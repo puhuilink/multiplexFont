@@ -1,12 +1,12 @@
 <template>
-  <div class="alarm-config">
-    <p>alarm config</p>
+  <div class="prequel-record">
+    <p>PrequelRecord</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AlarmConfig'
+  name: 'PrequelRecord'
 }
 </script>
 

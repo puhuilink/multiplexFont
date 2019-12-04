@@ -50,15 +50,73 @@ export const asyncRouterMap = [
           },
           {
             path: '/alarm/handle',
-            name: 'AlarmHandle',
-            component: () => import('@/views/alarm/handle/AlarmHandle'),
-            meta: { title: '告警处理', keepAlive: true, permission: [ 'alarm' ] }
+            component: RouteView,
+            meta: { title: '告警处理', keepAlive: true, permission: [ 'alarm' ] },
+            redirect: '/alarm/handle/HistoricalAlarms',
+            children: [
+              {
+                path: '/alarm/handle/HistoricalAlarms',
+                name: 'HistoricalAlarms',
+                component: () => import('@/views/alarm/handle/HistoricalAlarms'),
+                meta: { title: '历史告警', keepAlive: true }
+              },
+              {
+                path: '/alarm/handle/PrequelRecord',
+                name: 'PrequelRecord',
+                component: () => import('@/views/alarm/handle/PrequelRecord'),
+                meta: { title: '前转记录', keepAlive: true }
+              },
+              {
+                path: '/alarm/handle/GenerateFault',
+                name: 'GenerateFault',
+                component: () => import('@/views/alarm/handle/GenerateFault'),
+                meta: { title: '生成故障', keepAlive: true }
+              }
+            ]
           },
           {
             path: '/alarm/config',
             name: 'AlarmConfig',
-            component: () => import('@/views/alarm/config/AlarmConfig'),
-            meta: { title: '告警监控', keepAlive: true, permission: [ 'alarm' ] }
+            component: RouteView,
+            meta: { title: '告警配置', keepAlive: true, permission: [ 'alarm' ] },
+            children: [
+              {
+                path: '/alarm/config/AlarmTypes',
+                name: 'AlarmTypes',
+                component: () => import('@/views/alarm/config/AlarmTypes'),
+                meta: { title: '告警类型', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/AlarmRules',
+                name: 'AlarmRules',
+                component: () => import('@/views/alarm/config/AlarmRules'),
+                meta: { title: '告警规则', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/ThresholdRules',
+                name: 'ThresholdRules',
+                component: () => import('@/views/alarm/config/ThresholdRules'),
+                meta: { title: '阈值规则', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/FaultTypes',
+                name: 'FaultTypes',
+                component: () => import('@/views/alarm/config/FaultTypes'),
+                meta: { title: '故障类型', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/GeneratingFaultRules',
+                name: 'GeneratingFaultRules',
+                component: () => import('@/views/alarm/config/GeneratingFaultRules'),
+                meta: { title: '生成故障规则', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/FaultManagement',
+                name: 'FaultManagement',
+                component: () => import('@/views/alarm/config/FaultManagement'),
+                meta: { title: '故障前转路径管理', keepAlive: true }
+              }
+            ]
           }
         ]
       },
@@ -84,42 +142,81 @@ export const asyncRouterMap = [
             meta: { title: '指标列表', keepAlive: true, permission: [ 'performance' ] }
           },
           {
-            path: 'https://cn.bing.com/search?q=视频监控',
+            path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
             name: 'VideoMonitor',
             meta: { title: '视频监控', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=360安全',
-            name: '360安全',
-            meta: { title: '360安全', target: '_blank' }
+            path: 'http://vicube.ccccltd.cn:48080/PlatformDockingURL?type=IMS',
+            name: '服务管理',
+            meta: { title: '服务管理', target: '_blank' }
+          },
+          /* {
+            path: '/performance/',
+            name: '安全态势',
+            meta: { title: '安全态势', target: '_blank' },
+            children: [
+              {
+                path: 'https://10.1.1.113/libra/tsa/#/overview',
+                name: '整体态势',
+                meta: { title: '整体态势', target: '_blank' }
+              },
+              {
+                path: 'https://10.1.1.113/libra/tsa/#/intrusion',
+                name: '入侵态势',
+                meta: { title: '入侵态势', target: '_blank' }
+              }
+            ]
           },
           {
-            path: 'https://cn.bing.com/search?q=北京Pigoss',
+            path: '/performance/',
+            name: '360安全',
+            meta: { title: '360安全', target: '_blank' },
+            children: [
+              {
+                path: 'http://10.1.1.114:8080/login?refer=%2F',
+                name: '360天擎',
+                meta: { title: '360天擎', target: '_blank' }
+              },
+              {
+                path: 'https://10.1.1.8/',
+                name: '360天眼',
+                meta: { title: '360天眼', target: '_blank' }
+              },
+              {
+                path: 'https://10.1.1.9/',
+                name: '分析平台',
+                meta: { title: '分析平台', target: '_blank' }
+              }
+            ]
+          }, */
+          {
+            path: 'http://10.1.1.7/login.jsp',
             name: '北京Pigoss',
             meta: { title: '北京Pigoss', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=厦门Pigoss',
+            path: 'http://10.201.1.38/login.jsp',
             name: '厦门Pigoss',
             meta: { title: '厦门Pigoss', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=北京动环',
+            path: 'http://10.1.1.10/',
             name: '北京动环',
             meta: { title: '北京动环', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=厦门动环',
+            path: 'http://10.201.52.2/',
             name: '厦门动环',
             meta: { title: '厦门动环', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=APM',
+            path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
             name: 'APM',
             meta: { title: 'APM', target: '_blank' }
           },
           {
-            path: 'https://cn.bing.com/search?q=NPM',
+            path: 'http://10.1.1.211/zh-hans/accounts/login/?next=/',
             name: 'NPM',
             meta: { title: 'NPM', target: '_blank' }
           }

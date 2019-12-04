@@ -1,12 +1,12 @@
 <template>
-  <div class="alarm-handle">
-    <p>alarm handle</p>
+  <div class="faults-types">
+    <p>faults-types</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AlarmHandle'
+  name: 'FaultTypes'
 }
 </script>
 
