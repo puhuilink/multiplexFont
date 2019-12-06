@@ -17,7 +17,7 @@
 
       <div class="footer">
         <div class="copyright">
-          Copyright &copy; 2019
+          Copyright &copy; {{ new Date().getFullYear() }}
         </div>
       </div>
     </div>

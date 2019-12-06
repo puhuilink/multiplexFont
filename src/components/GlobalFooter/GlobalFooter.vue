@@ -2,7 +2,7 @@
   <div class="footer">
     <div class="copyright">
       Copyright
-      <a-icon type="copyright" /> 2019
+      <a-icon type="copyright" /> {{ new Date().getFullYear() }}
     </div>
   </div>
 </template>

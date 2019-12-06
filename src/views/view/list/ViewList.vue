@@ -9,6 +9,8 @@
   <div class="view-list">
     <page-view>
       <a-card :bordered="false">
+
+        <!-- S 搜索 -->
         <div class="table-page-search-wrapper">
           <a-form layout="inline">
             <a-row :gutter="48">
@@ -50,14 +52,16 @@
             </a-row>
           </a-form>
         </div>
+        <!-- E 搜索 -->
 
+        <!-- S 操作 -->
         <div class="table-operator">
-          <a-button type="primary" icon="plus">新建</a-button>
+          <a-button type="primary" icon="plus" @click="$refs.createModel.open()">新建</a-button>
           <a-dropdown v-if="selectedRowKeys.length > 0">
             <a-menu slot="overlay">
-              <a-menu-item key="1"><a-icon type="edit" @click="handleEdit" />编辑</a-menu-item>
-              <a-menu-item key="2"><a-icon type="copy" @click="handleCopy" />复制</a-menu-item>
-              <a-menu-item key="3"><a-icon type="highlight" @click="handleDesign" />设计</a-menu-item>
+              <a-menu-item key="1" v-if="selectedRowKeys.length === 1" ><a-icon type="edit" @click="handleEdit" />编辑</a-menu-item>
+              <a-menu-item key="2" v-if="selectedRowKeys.length === 1"><a-icon type="copy" @click="handleCopy" />复制</a-menu-item>
+              <a-menu-item key="3" v-if="selectedRowKeys.length === 1"><a-icon type="highlight" @click="handleDesign" />设计</a-menu-item>
               <a-menu-item key="4"><a-icon type="delete" @click="handleDelete"/>删除</a-menu-item>
             </a-menu>
             <a-button style="margin-left: 8px">
@@ -65,39 +69,42 @@
             </a-button>
           </a-dropdown>
         </div>
+        <!-- E 操作 -->
 
+        <!-- S 视图列表 -->
         <s-table
           ref="table"
           size="default"
           rowKey="key"
           :columns="columns"
           :data="loadData"
-          :alert="selectedRowKeys.length > 0"
+          :alert="false"
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
           showPagination="auto"
-        >
-          <span slot="serial" slot-scope="text, record, index">
-            {{ index + 1 }}
-          </span>
-          <!-- / 序号 -->
+        />
+        <!-- E 视图列表 -->
 
-        </s-table>
+        <!-- S 创建视图 -->
+        <create-view ref="createModel" @ok="() => $refs.table.refresh(true)" />
+        <!-- E 创建视图 -->
+
       </a-card>
     </page-view>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { PageView } from '@/layouts'
+import { getViewList } from '@/api/views'
+import CreateView from './modules/CreateView'
 
 export default {
   name: 'ViewList',
   components: {
     PageView,
     STable,
-    Ellipsis
+    CreateView
   },
   data () {
     return {
@@ -124,10 +131,6 @@ export default {
       // 表头
       columns: [
         {
-          title: '#',
-          scopedSlots: { customRender: 'serial' }
-        },
-        {
           title: '视图ID',
           dataIndex: 'id'
         },
@@ -138,12 +141,12 @@ export default {
         },
         {
           title: '视图类型',
-          dataIndex: 'types',
+          dataIndex: 'type',
           sorter: true
         },
         {
           title: '视图创建者',
-          dataIndex: 'updatedAt',
+          dataIndex: 'author',
           sorter: true
         },
         {
@@ -153,44 +156,64 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        console.log('loadData.parameter', Object.assign(parameter, this.queryParam))
-        return []
+        // 清空选中
+        this.selectedRowKeys = []
+        return getViewList(Object.assign(parameter, this.queryParam))
+          .then(res => {
+            return res.result
+          })
       },
+      // 已选行特性值
       selectedRowKeys: [],
+      // 已选行数据
       selectedRows: []
     }
   },
   methods: {
+    /**
+     * 筛选展开开关
+     */
+    toggleAdvanced () {
+      this.advanced = !this.advanced
+    },
+    /**
+     * 选中行更改事件
+     * @param selectedRowKeys
+     * @param selectedRows
+     */
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
+    /**
+     * 重置搜索表单
+     */
     resetSearchForm () {
-      this.queryParam = {
-        date: moment(new Date())
-      }
+      this.queryParam = {}
     },
+    /**
+     * 处理编辑事件
+     */
     handleEdit () {
       console.log('Edit: ', this.selectedRows)
     },
+    /**
+     * 处理复制事件
+     */
     handleCopy () {
       console.log('Copy: ', this.selectedRows)
     },
+    /**
+     * 处理设计事件
+     */
     handleDesign () {
       console.log('Design: ', this.selectedRows)
     },
+    /**
+     * 处理删除事件
+     */
     handleDelete () {
       console.log('Delete: ', this.selectedRows)
-    },
-    handleSub (record) {
-      if (record.status !== 0) {
-        this.$message.info(`${record.no} 订阅成功`)
-      } else {
-        this.$message.error(`${record.no} 订阅失败，规则已关闭`)
-      }
     }
   }
 }
