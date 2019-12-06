@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-// import { bxAnaalyse } from '@/core/icons'
+// 引入外部 svg icon
+// import { bxAnalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
 
@@ -26,9 +27,16 @@ export const asyncRouterMap = [
             meta: { title: '视图展示', keepAlive: true, permission: [ 'view' ] }
           },
           {
+            path: '/view/list',
+            name: 'ViewList',
+            component: () => import('@/views/view/list/ViewList'),
+            meta: { title: '视图定制', keepAlive: true, permission: [ 'view' ] }
+          },
+          {
             path: '/view/design',
             name: 'ViewDesign',
             component: () => import('@/views/view/design/ViewDesign'),
+            hidden: true,
             meta: { title: '视图设计', keepAlive: true, permission: [ 'view' ] }
           }
         ]
