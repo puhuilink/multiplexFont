@@ -1,3 +1,11 @@
+<!--
+ * @Author: 刘奕竹
+ * @Date: 2019-12-03 14:13:22
+ * @LastEditTime: 2019-12-06 11:31:41
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \web-zj\src\views\alarm\monitor\AlarmMonitor.vue
+ -->
 <template>
   <!--S 告警监控 lyz  lyz02413@163.com -->
   <div class="alarm-monitor">
@@ -13,7 +21,7 @@
       </div>
 
       <!-- E- 公共操作区 -->
-      {{ key }}
+
     </a-card>
   </div>
 </template>
