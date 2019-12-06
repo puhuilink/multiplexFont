@@ -59,10 +59,10 @@
           <a-button type="primary" icon="plus" @click="$refs.createModel.open()">新建</a-button>
           <a-dropdown v-if="selectedRowKeys.length > 0">
             <a-menu slot="overlay">
-              <a-menu-item key="1" v-if="selectedRowKeys.length === 1" ><a-icon type="edit" @click="handleEdit" />编辑</a-menu-item>
-              <a-menu-item key="2" v-if="selectedRowKeys.length === 1"><a-icon type="copy" @click="handleCopy" />复制</a-menu-item>
-              <a-menu-item key="3" v-if="selectedRowKeys.length === 1"><a-icon type="highlight" @click="handleDesign" />设计</a-menu-item>
-              <a-menu-item key="4"><a-icon type="delete" @click="handleDelete"/>删除</a-menu-item>
+              <a-menu-item key="1" v-if="selectedRowKeys.length === 1" @click="handleEdit"><a-icon type="edit" />编辑</a-menu-item>
+              <a-menu-item key="2" v-if="selectedRowKeys.length === 1" @click="handleCopy"><a-icon type="copy" />复制</a-menu-item>
+              <a-menu-item key="3" v-if="selectedRowKeys.length === 1" @click="handleDesign"><a-icon type="highlight" />设计</a-menu-item>
+              <a-menu-item key="4" @click="handleDelete"><a-icon type="delete" />删除</a-menu-item>
             </a-menu>
             <a-button style="margin-left: 8px">
               操作 <a-icon type="down" />
@@ -96,7 +96,7 @@
 <script>
 import { STable } from '@/components'
 import { PageView } from '@/layouts'
-import { getViewList } from '@/api/views'
+import { getViewList } from '@/api/view'
 import CreateView from './modules/CreateView'
 
 export default {
@@ -207,7 +207,9 @@ export default {
      * 处理设计事件
      */
     handleDesign () {
-      console.log('Design: ', this.selectedRows)
+      const [ row ] = this.selectedRows
+      const { id, title } = row
+      this.$router.push({ name: 'ViewDesign', query: { id, title } })
     },
     /**
      * 处理删除事件
