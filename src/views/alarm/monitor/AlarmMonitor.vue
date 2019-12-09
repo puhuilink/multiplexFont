@@ -1,13 +1,10 @@
-<!--
- * @Author: 刘奕竹
- * @Date: 2019-12-03 14:13:22
- * @LastEditTime: 2019-12-06 11:31:41
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \web-zj\src\views\alarm\monitor\AlarmMonitor.vue
- -->
+/**
+ *告警监控
+ *Author: yizhu liu
+ *Date: 2019-12-03 14:13:22
+ *Email: lyz02413@163.com
+ */
 <template>
-  <!--S 告警监控 lyz  lyz02413@163.com -->
   <div class="alarm-monitor">
     <a-card
       style="width:100%"
@@ -15,13 +12,58 @@
       :activeTabKey="key"
       @tabChange="key => onTabChange(key, 'key')"
     >
-      <!-- S- 公共操作区 -->
-      <div slot="headerContent">
+      <!-- S 搜索 -->
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="advanced ? 12 : 8" :sm="24">
+              <a-form-item label="CI域">
+                <a-select
+                  v-model="queryParam.CIdomain"
+                  placeholder="请选择CI域"
+                >
+                  <a-select-opt-group
+                    v-for="(group,index) in CIdomain"
+                    :key="index"
+                    :label="group.label"
+                  >
+                    <a-select-option
+                      v-for="item in group.options"
+                      :key="item.value"
+                      :value="item.value"
+                    >
+                      {{ item.label }}
+                    </a-select-option>
+                  </a-select-opt-group>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="advanced ? 12 : 8" :sm="24">
+              <a-form-item label="CI类型">
+                <a-select
+                  v-model="queryParam.CItype"
+                  placeholder="请选择CI类型"
+                >
+                  <a-select-opt-group
+                    v-for="(group,index) in CItype"
+                    :key="index"
+                    :label="group.label"
+                  >
+                    <a-select-option
+                      v-for="item in group.options"
+                      :key="item.value"
+                      :value="item.value"
+                    >
+                      {{ item.label }}
+                    </a-select-option>
+                  </a-select-opt-group>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
 
+        </a-form>
       </div>
-
-      <!-- E- 公共操作区 -->
-
     </a-card>
   </div>
 </template>
@@ -52,6 +94,74 @@ export default {
           key: 'ignore',
           tab: '已忽略告警'
         }
+      ],
+      // 搜索： 展开/关闭
+      advanced: false,
+      // 查询参数
+      queryParam: {},
+      // 筛选项：CI域
+      CIdomain: [
+        {
+          label: 'Root',
+          options: [{
+            value: 'rootDamin',
+            label: 'rootDamin'
+          }]
+        }, {
+          label: 'rootDamin',
+          options: [{
+            value: 'bj',
+            label: '北京运维组'
+          },
+          {
+            value: 'xm',
+            label: '厦门运维组'
+          }]
+        }
+      ],
+      // 筛选项：CI类型
+      CItype: [
+        {
+          label: 'Root',
+          options: [{
+            value: '0',
+            label: '统一资源'
+          }]
+        },
+        {
+          label: 'CI',
+          options: [{
+            value: '1',
+            label: '管理'
+          },
+          {
+            value: '2',
+            label: '监控定义'
+          },
+          {
+            value: '3',
+            label: '监控对象'
+          },
+          {
+            value: '4',
+            label: '告警'
+          },
+          {
+            value: '5',
+            label: '性能'
+          }]
+        },
+        {
+          label: 'Manager',
+          options: [{
+            value: '6',
+            label: '字典数据'
+          }]
+        }
+      ],
+      // 筛选项: CI实例
+      CIinstance: [
+
       ]
     }
   },

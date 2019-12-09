@@ -13,7 +13,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '中交 · 统一监控管理平台',
+      default: '中国交建· 统一监控管理平台',
       required: false
     },
     showTitle: {
