@@ -9,7 +9,7 @@
     <a-card
       style="width:100%"
       :tabList="tabList"
-      :activeTabKey="key"
+      :activeTabKey="'key'"
       @tabChange="key => onTabChange(key, 'key')"
     >
       <!-- S 搜索 -->
@@ -19,11 +19,11 @@
             <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI域">
                 <a-select
-                  v-model="queryParam.CIdomain"
+                  v-model="queryParam.CIDomain"
                   placeholder="请选择CI域"
                 >
                   <a-select-opt-group
-                    v-for="(group,index) in CIdomain"
+                    v-for="(group,index) in CIDomain"
                     :key="index"
                     :label="group.label"
                   >
@@ -41,11 +41,11 @@
             <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI类型">
                 <a-select
-                  v-model="queryParam.CItype"
+                  v-model="queryParam.CIType"
                   placeholder="请选择CI类型"
                 >
                   <a-select-opt-group
-                    v-for="(group,index) in CItype"
+                    v-for="(group,index) in CIType"
                     :key="index"
                     :label="group.label"
                   >
@@ -100,7 +100,7 @@ export default {
       // 查询参数
       queryParam: {},
       // 筛选项：CI域
-      CIdomain: [
+      CIDomain: [
         {
           label: 'Root',
           options: [{
@@ -120,7 +120,7 @@ export default {
         }
       ],
       // 筛选项：CI类型
-      CItype: [
+      CIType: [
         {
           label: 'Root',
           options: [{
