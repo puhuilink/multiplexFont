@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'tr
   require('./services/tagCloud')
   require('./services/article')
   require('./services/view')
+  require('./services/alarmMonitor')
 
   Mock.setup({
     timeout: 800 // setter delay time

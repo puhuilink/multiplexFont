@@ -28,6 +28,11 @@ const alarmList = (options) => {
         '0', '1', '2', '3',
         '4'
       ],
+      'ciName|1': [
+        'APM:F99', 'APM:HR1', 'APM:HR2',
+        'BJ-Aggr-SW3', 'BJ-Aggr-SW3',
+        'BJ-Access-SW1'
+      ],
       'appName|1': [
         '采购15', '采购12', '西南区域', '科技评审',
         '生产经营应用服务器1', '核心拓展接入A', '核心拓展接入B',
@@ -40,8 +45,8 @@ const alarmList = (options) => {
         '三级域汇聚交换机B(BJ-SJ-Aggr-SW2, IP:10.1.1.244) Gi2/0/9: 端口状态不等于Up [ Link Down ]'
       ],
       'firstArisingTime|1': '@datetime',
-      'arisingTime': '@datetime',
-      'severity': '@natural(1, 100)'
+      'arisingTime|1': '@datetime',
+      'severity|1-100': 100
     }))
   }
 
@@ -55,10 +60,10 @@ const alarmList = (options) => {
 }
 
 // 获取视图列表模拟接口
-Mock.mock(/\/view\/list/, 'get', alarmList)
+Mock.mock(/\/alarm\/list/, 'get', alarmList)
 
 // 告警监控tab模拟数据
-const alarmMenuList = (options) => {
+const alarmMenuList = () => {
   const result = []
   result.push(Mock.mock({
     '0': '@natural(0, 100)',
@@ -73,7 +78,7 @@ const alarmMenuList = (options) => {
 Mock.mock(/\/alarm\/menu\/list/, 'get', alarmMenuList)
 
 // 告警监控级别模拟数据
-const alarmLevelList = (options) => {
+const alarmLevelList = () => {
   const result = []
   result.push(Mock.mock({
     '0': '@natural(0, 100)',

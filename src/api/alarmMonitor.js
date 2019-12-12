@@ -33,11 +33,10 @@ export function getAlarmList (parameter) {
  * @param parameter
  * @returns {*}
  */
-export function getAlarmMenuList (parameter) {
+export function getAlarmMenuList () {
   return axios({
     url: api.alarmMenuList,
-    method: 'get',
-    params: parameter
+    method: 'get'
   })
 }
 
@@ -46,10 +45,9 @@ export function getAlarmMenuList (parameter) {
  * @param parameter
  * @returns {*}
  */
-export function getAlarmLevelList (parameter) {
+export function getAlarmLevelList () {
   return axios({
     url: api.alarmLevelList,
-    method: 'get',
-    params: parameter
+    method: 'get'
   })
 }
