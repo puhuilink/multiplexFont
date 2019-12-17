@@ -138,12 +138,24 @@
 
       <!-- S 操作 -->
       <a-row type="flex" justify="space-between" style="margin-bottom: 20px;">
-        <a-col :span="6" class="table-operator">
-          <a-button >确认</a-button>
-          <a-button >前转</a-button>
+        <a-col
+          :xs="24"
+          :sm="24"
+          :md="24"
+          :lg="4"
+          :xl="10"
+          class="table-operator">
+          <a-button @click="$refs.confirm.open()">确认</a-button>
+          <a-button @click="$refs.rollForward.open()">前转</a-button>
           <a-button >解决</a-button>
         </a-col>
-        <a-col :span="14" :offset="4">
+        <a-col
+          :xs="24"
+          :sm="24"
+          :md="24"
+          :lg="20"
+          :xl="14"
+        >
           <a-input-search
             placeholder="输入关键字"
             style="width: 200px"
@@ -151,11 +163,18 @@
           />
           <a-icon style="padding:0px 15px;" type="setting" />
           <a-icon style="padding:0px 12px;" type="sync" />
-          <a-icon style="padding:0px 15px;" type="sound" />
-          <!-- <div class="levelContent" v-for=" i in alarmLevelList" :key="i">
-            <a-badge :numberStyle="{backgroundColor:'#ff0000'}" />
-            <span>100</span>
-          </div> -->
+          <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
+          <audio src="" id="eventAudio" loop="loop" hidden></audio>
+          <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
+            <a-badge
+              :count="text | levelFilter"
+              :title="text | levelTitleFilter"
+              :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
+                text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
+                  text==4?{backGroundColor:'#00c356'}:{}"
+            />
+            <span style="padding-left:7px; ">{{ value }}</span>
+          </div>
         </a-col>
       </a-row>
       <!-- E 操作 -->
@@ -182,11 +201,22 @@
                 text==4?{backGroundColor:'#00c356'}:{}"
           />
         </span>
+        <!-- <span slot="activeState" slot-scope="text">
+          <a-icon
+            type="flag"
+            style="color:"
+          />
+        </span> -->
         <span slot="message" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>
       <!-- E 告警监控列表 -->
+
+      <!-- S  model模块-->
+      <m-confirm ref="confirm" @ok="() => $ref.table.refresh(true)"></m-confirm>
+      <roll-forward ref="rollForward" @ok="() => $ref.table.refresh(true)"></roll-forward>
+      <!-- E model模块 -->
     </a-card>
   </div>
 </template>
@@ -194,7 +224,8 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMonitor'
-
+import MConfirm from './modules/MConfirm'
+import RollForward from './modules/RollForward'
 const levelList = {
   0: {
     level: 'L1',
@@ -221,7 +252,9 @@ export default {
   name: 'AlarmMonitor',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    MConfirm,
+    RollForward
   },
   data () {
     return {
@@ -392,6 +425,8 @@ export default {
           }]
         }
       ],
+      // 是否播放告警音频
+      playAudio: false,
       // 告警列表表头
       columns: [
         {
@@ -448,6 +483,8 @@ export default {
             return res.result
           })
       },
+      // 告警级别数据对象
+      alarmLevelList: {},
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -463,27 +500,30 @@ export default {
     }
   },
   created () {
-    this.alarmLevelList()
-    this.alarmMenuList()
+    this.getLevelList()
+    this.getMenuList()
   },
   methods: {
     /**
      * 获取现有的告警级别列表
      */
-    alarmLevelList () {
-      return getAlarmLevelList()
+    getLevelList () {
+      getAlarmLevelList()
         .then(res => {
-          console.log(res)
-          // return res.result
+          this.alarmLevelList = res.result.data[0]
+          console.log(this.alarmLevelList)
         })
     },
     /**
      * 获取tab的告警数量列表
      */
-    alarmMenuList () {
+    getMenuList () {
       return getAlarmMenuList()
         .then(res => {
-          console.log(res)
+          const alarmMenuList = res.result.data[0]
+          for (const i in alarmMenuList) {
+            this.tabList[i].tab = this.tabList[i].tab + '（' + alarmMenuList[i] + '）'
+          }
         })
     },
     /**
@@ -498,6 +538,18 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    /**
+     * 点击添加消息提示音
+     */
+    onClickSound () {
+      if (this.playAudio) {
+        this.pauseAudio()
+        this.playAudio = false
+      } else {
+        this.clickAudio()
+        this.playAudio = true
+      }
     },
     /**
      * 选中行更改事件

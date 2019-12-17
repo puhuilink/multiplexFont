@@ -59,9 +59,6 @@ const alarmList = (options) => {
   })
 }
 
-// 获取视图列表模拟接口
-Mock.mock(/\/alarm\/list/, 'get', alarmList)
-
 // 告警监控tab模拟数据
 const alarmMenuList = () => {
   const result = []
@@ -72,10 +69,11 @@ const alarmMenuList = () => {
     '3': '@natural(0, 100)',
     '4': '@natural(0, 100)'
   }))
-}
 
-// 获取告警监控tab模拟接口
-Mock.mock(/\/alarm\/menu\/list/, 'get', alarmMenuList)
+  return builder({
+    data: result
+  })
+}
 
 // 告警监控级别模拟数据
 const alarmLevelList = () => {
@@ -87,7 +85,15 @@ const alarmLevelList = () => {
     '3': '@natural(0, 100)',
     '4': '@natural(0, 100)'
   }))
+
+  return builder({
+    data: result
+  })
 }
 
+// 获取视图列表模拟接口
+Mock.mock(/\/alarm\/list/, 'get', alarmList)
+// 获取告警监控tab模拟接口
+Mock.mock(/\/alarm\/menu\/list/, 'get', alarmMenuList)
 // 获取告警监控tab模拟接口
 Mock.mock(/\/alarm\/level\/list/, 'get', alarmLevelList)
