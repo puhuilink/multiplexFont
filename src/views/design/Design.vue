@@ -1,12 +1,10 @@
 <template>
-  <div class="view-display">
-    <p>视图设计</p>
-  </div>
+  <div class="design"></div>
 </template>
 
 <script>
 export default {
-  name: 'ViewDesign'
+  name: 'Design'
 }
 </script>
 

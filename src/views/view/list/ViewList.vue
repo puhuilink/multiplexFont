@@ -209,7 +209,7 @@ export default {
     handleDesign () {
       const [ row ] = this.selectedRows
       const { id, title } = row
-      this.$router.push({ name: 'ViewDesign', query: { id, title } })
+      this.$router.push({ name: 'Design', query: { id, title } })
     },
     /**
      * 处理删除事件

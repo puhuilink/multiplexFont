@@ -4,7 +4,6 @@ import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/lay
 // import { bxAnalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
-
   {
     path: '/',
     name: 'index',
@@ -31,13 +30,6 @@ export const asyncRouterMap = [
             name: 'ViewList',
             component: () => import('@/views/view/list/ViewList'),
             meta: { title: '视图定制', keepAlive: true, permission: [ 'view' ] }
-          },
-          {
-            path: '/view/design',
-            name: 'ViewDesign',
-            component: () => import('@/views/view/design/ViewDesign'),
-            hidden: true,
-            meta: { title: '视图设计', keepAlive: true, permission: [ 'view' ] }
           }
         ]
       },
@@ -470,6 +462,14 @@ export const asyncRouterMap = [
         ]
       }
     ]
+  },
+  // 视图设计
+  {
+    path: '/design',
+    name: 'Design',
+    hidden: true,
+    component: () => import('@/views/design/Design'),
+    meta: { title: '视图设计', permission: [ 'view' ] }
   },
   {
     path: '*', redirect: '/404', hidden: true
