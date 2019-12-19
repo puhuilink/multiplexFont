@@ -253,9 +253,9 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMonitor'
-import MConfirm from './modules/MConfirm'
-import RollForward from './modules/RollForward'
-import MSolve from './modules/MSolve'
+import MConfirm from '../modules/MConfirm'
+import RollForward from '../modules/RollForward'
+import MSolve from '../modules/MSolve'
 
 const levelList = {
   0: {
