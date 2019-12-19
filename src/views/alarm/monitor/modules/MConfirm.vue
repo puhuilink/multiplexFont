@@ -13,7 +13,7 @@
     @cancel="handleCancel"
   >
     <p>备注</p>
-    <a-textarea placeholder="请输入备注" :rows="4" v-model="remark"/>
+    <a-textarea placeholder="请输入备注" :rows="6" v-model="remark"/>
   </a-modal>
 </template>
 
@@ -49,4 +49,4 @@ export default {
 
 <style lang="less" scoped>
 
-</style>>
+</style>

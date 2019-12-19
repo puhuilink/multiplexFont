@@ -25,8 +25,8 @@ const alarmList = (options) => {
         '4'
       ],
       'activeState|1': [
-        '0', '1', '2', '3',
-        '4'
+        'pending', 'confirmed', 'shifting', 'resolved',
+        'ignore'
       ],
       'ciName|1': [
         'APM:F99', 'APM:HR1', 'APM:HR2',

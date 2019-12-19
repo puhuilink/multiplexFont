@@ -17,7 +17,7 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
+            <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI域">
                 <a-select
                   allowClear
@@ -40,7 +40,7 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI类型">
                 <a-select
                   allowClear
@@ -66,7 +66,7 @@
             </a-col>
             <!-- 多余筛选框是否展示 -->
             <template v-if="advanced">
-              <a-col :md="8" :sm="24">
+              <a-col :md="12" :sm="24">
                 <a-form-item label="CI实例">
                   <a-select
                     mode="multiple"
@@ -75,7 +75,7 @@
                     placeholder="请选择CI实例"
                     @change="CIInstanceChange"
                   >
-                    <a-select-option value="checkall" key="chackall" >全选</a-select-option>
+                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
                       v-for="(group,index) in CIInstance"
                       :key="index"
@@ -93,7 +93,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="12" :sm="24">
                 <a-form-item label="告警类型">
                   <a-select
                     mode="multiple"
@@ -102,7 +102,7 @@
                     placeholder="请选择告警类型"
                     @change="alarmTypeChange"
                   >
-                    <a-select-option value="checkall" key="chackall" >全选</a-select-option>
+                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
                       v-for="(group,index) in alarmType"
                       :key="index"
@@ -145,9 +145,9 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open()">确认</a-button>
-          <a-button @click="$refs.rollForward.open()">前转</a-button>
-          <a-button >解决</a-button>
+          <a-button @click="$refs.confirm.open()" :disabled="!hasSelected">确认</a-button>
+          <a-button @click="$refs.rollForward.open()" :disabled="!hasSelected">前转</a-button>
+          <a-button @click="$refs.resolve.open()" :disabled="!hasSelected">解决</a-button>
         </a-col>
         <a-col
           :xs="24"
@@ -162,7 +162,14 @@
             @search="onSearch"
           />
           <a-icon style="padding:0px 15px;" type="setting" />
-          <a-icon style="padding:0px 12px;" type="sync" />
+          <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
+          <a-icon
+            style="padding:0px 12px; color:#1890ff"
+            spin
+            type="sync"
+            v-else
+            @click="refresh"
+            title="关闭自动刷新" />
           <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
           <audio src="" id="eventAudio" loop="loop" hidden></audio>
           <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
@@ -171,7 +178,7 @@
               :title="text | levelTitleFilter"
               :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
                 text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
-                  text==4?{backGroundColor:'#00c356'}:{}"
+                  text==4?{backgroundColor:'#00c356'}:{}"
             />
             <span style="padding-left:7px; ">{{ value }}</span>
           </div>
@@ -179,7 +186,7 @@
       </a-row>
       <!-- E 操作 -->
 
-      <!--S 告警监控列表  -->
+      <!-- S 告警监控列表 -->
       <s-table
         ref="table"
         size="default"
@@ -198,24 +205,46 @@
             :title="text | levelTitleFilter"
             :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
               text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
-                text==4?{backGroundColor:'#00c356'}:{}"
+                text==4?{backgroundColor:'#00c356'}:{}"
           />
         </span>
-        <!-- <span slot="activeState" slot-scope="text">
+        <span slot="activeState" slot-scope="text">
           <a-icon
             type="flag"
-            style="color:"
+            theme="filled"
+            :title="text | acStateTitleFilter"
+            :style="text=='pending'?{color:'#c4c4c4', fontSize:'18px'}:text=='confirmed'?{color:'#00aaf', fontSize:'18px'}:
+              text=='shifting'?{color:'#f99025', fontSize:'18px'}:text=='resolved'?{color:'#39cc39', fontSize:'18px'}:
+                text=='ignore'?{color:'#000000', fontSize:'18px'}:{}"
           />
-        </span> -->
+        </span>
         <span slot="message" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>
       <!-- E 告警监控列表 -->
 
-      <!-- S  model模块-->
-      <m-confirm ref="confirm" @ok="() => $ref.table.refresh(true)"></m-confirm>
-      <roll-forward ref="rollForward" @ok="() => $ref.table.refresh(true)"></roll-forward>
+      <!-- S 表格右击菜单 -->
+      <a-menu :style="menuStyle" v-if="menuVisible">
+        <a-menu-item @click="$refs.confirm.open()">
+          <a-icon type="pushpin" />
+          确认告警
+        </a-menu-item>
+        <a-menu-item @click="$refs.rollForward.open()">
+          <a-icon type="to-top" />
+          前转告警
+        </a-menu-item>
+        <a-menu-item @click="$refs.resolve.open()">
+          <a-icon type="tool" />
+          解决告警
+        </a-menu-item>
+      </a-menu>
+      <!-- E 表格右击菜单 -->
+
+      <!-- S model模块 -->
+      <m-confirm ref="confirm" @ok="() => $refs.table.refresh(true)"></m-confirm>
+      <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward>
+      <m-solve ref="resolve" @ok="() => $refs.table.refresh(true)"></m-solve>
       <!-- E model模块 -->
     </a-card>
   </div>
@@ -226,26 +255,28 @@ import { STable, Ellipsis } from '@/components'
 import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMonitor'
 import MConfirm from './modules/MConfirm'
 import RollForward from './modules/RollForward'
+import MSolve from './modules/MSolve'
+
 const levelList = {
   0: {
-    level: 'L1',
-    text: 'INFO'
+    level: 'L5',
+    text: 'CRITICAL'
   },
   1: {
-    level: 'L2',
-    text: 'WARNING'
+    level: 'L4',
+    text: 'MAJOR'
   },
   2: {
     level: 'L3',
     text: 'MINOR'
   },
   3: {
-    level: 'L4',
-    text: 'MAJOR'
+    level: 'L2',
+    text: 'WARNING'
   },
   4: {
-    level: 'L5',
-    text: 'CRITICAL'
+    level: 'L1',
+    text: 'INFO'
   }
 }
 export default {
@@ -254,7 +285,8 @@ export default {
     STable,
     Ellipsis,
     MConfirm,
-    RollForward
+    RollForward,
+    MSolve
   },
   data () {
     return {
@@ -425,6 +457,8 @@ export default {
           }]
         }
       ],
+      // 自动刷新
+      autoRefresh: false,
       // 是否播放告警音频
       playAudio: false,
       // 告警列表表头
@@ -440,7 +474,8 @@ export default {
         {
           title: '状态',
           dataIndex: 'activeState',
-          sorter: true
+          sorter: true,
+          scopedSlots: { customRender: 'activeState' }
         },
         {
           title: 'CI名称',
@@ -483,12 +518,22 @@ export default {
             return res.result
           })
       },
+      // 自动刷新的定时器
+      timer: null,
       // 告警级别数据对象
       alarmLevelList: {},
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
-      selectedRows: []
+      selectedRows: [],
+      // 表格右击菜单数据
+      menuVisible: false,
+      menuStyle: {
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        border: '1px solid #eee'
+      }
     }
   },
   filters: {
@@ -497,11 +542,36 @@ export default {
     },
     levelTitleFilter (type) {
       return levelList[type].text
+    },
+    acStateTitleFilter (type) {
+      type += ''
+      switch (type) {
+        case 'pending':
+          return '新产生'
+        case 'confirmed':
+          return '已确认'
+        case 'shifting':
+          return '已前转'
+        case 'resolved':
+          return '已解决'
+        case 'ignore':
+          return '已忽略'
+        default:
+          return ''
+      }
     }
   },
   created () {
     this.getLevelList()
     this.getMenuList()
+  },
+  computed: {
+    /**
+     * 返回表格选中行
+     */
+    hasSelected () {
+      return this.selectedRowKeys.length > 0
+    }
   },
   methods: {
     /**
@@ -522,7 +592,8 @@ export default {
         .then(res => {
           const alarmMenuList = res.result.data[0]
           for (const i in alarmMenuList) {
-            this.tabList[i].tab = this.tabList[i].tab + '（' + alarmMenuList[i] + '）'
+            const tabText = this.tabList[i].tab.substr(0, 5)
+            this.tabList[i].tab = tabText + '（' + alarmMenuList[i] + '）'
           }
         })
     },
@@ -531,13 +602,31 @@ export default {
      */
     onTabChange (key, type) {
       console.log(key, type)
+      this.autoRefresh = false
+      clearInterval(this.timer)
       this[type] = key
+      this.$refs.table.refresh(true)
     },
     /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    /**
+     * 30s自动刷新
+     */
+    refresh () {
+      this.autoRefresh = !this.autoRefresh
+      if (this.autoRefresh) {
+        this.timer = setInterval(() => {
+          this.$refs.table.refresh(true)
+          this.getLevelList()
+          this.getMenuList()
+        }, 30000)
+      } else {
+        clearInterval(this.timer)
+      }
     },
     /**
      * 点击添加消息提示音
@@ -559,6 +648,13 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
+    },
+    /**
+     * 点击隐藏表格小菜单
+     */
+    bodyClick () {
+      this.menuVisible = false
+      document.body.removeEventListener('click', this.bodyClick)
     },
     /**
      * ci实例改变
@@ -610,6 +706,14 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          contextmenu: e => {
+            e.preventDefault()
+            this.menuData = record
+            this.menuVisible = true
+            this.menuStyle.top = e.clientY - 65 + 'px'
+            this.menuStyle.left = e.clientX - 150 + 'px'
+            document.body.addEventListener('click', this.bodyClick)
           }
         }
       }
