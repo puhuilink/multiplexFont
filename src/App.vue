@@ -26,4 +26,7 @@ export default {
   #app {
     height: 100%;
   }
+  .ant-drawer-content-wrapper{
+    width: 300px !important;
+  }
 </style>
