@@ -210,7 +210,7 @@
       <!-- S 历史告警列表 -->
       <s-table
         ref="table"
-        size="default"
+        size="small"
         rowKey="key"
         :columns="columns"
         :data="loadData"
@@ -465,13 +465,15 @@ export default {
           title: '状态',
           dataIndex: 'activeState',
           sorter: true,
-          width: 75,
+          algin: 'center',
+          width: 70,
           fixed: 'left',
           scopedSlots: { customRender: 'activeState' }
         },
         {
           title: 'CI名称',
           dataIndex: 'ciName',
+          algin: 'center',
           sorter: true
         },
         {

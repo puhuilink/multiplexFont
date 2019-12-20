@@ -189,12 +189,12 @@
       <!-- S 告警监控列表 -->
       <s-table
         ref="table"
-        size="default"
+        size="small"
         rowKey="key"
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: 1300 }"
+        :scroll="{ x: 1300, y: 350 }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
@@ -245,7 +245,9 @@
       <m-confirm ref="confirm" @ok="() => $refs.table.refresh(true)"></m-confirm>
       <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward>
       <m-solve ref="resolve" @ok="() => $refs.table.refresh(true)"></m-solve>
+      <m-detail ref="detail"></m-detail>
       <!-- E model模块 -->
+
     </a-card>
   </div>
 </template>
@@ -256,6 +258,7 @@ import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMo
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
+import MDetail from '../modules/MDetail'
 
 const levelList = {
   0: {
@@ -286,7 +289,8 @@ export default {
     Ellipsis,
     MConfirm,
     RollForward,
-    MSolve
+    MSolve,
+    MDetail
   },
   data () {
     return {
@@ -474,22 +478,26 @@ export default {
         {
           title: '状态',
           dataIndex: 'activeState',
+          width: 75,
           sorter: true,
           scopedSlots: { customRender: 'activeState' }
         },
         {
           title: 'CI名称',
           dataIndex: 'ciName',
+          width: 120,
           sorter: true
         },
         {
           title: '应用名称',
           dataIndex: 'appName',
+          width: 190,
           sorter: true
         },
         {
           title: '消息内容',
           dataIndex: 'message',
+          width: 420,
           scopedSlots: { customRender: 'message' }
         },
         {
@@ -704,16 +712,17 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           contextmenu: e => {
             e.preventDefault()
             this.menuData = record
             this.menuVisible = true
-            this.menuStyle.top = e.clientY - 65 + 'px'
-            this.menuStyle.left = e.clientX - 150 + 'px'
+            this.menuStyle.top = e.clientY - 80 + 'px'
+            this.menuStyle.left = e.clientX - 250 + 'px'
             document.body.addEventListener('click', this.bodyClick)
+          },
+          dblclick: () => {
+            console.log(record, '双击')
+            this.$refs.detail.open()
           }
         }
       }
