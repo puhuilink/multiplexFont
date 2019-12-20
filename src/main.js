@@ -19,6 +19,9 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './components/global.less'
 
+// 引入音频文件
+import audio from './assets/MINOR.mp3'
+
 Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
@@ -30,3 +33,39 @@ new Vue({
   created: bootstrap,
   render: h => h(App)
 }).$mount('#app')
+
+/**
+ * 注册播放音频事件到Vue实例上
+ */
+Vue.prototype.clickAudio = () => {
+  const buttonAudio = document.getElementById('eventAudio')
+  buttonAudio.setAttribute('src', audio)
+  buttonAudio.play()
+}
+
+/**
+ * 暂停音频播放
+ */
+Vue.prototype.pauseAudio = () => {
+  const buttonAudio = document.getElementById('eventAudio')
+  buttonAudio.setAttribute('src', audio)
+  buttonAudio.pause()
+}
+
+/* Vue.prototype.acStateColorFilter = (type) => {
+  type += ''
+  switch (type) {
+    case 'pending':
+      return '#c4c4c4'
+    case 'confirmed':
+      return '#00aaff'
+    case 'shifting':
+      return '#f99025'
+    case 'resolved':
+      return '#39cc39'
+    case 'ignore':
+      return '#000000'
+    default:
+      return ''
+  }
+} */
