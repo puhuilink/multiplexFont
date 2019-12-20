@@ -7,6 +7,9 @@ import user from './modules/user'
 // default router permission control
 import permission from './modules/permission'
 
+// 视图设计
+import screen from './modules/screen'
+
 // dynamic router permission control (Experimental)
 // import permission from './modules/async-router'
 import getters from './getters'
@@ -17,7 +20,8 @@ export default new Vuex.Store({
   modules: {
     app,
     user,
-    permission
+    permission,
+    screen
   },
   state: {
 

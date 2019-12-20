@@ -1,0 +1,67 @@
+.comment-template {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  height: calc(100vh - 102px);
+
+  &__header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 12px 16px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0, 0, 0, .23);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    padding: 0 12px 12px;
+    font-weight: bold;
+  }
+
+  &__content {
+    padding: 0 12px 6px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
+  }
+
+  &__item {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__leading {
+    flex: none;
+    width: 70px;
+    margin: 0;
+    text-align: left;
+  }
+
+  &__inner {
+    width: 100%;
+
+    input {
+      width: 100%;
+    }
+
+    .ant-select {
+      width: 100%;
+    }
+  }
+}
+
+// 覆盖ant design 折叠面板样式
+.ant-collapse-content.ant-collapse-content-active {
+  overflow: visible !important;
+}
