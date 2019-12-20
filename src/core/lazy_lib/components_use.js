@@ -44,6 +44,8 @@ import {
   Upload,
   Progress,
   Skeleton,
+  Slider,
+  Collapse,
   Popconfirm,
   message,
   notification
@@ -87,6 +89,8 @@ Vue.use(Upload)
 Vue.use(Progress)
 Vue.use(Skeleton)
 Vue.use(Popconfirm)
+Vue.use(Slider)
+Vue.use(Collapse)
 // Vue.use(VueCropper)
 Vue.use(notification)
 

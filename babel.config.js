@@ -24,5 +24,8 @@ module.exports = {
       }
     ]
   ],
-  plugins
+  plugins: [
+    ...plugins,
+    'transform-class-properties'
+  ]
 }
