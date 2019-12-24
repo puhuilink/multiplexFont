@@ -255,33 +255,12 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMonitor'
+import screening from '../screening'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
 
-const levelList = {
-  0: {
-    level: 'L5',
-    text: 'CRITICAL'
-  },
-  1: {
-    level: 'L4',
-    text: 'MAJOR'
-  },
-  2: {
-    level: 'L3',
-    text: 'MINOR'
-  },
-  3: {
-    level: 'L2',
-    text: 'WARNING'
-  },
-  4: {
-    level: 'L1',
-    text: 'INFO'
-  }
-}
 export default {
   name: 'AlarmMonitor',
   components: {
@@ -322,145 +301,13 @@ export default {
       // 查询参数
       queryParam: {},
       // 筛选项：CI域
-      CIDomain: [
-        {
-          label: 'Root',
-          options: [{
-            value: 'rootDamin',
-            label: 'rootDamin'
-          }]
-        }, {
-          label: 'rootDamin',
-          options: [{
-            value: 'bj',
-            label: '北京运维组'
-          },
-          {
-            value: 'xm',
-            label: '厦门运维组'
-          }]
-        }
-      ],
+      CIDomain: screening.CIDomain,
       // 筛选项：CI类型
-      CIType: [
-        {
-          label: 'Root',
-          options: [{
-            value: '0',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '1',
-            label: '管理'
-          },
-          {
-            value: '2',
-            label: '监控定义'
-          },
-          {
-            value: '3',
-            label: '监控对象'
-          },
-          {
-            value: '4',
-            label: '告警'
-          },
-          {
-            value: '5',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '6',
-            label: '字典数据'
-          }]
-        }
-      ],
+      CIType: screening.CIType,
       // 筛选项: CI实例
-      CIInstance: [
-        {
-          label: 'Root',
-          options: [{
-            value: '1',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '2',
-            label: '管理'
-          },
-          {
-            value: '3',
-            label: '监控定义'
-          },
-          {
-            value: '4',
-            label: '监控对象'
-          },
-          {
-            value: '5',
-            label: '告警'
-          },
-          {
-            value: '6',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '7',
-            label: '字典数据'
-          }]
-        }
-      ],
-      // 筛选项目：告警类型
-      alarmType: [
-        {
-          label: 'Root',
-          options: [{
-            value: '1',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '2',
-            label: '管理'
-          },
-          {
-            value: '3',
-            label: '监控定义'
-          },
-          {
-            value: '4',
-            label: '监控对象'
-          },
-          {
-            value: '5',
-            label: '告警'
-          },
-          {
-            value: '6',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '7',
-            label: '字典数据'
-          }]
-        }
-      ],
+      CIInstance: screening.CIInstance,
+      // 筛选项：告警类型
+      alarmType: screening.alarmType,
       // 自动刷新
       autoRefresh: false,
       // 是否播放告警音频
@@ -503,16 +350,19 @@ export default {
         {
           title: '首次告警时间',
           dataIndex: 'firstArisingTime',
+          width: 150,
           sorter: true
         },
         {
           title: '最近告警时间',
           dataIndex: 'arisingTime',
+          width: 150,
           sorter: true
         },
         {
           title: '次数',
           dataIndex: 'severity',
+          width: 70,
           sorter: true
         }
 
@@ -546,10 +396,10 @@ export default {
   },
   filters: {
     levelFilter (type) {
-      return levelList[type].level
+      return screening.levelList[type].level
     },
     levelTitleFilter (type) {
-      return levelList[type].text
+      return screening.levelList[type].text
     },
     acStateTitleFilter (type) {
       type += ''
@@ -586,6 +436,7 @@ export default {
      * 获取现有的告警级别列表
      */
     getLevelList () {
+      console.log(screening)
       getAlarmLevelList()
         .then(res => {
           this.alarmLevelList = res.result.data[0]
