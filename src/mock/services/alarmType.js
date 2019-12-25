@@ -21,10 +21,10 @@ const alarmTypeList = (options) => {
       no: 'No ' + tmpKey,
       editable: false,
       'turnoverTime|1': '@datetime',
-      'name|1': [
+      'name|1-1': [
         '北京告警', '厦门告警'
       ],
-      'showName|1': [
+      'showName|1-1': [
         '北京告警', '厦门告警'
       ],
       'showIcon|1': [

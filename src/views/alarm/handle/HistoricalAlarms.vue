@@ -494,10 +494,4 @@ export default {
 </script>
 
 <style scoped lang='less'>
-.opration{
-  margin-bottom: 10px;
-  button{
-    margin-right: 5px;
-  }
-}
 </style>
