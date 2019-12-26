@@ -107,7 +107,95 @@ const TRList = (options) => {
   })
 }
 
+// 故障类型模拟数据
+const faultTypeList = (options) => {
+  const totalCount = 3
+  const parameters = getQueryParameters(options)
+  const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(totalCount / pageSize)
+  const key = (pageNo - 1) * pageSize
+  const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
+
+  for (let i = 1; i < next; i++) {
+    const tmpKey = key + i
+    result.push(Mock.mock({
+      key: tmpKey,
+      id: tmpKey,
+      no: 'No ' + tmpKey,
+      editable: false,
+      'name|1': [
+        '北京故障', '厦门故障'
+      ],
+      'fatherName|1': [
+        '/'
+      ],
+      'describe': ''
+    }))
+  }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: result
+  })
+}
+
+const forwardWayList = (options) => {
+  const parameters = getQueryParameters(options)
+  const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(totalCount / pageSize)
+  const key = (pageNo - 1) * pageSize
+  const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
+
+  for (let i = 1; i < next; i++) {
+    const tmpKey = key + i
+    result.push(Mock.mock({
+      key: tmpKey,
+      id: tmpKey,
+      no: 'No ' + tmpKey,
+      editable: false,
+      'forwardName|1': [
+        '运维主管（5级）', '运维主管（4级）', '网络/安全/动环北京（5级）',
+        '网络/安全/动环北京（4级）', '系统/应用运维（5级）', '系统/应用运维（4级）',
+        '厦门动环（5级）', '厦门动环（4级）', '厦门IT告警信息', '中交领导', 'pigoss'
+      ],
+      'forwardType|1': [
+        '0', '1', '2'
+      ],
+      'systemTarget|1': [
+        '王忠友/wangzhongyou', '李沛伦/lipeilun',
+        '王彦伟/wangyanwei', '厦门IT公用邮箱/xiamenIT'
+      ],
+      'otherTarget': '',
+      'appExplain|1-3': [
+        '自动故障[应用系统告警 （4、5级）]', '厦门软件系统性能告警（4级）', ',北京软件系统性能告警（5级）'
+      ],
+      'period': '1分钟',
+      'sendMark': '发送标志',
+      'status|1': ['0', '1']
+    }))
+  }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: result
+  })
+}
+
 // 获取模拟接口
 Mock.mock(/\/alarmRule\/list/, 'get', alarmRuleList)
 
 Mock.mock(/\/TR\/list/, 'get', TRList)
+
+Mock.mock(/\/faultType\/list/, 'get', faultTypeList)
+
+Mock.mock(/\/forwardWay\/list/, 'get', forwardWayList)

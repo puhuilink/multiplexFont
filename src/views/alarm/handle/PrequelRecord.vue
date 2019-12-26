@@ -1,3 +1,9 @@
+/*
+ * 前转记录
+ * Author: yizhu liu
+ * Date: 2019-12-26 16:20:24
+ * Email: lyz02413@163.com
+ */
 <template>
   <div class="prequel-record">
     <a-card :bordered="false">

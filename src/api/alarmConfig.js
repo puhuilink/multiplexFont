@@ -9,7 +9,9 @@ import { axios } from '@/utils/request'
 
 const api = {
   alarmRuleList: '/alarmRule/list',
-  TRList: '/TR/list'
+  TRList: '/TR/list',
+  faultTypeList: '/faultType/list',
+  forwardWayList: '/forwardWay/list'
 }
 
 export default api
@@ -35,6 +37,32 @@ export function getAlarmRuleList (parameter) {
 export function getTRList (parameter) {
   return axios({
     url: api.TRList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取故障类型列表
+ * @param parameter
+ * @returns {*}
+ */
+export function getFaultTypeList (parameter) {
+  return axios({
+    url: api.faultTypeList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取故障类型列表
+ * @param parameter
+ * @returns {*}
+ */
+export function getForwardWayList (parameter) {
+  return axios({
+    url: api.forwardWayList,
     method: 'get',
     params: parameter
   })

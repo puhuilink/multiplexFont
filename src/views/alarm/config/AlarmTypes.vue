@@ -63,8 +63,7 @@
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
-      >
-      </s-table>
+      />
       <!-- E 列表 -->
     </a-card>
 
