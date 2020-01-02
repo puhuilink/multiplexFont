@@ -189,7 +189,7 @@ export default {
         {
           title: '前转规则名称',
           dataIndex: 'forwardRule',
-          align: 'center',
+          align: 'left',
           width: 200
         },
         {
