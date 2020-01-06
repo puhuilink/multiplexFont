@@ -108,7 +108,6 @@ export default {
   },
   data () {
     return {
-      mdl: {},
       // 高级搜索 展开/关闭
       advanced: false,
       // 视图类型

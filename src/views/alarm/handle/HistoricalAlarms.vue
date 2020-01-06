@@ -215,7 +215,7 @@
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: 1300 }"
+        :scroll="{ x: 1300, y:400 }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
@@ -254,32 +254,11 @@
 </template>
 <script>
 import { STable, Ellipsis } from '@/components'
+import screening from '../screening'
 import { getAlarmList } from '@/api/alarmMonitor'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 
-const levelList = {
-  0: {
-    level: 'L5',
-    text: 'CRITICAL'
-  },
-  1: {
-    level: 'L4',
-    text: 'MAJOR'
-  },
-  2: {
-    level: 'L3',
-    text: 'MINOR'
-  },
-  3: {
-    level: 'L2',
-    text: 'WARNING'
-  },
-  4: {
-    level: 'L1',
-    text: 'INFO'
-  }
-}
 export default {
   name: 'HistoricalAlarms',
   components: {
@@ -295,145 +274,13 @@ export default {
       // 查询参数
       queryParam: {},
       // 筛选项：CI域
-      CIDomain: [
-        {
-          label: 'Root',
-          options: [{
-            value: 'rootDamin',
-            label: 'rootDamin'
-          }]
-        }, {
-          label: 'rootDamin',
-          options: [{
-            value: 'bj',
-            label: '北京运维组'
-          },
-          {
-            value: 'xm',
-            label: '厦门运维组'
-          }]
-        }
-      ],
+      CIDomain: screening.CIDomain,
       // 筛选项：CI类型
-      CIType: [
-        {
-          label: 'Root',
-          options: [{
-            value: '0',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '1',
-            label: '管理'
-          },
-          {
-            value: '2',
-            label: '监控定义'
-          },
-          {
-            value: '3',
-            label: '监控对象'
-          },
-          {
-            value: '4',
-            label: '告警'
-          },
-          {
-            value: '5',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '6',
-            label: '字典数据'
-          }]
-        }
-      ],
-      // 筛选项: CI实例
-      CIName: [
-        {
-          label: 'Root',
-          options: [{
-            value: '1',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '2',
-            label: '管理'
-          },
-          {
-            value: '3',
-            label: '监控定义'
-          },
-          {
-            value: '4',
-            label: '监控对象'
-          },
-          {
-            value: '5',
-            label: '告警'
-          },
-          {
-            value: '6',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '7',
-            label: '字典数据'
-          }]
-        }
-      ],
+      CIType: screening.CIType,
+      // 筛选项: CI名称
+      CIName: screening.CIName,
       // 筛选项目：告警类型
-      alarmType: [
-        {
-          label: 'Root',
-          options: [{
-            value: '1',
-            label: '统一资源'
-          }]
-        },
-        {
-          label: 'CI',
-          options: [{
-            value: '2',
-            label: '管理'
-          },
-          {
-            value: '3',
-            label: '监控定义'
-          },
-          {
-            value: '4',
-            label: '监控对象'
-          },
-          {
-            value: '5',
-            label: '告警'
-          },
-          {
-            value: '6',
-            label: '性能'
-          }]
-        },
-        {
-          label: 'Manager',
-          options: [{
-            value: '7',
-            label: '字典数据'
-          }]
-        }
-      ],
+      alarmType: screening.alarmType,
       // 筛选：告警状态
       alarmState: [
         {
@@ -465,7 +312,7 @@ export default {
           title: '状态',
           dataIndex: 'activeState',
           sorter: true,
-          algin: 'center',
+          align: 'center',
           width: 70,
           fixed: 'left',
           scopedSlots: { customRender: 'activeState' }
@@ -473,45 +320,52 @@ export default {
         {
           title: 'CI名称',
           dataIndex: 'ciName',
-          algin: 'center',
+          align: 'center',
+          width: 120,
           sorter: true
         },
         {
           title: '应用名称',
           dataIndex: 'appName',
+          width: 120,
           sorter: true
         },
         {
           title: '级别',
           dataIndex: 'level',
+          width: 75,
           sorter: true,
           scopedSlots: { customRender: 'level' }
         },
         {
           title: '消息内容',
           dataIndex: 'message',
+          width: 400,
           scopedSlots: { customRender: 'message' }
         },
         {
           title: '首次告警时间',
           dataIndex: 'firstArisingTime',
+          width: 150,
           sorter: true
         },
         {
           title: '最近告警时间',
           dataIndex: 'arisingTime',
+          width: 150,
           sorter: true
         },
         {
           title: '次数',
           dataIndex: 'severity',
+          width: 70,
           sorter: true
         }
 
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-      // 清空选中
+        // 清空选中
         this.selectedRowKeys = []
         return getAlarmList(Object.assign(parameter, this.queryParam))
           .then(res => {
@@ -527,10 +381,10 @@ export default {
   },
   filters: {
     levelFilter (type) {
-      return levelList[type].level
+      return screening.levelList[type].level
     },
     levelTitleFilter (type) {
-      return levelList[type].text
+      return screening.levelList[type].text
     },
     acStateTitleFilter (type) {
       type += ''
@@ -640,10 +494,4 @@ export default {
 </script>
 
 <style scoped lang='less'>
-.opration{
-  margin-bottom: 10px;
-  button{
-    margin-right: 5px;
-  }
-}
 </style>

@@ -16,6 +16,13 @@ if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'tr
   require('./services/article')
   require('./services/view')
   require('./services/alarmMonitor')
+  require('./services/prequelRecord')
+  require('./services/generateFault')
+  require('./services/alarmType')
+  require('./services/alarmConfig')
+  require('./services/quotaList')
+  require('./services/analysis')
+  require('./services/system')
 
   Mock.setup({
     timeout: 800 // setter delay time
