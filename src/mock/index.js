@@ -21,6 +21,8 @@ if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'tr
   require('./services/alarmType')
   require('./services/alarmConfig')
   require('./services/quotaList')
+  require('./services/analysis')
+  require('./services/system')
 
   Mock.setup({
     timeout: 800 // setter delay time

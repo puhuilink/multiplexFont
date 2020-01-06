@@ -87,11 +87,7 @@
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
-      >
-        <span slot="message" slot-scope="text">
-          <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
-        </span>
-      </s-table>
+      />
       <!-- E 历史告警列表 -->
     </a-card>
   </div>
