@@ -41,6 +41,7 @@ import {
   Divider,
   DatePicker,
   TimePicker,
+  Tree,
   Upload,
   Progress,
   Skeleton,
@@ -91,6 +92,7 @@ Vue.use(Skeleton)
 Vue.use(Popconfirm)
 Vue.use(Slider)
 Vue.use(Collapse)
+Vue.use(Tree)
 // Vue.use(VueCropper)
 Vue.use(notification)
 
