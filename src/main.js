@@ -6,6 +6,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store/'
+import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
 
 // mock
@@ -31,6 +32,7 @@ new Vue({
   router,
   store,
   created: bootstrap,
+  apolloProvider,
   render: h => h(App)
 }).$mount('#app')
 
