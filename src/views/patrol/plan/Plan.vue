@@ -51,7 +51,7 @@
                   >
                     <a-select-option value="0">例行巡检</a-select-option>
                     <a-select-option value="1">临时巡检</a-select-option>
-                 </a-select>
+                  </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
@@ -64,7 +64,7 @@
                   >
                     <a-select-option value="0">是</a-select-option>
                     <a-select-option value="1">否</a-select-option>
-                 </a-select>
+                  </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">

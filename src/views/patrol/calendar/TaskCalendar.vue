@@ -21,7 +21,7 @@
 
       <!-- S 巡检日历 -->
       <a-calendar
-        mode='month'
+        mode="month"
       >
         <ul class="events" slot="dateCellRender" slot-scope="value">
           <li class="item" v-for="(item, index) in getListData(value)" :key="index">
