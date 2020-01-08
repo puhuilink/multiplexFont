@@ -23,6 +23,7 @@ if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'tr
   require('./services/quotaList')
   require('./services/analysis')
   require('./services/system')
+  require('./services/patrol')
 
   Mock.setup({
     timeout: 800 // setter delay time
