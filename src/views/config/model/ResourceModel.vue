@@ -1,15 +1,30 @@
 <template>
   <div class="resource-model">
-    <p>resource model</p>
+    {{ $apollo.queries.attributes.loading }}
+    {{ attributes }}
   </div>
 </template>
 
 <script>
+import gql from 'graphql-tag'
+
 export default {
-  name: 'ResourceModel'
+  name: 'ResourceModel',
+  apollo: {
+    attributes: {
+      query: gql`query MyQuery {
+        ngecc_model_attributes(limit: 10) {
+          did
+        }
+      }`,
+      update: data => data.ngecc_model_attributes
+    }
+  },
+  data: () => ({
+    attributes: null
+  })
 }
 </script>
 
 <style scoped>
-
 </style>
