@@ -4,6 +4,10 @@
 ## 基础
 本项目基于 [ant-design-pro-vue](https://github.com/sendya/ant-design-pro-vue) 改造，如遇问题请查看[文档](https://pro.loacg.com/docs/getting-started)
 
+## 代码规范
+* Git: [Git提交规范](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+* Git: [Git emoj 规范](https://gitmoji.carloscuesta.me/)
+
 ## 组件选型
 * 前端框架： vue - 2.6.x
 * 路由库：vue-router - 3.x
