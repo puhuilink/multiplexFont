@@ -13,7 +13,7 @@ plugins.push(['import', {
   'style': true // `style: true` 会加载 less 文件
 }])
 
-module.exports = {
+/* module.exports = {
   presets: [
     '@vue/cli-plugin-babel/preset',
     [
@@ -27,5 +27,18 @@ module.exports = {
   plugins: [
     ...plugins,
     'transform-class-properties'
+  ]
+} */
+
+module.exports = {
+  presets: [
+    '@vue/app'
+  ],
+  plugins: [
+    [ 'import', {
+      'libraryName': 'ant-design-vue',
+      'libraryDirectory': 'es',
+      'style': 'css'
+    } ]
   ]
 }
