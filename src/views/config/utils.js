@@ -39,7 +39,7 @@ function search (title = '', collection) {
   }
   // 扁平化遍历匹配
   collection
-    .filter(node => node.title.includes(title))
+    .filter(node => node.title.toLowerCase().includes(title.toLowerCase()))
     .forEach(recursiveMatchParent)
   // 去重
   const result = Array.from(
