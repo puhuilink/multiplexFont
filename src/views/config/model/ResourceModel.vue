@@ -12,7 +12,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import { buildTree } from './utils'
+import { buildTree } from '../utils'
 
 export default {
   name: 'ResourceModel',
@@ -42,9 +42,7 @@ export default {
             }
           }`
         })
-        const collection = res.data.ngecc_model
-        const root = collection.find(el => el.key === 'Ci')
-        this.treeData = buildTree(root, collection)
+        this.treeData = buildTree(res.data.ngecc_model)
       } catch (e) {
         this.treeData = null
         throw e
