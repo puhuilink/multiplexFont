@@ -56,5 +56,9 @@ export default {
       margin-right: 5px;
     }
   }
+
+  td {
+    white-space: nowrap;
+  }
 }
 </style>
