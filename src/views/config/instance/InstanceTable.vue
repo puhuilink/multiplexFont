@@ -4,6 +4,7 @@
     :columns="columns"
     :dataSource="dataSource"
     :loading="$apollo.queries.dataSource.loading"
+    :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
   >
     <!-- / 查询 -->
     <template #query>
@@ -28,8 +29,8 @@
     <!-- / 操作 -->
     <template #opration>
       <a-button>新建</a-button>
-      <a-button>编辑</a-button>
-      <a-button>删除</a-button>
+      <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+      <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
       <a-button>数据检查</a-button>
       <a-button>筛选</a-button>
     </template>
@@ -81,8 +82,13 @@ export default {
     GraphTable
   },
   data: () => ({
+    // 表格数据
     dataSource: [],
+    // 查询参数
     queryParams: {},
+    // 选中行的 key
+    selectedRowKeys: [],
+    // 表格数据加载中
     loading: false
   }),
   computed: {
@@ -111,6 +117,16 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    /**
+     * 表格行选中
+     * @event
+     * @return {Undefined}
+     */
+    selectRow (selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys
     }
   }
 }

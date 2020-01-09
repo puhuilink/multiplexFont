@@ -2,19 +2,36 @@
   <div class="resource-instance">
     <a-row type="flex">
       <!-- / tree -->
-      <a-col :xs="6">
+      <a-col :xl="6">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="资源树" key="1">
-            <a-tree class="tree" v-if="treeData.length" :treeData="treeData" defaultExpandAll @select="select" />
+            <a-input-search
+              allowClear
+              style="padding: 8px;"
+              placeholder="搜索资源树"
+              :value="searchValue"
+              @change="search"
+            />
+            <a-tree
+              class="resource-instance-tree"
+              v-if="treeData.length"
+              autoExpandParent
+              defaultExpandAll
+              :expandedKeys="expandedKeys"
+              :filterTreeNode="node => searchValue && node.title.includes(searchValue)"
+              :treeData="treeData"
+              @expand="expand"
+              @select="select"
+            />
           </a-tab-pane>
         </a-tabs>
       </a-col>
 
       <!-- / content -->
-      <a-col :xs="18">
+      <a-col :xl="18">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
-            <InstanceTable :parentnameS="selectedKey" />
+            <InstanceTable v-show="selectedKey" :parentnameS="selectedKey" />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>操作日志</a-tab-pane>
           <a-tab-pane tab="版本" key="3" forceRender>版本</a-tab-pane>
@@ -26,13 +43,13 @@
 
 <script>
 import gql from 'graphql-tag'
-import { buildTree } from '../utils'
+import { buildTree, search } from '../utils'
 import InstanceTable from './InstanceTable'
 
 export default {
   name: 'ResourceInstance',
   apollo: {
-    treeData: {
+    dataSource: {
       query: gql`query MyQuery {
         ngecc_model {
           title: label_s
@@ -40,17 +57,34 @@ export default {
           parentKey: parentname_s
         }
       }`,
-      update: data => buildTree(data.ngecc_model)
+      update: data => data.ngecc_model
     }
   },
   components: {
     InstanceTable
   },
   data: () => ({
-    treeData: [],
-    selectedKey: ''
+    dataSource: [],
+    selectedKey: '',
+    expandedKeys: [],
+    searchValue: ''
   }),
+  computed: {
+    treeData: {
+      get () {
+        return buildTree(this.dataSource)
+      }
+    }
+  },
   methods: {
+    /**
+     * 展开树节点触发
+     * @param {Array<String>} expandedKeys 展开的树节点
+     * @return {Undefined}
+     */
+    expand (expandedKeys) {
+      this.expandedKeys = expandedKeys
+    },
     /**
      * 点击树节点触发
      * @event
@@ -58,20 +92,28 @@ export default {
      */
     select ([selectedKey], { selected }) {
       this.selectedKey = selected ? selectedKey : ''
+    },
+    /**
+     * 查询树节点输入
+     * @event
+     * @return {Undefined}
+     */
+    search ({ target: { value } }) {
+      this.searchValue = value
+      this.expandedKeys = search(value, this.dataSource)
     }
   }
 }
 </script>
 
-<style>
-.full-height {
-  height: 100%;
-}
+<style lang="less">
 .resource-instance {
   height: 100%;
-}
-.tree {
-  height: calc(100vh - 120px);
-  overflow-y: auto;
+
+  &-tree {
+    margin-right: 8px;
+    height: calc(100vh - 170px);
+    overflow-y: auto;
+  }
 }
 </style>
