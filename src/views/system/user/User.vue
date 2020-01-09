@@ -7,48 +7,33 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="是否巡检">
-                <a-select
-                  allowClear
-                  v-model="queryParam.polling"
-                  placeholder="请选择"
-                  default-value="checkall"
-                >
-                  <a-select-option value="0">是</a-select-option>
-                  <a-select-option value="1">否</a-select-option>
-                </a-select>
+              <a-form-item label="用户名">
+                <a-input v-model="queryParam.loginName" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="名称">
+              <a-form-item label="姓名">
                 <a-input v-model="queryParam.name" placeholder=""/>
               </a-form-item>
             </a-col>
             <!-- 多余筛选框是否展示 -->
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="显示名称">
-                  <a-input v-model="queryParam.showName" placeholder=""/>
+                <a-form-item label="邮箱">
+                  <a-input v-model="queryParam.email" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="中文描述">
-                  <a-input v-model="queryParam.describe" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="KPI编码">
-                  <a-input v-model="queryParam.KPICode" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="是否KPI">
-                  <a-input v-model="queryParam.KPI" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="所属节点类型">
-                  <a-input v-model="queryParam.nodeType" placeholder=""/>
+                <a-form-item label="有效标识">
+                  <a-select
+                    allowClear
+                    v-model="queryParam.boolUse"
+                    placeholder="请选择"
+                    default-value="checkall"
+                  >
+                    <a-select-option value="0">有效</a-select-option>
+                    <a-select-option value="1">无效</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </template>
@@ -120,7 +105,7 @@ export default {
           dataIndex: 'loginName',
           sorter: true,
           align: 'center',
-          width: 200
+          width: 100
           // fixed: 'left'
         },
         {
@@ -182,16 +167,6 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    /**
-     * 日期时间空间选择
-     */
-    onDataChange (value, dateString) {
-      console.log('Selected Time: ', value)
-      console.log('Formatted Selected Time: ', dateString)
-    },
-    onDataOk (value) {
-      console.log('onOk: ', value)
     },
     /**
      * 选中行更改事件
