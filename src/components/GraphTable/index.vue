@@ -3,8 +3,19 @@ import Table from 'ant-design-vue/es/table/Table'
 
 export default {
   name: 'GraphTable',
+  extends: Table,
   props: {
-    ...Table.props
+    pagination: {
+      type: Object,
+      default: () => ({
+        pageSizeOptions: ['10', '15', '30', '50'],
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+      })
+    }
   },
   render (h) {
     // 顶部查询区域
