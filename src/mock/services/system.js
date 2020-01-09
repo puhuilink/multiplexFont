@@ -12,7 +12,6 @@ const userList = (options) => {
   const totalPage = Math.ceil(totalCount / pageSize)
   const key = (pageNo - 1) * pageSize
   const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
-
   for (let i = 1; i < next; i++) {
     const tmpKey = key + i
     result.push(Mock.mock({

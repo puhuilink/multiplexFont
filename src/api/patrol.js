@@ -4,7 +4,10 @@ import { axios } from '@/utils/request'
 const api = {
   calendarList: '/calendar/list',
   routeList: '/route/list',
-  planList: '/plan/list'
+  planList: '/plan/list',
+  taskList: '/task/list',
+  objList: '/obj/list',
+  objInfo: '/obj/info'
 }
 
 export default api
@@ -41,6 +44,45 @@ export function getRoute (parameter) {
 export function getPlan (parameter) {
   return axios({
     url: api.planList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取列表
+ * @param parameter
+ * @returns {*}
+ */
+export function getTask (parameter) {
+  return axios({
+    url: api.taskList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取列表
+ * @param parameter
+ * @returns {*}
+ */
+export function getObj (parameter) {
+  return axios({
+    url: api.objList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取信息
+ * @param parameter
+ * @returns {*}
+ */
+export function getObjInfo (parameter) {
+  return axios({
+    url: api.objInfo,
     method: 'get',
     params: parameter
   })

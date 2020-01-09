@@ -119,7 +119,146 @@ const planList = (options) => {
   })
 }
 
+const taskList = (options) => {
+  const totalCount = 571
+  const parameters = getQueryParameters(options)
+  const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(totalCount / pageSize)
+  const key = (pageNo - 1) * pageSize
+  const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
+
+  for (let i = 1; i < next; i++) {
+    const tmpKey = key + i
+    result.push(Mock.mock({
+      key: tmpKey,
+      id: tmpKey,
+      no: 'No ' + tmpKey,
+      editable: false,
+      'taskName|1': [
+        '2020年度', '厦门巡检'
+      ],
+      'checkArea|1': [
+        '北京机房', '厦门机房'
+      ],
+      'inspectionDate': '@date',
+      'executionTime': '@time',
+      'takState|1': [
+        '0', '1', '2', '3', '4'
+      ],
+      'taskType|1': [
+        '例行巡检'
+      ],
+      'abnormal|1': [
+        '0', '1'
+      ],
+      'executor|1': [
+        '李沛伦', '王彦伟'
+      ],
+      'delayedStart|1': [
+        '0', '1'
+      ],
+      'beginTime': '@dateTime',
+      'endTime': '@dateTime',
+      'defaultExecutorDo|1': [
+        '0', '1'
+      ],
+      'defaultExecutor|1': [
+        '刘昶', '李明君', '王金凤', '李沛伦'
+      ]
+    }))
+  }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: result
+  })
+}
+
+const objList = (options) => {
+  const totalCount = 571
+  const parameters = getQueryParameters(options)
+  const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(totalCount / pageSize)
+  const key = (pageNo - 1) * pageSize
+  const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
+
+  for (let i = 1; i < next; i++) {
+    const tmpKey = key + i
+    result.push(Mock.mock({
+      key: tmpKey,
+      id: tmpKey,
+      no: 'No ' + tmpKey,
+      editable: false,
+      'name|1': [
+        '机房门', '	BJDSA38', 'BJDSA08', 'BJDSA07'
+      ],
+      'checkArea|1': [
+        '北京机房', '厦门机房'
+      ],
+      'abnormal|1': [
+        '0', '1'
+      ]
+    }))
+  }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: result
+  })
+}
+
+const objInfo = (options) => {
+  const totalCount = 4
+  const parameters = getQueryParameters(options)
+  const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(totalCount / pageSize)
+  const key = (pageNo - 1) * pageSize
+  const next = (pageNo >= totalPage ? (totalCount % pageSize) : pageSize) + 1
+
+  for (let i = 1; i < next; i++) {
+    const tmpKey = key + i
+    result.push(Mock.mock({
+      key: tmpKey,
+      id: tmpKey,
+      no: 'No ' + tmpKey,
+      editable: false,
+      'name|1': [
+        '配电室门关闭', '	配电室门完好', '机房门关闭', '机房门完好'
+      ],
+      'result|1': [
+        '0', '1'
+      ],
+      'abnormal|1': [
+        '0', '1'
+      ]
+    }))
+  }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: result
+  })
+}
+
 // 获取模拟接口
 Mock.mock(/\/calendar\/list/, 'get', calendarList)
 Mock.mock(/\/route\/list/, 'get', routeList)
 Mock.mock(/\/plan\/list/, 'get', planList)
+Mock.mock(/\/task\/list/, 'get', taskList)
+Mock.mock(/\/obj\/list/, 'get', objList)
+Mock.mock(/\/obj\/info/, 'get', objInfo)

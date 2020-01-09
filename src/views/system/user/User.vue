@@ -143,6 +143,7 @@ export default {
         // this.selectedRowKeys = []
         return getUserList(Object.assign(parameter, this.queryParam))
           .then(res => {
+            console.log(res)
             return res.result
           })
       },
