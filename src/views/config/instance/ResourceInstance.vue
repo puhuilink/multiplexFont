@@ -123,13 +123,13 @@ export default {
 
   &-tree {
     margin-right: 8px;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 270px);
     overflow-y: auto;
   }
 
   &-table {
     margin-right: 8px;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 270px);
     overflow-y: auto;
   }
 }
