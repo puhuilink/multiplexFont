@@ -18,8 +18,10 @@ function buildTree (collection = []) {
   const root = collection.find(el => el.key === 'Ci')
   if (root) {
     recursiveBuildChildren(root, collection)
+    return [root]
+  } else {
+    return []
   }
-  return [root]
 }
 
 /**
