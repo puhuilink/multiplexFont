@@ -3,7 +3,7 @@
     <a-row type="flex">
 
       <!-- / tree -->
-      <a-col :xl="6">
+      <a-col :xl="6" :xxl="4">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="资源树" key="1">
             <a-input-search
@@ -14,14 +14,15 @@
               :value="searchValue"
               @change="search"
             />
-            <a-spin
-              v-if="!treeData.length"
+            <!-- FIXME: loading 非响应式 -->
+            <!-- <a-spin
+              v-if="$apollo.queries.dataSource.loading"
               spinning
-            />
+            /> -->
             <a-tree
-              v-else
+              v-if="treeData.length"
               class="resource-instance-tree"
-              autoExpandParent
+              :autoExpandParent="autoExpandParent"
               defaultExpandAll
               :expandedKeys="expandedKeys"
               :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
@@ -34,7 +35,7 @@
       </a-col>
 
       <!-- / content -->
-      <a-col :xl="18">
+      <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
             <InstanceTable
@@ -68,7 +69,10 @@ export default {
           parentKey: parentname_s
         }
       }`,
-      update: data => data.ngecc_model
+      update (data) {
+        this.autoExpandParent = true
+        return data.ngecc_model
+      }
     }
   },
   components: {
@@ -77,6 +81,7 @@ export default {
   data: () => ({
     dataSource: [],
     selectedKey: '',
+    autoExpandParent: true,
     expandedKeys: [],
     searchValue: ''
   }),
@@ -95,6 +100,7 @@ export default {
      */
     expand (expandedKeys) {
       this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
     },
     /**
      * 点击树节点触发
