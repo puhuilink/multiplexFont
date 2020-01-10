@@ -5,6 +5,7 @@
     :dataSource="dataSource"
     :loading="$apollo.queries.dataSource.loading"
     :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+    :scroll="{ x: 1200, y: 850}"
     @change="change"
   >
 
@@ -48,8 +49,8 @@ export default {
   name: 'InstanceTable',
   apollo: {
     dataSource: {
-      query: gql`query MyQuery($parentname_s: String!, $limit: Int!, $offset: Int!, $sortField: String!, $sortOrder: order_by!) {
-        ngecc_instance(offset: $offset, limit: $limit, where: {parentname_s: {_eq: $parentname_s}}, order_by: {_id_s: $sortOrder}) {
+      query: gql`query MyQuery($parentname_s: String!, $limit: Int!, $offset: Int!, $orderBy: [ngecc_instance_order_by!]) {
+        ngecc_instance(offset: $offset, limit: $limit, where: {parentname_s: {_eq: $parentname_s}}, order_by: $orderBy) {
           _class_s
           _id_s
           createtime_t
@@ -78,8 +79,11 @@ export default {
           limit: this.paginationInfo.pageSize,
           offset: (this.paginationInfo.current - 1) * this.paginationInfo.pageSize,
           // TODO: 变量作为 Object.name 传入查询
-          sortField: this.sorter.field || '_id_s',
-          sortOrder: this.sorter.order === 'descend' ? 'desc' : 'asc'
+          // sortField: this.sorter.field || '_id_s',
+          // sortOrder: this.sorter.order === 'descend' ? 'desc' : 'asc',
+          orderBy: {
+            [`${this.sorter.field || '_id_s'}`]: this.sorter.order === 'descend' ? 'desc' : 'asc'
+          }
         }
       }
     }
@@ -120,29 +124,29 @@ export default {
             title: 'ID',
             dataIndex: '_id_s',
             sorter: true,
-            width: 120
+            width: 180
           },
           {
             title: 'name',
             dataIndex: 'name_s',
             sorter: true,
-            width: 180
+            width: 300
           },
           {
             title: 'display name',
             dataIndex: 'label_s',
             sorter: true,
-            width: 180
+            width: 300
           },
           {
             title: 'parent',
             dataIndex: 'parentname_s',
-            width: 120
+            width: 300
           },
           {
             title: 'icon',
             dataIndex: 'icon_s',
-            width: 120
+            width: 180
           }
         ]
       }
