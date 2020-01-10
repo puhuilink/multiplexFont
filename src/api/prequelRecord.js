@@ -8,7 +8,7 @@
 import { axios } from '@/utils/request'
 
 const api = {
-  forwardRecordList: '/forward/record/list'
+  forwardRecordList: '/forwardRecord/list'
 }
 
 export default api

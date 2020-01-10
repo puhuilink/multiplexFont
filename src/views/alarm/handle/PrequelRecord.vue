@@ -1,8 +1,5 @@
 /*
  * 前转记录
- * Author: yizhu liu
- * Date: 2019-12-26 16:20:24
- * Email: lyz02413@163.com
  */
 <template>
   <div class="prequel-record">
@@ -140,14 +137,31 @@ export default {
           dataIndex: 'faultType',
           align: 'center',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '':
+                return ''
+              default:
+                return text
+            }
+          }
         },
         {
           title: '故障级别',
           dataIndex: 'faultLevel',
           align: 'center',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '':
+                return ''
+              default:
+                return text
+            }
+          }
+
         },
         {
           title: '故障名称',
@@ -168,7 +182,19 @@ export default {
           dataIndex: 'forwardType',
           align: 'center',
           width: 120,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '运维系统'
+              case '1':
+                return '邮件'
+              case '2':
+                return '短信'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '前转目标',
