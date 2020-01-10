@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import getCalendar from '@/api/patrol'
+import { getCalendar } from '@/api/patrol'
 
 export default {
   name: 'TaskCalendar',
@@ -87,8 +87,12 @@ export default {
     }
   },
   filters: {},
-  created () {
-    this.getTaskList()
+  async created () {
+    // this.getTaskList()
+    await getCalendar()
+      .then(res => {
+        console.log(res)
+      })
   },
   methods: {
     getListData (value) {
@@ -121,14 +125,6 @@ export default {
       if (value.month() === 8) {
         return 1394
       }
-    },
-
-    getTaskList () {
-      console.log(111)
-      return getCalendar()
-        .then(res => {
-          console.log(res)
-        })
     }
   }
 }
