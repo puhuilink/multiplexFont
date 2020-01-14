@@ -6,28 +6,9 @@
       <a-col :xl="6" :xxl="4">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="资源树" key="1">
-            <a-input-search
-              allowClear
-              autoFocus
-              style="padding: 8px;"
-              placeholder="搜索资源树"
-              :value="searchValue"
-              @change="search"
-            />
-            <!-- FIXME: loading 非响应式 -->
-            <!-- <a-spin
-              v-if="$apollo.queries.dataSource.loading"
-              spinning
-            /> -->
-            <a-tree
-              v-if="treeData.length"
+            <ResourceTree
               class="resource-instance-tree"
-              :autoExpandParent="autoExpandParent"
-              defaultExpandAll
-              :expandedKeys="expandedKeys"
-              :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
-              :treeData="treeData"
-              @expand="expand"
+              instanceListCount
               @select="select"
             />
           </a-tab-pane>
@@ -38,7 +19,7 @@
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
-            <InstanceTable
+            <ResourceInstanceList
               v-show="selectedKey"
               class="resource-instance-table"
               :parentnameS="selectedKey"
@@ -54,70 +35,26 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import { buildTree, search } from '../utils'
-import InstanceTable from './InstanceTable'
+import ResourceTree from '@/components/Resource/ResourceTree'
+import ResourceInstanceList from '@/components/Resource/Instance/ResourceInstanceList'
 
 export default {
   name: 'ResourceInstance',
-  apollo: {
-    dataSource: {
-      query: gql`query MyQuery {
-        ngecc_model {
-          title: label_s
-          key: name_s
-          parentKey: parentname_s
-        }
-      }`,
-      update (data) {
-        this.autoExpandParent = true
-        return data.ngecc_model
-      }
-    }
-  },
   components: {
-    InstanceTable
+    ResourceTree,
+    ResourceInstanceList
   },
   data: () => ({
-    dataSource: [],
-    selectedKey: '',
-    autoExpandParent: true,
-    expandedKeys: [],
-    searchValue: ''
+    selectedKey: ''
   }),
-  computed: {
-    treeData: {
-      get () {
-        return buildTree(this.dataSource)
-      }
-    }
-  },
   methods: {
     /**
-     * 展开树节点触发
-     * @param {Array<String>} expandedKeys 展开的树节点
+     * 资源树选中/取消选中节点
+     * @param {String} selectedKey 选中节点的 key
      * @return {Undefined}
      */
-    expand (expandedKeys) {
-      this.expandedKeys = expandedKeys
-      this.autoExpandParent = false
-    },
-    /**
-     * 点击树节点触发
-     * @event
-     * @return {Undefined}
-     */
-    select ([selectedKey], { selected }) {
-      this.selectedKey = selected ? selectedKey : ''
-    },
-    /**
-     * 查询树节点输入
-     * @event
-     * @return {Undefined}
-     */
-    search ({ target: { value } }) {
-      this.searchValue = value
-      this.expandedKeys = search(value, this.dataSource)
+    select (selectedKey) {
+      this.selectedKey = selectedKey
     }
   }
 }

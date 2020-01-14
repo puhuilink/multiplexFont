@@ -1,6 +1,6 @@
 <template>
   <div class="patrol-object">
-        <a-card :borderd="false">
+    <a-card :borderd="false">
 
       <!-- S 搜索 -->
       <div class="table-page-search-wrapper">
