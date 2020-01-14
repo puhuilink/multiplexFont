@@ -32,6 +32,7 @@ export default {
         result.then(r => {
           // hack
           r.pageNo = pageNo
+          // TODO: 重置 selectedRows?
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.pageNo, // 返回结果中的当前分页数
             total: r.pagination.aggregate.count, // 返回结果中的总记录数

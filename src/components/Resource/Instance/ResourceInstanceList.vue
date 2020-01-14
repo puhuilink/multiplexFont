@@ -97,6 +97,17 @@ export default {
       }
     }
   },
+  watch: {
+    parentnameS: {
+      immediate: false,
+      handler (val) {
+        // 重置查询条件
+        Object.assign(this.$data, this.$options.data.apply(this))
+        // 重新查询
+        val && this.$refs['table'].refresh(true)
+      }
+    }
+  },
   methods: {
     /**
      * 加载表格数据
