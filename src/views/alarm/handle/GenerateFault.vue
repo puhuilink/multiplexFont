@@ -109,7 +109,7 @@
       </div>
       <!-- E 操作栏 -->
 
-      <!-- S 历史告警列表 -->
+      <!-- S 列表 -->
       <s-table
         ref="table"
         size="small"
@@ -126,7 +126,7 @@
           <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>
-      <!-- E 历史告警列表 -->
+      <!-- E 列表 -->
     </a-card>
   </div>
 </template>

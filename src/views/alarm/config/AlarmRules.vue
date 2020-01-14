@@ -1,8 +1,5 @@
 /*
  * 告警规则
- * Author: yizhu liu
- * Date: 2019-12-09 14:44:58
- * Email: lyz02413@163.com
  */
 <template>
   <div class="alarms-rules">
@@ -51,8 +48,8 @@
           >{{ item.label }}</a-select-option>
         </a-select>
         <a-button>新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length == 0">删除</a-button>
         <a-button :disabled="!hasSelected">启用</a-button>
         <a-button :disabled="!hasSelected">停用</a-button>
       </div>

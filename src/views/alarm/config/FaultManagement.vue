@@ -1,8 +1,5 @@
 /*
  * 故障前转路径管理
- * Author: yizhu liu
- * Date: 2019-12-26 15:27:32
- * Email: lyz02413@163.com
  */
 <template>
   <div class="fault-management ">

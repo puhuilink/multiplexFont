@@ -145,7 +145,7 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open()" :disabled="!hasSelected">确认</a-button>
+          <a-button @click="$refs.confirm.open(record)" :disabled="!hasSelected">确认</a-button>
           <a-button @click="$refs.rollForward.open()" :disabled="!hasSelected">前转</a-button>
           <a-button @click="$refs.resolve.open()" :disabled="!hasSelected">解决</a-button>
         </a-col>
@@ -572,8 +572,7 @@ export default {
             document.body.addEventListener('click', this.bodyClick)
           },
           dblclick: () => {
-            console.log(record, '双击')
-            this.$refs.detail.open()
+            this.$refs.detail.open(record, 'monitorSee')
           }
         }
       }

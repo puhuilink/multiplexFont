@@ -1,8 +1,5 @@
 /*
  * 解决告警
- * Author: yizhu liu
- * Date: 2019-12-18 14:32:02
- * Email: lyz02413@163.com
  */
 <template>
   <a-modal

@@ -1,8 +1,5 @@
 /*
  * 告警类型
- * Author: yizhu liu
- * Date: 2019-12-24 13:51:42
- * Email: lyz02413@163.com
  */
 <template>
   <div class="alarms-types">
@@ -46,9 +43,25 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button type="primary" icon="plus">新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button
+          type="primary"
+          icon="plus"
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteType"
+        >
+          删除
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -65,6 +78,10 @@
         showPagination="auto"
       />
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
 
   </div>
@@ -73,11 +90,13 @@
 <script>
 import { STable } from '@/components'
 import { getalarmTypeList } from '@/api/alarmType'
+import detail from './modules/alarmTypesDetail'
 
 export default {
   name: 'AlarmsTypes',
   components: {
-    STable
+    STable,
+    detail
   },
   data () {
     return {
@@ -135,14 +154,7 @@ export default {
       selectedRows: []
     }
   },
-  computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
-    }
-  },
+  computed: {},
   methods: {
     /**
      * 筛选展开开关
@@ -167,9 +179,31 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'See')
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    deleteType () {
+      const data = this
+      this.$confirm({
+        title: '删除',
+        content: '确定要删除吗？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          console.log('OK', data.selectedRows)
+        },
+        onCancel () {
+          console.log('Cancel')
+        }
+      })
     }
   }
 }

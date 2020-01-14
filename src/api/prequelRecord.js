@@ -1,8 +1,5 @@
 /*
  * 前传记录模块接口
- * Author: yizhu liu
- * Date: 2019-12-09 14:45:49
- * Email: lyz02413@163.com
  */
 
 import { axios } from '@/utils/request'
