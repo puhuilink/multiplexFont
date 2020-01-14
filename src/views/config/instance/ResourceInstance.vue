@@ -20,7 +20,7 @@
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
             <ResourceInstanceList
-              v-show="selectedKey"
+              v-if="selectedKey"
               class="resource-instance-table"
               :parentnameS="selectedKey"
             />

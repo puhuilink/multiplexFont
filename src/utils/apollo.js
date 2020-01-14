@@ -15,14 +15,21 @@ const ngecc = new HttpLink({
   }
 })
 
-const apolloClient = new ApolloClient({
+const ngeccClient = new ApolloClient({
   link: ngecc,
   cache: new InMemoryCache(),
-  connectToDevTools: true
+  connectToDevTools: true,
+  // TODO: 禁用缓存
+  defaultOptions: {
+    fetchPolicy: 'no-cache'
+  }
 })
 
 const apolloProvider = new VueApollo({
-  defaultClient: apolloClient
+  defaultClient: ngeccClient,
+  clients: {
+    ngecc: ngeccClient
+  }
 })
 
 export default apolloProvider

@@ -8,10 +8,8 @@
       :value="searchValue"
       @change="search"
     />
-    <!-- FIXME: loading 非响应式 -->
-    <!-- v-if="$apollo.queries.dataSource.loading" -->
     <a-spin
-      v-if="loading"
+      v-if="$apollo.queries.dataSource.loading"
       spinning
     />
     <a-tree
@@ -28,37 +26,35 @@
 </template>
 
 <script>
-// import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 import { buildTree, search } from './utils'
-import Resource from '@/graphql/service/Resource'
 
 export default {
   name: 'ResourceTree',
-  // apollo: {
-  //   dataSource: {
-  //     query: gql`query ($instanceListCount: Boolean!) {
-  //       ngecc_model {
-  //         title: label_s
-  //         key: name_s
-  //         parentKey: parentname_s
-  //         instanceList: instanceList_aggregate @include(if: $instanceListCount) {
-  //           aggregate {
-  //             count
-  //           }
-  //         }
-  //       }
-  //     }`,
-  //     update (data) {
-  //       this.autoExpandParent = true
-  //       return data.ngecc_model
-  //     },
-  //     variables () {
-  //       return {
-  //         instanceListCount: this.instanceListCount
-  //       }
-  //     }
-  //   }
-  // },
+  apollo: {
+    dataSource: {
+      query: gql`query ($instanceListCount: Boolean!) {
+        dataSource: ngecc_model {
+          title: label_s
+          key: name_s
+          parentKey: parentname_s
+          instanceList: instanceList_aggregate @include(if: $instanceListCount) {
+            aggregate {
+              count
+            }
+          }
+        }
+      }`,
+      result () {
+        this.autoExpandParent = true
+      },
+      variables () {
+        return {
+          instanceListCount: this.instanceListCount
+        }
+      }
+    }
+  },
   components: {},
   props: {
     // 统计节点下的实例列表数量
@@ -82,26 +78,7 @@ export default {
       }
     }
   },
-  watch: {
-    instanceListCount: {
-      immediate: true,
-      handler: 'fetch'
-    }
-  },
   methods: {
-    async fetch () {
-      try {
-        this.loading = true
-        const { data } = await Resource.query()
-        this.dataSource = data.ngecc_model
-      } catch (e) {
-        this.dataSource = []
-        throw e
-      } finally {
-        this.loading = false
-        this.autoExpandParent = true
-      }
-    },
     /**
      * 展开树节点触发
      * @param {Array<String>} expandedKeys 展开的树节点

@@ -1,30 +1,44 @@
 <script>
-import Table from 'ant-design-vue/es/table/Table'
+import GraphTable from './GraphTable'
 
 export default {
-  name: 'GraphTable',
-  extends: Table,
+  // custom table
+  name: 'CTable',
   props: {
+    ...GraphTable.props,
     pagination: {
       type: Object,
       default: () => ({
-        pageSizeOptions: ['10', '15', '30', '50'],
+        // TODO: 查询全部
+        pageSizeOptions: ['50', '100'],
         defaultCurrent: 1,
-        defaultPageSize: 10,
+        // FIXME: default 始终为10
+        defaultPageSize: 50,
+        hideOnSinglePage: false,
         showQuickJumper: true,
         showSizeChanger: true,
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
       })
+    },
+    size: {
+      type: String,
+      default: 'small',
+      validator: size => ['default', 'middle', 'small'].includes(size)
+    }
+  },
+  methods: {
+    refresh () {
+      return this.$refs['table'].refresh(arguments)
     }
   },
   render (h) {
     // 顶部查询区域
-    const query = <div class="GraphTable-query">{ this.$slots.query }</div>
+    const query = <div class="CTable-query">{ this.$slots.query }</div>
     // 操作区域
-    const opration = <div class="GraphTable-operation">{ this.$slots.opration }</div>
+    const opration = <div class="CTable-operation">{ this.$slots.opration }</div>
     // 表格区域
-    const table = h(Table, {
-      class: 'GraphTable-table',
+    const table = h(GraphTable, {
+      ref: 'table',
       props: {
         ...this.$props,
         ...this.$attrs
@@ -36,7 +50,7 @@ export default {
         ...this.$scopedSlots
       }
     })
-    return <div class="GraphTable">
+    return <div class="CTable">
       { query }
       { opration }
       { table }
@@ -46,7 +60,7 @@ export default {
 </script>
 
 <style lang="less">
-.GraphTable {
+.CTable {
   & > * {
     padding: 8px 0;
   }
