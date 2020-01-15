@@ -4,7 +4,7 @@ import './index.less'
 
 export default {
   // custom table
-  name: 'CTable',
+  name: 'GraphTable',
   extends: STable,
   methods: {
     /**
@@ -22,7 +22,9 @@ export default {
         offset: (pageNo - 1) * pageSize
       },
       (sorter && sorter.field && sorter.order && {
-        [`${sorter.field}`]: sorter.order === 'descend' ? 'desc' : 'asc'
+        orderBy: {
+          [`${sorter.field}`]: sorter.order === 'descend' ? 'desc' : 'asc'
+        }
       }) || {}
       )
       const result = this.data(parameter)
@@ -31,11 +33,12 @@ export default {
       if ((typeof result === 'object' || typeof result === 'function') && typeof result.then === 'function') {
         result.then(r => {
           // hack
-          r.pageNo = pageNo
+          r.pageNo = r.pageNo || pageNo
           // TODO: 重置 selectedRows?
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.pageNo, // 返回结果中的当前分页数
-            total: r.pagination.aggregate.count, // 返回结果中的总记录数
+            // hack
+            total: r.totalCount || r.pagination.aggregate.count, // 返回结果中的总记录数
             showSizeChanger: this.showSizeChanger,
             pageSize: (pagination && pagination.pageSize) ||
               this.localPagination.pageSize
@@ -46,21 +49,11 @@ export default {
             this.loadData()
             return
           }
-
-          // 这里用于判断接口是否有返回 r.totalCount 且 this.showPagination = true 且 pageNo 和 pageSize 存在 且 totalCount 小于等于 pageNo * pageSize 的大小
-          // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
-          // @abort
-          // try {
-          //   if ((['auto', true].includes(this.showPagination) && r.totalCount <= (r.pageNo * this.localPagination.pageSize))) {
-          //     this.localPagination.hideOnSinglePage = true
-          //   }
-          // } catch (e) {
-          //   this.localPagination = false
-          // }
-          console.log('loadData -> this.localPagination', this.localPagination)
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
+      } else {
+        this.localLoading = false
       }
     }
   }

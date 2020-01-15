@@ -1,46 +1,72 @@
 <template>
-  <CTable
-    ref="table"
-    :data="loadData"
-    :columns="columns"
-    rowKey="_id_s"
-    :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-    :scroll="{ x: 1200, y: 850}"
-  >
+  <div class="ResourceInstanceList">
+    <CTable
+      ref="table"
+      :data="loadData"
+      :columns="columns"
+      rowKey="_id_s"
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+      :scroll="{ x: 1200, y: 850}"
+    >
 
-    <template #query>
-      <a-form layout="inline">
-        <a-row>
-          <div>
-            <a-col :md="12" :sm="24">
-              <a-form-item label="name">
-                <a-input allowClear v-model="queryParams.name_s" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="12" :sm="24">
-              <a-form-item label="display name">
-                <a-input allowClear v-model="queryParams.label_s" />
-              </a-form-item>
-            </a-col>
-          </div>
-        </a-row>
-      </a-form>
-    </template>
+      <template #query>
+        <a-form layout="inline">
+          <a-row>
+            <div>
+              <a-col :md="12" :sm="24">
+                <a-form-item label="name">
+                  <a-input allowClear v-model="queryParams.name_s" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item label="display name">
+                  <a-input allowClear v-model="queryParams.label_s" />
+                </a-form-item>
+              </a-col>
+            </div>
+          </a-row>
+        </a-form>
+      </template>
 
-    <template #opration>
-      <a-button>新建</a-button>
-      <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-      <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
-      <a-button>数据检查</a-button>
-      <a-button>筛选</a-button>
-    </template>
+      <template #opration>
+        <a-button>新建</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+        <a-button>数据检查</a-button>
+        <a-button>筛选</a-button>
+      </template>
 
-  </CTable>
+    </CTable>
+  </div>
 </template>
 
 <script>
 import CTable from '@/components/Table/CTable'
-import Resource from '@/graphql/service/Resource'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const query = gql`query instanceList($parentname_s: String!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [ngecc_instance_order_by!]) {
+  pagination: ngecc_instance_aggregate(where: {parentname_s: {_eq: $parentname_s}}) {
+    aggregate {
+      count
+    }
+  }
+  data: ngecc_instance(offset: $offset, limit: $limit, where: {parentname_s: {_eq: $parentname_s}}, order_by: $orderBy) {
+    _class_s
+    _id_s
+    createtime_t
+    creator_s
+    label_s
+    name_s
+    parentname_s
+    parenttree_s
+    permissionallowextend_b
+    updatetime_t
+    updator_s
+    values_e
+    version_i
+  }
+}`
 
 export default {
   name: 'ResourceInstanceList',
@@ -102,7 +128,7 @@ export default {
       immediate: false,
       handler (val) {
         // 重置查询条件
-        Object.assign(this.$data, this.$options.data.apply(this))
+        this.reset()
         // 重新查询
         val && this.$refs['table'].refresh(true)
       }
@@ -111,15 +137,18 @@ export default {
   methods: {
     /**
      * 加载表格数据
-     * @param {Object} parameter CTable 回传的分页与排序数据
+     * @param {Object} parameter CTable 回传的分页与排序条件
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      return Resource.instanceList({
-        ...parameter,
-        ...this.queryParams,
-        parentname_s: this.parentnameS
-      })
+      return apollo.clients.resource.query({
+        query,
+        variables: {
+          ...parameter,
+          ...this.queryParams,
+          parentname_s: this.parentnameS
+        }
+      }).then(r => r.data)
     },
     /**
      * 表格行选中
@@ -128,6 +157,12 @@ export default {
      */
     selectRow (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
+    },
+    /**
+     * 重置组件数据
+     */
+    reset () {
+      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }

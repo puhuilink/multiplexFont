@@ -1,6 +1,7 @@
 function buildNode (node) {
   if (node && node.instanceList) {
-    node.title += node.instanceList.aggregate.count
+    const count = node.instanceList.aggregate.count
+    node.title += count ? `(${count})` : ''
   }
 }
 
@@ -15,7 +16,6 @@ function buildChildren (parent, collection = []) {
 
 function recursiveBuildChildren (parent, collection = []) {
   if (parent) {
-    buildNode(parent)
     buildChildren(parent, collection)
     parent.children.forEach(el => {
       buildNode(el)
@@ -27,6 +27,7 @@ function recursiveBuildChildren (parent, collection = []) {
 function buildTree (collection = []) {
   const root = collection.find(el => el.key === 'Ci')
   if (root) {
+    buildNode(root)
     recursiveBuildChildren(root, collection)
     return [root]
   } else {
