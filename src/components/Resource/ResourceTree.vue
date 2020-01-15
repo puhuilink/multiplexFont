@@ -1,5 +1,6 @@
 <template>
   <div class="ResourceTree">
+    <!-- TODO: 固定搜索栏 -->
     <a-input-search
       allowClear
       autoFocus
@@ -32,6 +33,8 @@ import { buildTree, search } from './utils'
 export default {
   name: 'ResourceTree',
   apollo: {
+    // FIXME: instanceList 应当也包含子代的 children
+    // TODO: subscribe 节点增加 / 删除
     dataSource: {
       query: gql`query ($instanceListCount: Boolean!) {
         dataSource: ngecc_model {
