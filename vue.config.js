@@ -42,6 +42,13 @@ const vueConfig = {
     config.resolve.alias
       .set('@$', resolve('src'))
 
+    config.module
+      .rule('graphql')
+      .test(/\.graphql$/)
+      .use('graphql-tag/loader')
+      .loader('graphql-tag/loader')
+      .end()
+
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
     svgRule

@@ -200,6 +200,7 @@ export default {
         // this.selectedRowKeys = []
         return getForwardWayList(Object.assign(parameter, this.queryParam))
           .then(res => {
+            console.log(res)
             return res.result
           })
       },
