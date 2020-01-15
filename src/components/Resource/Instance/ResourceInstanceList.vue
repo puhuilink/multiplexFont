@@ -45,7 +45,7 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($parentname_s: String!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [ngecc_instance_order_by!]) {
+const query = gql`query instanceList($parentname_s: String!, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
   pagination: ngecc_instance_aggregate(where: {parentname_s: {_eq: $parentname_s}}) {
     aggregate {
       count
@@ -80,8 +80,6 @@ export default {
     CTable
   },
   data: () => ({
-    // 表格数据
-    dataSource: [],
     // 查询参数
     queryParams: {},
     // 选中行的 key
