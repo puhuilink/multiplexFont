@@ -12,7 +12,7 @@ export default {
         // TODO: 查询全部
         pageSizeOptions: ['50', '100'],
         defaultCurrent: 1,
-        // FIXME: default 始终为10
+        pageSize: 50,
         defaultPageSize: 50,
         hideOnSinglePage: false,
         showQuickJumper: true,
@@ -41,7 +41,8 @@ export default {
       ref: 'table',
       props: {
         ...this.$props,
-        ...this.$attrs
+        ...this.$attrs,
+        pageSize: this.pagination.pageSize
       },
       on: {
         ...this.$listeners
