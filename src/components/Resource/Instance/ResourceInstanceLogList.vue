@@ -107,6 +107,19 @@ export default {
       }
     }
   },
+  watch: {
+    '$props': {
+      immediate: false,
+      deep: true,
+      handler (val) {
+        console.log(val)
+        // 重置查询条件
+        this.reset()
+        // 重新查询
+        this.$refs['table'].refresh(true)
+      }
+    }
+  },
   methods: {
     /**
      * 加载表格数据
@@ -120,10 +133,10 @@ export default {
           ...parameter,
           where: {
             'modelname_s': {
-              '_eq': 'DictManager'
+              '_eq': this.modelName
             },
             'operationtype_s': {
-              '_eq': 'instance'
+              '_eq': this.operationType
             }
           }
         }
@@ -136,6 +149,12 @@ export default {
      */
     selectRow (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
+    },
+    /**
+     * 重置组件数据
+     */
+    reset () {
+      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
