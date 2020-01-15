@@ -58,7 +58,7 @@
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
-          @click="deleteType"
+          @click="deleteCtrl"
         >
           删除
         </a-button>
@@ -90,6 +90,7 @@
 <script>
 import { STable } from '@/components'
 import { getalarmTypeList } from '@/api/alarmType'
+import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/alarmTypesDetail'
 
 export default {
@@ -189,21 +190,9 @@ export default {
     /**
      * 删除选中项
      */
-    deleteType () {
-      const data = this
-      this.$confirm({
-        title: '删除',
-        content: '确定要删除吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          console.log('OK', data.selectedRows)
-        },
-        onCancel () {
-          console.log('Cancel')
-        }
-      })
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
     }
   }
 }

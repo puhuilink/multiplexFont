@@ -47,9 +47,19 @@
             :value="item.value"
           >{{ item.label }}</a-select-option>
         </a-select>
-        <a-button>新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length == 0">删除</a-button>
+        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
         <a-button :disabled="!hasSelected">启用</a-button>
         <a-button :disabled="!hasSelected">停用</a-button>
       </div>
@@ -85,6 +95,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -92,11 +106,14 @@
 <script>
 import { STable } from '@/components'
 import { getAlarmRuleList } from '@/api/alarmConfig'
+import deleteCheck from '@/components/DeleteCheck'
+import detail from './modules/alarmRuleDetail'
 
 export default {
   name: 'AlarmsRules',
   components: {
-    STable
+    STable,
+    detail
   },
   data () {
     return {
@@ -230,9 +247,19 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'Edit')
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
     }
   }
 }

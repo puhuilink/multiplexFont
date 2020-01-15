@@ -1,5 +1,5 @@
 /*
- * 告警类型:详情/编辑
+ * 告警类型:详情/编辑/新建
  */
 <template>
   <a-modal
@@ -23,7 +23,7 @@
             label="ID"
           >
             <a-input
-              v-decorator="['id']"
+              v-decorator="['id',{ initialValue: record.id }]"
               disabled
             />
           </a-form-item>
@@ -32,7 +32,7 @@
           <a-form-item label="名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['name', { rules: [{ required: true, message: '名称不能为空!' }] }]"
+              v-decorator="['name', { initialValue: record.name, rules: [{ required: true, message: '名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -40,7 +40,7 @@
           <a-form-item label="显示名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['showName', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['showName', { initialValue: record.showName, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -48,7 +48,7 @@
           <a-form-item label="图标">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['showIcon', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['showIcon', { initialValue: record.showIcon, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -56,7 +56,7 @@
           <a-form-item label="描述">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['icon', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['icon', { initialValue: record.icon, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -64,7 +64,7 @@
           <a-form-item label="启用">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['useing', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['useing', { initialValue: record.useing, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -72,7 +72,7 @@
           <a-form-item label="所属节点类型">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['nodeType', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['nodeType', { initialValue: record.nodeType, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -80,7 +80,7 @@
           <a-form-item label="告警编码">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['alarmCode', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['alarmCode', { initialValue: record.alarmCode, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -88,7 +88,7 @@
           <a-form-item label="数据权限域">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['DPFiled', { rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['DPFiled', { initialValue: record.DPFiled, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -130,21 +130,6 @@ export default {
       this.record = record
       console.log(record, mode)
       this.mode = mode
-      if (record !== '') {
-        await this.$nextTick()
-        setTimeout(() => {
-          this.form.setFieldsValue({
-            ...record
-          })
-        })
-      }
-    },
-    handleDetail (e) {
-      this.loading = true
-      setTimeout(() => {
-        this.visible = false
-        this.loading = false
-      }, 2000)
     },
     handleCancel (e) {
       console.log('Clicked cancel button')
