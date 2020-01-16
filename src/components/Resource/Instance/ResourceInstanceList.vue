@@ -45,13 +45,13 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($parentname_s: String!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [ngecc_instance_order_by!]) {
-  pagination: ngecc_instance_aggregate(where: {parentname_s: {_eq: $parentname_s}}) {
+const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
+  pagination: ngecc_instance_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data: ngecc_instance(offset: $offset, limit: $limit, where: {parentname_s: {_eq: $parentname_s}}, order_by: $orderBy) {
+  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
     _class_s
     _id_s
     createtime_t
@@ -73,15 +73,13 @@ export default {
   props: {
     parentnameS: {
       type: String,
-      default: ''
+      required: true
     }
   },
   components: {
     CTable
   },
   data: () => ({
-    // 表格数据
-    dataSource: [],
     // 查询参数
     queryParams: {},
     // 选中行的 key
@@ -124,13 +122,13 @@ export default {
     }
   },
   watch: {
-    parentnameS: {
-      immediate: false,
-      handler (val) {
+    '$props': {
+      deep: true,
+      handler () {
         // 重置查询条件
         this.reset()
         // 重新查询
-        val && this.$refs['table'].refresh(true)
+        this.$refs['table'].refresh(true)
       }
     }
   },
@@ -146,7 +144,12 @@ export default {
         variables: {
           ...parameter,
           ...this.queryParams,
-          parentname_s: this.parentnameS
+          // parentname_s: this.parentnameS
+          where: {
+            parentname_s: {
+              '_eq': this.parentnameS
+            }
+          }
         }
       }).then(r => r.data)
     },

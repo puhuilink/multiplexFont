@@ -107,7 +107,8 @@
                   <div slot="title">固定 Header</div>
                 </a-list-item-meta>
               </a-list-item>
-              <a-list-item>
+              <!-- 当前设置为固定 header 时 header 位于 sidemenu 上方，导致下方部分功能无法使用，因此禁用掉 -->
+              <!-- <a-list-item>
                 <a-switch slot="actions" size="small" :disabled="!fixedHeader" :defaultChecked="autoHideHeader" @change="handleFixedHeaderHidden" />
                 <a-list-item-meta>
                   <a-tooltip slot="title" placement="left">
@@ -115,13 +116,13 @@
                     <div :style="{ opacity: !fixedHeader ? '0.5' : '1' }">下滑时隐藏 Header</div>
                   </a-tooltip>
                 </a-list-item-meta>
-              </a-list-item>
-              <a-list-item >
+              </a-list-item> -->
+              <!-- <a-list-item >
                 <a-switch slot="actions" size="small" :disabled="(layoutMode === 'topmenu')" :defaultChecked="fixSiderbar" @change="handleFixSiderbar" />
                 <a-list-item-meta>
                   <div slot="title" :style="{ textDecoration: layoutMode === 'topmenu' ? 'line-through' : 'unset' }">固定侧边菜单</div>
                 </a-list-item-meta>
-              </a-list-item>
+              </a-list-item> -->
             </a-list>
           </div>
         </div>

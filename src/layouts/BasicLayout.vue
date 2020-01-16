@@ -19,8 +19,20 @@
       ></side-menu>
     </a-drawer>
 
+    <!-- fixed header -->
+    <global-header
+      v-if="fixedHeader"
+      :mode="layoutMode"
+      :menus="menus"
+      :theme="navTheme"
+      :collapsed="collapsed"
+      :device="device"
+      @toggle="toggle"
+    />
+
+    <!-- fixed menu -->
     <side-menu
-      v-else-if="isSideMenu()"
+      v-if="isSideMenu()"
       mode="inline"
       :menus="menus"
       :theme="navTheme"
@@ -28,9 +40,12 @@
       :collapsible="true"
     ></side-menu>
 
+    <!-- static content -->
     <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
-      <!-- layout header -->
+
+      <!-- static header -->
       <global-header
+        v-if="!fixedHeader"
         :mode="layoutMode"
         :menus="menus"
         :theme="navTheme"
@@ -48,15 +63,15 @@
       </a-layout-content>
 
       <!-- layout footer -->
-      <a-layout-footer>
+      <!-- TODO: 目前 footer 暂无展示内容 -->
+      <!-- <a-layout-footer>
         <global-footer />
-      </a-layout-footer>
+      </a-layout-footer> -->
 
       <!-- Setting Drawer (show in development mode) -->
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
   </a-layout>
-
 </template>
 
 <script>

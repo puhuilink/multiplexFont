@@ -25,8 +25,22 @@
               :parentnameS="selectedKey"
             />
           </a-tab-pane>
-          <a-tab-pane tab="操作日志" key="2" forceRender>操作日志</a-tab-pane>
-          <a-tab-pane tab="版本" key="3" forceRender>版本</a-tab-pane>
+          <a-tab-pane tab="操作日志" key="2" forceRender>
+            <ResourceInstanceLogList
+              v-if="selectedKey"
+              class="resource-instance-table"
+              :modelName="selectedKey"
+              operationType="instance"
+              :parentnameS="selectedKey"
+            />
+          </a-tab-pane>
+          <a-tab-pane tab="版本" key="3" forceRender>
+            <ResourceInstanceVersionList
+              v-if="selectedKey"
+              class="resource-instance-table"
+              :parentnameS="selectedKey"
+            />
+          </a-tab-pane>
         </a-tabs>
       </a-col>
 
@@ -37,12 +51,16 @@
 <script>
 import ResourceTree from '@/components/Resource/ResourceTree'
 import ResourceInstanceList from '@/components/Resource/Instance/ResourceInstanceList'
+import ResourceInstanceLogList from '@/components/Resource/Instance/ResourceInstanceLogList'
+import ResourceInstanceVersionList from '@/components/Resource/Instance/ResourceInstanceVersionList'
 
 export default {
   name: 'ResourceInstance',
   components: {
     ResourceTree,
-    ResourceInstanceList
+    ResourceInstanceList,
+    ResourceInstanceLogList,
+    ResourceInstanceVersionList
   },
   data: () => ({
     selectedKey: ''

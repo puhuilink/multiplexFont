@@ -283,8 +283,8 @@ body {
         display: flex;
 
         .logo.top-nav-header {
-          flex: 0 0 165px;
-          width: 165px;
+          flex: 0 0 265px;
+          width: 265px;
           height: 64px;
           position: relative;
           line-height: 64px;
@@ -387,12 +387,20 @@ body {
   }
 }
 
+.ant-fixed-sidemenu_fixed-header {
+  // 此处是将 header 放置到 sider 上，让出 header 高度
+  // header 高度 64px，为彼此阴影与边框再留出 1px
+  margin-top: 65px !important;
+  height: calc(100vh - 65px) !important;
+}
+
 // 菜单样式
 .sider {
   box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   position: relative;
   z-index: @ant-global-sider-zindex;
-  min-height: 100vh;
+  margin-top: 0;
+  height: 100vh;
 
   .ant-layout-sider-children {
     overflow-y: hidden;
@@ -404,12 +412,12 @@ body {
 
   &.ant-fixed-sidemenu {
     position: fixed;
-    height: 100%;
+    margin-top: 0;
+    height: 100vh;
   }
 
   .logo {
     position: relative;
-    height: 64px;
     padding-left: 24px;
     overflow: hidden;
     line-height: 64px;
