@@ -21,6 +21,7 @@
 
     <!-- fixed header -->
     <global-header
+      v-if="fixedHeader"
       :mode="layoutMode"
       :menus="menus"
       :theme="navTheme"
@@ -42,6 +43,17 @@
     <!-- static content -->
     <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
 
+      <!-- static header -->
+      <global-header
+        v-if="!fixedHeader"
+        :mode="layoutMode"
+        :menus="menus"
+        :theme="navTheme"
+        :collapsed="collapsed"
+        :device="device"
+        @toggle="toggle"
+      />
+
       <!-- layout content -->
       <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }">
         <multi-tab v-if="multiTab"></multi-tab>
@@ -51,6 +63,7 @@
       </a-layout-content>
 
       <!-- layout footer -->
+      <!-- TODO: 目前 footer 暂无展示内容 -->
       <!-- <a-layout-footer>
         <global-footer />
       </a-layout-footer> -->
@@ -59,7 +72,6 @@
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
   </a-layout>
-
 </template>
 
 <script>
