@@ -57,7 +57,7 @@ export default {
             title: '编号',
             dataIndex: '_id_x',
             sorter: true,
-            width: 180
+            width: 300
           },
           {
             title: '创建时间',
