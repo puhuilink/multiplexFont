@@ -392,7 +392,9 @@ body {
   box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   position: relative;
   z-index: @ant-global-sider-zindex;
-  min-height: 100vh;
+  // 此处是将顶栏放置到sider上，让出顶栏高度
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
 
   .ant-layout-sider-children {
     overflow-y: hidden;

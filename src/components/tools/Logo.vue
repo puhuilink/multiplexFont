@@ -26,6 +26,15 @@ export default {
 </script>
 <style scoped lang="less">
 .logo {
+  line-height: 1;
+  // FIXME: 居中
+  transform: translateY(-2px);
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+
   &__title {
     margin: 0 0 0 6px !important;
     font-size: 16px !important;
