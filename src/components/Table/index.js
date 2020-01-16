@@ -3,7 +3,8 @@ import get from 'lodash.get'
 
 export default {
   // FIXME: 如果父组件要操作localDataSource ?
-  // FIXME: td 换行溢出
+  // FIXME: td sort before div换行溢出
+  // TODO: 重置排序与分页？
   data () {
     return {
       needTotalList: [],

@@ -6,7 +6,7 @@
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1200, y: 850}"
+      :scroll="{ x: 1620, y: 850}"
     >
     </CTable>
   </div>
@@ -76,7 +76,8 @@ export default {
           {
             title: '操作节点名称',
             dataIndex: 'name_s',
-            sorter: true
+            sorter: true,
+            width: 300
           },
           {
             title: '数据关联编号',
@@ -112,7 +113,6 @@ export default {
       immediate: false,
       deep: true,
       handler (val) {
-        console.log(val)
         // 重置查询条件
         this.reset()
         // 重新查询
