@@ -118,7 +118,7 @@
           <ellipsis :length="10" tooltip >{{ text }}</ellipsis>
         </span>
       </s-table>
-      <!-- E 历史告警列表 -->
+      <!-- E 列表 -->
     </a-card>
   </div>
 </template>

@@ -1,8 +1,5 @@
 /*
  * 阈值规则
- * Author: yizhu liu
- * Date: 2019-12-25 13:43:51
- * Email: lyz02413@163.com
  */
 <template>
   <div class="threshold-rules">
@@ -89,9 +86,25 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button
+          type="primary"
+          icon="plus"
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -125,6 +138,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -133,11 +150,14 @@
 import { STable } from '@/components'
 import { getTRList } from '@/api/alarmConfig'
 import screening from '../screening'
+import deleteCheck from '@/components/DeleteCheck'
+import detail from './modules/thresholdRulesDetail'
 
 export default {
   name: 'ThresholdRules',
   components: {
-    STable
+    STable,
+    detail
   },
   data () {
     return {
@@ -254,9 +274,19 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'See')
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
     }
   }
 }

@@ -207,7 +207,7 @@
       </div>
       <!-- E 操作栏 -->
 
-      <!-- S 历史告警列表 -->
+      <!-- S 列表 -->
       <s-table
         ref="table"
         size="small"
@@ -243,11 +243,12 @@
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>
-      <!-- E 历史告警列表 -->
+      <!-- E 列表 -->
 
       <!-- S model模块 -->
       <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward>
       <m-solve ref="resolve" @ok="() => $refs.table.refresh(true)"></m-solve>
+      <m-detail ref="detail"></m-detail>
       <!-- E model模块 -->
     </a-card>
   </div>
@@ -258,6 +259,7 @@ import screening from '../screening'
 import { getAlarmList } from '@/api/alarmMonitor'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
+import MDetail from '../modules/MDetail'
 
 export default {
   name: 'HistoricalAlarms',
@@ -265,7 +267,8 @@ export default {
     STable,
     Ellipsis,
     RollForward,
-    MSolve
+    MSolve,
+    MDetail
   },
   data () {
     return {
@@ -340,7 +343,6 @@ export default {
         {
           title: '消息内容',
           dataIndex: 'message',
-          width: 400,
           scopedSlots: { customRender: 'message' }
         },
         {
@@ -485,6 +487,9 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'historySee')
           }
         }
       }

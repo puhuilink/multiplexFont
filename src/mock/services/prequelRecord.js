@@ -31,6 +31,9 @@ const forwardRecordList = (options) => {
       'shiftType|1': [
         '0', '1', '2'
       ],
+      'forwardType|1': [
+        '0', '1', '2'
+      ],
       'sender|1': [
         '小张', '小董', '小刘'
       ],
@@ -38,9 +41,6 @@ const forwardRecordList = (options) => {
         '采购15', '采购12', '西南区域', '科技评审',
         '生产经营', '核心拓展接入A', '核心拓展接入B',
         '汇聚交换机1', '汇聚交换机2', '汇聚交换机3'
-      ],
-      'forwardType|1': [
-        '0', '1', '2'
       ],
       'forwardTarget|1': [
         '一级', '二级'
@@ -67,4 +67,4 @@ const forwardRecordList = (options) => {
 }
 
 // 获取前转记录列表模拟接口
-Mock.mock(/\/forward\/record\/list/, 'get', forwardRecordList)
+Mock.mock(/\/forwardRecord\/list/, 'get', forwardRecordList)
