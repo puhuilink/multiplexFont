@@ -56,7 +56,11 @@
             <ResourceModelVersionList
               v-if="selectedNode"
               class="ResourceInstance-table"
-              :parentnameS="selectedNode.name_s"
+              :where="{
+                parentname_s: {
+                  _eq: selectedNode.name_s
+                }
+              }"
             />
           </a-tab-pane>
         </a-tabs>
