@@ -1,12 +1,12 @@
 <template>
-  <div class="ResourceInstanceVersionList">
+  <div class="OperationLogList">
     <CTable
       ref="table"
       :data="loadData"
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1000, y: 850}"
+      :scroll="{ x: 1820, y: 850}"
     >
     </CTable>
   </div>
@@ -17,15 +17,19 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query ($where: ngecc_instancehistory_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instancehistory_order_by!]) {
-  data: ngecc_instancehistory(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
-    createtime_t
-    label_s
-    version_i
-    name_s
+const query = gql`query ($where:ngecc_operationlog_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_operationlog_order_by!]) {
+  data: ngecc_operationlog(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
     _id_x
+    modelname_s
+    name_s
+    operator_s
+    operation_s
+    operatingtime_t
+    operationresult_s
+    relationid_s
+    relation_b
   }
-  pagination: ngecc_instancehistory_aggregate(where: $where) {
+  pagination: ngecc_operationlog_aggregate(where: $where) {
     aggregate {
       count
     }
@@ -33,7 +37,7 @@ const query = gql`query ($where: ngecc_instancehistory_bool_exp = {}, $limit: In
 }`
 
 export default {
-  name: 'ResourceInstanceVersionList',
+  name: 'OperationLogList',
   components: {
     CTable
   },
@@ -50,32 +54,52 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
+    // FIXME: 小屏下只展示出了部分列
     columns: {
       get () {
         return [
           {
-            title: '编号',
-            dataIndex: '_id_x',
+            title: '操作人',
+            dataIndex: 'modelname_s',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '操作时间',
+            dataIndex: 'operatingtime_t',
             sorter: true,
             width: 300
           },
           {
-            title: '创建时间',
-            dataIndex: 'createtime_t',
+            title: '操作节点名称',
+            dataIndex: 'name_s',
+            sorter: true,
+            width: 500
+          },
+          {
+            title: '数据关联编号',
+            dataIndex: 'relationid_s',
             sorter: true,
             width: 300
           },
           {
-            title: '版本',
-            dataIndex: 'version_i',
+            title: '操作类型',
+            dataIndex: 'operation_s',
             sorter: true,
-            width: 100
+            width: 180
           },
           {
-            title: '名称',
-            dataIndex: 'label_s',
+            title: '操作结果类型',
+            dataIndex: 'operationresult_s',
             sorter: true,
-            width: 300
+            width: 180
+          },
+          {
+            title: '是否为关系',
+            dataIndex: 'relation_b',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
           }
         ]
       }
@@ -85,7 +109,7 @@ export default {
     '$props': {
       immediate: false,
       deep: true,
-      handler () {
+      handler (val) {
         // 重置查询条件
         this.reset()
         // 重新查询

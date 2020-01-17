@@ -1,5 +1,5 @@
 <template>
-  <div class="ResourceInstanceVersionList">
+  <div class="ResourceModelVersionList">
     <CTable
       ref="table"
       :data="loadData"
@@ -17,15 +17,15 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query ($where: ngecc_instancehistory_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instancehistory_order_by!]) {
-  data: ngecc_instancehistory(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
+const query = gql`query ($where: ngecc_modelhistory_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_modelhistory_order_by!]) {
+  data: ngecc_modelhistory(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
     createtime_t
     label_s
     version_i
     name_s
     _id_x
   }
-  pagination: ngecc_instancehistory_aggregate(where: $where) {
+  pagination: ngecc_modelhistory_aggregate(where: $where) {
     aggregate {
       count
     }
@@ -33,14 +33,14 @@ const query = gql`query ($where: ngecc_instancehistory_bool_exp = {}, $limit: In
 }`
 
 export default {
-  name: 'ResourceInstanceVersionList',
+  name: 'ResourceModelVersionList',
   components: {
     CTable
   },
   props: {
-    where: {
-      type: Object,
-      default: () => ({})
+    parentnameS: {
+      type: String,
+      required: true
     }
   },
   data: () => ({
@@ -105,7 +105,9 @@ export default {
         variables: {
           ...parameter,
           where: {
-            ...this.where
+            'parentname_s': {
+              '_eq': this.parentnameS
+            }
           }
         }
       }).then(r => r.data)

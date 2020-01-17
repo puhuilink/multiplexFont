@@ -19,6 +19,7 @@
       defaultExpandAll
       :expandedKeys="expandedKeys"
       :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
+      :selectedKeys="[selectedKey]"
       :treeData="treeData"
       @expand="expand"
       @select="select"
@@ -38,6 +39,9 @@ export default {
     dataSource: {
       query: gql`query ($instanceListCount: Boolean!) {
         dataSource: ngecc_model {
+          did
+          label_s
+          name_s
           title: label_s
           key: name_s
           parentKey: parentname_s
@@ -92,13 +96,23 @@ export default {
       this.autoExpandParent = false
     },
     /**
-     * 点击树节点触发
+     * 选中/取消选中树节点触发
      * @event
      * @return {Undefined}
      */
-    select ([selectedKey], { selected }) {
-      this.selectedKey = selected ? selectedKey : ''
-      this.$emit('select', this.selectedKey)
+    select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
+      if (selected) {
+        this.selectedKey = selectedKey
+        const dataRef = selectedNode.data.props.dataRef
+        this.$emit('select', {
+          'did': dataRef.did,
+          'label_s': dataRef.label_s,
+          'name_s': dataRef.name_s
+        })
+      } else {
+        this.selectedKey = ''
+        this.$emit('select', null)
+      }
     },
     /**
      * 查询树节点输入

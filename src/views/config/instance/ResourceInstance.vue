@@ -1,5 +1,5 @@
 <template>
-  <div class="resource-instance">
+  <div class="ResourceInstance">
     <a-row type="flex">
 
       <!-- / tree -->
@@ -7,7 +7,7 @@
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="资源树" key="1">
             <ResourceTree
-              class="resource-instance-tree"
+              class="ResourceInstance-tree"
               instanceListCount
               @select="select"
             />
@@ -20,25 +20,38 @@
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
             <ResourceInstanceList
-              v-if="selectedKey"
-              class="resource-instance-table"
-              :parentnameS="selectedKey"
+              v-if="selectedNode"
+              class="ResourceInstance-table"
+              :where="{
+                parentname_s: {
+                  _eq: selectedNode.name_s
+                }
+              }"
             />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>
-            <ResourceInstanceLogList
-              v-if="selectedKey"
-              class="resource-instance-table"
-              :modelName="selectedKey"
-              operationType="instance"
-              :parentnameS="selectedKey"
+            <OperationLogList
+              v-if="selectedNode"
+              class="ResourceInstance-table"
+              :where="{
+                modelname_s: {
+                  _eq: selectedNode.name_s
+                },
+                operationtype_s: {
+                  _eq: 'instance'
+                }
+              }"
             />
           </a-tab-pane>
           <a-tab-pane tab="版本" key="3" forceRender>
             <ResourceInstanceVersionList
-              v-if="selectedKey"
-              class="resource-instance-table"
-              :parentnameS="selectedKey"
+              v-if="selectedNode"
+              class="ResourceInstance-table"
+              :where="{
+                parentname_s: {
+                  _eq: selectedNode.name_s
+                }
+              }"
             />
           </a-tab-pane>
         </a-tabs>
@@ -49,37 +62,39 @@
 </template>
 
 <script>
-import ResourceTree from '@/components/Resource/ResourceTree'
-import ResourceInstanceList from '@/components/Resource/Instance/ResourceInstanceList'
-import ResourceInstanceLogList from '@/components/Resource/Instance/ResourceInstanceLogList'
-import ResourceInstanceVersionList from '@/components/Resource/Instance/ResourceInstanceVersionList'
+import {
+  ResourceTree,
+  ResourceInstanceList,
+  ResourceInstanceVersionList
+} from '@/components/Resource'
+import { OperationLogList } from '@/components/Operation'
 
 export default {
   name: 'ResourceInstance',
   components: {
     ResourceTree,
     ResourceInstanceList,
-    ResourceInstanceLogList,
+    OperationLogList,
     ResourceInstanceVersionList
   },
   data: () => ({
-    selectedKey: ''
+    selectedNode: null
   }),
   methods: {
     /**
      * 资源树选中/取消选中节点
-     * @param {String} selectedKey 选中节点的 key
+     * @param {Object | Null} selectedNode 选中节点的数据
      * @return {Undefined}
      */
-    select (selectedKey) {
-      this.selectedKey = selectedKey
+    select (selectedNode) {
+      this.selectedNode = selectedNode
     }
   }
 }
 </script>
 
 <style lang="less">
-.resource-instance {
+.ResourceInstance {
   height: 100%;
 
   &-tree {

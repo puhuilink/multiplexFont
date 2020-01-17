@@ -1,12 +1,12 @@
 <template>
-  <div class="ResourceInstanceLogList">
+  <div class="ResourceModelRelationAttrList">
     <CTable
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_x"
+      rowKey="_id_s"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1820, y: 850}"
+      :scroll="{ x: 1760, y: 850}"
     >
     </CTable>
   </div>
@@ -17,38 +17,38 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query ($where:ngecc_operationlog_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_operationlog_order_by!]) {
-  data: ngecc_operationlog(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
-    _id_x
-    modelname_s
-    name_s
-    operator_s
-    operation_s
-    operatingtime_t
-    operationresult_s
-    relationid_s
-    relation_b
-  }
-  pagination: ngecc_operationlog_aggregate(where: $where) {
+const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_relationattribute_order_by!]) {
+  pagination: ngecc_relationattribute_aggregate (where: $where) {
     aggregate {
       count
     }
   }
-}`
+  data: ngecc_relationattribute (offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+    did
+    _id_s
+    name_s
+    label_s
+    source_s
+    target_s
+    mappingtype_s
+    relationtype_s
+    tabgroup_s
+    order_i
+    allowinheritance_b
+    allownull_b
+  }
+}
+`
 
 export default {
-  name: 'ResourceInstanceLogList',
+  name: 'ResourceModelRelationAttrList',
   components: {
     CTable
   },
   props: {
-    modelName: {
-      type: String,
-      required: true
-    },
-    operationType: {
-      type: String,
-      required: true
+    where: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -58,48 +58,69 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
+    // TODO: 列不全
     columns: {
       get () {
         return [
           {
-            title: '操作人',
-            dataIndex: 'modelname_s',
-            sorter: true,
-            width: 180
-          },
-          {
-            title: '操作时间',
-            dataIndex: 'operatingtime_t',
-            sorter: true,
-            width: 300
-          },
-          {
-            title: '操作节点名称',
+            title: '名称',
             dataIndex: 'name_s',
             sorter: true,
-            width: 500
+            width: 180
           },
           {
-            title: '数据关联编号',
-            dataIndex: 'relationid_s',
+            title: '显示名称',
+            dataIndex: 'label_s',
             sorter: true,
             width: 300
           },
           {
-            title: '操作类型',
-            dataIndex: 'operation_s',
+            title: '源',
+            dataIndex: 'source_s',
+            sorter: true,
+            width: 100
+          },
+          {
+            title: '目标',
+            dataIndex: 'target_s',
+            sorter: true,
+            width: 100
+          },
+          {
+            title: '映射类型',
+            dataIndex: 'mappingtype_s',
             sorter: true,
             width: 180
           },
           {
-            title: '操作结果类型',
-            dataIndex: 'operationresult_s',
+            title: '关系类型',
+            dataIndex: 'relationtype_s',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '所属分组',
+            dataIndex: 'tabgroup_s',
             sorter: true,
             width: 180
           },
           {
-            title: '是否为关系',
-            dataIndex: 'relation_b',
+            title: '排序',
+            dataIndex: 'order_i',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '是否继承',
+            dataIndex: 'allowinheritance_b',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '非空',
+            dataIndex: 'allownull_b',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
@@ -132,12 +153,7 @@ export default {
         variables: {
           ...parameter,
           where: {
-            'modelname_s': {
-              '_eq': this.modelName
-            },
-            'operationtype_s': {
-              '_eq': this.operationType
-            }
+            ...this.where
           }
         }
       }).then(r => r.data)

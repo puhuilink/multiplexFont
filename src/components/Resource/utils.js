@@ -18,7 +18,7 @@ function recursiveBuildChildren (parent, collection = []) {
   if (parent) {
     buildChildren(parent, collection)
     parent.children.forEach(el => {
-      buildNode(el)
+      // buildNode(el)
       recursiveBuildChildren(el, collection)
     })
   }
