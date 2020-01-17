@@ -52,22 +52,21 @@ export default {
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
-          .catch(() => {
-            Object.assign(this.$data, this.$options.data.apply(this))
-            this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
-              current: 1, // 返回结果中的当前分页数
-              // hack
-              total: 0, // 返回结果中的总记录数
-              showSizeChanger: this.showSizeChanger,
-              pageSize: (pagination && pagination.pageSize) ||
-              this.localPagination.pageSize
-            })
-            // this.localDataSource = []
-            // this.localLoading = false
+          .catch(e => {
+            this.reset()
+            throw e
           })
       } else {
-        this.localLoading = false
+        this.reset()
       }
+    },
+    reset () {
+      const initialData = this.$options.data.apply(this)
+      Object.assign(this.$data, initialData)
+      this.localPagination = Object.assign({}, this.localPagination, {
+        current: 1,
+        total: 0
+      })
     }
   }
 }
