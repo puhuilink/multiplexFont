@@ -38,9 +38,9 @@ export default {
     CTable
   },
   props: {
-    parentnameS: {
-      type: String,
-      required: true
+    where: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -105,9 +105,7 @@ export default {
         variables: {
           ...parameter,
           where: {
-            'parentname_s': {
-              '_eq': this.parentnameS
-            }
+            ...this.where
           }
         }
       }).then(r => r.data)
