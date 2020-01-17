@@ -1,41 +1,13 @@
 <template>
-  <div class="ResourceInstanceList">
+  <div class="ResourceModelAttrList">
     <CTable
       ref="table"
       :data="loadData"
       :columns="columns"
       rowKey="_id_s"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1280, y: 850}"
+      :scroll="{ x: 1580, y: 850}"
     >
-
-      <template #query>
-        <a-form layout="inline">
-          <a-row>
-            <div>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="name">
-                  <a-input allowClear v-model="queryParams.name_s" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="display name">
-                  <a-input allowClear v-model="queryParams.label_s" />
-                </a-form-item>
-              </a-col>
-            </div>
-          </a-row>
-        </a-form>
-      </template>
-
-      <template #opration>
-        <a-button>新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
-        <a-button>筛选</a-button>
-      </template>
-
     </CTable>
   </div>
 </template>
@@ -45,32 +17,38 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
-  pagination: ngecc_instance_aggregate(where: $where) {
+const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_model_attributes_order_by!]) {
+  pagination: ngecc_model_attributes_aggregate (where: $where) {
     aggregate {
       count
     }
   }
-  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+  data: ngecc_model_attributes (offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+    did
     _id_s
     label_s
     name_s
-    parentname_s
-    parenttree_s
-    version_i
+    width_i
+    datatype_s
+    displaytype_s
+    allownull_b
+    sourcevalue_s
+    allowinheritance_b
+    hidden_b
   }
-}`
+}
+`
 
 export default {
-  name: 'ResourceInstanceList',
+  name: 'ResourceModelAttrList',
+  components: {
+    CTable
+  },
   props: {
     where: {
       type: Object,
       default: () => ({})
     }
-  },
-  components: {
-    CTable
   },
   data: () => ({
     // 查询参数
@@ -80,32 +58,65 @@ export default {
   }),
   computed: {
     // TODO: 列不全
-    // TODO: td 溢出省略号或自动增长但与表头保持对齐
     columns: {
       get () {
         return [
           {
-            title: 'ID',
-            dataIndex: '_id_s',
+            title: '显示名称',
+            dataIndex: 'label_s',
             sorter: true,
             width: 180
           },
           {
-            title: '名称',
+            title: '属性名称',
             dataIndex: 'name_s',
             sorter: true,
-            width: 500
+            width: 300
           },
           {
-            title: '显示名称 name',
-            dataIndex: 'label_s',
+            title: '显示宽度',
+            dataIndex: 'width_i',
             sorter: true,
-            width: 300
+            width: 100
           },
           {
-            title: '父节点',
-            dataIndex: 'parentname_s',
-            width: 300
+            title: '数据类型',
+            dataIndex: 'datatype_s',
+            sorter: true,
+            width: 100
+          },
+          {
+            title: '显示类型',
+            dataIndex: 'displaytype_s',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '非空',
+            dataIndex: 'allownull_b',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '源值',
+            dataIndex: 'sourcevalue_s',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '继承',
+            dataIndex: 'allowinheritance_b',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '隐藏',
+            dataIndex: 'hidden_b',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
           }
         ]
       }
@@ -113,8 +124,9 @@ export default {
   },
   watch: {
     '$props': {
+      immediate: false,
       deep: true,
-      handler () {
+      handler (val) {
         // 重置查询条件
         this.reset()
         // 重新查询
@@ -133,8 +145,6 @@ export default {
         query,
         variables: {
           ...parameter,
-          ...this.queryParams,
-          // parentname_s: this.parentnameS
           where: {
             ...this.where
           }
@@ -160,4 +170,5 @@ export default {
 </script>
 
 <style lang="less">
+
 </style>
