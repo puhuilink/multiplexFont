@@ -11,20 +11,42 @@
 
       <template #query>
         <a-form layout="inline">
-          <a-row>
-            <div>
+          <div class="fold">
+            <a-row>
               <a-col :md="12" :sm="24">
-                <a-form-item label="name">
+                <a-form-item
+                  :labelCol="{ span: 2 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  label="名称"
+                  style="width: 100%"
+                >
                   <a-input allowClear v-model="queryParams.name_s" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
-                <a-form-item label="display name">
+                <a-form-item
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  label="显示名称"
+                  style="width: 100%"
+                >
                   <a-input allowClear v-model="queryParams.label_s" />
                 </a-form-item>
               </a-col>
-            </div>
-          </a-row>
+
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style="advanced && { float: 'right', overflow: 'hidden', transform: 'translateY(6.5PX)' } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
+                    {{ advanced ? '收起' : '展开' }}
+                    <a-icon :type="advanced ? 'up' : 'down'"/>
+                  </a> -->
+          </span>
         </a-form>
       </template>
 
@@ -73,6 +95,8 @@ export default {
     CTable
   },
   data: () => ({
+    // 查询栏是否展开
+    advanced: true,
     // 查询参数
     queryParams: {},
     // 选中行的 key
@@ -97,7 +121,7 @@ export default {
             width: 500
           },
           {
-            title: '显示名称 name',
+            title: '显示名称',
             dataIndex: 'label_s',
             sorter: true,
             width: 300
@@ -133,13 +157,22 @@ export default {
         query,
         variables: {
           ...parameter,
-          ...this.queryParams,
-          // parentname_s: this.parentnameS
           where: {
-            ...this.where
+            ...this.where,
+            ...this.queryParams.name_s ? {
+              name_s: {
+                _ilike: `%${this.queryParams.name_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.label_s ? { label_s: {
+              _ilike: `%${this.queryParams.label_s.trim()}%`
+            } } : {}
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中
@@ -154,10 +187,21 @@ export default {
      */
     reset () {
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    /**
+     * 切换查询栏展开状态
+     * @event
+     */
+    toggleAdvanced () {
+      this.advanced = !this.andvaced
     }
   }
 }
 </script>
 
 <style lang="less">
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>
