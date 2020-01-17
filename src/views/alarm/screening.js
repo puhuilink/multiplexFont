@@ -186,24 +186,24 @@ const alarmType = [
 // 级别列表
 const levelList = {
   0: {
-    level: 'L5',
-    text: 'CRITICAL'
+    level: 'L1',
+    text: 'INFO'
   },
   1: {
-    level: 'L4',
-    text: 'MAJOR'
+    level: 'L2',
+    text: 'WARNING'
   },
   2: {
     level: 'L3',
     text: 'MINOR'
   },
   3: {
-    level: 'L2',
-    text: 'WARNING'
+    level: 'L4',
+    text: 'MAJOR'
   },
   4: {
-    level: 'L1',
-    text: 'INFO'
+    level: 'L5',
+    text: 'CRITICAL'
   }
 }
 

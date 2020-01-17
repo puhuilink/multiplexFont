@@ -9,8 +9,8 @@
     <a-card
       style="width:100%"
       :tabList="tabList"
-      :activeTabKey="key"
-      @tabChange="key => onTabChange(key, 'key')"
+      :activeTabKey="tabKey"
+      @tabChange="tabKey => onTabChange(tabKey, 'key')"
     >
 
       <!-- S 搜索 -->
@@ -137,7 +137,7 @@
       <!-- E 搜索 -->
 
       <!-- S 操作 -->
-      <a-row type="flex" justify="space-between" style="margin-bottom: 20px;">
+      <a-row type="flex" justify="space-between" >
         <a-col
           :xs="24"
           :sm="24"
@@ -145,9 +145,9 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open(record)" :disabled="!hasSelected">确认</a-button>
-          <a-button @click="$refs.rollForward.open()" :disabled="!hasSelected">前转</a-button>
-          <a-button @click="$refs.resolve.open()" :disabled="!hasSelected">解决</a-button>
+          <a-button @click="$refs.confirm.open(record)" :disabled="selectedRowKeys.length > 0">确认</a-button>
+          <a-button @click="$refs.rollForward.open()" :disabled="selectedRowKeys.length > 0">前转</a-button>
+          <a-button @click="$refs.resolve.open()" :disabled="selectedRowKeys.length > 0">解决</a-button>
         </a-col>
         <a-col
           :xs="24"
@@ -176,9 +176,9 @@
             <a-badge
               :count="text | levelFilter"
               :title="text | levelTitleFilter"
-              :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
-                text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
-                  text==4?{backgroundColor:'#00c356'}:{}"
+              :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
+                text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
+                  text==0?{backgroundColor:'#00c356'}:{}"
             />
             <span style="padding-left:7px; ">{{ value }}</span>
           </div>
@@ -187,41 +187,40 @@
       <!-- E 操作 -->
 
       <!-- S 告警监控列表 -->
-      <s-table
+      <CTable
         ref="table"
         size="small"
-        rowKey="key"
+        rowKey="alert_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: 1300, y: 350 }"
+        :scroll="{ x: 1800, y: 350 }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
       >
         <span slot="level" slot-scope="text">
           <a-badge
             :count="text | levelFilter"
             :title="text | levelTitleFilter"
-            :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
-              text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
-                text==4?{backgroundColor:'#00c356'}:{}"
+            :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
+              text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
+                text==0?{backgroundColor:'#00c356'}:{}"
           />
         </span>
-        <span slot="activeState" slot-scope="text">
+        <span slot="state" slot-scope="text">
           <a-icon
             type="flag"
             theme="filled"
             :title="text | acStateTitleFilter"
-            :style="text=='pending'?{color:'#c4c4c4', fontSize:'18px'}:text=='confirmed'?{color:'#00aaf', fontSize:'18px'}:
-              text=='shifting'?{color:'#f99025', fontSize:'18px'}:text=='resolved'?{color:'#39cc39', fontSize:'18px'}:
-                text=='ignore'?{color:'#000000', fontSize:'18px'}:{}"
+            :style="text=='0'?{color:'#c4c4c4', fontSize:'18px'}:text=='5'?{color:'#00aaf', fontSize:'18px'}:
+              text=='10'?{color:'#f99025', fontSize:'18px'}:text=='20'?{color:'#39cc39', fontSize:'18px'}:
+                text=='30'?{color:'#000000', fontSize:'18px'}:{}"
           />
         </span>
         <span slot="message" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
-      </s-table>
+      </CTable>
       <!-- E 告警监控列表 -->
 
       <!-- S 表格右击菜单 -->
@@ -253,18 +252,69 @@
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getAlarmList, getAlarmMenuList, getAlarmLevelList } from '@/api/alarmMonitor'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+import { getAlarmMenuList } from '@/api/alarmMonitor'
 import screening from '../screening'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
 
+const query = gql`query instanceList($state: numeric!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
+  pagination: t_alert_aggregate(where: {state: {_eq: $state}}) {
+    aggregate {
+      count
+    }
+  }
+  data: t_alert(offset: $offset, limit: $limit, where: {state: {_eq: $state}}, order_by: $orderBy) {
+    arising_time
+    first_arising_time
+    message
+    state
+    app_name
+    dev_name
+    instance
+    alert_id
+    severity
+    count
+    agent_id
+  }
+}`
+const levelQuery = gql`query($where: t_alert_bool_exp={} ) {
+  L1: t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  L2: t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  L3:t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  L4:t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  L5:t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+}`
+
 export default {
   name: 'AlarmMonitor',
   components: {
-    STable,
+    CTable,
     Ellipsis,
     MConfirm,
     RollForward,
@@ -275,27 +325,27 @@ export default {
     return {
       tabList: [
         {
-          key: 'pending',
+          key: '0',
           tab: '待处理告警'
         },
         {
-          key: 'confirmed',
+          key: '5',
           tab: '已确认告警'
         },
         {
-          key: 'shifting',
+          key: '10',
           tab: '已前转告警'
         },
         {
-          key: 'resolved',
+          key: '20',
           tab: '已解决告警'
         },
         {
-          key: 'ignore',
+          key: '30',
           tab: '已忽略告警'
         }
       ],
-      key: 'pending',
+      tabKey: '0',
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
@@ -316,7 +366,7 @@ export default {
       columns: [
         {
           title: '级别',
-          dataIndex: 'level',
+          dataIndex: 'severity',
           width: 75,
           fixed: 'left',
           sorter: true,
@@ -324,21 +374,21 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'activeState',
+          dataIndex: 'state',
           width: 75,
           sorter: true,
-          scopedSlots: { customRender: 'activeState' }
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: 'CI名称',
-          dataIndex: 'ciName',
-          width: 120,
+          dataIndex: 'dev_name',
+          width: 200,
           sorter: true
         },
         {
           title: '应用名称',
-          dataIndex: 'appName',
-          width: 190,
+          dataIndex: 'app_name',
+          width: 300,
           sorter: true
         },
         {
@@ -349,32 +399,45 @@ export default {
         },
         {
           title: '首次告警时间',
-          dataIndex: 'firstArisingTime',
+          dataIndex: 'first_arising_time',
           width: 150,
           sorter: true
         },
         {
           title: '最近告警时间',
-          dataIndex: 'arisingTime',
+          dataIndex: 'arising_time',
           width: 150,
           sorter: true
         },
         {
           title: '次数',
-          dataIndex: 'severity',
+          dataIndex: 'count',
           width: 70,
+          sorter: true
+        },
+        {
+          title: '采集系统',
+          dataIndex: 'agent_id',
           sorter: true
         }
 
       ],
-      // 加载数据方法 必须为 Promise 对象
+      /**
+        * 加载表格数据
+        * @param {Object} parameter CTable 回传的分页与排序条件
+        * @return {Function: <Promise<Any>>}
+       */
       loadData: parameter => {
         // 清空选中
         this.selectedRowKeys = []
-        return getAlarmList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams,
+            state: this.tabKey
+          }
+        }).then(r => r.data)
       },
       // 自动刷新的定时器
       timer: null,
@@ -402,20 +465,19 @@ export default {
       return screening.levelList[type].text
     },
     acStateTitleFilter (type) {
-      type += ''
-      switch (type) {
-        case 'pending':
+      switch (`${type}`) {
+        case '0':
           return '新产生'
-        case 'confirmed':
+        case '5':
           return '已确认'
-        case 'shifting':
+        case '10':
           return '已前转'
-        case 'resolved':
+        case '20':
           return '已解决'
-        case 'ignore':
+        case '30':
           return '已忽略'
         default:
-          return ''
+          return type
       }
     }
   },
@@ -424,24 +486,26 @@ export default {
     this.getMenuList()
   },
   computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
-    }
   },
   methods: {
     /**
      * 获取现有的告警级别列表
      */
     getLevelList () {
-      console.log(screening)
-      getAlarmLevelList()
-        .then(res => {
-          this.alarmLevelList = res.result.data[0]
-          console.log(this.alarmLevelList)
-        })
+      return apollo.clients.alert.query({
+        query: levelQuery,
+        variables: {
+          where: {
+            'severity': { '_eq': 0 },
+            'state': { '_eq': 0 }
+          }
+        }
+      }).then(r => console.log(r))
+      // getAlarmLevelList()
+      //   .then(res => {
+      //     this.alarmLevelList = res.result.data[0]
+      //     console.log(this.alarmLevelList)
+      //   })
     },
     /**
      * 获取tab的告警数量列表
@@ -460,6 +524,7 @@ export default {
      * tab切换开关
      */
     onTabChange (key, type) {
+      this.tabKey = key
       console.log(key, type)
       this.autoRefresh = false
       clearInterval(this.timer)
@@ -616,6 +681,13 @@ export default {
   }
   .l5{
     background: #00c356;
+  }
+}
+// BEM: block + element + modify
+.AlarmMonitor {
+  &-level {
+    &__01 {}
+    &__02 {}
   }
 }
 </style>
