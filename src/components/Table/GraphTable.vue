@@ -52,9 +52,21 @@ export default {
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
+          .catch(e => {
+            this.reset()
+            throw e
+          })
       } else {
-        this.localLoading = false
+        this.reset()
       }
+    },
+    reset () {
+      const initialData = this.$options.data.apply(this)
+      Object.assign(this.$data, initialData)
+      this.localPagination = Object.assign({}, this.localPagination, {
+        current: 1,
+        total: 0
+      })
     }
   }
 }
