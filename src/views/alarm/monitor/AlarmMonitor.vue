@@ -256,7 +256,6 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import { getAlarmMenuList } from '@/api/alarmMonitor'
 import screening from '../screening'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
@@ -283,28 +282,55 @@ const query = gql`query instanceList($state: numeric!, $limit: Int! = 0, $offset
     agent_id
   }
 }`
-const levelQuery = gql`query($where: t_alert_bool_exp={} ) {
-  L1: t_alert_aggregate(where: $where) {
+const levelQuery = gql`query($state: numeric! ) {
+  L1: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:0}}) {
     aggregate {
       count
     }
   }
-  L2: t_alert_aggregate(where: $where) {
+  L2: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:1}}) {
     aggregate {
       count
     }
   }
-  L3:t_alert_aggregate(where: $where) {
+  L3:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:2}}) {
     aggregate {
       count
     }
   }
-  L4:t_alert_aggregate(where: $where) {
+  L4:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:3}}) {
     aggregate {
       count
     }
   }
-  L5:t_alert_aggregate(where: $where) {
+  L5:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:4}}) {
+    aggregate {
+      count
+    }
+  }
+}`
+const menuQuery = gql`query{
+  m1: t_alert_aggregate(where: {state: {_eq: 0}}) {
+    aggregate {
+      count
+    }
+  }
+  m2: t_alert_aggregate(where: {state: {_eq: 5}}) {
+    aggregate {
+      count
+    }
+  }
+  m3: t_alert_aggregate(where: {state: {_eq: 10}}) {
+    aggregate {
+      count
+    }
+  }
+  m4: t_alert_aggregate(where: {state: {_eq: 20}}) {
+    aggregate {
+      count
+    }
+  }
+  m5: t_alert_aggregate(where: {state: {_eq: 30}}) {
     aggregate {
       count
     }
@@ -492,33 +518,42 @@ export default {
      * 获取现有的告警级别列表
      */
     getLevelList () {
+      const that = this
       return apollo.clients.alert.query({
         query: levelQuery,
         variables: {
-          where: {
-            'severity': { '_eq': 0 },
-            'state': { '_eq': 0 }
-          }
+          state: this.tabKey
         }
-      }).then(r => console.log(r))
-      // getAlarmLevelList()
-      //   .then(res => {
-      //     this.alarmLevelList = res.result.data[0]
-      //     console.log(this.alarmLevelList)
-      //   })
+      }).then(r => {
+        that.alarmLevelList = {
+          4: r.data.L5.aggregate.count,
+          3: r.data.L4.aggregate.count,
+          2: r.data.L3.aggregate.count,
+          1: r.data.L2.aggregate.count,
+          0: r.data.L1.aggregate.count
+        }
+      })
     },
     /**
      * 获取tab的告警数量列表
      */
     getMenuList () {
-      return getAlarmMenuList()
-        .then(res => {
-          const alarmMenuList = res.result.data[0]
-          for (const i in alarmMenuList) {
-            const tabText = this.tabList[i].tab.substr(0, 5)
-            this.tabList[i].tab = tabText + '（' + alarmMenuList[i] + '）'
-          }
-        })
+      return apollo.clients.alert.query({
+        query: menuQuery
+      }).then(r => {
+        console.log(r.data)
+        const alarmMenuList = {
+          0: r.data.m1.aggregate.count,
+          1: r.data.m2.aggregate.count,
+          2: r.data.m3.aggregate.count,
+          3: r.data.m4.aggregate.count,
+          4: r.data.m5.aggregate.count
+        }
+        for (const i in alarmMenuList) {
+          const tabText = this.tabList[i].tab.substr(0, 5)
+          this.tabList[i].tab = tabText + '（' + alarmMenuList[i] + '）'
+        }
+      })
     },
     /**
      * tab切换开关
