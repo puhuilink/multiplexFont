@@ -98,7 +98,7 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       />
-      <!-- E 历史告警列表 -->
+      <!-- E 列表 -->
     </a-card>
   </div>
 </template>

@@ -1,8 +1,5 @@
 /*
  * 前转告警
- * Author: yizhu liu
- * Date: 2019-12-17 13:56:55
- * Email: lyz02413@163.com
  */
 <template>
   <div class="roll-forward">

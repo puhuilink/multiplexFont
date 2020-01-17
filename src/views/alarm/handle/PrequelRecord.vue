@@ -1,8 +1,5 @@
 /*
  * 前转记录
- * Author: yizhu liu
- * Date: 2019-12-26 16:20:24
- * Email: lyz02413@163.com
  */
 <template>
   <div class="prequel-record">
@@ -78,7 +75,7 @@
       </div>
       <!-- E 搜索 -->
 
-      <!-- S 历史告警列表 -->
+      <!-- S 列表 -->
       <s-table
         ref="table"
         size="small"
@@ -94,10 +91,10 @@
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>
-      <!-- E 历史告警列表 -->
+      <!-- E 列表 -->
 
       <!-- S model模块 -->
-      <!-- <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward> -->
+      <prequel-detail ref="detail"></prequel-detail>
       <!-- E model模块 -->
     </a-card>
   </div>
@@ -107,14 +104,14 @@
 import { STable, Ellipsis } from '@/components'
 // import screening from '../screening'
 import { getForwardRecordList } from '@/api/prequelRecord'
-// import RollForward from '../modules/RollForward'
+import prequelDetail from '../modules/prequelDetail'
 
 export default {
   name: 'PrequelRecord',
   components: {
     STable,
-    Ellipsis
-    // RollForward,
+    Ellipsis,
+    prequelDetail
   },
   data () {
     return {
@@ -140,14 +137,31 @@ export default {
           dataIndex: 'faultType',
           align: 'center',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '':
+                return ''
+              default:
+                return text
+            }
+          }
         },
         {
           title: '故障级别',
           dataIndex: 'faultLevel',
           align: 'center',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '':
+                return ''
+              default:
+                return text
+            }
+          }
+
         },
         {
           title: '故障名称',
@@ -168,7 +182,19 @@ export default {
           dataIndex: 'forwardType',
           align: 'center',
           width: 120,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case '0':
+                return '运维系统'
+              case '1':
+                return '邮件'
+              case '2':
+                return '短信'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '前转目标',
@@ -232,6 +258,9 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record)
           }
         }
       }
