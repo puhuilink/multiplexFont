@@ -105,7 +105,7 @@ export default {
 
   &-table {
     margin-right: 8px;
-    height: calc(100vh - 270px);
+    // height: calc(100vh - 270px);
     overflow-y: auto;
   }
 }
