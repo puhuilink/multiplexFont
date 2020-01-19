@@ -541,7 +541,6 @@ export default {
       return apollo.clients.alert.query({
         query: menuQuery
       }).then(r => {
-        console.log(r.data)
         const alarmMenuList = {
           0: r.data.m1.aggregate.count,
           1: r.data.m2.aggregate.count,

@@ -151,7 +151,7 @@ import { STable } from '@/components'
 import { getTRList } from '@/api/alarmConfig'
 import screening from '../screening'
 import deleteCheck from '@/components/DeleteCheck'
-import detail from './modules/thresholdRulesDetail'
+import detail from './modules/ThresholdRulesDetail'
 
 export default {
   name: 'ThresholdRules',
