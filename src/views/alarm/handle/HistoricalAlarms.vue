@@ -120,7 +120,7 @@
                 <a-form-item label="告警状态">
                   <a-select
                     allowClear
-                    v-model="queryParam.alarmState"
+                    v-model="queryParam.state"
                     placeholder="请选择"
                     default-value="checkall"
                   >
@@ -139,7 +139,7 @@
                 <a-form-item label="告警级别">
                   <a-select
                     allowClear
-                    v-model="queryParam.alarmLevel"
+                    v-model="queryParam.severity"
                     placeholder="请选择"
                     default-value="checkall"
                   >
@@ -156,7 +156,7 @@
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item label="告警信息">
-                  <a-input v-model="queryParam.alarmInfo" placeholder="请输入"/>
+                  <a-input v-model="queryParam.messageFilter" placeholder="请输入"/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -208,41 +208,39 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
-        rowKey="key"
+        rowKey="alert_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: 1300, y:400 }"
+        :scroll="{ x:3000, y: 350 }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
       >
         <span slot="level" slot-scope="text">
           <a-badge
             :count="text | levelFilter"
             :title="text | levelTitleFilter"
-            :numberStyle="text==0?{backgroundColor:'#ff0000'}:text==1?{backgroundColor:'#f7870a'}:
-              text==2?{backgroundColor:'#ffdb00'}:text==3?{backgroundColor:'#54b9e4'}:
-                text==4?{backgroundColor:'#00c356'}:{}"
+            :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
+              text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
+                text==0?{backgroundColor:'#00c356'}:{}"
           />
         </span>
-        <span slot="activeState" slot-scope="text">
+        <span slot="state" slot-scope="text">
           <a-icon
             type="flag"
             theme="filled"
             :title="text | acStateTitleFilter"
-            :style="text=='pending'?{color:'#c4c4c4', fontSize:'18px'}:text=='confirmed'?{color:'#00aaf', fontSize:'18px'}:
-              text=='shifting'?{color:'#f99025', fontSize:'18px'}:text=='resolved'?{color:'#39cc39', fontSize:'18px'}:
-                text=='ignore'?{color:'#000000', fontSize:'18px'}:{}"
+            :style="text=='0'?{color:'#c4c4c4', fontSize:'18px'}:text=='5'?{color:'#00aaf', fontSize:'18px'}:
+              text=='10'?{color:'#f99025', fontSize:'18px'}:text=='20'?{color:'#39cc39', fontSize:'18px'}:
+                text=='30'?{color:'#000000', fontSize:'18px'}:{}"
           />
         </span>
         <span slot="message" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S model模块 -->
@@ -254,7 +252,8 @@
   </div>
 </template>
 <script>
-import { STable, Ellipsis } from '@/components'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import screening from '../screening'
 import { getAlarmList } from '@/api/alarmMonitor'
 import RollForward from '../modules/RollForward'
@@ -264,7 +263,7 @@ import MDetail from '../modules/MDetail'
 export default {
   name: 'HistoricalAlarms',
   components: {
-    STable,
+    CTable,
     Ellipsis,
     RollForward,
     MSolve,
@@ -313,54 +312,100 @@ export default {
       columns: [
         {
           title: '状态',
-          dataIndex: 'activeState',
+          dataIndex: 'state',
+          width: 75,
           sorter: true,
-          align: 'center',
-          width: 70,
           fixed: 'left',
-          scopedSlots: { customRender: 'activeState' }
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: 'CI名称',
-          dataIndex: 'ciName',
-          align: 'center',
-          width: 120,
+          dataIndex: 'dev_name',
+          width: 200,
           sorter: true
         },
         {
           title: '应用名称',
-          dataIndex: 'appName',
-          width: 120,
+          dataIndex: 'app_name',
+          width: 300,
           sorter: true
         },
         {
           title: '级别',
-          dataIndex: 'level',
-          width: 75,
+          dataIndex: 'severity',
+          width: 100,
           sorter: true,
           scopedSlots: { customRender: 'level' }
         },
         {
           title: '消息内容',
           dataIndex: 'message',
+          width: 420,
           scopedSlots: { customRender: 'message' }
         },
         {
           title: '首次告警时间',
-          dataIndex: 'firstArisingTime',
+          dataIndex: 'first_arising_time',
           width: 150,
           sorter: true
         },
         {
           title: '最近告警时间',
-          dataIndex: 'arisingTime',
+          dataIndex: 'arising_time',
           width: 150,
           sorter: true
         },
         {
           title: '次数',
-          dataIndex: 'severity',
+          dataIndex: 'count',
           width: 70,
+          sorter: true
+        },
+        {
+          title: '采集系统',
+          dataIndex: 'agent_id',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '关闭时间',
+          dataIndex: 'close_time',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '关闭人',
+          dataIndex: 'close_by',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '工单编号',
+          dataIndex: 'order_id',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '告警编号',
+          dataIndex: 'alert_id',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '子告警',
+          dataIndex: 'related',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '接入行',
+          dataIndex: 'instance',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '交易渠道',
+          dataIndex: 'instance2',
           sorter: true
         }
 
@@ -425,40 +470,14 @@ export default {
      * ci名称改变
      */
     CINameChange (value) {
-      this.queryParam.CIName = this.checkAll(value, this.CIName)
+      this.queryParam.CIName = screening.checkAll(value, this.CIName)
       console.log(this.queryParam)
     },
     /**
      * 告警类型改变
      */
     alarmTypeChange (value) {
-      this.queryParam.alarmType = this.checkAll(value, this.alarmType)
-    },
-    /**
-     * 选择框全选(适用于分组选择器)
-     */
-    checkAll (arr, modelList) {
-      // arr:change中的数组 ，  modelList:下拉框List
-      const length = arr.length
-      let list = arr
-      arr.forEach(element => {
-        // 当数组中存在0，说明此时进行全选/取消全选
-        if (element === 'checkall') {
-          // 当数组长度为最大长度且最后一个元素为0时，说明此时在全选的基础上又点击全选，则取消全选
-          if (length - 1 === modelList.length && arr[length - 1] === 'checkall') {
-            list = []
-          } else {
-            // 当不是取消全选操作，只要数组中出现了0则说明进行了全选操作
-            list = []
-            modelList.forEach(m => {
-              for (const i in m.options) {
-                list.push(m.options[i].value)
-              }
-            })
-          }
-        }
-      })
-      return list
+      this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
     },
     /**
      * 日期时间空间选择

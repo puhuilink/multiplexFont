@@ -206,6 +206,51 @@ const levelList = {
     text: 'CRITICAL'
   }
 }
+/**
+ * 获得今天的日期 yyyy-mm-dd
+ */
+function getNowFormatDate () {
+  var date = new Date()
+  var seperator1 = '-'
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+  var strDate = date.getDate()
+  if (month >= 1 && month <= 9) {
+    month = '0' + month
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = '0' + strDate
+  }
+  var currentdate = year + seperator1 + month + seperator1 + strDate
+  return currentdate
+}
+
+/**
+ * 选择框全选(适用于分组选择器)
+ */
+function checkAll (arr, modelList) {
+  // arr:change中的数组 ，  modelList:下拉框List
+  const length = arr.length
+  let list = arr
+  arr.forEach(element => {
+    // 当数组中存在0，说明此时进行全选/取消全选
+    if (element === 'checkall') {
+      // 当数组长度为最大长度且最后一个元素为0时，说明此时在全选的基础上又点击全选，则取消全选
+      if (length - 1 === modelList.length && arr[length - 1] === 'checkall') {
+        list = []
+      } else {
+        // 当不是取消全选操作，只要数组中出现了0则说明进行了全选操作
+        list = []
+        modelList.forEach(m => {
+          for (const i in m.options) {
+            list.push(m.options[i].value)
+          }
+        })
+      }
+    }
+  })
+  return list
+}
 
 export default {
   CIDomain,
@@ -213,5 +258,7 @@ export default {
   CIInstance,
   CIName,
   alarmType,
-  levelList
+  levelList,
+  getNowFormatDate,
+  checkAll
 }

@@ -186,10 +186,9 @@
       </a-row>
       <!-- E 操作 -->
 
-      <!-- S 告警监控列表 -->
+      <!-- S 列表 -->
       <CTable
         ref="table"
-        size="small"
         rowKey="alert_id"
         :columns="columns"
         :data="loadData"
@@ -262,13 +261,15 @@ import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
 
-const query = gql`query instanceList($state: numeric!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
-  pagination: t_alert_aggregate(where: {state: {_eq: $state}}) {
+// 后期取消注释
+// const today = screening.getNowFormatDate()
+const query = gql`query instanceList($state: numeric!, $arising_time_gte: timestamp!, $arising_time_lte: timestamp!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
+  pagination: t_alert_aggregate(where: {state: {_eq: $state}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  data: t_alert(offset: $offset, limit: $limit, where: {state: {_eq: $state}}, order_by: $orderBy) {
+  data: t_alert(offset: $offset, limit: $limit, where: {state: {_eq: $state},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}, order_by: $orderBy) {
     arising_time
     first_arising_time
     message
@@ -282,55 +283,55 @@ const query = gql`query instanceList($state: numeric!, $limit: Int! = 0, $offset
     agent_id
   }
 }`
-const levelQuery = gql`query($state: numeric! ) {
-  L1: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:0}}) {
+const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $arising_time_lte: timestamp! ) {
+  L1: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:0},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  L2: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:1}}) {
+  L2: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:1},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  L3:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:2}}) {
+  L3:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:2},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  L4:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:3}}) {
+  L4:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:3},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  L5:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:4}}) {
+  L5:t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:4},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
 }`
-const menuQuery = gql`query{
-  m1: t_alert_aggregate(where: {state: {_eq: 0}}) {
+const menuQuery = gql`query($arising_time_gte: timestamp!, $arising_time_lte: timestamp!){
+  m1: t_alert_aggregate(where: {state: {_eq: 0}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  m2: t_alert_aggregate(where: {state: {_eq: 5}}) {
+  m2: t_alert_aggregate(where: {state: {_eq: 5}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  m3: t_alert_aggregate(where: {state: {_eq: 10}}) {
+  m3: t_alert_aggregate(where: {state: {_eq: 10}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  m4: t_alert_aggregate(where: {state: {_eq: 20}}) {
+  m4: t_alert_aggregate(where: {state: {_eq: 20}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
   }
-  m5: t_alert_aggregate(where: {state: {_eq: 30}}) {
+  m5: t_alert_aggregate(where: {state: {_eq: 30}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
     }
@@ -461,7 +462,10 @@ export default {
           variables: {
             ...parameter,
             ...this.queryParams,
-            state: this.tabKey
+            state: this.tabKey,
+            arising_time_gte: '2018-5-31 00:00:00',
+            arising_time_lte: '2018-5-31 23:59:59'
+            // arising_time: today
           }
         }).then(r => r.data)
       },
@@ -518,14 +522,16 @@ export default {
      * 获取现有的告警级别列表
      */
     getLevelList () {
-      const that = this
       return apollo.clients.alert.query({
         query: levelQuery,
         variables: {
-          state: this.tabKey
+          state: this.tabKey,
+          // arising_time: today(后期替换时间)
+          arising_time_gte: '2018-5-31 00:00:00',
+          arising_time_lte: '2018-5-31 23:59:59'
         }
       }).then(r => {
-        that.alarmLevelList = {
+        this.alarmLevelList = {
           4: r.data.L5.aggregate.count,
           3: r.data.L4.aggregate.count,
           2: r.data.L3.aggregate.count,
@@ -539,7 +545,12 @@ export default {
      */
     getMenuList () {
       return apollo.clients.alert.query({
-        query: menuQuery
+        query: menuQuery,
+        variables: {
+          // arising_time: today
+          arising_time_gte: '2018-5-31 00:00:00',
+          arising_time_lte: '2018-5-31 23:59:59'
+        }
       }).then(r => {
         const alarmMenuList = {
           0: r.data.m1.aggregate.count,
@@ -618,40 +629,14 @@ export default {
      * ci实例改变
      */
     CIInstanceChange (value) {
-      this.queryParam.CIInstance = this.checkAll(value, this.CIInstance)
+      this.queryParam.CIInstance = screening.checkAll(value, this.CIInstance)
       console.log(this.queryParam)
-    },
-    /**
-     * 选择框全选(适用于分组选择器)
-     */
-    checkAll (arr, modelList) {
-      // arr:change中的数组 ，  modelList:下拉框List
-      const length = arr.length
-      let list = arr
-      arr.forEach(element => {
-        // 当数组中存在0，说明此时进行全选/取消全选
-        if (element === 'checkall') {
-          // 当数组长度为最大长度且最后一个元素为0时，说明此时在全选的基础上又点击全选，则取消全选
-          if (length - 1 === modelList.length && arr[length - 1] === 'checkall') {
-            list = []
-          } else {
-            // 当不是取消全选操作，只要数组中出现了0则说明进行了全选操作
-            list = []
-            modelList.forEach(m => {
-              for (const i in m.options) {
-                list.push(m.options[i].value)
-              }
-            })
-          }
-        }
-      })
-      return list
     },
     /**
      * 告警类型改变
      */
     alarmTypeChange (value) {
-      this.queryParam.alarmType = this.checkAll(value, this.alarmType)
+      this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
     },
     onSearch (value) {
       console.log(value)
