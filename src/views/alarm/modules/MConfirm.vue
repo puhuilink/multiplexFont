@@ -1,8 +1,5 @@
 /*
  * 确认告警
- * Author: yizhu liu
- * Date: 2019-12-12 17:49:21
- * Email: lyz02413@163.com
  */
 <template>
   <a-modal

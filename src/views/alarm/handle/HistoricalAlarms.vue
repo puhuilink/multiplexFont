@@ -214,7 +214,7 @@
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x:3000, y: 350 }"
+        :scroll="{ x:3300, y: 350 }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
@@ -254,8 +254,9 @@
 <script>
 import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 import screening from '../screening'
-import { getAlarmList } from '@/api/alarmMonitor'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
@@ -314,8 +315,8 @@ export default {
           title: '状态',
           dataIndex: 'state',
           width: 75,
-          sorter: true,
           fixed: 'left',
+          sorter: true,
           scopedSlots: { customRender: 'state' }
         },
         {
@@ -334,6 +335,7 @@ export default {
           title: '级别',
           dataIndex: 'severity',
           width: 100,
+          align: 'center',
           sorter: true,
           scopedSlots: { customRender: 'level' }
         },
@@ -346,13 +348,13 @@ export default {
         {
           title: '首次告警时间',
           dataIndex: 'first_arising_time',
-          width: 150,
+          width: 180,
           sorter: true
         },
         {
           title: '最近告警时间',
           dataIndex: 'arising_time',
-          width: 150,
+          width: 180,
           sorter: true
         },
         {
@@ -406,18 +408,48 @@ export default {
         {
           title: '交易渠道',
           dataIndex: 'instance2',
+          align: 'left',
           sorter: true
         }
 
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
+        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
+          pagination: t_alert_aggregate(where: {}) {
+            aggregate {
+              count
+            }
+          }
+          data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy) {
+            state
+            dev_name
+            app_name
+            severity
+            message
+            first_arising_time
+            arising_time
+            count
+            agent_id
+            close_time
+            close_by
+            order_id
+            alert_id
+            related
+            instance
+            instance2
+          }
+        }`
         // 清空选中
         this.selectedRowKeys = []
-        return getAlarmList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+            // arising_time: today
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -434,20 +466,19 @@ export default {
       return screening.levelList[type].text
     },
     acStateTitleFilter (type) {
-      type += ''
-      switch (type) {
-        case 'pending':
+      switch (`${type}`) {
+        case '0':
           return '新产生'
-        case 'confirmed':
+        case '5':
           return '已确认'
-        case 'shifting':
+        case '10':
           return '已前转'
-        case 'resolved':
+        case '20':
           return '已解决'
-        case 'ignore':
+        case '30':
           return '已忽略'
         default:
-          return ''
+          return type
       }
     }
   },

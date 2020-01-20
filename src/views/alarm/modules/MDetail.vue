@@ -154,11 +154,11 @@
             <a-input disabled v-model="record.code" />
           </a-form-item>
         </a-col>
-        <a-col :lg="12" :md="12" :sm="24">
+        <!-- <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="子告警">
             <a-input disabled v-model="record.related" />
           </a-form-item>
-        </a-col>
+        </a-col> -->
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="KPI编号">
             <a-input disabled v-model="record.kpi_code" />

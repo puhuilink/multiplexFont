@@ -145,9 +145,9 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open(record)" :disabled="selectedRowKeys.length > 0">确认</a-button>
-          <a-button @click="$refs.rollForward.open()" :disabled="selectedRowKeys.length > 0">前转</a-button>
-          <a-button @click="$refs.resolve.open()" :disabled="selectedRowKeys.length > 0">解决</a-button>
+          <a-button @click="$refs.confirm.open(record)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
+          <a-button @click="$refs.rollForward.open()" :disabled="!selectedRowKeys.length > 0">前转</a-button>
+          <a-button @click="$refs.resolve.open()" :disabled="!selectedRowKeys.length > 0">解决</a-button>
         </a-col>
         <a-col
           :xs="24"
@@ -700,13 +700,6 @@ export default {
   }
   .l5{
     background: #00c356;
-  }
-}
-// BEM: block + element + modify
-.AlarmMonitor {
-  &-level {
-    &__01 {}
-    &__02 {}
   }
 }
 </style>
