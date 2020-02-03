@@ -1,8 +1,5 @@
 /*
  * 生成故障
- * Author: yizhu liu
- * Date: 2019-12-24 09:28:43
- * Email: lyz02413@163.com
  */
 <template>
   <div class="generate-fault">

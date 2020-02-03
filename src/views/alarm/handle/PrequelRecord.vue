@@ -126,7 +126,7 @@ export default {
       columns: [
         {
           title: '前转编号',
-          dataIndex: 'id',
+          dataIndex: 'incident_id',
           sorter: true,
           align: 'center',
           width: 100,
@@ -134,7 +134,7 @@ export default {
         },
         {
           title: '故障类型',
-          dataIndex: 'faultType',
+          dataIndex: 'incident_type',
           align: 'center',
           width: 100,
           sorter: true,
@@ -149,7 +149,7 @@ export default {
         },
         {
           title: '故障级别',
-          dataIndex: 'faultLevel',
+          dataIndex: 'severity',
           align: 'center',
           width: 100,
           sorter: true,
@@ -165,21 +165,21 @@ export default {
         },
         {
           title: '故障名称',
-          dataIndex: 'faultName',
+          dataIndex: 'incident_title',
           align: 'center',
           width: 120,
           sorter: true
         },
         {
           title: '发送者',
-          dataIndex: 'sender',
+          dataIndex: 'send_by',
           align: 'center',
           width: 120,
           sorter: true
         },
         {
           title: '前转类型',
-          dataIndex: 'forwardType',
+          dataIndex: 'forward_type',
           align: 'center',
           width: 120,
           sorter: true,
@@ -198,21 +198,21 @@ export default {
         },
         {
           title: '前转目标',
-          dataIndex: 'forwardTarget',
+          dataIndex: 'forward_destiationn',
           align: 'center',
           width: 120,
           sorter: true
         },
         {
           title: '发送时间',
-          dataIndex: 'firstArisingTime',
+          dataIndex: 'send_time',
           align: 'center',
           width: 150,
           sorter: true
         },
         {
           title: '描述',
-          dataIndex: 'message',
+          dataIndex: 'comments',
           align: 'center',
           width: 400,
           scopedSlots: { customRender: 'message' }
