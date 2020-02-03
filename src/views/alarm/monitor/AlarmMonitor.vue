@@ -1,8 +1,5 @@
 /**
  *告警监控
- *Author: yizhu liu
- *Date: 2019-12-03 14:13:22
- *Email: lyz02413@163.com
  */
 <template>
   <div class="alarm-monitor">
@@ -145,7 +142,7 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open(record)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
+          <a-button @click="$refs.confirm.open(selectedRows)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
           <a-button @click="$refs.rollForward.open()" :disabled="!selectedRowKeys.length > 0">前转</a-button>
           <a-button @click="$refs.resolve.open()" :disabled="!selectedRowKeys.length > 0">解决</a-button>
         </a-col>
@@ -224,7 +221,7 @@
 
       <!-- S 表格右击菜单 -->
       <a-menu :style="menuStyle" v-if="menuVisible">
-        <a-menu-item @click="$refs.confirm.open()">
+        <a-menu-item @click="$refs.confirm.open(menuData)">
           <a-icon type="pushpin" />
           确认告警
         </a-menu-item>

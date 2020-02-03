@@ -1,8 +1,5 @@
 /*
  * 历史告警
- * Author: yizhu liu
- * Date: 2019-12-19 13:58:55
- * Email: lyz02413@163.com
  */
 
 <template>
