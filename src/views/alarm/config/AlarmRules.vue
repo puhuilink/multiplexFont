@@ -107,7 +107,7 @@
 import { STable } from '@/components'
 import { getAlarmRuleList } from '@/api/alarmConfig'
 import deleteCheck from '@/components/DeleteCheck'
-import detail from './modules/AlarmRuleDetail'
+import detail from './modules/alarmRuleDetail'
 
 export default {
   name: 'AlarmsRules',
