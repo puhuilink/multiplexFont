@@ -51,7 +51,7 @@
       </template>
 
       <template #opration>
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
@@ -59,6 +59,10 @@
       </template>
 
     </CTable>
+
+    <ResourceInstanceSchema
+      ref="schema"
+    />
   </div>
 </template>
 
@@ -66,6 +70,7 @@
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import ResourceInstanceSchema from './ResourceInstanceSchema'
 
 const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
   pagination: ngecc_instance_aggregate(where: $where) {
@@ -92,7 +97,8 @@ export default {
     }
   },
   components: {
-    CTable
+    CTable,
+    ResourceInstanceSchema
   },
   data: () => ({
     // 查询栏是否展开
@@ -147,6 +153,9 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
