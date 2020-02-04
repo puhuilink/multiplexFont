@@ -91,7 +91,7 @@
 import { STable } from '@/components'
 import { getalarmTypeList } from '@/api/alarmType'
 import deleteCheck from '@/components/DeleteCheck'
-import detail from './modules/alarmTypesDetail'
+import detail from './modules/AlarmTypesDetail'
 
 export default {
   name: 'AlarmsTypes',

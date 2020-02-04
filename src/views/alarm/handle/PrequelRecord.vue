@@ -105,6 +105,8 @@ import { STable, Ellipsis } from '@/components'
 // import screening from '../screening'
 import { getForwardRecordList } from '@/api/prequelRecord'
 import prequelDetail from '../modules/prequelDetail'
+// import gql from 'graphql-tag'
+// import apollo from '@/utils/apollo'
 
 export default {
   name: 'PrequelRecord',

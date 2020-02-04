@@ -85,6 +85,16 @@
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="更新时间">
+            <a-date-picker
+              showTime
+              style="width: 100%"
+              :disabled="mode=='See'"
+              v-decorator="['refreshTime', { initialValue: record.refreshTime, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="数据权限域">
             <a-input
               :disabled="mode=='See'"

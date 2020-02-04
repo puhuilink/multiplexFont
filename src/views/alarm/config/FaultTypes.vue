@@ -33,7 +33,10 @@
         <a-button>新建类型</a-button>
         <a-button>新建子类型</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button
+          :disabled="!hasSelected"
+          @click="deleteCtrl"
+        >删除</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -74,6 +77,8 @@
 <script>
 import { STable } from '@/components'
 import { getFaultTypeList } from '@/api/alarmConfig'
+import deleteCheck from '@/components/DeleteCheck'
+
 export default {
   name: 'FaultTypes',
   components: {
@@ -157,6 +162,13 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
     }
   }
 }
