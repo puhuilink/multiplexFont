@@ -9,7 +9,6 @@
         <a-input
           :style="{width: 'calc(100% - 100px)'}"
           v-decorator="['name', {
-            initialValue: '规则名称',
             rules: [{required: true, message: '规则名称必须填写'}]}
           ]"
         />
@@ -21,8 +20,8 @@
       >
         <a-radio-group
           name="radioGroup"
-          v-decorator="['name', {
-            initialValue: '1',
+          v-decorator="['type', {
+            initialValue: 1,
             rules: [{required: true, message: '规则模式必须填写'}]}
           ]"
         >

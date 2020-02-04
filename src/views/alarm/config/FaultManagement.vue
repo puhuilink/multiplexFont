@@ -71,9 +71,24 @@
       <div class="opration">
         <a-button>新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelected">启用</a-button>
-        <a-button :disabled="!hasSelected">停用</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
+        <a-button
+          :disabled="!hasSelected"
+          @click="enableCtrl"
+        >
+          启用
+        </a-button>
+        <a-button
+          :disabled="!hasSelected"
+          @click="disableCtrl"
+        >
+          停用
+        </a-button>
         <a-button :disabled="!hasSelected">关联故障</a-button>
       </div>
       <!-- E 操作栏 -->
@@ -119,6 +134,8 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getForwardWayList } from '@/api/alarmConfig'
+import deleteCheck from '@/components/DeleteCheck'
+import AbleCheck from '@/components/AbleCheck'
 
 export default {
   name: 'FaultManagement',
@@ -264,6 +281,27 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
+    },
+    /**
+     * 确定启用
+     */
+    async enableCtrl () {
+      await AbleCheck.enable() &&
+        console.log('确定启用')
+    },
+    /**
+     * 确定禁用
+     */
+    async disableCtrl () {
+      await AbleCheck.disable() &&
+        console.log('确定停用')
     }
   }
 }

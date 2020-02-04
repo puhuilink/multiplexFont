@@ -1,68 +1,105 @@
 <template>
   <div>
     <a-form :form="form" style="max-width: 500px; margin: 40px auto 0;">
-      <a-alert
-        :closable="true"
-        message="确认转账后，资金将直接打入对方账户，无法退回。"
-        style="margin-bottom: 24px;"
-      />
       <a-form-item
-        label="付款账户"
+        label="域选择"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        class="stepFormText"
       >
-        ant-design@alipay.com
+        <a-select
+          allowClear
+          v-decorator="[
+            'domian',
+            { rules: [{ required: true, message: '请选择域' }] },
+          ]"
+          placeholder="请选择域"
+        >
+          <a-select-opt-group
+            v-for="(group,index) in screening.CIDomain"
+            :key="index"
+            :label="group.label"
+          >
+            <a-select-option
+              v-for="item in group.options"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select-opt-group>
+        </a-select>
       </a-form-item>
       <a-form-item
-        label="收款账户"
+        label="类型"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        class="stepFormText"
       >
-        test@example.com
+        <a-select
+          allowClear
+          v-decorator="[
+            'CIType',
+            { rules: [{ required: true, message: '请选择类型' }] },
+          ]"
+          placeholder="请选择类型"
+        >
+          <a-select-opt-group
+            v-for="(group,index) in screening.CIType"
+            :key="index"
+            :label="group.label"
+          >
+            <a-select-option
+              v-for="item in group.options"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select-opt-group>
+        </a-select>
       </a-form-item>
       <a-form-item
-        label="收款人姓名"
+        label="告警类型"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        class="stepFormText"
       >
-        Alex
-      </a-form-item>
-      <a-form-item
-        label="转账金额"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        class="stepFormText"
-      >
-        ￥ 5,000.00
-      </a-form-item>
-      <a-divider />
-      <a-form-item
-        label="支付密码"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        class="stepFormText"
-      >
-        <a-input
-          type="password"
-          style="width: 80%;"
-          v-decorator="['paymentPassword', { initialValue: '123456', rules: [{required: true, message: '请输入支付密码'}] }]" />
+        <a-select
+          allowClear
+          v-decorator="[
+            'alarmType',
+            { rules: [{ required: true, message: '请选择告警类型' }] },
+          ]"
+          placeholder="请选择告警类型"
+        >
+          <a-select-opt-group
+            v-for="(group,index) in screening.alarmType"
+            :key="index"
+            :label="group.label"
+          >
+            <a-select-option
+              v-for="item in group.options"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select-opt-group>
+        </a-select>
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
-        <a-button :loading="loading" type="primary" @click="nextStep">提交</a-button>
         <a-button style="margin-left: 8px" @click="prevStep">上一步</a-button>
+        <a-button type="primary" @click="nextStep">下一步</a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
+import screening from '@/views/alarm/screening'
 export default {
   name: 'Step2',
   data () {
     return {
+      screening,
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },
       wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
       form: this.$form.createForm(this),
