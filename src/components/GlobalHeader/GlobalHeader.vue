@@ -6,6 +6,7 @@
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
         :style="{ padding: '0' }">
         <div v-if="mode === 'sidemenu'" class="header">
+          <Logo v-if="fixedHeader" class="header-logo" />
           <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
           <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
           <user-menu></user-menu>
@@ -109,6 +110,24 @@ export default {
 <style lang="less">
 @import '../index.less';
 
+.ant-header-fixedHeader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 64px;
+  z-index: 199;
+}
+
+.header-logo {
+  display: inline-block;
+  padding: 12px 20px;
+
+  h1 {
+    display: inline-block;
+  }
+}
+
 .header-animat{
   position: relative;
   z-index: @ant-global-header-zindex;
@@ -117,7 +136,8 @@ export default {
   transition: all 0.25s ease;
 }
 .showHeader-leave-active {
-  transition: all 0.5s ease;
+  height: 0;
+  transition: all 0.25s ease;
 }
 .showHeader-enter, .showHeader-leave-to {
   opacity: 0;

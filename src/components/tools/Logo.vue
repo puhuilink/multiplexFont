@@ -13,7 +13,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '中国交建 · 统一监控管理平台',
+      default: '中国交建· 统一监控管理平台',
       required: false
     },
     showTitle: {
@@ -26,6 +26,15 @@ export default {
 </script>
 <style scoped lang="less">
 .logo {
+  line-height: 1;
+  // FIXME: 居中
+  transform: translateY(-2px);
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+
   &__title {
     margin: 0 0 0 6px !important;
     font-size: 16px !important;

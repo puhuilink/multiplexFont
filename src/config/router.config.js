@@ -269,6 +269,35 @@ export const asyncRouterMap = [
         ]
       },
 
+      // system
+      {
+        path: '/system',
+        name: 'system',
+        redirect: '/system/user',
+        component: RouteView,
+        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: [ 'system' ] },
+        children: [
+          {
+            path: '/system/user',
+            name: 'User',
+            component: () => import('@/views/system/user/User'),
+            meta: { title: '用户管理', keepAlive: true, permission: [ 'system' ] }
+          },
+          {
+            path: '/system/group',
+            name: 'Group',
+            component: () => import('@/views/system/group/Group'),
+            meta: { title: '工作组管理', keepAlive: true, permission: [ 'system' ] }
+          },
+          {
+            path: '/system/audit',
+            name: 'Audit',
+            component: () => import('@/views/system/audit/Audit'),
+            meta: { title: '审计管理', keepAlive: true, permission: [ 'system' ] }
+          }
+        ]
+      },
+
       // patrol
       {
         path: '/patrol',
@@ -299,42 +328,13 @@ export const asyncRouterMap = [
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡检任务管理', keepAlive: true, permission: [ 'patrol' ] }
+            meta: { title: '巡检任务单', keepAlive: true, permission: [ 'patrol' ] }
           },
           {
             path: '/patrol/object',
             name: 'PatrolObject',
             component: () => import('@/views/patrol/object/PatrolObject'),
             meta: { title: '巡检检查对象', keepAlive: true, permission: [ 'patrol' ] }
-          }
-        ]
-      },
-
-      // system
-      {
-        path: '/system',
-        name: 'system',
-        redirect: '/system/user',
-        component: RouteView,
-        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: [ 'system' ] },
-        children: [
-          {
-            path: '/system/user',
-            name: 'User',
-            component: () => import('@/views/system/user/User'),
-            meta: { title: '用户管理', keepAlive: true, permission: [ 'system' ] }
-          },
-          {
-            path: '/system/group',
-            name: 'Group',
-            component: () => import('@/views/system/group/Group'),
-            meta: { title: '工作组管理', keepAlive: true, permission: [ 'system' ] }
-          },
-          {
-            path: '/system/audit',
-            name: 'Audit',
-            component: () => import('@/views/system/audit/Audit'),
-            meta: { title: '审计管理', keepAlive: true, permission: [ 'system' ] }
           }
         ]
       },

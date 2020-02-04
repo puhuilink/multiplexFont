@@ -18,6 +18,7 @@ import {
   Checkbox,
   Select,
   Card,
+  Calendar,
   Form,
   Row,
   Col,
@@ -41,6 +42,7 @@ import {
   Divider,
   DatePicker,
   TimePicker,
+  Tree,
   Upload,
   Progress,
   Skeleton,
@@ -62,6 +64,7 @@ Vue.use(Radio)
 Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
+Vue.use(Calendar)
 Vue.use(Form)
 Vue.use(Row)
 Vue.use(Col)
@@ -91,6 +94,7 @@ Vue.use(Skeleton)
 Vue.use(Popconfirm)
 Vue.use(Slider)
 Vue.use(Collapse)
+Vue.use(Tree)
 // Vue.use(VueCropper)
 Vue.use(notification)
 
