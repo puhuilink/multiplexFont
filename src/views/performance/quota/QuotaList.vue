@@ -69,7 +69,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
       </div>
@@ -90,18 +90,24 @@
       />
       <!-- E 列表 -->
     </a-card>
+
+    <QuotaSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getQuotaList } from '@/api/quotaList'
+import QuotaSchema from './QuotaSchema'
 
 export default {
   name: 'QuotaList',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    QuotaSchema
   },
   data () {
     return {
@@ -180,6 +186,9 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 筛选展开开关
      */
