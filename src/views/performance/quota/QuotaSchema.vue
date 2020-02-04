@@ -7,12 +7,12 @@
     :width="940"
     wrapClassName="QuotaSchema__modal"
     @cancel="cancel"
-    @afterClose="reset"
+    :afterClose="reset"
     okText="保存"
     cancelText="取消"
   >
     <a-form :form="form" layout="vertical">
-      <a-tabs defaultActiveKey="1">
+      <a-tabs v-model="activeTabKey">
         <a-tab-pane tab="基本信息" key="1">
           <a-row>
             <a-col :md="12" :span="24">
@@ -488,6 +488,7 @@ export default {
   components: {},
   props: {},
   data: (vm) => ({
+    activeTabKey: '1',
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
@@ -530,14 +531,9 @@ export default {
 <style lang="less">
   .QuotaSchema {
     &__modal {
-      .ant-modal-body {
-        /*height: 700px;*/
-        /*overflow-y: hidden;*/
-      }
       .ant-tabs-tabpane {
         height: 615px;
         overflow-y: scroll;
-        /*overflow-x: hidden;*/
       }
 
       .ant-calendar-picker {

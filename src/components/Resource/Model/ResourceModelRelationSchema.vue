@@ -7,7 +7,7 @@
     :width="940"
     wrapClassName="ResourceModelRelationSchema__modal"
     @cancel="cancel"
-    @afterClose="reset"
+    :afterClose="reset"
     okText="保存"
     cancelText="取消"
   >
