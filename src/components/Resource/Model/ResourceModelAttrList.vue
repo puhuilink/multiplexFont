@@ -8,7 +8,18 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: 1580, y: 850}"
     >
+      <template #opration>
+        <a-button @click="add">新建</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+        <a-button>数据检查</a-button>
+        <a-button>筛选</a-button>
+      </template>
     </CTable>
+
+    <ResourceModelAttrSchema
+      ref="schema"
+    />
   </div>
 </template>
 
@@ -16,6 +27,7 @@
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 
 const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_model_attributes_order_by!]) {
   pagination: ngecc_model_attributes_aggregate (where: $where) {
@@ -42,7 +54,8 @@ const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: In
 export default {
   name: 'ResourceModelAttrList',
   components: {
-    CTable
+    CTable,
+    ResourceModelAttrSchema
   },
   props: {
     where: {
@@ -135,6 +148,9 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
