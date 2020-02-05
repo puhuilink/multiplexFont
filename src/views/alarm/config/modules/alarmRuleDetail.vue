@@ -4,11 +4,13 @@
 <template>
   <a-modal
     :title="mode=='New'?'新增':mode=='See'?'详情':'编辑'"
+    :footer="null"
     style="top: 40px;"
     :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
     :width="900"
     :visible="visible"
     :loading="loading"
+    destroyOnClose
     @cancel="handleCancel"
   >
     <a-steps class="steps" :current="currentTab">
@@ -25,19 +27,19 @@
       <step4 v-if="currentTab === 3" @prevStep="prevStep" @finish="finish"/>
     </div>
 
-    <template slot="footer" v-if="currentTab === 3">
+    <!-- <template slot="footer" v-if="currentTab === 3">
       <a-button @click="handleSubmit">保存</a-button>
       <a-button @click="handleCancel">取消</a-button>
-    </template>
+    </template> -->
 
   </a-modal>
 </template>
 
 <script>
-import step1 from '@/components/ARStepForm/basis'
-import step2 from '@/components/ARStepForm/rules'
-import step3 from '@/components/ARStepForm/advancedRules'
-import step4 from '@/components/ARStepForm/alarmMerger'
+import step1 from '@/components/ARStepForm/Basis'
+import step2 from '@/components/ARStepForm/Rules'
+import step3 from '@/components/ARStepForm/AdvancedRules'
+import step4 from '@/components/ARStepForm/AlarmMerger'
 
 export default {
   name: 'AlarmTypesDetail',

@@ -10,6 +10,7 @@
       :confirmLoading="confirmLoading"
       @ok="handleSubmit"
       @cancel="handleCancel"
+      destroyOnClose
     >
       <a-spin :spinning="confirmLoading">
         <a-form :form="form">

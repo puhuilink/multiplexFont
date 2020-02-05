@@ -2,111 +2,183 @@
   <div>
     <a-form :form="form" style="max-width: 500px; margin: 40px auto 0;">
       <a-form-item
-        label="付款账户"
+        label="新的告警类型"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
         <a-select
-          placeholder="ant-design@alipay.com"
-          v-decorator="['paymentUser', { rules: [{required: true, message: '付款账户必须填写'}] }]">
-          <a-select-option value="1">ant-design@alipay.com</a-select-option>
+          allowClear
+          v-decorator="[
+            'domian'
+          ]"
+          placeholder="请选择"
+        >
+          <a-select-opt-group
+            v-for="(group,index) in screening.CIDomain"
+            :key="index"
+            :label="group.label"
+          >
+            <a-select-option
+              v-for="item in group.options"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select-opt-group>
         </a-select>
       </a-form-item>
       <a-form-item
-        label="收款账户"
+        label="新的告警级别"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-input-group
-          style="display: inline-block; vertical-align: middle"
-          :compact="true"
+        <a-select
+          mode="multiple"
+          allowClear
+          placeholder="请选择告警级别"
+          v-decorator="[
+            'newLevel'
+          ]"
+          @change="alarmLevelChange"
         >
-          <a-select defaultValue="alipay" style="width: 100px">
-            <a-select-option value="alipay">支付宝</a-select-option>
-            <a-select-option value="wexinpay">微信</a-select-option>
-          </a-select>
-          <a-input
-            :style="{width: 'calc(100% - 100px)'}"
-            v-decorator="['payType', { initialValue: 'test@example.com', rules: [{required: true, message: '收款账户必须填写'}]}]"
-          />
-        </a-input-group>
+          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <a-select-option
+            v-for="item in levelList"
+            :key="item"
+            :value="item"
+          >
+            {{ item }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item
-        label="收款人姓名"
+        label="新的告警标记"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-input v-decorator="['name', { initialValue: 'Alex', rules: [{required: true, message: '收款人名称必须核对'}] }]"/>
+        <a-radio-group
+          name="radioGroup"
+          v-decorator="['newTag', {
+            initialValue: 0}
+          ]"
+        >
+          <a-radio :value="0">添加</a-radio>
+          <a-radio :value="1">重置</a-radio>
+          <a-radio :value="2">删除</a-radio>
+        </a-radio-group>
       </a-form-item>
       <a-form-item
-        label="转账金额"
+        label=" "
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-input prefix="￥" v-decorator="['momey', { initialValue: '5000', rules: [{required: true, message: '转账金额必须填写'}] }]"/>
+        <a-select
+          mode="multiple"
+          allowClear
+          v-decorator="[
+            'newTag2'
+          ]"
+          @change="alarmLevelChange"
+        >
+          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <a-select-option
+            v-for="item in levelList"
+            :key="item"
+            :value="item"
+          >
+            {{ item }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
-        <a-button type="primary" @click="nextStep">下一步</a-button>
+        <a-button @click="prevStep">上一步</a-button>
+        <a-button style="margin-left: 8px" :loading="loading" type="primary" @click="nextStep">提交</a-button>
       </a-form-item>
     </a-form>
-    <a-divider />
-    <div class="step-form-style-desc">
-      <h3>说明</h3>
-      <h4>转账到支付宝账户</h4>
-      <p>如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。</p>
-      <h4>转账到银行卡</h4>
-      <p>如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。</p>
-    </div>
   </div>
 </template>
 
 <script>
+import screening from '@/views/alarm/screening'
+
 export default {
-  name: 'Step1',
+  name: 'AlarmMerge',
   data () {
     return {
+      screening,
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },
       wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
-      form: this.$form.createForm(this)
+      form: this.$form.createForm(this),
+      loading: false,
+      timer: 0,
+      levelList: [
+        'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
+      ]
     }
   },
   methods: {
     nextStep () {
+      const that = this
       const { form: { validateFields } } = this
-      // 先校验，通过表单校验后，才进入下一步
+      that.loading = true
       validateFields((err, values) => {
         if (!err) {
-          this.$emit('nextStep')
+          console.log('表单 values', values)
+          that.timer = setTimeout(function () {
+            that.loading = false
+            that.$emit('handleSubmit')
+          }, 1500)
+        } else {
+          that.loading = false
+        }
+      })
+    },
+    prevStep () {
+      this.$emit('prevStep')
+    },
+    /**
+     * 告警类型改变
+     */
+    alarmLevelChange (value) {
+      // this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
+      console.log(value)
+      let list = value
+      value.forEach(element => {
+        if (element === 'checkall') {
+          if (length - 1 === this.levelList && value[length - 1] === 'checkall') {
+            list = []
+            console.log('点击')
+          } else {
+            list = []
+            this.levelList.forEach(m => {
+              list.push(m)
+              console.log(list)
+              const a = this.form.getFieldsValue()
+              this.form.setFieldsValue({
+                alarmLevel: list
+              })
+              console.log(a)
+            })
+          }
         }
       })
     }
+  },
+  beforeDestroy () {
+    clearTimeout(this.timer)
   }
 }
 </script>
 
 <style lang="less" scoped>
-.step-form-style-desc {
-  padding: 0 56px;
-  color: rgba(0,0,0,.45);
+  .stepFormText {
+    margin-bottom: 24px;
 
-  h3 {
-    margin: 0 0 12px;
-    color: rgba(0,0,0,.45);
-    font-size: 16px;
-    line-height: 32px;
+    .ant-form-item-label,
+    .ant-form-item-control {
+      line-height: 22px;
+    }
   }
 
-  h4 {
-    margin: 0 0 4px;
-    color: rgba(0,0,0,.45);
-    font-size: 14px;
-    line-height: 22px;
-  }
-
-  p {
-    margin-top: 0;
-    margin-bottom: 12px;
-    line-height: 22px;
-  }
-}
 </style>

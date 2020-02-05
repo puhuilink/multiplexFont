@@ -67,7 +67,7 @@
 
 <script>
 export default {
-  name: 'Step1',
+  name: 'Basis',
   data () {
     return {
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },

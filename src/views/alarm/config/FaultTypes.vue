@@ -30,13 +30,28 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建类型</a-button>
-        <a-button>新建子类型</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
         <a-button
-          :disabled="!hasSelected"
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建类型
+        </a-button>
+        <a-button
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建子类型
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
-        >删除</a-button>
+        >
+          删除
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -70,6 +85,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -78,11 +97,13 @@
 import { STable } from '@/components'
 import { getFaultTypeList } from '@/api/alarmConfig'
 import deleteCheck from '@/components/DeleteCheck'
+import detail from './modules/FTDetail'
 
 export default {
   name: 'FaultTypes',
   components: {
-    STable
+    STable,
+    detail
   },
   data () {
     return {
