@@ -56,7 +56,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>查看</a-button>
+        <a-button @click="show" :disabled="selectedRowKeys.length !== 1">查看</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -70,7 +70,7 @@
         :alert="false"
         :scroll="{ y:400 }"
         :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: onSelectChange }"
         showPagination="auto"
       >
         <span slot="operateContent" slot-scope="text">
@@ -79,18 +79,24 @@
       </s-table>
       <!-- E 列表 -->
     </a-card>
+
+    <AduitSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getAuditList } from '@/api/system'
+import AduitSchema from './AduitSchema'
 
 export default {
   name: 'Audit',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    AduitSchema
   },
   data () {
     return {
@@ -160,6 +166,10 @@ export default {
   filters: {},
   computed: {},
   methods: {
+    show () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].show(record)
+    },
     /**
      * 筛选展开开关
      */
