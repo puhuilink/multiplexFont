@@ -5,12 +5,12 @@
       :data="loadData"
       :columns="columns"
       rowKey="_id_s"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+      :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
       <template #opration>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
         <a-button>筛选</a-button>
@@ -67,6 +67,8 @@ export default {
   data: () => ({
     // 查询参数
     queryParams: {},
+    // 选中行
+    selectedRows: [],
     // 选中行的 key
     selectedRowKeys: []
   }),
@@ -157,6 +159,9 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    edit () {
+      this.$refs['schema'].edit()
     },
     /**
      * 加载表格数据
