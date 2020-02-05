@@ -1,5 +1,5 @@
 <template>
-  <div class="ResourceTree">
+  <div class="ResourceTree" :class="{ 'ResourceTree__hidden-tab': hiddenTab }">
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="资源树" key="1">
         <!-- TODO: 固定搜索栏 -->
@@ -90,10 +90,20 @@ export default {
     ResourceTreeNodeSchema
   },
   props: {
+    // 隐藏分页
+    hiddenTab: {
+      type: Boolean,
+      default: false
+    },
     // 统计节点下的实例列表数量
     instanceListCount: {
       type: Boolean,
       default: false
+    },
+    // 根节点
+    rootKeys: {
+      type: Array,
+      default: () => (['Ci'])
     }
   },
   data: () => ({
@@ -112,7 +122,7 @@ export default {
     },
     treeData: {
       get () {
-        return buildTree(this.dataSource)
+        return buildTree(this.dataSource, this.rootKeys)
       }
     }
   },
@@ -154,6 +164,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
+      // FIMXE: 查询匹配有时无法匹配，比如查询 "北京"
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }
@@ -163,6 +174,11 @@ export default {
 
 <style lang="less">
 .ResourceTree {
+  &__hidden-tab {
+    .ant-tabs-bar {
+      display: none;
+    }
+  }
   &__tabBarExtraContent {
     padding-right: 8px;
   }

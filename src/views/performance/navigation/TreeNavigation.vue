@@ -5,64 +5,33 @@
  * Email: lyz02413@163.com
  */
 <template>
-  <div class="tree-navigation">
-    <a-layout theme="light" >
-
-      <a-layout-header class="tn-header">
-        <a-input-search
-          placeholder="input search text"
-          style="width: 200px; margin-right: 7px;"
-          @search="onSearch"
+  <div class="TreeNavigation">
+    <a-row>
+      <a-col :span="6">
+        <ResourceTree
+          hiddenTab
+          :rootKeys="['BJDC', 'XMDC']"
         />
-        <a-button icon="clock-circle" style="background:#555; color:#fff;" />
-        <a-button icon="border-verticle" style="background:rgb(195, 206, 212); color:#fff;" />
-        <a-button icon="border-horizontal" style="background:rgb(195, 206, 212); color:#fff;" />
-        <a-button style="background:rgb(195, 206, 212); color:#fff;" >
-          1:1
-        </a-button>
-      </a-layout-header>
+      </a-col>
 
-      <a-layout>
-
-        <a-layout-sider
-          breakpoint="lg"
-          collapsedWidth="0"
-          collapsible
-          v-model="collapsed"
-          theme="light"
-        >
-          <a-menu
-            :defaultSelectedKeys="['1']"
-            :defaultOpenKeys="['2']"
-            mode="inline"
-            theme="light"
-            :inlineCollapsed="collapsed"
-          >
-            <template v-for="item in list">
-              <a-menu-item v-if="!item.children" :key="item.key">
-                <a-icon type="file" />
-                <span>{{ item.title }}</span>
-              </a-menu-item>
-              <sub-menu v-else :menu-info="item" :key="item.key" />
-            </template>
-          </a-menu>
-        </a-layout-sider>
-
-        <a-layout-content :style="{ padding: '16px 36px 0', background: '#fff' }">
-          content
-        </a-layout-content>
-      </a-layout>
-
-    </a-layout>
+      <a-col :span="18">
+        视图 TODO
+      </a-col>
+    </a-row>
   </div>
 </template>
 
 <script>
 import SubMenu from '@/components/SubMenu/SubMenu'
+import {
+  ResourceTree
+} from '@/components/Resource'
+
 export default {
   name: 'TreeNavigation',
   components: {
-    'sub-menu': SubMenu
+    'sub-menu': SubMenu,
+    ResourceTree
   },
   data () {
     return {
