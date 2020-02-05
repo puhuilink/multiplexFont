@@ -15,7 +15,7 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="用户名"
+            label="工作组名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
@@ -26,118 +26,10 @@
                   rules: [
                     {
                       required: true,
-                      message: '用户名必填'
+                      message: '工作组名称必填'
                     }
                   ]
                 }
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="姓名"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: '姓名必填'
-                    }
-                  ]
-                }
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="岗位职责"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-                { rules: [{ required: true, message: '名称必填' }] },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="办公电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-                { rules: [{ required: true, message: '名称必填' }] },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="移动电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="Email"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: 'Email必填'
-                    }
-                  ]
-                }
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="备注"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-textarea
-              v-decorator="[
-                'username',
               ]"
             />
           </a-form-item>
@@ -169,6 +61,51 @@
                 :value="item.value"
               >{{ item.name }}</a-select-option>
             </a-select>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="域"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-select
+              v-decorator="[
+                'gender',
+                {
+                  initialValue: true,
+                  rules: [
+                    {
+                      required: true,
+                      message: '域必填'
+                    }
+                  ]
+                }
+              ]"
+            >
+              <a-select-option
+                v-for="item in []"
+                :key="item.value"
+                :value="item.value"
+              >{{ item.name }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="备注"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-textarea
+              v-decorator="[
+                'username',
+              ]"
+            />
           </a-form-item>
         </a-col>
       </a-row>

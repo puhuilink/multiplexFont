@@ -49,7 +49,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
         <a-button :disabled="!hasSelected">重置密码</a-button>
@@ -78,18 +78,24 @@
       </s-table>
       <!-- E 列表 -->
     </a-card>
+
+    <GroupSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getGroupList } from '@/api/system'
+import GroupSchema from './GroupSchema'
 
 export default {
   name: 'Group',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    GroupSchema
   },
   data () {
     return {
@@ -149,6 +155,9 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 筛选展开开关
      */
