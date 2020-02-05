@@ -54,7 +54,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
         <a-button :disabled="!hasSelected">重置密码</a-button>
@@ -79,18 +79,24 @@
       />
       <!-- E 列表 -->
     </a-card>
+
+    <UserSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getUserList } from '@/api/system'
+import UserSchema from './UserSchema'
 
 export default {
   name: 'User',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    UserSchema
   },
   data () {
     return {
@@ -163,6 +169,9 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 筛选展开开关
      */
