@@ -9,6 +9,7 @@
     :width="900"
     :visible="visible"
     :loading="loading"
+    destroyOnClose
     @cancel="handleCancel"
   >
     <a-form

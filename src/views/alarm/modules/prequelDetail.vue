@@ -9,6 +9,7 @@
     :width="900"
     :visible="visible"
     :loading="loading"
+    destroyOnClose
   >
     <a-row class="form-row" :gutter="16">
       <a-col :lg="12" :md="12" :sm="24">
