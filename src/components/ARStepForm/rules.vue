@@ -64,11 +64,11 @@
       >
         <a-select
           allowClear
+          placeholder="请选择告警类型"
           v-decorator="[
             'alarmType',
             { rules: [{ required: true, message: '请选择告警类型' }] },
           ]"
-          placeholder="请选择告警类型"
         >
           <a-select-opt-group
             v-for="(group,index) in screening.alarmType"
@@ -85,9 +85,34 @@
           </a-select-opt-group>
         </a-select>
       </a-form-item>
+      <a-form-item
+        label="告警级别"
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+      >
+        <a-select
+          mode="multiple"
+          allowClear
+          placeholder="请选择告警级别"
+          v-decorator="[
+            'alarmLevel',
+            { rules: [{ required: true, message: '请选择告警级别' }] },
+          ]"
+          @change="alarmLevelChange"
+        >
+          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <a-select-option
+            v-for="item in levelList"
+            :key="item"
+            :value="item"
+          >
+            {{ item }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
-        <a-button style="margin-left: 8px" @click="prevStep">上一步</a-button>
-        <a-button type="primary" @click="nextStep">下一步</a-button>
+        <a-button @click="prevStep">上一步</a-button>
+        <a-button style="margin-left: 8px" type="primary" @click="nextStep">下一步</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -96,7 +121,7 @@
 <script>
 import screening from '@/views/alarm/screening'
 export default {
-  name: 'Step2',
+  name: 'Rules',
   data () {
     return {
       screening,
@@ -104,28 +129,51 @@ export default {
       wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
       form: this.$form.createForm(this),
       loading: false,
-      timer: 0
+      timer: 0,
+      levelList: [
+        'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
+      ]
     }
   },
   methods: {
     nextStep () {
-      const that = this
       const { form: { validateFields } } = this
-      that.loading = true
+      // 先校验，通过表单校验后，才进入下一步
       validateFields((err, values) => {
         if (!err) {
-          console.log('表单 values', values)
-          that.timer = setTimeout(function () {
-            that.loading = false
-            that.$emit('nextStep')
-          }, 1500)
-        } else {
-          that.loading = false
+          this.$emit('nextStep')
         }
       })
     },
     prevStep () {
       this.$emit('prevStep')
+    },
+    /**
+     * 告警类型改变
+     */
+    alarmLevelChange (value) {
+      // this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
+      console.log(value)
+      let list = value
+      value.forEach(element => {
+        if (element === 'checkall') {
+          if (length - 1 === this.levelList && value[length - 1] === 'checkall') {
+            list = []
+            console.log('点击')
+          } else {
+            list = []
+            this.levelList.forEach(m => {
+              list.push(m)
+              console.log(list)
+              const a = this.form.getFieldsValue()
+              this.form.setFieldsValue({
+                alarmLevel: list
+              })
+              console.log(a)
+            })
+          }
+        }
+      })
     }
   },
   beforeDestroy () {
