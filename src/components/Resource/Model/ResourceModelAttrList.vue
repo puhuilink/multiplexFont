@@ -66,6 +66,8 @@ export default {
   data: () => ({
     // 查询参数
     queryParams: {},
+    // 选中行
+    selectedRows: [],
     // 选中行的 key
     selectedRowKeys: []
   }),
@@ -151,6 +153,10 @@ export default {
     add () {
       this.$refs['schema'].add()
     },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['shcema'].edit(record)
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
@@ -172,8 +178,9 @@ export default {
      * @event
      * @return {Undefined}
      */
-    selectRow (selectedRowKeys) {
+    selectRow (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
     /**
      * 重置组件数据

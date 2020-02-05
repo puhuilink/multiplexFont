@@ -24,15 +24,24 @@ function recursiveBuildChildren (parent, collection = []) {
   }
 }
 
-function buildTree (collection = []) {
-  const root = collection.find(el => el.key === 'Ci')
-  if (root) {
-    buildNode(root)
-    recursiveBuildChildren(root, collection)
-    return [root]
-  } else {
-    return []
-  }
+// TODO: 节点筛选出来后，slice 处理数组，加快下次遍历
+function buildTree (collection = [], rootKeys = ['Ci']) {
+  const roots = []
+  collection.forEach(el => {
+    rootKeys.forEach((key, index) => {
+      if (el.key === key) {
+        roots.push(el)
+        // 找到后弹出
+        // TODO: 是否会影响长度，或者用逆序？
+        // rootKeys.splice(index, 1)
+      }
+    })
+  })
+  roots.forEach(el => {
+    buildNode(el)
+    recursiveBuildChildren(el, collection)
+  })
+  return roots
 }
 
 /**

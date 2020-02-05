@@ -54,13 +54,13 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
         <a-button :disabled="!hasSelected">重置密码</a-button>
         <a-button :disabled="!hasSelected">分配工作组</a-button>
         <a-button :disabled="!hasSelected">更改状态</a-button>
-        <a-button :disabled="!hasSelected">分配权限</a-button>
+        <a-button @click="auth" :disabled="!hasSelected">分配权限</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -79,18 +79,30 @@
       />
       <!-- E 列表 -->
     </a-card>
+
+    <UserSchema
+      ref="schema"
+    />
+
+    <AuthScheme
+      ref="auth"
+    />
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getUserList } from '@/api/system'
+import UserSchema from './UserSchema'
+import AuthScheme from '@/components/Auth/AuthSchema'
 
 export default {
   name: 'User',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    UserSchema,
+    AuthScheme
   },
   data () {
     return {
@@ -163,6 +175,12 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
+    auth () {
+      this.$refs['auth'].edit()
+    },
     /**
      * 筛选展开开关
      */

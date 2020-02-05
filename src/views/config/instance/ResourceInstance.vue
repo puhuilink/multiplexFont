@@ -4,15 +4,11 @@
 
       <!-- / tree -->
       <a-col :xl="6" :xxl="4">
-        <a-tabs defaultActiveKey="1">
-          <a-tab-pane tab="资源树" key="1">
-            <ResourceTree
-              class="ResourceInstance-tree"
-              instanceListCount
-              @select="select"
-            />
-          </a-tab-pane>
-        </a-tabs>
+        <ResourceTree
+          class="ResourceInstance-tree"
+          instanceListCount
+          @select="select"
+        />
       </a-col>
 
       <!-- / content -->
