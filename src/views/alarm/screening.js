@@ -206,6 +206,10 @@ const levelList = {
     text: 'CRITICAL'
   }
 }
+
+const forwardType = [
+  '运维系统', '邮件', '短信'
+]
 /**
  * 获得今天的日期 yyyy-mm-dd
  */
@@ -259,6 +263,7 @@ export default {
   CIName,
   alarmType,
   levelList,
+  forwardType,
   getNowFormatDate,
   checkAll
 }
