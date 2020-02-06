@@ -52,7 +52,7 @@
         <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelectedOne">分配用户</a-button>
+        <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
         <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
         <a-button :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
@@ -90,6 +90,10 @@
     <GroupAdministratorSchema
       ref="groupAdmin"
     />
+
+    <GroupUserSchema
+      ref="groupUser"
+    />
   </div>
 </template>
 
@@ -99,6 +103,7 @@ import { getGroupList } from '@/api/system'
 import GroupSchema from './GroupSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './GroupAdministratorSchema'
+import GroupUserSchema from './GroupUserSchema'
 
 export default {
   name: 'Group',
@@ -107,7 +112,8 @@ export default {
     Ellipsis,
     GroupSchema,
     AuthScheme,
-    GroupAdministratorSchema
+    GroupAdministratorSchema,
+    GroupUserSchema
   },
   data () {
     return {
@@ -172,6 +178,9 @@ export default {
   methods: {
     allocateAdmin () {
       this.$refs['groupAdmin'].edit()
+    },
+    allocateUser () {
+      this.$refs['groupUser'].edit()
     },
     auth () {
       this.$refs['auth'].edit()
