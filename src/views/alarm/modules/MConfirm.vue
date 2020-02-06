@@ -8,6 +8,7 @@
     @ok="handleConfim"
     :confirmLoading="confirmLoading"
     @cancel="handleCancel"
+    destroyOnClose
   >
     <p>备注</p>
     <a-textarea placeholder="请输入备注" :rows="6" v-model="comments"/>

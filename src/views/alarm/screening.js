@@ -206,6 +206,10 @@ const levelList = {
     text: 'CRITICAL'
   }
 }
+
+const forwardType = [
+  '运维系统', '邮件', '短信'
+]
 /**
  * 获得今天的日期 yyyy-mm-dd
  */
@@ -233,13 +237,13 @@ function checkAll (arr, modelList) {
   const length = arr.length
   let list = arr
   arr.forEach(element => {
-    // 当数组中存在0，说明此时进行全选/取消全选
+    // 当数组中存在checkall，说明此时进行全选/取消全选
     if (element === 'checkall') {
-      // 当数组长度为最大长度且最后一个元素为0时，说明此时在全选的基础上又点击全选，则取消全选
+      // 当数组长度为最大长度且最后一个元素为checkall时，说明此时在全选的基础上又点击全选，则取消全选
       if (length - 1 === modelList.length && arr[length - 1] === 'checkall') {
         list = []
       } else {
-        // 当不是取消全选操作，只要数组中出现了0则说明进行了全选操作
+        // 当不是取消全选操作，只要数组中出现了checkall则说明进行了全选操作
         list = []
         modelList.forEach(m => {
           for (const i in m.options) {
@@ -259,6 +263,7 @@ export default {
   CIName,
   alarmType,
   levelList,
+  forwardType,
   getNowFormatDate,
   checkAll
 }

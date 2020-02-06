@@ -69,8 +69,17 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
+        <a-button
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
@@ -127,6 +136,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -136,12 +149,14 @@ import { STable, Ellipsis } from '@/components'
 import { getForwardWayList } from '@/api/alarmConfig'
 import deleteCheck from '@/components/DeleteCheck'
 import AbleCheck from '@/components/AbleCheck'
+import detail from './modules/FMDetail'
 
 export default {
   name: 'FaultManagement',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    detail
   },
   data () {
     return {
@@ -240,14 +255,7 @@ export default {
       }
     }
   },
-  computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
-    }
-  },
+  computed: {},
   methods: {
     /**
      * 筛选展开开关
