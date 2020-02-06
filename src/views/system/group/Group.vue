@@ -50,12 +50,12 @@
       <!-- S 操作栏 -->
       <div class="opration">
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
+        <a-button :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelected">重置密码</a-button>
-        <a-button :disabled="!hasSelected">分配工作组</a-button>
-        <a-button :disabled="!hasSelected">更改状态</a-button>
-        <a-button @click="auth" :disabled="!hasSelected">分配权限</a-button>
+        <a-button :disabled="!hasSelectedOne">分配用户</a-button>
+        <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
+        <a-button :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -86,6 +86,10 @@
     <AuthScheme
       ref="auth"
     />
+
+    <GroupAdministratorSchema
+      ref="groupAdmin"
+    />
   </div>
 </template>
 
@@ -94,6 +98,7 @@ import { STable, Ellipsis } from '@/components'
 import { getGroupList } from '@/api/system'
 import GroupSchema from './GroupSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
+import GroupAdministratorSchema from './GroupAdministratorSchema'
 
 export default {
   name: 'Group',
@@ -101,7 +106,8 @@ export default {
     STable,
     Ellipsis,
     GroupSchema,
-    AuthScheme
+    AuthScheme,
+    GroupAdministratorSchema
   },
   data () {
     return {
@@ -158,9 +164,15 @@ export default {
      */
     hasSelected () {
       return this.selectedRowKeys.length > 0
+    },
+    hasSelectedOne () {
+      return this.selectedRowKeys.length === 1
     }
   },
   methods: {
+    allocateAdmin () {
+      this.$refs['groupAdmin'].edit()
+    },
     auth () {
       this.$refs['auth'].edit()
     },
