@@ -37,8 +37,10 @@ export default {
 
   &__title {
     margin: 0 0 0 6px !important;
+    font-family: arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
+    font-weight: 100;
     font-size: 16px !important;
-    font-weight: normal !important;
+    /*font-weight: normal !important;*/
   }
 }
 </style>
