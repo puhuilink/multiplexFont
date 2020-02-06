@@ -11,7 +11,7 @@
       <template #opration>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+        <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
         <a-button>筛选</a-button>
       </template>
@@ -28,6 +28,7 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
+import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_relationattribute_order_by!]) {
   pagination: ngecc_relationattribute_aggregate (where: $where) {
@@ -159,6 +160,9 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
     },
     edit () {
       this.$refs['schema'].edit()

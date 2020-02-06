@@ -40,7 +40,7 @@
           <template v-if="!instanceListCount">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled"></a-button>
-            <a-button icon="delete" :disabled="disabled"></a-button>
+            <a-button @click="batchDelete" icon="delete" :disabled="disabled"></a-button>
           </template>
         </div>
       </template>
@@ -53,6 +53,7 @@ import gql from 'graphql-tag'
 import { buildTree, search } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/moduels/template/index'
+import deleteCheck from '@/components/DeleteCheck'
 
 export default {
   name: 'ResourceTree',
@@ -129,6 +130,9 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
     },
     /**
      * 展开树节点触发

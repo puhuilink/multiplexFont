@@ -71,7 +71,7 @@
       <div class="opration">
         <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -101,6 +101,7 @@
 import { STable, Ellipsis } from '@/components'
 import { getQuotaList } from '@/api/quotaList'
 import QuotaSchema from './QuotaSchema'
+import deleteCheck from '@/components/DeleteCheck'
 
 export default {
   name: 'QuotaList',
@@ -188,6 +189,9 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
     },
     /**
      * 筛选展开开关
