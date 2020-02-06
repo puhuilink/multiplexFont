@@ -8,6 +8,7 @@
     :visible="visible"
     @ok="handleSolve"
     :loading="loading"
+    destroyOnClose
     @cancel="handleCancel"
   >
     <a-spin :spinning="loading">

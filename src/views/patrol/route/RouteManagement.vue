@@ -1,3 +1,6 @@
+/*
+ * 路线管理
+ */
 <template>
   <div class="route-management">
     <a-card :borderd="false">
@@ -50,8 +53,17 @@
       <!-- S 操作栏 -->
       <div class="opration">
         <a-button>新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -80,6 +92,7 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getRoute } from '@/api/patrol'
+import deleteCheck from '@/components/DeleteCheck'
 
 export default {
   name: 'RouteManagement',
@@ -135,14 +148,7 @@ export default {
     }
   },
   filters: {},
-  computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
-    }
-  },
+  computed: {},
   methods: {
     /**
      * 筛选展开开关
@@ -180,6 +186,13 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
     }
   }
 }

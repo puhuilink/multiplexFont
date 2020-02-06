@@ -1,35 +1,58 @@
 <template>
-  <div class="ResourceTree">
-    <!-- TODO: 固定搜索栏 -->
-    <a-input-search
-      allowClear
-      autoFocus
-      style="padding: 8px;"
-      placeholder="搜索资源树"
-      :value="searchValue"
-      @change="search"
-    />
-    <a-spin
-      v-if="$apollo.queries.dataSource.loading"
-      spinning
-    />
-    <a-tree
-      v-else
-      :autoExpandParent="autoExpandParent"
-      defaultExpandAll
-      :expandedKeys="expandedKeys"
-      :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
-      :selectedKeys="[selectedKey]"
-      :treeData="treeData"
-      @expand="expand"
-      @select="select"
-    />
+  <div class="ResourceTree" :class="{ 'ResourceTree__hidden-tab': hiddenTab }">
+    <a-tabs defaultActiveKey="1">
+      <a-tab-pane tab="资源树" key="1">
+        <!-- TODO: 固定搜索栏 -->
+        <a-input-search
+          allowClear
+          autoFocus
+          style="padding: 8px;"
+          placeholder="搜索资源树"
+          :value="searchValue"
+          @change="search"
+        />
+        <a-spin
+          v-if="$apollo.queries.dataSource.loading"
+          spinning
+        />
+        <a-tree
+          v-else
+          :autoExpandParent="autoExpandParent"
+          defaultExpandAll
+          :expandedKeys="expandedKeys"
+          :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
+          :selectedKeys="[selectedKey]"
+          :treeData="treeData"
+          @expand="expand"
+          @select="select"
+        />
+
+        <ResourceTreeNodeSchema
+          ref="schema"
+        />
+
+      </a-tab-pane>
+
+      <template slot="tabBarExtraContent">
+        <div class="ResourceTree__tabBarExtraContent">
+          <a-button icon="upload"></a-button>
+          <a-button icon="download"></a-button>
+          <template v-if="!instanceListCount">
+            <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
+            <a-button icon="edit" :disabled="disabled"></a-button>
+            <a-button icon="delete" :disabled="disabled"></a-button>
+          </template>
+        </div>
+      </template>
+    </a-tabs>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import { buildTree, search } from './utils'
+import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
+import Template from '../../views/design/moduels/template/index'
 
 export default {
   name: 'ResourceTree',
@@ -62,12 +85,25 @@ export default {
       }
     }
   },
-  components: {},
+  components: {
+    Template,
+    ResourceTreeNodeSchema
+  },
   props: {
+    // 隐藏分页
+    hiddenTab: {
+      type: Boolean,
+      default: false
+    },
     // 统计节点下的实例列表数量
     instanceListCount: {
       type: Boolean,
       default: false
+    },
+    // 根节点
+    rootKeys: {
+      type: Array,
+      default: () => (['Ci'])
     }
   },
   data: () => ({
@@ -79,13 +115,21 @@ export default {
     searchValue: ''
   }),
   computed: {
+    disabled: {
+      get () {
+        return !this.selectedKey
+      }
+    },
     treeData: {
       get () {
-        return buildTree(this.dataSource)
+        return buildTree(this.dataSource, this.rootKeys)
       }
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
     /**
      * 展开树节点触发
      * @param {Array<String>} expandedKeys 展开的树节点
@@ -120,6 +164,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
+      // FIMXE: 查询匹配有时无法匹配，比如查询 "北京"
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }
@@ -128,5 +173,21 @@ export default {
 </script>
 
 <style lang="less">
+.ResourceTree {
+  &__hidden-tab {
+    .ant-tabs-bar {
+      display: none;
+    }
+  }
+  &__tabBarExtraContent {
+    padding-right: 8px;
+  }
 
+  .ant-btn {
+    padding: 0 2.5px !important;
+    border: none !important;
+    background-color: transparent !important;
+    transform: translateY(3px);
+  }
+}
 </style>

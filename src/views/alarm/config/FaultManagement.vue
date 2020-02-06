@@ -69,11 +69,35 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelected">启用</a-button>
-        <a-button :disabled="!hasSelected">停用</a-button>
+        <a-button
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
+        <a-button
+          :disabled="!hasSelected"
+          @click="enableCtrl"
+        >
+          启用
+        </a-button>
+        <a-button
+          :disabled="!hasSelected"
+          @click="disableCtrl"
+        >
+          停用
+        </a-button>
         <a-button :disabled="!hasSelected">关联故障</a-button>
       </div>
       <!-- E 操作栏 -->
@@ -112,6 +136,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -119,12 +147,16 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getForwardWayList } from '@/api/alarmConfig'
+import deleteCheck from '@/components/DeleteCheck'
+import AbleCheck from '@/components/AbleCheck'
+import detail from './modules/FMDetail'
 
 export default {
   name: 'FaultManagement',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    detail
   },
   data () {
     return {
@@ -223,14 +255,7 @@ export default {
       }
     }
   },
-  computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
-    }
-  },
+  computed: {},
   methods: {
     /**
      * 筛选展开开关
@@ -264,6 +289,27 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      await deleteCheck.sureDelete() &&
+        console.log('确定删除')
+    },
+    /**
+     * 确定启用
+     */
+    async enableCtrl () {
+      await AbleCheck.enable() &&
+        console.log('确定启用')
+    },
+    /**
+     * 确定禁用
+     */
+    async disableCtrl () {
+      await AbleCheck.disable() &&
+        console.log('确定停用')
     }
   }
 }
