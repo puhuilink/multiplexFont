@@ -337,130 +337,130 @@ export const asyncRouterMap = [
             meta: { title: '巡检检查对象', keepAlive: true, permission: [ 'patrol' ] }
           }
         ]
-      },
+      }
 
       // 以下是示例页面路由，待之后进行删除
       // forms
-      {
-        path: '/form',
-        redirect: '/form/base-form',
-        component: PageView,
-        meta: { title: '表单页', icon: 'form', permission: [ 'form' ] },
-        children: [
-          {
-            path: '/form/base-form',
-            name: 'BaseForm',
-            component: () => import('@/views/form/BasicForm'),
-            meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
-          }
-        ]
-      },
-
-      // list
-      {
-        path: '/list',
-        name: 'list',
-        component: PageView,
-        redirect: '/list/table-list',
-        meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
-        children: [
-          {
-            path: '/list/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
-            meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
-          }
-        ]
-      },
-
-      // account
-      {
-        path: '/account',
-        component: RouteView,
-        redirect: '/account/settings',
-        name: 'account',
-        meta: { title: '个人页', icon: 'user', keepAlive: true, permission: [ 'user' ] },
-        children: [
-          {
-            path: '/account/settings',
-            name: 'settings',
-            component: () => import('@/views/account/settings/Index'),
-            meta: { title: '个人设置', hideHeader: true, permission: [ 'user' ] },
-            redirect: '/account/settings/base',
-            hideChildrenInMenu: true,
-            children: [
-              {
-                path: '/account/settings/base',
-                name: 'BaseSettings',
-                component: () => import('@/views/account/settings/BaseSetting'),
-                meta: { title: '基本设置', permission: [ 'user' ] }
-              },
-              {
-                path: '/account/settings/custom',
-                name: 'CustomSettings',
-                component: () => import('@/views/account/settings/Custom'),
-                meta: { title: '个性化设置', keepAlive: true, permission: [ 'user' ] }
-              }
-            ]
-          }
-        ]
-      },
-
-      // other
-      {
-        path: '/other',
-        name: 'otherPage',
-        component: PageView,
-        meta: { title: '其他组件', icon: 'slack', permission: [ 'view' ] },
-        redirect: '/other/list',
-        children: [
-          {
-            path: '/other/list',
-            component: RouteView,
-            meta: { title: '业务布局', icon: 'layout', permission: [ 'support' ] },
-            redirect: '/other/list/tree-list',
-            children: [
-              {
-                path: '/other/list/tree-list',
-                name: 'TreeList',
-                component: () => import('@/views/other/TreeList'),
-                meta: { title: '树目录表格', keepAlive: true }
-              },
-              {
-                path: '/other/list/edit-table',
-                name: 'EditList',
-                component: () => import('@/views/other/TableInnerEditList'),
-                meta: { title: '内联编辑表格', keepAlive: true }
-              },
-              {
-                path: '/other/list/user-list',
-                name: 'UserList',
-                component: () => import('@/views/other/UserList'),
-                meta: { title: '用户列表', keepAlive: true }
-              },
-              {
-                path: '/other/list/role-list',
-                name: 'RoleList',
-                component: () => import('@/views/other/RoleList'),
-                meta: { title: '角色列表', keepAlive: true }
-              },
-              {
-                path: '/other/list/system-role',
-                name: 'SystemRole',
-                component: () => import('@/views/role/RoleList'),
-                meta: { title: '角色列表2', keepAlive: true }
-              },
-              {
-                path: '/other/list/permission-list',
-                name: 'PermissionList',
-                component: () => import('@/views/other/PermissionList'),
-                meta: { title: '权限列表', keepAlive: true }
-              }
-            ]
-          }
-        ]
-      }
+      // {
+      //   path: '/form',
+      //   redirect: '/form/base-form',
+      //   component: PageView,
+      //   meta: { title: '表单页', icon: 'form', permission: [ 'form' ] },
+      //   children: [
+      //     {
+      //       path: '/form/base-form',
+      //       name: 'BaseForm',
+      //       component: () => import('@/views/form/BasicForm'),
+      //       meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
+      //     }
+      //   ]
+      // },
+      //
+      // // list
+      // {
+      //   path: '/list',
+      //   name: 'list',
+      //   component: PageView,
+      //   redirect: '/list/table-list',
+      //   meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
+      //   children: [
+      //     {
+      //       path: '/list/table-list/:pageNo([1-9]\\d*)?',
+      //       name: 'TableListWrapper',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/list/TableList'),
+      //       meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
+      //     }
+      //   ]
+      // },
+      //
+      // // account
+      // {
+      //   path: '/account',
+      //   component: RouteView,
+      //   redirect: '/account/settings',
+      //   name: 'account',
+      //   meta: { title: '个人页', icon: 'user', keepAlive: true, permission: [ 'user' ] },
+      //   children: [
+      //     {
+      //       path: '/account/settings',
+      //       name: 'settings',
+      //       component: () => import('@/views/account/settings/Index'),
+      //       meta: { title: '个人设置', hideHeader: true, permission: [ 'user' ] },
+      //       redirect: '/account/settings/base',
+      //       hideChildrenInMenu: true,
+      //       children: [
+      //         {
+      //           path: '/account/settings/base',
+      //           name: 'BaseSettings',
+      //           component: () => import('@/views/account/settings/BaseSetting'),
+      //           meta: { title: '基本设置', permission: [ 'user' ] }
+      //         },
+      //         {
+      //           path: '/account/settings/custom',
+      //           name: 'CustomSettings',
+      //           component: () => import('@/views/account/settings/Custom'),
+      //           meta: { title: '个性化设置', keepAlive: true, permission: [ 'user' ] }
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
+      //
+      // // other
+      // {
+      //   path: '/other',
+      //   name: 'otherPage',
+      //   component: PageView,
+      //   meta: { title: '其他组件', icon: 'slack', permission: [ 'view' ] },
+      //   redirect: '/other/list',
+      //   children: [
+      //     {
+      //       path: '/other/list',
+      //       component: RouteView,
+      //       meta: { title: '业务布局', icon: 'layout', permission: [ 'support' ] },
+      //       redirect: '/other/list/tree-list',
+      //       children: [
+      //         {
+      //           path: '/other/list/tree-list',
+      //           name: 'TreeList',
+      //           component: () => import('@/views/other/TreeList'),
+      //           meta: { title: '树目录表格', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/other/list/edit-table',
+      //           name: 'EditList',
+      //           component: () => import('@/views/other/TableInnerEditList'),
+      //           meta: { title: '内联编辑表格', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/other/list/user-list',
+      //           name: 'UserList',
+      //           component: () => import('@/views/other/UserList'),
+      //           meta: { title: '用户列表', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/other/list/role-list',
+      //           name: 'RoleList',
+      //           component: () => import('@/views/other/RoleList'),
+      //           meta: { title: '角色列表', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/other/list/system-role',
+      //           name: 'SystemRole',
+      //           component: () => import('@/views/role/RoleList'),
+      //           meta: { title: '角色列表2', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/other/list/permission-list',
+      //           name: 'PermissionList',
+      //           component: () => import('@/views/other/PermissionList'),
+      //           meta: { title: '权限列表', keepAlive: true }
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // }
     ]
   },
   // 视图设计

@@ -55,12 +55,12 @@
       <!-- S 操作栏 -->
       <div class="opration">
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
+        <a-button :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelected">重置密码</a-button>
-        <a-button :disabled="!hasSelected">分配工作组</a-button>
-        <a-button :disabled="!hasSelected">更改状态</a-button>
-        <a-button @click="auth" :disabled="!hasSelected">分配权限</a-button>
+        <a-button :disabled="!hasSelectedOne">重置密码</a-button>
+        <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
+        <a-button :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="allocateAuth" :disabled="!hasSelected">分配权限</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -87,6 +87,10 @@
     <AuthScheme
       ref="auth"
     />
+
+    <UserGroupSchema
+      ref="group"
+    />
   </div>
 </template>
 
@@ -95,6 +99,7 @@ import { STable, Ellipsis } from '@/components'
 import { getUserList } from '@/api/system'
 import UserSchema from './UserSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
+import UserGroupSchema from './UserGroupSchema'
 
 export default {
   name: 'User',
@@ -102,7 +107,8 @@ export default {
     STable,
     Ellipsis,
     UserSchema,
-    AuthScheme
+    AuthScheme,
+    UserGroupSchema
   },
   data () {
     return {
@@ -172,14 +178,20 @@ export default {
      */
     hasSelected () {
       return this.selectedRowKeys.length > 0
+    },
+    hasSelectedOne () {
+      return this.selectedRowKeys.length === 1
     }
   },
   methods: {
     add () {
       this.$refs['schema'].add()
     },
-    auth () {
+    allocateAuth () {
       this.$refs['auth'].edit()
+    },
+    allocateGroup () {
+      this.$refs['group'].edit()
     },
     /**
      * 筛选展开开关
