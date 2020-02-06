@@ -87,18 +87,23 @@
           删除
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="enableCtrl"
         >
           启用
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="disableCtrl"
         >
           停用
         </a-button>
-        <a-button :disabled="!hasSelected">关联故障</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.correlation.open(selectedRows[0])"
+        >
+          关联故障
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -139,6 +144,7 @@
 
       <!-- S 模块 -->
       <detail ref="detail"></detail>
+      <correlation ref="correlation"></correlation>
       <!-- E 模块 -->
     </a-card>
   </div>
@@ -150,13 +156,15 @@ import { getForwardWayList } from '@/api/alarmConfig'
 import deleteCheck from '@/components/DeleteCheck'
 import AbleCheck from '@/components/AbleCheck'
 import detail from './modules/FMDetail'
+import correlation from './modules/FMCorrelation'
 
 export default {
   name: 'FaultManagement',
   components: {
     STable,
     Ellipsis,
-    detail
+    detail,
+    correlation
   },
   data () {
     return {
@@ -286,6 +294,9 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'Edit')
           }
         }
       }

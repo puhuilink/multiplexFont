@@ -49,6 +49,76 @@
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="系统前转目标">
+            <a-select
+              allowClear
+              :disabled="mode=='See'"
+              style="width: 100%"
+              v-decorator="['forwardTo', {
+                initialValue: record.forwardTo
+              }]"
+              placeholder="请选择"
+            >
+              <a-select-option
+                v-for="item in screening.forwardType"
+                :key="item"
+                :value="item"
+              >
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="其他前转目标">
+            <a-input
+              :disabled="mode=='See'"
+              v-decorator="['other', { initialValue: record.other }]"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="前转周期">
+            <a-input-number
+              style="width: 100%"
+              :disabled="mode=='See'"
+              v-decorator="['timeNum', { initialValue: record.timeNum }]"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="前转周期单位">
+            <a-select
+              allowClear
+              :disabled="mode=='See'"
+              style="width: 100%"
+              v-decorator="['time', {
+                initialValue: record.time
+              }]"
+              placeholder="请选择"
+            >
+              <a-select-option value="0">分钟</a-select-option>
+              <a-select-option value="1">小时</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="发送标志">
+            <a-select
+              allowClear
+              :disabled="mode=='See'"
+              style="width: 100%"
+              v-decorator="['send', {
+                initialValue: record.send,
+              }]"
+              placeholder="请选择"
+            >
+              <a-select-option value="0">封挡后发送</a-select-option>
+              <!-- <a-select-option value="1">否</a-select-option> -->
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="是否启用">
             <a-select
               allowClear
@@ -63,6 +133,38 @@
               <a-select-option value="0">是</a-select-option>
               <a-select-option value="1">否</a-select-option>
             </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="前转模板">
+            <a-select
+              allowClear
+              :disabled="mode=='See'"
+              style="width: 100%"
+              v-decorator="['send', {
+                initialValue: record.send,
+              }]"
+              placeholder="请选择"
+            >
+              <a-select-option value="0">模板</a-select-option>
+              <!-- <a-select-option value="1">否</a-select-option> -->
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="备注">
+            <a-input
+              :disabled="mode=='See'"
+              v-decorator="['remarks', { initialValue: record.remarks }]"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="过滤条件">
+            <a-input
+              :disabled="mode=='See'"
+              v-decorator="['remarks', { initialValue: record.remarks }]"
+            />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
@@ -87,11 +189,24 @@
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
-          <a-form-item label="消息模板">
-            <a-input
+          <a-form-item label="故障分类">
+            <a-select
+              allowClear
               :disabled="mode=='See'"
-              v-decorator="['remarks', { initialValue: record.DPFiled, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
-            />
+              style="width: 100%"
+              v-decorator="['alarmLevel', {
+                initialValue: record.CIType,
+                rules: [{ required: true, message: '故障分类不能为空!' }]
+              }]"
+            >
+              <a-select-option
+                v-for="item in screening.levelList"
+                :key="item.level"
+                :value="item.level"
+              >
+                {{ item.text }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
