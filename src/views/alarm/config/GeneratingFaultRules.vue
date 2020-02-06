@@ -48,13 +48,13 @@
           删除
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="enableCtrl"
         >
           启用
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="disableCtrl"
         >
           停用
