@@ -1,3 +1,6 @@
+/*
+ * 动态基线策略
+ */
 <template>
   <div class="baseline-strategy">
     <a-card :bordered="false">
@@ -69,10 +72,17 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-        >编辑</a-button>
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
@@ -96,6 +106,10 @@
         showPagination="auto"
       />
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -104,12 +118,14 @@
 import { STable, Ellipsis } from '@/components'
 import { getStrategyList } from '@/api/analysis'
 import deleteCheck from '@/components/DeleteCheck'
+import detail from '../modules/BSDetail'
 
 export default {
   name: 'BaselineStrategy',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    detail
   },
   data () {
     return {
@@ -194,18 +210,6 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     },
     /**
      * 删除选中项
