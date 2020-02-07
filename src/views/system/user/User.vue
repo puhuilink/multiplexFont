@@ -71,7 +71,7 @@
           <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParamss = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -267,7 +267,7 @@ export default {
                 _ilike: `%${this.queryParams.email.trim()}%`
               }
             } : {},
-            ...this.queryParams.hasOwnProperty('flag') ? {
+            ...this.queryParams.hasOwnProperty('flag') && this.queryParams.flag !== undefined ? {
               flag: {
                 _eq: `${this.queryParams.flag}`
               }
