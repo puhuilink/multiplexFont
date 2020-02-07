@@ -67,7 +67,7 @@
         </a-form>
       </template>
 
-      <template #opration>
+      <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
@@ -253,9 +253,10 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-      if (!this.advanced) {
-        delete (this.queryParams.flag)
-      }
+      // 展开只是 UI 切换
+      // if (!this.advanced) {
+      //   delete (this.queryParams.flag)
+      // }
     },
     /**
      * 日期时间空间选择

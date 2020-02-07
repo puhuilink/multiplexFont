@@ -35,7 +35,7 @@ export default {
     // 顶部查询区域
     const query = <div class="CTable-query">{ this.$slots.query }</div>
     // 操作区域
-    const opration = <div class="CTable-operation">{ this.$slots.opration }</div>
+    const opration = <div class="CTable-operation">{ this.$slots.operation }</div>
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',

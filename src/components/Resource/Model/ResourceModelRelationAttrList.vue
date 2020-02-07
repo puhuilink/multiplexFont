@@ -8,7 +8,7 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
-      <template #opration>
+      <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>

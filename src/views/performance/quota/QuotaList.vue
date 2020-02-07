@@ -1,95 +1,88 @@
 <template>
   <div class="quota-list">
-    <a-card :borderd="false">
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+    <!-- S 列表 -->
+    <CTable
+      ref="table"
+      rowKey="rid"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: 1340, y:650 }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="是否巡检">
-                <a-select
-                  allowClear
-                  v-model="queryParam.polling"
-                  placeholder="请选择"
-                  default-value="checkall"
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
                 >
-                  <a-select-option value="0">是</a-select-option>
-                  <a-select-option value="1">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="名称">
-                <a-input v-model="queryParam.name" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="显示名称">
-                  <a-input v-model="queryParam.showName" placeholder=""/>
+                  <a-input v-model="queryParams.name_s" placeholder=""/>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="中文描述">
-                  <a-input v-model="queryParam.describe" placeholder=""/>
+
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="显示名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.label_s" placeholder=""/>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="KPI编码">
-                  <a-input v-model="queryParam.KPICode" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="是否KPI">
-                  <a-input v-model="queryParam.KPI" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="所属节点类型">
-                  <a-input v-model="queryParam.nodeType" placeholder=""/>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
+            </a-row>
+
+            <div v-show="advanced">
+              <a-row>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="KPI编码"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%"
+                  >
+                    <a-input v-model="queryParams.kpicode_s" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="所属模型"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%"
+                  >
+                    <a-input v-model="queryParams.nodetype_s" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
         </a-form>
-      </div>
-      <!-- E 搜索 -->
+      </template>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
+      <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelected">编辑</a-button>
+        <a-button :disabled="!hasSelectedOne">编辑</a-button>
         <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
-      </div>
-      <!-- E 操作栏 -->
-
-      <!-- S 列表 -->
-      <s-table
-        ref="table"
-        size="small"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ x: 1300, y:400 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      />
-      <!-- E 列表 -->
-    </a-card>
+      </template>
+    </CTable>
 
     <QuotaSchema
       ref="schema"
@@ -98,15 +91,38 @@
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getQuotaList } from '@/api/quotaList'
+import { Ellipsis } from '@/components'
 import QuotaSchema from './QuotaSchema'
 import deleteCheck from '@/components/DeleteCheck'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+import CTable from '@/components/Table/CTable'
+import Template from '../../design/moduels/template/index'
+
+const query = gql`query ($where: ngecc_instance_values_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
+  pagination: ngecc_instance_values_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: ngecc_instance_values (where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+    rid
+    updatetime_t
+    name_s
+    label_s
+    icon_s
+    domain_s
+    kpicode_s
+    nodetype_s
+  }
+}
+`
 
 export default {
   name: 'QuotaList',
   components: {
-    STable,
+    Template,
+    CTable,
     Ellipsis,
     QuotaSchema
   },
@@ -115,62 +131,52 @@ export default {
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParams: {},
       // 告警列表表头
       columns: [
         {
           title: '更新时间',
-          dataIndex: 'refreshTime',
+          dataIndex: 'updatetime_t',
           sorter: true,
-          align: 'center',
-          width: 160,
-          fixed: 'left'
-        },
-        {
-          title: '名称',
-          dataIndex: 'name',
-          align: 'center',
-          sorter: true
-        },
-        {
-          title: '显示名称',
-          dataIndex: 'showName',
-          align: 'center',
           width: 200
         },
         {
+          title: '名称',
+          dataIndex: 'name_s',
+          sorter: true,
+          width: 410
+        },
+        {
+          title: '显示名称',
+          dataIndex: 'label_s',
+          sorter: true,
+          width: 230
+        },
+        {
           title: '图标',
-          dataIndex: 'icon',
-          align: 'center',
-          width: 100
+          dataIndex: 'icon_s',
+          sorter: true,
+          width: 80
         },
         {
           title: '数据权限域',
-          dataIndex: 'domain',
-          align: 'center',
+          dataIndex: 'domain_s',
           width: 120,
           sorter: true
         },
         {
           title: 'Kpi编码',
-          dataIndex: 'KPICode',
-          align: 'center',
+          dataIndex: 'kpicode_s',
+          sorter: true,
           width: 100
         },
         {
           title: '所属模型',
-          dataIndex: 'model',
-          align: 'center',
-          width: 120
+          dataIndex: 'nodetype_s',
+          sorter: true,
+          width: 220
         }
       ],
-      loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getQuotaList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -184,6 +190,9 @@ export default {
      */
     hasSelected () {
       return this.selectedRowKeys.length > 0
+    },
+    hasSelectedOne () {
+      return this.selectedRowKeys.length === 1
     }
   },
   methods: {
@@ -192,6 +201,48 @@ export default {
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
+    },
+    /**
+     * 加载表格数据
+     * @param {Object} parameter CTable 回传的分页与排序条件
+     * @return {Function: <Promise<Any>>}
+     */
+    loadData (parameter) {
+      return apollo.clients.resource.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            'parentname_s': {
+              '_eq': 'Kpi'
+            },
+            ...this.queryParams.name_s ? {
+              name_s: {
+                _ilike: `%${this.queryParams.name_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.label_s ? {
+              label_s: {
+                _ilike: `%${this.queryParams.label_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.kpicode_s ? {
+              kpicode_s: {
+                _ilike: `%${this.queryParams.kpicode_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.nodetype_s ? {
+              nodetype_s: {
+                _ilike: `%${this.queryParams.nodetype_s.trim()}%`
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 筛选展开开关
@@ -240,5 +291,9 @@ export default {
   button{
     margin-right: 5px;
   }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>
