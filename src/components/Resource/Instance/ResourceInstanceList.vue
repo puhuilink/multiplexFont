@@ -199,6 +199,10 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.andvaced
+      if (!this.advanced) {
+        delete (this.queryParams.email)
+        delete (this.queryParams.flag)
+      }
     }
   }
 }

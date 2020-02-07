@@ -253,7 +253,9 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-      delete (this.queryParams.flag)
+      if (!this.advanced) {
+        delete (this.queryParams.flag)
+      }
     },
     /**
      * 日期时间空间选择
