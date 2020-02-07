@@ -42,10 +42,6 @@
           <span :style="advanced && { float: 'right', overflow: 'hidden', transform: 'translateY(6.5PX)' } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
             <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-                    {{ advanced ? '收起' : '展开' }}
-                    <a-icon :type="advanced ? 'up' : 'down'"/>
-                  </a> -->
           </span>
         </a-form>
       </template>
