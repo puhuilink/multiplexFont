@@ -52,9 +52,10 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
         >
           编辑
         </a-button>
@@ -85,6 +86,10 @@
         </span>
       </s-table>
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
@@ -93,12 +98,14 @@
 import { STable, Ellipsis } from '@/components'
 import { getRoute } from '@/api/patrol'
 import deleteCheck from '@/components/DeleteCheck'
+import detail from '../modules/RMDetail'
 
 export default {
   name: 'RouteManagement',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    detail
   },
   data () {
     return {

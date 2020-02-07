@@ -22,6 +22,7 @@
       <!-- S 巡检日历 -->
       <a-calendar
         mode="month"
+        @select="onSelect"
       >
         <ul class="events" slot="dateCellRender" slot-scope="value">
           <li class="item" v-for="(item, index) in getListData(value)" :key="index">
@@ -44,16 +45,23 @@
         </template>
       </a-calendar>
       <!-- E 巡检日历 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
 
 <script>
 import { getCalendar } from '@/api/patrol'
+import detail from '../modules/TCDetail'
 
 export default {
   name: 'TaskCalendar',
-  components: {},
+  components: {
+    detail
+  },
   data () {
     return {
       performStatus: [
@@ -83,7 +91,8 @@ export default {
           label: '执行完成发现异常'
         }
       ],
-      taskList: []
+      taskList: [],
+      selectedValue: ''
     }
   },
   filters: {},
@@ -125,6 +134,11 @@ export default {
       if (value.month() === 8) {
         return 1394
       }
+    },
+
+    onSelect (value) {
+      this.selectedValue = value
+      this.$refs.detail.open(value)
     }
   }
 }
