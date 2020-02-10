@@ -100,11 +100,11 @@
         <a-button @click="show" :disabled="selectedRowKeys.length !== 1">查看</a-button>
       </template>
       <span slot="operateContent" slot-scope="text">
-        <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
+        <ellipsis :length="80" tooltip>{{ text }}</ellipsis>
       </span>
     </CTable>
     <!-- E 列表 -->
-    <AduitSchema
+    <AuditSchema
       ref="schema"
     />
   </div>
@@ -113,7 +113,7 @@
 <script>
 import { Ellipsis } from '@/components'
 // import { getAuditList } from '@/api/system'
-import AduitSchema from './AuditSchema'
+import AuditSchema from './AuditSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
@@ -149,7 +149,7 @@ export default {
   components: {
     CTable,
     Ellipsis,
-    AduitSchema
+    AuditSchema
   },
   data () {
     return {
@@ -198,7 +198,7 @@ export default {
         {
           title: '操作内容',
           dataIndex: 'content',
-          sorter: true,
+          // sorter: true,
           scopedSlots: { customRender: 'operateContent' }
         }
       ],
