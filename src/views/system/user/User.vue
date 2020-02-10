@@ -82,7 +82,7 @@
 
       <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelectedOne">编辑</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
         <a-button :disabled="!hasSelectedOne">重置密码</a-button>
         <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
@@ -233,6 +233,10 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
     },
     allocateAuth () {
       this.$refs['auth'].edit()

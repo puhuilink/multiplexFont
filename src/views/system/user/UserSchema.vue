@@ -21,7 +21,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'user_id',
                 {
                   rules: [
                     {
@@ -43,7 +43,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'staff_name',
                 {
                   rules: [
                     {
@@ -67,7 +67,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'job_title',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -99,7 +99,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'mobile_phone',
               ]"
             />
           </a-form-item>
@@ -113,7 +113,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'email',
                 {
                   rules: [
                     {
@@ -137,7 +137,7 @@
           >
             <a-textarea
               v-decorator="[
-                'username',
+                'note',
               ]"
             />
           </a-form-item>
@@ -151,7 +151,7 @@
           >
             <a-select
               v-decorator="[
-                'gender',
+                'flag',
                 {
                   initialValue: true,
                   rules: [
@@ -223,12 +223,13 @@ export default {
        * @param {Object} record
        * @return {Undefined}
        */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
       this.visible = true
-      this.record = {
+      await this.$nextTick()
+      this.form.setFieldsValue({
         ...record
-      }
+      })
     },
     cancel () {
       this.visible = false
