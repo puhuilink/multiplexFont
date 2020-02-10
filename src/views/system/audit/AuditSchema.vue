@@ -23,7 +23,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'user_id',
               ]"
             />
           </a-form-item>
@@ -39,7 +39,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'client_ip',
               ]"
             />
           </a-form-item>
@@ -57,7 +57,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'module_name',
               ]"
             />
           </a-form-item>
@@ -73,7 +73,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'actionname',
               ]"
             />
           </a-form-item>
@@ -91,7 +91,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'operation_time',
               ]"
             />
           </a-form-item>
@@ -107,7 +107,7 @@
               readOnly
               disabled
               v-decorator="[
-                'username',
+                'content',
               ]"
             />
           </a-form-item>
@@ -128,7 +128,7 @@ const formItemLayout = {
 }
 
 export default {
-  name: 'AduitSchema',
+  name: 'AuditSchema',
   components: {},
   props: {},
   data: (vm) => ({
@@ -142,9 +142,14 @@ export default {
   }),
   computed: {},
   methods: {
-    show (record) {
-      this.title = '查看'
+    async show (record) {
+      this.title = '审计详情'
       this.visible = true
+      await this.$nextTick()
+      this.form.setFieldsValue({
+        ...record
+      })
+      // console.log(record)
     },
     cancel () {
       this.visible = false

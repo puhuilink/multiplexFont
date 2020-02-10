@@ -113,7 +113,7 @@
 <script>
 import { Ellipsis } from '@/components'
 // import { getAuditList } from '@/api/system'
-import AduitSchema from './AduitSchema'
+import AduitSchema from './AuditSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
