@@ -101,7 +101,6 @@
         :data="loadData"
         :alert="false"
         :scroll="{ y:400 }"
-        :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       />
