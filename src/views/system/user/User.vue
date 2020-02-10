@@ -99,8 +99,11 @@
       </span>
     </cTable>
     <!-- E 列表 -->
+    <!--  FIXME: apollo 有缓存，此处不会触发刷新  -->
     <UserSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="query"
     />
 
     <AuthScheme
@@ -253,6 +256,11 @@ export default {
       return apollo.clients.alert.query({
         query,
         variables: {
+          // user 表没有id，并非默认按最新数据排序，此处手动指定
+          // TODO: 是否table默认都nulls_last
+          orderBy: {
+            'createdate': 'desc_nulls_last'
+          },
           ...parameter,
           where: {
             ...this.where,
