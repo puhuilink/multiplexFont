@@ -217,7 +217,7 @@
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
       </CTable>
-      <!-- E 告警监控列表 -->
+      <!-- E 列表 -->
 
       <!-- S 表格右击菜单 -->
       <a-menu :style="menuStyle" v-if="menuVisible">
@@ -240,7 +240,17 @@
       <m-confirm ref="confirm" @ok="() => $refs.table.refresh(true)"></m-confirm>
       <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward>
       <m-solve ref="resolve" @ok="() => $refs.table.refresh(true)"></m-solve>
-      <m-detail ref="detail"></m-detail>
+      <m-detail
+        ref="detail"
+        @handleForward="$refs.rollForward.open()"
+        @handleSolve="$refs.resolve.open()"
+        @eventQuery="$refs.eventQuery.open()"
+        @operation="$refs.operation.open()"
+        @correlation="$refs.correlation.open()"
+      />
+      <event-query ref="eventQuery"></event-query>
+      <operation ref="operation"></operation>
+      <correlation ref="correlation"></correlation>
       <!-- E model模块 -->
 
     </a-card>
@@ -257,6 +267,9 @@ import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
+import EventQuery from '../modules/MEventQuery'
+import Operation from '../modules/OperationLog'
+import correlation from '../modules/MCorrelation'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
@@ -343,7 +356,10 @@ export default {
     MConfirm,
     RollForward,
     MSolve,
-    MDetail
+    MDetail,
+    EventQuery,
+    Operation,
+    correlation
   },
   data () {
     return {
