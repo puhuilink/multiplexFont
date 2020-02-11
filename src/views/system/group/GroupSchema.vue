@@ -42,6 +42,7 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              :disabled="title === '编辑'"
               v-decorator="[
                 'group_id',
                 {
@@ -264,8 +265,6 @@ export default {
         variables: {
           objects: [{
             ...values,
-            // FIXME: 初始值都是DB，还是为空后期配？
-            // auth_method: 'DB',
             createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
           }]
         }
@@ -295,7 +294,6 @@ export default {
               '_eq': this.record.group_id
             }
           },
-          // FIXME: 此处主键为 group_id，是否允许修改？
           group: {
             ...values,
             updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
