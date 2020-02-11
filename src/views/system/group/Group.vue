@@ -69,7 +69,7 @@
 
       <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelectedOne">编辑</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button :disabled="!hasSelected">删除</a-button>
         <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
         <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
@@ -85,6 +85,8 @@
 
     <GroupSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="query"
     />
 
     <AuthScheme
@@ -214,6 +216,10 @@ export default {
     add () {
       this.$refs['schema'].add()
     },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
@@ -223,6 +229,9 @@ export default {
       return apollo.clients.alert.query({
         query,
         variables: {
+          orderBy: {
+            'createdate': 'desc_nulls_last'
+          },
           ...parameter,
           where: {
             ...this.where,
