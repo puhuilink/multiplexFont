@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_s"
+      :rowKey="el => el.rid"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: 1280, y: 850}"
     >
@@ -48,7 +48,7 @@
 
       <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
         <a-button>筛选</a-button>
@@ -58,6 +58,8 @@
 
     <ResourceInstanceSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="query"
     />
   </div>
 </template>
@@ -68,19 +70,21 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceInstanceSchema from './ResourceInstanceSchema'
 
-const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
-  pagination: ngecc_instance_aggregate(where: $where) {
+const query = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
+  pagination: ngecc_instance_values_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    _id_s
+  data: ngecc_instance_values(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+    id_s
+    rid
+    domain_s
     label_s
     name_s
     parentname_s
-    parenttree_s
-    version_i
+    valuecode_s
+    valuelabel_s
   }
 }`
 
@@ -101,6 +105,8 @@ export default {
     advanced: true,
     // 查询参数
     queryParams: {},
+    // 选中行
+    selectRows: [],
     // 选中行的 key
     selectedRowKeys: []
   }),
@@ -110,12 +116,12 @@ export default {
     columns: {
       get () {
         return [
-          {
-            title: 'ID',
-            dataIndex: '_id_s',
-            sorter: true,
-            width: 180
-          },
+          // {
+          //   title: 'ID',
+          //   dataIndex: 'id_s',
+          //   sorter: true,
+          //   width: 180
+          // },
           {
             title: '名称',
             dataIndex: 'name_s',
@@ -152,6 +158,10 @@ export default {
     add () {
       this.$refs['schema'].add()
     },
+    edit () {
+      const [record] = this.selectRows
+      this.$refs['schema'].edit(record)
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
@@ -161,6 +171,9 @@ export default {
       return apollo.clients.resource.query({
         query,
         variables: {
+          orderBy: {
+            rid: 'desc'
+          },
           ...parameter,
           where: {
             ...this.where,
@@ -184,8 +197,9 @@ export default {
      * @event
      * @return {Undefined}
      */
-    selectRow (selectedRowKeys) {
+    selectRow (selectedRowKeys, selectRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectRows = selectRows
     },
     /**
      * 重置组件数据
