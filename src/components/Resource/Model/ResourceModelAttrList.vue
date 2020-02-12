@@ -4,13 +4,13 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_s"
+      :rowKey="el => `${el._id_s}`"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: 1580, y: 850}"
     >
       <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+        <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
         <a-button>筛选</a-button>
@@ -20,6 +20,8 @@
     <ResourceModelAttrSchema
       :did="where.did._eq"
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="query"
     />
   </div>
 </template>
@@ -38,17 +40,30 @@ const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: In
     }
   }
   data: ngecc_model_attributes (offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    did
-    _id_s
-    label_s
-    name_s
-    width_i
+    alertmessage_s
+    allowinheritance_b
+    allownull_b
+    assetsattr_b
     datatype_s
     displaytype_s
-    allownull_b
-    sourcevalue_s
-    allowinheritance_b
+    did
+    defaultvalue_s
+    edit_b
+    _id_s
+    label_s
+    matchtype_s
     hidden_b
+    name_s
+    operationvalue_s
+    order_i
+    rid
+    sourcevalue_s
+    sourcetype_s
+    searchfield_b
+    tabgroup_s
+    uniquenessscope_s
+    uniqueness_b
+    width_i
   }
 }
 `
@@ -147,7 +162,7 @@ export default {
         // 重置查询条件
         this.reset()
         // 重新查询
-        this.$refs['table'].refresh(true)
+        this.query()
       }
     }
   },
@@ -160,7 +175,7 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
-      this.$refs['shcema'].edit(record)
+      this.$refs['schema'].edit(record)
     },
     /**
      * 加载表格数据
@@ -180,6 +195,9 @@ export default {
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中

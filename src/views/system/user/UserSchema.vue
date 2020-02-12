@@ -300,7 +300,7 @@ export default {
           }]
         }
       }).then(res => {
-        this.$emit('createSuccess')
+        this.$emit('addSuccess')
         this.cancel()
       }).catch(err => {
         if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {

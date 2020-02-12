@@ -191,11 +191,11 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-checkbox
+            <a-input
               v-decorator="[
                 'sourcevalue_s',
               ]">
-            </a-checkbox>
+            </a-input>
           </a-form-item>
         </a-col>
       </a-row>
@@ -251,7 +251,7 @@
           >
             <a-select
               v-decorator="[
-                'tabgroup'
+                'tabgroup_s'
               ]"
             >
               <a-select-option
@@ -481,15 +481,16 @@ const options = {
     {
       name: '基本关系',
       value: 'base'
-    },
-    {
-      name: '关系信息',
-      value: '?'
-    },
-    {
-      name: '其他信息',
-      value: '??'
     }
+    // TODO: 找出剩余两种关系的值
+    // {
+    //   name: '关系信息',
+    //   value: '?'
+    // },
+    // {
+    //   name: '其他信息',
+    //   value: '??'
+    // }
   ]
 }
 
@@ -502,13 +503,13 @@ const insert = gql`mutation ($objects: [ngecc_model_attributes_insert_input!]! =
 }
 `
 
-const update = gql`mutation update ($where: t_user_bool_exp!, $user: t_user_set_input) {
-  update_t_user (
+const update = gql`mutation update ($where: ngecc_model_attributes_bool_exp!, $attr: ngecc_model_attributes_set_input) {
+  update_ngecc_model_attributes (
     where: $where,
-    _set: $user
+    _set: $attr
   ) {
-    returning {
-      staff_name
+      returning {
+      rid
     }
   }
 }`
@@ -542,15 +543,17 @@ export default {
     /**
        * 编辑
        * @param {Object} record
-       * @return {Undefined}
+       * @return {Promise<Undefined>}
        */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
       this.submit = this.update
-      this.visible = true
       this.record = {
         ...record
       }
+      this.visible = true
+      await this.$nextTick()
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
@@ -570,7 +573,7 @@ export default {
           objects: [values]
         }
       }).then(res => {
-        this.$emit('createSuccess')
+        this.$emit('addSuccess')
         this.cancel()
       }).catch(err => {
         throw err
@@ -588,11 +591,11 @@ export default {
         mutation: update,
         variables: {
           where: {
-            'user_id': {
-              '_eq': this.record.user_id
+            'rid': {
+              '_eq': this.record.rid
             }
           },
-          user: {
+          attr: {
             ...values
           }
         }
@@ -600,9 +603,6 @@ export default {
         this.$emit('editSuccess')
         this.cancel()
       }).catch(err => {
-        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-          //  TODO: toast 已存在的用户名
-        }
         throw err
       }).finally(() => {
         this.loading = false
