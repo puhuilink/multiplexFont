@@ -83,10 +83,10 @@
       <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
-        <a-button :disabled="!hasSelectedOne">重置密码</a-button>
+        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
+        <a-button @click="resetPwd" :disabled="!hasSelectedOne">重置密码</a-button>
         <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
-        <a-button :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="toggleStatus" :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="allocateAuth" :disabled="!hasSelected">分配权限</a-button>
       </template>
 
@@ -125,6 +125,7 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
 import Template from '../../design/moduels/template/index'
+import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {
   pagination: t_user_aggregate(where: $where) {
@@ -246,6 +247,49 @@ export default {
     },
     allocateGroup () {
       this.$refs['group'].edit()
+    },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
+    },
+    /**
+     * 重置密码
+     * @return {Undefined}
+     */
+    resetPwd () {
+      // const [record] = this.selectedRows
+      this.$modal.confirm({
+        title: '提示',
+        content: '是否重置当前用户密码？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          //  TODO
+        },
+        onCancel () {
+          // TODO
+        }
+      })
+    },
+    /**
+     * 更改状态
+     * @return {Undefined}
+     */
+    toggleStatus () {
+      // const [record] = this.selectedRows
+      this.$modal.confirm({
+        title: '提示',
+        content: '是否改变用户状态？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          //  TODO
+        },
+        onCancel () {
+          // TODO
+        }
+      })
     },
     /**
      * 加载表格数据

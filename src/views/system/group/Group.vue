@@ -70,10 +70,10 @@
       <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
         <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
         <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
-        <a-button :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="toggleStatus" :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
       </template>
 
@@ -114,6 +114,7 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
 import Template from '../../design/moduels/template/index'
+import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_group_order_by!])  {
   pagination: t_group_aggregate(where: $where) {
@@ -215,6 +216,28 @@ export default {
     },
     add () {
       this.$refs['schema'].add()
+    },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
+    },
+    /**
+     * 更改状态
+     * @return {Undefined}
+     */
+    toggleStatus () {
+      this.$modal.confirm({
+        title: '提示',
+        content: '是否改变用户状态？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          //  TODO
+        },
+        onCancel () {
+          // TODO
+        }
+      })
     },
     edit () {
       const [record] = this.selectedRows

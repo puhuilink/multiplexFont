@@ -17,7 +17,7 @@
       </template>
     </CTable>
 
-    <ResourceModelAttrSchema
+    <ResourceModelRelationSchema
       ref="schema"
     />
   </div>
@@ -27,7 +27,7 @@
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import ResourceModelAttrSchema from './ResourceModelAttrSchema'
+import ResourceModelRelationSchema from './ResourceModelRelationSchema'
 import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_relationattribute_order_by!]) {
@@ -57,7 +57,7 @@ export default {
   name: 'ResourceModelRelationAttrList',
   components: {
     CTable,
-    ResourceModelAttrSchema
+    ResourceModelRelationSchema
   },
   props: {
     where: {
