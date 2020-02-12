@@ -18,6 +18,7 @@
     </CTable>
 
     <ResourceModelAttrSchema
+      :did="where.did._eq"
       ref="schema"
     />
   </div>
@@ -170,6 +171,9 @@ export default {
       return apollo.clients.resource.query({
         query,
         variables: {
+          orderBy: {
+            rid: 'desc'
+          },
           ...parameter,
           where: {
             ...this.where

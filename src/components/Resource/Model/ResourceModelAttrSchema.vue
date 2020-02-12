@@ -9,6 +9,7 @@
     @cancel="cancel"
     :afterClose="reset"
     okText="保存"
+    @ok="submit"
     cancelText="取消"
   >
     <a-form
@@ -101,7 +102,13 @@
               v-decorator="[
                 'displaytype_s',
                 {
-                  initialValue: 'TEXT'
+                  initialValue: 'TEXT',
+                  rules: [
+                    {
+                      required: true,
+                      message: '显示类型必选'
+                    }
+                  ]
                 },
               ]"
             >
@@ -120,11 +127,17 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <a-select
               v-decorator="[
                 'sourcetype_s',
               ]"
-            />
+            >
+              <a-select-option
+                v-for="item in options.sourcetype"
+                :key="item.value"
+                :value="item.value"
+              >{{ item.name }}</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
@@ -151,7 +164,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasmse',
+                'allownull_b',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -319,7 +332,7 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <!-- TODO: >= 0 ?-->
+            <!-- TODO: >= 0 ? 格式可否为小数？数据库里精确到小数点后一位-->
             <a-input
               type="number"
               v-decorator="[
@@ -377,6 +390,9 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -387,6 +403,8 @@ const formItemLayout = {
 }
 
 const options = {
+  // FIXME: 值从哪里来？
+  sourcetype: [],
   type: [
     {
       name: 'STRING',
@@ -475,16 +493,42 @@ const options = {
   ]
 }
 
+const insert = gql`mutation ($objects: [ngecc_model_attributes_insert_input!]! = []) {
+  insert_ngecc_model_attributes (objects: $objects) {
+    returning {
+      rid
+    }
+  }
+}
+`
+
+const update = gql`mutation update ($where: t_user_bool_exp!, $user: t_user_set_input) {
+  update_t_user (
+    where: $where,
+    _set: $user
+  ) {
+    returning {
+      staff_name
+    }
+  }
+}`
+
 export default {
   name: 'ResourceModelAttrSchema',
   components: {},
-  props: {},
+  props: {
+    did: {
+      type: Number,
+      required: true
+    }
+  },
   data: (vm) => ({
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
     options,
     record: null,
+    submit: () => {},
     title: '',
     visible: false
   }),
@@ -492,6 +536,7 @@ export default {
   methods: {
     add () {
       this.title = '新增'
+      this.submit = this.insert
       this.visible = true
     },
     /**
@@ -501,6 +546,7 @@ export default {
        */
     edit (record) {
       this.title = '编辑'
+      this.submit = this.update
       this.visible = true
       this.record = {
         ...record
@@ -508,6 +554,66 @@ export default {
     },
     cancel () {
       this.visible = false
+    },
+    /**
+     * 新增
+     */
+    async insert () {
+      const values = {
+        ...await this.getFormFields(),
+        did: this.did
+      }
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: insert,
+        variables: {
+          objects: [values]
+        }
+      }).then(res => {
+        this.$emit('createSuccess')
+        this.cancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update () {
+      const values = await this.getFormFields()
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'user_id': {
+              '_eq': this.record.user_id
+            }
+          },
+          user: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$emit('editSuccess')
+        this.cancel()
+      }).catch(err => {
+        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
+          //  TODO: toast 已存在的用户名
+        }
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     reset () {
       this.form.resetFields()
