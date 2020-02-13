@@ -1,3 +1,6 @@
+/*
+ * 动态基线策略
+ */
 <template>
   <div class="baseline-strategy">
     <a-card :bordered="false">
@@ -69,10 +72,17 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>新建</a-button>
+        <a-button
+          @click="$refs.detail.open('', 'New')"
+        >
+          新建
+        </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-        >编辑</a-button>
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
@@ -83,33 +93,66 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
         rowKey="key"
         :columns="columns"
         :data="loadData"
         :alert="false"
         :scroll="{ y:400 }"
-        :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       />
       <!-- E 列表 -->
+
+      <!-- S 模块 -->
+      <detail ref="detail"></detail>
+      <!-- E 模块 -->
     </a-card>
   </div>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getStrategyList } from '@/api/analysis'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
+import detail from '../modules/BSDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
+    pagination: t_baseline_policy_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data:  t_baseline_policy (offset: $offset, limit: $limit, order_by: $orderBy) {
+    bottomlinedata_provider
+    bottomlinedata_range_from
+    bottomlinedata_range_to
+    cal_interval
+    cron_expression
+    cycle_count
+    middledata_provider
+    middlelinedata_range_from
+    middlelinedata_range_to
+    sample_radio
+    sigma
+    status
+    title
+    toplinedata_provider
+    toplinedata_range_from
+    update_time
+    uuid
+    toplinedata_range_to
+  }
+}`
 export default {
   name: 'BaselineStrategy',
   components: {
-    STable,
-    Ellipsis
+    CTable,
+    Ellipsis,
+    detail
   },
   data () {
     return {
@@ -121,45 +164,48 @@ export default {
       columns: [
         {
           title: '策略名称',
-          dataIndex: 'policyName',
+          dataIndex: 'title',
           sorter: true,
-          align: 'center',
           width: 200
           // fixed: 'left'
         },
         {
           title: '周期',
-          dataIndex: 'cycle',
+          dataIndex: 'cycle_count',
           align: 'center',
           width: 150,
           sorter: true
         },
         {
           title: '时间步长',
-          dataIndex: 'timeStep',
+          dataIndex: 'cal_interval',
           align: 'center',
           width: 200
         },
         {
           title: '样本密集区域',
-          dataIndex: 'sampleRegion',
+          dataIndex: 'sample_radio',
           align: 'center',
           width: 100
         },
         {
           title: '计算时间',
-          dataIndex: 'computingTime',
+          dataIndex: 'cron_expression',
           align: 'center',
           width: 120,
           sorter: true
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getStrategyList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        // 清空选中
+        this.selectedRowKeys = []
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -194,18 +240,6 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     },
     /**
      * 删除选中项

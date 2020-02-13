@@ -66,10 +66,9 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
-        rowKey="key"
+        rowKey="id_s"
         :columns="columns"
         :data="loadData"
         :alert="false"
@@ -88,15 +87,16 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { getalarmTypeList } from '@/api/alarmType'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/AlarmTypesDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
 export default {
   name: 'AlarmsTypes',
   components: {
-    STable,
+    CTable,
     detail
   },
   data () {
@@ -113,41 +113,63 @@ export default {
         },
         {
           title: '名称',
-          dataIndex: 'name',
+          dataIndex: 'name_s',
           sorter: true
         },
         {
           title: '显示名称',
-          dataIndex: 'showName',
+          dataIndex: 'label_s',
           sorter: true
         },
         {
           title: '图标',
-          dataIndex: 'showIcon',
+          dataIndex: 'icon_s',
           sorter: true
         },
         {
           title: '数据权限域',
-          dataIndex: 'DPFiled',
+          dataIndex: 'domain_s',
           sorter: true
         },
         {
           title: '告警编码',
-          dataIndex: 'alarmCode',
+          dataIndex: 'id_s',
           sorter: true
         },
         {
           title: '所属模型',
-          dataIndex: 'mid',
+          dataIndex: 'nodetype_s',
           sorter: true
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getalarmTypeList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [ngecc_instance_values_order_by!]) {
+          pagination: ngecc_instance_values_aggregate(where: {parentname_s: {_eq: "Alert"}}) {
+            aggregate {
+              count
+            }
+          }
+          data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: {parentname_s: {_eq: "Alert"}}) {
+            id_s
+            icon_s
+            ispageadd_s
+            description_1_s
+            name_s
+            domain_s
+            enable_b
+            label_s
+            nodetype_s
+            parentname_s
+          }
+        }`
+        // eslint-disable-next-line no-undef
+        return apollo.clients.resource.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],

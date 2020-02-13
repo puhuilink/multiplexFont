@@ -1,8 +1,5 @@
 /*
  * 故障类型
- * Author: yizhu liu
- * Date: 2019-12-26 10:41:44
- * Email: lyz02413@163.com
  */
 <template>
   <div class="faults-types">
@@ -56,10 +53,9 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
-        rowKey="key"
+        rowKey="type_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
@@ -67,23 +63,7 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       >
-        <span slot="status" slot-scope="text">
-          <a-icon
-            v-if="text=='0'"
-            type="check"
-            theme="outlined"
-            :title="text | statusTitleFilter"
-            :style="{color:'#00c356'}"
-          />
-          <a-icon
-            v-else
-            type="close"
-            theme="outlined"
-            :title="text | statusTitleFilter"
-            :style="{color:'#f97160'}"
-          />
-        </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S 模块 -->
@@ -94,15 +74,30 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { getFaultTypeList } from '@/api/alarmConfig'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/FTDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_type_order_by!]) {
+    pagination: t_incident_type_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data: t_incident_type(offset: $offset, limit: $limit, order_by: $orderBy) {
+    parent_type_id
+    comments
+    parent_type_title
+    type_id
+    type_title
+  }
+}`
 export default {
   name: 'FaultTypes',
   components: {
-    STable,
+    CTable,
     detail
   },
   data () {
@@ -114,31 +109,34 @@ export default {
       columns: [
         {
           title: '故障分类编号',
-          dataIndex: 'id',
+          dataIndex: 'type_id',
           sorter: true
         },
         {
           title: '故障分类名称',
-          dataIndex: 'name',
+          dataIndex: 'type_title',
           sorter: true
         },
         {
           title: '父类型名称',
-          dataIndex: 'fatherName',
+          dataIndex: 'parent_type_title',
           sorter: true
         },
         {
           title: '故障分类描述',
-          dataIndex: 'describe',
+          dataIndex: 'comments',
           sorter: true
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getFaultTypeList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        this.selectedRowKeys = []
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -180,6 +178,9 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'Edit')
           }
         }
       }

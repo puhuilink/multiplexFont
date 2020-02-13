@@ -61,13 +61,13 @@
           删除
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="enableCtrl"
         >
           启用
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="disableCtrl"
         >
           停用
@@ -76,10 +76,9 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
-        rowKey="key"
+        rowKey="rule_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
@@ -89,7 +88,7 @@
       >
         <span slot="status" slot-scope="text">
           <a-icon
-            v-if="text=='0'"
+            v-if="text"
             type="check-circle"
             theme="filled"
             :title="text | statusTitleFilter"
@@ -103,7 +102,7 @@
             :style="{color:'#f97160'}"
           />
         </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S 模块 -->
@@ -114,16 +113,39 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { getAlarmRuleList } from '@/api/alarmConfig'
+import CTable from '@/components/Table/CTable'
 import detail from './modules/AlarmRuleDetail'
 import deleteCheck from '@/components/DeleteCheck'
 import AbleCheck from '@/components/AbleCheck'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_rule_order_by!]) {
+    pagination: t_alert_rule_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data: t_alert_rule(offset: $offset, limit: $limit, order_by: $orderBy) {
+    content
+    createdate
+    domain
+    enabled
+    is_exclusive
+    node_type
+    priority
+    rule_id
+    rule_type
+    rulecomments
+    title
+    updatedate
+  }
+}`
 
 export default {
   name: 'AlarmsRules',
   components: {
-    STable,
+    CTable,
     detail
   },
   data () {
@@ -134,78 +156,113 @@ export default {
       queryParam: {},
       ruleList: [
         {
-          value: 'type',
-          label: '告警类型规则'
+          value: 'alert-classify',
+          label: '告警分类规则'
         },
         {
-          value: 'filter',
+          value: 'alert-filter',
           label: '告警过滤规则'
         },
         {
-          value: 'merge',
+          value: 'alert-merge',
           label: '告警合并规则'
         },
         {
-          value: 'asocciation',
+          value: 'alert-relate',
           label: '告警关联规则'
         },
         {
-          value: 'upgrade',
+          value: 'alert-upgrade',
           label: '告警升级规则'
         },
         {
-          value: 'recover',
+          value: 'alert-recover',
           label: '告警恢复规则'
         }
       ],
       columns: [
         {
           title: '规则名称',
-          dataIndex: 'ruleName',
+          dataIndex: 'title',
           sorter: true
         },
         {
           title: '规则类型',
-          dataIndex: 'ruleType',
-          sorter: true
+          dataIndex: 'rule_type',
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case 'alert-classify':
+                return '分类'
+              case 'alert-filter':
+                return '过滤'
+              case 'alert-merge':
+                return '合并'
+              case 'alert-relate':
+                return '关联'
+              case 'alert-upgrade':
+                return '升级'
+              case 'alert-recover':
+                return '恢复'
+              case 'alert-forward':
+                return '故障'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '节点类型',
-          dataIndex: 'nodeType',
+          dataIndex: 'node_type',
           sorter: true
         },
         {
           title: '域',
-          dataIndex: 'region',
+          dataIndex: 'domain',
           sorter: true
         },
         {
           title: '优先级',
           dataIndex: 'priority',
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            text += ''
+            switch (text) {
+              case '0':
+                return '低'
+              case '10':
+                return '中'
+              case '20':
+                return '高'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '例外',
-          dataIndex: 'exception',
+          dataIndex: 'rulecomments',
           sorter: true
         },
         {
           title: '编辑时间',
-          dataIndex: 'editSession',
+          dataIndex: 'updatedate',
           sorter: true
         },
         {
           title: '状态',
-          dataIndex: 'status',
+          dataIndex: 'enabled',
           scopedSlots: { customRender: 'status' }
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getAlarmRuleList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -217,21 +274,13 @@ export default {
     statusTitleFilter (type) {
       type += ''
       switch (type) {
-        case '0':
+        case 'true':
           return '已启用'
-        case '1':
+        case 'false':
           return '已禁用'
         default:
           return ''
       }
-    }
-  },
-  computed: {
-    /**
-     * 返回表格选中行
-     */
-    hasSelected () {
-      return this.selectedRowKeys.length > 0
     }
   },
   methods: {
@@ -256,9 +305,6 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
             this.$refs.detail.open(record, 'Edit')
           }

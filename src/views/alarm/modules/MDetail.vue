@@ -213,11 +213,11 @@
       </a-row>
     </a-card>
     <template slot="footer" >
-      <a-button v-if="mode=='monitorSee'" @click="handleCancel">前转</a-button>
-      <a-button v-if="mode=='monitorSee'" @click="handleCancel">解决</a-button>
-      <a-button v-if="mode=='monitorSee'" @click="handleCancel">事件查询</a-button>
-      <a-button v-if="mode=='monitorSee'" @click="handleCancel">操作日志</a-button>
-      <a-button v-if="mode=='monitorSee'" @click="handleCancel">关联告警</a-button>
+      <a-button v-if="mode=='monitorSee'" @click="$emit('handleForward')">前转</a-button>
+      <a-button v-if="mode=='monitorSee'" @click="$emit('handleSolve')">解决</a-button>
+      <a-button v-if="mode=='monitorSee'" @click="$emit('eventQuery')">事件查询</a-button>
+      <a-button v-if="mode=='monitorSee'" @click="$emit('operation')">操作日志</a-button>
+      <a-button v-if="mode=='monitorSee'" @click="$emit('correlation')">关联告警</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </template>
   </a-modal>

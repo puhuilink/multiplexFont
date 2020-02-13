@@ -87,23 +87,28 @@
           删除
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="enableCtrl"
         >
           启用
         </a-button>
         <a-button
-          :disabled="!hasSelected"
+          :disabled="!this.selectedRowKeys.length > 0"
           @click="disableCtrl"
         >
           停用
         </a-button>
-        <a-button :disabled="!hasSelected">关联故障</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.correlation.open(selectedRows[0])"
+        >
+          关联故障
+        </a-button>
       </div>
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
         size="small"
         rowKey="key"
@@ -117,7 +122,7 @@
       >
         <span slot="status" slot-scope="text">
           <a-icon
-            v-if="text=='0'"
+            v-if="text"
             type="check-circle"
             theme="filled"
             :title="text | statusTitleFilter"
@@ -134,29 +139,56 @@
         <span slot="appExplain" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S 模块 -->
       <detail ref="detail"></detail>
+      <correlation ref="correlation"></correlation>
       <!-- E 模块 -->
     </a-card>
   </div>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getForwardWayList } from '@/api/alarmConfig'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import AbleCheck from '@/components/AbleCheck'
 import detail from './modules/FMDetail'
+import correlation from './modules/FMCorrelation'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_path_order_by!]) {
+    pagination: t_forward_path_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data: t_forward_path (offset: $offset, limit: $limit, order_by: $orderBy) {
+    enabled
+    forward_comment
+    forward_destination
+    forward_path_id
+    forward_path_title
+    forward_type
+    forward_user
+    incident_severity
+    incident_type
+    send_cycle
+    send_tag
+    template_name
+    template_path
+  }
+}`
 export default {
   name: 'FaultManagement',
   components: {
-    STable,
+    CTable,
     Ellipsis,
-    detail
+    detail,
+    correlation
   },
   data () {
     return {
@@ -170,19 +202,19 @@ export default {
       columns: [
         {
           title: '前转路径名称',
-          dataIndex: 'forwardName',
+          dataIndex: 'forward_path_title',
           width: 180,
           sorter: true
         },
         {
           title: '前转类型',
-          dataIndex: 'forwardType',
+          dataIndex: 'forward_type',
           width: 100,
           sorter: true
         },
         {
           title: '系统前转目标',
-          dataIndex: 'systemTarget',
+          dataIndex: 'forward_user',
           width: 200,
           sorter: true
         },
@@ -194,47 +226,50 @@ export default {
         },
         {
           title: '应用说明',
-          dataIndex: 'appExplain',
+          dataIndex: 'app_note_s',
           sorter: true,
           width: 350,
           scopedSlots: { customRender: 'appExplain' }
         },
         {
           title: '前转周期',
-          dataIndex: 'period',
+          dataIndex: 'send_cycle',
           width: 100,
           sorter: true
         },
         {
           title: '发送标志',
-          dataIndex: 'sendMark',
+          dataIndex: 'send_tag',
           width: 100,
           sorter: true
         },
         {
           title: '启用标志',
-          dataIndex: 'status',
+          dataIndex: 'enabled',
           width: 100,
           scopedSlots: { customRender: 'status' }
         },
         {
           title: '前转模板',
           width: 100,
-          dataIndex: 'template'
+          dataIndex: 'template_path'
         },
         {
           title: '备注',
           width: 100,
-          dataIndex: 'remark'
+          dataIndex: 'forward_comment'
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getForwardWayList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            console.log(res)
-            return res.result
-          })
+        // 清空选中
+        this.selectedRowKeys = []
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -286,6 +321,9 @@ export default {
         on: {
           click: () => {
             console.log(record, index)
+          },
+          dblclick: () => {
+            this.$refs.detail.open(record, 'Edit')
           }
         }
       }
