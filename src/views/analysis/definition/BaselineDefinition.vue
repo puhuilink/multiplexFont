@@ -1,3 +1,7 @@
+/*
+ * 动态基线定义管理
+ */
+
 <template>
   <div class="baseline-definition">
     <a-card :bordered="false">
@@ -95,9 +99,8 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
         rowKey="key"
         :columns="columns"
         :data="loadData"
@@ -113,15 +116,48 @@
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getDefinitionList } from '@/api/analysis'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_def_order_by!]) {
+    pagination: t_baseline_def_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data:  t_baseline_def (offset: $offset, limit: $limit, order_by: $orderBy) {
+    calendar_type
+    ci_id
+    ci_label
+    ci_type_label
+    ci_type_name
+    cycle_day_num
+    cycle_default_type
+    cycle_month_num
+    cycle_quarter_num
+    cycle_week_num
+    cycle_year_num
+    gen_type
+    kpi_code
+    kpi_label
+    round_num
+    rule_id
+    rule_status
+    status
+    title
+    update_time
+    uuid
+    uuid_policy
+  }
+}`
 export default {
   name: 'BaselineDefinition',
   components: {
-    STable,
+    CTable,
     Ellipsis
   },
   data () {
@@ -135,40 +171,57 @@ export default {
       columns: [
         {
           title: '动态基线名称',
-          dataIndex: 'policyName',
+          dataIndex: 'title',
           sorter: true,
-          width: 220
+          width: 200
           // fixed: 'left'
         },
         {
           title: '节点类型',
-          dataIndex: 'nodeType',
+          dataIndex: 'ci_type_label',
           width: 150,
           sorter: true
         },
         {
           title: '节点实例',
-          dataIndex: 'nodeInstance',
-          width: 100
+          dataIndex: 'ci_label',
+          width: 100,
+          sorter: true
         },
         {
           title: 'KPI名称',
-          dataIndex: 'kpi',
-          width: 100
+          dataIndex: 'kpi_label',
+          width: 100,
+          sorter: true
         },
         {
           title: '周期',
-          dataIndex: 'cycle',
-          width: 120,
-          sorter: true
+          dataIndex: 'cycle_default_type',
+          width: 100,
+          sorter: true,
+          customRender: (text) => {
+            text += ''
+            switch (text) {
+              case 'Day':
+                return '按日计算'
+              case 'Week':
+                return '按周计算'
+              default:
+                return text
+            }
+          }
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getDefinitionList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        // 清空选中
+        this.selectedRowKeys = []
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
