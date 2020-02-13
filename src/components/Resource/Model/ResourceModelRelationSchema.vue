@@ -18,14 +18,14 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="显示名称"
+            label="名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
-                'username',
-                { rules: [{ required: true, message: '显示名称必填' }] },
+                'name_s',
+                { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
           </a-form-item>
@@ -33,15 +33,15 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="属性名称"
+            label="显示名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
-                'username',
+                'label_s',
                 {
-                  rules: [{ required: true, message: '' }],
+                  rules: [{ required: true, message: '显示名称必填' }],
                   // initialValue: 'name'
                 },
               ]"
@@ -53,14 +53,14 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="显示宽度"
+            label="目标"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
                 'username',
-
+                { rules: [{ required: true, message: '目标必填' }] },
               ]"
             />
           </a-form-item>
@@ -68,7 +68,7 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="数据类型"
+            label="映射类型"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
@@ -76,12 +76,12 @@
               v-decorator="[
                 'gender',
                 {
-                  initialValue: 'STRING'
+                  initialValue: 'one'
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.type"
+                v-for="item in options.map"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
@@ -93,7 +93,7 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="显示类型"
+            label="关系类型"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
@@ -101,134 +101,16 @@
               v-decorator="[
                 'gesnder',
                 {
-                  initialValue: 'TEXT'
+                  initialValue: 'Belongs To'
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.displayType"
+                v-for="item in options.relationType"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
             </a-select>
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="源类型"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="作为查询"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasme',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="非空"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmse',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="匹配条件"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="源值"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasssme',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="继承"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="隐藏"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmae',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="不可编辑"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasme1',
-              ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
@@ -238,44 +120,20 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <a-select
               v-decorator="[
-                'username',
-
+                'gesnder',
+                {
+                  initialValue: '基本信息'
+                },
               ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="默认值"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="运算值"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-
-              ]"
-            />
+            >
+              <a-select-option
+                v-for="item in options.group"
+                :key="item.value"
+                :value="item.value"
+              >{{ item.name }}</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
@@ -290,7 +148,6 @@
             <a-input
               v-decorator="[
                 'username',
-
               ]"
             />
           </a-form-item>
@@ -298,13 +155,13 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="唯一验证"
+            label="是否继承"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-checkbox
               v-decorator="[
-                'usernasme4',
+                'usernasmse',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -313,31 +170,36 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="唯一范围"
+            label="是否作为查询框"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <a-checkbox
               v-decorator="[
-                'username',
-
-              ]"
-            />
+                'usernasmae',
+              ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="正则验证"
+            label="匹配条件"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <a-select
               v-decorator="[
-                'username',
-
+                'gesnder',
+                {
+                },
               ]"
-            />
+            >
+              <a-select-option
+                v-for="item in []"
+                :key="item.value"
+                :value="item.value"
+              >{{ item.name }}</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
@@ -345,16 +207,14 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="提示信息"
+            label="非空"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <a-checkbox
               v-decorator="[
-                'username',
-
-              ]"
-            />
+                'usernasmae',
+              ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
@@ -366,8 +226,24 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasme23',
+                'usernasmae',
               ]"></a-checkbox>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="默认值"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'username',
+              ]"
+            />
           </a-form-item>
         </a-col>
       </a-row>
@@ -428,6 +304,64 @@ const options = {
     {
       name: 'CHECKBOX',
       value: 'CHECKBOX'
+    }
+  ],
+  map: [
+    {
+      name: 'one',
+      value: 'one'
+    },
+    {
+      name: 'more',
+      value: 'more'
+    }
+  ],
+  relationType: [
+    {
+      name: 'Belongs To',
+      value: 'Belongs To'
+    },
+    {
+      name: 'Installed On',
+      value: 'Installed On'
+    },
+    {
+      name: 'Located in',
+      value: 'Located in'
+    },
+    {
+      name: 'Related To',
+      value: 'Related To'
+    },
+    {
+      name: 'Connected To',
+      value: 'Connected To'
+    },
+    {
+      name: 'Pointed To',
+      value: 'Pointed To'
+    },
+    {
+      name: '交易路径下一环节',
+      value: '交易路径下一环节'
+    },
+    {
+      name: '位置归属于',
+      value: '位置归属于'
+    }
+  ],
+  group: [
+    {
+      name: '基本信息',
+      value: '基本信息'
+    },
+    {
+      name: '关系信息',
+      value: '关系信息'
+    },
+    {
+      name: '其他信息',
+      value: '其他信息'
     }
   ]
 }

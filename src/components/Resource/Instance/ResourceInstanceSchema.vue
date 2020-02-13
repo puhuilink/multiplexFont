@@ -9,6 +9,7 @@
     @cancel="cancel"
     :afterClose="reset"
     okText="保存"
+    @ok="submit"
     cancelText="取消"
   >
     <a-form :form="form" layout="vertical">
@@ -21,7 +22,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'name_s',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -36,7 +37,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'label_s',
               ]"
             />
           </a-form-item>
@@ -52,7 +53,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'domain_s',
               ]"
             />
           </a-form-item>
@@ -66,7 +67,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'valuecode_s',
               ]"
             />
           </a-form-item>
@@ -82,7 +83,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'valuelabel_s',
               ]"
             />
           </a-form-item>
@@ -93,6 +94,27 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const insert = gql`mutation ($objects: [ngecc_instance_values_insert_input!]! = []) {
+  insert_ngecc_instance_values (objects: $objects) {
+    returning {
+      did
+    }
+  }
+}`
+
+const update = gql`mutation update ($where: ngecc_instance_values_bool_exp!, $val: ngecc_instance_values_set_input) {
+  update_ngecc_instance_values (
+    where: $where,
+    _set: $val
+  ) {
+      returning {
+      rid
+    }
+  }
+}`
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -110,6 +132,7 @@ export default {
     formItemLayout,
     loading: false,
     record: null,
+    submit: () => {},
     title: '',
     visible: false
   }),
@@ -118,21 +141,82 @@ export default {
     add () {
       this.title = '新增'
       this.visible = true
+      // this.submit = this.insert
     },
     /**
      * 编辑
      * @param {Object} record
-     * @return {Undefined}
+     * @return {Promise<Undefined>}
      */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
+      this.submit = this.update
       this.visible = true
       this.record = {
         ...record
       }
+      await this.$nextTick()
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
+    },
+    /**
+     * 新增
+     */
+    async insert () {
+      const values = await this.getFormFields()
+      this.loading = true
+      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
+      return apollo.clients.resource.mutate({
+        mutation: insert,
+        variables: {
+          objects: [{
+            ...values
+          }]
+        }
+      }).then(res => {
+        this.$emit('addSuccess')
+        this.cancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update () {
+      const values = await this.getFormFields()
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'rid': {
+              '_eq': this.record.rid
+            }
+          },
+          val: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$emit('editSuccess')
+        this.cancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     reset () {
       this.form.resetFields()

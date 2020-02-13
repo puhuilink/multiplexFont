@@ -8,7 +8,7 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
-      <template #opration>
+      <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
@@ -17,7 +17,7 @@
       </template>
     </CTable>
 
-    <ResourceModelAttrSchema
+    <ResourceModelRelationSchema
       ref="schema"
     />
   </div>
@@ -27,7 +27,7 @@
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import ResourceModelAttrSchema from './ResourceModelAttrSchema'
+import ResourceModelRelationSchema from './ResourceModelRelationSchema'
 import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_relationattribute_order_by!]) {
@@ -57,7 +57,7 @@ export default {
   name: 'ResourceModelRelationAttrList',
   components: {
     CTable,
-    ResourceModelAttrSchema
+    ResourceModelRelationSchema
   },
   props: {
     where: {

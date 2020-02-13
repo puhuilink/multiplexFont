@@ -1,86 +1,92 @@
 <template>
   <div class="group">
-    <a-card :bordered="false">
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+    <CTable
+      ref="table"
+      :columns="columns"
+      :data="loadData"
+      rowKey="group_id"
+      :scroll="{ x: 1180, y: 850}"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="工作组编号">
-                <a-input v-model="queryParam.code" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="工作组名称">
-                <a-input v-model="queryParam.name" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="有效标识">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="工作组编号"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.group_id" placeholder=""/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="工作组名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.group_name" placeholder=""/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row v-if="advanced">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  label="有效标识"
+                  style="width: 100%"
+                >
                   <a-select
                     allowClear
-                    v-model="queryParam.boolUse"
+                    defaultValue="1"
+                    v-model="queryParams.flag"
                     placeholder="请选择"
-                    default-value="checkall"
                   >
-                    <a-select-option value="0">有效</a-select-option>
-                    <a-select-option value="1">无效</a-select-option>
+                    <a-select-option value="1">有效</a-select-option>
+                    <a-select-option value="0">无效</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
+            </a-row>
+          </div>
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
         </a-form>
-      </div>
-      <!-- E 搜索 -->
+      </template>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
+      <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button :disabled="!hasSelected">删除</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
+        <a-button @click="batchDelete" :disabled="!isValid">删除</a-button>
         <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
         <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
-        <a-button :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
-      </div>
-      <!-- E 操作栏 -->
+      </template>
 
-      <!-- S 列表 -->
-      <s-table
-        ref="table"
-        size="small"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ y:400 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      >
-        <span slot="remark" slot-scope="text">
-          <ellipsis :length="60" tooltip>{{ text }}</ellipsis>
-        </span>
-      </s-table>
-      <!-- E 列表 -->
-    </a-card>
+      <span slot="note" slot-scope="text">
+        <ellipsis :length="60" tooltip>{{ text }}</ellipsis>
+      </span>
+
+    </CTable>
 
     <GroupSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="query"
     />
 
     <AuthScheme
@@ -98,65 +104,125 @@
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getGroupList } from '@/api/system'
+import { Ellipsis } from '@/components'
+// import { getGroupList } from '@/api/system'
 import GroupSchema from './GroupSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './GroupAdministratorSchema'
 import GroupUserSchema from './GroupUserSchema'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+import CTable from '@/components/Table/CTable'
+import Template from '../../design/moduels/template/index'
+import deleteCheck from '@/components/DeleteCheck'
+
+const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_group_order_by!])  {
+  pagination: t_group_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: t_group (where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+    group_id
+    group_name
+    group_type
+    group_id
+    flag
+    note
+  }
+}
+`
+
+const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
+  #   group 表删除
+  delete_t_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+  #   关联解除
+  delete_t_user_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+}`
+
+const updateGroupFlag = gql`mutation update_group_flag ($groupId: String!, $flag: numeric) {
+  update_t_group(
+    where: {
+      group_id: {
+        _eq: $groupId
+      }
+    },
+    _set: {
+      flag: $flag
+    }
+  ) {
+    affected_rows
+  }
+}`
+
+// 删除组会删除组，并且解除其组内用户的关联
+// 只能删除无效组
 
 export default {
   name: 'Group',
   components: {
-    STable,
+    Template,
+    CTable,
     Ellipsis,
     GroupSchema,
     AuthScheme,
     GroupAdministratorSchema,
     GroupUserSchema
   },
+  props: {
+    where: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParams: {},
       // 告警列表表头
       columns: [
         {
           title: '工作组编号',
-          dataIndex: 'code',
+          dataIndex: 'group_id',
           sorter: true,
-          align: 'center',
-          width: 180
+          width: 280
           // fixed: 'left'
         },
         {
           title: '工作组名称',
-          dataIndex: 'name',
-          width: 180,
-          align: 'center',
+          dataIndex: 'group_name',
+          width: 280,
           sorter: true
         },
         {
           title: '有效标志',
-          dataIndex: 'boolUse',
-          align: 'center',
-          width: 180
+          dataIndex: 'flag',
+          width: 120,
+          sorter: true,
+          customRender: val => val ? '有效' : '失效'
         },
         {
           title: '备注',
-          dataIndex: 'remark',
-          scopedSlots: { customRender: 'remark' }
+          dataIndex: 'note',
+          width: '500',
+          // fixed: 'right'
+          scopedSlots: { customRender: 'note' }
         }
       ],
-      loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getGroupList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -173,6 +239,16 @@ export default {
     },
     hasSelectedOne () {
       return this.selectedRowKeys.length === 1
+    },
+    isValid () {
+      if (!this.hasSelected) {
+        return false
+      } else {
+        // 仅失效工作组可删除
+        return this.selectedRows
+          .filter(el => !el.flag)
+          .length === this.selectedRows.length
+      }
     }
   },
   methods: {
@@ -188,11 +264,102 @@ export default {
     add () {
       this.$refs['schema'].add()
     },
+    async batchDelete () {
+      await deleteCheck.sureDelete()
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteGroup,
+          variables: {
+            groupIds: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        // TODO: toast
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
+    },
+    /**
+     * 更改状态
+     * @return {Undefined}
+     */
+    async toggleFlag () {
+      await deleteCheck.confirm({ content: '是否改变工作组状态？' })
+      try {
+        this.$refs['table'].loading = true
+        const [record] = this.selectedRows
+        apollo.clients.alert.mutate({
+          mutation: updateGroupFlag,
+          variables: {
+            groupId: record.group_id,
+            flag: Number(!record.flag)
+          }
+        })
+        // TODO: toast
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
+    },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
+    },
+    /**
+     * 加载表格数据
+     * @param {Object} parameter CTable 回传的分页与排序条件
+     * @return {Function: <Promise<Any>>}
+     */
+    loadData (parameter) {
+      this.selectedRows = []
+      this.selectedRows = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          orderBy: {
+            'createdate': 'desc_nulls_last'
+          },
+          ...parameter,
+          where: {
+            ...this.where,
+            ...this.queryParams.group_id ? {
+              group_id: {
+                _ilike: `%${this.queryParams.group_id.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.group_name ? {
+              group_name: {
+                _ilike: `%${this.queryParams.group_name.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.hasOwnProperty('flag') && this.queryParams.flag !== undefined ? {
+              flag: {
+                _eq: `${this.queryParams.flag}`
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
+    },
     /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+      // 展开只是 UI 切换
+      // if (!this.advanced) {
+      //   delete (this.queryParams.flag)
+      // }
     },
     /**
      * 日期时间空间选择
@@ -235,5 +402,9 @@ export default {
   button{
     margin-right: 5px;
   }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>

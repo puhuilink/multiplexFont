@@ -21,7 +21,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'name_s',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -36,7 +36,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'label_s',
                 { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />

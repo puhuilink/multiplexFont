@@ -11,10 +11,14 @@
         />
       </a-col>
 
+      <!-- TODO: 目前只统计到一个节点对应的实例列表，vicube统计的是当前节点与其所有后代节点相关的实例列表 -->
+      <!-- TODO: 接上一条，在节点名字右侧展示其下方的实例列表数量 -->
+
       <!-- / content -->
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
+            <!-- FIXME: 同一个parentname_s 对应的 did 不同 -->
             <ResourceInstanceList
               v-if="selectedNode"
               class="ResourceInstance-table"
