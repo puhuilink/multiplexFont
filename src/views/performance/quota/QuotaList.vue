@@ -79,7 +79,7 @@
 
       <template #operation>
         <a-button @click="add">新建</a-button>
-        <a-button :disabled="!hasSelectedOne">编辑</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
       </template>
     </CTable>
@@ -117,6 +117,18 @@ const query = gql`query ($where: ngecc_instance_values_bool_exp = {}, $limit: In
   }
 }
 `
+
+// const deleteQL = gql`mutation ($rids: [Int!] = []) {
+//   delete_ngecc_instance_values (where: {
+//     rid: {
+//       _in: $rids
+//     }
+//   }) {
+//     returning {
+//       name_s
+//     }
+//   }
+// }`
 
 export default {
   name: 'QuotaList',
@@ -198,6 +210,10 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
