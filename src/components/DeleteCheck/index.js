@@ -17,7 +17,24 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk () {
-          setTimeout(resolve, 1000, true)
+          setTimeout(resolve, 300, true)
+        },
+        onCancel () {
+          resolve(false)
+        }
+      })
+    })
+  },
+  confirm (options = {}) {
+    return new Promise(resolve => {
+      Modal.confirm({
+        title: options.title || '提示',
+        content: options.content || '确定要删除吗？',
+        okText: options.okText || '确定',
+        okType: options.okType || 'danger',
+        cancelText: options.cancelText || '取消',
+        onOk () {
+          setTimeout(resolve, 300, true)
         },
         onCancel () {
           resolve(false)

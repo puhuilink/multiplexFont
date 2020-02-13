@@ -97,7 +97,9 @@ export default {
      * @return {Undefined}
      */
     select (selectedNode) {
-      this.selectedNode = selectedNode
+      this.selectedNode = {
+        ...selectedNode
+      }
     }
   }
 }

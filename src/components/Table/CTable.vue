@@ -26,6 +26,18 @@ export default {
       validator: size => ['default', 'middle', 'small'].includes(size)
     }
   },
+  computed: {
+    loading: {
+      get () {
+        return this.$refs['table'] ? this.$refs['table'].localeLoading : false
+      },
+      set (v) {
+        if (this.$refs['table']) {
+          this.$refs['table'].localeLoading = v
+        }
+      }
+    }
+  },
   methods: {
     refresh () {
       return this.$refs['table'].refresh(arguments)
@@ -35,7 +47,7 @@ export default {
     // 顶部查询区域
     const query = <div class="CTable-query">{ this.$slots.query }</div>
     // 操作区域
-    const opration = <div class="CTable-operation">{ this.$slots.opration }</div>
+    const opration = <div class="CTable-operation">{ this.$slots.operation }</div>
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',

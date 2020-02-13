@@ -9,6 +9,7 @@
     @cancel="cancel"
     :afterClose="reset"
     okText="保存"
+    @ok="submit"
     cancelText="取消"
   >
     <a-form
@@ -18,14 +19,14 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="名称"
+            label="显示名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
-                'username',
-                { rules: [{ required: true, message: '名称必填' }] },
+                'label_s',
+                { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />
           </a-form-item>
@@ -33,15 +34,16 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="显示名称"
+            label="属性名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              :disabled="title === '编辑'"
               v-decorator="[
-                'username',
+                'name_s',
                 {
-                  rules: [{ required: true, message: '显示名称必填' }],
+                  rules: [{ required: true, message: '' }],
                   // initialValue: 'name'
                 },
               ]"
@@ -53,14 +55,13 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="目标"
+            label="显示宽度"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
-                'username',
-                { rules: [{ required: true, message: '目标必填' }] },
+                'width_i'
               ]"
             />
           </a-form-item>
@@ -68,20 +69,20 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="映射类型"
+            label="数据类型"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-select
               v-decorator="[
-                'gender',
+                'datatype_s',
                 {
-                  initialValue: 'one'
+                  initialValue: 'STRING'
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.map"
+                v-for="item in options.type"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
@@ -93,24 +94,152 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="关系类型"
+            label="显示类型"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-select
               v-decorator="[
-                'gesnder',
+                'displaytype_s',
                 {
-                  initialValue: 'Belongs To'
+                  initialValue: 'TEXT',
+                  rules: [
+                    {
+                      required: true,
+                      message: '显示类型必选'
+                    }
+                  ]
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.relationType"
+                v-for="item in options.displayType"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
             </a-select>
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="源类型"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-select
+              v-decorator="[
+                'sourcetype_s',
+              ]"
+            >
+              <a-select-option
+                v-for="item in options.sourcetype"
+                :key="item.value"
+                :value="item.value"
+              >{{ item.name }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="作为查询"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'searchfield_b',
+              ]"></a-checkbox>
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="非空"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'allownull_b',
+              ]"></a-checkbox>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="匹配条件"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'matchtype_s'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="源值"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'sourcevalue_s',
+              ]">
+            </a-input>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="继承"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'allowinheritance_b',
+              ]">
+            </a-checkbox>
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="隐藏"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'hidden_b',
+              ]"></a-checkbox>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="不可编辑"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'edit_b',
+              ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
@@ -122,112 +251,15 @@
           >
             <a-select
               v-decorator="[
-                'gesnder',
-                {
-                  initialValue: '基本信息'
-                },
+                'tabgroup_s'
               ]"
             >
               <a-select-option
-                v-for="item in options.group"
+                v-for="item in options.tabgroup"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
             </a-select>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="排序"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'username',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="是否继承"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmse',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="是否作为查询框"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmae',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="匹配条件"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-select
-              v-decorator="[
-                'gesnder',
-                {
-                },
-              ]"
-            >
-              <a-select-option
-                v-for="item in []"
-                :key="item.value"
-                :value="item.value"
-              >{{ item.name }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="非空"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmae',
-              ]"></a-checkbox>
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="资产属性"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-checkbox
-              v-decorator="[
-                'usernasmae',
-              ]"></a-checkbox>
           </a-form-item>
         </a-col>
       </a-row>
@@ -241,9 +273,115 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'defaultvalue_s'
               ]"
             />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="运算值"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'operationvalue_s'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="排序"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <!-- TODO: >= 0 ?-->
+            <a-input
+              type="number"
+              v-decorator="[
+                'order_i'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="唯一验证"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'uniqueness_b',
+              ]"></a-checkbox>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="唯一范围"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <!-- TODO: >= 0 ? 格式可否为小数？数据库里精确到小数点后一位-->
+            <a-input
+              type="number"
+              v-decorator="[
+                'uniquenessscope_s'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="正则验证"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'pattern_s'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="提示信息"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'alertmessage_s'
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="资产属性"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-checkbox
+              v-decorator="[
+                'assetsattr_b',
+              ]"></a-checkbox>
           </a-form-item>
         </a-col>
       </a-row>
@@ -252,6 +390,9 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -262,6 +403,8 @@ const formItemLayout = {
 }
 
 const options = {
+  // FIXME: 值从哪里来？
+  sourcetype: [],
   type: [
     {
       name: 'STRING',
@@ -282,6 +425,14 @@ const options = {
     {
       name: 'DATE',
       value: 'DATE'
+    },
+    {
+      name: 'BOOLEAN',
+      value: 'BOOLEAN'
+    },
+    {
+      name: 'FLOAT',
+      value: 'FLOAT'
     }
   ],
   displayType: [
@@ -304,78 +455,81 @@ const options = {
     {
       name: 'CHECKBOX',
       value: 'CHECKBOX'
+    },
+    {
+      name: 'DATETIME',
+      value: 'DATETIME'
+    },
+    {
+      name: 'CHECKBOX',
+      value: 'CHECKBOX'
+    },
+    {
+      name: 'RADIO',
+      value: 'RADIO'
+    },
+    {
+      name: 'SELECTED',
+      value: 'SELECTED'
+    },
+    {
+      name: 'URMPTREE',
+      value: 'URMPTREE'
     }
   ],
-  map: [
+  tabgroup: [
     {
-      name: 'one',
-      value: 'one'
-    },
-    {
-      name: 'more',
-      value: 'more'
+      name: '基本关系',
+      value: 'base'
     }
-  ],
-  relationType: [
-    {
-      name: 'Belongs To',
-      value: 'Belongs To'
-    },
-    {
-      name: 'Installed On',
-      value: 'Installed On'
-    },
-    {
-      name: 'Located in',
-      value: 'Located in'
-    },
-    {
-      name: 'Related To',
-      value: 'Related To'
-    },
-    {
-      name: 'Connected To',
-      value: 'Connected To'
-    },
-    {
-      name: 'Pointed To',
-      value: 'Pointed To'
-    },
-    {
-      name: '交易路径下一环节',
-      value: '交易路径下一环节'
-    },
-    {
-      name: '位置归属于',
-      value: '位置归属于'
-    }
-  ],
-  group: [
-    {
-      name: '基本信息',
-      value: '基本信息'
-    },
-    {
-      name: '关系信息',
-      value: '关系信息'
-    },
-    {
-      name: '其他信息',
-      value: '其他信息'
-    }
+    // TODO: 找出剩余两种关系的值
+    // {
+    //   name: '关系信息',
+    //   value: '?'
+    // },
+    // {
+    //   name: '其他信息',
+    //   value: '??'
+    // }
   ]
 }
+
+const insert = gql`mutation ($objects: [ngecc_model_attributes_insert_input!]! = []) {
+  insert_ngecc_model_attributes (objects: $objects) {
+    returning {
+      rid
+    }
+  }
+}
+`
+
+const update = gql`mutation update ($where: ngecc_model_attributes_bool_exp!, $attr: ngecc_model_attributes_set_input) {
+  update_ngecc_model_attributes (
+    where: $where,
+    _set: $attr
+  ) {
+      returning {
+      rid
+    }
+  }
+}`
 
 export default {
   name: 'ResourceModelAttrSchema',
   components: {},
-  props: {},
+  props: {
+    did: {
+      type: Number,
+      required: true
+    }
+  },
   data: (vm) => ({
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
     options,
     record: null,
+    submit: () => {},
     title: '',
     visible: false
   }),
@@ -383,22 +537,83 @@ export default {
   methods: {
     add () {
       this.title = '新增'
+      this.submit = this.insert
       this.visible = true
     },
     /**
-     * 编辑
-     * @param {Object} record
-     * @return {Undefined}
-     */
-    edit (record) {
+       * 编辑
+       * @param {Object} record
+       * @return {Promise<Undefined>}
+       */
+    async edit (record) {
       this.title = '编辑'
-      this.visible = true
+      this.submit = this.update
       this.record = {
         ...record
       }
+      this.visible = true
+      await this.$nextTick()
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
+    },
+    /**
+     * 新增
+     */
+    async insert () {
+      const values = {
+        ...await this.getFormFields(),
+        did: this.did
+      }
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: insert,
+        variables: {
+          objects: [values]
+        }
+      }).then(res => {
+        this.$emit('addSuccess')
+        this.cancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update () {
+      const values = await this.getFormFields()
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'rid': {
+              '_eq': this.record.rid
+            }
+          },
+          attr: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$emit('editSuccess')
+        this.cancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     reset () {
       this.form.resetFields()
@@ -409,12 +624,12 @@ export default {
 </script>
 
 <style lang="less">
-.ResourceModelAttrSchema {
-  &__modal {
-    .ant-modal-body {
-      height: 415px;
-      overflow: scroll;
+  .ResourceModelAttrSchema {
+    &__modal {
+      .ant-modal-body {
+        height: 415px;
+        overflow: scroll;
+      }
     }
   }
-}
 </style>
