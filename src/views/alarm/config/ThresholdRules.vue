@@ -109,7 +109,7 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
         size="small"
         rowKey="key"
@@ -122,21 +122,21 @@
       >
         <span slot="status" slot-scope="text">
           <a-icon
-            v-if="text=='0'"
-            type="check"
-            theme="outlined"
+            v-if="text"
+            type="check-circle"
+            theme="filled"
             :title="text | statusTitleFilter"
             :style="{color:'#00c356'}"
           />
           <a-icon
             v-else
-            type="close"
-            theme="outlined"
+            type="close-circle"
+            theme="filled"
             :title="text | statusTitleFilter"
             :style="{color:'#f97160'}"
           />
         </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S 模块 -->
@@ -147,16 +147,45 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { getTRList } from '@/api/alarmConfig'
+import CTable from '@/components/Table/CTable'
 import screening from '../screening'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/ThresholdRulesDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_threshold_order_by!]) {
+    pagination: t_threshold_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data: t_threshold(offset: $offset, limit: $limit, order_by: $orderBy) {
+    alert_code
+    condition
+    domain
+    enabled
+    enter_count
+    exit_count
+    id
+    ignore_instance
+    instance
+    keep_count
+    kpi_code
+    message
+    node_ids
+    node_type
+    ref_value
+    title
+    threshold_type
+    severity
+    udapvalue_type
+  }
+}`
 export default {
   name: 'ThresholdRules',
   components: {
-    STable,
+    CTable,
     detail
   },
   data () {
@@ -171,51 +200,74 @@ export default {
       columns: [
         {
           title: '名称',
-          dataIndex: 'name',
+          dataIndex: 'title',
           sorter: true
         },
         {
           title: '节点类型',
-          dataIndex: 'nodeType',
+          dataIndex: 'node_type',
           sorter: true
         },
         {
           title: '节点',
-          dataIndex: 'node',
+          dataIndex: 'node_ids_label',
           sorter: true
         },
         {
           title: '域',
-          dataIndex: 'region',
+          dataIndex: 'domain',
           sorter: true
         },
         {
           title: 'KPI名称',
-          dataIndex: 'KPIName',
+          dataIndex: 'kpi_code',
+          width: 150,
           sorter: true
         },
         {
           title: 'Alert名称',
-          dataIndex: 'AlertName',
+          dataIndex: 'alert_code',
+          width: 150,
           sorter: true
         },
         {
           title: '级别',
-          dataIndex: 'level',
-          sorter: true
+          dataIndex: 'severity',
+          width: 100,
+          sorter: true,
+          customRender: (text) => {
+            text += ''
+            switch (text) {
+              case '0':
+                return 'INFO'
+              case '1':
+                return 'WARNING'
+              case '2':
+                return 'MINOR'
+              case '3':
+                return 'MAJOR'
+              case '4':
+                return 'CRITICAL'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '启用',
-          dataIndex: 'status',
+          dataIndex: 'enabled',
           scopedSlots: { customRender: 'status' }
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getTRList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        this.selectedRowKeys = []
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],

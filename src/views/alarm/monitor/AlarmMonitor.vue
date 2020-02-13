@@ -273,6 +273,26 @@ import correlation from '../modules/MCorrelation'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
+// const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
+//   pagination: t_alert_aggregate(where: $where) {
+//     aggregate {
+//       count
+//     }
+//   }
+//   data: t_alert(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+//     arising_time
+//     first_arising_time
+//     message
+//     state
+//     app_name
+//     dev_name
+//     instance
+//     alert_id
+//     severity
+//     count
+//     agent_id
+//   }
+// }`
 const query = gql`query instanceList($state: numeric!, $arising_time_gte: timestamp!, $arising_time_lte: timestamp!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
   pagination: t_alert_aggregate(where: {state: {_eq: $state}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
@@ -350,6 +370,12 @@ const menuQuery = gql`query($arising_time_gte: timestamp!, $arising_time_lte: ti
 
 export default {
   name: 'AlarmMonitor',
+  // props: {
+  //   where: {
+  //     type: Object,
+  //     default: () => ({})
+  //   }
+  // },
   components: {
     CTable,
     Ellipsis,
@@ -479,6 +505,16 @@ export default {
             arising_time_gte: '2018-5-31 00:00:00',
             arising_time_lte: '2018-5-31 23:59:59'
             // arising_time: today
+            // where: {
+            //   ...this.where,
+            //   state: {
+            //     eq: `%${this.tabkey}%`
+            //   },
+            //   arising_time: {
+            //     _gte: '2018-5-31 00:00:00',
+            //     _lte: '2018-5-31 23:59:59'
+            //   }
+            // }
           }
         }).then(r => r.data)
       },

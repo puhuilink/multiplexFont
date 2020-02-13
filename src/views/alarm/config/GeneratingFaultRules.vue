@@ -81,16 +81,16 @@
       >
         <span slot="status" slot-scope="text">
           <a-icon
-            v-if="text=='0'"
-            type="check"
-            theme="outlined"
+            v-if="text"
+            type="check-circle"
+            theme="filled"
             :title="text | statusTitleFilter"
             :style="{color:'#00c356'}"
           />
           <a-icon
             v-else
-            type="close"
-            theme="outlined"
+            type="close-circle"
+            theme="filled"
             :title="text | statusTitleFilter"
             :style="{color:'#f97160'}"
           />
