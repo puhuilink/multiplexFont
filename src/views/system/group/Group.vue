@@ -70,10 +70,10 @@
       <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
+        <a-button @click="batchDelete" :disabled="!isValid">删除</a-button>
         <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
         <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
-        <a-button @click="toggleStatus" :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
       </template>
 
@@ -132,6 +132,43 @@ const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offs
   }
 }
 `
+
+const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
+  #   group 表删除
+  delete_t_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+  #   关联解除
+  delete_t_user_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+}`
+
+const updateGroupFlag = gql`mutation update_group_flag ($groupId: String!, $flag: numeric) {
+  update_t_group(
+    where: {
+      group_id: {
+        _eq: $groupId
+      }
+    },
+    _set: {
+      flag: $flag
+    }
+  ) {
+    affected_rows
+  }
+}`
+
+// 删除组会删除组，并且解除其组内用户的关联
+// 只能删除无效组
 
 export default {
   name: 'Group',
@@ -202,6 +239,16 @@ export default {
     },
     hasSelectedOne () {
       return this.selectedRowKeys.length === 1
+    },
+    isValid () {
+      if (!this.hasSelected) {
+        return false
+      } else {
+        // 仅失效工作组可删除
+        return this.selectedRows
+          .filter(el => !el.flag)
+          .length === this.selectedRows.length
+      }
     }
   },
   methods: {
@@ -219,25 +266,47 @@ export default {
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteGroup,
+          variables: {
+            groupIds: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        // TODO: toast
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
      * 更改状态
      * @return {Undefined}
      */
-    toggleStatus () {
-      this.$modal.confirm({
-        title: '提示',
-        content: '是否改变用户状态？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          //  TODO
-        },
-        onCancel () {
-          // TODO
-        }
-      })
+    async toggleFlag () {
+      await deleteCheck.confirm({ content: '是否改变工作组状态？' })
+      try {
+        this.$refs['table'].loading = true
+        const [record] = this.selectedRows
+        apollo.clients.alert.mutate({
+          mutation: updateGroupFlag,
+          variables: {
+            groupId: record.group_id,
+            flag: Number(!record.flag)
+          }
+        })
+        // TODO: toast
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     edit () {
       const [record] = this.selectedRows
@@ -249,6 +318,8 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      this.selectedRows = []
+      this.selectedRows = []
       return apollo.clients.alert.query({
         query,
         variables: {

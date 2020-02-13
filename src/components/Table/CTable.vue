@@ -26,6 +26,18 @@ export default {
       validator: size => ['default', 'middle', 'small'].includes(size)
     }
   },
+  computed: {
+    loading: {
+      get () {
+        return this.$refs['table'] ? this.$refs['table'].localeLoading : false
+      },
+      set (v) {
+        if (this.$refs['table']) {
+          this.$refs['table'].localeLoading = v
+        }
+      }
+    }
+  },
   methods: {
     refresh () {
       return this.$refs['table'].refresh(arguments)

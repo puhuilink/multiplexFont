@@ -86,7 +86,7 @@
         <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
         <a-button @click="resetPwd" :disabled="!hasSelectedOne">重置密码</a-button>
         <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
-        <a-button @click="toggleStatus" :disabled="!hasSelectedOne">更改状态</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
         <a-button @click="allocateAuth" :disabled="!hasSelected">分配权限</a-button>
       </template>
 
@@ -145,6 +145,40 @@ const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offse
   }
 }
 `
+
+const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
+  #   user 表删除
+  delete_t_user (where: {
+    user_id: {
+      _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+  #   关联解除
+  delete_t_user_group (where: {
+    user_id: {
+      _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+}`
+
+const updateUserFlag = gql`mutation update_user_flag ($userId: String!, $flag: numeric) {
+  update_t_user(
+    where: {
+      user_id: {
+        _eq: $userId
+      }
+    },
+    _set: {
+      flag: $flag
+    }
+  ) {
+    affected_rows
+  }
+}`
 
 export default {
   name: 'User',
@@ -250,6 +284,22 @@ export default {
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteUser,
+          variables: {
+            userIds: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
      * 重置密码
@@ -275,21 +325,25 @@ export default {
      * 更改状态
      * @return {Undefined}
      */
-    toggleStatus () {
-      // const [record] = this.selectedRows
-      this.$modal.confirm({
-        title: '提示',
-        content: '是否改变用户状态？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          //  TODO
-        },
-        onCancel () {
-          // TODO
-        }
-      })
+    async toggleFlag () {
+      await deleteCheck.confirm({ content: '是否改变用户状态？' })
+      try {
+        this.$refs['table'].loading = true
+        const [record] = this.selectedRows
+        apollo.clients.alert.mutate({
+          mutation: updateUserFlag,
+          variables: {
+            userId: record.user_id,
+            flag: Number(!record.flag)
+          }
+        })
+        // TODO: toast
+        this.query()
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
      * 加载表格数据
@@ -297,6 +351,8 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      this.selectedRowKeys = []
+      this.selectedRows = []
       return apollo.clients.alert.query({
         query,
         variables: {
