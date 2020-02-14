@@ -8,24 +8,55 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
+    :rowKey="record => `${record.user_id}${record.user.staff_name}`"
     okText="保存"
-    cancelText="取消"
+    @ok="submit"
   >
     <a-transfer
-      :dataSource="mockData"
+      :dataSource="userList"
       showSearch
       :filterOption="filterOption"
       :targetKeys="targetKeys"
       @change="handleChange"
       @search="handleSearch"
-      :render="item => item.title"
+      :render="item => item.user.staff_name"
     >
     </a-transfer>
   </a-modal>
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
 // 组管理员必须是组内成员
+const currentUserList = gql`query ($groupId: String) {
+  data: t_user_group (where: {group_id: { _eq: $groupId }}) {
+    key: user_id
+    title: user_id
+    user {
+      staff_name
+    }
+  }
+}`
+
+const currentAdmin = gql`query ($groupId: String) {
+  data: t_user_group (where: {_and: {group_id: {_eq: $groupId}, user_role: {_eq: "2"}}}) {
+    user_id
+  }
+}`
+
+const allocateAdmin = gql`mutation ($groupId: String, $userIds: [String!]) {
+  # 全部取消管理员
+  disenable: update_t_user_group(where: {group_id: {_eq: $groupId}}, _set: {user_role: "1"}) {
+    affected_rows
+  }
+  # 设定管理员
+  enable: update_t_user_group(where: {_and: {group_id: {_eq: $groupId}, user_id: {_in: $userIds}}}, _set: {user_role: "2"}) {
+    affected_rows
+  }
+}
+`
 
 export default {
   name: 'GroupAdministratorSchema',
@@ -37,31 +68,38 @@ export default {
     title: '',
     visible: false,
     // 所有数据
-    mockData: [],
+    userList: [],
     // 选中数据
     targetKeys: []
   }),
-  mounted () {
-    this.getMock()
-  },
   methods: {
-    getMock () {
-      const targetKeys = []
-      const mockData = []
-      for (let i = 0; i < 20; i++) {
-        const data = {
-          key: i.toString(),
-          title: `content${i + 1}`,
-          description: `description of content${i + 1}`,
-          chosen: Math.random() * 2 > 1
-        }
-        if (data.chosen) {
-          targetKeys.push(data.key)
-        }
-        mockData.push(data)
+    async getCurrentUserListerList (groupId) {
+      try {
+        const { data } = await apollo.clients.alert.query({
+          query: currentUserList,
+          variables: {
+            groupId
+          }
+        })
+        this.userList = data.data
+      } catch (e) {
+        this.userList = []
+        throw e
       }
-      this.mockData = mockData
-      this.targetKeys = targetKeys
+    },
+    async getCurrentAdminList (groupId) {
+      try {
+        const { data } = await apollo.clients.alert.query({
+          query: currentAdmin,
+          variables: {
+            groupId
+          }
+        })
+        this.targetKeys = data.data.map(e => e.user_id)
+      } catch (e) {
+        this.targetKeys = []
+        throw e
+      }
     },
     /**
        * 过滤条件
@@ -82,6 +120,11 @@ export default {
     edit (record) {
       this.title = '设置组管理员'
       this.visible = true
+      this.record = {
+        ...record
+      }
+      this.getCurrentUserListerList(record.group_id)
+      this.getCurrentAdminList(record.group_id)
     },
     cancel () {
       this.visible = false
@@ -89,6 +132,28 @@ export default {
     reset () {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async submit () {
+      try {
+        this.loading = true
+        // TODO: 直接传一个 userId 与 groupIds, 字段拼接处理到 api / controller 层完成
+        const groupId = this.record.group_id
+        const userIds = this.targetKeys
+        await apollo.clients.alert.mutate({
+          mutation: allocateAdmin,
+          variables: {
+            groupId,
+            userIds
+          }
+        })
+        // TODO: toast
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

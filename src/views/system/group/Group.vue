@@ -86,7 +86,7 @@
     <GroupSchema
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
-      @editSuccess="query"
+      @editSuccess="$refs['table'].refresh(false)"
     />
 
     <AuthScheme
@@ -95,6 +95,7 @@
 
     <GroupAdministratorSchema
       ref="groupAdmin"
+      @editSuccess="$refs['table'].refresh(false)"
     />
 
     <GroupUserSchema
@@ -254,7 +255,8 @@ export default {
   },
   methods: {
     allocateAdmin () {
-      this.$refs['groupAdmin'].edit()
+      const [record] = this.selectedRows
+      this.$refs['groupAdmin'].edit(record)
     },
     allocateUser () {
       const [record] = this.selectedRows
@@ -279,7 +281,6 @@ export default {
           }
         })
         // TODO: toast
-        this.query()
       } catch (e) {
         throw e
       } finally {
@@ -291,7 +292,9 @@ export default {
      * @return {Undefined}
      */
     async toggleFlag () {
-      await deleteCheck.confirm({ content: '是否改变工作组状态？' })
+      if (!await deleteCheck.confirm({ content: '是否改变工作组状态？' })) {
+        return
+      }
       try {
         this.$refs['table'].loading = true
         const [record] = this.selectedRows
@@ -303,7 +306,7 @@ export default {
           }
         })
         // TODO: toast
-        this.query()
+        this.$refs['table'].refresh(false)
       } catch (e) {
         throw e
       } finally {
