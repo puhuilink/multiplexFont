@@ -296,7 +296,9 @@ export default {
             ]
           }
         })
-        this.query()
+        // TODO: toast
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
       } catch (e) {
         throw e
       } finally {
@@ -328,7 +330,9 @@ export default {
      * @return {Undefined}
      */
     async toggleFlag () {
-      await deleteCheck.confirm({ content: '是否改变用户状态？' })
+      if (!await deleteCheck.confirm({ content: '是否改变用户状态？' })) {
+        return
+      }
       try {
         this.$refs['table'].loading = true
         const [record] = this.selectedRows
