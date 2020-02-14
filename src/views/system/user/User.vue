@@ -103,7 +103,7 @@
     <UserSchema
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
-      @editSuccess="query"
+      @editSuccess="$refs['table'].refresh(false)"
     />
 
     <AuthScheme
@@ -112,6 +112,7 @@
 
     <UserGroupSchema
       ref="group"
+      @editSuccess="query"
     />
   </div>
 </template>
@@ -280,7 +281,8 @@ export default {
       this.$refs['auth'].edit()
     },
     allocateGroup () {
-      this.$refs['group'].edit()
+      const [record] = this.selectedRows
+      this.$refs['group'].edit(record)
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
