@@ -25,6 +25,8 @@
 </template>
 
 <script>
+// 组管理员必须是组内成员
+
 export default {
   name: 'GroupAdministratorSchema',
   data: (vm) => ({

@@ -136,7 +136,9 @@ export default {
         const userId = this.record.user_id
         const objects = this.targetKeys.map(groupId => ({
           user_id: userId,
-          group_id: groupId
+          group_id: groupId,
+          // 1为非管理员，2为管理员
+          user_role: '1'
         }))
         await apollo.clients.alert.mutate({
           mutation: allocateUserGroup,

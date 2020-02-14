@@ -321,7 +321,7 @@ export default {
      */
     loadData (parameter) {
       this.selectedRows = []
-      this.selectedRows = []
+      this.selectedRowKeys = []
       return apollo.clients.alert.query({
         query,
         variables: {
