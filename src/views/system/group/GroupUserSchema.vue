@@ -8,11 +8,12 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
+    :rowKey="record => record.group_id"
     okText="保存"
-    cancelText="取消"
+    @ok="submit"
   >
     <a-transfer
-      :dataSource="mockData"
+      :dataSource="userList"
       showSearch
       :filterOption="filterOption"
       :targetKeys="targetKeys"
@@ -25,6 +26,33 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const userList = gql`query {
+  data: t_user {
+    key: user_id
+    title: staff_name
+  }
+}`
+
+const groupUserList = gql`query groupList($groupId: String) {
+  data: t_user_group(where: {group_id: {_eq: $groupId}}) {
+    user_id
+  }
+}`
+
+const allocateGroupUser = gql`mutation allocateGroupUser ($groupId: String!, $objects: [t_user_group_insert_input!]! = []) {
+  # 批量删除旧用户
+  delete_t_user_group (where: {group_id: {_eq: $groupId}}) {
+    affected_rows
+  }
+  # 批量插入新用户
+  insert_t_user_group (objects:$objects) {
+    affected_rows
+  }
+}`
+
 export default {
   name: 'GroupUserSchema',
   data: (vm) => ({
@@ -35,31 +63,32 @@ export default {
     title: '',
     visible: false,
     // 所有数据
-    mockData: [],
+    userList: [],
     // 选中数据
     targetKeys: []
   }),
-  mounted () {
-    this.getMock()
-  },
   methods: {
-    getMock () {
-      const targetKeys = []
-      const mockData = []
-      for (let i = 0; i < 20; i++) {
-        const data = {
-          key: i.toString(),
-          title: `content${i + 1}`,
-          description: `description of content${i + 1}`,
-          chosen: Math.random() * 2 > 1
-        }
-        if (data.chosen) {
-          targetKeys.push(data.key)
-        }
-        mockData.push(data)
+    /**
+     * 获取所有用户组
+     * @return {Promise<Undefined>}
+     */
+    async getAllUserList () {
+      try {
+        const { data } = await apollo.clients.alert.query({ query: userList }).then(r => r.data)
+        this.userList = data
+      } catch (e) {
+        this.userList = []
+        throw e
       }
-      this.mockData = mockData
-      this.targetKeys = targetKeys
+    },
+    async getCurrentUserList (groupId) {
+      try {
+        const { data } = await apollo.clients.alert.query({ query: groupUserList, variables: { groupId } }).then(r => r.data)
+        this.targetKeys = data.map(e => e.user_id)
+      } catch (e) {
+        this.targetKeys = []
+        throw e
+      }
     },
     /**
        * 过滤条件
@@ -78,7 +107,13 @@ export default {
       // console.log('search:', dir, value)
     },
     edit (record) {
+      this.getAllUserList()
+      // console.log(record)
+      this.getCurrentUserList(record.group_id)
       this.title = '设置用户'
+      this.record = {
+        ...record
+      }
       this.visible = true
     },
     cancel () {
@@ -87,6 +122,32 @@ export default {
     reset () {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async submit () {
+      try {
+        this.loading = true
+        // TODO: 直接传一个 userId 与 groupIds, 字段拼接处理到 api / controller 层完成
+        const groupId = this.record.group_id
+        const objects = this.targetKeys.map(userId => ({
+          user_id: userId,
+          group_id: groupId
+        }))
+        // console.log(ob)
+        await apollo.clients.alert.mutate({
+          mutation: allocateGroupUser,
+          variables: {
+            groupId,
+            objects
+          }
+        })
+        // TODO: toast
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

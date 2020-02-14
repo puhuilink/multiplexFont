@@ -99,6 +99,7 @@
 
     <GroupUserSchema
       ref="groupUser"
+      @editSuccess="$refs['table'].refresh(false)"
     />
   </div>
 </template>
@@ -256,7 +257,8 @@ export default {
       this.$refs['groupAdmin'].edit()
     },
     allocateUser () {
-      this.$refs['groupUser'].edit()
+      const [record] = this.selectedRows
+      this.$refs['groupUser'].edit(record)
     },
     auth () {
       this.$refs['auth'].edit()

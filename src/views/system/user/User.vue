@@ -112,7 +112,7 @@
 
     <UserGroupSchema
       ref="group"
-      @editSuccess="query"
+      @editSuccess="$refs['table'].refresh(false)"
     />
   </div>
 </template>
