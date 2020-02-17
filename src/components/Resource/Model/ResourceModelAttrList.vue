@@ -234,7 +234,9 @@ export default {
             ]
           }
         })
-        //  TODO: toast
+        // TODO: toast
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
       } catch (e) {
         throw e
       } finally {
