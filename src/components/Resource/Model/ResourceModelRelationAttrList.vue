@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_s"
+      rowKey="did"
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
@@ -19,6 +19,8 @@
 
     <ResourceModelRelationSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="$refs['table'].refresh(false)"
     />
   </div>
 </template>
@@ -159,7 +161,9 @@ export default {
   },
   methods: {
     add () {
-      this.$refs['schema'].add()
+      this.$refs['schema'].add(
+        this.where.source_s._eq
+      )
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
@@ -182,6 +186,9 @@ export default {
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中
