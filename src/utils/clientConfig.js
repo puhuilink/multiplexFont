@@ -9,10 +9,22 @@ const linkList = ['8071', '8072', '8073', '8074'].map(port => new HttpLink({
   }
 }))
 
+const defaultOptions = {
+  // watchQuery: {
+  //   fetchPolicy: 'no-cache',
+  //   errorPolicy: 'ignore',
+  // },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all'
+  }
+}
+
 const clientList = linkList.map(link => new ApolloClient({
   link: link,
   cache: new InMemoryCache(),
-  connectToDevTools: true
+  connectToDevTools: true,
+  defaultOptions: defaultOptions
 }))
 
 // 缓存
