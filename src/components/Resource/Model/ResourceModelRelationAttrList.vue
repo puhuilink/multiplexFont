@@ -94,6 +94,16 @@ const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: I
 }
 `
 
+const deleteAttrs = gql`mutation delete_relationattributes ($dids: [Int!] = []) {
+  delete_ngecc_relationattribute (where: {
+    did: {
+      _in: $dids
+    }
+  }) {
+    affected_rows
+  }
+}`
+
 export default {
   name: 'ResourceModelRelationAttrList',
   components: {
@@ -206,7 +216,27 @@ export default {
       )
     },
     async batchDelete () {
-      await deleteCheck.sureDelete()
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.resource.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            dids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        // TODO: toast
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     edit () {
       const [record] = this.selectedRows
