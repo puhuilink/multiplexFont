@@ -223,7 +223,17 @@ export default {
         variables: {
           ...parameter,
           where: {
-            ...this.where
+            ...this.where,
+            ...this.queryParams.label_s ? {
+              label_s: {
+                _ilike: `%${this.queryParams.label_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.name_s ? {
+              name_s: {
+                _ilike: `%${this.queryParams.name_s.trim()}%`
+              }
+            } : {}
           }
         }
       }).then(r => r.data)
