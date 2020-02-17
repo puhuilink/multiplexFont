@@ -372,6 +372,19 @@ const insert = gql`mutation insert_relationattribute ($objects: [ngecc_relationa
   }
 }`
 
+const update = gql`mutation update_relationattribute($did: Int!, $object: ngecc_relationattribute_set_input) {
+  update_ngecc_relationattribute(
+    where: {
+      did:
+        {_eq: $did}
+      }
+    _set: $object
+  ) {
+    affected_rows
+  }
+}
+`
+
 export default {
   name: 'ResourceModelRelationSchema',
   components: {},
@@ -404,13 +417,16 @@ export default {
        * @param {Object} record
        * @return {Undefined}
        */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
       this.visible = true
       this.submit = this.update
       this.record = {
         ...record
       }
+      await this.$nextTick()
+      // FIXME: checkbox
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
@@ -439,8 +455,27 @@ export default {
         this.loading = false
       }
     },
-    update () {
-
+    async update () {
+      try {
+        this.loading = true
+        const value = await this.getFormFields()
+        await apollo.clients.resource.mutate({
+          mutation: update,
+          variables: {
+            did: this.record.did,
+            object: {
+              ...value
+            }
+          }
+        })
+        // TODO: toast
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     async getFormFields () {
       return new Promise((resolve, reject) => {

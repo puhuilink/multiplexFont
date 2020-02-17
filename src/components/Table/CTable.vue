@@ -44,6 +44,7 @@ export default {
     }
   },
   render (h) {
+    // FIXME: 有时顶部不可见
     // 顶部查询区域
     const query = <div class="CTable-query">{ this.$slots.query }</div>
     // 操作区域

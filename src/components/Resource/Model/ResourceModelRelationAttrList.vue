@@ -8,6 +8,45 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
+      <template #query>
+        <a-form layout="inline">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="属性名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.name_s" placeholder=""/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="显示名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.label_s" placeholder=""/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <!--            <a @click="toggleAdvanced" style="margin-left: 8px">-->
+            <!--              {{ advanced ? '收起' : '展开' }}-->
+            <!--              <a-icon :type="advanced ? 'up' : 'down'"/>-->
+            <!--            </a>-->
+          </span>
+        </a-form>
+      </template>
       <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
@@ -68,6 +107,7 @@ export default {
     }
   },
   data: () => ({
+    advanced: false,
     // 查询参数
     queryParams: {},
     // 选中行
@@ -169,7 +209,8 @@ export default {
       await deleteCheck.sureDelete()
     },
     edit () {
-      this.$refs['schema'].edit()
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
     },
     /**
      * 加载表格数据
@@ -195,8 +236,9 @@ export default {
      * @event
      * @return {Undefined}
      */
-    selectRow (selectedRowKeys) {
+    selectRow (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
     /**
      * 重置组件数据
