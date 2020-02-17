@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      :rowKey="el => `${el._id_s}`"
+      :rowKey="el => `${el.rid}`"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: 1580, y: 850}"
     >
@@ -106,6 +106,15 @@ const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: In
   }
 }
 `
+const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
+  delete_ngecc_model_attributes (where: {
+    rid: {
+      _in: $rids
+    }
+  }) {
+    affected_rows
+  }
+}`
 
 export default {
   name: 'ResourceModelAttrList',
@@ -212,7 +221,24 @@ export default {
       this.$refs['schema'].add()
     },
     async batchDelete () {
-      await deleteCheck.sureDelete()
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.resource.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            rids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     edit () {
       const [record] = this.selectedRows
@@ -248,7 +274,6 @@ export default {
       }).then(r => r.data)
     },
     query () {
-      console.log(1)
       this.$refs['table'].refresh(true)
     },
     /**
