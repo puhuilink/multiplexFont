@@ -309,7 +309,6 @@ export default {
   methods: {
     open (record, mode) {
       this.visible = true
-      console.log(record.alert_id)
       this.mode = mode
       return apollo.clients.alert.query({
         query,
@@ -317,7 +316,6 @@ export default {
           alert_id: record.alert_id
         }
       }).then(r => {
-        console.log(r)
         this.record = r.data.data[0]
       })
     },
@@ -329,7 +327,6 @@ export default {
       }, 2000)
     },
     handleCancel (e) {
-      console.log('Clicked cancel button')
       this.visible = false
     },
     /**
