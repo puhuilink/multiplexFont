@@ -118,6 +118,7 @@ const query = gql`query ($where: ngecc_instance_values_bool_exp = {}, $limit: In
 }
 `
 
+// TODO: 确认是否有表关联
 // const deleteQL = gql`mutation ($rids: [Int!] = []) {
 //   delete_ngecc_instance_values (where: {
 //     rid: {

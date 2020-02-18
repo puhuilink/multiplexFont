@@ -3,75 +3,72 @@
  */
 <template>
   <div class="baseline-strategy">
-    <a-card :bordered="false">
+    <!-- S 列表 -->
+    <CTable
+      ref="table"
+      rowKey="uuid"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: scrollX, y:800 }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
 
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="是否巡检">
-                <a-select
-                  allowClear
-                  v-model="queryParam.polling"
-                  placeholder="请选择"
-                  default-value="checkall"
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="策略名称"
+                  :md="12"
+                  :sm="24"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
                 >
-                  <a-select-option value="0">是</a-select-option>
-                  <a-select-option value="1">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="名称">
-                <a-input v-model="queryParam.name" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="显示名称">
-                  <a-input v-model="queryParam.showName" placeholder=""/>
+                  <a-input v-model="queryParams.title"></a-input>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="中文描述">
-                  <a-input v-model="queryParam.describe" placeholder=""/>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="周期"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%">
+                  <a-input type="number" v-model.number="queryParams.cycle_count" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="KPI编码">
-                  <a-input v-model="queryParam.KPICode" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="是否KPI">
-                  <a-input v-model="queryParam.KPI" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="所属节点类型">
-                  <a-input v-model="queryParam.nodeType" placeholder=""/>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
+            </a-row>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
+            <a-row>
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="计算时间"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%">
+                    <a-input v-model="queryParams.cron_expression" />
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
+      <template #operation>
         <a-button
           @click="$refs.detail.open('', 'New')"
         >
@@ -89,26 +86,13 @@
         >
           删除
         </a-button>
-      </div>
-      <!-- E 操作栏 -->
+      </template>
+    </CTable>
+    <!-- E 列表 -->
 
-      <!-- S 列表 -->
-      <CTable
-        ref="table"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ y:400 }"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      />
-      <!-- E 列表 -->
-
-      <!-- S 模块 -->
-      <detail ref="detail"></detail>
-      <!-- E 模块 -->
-    </a-card>
+    <!-- S 模块 -->
+    <detail ref="detail"></detail>
+    <!-- E 模块 -->
   </div>
 </template>
 
@@ -119,14 +103,15 @@ import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/BSDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import Template from '../../design/moduels/template/index'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
-    pagination: t_baseline_policy_aggregate(where: {}) {
+const query = gql`query instanceList($where: t_baseline_policy_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
+    pagination: t_baseline_policy_aggregate(where: $where) {
       aggregate {
         count
       }
     }
-  data:  t_baseline_policy (offset: $offset, limit: $limit, order_by: $orderBy) {
+  data:  t_baseline_policy (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
     bottomlinedata_provider
     bottomlinedata_range_from
     bottomlinedata_range_to
@@ -150,6 +135,7 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
 export default {
   name: 'BaselineStrategy',
   components: {
+    Template,
     CTable,
     Ellipsis,
     detail
@@ -159,54 +145,39 @@ export default {
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParams: {},
       // 告警列表表头
       columns: [
         {
           title: '策略名称',
           dataIndex: 'title',
-          sorter: true,
-          width: 200
-          // fixed: 'left'
+          sorter: true
         },
         {
           title: '周期',
           dataIndex: 'cycle_count',
-          align: 'center',
           width: 150,
           sorter: true
         },
         {
           title: '时间步长',
           dataIndex: 'cal_interval',
-          align: 'center',
-          width: 200
+          width: 200,
+          sorter: true
         },
         {
           title: '样本密集区域',
           dataIndex: 'sample_radio',
-          align: 'center',
-          width: 100
+          width: 250,
+          sorter: true
         },
         {
           title: '计算时间',
           dataIndex: 'cron_expression',
-          align: 'center',
           width: 120,
           sorter: true
         }
       ],
-      loadData: parameter => {
-        // 清空选中
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -214,7 +185,13 @@ export default {
     }
   },
   filters: {},
-  computed: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
   methods: {
     /**
      * 筛选展开开关
@@ -247,6 +224,39 @@ export default {
     async deleteCtrl () {
       await deleteCheck.sureDelete() &&
         console.log('确定删除')
+    },
+    loadData (parameter) {
+      // return console.log(
+      //   this.queryParams.title.trim()
+      // )
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.queryParams.title ? {
+              title: {
+                _ilike: `%${this.queryParams.title.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.cycle_count !== undefined ? {
+              cycle_count: {
+                _eq: Number(this.queryParams.cycle_countcycle_count)
+              }
+            } : {},
+            ...this.queryParams.cron_expression !== undefined ? {
+              cron_expression: {
+                _eq: `${this.queryParams.cron_expression.trim()}`
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     }
   }
 }
@@ -258,5 +268,9 @@ export default {
   button{
     margin-right: 5px;
   }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>
