@@ -136,6 +136,16 @@ const query = gql`query instanceList($where: t_baseline_policy_bool_exp = {}, $l
     toplinedata_range_to
   }
 }`
+
+const deletePolicy = gql`mutation delete_baseline_policy($uuids: [String!]! = []) {
+  delete_t_baseline_policy(where: {uuid: {
+    _in: $uuids
+  }}) {
+    affected_rows
+  }
+}
+`
+
 export default {
   name: 'BaselineStrategy',
   components: {
@@ -226,8 +236,27 @@ export default {
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deletePolicy,
+          variables: {
+            uuids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        // TODO: toast
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     loadData (parameter) {
       // return console.log(
