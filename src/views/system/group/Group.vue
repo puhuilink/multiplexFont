@@ -85,7 +85,7 @@
 
     <GroupSchema
       ref="schema"
-      @addSuccess="() => { this.reset(); this.query() }"
+      @addSuccess="() => { this.queryParams = {}; this.query() }"
       @editSuccess="$refs['table'].refresh(false)"
     />
 

@@ -70,7 +70,7 @@
 
       <template #operation>
         <a-button
-          @click="$refs.detail.open('', 'New')"
+          @click="$refs.detail.open({}, 'New')"
         >
           新建
         </a-button>
@@ -91,7 +91,11 @@
     <!-- E 列表 -->
 
     <!-- S 模块 -->
-    <detail ref="detail"></detail>
+    <detail
+      ref="detail"
+      @addSuccess="() => { this.queryParams = {}; this.query() }"
+      @editSuccess="$refs['table'].refresh(false)"
+    ></detail>
     <!-- E 模块 -->
   </div>
 </template>
