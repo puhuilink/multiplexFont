@@ -10,6 +10,7 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
+    @ok="submit"
   >
     <a-form :form="form" layout="vertical">
       <a-row>
@@ -134,6 +135,8 @@
 </template>
 
 <script>
+import { editModel, addModels } from '@/api/controller/Resource'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -154,15 +157,27 @@ export default {
     options: {
       kpi: []
     },
+    parentName: '',
+    parentTree: '',
     record: null,
+    submit: () => {},
     title: '',
     visible: false
   }),
   computed: {},
   methods: {
-    add () {
+    /**
+     * 新增
+     * @param {String} parentName 父节点名称
+     * @param {String} parentTree 父节点节点位置
+     * @return {Undefined}
+     */
+    add (parentName, parentTree) {
       this.title = '新增'
       this.visible = true
+      this.submit = this.insert
+      this.parentName = parentName
+      this.parentTree = parentTree
     },
     /**
      * 编辑
@@ -175,9 +190,10 @@ export default {
       this.record = {
         ...record
       }
+      this.submit = this.update
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
-      let formData = {}
+      const formData = {}
       keys.forEach(key => {
         if (record.hasOwnProperty(key)) {
           formData[key] = record[key]
@@ -187,6 +203,51 @@ export default {
     },
     cancel () {
       this.visible = false
+    },
+    async insert () {
+      try {
+        const values = await this.getFormFields()
+        this.loading = true
+        await addModels([{
+          ...values,
+          parentname_s: this.parentName,
+          parenttree_s: this.parentTree
+        }])
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
+        this.$emit('addSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async update () {
+      try {
+        const values = await this.getFormFields()
+        this.loading = true
+        await editModel(this.record.did, values)
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     reset () {
       this.form.resetFields()

@@ -270,6 +270,10 @@ export default {
         }
       }).then(res => {
         this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
         this.cancel()
       }).catch(err => {
         if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
@@ -301,6 +305,10 @@ export default {
         }
       }).then(res => {
         this.$emit('editSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
         this.cancel()
       }).catch(err => {
         if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {

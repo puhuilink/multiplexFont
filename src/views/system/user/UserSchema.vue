@@ -198,9 +198,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-import moment from 'moment'
+import { addUsers, updateUser } from '@/api/controller/User'
 
 const formItemLayout = {
   labelCol: {
@@ -210,25 +208,6 @@ const formItemLayout = {
     span: 23
   }
 }
-
-const insert = gql`mutation insert_user ($objects: [t_user_insert_input!]!) {
-  insert_t_user (objects: $objects) {
-    returning {
-      user_id
-    }
-  }
-}`
-
-const update = gql`mutation update ($where: t_user_bool_exp!, $user: t_user_set_input) {
-  update_t_user (
-    where: $where,
-    _set: $user
-  ) {
-    returning {
-      staff_name
-    }
-  }
-}`
 
 export default {
   name: 'UserSchema',
@@ -287,62 +266,46 @@ export default {
      * 新增
      */
     async insert () {
-      const values = await this.getFormFields()
-      this.loading = true
-      return apollo.clients.alert.mutate({
-        mutation: insert,
-        variables: {
-          objects: [{
-            ...values,
-            // FIXME: 初始值都是DB，还是为空后期配？
-            auth_method: 'DB',
-            createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
-          }]
-        }
-      }).then(res => {
+      try {
+        const values = await this.getFormFields()
+        this.loading = true
+        await addUsers([values])
         this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
         this.cancel()
-      }).catch(err => {
-        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-          //  TODO: toast 已存在的用户名
-        }
-        throw err
-      }).finally(() => {
+      } catch (e) {
+        // TODO: 统一拦截 notification？
+        throw e
+      } finally {
         this.loading = false
-      })
+      }
     },
     /**
      * 编辑
      */
     async update () {
-      const values = await this.getFormFields()
-      this.loading = true
-      return apollo.clients.alert.mutate({
-        mutation: update,
-        variables: {
-          where: {
-            'user_id': {
-              '_eq': this.record.user_id
-            }
-          },
-          user: {
-            ...values,
-            // FIXME: 初始值都是DB，还是为空后期配？
-            auth_method: 'DB',
-            updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
-          }
-        }
-      }).then(res => {
+      try {
+        const values = await this.getFormFields()
+        this.loading = true
+        await updateUser({
+          'user_id': this.record.user_id,
+          ...values
+        })
         this.$emit('editSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
         this.cancel()
-      }).catch(err => {
-        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-          //  TODO: toast 已存在的用户名
-        }
-        throw err
-      }).finally(() => {
+      } catch (e) {
+        // TODO: 统一拦截 notification？
+        throw e
+      } finally {
         this.loading = false
-      })
+      }
     },
     async getFormFields () {
       return new Promise((resolve, reject) => {
