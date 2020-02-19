@@ -6,7 +6,7 @@
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1000, y: 850}"
+      :scroll="{ x: 1000, y: `calc(100vh - 290px)`}"
     >
     </CTable>
   </div>

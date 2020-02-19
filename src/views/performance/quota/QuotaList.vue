@@ -7,7 +7,7 @@
       :columns="columns"
       :data="loadData"
       :scroll="{ x: 1340, y: `calc(100vh - 280px)` }"
-      :rowSelection="false"
+      :rowSelection="null"
     >
       <!--      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"-->
       <template #query>
