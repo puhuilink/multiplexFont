@@ -10,6 +10,7 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
+    @ok="submit"
   >
     <a-form
       :form="form"
@@ -59,7 +60,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'target_s',
                 { rules: [{ required: true, message: '目标必填' }] },
               ]"
             />
@@ -74,7 +75,7 @@
           >
             <a-select
               v-decorator="[
-                'gender',
+                'mappingtype_s',
                 {
                   initialValue: 'one'
                 },
@@ -99,7 +100,7 @@
           >
             <a-select
               v-decorator="[
-                'gesnder',
+                'relationtype_s',
                 {
                   initialValue: 'Belongs To'
                 },
@@ -122,7 +123,7 @@
           >
             <a-select
               v-decorator="[
-                'gesnder',
+                'tabgroup_s',
                 {
                   initialValue: '基本信息'
                 },
@@ -146,8 +147,9 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              type="number"
               v-decorator="[
-                'username',
+                'order_i',
               ]"
             />
           </a-form-item>
@@ -161,7 +163,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasmse',
+                'allowinheritance_b',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -176,24 +178,19 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasmae',
+                'searchfield_b',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
         <a-col :md="12" :span="24">
+          <!-- FIXME: VICUBE 此处为空？ -->
           <a-form-item
             label="匹配条件"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-select
-              v-decorator="[
-                'gesnder',
-                {
-                },
-              ]"
-            >
+            <a-select>
               <a-select-option
                 v-for="item in []"
                 :key="item.value"
@@ -213,7 +210,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasmae',
+                'allownull_b',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -226,7 +223,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'usernasmae',
+                'assetattr_b',
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -241,7 +238,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'defaultvalue_s',
               ]"
             />
           </a-form-item>
@@ -252,6 +249,9 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -353,52 +353,137 @@ const options = {
   group: [
     {
       name: '基本信息',
-      value: '基本信息'
+      value: 'base'
     },
     {
       name: '关系信息',
-      value: '关系信息'
+      value: 'relation'
     },
     {
       name: '其他信息',
-      value: '其他信息'
+      value: 'other'
     }
   ]
 }
+
+const insert = gql`mutation insert_relationattribute ($objects: [ngecc_relationattribute_insert_input!]! = []) {
+  insert_ngecc_relationattribute (objects: $objects) {
+    affected_rows
+  }
+}`
+
+const update = gql`mutation update_relationattribute($did: Int!, $object: ngecc_relationattribute_set_input) {
+  update_ngecc_relationattribute(
+    where: {
+      did:
+        {_eq: $did}
+      }
+    _set: $object
+  ) {
+    affected_rows
+  }
+}
+`
 
 export default {
   name: 'ResourceModelRelationSchema',
   components: {},
   props: {},
   data: (vm) => ({
+    sourceS: null,
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
     options,
     record: null,
+    submit: () => {},
     title: '',
     visible: false
   }),
   computed: {},
   methods: {
-    add () {
+    /**
+     * 新增
+     * @param {String} sourceS 关联
+     */
+    add (sourceS) {
       this.title = '新增'
       this.visible = true
+      this.sourceS = sourceS
+      this.submit = this.insert
     },
     /**
        * 编辑
        * @param {Object} record
        * @return {Undefined}
        */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
       this.visible = true
+      this.submit = this.update
       this.record = {
         ...record
       }
+      await this.$nextTick()
+      // FIXME: checkbox
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
+    },
+    async insert () {
+      try {
+        this.loading = true
+        const value = await this.getFormFields()
+        await apollo.clients.resource.mutate({
+          mutation: insert,
+          variables: {
+            objects: [
+              {
+                ...value,
+                'source_s': this.sourceS
+              }
+            ]
+          }
+        })
+        // TODO: toast
+        this.$emit('addSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    // FIXME: 所有表单长度校验。。。
+    async update () {
+      try {
+        this.loading = true
+        const value = await this.getFormFields()
+        await apollo.clients.resource.mutate({
+          mutation: update,
+          variables: {
+            did: this.record.did,
+            object: {
+              ...value
+            }
+          }
+        })
+        // TODO: toast
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     reset () {
       this.form.resetFields()

@@ -10,27 +10,29 @@
     :visible="visible"
     :loading="loading"
     destroyOnClose
-    @cancel="handleCancel"
+    @cancel="cancel"
+    @ok="submit"
   >
     <a-form
       id="components-form-demo-validate-other"
       :form="form"
       layout="vertical"
-      @submit="handleSubmit"
+      @submit="submit"
     >
       <a-row class="form-row" :gutter="16">
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="策略名称">
             <a-input
-              v-decorator="['name', { initialValue: record.name, rules: [{ required: true, message: '策略名称不能为空!' }] }]"
+              v-decorator="['title', { rules: [{ required: true, message: '策略名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="周期值">
             <a-input
-              :disabled="mode=='See'"
-              v-decorator="['father', { initialValue: record.father, rules: [{ required: true, message: '不能为空!' }] }]"
+              :disabled="mode=='cycle_count'"
+              type="number"
+              v-decorator="['cycle_count', { rules: [{ required: true, message: '不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -38,8 +40,13 @@
           <a-form-item label="时间步长（分钟）">
             <a-input
               :disabled="mode=='See'"
-              placeholder="计算间隔：数字类型，单位为“分钟”,必须要被1小时整除"
-              v-decorator="['describe', { initialValue: record.describe, rules: [{ required: true, message: '不能为空!' }] }]"
+              placeholder="计算间隔：数字类型，单位为“分钟”,必须要被60整除"
+              type="number"
+              v-decorator="['cal_interval', {
+                rules: [
+                  { required: true, message: '不能为空!' },
+                  { validator }
+                ] }]"
             />
           </a-form-item>
         </a-col>
@@ -48,16 +55,19 @@
             <a-input
               :disabled="mode=='See'"
               placeholder="取样数据区域，数字类型，0-1"
-              v-decorator="['describe', { initialValue: record.describe, rules: [{ required: true, message: '不能为空!' }] }]"
+              type="number"
+              :min="0"
+              :max="1"
+              v-decorator="['sample_radio', { rules: [{ required: true, message: '不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
-          <a-form-item label="触发时间">
+          <a-form-item label="计算时间">
             <a-input
               :disabled="mode=='See'"
               placeholder="cron表达式，例：0 50 ***?"
-              v-decorator="['describe', { initialValue: record.describe, rules: [{ required: true, message: '不能为空!' }] }]"
+              v-decorator="['cron_expression', { rules: [{ required: true, message: '不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -65,22 +75,34 @@
           <a-form-item label="±σ">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['describe', { initialValue: record.describe, rules: [{ required: true, message: '±σ不能为空!' }] }]"
+              v-decorator="['sigma', { rules: [{ required: true, message: '±σ不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
       </a-row>
     </a-form>
 
-    <template slot="footer" >
-      <a-button v-if="mode!=='See'" @click="handleSubmit">保存</a-button>
-      <a-button @click="handleCancel">取消</a-button>
-    </template>
-
   </a-modal>
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+// FIXME: uuid ?
+const insert = gql`mutation insert_baseline_policy ($objects: [t_baseline_policy_insert_input!]! = []) {
+  insert_t_baseline_policy (objects: $objects) {
+    affected_rows
+  }
+}`
+
+const update = gql`mutation update_baseline_policy($uuid: String, $object: t_baseline_policy_set_input) {
+  update_t_baseline_policy(where: {uuid: {_eq: $uuid}}, _set: $object) {
+    affected_rows
+  }
+}
+`
+
 export default {
   name: 'FTDetail',
   data () {
@@ -90,46 +112,91 @@ export default {
       loading: false,
       record: '',
       // 开启的父级操作来源
-      mode: ''
+      mode: '',
+      submit: () => {}
     }
   },
-  beforeCreate () {
-  },
-  created () {
-    window.form = this.form
-    // this.form.setFieldsValue(record)
-  },
-  beforeMount () {
-  },
   methods: {
-    async open (record, mode) {
+    validator (rule, value, callback) {
+      if (60 % Number(value) !== 0) {
+        // eslint-disable-next-line
+        callback('不能被60整除')
+      } else {
+        callback()
+      }
+    },
+    /**
+     * 新增 / 编辑
+     * @param {Object} record 编辑时的源数据
+     * @mode {'Edit' | 'Add' | 'See'} mode 操作模式
+     */
+    async open (record = {}, mode) {
       this.visible = true
-      this.record = record
-      console.log(record, mode)
+      if (mode === 'Edit') {
+        this.submit = this.update
+        this.record = {
+          ...record
+        }
+        await this.$nextTick()
+        this.form.setFieldsValue(record)
+      } else if (mode === 'See') {
+        this.submit = this.insert
+      }
       this.mode = mode
     },
-    handleCancel (e) {
-      console.log('Clicked cancel button')
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFieldsAndScroll((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
+    },
+    cancel (e) {
       this.visible = false
     },
     /**
-     * 表单效验
+     * 更新
      */
-    handleSubmit (e) {
-      e.preventDefault()
-      this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values)
-        }
-      })
+    async update () {
+      try {
+        this.loading = true
+        const value = await this.getFormFields()
+        await apollo.clients.alert.mutate({
+          mutation: update,
+          variables: {
+            uuid: this.record.uuid,
+            object: value
+          }
+        })
+        // TODO: toast
+        this.$emit('editSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     /**
-     * tab切换开关
+     * 新增
      */
-    onTabChange (key, type) {
-      this.autoRefresh = false
-      clearInterval(this.timer)
-      this[type] = key
+    async insert () {
+      try {
+        this.loading = true
+        // const value = await this.getFormFields()
+        await apollo.clients.alert.mutate({
+          mutation: insert,
+          variables: {
+
+          }
+        })
+        this.$emit('addSuccess')
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

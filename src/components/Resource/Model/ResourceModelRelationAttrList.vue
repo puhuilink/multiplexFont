@@ -4,10 +4,49 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_s"
+      rowKey="did"
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
       :scroll="{ x: 1760, y: 850}"
     >
+      <template #query>
+        <a-form layout="inline">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="属性名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.name_s" placeholder=""/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="显示名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.label_s" placeholder=""/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <!--            <a @click="toggleAdvanced" style="margin-left: 8px">-->
+            <!--              {{ advanced ? '收起' : '展开' }}-->
+            <!--              <a-icon :type="advanced ? 'up' : 'down'"/>-->
+            <!--            </a>-->
+          </span>
+        </a-form>
+      </template>
       <template #operation>
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
@@ -19,6 +58,8 @@
 
     <ResourceModelRelationSchema
       ref="schema"
+      @addSuccess="() => { this.reset(); this.query() }"
+      @editSuccess="$refs['table'].refresh(false)"
     />
   </div>
 </template>
@@ -53,6 +94,16 @@ const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: I
 }
 `
 
+const deleteAttrs = gql`mutation delete_relationattributes ($dids: [Int!] = []) {
+  delete_ngecc_relationattribute (where: {
+    did: {
+      _in: $dids
+    }
+  }) {
+    affected_rows
+  }
+}`
+
 export default {
   name: 'ResourceModelRelationAttrList',
   components: {
@@ -66,6 +117,7 @@ export default {
     }
   },
   data: () => ({
+    advanced: false,
     // 查询参数
     queryParams: {},
     // 选中行
@@ -159,13 +211,36 @@ export default {
   },
   methods: {
     add () {
-      this.$refs['schema'].add()
+      this.$refs['schema'].add(
+        this.where.source_s._eq
+      )
     },
     async batchDelete () {
-      await deleteCheck.sureDelete()
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.resource.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            dids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        // TODO: toast
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     edit () {
-      this.$refs['schema'].edit()
+      const [record] = this.selectedRows
+      this.$refs['schema'].edit(record)
     },
     /**
      * 加载表格数据
@@ -178,18 +253,32 @@ export default {
         variables: {
           ...parameter,
           where: {
-            ...this.where
+            ...this.where,
+            ...this.queryParams.label_s ? {
+              label_s: {
+                _ilike: `%${this.queryParams.label_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.name_s ? {
+              name_s: {
+                _ilike: `%${this.queryParams.name_s.trim()}%`
+              }
+            } : {}
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中
      * @event
      * @return {Undefined}
      */
-    selectRow (selectedRowKeys) {
+    selectRow (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
     /**
      * 重置组件数据

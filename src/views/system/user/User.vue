@@ -102,7 +102,7 @@
     <!--  FIXME: apollo 有缓存，此处不会触发刷新  -->
     <UserSchema
       ref="schema"
-      @addSuccess="() => { this.reset(); this.query() }"
+      @addSuccess="() => { this.queryParams = {}; this.query() }"
       @editSuccess="$refs['table'].refresh(false)"
     />
 
