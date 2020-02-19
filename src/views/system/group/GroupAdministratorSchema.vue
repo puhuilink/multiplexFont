@@ -148,7 +148,7 @@ export default {
         })
         this.$notification.success({
           message: '系统提示',
-          description: '编辑成功'
+          description: '分配组管理员成功'
         })
         this.$emit('editSuccess')
         this.cancel()
