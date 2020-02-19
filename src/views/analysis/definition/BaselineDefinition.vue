@@ -4,48 +4,37 @@
 
 <template>
   <div class="baseline-definition">
-    <a-card :bordered="false">
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+    <CTable
+      ref="table"
+      rowKey="uuid"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
+      :customRow="customRow"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="动态基线名称">
-                <a-input v-model="queryParam.name" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="节点类型">
-                <a-select
-                  allowClear
-                  v-model="queryParam.nodeType"
-                  placeholder="请选择"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in nodeType"
-                    :key="index"
-                    :label="group.label"
-                    :allowClear="true"
-                  >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select-opt-group>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="KPI">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="动态基线名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%">
+                  <a-input v-model="queryParams.title" placeholder=""/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="节点类型"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%">
                   <a-select
                     allowClear
-                    v-model="queryParam.kpi"
+                    v-model="queryParams.ci_type_label"
                     placeholder="请选择"
                   >
                     <a-select-opt-group
@@ -65,24 +54,57 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
+            </a-row>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
+            <a-row>
+              <!-- 多余筛选框是否展示 -->
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="KPI"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      allowClear
+                      v-model="queryParams.kpi"
+                      placeholder="请选择"
+                    >
+                      <a-select-opt-group
+                        v-for="(group,index) in nodeType"
+                        :key="index"
+                        :label="group.label"
+                        :allowClear="true"
+                      >
+                        <a-select-option
+                          v-for="item in group.options"
+                          :key="item.value"
+                          :value="item.value"
+                        >
+                          {{ item.label }}
+                        </a-select-option>
+                      </a-select-opt-group>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
+      <template #operation>
         <a-button>新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
@@ -95,23 +117,9 @@
         >
           删除
         </a-button>
-      </div>
-      <!-- E 操作栏 -->
+      </template>
 
-      <!-- S 列表 -->
-      <CTable
-        ref="table"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ y:400 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      />
-      <!-- E 列表 -->
-    </a-card>
+    </CTable>
   </div>
 </template>
 
@@ -120,52 +128,23 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
+import Template from '../../design/moduels/template/index'
+import { getBaseLineDefList } from '@/api/controller/Baseline'
+import { getResourceInstanceList } from '@/api/controller/Resource'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_def_order_by!]) {
-    pagination: t_baseline_def_aggregate(where: {}) {
-      aggregate {
-        count
-      }
-    }
-  data:  t_baseline_def (offset: $offset, limit: $limit, order_by: $orderBy) {
-    calendar_type
-    ci_id
-    ci_label
-    ci_type_label
-    ci_type_name
-    cycle_day_num
-    cycle_default_type
-    cycle_month_num
-    cycle_quarter_num
-    cycle_week_num
-    cycle_year_num
-    gen_type
-    kpi_code
-    kpi_label
-    round_num
-    rule_id
-    rule_status
-    status
-    title
-    update_time
-    uuid
-    uuid_policy
-  }
-}`
 export default {
   name: 'BaselineDefinition',
   components: {
+    Template,
     CTable,
     Ellipsis
   },
   data () {
     return {
-      // 搜索： 展开/关闭
+    // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParams: {},
       nodeType: screening.CIType,
       // 告警列表表头
       columns: [
@@ -173,7 +152,7 @@ export default {
           title: '动态基线名称',
           dataIndex: 'title',
           sorter: true,
-          width: 200
+          width: 300
           // fixed: 'left'
         },
         {
@@ -185,13 +164,13 @@ export default {
         {
           title: '节点实例',
           dataIndex: 'ci_label',
-          width: 100,
+          width: 300,
           sorter: true
         },
         {
           title: 'KPI名称',
           dataIndex: 'kpi_label',
-          width: 100,
+          // width: 100,
           sorter: true
         },
         {
@@ -215,13 +194,27 @@ export default {
       loadData: parameter => {
         // 清空选中
         this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
+        const variables = {
+          ...parameter,
+          where: {
+            ...this.queryParams.title ? {
+              title: {
+                _ilike: `%${this.queryParams.title.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.ci_type_label ? {
+              ci_type_label: {
+                _ilike: `%${this.queryParams.ci_type_label.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.kpi ? {
+              kpi: {
+                _ilike: `%${this.queryParams.kpi.trim()}%`
+              }
+            } : {}
           }
-        }).then(r => r.data)
+        }
+        return getBaseLineDefList(variables).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -230,17 +223,30 @@ export default {
     }
   },
   filters: {},
-  computed: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
   methods: {
     /**
-     * 筛选展开开关
+     * 查询
+     * @param {Boolean} firstPage 是否从第一页开始
      */
+    query (firstPage = true) {
+      this.$refs['table'].refresh(firstPage)
+    },
+    /**
+    * 筛选展开开关
+    */
     toggleAdvanced () {
       this.advanced = !this.advanced
     },
     /**
-     * 日期时间空间选择
-     */
+    * 日期时间空间选择
+    */
     onDataChange (value, dateString) {
       console.log('Selected Time: ', value)
       console.log('Formatted Selected Time: ', dateString)
@@ -249,17 +255,17 @@ export default {
       console.log('onOk: ', value)
     },
     /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
+    * 选中行更改事件
+    * @param selectedRowKeys
+    * @param selectedRows
+    */
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     /**
-     * 行属性,表格点击事件
-     */
+    * 行属性,表格点击事件
+    */
     customRow (record, index) {
       return {
         on: {
@@ -270,21 +276,31 @@ export default {
       }
     },
     /**
-     * 删除选中项
-     */
+    * 删除选中项
+    */
     async deleteCtrl () {
       await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+    console.log('确定删除')
     }
+  },
+  created () {
+    getResourceInstanceList()
+      .then(r => {
+        console.log(r)
+      })
   }
 }
 </script>
 
-<style scoped lang='less'>
+<style scoped lang="less">
 .opration{
   margin-bottom: 10px;
   button{
     margin-right: 5px;
   }
 }
-</style>
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
+  </style>
