@@ -11,7 +11,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="显示名称">
-                <a-input v-model="queryParam.showName" placeholder=""/>
+                <a-input v-model="queryParam.label_s" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -108,7 +108,7 @@ export default {
       columns: [
         {
           title: '更新时间',
-          dataIndex: 'turnoverTime',
+          dataIndex: 'updatetime_t',
           sorter: true
         },
         {
@@ -160,6 +160,7 @@ export default {
             label_s
             nodetype_s
             parentname_s
+            updatetime_t
           }
         }`
         // eslint-disable-next-line no-undef
