@@ -39,7 +39,7 @@
           <a-button icon="download"></a-button>
           <template v-if="!instanceListCount">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
-            <a-button icon="edit" :disabled="disabled"></a-button>
+            <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
             <a-button @click="batchDelete" icon="delete" :disabled="disabled"></a-button>
           </template>
         </div>
@@ -66,6 +66,10 @@ export default {
           did
           label_s
           name_s
+          batch_b
+          edit_b
+          encrypt_s
+          order_i
           title: label_s
           key: name_s
           parentKey: parentname_s
@@ -113,7 +117,9 @@ export default {
     selectedKey: '',
     autoExpandParent: true,
     expandedKeys: [],
-    searchValue: ''
+    searchValue: '',
+    // 当前选中的节点
+    selectedNode: null
   }),
   computed: {
     disabled: {
@@ -130,6 +136,9 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add()
+    },
+    edit () {
+      this.$refs['schema'].edit({ ...this.selectedNode })
     },
     async batchDelete () {
       await deleteCheck.sureDelete()
@@ -152,12 +161,16 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
+        this.selectedNode = {
+          ...dataRef
+        }
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
           'name_s': dataRef.name_s
         })
       } else {
+        this.selectedNode = null
         this.selectedKey = ''
         this.$emit('select', null)
       }
