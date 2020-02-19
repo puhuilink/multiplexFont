@@ -41,7 +41,7 @@
     </a-form>
 
     <template slot="footer" >
-      <a-button v-if="mode!=='See'" @click="handleSubmit">保存</a-button>
+      <a-button @click="handleSubmit">保存</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </template>
 

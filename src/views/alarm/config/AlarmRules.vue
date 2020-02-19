@@ -62,13 +62,13 @@
         </a-button>
         <a-button
           :disabled="!this.selectedRowKeys.length > 0"
-          @click="enableCtrl"
+          @click="enableCtrl(true)"
         >
           启用
         </a-button>
         <a-button
           :disabled="!this.selectedRowKeys.length > 0"
-          @click="disableCtrl"
+          @click="enableCtrl(false)"
         >
           停用
         </a-button>
@@ -116,7 +116,7 @@
 import CTable from '@/components/Table/CTable'
 import detail from './modules/AlarmRuleDetail'
 import deleteCheck from '@/components/DeleteCheck'
-import AbleCheck from '@/components/AbleCheck'
+// import AbleCheck from '@/components/AbleCheck'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
@@ -139,6 +139,21 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     rulecomments
     title
     updatedate
+  }
+}`
+
+const enableUpdate = gql`mutation update_t_alert_rule ($ruleId: [numeric!] = [], $enabled: Boolean!) {
+  update_t_alert_rule(
+    where: {
+      rule_id: {
+        _in: $ruleId
+      }
+    },
+    _set: {
+      enabled: $enabled
+    }
+  ) {
+    affected_rows
   }
 }`
 
@@ -321,16 +336,27 @@ export default {
     /**
      * 确定启用
      */
-    async enableCtrl () {
-      await AbleCheck.enable() &&
-        console.log('确定启用')
-    },
-    /**
-     * 确定禁用
-     */
-    async disableCtrl () {
-      await AbleCheck.disable() &&
-        console.log('确定停用')
+    async enableCtrl (value) {
+      if (!await deleteCheck.confirm({ content: value ? '确定启用吗？' : '确定停用吗？' })) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: enableUpdate,
+          variables: {
+            ruleId: this.selectedRowKeys,
+            enabled: value
+          }
+        })
+        // TODO: toast
+        this.$refs['table'].refresh(true)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+        // this.$message.info(value ? '成功启用' : '成功停用')
+      }
     }
   }
 }
