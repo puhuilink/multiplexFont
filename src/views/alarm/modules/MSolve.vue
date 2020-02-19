@@ -86,6 +86,7 @@ export default {
       validateFields((errors, values) => {
         if (!errors) {
           console.log('values', values)
+          // eslint-disable-next-line
           for (let i in values.checkbox) {
             console.log(values.checkbox[i])
             switch (values.checkbox[i]) {

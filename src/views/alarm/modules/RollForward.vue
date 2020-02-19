@@ -51,7 +51,7 @@
               placeholder="请选择"
             >
               <a-select-option v-for="item in levelList" :key="item.value" :value="item.value">
-                {{ item.label}}
+                {{ item.label }}
               </a-select-option>
             </a-select>
           </a-form-item>

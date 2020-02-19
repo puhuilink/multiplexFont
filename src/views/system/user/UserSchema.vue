@@ -277,7 +277,6 @@ export default {
         })
         this.cancel()
       } catch (e) {
-        // TODO: 统一拦截 notification？
         throw e
       } finally {
         this.loading = false
@@ -301,7 +300,6 @@ export default {
         })
         this.cancel()
       } catch (e) {
-        // TODO: 统一拦截 notification？
         throw e
       } finally {
         this.loading = false
