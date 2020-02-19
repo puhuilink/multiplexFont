@@ -1,9 +1,9 @@
 /*
- * 前传记录详情
+ * 前转记录详情
  */
 <template>
   <a-modal
-    title="前传记录"
+    title="前转记录详情"
     style="top: 40px;"
     :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
     :width="900"
@@ -13,48 +13,48 @@
   >
     <a-row class="form-row" :gutter="16">
       <a-col :lg="12" :md="12" :sm="24">
-        <a-form-item label="前传编号">
-          <a-input disabled :defaultValue="record.code" />
+        <a-form-item label="前转编号">
+          <a-input disabled :defaultValue="record.incident_id" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="故障类型">
-          <a-input disabled :defaultValue="record.type" />
+          <a-input disabled :defaultValue="record.incident_type" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="故障级别">
-          <a-input disabled :defaultValue="record.level" />
+          <a-input disabled :defaultValue="record.severity" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="故障名称">
-          <a-input disabled :defaultValue="record.name" />
+          <a-input disabled :defaultValue="record.incident_title" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="发送者">
-          <a-input disabled :defaultValue="record.firstArisingTime" />
+          <a-input disabled :defaultValue="record.send_by" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
-        <a-form-item label="前传类型">
-          <a-input disabled :defaultValue="record.arisingTime" />
+        <a-form-item label="前转类型">
+          <a-input disabled :defaultValue="record.forward_type" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
-        <a-form-item label="前传目标">
-          <a-input disabled defaultValue="" />
+        <a-form-item label="前转目标">
+          <a-input disabled :defaultValue="record.forward_destiationn" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="发送时间">
-          <a-input disabled defaultValue="record.arisingTime" />
+          <a-input disabled :defaultValue="record.send_time" />
         </a-form-item>
       </a-col>
       <a-col :lg="12" :md="12" :sm="24">
         <a-form-item label="描述">
-          <a-input disabled defaultValue="" />
+          <a-input disabled :defaultValue="record.comments" />
         </a-form-item>
       </a-col>
     </a-row>

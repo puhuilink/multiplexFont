@@ -33,8 +33,9 @@
 
     <!-- S 列表 -->
     <CTable
+      v-if="record"
       ref="table"
-      rowKey="alert_id"
+      rowKey="event_id"
       :columns="columns"
       :data="loadData"
       :alert="false"
@@ -82,11 +83,10 @@ export default {
       },
       visible: false,
       loading: false,
-      // 告警列表表头
       columns: [
         {
           title: '事件ID',
-          dataIndex: 'id',
+          dataIndex: 'event_id',
           width: 120,
           fixed: 'left',
           sorter: true
@@ -112,51 +112,18 @@ export default {
         },
         {
           title: '业务来源',
-          dataIndex: 'count',
+          dataIndex: 'app_name',
           width: 120,
           sorter: true
         },
         {
           title: '原系统参数编号',
-          dataIndex: 'agent_id',
+          dataIndex: 'src_event_id',
           sorter: true
         }
 
       ],
-      loadData: parameter => {
-        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
-          pagination: t_alert_aggregate(where: {}) {
-            aggregate {
-              count
-            }
-          }
-          data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy) {
-            state
-            dev_name
-            app_name
-            severity
-            message
-            first_arising_time
-            arising_time
-            count
-            agent_id
-            close_time
-            close_by
-            order_id
-            alert_id
-            related
-            instance
-            instance2
-          }
-        }`
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      }
+      record: ''
     }
   },
   filters: {
@@ -184,8 +151,10 @@ export default {
     }
   },
   methods: {
-    open () {
+    open ({ ...record }) {
       this.visible = true
+      this.record = record
+      console.log(this.record)
     },
     handleSolve (e) {
       this.loading = true
@@ -200,6 +169,52 @@ export default {
     },
     onSearch (e) {
       console.log('查找框中输入', e)
+    },
+    loadData (parameter) {
+      const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_event_order_by!], $alert_id: numeric) {
+        pagination: t_alert_event_aggregate(where: {alert_id: {_eq: $alert_id}}) {
+          aggregate {
+            count
+          }
+        }
+        data: t_alert_event(offset: $offset, limit: $limit, order_by: $orderBy, where:{alert_id: {_eq: $alert_id}}) {
+          agent_id
+          agent_name
+          alert_code
+          alert_id
+          app_name
+          arising_time
+          change_id
+          dev_name
+          domains
+          event_id
+          filtered
+          instance
+          instance2
+          kpi_code
+          kpi_unit
+          kpi_value
+          message
+          node_id
+          node_types
+          receive_time
+          related_node_id
+          severity
+          src_event_id
+          title
+        }
+      }`
+      // const that = this
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          alert_id: this.record.alert_id
+        }
+      }).then(r => {
+        console.log(r.data)
+        return r.data
+      })
     }
   }
 }

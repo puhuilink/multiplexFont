@@ -95,6 +95,9 @@
         :scroll="{ x: 1500, y:400 }"
         :customRow="customRow"
       >
+        <span slot="incidentTitle" slot-scope="text">
+          <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
+        </span>
         <span slot="message" slot-scope="text">
           <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
         </span>
@@ -135,6 +138,7 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     severity
   }
 }`
+
 export default {
   name: 'PrequelRecord',
   components: {
@@ -164,7 +168,6 @@ export default {
         {
           title: '故障类型',
           dataIndex: 'incident_type',
-          align: 'center',
           width: 100,
           sorter: true,
           customRender: (text) => {
@@ -183,17 +186,16 @@ export default {
           width: 100,
           sorter: true,
           customRender: (text) => {
-            text += ''
             switch (text) {
-              case '0':
+              case 0:
                 return 'INFO'
-              case '1':
+              case 1:
                 return 'WARNING'
-              case '2':
+              case 2:
                 return 'MINOR'
-              case '3':
+              case 3:
                 return 'MAJOR'
-              case '4':
+              case 4:
                 return 'CRITICAL'
               default:
                 return text
@@ -202,11 +204,10 @@ export default {
         },
         {
           title: '故障名称',
-          dataIndex: '',
-          // dataIndex: 'incident_title',
-          align: 'center',
-          width: 120,
-          sorter: true
+          dataIndex: 'incident_title',
+          width: 300,
+          sorter: true,
+          scopedSlots: { customRender: 'incidentTitle' }
         },
         {
           title: '发送者',
@@ -252,7 +253,7 @@ export default {
           title: '描述',
           dataIndex: 'comments',
           align: 'center',
-          width: 400,
+          // width: 400,
           scopedSlots: { customRender: 'message' }
         }
       ],

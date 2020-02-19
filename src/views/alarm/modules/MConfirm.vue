@@ -34,16 +34,11 @@ export default {
       this.record = record
       console.log(record)
     },
-    handleConfim (e) {
-      console.log(this.data)
+    async handleConfim (e) {
       this.confirmLoading = true
-      // setTimeout(() => {
-      //   this.visible = false
-      //   this.confirmLoading = false
-      // }, 2000)
-      return apollo.clients.alert.query({
-        query: gql`mutation update_t_alert($alert_id: numeric, $changes: t_alert_set_input) {
-          update_t_alert(where: {alert_id: {_eq: $alert_id}}, _set: $changes) {
+      return apollo.clients.alert.mutate({
+        mutation: gql`mutation update_t_alert($alert_id: [numeric!]=[], $changes: t_alert_set_input) {
+          update_t_alert(where: {alert_id: {_in: $alert_id}}, _set: $changes) {
             affected_rows
             returning {
               state
@@ -51,9 +46,9 @@ export default {
           }
         }`,
         variables: {
-          alert_id: this.record[0].alert_id,
+          alert_id: this.record,
           changes: {
-            state: '5',
+            state: 5,
             comments: this.comments
           }
         }
@@ -61,6 +56,7 @@ export default {
         console.log(r)
         this.visible = false
         this.confirmLoading = false
+        // this.$message.info('确认告警成功！')
       })
     },
     handleCancel (e) {
