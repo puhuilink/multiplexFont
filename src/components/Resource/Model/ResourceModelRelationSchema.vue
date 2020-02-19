@@ -164,6 +164,9 @@
             <a-checkbox
               v-decorator="[
                 'allowinheritance_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -179,6 +182,9 @@
             <a-checkbox
               v-decorator="[
                 'searchfield_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -211,6 +217,9 @@
             <a-checkbox
               v-decorator="[
                 'allownull_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
@@ -224,6 +233,9 @@
             <a-checkbox
               v-decorator="[
                 'assetattr_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"></a-checkbox>
           </a-form-item>
         </a-col>

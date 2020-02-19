@@ -6,9 +6,10 @@
       rowKey="rid"
       :columns="columns"
       :data="loadData"
-      :scroll="{ x: 1340, y:650 }"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :scroll="{ x: 1340, y: `calc(100vh - 280px)` }"
+      :rowSelection="null"
     >
+      <!--      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"-->
       <template #query>
         <a-form layout="inline">
           <div :class="{ fold: !advanced }">
@@ -78,9 +79,11 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
+        <!--              <a-button @click="add">新建</a-button>-->
+        <!--              <a-button @click="edit" :disabled="!hasSelectedOne">编辑-->
+        <!--        占位-->
+        <a-button v-show="advanced" style="visibility: hidden"></a-button>
+        <!--              <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>-->
       </template>
     </CTable>
 

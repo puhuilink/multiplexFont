@@ -20,6 +20,7 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              :disabled="title === '编辑'"
               v-decorator="[
                 'name_s',
                 { rules: [{ required: true, message: '名称必填' }] },
@@ -47,13 +48,13 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="图片"
+            label="图标"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
               v-decorator="[
-                'username',
+                'icon_s',
               ]"
             />
           </a-form-item>
@@ -66,8 +67,11 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              type="number"
+              :min="0"
+              :max="99"
               v-decorator="[
-                'username',
+                'order_i',
               ]"
             />
           </a-form-item>
@@ -83,7 +87,10 @@
           >
             <a-checkbox
               v-decorator="[
-                'username'
+                'edit_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"
             />
           </a-form-item>
@@ -97,7 +104,10 @@
           >
             <a-checkbox
               v-decorator="[
-                'username',
+                'batch_b',
+                {
+                  valuePropName: 'checked'
+                }
               ]"
             />
           </a-form-item>
@@ -113,7 +123,7 @@
           >
             <a-input
               v-decorator="[
-                'username',
+                'encrypt_s',
               ]"
             />
           </a-form-item>
@@ -159,12 +169,21 @@ export default {
      * @param {Object} record
      * @return {Undefined}
      */
-    edit (record) {
+    async edit (record) {
       this.title = '编辑'
       this.visible = true
       this.record = {
         ...record
       }
+      await this.$nextTick()
+      const keys = Object.keys(this.form.getFieldsValue())
+      let formData = {}
+      keys.forEach(key => {
+        if (record.hasOwnProperty(key)) {
+          formData[key] = record[key]
+        }
+      })
+      this.form.setFieldsValue(formData)
     },
     cancel () {
       this.visible = false

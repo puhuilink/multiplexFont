@@ -6,7 +6,7 @@
       :columns="columns"
       :rowKey="el => el.rid"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1280, y: 850}"
+      :scroll="{ x: 1280, y: `calc(100vh - 370px)`}"
     >
 
       <template #query>
@@ -51,7 +51,6 @@
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
         <a-button>数据检查</a-button>
-        <a-button>筛选</a-button>
       </template>
 
     </CTable>
