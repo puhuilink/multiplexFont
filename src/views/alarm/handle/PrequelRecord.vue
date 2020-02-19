@@ -138,6 +138,7 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     severity
   }
 }`
+
 export default {
   name: 'PrequelRecord',
   components: {

@@ -56,6 +56,7 @@ export default {
         console.log(r)
         this.visible = false
         this.confirmLoading = false
+        // this.$message.info('确认告警成功！')
       })
     },
     handleCancel (e) {

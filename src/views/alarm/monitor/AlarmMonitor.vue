@@ -142,9 +142,9 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open(selectedRows)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
-          <a-button @click="$refs.rollForward.open()" :disabled="!selectedRowKeys.length > 0">前转</a-button>
-          <a-button @click="$refs.resolve.open()" :disabled="!selectedRowKeys.length > 0">解决</a-button>
+          <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
+          <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
+          <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
         </a-col>
         <a-col
           :xs="24"
@@ -221,15 +221,15 @@
 
       <!-- S 表格右击菜单 -->
       <a-menu :style="menuStyle" v-if="menuVisible">
-        <a-menu-item @click="$refs.confirm.open(menuData)">
+        <a-menu-item @click="$refs.confirm.open(selectedRowKeys)">
           <a-icon type="pushpin" />
           确认告警
         </a-menu-item>
-        <a-menu-item @click="$refs.rollForward.open()">
+        <a-menu-item @click="$refs.rollForward.open(selectedRowKeys, selectedRows)">
           <a-icon type="to-top" />
           前转告警
         </a-menu-item>
-        <a-menu-item @click="$refs.resolve.open()">
+        <a-menu-item @click="$refs.resolve.open(selectedRowKeys)">
           <a-icon type="tool" />
           解决告警
         </a-menu-item>
@@ -244,8 +244,8 @@
         ref="detail"
         @handleForward="$refs.rollForward.open()"
         @handleSolve="$refs.resolve.open()"
-        @eventQuery="$refs.eventQuery.open()"
-        @operation="$refs.operation.open()"
+        @eventQuery="eventQuery"
+        @operation="$refs.operation.open(record)"
         @correlation="$refs.correlation.open()"
       />
       <event-query ref="eventQuery"></event-query>
@@ -533,7 +533,8 @@ export default {
         top: '0',
         left: '0',
         border: '1px solid #eee'
-      }
+      },
+      record: {}
     }
   },
   filters: {
@@ -567,6 +568,10 @@ export default {
   computed: {
   },
   methods: {
+    eventQuery () {
+      // return console.log(this.record)
+      this.$refs.eventQuery.open(this.record)
+    },
     /**
      * 获取现有的告警级别列表
      */
@@ -619,7 +624,6 @@ export default {
      */
     onTabChange (key, type) {
       this.tabKey = key
-      console.log(key, type)
       this.autoRefresh = false
       clearInterval(this.timer)
       this[type] = key
@@ -705,6 +709,7 @@ export default {
             document.body.addEventListener('click', this.bodyClick)
           },
           dblclick: () => {
+            this.record = record
             this.$refs.detail.open(record, 'monitorSee')
           }
         }

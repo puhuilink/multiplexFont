@@ -198,8 +198,8 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button @click="$refs.rollForward.open()" :disabled="!hasSelected">前转</a-button>
-        <a-button @click="$refs.resolve.open()" :disabled="!hasSelected">解决</a-button>
+        <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected">前转</a-button>
+        <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
         <a-button>导出</a-button>
       </div>
       <!-- E 操作栏 -->
