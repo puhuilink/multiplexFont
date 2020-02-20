@@ -122,14 +122,22 @@ export default {
     selectedKey: '',
     autoExpandParent: true,
     expandedKeys: [],
-    searchValue: '',
-    // 当前选中的节点
-    selectedNode: null
+    searchValue: ''
   }),
   computed: {
     disabled: {
       get () {
         return !this.selectedKey
+      }
+    },
+    selectedNode: {
+      get () {
+        if (!this.selectedKey) {
+          return null
+        } else {
+          const value = this.dataSource.find(el => el.key === this.selectedKey)
+          return value
+        }
       }
     },
     treeData: {
@@ -168,7 +176,6 @@ export default {
         // 删除成功重置
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
-        this.selectedNode = null
       } catch (e) {
         throw e
       } finally {
@@ -194,9 +201,6 @@ export default {
         this.selectedKey = selectedKey
         console.log(selectedNode)
         const dataRef = selectedNode.data.props.dataRef
-        this.selectedNode = {
-          ...dataRef
-        }
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
