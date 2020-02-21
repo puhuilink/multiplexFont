@@ -28,18 +28,19 @@
       <!-- S 操作栏 -->
       <div class="opration">
         <a-button
-          @click="$refs.detail.open('', 'New')"
+          @click="$refs.detail.open('', 'New', typeList)"
         >
           新建类型
         </a-button>
         <a-button
-          @click="$refs.detail.open('', 'New')"
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open('', 'NewSon', typeList)"
         >
           新建子类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          @click="$refs.detail.open(selectedRows[0], 'Edit', typeList)"
         >
           编辑
         </a-button>
@@ -136,8 +137,18 @@ export default {
             ...parameter,
             ...this.queryParams
           }
-        }).then(r => r.data)
+        }).then(r => {
+          const list = r.data.data
+          this.typeList.push(...list)
+          return r.data
+        })
       },
+      typeList: [
+        {
+          type_id: 0,
+          type_title: '/'
+        }
+      ],
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -180,7 +191,7 @@ export default {
             console.log(record, index)
           },
           dblclick: () => {
-            this.$refs.detail.open(record, 'Edit')
+            this.$refs.detail.open(record, 'Edit', this.typeList)
           }
         }
       }
