@@ -1,5 +1,5 @@
 /*
- * 告警类型:详情/编辑/新建
+ * 阈值规则 详情/编辑/新建
  */
 <template>
   <a-modal
@@ -23,24 +23,27 @@
           <a-form-item label="名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['name', { initialValue: record.name, rules: [{ required: true, message: '名称不能为空!' }] }]"
+              v-decorator="['title', { initialValue: record.title, rules: [{ required: true, message: '名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="是否启用">
             <a-select
-              allowClear
               :disabled="mode=='See'"
-              style="width: 100%"
-              v-decorator="['useing', {
-                initialValue: record.status,
-                rules: [{ required: true, message: '启用不能为空!' }]
-              }]"
-              placeholder="请选择"
+              v-decorator="[
+                'enable_b',
+                { initialValue: record.enable_b?record.enable_b+'':'true',
+                  rules: [{ required: true, message: '启用不能为空!' }]
+                }
+              ]"
             >
-              <a-select-option value="0">是</a-select-option>
-              <a-select-option value="1">否</a-select-option>
+              <a-select-option value="true">
+                是
+              </a-select-option>
+              <a-select-option value="false">
+                否
+              </a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -50,8 +53,8 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['CIDomain', {
-                initialValue: record.CIDomain,
+              v-decorator="['domain', {
+                initialValue: record.domain,
                 rules: [{ required: true, message: '数据域不能为空!' }]
               }]"
             >
@@ -77,8 +80,8 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['nodeType', {
-                initialValue: record.CIType,
+              v-decorator="['node_type', {
+                initialValue: record.node_type,
                 rules: [{ required: true, message: '节点类型不能为空!' }]
               }]"
             >

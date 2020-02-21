@@ -1,8 +1,44 @@
 import apollo from '@/utils/apollo'
-import { queryResourceModelList } from '../graphql/Resource'
+import {
+  mutationUpdateModel,
+  mutationInsertModels,
+  queryResourceModelList
+} from '../graphql/Resource'
 
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
     query: queryResourceModelList
   }).then(r => r.data)
+}
+
+/**
+ * 更新模型
+ * @param {Number} did 主键
+ * @param {Objetc} set 增量内容
+ */
+export const editModel = function (did, set = {}) {
+  return apollo.clients.resource.mutate({
+    mutation: mutationUpdateModel,
+    variables: {
+      did,
+      set
+    }
+  })
+}
+
+/**
+ * （批量）新增资源模型
+ * @param {Array} objects
+ * @return {*}
+ */
+export const addModels = function (objects = []) {
+  // TODO: 数据表 did 唯一，是否要（需要）做 name_s 唯一？
+  // TODO: 旧的业务逻辑，确实是根据 name_s 唯一的，如何迁移到以 did 构建树？
+  // FIXME: 目前的构建树方式，是认为 name_s 唯一的
+  return apollo.clients.resource.mutate({
+    mutation: mutationInsertModels,
+    variables: {
+      objects
+    }
+  })
 }

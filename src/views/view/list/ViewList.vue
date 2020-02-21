@@ -7,104 +7,90 @@
 */
 <template>
   <div class="view-list">
-    <page-view>
-      <a-card :bordered="false">
-
-        <!-- S 搜索 -->
-        <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="advanced ? 12 : 8" :sm="24">
-                <a-form-item label="视图ID">
-                  <a-input v-model="queryParam.id" placeholder=""/>
+    <CTable
+      ref="table"
+      rowKey="view_id"
+      :columns="columns"
+      :data="loadData"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :scroll="{ x: scrollX, y: `calc(100vh - 300px)` }"
+    >
+      <template #query>
+        <a-form layout="inline">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="视图ID"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model.number="queryParams.view_id" placeholder=""/>
                 </a-form-item>
               </a-col>
-              <a-col :md="advanced ? 12 : 8" :sm="24">
-                <a-form-item label="视图名称">
-                  <a-input v-model="queryParam.name" placeholder=""/>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="视图标题"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.view_title" placeholder=""/>
                 </a-form-item>
-              </a-col>
-              <template v-if="advanced">
-                <a-col :md="12" :sm="24">
-                  <a-form-item label="视图类型">
-                    <a-select
-                      mode="multiple"
-                      v-model="queryParam.viewType"
-                      placeholder=""
-                    >
-                      <a-select-option v-for="viewType in viewTypes" :key="viewType.value">
-                        {{ viewType.label }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-              </template>
-              <a-col :md="!advanced && 8 || 24" :sm="24">
-                <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                  <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                  <a @click="toggleAdvanced" style="margin-left: 8px">
-                    {{ advanced ? '收起' : '展开' }}
-                    <a-icon :type="advanced ? 'up' : 'down'"/>
-                  </a>
-                </span>
               </a-col>
             </a-row>
-          </a-form>
-        </div>
-        <!-- E 搜索 -->
+          </div>
 
-        <!-- S 操作 -->
-        <div class="table-operator">
-          <a-button type="primary" icon="plus" @click="$refs.createModel.open()">新建</a-button>
-          <a-dropdown v-if="selectedRowKeys.length > 0">
-            <a-menu slot="overlay">
-              <a-menu-item key="1" v-if="selectedRowKeys.length === 1" @click="handleEdit"><a-icon type="edit" />编辑</a-menu-item>
-              <a-menu-item key="2" v-if="selectedRowKeys.length === 1" @click="handleCopy"><a-icon type="copy" />复制</a-menu-item>
-              <a-menu-item key="3" v-if="selectedRowKeys.length === 1" @click="handleDesign"><a-icon type="highlight" />设计</a-menu-item>
-              <a-menu-item key="4" @click="handleDelete"><a-icon type="delete" />删除</a-menu-item>
-            </a-menu>
-            <a-button style="margin-left: 8px">
-              操作 <a-icon type="down" />
-            </a-button>
-          </a-dropdown>
-        </div>
-        <!-- E 操作 -->
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <!--                      <a @click="toggleAdvanced" style="margin-left: 8px">-->
+            <!--                        {{ advanced ? '收起' : '展开' }}-->
+            <!--                        <a-icon :type="advanced ? 'up' : 'down'"/>-->
+            <!--                      </a>-->
+          </span>
+        </a-form>
+      </template>
 
-        <!-- S 视图列表 -->
-        <s-table
-          ref="table"
-          size="default"
-          rowKey="key"
-          :columns="columns"
-          :data="loadData"
-          :alert="false"
-          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-          showPagination="auto"
-        />
-        <!-- E 视图列表 -->
+      <template #operation>
+        <a-button @click="$refs.createModel.open()">新建</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit">编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy">复制</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign">设计</a-button>
+        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
+      </template>
+    </CTable>
 
-        <!-- S 创建视图 -->
-        <create-view ref="createModel" @ok="() => $refs.table.refresh(true)" />
-        <!-- E 创建视图 -->
+    <!-- S 创建视图 -->
+    <create-view ref="createModel" @ok="() => $refs.table.refresh(true)" />
+    <!-- E 创建视图 -->
 
-      </a-card>
-    </page-view>
+    <ViewTitleScheme
+      ref="title"
+      @editSuccess="$refs['table'].refresh(false)"
+    />
   </div>
 </template>
 
 <script>
-import { STable } from '@/components'
+import CTable from '@/components/Table/CTable'
 import { PageView } from '@/layouts'
-import { getViewList } from '@/api/view'
+import { getViewList } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
+import ViewTitleScheme from './ViewTitleScheme'
+import Template from '../../design/moduels/template/index'
 
 export default {
   name: 'ViewList',
   components: {
+    Template,
     PageView,
-    STable,
-    CreateView
+    CTable,
+    CreateView,
+    ViewTitleScheme
   },
   data () {
     return {
@@ -126,49 +112,83 @@ export default {
         { label: '插件视图', value: 'plugin' }
       ],
       // 查询参数
-      queryParam: {},
+      queryParams: {},
       // 表头
       columns: [
         {
           title: '视图ID',
-          dataIndex: 'id'
+          dataIndex: 'view_id',
+          sorter: true,
+          width: 100
         },
         {
           title: '视图标题',
-          dataIndex: 'title',
-          sorter: true
+          dataIndex: 'view_title',
+          sorter: true,
+          width: 300
+        },
+        {
+          title: '视图名称',
+          dataIndex: 'view_name',
+          sorter: true,
+          width: 300
         },
         {
           title: '视图类型',
-          dataIndex: 'type',
-          sorter: true
+          dataIndex: 'view_type',
+          sorter: true,
+          width: 200
         },
         {
           title: '视图创建者',
-          dataIndex: 'author',
-          sorter: true
+          dataIndex: 'creator',
+          sorter: true,
+          width: 200
         },
         {
           title: '缩略图',
-          dataIndex: 'thumbnail'
+          dataIndex: 'view_img'
         }
       ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        // 清空选中
-        this.selectedRowKeys = []
-        return getViewList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
       selectedRows: []
     }
   },
+  computed: {
+    scrollX: {
+      get () {
+        // 选择框宽度 36
+        return this.columns.map(e => e.width).reduce((x1, x2) => (x1 + x2)) + 36
+      }
+    }
+  },
   methods: {
+    /**
+     * 加载表格数据
+     * @param {Object} parameter CTable 回传的分页与排序条件
+     * @return {Function: <Promise<Any>>}
+     */
+    loadData (parameter) {
+      this.selectedRowKeys = []
+      this.selectedRows = []
+      return getViewList({
+        ...parameter,
+        where: {
+          ...this.queryParams.view_id !== undefined ? {
+            view_id: {
+              _ilike: `%${this.queryParams.view_id.trim()}%`
+            }
+          } : {},
+          ...this.queryParams.view_title !== undefined ? {
+            view_title: {
+              _ilike: `%${this.queryParams.view_title.trim()}%`
+            }
+          } : {}
+        }
+      }).then(r => r.data)
+    },
     /**
      * 筛选展开开关
      */
@@ -184,17 +204,21 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
+    query (firstPage = true) {
+      this.$refs['table'].refresh(firstPage)
+    },
     /**
      * 重置搜索表单
      */
     resetSearchForm () {
-      this.queryParam = {}
+      this.queryParams = {}
     },
     /**
      * 处理编辑事件
      */
     handleEdit () {
-      console.log('Edit: ', this.selectedRows)
+      const [record] = this.selectedRows
+      this.$refs['title'].edit(record)
     },
     /**
      * 处理复制事件
@@ -220,4 +244,8 @@ export default {
 }
 </script>
 <style scoped lang="less">
+  .fold {
+    display: inline-block;
+    width: calc(100% - 216px);
+  }
 </style>

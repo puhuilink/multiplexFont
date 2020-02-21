@@ -15,3 +15,22 @@ export const queryResourceModelList = gql`query ($instanceListCount: Boolean! = 
     }
   }
 }`
+
+// name_s 属性只读（主键）
+export const mutationUpdateModel = gql`mutation ($did: Int, $set: ngecc_model_set_input = {}) {
+  update_ngecc_model (where: {
+    did: {
+      _eq: $did
+    }
+  }, _set: $set) {
+    returning {
+      icon_s
+    }
+  }
+}`
+
+export const mutationInsertModels = gql`mutation ($objects: [ngecc_model_insert_input!]! = []) {
+  insert_ngecc_model (objects:$objects) {
+    affected_rows
+  }
+}`

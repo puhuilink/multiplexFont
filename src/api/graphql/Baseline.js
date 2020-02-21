@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { BaselineFragment } from '../fragment/Baseline'
+// import { BaselineFragment } from '../fragment/Baseline'
 
 export const queryBaselineDefList = gql`query ($where: t_baseline_def_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_def_order_by!]) {
   pagination: t_baseline_def_aggregate(where: $where) {

@@ -280,7 +280,10 @@ export default {
             ]
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
       } catch (e) {
         throw e
       } finally {
@@ -305,7 +308,10 @@ export default {
             flag: Number(!record.flag)
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
         this.$refs['table'].refresh(false)
       } catch (e) {
         throw e

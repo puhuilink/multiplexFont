@@ -142,7 +142,10 @@ export default {
             objects
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '分配用户成功'
+        })
         this.$emit('editSuccess')
         this.cancel()
       } catch (e) {

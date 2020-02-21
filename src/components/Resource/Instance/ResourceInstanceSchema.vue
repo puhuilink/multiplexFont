@@ -167,6 +167,7 @@ export default {
     async insert () {
       const values = await this.getFormFields()
       this.loading = true
+      // FIXME: 上 mongo 对照下最初表的设计
       // FIXME: 数据库 rid 与 did 一致，did 不是外键？
       return apollo.clients.resource.mutate({
         mutation: insert,
@@ -176,6 +177,10 @@ export default {
           }]
         }
       }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
         this.$emit('addSuccess')
         this.cancel()
       }).catch(err => {
@@ -203,6 +208,10 @@ export default {
           }
         }
       }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
         this.$emit('editSuccess')
         this.cancel()
       }).catch(err => {

@@ -296,7 +296,10 @@ export default {
             ]
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
         // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
@@ -330,7 +333,7 @@ export default {
      * @return {Undefined}
      */
     async toggleFlag () {
-      if (!await deleteCheck.confirm({ content: '是否改变用户状态？' })) {
+      if (!await deleteCheck.confirm({ content: '确认更改用户状态？' })) {
         return
       }
       try {
@@ -343,7 +346,10 @@ export default {
             flag: Number(!record.flag)
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '更改状态成功'
+        })
         this.query()
       } catch (e) {
         throw e
