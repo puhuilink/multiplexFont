@@ -219,7 +219,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
-      // FIMXE: 查询匹配有时无法匹配，比如查询 "北京"
+      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }
