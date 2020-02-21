@@ -42,6 +42,7 @@ const groupUserList = gql`query groupList($groupId: String) {
   }
 }`
 
+// FIXME: 如果删除的用户同时是该组的管理员，管理员表也应该操作
 const allocateGroupUser = gql`mutation allocateGroupUser ($groupId: String!, $objects: [t_user_group_insert_input!]! = []) {
   # 批量删除旧用户
   delete_t_user_group (where: {group_id: {_eq: $groupId}}) {
