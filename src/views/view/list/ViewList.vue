@@ -176,9 +176,10 @@ export default {
       return getViewList({
         ...parameter,
         where: {
-          ...this.queryParams.view_id !== undefined ? {
+          ...this.queryParams.view_id !== undefined && this.queryParams.view_id !== '' ? {
             view_id: {
-              _ilike: `%${this.queryParams.view_id.trim()}%`
+              // TODO: 表单 input 强转换
+              _eq: Number(this.queryParams.view_id)
             }
           } : {},
           ...this.queryParams.view_title !== undefined ? {
