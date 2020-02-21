@@ -92,7 +92,26 @@ import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/AlarmTypesDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [ngecc_instance_values_order_by!]) {
+  pagination: ngecc_instance_values_aggregate(where: {parentname_s: {_eq: "Alert"}}) {
+    aggregate {
+      count
+    }
+  }
+  data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: {parentname_s: {_eq: "Alert"}}) {
+    id_s
+    icon_s
+    ispageadd_s
+    description_1_s
+    name_s
+    domain_s
+    enable_b
+    label_s
+    nodetype_s
+    parentname_s
+    updatetime_t
+  }
+}`
 export default {
   name: 'AlarmsTypes',
   components: {
@@ -143,26 +162,6 @@ export default {
         }
       ],
       loadData: parameter => {
-        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [ngecc_instance_values_order_by!]) {
-          pagination: ngecc_instance_values_aggregate(where: {parentname_s: {_eq: "Alert"}}) {
-            aggregate {
-              count
-            }
-          }
-          data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: {parentname_s: {_eq: "Alert"}}) {
-            id_s
-            icon_s
-            ispageadd_s
-            description_1_s
-            name_s
-            domain_s
-            enable_b
-            label_s
-            nodetype_s
-            parentname_s
-            updatetime_t
-          }
-        }`
         // eslint-disable-next-line no-undef
         return apollo.clients.resource.query({
           query,
