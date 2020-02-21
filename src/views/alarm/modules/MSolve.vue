@@ -86,7 +86,7 @@ export default {
       validateFields((errors, values) => {
         if (!errors) {
           console.log('values', values)
-          for (let i in values.checkbox) {
+          for (const i in values.checkbox) {
             console.log(values.checkbox[i])
             switch (values.checkbox[i]) {
               case 'recoverAll' :
@@ -119,7 +119,8 @@ export default {
         variables: {
           idList: this.idList,
           change: {
-            state: this.clearOut ? 30 : 20,
+            state: this.resolved ? 30 : 20,
+            active_state: this.clearOut ? 2 : 0,
             comments: values.description
           }
         }
