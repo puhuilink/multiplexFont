@@ -15,3 +15,16 @@ export const queryViewList = gql`query ($where: t_view_bool_exp! = {}, $limit: I
     view_img
   }
 }`
+
+export const mutationUpdateView = gql`mutation ($viewId: numeric!, $set: t_view_set_input! = {}) {
+  update_t_view (
+    where: {
+      view_id: {
+        _eq: $viewId
+      }
+    }
+    _set:$set
+  ) {
+    affected_rows
+  }
+}`

@@ -46,9 +46,9 @@ export default {
   render (h) {
     // FIXME: 有时顶部不可见
     // 顶部查询区域
-    const query = <div class="CTable-query">{ this.$slots.query }</div>
+    const query = <div class="CTable-query">{ this.$slots ? this.$slots.query : '' }</div>
     // 操作区域
-    const opration = <div class="CTable-operation">{ this.$slots.operation }</div>
+    const operation = <div class="CTable-operation">{ this.$slots ? this.$slots.operation : '' }</div>
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',
@@ -66,9 +66,14 @@ export default {
     })
     return <div class="CTable">
       { query }
-      { opration }
+      { operation }
       { table }
     </div>
+  },
+  updated () {
+    console.log(
+      this.$slots
+    )
   }
 }
 </script>

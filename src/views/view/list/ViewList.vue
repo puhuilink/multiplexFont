@@ -67,6 +67,11 @@
     <!-- S 创建视图 -->
     <create-view ref="createModel" @ok="() => $refs.table.refresh(true)" />
     <!-- E 创建视图 -->
+
+    <ViewTitleScheme
+      ref="title"
+      @editSuccess="$refs['table'].refresh(false)"
+    />
   </div>
 </template>
 
@@ -75,6 +80,7 @@ import CTable from '@/components/Table/CTable'
 import { PageView } from '@/layouts'
 import { getViewList } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
+import ViewTitleScheme from './ViewTitleScheme'
 import Template from '../../design/moduels/template/index'
 
 export default {
@@ -83,7 +89,8 @@ export default {
     Template,
     PageView,
     CTable,
-    CreateView
+    CreateView,
+    ViewTitleScheme
   },
   data () {
     return {
@@ -210,7 +217,8 @@ export default {
      * 处理编辑事件
      */
     handleEdit () {
-      console.log('Edit: ', this.selectedRows)
+      const [record] = this.selectedRows
+      this.$refs['title'].edit(record)
     },
     /**
      * 处理复制事件
