@@ -24,6 +24,7 @@ export const addUsers = function (objects = []) {
       }))
     }
   }).catch(err => {
+    // TODO: notification
     if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
       throw new Error('用户名已存在')
     }
