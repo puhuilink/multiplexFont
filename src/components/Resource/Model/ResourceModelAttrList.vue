@@ -256,6 +256,8 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      this.selectedRowKeys = []
+      this.selectedRows = []
       return apollo.clients.resource.query({
         query,
         variables: {
