@@ -218,8 +218,12 @@ export default {
           }]
         }
       }).then(res => {
-        // this.$emit('addSuccess')
-        this.cancel()
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
       }).catch(err => {
         throw err
       }).finally(() => {
@@ -235,8 +239,8 @@ export default {
         mutation: update,
         variables: {
           where: {
-            'id_s': {
-              '_eq': this.record.id_s
+            'name_S': {
+              '_eq': this.record.name_s
             }
           },
           val: {
@@ -244,8 +248,11 @@ export default {
           }
         }
       }).then(res => {
-        // this.$emit('editSuccess')
-        console.log('编辑成功')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
         this.handleCancel()
       }).catch(err => {
         throw err

@@ -46,13 +46,13 @@
         <a-button
           type="primary"
           icon="plus"
-          @click="$refs.detail.open('', 'New')"
+          @click="add"
         >
           新建
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          @click="edit"
         >
           编辑
         </a-button>
@@ -68,7 +68,7 @@
       <!-- S 列表 -->
       <CTable
         ref="table"
-        rowKey="id_s"
+        rowKey="rid"
         :columns="columns"
         :data="loadData"
         :alert="false"
@@ -79,7 +79,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <!-- E 模块 -->
     </a-card>
 
@@ -99,6 +102,8 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     }
   }
   data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: {parentname_s: {_eq: "Alert"}}) {
+    did
+    rid
     id_s
     icon_s
     ispageadd_s
@@ -112,6 +117,25 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     updatetime_t
   }
 }`
+
+const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
+  # instance表删除
+  delete_ngecc_instance_values (where: {
+    rid: {
+      _in: $rids
+    }
+  }) {
+    affected_rows
+  }
+}`
+//  # 关联解除
+// delete_ngecc_relationinstance (where: {
+//   name_s: {
+//     _in: $nameList
+//   }
+// }) {
+//   affected_rows
+// }
 export default {
   name: 'AlarmsTypes',
   components: {
@@ -209,12 +233,40 @@ export default {
         }
       }
     },
+    add () {
+      this.$refs['detail'].open('', 'New')
+    },
+    edit () {
+      this.$refs.detail.open(this.selectedRows[0], 'Edit')
+    },
     /**
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.resource.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            rids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     }
   }
 }

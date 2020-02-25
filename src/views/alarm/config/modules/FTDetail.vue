@@ -108,7 +108,11 @@ export default {
   methods: {
     async open (record, mode, typeList) {
       this.visible = true
-      this.record = record
+      if (mode === 'Edit') {
+        this.record = record
+      } else if (mode === 'NewSon') {
+        this.record.parent_type_title = record.parent_type_title
+      }
       this.mode = mode
       this.typeList = typeList
     },
@@ -156,13 +160,16 @@ export default {
         mutation: insert,
         variables: {
           objects: [{
-            ...values,
-            parentname_s: 'Alert'
+            ...values
           }]
         }
       }).then(res => {
-        // this.$emit('addSuccess')
-        this.cancel()
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
       }).catch(err => {
         throw err
       }).finally(() => {
@@ -187,8 +194,11 @@ export default {
           }
         }
       }).then(res => {
-        // this.$emit('editSuccess')
-        console.log('编辑成功')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
         this.handleCancel()
       }).catch(err => {
         throw err

@@ -28,19 +28,19 @@
       <!-- S 操作栏 -->
       <div class="opration">
         <a-button
-          @click="$refs.detail.open('', 'New', typeList)"
+          @click="add('New')"
         >
           新建类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open('', 'NewSon', typeList)"
+          @click="add('NewSon')"
         >
           新建子类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit', typeList)"
+          @click="edit"
         >
           编辑
         </a-button>
@@ -68,7 +68,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <!-- E 模块 -->
     </a-card>
   </div>
@@ -93,6 +96,18 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     parent_type_title
     type_id
     type_title
+  }
+}`
+
+// type_id属性更改
+const deleteAttrs = gql`mutation ($typeIds: [numeric!] = []) {
+  # instance表删除
+  delete_t_incident_type (where: {
+    type_id: {
+      _in: $typeIds
+    }
+  }) {
+    affected_rows
   }
 }`
 export default {
@@ -138,17 +153,17 @@ export default {
             ...this.queryParams
           }
         }).then(r => {
-          const list = r.data.data
-          this.typeList.push(...list)
+          this.typeList = [
+            {
+              type_id: 0,
+              type_title: '/'
+            },
+            ...r.data.data
+          ]
           return r.data
         })
       },
-      typeList: [
-        {
-          type_id: 0,
-          type_title: '/'
-        }
-      ],
+      typeList: [],
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -187,21 +202,50 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
             this.$refs.detail.open(record, 'Edit', this.typeList)
           }
         }
       }
     },
+    add (e) {
+      if (e === 'New') {
+        this.$refs['detail'].open('', e, this.typeList)
+      } else {
+        this.$refs['detail'].open(this.selectedRows[0], e, this.typeList)
+      }
+    },
+    edit () {
+      this.$refs['detail'].open(this.selectedRows[0], 'Edit', this.typeList)
+    },
     /**
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            typeIds: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     }
   }
 }
