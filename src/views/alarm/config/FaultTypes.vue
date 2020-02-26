@@ -11,12 +11,12 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="故障分类名称">
-                <a-input v-model="queryParam.typeName" placeholder=""/>
+                <a-input v-model="queryParam.type_title" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
               </span>
             </a-col>
@@ -84,13 +84,13 @@ import detail from './modules/FTDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_type_order_by!]) {
-    pagination: t_incident_type_aggregate(where: {}) {
+const query = gql`query instanceList($where: t_incident_type_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_type_order_by!]) {
+    pagination: t_incident_type_aggregate(where: $where) {
       aggregate {
         count
       }
     }
-  data: t_incident_type(offset: $offset, limit: $limit, order_by: $orderBy) {
+  data: t_incident_type(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
     parent_type_id
     comments
     parent_type_title
@@ -144,25 +144,6 @@ export default {
           sorter: true
         }
       ],
-      loadData: parameter => {
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => {
-          this.typeList = [
-            {
-              type_id: 0,
-              type_title: '/'
-            },
-            ...r.data.data
-          ]
-          return r.data
-        })
-      },
       typeList: [],
       // 已选行特性值
       selectedRowKeys: [],
@@ -186,6 +167,34 @@ export default {
      */
     handleChange (value) {
       console.log(`selected ${value}`)
+    },
+    loadData (parameter) {
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.queryParam.type_title ? {
+              type_title: {
+                _ilike: `%${this.queryParam.type_title.trim()}%`
+              }
+            } : {}
+          }
+        }
+      }).then(r => {
+        this.typeList = [
+          {
+            type_id: 0,
+            type_title: '/'
+          },
+          ...r.data.data
+        ]
+        return r.data
+      })
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 选中行更改事件
