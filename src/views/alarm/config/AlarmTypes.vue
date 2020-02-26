@@ -16,19 +16,19 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="所属节点类型">
-                <a-input v-model="queryParam.type" placeholder=""/>
+                <a-input v-model="queryParam.nodetype_s" placeholder=""/>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="告警编码">
-                  <a-input v-model="queryParam.type" placeholder=""/>
+                  <a-input v-model="queryParam.id_s" placeholder=""/>
                 </a-form-item>
               </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -95,14 +95,13 @@ import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/AlarmTypesDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [ngecc_instance_values_order_by!]) {
-  pagination: ngecc_instance_values_aggregate(where: {parentname_s: {_eq: "Alert"}}) {
+const query = gql`query instanceList($where: ngecc_instance_values_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [ngecc_instance_values_order_by!]) {
+  pagination: ngecc_instance_values_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: {parentname_s: {_eq: "Alert"}}) {
-    did
+  data:  ngecc_instance_values(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
     rid
     id_s
     icon_s
@@ -185,16 +184,6 @@ export default {
           sorter: true
         }
       ],
-      loadData: parameter => {
-        // eslint-disable-next-line no-undef
-        return apollo.clients.resource.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -224,14 +213,44 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
-            this.$refs.detail.open(record, 'See')
+            this.$refs['detail'].open(record, 'See')
           }
         }
       }
+    },
+    loadData (parameter) {
+      // eslint-disable-next-line no-undef
+      return apollo.clients.resource.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            'parentname_s': {
+              '_eq': 'Alert'
+            },
+            ...this.queryParam.label_s ? {
+              label_s: {
+                _ilike: `%${this.queryParam.label_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.nodetype_s ? {
+              nodetype_s: {
+                _ilike: `%${this.queryParam.nodetype_s.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.id_s ? {
+              id_s: {
+                _ilike: `%${this.queryParam.id_s.trim()}%`
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     add () {
       this.$refs['detail'].open('', 'New')
