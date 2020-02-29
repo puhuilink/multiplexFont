@@ -12,7 +12,7 @@
           <a-row :gutter="48">
             <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI域">
-                <a-select
+                <!-- <a-select
                   allowClear
                   v-model="queryParam.CIDomain"
                   placeholder="请选择CI域"
@@ -30,6 +30,18 @@
                       {{ item.label }}
                     </a-select-option>
                   </a-select-opt-group>
+                </a-select> -->
+                <a-select
+                  allowClear
+                  v-model="queryParam.domains"
+                  placeholder="请选择CI域"
+                >
+                  <a-select-option
+                    v-for="item in queryList.domainList"
+                    :key="item.name_s"
+                  >
+                    {{ item.label_s }}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -37,22 +49,19 @@
               <a-form-item label="CI类型">
                 <a-select
                   allowClear
-                  v-model="queryParam.CIType"
-                  placeholder="请选择"
+                  v-model="queryParam.node_types"
+                  placeholder="请选择CI类型"
+                  @change="ciTypeChange"
                 >
                   <a-select-opt-group
-                    v-for="(group,index) in CIType"
+                    v-for="(group,index) in queryList.typeList"
                     :key="index"
-                    :label="group.label"
+                    :label="group[0].parentname_s"
                     :allowClear="true"
                   >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
+                    <template v-for="(groupitem,indexs) in group">
+                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                    </template>
                   </a-select-opt-group>
                 </a-select>
               </a-form-item>
@@ -60,28 +69,25 @@
             <!-- 多余筛选框是否展示 -->
             <template v-if="advanced">
               <a-col :md="12" :sm="24">
-                <a-form-item label="CI名称">
+                <a-form-item label="CI实例">
                   <a-select
-                    mode="multiple"
                     allowClear
-                    v-model="queryParam.CIName"
-                    placeholder="请选择"
-                    @change="CINameChange"
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.node_ids"
+                    placeholder="请选择CI实例"
+                    @change="CIInstanceChange"
                   >
                     <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
-                      v-for="(group,index) in CIName"
+                      v-for="(group,index) in queryList.CIInstance"
                       :key="index"
-                      :label="group.label"
+                      :label="group[0].parentname_s"
                       :allowClear="true"
                     >
-                      <a-select-option
-                        v-for="item in group.options"
-                        :key="item.value"
-                        :value="item.value"
-                      >
-                        {{ item.label }}
-                      </a-select-option>
+                      <template v-for="(groupitem,indexs) in group">
+                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                      </template>
                     </a-select-opt-group>
                   </a-select>
                 </a-form-item>
@@ -89,26 +95,23 @@
               <a-col :md="12" :sm="24">
                 <a-form-item label="告警类型">
                   <a-select
-                    mode="multiple"
                     allowClear
-                    v-model="queryParam.alarmType"
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.alert_id"
                     placeholder="请选择告警类型"
                     @change="alarmTypeChange"
                   >
-                    <a-select-option value="checkall" key="chackall" >全选</a-select-option>
+                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
-                      v-for="(group,index) in alarmType"
+                      v-for="(group,index) in queryList.alertList"
                       :key="index"
-                      :label="group.label"
+                      :label="group[0].parentname_s"
                       :allowClear="true"
                     >
-                      <a-select-option
-                        v-for="item in group.options"
-                        :key="item.value"
-                        :value="item.value"
-                      >
-                        {{ item.label }}
-                      </a-select-option>
+                      <template v-for="groupitem in group">
+                        <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+                      </template>
                     </a-select-opt-group>
                   </a-select>
                 </a-form-item>
@@ -119,9 +122,9 @@
                     allowClear
                     v-model="queryParam.state"
                     placeholder="请选择"
-                    default-value="checkall"
+                    default-value=""
                   >
-                    <a-select-option value="checkall" key="checkall" >所有</a-select-option>
+                    <a-select-option value="" key="" >所有</a-select-option>
                     <a-select-option
                       v-for="item in alarmState"
                       :key="item.value"
@@ -138,40 +141,45 @@
                     allowClear
                     v-model="queryParam.severity"
                     placeholder="请选择"
-                    default-value="checkall"
+                    default-value=""
                   >
-                    <a-select-option value="checkall" key="checkall" >所有</a-select-option>
+                    <a-select-option value="" key="" >所有</a-select-option>
                     <a-select-option
                       v-for="item in alarmLevel"
-                      :key="item"
-                      :value="item"
+                      :key="item.value"
+                      :value="item.value"
                     >
-                      {{ item }}
+                      {{ item.text }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item label="告警信息">
-                  <a-input v-model="queryParam.messageFilter" placeholder="请输入"/>
+                  <a-input v-model="queryParam.message" placeholder="请输入"/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item label="采集系统">
                   <a-select
                     allowClear
-                    v-model="queryParam.alarmLevel"
-                    placeholder="请选择"
-                    default-value="checkall"
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.agent_id"
+                    placeholder="请选择采集系统"
+                    @change="agentChange"
                   >
-                    <a-select-option value="checkall" key="checkall" >所有</a-select-option>
-                    <a-select-option
-                      v-for="item in alarmLevel"
-                      :key="item"
-                      :value="item"
+                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                    <a-select-opt-group
+                      v-for="(group,index) in queryList.agentList"
+                      :key="index"
+                      :label="group[0].parentname_s"
+                      :allowClear="true"
                     >
-                      {{ item }}
-                    </a-select-option>
+                      <template v-for="(groupitem,indexs) in group">
+                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                      </template>
+                    </a-select-opt-group>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -183,7 +191,7 @@
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
+                <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -253,10 +261,37 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import queryList from '@/api/alarm/queryList'
 import screening from '../screening'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
+
+const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
+  pagination: t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
+    state
+    dev_name
+    app_name
+    severity
+    message
+    first_arising_time
+    arising_time
+    count
+    agent_id
+    close_time
+    close_by
+    order_id
+    alert_id
+    related
+    instance
+    instance2
+  }
+}`
 
 export default {
   name: 'HistoricalAlarms',
@@ -273,39 +308,58 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
-      // 筛选项：CI域
-      CIDomain: screening.CIDomain,
-      // 筛选项：CI类型
-      CIType: screening.CIType,
-      // 筛选项: CI名称
-      CIName: screening.CIName,
-      // 筛选项目：告警类型
-      alarmType: screening.alarmType,
+      queryList: {},
       // 筛选：告警状态
       alarmState: [
         {
-          value: 'pending',
+          value: 0,
           label: '新产生'
         },
         {
-          value: 'confirmed',
+          value: 5,
           label: '已确认'
         },
         {
-          value: 'shifting',
+          value: 10,
           label: '处理中'
         },
         {
-          value: 'resolved',
+          value: 20,
           label: '已处理'
         },
         {
-          value: 'ignore',
+          value: 30,
           label: '已忽略'
         }
       ],
       // 筛选：告警级别
-      alarmLevel: ['INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITCAL'],
+      alarmLevel: [
+        {
+          value: 0,
+          level: 'L1',
+          text: 'INFO'
+        },
+        {
+          value: 1,
+          level: 'L2',
+          text: 'WARNING'
+        },
+        {
+          value: 2,
+          level: 'L3',
+          text: 'MINOR'
+        },
+        {
+          value: 3,
+          level: 'L4',
+          text: 'MAJOR'
+        },
+        {
+          value: 4,
+          level: 'L5',
+          text: 'CRITICAL'
+        }
+      ],
       // 告警列表表头
       columns: [
         {
@@ -410,44 +464,6 @@ export default {
         }
 
       ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
-          pagination: t_alert_aggregate(where: {}) {
-            aggregate {
-              count
-            }
-          }
-          data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy) {
-            state
-            dev_name
-            app_name
-            severity
-            message
-            first_arising_time
-            arising_time
-            count
-            agent_id
-            close_time
-            close_by
-            order_id
-            alert_id
-            related
-            instance
-            instance2
-          }
-        }`
-        // 清空选中
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-            // arising_time: today
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -479,6 +495,9 @@ export default {
       }
     }
   },
+  created () {
+    this.getqueryList()
+  },
   computed: {
     /**
      * 返回表格选中行
@@ -489,23 +508,44 @@ export default {
   },
   methods: {
     /**
+     * 获取筛选项的下拉列表的值
+     */
+    async getqueryList () {
+      this.queryList.domainList = await queryList.domainList()
+      this.queryList.typeList = await queryList.typeList()
+      this.queryList.alertList = await queryList.alertList()
+      this.queryList.agentList = await queryList.agentList()
+    },
+    async ciTypeChange (value) {
+      this.queryList.CIInstance = await queryList.nodeList(value)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
+    },
+    /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
     },
     /**
-     * ci名称改变
+     * ci实例改变
      */
-    CINameChange (value) {
-      this.queryParam.CIName = screening.checkAll(value, this.CIName)
-      console.log(this.queryParam)
+    CIInstanceChange (value) {
+      console.log(value)
+      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
     },
     /**
      * 告警类型改变
      */
     alarmTypeChange (value) {
-      this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
+      this.queryParam.alert_id = screening.checkAll(value, this.queryList.alertList)
+    },
+    /**
+     * 采集系统下拉改变
+     */
+    agentChange (value) {
+      this.queryParam.agent_id = screening.checkAll(value, this.queryList.agentList)
     },
     /**
      * 日期时间空间选择
@@ -526,15 +566,66 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
+    // 加载数据方法 必须为 Promise 对象
+    loadData (parameter) {
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            ...this.queryParam.domains ? {
+              domains: {
+                _eq: this.queryParam.domains
+              }
+            } : {},
+            ...this.queryParam.node_types ? {
+              node_types: {
+                _eq: this.queryParam.node_types
+              }
+            } : {},
+            ...this.queryParam.node_ids ? {
+              node_ids: {
+                _in: this.queryParam.node_ids
+              }
+            } : {},
+            ...this.queryParam.alert_id ? {
+              alert_id: {
+                _in: this.queryParam.alert_id
+              }
+            } : {},
+            ...this.queryParam.agent_id ? {
+              agent_id: {
+                _in: this.queryParam.agent_id
+              }
+            } : {},
+            ...this.queryParam.state ? {
+              state: {
+                _eq: this.queryParam.state
+              }
+            } : {},
+            ...this.queryParam.severity ? {
+              severity: {
+                _eq: this.queryParam.severity
+              }
+            } : {},
+            ...this.queryParam.message ? {
+              message: {
+                _ilike: this.queryParam.message
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
     /**
      * 行属性,表格点击事件
      */
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
             this.$refs.detail.open(record, 'historySee')
           }
