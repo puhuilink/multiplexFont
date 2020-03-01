@@ -23,6 +23,7 @@ export const queryModelList = gql`query modelListWithChildren ($withChildren: Bo
     children @include(if: $withChildren) {
       label: label_s
       value: name_s
+      parentName: parentname_s
     }
   }
 }`
@@ -32,6 +33,12 @@ export const queryInsanceList = gql`query ($where: ngecc_instance_bool_exp! = {}
     label: label_s
     value: name_s
     parentName: parentname_s
+  }
+}`
+
+export const queryKpiList = gql`query ($where: ngecc_instance_values_bool_exp! = {}) {
+  data: ngecc_instance_values (where: $where) {
+    label: label_s
   }
 }`
 

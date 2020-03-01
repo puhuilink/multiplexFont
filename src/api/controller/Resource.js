@@ -4,7 +4,8 @@ import {
   mutationInsertModels,
   queryResourceModelList,
   queryModelList,
-  queryInsanceList
+  queryInsanceList,
+  queryKpiList
 } from '../graphql/Resource'
 
 export const getResourceInstanceList = function () {
@@ -27,6 +28,20 @@ export const getInstanceList = function (where = {}) {
     query: queryInsanceList,
     variables: {
       where
+    }
+  }).then(r => r.data)
+}
+
+export const getKpiList = function (where = {}) {
+  return apollo.clients.resource.query({
+    query: queryKpiList,
+    variables: {
+      where: {
+        ...where,
+        'parentname_s': {
+          '_eq': 'Kpi'
+        }
+      }
     }
   }).then(r => r.data)
 }

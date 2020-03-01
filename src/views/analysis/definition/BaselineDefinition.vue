@@ -132,7 +132,7 @@ import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../design/moduels/template/index'
-import { getBaseLineDefList } from '@/api/controller/Baseline'
+import { getBaselineDefList } from '@/api/controller/Baseline'
 import { getResourceInstanceList } from '@/api/controller/Resource'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 
@@ -219,7 +219,7 @@ export default {
             } : {}
           }
         }
-        return getBaseLineDefList(variables).then(r => r.data)
+        return getBaselineDefList(variables).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
