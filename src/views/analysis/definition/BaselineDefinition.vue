@@ -105,7 +105,7 @@
       </template>
 
       <template #operation>
-        <a-button>新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
         >
@@ -120,6 +120,9 @@
       </template>
 
     </CTable>
+
+    <BaselineDefinitionSchema ref="schema" />
+
   </div>
 </template>
 
@@ -131,13 +134,15 @@ import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../design/moduels/template/index'
 import { getBaseLineDefList } from '@/api/controller/Baseline'
 import { getResourceInstanceList } from '@/api/controller/Resource'
+import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 
 export default {
   name: 'BaselineDefinition',
   components: {
     Template,
     CTable,
-    Ellipsis
+    Ellipsis,
+    BaselineDefinitionSchema
   },
   data () {
     return {
@@ -231,6 +236,13 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.$refs['schema'].add()
+    },
+    edit () {
+      const [record] = this.selectedRows
+      this.$refs['schema'].edtt(record)
+    },
     /**
      * 查询
      * @param {Boolean} firstPage 是否从第一页开始

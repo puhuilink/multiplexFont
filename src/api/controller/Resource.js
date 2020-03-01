@@ -2,12 +2,32 @@ import apollo from '@/utils/apollo'
 import {
   mutationUpdateModel,
   mutationInsertModels,
-  queryResourceModelList
+  queryResourceModelList,
+  queryModelList,
+  queryInsanceList
 } from '../graphql/Resource'
 
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
     query: queryResourceModelList
+  }).then(r => r.data)
+}
+
+export const getModelList = function (withChildren = false) {
+  return apollo.clients.resource.query({
+    query: queryModelList,
+    variables: {
+      withChildren
+    }
+  }).then(r => r.data)
+}
+
+export const getInstanceList = function (where = {}) {
+  return apollo.clients.resource.query({
+    query: queryInsanceList,
+    variables: {
+      where
+    }
   }).then(r => r.data)
 }
 
