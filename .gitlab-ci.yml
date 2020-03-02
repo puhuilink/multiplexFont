@@ -5,8 +5,8 @@ stages:
 build_job: 
  stage: build
  script: 
- # - echo "删除服务器上一次拉取的项目"
- # - rm -rf /root/gitlab/ 
+  - echo "删除服务器上一次拉取的项目"
+  - rm -rf /root/gitlab/project/web 
  # - echo "删除nginx配置文件夹中，上一次的dist文件"
  # - rm -rf /etc/nginx/html/dist
   - echo "拉取代码"
