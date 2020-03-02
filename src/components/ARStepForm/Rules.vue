@@ -141,7 +141,7 @@ export default {
       // 先校验，通过表单校验后，才进入下一步
       validateFields((err, values) => {
         if (!err) {
-          this.$emit('nextStep')
+          this.$emit('nextStep', values)
         }
       })
     },

@@ -106,7 +106,6 @@ export default {
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },
       wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
       form: this.$form.createForm(this),
-      loading: false,
       timer: 0,
       levelList: [
         'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'

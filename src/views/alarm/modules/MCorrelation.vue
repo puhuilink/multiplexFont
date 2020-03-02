@@ -153,13 +153,13 @@ export default {
 
       ],
       loadData: parameter => {
-        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
-          pagination: t_alert_aggregate(where: {}) {
+        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!], $cause_alert_id: numeric!) {
+          pagination: t_alert_aggregate(where: {cause_alert_id: {_eq: $cause_alert_id}}) {
             aggregate {
               count
             }
           }
-          data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy) {
+          data: t_alert(offset: $offset, limit: $limit, where: {cause_alert_id: {_eq: $cause_alert_id}}, order_by: $orderBy) {
             state
             dev_name
             app_name
@@ -182,10 +182,12 @@ export default {
           query,
           variables: {
             ...parameter,
-            ...this.queryParams
+            ...this.queryParams,
+            cause_alert_id: this.record.alert_id
           }
         }).then(r => r.data)
-      }
+      },
+      record: ''
     }
   },
   filters: {
@@ -213,8 +215,9 @@ export default {
     }
   },
   methods: {
-    open () {
+    open (...record) {
       this.visible = true
+      this.record = record[0]
     },
     handleSolve (e) {
       this.loading = true

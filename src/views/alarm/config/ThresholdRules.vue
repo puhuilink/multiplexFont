@@ -13,22 +13,15 @@
               <a-form-item label="数据域">
                 <a-select
                   allowClear
-                  v-model="queryParam.CIDomain"
+                  v-model="queryParam.domains"
                   placeholder="请选择"
                 >
-                  <a-select-opt-group
-                    v-for="(group,index) in CIDomain"
-                    :key="index"
-                    :label="group.label"
+                  <a-select-option
+                    v-for="item in queryList.domainList"
+                    :key="item.name_s"
                   >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select-opt-group>
+                    {{ item.label_s }}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -36,22 +29,19 @@
               <a-form-item label="节点类型">
                 <a-select
                   allowClear
-                  v-model="queryParam.CIType"
+                  v-model="queryParam.node_types"
                   placeholder="请选择"
+                  @change="ciTypeChange"
                 >
                   <a-select-opt-group
-                    v-for="(group,index) in CIType"
+                    v-for="(group,index) in queryList.typeList"
                     :key="index"
-                    :label="group.label"
+                    :label="group[0].parentname_s"
                     :allowClear="true"
                   >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
+                    <template v-for="(groupitem,indexs) in group">
+                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                    </template>
                   </a-select-opt-group>
                 </a-select>
               </a-form-item>
@@ -60,11 +50,11 @@
               <a-col :md="8" :sm="24">
                 <a-form-item label="KPI">
                   <a-select
-                    defaultValue="checkAll"
-                    style="width: 100%"
-                    v-model="queryParam.KPI"
+                    allowClear
+                    v-model="queryParam.kpi_code"
+                    placeholder="请先选择节点类型"
                   >
-                    <a-select-option value="using">数据请求中，请稍后...</a-select-option>
+                    <a-select-option v-for="(group,index) in queryList.kpiList" :key="index" :value="group.kpicode_s" >{{ group.label_s }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -112,7 +102,7 @@
       <CTable
         ref="table"
         size="small"
-        rowKey="key"
+        rowKey="id"
         :columns="columns"
         :data="loadData"
         :alert="false"
@@ -140,7 +130,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <!-- E 模块 -->
     </a-card>
   </div>
@@ -149,18 +142,19 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import screening from '../screening'
+import queryList from '@/api/alarm/queryList'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/ThresholdRulesDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_threshold_order_by!]) {
-    pagination: t_threshold_aggregate(where: {}) {
+const query = gql`query instanceList($where: t_threshold_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_threshold_order_by!]) {
+    pagination: t_threshold_aggregate(where: $where) {
       aggregate {
         count
       }
     }
-  data: t_threshold(offset: $offset, limit: $limit, order_by: $orderBy) {
+  data: t_threshold(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
     alert_code
     condition
     domain
@@ -182,6 +176,15 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
     udapvalue_type
   }
 }`
+const deleteAttrs = gql`mutation ($idList: [Int!] = []) {
+  delete_t_threshold (where: {
+    id: {
+      _in: $idList
+    }
+  }) {
+    affected_rows
+  }
+}`
 export default {
   name: 'ThresholdRules',
   components: {
@@ -194,9 +197,7 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
-      // 筛选项的值来源
-      CIDomain: screening.CIDomain,
-      CIType: screening.CIType,
+      queryList: {},
       columns: [
         {
           title: '名称',
@@ -259,16 +260,6 @@ export default {
           scopedSlots: { customRender: 'status' }
         }
       ],
-      loadData: parameter => {
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -288,6 +279,9 @@ export default {
       }
     }
   },
+  created () {
+    this.getqueryList()
+  },
   computed: {
     /**
      * 返回表格选中行
@@ -298,10 +292,62 @@ export default {
   },
   methods: {
     /**
+     * 获取筛选项的下拉列表的值
+     */
+    async getqueryList () {
+      this.queryList.domainList = await queryList.domainList()
+      this.queryList.typeList = await queryList.typeList()
+    },
+    async ciTypeChange (value) {
+      this.queryList.kpiList = await queryList.kpiList(value)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
+    },
+    loadData (parameter) {
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.queryParam.domain ? {
+              domain: {
+                _eq: this.queryParam.domain
+              }
+            } : {},
+            ...this.queryParam.node_types ? {
+              node_types: {
+                _eq: this.queryParam.node_types
+              }
+            } : {},
+            ...this.queryParam.kpi_code ? {
+              kpi_code: {
+                _eq: this.queryParam.kpi_code
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    /**
+     * ci实例改变
+     */
+    CIInstanceChange (value) {
+      console.log(value)
+      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
+    },
+    /**
+     * 告警类型改变
+     */
+    alarmTypeChange (value) {
+      this.queryParam.alert_id = screening.checkAll(value, this.queryList.alertList)
     },
     /**
      * 表格展示规则类型过滤
@@ -324,11 +370,8 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
-            this.$refs.detail.open(record, 'See')
+            this.$refs['detail'].open(record, 'See')
           }
         }
       }
@@ -337,8 +380,30 @@ export default {
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            idList: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     }
   }
 }
