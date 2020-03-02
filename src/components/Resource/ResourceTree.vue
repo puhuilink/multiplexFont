@@ -29,6 +29,8 @@
 
         <ResourceTreeNodeSchema
           ref="schema"
+          @addSuccess="addSuccess"
+          @editSuccess="editSuccess"
         />
 
       </a-tab-pane>
@@ -40,7 +42,7 @@
           <template v-if="!instanceListCount">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
-            <a-button @click="batchDelete" icon="delete" :disabled="disabled"></a-button>
+            <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
           </template>
         </div>
       </template>
@@ -70,6 +72,8 @@ export default {
           edit_b
           encrypt_s
           order_i
+          icon_s
+          parenttree_s
           title: label_s
           key: name_s
           parentKey: parentname_s
@@ -83,6 +87,7 @@ export default {
       result () {
         this.autoExpandParent = true
       },
+      // 响应式，当数据变化时，触发刷新
       variables () {
         return {
           instanceListCount: this.instanceListCount
@@ -117,14 +122,22 @@ export default {
     selectedKey: '',
     autoExpandParent: true,
     expandedKeys: [],
-    searchValue: '',
-    // 当前选中的节点
-    selectedNode: null
+    searchValue: ''
   }),
   computed: {
     disabled: {
       get () {
         return !this.selectedKey
+      }
+    },
+    selectedNode: {
+      get () {
+        if (!this.selectedKey) {
+          return null
+        } else {
+          const value = this.dataSource.find(el => el.key === this.selectedKey)
+          return value
+        }
       }
     },
     treeData: {
@@ -135,13 +148,39 @@ export default {
   },
   methods: {
     add () {
-      this.$refs['schema'].add()
+      // eslint-disable-next-line
+      const { parenttree_s, name_s } = this.selectedNode
+      // 父节点位置加上自身的名字，就是自身节点的位置
+      this.$refs['schema'].add(
+        name_s,
+        // eslint-disable-next-line
+        `${parenttree_s}${name_s}`
+      )
+    },
+    addSuccess () {
+      this.$apollo.queries.dataSource.refetch()
     },
     edit () {
       this.$refs['schema'].edit({ ...this.selectedNode })
     },
-    async batchDelete () {
-      await deleteCheck.sureDelete()
+    editSuccess () {
+      this.$apollo.queries.dataSource.refetch()
+    },
+    async onDelete () {
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      // 删除一个节点，其子节点都要删除，并且子节点相关联的表也应处理
+      try {
+        // TODO: 删除接口
+        // 删除成功重置
+        await this.$apollo.queries.dataSource.refetch()
+        this.selectedKey = ''
+      } catch (e) {
+        throw e
+      } finally {
+
+      }
     },
     /**
      * 展开树节点触发
@@ -160,16 +199,15 @@ export default {
     select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
       if (selected) {
         this.selectedKey = selectedKey
+        console.log(selectedNode)
         const dataRef = selectedNode.data.props.dataRef
-        this.selectedNode = {
-          ...dataRef
-        }
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
           'name_s': dataRef.name_s
         })
       } else {
+        // FIXME: 新增后可以不用重置
         this.selectedNode = null
         this.selectedKey = ''
         this.$emit('select', null)
@@ -181,7 +219,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
-      // FIMXE: 查询匹配有时无法匹配，比如查询 "北京"
+      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }

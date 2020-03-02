@@ -68,9 +68,8 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <CTable
         ref="table"
-        size="small"
         rowKey="key"
         :columns="columns"
         :data="loadData"
@@ -95,7 +94,7 @@
             :style="{color:'#f97160'}"
           />
         </span>
-      </s-table>
+      </CTable>
       <!-- E 列表 -->
 
       <!-- S 模块 -->
@@ -106,16 +105,54 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { getAlarmRuleList } from '@/api/alarmConfig'
+import CTable from '@/components/Table/CTable'
+// import { getAlarmRuleList } from '@/api/alarmConfig'
 import deleteCheck from '@/components/DeleteCheck'
 import AbleCheck from '@/components/AbleCheck'
 import detail from './modules/GFRDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_order_by!]) {
+    pagination: t_incident_aggregate(where: {}) {
+      aggregate {
+        count
+      }
+    }
+  data: t_incident(offset: $offset, limit: $limit, order_by: $orderBy) {
+    active_time
+    active_by
+    forward_destination
+    forward_records
+    forward_type
+    incident_alert_size
+    incident_description
+    incident_id
+    incident_severity
+    incident_state
+    incident_type
+    life_cycle
+    mandatory_alert_ids
+    optional_alert_ids
+    order_comments
+    order_id
+    order_status
+    prepare_time
+    resolve_by
+    resolve_time
+    rule_id
+    rule_title
+    seal_time
+    send_count
+    send_cycle
+    update_time
+  }
+}`
 
 export default {
   name: 'GeneratingFaultRules',
   components: {
-    STable,
+    CTable,
     detail
   },
   data () {
@@ -194,10 +231,17 @@ export default {
       ],
       loadData: parameter => {
         // this.selectedRowKeys = []
-        return getAlarmRuleList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        // return getAlarmRuleList(Object.assign(parameter, this.queryParam))
+        //   .then(res => {
+        //     return res.result
+        //   })
+        return apollo.clients.resource.query({
+          query,
+          variables: {
+            ...parameter,
+            ...this.queryParams
+          }
+        }).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],

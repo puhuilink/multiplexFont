@@ -5,7 +5,7 @@
       :data="loadData"
       :columns="columns"
       rowKey="_id_x"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+      :rowSelection="null"
       :scroll="{ x: 1620, y: 850}"
     >
     </CTable>

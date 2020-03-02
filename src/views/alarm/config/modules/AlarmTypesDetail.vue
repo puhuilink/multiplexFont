@@ -24,7 +24,7 @@
             label="ID"
           >
             <a-input
-              v-decorator="['id',{ initialValue: record.id }]"
+              v-model="record.id_s"
               disabled
             />
           </a-form-item>
@@ -33,7 +33,7 @@
           <a-form-item label="名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['name', { initialValue: record.name, rules: [{ required: true, message: '名称不能为空!' }] }]"
+              v-decorator="['name_s', { initialValue: record.name_s, rules: [{ required: true, message: '名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -41,7 +41,7 @@
           <a-form-item label="显示名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['showName', { initialValue: record.showName, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['label_s', { initialValue: record.label_s, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -49,7 +49,7 @@
           <a-form-item label="图标">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['showIcon', { initialValue: record.showIcon, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['icon_s', { initialValue: record.icon_s?record.icon_s:'AlertType' }]"
             />
           </a-form-item>
         </a-col>
@@ -57,23 +57,33 @@
           <a-form-item label="描述">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['icon', { initialValue: record.icon, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['description_1_s', { initialValue: record.description_1_s }]"
             />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="启用">
-            <a-input
+            <a-select
               :disabled="mode=='See'"
-              v-decorator="['useing', { initialValue: record.useing, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
-            />
+              v-decorator="[
+                'enable_b',
+                { initialValue: record.enable_b?record.enable_b+'':'true'},
+              ]"
+            >
+              <a-select-option value="true">
+                是
+              </a-select-option>
+              <a-select-option value="false">
+                否
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="所属节点类型">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['nodeType', { initialValue: record.nodeType, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['nodetype_s', { initialValue: record.nodetype_s?record.nodetype_s:'CommonCi' }]"
             />
           </a-form-item>
         </a-col>
@@ -81,7 +91,7 @@
           <a-form-item label="告警编码">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['alarmCode', { initialValue: record.alarmCode, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['alarmCode', { initialValue: record.alarmCode }]"
             />
           </a-form-item>
         </a-col>
@@ -91,7 +101,7 @@
               showTime
               style="width: 100%"
               :disabled="mode=='See'"
-              v-decorator="['refreshTime', { initialValue: record.refreshTime, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['updatetime_t', { initialValue: record.updatetime_t }]"
             />
           </a-form-item>
         </a-col>
@@ -99,7 +109,7 @@
           <a-form-item label="数据权限域">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['DPFiled', { initialValue: record.DPFiled, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+              v-decorator="['domain_s', { initialValue: record.domain_s?record.domain_s:'rootDomain' }]"
             />
           </a-form-item>
         </a-col>
@@ -115,6 +125,27 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const insert = gql`mutation ($objects: [ngecc_instance_values_insert_input!]! = []) {
+  insert_ngecc_instance_values (objects: $objects) {
+    returning {
+      rid
+    }
+  }
+}`
+
+const update = gql`mutation update ($where: ngecc_instance_values_bool_exp!, $val: ngecc_instance_values_set_input) {
+  update_ngecc_instance_values (
+    where: $where,
+    _set: $val
+  ) {
+      returning {
+      id_s
+    }
+  }
+}`
 export default {
   name: 'AlarmTypesDetail',
   data () {
@@ -138,9 +169,8 @@ export default {
   methods: {
     async open (record, mode) {
       this.visible = true
-      this.record = record
-      console.log(record, mode)
       this.mode = mode
+      this.record = { ...record }
     },
     handleCancel (e) {
       console.log('Clicked cancel button')
@@ -154,6 +184,14 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values)
+          // 告警编码先置空
+          delete values.alarmCode
+          values.enable_b === 'true' ? values.enable_b = true : values.enable_b = false
+          if (this.mode === 'New') {
+            this.insert(values)
+          } else if (this.mode === 'Edit') {
+            this.update(values)
+          }
         }
       })
     },
@@ -164,6 +202,63 @@ export default {
       this.autoRefresh = false
       clearInterval(this.timer)
       this[type] = key
+    },
+    /**
+     * 新增
+     */
+    async insert (values) {
+      this.loading = true
+      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
+      return apollo.clients.resource.mutate({
+        mutation: insert,
+        variables: {
+          objects: [{
+            ...values,
+            parentname_s: 'Alert'
+          }]
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update (values) {
+      this.loading = true
+      return apollo.clients.resource.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'name_S': {
+              '_eq': this.record.name_s
+            }
+          },
+          val: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

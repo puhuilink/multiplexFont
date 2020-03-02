@@ -234,7 +234,10 @@ export default {
             ]
           }
         })
-        // TODO: toast
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
         // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
@@ -253,6 +256,8 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      this.selectedRowKeys = []
+      this.selectedRows = []
       return apollo.clients.resource.query({
         query,
         variables: {

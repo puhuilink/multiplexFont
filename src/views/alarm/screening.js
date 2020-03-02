@@ -210,6 +210,7 @@ const levelList = {
 const forwardType = [
   '运维系统', '邮件', '短信'
 ]
+
 /**
  * 获得今天的日期 yyyy-mm-dd
  */

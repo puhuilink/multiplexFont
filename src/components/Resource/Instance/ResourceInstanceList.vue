@@ -6,7 +6,7 @@
       :columns="columns"
       :rowKey="el => el.rid"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1280, y: `calc(100vh - 370px)`}"
+      :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
     >
 
       <template #query>
@@ -84,6 +84,7 @@ const query = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {
     parentname_s
     valuecode_s
     valuelabel_s
+    nodetype_s
   }
 }`
 
@@ -125,7 +126,7 @@ export default {
             title: '名称',
             dataIndex: 'name_s',
             sorter: true,
-            width: 500
+            width: 600
           },
           {
             title: '显示名称',
@@ -137,8 +138,20 @@ export default {
             title: '父节点',
             dataIndex: 'parentname_s',
             width: 300
+          },
+          {
+            title: '所属节点类型',
+            dataIndex: 'nodetype_s',
+            width: 300
           }
         ]
+      }
+    },
+    scrollX: {
+      get () {
+        return this.columns
+          .filter(e => e.width)
+          .reduce((a, b) => a + b) + 36
       }
     }
   },
@@ -167,6 +180,8 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      this.selectedRowKeys = []
+      this.selectedRows = []
       return apollo.clients.resource.query({
         query,
         variables: {

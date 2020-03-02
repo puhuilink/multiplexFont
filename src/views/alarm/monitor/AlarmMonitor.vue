@@ -16,7 +16,7 @@
           <a-row :gutter="48">
             <a-col :md="advanced ? 12 : 8" :sm="24">
               <a-form-item label="CI域">
-                <a-select
+                <!-- <a-select
                   allowClear
                   v-model="queryParam.CIDomain"
                   placeholder="请选择CI域"
@@ -34,6 +34,18 @@
                       {{ item.label }}
                     </a-select-option>
                   </a-select-opt-group>
+                </a-select> -->
+                <a-select
+                  allowClear
+                  v-model="queryParam.domains"
+                  placeholder="请选择CI域"
+                >
+                  <a-select-option
+                    v-for="item in queryList.domainList"
+                    :key="item.name_s"
+                  >
+                    {{ item.label_s }}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -41,22 +53,19 @@
               <a-form-item label="CI类型">
                 <a-select
                   allowClear
-                  v-model="queryParam.CIType"
+                  v-model="queryParam.node_types"
                   placeholder="请选择CI类型"
+                  @change="ciTypeChange"
                 >
                   <a-select-opt-group
-                    v-for="(group,index) in CIType"
+                    v-for="(group,index) in queryList.typeList"
                     :key="index"
-                    :label="group.label"
+                    :label="group[0].parentname_s"
                     :allowClear="true"
                   >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
+                    <template v-for="(groupitem,indexs) in group">
+                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                    </template>
                   </a-select-opt-group>
                 </a-select>
               </a-form-item>
@@ -66,26 +75,23 @@
               <a-col :md="12" :sm="24">
                 <a-form-item label="CI实例">
                   <a-select
-                    mode="multiple"
                     allowClear
-                    v-model="queryParam.CIInstance"
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.node_ids"
                     placeholder="请选择CI实例"
                     @change="CIInstanceChange"
                   >
                     <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
-                      v-for="(group,index) in CIInstance"
+                      v-for="(group,index) in queryList.CIInstance"
                       :key="index"
-                      :label="group.label"
+                      :label="group[0].parentname_s"
                       :allowClear="true"
                     >
-                      <a-select-option
-                        v-for="item in group.options"
-                        :key="item.value"
-                        :value="item.value"
-                      >
-                        {{ item.label }}
-                      </a-select-option>
+                      <template v-for="(groupitem,indexs) in group">
+                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                      </template>
                     </a-select-opt-group>
                   </a-select>
                 </a-form-item>
@@ -93,26 +99,47 @@
               <a-col :md="12" :sm="24">
                 <a-form-item label="告警类型">
                   <a-select
-                    mode="multiple"
                     allowClear
-                    v-model="queryParam.alarmType"
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.alert_id"
                     placeholder="请选择告警类型"
                     @change="alarmTypeChange"
                   >
                     <a-select-option value="checkall" key="checkall" >全选</a-select-option>
                     <a-select-opt-group
-                      v-for="(group,index) in alarmType"
+                      v-for="(group,index) in queryList.alertList"
                       :key="index"
-                      :label="group.label"
+                      :label="group[0].parentname_s"
                       :allowClear="true"
                     >
-                      <a-select-option
-                        v-for="item in group.options"
-                        :key="item.value"
-                        :value="item.value"
-                      >
-                        {{ item.label }}
-                      </a-select-option>
+                      <template v-for="groupitem in group">
+                        <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+                      </template>
+                    </a-select-opt-group>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item label="采集系统">
+                  <a-select
+                    allowClear
+                    mode="multiple"
+                    :maxTagCount="2"
+                    v-model="queryParam.agent_id"
+                    placeholder="请选择采集系统"
+                    @change="agentChange"
+                  >
+                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                    <a-select-opt-group
+                      v-for="(group,index) in queryList.agentList"
+                      :key="index"
+                      :label="group[0].parentname_s"
+                      :allowClear="true"
+                    >
+                      <template v-for="(groupitem,indexs) in group">
+                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                      </template>
                     </a-select-opt-group>
                   </a-select>
                 </a-form-item>
@@ -120,7 +147,7 @@
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -142,9 +169,9 @@
           :lg="4"
           :xl="10"
           class="table-operator">
-          <a-button @click="$refs.confirm.open(selectedRows)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
-          <a-button @click="$refs.rollForward.open()" :disabled="!selectedRowKeys.length > 0">前转</a-button>
-          <a-button @click="$refs.resolve.open()" :disabled="!selectedRowKeys.length > 0">解决</a-button>
+          <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
+          <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
+          <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
         </a-col>
         <a-col
           :xs="24"
@@ -221,15 +248,15 @@
 
       <!-- S 表格右击菜单 -->
       <a-menu :style="menuStyle" v-if="menuVisible">
-        <a-menu-item @click="$refs.confirm.open(menuData)">
+        <a-menu-item @click="$refs.confirm.open(selectedRowKeys)">
           <a-icon type="pushpin" />
           确认告警
         </a-menu-item>
-        <a-menu-item @click="$refs.rollForward.open()">
+        <a-menu-item @click="$refs.rollForward.open(selectedRowKeys, selectedRows)">
           <a-icon type="to-top" />
           前转告警
         </a-menu-item>
-        <a-menu-item @click="$refs.resolve.open()">
+        <a-menu-item @click="$refs.resolve.open(selectedRowKeys)">
           <a-icon type="tool" />
           解决告警
         </a-menu-item>
@@ -237,16 +264,16 @@
       <!-- E 表格右击菜单 -->
 
       <!-- S model模块 -->
-      <m-confirm ref="confirm" @ok="() => $refs.table.refresh(true)"></m-confirm>
-      <roll-forward ref="rollForward" @ok="() => $refs.table.refresh(true)"></roll-forward>
-      <m-solve ref="resolve" @ok="() => $refs.table.refresh(true)"></m-solve>
+      <m-confirm ref="confirm" @ok="() => $refs['table'].refresh(true)"></m-confirm>
+      <roll-forward ref="rollForward" @ok="() => $refs['table'].refresh(true)"></roll-forward>
+      <m-solve ref="resolve" @ok="() => $refs['table'].refresh(true)"></m-solve>
       <m-detail
         ref="detail"
         @handleForward="$refs.rollForward.open()"
         @handleSolve="$refs.resolve.open()"
-        @eventQuery="$refs.eventQuery.open()"
-        @operation="$refs.operation.open()"
-        @correlation="$refs.correlation.open()"
+        @eventQuery="eventQuery"
+        @operation="$refs.operation.open(record)"
+        @correlation="$refs.correlation.open(record)"
       />
       <event-query ref="eventQuery"></event-query>
       <operation ref="operation"></operation>
@@ -262,6 +289,7 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import queryList from '@/api/alarm/queryList'
 import screening from '../screening'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
@@ -273,33 +301,13 @@ import correlation from '../modules/MCorrelation'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
-// const query = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
-//   pagination: t_alert_aggregate(where: $where) {
-//     aggregate {
-//       count
-//     }
-//   }
-//   data: t_alert(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-//     arising_time
-//     first_arising_time
-//     message
-//     state
-//     app_name
-//     dev_name
-//     instance
-//     alert_id
-//     severity
-//     count
-//     agent_id
-//   }
-// }`
-const query = gql`query instanceList($state: numeric!, $arising_time_gte: timestamp!, $arising_time_lte: timestamp!, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
-  pagination: t_alert_aggregate(where: {state: {_eq: $state}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
+const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
+  pagination: t_alert_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data: t_alert(offset: $offset, limit: $limit, where: {state: {_eq: $state},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}, order_by: $orderBy) {
+  data: t_alert(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
     arising_time
     first_arising_time
     message
@@ -311,8 +319,10 @@ const query = gql`query instanceList($state: numeric!, $arising_time_gte: timest
     severity
     count
     agent_id
+    agent_name
   }
 }`
+
 const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $arising_time_lte: timestamp! ) {
   L1: t_alert_aggregate(where: {state:{_eq: $state},severity:{_eq:0},arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
@@ -416,19 +426,11 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
-      // 筛选项：CI域
-      CIDomain: screening.CIDomain,
-      // 筛选项：CI类型
-      CIType: screening.CIType,
-      // 筛选项: CI实例
-      CIInstance: screening.CIInstance,
-      // 筛选项：告警类型
-      alarmType: screening.alarmType,
+      queryList: {},
       // 自动刷新
       autoRefresh: false,
       // 是否播放告警音频
       playAudio: false,
-      // 告警列表表头
       columns: [
         {
           title: '级别',
@@ -488,43 +490,10 @@ export default {
         }
 
       ],
-      /**
-        * 加载表格数据
-        * @param {Object} parameter CTable 回传的分页与排序条件
-        * @return {Function: <Promise<Any>>}
-       */
-      loadData: parameter => {
-        // 清空选中
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams,
-            state: this.tabKey,
-            arising_time_gte: '2018-5-31 00:00:00',
-            arising_time_lte: '2018-5-31 23:59:59'
-            // arising_time: today
-            // where: {
-            //   ...this.where,
-            //   state: {
-            //     eq: `%${this.tabkey}%`
-            //   },
-            //   arising_time: {
-            //     _gte: '2018-5-31 00:00:00',
-            //     _lte: '2018-5-31 23:59:59'
-            //   }
-            // }
-          }
-        }).then(r => r.data)
-      },
       // 自动刷新的定时器
       timer: null,
-      // 告警级别数据对象
       alarmLevelList: {},
-      // 已选行特性值
       selectedRowKeys: [],
-      // 已选行数据
       selectedRows: [],
       // 表格右击菜单数据
       menuVisible: false,
@@ -533,7 +502,8 @@ export default {
         top: '0',
         left: '0',
         border: '1px solid #eee'
-      }
+      },
+      record: {}
     }
   },
   filters: {
@@ -563,10 +533,65 @@ export default {
   created () {
     this.getLevelList()
     this.getMenuList()
+    this.getqueryList()
   },
   computed: {
   },
   methods: {
+    /**
+      * 加载表格数据
+      * @param {Object} parameter CTable 回传的分页与排序条件
+      * @return {Function: <Promise<Any>>}
+      */
+    loadData (parameter) {
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            state: {
+              _eq: this.tabkey
+            },
+            arising_time: {
+              _gte: '2018-5-31 00:00:00',
+              _lte: '2018-5-31 23:59:59'
+            },
+            ...this.queryParam.domains ? {
+              domains: {
+                _eq: this.queryParam.domains
+              }
+            } : {},
+            ...this.queryParam.node_types ? {
+              node_types: {
+                _eq: this.queryParam.node_types
+              }
+            } : {},
+            ...this.queryParam.node_ids ? {
+              node_ids: {
+                _in: this.queryParam.node_ids
+              }
+            } : {},
+            ...this.queryParam.alert_id ? {
+              alert_id: {
+                _in: this.queryParam.alert_id
+              }
+            } : {},
+            ...this.queryParam.agent_id ? {
+              agent_id: {
+                _in: this.queryParam.agent_id
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    eventQuery () {
+      // return console.log(this.record)
+      this.$refs.eventQuery.open(this.record)
+    },
     /**
      * 获取现有的告警级别列表
      */
@@ -615,21 +640,35 @@ export default {
       })
     },
     /**
+     * 获取筛选项的下拉列表的值
+     */
+    async getqueryList () {
+      this.queryList.domainList = await queryList.domainList()
+      this.queryList.typeList = await queryList.typeList()
+      this.queryList.alertList = await queryList.alertList()
+      this.queryList.agentList = await queryList.agentList()
+    },
+    /**
      * tab切换开关
      */
     onTabChange (key, type) {
       this.tabKey = key
-      console.log(key, type)
       this.autoRefresh = false
       clearInterval(this.timer)
       this[type] = key
-      this.$refs.table.refresh(true)
+      this.$refs['table'].refresh(true)
     },
     /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    async ciTypeChange (value) {
+      this.queryList.CIInstance = await queryList.nodeList(value)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 30s自动刷新
@@ -638,7 +677,7 @@ export default {
       this.autoRefresh = !this.autoRefresh
       if (this.autoRefresh) {
         this.timer = setInterval(() => {
-          this.$refs.table.refresh(true)
+          this.$refs['table'].refresh(true)
           this.getLevelList()
           this.getMenuList()
         }, 30000)
@@ -678,14 +717,20 @@ export default {
      * ci实例改变
      */
     CIInstanceChange (value) {
-      this.queryParam.CIInstance = screening.checkAll(value, this.CIInstance)
-      console.log(this.queryParam)
+      console.log(value)
+      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
     },
     /**
      * 告警类型改变
      */
     alarmTypeChange (value) {
-      this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
+      this.queryParam.alert_id = screening.checkAll(value, this.queryList.alertList)
+    },
+    /**
+     * 采集系统下拉改变
+     */
+    agentChange (value) {
+      this.queryParam.agent_id = screening.checkAll(value, this.queryList.agentList)
     },
     onSearch (value) {
       console.log(value)
@@ -705,6 +750,7 @@ export default {
             document.body.addEventListener('click', this.bodyClick)
           },
           dblclick: () => {
+            this.record = record
             this.$refs.detail.open(record, 'monitorSee')
           }
         }

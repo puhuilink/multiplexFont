@@ -45,10 +45,12 @@ export default {
   },
   render (h) {
     // FIXME: 有时顶部不可见
+    // FIXME: td 宽度过大时自动省略号 + tooltip?
+    // TODO: 刷新时如何重置排序？场景多在于点击“查询”按钮时，或新增数据时。方案：在 refresh 后新增一个参数用于判断是否要进行排序
     // 顶部查询区域
-    const query = <div class="CTable-query">{ this.$slots.query }</div>
+    const query = <div class="CTable-query">{ this.$slots ? this.$slots.query : '' }</div>
     // 操作区域
-    const opration = <div class="CTable-operation">{ this.$slots.operation }</div>
+    const operation = <div class="CTable-operation">{ this.$slots ? this.$slots.operation : '' }</div>
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',
@@ -66,9 +68,14 @@ export default {
     })
     return <div class="CTable">
       { query }
-      { opration }
+      { operation }
       { table }
     </div>
+  },
+  updated () {
+    console.log(
+      this.$slots
+    )
   }
 }
 </script>

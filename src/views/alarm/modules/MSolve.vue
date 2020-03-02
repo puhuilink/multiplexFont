@@ -27,7 +27,7 @@
         >
           <a-checkbox-group
             :options="options"
-            v-decorator="['checkbox', { initialValue: ['0'] }]"
+            v-decorator="['checkbox', { initialValue: ['clearOut', 'recoverAll'] }]"
           />
         </a-form-item>
       </a-form>
@@ -36,6 +36,19 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+const update = gql`mutation update_t_alert ($idList: [numeric!] = [], $change: t_alert_set_input) {
+  update_t_alert(
+    where: {
+      alert_id: {_in: $idList}
+    },
+    _set: $change
+    ) {
+    affected_rows
+  }
+}`
+
 export default {
   name: 'MSolve',
   data () {
@@ -51,27 +64,76 @@ export default {
       visible: false,
       loading: false,
       options: [
-        { label: '解决子告警', value: '0' },
-        { label: '设置为忽略', value: '1' },
-        { label: '清除内存', value: '2' }
+        { label: '解决子告警', value: 'recoverAll' },
+        { label: '设置为忽略', value: 'resolved' },
+        { label: '清除内存', value: 'clearOut' }
       ],
+      recoverAll: '',
+      resolved: '',
+      clearOut: '',
+      idList: [],
       form: this.$form.createForm(this)
     }
   },
   methods: {
-    open () {
+    open (idList, record) {
       this.visible = true
+      this.idList = idList
     },
     handleSolve (e) {
+      const { form: { validateFields } } = this
       this.loading = true
-      setTimeout(() => {
-        this.visible = false
-        this.loading = false
-      }, 2000)
+      validateFields((errors, values) => {
+        if (!errors) {
+          console.log('values', values)
+          for (const i in values.checkbox) {
+            console.log(values.checkbox[i])
+            switch (values.checkbox[i]) {
+              case 'recoverAll' :
+                this.recoverAll = true
+                break
+              case 'resolved' :
+                this.resolved = true
+                break
+              case 'clearOut' :
+                this.clearOut = true
+                break
+              default :
+                break
+            }
+          }
+          this.update(values)
+        } else {
+          this.confirmLoading = false
+        }
+      })
     },
     handleCancel (e) {
       console.log('Clicked cancel button')
       this.visible = false
+    },
+    async update (values) {
+      this.loading = true
+      return apollo.clients.alert.mutate({
+        mutation: update,
+        variables: {
+          idList: this.idList,
+          change: {
+            state: this.resolved ? 30 : 20,
+            active_state: this.clearOut ? 2 : 0,
+            comments: values.description
+          }
+        }
+      }).then(res => {
+        // this.cancel()
+        this.visible = false
+        this.confirmLoading = false
+        // this.$emit('table').refresh(true)
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

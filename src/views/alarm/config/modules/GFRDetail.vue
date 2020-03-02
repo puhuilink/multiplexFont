@@ -92,7 +92,7 @@ export default {
       this.visible = false
     },
     // handler
-    nextStep () {
+    nextStep (e) {
       if (this.currentTab < 4) {
         this.currentTab += 1
       }

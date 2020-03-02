@@ -3,7 +3,7 @@
  */
 <template>
   <a-modal
-    title="告警事件查询"
+    title="告警操作日志查看"
     :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
     :width="800"
     style="top: 40px;"
@@ -17,9 +17,11 @@
     <a-row type="flex" justify="space-between" >
       <a-col :span="8">
         <a-button
-          :disabled="!selectedRowKeys.length > 0"
           @click="clearSelect"
-        >清除</a-button>
+        >
+          <a-icon type="delete" />
+          清除
+        </a-button>
       </a-col>
       <a-col :span="8" :offset="8">
         <a-input-search
@@ -52,8 +54,25 @@ import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_action_log_order_by!], $alert_id: numeric) {
+  pagination: t_alert_action_log_aggregate(where: {alert_id: {_eq: $alert_id}}) {
+    aggregate {
+      count
+    }
+  }
+  data: t_alert_action_log(offset: $offset, limit: $limit, order_by: $orderBy, where:{alert_id: {_eq: $alert_id}}) {
+    result
+    param_str
+    operator
+    comments
+    alert_id
+    action_type
+    action_id
+    act_time
+  }
+}`
 export default {
-  name: 'MCorrelation',
+  name: 'OperationLog',
   components: {
     CTable,
     Ellipsis
@@ -70,84 +89,53 @@ export default {
       },
       visible: false,
       loading: false,
+      record: '',
       // 告警列表表头
       columns: [
         {
           title: '时间',
-          dataIndex: 'severity',
+          dataIndex: 'act_time',
           width: 75,
           sorter: true
         },
         {
           title: '操作',
-          dataIndex: 'state',
+          dataIndex: 'action_type',
           width: 75,
           sorter: true
         },
         {
           title: '操作人',
-          dataIndex: 'dev_name',
+          dataIndex: 'operator',
           width: 200,
           sorter: true
         },
         {
           title: '告警编号',
-          dataIndex: 'app_name',
-          width: 300,
+          dataIndex: 'alert_id',
+          width: 200,
           sorter: true
         },
         {
           title: '操作参数',
-          dataIndex: 'count',
-          width: 70,
+          dataIndex: 'param_str',
+          width: 130,
           sorter: true
         },
         {
           title: '当前显示',
-          dataIndex: 'agent_id',
+          dataIndex: 'comments',
           sorter: true
         }
 
-      ],
-      loadData: parameter => {
-        const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
-          pagination: t_alert_aggregate(where: {}) {
-            aggregate {
-              count
-            }
-          }
-          data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy) {
-            state
-            dev_name
-            app_name
-            severity
-            message
-            first_arising_time
-            arising_time
-            count
-            agent_id
-            close_time
-            close_by
-            order_id
-            alert_id
-            related
-            instance
-            instance2
-          }
-        }`
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      }
+      ]
     }
   },
   methods: {
-    open () {
+    open (...record) {
       this.visible = true
+      this.record = record[0]
+      console.log(this.record)
     },
     handleSolve (e) {
       this.loading = true
@@ -160,11 +148,22 @@ export default {
       console.log('Clicked cancel button')
       this.visible = false
     },
+    loadData (parameter) {
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          alert_id: this.record.alert_id
+        }
+      }).then(r => {
+        console.log(r.data)
+        return r.data
+      })
+    },
     onSearch (e) {
       console.log('查找框中输入', e)
     },
     clearSelect () {
-      console.log(this.selectedRowKeys, this.selectedRows)
       return new Promise(resolve => {
         Modal.confirm({
           title: '清除',
