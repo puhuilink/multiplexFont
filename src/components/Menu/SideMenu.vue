@@ -1,11 +1,12 @@
 <template>
   <a-layout-sider
-    :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null ]"
+    :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null, fixedHeader ? 'ant-fixed-sidemenu_fixed-header' : null ]"
     width="300px"
     :collapsible="collapsible"
     v-model="collapsed"
     :trigger="null">
-    <logo />
+    <!-- fixedheader 时 Logo 放到 header 里 -->
+    <logo v-if="!fixedHeader" />
     <s-menu
       :collapsed="collapsed"
       :menu="menus"

@@ -12,11 +12,13 @@ export default {
   },
   render () {
     const { $route: { meta }, $store: { getters } } = this
+    // eslint-disable-next-line
     const inKeep = (
       <keep-alive>
         <router-view />
       </keep-alive>
     )
+    // eslint-disable-next-line
     const notKeep = (
       <router-view />
     )
@@ -26,7 +28,9 @@ export default {
     if (!getters.multiTab && !meta.keepAlive) {
       return notKeep
     }
-    return this.keepAlive || getters.multiTab || meta.keepAlive ? inKeep : notKeep
+    // FIXME: ?
+    return this.keepAlive || getters.multiTab || meta.keepAlive ? notKeep : notKeep
+    // return this.keepAlive || getters.multiTab || meta.keepAlive ? inKeep : notKeep
   }
 }
 </script>

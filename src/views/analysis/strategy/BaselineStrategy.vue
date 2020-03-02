@@ -1,15 +1,312 @@
+/*
+ * 动态基线策略
+ */
 <template>
   <div class="baseline-strategy">
-    <p>baseline strategy</p>
+    <!-- S 列表 -->
+    <CTable
+      ref="table"
+      rowKey="uuid"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: scrollX, y:800 }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+
+      <template #query>
+        <a-form layout="inline">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="策略名称"
+                  :md="12"
+                  :sm="24"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.title"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="周期"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%">
+                  <a-input type="number" v-model.number="queryParams.cycle_count" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row>
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="计算时间"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%">
+                    <a-input v-model="queryParams.cron_expression" />
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
+      <template #operation>
+        <a-button
+          @click="$refs.detail.open({}, 'New')"
+        >
+          新建
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button>
+      </template>
+    </CTable>
+    <!-- E 列表 -->
+
+    <!-- S 模块 -->
+    <detail
+      ref="detail"
+      @addSuccess="() => { this.queryParams = {}; this.query() }"
+      @editSuccess="$refs['table'].refresh(false)"
+    ></detail>
+    <!-- E 模块 -->
   </div>
 </template>
 
 <script>
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
+import deleteCheck from '@/components/DeleteCheck'
+import detail from '../modules/BSDetail'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+import Template from '../../design/moduels/template/index'
+
+const query = gql`query instanceList($where: t_baseline_policy_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
+    pagination: t_baseline_policy_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  data:  t_baseline_policy (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+    bottomlinedata_provider
+    bottomlinedata_range_from
+    bottomlinedata_range_to
+    cal_interval
+    cron_expression
+    cycle_count
+    middledata_provider
+    middlelinedata_range_from
+    middlelinedata_range_to
+    sample_radio
+    sigma
+    status
+    title
+    toplinedata_provider
+    toplinedata_range_from
+    update_time
+    uuid
+    toplinedata_range_to
+  }
+}`
+
+const deletePolicy = gql`mutation delete_baseline_policy($uuids: [String!]! = []) {
+  delete_t_baseline_policy(where: {uuid: {
+    _in: $uuids
+  }}) {
+    affected_rows
+  }
+}
+`
+
 export default {
-  name: 'BaselineStrategy'
+  name: 'BaselineStrategy',
+  components: {
+    Template,
+    CTable,
+    Ellipsis,
+    detail
+  },
+  data () {
+    return {
+      // 搜索： 展开/关闭
+      advanced: false,
+      // 查询参数
+      queryParams: {},
+      // 告警列表表头
+      columns: [
+        {
+          title: '策略名称',
+          dataIndex: 'title',
+          sorter: true
+        },
+        {
+          title: '周期',
+          dataIndex: 'cycle_count',
+          width: 150,
+          sorter: true
+        },
+        {
+          title: '时间步长',
+          dataIndex: 'cal_interval',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '样本密集区域',
+          dataIndex: 'sample_radio',
+          width: 250,
+          sorter: true
+        },
+        {
+          title: '计算时间',
+          dataIndex: 'cron_expression',
+          width: 120,
+          sorter: true
+        }
+      ],
+      // 已选行特性值
+      selectedRowKeys: [],
+      // 已选行数据
+      selectedRows: []
+    }
+  },
+  filters: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
+  methods: {
+    /**
+     * 筛选展开开关
+     */
+    toggleAdvanced () {
+      this.advanced = !this.advanced
+    },
+    /**
+     * 日期时间空间选择
+     */
+    onDataChange (value, dateString) {
+      console.log('Selected Time: ', value)
+      console.log('Formatted Selected Time: ', dateString)
+    },
+    onDataOk (value) {
+      console.log('onOk: ', value)
+    },
+    /**
+     * 选中行更改事件
+     * @param selectedRowKeys
+     * @param selectedRows
+     */
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    /**
+     * 删除选中项
+     */
+    async deleteCtrl () {
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deletePolicy,
+          variables: {
+            uuids: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
+    },
+    loadData (parameter) {
+      // return console.log(
+      //   this.queryParams.title.trim()
+      // )
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.queryParams.title ? {
+              title: {
+                _ilike: `%${this.queryParams.title.trim()}%`
+              }
+            } : {},
+            ...this.queryParams.cycle_count !== undefined ? {
+              cycle_count: {
+                _eq: Number(this.queryParams.cycle_countcycle_count)
+              }
+            } : {},
+            ...this.queryParams.cron_expression !== undefined ? {
+              cron_expression: {
+                _eq: `${this.queryParams.cron_expression.trim()}`
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
+    }
+  }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang='less'>
+.opration{
+  margin-bottom: 10px;
+  button{
+    margin-right: 5px;
+  }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>

@@ -22,8 +22,17 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="less">
   #app {
     height: 100%;
   }
+  .ant-drawer-content-wrapper{
+    width: 300px !important;
+  }
+  .opration{
+    margin-bottom: 10px;
+    button{
+      margin-right: 5px;
+    }
+}
 </style>

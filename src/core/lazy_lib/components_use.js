@@ -18,6 +18,7 @@ import {
   Checkbox,
   Select,
   Card,
+  Calendar,
   Form,
   Row,
   Col,
@@ -41,6 +42,7 @@ import {
   Divider,
   DatePicker,
   TimePicker,
+  Tree,
   Upload,
   Progress,
   Skeleton,
@@ -48,7 +50,8 @@ import {
   Collapse,
   Popconfirm,
   message,
-  notification
+  notification,
+  Transfer
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -62,6 +65,7 @@ Vue.use(Radio)
 Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
+Vue.use(Calendar)
 Vue.use(Form)
 Vue.use(Row)
 Vue.use(Col)
@@ -91,8 +95,10 @@ Vue.use(Skeleton)
 Vue.use(Popconfirm)
 Vue.use(Slider)
 Vue.use(Collapse)
+Vue.use(Tree)
 // Vue.use(VueCropper)
 Vue.use(notification)
+Vue.use(Transfer)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message
