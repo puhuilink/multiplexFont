@@ -103,7 +103,7 @@
             >
               <a-select-option value="checkall" key="checkall" >全选</a-select-option>
               <a-select-opt-group
-                v-for="(group,index) in queryList.CIInstance"
+                v-for="(group,index) in queryList.nodeList"
                 :key="index"
                 :label="group[0].parentname_s"
                 :allowClear="true"
@@ -442,12 +442,13 @@ export default {
     },
     async ciTypeChange (value) {
       this.queryList.kpiList = await queryList.kpiList(value)
+      this.queryList.nodeList = await queryList.nodeList(value)
     },
     /**
      * ci实例改变 筛选是否全选
      */
     CIInstanceChange (value) {
-      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
+      this.queryParam.node_ids = screening.checkAll(value, this.queryList.CIInstance)
     },
     handleCancel (e) {
       this.visible = false
