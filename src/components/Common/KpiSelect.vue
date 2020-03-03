@@ -1,6 +1,7 @@
 <template>
   <div class="KpiSelect">
     <a-select
+      :labelInValue="labelInValue"
       mode="multiple"
       style="min-width: 200px"
       v-model="_value"
@@ -33,6 +34,10 @@ export default {
     'nodetypeS': {
       type: String,
       default: ''
+    },
+    labelInValue: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({

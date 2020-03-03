@@ -27,25 +27,39 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <a-input v-model="formData1.title" placeholder />
+          <a-select
+            v-model="formData0.gen_type"
+          >
+            <a-select-option
+              v-for="item in options.types"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item
           label="基线标题"
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <a-input v-model="formData1.title" placeholder />
+          <a-input v-model="formData0.title" placeholder />
         </a-form-item>
         <a-form-item
           label="Ci类型"
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
           <CiModelSelect
-            :value="formData1.model"
+            labelInValue
+            :value="formData0.ciType"
             @input="onModelInput"
           />
         </a-form-item>
@@ -54,10 +68,12 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
           <CiInstanceSelect
-            :parentNameS="formData1.model"
-            :value="formData1.instance"
+            labelInValue
+            :parentNameS="formData0.ciType ? formData0.ciType['key'] : ''"
+            :value="formData0.ci"
             @input="onInstanceInput"
           />
         </a-form-item>
@@ -67,8 +83,9 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <KpiSelect v-model="formData1.title" placeholder />
+          <KpiSelect labelInValue v-model="formData0.kpi" placeholder />
         </a-form-item>
       </a-form>
     </div>
@@ -81,8 +98,9 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <BaselineStrategySelect v-model="formData2.policy" placeholder />
+          <BaselineStrategySelect v-model="formData1.uuid_policy" placeholder />
         </a-form-item>
 
         <a-form-item
@@ -90,8 +108,12 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <a-input type="number" v-model="formData2.title" placeholder />
+          <a-input-number
+            v-bind="numberProps"
+            v-model="formData1.round_num"
+            placeholder />
         </a-form-item>
 
         <div>
@@ -100,16 +122,17 @@
             :labelCol="layout.labelCol"
             :wrapperCol="layout.wrapperCol"
             style="width: 80%"
+            required
           >
-            <a-input type="number" :min="1" v-model="formData2.title" placeholder />
+            <a-input-number v-bind="numberProps" v-model.number="formData1.cycle_day_num" placeholder />
           </a-form-item>
           <a-form-item>
             <a-form-item>
               <a-radio
-                name="isDefault"
-                :value="1"
-                :checked="formData2.isDefault === 1"
-                @change="formData2.isDefault = 1"
+                name="cycle_default_type"
+                :value="'cycle_day_num'"
+                :checked="formData1.cycle_default_type === 'cycle_day_num'"
+                @change="formData1.cycle_default_type = 'cycle_day_num'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -121,16 +144,17 @@
             :labelCol="layout.labelCol"
             :wrapperCol="layout.wrapperCol"
             style="width: 80%"
+            required
           >
-            <a-input type="number" :min="1" v-model="formData2.title" placeholder />
+            <a-input-number v-bind="numberProps" v-model.number="formData1.cycle_week_num" placeholder />
           </a-form-item>
           <a-form-item>
             <a-form-item>
               <a-radio
-                name="isDefault"
-                :value="2"
-                :checked="formData2.isDefault === 2"
-                @change="formData2.isDefault = 2"
+                name="cycle_default_type"
+                :value="'cycle_week_num'"
+                :checked="formData1.cycle_default_type === 'cycle_week_num'"
+                @change="formData1.cycle_default_type = 'cycle_week_num'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -142,16 +166,17 @@
             :labelCol="layout.labelCol"
             :wrapperCol="layout.wrapperCol"
             style="width: 80%"
+            required
           >
-            <a-input type="number" :min="1" v-model="formData2.title" placeholder />
+            <a-input-number v-bind="numberProps" v-model.number="formData1.cycle_month_num" placeholder />
           </a-form-item>
           <a-form-item>
             <a-form-item>
               <a-radio
-                name="isDefault"
-                :value="3"
-                :checked="formData2.isDefault === 3"
-                @change="formData2.isDefault = 3"
+                name="cycle_default_type"
+                :value="'cycle_month_num'"
+                :checked="formData1.cycle_default_type === 'cycle_month_num'"
+                @change="formData1.cycle_default_type = 'cycle_month_num'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -163,15 +188,16 @@
             :labelCol="layout.labelCol"
             :wrapperCol="layout.wrapperCol"
             style="width: 80%"
+            required
           >
-            <a-input type="number" :min="1" v-model="formData2.title" placeholder />
+            <a-input-number v-bind="numberProps" v-model.number="formData1.cycle_year_num" placeholder />
           </a-form-item>
           <a-form-item>
             <a-radio
-              name="isDefault"
-              :value="4"
-              :checked="formData2.isDefault === 4"
-              @change="formData2.isDefault = 4"
+              name="cycle_default_type"
+              value="cycle_year_num"
+              :checked="formData1.cycle_default_type === 'cycle_year_num'"
+              @change="formData1.cycle_default_type = 'cycle_year_num'"
             >是否默认</a-radio>
           </a-form-item>
         </div>
@@ -200,14 +226,25 @@ import {
   BaselineStrategySelect
 } from '@/components/Common'
 
+const TYPES = [
+  {
+    label: '按Ci实例计算',
+    value: 'standalone'
+  },
+  {
+    label: '按Ci类型计算',
+    value: 'converged'
+  }
+]
+
 const layout = {
   labelCol: {
-    span: 3,
+    span: 4,
     offset: 5
   },
   wrapperCol: {
-    span: 15,
-    offset: 1
+    span: 13,
+    offset: 2
   }
 }
 
@@ -222,19 +259,53 @@ export default {
   props: {},
   data: (vm) => ({
     // 当前步骤
-    current: 1,
+    current: 0,
     form0: vm.$form.createForm(vm),
     form1: vm.$form.createForm(vm),
     form2: vm.$form.createForm(vm),
-    formData1: {
-      instance: []
+    formData0: {
+      instance: [],
+      // 计算方式 generate type ?
+      'gen_type': 'standalone',
+      // 基线标题
+      title: '',
+      // Kpi，以逗号分隔的字符串数组
+      // 'kpi_code': '',
+      // 'kpi_label': '',
+      kpi: [],
+      // Ci 实例，以逗号分隔的字符串数组
+      // 'ci_label': '',
+      // 'ci_id': '',
+      ci: [],
+      // Ci 类型
+      // 'ci_type_name': '',
+      // 'ci_type_label': ''
+      ciType: {}
     },
-    formData2: {
-      isDefault: false
+    formData1: {
+      // 计算策略 id
+      'uuid_policy': '',
+      // 周期类型（年）
+      'cycle_year_num': 0,
+      // 周期类型（月）
+      'cycle_month_num': 0,
+      // 周期类型（周）
+      'cycle_week_num': 0,
+      // 周期类型（天）
+      'cycle_day_num': 0,
+      // 周期类型（季度）
+      'cycle_quarter_num': 0,
+      // 默认周期类型
+      'cycle_default_type': 'cycle_week_num',
+      // 数值精度
+      'round_num': 0
     },
     // 按钮是否 loading
     loading: false,
     layout,
+    options: {
+      types: TYPES
+    },
     // 弹窗标题
     title: '',
     // 弹窗是否可见
@@ -242,7 +313,20 @@ export default {
     // 保存指向的操作
     submit: () => { }
   }),
-  computed: {},
+  computed: {
+    numberProps: {
+      get () {
+        return {
+          min: 0,
+          max: 9999,
+          parser: this.parseInt,
+          style: {
+            width: '100%'
+          }
+        }
+      }
+    }
+  },
   methods: {
     add () {
       this.visible = true
@@ -254,20 +338,37 @@ export default {
     cancel () {
       this.visible = false
     },
+    /**
+     * 转换输入的文字为整数
+     * @param {String} val
+     * @return {Number}
+     */
+    parseInt (val) {
+      const num = Number(val)
+      return isNaN(num) ? 0 : num.toFixed(0)
+    },
     onModelInput (str = '') {
-      this.formData1.model = str
+      this.formData0.ciType = str
       // 重置选中的 Ci 实例
-      this.formData1.instance = []
+      this.formData0.ci = []
     },
     onInstanceInput (arr = []) {
       // FIXME: 有时候抛出的 arr 是字符串？
-      this.formData1.instance = Array.isArray(arr) ? arr : []
+      this.formData0.ci = Array.isArray(arr) ? arr : []
       // TODO: 重置 kpi ？
     },
     /**
      * 下一步
      */
     next () {
+      // if (this.current === 1) {
+      //   this.form1.validateFields((err, value) => {
+      //     if (!err) {
+      //       console.log(value)
+      //       this.current++
+      //     }
+      //   })
+      // }
       this.current++
     },
     /**
