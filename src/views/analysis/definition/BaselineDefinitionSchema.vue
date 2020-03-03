@@ -27,14 +27,26 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <a-input v-model="formData0.title" placeholder />
+          <a-select
+            v-model="formData0.gen_type"
+          >
+            <a-select-option
+              v-for="item in options.types"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item
           label="基线标题"
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
           <a-input v-model="formData0.title" placeholder />
         </a-form-item>
@@ -43,9 +55,11 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
           <CiModelSelect
-            :value="formData0.model"
+            labelInValue
+            :value="formData0.ciType"
             @input="onModelInput"
           />
         </a-form-item>
@@ -54,10 +68,12 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
           <CiInstanceSelect
-            :parentNameS="formData0.model"
-            :value="formData0.instance"
+            labelInValue
+            :parentNameS="formData0.ciType ? formData0.ciType['key'] : ''"
+            :value="formData0.ci"
             @input="onInstanceInput"
           />
         </a-form-item>
@@ -67,8 +83,9 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
+          required
         >
-          <KpiSelect v-model="formData0.title" placeholder />
+          <KpiSelect labelInValue v-model="formData0.kpi" placeholder />
         </a-form-item>
       </a-form>
     </div>
@@ -209,6 +226,17 @@ import {
   BaselineStrategySelect
 } from '@/components/Common'
 
+const TYPES = [
+  {
+    label: '按Ci实例计算',
+    value: 'standalone'
+  },
+  {
+    label: '按Ci类型计算',
+    value: 'converged'
+  }
+]
+
 const layout = {
   labelCol: {
     span: 4,
@@ -231,12 +259,28 @@ export default {
   props: {},
   data: (vm) => ({
     // 当前步骤
-    current: 1,
+    current: 0,
     form0: vm.$form.createForm(vm),
     form1: vm.$form.createForm(vm),
     form2: vm.$form.createForm(vm),
     formData0: {
-      instance: []
+      instance: [],
+      // 计算方式 generate type ?
+      'gen_type': 'standalone',
+      // 基线标题
+      title: '',
+      // Kpi，以逗号分隔的字符串数组
+      // 'kpi_code': '',
+      // 'kpi_label': '',
+      kpi: [],
+      // Ci 实例，以逗号分隔的字符串数组
+      // 'ci_label': '',
+      // 'ci_id': '',
+      ci: [],
+      // Ci 类型
+      // 'ci_type_name': '',
+      // 'ci_type_label': ''
+      ciType: {}
     },
     formData1: {
       // 计算策略 id
@@ -259,6 +303,9 @@ export default {
     // 按钮是否 loading
     loading: false,
     layout,
+    options: {
+      types: TYPES
+    },
     // 弹窗标题
     title: '',
     // 弹窗是否可见
@@ -301,13 +348,13 @@ export default {
       return isNaN(num) ? 0 : num.toFixed(0)
     },
     onModelInput (str = '') {
-      this.formData0.model = str
+      this.formData0.ciType = str
       // 重置选中的 Ci 实例
-      this.formData0.instance = []
+      this.formData0.ci = []
     },
     onInstanceInput (arr = []) {
       // FIXME: 有时候抛出的 arr 是字符串？
-      this.formData0.instance = Array.isArray(arr) ? arr : []
+      this.formData0.ci = Array.isArray(arr) ? arr : []
       // TODO: 重置 kpi ？
     },
     /**
