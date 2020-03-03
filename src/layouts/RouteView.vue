@@ -12,11 +12,13 @@ export default {
   },
   render () {
     const { $route: { meta }, $store: { getters } } = this
+    // eslint-disable-next-line
     const inKeep = (
       <keep-alive>
         <router-view />
       </keep-alive>
     )
+    // eslint-disable-next-line
     const notKeep = (
       <router-view />
     )

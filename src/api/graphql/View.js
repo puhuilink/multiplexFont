@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const queryViewList = gql`query ($where: t_view_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_view_order_by!]) {
+export const queryViewList = gql`query ($where: t_view_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_view_order_by!] = {view_id: desc}) {
   pagination: t_view_aggregate (where: $where) {
     aggregate {
       count
@@ -25,6 +25,12 @@ export const mutationUpdateView = gql`mutation ($viewId: numeric!, $set: t_view_
     }
     _set:$set
   ) {
+    affected_rows
+  }
+}`
+
+export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!]! = []) {
+  insert_t_view (objects: $objects) {
     affected_rows
   }
 }`

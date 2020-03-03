@@ -16,6 +16,32 @@ export const queryResourceModelList = gql`query ($instanceListCount: Boolean! = 
   }
 }`
 
+export const queryModelList = gql`query modelListWithChildren ($withChildren: Boolean! = false) {
+  groups: ngecc_model {
+    label: label_s
+    value: name_s
+    children @include(if: $withChildren) {
+      label: label_s
+      value: name_s
+      parentName: parentname_s
+    }
+  }
+}`
+
+export const queryInsanceList = gql`query ($where: ngecc_instance_bool_exp! = {}) {
+  data: ngecc_instance (where: $where) {
+    label: label_s
+    value: name_s
+    parentName: parentname_s
+  }
+}`
+
+export const queryKpiList = gql`query ($where: ngecc_instance_values_bool_exp! = {}) {
+  data: ngecc_instance_values (where: $where) {
+    label: label_s
+  }
+}`
+
 // name_s 属性只读（主键）
 export const mutationUpdateModel = gql`mutation ($did: Int, $set: ngecc_model_set_input = {}) {
   update_ngecc_model (where: {

@@ -56,12 +56,24 @@
       </template>
 
       <template #operation>
-        <a-button @click="$refs.createModel.open()">新建</a-button>
+        <a-button @click="$refs['title'].add()">新建</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit">编辑</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy">复制</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign">设计</a-button>
         <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
       </template>
+
+      <span slot="viewTitle" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
+
+      <span slot="viewName" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
+
+      <span slot="img" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
     </CTable>
 
     <!-- S 创建视图 -->
@@ -71,6 +83,7 @@
     <ViewTitleScheme
       ref="title"
       @editSuccess="$refs['table'].refresh(false)"
+      @addSuccess="() => { this.queryParams = {}; this.$refs['table'].refresh(true) }"
     />
   </div>
 </template>
@@ -82,6 +95,7 @@ import { getViewList } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
 import Template from '../../design/moduels/template/index'
+import { Ellipsis } from '@/components'
 
 export default {
   name: 'ViewList',
@@ -90,7 +104,8 @@ export default {
     PageView,
     CTable,
     CreateView,
-    ViewTitleScheme
+    ViewTitleScheme,
+    Ellipsis
   },
   data () {
     return {
@@ -119,19 +134,22 @@ export default {
           title: '视图ID',
           dataIndex: 'view_id',
           sorter: true,
+          // fixed: 'left',
           width: 100
         },
         {
           title: '视图标题',
           dataIndex: 'view_title',
           sorter: true,
-          width: 300
+          width: 300,
+          scopedSlots: { customRender: 'viewTitle' }
         },
         {
           title: '视图名称',
           dataIndex: 'view_name',
           sorter: true,
-          width: 300
+          width: 300,
+          scopedSlots: { customRender: 'viewName' }
         },
         {
           title: '视图类型',
@@ -147,7 +165,9 @@ export default {
         },
         {
           title: '缩略图',
-          dataIndex: 'view_img'
+          dataIndex: 'view_img',
+          width: 400,
+          scopedSlots: { customRender: 'img' }
         }
       ],
       // 已选行特性值

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { updateView } from '@/api/controller/View'
+import { addView, updateView } from '@/api/controller/View'
 
 const formItemLayout = {
   labelCol: {
@@ -86,8 +86,33 @@ export default {
         ...record
       })
     },
+    add () {
+      this.title = '新建'
+      this.submit = this.insert
+      this.visible = true
+    },
     cancel () {
       this.visible = false
+    },
+    /**
+     * 新建
+     */
+    async insert () {
+      try {
+        const values = await this.getFormFields()
+        this.loading = true
+        await addView(values)
+        this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     /**
      * 编辑
