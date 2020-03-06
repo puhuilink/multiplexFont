@@ -208,7 +208,7 @@
       <div class="opration">
         <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected">前转</a-button>
         <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
-        <a-button>导出</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)">导出</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -261,6 +261,7 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import excel from '@/utils/excel'
 import queryList from '@/api/alarm/queryList'
 import screening from '../screening'
 import RollForward from '../modules/RollForward'
@@ -631,6 +632,30 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 导出
+     */
+    exportExcel (e) {
+      console.log(e)
+
+      const header = ['alertId', '状态', 'CI名称', '应用级别', '级别', '消息内容', '首次告警时间',	'最近告警时间', '次数',	'采集系统',	'关闭时间',	'关闭人',	'工单编号',	'告警编号',	'子告警',	'接入行',	'交易渠道']
+      // 根据后台数据来写字段名
+      const kmap = ['alert_id', 'state']
+      const newdata = [
+        {
+          index: 1,
+          data: '后台数据'
+        }
+      ]
+      let params = {
+        title: [header],
+        key: kmap,
+        data: newdata,
+        autoWidth: true,
+        filename: `历史告警`
+      }
+      excel.export_array_to_excel(params)
     }
   }
 }
