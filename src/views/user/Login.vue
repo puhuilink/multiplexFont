@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import md5 from 'md5'
+// import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
@@ -167,16 +167,16 @@ export default {
       }
     }
   },
-  // created () {
-  //   get2step({ })
-  //     .then(res => {
-  //       this.requiredTwoStepCaptcha = res.result.stepCode
-  //     })
-  //     .catch(() => {
-  //       this.requiredTwoStepCaptcha = false
-  //     })
-  //   // this.requiredTwoStepCaptcha = true
-  // },
+  created () {
+    get2step({ })
+      .then(res => {
+        this.requiredTwoStepCaptcha = res.result.stepCode
+      })
+      .catch(() => {
+        this.requiredTwoStepCaptcha = false
+      })
+    // this.requiredTwoStepCaptcha = true
+  },
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
