@@ -23,7 +23,7 @@
               type="text"
               placeholder="账户: admin"
               v-decorator="[
-                'username',
+                'userId',
                 {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
               ]"
             >
@@ -34,11 +34,11 @@
           <a-form-item>
             <a-input
               size="large"
-              type="password"
+              type="encryptedPwd"
               autocomplete="false"
               placeholder="密码: admin"
               v-decorator="[
-                'password',
+                'encryptedPwd',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
               ]"
             >
@@ -83,7 +83,7 @@
           type="text"
           placeholder="账户: admin"
           v-decorator="[
-            'username',
+            'userId',
             {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
           ]"
         >
@@ -94,11 +94,11 @@
       <a-form-item>
         <a-input
           size="large"
-          type="password"
+          type="encryptedPwd"
           autocomplete="false"
           placeholder="密码: admin"
           v-decorator="[
-            'password',
+            'encryptedPwd',
             {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
           ]"
         >
@@ -110,7 +110,7 @@
         <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
         <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
-          class="forge-password"
+          class="forge-encryptedPwd"
           style="float: right;"
         >忘记密码</router-link>
       </a-form-item> -->
@@ -152,7 +152,7 @@ export default {
     return {
       customActiveKey: 'tab1',
       loginBtn: false,
-      // login type: 0 email, 1 username, 2 telephone
+      // login type: 0 email, 1 userId, 2 telephone
       loginType: 0,
       isLoginError: false,
       requiredTwoStepCaptcha: false,
@@ -161,22 +161,22 @@ export default {
       state: {
         time: 60,
         loginBtn: false,
-        // login type: 0 email, 1 username, 2 telephone
+        // login type: 0 email, 1 userId, 2 telephone
         loginType: 0,
         smsSendBtn: false
       }
     }
   },
-  created () {
-    get2step({ })
-      .then(res => {
-        this.requiredTwoStepCaptcha = res.result.stepCode
-      })
-      .catch(() => {
-        this.requiredTwoStepCaptcha = false
-      })
-    // this.requiredTwoStepCaptcha = true
-  },
+  // created () {
+  //   get2step({ })
+  //     .then(res => {
+  //       this.requiredTwoStepCaptcha = res.result.stepCode
+  //     })
+  //     .catch(() => {
+  //       this.requiredTwoStepCaptcha = false
+  //     })
+  //   // this.requiredTwoStepCaptcha = true
+  // },
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
@@ -205,15 +205,16 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'encryptedPwd'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           console.log('login form', values)
           const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
+          delete loginParams.userId
+          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+          // loginParams.encryptedPwd = md5(values.encryptedPwd)
+          loginParams.encryptedPwd = values.encryptedPwd
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -322,7 +323,7 @@ export default {
     height: 40px;
   }
 
-  .forge-password {
+  .forge-encryptedPwd {
     font-size: 14px;
   }
 

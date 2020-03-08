@@ -3,6 +3,7 @@
     centered
     :confirmLoading="loading"
     destroyOnClose
+    :maskClosable="false"
     :title="title"
     v-model="visible"
     :width="940"
