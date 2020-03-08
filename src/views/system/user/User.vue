@@ -125,7 +125,7 @@ import UserGroupSchema from './UserGroupSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {

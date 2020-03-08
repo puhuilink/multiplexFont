@@ -8,6 +8,7 @@ import router from './router'
 import store from './store/'
 import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
+import './plugins'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
