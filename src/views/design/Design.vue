@@ -30,32 +30,32 @@
 </template>
 
 <script>
-  import Screen from './modules/screen/index'
-  import Template from './modules/template/index'
-  import Config from './modules/config/index'
+import Screen from './modules/screen/index'
+import Template from './modules/template/index'
+import Config from './modules/config/index'
 
-  export default {
-    name: 'Design',
-    components: {
-      Screen,
-      Template,
-      Config
+export default {
+  name: 'Design',
+  components: {
+    Screen,
+    Template,
+    Config
+  },
+  data: () => ({
+    // 左区域展开
+    leftPanelExpand: true,
+    // 左区域展开
+    rightPanelExpand: true
+  }),
+  methods: {
+    leftPanelControl (control) {
+      this.leftPanelExpand = control
     },
-    data: () => ({
-      // 左区域展开
-      leftPanelExpand: true,
-      // 左区域展开
-      rightPanelExpand: true
-    }),
-    methods: {
-      leftPanelControl (control) {
-        this.leftPanelExpand = control
-      },
-      rightPanelControl (control) {
-        this.rightPanelExpand = control
-      }
+    rightPanelControl (control) {
+      this.rightPanelExpand = control
     }
   }
+}
 </script>
 
 <style scoped lang="less">

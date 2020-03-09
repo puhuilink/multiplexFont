@@ -1,10 +1,10 @@
 /**
-* 通用echarts对象
-* Author: dong xing
-* Date: 2019/11/25
-* Time: 6:04 下午
-* Email: dong.xing@outlook.com
-*/
+ * 通用echarts对象
+ * Author: dong xing
+ * Date: 2019/11/25
+ * Time: 6:04 下午
+ * Email: dong.xing@outlook.com
+ */
 
 /**
  * 图例
@@ -46,6 +46,23 @@ class LineStyle {
     this.color = color
     this.width = width
     this.type = type
+  }
+}
+
+/**
+ * 通用元素样式
+ */
+class ItemStyle {
+  constructor ({
+    color = 'rgba(255, 0, 0, 1)',
+    borderColor = 'rgba(0, 0, 0, 1)',
+    borderWidth = 1,
+    borderType = 'solid'
+  }) {
+    this.color = color
+    this.borderColor = borderColor
+    this.borderWidth = borderWidth
+    this.borderType = borderType
   }
 }
 
@@ -272,9 +289,10 @@ class YAixs extends Aixs {
 }
 
 export {
+  BarItemStyle,
+  ItemStyle,
   Legend,
   LineStyle,
-  BarItemStyle,
   XAixs,
   YAixs
 }
