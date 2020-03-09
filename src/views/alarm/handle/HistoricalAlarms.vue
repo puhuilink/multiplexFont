@@ -208,7 +208,7 @@
       <div class="opration">
         <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected">前转</a-button>
         <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
-        <a-button @click="exportExcel(selectedRowKeys)">导出</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -261,8 +261,8 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import excel from '@/utils/excel'
 import queryList from '@/api/alarm/queryList'
+import { getHistoryEcxel } from '@/api/alarm/ExcelExport'
 import screening from '../screening'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
@@ -636,26 +636,41 @@ export default {
     /**
      * 导出
      */
-    exportExcel (e) {
-      console.log(e)
-
-      const header = ['alertId', '状态', 'CI名称', '应用级别', '级别', '消息内容', '首次告警时间',	'最近告警时间', '次数',	'采集系统',	'关闭时间',	'关闭人',	'工单编号',	'告警编号',	'子告警',	'接入行',	'交易渠道']
-      // 根据后台数据来写字段名
-      const kmap = ['alert_id', 'state']
-      const newdata = [
+    async  exportExcel (e) {
+      const file = await getHistoryEcxel(e)
+      this.downloadFile(file, '历史告警列表')
+      // getHistoryEcxel(e).then(r => {
+      //   const content = r.data
+      //   const blob = new Blob([ content ])
+      //   const fileName = `${new Date().getTime()}_历史告警导出.xlsx`
+      //   if ('download' in document.createElement('a')) {
+      //     const elink = document.createElement('a')
+      //     elink.download = fileName
+      //     elink.style.display = 'none'
+      //     elink.href = URL.createObjectURL(blob)
+      //     document.body.appendChild(elink)
+      //     elink.click()
+      //     URL.revokeObjectURL(elink.href)
+      //     document.body.removeChild(elink)
+      //   } else {
+      //     navigator.msSaveBlob(blob, fileName)
+      //   }
+      // })
+    },
+    downloadFile (file, filename = '') {
+      const blob = new Blob(
+        [file],
         {
-          index: 1,
-          data: '后台数据'
-        }
-      ]
-      let params = {
-        title: [header],
-        key: kmap,
-        data: newdata,
-        autoWidth: true,
-        filename: `历史告警`
-      }
-      excel.export_array_to_excel(params)
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+        })
+      const downloadElement = document.createElement('a')
+      const href = window.URL.createObjectURL(blob) // 创建下载的链接
+      downloadElement.href = href
+      downloadElement.download = filename // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement)// 下载完成移除元素
+      window.URL.revokeObjectURL(href) // 释放掉blob对象
     }
   }
 }
