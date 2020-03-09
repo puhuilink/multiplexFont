@@ -92,6 +92,7 @@ import _ from 'lodash'
 import PerfectScrollbar from 'perfect-scrollbar'
 import { ScreenMutations } from '@/store/modules/screen'
 import View from '@/model/view'
+import ViewService from '../config/view'
 import Wrapper from '@/components/Wrapper/index'
 import Widget from '@/components/Widget/index'
 import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
@@ -126,6 +127,7 @@ export default {
     isSubscribed: true,
     isResize: false,
     wrapperChange$: new WrapperService().change$,
+    viewChange$: new ViewService().change$,
     // 滚动条
     perfectScrollBar: null
   }),
@@ -144,19 +146,23 @@ export default {
     // 视图change事件处理
     merge(
       fromEvent(window, 'resize').pipe(mapTo({ type: 'resize' })),
-      this.change$
+      this.change$,
+      this.viewChange$
     )
       .pipe(
         takeWhile(() => this.isSubscribed),
-        startWith({ type: 'resize' })
+        startWith({ type: 'init' })
       )
       .subscribe((event) => {
-        // 设置缩放
-        this.setScale(event)
-
+        console.log(event)
         // 更新滚动条
-        if (event.type === 'resize') {
-          this.perfectScrollBar && this.perfectScrollBar.update()
+        this.perfectScrollBar && this.perfectScrollBar.update()
+
+        if (event.type === 'init' && !this.view.config) {
+          this.setInitStyle()
+        } else {
+          console.log('here')
+          this.setStyle(event)
         }
 
         // 设置屏幕对象
@@ -294,9 +300,9 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     /**
-     * 左右panel展开与否
-     * @param type 左右panel
-     */
+       * 左右panel展开与否
+       * @param type 左右panel
+       */
     panelControl (type) {
       const mapping = new Map([
         ['left', 'leftPanelExpand'],
@@ -308,47 +314,11 @@ export default {
         this.change$.next({ type: 'resize' })
       }, 400)
     },
-    /**
-     * 设置视图缩放及尺寸
-     * @param event
-     */
-    setScale (event) {
+    setInitStyle () {
       const { width, height } = this.$refs.page.getBoundingClientRect()
       const xScale = ((width - 32) / this.width)
       const yScale = ((height - 32) / this.height)
-      // 如果视图的更改类型为resize，则根据宽高最小的比例设置缩放，其余更改只更新该类型变量数据
-      if (event.type === 'resize') {
-        this.scale = Math.min(xScale, yScale)
-      } else {
-        this[event.type] = event.value
-      }
-
-      if (this.view.config) {
-        const {
-          config: {
-            commonConfig: {
-              width, height
-            },
-            proprietaryConfig: {
-              mode,
-              backgroundColor,
-              backgroundImage,
-              backgroundRepeat,
-              backgroundSize
-            }
-          }
-        } = this.view
-
-        anime.set(this.$refs.view, {
-          width,
-          height,
-          backgroundImage: mode === 'image' ? `url(${backgroundImage})` : '',
-          backgroundColor,
-          backgroundRepeat,
-          backgroundSize
-        })
-      }
-
+      this.scale = Math.min(xScale, yScale)
       anime({
         targets: this.$refs.view,
         scale: this.scale,
@@ -359,6 +329,66 @@ export default {
         targets: this.$refs.gauge,
         width: this.width * this.scale + 32,
         height: this.height * this.scale + 32,
+        duration: 150,
+        easing: 'linear'
+      })
+    },
+    /**
+       * 设置视图缩放及尺寸
+       * @param event
+       */
+    setStyle (event) {
+      const {
+        width: pageWidth,
+        height: pageHeight
+      } = this.$refs.page.getBoundingClientRect()
+      const {
+        config: {
+          commonConfig: {
+            width, height
+          },
+          proprietaryConfig: {
+            mode,
+            backgroundColor,
+            backgroundImage,
+            backgroundRepeat,
+            backgroundSize
+          }
+        }
+      } = this.view
+      const xScale = ((pageWidth - 32) / width)
+      const yScale = ((pageHeight - 32) / height)
+
+      // 如果手动调整缩放条，则直接设置缩放比例
+      if (event.type === 'scale') {
+        this.scale = event.value
+      } else {
+        // 如果开启自动调整则设置缩放
+        if (this.isAutoResize) {
+          // 根据宽高最小的比例设置缩放，其余更改只更新该类型变量数据
+          this.scale = Math.min(xScale, yScale)
+        }
+      }
+
+      anime.set(this.$refs.view, {
+        backgroundImage: mode === 'image' ? `url(${backgroundImage})` : '',
+        backgroundRepeat,
+        backgroundSize
+      })
+
+      anime({
+        targets: this.$refs.view,
+        width,
+        height,
+        scale: this.scale,
+        backgroundColor: mode === 'color' ? backgroundColor : '',
+        duration: 150,
+        easing: 'linear'
+      })
+      anime({
+        targets: this.$refs.gauge,
+        width: width * this.scale + 32,
+        height: height * this.scale + 32,
         duration: 150,
         easing: 'linear'
       })
@@ -373,116 +403,116 @@ export default {
 </script>
 
 <style scoped lang="less">
-.screen {
-  height: calc(100vh - 54px);
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: stretch;
-  background: whitesmoke;
-
-  &__header {
-    position: relative;
-    flex: none;
+  .screen {
+    height: calc(100vh - 54px);
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: column nowrap;
     justify-content: space-between;
-    align-items: center;
-    height: 48px;
-    background: white;
-    box-shadow: 0 2px 8px #f0f1f2;
-    z-index: 4;
+    align-items: stretch;
+    background: whitesmoke;
 
-    p {
-      margin: 0;
-    }
-  }
-
-  &__control {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    cursor: pointer;
-    height: 100%;
-
-    & span {
+    &__header {
+      position: relative;
       flex: none;
       display: flex;
       flex-flow: row nowrap;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      height: 48px;
+      background: white;
+      box-shadow: 0 2px 8px #f0f1f2;
+      z-index: 4;
+
+      p {
+        margin: 0;
+      }
+    }
+
+    &__control {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-start;
       align-items: center;
       cursor: pointer;
-      width: 48px;
       height: 100%;
 
-      &:hover {
-        background: rgba(0, 0, 0, 0.025);
+      & span {
+        flex: none;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 48px;
+        height: 100%;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.025);
+        }
+      }
+    }
+
+    &__size {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+      align-items: center;
+
+      .ant-input-group-wrapper {
+        width: 120px;
+        margin-left: 16px;
       }
     }
   }
 
-  &__size {
+  .page {
+    position: relative;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    overflow: auto;
+    background: #f1f1f1;
+  }
+
+  .gauge {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .scale-bar {
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-end;
     align-items: center;
+    box-sizing: border-box;
+    padding: 0 16px;
+    height: 48px;
+    background: white;
+    border: 2px solid whitesmoke;
+    border-bottom: none;
+    z-index: 3;
 
-    .ant-input-group-wrapper {
-      width: 120px;
-      margin-left: 16px;
+    &__slider.ant-slider {
+      width: 200px;
+      margin: 0 16px;
+    }
+
+    &__number {
+      width: 85px;
+      margin: 0;
     }
   }
-}
 
-.page {
-  position: relative;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 0;
-  overflow: auto;
-  background: #f1f1f1;
-}
-
-.gauge {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.scale-bar {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0 16px;
-  height: 48px;
-  background: white;
-  border: 2px solid whitesmoke;
-  border-bottom: none;
-  z-index: 3;
-
-  &__slider.ant-slider {
-    width: 200px;
-    margin: 0 16px;
+  .view {
+    position: relative;
+    height: 1080px;
+    width: 1920px;
+    margin: 16px 0 0 16px;
+    background: white;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2),
+    0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    transform-origin: 0 0;
+    overflow: hidden;
   }
-
-  &__number {
-    width: 85px;
-    margin: 0;
-  }
-}
-
-.view {
-  position: relative;
-  height: 1080px;
-  width: 1920px;
-  margin: 16px 0 0 16px;
-  background: white;
-  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2),
-  0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
-  transform-origin: 0 0;
-  overflow: hidden;
-}
 </style>

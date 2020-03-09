@@ -120,7 +120,7 @@
                     <div class="comment-template__inner">
                       <ColorPicker
                         v-model="config.proprietaryConfig.barItemStyle.color"
-                        @change="$refs.chartProprietaryRef.change()"/>
+                        @change="singleColorChange(config)"/>
                     </div>
                   </div>
                   <!-- / 单一颜色 -->
@@ -336,6 +336,7 @@ export default {
     LinearColorSelector
   },
   data: () => ({
+    singleColor: 'rgba(7,171,253,1)',
     combinationColors: [
       {
         type: 'default',
@@ -431,14 +432,14 @@ export default {
       removeWidget: ScreenMutations.REMOVE_WIDGET
     }),
     /**
-     * 获取配色方案
-     * @param config 配置
-     * @returns {*}
-     */
+       * 获取配色方案
+       * @param config 配置
+       * @returns {*}
+       */
     getColors (config) {
       const { typeMapping, customMapping } = this
       if (config.proprietaryConfig.barItemStyle.type === 'single') {
-        return 'rgba(7,171,253,1)'
+        return this.singleColor
       }
 
       let color
@@ -452,10 +453,14 @@ export default {
       }
       return color
     },
+    singleColorChange (config) {
+      this.singleColor = config.proprietaryConfig.barItemStyle.color
+      this.$refs.chartProprietaryRef.change()
+    },
     /**
-     * 柱条宽度类型更改
-     * @param config 配置
-     */
+       * 柱条宽度类型更改
+       * @param config 配置
+       */
     barWidthTypeChange (config) {
       Object.assign(config.proprietaryConfig, {
         barWidth: config.proprietaryConfig.barWidthType === 'custom'
@@ -465,18 +470,18 @@ export default {
       this.$refs.chartProprietaryRef.change()
     },
     /**
-     * 当颜色类型或者模式更改时，判断此时的颜色
-     * @param config
-     */
+       * 当颜色类型或者模式更改时，判断此时的颜色
+       * @param config
+       */
     colorChange (config) {
       Object.assign(config.proprietaryConfig.barItemStyle, {
         color: this.getColors(config)
       })
     },
     /**
-     * 颜色组更改
-     * @param config
-     */
+       * 颜色组更改
+       * @param config
+       */
     colorGroupChange (config) {
       this.colorChange(config)
       this.$refs.chartProprietaryRef.change()
@@ -486,27 +491,27 @@ export default {
 </script>
 
 <style scoped lang="less">
-.bar-config {
-  &__colors {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    span {
-      width: 22px;
-      height: 22px;
+  .bar-config {
+    &__colors {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-evenly;
+      align-items: center;
+      span {
+        width: 22px;
+        height: 22px;
+      }
     }
-  }
 
-  &__linear {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    span {
-      width: 22px;
-      height: 72px;
+    &__linear {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-evenly;
+      align-items: center;
+      span {
+        width: 22px;
+        height: 72px;
+      }
     }
   }
-}
 </style>
