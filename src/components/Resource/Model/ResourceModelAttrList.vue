@@ -70,7 +70,7 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
-import Template from '../../../views/design/moduels/template/index'
+import Template from '../../../views/design/modules/template/index'
 
 const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_model_attributes_order_by!]) {
   pagination: ngecc_model_attributes_aggregate (where: $where) {

@@ -1,10 +1,15 @@
 import apollo from '@/utils/apollo'
 import moment from 'moment'
+import { axios } from '@/utils/request'
 
 import {
   mutationInsertUsers,
   mutationUpdateUser
 } from '../graphql/User'
+
+export const login = function (data = {}) {
+  return axios.post('/user/login', data)
+}
 
 /**
  * （批量）新增用户

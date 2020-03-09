@@ -3,6 +3,7 @@
     centered
     :confirmLoading="loading"
     destroyOnClose
+    :maskClosable="false"
     :title="title"
     v-model="visible"
     :width="940"
@@ -68,7 +69,6 @@
           :labelCol="layout.labelCol"
           :wrapperCol="layout.wrapperCol"
           style="width: 80%"
-          required
         >
           <CiInstanceSelect
             labelInValue
@@ -211,7 +211,7 @@
 
     <template #footer>
       <a-button v-show="current !== 0" @click="prev">上一步</a-button>
-      <a-button v-show="current !== 2" @click="next">下一步</a-button>
+      <a-button v-show="current !== 2" @click="next" :disabled="disabled">下一步</a-button>
       <a-button @click="cancel">取消</a-button>
       <a-button v-show="current === 2">保存</a-button>
     </template>
@@ -264,7 +264,6 @@ export default {
     form1: vm.$form.createForm(vm),
     form2: vm.$form.createForm(vm),
     formData0: {
-      instance: [],
       // 计算方式 generate type ?
       'gen_type': 'standalone',
       // 基线标题
@@ -314,6 +313,7 @@ export default {
     submit: () => { }
   }),
   computed: {
+    // 数字输入框默认配置
     numberProps: {
       get () {
         return {
@@ -324,6 +324,34 @@ export default {
             width: '100%'
           }
         }
+      }
+    },
+    // 下一步是否可用
+    disabled: {
+      get () {
+        let disabled = true
+        switch (this.current) {
+          case 0:
+            disabled = !(
+              this.formData0.gen_type &&
+              this.formData0.title &&
+              this.formData0.kpi.length &&
+              Object.values(this.formData0.ciType).length
+            )
+            break
+          case 1:
+            // 存在空值时
+            disabled = Object.values(this.formData1).filter(v => v === '' || v === undefined).length !== 0
+            break
+          case 2:
+            // 最后一步没有下一步
+            disabled = true
+            break
+          default:
+            disabled = true
+            break
+        }
+        return disabled
       }
     }
   },

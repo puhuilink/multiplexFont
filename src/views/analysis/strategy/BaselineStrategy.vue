@@ -107,7 +107,7 @@ import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/BSDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 
 const query = gql`query instanceList($where: t_baseline_policy_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
     pagination: t_baseline_policy_aggregate(where: $where) {
