@@ -9,7 +9,7 @@
 <template>
   <div class="design">
     <div class="header">
-      <p>Terminator</p>
+      <p>视图设计 - {{ routeQuery.title }}</p>
     </div>
     <div class="content">
       <transition name="panel">
@@ -47,6 +47,11 @@ export default {
     // 左区域展开
     rightPanelExpand: true
   }),
+  computed: {
+    routeQuery () {
+      return this.$route.query
+    }
+  },
   methods: {
     leftPanelControl (control) {
       this.leftPanelExpand = control
@@ -54,6 +59,18 @@ export default {
     rightPanelControl (control) {
       this.rightPanelExpand = control
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$confirm({
+      title: '确认要离开当前视图？',
+      content: '请确认以保存当前视图，未保存内容则不会生效！',
+      onOk () {
+        next(true)
+      },
+      onCancel () {
+        next(false)
+      }
+    })
   }
 }
 </script>

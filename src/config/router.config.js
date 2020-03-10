@@ -472,6 +472,13 @@ export const asyncRouterMap = [
     meta: { title: '视图设计', permission: [ 'view' ] }
   },
   {
+    path: '/preview',
+    name: 'Preview',
+    hidden: true,
+    component: () => import('@/views/preview'),
+    meta: { title: '视图预览', permission: [ 'view' ] }
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]

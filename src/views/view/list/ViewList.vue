@@ -252,7 +252,7 @@ export default {
      */
     handleDesign () {
       const [ row ] = this.selectedRows
-      const { id, title } = row
+      const { view_id: id, view_title: title } = row
       this.$router.push({ name: 'Design', query: { id, title } })
     },
     /**

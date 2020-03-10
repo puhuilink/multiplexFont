@@ -14,7 +14,22 @@
         </span>
         <a-button v-else type="link" icon="appstore">组件库</a-button>
       </div>
+      <div class="screen__center">
+        <div class="screen__bar">
+          <a-button-group>
+            <a-tooltip placement="top" title="保存">
+              <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
+            </a-tooltip>
+            <a-tooltip placement="top" title="导出">
+              <a-button type="primary"><a-icon type="export" /></a-button>
+            </a-tooltip>
+          </a-button-group>
+        </div>
 
+        <a-tooltip placement="top" title="预览">
+          <a-button type="primary" @click="preview"><a-icon type="eye" /></a-button>
+        </a-tooltip>
+      </div>
       <div class="screen__control" @click="panelControl('right')">
         <span v-if="rightPanelExpand">
           <a-icon type="menu-unfold" />
@@ -298,9 +313,9 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     /**
-       * 左右panel展开与否
-       * @param type 左右panel
-       */
+     * 左右panel展开与否
+     * @param type 左右panel
+     */
     panelControl (type) {
       const mapping = new Map([
         ['left', 'leftPanelExpand'],
@@ -312,6 +327,9 @@ export default {
         this.change$.next({ type: 'resize' })
       }, 400)
     },
+    /**
+     * 初始化设置样式
+     */
     setInitStyle () {
       const { width, height } = this.$refs.page.getBoundingClientRect()
       const xScale = ((width - 32) / this.width)
@@ -332,9 +350,9 @@ export default {
       })
     },
     /**
-       * 设置视图缩放及尺寸
-       * @param event
-       */
+     * 设置视图缩放及尺寸
+     * @param event
+     */
     setStyle (event) {
       const {
         width: pageWidth,
@@ -390,6 +408,13 @@ export default {
         duration: 150,
         easing: 'linear'
       })
+    },
+    save () {
+      const option = this.view.getOption()
+      console.log('save: ', option)
+    },
+    preview () {
+      this.$router.push('/preview')
     }
   },
   beforeDestroy () {
@@ -448,6 +473,16 @@ export default {
           background: rgba(0, 0, 0, 0.025);
         }
       }
+    }
+
+    &__center {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 16px;
     }
 
     &__size {
