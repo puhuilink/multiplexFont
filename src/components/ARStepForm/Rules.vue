@@ -137,14 +137,22 @@ export default {
   },
   created () {
     this.getqueryList()
-    const severity = this.record.severityFilter ? this.record.severityFilter.split(',') : []
+    const severity = this.record.severityFilter
+      ? typeof (this.record.severityFilter) === 'string'
+        ? this.record.severityFilter.split(',') : this.record.severityFilter : []
     this.record.severity = severity.map(Number)
   },
   methods: {
     async getqueryList () {
-      this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
-      this.queryList.alertList = await queryList.alertList()
+      queryList.domainList().then((e) => {
+        this.queryList.domainList = e
+      })
+      queryList.typeList().then((e) => {
+        this.queryList.typeList = e
+      })
+      queryList.alertList().then((e) => {
+        this.queryList.alertList = e
+      })
     },
     nextStep () {
       const { form: { validateFields } } = this

@@ -8,7 +8,7 @@
       >
         <a-checkbox-group
           style="width: 100%;"
-          v-decorator="['merge-cells', { initialValue: mergeChoose }]"
+          v-decorator="['merge_cells', { initialValue: mergeChoose }]"
         >
           <a-row>
             <a-col :span="8" v-for="(cell,index) in mergeCells" :key="index">
@@ -46,7 +46,7 @@
         :wrapperCol="wrapperCol"
       >
         <a-checkbox-group
-          v-decorator="['update-cells', { initialValue: updateChoose }]"
+          v-decorator="['update_cells', { initialValue: updateChoose }]"
           style="width: 100%;"
         >
           <a-row>
@@ -159,11 +159,29 @@ export default {
       that.loading = true
       validateFields((err, values) => {
         if (!err) {
-          console.log('表单 values', values)
-          that.timer = setTimeout(function () {
-            that.loading = false
-            that.$emit('handleSubmit', values)
-          }, 1500)
+          const re = {}
+          that.mergeCells.map(e => {
+            if (values['merge_cells'].indexOf(e.option) === -1) {
+              re[e.option] = false
+            } else {
+              re[e.option] = true
+            }
+          })
+          that.updateCells.map(e => {
+            if (values['update_cells'].indexOf(e.option) === -1) {
+              re[e.option] = false
+            } else {
+              re[e.option] = true
+            }
+          })
+          values = {
+            ...values,
+            ...re
+          }
+          delete (values.merge_cells)
+          delete (values.update_cells)
+          that.loading = false
+          that.$emit('handleSubmit', values)
         } else {
           that.loading = false
         }

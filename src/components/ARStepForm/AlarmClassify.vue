@@ -8,23 +8,23 @@
       >
         <a-select
           allowClear
+          placeholder="请选择告警类型"
           v-decorator="[
-            'domian'
+            'newAlertCode',
+            {
+              initialValue: record.newAlertCode
+            }
           ]"
-          placeholder="请选择"
         >
           <a-select-opt-group
-            v-for="(group,index) in screening.CIDomain"
+            v-for="(group,index) in queryList.alertList"
             :key="index"
-            :label="group.label"
+            :label="group[0].parentname_s"
+            :allowClear="true"
           >
-            <a-select-option
-              v-for="item in group.options"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
+            <template v-for="groupitem in group">
+              <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+            </template>
           </a-select-opt-group>
         </a-select>
       </a-form-item>
@@ -38,17 +38,20 @@
           allowClear
           placeholder="请选择告警级别"
           v-decorator="[
-            'newLevel'
+            'newSeverity',
+            {
+              initialValue: record.newSeverity
+            }
           ]"
-          @change="alarmLevelChange"
         >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <!-- @change="alarmLevelChange" -->
+          <!-- <a-select-option value="checkall" key="checkall">全选</a-select-option> -->
           <a-select-option
-            v-for="item in levelList"
-            :key="item"
-            :value="item"
+            v-for="item in screening.severityList"
+            :key="item.value"
+            :value="item.value"
           >
-            {{ item }}
+            {{ item.text }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -59,13 +62,13 @@
       >
         <a-radio-group
           name="radioGroup"
-          v-decorator="['newTag', {
-            initialValue: 0}
+          v-decorator="['tagOp', {
+            initialValue: record.tagOp}
           ]"
         >
-          <a-radio :value="0">添加</a-radio>
-          <a-radio :value="1">重置</a-radio>
-          <a-radio :value="2">删除</a-radio>
+          <a-radio value="0">添加</a-radio>
+          <a-radio value="1">重置</a-radio>
+          <a-radio value="2">删除</a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item
@@ -77,11 +80,12 @@
           mode="multiple"
           allowClear
           v-decorator="[
-            'newTag2'
+            'newTags',
+            {initialValue: record.newTags}
           ]"
           @change="alarmLevelChange"
         >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <!-- <a-select-option value="checkall" key="checkall">全选</a-select-option> -->
           <a-select-option
             v-for="item in levelList"
             :key="item"
@@ -101,9 +105,16 @@
 
 <script>
 import screening from '@/views/alarm/screening'
+import queryList from '@/api/alarm/queryList'
 
 export default {
   name: 'AlarmClassify',
+  props: {
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       screening,
@@ -114,10 +125,19 @@ export default {
       timer: 0,
       levelList: [
         'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
-      ]
+      ],
+      queryList: {}
     }
   },
+  created () {
+    this.getqueryList()
+  },
   methods: {
+    async getqueryList () {
+      queryList.alertList().then((e) => {
+        this.queryList.alertList = e
+      })
+    },
     nextStep () {
       const that = this
       const { form: { validateFields } } = this

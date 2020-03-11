@@ -86,6 +86,27 @@ import merger from '@/components/ARStepForm/AlarmMerger'
 import relate from '@/components/ARStepForm/AlarmRelate'
 import upgrade from '@/components/ARStepForm/AlarmUpgrade'
 import recover from '@/components/ARStepForm/AlarmRecover'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+import moment from 'moment'
+
+const insert = gql`mutation ($objects: [t_alert_rule_insert_input!]! = []) {
+  insert_t_alert_rule (objects: $objects) {
+    returning {
+      rule_id
+    }
+  }
+}`
+const update = gql`mutation update ($where: t_alert_rule_bool_exp!, $val: t_alert_rule_set_input) {
+  update_t_alert_rule (
+    where: $where,
+    _set: $val
+  ) {
+      returning {
+      rule_id
+    }
+  }
+}`
 
 export default {
   name: 'AlarmRulesDetail',
@@ -105,10 +126,11 @@ export default {
       form: this.$form.createForm(this),
       visible: false,
       loading: false,
-      record: '',
+      record: {},
       mode: '',
       ruleType: '',
-      formData: {}
+      formData: {},
+      oldkeys: []
     }
   },
   beforeCreate () {
@@ -121,15 +143,24 @@ export default {
   },
   methods: {
     async open (record, mode, ruleType) {
+      this.currentTab = 0
       this.visible = true
       this.mode = mode
       this.ruleType = ruleType
-      const xmlContent = screening.xmlTojson(record.content)[ruleType]
-      this.record = {
-        ...record,
-        ...xmlContent
+      if (mode === 'New') {
+        this.record = {}
       }
-      console.log(this.record)
+      if (mode === 'Edit') {
+        const xmlContent = screening.xmlTojson(record.content)[ruleType]
+        record.timeFromStr = record.timeFrom ? screening.timeToDate(record.timeFrom) : ''
+        record.timeToStr = record.timeTo ? screening.timeToDate(record.timeTo) : ''
+        this.record = {
+          ...record,
+          ...xmlContent
+        }
+        this.oldkeys = [[...Object.keys(xmlContent)], ruleType]
+        console.log(record, this.record, xmlContent)
+      }
     },
     handleCancel (e) {
       this.visible = false
@@ -140,7 +171,6 @@ export default {
       if (this.currentTab < 3) {
         this.currentTab += 1
       }
-      console.log(this.formData)
     },
     prevStep () {
       if (this.currentTab > 0) {
@@ -155,12 +185,88 @@ export default {
      */
     handleSubmit (e) {
       this.formData = { ...e, ...this.formData }
-      console.log(this.formData)
-      // this.form.validateFieldsAndScroll((err, values) => {
-      //   if (!err) {
-      //     console.log('Received values of form: ', values)
-      //   }
-      // })
+      const result = {
+        title: this.formData.title,
+        rule_type: this.ruleType,
+        priority: this.formData.priority,
+        node_type: this.formData.node_type,
+        domain: this.formData.domain,
+        // is_exclusive: this.record.is_exclusive,
+        enabled: this.formData.enabled
+      }
+      const xmlstr = { }
+      this.oldkeys[0].map(e => {
+        xmlstr[ e ] = this.formData[ e ]
+      })
+      result.content = `<${this.oldkeys[1]}>${screening.jsonToxml(xmlstr)}</${this.oldkeys[1]}>`
+      console.log(result)
+      if (this.mode === 'New') {
+        this.insert(result)
+      } else if (this.mode === 'Edit') {
+        this.update(result)
+      }
+    },
+    /**
+     * tab===3时提交的表单数据处理
+     */
+    lastSubmit (e) {
+      console.log(e)
+    },
+    /**
+     * 新增
+     */
+    async insert (values) {
+      this.loading = true
+      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
+      return apollo.clients.alert.mutate({
+        mutation: insert,
+        variables: {
+          objects: [{
+            ...values
+          }]
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update (values) {
+      this.loading = true
+      return apollo.clients.alert.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'rule_id': {
+              '_eq': this.record.rule_id
+            }
+          },
+          val: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

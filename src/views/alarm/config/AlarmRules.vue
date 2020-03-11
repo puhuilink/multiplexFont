@@ -85,7 +85,6 @@
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       >
@@ -109,7 +108,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <!-- E 模块 -->
     </a-card>
   </div>
@@ -320,18 +322,6 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          dblclick: () => {
-            this.$refs.detail.open(record, 'Edit')
-          }
-        }
-      }
     },
     loadData (parameter) {
       return apollo.clients.alert.query({

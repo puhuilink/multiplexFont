@@ -41,7 +41,7 @@
           allowClear
           v-decorator="[
             'agentIdFilter',
-
+            {initialValue: record.agentIdFilter}
           ]"
           placeholder="请选择采集系统"
           @change="agentChange"
@@ -103,24 +103,18 @@
       </a-form-item>
       <a-form-item
         v-show="timeRangeType==='1'"
-        label="时间范围"
+        label="相对时间范围"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         v-decorator="[
           '',
           {
-            initialValue: [record.timeFrom, record.timeTo]
+            initialValue: [record.timeFromStr, record.timeToStr]
           }
         ]"
       >
-        <a-range-picker
-          allowClear
-          format="YYYY-MM-DD HH:mm:ss"
-          :placeholder="['Min Date', 'Max Date']"
-          :showTime="{ format: 'HH:mm:ss' }"
-          style="width: 100%"
-          @ok="timeOk"
-        />
+        <a-input style="width:50%" addonAfter="至" :defaultValue="record.timeFrom" />
+        <a-input style="width:50%" addonAfter="秒" :defaultValue="record.timeTo" />
       </a-form-item>
       <a-form-item
         v-show="timeRangeType==='0' || timeRangeType==='2'"
