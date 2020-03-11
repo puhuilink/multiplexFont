@@ -1,4 +1,5 @@
-
+const X2JS = require('x2js')
+const moment = require('moment')
 // 级别列表
 const levelList = {
   0: {
@@ -136,7 +137,6 @@ function checkAll (arr, modelList) {
 }
 
 function xmlTojson (xml) {
-  const X2JS = require('x2js')
   var x2js = new X2JS()
   return x2js.xml2js(xml)
 }
@@ -144,11 +144,22 @@ function xmlTojson (xml) {
  * xml数据转成json对象的数据
  */
 function jsonToxml (json) {
-  const X2JS = require('x2js')
   var x2js = new X2JS()
   return x2js.js2xml(json)
 }
 
+/**
+ * 时间戳转成日期
+ */
+function timeToDate (time) {
+  return moment(time).format('YYYY-MM-DD HH:mm:ss')
+}
+/**
+ * 日期转为时间戳
+ */
+function dateToTime (date) {
+  return moment(date, 'YYYY-MM-DD HH:mm:ss').valueOf()
+}
 export default {
   levelList,
   forwardType,
@@ -157,5 +168,7 @@ export default {
   stateList,
   severityList,
   xmlTojson,
-  jsonToxml
+  jsonToxml,
+  timeToDate,
+  dateToTime
 }
