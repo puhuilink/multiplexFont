@@ -174,13 +174,13 @@
 <script>
 import '@/assets/less/template.less'
 import _ from 'lodash'
-import anime from 'animejs'
 import { fromEvent } from 'rxjs'
 import { takeWhile, map, filter, switchMap } from 'rxjs/operators'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import View from '@/model/view'
 import ColorPicker from '@/components/ColorPicker/index.vue'
+import ViewService from './index'
 
 export default {
   name: 'ViewConfig',
@@ -188,7 +188,8 @@ export default {
     ColorPicker
   },
   data: () => ({
-    isSubscribed: true
+    isSubscribed: true,
+    viewService: new ViewService()
   }),
   mounted () {
     fromEvent(this.$refs.screenshot.$el, 'paste')
@@ -221,39 +222,7 @@ export default {
       this.setView({
         view: new View(this.targetView)
       })
-      const { el, gauge, scale } = this.view
-      const {
-        commonConfig: { height, width },
-        proprietaryConfig: {
-          mode,
-          backgroundColor,
-          backgroundImage,
-          backgroundRepeat,
-          backgroundSize
-        }
-      } = this.targetView.config
-
-      anime.set(el, {
-        backgroundImage: mode === 'image' ? `url(${backgroundImage})` : '',
-        backgroundRepeat,
-        backgroundSize
-      })
-
-      anime({
-        targets: el,
-        width,
-        height,
-        backgroundColor: mode === 'color' ? backgroundColor : '',
-        duration: 150,
-        easing: 'linear'
-      })
-      anime({
-        targets: gauge,
-        width: width * scale + 32,
-        height: height * scale + 32,
-        duration: 150,
-        easing: 'linear'
-      })
+      this.viewService.next('adjust')
     }
   },
   destroyed () {
@@ -263,55 +232,55 @@ export default {
 </script>
 
 <style scoped lang="less">
-.view-config {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-  padding-top: 16px;
-
-  &__content {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    align-items: center;
-
-    .ant-input-group-wrapper {
-      margin: 0 12px;
-    }
-  }
-
-  &__screen {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    align-items: center;
-
-    & button {
-      width: 100%;
-    }
-  }
-
-  &__screenshot {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
+  .view-config {
+    height: 100%;
     width: 100%;
-    height: 140px;
-    margin: 0 12px 12px;
-    background: #e4e4e4;
-    padding: 6px;
-    border-radius: 4px;
+    overflow: auto;
+    padding-top: 16px;
 
-    img {
-      max-width: 100%;
-      max-height: 100%;
+    &__content {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-evenly;
+      align-items: center;
+
+      .ant-input-group-wrapper {
+        margin: 0 12px;
+      }
     }
 
-    p {
-      color: #1890ff;
-      margin: 0;
+    &__screen {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+      align-items: center;
+
+      & button {
+        width: 100%;
+      }
+    }
+
+    &__screenshot {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 140px;
+      margin: 0 12px 12px;
+      background: #e4e4e4;
+      padding: 6px;
+      border-radius: 4px;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      p {
+        color: #1890ff;
+        margin: 0;
+      }
     }
   }
-}
 </style>

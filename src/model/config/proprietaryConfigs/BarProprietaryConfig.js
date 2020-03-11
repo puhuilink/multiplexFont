@@ -18,7 +18,7 @@ import { BarItemStyle, Legend, XAixs, YAixs } from './index'
 export default class BarProprietaryConfig {
   constructor ({
     barType = 'single',
-    itemStyle = {},
+    barItemStyle = {},
     legend = {},
     barWidthType = 'auto',
     barWidth = 'auto',
@@ -27,7 +27,7 @@ export default class BarProprietaryConfig {
   }) {
     this.barType = barType
     this.legend = new Legend(legend)
-    this.barItemStyle = new BarItemStyle(itemStyle)
+    this.barItemStyle = new BarItemStyle(barItemStyle)
     this.barWidthType = barWidthType
     this.barWidth = barWidth
     this.xAxis = new XAixs(xAxis)
@@ -38,14 +38,8 @@ export default class BarProprietaryConfig {
    * 获取柱形图专有配置
    */
   getOption () {
-    return _.cloneDeep({
-      barType: this.barType,
-      barWidthType: this.barWidthType,
-      barWidth: this.barWidth,
-      legend: this.legend,
-      itemStyle: this.barItemStyle.getOption(),
-      xAxis: this.xAxis,
-      yAxis: this.yAxis
+    return Object.assign(_.cloneDeep(this), {
+      itemStyle: this.barItemStyle.getOption()
     })
   }
 }

@@ -7,9 +7,9 @@
 */
 <template>
   <div class="template">
-    <div class="template__header">
-      <p>组件库</p>
-    </div>
+    <!--    <div class="template__header">-->
+    <!--      <p>组件库</p>-->
+    <!--    </div>-->
 
     <div class="template__list">
       <div

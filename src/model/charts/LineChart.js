@@ -1,12 +1,11 @@
 /**
-* 折线图
-* Author: dong xing
-* Date: 2019/11/20
-* Time: 8:55 上午
-* Email: dong.xing@outlook.com
-*/
+ * 折线图
+ * Author: dong xing
+ * Date: 2019/11/20
+ * Time: 8:55 上午
+ * Email: dong.xing@outlook.com
+ */
 
-import _ from 'lodash'
 import Chart from './index'
 
 export default class LineChart extends Chart {
@@ -22,12 +21,11 @@ export default class LineChart extends Chart {
    */
   mappingOption ({ commonConfig, proprietaryConfig, dataConfig }) {
     const { grid } = commonConfig.getOption()
-    const { smooth, legend, lineStyle, xAxis, yAxis } = _.cloneDeep(proprietaryConfig)
+    const { legend, xAxis, yAxis, ...options } = proprietaryConfig.getOption()
     const { sourceType, staticData } = dataConfig
     const line = {
       type: 'line',
-      smooth,
-      lineStyle
+      ...options
     }
     let series = []
 
@@ -47,7 +45,6 @@ export default class LineChart extends Chart {
         series
       })
     }
-
     return option
   }
 }

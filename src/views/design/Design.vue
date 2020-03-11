@@ -9,12 +9,18 @@
 <template>
   <div class="design">
     <div class="header">
-      <p>Terminator</p>
+      <p>视图设计 - {{ routeQuery.title }}</p>
     </div>
     <div class="content">
       <transition name="panel">
         <div class="left" v-show="leftPanelExpand">
-          <Template />
+          <a-tabs defaultActiveKey="1">
+            <a-tab-pane tab="组件库" key="1">
+              <Template />
+            </a-tab-pane>
+            <a-tab-pane tab="视图" key="2"></a-tab-pane>
+            <a-tab-pane tab="CI" key="3"></a-tab-pane>
+          </a-tabs>
         </div>
       </transition>
       <div class="center">
@@ -30,32 +36,49 @@
 </template>
 
 <script>
-  import Screen from './modules/screen/index'
-  import Template from './modules/template/index'
-  import Config from './modules/config/index'
+import Screen from './modules/screen/index'
+import Template from './modules/template/index'
+import Config from './modules/config/index'
 
-  export default {
-    name: 'Design',
-    components: {
-      Screen,
-      Template,
-      Config
-    },
-    data: () => ({
-      // 左区域展开
-      leftPanelExpand: true,
-      // 左区域展开
-      rightPanelExpand: true
-    }),
-    methods: {
-      leftPanelControl (control) {
-        this.leftPanelExpand = control
-      },
-      rightPanelControl (control) {
-        this.rightPanelExpand = control
-      }
+export default {
+  name: 'Design',
+  components: {
+    Screen,
+    Template,
+    Config
+  },
+  data: () => ({
+    // 左区域展开
+    leftPanelExpand: true,
+    // 左区域展开
+    rightPanelExpand: true
+  }),
+  computed: {
+    routeQuery () {
+      return this.$route.query
     }
+  },
+  methods: {
+    leftPanelControl (control) {
+      this.leftPanelExpand = control
+    },
+    rightPanelControl (control) {
+      this.rightPanelExpand = control
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$confirm({
+      title: '确认要离开当前视图？',
+      content: '请确认以保存当前视图，未保存内容则不会生效！',
+      onOk () {
+        next(true)
+      },
+      onCancel () {
+        next(false)
+      }
+    })
   }
+}
 </script>
 
 <style scoped lang="less">
