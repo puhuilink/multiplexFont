@@ -28,26 +28,6 @@
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
-          <a-form-item label="是否启用">
-            <a-select
-              :disabled="mode=='See'"
-              v-decorator="[
-                'enable_b',
-                { initialValue: record.enable_b?record.enable_b+'':'true',
-                  rules: [{ required: true, message: '启用不能为空!' }]
-                }
-              ]"
-            >
-              <a-select-option value="true">
-                是
-              </a-select-option>
-              <a-select-option value="false">
-                否
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="数据域">
             <a-select
               allowClear
@@ -184,18 +164,30 @@
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
-          <a-form-item label="忽略节点实例">
-            <a-select
-              allowClear
-              :disabled="mode=='See'"
-              style="width: 100%"
+          <a-form-item label="是否启用">
+            <a-radio-group
+              v-decorator="[
+                'enabled',
+                { initialValue: record.enabled,
+                  rules: [{ required: true, message: '启用不能为空!' }]
+                }
+              ]"
+            >
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :lg="12" :md="12" :sm="24">
+          <a-form-item label="是否忽略节点实例">
+            <a-radio-group
               v-decorator="['ignore_instance', {
-                initialValue: record.ignore_instance ? record.ignore_instance+'' : 'false'
+                initialValue: record.ignore_instance
               }]"
             >
-              <a-select-option value="true">是</a-select-option>
-              <a-select-option value="false">否</a-select-option>
-            </a-select>
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
           </a-form-item>
         </a-col>
         <a-col :lg="24" :md="24" :sm="24">
@@ -293,7 +285,7 @@ import apollo from '@/utils/apollo'
 const insert = gql`mutation ($objects: [t_threshold_insert_input!]! = []) {
   insert_t_threshold (objects: $objects) {
     returning {
-      rid
+      id
     }
   }
 }`
@@ -304,7 +296,7 @@ const update = gql`mutation update ($where: t_threshold_bool_exp!, $val: t_thres
     _set: $val
   ) {
       returning {
-      id_s
+      id
     }
   }
 }`
@@ -460,8 +452,7 @@ export default {
       e.preventDefault()
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          values.enable_b === 'true' ? values.enable_b = true : values.enable_b = false
-          values.ignore_instance === 'true' ? values.enable_b = true : values.enable_b = false
+          console.log(values)
           if (this.mode === 'New') {
             this.insert(values)
           } else if (this.mode === 'Edit') {
@@ -505,8 +496,8 @@ export default {
         mutation: update,
         variables: {
           where: {
-            'name_S': {
-              '_eq': this.record.name_s
+            'id': {
+              '_eq': this.record.id
             }
           },
           val: {
