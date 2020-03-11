@@ -23,16 +23,16 @@
             <a-tooltip placement="top" title="导出">
               <a-button type="primary" @click="exportFile"><a-icon type="export" /></a-button>
             </a-tooltip>
-            <a-tooltip placement="top" title="导入">
-              <a-upload
-                name="file"
-                :before-upload="beforeUpload"
-                :show-upload-list="false"
-                :multiple="false"
-              >
+            <a-upload
+              name="file"
+              :before-upload="beforeUpload"
+              :show-upload-list="false"
+              :multiple="false"
+            >
+              <a-tooltip placement="top" title="导入">
                 <a-button type="primary"><a-icon type="upload" /></a-button>
-              </a-upload>
-            </a-tooltip>
+              </a-tooltip>
+            </a-upload>
             <a-tooltip placement="top" title="清空画板">
               <a-button type="danger" @click="clear"><a-icon type="delete" /></a-button>
             </a-tooltip>
