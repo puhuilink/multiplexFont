@@ -28,6 +28,7 @@ export default class View {
     el,
     gauge,
     parent,
+    id = 'view-' + uuid(),
     name = '',
     views = [],
     widgets = [],
@@ -35,7 +36,7 @@ export default class View {
     cover = '',
     config = defaultConfig
   }) {
-    this.id = 'view-' + uuid()
+    this.id = id
     this.el = el
     this.gauge = gauge
     this.parent = parent

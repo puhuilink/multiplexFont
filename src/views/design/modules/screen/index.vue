@@ -21,7 +21,20 @@
               <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
             </a-tooltip>
             <a-tooltip placement="top" title="导出">
-              <a-button type="primary"><a-icon type="export" /></a-button>
+              <a-button type="primary" @click="exportFile"><a-icon type="export" /></a-button>
+            </a-tooltip>
+            <a-tooltip placement="top" title="导入">
+              <a-upload
+                name="file"
+                :before-upload="beforeUpload"
+                :show-upload-list="false"
+                :multiple="false"
+              >
+                <a-button type="primary"><a-icon type="upload" /></a-button>
+              </a-upload>
+            </a-tooltip>
+            <a-tooltip placement="top" title="清空画板">
+              <a-button type="danger" @click="clear"><a-icon type="delete" /></a-button>
             </a-tooltip>
           </a-button-group>
         </div>
@@ -105,8 +118,10 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
 import anime from 'animejs'
 import _ from 'lodash'
 import PerfectScrollbar from 'perfect-scrollbar'
+import { downloadFile } from '@/utils/util'
 import { ScreenMutations } from '@/store/modules/screen'
 import View from '@/model/view'
+import WidgetModel from '@/model/widget'
 import ViewService from '../config/view'
 import Wrapper from '@/components/Wrapper/index'
 import Widget from '@/components/Widget/index'
@@ -144,7 +159,11 @@ export default {
     wrapperChange$: new WrapperService().change$,
     viewChange$: new ViewService().change$,
     // 滚动条
-    perfectScrollBar: null
+    perfectScrollBar: null,
+    // 视图配置
+    viewOptions: null,
+    // 部件配置
+    widgetOptions: null
   }),
   mounted () {
     const { platform } = navigator
@@ -409,10 +428,52 @@ export default {
         easing: 'linear'
       })
     },
+    /**
+     * 保存视图配置
+     */
     save () {
-      const option = this.view.getOption()
-      console.log('save: ', option)
+      this.viewOptions = this.view.getOption()
     },
+    /**
+     * 导入视图配置
+     * @param file
+     * @returns {boolean}
+     */
+    beforeUpload (file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        this.viewOptions = _.omit(JSON.parse(reader.result), ['id', 'name'])
+        // 实例化部件对象
+        const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
+        // 更新视图对象
+        this.setView({
+          view: new View({
+            ...this.view,
+            ...this.viewOptions,
+            ...{ widgets }
+          })
+        })
+        // 设置视图样式
+        this.setStyle({ type: 'input' })
+      }
+      return false
+    },
+    /**
+     * 导出视图配置至json文件
+     */
+    exportFile () {
+      const option = this.view.getOption()
+      const title = this.$route.query.title
+      downloadFile(`${title}.json`, JSON.stringify(option))
+    },
+    /**
+     * 清空画板
+     */
+    clear () {},
+    /**
+     * 预览视图
+     */
     preview () {
       this.$router.push('/preview')
     }
