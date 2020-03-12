@@ -88,7 +88,7 @@ import upgrade from '@/components/ARStepForm/AlarmUpgrade'
 import recover from '@/components/ARStepForm/AlarmRecover'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import moment from 'moment'
+// import moment from 'moment'
 
 const insert = gql`mutation ($objects: [t_alert_rule_insert_input!]! = []) {
   insert_t_alert_rule (objects: $objects) {
