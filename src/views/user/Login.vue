@@ -81,7 +81,7 @@
         <a-input
           size="large"
           type="text"
-          placeholder="账户: admin"
+          placeholder="账户名"
           v-decorator="[
             'userId',
             {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
@@ -94,9 +94,9 @@
       <a-form-item>
         <a-input
           size="large"
-          type="encryptedPwd"
+          type="password"
           autocomplete="false"
-          placeholder="密码: admin"
+          placeholder="密码"
           v-decorator="[
             'encryptedPwd',
             {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
