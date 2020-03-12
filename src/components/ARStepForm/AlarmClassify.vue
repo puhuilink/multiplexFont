@@ -1,22 +1,46 @@
-/*
- * 告警前转设置
- */
 <template>
   <div>
     <a-form :form="form" style="max-width: 500px; margin: 40px auto 0;">
       <a-form-item
-        label="故障级别"
+        label="新的告警类型"
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+      >
+        <a-select
+          allowClear
+          placeholder="请选择告警类型"
+          v-decorator="[
+            'newAlertCode',
+            {
+              initialValue: record.newAlertCode
+            }
+          ]"
+        >
+          <a-select-opt-group
+            v-for="(group,index) in queryList.alertList"
+            :key="index"
+            :label="group[0].parentname_s"
+            :allowClear="true"
+          >
+            <template v-for="groupitem in group">
+              <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+            </template>
+          </a-select-opt-group>
+        </a-select>
+      </a-form-item>
+      <a-form-item
+        label="新的告警级别"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
         <a-select
           mode="multiple"
           allowClear
-          placeholder="请选择故障级别"
+          placeholder="请选择告警级别"
           v-decorator="[
-            'incidentSeverity',
+            'newSeverity',
             {
-              initialValue: record.incidentSeverity
+              initialValue: record.newSeverity
             }
           ]"
         >
@@ -32,87 +56,59 @@
         </a-select>
       </a-form-item>
       <a-form-item
-        label="故障分类"
+        label="新的告警标记"
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+      >
+        <a-radio-group
+          name="radioGroup"
+          v-decorator="['tagOp', {
+            initialValue: record.tagOp}
+          ]"
+        >
+          <a-radio value="0">添加</a-radio>
+          <a-radio value="1">重置</a-radio>
+          <a-radio value="2">删除</a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item
+        label=" "
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
         <a-select
+          mode="multiple"
           allowClear
-          style="width: 100%"
-          v-decorator="['incidentType', {
-            initialValue: record.incidentType
-          }]"
+          v-decorator="[
+            'newTags',
+            {initialValue: record.newTags}
+          ]"
+          @change="alarmLevelChange"
         >
+          <!-- <a-select-option value="checkall" key="checkall">全选</a-select-option> -->
           <a-select-option
-            v-for="item in queryList.faultList"
-            :key="item.type_id"
-            :value="item.type_id"
+            v-for="item in levelList"
+            :key="item"
+            :value="item"
           >
-            {{ item.type_title }}
+            {{ item }}
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item
-        label="告警数量"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-      >
-        <a-input-number
-          style="width: 100%"
-          v-decorator="['incidentAlertSize', { initialValue: record.incidentAlertSize }]"
-        />
-      </a-form-item>
-      <a-form-item
-        label="活动周期"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-      >
-        <a-input-number
-          style="width: 100%"
-          v-decorator="['lifeCycleStr', { initialValue:record.lifeCycleStr }]"
-        />
-      </a-form-item>
-      <a-form-item
-        label="活动周期单位"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-      >
-        <a-select
-          allowClear
-          style="width: 100%"
-          v-decorator="['lifeCycleUnit', {
-            initialValue: record.lifeCycleUnit
-          }]"
-          placeholder="请选择"
-        >
-          <a-select-option value="s">秒</a-select-option>
-          <a-select-option value="m">分钟</a-select-option>
-          <a-select-option value="h">小时</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item
-        label="事件描述"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-      >
-        <a-input
-          v-decorator="['incidentDescription', { initialValue: record.incidentDescription }]"
-        />
-      </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
         <a-button @click="prevStep">上一步</a-button>
-        <a-button style="margin-left: 8px" type="primary" @click="nextStep">下一步</a-button>
+        <a-button style="margin-left: 8px" :loading="loading" type="primary" @click="nextStep">提交</a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
-import queryList from '@/api/alarm/queryList'
 import screening from '@/views/alarm/screening'
+import queryList from '@/api/alarm/queryList'
 
 export default {
-  name: 'AlarmForWard',
+  name: 'AlarmClassify',
   props: {
     record: {
       type: Object,
@@ -138,16 +134,23 @@ export default {
   },
   methods: {
     async getqueryList () {
-      queryList.faultList().then((e) => {
-        this.queryList.faultList = e
+      queryList.alertList().then((e) => {
+        this.queryList.alertList = e
       })
     },
     nextStep () {
+      const that = this
       const { form: { validateFields } } = this
-      // 先校验，通过表单校验后，才进入下一步
+      that.loading = true
       validateFields((err, values) => {
         if (!err) {
-          this.$emit('nextStep', values)
+          console.log('表单 values', values)
+          that.timer = setTimeout(function () {
+            that.loading = false
+            that.$emit('handleSubmit', values)
+          }, 1500)
+        } else {
+          that.loading = false
         }
       })
     },

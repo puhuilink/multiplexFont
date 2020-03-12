@@ -1,188 +1,5 @@
-// 筛选项：CI域
-const CIDomain = [
-  {
-    label: 'Root',
-    options: [{
-      value: 'rootDamin',
-      label: 'rootDamin'
-    }]
-  }, {
-    label: 'rootDamin',
-    options: [{
-      value: 'bj',
-      label: '北京运维组'
-    },
-    {
-      value: 'xm',
-      label: '厦门运维组'
-    }]
-  }
-]
-
-// 筛选项：CI类型
-const CIType = [
-  {
-    label: 'Root',
-    options: [{
-      value: '0',
-      label: '统一资源'
-    }]
-  },
-  {
-    label: 'CI',
-    options: [{
-      value: '1',
-      label: '管理'
-    },
-    {
-      value: '2',
-      label: '监控定义'
-    },
-    {
-      value: '3',
-      label: '监控对象'
-    },
-    {
-      value: '4',
-      label: '告警'
-    },
-    {
-      value: '5',
-      label: '性能'
-    }]
-  },
-  {
-    label: 'Manager',
-    options: [{
-      value: '6',
-      label: '字典数据'
-    }]
-  }
-]
-
-// 筛选项 CI实例
-const CIInstance = [
-  {
-    label: 'Root',
-    options: [{
-      value: '1',
-      label: '统一资源'
-    }]
-  },
-  {
-    label: 'CI',
-    options: [{
-      value: '2',
-      label: '管理'
-    },
-    {
-      value: '3',
-      label: '监控定义'
-    },
-    {
-      value: '4',
-      label: '监控对象'
-    },
-    {
-      value: '5',
-      label: '告警'
-    },
-    {
-      value: '6',
-      label: '性能'
-    }]
-  },
-  {
-    label: 'Manager',
-    options: [{
-      value: '7',
-      label: '字典数据'
-    }]
-  }
-]
-
-// 筛选项: CI名称
-const CIName = [
-  {
-    label: 'Root',
-    options: [{
-      value: '1',
-      label: '统一资源'
-    }]
-  },
-  {
-    label: 'CI',
-    options: [{
-      value: '2',
-      label: '管理'
-    },
-    {
-      value: '3',
-      label: '监控定义'
-    },
-    {
-      value: '4',
-      label: '监控对象'
-    },
-    {
-      value: '5',
-      label: '告警'
-    },
-    {
-      value: '6',
-      label: '性能'
-    }]
-  },
-  {
-    label: 'Manager',
-    options: [{
-      value: '7',
-      label: '字典数据'
-    }]
-  }
-]
-
-// 告警类型
-const alarmType = [
-  {
-    label: 'Root',
-    options: [{
-      value: '1',
-      label: '统一资源'
-    }]
-  },
-  {
-    label: 'CI',
-    options: [{
-      value: '2',
-      label: '管理'
-    },
-    {
-      value: '3',
-      label: '监控定义'
-    },
-    {
-      value: '4',
-      label: '监控对象'
-    },
-    {
-      value: '5',
-      label: '告警'
-    },
-    {
-      value: '6',
-      label: '性能'
-    }]
-  },
-  {
-    label: 'Manager',
-    options: [{
-      value: '7',
-      label: '字典数据'
-    }]
-  }
-]
-
+const X2JS = require('x2js')
+const moment = require('moment')
 // 级别列表
 const levelList = {
   0: {
@@ -208,9 +25,71 @@ const levelList = {
 }
 
 const forwardType = [
-  '运维系统', '邮件', '短信'
+  {
+    value: 'EOMS',
+    label: '运维系统'
+  },
+  {
+    value: 'Email',
+    label: '邮件'
+  },
+  {
+    value: 'SMS',
+    label: '短信'
+  }
 ]
 
+// 告警状态列表
+const stateList = [
+  {
+    value: 0,
+    label: '新产生'
+  },
+  {
+    value: 5,
+    label: '已确认'
+  },
+  {
+    value: 10,
+    label: '处理中'
+  },
+  {
+    value: 20,
+    label: '已处理'
+  },
+  {
+    value: 30,
+    label: '已忽略'
+  }
+]
+// 告警级别列表
+const severityList = [
+  {
+    value: 0,
+    level: 'L1',
+    text: 'INFO'
+  },
+  {
+    value: 1,
+    level: 'L2',
+    text: 'WARNING'
+  },
+  {
+    value: 2,
+    level: 'L3',
+    text: 'MINOR'
+  },
+  {
+    value: 3,
+    level: 'L4',
+    text: 'MAJOR'
+  },
+  {
+    value: 4,
+    level: 'L5',
+    text: 'CRITICAL'
+  }
+]
 /**
  * 获得今天的日期 yyyy-mm-dd
  */
@@ -247,8 +126,8 @@ function checkAll (arr, modelList) {
         // 当不是取消全选操作，只要数组中出现了checkall则说明进行了全选操作
         list = []
         modelList.forEach(m => {
-          for (const i in m.options) {
-            list.push(m.options[i].value)
+          for (const i in m) {
+            list.push(m[i].name_s)
           }
         })
       }
@@ -257,14 +136,39 @@ function checkAll (arr, modelList) {
   return list
 }
 
+function xmlTojson (xml) {
+  var x2js = new X2JS()
+  return x2js.xml2js(xml)
+}
+/**
+ * xml数据转成json对象的数据
+ */
+function jsonToxml (json) {
+  var x2js = new X2JS()
+  return x2js.js2xml(json)
+}
+
+/**
+ * 时间戳转成日期
+ */
+function timeToDate (time) {
+  return moment(time).format('YYYY-MM-DD HH:mm:ss')
+}
+/**
+ * 日期转为时间戳
+ */
+function dateToTime (date) {
+  return moment(date, 'YYYY-MM-DD HH:mm:ss').valueOf()
+}
 export default {
-  CIDomain,
-  CIType,
-  CIInstance,
-  CIName,
-  alarmType,
   levelList,
   forwardType,
   getNowFormatDate,
-  checkAll
+  checkAll,
+  stateList,
+  severityList,
+  xmlTojson,
+  jsonToxml,
+  timeToDate,
+  dateToTime
 }

@@ -11,7 +11,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="规则名称">
-                <a-input v-model="queryParam.ruleName" placeholder=""/>
+                <a-input v-model="queryParam.title" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -19,10 +19,10 @@
                 <a-select
                   defaultValue="checkAll"
                   style="width: 100%;"
-                  v-model="queryParam.ruleStatus"
+                  v-model="queryParam.enabled"
                 >
-                  <a-select-option value="using">启用</a-select-option>
-                  <a-select-option value="forbidden">禁用</a-select-option>
+                  <a-select-option value="true">启用</a-select-option>
+                  <a-select-option value="false">禁用</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -39,18 +39,21 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-select defaultValue="checkAll" style="width: 140px; margin-right:10px;" @change="handleChange">
-          <a-select-option value="checkAll">全部规则</a-select-option>
+        <a-select defaultValue="" style="width: 140px; margin-right:10px;" @change="ruleTypeChange">
+          <a-select-option value="">全部规则</a-select-option>
           <a-select-option
             v-for="item in ruleList"
             :key="item.value"
             :value="item.value"
           >{{ item.label }}</a-select-option>
         </a-select>
-        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
+        <a-button
+          :disabled="!checkRuleType"
+          @click="$refs.detail.open('', 'New', queryParam.rule_type)"
+        >新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          @click="$refs.detail.open(selectedRows[0], 'Edit', selectedRows[0].rule_type)"
         >
           编辑
         </a-button>
@@ -82,7 +85,6 @@
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       >
@@ -106,7 +108,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <!-- E 模块 -->
     </a-card>
   </div>
@@ -120,13 +125,13 @@ import deleteCheck from '@/components/DeleteCheck'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_rule_order_by!]) {
-    pagination: t_alert_rule_aggregate(where: {}) {
+const query = gql`query instanceList($where: t_alert_rule_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_rule_order_by!]) {
+    pagination: t_alert_rule_aggregate(where: $where) {
       aggregate {
         count
       }
     }
-  data: t_alert_rule(offset: $offset, limit: $limit, order_by: $orderBy) {
+  data: t_alert_rule(where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
     content
     createdate
     domain
@@ -157,6 +162,16 @@ const enableUpdate = gql`mutation update_t_alert_rule ($ruleId: [numeric!] = [],
   }
 }`
 
+const deleteAttrs = gql`mutation ($ruleId: [numeric!] = []) {
+  delete_t_alert_rule (where: {
+    rule_id: {
+      _in: $ruleId
+    }
+  }) {
+    affected_rows
+  }
+}`
+
 export default {
   name: 'AlarmsRules',
   components: {
@@ -169,6 +184,7 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
+      checkRuleType: '',
       ruleList: [
         {
           value: 'alert-classify',
@@ -270,15 +286,6 @@ export default {
           scopedSlots: { customRender: 'status' }
         }
       ],
-      loadData: parameter => {
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -302,8 +309,10 @@ export default {
     /**
      * 表格展示规则类型过滤
      */
-    handleChange (value) {
-      console.log(`selected ${value}`)
+    ruleTypeChange (value) {
+      this.queryParam.rule_type = value
+      this.checkRuleType = value
+      this.query()
     },
     /**
      * 选中行更改事件
@@ -314,27 +323,66 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          dblclick: () => {
-            this.$refs.detail.open(record, 'Edit')
+    loadData (parameter) {
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            ...this.queryParam.rule_type ? {
+              rule_type: {
+                _eq: this.queryParam.rule_type
+              }
+            } : {},
+            ...this.queryParam.title ? {
+              title: {
+                _ilike: `%${this.queryParam.title.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.enabled ? {
+              enabled: {
+                _eq: this.queryParam.enabled === 'true'
+              }
+            } : {}
           }
         }
-      }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            ruleId: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
-     * 确定启用
+     * 启用/停用
      */
     async enableCtrl (value) {
       if (!await deleteCheck.confirm({ content: value ? '确定启用吗？' : '确定停用吗？' })) {
@@ -350,7 +398,7 @@ export default {
           }
         })
         // TODO: toast
-        this.$refs['table'].refresh(true)
+        this.query()
       } catch (e) {
         throw e
       } finally {
