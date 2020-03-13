@@ -2,6 +2,7 @@
   <div class="CiModelSelect">
     <!-- FIXME: 自定义 search 回调 -->
     <a-select
+      :labelInValue="labelInValue"
       showSearch
       allowClear
       style="min-width: 200px"
@@ -9,6 +10,7 @@
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
       @change="handleChange"
       @select="select"
+      :filterOption="filterOption"
     >
       <a-select-opt-group v-for="(group) in groups" :key="group.value">
         <span slot="label">{{ group.label }}</span>
@@ -31,9 +33,15 @@ export default {
   name: 'CiModelSelect',
   components: {},
   props: {
+    // labelInValue 为真时格式为 object，否则为 string
+    // eslint-disable-next-line
     value: {
-      type: String,
-      default: ''
+      // type: String,
+      // default: ''
+    },
+    labelInValue: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -51,6 +59,12 @@ export default {
     }
   },
   methods: {
+    filterOption (input, option) {
+      const text = option.componentOptions.children[0].text || ''
+      return text.toLowerCase().includes(
+        input.toLowerCase()
+      )
+    },
     async loadData () {
       try {
         this.loading = true

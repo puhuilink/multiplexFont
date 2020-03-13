@@ -54,7 +54,7 @@
 import gql from 'graphql-tag'
 import { buildTree, search } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
-import Template from '../../views/design/moduels/template/index'
+import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 
 export default {

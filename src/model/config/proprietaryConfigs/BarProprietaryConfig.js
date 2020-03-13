@@ -6,7 +6,8 @@
  * Email: dong.xing@outlook.com
  */
 
-import { ItemStyle, Legend } from './index'
+import _ from 'lodash'
+import { BarItemStyle, Legend, XAixs, YAixs } from './index'
 
 /**
  * 折现图专有属性配置
@@ -17,15 +18,28 @@ import { ItemStyle, Legend } from './index'
 export default class BarProprietaryConfig {
   constructor ({
     barType = 'single',
-    itemStyle = {},
+    barItemStyle = {},
     legend = {},
     barWidthType = 'auto',
-    barWidth = 'auto'
+    barWidth = 'auto',
+    xAxis = {},
+    yAxis = {}
   }) {
     this.barType = barType
     this.legend = new Legend(legend)
-    this.itemStyle = new ItemStyle(itemStyle)
+    this.barItemStyle = new BarItemStyle(barItemStyle)
     this.barWidthType = barWidthType
     this.barWidth = barWidth
+    this.xAxis = new XAixs(xAxis)
+    this.yAxis = new YAixs(yAxis)
+  }
+
+  /**
+   * 获取柱形图专有配置
+   */
+  getOption () {
+    return Object.assign(_.cloneDeep(this), {
+      itemStyle: this.barItemStyle.getOption()
+    })
   }
 }

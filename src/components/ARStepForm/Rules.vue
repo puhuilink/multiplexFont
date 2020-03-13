@@ -9,24 +9,19 @@
         <a-select
           allowClear
           v-decorator="[
-            'domian',
-            { rules: [{ required: true, message: '请选择域' }] },
+            'domain',
+            { initialValue: record.domain,
+              rules: [{ required: true, message: '请选择域' }]
+            },
           ]"
           placeholder="请选择域"
         >
-          <a-select-opt-group
-            v-for="(group,index) in screening.CIDomain"
-            :key="index"
-            :label="group.label"
+          <a-select-option
+            v-for="item in queryList.domainList"
+            :key="item.name_s"
           >
-            <a-select-option
-              v-for="item in group.options"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
-          </a-select-opt-group>
+            {{ item.label_s }}
+          </a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -37,23 +32,21 @@
         <a-select
           allowClear
           v-decorator="[
-            'CIType',
-            { rules: [{ required: true, message: '请选择类型' }] },
+            'node_type',
+            { initialValue: record.node_type,
+              rules: [{ required: true, message: '请选择类型' }] },
           ]"
           placeholder="请选择类型"
         >
           <a-select-opt-group
-            v-for="(group,index) in screening.CIType"
+            v-for="(group,index) in queryList.typeList"
             :key="index"
-            :label="group.label"
+            :label="group[0].parentname_s"
+            :allowClear="true"
           >
-            <a-select-option
-              v-for="item in group.options"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
+            <template v-for="(groupitem,indexs) in group">
+              <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+            </template>
           </a-select-opt-group>
         </a-select>
       </a-form-item>
@@ -66,22 +59,21 @@
           allowClear
           placeholder="请选择告警类型"
           v-decorator="[
-            'alarmType',
-            { rules: [{ required: true, message: '请选择告警类型' }] },
+            'alertCode',
+            {
+              initialValue: record.alertCode
+            }
           ]"
         >
           <a-select-opt-group
-            v-for="(group,index) in screening.alarmType"
+            v-for="(group,index) in queryList.alertList"
             :key="index"
-            :label="group.label"
+            :label="group[0].parentname_s"
+            :allowClear="true"
           >
-            <a-select-option
-              v-for="item in group.options"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
+            <template v-for="groupitem in group">
+              <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+            </template>
           </a-select-opt-group>
         </a-select>
       </a-form-item>
@@ -95,18 +87,20 @@
           allowClear
           placeholder="请选择告警级别"
           v-decorator="[
-            'alarmLevel',
-            { rules: [{ required: true, message: '请选择告警级别' }] },
+            'severityFilter',
+            {
+              initialValue: record.severity
+            }
           ]"
-          @change="alarmLevelChange"
         >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <!-- @change="alarmLevelChange" -->
+          <!-- <a-select-option value="checkall" key="checkall">全选</a-select-option> -->
           <a-select-option
-            v-for="item in levelList"
-            :key="item"
-            :value="item"
+            v-for="item in screening.severityList"
+            :key="item.value"
+            :value="item.value"
           >
-            {{ item }}
+            {{ item.text }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -120,8 +114,16 @@
 
 <script>
 import screening from '@/views/alarm/screening'
+import queryList from '@/api/alarm/queryList'
+
 export default {
   name: 'Rules',
+  props: {
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       screening,
@@ -130,12 +132,28 @@ export default {
       form: this.$form.createForm(this),
       loading: false,
       timer: 0,
-      levelList: [
-        'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
-      ]
+      queryList: {}
     }
   },
+  created () {
+    this.getqueryList()
+    const severity = this.record.severityFilter
+      ? typeof (this.record.severityFilter) === 'string'
+        ? this.record.severityFilter.split(',') : this.record.severityFilter : []
+    this.record.severity = severity.map(Number)
+  },
   methods: {
+    async getqueryList () {
+      queryList.domainList().then((e) => {
+        this.queryList.domainList = e
+      })
+      queryList.typeList().then((e) => {
+        this.queryList.typeList = e
+      })
+      queryList.alertList().then((e) => {
+        this.queryList.alertList = e
+      })
+    },
     nextStep () {
       const { form: { validateFields } } = this
       // 先校验，通过表单校验后，才进入下一步
@@ -147,33 +165,6 @@ export default {
     },
     prevStep () {
       this.$emit('prevStep')
-    },
-    /**
-     * 告警类型改变
-     */
-    alarmLevelChange (value) {
-      // this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
-      console.log(value)
-      let list = value
-      value.forEach(element => {
-        if (element === 'checkall') {
-          if (length - 1 === this.levelList && value[length - 1] === 'checkall') {
-            list = []
-            console.log('点击')
-          } else {
-            list = []
-            this.levelList.forEach(m => {
-              list.push(m)
-              console.log(list)
-              const a = this.form.getFieldsValue()
-              this.form.setFieldsValue({
-                alarmLevel: list
-              })
-              console.log(a)
-            })
-          }
-        }
-      })
     }
   },
   beforeDestroy () {

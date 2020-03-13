@@ -1,7 +1,8 @@
 import Vue from 'vue'
-import { login, getInfo, logout } from '@/api/login'
+import { getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
+import { login } from '@/api/controller/User'
 
 const user = {
   state: {
@@ -37,9 +38,8 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
+          Vue.ls.set(ACCESS_TOKEN, response.data, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', response.data)
           resolve()
         }).catch(error => {
           reject(error)

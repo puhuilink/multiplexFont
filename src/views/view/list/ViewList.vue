@@ -94,7 +94,7 @@ import { PageView } from '@/layouts'
 import { getViewList } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 import { Ellipsis } from '@/components'
 
 export default {
@@ -252,7 +252,7 @@ export default {
      */
     handleDesign () {
       const [ row ] = this.selectedRows
-      const { id, title } = row
+      const { view_id: id, view_title: title } = row
       this.$router.push({ name: 'Design', query: { id, title } })
     },
     /**

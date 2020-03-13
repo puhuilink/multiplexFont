@@ -26,8 +26,8 @@ export default {
   components: {},
   props: {
     value: {
-      type: Array,
-      default: () => ([])
+      type: String,
+      default: ''
     }
   },
   data: () => ({

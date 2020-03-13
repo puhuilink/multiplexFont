@@ -23,7 +23,7 @@
           <a-form-item label="前转路径名称">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['name', { initialValue: record.name, rules: [{ required: true, message: '名称不能为空!' }] }]"
+              v-decorator="['forward_path_title', { initialValue: record.forward_path_title, rules: [{ required: true, message: '名称不能为空!' }] }]"
             />
           </a-form-item>
         </a-col>
@@ -33,17 +33,17 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['forwardType', {
-                initialValue: record.forwardType
+              v-decorator="['forward_type', {
+                initialValue: record.forward_type,rules: [{ required: true, message: '前转类型不能为空!' }]
               }]"
               placeholder="请选择"
             >
               <a-select-option
                 v-for="item in screening.forwardType"
-                :key="item"
-                :value="item"
+                :key="item.value"
+                :value="item.value"
               >
-                {{ item }}
+                {{ item.label }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -54,17 +54,16 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['forwardTo', {
-                initialValue: record.forwardTo
+              v-decorator="['forward_user', {
+                initialValue: record.forward_user,rules: [{ required: true, message: '系统前转目标不能为空!' }]
               }]"
               placeholder="请选择"
             >
               <a-select-option
-                v-for="item in screening.forwardType"
-                :key="item"
-                :value="item"
+                v-for="item in queryList.userList"
+                :key="item.user_id"
               >
-                {{ item }}
+                {{ item.user_id }}/{{ item.staff_name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -73,16 +72,19 @@
           <a-form-item label="其他前转目标">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['other', { initialValue: record.other }]"
+              v-decorator="['forward_destination', {
+                initialValue: record.forward_destination
+              }]"
             />
           </a-form-item>
         </a-col>
+        <!-- 需商议 -->
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="前转周期">
             <a-input-number
               style="width: 100%"
               :disabled="mode=='See'"
-              v-decorator="['timeNum', { initialValue: record.timeNum }]"
+              v-decorator="['send_cycle', { initialValue: record.send_cycle }]"
             />
           </a-form-item>
         </a-col>
@@ -108,8 +110,8 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['send', {
-                initialValue: record.send,
+              v-decorator="['send_tag', {
+                initialValue: record.send_tag,
               }]"
               placeholder="请选择"
             >
@@ -141,8 +143,8 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['send', {
-                initialValue: record.send,
+              v-decorator="['template_path', {
+                initialValue: record.template_path,
               }]"
               placeholder="请选择"
             >
@@ -155,16 +157,12 @@
           <a-form-item label="备注">
             <a-input
               :disabled="mode=='See'"
-              v-decorator="['remarks', { initialValue: record.remarks }]"
+              v-decorator="['forward_comment', { initialValue: record.forward_comment }]"
             />
           </a-form-item>
         </a-col>
-        <a-col :lg="12" :md="12" :sm="24">
-          <a-form-item label="过滤条件">
-            <a-input
-              :disabled="mode=='See'"
-              v-decorator="['remarks', { initialValue: record.remarks }]"
-            />
+        <a-col :lg="24" :md="24" :sm="24">
+          <a-form-item label="过滤条件(选填)">
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
@@ -173,15 +171,14 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['alarmLevel', {
-                initialValue: record.CIType,
-                rules: [{ required: true, message: '故障级别不能为空!' }]
+              v-decorator="['incident_severity', {
+                initialValue: record.incident_severity
               }]"
             >
               <a-select-option
-                v-for="item in screening.levelList"
-                :key="item.level"
-                :value="item.level"
+                v-for="item in screening.severityList"
+                :key="item.value"
+                :value="item.value"
               >
                 {{ item.text }}
               </a-select-option>
@@ -194,9 +191,8 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['alarmLevel', {
-                initialValue: record.CIType,
-                rules: [{ required: true, message: '故障分类不能为空!' }]
+              v-decorator="['incident_type', {
+                initialValue: record.incident_type
               }]"
             >
               <a-select-option
@@ -222,6 +218,29 @@
 
 <script>
 import screening from '../../screening'
+import queryList from '@/api/alarm/queryList'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
+
+const insert = gql`mutation ($objects: [t_forward_path_insert_input!]! = []) {
+  insert_t_forward_path (objects: $objects) {
+    returning {
+      rid
+    }
+  }
+}`
+
+const update = gql`mutation update ($where: t_forward_path_bool_exp!, $val: t_forward_path_set_input) {
+  update_t_forward_path (
+    where: $where,
+    _set: $val
+  ) {
+      returning {
+      id_s
+    }
+  }
+}`
+
 export default {
   name: 'FMDetail',
   data () {
@@ -230,9 +249,9 @@ export default {
       visible: false,
       loading: false,
       record: '',
-      // 开启的父级操作来源
       mode: '',
-      screening
+      screening,
+      queryList: {}
     }
   },
   beforeCreate () {
@@ -240,6 +259,7 @@ export default {
   created () {
     window.form = this.form
     // this.form.setFieldsValue(record)
+    this.getqueryList()
   },
   beforeMount () {
   },
@@ -248,10 +268,12 @@ export default {
       this.visible = true
       this.record = record
       this.mode = mode
-      console.log(record, mode)
+    },
+    async getqueryList () {
+      this.queryList.userList = await queryList.userList()
+      this.queryList.faultList = await queryList.faultList()
     },
     handleCancel (e) {
-      console.log('Clicked cancel button')
       this.visible = false
     },
     /**
@@ -261,8 +283,68 @@ export default {
       e.preventDefault()
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
+          if (this.mode === 'New') {
+            this.insert(values)
+          } else if (this.mode === 'Edit') {
+            this.update(values)
+          }
         }
+      })
+    },
+    /**
+     * 新增
+     */
+    async insert (values) {
+      this.loading = true
+      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
+      return apollo.clients.alert.mutate({
+        mutation: insert,
+        variables: {
+          objects: [{
+            ...values
+          }]
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update (values) {
+      this.loading = true
+      return apollo.clients.alert.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'name_S': {
+              '_eq': this.record.name_s
+            }
+          },
+          val: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
       })
     }
   }
