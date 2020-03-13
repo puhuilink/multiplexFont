@@ -12,7 +12,8 @@ import './plugins'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
-import './mock'
+// TODO: judge whether env is development or production
+// import './mock'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
