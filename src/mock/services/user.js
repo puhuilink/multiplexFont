@@ -936,3 +936,7 @@ const userNav = (options) => {
 
 Mock.mock(/\/api\/user\/info/, 'get', info)
 Mock.mock(/\/api\/user\/nav/, 'get', userNav)
+
+export {
+  info
+}
