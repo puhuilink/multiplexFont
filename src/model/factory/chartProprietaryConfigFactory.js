@@ -9,18 +9,21 @@ import LinesProprietaryConfig from '../config/proprietaryConfigs/LinesProprietar
 import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryConfig'
 import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
+import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
 
 export default class ChartProprietaryConfigFactory {
-  static create ({ type, proprietaryConfig }) {
+  static create ({ type, proprietaryConfig = {} }) {
     switch (type) {
       case 'Lines':
-        return new LinesProprietaryConfig(proprietaryConfig || {})
+        return new LinesProprietaryConfig(proprietaryConfig)
       case 'Bar':
-        return new BarProprietaryConfig(proprietaryConfig || {})
+        return new BarProprietaryConfig(proprietaryConfig)
+      case 'Texts':
+        return new TextsProprietaryConfig(proprietaryConfig)
       case 'Topology':
-        return new TopologyProprietaryConfig(proprietaryConfig || {})
+        return new TopologyProprietaryConfig(proprietaryConfig)
       case 'ViewConfig':
-        return new ViewProprietaryConfig(proprietaryConfig || {})
+        return new ViewProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

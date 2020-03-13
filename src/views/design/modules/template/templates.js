@@ -24,14 +24,15 @@ const charts = [
   },
   {
     category: 'CHART', type: 'Topology', name: '拓扑图', icon: 'branches', width: 800, height: 600
-  }
+  },
+  { category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100 }
 ]
 
 // 元素模板
 const elements = [
-  {
-    category: 'ELEMENT', type: 'text', name: '文本', icon: 'font-colors', width: 300, height: 200
-  }
+  // {
+  //   category: 'ELEMENT', type: 'text', name: '文本', icon: 'font-colors', width: 300, height: 200
+  // }
 ]
 
 // 可拓展模板

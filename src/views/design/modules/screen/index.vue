@@ -33,9 +33,13 @@
                 <a-button type="primary"><a-icon type="upload" /></a-button>
               </a-tooltip>
             </a-upload>
-            <a-tooltip placement="top" title="清空画板">
-              <a-button type="danger" @click="clear"><a-icon type="delete" /></a-button>
-            </a-tooltip>
+            <a-popconfirm
+              title="确定清空画板？"
+              @confirm="clear"
+              okText="确定"
+              cancelText="取消">
+              <a-button type="danger" icon="delete">清空</a-button>
+            </a-popconfirm>
           </a-button-group>
         </div>
 
@@ -161,9 +165,7 @@ export default {
     // 滚动条
     perfectScrollBar: null,
     // 视图配置
-    viewOptions: null,
-    // 部件配置
-    widgetOptions: null
+    viewOptions: null
   }),
   mounted () {
     const { platform } = navigator
@@ -191,12 +193,6 @@ export default {
         // 更新滚动条
         this.perfectScrollBar && this.perfectScrollBar.update()
 
-        if (event.type === 'init' && !this.view.config) {
-          this.setInitStyle()
-        } else {
-          this.setStyle(event)
-        }
-
         // 设置屏幕对象
         this.setView({
           view: new View(Object.assign(
@@ -209,6 +205,14 @@ export default {
             }
           ))
         })
+
+        // 初始化场景进行样式设置
+        if (event.type === 'init' && !this.view.config) {
+          this.setInitStyle()
+        } else {
+          // 其他场景中，设置画板样式
+          this.setStyle(event)
+        }
       })
 
     // 选择激活的部件
@@ -367,6 +371,14 @@ export default {
         duration: 150,
         easing: 'linear'
       })
+
+      // 更新视图缩放
+      this.setView({
+        view: Object.assign(new View({
+          ...this.view,
+          scale: this.scale
+        }))
+      })
     },
     /**
      * 设置视图缩放及尺寸
@@ -404,6 +416,14 @@ export default {
           this.scale = Math.min(xScale, yScale)
         }
       }
+
+      // 更新视图缩放
+      this.setView({
+        view: Object.assign(new View({
+          ...this.view,
+          scale: this.scale
+        }))
+      })
 
       anime.set(this.$refs.view, {
         backgroundImage: mode === 'image' ? `url(${backgroundImage})` : '',
@@ -470,7 +490,18 @@ export default {
     /**
      * 清空画板
      */
-    clear () {},
+    clear () {
+      // 清空部件列表
+      this.setView({
+        view: new View({ ..._.pick(this.view, ['id', 'el', 'gauge', 'parent']) })
+      })
+      // 设置当前激活为当前画板
+      this.activateWidget({ widget: this.view })
+      // 初始化样式
+      this.setStyle({ type: 'reset' })
+      // 移除部件选择器
+      anime.set('#wrapper', { display: 'none' })
+    },
     /**
      * 预览视图
      */
