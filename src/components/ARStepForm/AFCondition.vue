@@ -48,7 +48,7 @@
           <a-radio :value="2">删除</a-radio>
         </a-radio-group>
       </a-form-item>
-      <a-form-item
+      <!-- <a-form-item
         label=" "
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
@@ -63,14 +63,14 @@
         >
           <a-select-option value="checkall" key="checkall">全选</a-select-option>
           <a-select-option
-            v-for="item in levelList"
-            :key="item"
+            v-for="item in screening.levelList"
+            :key="item.value"
             :value="item"
           >
             {{ item }}
           </a-select-option>
         </a-select>
-      </a-form-item>
+      </a-form-item> -->
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
         <a-button @click="prevStep">上一步</a-button>
         <a-button style="margin-left: 8px" :loading="loading" type="primary" @click="nextStep">提交</a-button>

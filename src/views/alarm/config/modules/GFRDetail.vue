@@ -22,11 +22,16 @@
     </a-steps>
 
     <div class="content">
-      <step1 v-if="currentTab === 0" @nextStep="nextStep"/>
-      <step2 v-if="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep"/>
-      <step3 v-if="currentTab === 2" @nextStep="nextStep" @prevStep="prevStep"/>
-      <step4 v-if="currentTab === 3" @nextStep="nextStep" @prevStep="prevStep"/>
-      <step5 v-if="currentTab === 4" @prevStep="prevStep" @finish="finish"/>
+      <step1 v-if="currentTab === 0" @nextStep="nextStep" :record="record"/>
+      <step2 v-if="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" :record="record"/>
+      <step3 v-if="currentTab === 2" @nextStep="nextStep" @prevStep="prevStep" :record="record"/>
+      <step4 v-if="currentTab === 3" @nextStep="nextStep" @prevStep="prevStep" :record="record"/>
+      <step5
+        v-if="currentTab === 4"
+        @prevStep="prevStep"
+        @handleSubmit="handleSubmit"
+        :record="record"
+      />
     </div>
 
     <!-- <template slot="footer" v-if="currentTab === 3">
@@ -38,14 +43,35 @@
 </template>
 
 <script>
+import screening from '../../screening'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 import step1 from '@/components/ARStepForm/Basis'
 import step2 from '@/components/ARStepForm/Rules'
 import step3 from '@/components/ARStepForm/AdvancedRules'
 import step4 from '@/components/ARStepForm/AlarmForward'
 import step5 from '@/components/ARStepForm/AFCondition'
 
+const insert = gql`mutation ($objects: [t_alert_rule_insert_input!]! = []) {
+  insert_t_alert_rule (objects: $objects) {
+    returning {
+      rule_id
+    }
+  }
+}`
+const update = gql`mutation update ($where: t_alert_rule_bool_exp!, $val: t_alert_rule_set_input) {
+  update_t_alert_rule (
+    where: $where,
+    _set: $val
+  ) {
+      returning {
+      rule_id
+    }
+  }
+}`
+
 export default {
-  name: 'AlarmTypesDetail',
+  name: 'GFRDetail',
   components: {
     step1,
     step2,
@@ -59,9 +85,10 @@ export default {
       form: this.$form.createForm(this),
       visible: false,
       loading: false,
-      record: '',
-      // 开启的父级操作来源
-      mode: ''
+      record: {},
+      mode: '',
+      formData: {},
+      oldkeys: []
     }
   },
   beforeCreate () {
@@ -74,25 +101,32 @@ export default {
   },
   methods: {
     async open (record, mode) {
+      this.currentTab = 0
       this.visible = true
-      this.record = record
-      console.log(record, mode)
       this.mode = mode
-      // if (record !== '') {
-      //   await this.$nextTick()
-      //   setTimeout(() => {
-      //     this.form.setFieldsValue({
-      //       ...record
-      //     })
-      //   })
-      // }
+      if (mode === 'New') {
+        this.record = {}
+      }
+      if (mode === 'Edit') {
+        const xmlContent = screening.xmlTojson(record.content)['alert-forward']
+        record.timeFromStr = record.timeFrom ? screening.timeToDate(record.timeFrom) : ''
+        record.timeToStr = record.timeTo ? screening.timeToDate(record.timeTo) : ''
+        record.incidentSeverity = parseInt(record.incidentSeverity)
+        this.record = {
+          ...record,
+          ...xmlContent
+        }
+        this.oldkeys = [[...Object.keys(xmlContent)], 'alert-forward']
+        console.log(record, this.record, xmlContent)
+      }
     },
     handleCancel (e) {
       console.log('Clicked cancel button')
       this.visible = false
     },
     // handler
-    nextStep (e) {
+    nextStep (val) {
+      this.formData = { ...val, ...this.formData }
       if (this.currentTab < 4) {
         this.currentTab += 1
       }
@@ -109,11 +143,82 @@ export default {
      * 表单效验
      */
     handleSubmit (e) {
-      e.preventDefault()
-      this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values)
+      this.formData = { ...e, ...this.formData }
+      const result = {
+        title: this.formData.title,
+        rule_type: 'alert-forward',
+        priority: this.formData.priority,
+        node_type: this.formData.node_type,
+        domain: this.formData.domain,
+        // is_exclusive: this.record.is_exclusive,
+        enabled: this.formData.enabled
+      }
+      const xmlstr = { }
+      this.oldkeys[0].map(e => {
+        xmlstr[ e ] = this.formData[ e ]
+      })
+      result.content = `<${this.oldkeys[1]}>${screening.jsonToxml(xmlstr)}</${this.oldkeys[1]}>`
+      console.log(result)
+      if (this.mode === 'New') {
+        this.insert(result)
+      } else if (this.mode === 'Edit') {
+        this.update(result)
+      }
+    },
+    /**
+     * 新增
+     */
+    async insert (values) {
+      this.loading = true
+      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
+      return apollo.clients.alert.mutate({
+        mutation: insert,
+        variables: {
+          objects: [{
+            ...values
+          }]
         }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 编辑
+     */
+    async update (values) {
+      this.loading = true
+      return apollo.clients.alert.mutate({
+        mutation: update,
+        variables: {
+          where: {
+            'rule_id': {
+              '_eq': this.record.rule_id
+            }
+          },
+          val: {
+            ...values
+          }
+        }
+      }).then(res => {
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('addSuccess')
+        this.handleCancel()
+      }).catch(err => {
+        throw err
+      }).finally(() => {
+        this.loading = false
       })
     }
   }

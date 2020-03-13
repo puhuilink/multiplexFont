@@ -2,94 +2,61 @@
   <div>
     <a-form :form="form" style="max-width: 500px; margin: 40px auto 0;">
       <a-form-item
-        label="新的告警类型"
+        label="告警合并依据"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-select
-          allowClear
-          v-decorator="[
-            'domian'
-          ]"
-          placeholder="请选择"
+        <a-checkbox-group
+          style="width: 100%;"
+          v-decorator="['merge_cells', { initialValue: mergeChoose }]"
         >
-          <a-select-opt-group
-            v-for="(group,index) in screening.CIDomain"
-            :key="index"
-            :label="group.label"
-          >
-            <a-select-option
-              v-for="item in group.options"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
-          </a-select-opt-group>
-        </a-select>
+          <a-row>
+            <a-col :span="8" v-for="(cell,index) in mergeCells" :key="index">
+              <a-checkbox :value="cell.option">
+                {{ cell.label }}
+              </a-checkbox>
+            </a-col>
+          </a-row>
+        </a-checkbox-group>
       </a-form-item>
       <a-form-item
-        label="新的告警级别"
+        label="最大合并数量"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-select
-          mode="multiple"
-          allowClear
-          placeholder="请选择告警级别"
-          v-decorator="[
-            'newLevel'
-          ]"
-          @change="alarmLevelChange"
-        >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
-          <a-select-option
-            v-for="item in levelList"
-            :key="item"
-            :value="item"
-          >
-            {{ item }}
-          </a-select-option>
-        </a-select>
+        <a-input-number
+          v-decorator="['mergeCount', { initialValue: record.mergeCount}]"
+        />
       </a-form-item>
       <a-form-item
-        label="新的告警标记"
+        label="合并时间窗口"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-radio-group
-          name="radioGroup"
-          v-decorator="['newTag', {
-            initialValue: 0}
-          ]"
-        >
-          <a-radio :value="0">添加</a-radio>
-          <a-radio :value="1">重置</a-radio>
-          <a-radio :value="2">删除</a-radio>
-        </a-radio-group>
+        <a-input
+          addonAfter="秒"
+          min="0"
+          max="100000"
+          v-decorator="['timeWindow', { initialValue: record.timeWindow}]"
+        />
       </a-form-item>
       <a-form-item
-        label=" "
+        label="合并选项"
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-select
-          mode="multiple"
-          allowClear
-          v-decorator="[
-            'newTag2'
-          ]"
-          @change="alarmLevelChange"
+        <a-checkbox-group
+          v-decorator="['update_cells', { initialValue: updateChoose }]"
+          style="width: 100%;"
         >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
-          <a-select-option
-            v-for="item in levelList"
-            :key="item"
-            :value="item"
-          >
-            {{ item }}
-          </a-select-option>
-        </a-select>
+          <a-row>
+            <a-col :span="8" v-for="(cell,index) in updateCells" :key="index">
+              <a-checkbox :value="cell.option">
+                {{ cell.label }}
+              </a-checkbox>
+            </a-col>
+          </a-row>
+        </a-checkbox-group>
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
         <a-button @click="prevStep">上一步</a-button>
@@ -104,6 +71,12 @@ import screening from '@/views/alarm/screening'
 
 export default {
   name: 'AlarmMerge',
+  props: {
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       screening,
@@ -112,23 +85,103 @@ export default {
       form: this.$form.createForm(this),
       loading: false,
       timer: 0,
-      levelList: [
-        'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
-      ]
+      mergeCells: [
+        {
+          option: 'mergeNodeId',
+          label: '来源节点'
+        },
+        {
+          option: 'mergeAlertCode',
+          label: '告警类型'
+        },
+        {
+          option: 'mergeInstance',
+          label: '来源实例'
+        },
+        {
+          option: 'mergeInstance2',
+          label: '来源实例2'
+        },
+        {
+          option: 'mergeSeverity',
+          label: '告警级别'
+        },
+        {
+          option: 'mergeAgentId',
+          label: '采集系统'
+        },
+        {
+          option: 'mergeMessage',
+          label: '告警内容'
+        }
+      ],
+      updateCells: [
+        {
+          option: 'updateAlert',
+          label: '更新告警内容'
+        },
+        {
+          option: 'autoRecover',
+          label: '自动恢复'
+        },
+        {
+          option: 'updateTags',
+          label: '更新告警标记'
+        }
+      ],
+      mergeChoose: [],
+      updateChoose: []
     }
   },
+  created () {
+    this.getDefaultValue()
+  },
   methods: {
+    getDefaultValue () {
+      const defaultValue = []
+      const defaultUpvalue = []
+      this.mergeCells.map(e => {
+        if (this.record[e.option] === 'true') {
+          defaultValue.push(e.option)
+        }
+      })
+      this.mergeChoose = defaultValue
+      this.updateCells.map(e => {
+        if (this.record[e.option] === 'true') {
+          defaultUpvalue.push(e.option)
+        }
+      })
+      this.updateChoose = defaultUpvalue
+    },
     nextStep () {
       const that = this
       const { form: { validateFields } } = this
       that.loading = true
       validateFields((err, values) => {
         if (!err) {
-          console.log('表单 values', values)
-          that.timer = setTimeout(function () {
-            that.loading = false
-            that.$emit('handleSubmit')
-          }, 1500)
+          const re = {}
+          that.mergeCells.map(e => {
+            if (values['merge_cells'].indexOf(e.option) === -1) {
+              re[e.option] = false
+            } else {
+              re[e.option] = true
+            }
+          })
+          that.updateCells.map(e => {
+            if (values['update_cells'].indexOf(e.option) === -1) {
+              re[e.option] = false
+            } else {
+              re[e.option] = true
+            }
+          })
+          values = {
+            ...values,
+            ...re
+          }
+          delete (values.merge_cells)
+          delete (values.update_cells)
+          that.loading = false
+          that.$emit('handleSubmit', values)
         } else {
           that.loading = false
         }

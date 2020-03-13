@@ -28,7 +28,56 @@ function domainList () {
 }
 
 /**
- * 获取cI类型
+ * 获取故障类型list
+ */
+function faultList () {
+  return new Promise((resolve, reject) => {
+    apollo.clients.alert.query({
+      query: gql`query instanceList($where: t_incident_type_bool_exp = {}) {
+        data: t_incident_type(where: $where) {
+          parent_type_id
+          comments
+          parent_type_title
+          type_id
+          type_title
+        }
+      }`,
+      variables: {
+        where: {}
+      }
+    }).then(r => {
+      resolve(r.data.data || [])
+    })
+  })
+}
+
+/**
+ * 获取前转目标List
+ */
+function userList () {
+  return new Promise((resolve, reject) => {
+    apollo.clients.alert.query({
+      query: gql`query instanceList($where: t_user_bool_exp = {}) {
+        data: t_user(where: $where) {
+          auth_method
+          createdate
+          creator
+          email
+          user_id
+          staff_name
+          mobile_phone
+        }
+      }`,
+      variables: {
+        where: {}
+      }
+    }).then(r => {
+      resolve(r.data.data || [])
+    })
+  })
+}
+/**
+ * 获取cI类型list
  */
 function typeList () {
   return new Promise((resolve, reject) => {
@@ -203,6 +252,8 @@ function agentList () {
 
 export default {
   domainList,
+  faultList,
+  userList,
   typeList,
   nodeList,
   kpiList,
