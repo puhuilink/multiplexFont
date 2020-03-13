@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { getInfo, logout } from '@/api/login'
+import { logout } from '@/api/login'
+import { info } from '@/mock/services/user'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 import { login } from '@/api/controller/User'
@@ -49,8 +50,11 @@ const user = {
 
     // 获取用户信息
     GetInfo ({ commit }) {
-      return new Promise((resolve, reject) => {
-        getInfo().then(response => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
+          const response = info()
+          // const response= await getInfo()
           const result = response.result
 
           if (result.role && result.role.permissions.length > 0) {
@@ -73,9 +77,9 @@ const user = {
           commit('SET_AVATAR', result.avatar)
 
           resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
+        } catch (e) {
+          reject(e)
+        }
       })
     },
 
