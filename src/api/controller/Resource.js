@@ -54,14 +54,13 @@ export const getKpiList = function (where = {}) {
  * @param {Objetc} set 增量内容
  */
 export const editModel = function (did, set = {}) {
-  // return apollo.clients.resource.mutate({
-  //   mutation: mutationUpdateModel,
-  //   variables: {
-  //     did,
-  //     set
-  //   }
-  // })
-  return editModelOld(did, set)
+  return apollo.clients.resource.mutate({
+    mutation: mutationUpdateModel,
+    variables: {
+      did,
+      set
+    }
+  })
 }
 
 /**
@@ -74,25 +73,17 @@ export const editModelOld = function (did, set = {}) {
       data[modelMapping[key]] = set[key]
     }
   })
-  // const {
-  //   name_s: name,
-  //   label_s: label,
-  //   icon_s: icon,
-  //   edit_b: edit,
-  //   batch_b: batch,
-  //   encrypt_s: encrypt,
-  //   order_i: order
-  // } = set
-
   return oldRequest.post('/urmp/api/rest/post/modelService/update', [data, '', []])
 }
 
 /**
  * （批量）新增资源模型
+ * TODO: 数组参数改为对象
  * @param {Array} objects
  * @return {*}
  */
 export const addModels = function (objects = []) {
+  // return addModelsOld(objects)
   // TODO: 数据表 did 唯一，是否要（需要）做 name_s 唯一？
   // TODO: 旧的业务逻辑，确实是根据 name_s 唯一的，如何迁移到以 did 构建树？
   // FIXME: 目前的构建树方式，是认为 name_s 唯一的
@@ -106,17 +97,17 @@ export const addModels = function (objects = []) {
 
 /**
  * 旧系统（批量）新增资源模型
+ * TODO: 数组参数改为对象
  * @param {Array} objects
  * @return {*}
  */
 export const addModelsOld = function (objects = []) {
-  // TODO: 数据表 did 唯一，是否要（需要）做 name_s 唯一？
-  // TODO: 旧的业务逻辑，确实是根据 name_s 唯一的，如何迁移到以 did 构建树？
-  // FIXME: 目前的构建树方式，是认为 name_s 唯一的
-  return apollo.clients.resource.mutate({
-    mutation: mutationInsertModels,
-    variables: {
-      objects
+  const [object] = objects
+  const data = {}
+  Object.keys(object).forEach(key => {
+    if (modelMapping[key]) {
+      data[modelMapping[key]] = object[key]
     }
   })
+  return oldRequest.post('/urmp/api/rest/post/modelService/add', [data, data.parentName, '', []])
 }
