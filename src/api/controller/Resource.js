@@ -7,6 +7,7 @@ import {
   queryInsanceList,
   queryKpiList
 } from '../graphql/Resource'
+import { oldRequest } from '@/utils/oldRequest'
 
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
@@ -59,6 +60,20 @@ export const editModel = function (did, set = {}) {
       set
     }
   })
+}
+
+/**
+ * 旧系统更新模型
+ * @param {*} data
+ * @param {*} unknown
+ * @param {*} unkonwnArr
+ */
+export const editModelOld = function (data = {}, unknown = '', unkonwnArr = []) {
+  return oldRequest.post('/urmp/api/rest/post/modelService/update', [
+    data,
+    unknown,
+    unkonwnArr
+  ])
 }
 
 /**

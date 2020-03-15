@@ -135,7 +135,8 @@
 </template>
 
 <script>
-import { editModel, addModels } from '@/api/controller/Resource'
+// eslint-disable-next-line
+import { editModel, editModelOld, addModels } from '@/api/controller/Resource'
 
 const formItemLayout = {
   labelCol: {
@@ -227,6 +228,7 @@ export default {
     },
     async update () {
       try {
+        await editModelOld()
         const values = await this.getFormFields()
         this.loading = true
         await editModel(this.record.did, values)
