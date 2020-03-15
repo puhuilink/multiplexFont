@@ -39,13 +39,13 @@ const err = (error) => {
 }
 
 // request interceptor
-service.interceptors.request.use(config => {
-  const token = Vue.ls.get(ACCESS_TOKEN)
-  if (token) {
-    config.headers['Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
-  }
-  return config
-}, err)
+// service.interceptors.request.use(config => {
+//   const token = Vue.ls.get(ACCESS_TOKEN)
+//   if (token) {
+//     config.headers['Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+//   }
+//   return config
+// }, err)
 
 // response interceptor
 service.interceptors.response.use((response) => {

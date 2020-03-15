@@ -64,16 +64,27 @@ export const editModel = function (did, set = {}) {
 
 /**
  * 旧系统更新模型
- * @param {*} data
- * @param {*} unknown
- * @param {*} unkonwnArr
  */
-export const editModelOld = function (data = {}, unknown = '', unkonwnArr = []) {
-  return oldRequest.post('/urmp/api/rest/post/modelService/update', [
-    data,
-    unknown,
-    unkonwnArr
-  ])
+export const editModelOld = function (did, set = {}) {
+  const {
+    name_s: name,
+    label_s: label,
+    icon_s: icon,
+    edit_b: edit,
+    batch_b: batch,
+    encrypt_s: encrypt,
+    order_i: order
+  } = set
+
+  return oldRequest.post('/urmp/api/rest/post/modelService/update', [{
+    name,
+    label,
+    icon,
+    edit,
+    batch,
+    encrypt,
+    order
+  }, '', []])
 }
 
 /**
