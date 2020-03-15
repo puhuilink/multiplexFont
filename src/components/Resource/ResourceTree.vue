@@ -56,6 +56,8 @@ import { buildTree, search } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
+// eslint-disable-next-line
+import { deleteModel } from '@/api/controller/Resource'
 
 export default {
   name: 'ResourceTree',
@@ -174,12 +176,12 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
+        await deleteModel(this.selectedKey)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
       } catch (e) {
         throw e
       } finally {
-
       }
     },
     /**

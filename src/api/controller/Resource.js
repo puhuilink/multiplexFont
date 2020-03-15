@@ -9,6 +9,7 @@ import {
 } from '../graphql/Resource'
 import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
+import store from '@/store'
 
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
@@ -110,4 +111,16 @@ export const addModelsOld = function (objects = []) {
     }
   })
   return oldRequest.post('/urmp/api/rest/post/modelService/add', [data, data.parentName, '', []])
+}
+
+export const deleteModel = function (name) {
+  // return deleteModelOld(name)
+}
+
+export const deleteModelOld = function (name) {
+  return oldRequest.post('/urmp/api/rest/post/modelService/remove', [
+    name,
+    store.state.user.name,
+    ['']
+  ])
 }
