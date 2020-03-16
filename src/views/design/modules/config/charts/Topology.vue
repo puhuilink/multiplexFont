@@ -33,29 +33,9 @@
             <!-- S 尺寸 -->
             <a-collapse-panel header="尺寸" key="1">
 
-              <div class="comment-template__item">
-                <p class="comment-template__leading">宽:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="number"
-                    v-model.number="config.commonConfig.width"
-                    min="0"
-                    @change="change('size', 'width')" />
-                </div>
-              </div>
-              <!-- / 宽 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">高:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="number"
-                    v-model.number="config.commonConfig.height"
-                    min="0"
-                    @change="change('size', 'height')" />
-                </div>
-              </div>
-              <!-- / 高 -->
+              <!-- S 公共配置模板 -->
+              <CommonTemplate />
+              <!-- E 公共配置模板 -->
 
             </a-collapse-panel>
             <!-- E 尺寸 -->
@@ -213,7 +193,7 @@
 import _ from 'lodash'
 import anime from 'animejs'
 import Grid from '@antv/g6/build/grid'
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import ColorPicker from '@/components/ColorPicker/index'
 import CommonTemplate from '../common/index'
@@ -229,6 +209,7 @@ export default {
   mixins: [CommonTemplate],
   components: {
     ColorPicker,
+    CommonTemplate,
     ChartProprietaryTemplate,
     DataSourceTemplate,
     CommonNodeTemplate,
@@ -246,6 +227,10 @@ export default {
     wrapperService: new WrapperService()
   }),
   computed: {
+    ...mapState('screen', ['activeWidget']),
+    config () {
+      return _.cloneDeep(this.activeWidget.config)
+    },
     // 激活的面板
     activePanel () {
       return (this.activeNode && this.mode === 'default') || this.activeEdge ? 2 : 1
@@ -266,15 +251,15 @@ export default {
       setEdgeConfig: ScreenMutations.SET_EDGE_CONFIG
     }),
     /**
-     * 移除拓扑部件
-     */
+       * 移除拓扑部件
+       */
     remove () {
       this.topologyEditable && this.topologyEdit()
       this.removeWidget({ widgetId: this.activeWidget.widgetId })
     },
     /**
-     * 拓扑图是否可编辑
-     */
+       * 拓扑图是否可编辑
+       */
     topologyEdit () {
       // 更改拓扑图编辑状态
       this.modifyTopologyEditable({
@@ -368,8 +353,8 @@ export default {
       }
     },
     /**
-     * 拓扑图是否可更改尺寸
-     */
+       * 拓扑图是否可更改尺寸
+       */
     topologyResize () {
       this.wrapperService.next({
         el: 'topology',
@@ -378,31 +363,31 @@ export default {
       })
     },
     /**
-     * 模式更改
-     */
+       * 模式更改
+       */
     modeChange () {
       const { render: { chart } } = this.activeWidget
       chart.setMode(this.mode)
     },
     /**
-     * 边配置更改事件
-     */
+       * 边配置更改事件
+       */
     edgeConfigChange () {
       this.setEdgeConfig({
         edgeConfig: this.edge
       })
     },
     /**
-     * 检查是否开启网格
-     */
+       * 检查是否开启网格
+       */
     checkGridStatus () {
       const { render: { chart } } = this.activeWidget
       const [hasGridPlugin] = chart.get('plugins')
       this.isDisplayGrid = !!hasGridPlugin
     },
     /**
-     * 拓扑网格显示更改事件
-     */
+       * 拓扑网格显示更改事件
+       */
     gridChange () {
       const { render: { chart } } = this.activeWidget
       const [grid] = chart.get('plugins')

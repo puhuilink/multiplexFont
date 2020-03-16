@@ -52,25 +52,35 @@
               <a-radio-group
                 buttonStyle="solid"
                 v-model="targetView.config.proprietaryConfig.mode"
-                @change="change">
-                <a-radio-button value="color">颜色</a-radio-button>
+                @change="modeChange">
+                <a-radio-button value="single">单一</a-radio-button>
+                <a-radio-button value="linear">渐变</a-radio-button>
                 <a-radio-button value="image">图片</a-radio-button>
               </a-radio-group>
             </div>
           </div>
           <!-- / 模式 -->
 
-          <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'color'">
-            <p class="comment-template__leading">颜色:</p>
+          <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'single'">
             <div class="comment-template__inner">
               <ColorPicker
                 v-model="targetView.config.proprietaryConfig.backgroundColor"
-                @change="change" />
+                @change="singleColorChange" />
             </div>
           </div>
-          <!-- / 颜色 -->
+          <!-- / 单一颜色 -->
 
-          <div v-else>
+          <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'linear'">
+            <div class="comment-template__inner">
+              <LinearColorPicker
+                show-angle
+                v-model="targetView.config.proprietaryConfig.backgroundColor"
+                @change="linearColorChange" />
+            </div>
+          </div>
+          <!-- / 渐变颜色 -->
+
+          <div v-if="targetView.config.proprietaryConfig.mode === 'image'">
             <div class="comment-template__item">
               <p class="comment-template__leading">图片:</p>
               <div class="comment-template__inner">
@@ -90,8 +100,8 @@
                   @change="change">
                   <a-select-option value="no-repeat">不重复</a-select-option>
                   <a-select-option value="repeat">重复</a-select-option>
-                  <a-select-option value="repeat-x">重复X轴</a-select-option>
-                  <a-select-option value="repeat-y">重复Y轴</a-select-option>
+                  <a-select-option value="repeat-x">水平重复</a-select-option>
+                  <a-select-option value="repeat-y">垂直重复</a-select-option>
                 </a-select>
               </div>
             </div>
@@ -179,16 +189,24 @@ import { takeWhile, map, filter, switchMap } from 'rxjs/operators'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import View from '@/model/view'
-import ColorPicker from '@/components/ColorPicker/index.vue'
+import ColorPicker from '@/components/ColorPicker'
+import LinearColorPicker from '@/components/LinearColorPicker'
 import ViewService from './index'
 
 export default {
   name: 'ViewConfig',
   components: {
-    ColorPicker
+    ColorPicker,
+    LinearColorPicker
   },
   data: () => ({
     isSubscribed: true,
+    singleColor: 'rgba(255, 255, 255, 1)',
+    linearColor: {
+      start: 'rgba(255, 255, 255, 1)',
+      end: 'rgba(0, 0, 0, 1)',
+      angle: 180
+    },
     viewService: new ViewService()
   }),
   mounted () {
@@ -218,6 +236,32 @@ export default {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW
     }),
+    /**
+       * 单一颜色更改
+       */
+    singleColorChange () {
+      this.singleColor = this.targetView.config.proprietaryConfig.backgroundColor
+      this.change()
+    },
+    /**
+       * 渐变颜色更改
+       */
+    linearColorChange () {
+      this.linearColor = this.targetView.config.proprietaryConfig.backgroundColor
+      this.change()
+    },
+    /**
+       * 模式更改
+       */
+    modeChange () {
+      if (this.targetView.config.proprietaryConfig.mode !== 'image') {
+        const backgroundColor = this.targetView.config.proprietaryConfig.mode === 'single'
+          ? this.singleColor
+          : this.linearColor
+        Object.assign(this.targetView.config.proprietaryConfig, { backgroundColor })
+      }
+      this.change()
+    },
     change () {
       this.setView({
         view: new View(this.targetView)
@@ -232,55 +276,55 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .view-config {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    padding-top: 16px;
+.view-config {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  padding-top: 16px;
 
-    &__content {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-evenly;
-      align-items: center;
+  &__content {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
 
-      .ant-input-group-wrapper {
-        margin: 0 12px;
-      }
-    }
-
-    &__screen {
-      display: flex;
-      flex-flow: column nowrap;
-      justify-content: flex-start;
-      align-items: center;
-
-      & button {
-        width: 100%;
-      }
-    }
-
-    &__screenshot {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 140px;
-      margin: 0 12px 12px;
-      background: #e4e4e4;
-      padding: 6px;
-      border-radius: 4px;
-
-      img {
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      p {
-        color: #1890ff;
-        margin: 0;
-      }
+    .ant-input-group-wrapper {
+      margin: 0 12px;
     }
   }
+
+  &__screen {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    & button {
+      width: 100%;
+    }
+  }
+
+  &__screenshot {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 140px;
+    margin: 0 12px 12px;
+    background: #e4e4e4;
+    padding: 6px;
+    border-radius: 4px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    p {
+      color: #1890ff;
+      margin: 0;
+    }
+  }
+}
 </style>
