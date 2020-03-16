@@ -5,7 +5,8 @@ const info = (options) => {
   console.log('options', options)
   const userInfo = {
     'id': '4291d7da9005377ec9aec4a71ea837f',
-    'name': '超级管理员',
+    'staffname': '超级管理员',
+    'name': 'administrator',
     'username': 'admin',
     'password': '',
     'avatar': '/avatar.jpg',
@@ -936,3 +937,7 @@ const userNav = (options) => {
 
 Mock.mock(/\/api\/user\/info/, 'get', info)
 Mock.mock(/\/api\/user\/nav/, 'get', userNav)
+
+export {
+  info
+}

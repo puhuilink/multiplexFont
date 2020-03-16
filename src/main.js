@@ -8,11 +8,13 @@ import router from './router'
 import store from './store/'
 import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
+import { loginOld } from '@/api/controller/User'
 import './plugins'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
-import './mock'
+// TODO: judge whether env is development or production
+// import './mock'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
@@ -28,6 +30,9 @@ Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
+
+// TODO: 此处为兼容老系统 api，开发时开启
+loginOld().then()
 
 new Vue({
   router,
