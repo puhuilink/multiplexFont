@@ -160,6 +160,25 @@ function timeToDate (time) {
 function dateToTime (date) {
   return moment(date, 'YYYY-MM-DD HH:mm:ss').valueOf()
 }
+/**
+ * 生成唯一id
+ */
+function createUniqueId () {
+  const unx = Date.now()
+  const length = 20 - unx.toString().length
+  if (length > 0) {
+    var data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    var nums = ''
+    for (var i = 0; i < length; i++) {
+      var r = parseInt(Math.random() * 10)
+      nums += data[r]
+    }
+    return unx + nums
+  } else {
+    return false
+  }
+}
+
 export default {
   levelList,
   forwardType,
@@ -170,5 +189,6 @@ export default {
   xmlTojson,
   jsonToxml,
   timeToDate,
-  dateToTime
+  dateToTime,
+  createUniqueId
 }
