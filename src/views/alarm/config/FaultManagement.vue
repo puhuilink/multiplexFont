@@ -45,8 +45,8 @@
                     style="width: 100%;"
                     v-model="queryParam.enabled"
                   >
-                    <a-select-option value="true">启用</a-select-option>
-                    <a-select-option value="false">禁用</a-select-option>
+                    <a-select-option :value="true">启用</a-select-option>
+                    <a-select-option :value="false">禁用</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -204,7 +204,7 @@ const enableUpdate = gql`mutation update_t_forward_path ($id: [numeric!] = [], $
     },
     _set: {
       enabled: $enabled
-    }
+    } 
   ) {
     affected_rows
   }
@@ -372,7 +372,7 @@ export default {
             } : {},
             ...this.queryParam.enabled ? {
               enabled: {
-                _eq: this.queryParam.enabled === 'true'
+                _eq: this.queryParam.enabled
               }
             } : {}
           }
