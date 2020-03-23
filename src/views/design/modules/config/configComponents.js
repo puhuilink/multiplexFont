@@ -10,13 +10,15 @@ import Lines from './charts/Lines'
 import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
+import HealthDegree from './charts/HealthDegree.vue'
 
 // 图表模板配置
 const charts = {
   Bar,
   Lines,
   Texts,
-  Topology
+  Topology,
+  HealthDegree
 }
 
 // 元素模板配置
