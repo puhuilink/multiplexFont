@@ -37,6 +37,7 @@
               label="Ci实例"
               :labelCol="formItemLayout.labelCol"
               :wrapperCol="formItemLayout.wrapperCol"
+              required
             >
               <CiInstanceSelect
                 labelInValue
