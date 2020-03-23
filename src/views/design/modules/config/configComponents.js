@@ -10,12 +10,14 @@ import Lines from './charts/Lines'
 import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
+import Rects from './charts/Rects'
 
 // 图表模板配置
 const charts = {
   Bar,
   Lines,
   Texts,
+  Rects,
   Topology
 }
 
