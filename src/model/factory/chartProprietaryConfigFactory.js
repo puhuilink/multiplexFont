@@ -11,6 +11,7 @@ import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProp
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
 import HealthDegreeProprietaryConfig from '../config/proprietaryConfigs/HealthDegreeProprietaryConfig'
+import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryConfig'
 
 export default class ChartProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -23,6 +24,8 @@ export default class ChartProprietaryConfigFactory {
         return new TextsProprietaryConfig(proprietaryConfig)
       case 'Topology':
         return new TopologyProprietaryConfig(proprietaryConfig)
+      case 'Rect':
+        return new RectProprietaryConfig(proprietaryConfig)
       case 'ViewConfig':
         return new ViewProprietaryConfig(proprietaryConfig)
       case 'HealthDegree':

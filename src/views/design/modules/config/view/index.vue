@@ -6,167 +6,168 @@
 * Email: dong.xing@outlook.com
 */
 <template>
-  <div class="comment-template">
-    <div class="comment-template__header">
-      <p class="comment-template__name">画板</p>
-    </div>
+  <div class="view-config">
+    <a-collapse :activeKey="[1, 2, 3, 4]" :bordered="false">
 
-    <!-- S 视图配置 -->
-    <div class="view-config">
-      <a-collapse :activeKey="[1, 2, 3, 4]" :bordered="false">
+      <!-- S 尺寸 -->
+      <a-collapse-panel header="尺寸" key="1">
 
-        <!-- S 尺寸 -->
-        <a-collapse-panel header="尺寸" key="1">
+        <div class="comment-template__item">
+          <p class="comment-template__leading">宽:</p>
+          <div class="comment-template__inner">
+            <a-input
+              type="number"
+              v-model.number="targetView.config.commonConfig.width"
+              @change="change" />
+          </div>
+        </div>
+        <!-- / 宽 -->
 
+        <div class="comment-template__item">
+          <p class="comment-template__leading">高:</p>
+          <div class="comment-template__inner">
+            <a-input
+              type="number"
+              v-model.number="targetView.config.commonConfig.height"
+              @change="change" />
+          </div>
+        </div>
+        <!-- / 高 -->
+
+      </a-collapse-panel>
+      <!-- E 尺寸 -->
+
+      <!-- E 背景 -->
+      <a-collapse-panel header="背景" key="2">
+
+        <div class="comment-template__item">
+          <p class="comment-template__leading">模式:</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-radio-group
+              buttonStyle="solid"
+              v-model="targetView.config.proprietaryConfig.mode"
+              @change="modeChange">
+              <a-radio-button value="single">单一</a-radio-button>
+              <a-radio-button value="linear">渐变</a-radio-button>
+              <a-radio-button value="image">图片</a-radio-button>
+            </a-radio-group>
+          </div>
+        </div>
+        <!-- / 模式 -->
+
+        <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'single'">
+          <div class="comment-template__inner">
+            <ColorPicker
+              v-model="targetView.config.proprietaryConfig.backgroundColor"
+              @change="singleColorChange" />
+          </div>
+        </div>
+        <!-- / 单一颜色 -->
+
+        <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'linear'">
+          <div class="comment-template__inner">
+            <LinearColorPicker
+              show-angle
+              v-model="targetView.config.proprietaryConfig.backgroundColor"
+              @change="linearColorChange" />
+          </div>
+        </div>
+        <!-- / 渐变颜色 -->
+
+        <div v-if="targetView.config.proprietaryConfig.mode === 'image'">
           <div class="comment-template__item">
-            <p class="comment-template__leading">宽:</p>
+            <p class="comment-template__leading">图片:</p>
             <div class="comment-template__inner">
               <a-input
-                type="number"
-                v-model.number="targetView.config.commonConfig.width"
+                type="text"
+                v-model.trim="targetView.config.proprietaryConfig.backgroundImage"
                 @change="change" />
             </div>
           </div>
-          <!-- / 宽 -->
+          <!-- / 图片 -->
 
           <div class="comment-template__item">
-            <p class="comment-template__leading">高:</p>
-            <div class="comment-template__inner">
-              <a-input
-                type="number"
-                v-model.number="targetView.config.commonConfig.height"
-                @change="change" />
-            </div>
-          </div>
-          <!-- / 高 -->
-
-        </a-collapse-panel>
-        <!-- E 尺寸 -->
-
-        <!-- E 背景 -->
-        <a-collapse-panel header="背景" key="2">
-
-          <div class="comment-template__item">
-            <p class="comment-template__leading">模式:</p>
-            <div class="comment-template__inner comment-template__end">
-              <a-radio-group
-                buttonStyle="solid"
-                v-model="targetView.config.proprietaryConfig.mode"
-                @change="change">
-                <a-radio-button value="color">颜色</a-radio-button>
-                <a-radio-button value="image">图片</a-radio-button>
-              </a-radio-group>
-            </div>
-          </div>
-          <!-- / 模式 -->
-
-          <div class="comment-template__item" v-if="targetView.config.proprietaryConfig.mode === 'color'">
-            <p class="comment-template__leading">颜色:</p>
-            <div class="comment-template__inner">
-              <ColorPicker
-                v-model="targetView.config.proprietaryConfig.backgroundColor"
-                @change="change" />
-            </div>
-          </div>
-          <!-- / 颜色 -->
-
-          <div v-else>
-            <div class="comment-template__item">
-              <p class="comment-template__leading">图片:</p>
-              <div class="comment-template__inner">
-                <a-input
-                  type="text"
-                  v-model.trim="targetView.config.proprietaryConfig.backgroundImage"
-                  @change="change" />
-              </div>
-            </div>
-            <!-- / 图片 -->
-
-            <div class="comment-template__item">
-              <p class="comment-template__leading">重复:</p>
-              <div class="comment-template__inner">
-                <a-select
-                  v-model="targetView.config.proprietaryConfig.backgroundRepeat"
-                  @change="change">
-                  <a-select-option value="no-repeat">不重复</a-select-option>
-                  <a-select-option value="repeat">重复</a-select-option>
-                  <a-select-option value="repeat-x">重复X轴</a-select-option>
-                  <a-select-option value="repeat-y">重复Y轴</a-select-option>
-                </a-select>
-              </div>
-            </div>
-            <!-- / 尺寸 -->
-
-            <div class="comment-template__item">
-              <p class="comment-template__leading">尺寸:</p>
-              <div class="comment-template__inner">
-                <a-select
-                  v-model="targetView.config.proprietaryConfig.backgroundSize"
-                  @change="change">
-                  <a-select-option value="">默认大小</a-select-option>
-                  <a-select-option value="contain">伸展扩展以适配屏幕</a-select-option>
-                  <a-select-option value="cover">等比扩展以适配屏幕</a-select-option>
-                </a-select>
-              </div>
-            </div>
-            <!-- / 尺寸 -->
-
-          </div>
-
-        </a-collapse-panel>
-        <!-- E 背景 -->
-
-        <!-- S 显示 -->
-        <a-collapse-panel header="显示" key="3">
-
-          <div class="comment-template__item">
-            <p class="comment-template__leading">缩放模式:</p>
+            <p class="comment-template__leading">重复:</p>
             <div class="comment-template__inner">
               <a-select
-                v-model="targetView.config.proprietaryConfig.scaleMode"
+                v-model="targetView.config.proprietaryConfig.backgroundRepeat"
                 @change="change">
-                <a-select-option value="auto">自适应</a-select-option>
-                <a-select-option value="primary">原始尺寸</a-select-option>
-                <a-select-option value="fullscreen">全屏显示</a-select-option>
-                <a-select-option value="fullWidth">等比宽度铺满</a-select-option>
-                <a-select-option value="fullHeight">等比高度铺满</a-select-option>
+                <a-select-option value="no-repeat">不重复</a-select-option>
+                <a-select-option value="repeat">重复</a-select-option>
+                <a-select-option value="repeat-x">水平重复</a-select-option>
+                <a-select-option value="repeat-y">垂直重复</a-select-option>
               </a-select>
             </div>
           </div>
-          <!-- / 缩放模式 -->
-
-        </a-collapse-panel>
-        <!-- E 显示 -->
-
-        <!-- S 屏幕截图 -->
-        <a-collapse-panel header="封面" key="4">
-
-          <div class="view-config__screen">
-            <div class="view-config__screenshot">
-              <img :src="targetView.cover" alt="" v-if="targetView.cover" />
-              <p v-else>视图封面</p>
-            </div>
-          </div>
+          <!-- / 尺寸 -->
 
           <div class="comment-template__item">
-            <p class="comment-template__leading">封面:</p>
+            <p class="comment-template__leading">尺寸:</p>
             <div class="comment-template__inner">
-              <a-textarea
-                ref="screenshot"
-                type="text"
-                v-model.trim="targetView.cover"
-                @change="change" />
+              <a-select
+                v-model="targetView.config.proprietaryConfig.backgroundSize"
+                @change="change">
+                <a-select-option value="">默认大小</a-select-option>
+                <a-select-option value="contain">伸展扩展以适配屏幕</a-select-option>
+                <a-select-option value="cover">等比扩展以适配屏幕</a-select-option>
+              </a-select>
             </div>
           </div>
-          <!-- / 封面 -->
+          <!-- / 尺寸 -->
 
-        </a-collapse-panel>
-        <!-- E 屏幕截图 -->
+        </div>
 
-      </a-collapse>
+      </a-collapse-panel>
+      <!-- E 背景 -->
 
-    </div>
-    <!-- E 视图配置 -->
+      <!-- S 显示 -->
+      <a-collapse-panel header="显示" key="3">
+
+        <div class="comment-template__item">
+          <p class="comment-template__leading">缩放模式:</p>
+          <div class="comment-template__inner">
+            <a-select
+              v-model="targetView.config.proprietaryConfig.scaleMode"
+              @change="change">
+              <a-select-option value="auto">自适应</a-select-option>
+              <a-select-option value="primary">原始尺寸</a-select-option>
+              <a-select-option value="fullscreen">全屏显示</a-select-option>
+              <a-select-option value="fullWidth">等比宽度铺满</a-select-option>
+              <a-select-option value="fullHeight">等比高度铺满</a-select-option>
+            </a-select>
+          </div>
+        </div>
+        <!-- / 缩放模式 -->
+
+      </a-collapse-panel>
+      <!-- E 显示 -->
+
+      <!-- S 屏幕截图 -->
+      <a-collapse-panel header="封面" key="4">
+
+        <div class="view-config__screen">
+          <div class="view-config__screenshot">
+            <img :src="targetView.cover" alt="" v-if="targetView.cover" />
+            <p v-else>视图封面</p>
+          </div>
+        </div>
+
+        <div class="comment-template__item">
+          <p class="comment-template__leading">封面:</p>
+          <div class="comment-template__inner">
+            <a-textarea
+              ref="screenshot"
+              type="text"
+              v-model.trim="targetView.cover"
+              @change="change" />
+          </div>
+        </div>
+        <!-- / 封面 -->
+
+      </a-collapse-panel>
+      <!-- E 屏幕截图 -->
+
+    </a-collapse>
 
   </div>
 </template>
@@ -179,16 +180,24 @@ import { takeWhile, map, filter, switchMap } from 'rxjs/operators'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import View from '@/model/view'
-import ColorPicker from '@/components/ColorPicker/index.vue'
+import ColorPicker from '@/components/ColorPicker'
+import LinearColorPicker from '@/components/LinearColorPicker'
 import ViewService from './index'
 
 export default {
   name: 'ViewConfig',
   components: {
-    ColorPicker
+    ColorPicker,
+    LinearColorPicker
   },
   data: () => ({
     isSubscribed: true,
+    singleColor: 'rgba(255, 255, 255, 1)',
+    linearColor: {
+      start: 'rgba(255, 255, 255, 1)',
+      end: 'rgba(0, 0, 0, 1)',
+      angle: 180
+    },
     viewService: new ViewService()
   }),
   mounted () {
@@ -218,6 +227,32 @@ export default {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW
     }),
+    /**
+       * 单一颜色更改
+       */
+    singleColorChange () {
+      this.singleColor = this.targetView.config.proprietaryConfig.backgroundColor
+      this.change()
+    },
+    /**
+       * 渐变颜色更改
+       */
+    linearColorChange () {
+      this.linearColor = this.targetView.config.proprietaryConfig.backgroundColor
+      this.change()
+    },
+    /**
+       * 模式更改
+       */
+    modeChange () {
+      if (this.targetView.config.proprietaryConfig.mode !== 'image') {
+        const backgroundColor = this.targetView.config.proprietaryConfig.mode === 'single'
+          ? this.singleColor
+          : this.linearColor
+        Object.assign(this.targetView.config.proprietaryConfig, { backgroundColor })
+      }
+      this.change()
+    },
     change () {
       this.setView({
         view: new View(this.targetView)

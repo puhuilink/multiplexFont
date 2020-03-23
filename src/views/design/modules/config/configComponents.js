@@ -11,6 +11,7 @@ import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
 import HealthDegree from './charts/HealthDegree.vue'
+import Rects from './charts/Rects'
 
 // 图表模板配置
 const charts = {
@@ -18,7 +19,8 @@ const charts = {
   Lines,
   Texts,
   Topology,
-  HealthDegree
+  HealthDegree,
+  Rects
 }
 
 // 元素模板配置

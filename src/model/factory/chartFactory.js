@@ -10,6 +10,7 @@ import BarChart from '../charts/BarChart'
 import TopologyChart from '../charts/TopologyChart'
 import TextsChart from '../charts/TextsChart'
 import HealthDegreeChart from '../charts/HealthDegreeChart'
+import RectChart from '../charts/RectChart'
 
 export default class ChartFactory {
   static create (type, widget) {
@@ -24,6 +25,8 @@ export default class ChartFactory {
         return new TopologyChart(widget)
       case 'HealthDegree':
         return new HealthDegreeChart(widget)
+      case 'Rect':
+        return new RectChart(widget)
       default:
         return null
     }

@@ -317,13 +317,13 @@ export default {
           mutation
         })
         // 调整图表尺寸
-        if (config.type === 'Topology') {
-          this.activeWidget.render.resize(
-            render.container.offsetWidth,
-            render.container.offsetHeight
-          )
-        }
-        this.activeWidget.render.resize()
+        // if (config.type === 'Topology') {
+        //   this.activeWidget.render.resize(
+        //     render.container.offsetWidth,
+        //     render.container.offsetHeight
+        //   )
+        // }
+        this.activeWidget.render.resize(config)
       })
   },
   computed: {
@@ -436,7 +436,7 @@ export default {
         width,
         height,
         scale: this.scale,
-        backgroundColor: mode === 'color' ? backgroundColor : '',
+        background: mode === 'single' ? backgroundColor : `linear-gradient(${backgroundColor.angle}deg, ${backgroundColor.start}, ${backgroundColor.end})`,
         duration: 150,
         easing: 'linear'
       })

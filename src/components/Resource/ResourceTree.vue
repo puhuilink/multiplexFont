@@ -221,7 +221,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
-      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京
+      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京（可能与内存泄漏有关：上次搜索后未重置状态）
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }

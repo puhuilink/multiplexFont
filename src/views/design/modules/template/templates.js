@@ -28,6 +28,12 @@ const charts = [
   { category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100 },
   {
     category: 'CHART', type: 'HealthDegree', name: '健康度', icon: 'minus-circle', width: 300, height: 300
+  },
+  {
+    category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100
+  },
+  {
+    category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300
   }
 ]
 
