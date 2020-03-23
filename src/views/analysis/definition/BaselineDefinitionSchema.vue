@@ -59,8 +59,7 @@
           required
         >
           <CiModelSelect
-            labelInValue
-            :value="formData0.ciType"
+            :value="formData0.model"
             @input="onModelInput"
           />
         </a-form-item>
@@ -72,7 +71,7 @@
         >
           <CiInstanceSelect
             labelInValue
-            :parentNameS="formData0.ciType ? formData0.ciType['key'] : ''"
+            :parentNameS="formData0.model"
             :value="formData0.ci"
             @input="onInstanceInput"
           />
@@ -87,7 +86,7 @@
         >
           <KpiSelect
             v-model="formData0.kpi"
-            :nodetypeS="formData0.ciType ? formData0.ciType['key'] : ''"
+            :nodetypeS="formData0.model"
             placeholder />
         </a-form-item>
       </a-form>
@@ -260,6 +259,8 @@ export default {
     BaselineStrategySelect
   },
   props: {},
+  // TODO: 库里不光存放了 ci、kpi的值，还存放其 label 作为冗余
+  // FIXME: 关联查询只差了父子代，子孙代未查出
   data: (vm) => ({
     // 当前步骤
     current: 0,
@@ -282,7 +283,7 @@ export default {
       // Ci 类型
       // 'ci_type_name': '',
       // 'ci_type_label': ''
-      ciType: {}
+      model: ''
     },
     formData1: {
       // 计算策略 id
@@ -339,7 +340,7 @@ export default {
               this.formData0.gen_type &&
               this.formData0.title &&
               this.formData0.kpi.length &&
-              Object.values(this.formData0.ciType).length
+              Object.values(this.formData0.model).length
             )
             break
           case 1:
@@ -379,7 +380,7 @@ export default {
       return isNaN(num) ? 0 : num.toFixed(0)
     },
     onModelInput (str = '') {
-      this.formData0.ciType = str
+      this.formData0.model = str
       // 重置选中的 Ci 实例
       this.formData0.ci = []
       this.formData0.kpi = []

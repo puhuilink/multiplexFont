@@ -31,7 +31,7 @@
               :wrapperCol="formItemLayout.wrapperCol"
               required
             >
-              <CiModelSelect labelInValue :value="formData.ciType" @input="onModelInput" />
+              <CiModelSelect :value="formData.model" @input="onModelInput" />
             </a-form-item>
             <a-form-item
               label="Ci实例"
@@ -40,7 +40,7 @@
             >
               <CiInstanceSelect
                 labelInValue
-                :parentNameS="formData.ciType ? formData.ciType['key'] : ''"
+                :parentNameS="formData.model"
                 :value="formData.selectedInstance"
                 @input="onInstanceInput"
               />
@@ -53,7 +53,7 @@
             >
               <KpiSelect
                 v-model="formData.selectedKpi"
-                :nodetypeS="formData.ciType ? formData.ciType['key'] : ''"
+                :nodetypeS="formData.model"
                 placeholder
               />
             </a-form-item>
@@ -101,7 +101,7 @@ export default {
     formItemLayout,
     form: vm.$form.create(vm),
     formData: {
-      ciType: {},
+      model: '',
       selectedInstance: [],
       selectedKpi: []
     }
@@ -126,7 +126,7 @@ export default {
       render.mergeOption(this.config)
     },
     onModelInput (v) {
-      this.formData.ciType = v
+      this.formData.model = v
       this.formData.selectedInstance = []
       this.formData.selectedKpi = []
     },

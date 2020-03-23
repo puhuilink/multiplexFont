@@ -78,11 +78,11 @@ export default {
       }
     },
     handleChange (value) {
-      console.log(arguments)
+      // console.log(arguments)
       this._value = value
     },
     select () {
-      console.log(arguments)
+      // console.log(arguments)
     }
   },
   created () {
