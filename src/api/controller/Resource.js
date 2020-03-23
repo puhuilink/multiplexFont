@@ -85,9 +85,7 @@ export const editModelOld = function (did, set = {}) {
  */
 export const addModels = function (objects = []) {
   // return addModelsOld(objects)
-  // TODO: 数据表 did 唯一，是否要（需要）做 name_s 唯一？
-  // TODO: 旧的业务逻辑，确实是根据 name_s 唯一的，如何迁移到以 did 构建树？
-  // FIXME: 目前的构建树方式，是认为 name_s 唯一的
+  // （旧系统的）构建树方式，是认为 name_s 唯一的
   return apollo.clients.resource.mutate({
     mutation: mutationInsertModels,
     variables: {
