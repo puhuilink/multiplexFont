@@ -85,7 +85,10 @@
           style="width: 80%"
           required
         >
-          <KpiSelect labelInValue v-model="formData0.kpi" placeholder />
+          <KpiSelect
+            v-model="formData0.kpi"
+            :nodetypeS="formData0.ciType ? formData0.ciType['key'] : ''"
+            placeholder />
         </a-form-item>
       </a-form>
     </div>
@@ -379,6 +382,10 @@ export default {
       this.formData0.ciType = str
       // 重置选中的 Ci 实例
       this.formData0.ci = []
+      this.formData0.kpi = []
+      console.log(
+        this.formData0.kpi
+      )
     },
     onInstanceInput (arr = []) {
       // FIXME: 有时候抛出的 arr 是字符串？

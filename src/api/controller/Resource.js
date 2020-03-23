@@ -5,7 +5,8 @@ import {
   queryResourceModelList,
   queryModelList,
   queryInsanceList,
-  queryKpiList
+  queryKpiList,
+  queryKpiSelectList
 } from '../graphql/Resource'
 import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
@@ -37,7 +38,7 @@ export const getInstanceList = function (where = {}) {
 
 export const getKpiList = function (where = {}) {
   return apollo.clients.resource.query({
-    query: queryKpiList,
+    query: queryKpiList(where),
     variables: {
       where: {
         ...where,
@@ -47,6 +48,25 @@ export const getKpiList = function (where = {}) {
       }
     }
   }).then(r => r.data)
+}
+
+export const getKpiSelectList = function (nodeType = '') {
+  return apollo.clients.resource.query({
+    query: queryKpiSelectList(nodeType),
+    variables: {
+      'nodeType': nodeType
+    }
+  }).then(r => {
+    // 此处查询出 nodeType 为 nodeType 和 CommonCI 时的并集
+    // 当 nodeType !== CommonCi 时查询出两个结果
+    const { data, data2 } = r.data
+    return {
+      data: [
+        ...data,
+        ...data2 || []
+      ]
+    }
+  })
 }
 
 /**

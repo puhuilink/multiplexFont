@@ -12,7 +12,7 @@
       @select="select"
       :filterOption="filterOption"
     >
-      <a-select-opt-group v-for="(group) in groups" :key="group.value">
+      <a-select-opt-group v-for="(group, idx) in groups" :key="idx">
         <span slot="label">{{ group.label }}</span>
         <a-select-option
           v-for="(item, itemIdx) in group.children"

@@ -42,6 +42,65 @@ export const queryKpiList = gql`query ($where: ngecc_instance_values_bool_exp! =
   }
 }`
 
+export const queryKpiSelectList = nodeType => {
+  if (nodeType === 'CommonCi') {
+    return gql`query ($nodeType: String!) {
+      data: ngecc_instance_values (where: {
+        nodetype_s: {
+          _eq: $nodeType
+        }
+        parentname_s: {
+          _eq: "Kpi"
+        }
+      }) {
+        label: label_s
+        rid: rid
+      }
+    }`
+  } else {
+    return gql`query ($nodeType: String!) {
+      data: ngecc_instance_values (where: {
+        nodetype_s: {
+          _eq: $nodeType
+        }
+        parentname_s: {
+          _eq: "Kpi"
+        }
+      }) {
+        label: label_s
+        rid: rid
+      }
+      data2: ngecc_instance_values (where: {
+        nodetype_s: {
+          _eq: "CommonCi"
+        },
+        parentname_s: {
+          _eq: "Kpi"
+        }
+      }) {
+        label: label_s
+        rid: rid
+      }
+    }`
+  }
+}
+
+// export const queryKpiSelectList = gql`query ($where: ngecc_instance_values_bool_exp! = {}) {
+//   data: ngecc_instance_values (where: $where) {
+//     label: label_s
+//   }
+//   data2: ngecc_instance_values (where: {
+//     nodetype_s: {
+//       _eq: "CommonCi"
+//     },
+//     parentname_s: {
+//       _eq: "Kpi"
+//     }
+//   }) {
+//     label: label_s
+//   }
+// }`
+
 // name_s 属性只读（主键）
 export const mutationUpdateModel = gql`mutation ($did: Int, $set: ngecc_model_set_input = {}) {
   update_ngecc_model (where: {
