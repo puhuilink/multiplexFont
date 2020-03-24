@@ -54,6 +54,7 @@ export default {
       ['Texts', 'Texts'],
       ['Rect', 'Rects'],
       ['Topology', 'Topology'],
+      ['Clock', 'Clock'],
       ['ViewConfig', 'ViewConfig']
     ])
   }),
