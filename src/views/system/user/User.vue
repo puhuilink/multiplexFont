@@ -99,7 +99,6 @@
       </span>
     </cTable>
     <!-- E 列表 -->
-    <!--  FIXME: apollo 有缓存，此处不会触发刷新  -->
     <UserSchema
       ref="schema"
       @addSuccess="() => { this.queryParams = {}; this.query() }"

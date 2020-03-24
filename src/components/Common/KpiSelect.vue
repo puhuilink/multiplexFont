@@ -4,14 +4,14 @@
       :labelInValue="labelInValue"
       mode="multiple"
       style="min-width: 200px"
-      v-model="_value"
+      :value="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
       @change="handleChange"
     >
       <a-select-option
         v-for="(item, itemIdx) in options"
         :key="itemIdx"
-        :value="item.value"
+        :value="item.rid"
       >
         {{ item.label }}
       </a-select-option>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { getKpiList } from '@/api/controller/Resource'
+import { getKpiSelectList } from '@/api/controller/Resource'
 
 export default {
   name: 'KpiSelect',
@@ -49,7 +49,8 @@ export default {
       get () {
         return this.value
       },
-      set (v = '') {
+      set (v) {
+        console.log(v)
         this.$emit('input', v)
       }
     }
@@ -58,16 +59,10 @@ export default {
     nodetypeS: {
       immediate: false,
       handler (v) {
+        this.options = []
+        this._value = []
         if (v) {
-          this.$emit('input', '')
-          this.loadData({
-            'nodetype_s': {
-              '_eq': this.nodetypeS
-            }
-          })
-        } else {
-          this.options = []
-          this.$emit('input', '')
+          this.loadData()
         }
       }
     }
@@ -77,13 +72,12 @@ export default {
        * 加载列表
        * TODO: 数据量较大，可分页加载，向下滑动时分页
        * TODO: 全选
-       * @param query
        * @return {Promise<void>}
        */
-    async loadData (query = {}) {
+    async loadData () {
       try {
         this.loading = true
-        const { data } = await getKpiList(query)
+        const { data } = await getKpiSelectList(this.nodetypeS)
         this.options = data
       } catch (e) {
         this.options = []
@@ -93,6 +87,7 @@ export default {
       }
     },
     handleChange (value) {
+      console.log(value)
       this._value = value
     }
   }
