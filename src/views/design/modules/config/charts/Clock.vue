@@ -1,11 +1,3 @@
-/**
-* 文本注解配置
-* Author: dong xing
-* Date: 2020/3/12
-* Time: 19:38
-* Email: dong.xing@outlook.com
-*/
-
 <template>
   <div class="texts-config">
     <a-tabs
@@ -28,40 +20,20 @@
             <!-- S 文本样式 -->
             <a-collapse-panel header="文本样式" key="1">
 
+              <!-- 时间格式 -->
               <div class="comment-template__item">
-                <p class="comment-template__leading">文本:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="text"
-                    v-model.trim="config.proprietaryConfig.title.text"
-                    @change="change" />
-                </div>
-              </div>
-              <!-- / 文本 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">链接:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="text"
-                    v-model.trim="config.proprietaryConfig.title.link"
-                    @change="change" />
-                </div>
-              </div>
-              <!-- / 链接 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">打开方式:</p>
-                <div class="comment-template__inner">
+                <p class="comment-template__leading">格式:</p>
+                <div class="comment-template__inner comment-template__end">
                   <a-select
-                    v-model="config.proprietaryConfig.title.target"
+                    defaultValue="YYYY-MM-DD HH:mm:ss"
+                    v-model="config.proprietaryConfig.format"
                     @change="change">
-                    <a-select-option value="blank">新窗口打开</a-select-option>
-                    <a-select-option value="self">当前窗口打开</a-select-option>
+                    <a-select-option value="YYYY-MM-DD HH:mm:ss">YYYY-MM-DD HH:mm:ss</a-select-option>
+                    <a-select-option value="YYYY-MM-DD">YYYY-MM-DD</a-select-option>
+                    <a-select-option value="HH:mm:ss">HH:mm:ss</a-select-option>
                   </a-select>
                 </div>
               </div>
-              <!-- / 打开方式 -->
 
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
@@ -199,7 +171,7 @@ import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 
 export default {
-  name: 'Texts',
+  name: 'Clock',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
