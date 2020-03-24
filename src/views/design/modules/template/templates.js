@@ -32,6 +32,9 @@ const charts = [
     category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300
   },
   {
+    category: 'CHART', type: 'Circle', name: '圆形', icon: 'loading-3-quarters', width: 300, height: 300
+  },
+  {
     category: 'CHART', type: 'Clock', name: '时钟', icon: 'clock-circle', width: 300, height: 100
   }
 ]

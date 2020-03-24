@@ -12,6 +12,7 @@ import Texts from './charts/Texts'
 import Topology from './charts/Topology'
 import Rects from './charts/Rects'
 import Clock from './charts/Clock'
+import CircleConfig from './charts/CircleConfig'
 
 // 图表模板配置
 const charts = {
@@ -20,7 +21,8 @@ const charts = {
   Texts,
   Rects,
   Topology,
-  Clock
+  Clock,
+  CircleConfig
 }
 
 // 元素模板配置
