@@ -10,6 +10,7 @@ import BarChart from '../charts/BarChart'
 import TopologyChart from '../charts/TopologyChart'
 import TextsChart from '../charts/TextsChart'
 import RectChart from '../charts/RectChart'
+import ClockChart from '../charts/ClockChart'
 import CircleChart from '../charts/CircleChart'
 import TriangleChart from '../charts/TriangleChart'
 
@@ -26,6 +27,8 @@ export default class ChartFactory {
         return new TopologyChart(widget)
       case 'Rect':
         return new RectChart(widget)
+      case 'Clock':
+        return new ClockChart(widget)
       case 'Circle':
         return new CircleChart(widget)
       case 'Triangle':

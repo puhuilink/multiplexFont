@@ -11,6 +11,7 @@ import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
 import Rects from './charts/Rects'
+import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
 
@@ -21,6 +22,7 @@ const charts = {
   Texts,
   Rects,
   Topology,
+  Clock,
   CircleConfig,
   TriangleConfig
 }
