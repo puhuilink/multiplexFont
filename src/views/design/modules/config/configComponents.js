@@ -10,6 +10,7 @@ import Lines from './charts/Lines'
 import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
+import HealthDegree from './charts/HealthDegree.vue'
 import Rects from './charts/Rects'
 import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
@@ -20,8 +21,9 @@ const charts = {
   Bar,
   Lines,
   Texts,
-  Rects,
   Topology,
+  HealthDegree,
+  Rects,
   Clock,
   CircleConfig,
   TriangleConfig

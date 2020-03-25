@@ -455,6 +455,77 @@ class YAixs extends Aixs {
 }
 
 /**
+ * 饼图基础配置
+ * 官方配置： https://www.echartsjs.com/zh/option.html#series-pie.type
+ */
+class SeriesPie {
+  constructor ({
+    id = 'SeriesPie',
+    type = 'pie',
+    radius = 80,
+    center = ['50%', '50%'],
+    z = 5,
+    silent = true,
+    labelLine = false,
+    color = {
+      start: 'red',
+      end: 'orange',
+      type: 'linear',
+      colorStops: [{
+        offset: 0,
+        color: 'rgba(86,198,62,1)'
+      }, {
+        offset: 1,
+        color: 'rgba(40,131,38,1)'
+      }]
+    },
+    data = [100]
+  }) {
+    this.id = id
+    this.type = type
+    this.radius = radius
+    this.center = center
+    this.z = z
+    this.silent = silent
+    this.labelLine = labelLine
+    this.color = color
+    this.data = data
+  }
+
+  /**
+   * 获取饼图配置
+   */
+  getOption () {
+    let color
+    if (this.color.type) {
+      switch (this.color.type) {
+        case '':
+          // color = this.color
+          break
+        case 'linear':
+          color = {
+            type: 'linear',
+            colorStops: [{
+              offset: 0,
+              color: this.color.start || 'rgba(86,198,62,1)'
+            }, {
+              offset: 1,
+              color: this.color.end || 'rgba(40,131,38,1)'
+            }]
+          }
+          break
+        default:
+          break
+      }
+    } else {
+      color = this.color
+    }
+    return Object.assign(_.cloneDeep(this), {
+      color
+    })
+  }
+}
+/*
  * 形状样式
  */
 class Style {
@@ -569,6 +640,71 @@ class RectShape {
   }
 }
 
+/**
+ * 仪表盘基础配置
+ */
+class SeriesGauge {
+  constructor (
+    {
+      id = 'SeriesGauge',
+      type = 'gauge',
+      radius = '100',
+      startAngle = 225,
+      endAngle = -134.8,
+      z = 4,
+      axisTick = {
+        show: true,
+        lineStyle: {
+          width: 2,
+          color: 'rgba(1,244,255, 0.9)'
+        }
+      },
+      splitLine = {
+        length: 16,
+        lineStyle: {
+          width: 2,
+          color: 'rgba(1,244,255, 0.9)'
+        }
+      },
+      axisLabel = {
+        color: 'rgba(255,255,255,0)',
+        fontSize: 12
+      },
+      pointer = {
+        show: false
+      },
+      axisLine = {
+        lineStyle: {
+          opacity: 0
+        }
+      },
+      detail = {
+        show: false
+      },
+      data = [100]
+    }
+  ) {
+    this.id = id
+    this.type = type
+    this.radius = radius
+    this.startAngle = startAngle
+    this.endAngle = endAngle
+    this.z = z
+    this.axisTick = axisTick
+    this.splitLine = splitLine
+    this.axisLabel = axisLabel
+    this.pointer = pointer
+    this.axisLine = axisLine
+    this.detail = detail
+    this.data = data
+  }
+  /**
+  * 获取仪表盘配置
+  */
+  getOption () {
+    return Object.assign(_.cloneDeep(this))
+  }
+}
 /**
  * 矩形
  */
@@ -723,6 +859,9 @@ export {
   Title,
   XAixs,
   YAixs,
+  TextStyle,
+  SeriesPie,
+  SeriesGauge,
   RectGraphic,
   CircleGraphic,
   TriangleGraphic

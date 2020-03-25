@@ -10,6 +10,7 @@ import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryCon
 import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
+import HealthDegreeProprietaryConfig from '../config/proprietaryConfigs/HealthDegreeProprietaryConfig'
 import ClockProprietaryConfig from '../config/proprietaryConfigs/ClockProprietaryConfig'
 import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryConfig'
 import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
@@ -36,6 +37,8 @@ export default class ChartProprietaryConfigFactory {
         return new TriangleChartProprietaryConfig(proprietaryConfig)
       case 'ViewConfig':
         return new ViewProprietaryConfig(proprietaryConfig)
+      case 'HealthDegree':
+        return new HealthDegreeProprietaryConfig(proprietaryConfig)
       default:
         return null
     }
