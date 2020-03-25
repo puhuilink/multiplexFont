@@ -57,7 +57,8 @@ export default {
       ['Triangle', 'TriangleConfig'],
       ['Topology', 'Topology'],
       ['Clock', 'Clock'],
-      ['ViewConfig', 'ViewConfig']
+      ['Image', 'ImageConfig'],
+      ['View', 'ViewConfig']
     ])
   }),
   computed: {

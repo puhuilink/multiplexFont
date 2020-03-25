@@ -39,6 +39,9 @@ const charts = [
   },
   {
     category: 'CHART', type: 'Triangle', name: '三角形', icon: 'heat-map', width: 300, height: 300
+  },
+  {
+    category: 'CHART', type: 'Image', name: '图片', icon: 'picture', width: 300, height: 300
   }
 ]
 

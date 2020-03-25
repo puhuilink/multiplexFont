@@ -461,7 +461,6 @@ export default {
      */
     beforeUpload (file) {
       const reader = new FileReader()
-      reader.readAsText(file)
       reader.onload = () => {
         this.viewOptions = _.omit(JSON.parse(reader.result), ['id', 'name'])
         // 实例化部件对象
@@ -477,6 +476,7 @@ export default {
         // 设置视图样式
         this.setStyle({ type: 'input' })
       }
+      reader.readAsText(file)
       return false
     },
     /**
