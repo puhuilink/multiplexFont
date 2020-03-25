@@ -1,17 +1,15 @@
 /**
- * 矩形
- * Author: dong xing
- * Date: 2020/3/24
- * Time: 9:33
- * Email: dong.xing@outlook.com
- */
-
+* 三角形
+* Author: dong xing
+* Date: 2020/3/24
+* Time: 15:05
+* Email: dong.xing@outlook.com
+*/
 import Chart from './index'
 
-export default class RectChart extends Chart {
+export default class TriangleChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
-    this.config = widget.config
   }
 
   resize (config) {

@@ -1,13 +1,13 @@
 /**
-* 矩形配置面板
+* 三角形配置面板
 * Author: dong xing
-* Date: 2020/3/19
-* Time: 17:10
+* Date: 2020/3/24
+* Time: 16:40
 * Email: dong.xing@outlook.com
 */
 
 <template>
-  <div class="rects-config">
+  <div class="triangle-config">
     <a-tabs
       defaultActiveKey="1"
       tabPosition="top"
@@ -22,7 +22,7 @@
       </a-tab-pane>
 
       <a-tab-pane tab="专有属性" key="2">
-        <div class="rects-config__template">
+        <div class="triangle-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
 
             <!-- S 样式 -->
@@ -82,62 +82,21 @@
               </div>
               <!-- / 内边框 -->
 
+              <div class="comment-template__item">
+                <p class="comment-template__leading">平滑:</p>
+                <div class="comment-template__inner">
+                  <a-slider
+                    :min="0"
+                    :max="1"
+                    :step="0.01"
+                    @change="change"
+                    v-model.number="config.proprietaryConfig.graphic.shape.smooth" />
+                </div>
+              </div>
+              <!-- / 平滑 -->
+
             </a-collapse-panel>
             <!-- E 样式 -->
-
-            <!-- S 圆角 -->
-            <a-collapse-panel header="内圆角" key="2">
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">左上:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    :min="0"
-                    :max="48"
-                    @change="change"
-                    v-model.number="config.proprietaryConfig.graphic.shape.borderTopLeftRadius" />
-                </div>
-              </div>
-              <!-- / 左上圆角 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">右上:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    :min="0"
-                    :max="48"
-                    @change="change"
-                    v-model.number="config.proprietaryConfig.graphic.shape.borderTopRightRadius" />
-                </div>
-              </div>
-              <!-- / 右上圆角 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">右下:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    :min="0"
-                    :max="48"
-                    @change="change"
-                    v-model.number="config.proprietaryConfig.graphic.shape.borderBottomRightRadius" />
-                </div>
-              </div>
-              <!-- / 右下圆角 -->
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">左下:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    :min="0"
-                    :max="48"
-                    @change="change"
-                    v-model.number="config.proprietaryConfig.graphic.shape.borderBottomLeftRadius" />
-                </div>
-              </div>
-              <!-- / 左下圆角 -->
-
-            </a-collapse-panel>
-            <!-- E 圆角 -->
 
           </a-collapse>
         </div>
@@ -155,7 +114,7 @@ import ColorPicker from '@/components/ColorPicker'
 import LinearColorPicker from '@/components/LinearColorPicker'
 
 export default {
-  name: 'Rects',
+  name: 'TriangleConfig',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
@@ -171,24 +130,24 @@ export default {
   }),
   methods: {
     /**
-       * 单一颜色更改
-       * @param config 配置
-       */
+     * 单一颜色更改
+     * @param config 配置
+     */
     singleColorChange ({ proprietaryConfig: { graphic: { style: { fill } } } }) {
       this.singleColor = fill
       this.change()
     },
     /**
-       * 渐变颜色更改
-       * @param config 配置
-       */
+     * 渐变颜色更改
+     * @param config 配置
+     */
     linearColorChange ({ proprietaryConfig: { graphic: { style: { fill } } } }) {
       this.linearColor = fill
       this.change()
     },
     /**
-       * 颜色模式更改
-       */
+     * 颜色模式更改
+     */
     colorModeChange (config) {
       const fill = config.proprietaryConfig.graphic.style.colorMode === 'single'
         ? this.singleColor
@@ -200,5 +159,6 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped>
+
 </style>

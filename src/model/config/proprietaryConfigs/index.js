@@ -530,13 +530,42 @@ class SeriesPie {
  */
 class Style {
   constructor ({
+    colorMode = 'single',
     fill = 'rgba(64,169,255, 1)',
     stroke = 'rgba(12,142,255, 1)',
     lineWidth = 0
   }) {
+    this.colorMode = colorMode
     this.fill = fill
     this.stroke = stroke
     this.lineWidth = lineWidth
+  }
+
+  /**
+   * 映射配置
+   * @returns {{} & Style & {fill: (string|{x: number, y: number, y2: number, x2: number, colorStops: [{offset: number, color}, {offset: number, color}], type: string})}}
+   */
+  getOption () {
+    const fill = this.colorMode === 'single'
+      ? this.fill
+      : {
+        type: 'linear',
+        x: 1,
+        y: 0,
+        x2: 1,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            color: this.fill.start || 'rgba(64,169,255, 1)'
+          },
+          {
+            offset: 1,
+            color: this.fill.end || 'rgba(0, 0, 0, 1)'
+          }
+        ]
+      }
+    return Object.assign({}, this, { fill })
   }
 }
 
@@ -593,10 +622,14 @@ class RectShape {
   /**
    * 映射配置
    */
-  getOption () {
+  getOption (chart, lineWidth, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - lineWidth - left - right
+    const height = chart.getHeight() - lineWidth - top - bottom
+
     return {
-      width: this.width,
-      height: this.height,
+      width,
+      height,
       r: [
         this.borderTopLeftRadius,
         this.borderTopRightRadius,
@@ -692,12 +725,125 @@ class RectGraphic extends Graphic {
    * @returns {any}
    */
   getOption (chart, padding) {
+    return Object.assign(_.cloneDeep(this),
+      {
+        shape: this.shape.getOption(chart, this.style.lineWidth, padding),
+        style: this.style.getOption()
+      },
+      padding
+    )
+  }
+}
+
+/**
+ * 园形形状
+ */
+class CircleShape {
+  constructor ({
+    cx = 0,
+    cy = 0,
+    r = 150
+  }) {
+    this.cx = cx
+    this.cy = cy
+    this.r = r
+  }
+}
+
+/**
+ * 圆形
+ */
+class CircleGraphic extends Graphic {
+  constructor ({
+    shape = {},
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'circle'
+    this.shape = new CircleShape(shape)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
     const { top, left, right, bottom } = padding
     const width = chart.getWidth() - this.style.lineWidth - left - right
     const height = chart.getHeight() - this.style.lineWidth - top - bottom
-    const shape = Object.assign({}, this.shape, { width, height })
+    const r = Math.min(width, height) / 2
+    const center = { x: width / 2 - r, y: height / 2 - r }
     return Object.assign(_.cloneDeep(this),
-      { shape: new RectShape(shape).getOption() },
+      {
+        shape: new CircleShape({ r }),
+        style: this.style.getOption(),
+        top: center.y + top,
+        left: center.x + left
+      }
+    )
+  }
+}
+
+/**
+ * 三角形形状
+ */
+class TriangleShape {
+  constructor ({
+    points = [],
+    smooth = 0
+  }) {
+    this.points = points
+    this.smooth = smooth
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param lineWidth
+   * @param padding
+   */
+  getOption (chart, lineWidth, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - lineWidth
+    const height = chart.getHeight() - lineWidth - bottom
+    const vertex = [width / 2, top]
+    const leftPoint = [left, height]
+    const rightPoint = [width - right, height]
+
+    return {
+      points: [vertex, leftPoint, rightPoint],
+      smooth: this.smooth
+    }
+  }
+}
+
+/**
+ * 三角形
+ */
+class TriangleGraphic extends Graphic {
+  constructor ({
+    shape = {},
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'polygon'
+    this.shape = new TriangleShape(shape)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
+    return Object.assign(_.cloneDeep(this),
+      {
+        shape: this.shape.getOption(chart, this.style.lineWidth, padding),
+        style: this.style.getOption()
+      },
       padding
     )
   }
@@ -716,5 +862,7 @@ export {
   TextStyle,
   SeriesPie,
   SeriesGauge,
-  RectGraphic
+  RectGraphic,
+  CircleGraphic,
+  TriangleGraphic
 }

@@ -12,6 +12,9 @@ import Texts from './charts/Texts'
 import Topology from './charts/Topology'
 import HealthDegree from './charts/HealthDegree.vue'
 import Rects from './charts/Rects'
+import Clock from './charts/Clock'
+import CircleConfig from './charts/CircleConfig'
+import TriangleConfig from './charts/TriangleConfig'
 
 // 图表模板配置
 const charts = {
@@ -20,7 +23,10 @@ const charts = {
   Texts,
   Topology,
   HealthDegree,
-  Rects
+  Rects,
+  Clock,
+  CircleConfig,
+  TriangleConfig
 }
 
 // 元素模板配置
