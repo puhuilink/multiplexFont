@@ -278,7 +278,7 @@
 
 <script>
 import screening from '../../screening'
-import queryList from '@/api/alarm/queryList'
+import queryList from '@/api/controller/AlarmqQueryList'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
