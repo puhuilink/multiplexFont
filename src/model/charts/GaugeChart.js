@@ -3,7 +3,7 @@ import Chart from './index'
 /**
  * 仪表盘组件
  */
-export default class GuageChart extends Chart {
+export default class GaugeChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
   }

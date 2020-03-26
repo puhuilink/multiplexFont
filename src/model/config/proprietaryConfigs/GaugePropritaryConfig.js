@@ -4,7 +4,7 @@ import { SeriesGauge } from './index'
 /**
  * 仪表盘专有属性配置
  */
-export default class GuageProprietaryConfig {
+export default class GaugeProprietaryConfig {
   constructor ({
     series = {
       name: '速度',

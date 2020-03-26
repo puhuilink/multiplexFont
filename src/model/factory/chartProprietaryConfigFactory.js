@@ -16,7 +16,7 @@ import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryC
 import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
 import TriangleChartProprietaryConfig from '../config/proprietaryConfigs/TriangleProprietaryConfig'
 import ImageProprietaryConfig from '../config/proprietaryConfigs/ImageProprietaryConfig'
-import GuagePropritaryConfig from '../config//proprietaryConfigs/GuagePropritaryConfig'
+import GaugePropritaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
 
 export default class ChartProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -43,8 +43,8 @@ export default class ChartProprietaryConfigFactory {
         return new ViewProprietaryConfig(proprietaryConfig)
       case 'HealthDegree':
         return new HealthDegreeProprietaryConfig(proprietaryConfig)
-      case 'Guage':
-        return new GuagePropritaryConfig(proprietaryConfig)
+      case 'gauge':
+        return new GaugePropritaryConfig(proprietaryConfig)
       default:
         return null
     }

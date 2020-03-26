@@ -59,7 +59,7 @@ export default {
       ['Clock', 'Clock'],
       ['Image', 'ImageConfig'],
       ['View', 'ViewConfig'],
-      ['Guage', 'Guage']
+      ['gauge', 'Gauge']
     ])
   }),
   computed: {
@@ -84,52 +84,52 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .config {
+.config {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-content: stretch;
+  width: 320px;
+  height: 100%;
+
+  &__header {
+    flex: none;
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     justify-content: space-between;
-    align-content: stretch;
-    width: 320px;
-    height: 100%;
+    align-items: center;
+    height: 48px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    box-shadow: 0 2px 8px #f0f1f2;
+    z-index: 3;
 
-    &__header {
+    p {
       flex: none;
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-between;
-      align-items: center;
-      height: 48px;
-      box-sizing: border-box;
-      padding: 0 16px;
-      box-shadow: 0 2px 8px #f0f1f2;
-      z-index: 3;
-
-      p {
-        flex: none;
-        margin: 0;
-      }
-    }
-
-    &__content {
-      position: relative;
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      box-shadow: -4px 8px 8px 0 rgba(0, 0, 0, 0.12);
-      z-index: 2;
-    }
-
-    &__none {
-      width: 100%;
-      text-align: center;
-
-      i {
-        color: rgba(0, 0, 0, .56);
-        font-size: 36px;
-        margin-bottom: 16px;
-      }
+      margin: 0;
     }
   }
+
+  &__content {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-shadow: -4px 8px 8px 0 rgba(0, 0, 0, 0.12);
+    z-index: 2;
+  }
+
+  &__none {
+    width: 100%;
+    text-align: center;
+
+    i {
+      color: rgba(0, 0, 0, 0.56);
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+  }
+}
 </style>

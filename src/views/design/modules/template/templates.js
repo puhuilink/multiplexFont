@@ -48,7 +48,7 @@ const charts = [
     category: 'CHART', type: 'Image', name: '图片', icon: 'picture', width: 300, height: 300
   },
   {
-    category: 'CHART', type: 'Guage', name: '仪表盘', icon: 'dashboard', width: 300, height: 300
+    category: 'CHART', type: 'gauge', name: '仪表盘', icon: 'dashboard', width: 400, height: 400
   }
 ]
 

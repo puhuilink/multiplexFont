@@ -16,7 +16,7 @@ import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
 import ImageConfig from './charts/ImageConfig'
-import Guage from './charts/Guage'
+import Gauge from './charts/Gauge'
 
 // 图表模板配置
 const charts = {
@@ -30,7 +30,7 @@ const charts = {
   CircleConfig,
   TriangleConfig,
   ImageConfig,
-  Guage
+  Gauge
 }
 
 // 元素模板配置

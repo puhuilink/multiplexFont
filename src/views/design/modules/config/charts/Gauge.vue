@@ -141,7 +141,7 @@ import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 
 export default {
-  name: 'Guage',
+  name: 'Gauge',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
