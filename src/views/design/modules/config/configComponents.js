@@ -15,6 +15,7 @@ import Rects from './charts/Rects'
 import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
+import ImageConfig from './charts/ImageConfig'
 
 // 图表模板配置
 const charts = {
@@ -26,7 +27,8 @@ const charts = {
   Rects,
   Clock,
   CircleConfig,
-  TriangleConfig
+  TriangleConfig,
+  ImageConfig
 }
 
 // 元素模板配置
