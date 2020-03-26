@@ -15,6 +15,7 @@ import ClockChart from '../charts/ClockChart'
 import CircleChart from '../charts/CircleChart'
 import TriangleChart from '../charts/TriangleChart'
 import ImageChart from '../charts/ImageChart'
+import GuageChart from '../charts/GuageChart'
 
 export default class ChartFactory {
   static create (type, widget) {
@@ -39,6 +40,8 @@ export default class ChartFactory {
         return new TriangleChart(widget)
       case 'Image':
         return new ImageChart(widget)
+      case 'Guage':
+        return new GuageChart(widget)
       default:
         return null
     }

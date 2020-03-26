@@ -58,7 +58,8 @@ export default {
       ['Topology', 'Topology'],
       ['Clock', 'Clock'],
       ['Image', 'ImageConfig'],
-      ['View', 'ViewConfig']
+      ['View', 'ViewConfig'],
+      ['Guage', 'Guage']
     ])
   }),
   computed: {
