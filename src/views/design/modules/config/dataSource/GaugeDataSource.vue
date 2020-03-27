@@ -1,14 +1,14 @@
 <template>
   <DataSourceTemplate>
     <template #real>
-      <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
+      <!-- <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
         <a-button>模拟</a-button>
-      </a-tooltip>
+      </a-tooltip> -->
       <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
         <a-button :disabled="!available" @click="preview">预览</a-button>
       </a-tooltip>
 
-      <ComboSelect v-model="formData" />
+      <ComboSelect :multiple="false" v-model="formData" />
 
     </template>
   </DataSourceTemplate>
