@@ -132,10 +132,7 @@
       </a-tab-pane>
 
       <a-tab-pane tab="数据配置" key="3" forceRender>
-        <GaugeDataSource
-          :value="config.dataConfig.dbDataConfig"
-          @changeDynamicDataConfig="changeDynamicDataConfig"
-        />
+        <GaugeDataSource />
       </a-tab-pane>
 
     </a-tabs>
@@ -161,10 +158,6 @@ export default {
     radiusChange (value) {
       this.config.proprietaryConfig.series.radius = `${value}%`
       this.change()
-    },
-    changeDynamicDataConfig (e) {
-      this.config.dataConfig.dbDataConfig = Object.assign({}, e)
-      // this.change()
     }
   }
 }

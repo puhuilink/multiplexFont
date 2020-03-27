@@ -89,12 +89,14 @@ export default {
     }
   },
   created () {
-    // MOCK
-    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({
-      'model': 'Linux',
-      'selectedInstance': ['557768655516084'],
-      'selectedKpi': ['2008']
-    })
+    // MOCK：已经被修改过则不取mock数据
+    if (!this.config.dataConfig.dbDataConfig.model) {
+      this.config.dataConfig.dbDataConfig = new GaugeDataConfig({
+        'model': 'Linux',
+        'selectedInstance': ['557768655516084'],
+        'selectedKpi': ['2008']
+      })
+    }
   }
 }
 </script>
