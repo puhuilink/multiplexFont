@@ -148,7 +148,6 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import GaugeDataSource from '../dataSource/GaugeDataSource'
-import GaugeDataConfig from '@/model/config/dataConfig/dynamicData/GaugeDataConfig'
 
 export default {
   name: 'Gauge',
@@ -167,14 +166,6 @@ export default {
       this.config.dataConfig.dbDataConfig = Object.assign({}, e)
       // this.change()
     }
-  },
-  created () {
-    // MOCK
-    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({
-      'model': 'Linux',
-      'selectedInstance': ['557768655516084'],
-      'selectedKpi': ['2008']
-    })
   }
 }
 </script>

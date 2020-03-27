@@ -7,40 +7,9 @@
       <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
         <a-button :disabled="!available" @click="preview">预览</a-button>
       </a-tooltip>
-      <a-form>
-        <a-form-item
-          label="Ci类型"
-          :labelCol="formItemLayout.labelCol"
-          :wrapperCol="formItemLayout.wrapperCol"
-          required
-        >
-          <CiModelSelect :value="formData.model" @input="onModelInput" />
-        </a-form-item>
-        <a-form-item
-          label="Ci实例"
-          :labelCol="formItemLayout.labelCol"
-          :wrapperCol="formItemLayout.wrapperCol"
-          required
-        >
-          <CiInstanceSelect
-            :parentNameS="formData.model"
-            :value="formData.selectedInstance"
-            @input="onInstanceInput"
-          />
-        </a-form-item>
-        <a-form-item
-          label="Kpi"
-          :labelCol="formItemLayout.labelCol"
-          :wrapperCol="formItemLayout.wrapperCol"
-          required
-        >
-          <KpiSelect
-            v-model="formData.selectedKpi"
-            :nodetypeS="formData.model"
-            placeholder
-          />
-        </a-form-item>
-      </a-form>
+
+      <ComboSelect v-model="formData" />
+
     </template>
   </DataSourceTemplate>
 </template>
@@ -48,60 +17,35 @@
 <script>
 import '@/assets/less/template.less'
 import _ from 'lodash'
+import { ComboSelect } from '@/components/Common'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import {
-  CiModelSelect,
-  CiInstanceSelect,
-  KpiSelect,
-  BaselineStrategySelect
-} from '@/components/Common'
 import { getKpiList } from '@/api/controller/Kpi'
 import { queryList } from './data'
 import DataSourceTemplate from './index'
-
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-    offset: 0
-  },
-  wrapperCol: {
-    span: 13,
-    offset: 2
-  }
-}
-
-const formData = {
-  model: '',
-  selectedInstance: [],
-  selectedKpi: []
-}
+import ProprietaryMixins from '../propietaryMixins'
+import GaugeDataConfig from '@/model/config/dataConfig/dynamicData/GaugeDataConfig'
 
 export default {
   name: 'GaugeDataSource',
+  mixins: [ProprietaryMixins],
   components: {
     DataSourceTemplate,
-    CiModelSelect,
-    CiInstanceSelect,
-    KpiSelect,
-    BaselineStrategySelect
+    ComboSelect
   },
-  props: {
-    value: {
-      type: Object,
-      required: true,
-      default: () => _.cloneDeep(formData)
-    }
-  },
-  data: (vm) => ({
-    formItemLayout,
-    form: vm.$form.create(vm),
-    formData: null
-  }),
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
+    },
+    formData: {
+      get () {
+        return this.config.dataConfig.dbDataConfig
+      },
+      set (v) {
+        this.config.dataConfig.dbDataConfig = v
+        this.change()
+      }
     },
     available () {
       return Boolean(
@@ -111,15 +55,6 @@ export default {
         this.formData.selectedInstance &&
         this.formData.selectedInstance.length
       )
-    }
-  },
-  watch: {
-    formData: {
-      deep: true,
-      handler (v) {
-        // this.changeDynamicDataConfig()
-        this.$emit('changeDynamicDataConfig', _.cloneDeep(this.formData))
-      }
     }
   },
   methods: {
@@ -134,17 +69,6 @@ export default {
         widget: Object.assign(activeWidget, { render })
       })
       render.mergeOption(this.config)
-    },
-    onModelInput (v) {
-      if (this.formData.model === v) {
-        return
-      }
-      this.formData.selectedKpi = []
-      this.formData.selectedInstance = []
-      this.formData.model = v
-    },
-    onInstanceInput (arr = []) {
-      this.formData.selectedInstance = Array.isArray(arr) ? arr : []
     },
     async preview () {
       try {
@@ -161,7 +85,12 @@ export default {
     }
   },
   created () {
-    this.formData = _.isEmpty(this.value) ? _.cloneDeep(formData) : _.cloneDeep(this.value)
+    // MOCK
+    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({
+      'model': 'Linux',
+      'selectedInstance': ['557768655516084'],
+      'selectedKpi': ['2008']
+    })
   }
 }
 </script>
