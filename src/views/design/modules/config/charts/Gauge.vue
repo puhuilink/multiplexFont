@@ -130,6 +130,11 @@
           </a-collapse>
         </div>
       </a-tab-pane>
+
+      <a-tab-pane tab="数据配置" key="3">
+        <DataSourceTemplate v-model="config.dataConfig.dbDataConfig" />
+      </a-tab-pane>
+
     </a-tabs>
   </div>
 </template>
@@ -139,13 +144,15 @@ import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
+import DataSourceTemplate from '../dataSource'
 
 export default {
   name: 'Gauge',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
-    ColorPicker
+    ColorPicker,
+    DataSourceTemplate
   },
   methods: {
     radiusChange (value) {
