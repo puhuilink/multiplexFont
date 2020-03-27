@@ -18,6 +18,6 @@ export default class DataConfig {
   }) {
     this.sourceType = sourceType
     this.staticData = StaticDataFactory.create(widgetType)
-    this.dbDataConfig = CreateDynamicDataFactory.create(dbDataConfig)
+    this.dbDataConfig = CreateDynamicDataFactory.create(widgetType, dbDataConfig)
   }
 }

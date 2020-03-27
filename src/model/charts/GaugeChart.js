@@ -14,6 +14,7 @@ export default class GaugeChart extends Chart {
   mappingOption ({ commonConfig, proprietaryConfig, dataConfig }) {
     const { grid } = commonConfig.getOption()
     const itemOptions = proprietaryConfig.getOption()
+    console.dir(dataConfig.dbDataConfig, dataConfig.dbDataConfig.getOption)
     return {
       grid,
       ...itemOptions,

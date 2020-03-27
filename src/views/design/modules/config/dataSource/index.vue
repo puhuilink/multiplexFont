@@ -8,6 +8,12 @@
 
 <template>
   <div class="data-source common-template">
+    <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
+      <a-button>模拟</a-button>
+    </a-tooltip>
+    <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
+      <a-button :disabled="!available" @click="preview">预览</a-button>
+    </a-tooltip>
     <a-collapse defaultActiveKey="1" :bordered="false">
       <!-- S 数据源 -->
       <a-collapse-panel header="数据源" key="1">
@@ -119,13 +125,23 @@ export default {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
+    },
+    available () {
+      return Boolean(
+        this.formData &&
+        this.formData.selectedKpi &&
+        this.formData.selectedKpi.length &&
+        this.formData.selectedInstance &&
+        this.formData.selectedInstance.length
+      )
     }
   },
   watch: {
     formData: {
       deep: true,
       handler (v) {
-        this.changeDynamicDataConfig()
+        // this.changeDynamicDataConfig()
+        this.$emit('changeDynamicDataConfig', _.cloneDeep(this.formData))
       }
     }
   },
@@ -142,9 +158,6 @@ export default {
       })
       render.mergeOption(this.config)
     },
-    changeDynamicDataConfig () {
-      this.$emit('changeDynamicDataConfig', _.cloneDeep(this.formData))
-    },
     onModelInput (v) {
       if (this.formData.model === v) {
         return
@@ -154,10 +167,10 @@ export default {
       this.formData.model = v
     },
     onInstanceInput (arr = []) {
-      if (_.isEqual(arr, this.formData.selectedInstance)) {
-        return
-      }
       this.formData.selectedInstance = Array.isArray(arr) ? arr : []
+    },
+    preview () {
+
     }
   },
   created () {

@@ -87,9 +87,6 @@ export default {
   },
   created () {
     this.loadData()
-  },
-  updated () {
-    console.log(this.$props)
   }
 }
 </script>

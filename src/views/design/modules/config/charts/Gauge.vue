@@ -1,13 +1,13 @@
 <template>
   <div class="texts-config">
     <a-tabs defaultActiveKey="3" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="" forceRender>
+      <a-tab-pane tab="公共属性" key="">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2" forceRender>
+      <a-tab-pane tab="专有属性" key="2">
         <div class="texts-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
             <!-- S 文本样式 -->
@@ -134,9 +134,7 @@
       <a-tab-pane tab="数据配置" key="3" forceRender>
         <DataSourceTemplate
           :value="config.dataConfig.dbDataConfig"
-          @changeDynamicDataConfig="e => {
-            this.config.dataConfig.dbDataConfig = Object.assign({}, e)
-          }"
+          @changeDynamicDataConfig="changeDynamicDataConfig"
         />
       </a-tab-pane>
 
@@ -150,6 +148,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import DataSourceTemplate from '../dataSource'
+import GaugeDataConfig from '@/model/config/dataConfig/dynamicData/GaugeDataConfig'
 
 export default {
   name: 'Gauge',
@@ -163,11 +162,15 @@ export default {
     radiusChange (value) {
       this.config.proprietaryConfig.series.radius = `${value}%`
       this.change()
+    },
+    changeDynamicDataConfig (e) {
+      this.config.dataConfig.dbDataConfig = Object.assign({}, e)
+      // this.change()
     }
   },
   created () {
     // MOCK
-    this.config.dataConfig.dbDataConfig = { 'model': 'Linux', 'selectedInstance': ['BJ-QYSX-web'], 'selectedKpi': [3867] }
+    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({ 'model': 'Linux', 'selectedInstance': ['BJ-QYSX-web'], 'selectedKpi': [3867] })
   }
 }
 </script>
