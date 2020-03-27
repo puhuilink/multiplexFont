@@ -148,8 +148,13 @@ export default {
     },
     async preview () {
       try {
-        const res = await getKpiList(queryList(this.formData))
-        console.log(res)
+        const { data } = await getKpiList(queryList(this.formData))
+        // console.log(data)
+        const [{ value }] = data
+        // TODO: data直接初始化为对象而非数组
+        this.$set(this.config.proprietaryConfig.series.data[0], 'value', value)
+        // this.config.proprietaryConfig.series.data[0].value = value
+        this.change()
       } catch (e) {
         throw e
       }

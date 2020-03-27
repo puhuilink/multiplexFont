@@ -19,7 +19,7 @@ const template = `t_kpi_current(where: {
 }`
 
 const query = ({ kpi_code, ci_id }) => (
-  `t_kpi_current(where: {
+  `data: t_kpi_current(where: {
     _and: {
       kpi_code: {_eq: ${kpi_code}},
       ci_id: {_eq: "${ci_id}"}}
