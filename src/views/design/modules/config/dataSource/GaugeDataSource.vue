@@ -1,67 +1,48 @@
 <template>
-  <div class="data-source common-template">
-    <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
-      <a-button>模拟</a-button>
-    </a-tooltip>
-    <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-      <a-button :disabled="!available" @click="preview">预览</a-button>
-    </a-tooltip>
-    <a-collapse defaultActiveKey="1" :bordered="false">
-      <!-- S 数据源 -->
-      <a-collapse-panel header="数据源" key="1">
-        <div class="comment-template__item">
-          <!-- <p class="comment-template__leading">选择:</p>
-          <div class="comment-template__inner">
-            <a-select
-              class="data-source__select"
-              v-model="config.dataConfig.sourceType"
-              @change="change">
-              <a-select-option value="null">空数据</a-select-option>
-              <a-select-option value="static">静态数据</a-select-option>
-              <a-select-option value="real">实时数据</a-select-option>
-            </a-select>
-          </div> -->
-
-          <a-form>
-            <a-form-item
-              label="Ci类型"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <CiModelSelect :value="formData.model" @input="onModelInput" />
-            </a-form-item>
-            <a-form-item
-              label="Ci实例"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <CiInstanceSelect
-                :parentNameS="formData.model"
-                :value="formData.selectedInstance"
-                @input="onInstanceInput"
-              />
-            </a-form-item>
-            <a-form-item
-              label="Kpi"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <KpiSelect
-                v-model="formData.selectedKpi"
-                :nodetypeS="formData.model"
-                placeholder
-              />
-            </a-form-item>
-          </a-form>
-        </div>
-        <!-- / 数据源选择 -->
-      </a-collapse-panel>
-      <!-- E 数据源 -->
-    </a-collapse>
-  </div>
+  <DataSourceTemplate>
+    <template #real>
+      <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
+        <a-button>模拟</a-button>
+      </a-tooltip>
+      <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
+        <a-button :disabled="!available" @click="preview">预览</a-button>
+      </a-tooltip>
+      <a-form>
+        <a-form-item
+          label="Ci类型"
+          :labelCol="formItemLayout.labelCol"
+          :wrapperCol="formItemLayout.wrapperCol"
+          required
+        >
+          <CiModelSelect :value="formData.model" @input="onModelInput" />
+        </a-form-item>
+        <a-form-item
+          label="Ci实例"
+          :labelCol="formItemLayout.labelCol"
+          :wrapperCol="formItemLayout.wrapperCol"
+          required
+        >
+          <CiInstanceSelect
+            :parentNameS="formData.model"
+            :value="formData.selectedInstance"
+            @input="onInstanceInput"
+          />
+        </a-form-item>
+        <a-form-item
+          label="Kpi"
+          :labelCol="formItemLayout.labelCol"
+          :wrapperCol="formItemLayout.wrapperCol"
+          required
+        >
+          <KpiSelect
+            v-model="formData.selectedKpi"
+            :nodetypeS="formData.model"
+            placeholder
+          />
+        </a-form-item>
+      </a-form>
+    </template>
+  </DataSourceTemplate>
 </template>
 
 <script>
@@ -77,6 +58,7 @@ import {
 } from '@/components/Common'
 import { getKpiList } from '@/api/controller/Kpi'
 import { queryList } from './data'
+import DataSourceTemplate from './index'
 
 const formItemLayout = {
   labelCol: {
@@ -98,6 +80,7 @@ const formData = {
 export default {
   name: 'GaugeDataSource',
   components: {
+    DataSourceTemplate,
     CiModelSelect,
     CiInstanceSelect,
     KpiSelect,

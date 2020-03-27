@@ -9,10 +9,10 @@
 <template>
   <div class="data-source common-template">
 
-    <a-collapse defaultActiveKey="1" :bordered="false">
+    <a-collapse :activeKey="[1, 2]" :bordered="false">
 
       <!-- S 数据源 -->
-      <a-collapse-panel header="数据源" key="1">
+      <a-collapse-panel header="数据源类型" key="1">
 
         <div class="comment-template__item">
           <p class="comment-template__leading">选择:</p>
@@ -26,11 +26,19 @@
               <a-select-option value="real">实时数据</a-select-option>
             </a-select>
           </div>
+
         </div>
         <!-- / 数据源选择 -->
 
       </a-collapse-panel>
       <!-- E 数据源 -->
+
+      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === 'real'">
+        <!-- 留给组件自己实现 -->
+        <!-- <slot name="null" v-show="sourceType === 'null'"></slot> -->
+        <!-- <slot name="static" v-show="sourceType === 'static'"></slot> -->
+        <slot name="real" v-show="sourceType === 'real'"></slot>
+      </a-collapse-panel>
 
     </a-collapse>
 
@@ -49,6 +57,9 @@ export default {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
+    },
+    sourceType () {
+      return this.config.dataConfig.sourceType || 'null'
     }
   },
   methods: {
