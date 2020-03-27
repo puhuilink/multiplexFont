@@ -132,7 +132,7 @@
       </a-tab-pane>
 
       <a-tab-pane tab="数据配置" key="3" forceRender>
-        <DataSourceTemplate
+        <GaugeDataSource
           :value="config.dataConfig.dbDataConfig"
           @changeDynamicDataConfig="changeDynamicDataConfig"
         />
@@ -147,7 +147,7 @@ import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
-import DataSourceTemplate from '../dataSource'
+import GaugeDataSource from '../dataSource/GaugeDataSource'
 import GaugeDataConfig from '@/model/config/dataConfig/dynamicData/GaugeDataConfig'
 
 export default {
@@ -156,7 +156,7 @@ export default {
   components: {
     CommonTemplate,
     ColorPicker,
-    DataSourceTemplate
+    GaugeDataSource
   },
   methods: {
     radiusChange (value) {
