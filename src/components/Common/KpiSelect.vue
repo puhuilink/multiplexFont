@@ -2,7 +2,7 @@
   <div class="KpiSelect">
     <a-select
       :labelInValue="labelInValue"
-      mode="multiple"
+      :mode="multiple ? 'multiple' : 'default'"
       style="min-width: 200px"
       :value="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
@@ -26,9 +26,14 @@ export default {
   name: 'KpiSelect',
   components: {},
   props: {
+    // eslint-disable-next-line
     value: {
-      type: Array,
-      default: () => ([])
+      // type: Array,
+      // default: () => ([])
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
     'nodetypeS': {
@@ -50,7 +55,8 @@ export default {
         return this.value
       },
       set (v) {
-        this.$emit('input', v)
+        // 为维护字段一致性，对外统一暴露为数组格式
+        this.$emit('input', this.multiple ? v : [v])
       }
     }
   },

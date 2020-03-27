@@ -71,16 +71,20 @@ export default {
       render.mergeOption(this.config)
     },
     async preview () {
+      // TODO: data直接初始化为对象而非数组
+      const set = v => this.$set(this.config.proprietaryConfig.series.data[0], 'value', v)
       try {
         const { data } = await getKpiList(queryList(this.formData))
-        // console.log(data)
-        const [{ value }] = data
-        // TODO: data直接初始化为对象而非数组
-        this.$set(this.config.proprietaryConfig.series.data[0], 'value', value)
-        // this.config.proprietaryConfig.series.data[0].value = value
-        this.change()
+        if (data.length) {
+          set(data[0].value)
+        } else {
+          set(0)
+        }
       } catch (e) {
+        set(0)
         throw e
+      } finally {
+        this.change()
       }
     }
   },

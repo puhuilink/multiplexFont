@@ -16,6 +16,7 @@
         required
       >
         <CiInstanceSelect
+          :multiple="false"
           :parentNameS="formData.model"
           :value="formData.selectedInstance"
           @input="onInstanceInput"
@@ -23,11 +24,13 @@
       </a-form-item>
       <a-form-item
         label="Kpi"
+        :multiple="multiple"
         :labelCol="formItemLayout.labelCol"
         :wrapperCol="formItemLayout.wrapperCol"
         required
       >
         <KpiSelect
+          :multiple="multiple"
           v-model="formData.selectedKpi"
           :nodetypeS="formData.model"
           placeholder
@@ -74,6 +77,10 @@ export default {
       type: Object,
       required: true,
       default: () => _.cloneDeep(formData)
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
