@@ -40,7 +40,6 @@
               required
             >
               <CiInstanceSelect
-                labelInValue
                 :parentNameS="formData.model"
                 :value="formData.selectedInstance"
                 @input="onInstanceInput"
@@ -90,6 +89,12 @@ const formItemLayout = {
   }
 }
 
+const formData = {
+  model: '',
+  selectedInstance: [],
+  selectedKpi: []
+}
+
 export default {
   name: 'DataSourceTemplate',
   components: {
@@ -98,19 +103,30 @@ export default {
     KpiSelect,
     BaselineStrategySelect
   },
+  props: {
+    value: {
+      type: Object,
+      required: true,
+      default: () => _.cloneDeep(formData)
+    }
+  },
   data: (vm) => ({
     formItemLayout,
     form: vm.$form.create(vm),
-    formData: {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: []
-    }
+    formData: null
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
+    }
+  },
+  watch: {
+    formData: {
+      deep: true,
+      handler (v) {
+        this.changeDynamicDataConfig()
+      }
     }
   },
   methods: {
@@ -126,14 +142,26 @@ export default {
       })
       render.mergeOption(this.config)
     },
+    changeDynamicDataConfig () {
+      this.$emit('changeDynamicDataConfig', _.cloneDeep(this.formData))
+    },
     onModelInput (v) {
-      this.formData.model = v
-      this.formData.selectedInstance = []
+      if (this.formData.model === v) {
+        return
+      }
       this.formData.selectedKpi = []
+      this.formData.selectedInstance = []
+      this.formData.model = v
     },
     onInstanceInput (arr = []) {
+      if (_.isEqual(arr, this.formData.selectedInstance)) {
+        return
+      }
       this.formData.selectedInstance = Array.isArray(arr) ? arr : []
     }
+  },
+  created () {
+    this.formData = _.isEmpty(this.value) ? _.cloneDeep(formData) : _.cloneDeep(this.value)
   }
 }
 </script>

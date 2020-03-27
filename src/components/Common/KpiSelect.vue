@@ -50,17 +50,15 @@ export default {
         return this.value
       },
       set (v) {
-        console.log(v)
         this.$emit('input', v)
       }
     }
   },
   watch: {
     nodetypeS: {
-      immediate: false,
+      immediate: true,
       handler (v) {
-        this.options = []
-        this._value = []
+        // this._value = []
         if (v) {
           this.loadData()
         }
@@ -87,7 +85,7 @@ export default {
       }
     },
     handleChange (value) {
-      console.log(value)
+      // console.log(value)
       this._value = value
     }
   }

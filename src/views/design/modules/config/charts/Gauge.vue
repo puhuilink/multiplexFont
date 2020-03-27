@@ -1,13 +1,13 @@
 <template>
   <div class="texts-config">
-    <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="1">
+    <a-tabs defaultActiveKey="3" tabPosition="top" :style="{ height: '100%'}">
+      <a-tab-pane tab="公共属性" key="" forceRender>
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2">
+      <a-tab-pane tab="专有属性" key="2" forceRender>
         <div class="texts-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
             <!-- S 文本样式 -->
@@ -131,8 +131,13 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane tab="数据配置" key="3">
-        <DataSourceTemplate v-model="config.dataConfig.dbDataConfig" />
+      <a-tab-pane tab="数据配置" key="3" forceRender>
+        <DataSourceTemplate
+          :value="config.dataConfig.dbDataConfig"
+          @changeDynamicDataConfig="e => {
+            this.config.dataConfig.dbDataConfig = Object.assign({}, e)
+          }"
+        />
       </a-tab-pane>
 
     </a-tabs>
@@ -159,6 +164,10 @@ export default {
       this.config.proprietaryConfig.series.radius = `${value}%`
       this.change()
     }
+  },
+  created () {
+    // MOCK
+    this.config.dataConfig.dbDataConfig = { 'model': 'Linux', 'selectedInstance': ['BJ-QYSX-web'], 'selectedKpi': [3867] }
   }
 }
 </script>

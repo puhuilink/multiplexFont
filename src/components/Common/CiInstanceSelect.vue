@@ -12,6 +12,7 @@
         v-for="(item, itemIdx) in options"
         :key="itemIdx"
         :value="item.value"
+        v-if="item.value"
       >
         {{ item.label }}
       </a-select-option>
@@ -49,17 +50,17 @@ export default {
       get () {
         return this.value
       },
-      set (v = '') {
+      set (v) {
         this.$emit('input', v)
       }
     }
   },
   watch: {
     parentNameS: {
-      immediate: false,
+      immediate: true,
       handler (v) {
+        console.log('parentNameS', v)
         if (v) {
-          this.$emit('input', '')
           this.loadData({
             'parentname_s': {
               '_eq': this.parentNameS
@@ -67,7 +68,6 @@ export default {
           })
         } else {
           this.options = []
-          this.$emit('input', '')
         }
       }
     }
