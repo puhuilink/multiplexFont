@@ -170,7 +170,11 @@ export default {
   },
   created () {
     // MOCK
-    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({ 'model': 'Linux', 'selectedInstance': ['BJ-QYSX-web'], 'selectedKpi': [3867] })
+    this.config.dataConfig.dbDataConfig = new GaugeDataConfig({
+      'model': 'Linux',
+      'selectedInstance': ['557768655516084'],
+      'selectedKpi': ['2008']
+    })
   }
 }
 </script>

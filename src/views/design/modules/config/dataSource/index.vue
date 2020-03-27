@@ -83,6 +83,8 @@ import {
   KpiSelect,
   BaselineStrategySelect
 } from '@/components/Common'
+import { getKpiList } from '@/api/controller/Kpi'
+import { queryList } from './data'
 
 const formItemLayout = {
   labelCol: {
@@ -169,8 +171,13 @@ export default {
     onInstanceInput (arr = []) {
       this.formData.selectedInstance = Array.isArray(arr) ? arr : []
     },
-    preview () {
-
+    async preview () {
+      try {
+        const res = await getKpiList(queryList(this.formData))
+        console.log(res)
+      } catch (e) {
+        throw e
+      }
     }
   },
   created () {

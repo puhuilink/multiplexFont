@@ -11,7 +11,7 @@
       <a-select-option
         v-for="(item, itemIdx) in options"
         :key="itemIdx"
-        :value="item.rid"
+        :value="item.value"
       >
         {{ item.label }}
       </a-select-option>
