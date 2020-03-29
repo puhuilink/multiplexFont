@@ -31,7 +31,7 @@ export const queryModelList = gql`query modelListWithChildren ($withChildren: Bo
 export const queryInsanceList = gql`query ($where: ngecc_instance_bool_exp! = {}) {
   data: ngecc_instance (where: $where) {
     label: label_s
-    value: name_s
+    value: _id_s
     parentName: parentname_s
   }
 }`
@@ -55,6 +55,7 @@ export const queryKpiSelectList = nodeType => {
       }) {
         label: label_s
         rid: rid
+        value: kpicode_s
       }
     }`
   } else {
@@ -69,6 +70,7 @@ export const queryKpiSelectList = nodeType => {
       }) {
         label: label_s
         rid: rid
+        value: kpicode_s
       }
       data2: ngecc_instance_values (where: {
         nodetype_s: {
@@ -80,6 +82,7 @@ export const queryKpiSelectList = nodeType => {
       }) {
         label: label_s
         rid: rid
+        value: kpicode_s
       }
     }`
   }
