@@ -223,7 +223,7 @@ export default {
   computed: {
     ...mapState('screen', ['view', 'scale']),
     targetView () {
-      return _.cloneDeep(this.view)
+      return new View(this.view)
     }
   },
   methods: {
