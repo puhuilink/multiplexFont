@@ -59,21 +59,3 @@ Vue.prototype.pauseAudio = () => {
   buttonAudio.setAttribute('src', audio)
   buttonAudio.pause()
 }
-
-/* Vue.prototype.acStateColorFilter = (type) => {
-  type += ''
-  switch (type) {
-    case 'pending':
-      return '#c4c4c4'
-    case 'confirmed':
-      return '#00aaff'
-    case 'shifting':
-      return '#f99025'
-    case 'resolved':
-      return '#39cc39'
-    case 'ignore':
-      return '#000000'
-    default:
-      return ''
-  }
-} */
