@@ -3,59 +3,80 @@
  */
 <template>
   <div class="route-management">
-    <a-card :borderd="false">
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+    <CTable
+      ref="table"
+      rowKey="route_id"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
+      :customRow="customRow"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="巡检区域">
-                <a-select
-                  allowClear
-                  v-model="queryParam.checkArea"
-                  placeholder="请选择"
-                  default-value="checkall"
-                >
-                  <a-select-option value="0">北京机房</a-select-option>
-                  <a-select-option value="1">厦门机房</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="路线名称">
-                <a-input v-model="queryParam.wayName" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="路线编码">
-                  <a-input v-model="queryParam.wayCode" placeholder=""/>
+          <div :class="{ fold: !advanced }">
+            <a-row :gutter="48">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="巡检区域"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14 }"
+                  style="width: 100%">
+                  <a-select
+                    allowClear
+                    v-model="queryParam.ascription"
+                    placeholder="请选择"
+                    default-value=""
+                  >
+                    <a-select-option value="MachineRoom-BJ">北京机房</a-select-option>
+                    <a-select-option value="MachineRoom-XM">厦门机房</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="路线名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14 }"
+                  style="width: 100%">
+                  <a-input v-model="queryParam.route_name" placeholder=""/>
+                </a-form-item>
+              </a-col>
+            </a-row>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
-        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
+            <a-row>
+              <!-- 多余筛选框是否展示 -->
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="路线编号"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14 }"
+                    style="width: 100%">
+                    <a-input v-model="queryParam.route_code" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
+      <template #operation>
+        <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          @click="edit"
         >
           编辑
         </a-button>
@@ -65,45 +86,29 @@
         >
           删除
         </a-button>
-      </div>
-      <!-- E 操作栏 -->
+      </template>
 
-      <!-- S 列表 -->
-      <s-table
-        ref="table"
-        size="small"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ y:400 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      >
-        <span slot="way" slot-scope="text">
-          <ellipsis :length="65" tooltip >{{ text }}</ellipsis>
-        </span>
-      </s-table>
-      <!-- E 列表 -->
-
-      <!-- S 模块 -->
-      <detail ref="detail"></detail>
-      <!-- E 模块 -->
-    </a-card>
+      <span slot="route_info" slot-scope="text">
+        <ellipsis :length="50" tooltip>{{ text.replace(/,/g, '——>') }}</ellipsis>
+      </span>
+    </CTable>
+    <!-- S 模块 -->
+    <detail ref="detail"></detail>
+    <!-- E 模块 -->
   </div>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getRoute } from '@/api/patrol'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/RMDetail'
+import { getRouteList, deleteRoute } from '@/api/controller/patrol'
 
 export default {
   name: 'RouteManagement',
   components: {
-    STable,
+    CTable,
     Ellipsis,
     detail
   },
@@ -117,36 +122,62 @@ export default {
       columns: [
         {
           title: '路线名称',
-          dataIndex: 'wayName',
-          align: 'center',
+          dataIndex: 'route_name',
           width: 200,
           sorter: true
         },
         {
           title: '巡检区域',
-          dataIndex: 'checkArea',
-          align: 'center',
-          width: 100
+          dataIndex: 'ascription',
+          width: 200,
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case 'MachineRoom-XM':
+                return '厦门机房'
+              case 'MachineRoom-BJ':
+                return '北京机房'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '路线编号',
-          dataIndex: 'wayCode',
-          align: 'center',
+          dataIndex: 'route_code',
           width: 300,
           sorter: true
         },
         {
           title: '路线展示',
-          dataIndex: 'way',
-          scopedSlots: { customRender: 'way' }
+          dataIndex: 'rf_names',
+          sorter: true,
+          scopedSlots: { customRender: 'route_info' }
         }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getRoute(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        this.selectedRowKeys = []
+        const variables = {
+          ...parameter,
+          where: {
+            ...this.queryParam.ascription ? {
+              ascription: {
+                _eq: this.queryParam.ascription
+              }
+            } : {},
+            ...this.queryParam.route_name ? {
+              route_name: {
+                _ilike: `%${this.queryParam.route_name.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.route_code ? {
+              route_code: {
+                _ilike: `%${this.queryParam.route_code.trim()}%`
+              }
+            } : {}
+          }
+        }
+        return getRouteList(variables).then(r => r.data)
       },
       // 已选行特性值
       selectedRowKeys: [],
@@ -155,8 +186,29 @@ export default {
     }
   },
   filters: {},
-  computed: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
   methods: {
+    add () {
+      this.$refs['detail'].open('', 'New')
+    },
+    edit () {
+      // const [record] = this.selectedRows
+      // this.$refs['detail'].edtt(record)
+      this.$refs.detail.open(this.selectedRows[0], 'Edit')
+    },
+    /**
+     * 查询
+     * @param {Boolean} firstPage 是否从第一页开始
+     */
+    query (firstPage = true) {
+      this.$refs['table'].refresh(firstPage)
+    },
     /**
      * 筛选展开开关
      */
@@ -198,8 +250,26 @@ export default {
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        const variables = {
+          IDs: this.selectedRowKeys
+        }
+        await deleteRoute(variables)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     }
   }
 }
@@ -211,5 +281,9 @@ export default {
   button{
     margin-right: 5px;
   }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>
