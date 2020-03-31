@@ -469,7 +469,8 @@ export const asyncRouterMap = [
     name: 'Design',
     hidden: true,
     component: () => import('@/views/design/Design'),
-    meta: { title: '视图设计', permission: [ 'view' ] }
+    meta: { title: '视图设计', permission: ['view'] },
+    props: route => route.query
   },
   {
     path: '/preview',
