@@ -644,59 +644,49 @@ class RectShape {
  * 仪表盘基础配置
  */
 class SeriesGauge {
-  constructor (
-    {
-      id = 'SeriesGauge',
-      type = 'gauge',
-      radius = '100',
-      startAngle = 225,
-      endAngle = -134.8,
-      z = 4,
-      axisTick = {
-        show: true,
-        lineStyle: {
-          width: 2,
-          color: 'rgba(1,244,255, 0.9)'
-        }
-      },
-      splitLine = {
-        length: 16,
-        lineStyle: {
-          width: 2,
-          color: 'rgba(1,244,255, 0.9)'
-        }
-      },
-      axisLabel = {
-        color: 'rgba(255,255,255,0)',
-        fontSize: 12
-      },
-      pointer = {
-        show: false
-      },
-      axisLine = {
-        lineStyle: {
-          opacity: 0
-        }
-      },
-      detail = {
-        show: false
-      },
-      data = [100]
-    }
-  ) {
-    this.id = id
-    this.type = type
-    this.radius = radius
-    this.startAngle = startAngle
-    this.endAngle = endAngle
-    this.z = z
-    this.axisTick = axisTick
-    this.splitLine = splitLine
-    this.axisLabel = axisLabel
-    this.pointer = pointer
-    this.axisLine = axisLine
-    this.detail = detail
-    this.data = data
+  constructor (options = {
+    id: 'SeriesGauge',
+    type: 'gauge',
+    radius: '100',
+    min: 0,
+    max: 100,
+    startAngle: 225,
+    endAngle: -134.8,
+    z: 4,
+    axisTick: {
+      show: true,
+      lineStyle: {
+        width: 2,
+        color: 'rgba(1,244,255, 0.9)'
+      }
+    },
+    splitLine: {
+      length: 16,
+      lineStyle: {
+        width: 2,
+        color: 'rgba(1,244,255, 0.9)'
+      }
+    },
+    axisLabel: {
+      color: 'rgba(255,255,255,0)',
+      fontSize: 12
+    },
+    pointer: {
+      show: false
+    },
+    axisLine: {
+      lineStyle: {
+        opacity: 0
+      }
+    },
+    detail: {
+      show: false
+    },
+    data: [100]
+  }) {
+    Object.keys(options).forEach(key => {
+      this[key] = options[key]
+    })
   }
   /**
   * 获取仪表盘配置

@@ -8,11 +8,14 @@
 
 <template>
   <div class="data-source common-template">
-    <a-collapse defaultActiveKey="1" :bordered="false">
+
+    <a-collapse :activeKey="[1, 2]" :bordered="false">
+
       <!-- S 数据源 -->
-      <a-collapse-panel header="数据源" key="1">
+      <a-collapse-panel header="数据源类型" key="1">
+
         <div class="comment-template__item">
-          <!-- <p class="comment-template__leading">选择:</p>
+          <p class="comment-template__leading">选择:</p>
           <div class="comment-template__inner">
             <a-select
               class="data-source__select"
@@ -22,48 +25,23 @@
               <a-select-option value="static">静态数据</a-select-option>
               <a-select-option value="real">实时数据</a-select-option>
             </a-select>
-          </div> -->
+          </div>
 
-          <a-form>
-            <a-form-item
-              label="Ci类型"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <CiModelSelect :value="formData.model" @input="onModelInput" />
-            </a-form-item>
-            <a-form-item
-              label="Ci实例"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <CiInstanceSelect
-                labelInValue
-                :parentNameS="formData.model"
-                :value="formData.selectedInstance"
-                @input="onInstanceInput"
-              />
-            </a-form-item>
-            <a-form-item
-              label="Kpi"
-              :labelCol="formItemLayout.labelCol"
-              :wrapperCol="formItemLayout.wrapperCol"
-              required
-            >
-              <KpiSelect
-                v-model="formData.selectedKpi"
-                :nodetypeS="formData.model"
-                placeholder
-              />
-            </a-form-item>
-          </a-form>
         </div>
         <!-- / 数据源选择 -->
+
       </a-collapse-panel>
       <!-- E 数据源 -->
+
+      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === 'real'">
+        <!-- 留给组件自己实现 -->
+        <!-- <slot name="null" v-show="sourceType === 'null'"></slot> -->
+        <!-- <slot name="static" v-show="sourceType === 'static'"></slot> -->
+        <slot name="real" v-show="sourceType === 'real'"></slot>
+      </a-collapse-panel>
+
     </a-collapse>
+
   </div>
 </template>
 
@@ -72,45 +50,16 @@ import '@/assets/less/template.less'
 import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import {
-  CiModelSelect,
-  CiInstanceSelect,
-  KpiSelect,
-  BaselineStrategySelect
-} from '@/components/Common'
-
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-    offset: 0
-  },
-  wrapperCol: {
-    span: 13,
-    offset: 2
-  }
-}
 
 export default {
   name: 'DataSourceTemplate',
-  components: {
-    CiModelSelect,
-    CiInstanceSelect,
-    KpiSelect,
-    BaselineStrategySelect
-  },
-  data: (vm) => ({
-    formItemLayout,
-    form: vm.$form.create(vm),
-    formData: {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: []
-    }
-  }),
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
+    },
+    sourceType () {
+      return this.config.dataConfig.sourceType || 'null'
     }
   },
   methods: {
@@ -125,14 +74,6 @@ export default {
         widget: Object.assign(activeWidget, { render })
       })
       render.mergeOption(this.config)
-    },
-    onModelInput (v) {
-      this.formData.model = v
-      this.formData.selectedInstance = []
-      this.formData.selectedKpi = []
-    },
-    onInstanceInput (arr = []) {
-      this.formData.selectedInstance = Array.isArray(arr) ? arr : []
     }
   }
 }
@@ -140,6 +81,7 @@ export default {
 
 <style scoped lang="less">
 .data-source {
+
   &__select {
     width: 100%;
   }

@@ -2,7 +2,7 @@
   <div class="CiInstanceSelect">
     <a-select
       :labelInValue="labelInValue"
-      mode="multiple"
+      :mode="multiple ? 'multiple' : 'default'"
       style="min-width: 200px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
@@ -12,6 +12,7 @@
         v-for="(item, itemIdx) in options"
         :key="itemIdx"
         :value="item.value"
+        v-if="item.value"
       >
         {{ item.label }}
       </a-select-option>
@@ -26,9 +27,14 @@ export default {
   name: 'CiInstanceSelect',
   components: {},
   props: {
+    // eslint-disable-next-line
     value: {
-      type: Array,
-      default: () => ([])
+      // type: Array,
+      // default: () => ([])
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
     'parentNameS': {
@@ -49,17 +55,18 @@ export default {
       get () {
         return this.value
       },
-      set (v = '') {
-        this.$emit('input', v)
+      set (v) {
+        // 为维护字段一致性，对外统一暴露为数组格式
+        this.$emit('input', this.multiple ? v : [v])
       }
     }
   },
   watch: {
     parentNameS: {
-      immediate: false,
+      immediate: true,
       handler (v) {
+        console.log('parentNameS', v)
         if (v) {
-          this.$emit('input', '')
           this.loadData({
             'parentname_s': {
               '_eq': this.parentNameS
@@ -67,7 +74,6 @@ export default {
           })
         } else {
           this.options = []
-          this.$emit('input', '')
         }
       }
     }
