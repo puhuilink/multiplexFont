@@ -639,23 +639,6 @@ export default {
     async  exportExcel (e) {
       const file = await getHistoryEcxel(e)
       this.downloadFile(file, '历史告警列表')
-      // getHistoryEcxel(e).then(r => {
-      //   const content = r.data
-      //   const blob = new Blob([ content ])
-      //   const fileName = `${new Date().getTime()}_历史告警导出.xlsx`
-      //   if ('download' in document.createElement('a')) {
-      //     const elink = document.createElement('a')
-      //     elink.download = fileName
-      //     elink.style.display = 'none'
-      //     elink.href = URL.createObjectURL(blob)
-      //     document.body.appendChild(elink)
-      //     elink.click()
-      //     URL.revokeObjectURL(elink.href)
-      //     document.body.removeChild(elink)
-      //   } else {
-      //     navigator.msSaveBlob(blob, fileName)
-      //   }
-      // })
     },
     downloadFile (file, filename = '') {
       const blob = new Blob(
