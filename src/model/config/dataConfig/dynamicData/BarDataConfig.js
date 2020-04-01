@@ -12,7 +12,7 @@ export default class BarDataConfig {
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}
    */
-  async getDataOption () {
+  async getOption () {
     const { model, selectedInstance, selectedKpi } = this
     const res = await getComponentValues({ model, selectedInstance, selectedKpi })
     // 按 instance 进行分组

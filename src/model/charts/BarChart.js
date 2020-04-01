@@ -57,7 +57,7 @@ export default class BarChart extends Chart {
       case 'real': {
         if (loadingDynamicData) {
           try {
-            const dynamicData = await dbDataConfig.getDataOption()
+            const dynamicData = await dbDataConfig.getOption()
             series = dynamicData.singleSeries.map((item) => {
               Object.assign(item, bar, { barWidth })
               return item
