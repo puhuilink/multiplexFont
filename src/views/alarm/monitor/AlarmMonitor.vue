@@ -161,7 +161,7 @@
       <!-- E 搜索 -->
 
       <!-- S 操作 -->
-      <a-row :gutter="24">
+      <a-row>
         <a-col
           :xs="24"
           :sm="24"
@@ -177,8 +177,8 @@
           :xs="24"
           :sm="24"
           :md="24"
-          :lg="{span: 9, offset:7}"
-          :xl="{span: 9, offset:7}"
+          :lg="{span: 8, offset:8}"
+          :xl="{span: 8, offset:8}"
         >
           <a-input-search
             placeholder="输入关键字"
@@ -201,8 +201,8 @@
           :xs="24"
           :sm="24"
           :md="24"
-          :lg="{span: 9,offset:15}"
-          :xl="{span: 9,offset:15}"
+          :lg="{span: 8,offset:16}"
+          :xl="{span: 8,offset:16}"
         >
           <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
             <a-badge
@@ -561,7 +561,7 @@ export default {
           where: {
             ...this.where,
             state: {
-              _eq: this.tabkey
+              _eq: this.tabKey
             },
             arising_time: {
               _gte: '2018-5-31 00:00:00',
