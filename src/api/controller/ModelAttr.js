@@ -4,6 +4,8 @@ import {
   update,
   queryLastestId
 } from '../graphql/ModelAttr'
+import { oldRequest } from '@/utils/oldRequest'
+import store from '@/store'
 
 /**
  * 获取最新数据id，用于数据表自增
@@ -44,6 +46,17 @@ export const addModelAttr = async function (value) {
 }
 
 /**
+ * 旧系统增加属性
+ * @param {*} value
+ * @return {Promise<any>}
+ */
+export const addModelAttrOld = async function (value) {
+  // const rid = await fetchLastestId() + 1
+  // TODO
+  return oldRequest.post('/urmp/api/rest/post/modelService/modelAttributeManager', [])
+}
+
+/**
  * 更新属性
  * @param {*} value
  * @return {Promise<any>}
@@ -62,4 +75,18 @@ export const updateModelAttr = function (rid, value) {
       }
     }
   })
+}
+
+/**
+ * 旧系统更新属性
+ * @param {*} value
+ * @return {Promise<any>}
+ */
+export const updateModelAttrOld = function (rid, value) {
+  // TODO: mapping
+  return oldRequest.post('/urmp/api/rest/post/instanceService/update', [
+    value,
+    store.state.user.name,
+    []
+  ])
 }
