@@ -24,7 +24,7 @@
             <a-button shape="circle" type="danger" icon="delete" />
           </a-popconfirm>
         </div>
-        <component :is="templateComponentName" />
+        <component :is="templateComponentName" :key="templateComponentKey" />
       </div>
       <div class="config__none" v-else>
         <a-icon type="disconnect" />
@@ -73,6 +73,9 @@ export default {
     },
     templateComponentName () {
       return this.templateMapping.get(this.activeWidget.config.type)
+    },
+    templateComponentKey () {
+      return this.activeWidget.widgetId
     }
   },
   methods: {
