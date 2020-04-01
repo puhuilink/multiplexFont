@@ -8,6 +8,7 @@ import _ from 'lodash'
 
 export default class DynamicDataFactory {
   static create (type, dbDataConfig) {
+    console.log('dbDataConfig', type, dbDataConfig)
     switch (_.upperFirst(type)) {
       case 'Gauge':
         return new GaugeDataConfig(dbDataConfig)

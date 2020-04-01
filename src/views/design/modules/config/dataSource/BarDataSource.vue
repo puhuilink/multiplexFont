@@ -5,7 +5,7 @@
         <a-button>模拟</a-button>
       </a-tooltip> -->
       <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-        <a-button :disabled="!available" @click="preview">预览</a-button>
+        <a-button :disabled="!available" @click="change(true)">预览</a-button>
       </a-tooltip>
 
       <ComboSelect :multiple="true" v-model="formData" />
@@ -61,34 +61,7 @@ export default {
   methods: {
     ...mapMutations('screen', {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
-    }),
-    change () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
-      Object.assign(activeWidget.config, this.config)
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { render })
-      })
-      render.mergeOption(this.config)
-    },
-    async preview () {
-      getComponentValues(this.formData)
-      // // TODO: data直接初始化为对象而非数组
-      // const set = v => this.$set(this.config.proprietaryConfig.series.data[0], 'value', v)
-      // try {
-      //   const { data } = await getKpiList(queryList(this.formData))
-      //   if (data.length) {
-      //     set(data[0].value)
-      //   } else {
-      //     set(0)
-      //   }
-      // } catch (e) {
-      //   set(0)
-      //   throw e
-      // } finally {
-      //   this.change()
-      // }
-    }
+    })
   }
 }
 </script>
