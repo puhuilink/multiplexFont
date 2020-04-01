@@ -3,9 +3,28 @@
  */
 import { axios } from '@/utils/request'
 
-export function getHistoryEcxel (data) {
+export const getHistoryEcxel = function (data) {
   return axios({
     url: '/alert/exportAlert',
+    method: 'post',
+    data,
+    responseType: 'arraybuffer'
+  })
+}
+// TODO: 地址需要转换为巡检的地址
+export const getPatrolTask = function (data) {
+  return axios({
+    url: '/taskInfo/exportTask',
+    method: 'post',
+    data,
+    responseType: 'arraybuffer'
+  })
+}
+
+// TODO: 地址需要转换为巡检的地址
+export const getPatrolObject = function (data) {
+  return axios({
+    url: '/taskCi/exportTaskCi',
     method: 'post',
     data,
     responseType: 'arraybuffer'

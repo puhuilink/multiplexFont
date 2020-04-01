@@ -69,7 +69,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button>导出Excel</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
       </div>
       <!-- E 操作栏 -->
 
@@ -105,6 +105,7 @@
 <script>
 import { STable } from '@/components'
 import { getObj, getObjInfo } from '@/api/patrol'
+import { getPatrolObject } from '@/api/controller/ExcelExport'
 
 export default {
   name: 'PatrolObject',
@@ -249,6 +250,13 @@ export default {
           }
         }
       }
+    },
+    /**
+     * 导出
+     */
+    async  exportExcel (e) {
+      const file = await getPatrolObject(e)
+      this.downloadFile(file, '巡检检查对象列表')
     }
   }
 }
