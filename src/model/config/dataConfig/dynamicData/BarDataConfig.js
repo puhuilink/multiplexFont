@@ -17,6 +17,7 @@ export default class BarDataConfig {
     const res = await getComponentValues({ model, selectedInstance, selectedKpi })
     // 按 instance 进行分组
     const groupedData = _.groupBy(res, 'instanceLabel')
+    console.log(res, groupedData)
     // TODO: 此处为单列数据展示
     const data = {
       legend: {},
