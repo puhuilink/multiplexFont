@@ -1,10 +1,10 @@
 /**
-* echarts 图表对象
-* Author: dong xing
-* Date: 2019/11/25
-* Time: 4:55 下午
-* Email: dong.xing@outlook.com
-*/
+ * echarts 图表对象
+ * Author: dong xing
+ * Date: 2019/11/25
+ * Time: 4:55 下午
+ * Email: dong.xing@outlook.com
+ */
 import anime from 'animejs'
 import echarts from 'echarts'
 import _ from 'lodash'
@@ -15,6 +15,8 @@ export default class Chart {
     this.chartConfig = {}
     this.setContainer(widget)
     this.init(widget)
+    this.setStyle(widget.config)
+    this.config = widget.config
   }
 
   /**
@@ -32,6 +34,22 @@ export default class Chart {
       left,
       zIndex
     })
+  }
+
+  /**
+   * 设置基本样式
+   * @param config
+   */
+  setStyle (config) {
+    const {
+      colorMode, backgroundColor, border
+    } = config.commonConfig
+    anime.set(this.container, {
+      ...border.getOption(),
+      background: colorMode === 'single' ? backgroundColor : `linear-gradient(${backgroundColor.angle}deg, ${backgroundColor.start}, ${backgroundColor.end})`
+    })
+    // 在矩形等图形中，设置resize调用矩形类的resize方法，需要传入config配置
+    this.resize(config)
   }
 
   /**
@@ -68,10 +86,11 @@ export default class Chart {
   /**
    * 设置新的配置项渲染图表
    * @param config widget 配置项
+   * @param {Boolean} loadingDynamicData 是否同时绘制动态数据
    */
-  mergeOption (config) {
+  async mergeOption (config, loadingDynamicData = false) {
     // 向外暴露 echarts 配置
-    this.chartConfig = this.mappingOption(config)
+    this.chartConfig = await this.mappingOption(config, loadingDynamicData)
     // 如果数据为空则清空图表
     if (_.isEmpty(this.chartConfig.series)) {
       this.chart.clear()

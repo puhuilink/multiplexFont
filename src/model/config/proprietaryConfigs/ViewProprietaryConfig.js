@@ -1,14 +1,15 @@
 /**
-* 视图属性配置
-* Author: dong xing
-* Date: 2020/2/24
-* Time: 5:30 下午
-* Email: dong.xing@outlook.com
-*/
+ * 视图属性配置
+ * Author: dong xing
+ * Date: 2020/2/24
+ * Time: 5:30 下午
+ * Email: dong.xing@outlook.com
+ */
 
 /**
  * @param mode 背景样式模式
- *  color: 单一颜色
+ *  single: 单一颜色
+ *  linear: 单一颜色
  *  image: 背景图片
  *
  * @param backgroundImage 背景图片
@@ -33,7 +34,7 @@
  */
 export default class ViewProprietaryConfig {
   constructor ({
-    mode = 'color',
+    mode = 'single',
     backgroundColor = 'rgba(255,255,255,1)',
     backgroundImage = '',
     backgroundRepeat = 'no-repeat',

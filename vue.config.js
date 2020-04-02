@@ -96,6 +96,14 @@ const vueConfig = {
     port: 8080,
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
+      '/urmp': {
+        target: 'http://10.1.13.19:48080/',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/urmp': ''
+        }
+      },
       '/api': {
         target: 'http://10.1.8.176:28081/',
         ws: false,

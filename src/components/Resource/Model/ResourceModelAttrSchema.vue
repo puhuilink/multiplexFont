@@ -411,8 +411,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
+import { addModelAttr, updateModelAttr } from '@/api/controller/ModelAttr'
 
 const formItemLayout = {
   labelCol: {
@@ -515,26 +514,6 @@ const options = {
   ]
 }
 
-const insert = gql`mutation ($objects: [ngecc_model_attributes_insert_input!]! = []) {
-  insert_ngecc_model_attributes (objects: $objects) {
-    returning {
-      rid
-    }
-  }
-}
-`
-
-const update = gql`mutation update ($where: ngecc_model_attributes_bool_exp!, $attr: ngecc_model_attributes_set_input) {
-  update_ngecc_model_attributes (
-    where: $where,
-    _set: $attr
-  ) {
-      returning {
-      rid
-    }
-  }
-}`
-
 export default {
   name: 'ResourceModelAttrSchema',
   components: {},
@@ -583,17 +562,12 @@ export default {
      * 新增
      */
     async insert () {
-      const values = {
+      const value = {
         ...await this.getFormFields(),
         did: this.did
       }
       this.loading = true
-      return apollo.clients.resource.mutate({
-        mutation: insert,
-        variables: {
-          objects: [values]
-        }
-      }).then(res => {
+      return addModelAttr(value).then(res => {
         this.$notification.success({
           message: '系统提示',
           description: '新建成功'
@@ -610,32 +584,21 @@ export default {
      * 编辑
      */
     async update () {
-      const values = await this.getFormFields()
+      const value = await this.getFormFields()
       this.loading = true
-      return apollo.clients.resource.mutate({
-        mutation: update,
-        variables: {
-          where: {
-            'rid': {
-              '_eq': this.record.rid
-            }
-          },
-          attr: {
-            ...values
-          }
-        }
-      }).then(res => {
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
+      return updateModelAttr(this.record.rid, value)
+        .then(res => {
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.$emit('editSuccess')
+          this.cancel()
+        }).catch(err => {
+          throw err
+        }).finally(() => {
+          this.loading = false
         })
-        this.$emit('editSuccess')
-        this.cancel()
-      }).catch(err => {
-        throw err
-      }).finally(() => {
-        this.loading = false
-      })
     },
     async getFormFields () {
       return new Promise((resolve, reject) => {

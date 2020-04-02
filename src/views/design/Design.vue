@@ -10,6 +10,9 @@
   <div class="design">
     <div class="header">
       <p>视图设计 - {{ routeQuery.title }}</p>
+      <a-button shape="circle" @click="back">
+        <a-icon type="close"></a-icon>
+      </a-button>
     </div>
     <div class="content">
       <transition name="panel">
@@ -59,6 +62,9 @@ export default {
     }
   },
   methods: {
+    back () {
+      this.$router.go(-1)
+    },
     leftPanelControl (control) {
       this.leftPanelExpand = control
     },
@@ -97,8 +103,9 @@ export default {
     flex: none;
     display: flex;
     flex-flow: row nowrap;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
+    width: 100%;
     height: 54px;
     box-sizing: border-box;
     padding: 0 16px;

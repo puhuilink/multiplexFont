@@ -277,7 +277,9 @@ class Title {
     text = '文本',
     link = '',
     target = 'blank',
-    textStyle = {},
+    textStyle = {
+      fontSize: 24
+    },
     position = {}
   }) {
     this.text = text
@@ -452,13 +454,464 @@ class YAixs extends Aixs {
   }
 }
 
+/**
+ * 饼图基础配置
+ * 官方配置： https://www.echartsjs.com/zh/option.html#series-pie.type
+ */
+class SeriesPie {
+  constructor ({
+    id = 'SeriesPie',
+    type = 'pie',
+    radius = 80,
+    center = ['50%', '50%'],
+    z = 5,
+    silent = true,
+    labelLine = false,
+    color = {
+      start: 'red',
+      end: 'orange',
+      type: 'linear',
+      colorStops: [{
+        offset: 0,
+        color: 'rgba(86,198,62,1)'
+      }, {
+        offset: 1,
+        color: 'rgba(40,131,38,1)'
+      }]
+    },
+    data = [100]
+  }) {
+    this.id = id
+    this.type = type
+    this.radius = radius
+    this.center = center
+    this.z = z
+    this.silent = silent
+    this.labelLine = labelLine
+    this.color = color
+    this.data = data
+  }
+
+  /**
+   * 获取饼图配置
+   */
+  getOption () {
+    let color
+    if (this.color.type) {
+      switch (this.color.type) {
+        case '':
+          // color = this.color
+          break
+        case 'linear':
+          color = {
+            type: 'linear',
+            colorStops: [{
+              offset: 0,
+              color: this.color.start || 'rgba(86,198,62,1)'
+            }, {
+              offset: 1,
+              color: this.color.end || 'rgba(40,131,38,1)'
+            }]
+          }
+          break
+        default:
+          break
+      }
+    } else {
+      color = this.color
+    }
+    return Object.assign(_.cloneDeep(this), {
+      color
+    })
+  }
+}
+/*
+ * 形状样式
+ */
+class Style {
+  constructor ({
+    colorMode = 'single',
+    fill = 'rgba(64,169,255, 1)',
+    stroke = 'rgba(12,142,255, 1)',
+    lineWidth = 0
+  }) {
+    this.colorMode = colorMode
+    this.fill = fill
+    this.stroke = stroke
+    this.lineWidth = lineWidth
+  }
+
+  /**
+   * 映射配置
+   * @returns {{} & Style & {fill: (string|{x: number, y: number, y2: number, x2: number, colorStops: [{offset: number, color}, {offset: number, color}], type: string})}}
+   */
+  getOption () {
+    const fill = this.colorMode === 'single'
+      ? this.fill
+      : {
+        type: 'linear',
+        x: 1,
+        y: 0,
+        x2: 1,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            color: this.fill.start || 'rgba(64,169,255, 1)'
+          },
+          {
+            offset: 1,
+            color: this.fill.end || 'rgba(0, 0, 0, 1)'
+          }
+        ]
+      }
+    return Object.assign({}, this, { fill })
+  }
+}
+
+/**
+ * echart图形
+ * @param originType
+ * 'container_center' 容器居中
+ * 'container_topLeft' 容器左上
+ * 'container_topRight' 容器右上
+ * 'container_bottomRight' 容器右下
+ * 'container_bottomLeft' 容器左下
+ * 'graph_center' 图形居中
+ * 'graph_topLeft' 图形左上
+ * 'graph_topRight' 图形右上
+ * 'graph_bottomRight' 图形右下
+ * 'graph_bottomLeft' 图形左下
+ */
+class Graphic {
+  constructor ({
+    top = 0,
+    left = 0,
+    right = 0,
+    bottom = 0,
+    style = {}
+  }) {
+    this.top = top
+    this.left = left
+    this.right = right
+    this.bottom = bottom
+    this.style = new Style(style)
+  }
+}
+
+/**
+ * 矩形形状
+ */
+class RectShape {
+  constructor ({
+    width = 300,
+    height = 300,
+    borderTopLeftRadius = 0,
+    borderTopRightRadius = 0,
+    borderBottomRightRadius = 0,
+    borderBottomLeftRadius = 0
+  }) {
+    this.width = width
+    this.height = height
+    this.borderTopLeftRadius = borderTopLeftRadius
+    this.borderTopRightRadius = borderTopRightRadius
+    this.borderBottomRightRadius = borderBottomRightRadius
+    this.borderBottomLeftRadius = borderBottomLeftRadius
+  }
+
+  /**
+   * 映射配置
+   */
+  getOption (chart, lineWidth, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - lineWidth - left - right
+    const height = chart.getHeight() - lineWidth - top - bottom
+
+    return {
+      width,
+      height,
+      r: [
+        this.borderTopLeftRadius,
+        this.borderTopRightRadius,
+        this.borderBottomRightRadius,
+        this.borderBottomLeftRadius
+      ]
+    }
+  }
+}
+
+/**
+ * 仪表盘基础配置
+ */
+class SeriesGauge {
+  constructor (options = {
+    id: 'SeriesGauge',
+    type: 'gauge',
+    radius: '100',
+    min: 0,
+    max: 100,
+    startAngle: 225,
+    endAngle: -134.8,
+    z: 4,
+    axisTick: {
+      show: true,
+      lineStyle: {
+        width: 2,
+        color: 'rgba(1,244,255, 0.9)'
+      }
+    },
+    splitLine: {
+      length: 16,
+      lineStyle: {
+        width: 2,
+        color: 'rgba(1,244,255, 0.9)'
+      }
+    },
+    axisLabel: {
+      color: 'rgba(255,255,255,0)',
+      fontSize: 12
+    },
+    pointer: {
+      show: false
+    },
+    axisLine: {
+      lineStyle: {
+        opacity: 0
+      }
+    },
+    detail: {
+      show: false
+    },
+    data: [100]
+  }) {
+    Object.keys(options).forEach(key => {
+      this[key] = options[key]
+    })
+  }
+  /**
+  * 获取仪表盘配置
+  */
+  getOption () {
+    return Object.assign(_.cloneDeep(this))
+  }
+}
+/**
+ * 矩形
+ */
+class RectGraphic extends Graphic {
+  constructor ({
+    shape = {},
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'rect'
+    this.shape = new RectShape(shape)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
+    return Object.assign(_.cloneDeep(this),
+      {
+        shape: this.shape.getOption(chart, this.style.lineWidth, padding),
+        style: this.style.getOption()
+      },
+      padding
+    )
+  }
+}
+
+/**
+ * 园形形状
+ */
+class CircleShape {
+  constructor ({
+    cx = 0,
+    cy = 0,
+    r = 150
+  }) {
+    this.cx = cx
+    this.cy = cy
+    this.r = r
+  }
+}
+
+/**
+ * 圆形
+ */
+class CircleGraphic extends Graphic {
+  constructor ({
+    shape = {},
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'circle'
+    this.shape = new CircleShape(shape)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - this.style.lineWidth - left - right
+    const height = chart.getHeight() - this.style.lineWidth - top - bottom
+    const r = Math.min(width, height) / 2
+    const center = { x: width / 2 - r, y: height / 2 - r }
+    return Object.assign(_.cloneDeep(this),
+      {
+        shape: new CircleShape({ r }),
+        style: this.style.getOption(),
+        top: center.y + top,
+        left: center.x + left
+      }
+    )
+  }
+}
+
+/**
+ * 三角形形状
+ */
+class TriangleShape {
+  constructor ({
+    points = [],
+    smooth = 0
+  }) {
+    this.points = points
+    this.smooth = smooth
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param lineWidth
+   * @param padding
+   */
+  getOption (chart, lineWidth, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - lineWidth
+    const height = chart.getHeight() - lineWidth - bottom
+    const vertex = [width / 2, top]
+    const leftPoint = [left, height]
+    const rightPoint = [width - right, height]
+
+    return {
+      points: [vertex, leftPoint, rightPoint],
+      smooth: this.smooth
+    }
+  }
+}
+
+/**
+ * 三角形
+ */
+class TriangleGraphic extends Graphic {
+  constructor ({
+    shape = {},
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'polygon'
+    this.shape = new TriangleShape(shape)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
+    return Object.assign(_.cloneDeep(this),
+      {
+        shape: this.shape.getOption(chart, this.style.lineWidth, padding),
+        style: this.style.getOption()
+      },
+      padding
+    )
+  }
+}
+
+/**
+ * 图片样式
+ */
+class ImageStyle {
+  constructor ({
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    image = ''
+  }) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.image = image
+  }
+}
+
+/**
+ * 图片
+ */
+class ImageGraphic extends Graphic {
+  constructor ({
+    ...graphicOption
+  }) {
+    super(graphicOption)
+    this.type = 'image'
+    this.style = new ImageStyle(this.style)
+  }
+
+  /**
+   * 映射配置
+   * @param chart
+   * @param padding
+   * @returns {any}
+   */
+  getOption (chart, padding) {
+    const { top, left, right, bottom } = padding
+    const width = chart.getWidth() - left - right
+    const height = chart.getHeight() - top - bottom
+    const imageRatio = this.style.width / this.style.height
+    const containerRatio = width / height
+    const limit = imageRatio >= containerRatio
+      ? { width, height: width / imageRatio }
+      : { height, width: height * imageRatio }
+    const center = { x: (width - limit.width) / 2, y: (height - limit.height) / 2 }
+
+    return Object.assign(_.cloneDeep(this),
+      {
+        style: { image: this.style.image, ...limit },
+        top: center.y + top,
+        left: center.x + left
+      }
+    )
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
   ItemStyle,
   Legend,
   LineStyle,
+  Graphic,
   Title,
   XAixs,
-  YAixs
+  YAixs,
+  TextStyle,
+  SeriesPie,
+  SeriesGauge,
+  RectGraphic,
+  CircleGraphic,
+  TriangleGraphic,
+  ImageGraphic
 }

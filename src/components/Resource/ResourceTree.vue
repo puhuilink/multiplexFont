@@ -56,6 +56,8 @@ import { buildTree, search } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
+// eslint-disable-next-line
+import { deleteModel } from '@/api/controller/Resource'
 
 export default {
   name: 'ResourceTree',
@@ -174,12 +176,12 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
+        await deleteModel(this.selectedKey)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
       } catch (e) {
         throw e
       } finally {
-
       }
     },
     /**
@@ -199,12 +201,12 @@ export default {
     select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
       if (selected) {
         this.selectedKey = selectedKey
-        console.log(selectedNode)
         const dataRef = selectedNode.data.props.dataRef
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
-          'name_s': dataRef.name_s
+          'name_s': dataRef.name_s,
+          'tree_s': dataRef.parenttree_s + dataRef.name_s
         })
       } else {
         // FIXME: 新增后可以不用重置
@@ -219,7 +221,7 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
-      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京
+      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京（可能与内存泄漏有关：上次搜索后未重置状态）
       this.searchValue = value
       this.expandedKeys = search(value, this.dataSource)
     }

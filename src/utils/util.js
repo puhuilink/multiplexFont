@@ -80,3 +80,15 @@ export function downloadFile (fileName, content) {
   event.initMouseEvent('click', false, false)
   link.dispatchEvent(event)
 }
+
+/**
+ * 生成number格式的uuid，主要用于数据表新增项的id
+ * @param {*} length
+ */
+export function numbericUuid (length) {
+  return new Date().valueOf() * 1000 + parseInt(Math.random() * 1000)
+}
+
+export function varcharUuid (length) {
+  return `${numbericUuid()}`
+}

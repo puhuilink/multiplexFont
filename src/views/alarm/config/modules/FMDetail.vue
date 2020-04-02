@@ -84,6 +84,7 @@
             <a-input-number
               style="width: 100%"
               :disabled="mode=='See'"
+              :min="0"
               v-decorator="['send_cycle', { initialValue: record.send_cycle }]"
             />
           </a-form-item>
@@ -94,13 +95,13 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['time', {
-                initialValue: record.time
+              v-decorator="['send_cycle_unit', {
+                initialValue: record.send_cycle_unit
               }]"
               placeholder="请选择"
             >
-              <a-select-option value="0">分钟</a-select-option>
-              <a-select-option value="1">小时</a-select-option>
+              <a-select-option value="m">分钟</a-select-option>
+              <a-select-option value="h">小时</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -126,14 +127,14 @@
               allowClear
               :disabled="mode=='See'"
               style="width: 100%"
-              v-decorator="['useing', {
-                initialValue: record.status,
+              v-decorator="['enabled', {
+                initialValue: record.enabled,
                 rules: [{ required: true, message: '启用不能为空!' }]
               }]"
               placeholder="请选择"
             >
-              <a-select-option value="0">是</a-select-option>
-              <a-select-option value="1">否</a-select-option>
+              <a-select-option value="true">是</a-select-option>
+              <a-select-option value="false">否</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -225,7 +226,7 @@ import apollo from '@/utils/apollo'
 const insert = gql`mutation ($objects: [t_forward_path_insert_input!]! = []) {
   insert_t_forward_path (objects: $objects) {
     returning {
-      rid
+      forward_path_id
     }
   }
 }`
@@ -236,7 +237,7 @@ const update = gql`mutation update ($where: t_forward_path_bool_exp!, $val: t_fo
     _set: $val
   ) {
       returning {
-      id_s
+      forward_path_id
     }
   }
 }`
@@ -283,13 +284,29 @@ export default {
       e.preventDefault()
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          values.send_cycle = this.sendCycleStr(values.send_cycle, values.send_cycle_unit)
+          delete (values.send_cycle_unit)
           if (this.mode === 'New') {
+            values.forward_path_id = screening.createUniqueId()
             this.insert(values)
           } else if (this.mode === 'Edit') {
             this.update(values)
           }
         }
       })
+    },
+    /**
+     * 前转周期时间处理
+     */
+    sendCycleStr (cycle, unit) {
+      switch (unit) {
+        case 'm':
+          return cycle * 600000
+        case 'h':
+          return cycle * 3600000
+        default:
+          break
+      }
     },
     /**
      * 新增
