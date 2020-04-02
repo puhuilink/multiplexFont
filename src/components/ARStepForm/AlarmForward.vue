@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import queryList from '@/api/alarm/queryList'
+import queryList from '@/api/controller/AlarmqQueryList'
 import screening from '@/views/alarm/screening'
 
 export default {

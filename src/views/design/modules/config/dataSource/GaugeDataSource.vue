@@ -8,56 +8,23 @@
         <a-button :disabled="!available" @click="change(true)">预览</a-button>
       </a-tooltip>
 
-      <ComboSelect :multiple="false" v-model="formData" />
+      <ComboSelect :multiple="false" v-model="resourceConfig" />
 
     </template>
   </DataSourceTemplate>
 </template>
 
 <script>
-import '@/assets/less/template.less'
-import _ from 'lodash'
 import { ComboSelect } from '@/components/Common'
-import { mapState, mapMutations } from 'vuex'
-import { ScreenMutations } from '@/store/modules/screen'
 import DataSourceTemplate from './index'
-import ProprietaryMixins from '../propietaryMixins'
+import DataSourceMixins from '../dataSourceMixins'
 
 export default {
   name: 'GaugeDataSource',
-  mixins: [ProprietaryMixins],
+  mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
     ComboSelect
-  },
-  computed: {
-    ...mapState('screen', ['activeWidget']),
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    },
-    formData: {
-      get () {
-        return this.config.dataConfig.dbDataConfig
-      },
-      set (v) {
-        this.config.dataConfig.dbDataConfig = v
-        this.change()
-      }
-    },
-    available () {
-      return Boolean(
-        this.formData &&
-        this.formData.selectedKpi &&
-        this.formData.selectedKpi.length &&
-        this.formData.selectedInstance &&
-        this.formData.selectedInstance.length
-      )
-    }
-  },
-  methods: {
-    ...mapMutations('screen', {
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
-    })
   }
 }
 </script>
