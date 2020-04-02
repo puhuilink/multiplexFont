@@ -41,7 +41,6 @@ export default class BarChart extends Chart {
           Object.assign(item, bar, { barWidth })
           return item
         })
-        console.log('series', series)
         const { legend: staticLegend, xAxis: staticXAxis, yAxis: staticYAxis } = staticData
         Object.assign(option, {
           legend: Object.assign(legend, staticLegend),
@@ -56,30 +55,22 @@ export default class BarChart extends Chart {
       }
       case 'real': {
         if (loadingDynamicData) {
-          try {
-            const dynamicData = await dbDataConfig.getOption()
-            series = dynamicData.singleSeries.map((item) => {
-              Object.assign(item, bar, { barWidth })
-              return item
-            })
-            const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
-            Object.assign(option, {
-              legend: Object.assign(legend, dynamicLegend),
-              xAxis: Object.assign(xAxis, dynamicXAxis),
-              yAxis: Object.assign(yAxis, dynamicYAxis),
-              series
-            })
-          } catch (e) {
-            // TODO: reset，或者放到 dbDataConfig 中返回空
-            throw e
-          }
-        } else {
-          Object.assign(option, this.lastOption)
+          const dynamicData = await dbDataConfig.getOption()
+          series = dynamicData.singleSeries.map((item) => {
+            Object.assign(item, bar, { barWidth })
+            return item
+          })
+          const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+          Object.assign(option, {
+            legend: Object.assign(legend, dynamicLegend),
+            xAxis: Object.assign(xAxis, dynamicXAxis),
+            yAxis: Object.assign(yAxis, dynamicYAxis),
+            series
+          })
         }
         break
       }
     }
-    this.lastOption = Object.assign({}, option)
     return Object.assign({}, option)
   }
 }

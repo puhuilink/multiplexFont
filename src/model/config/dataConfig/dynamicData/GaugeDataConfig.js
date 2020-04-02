@@ -1,10 +1,14 @@
 import { getComponentValues } from '@/api/controller/View'
 
 export default class GaugeDataConfig {
-  constructor ({ model, selectedInstance, selectedKpi }) {
-    this.model = model
-    this.selectedInstance = selectedInstance
-    this.selectedKpi = selectedKpi
+  constructor ({
+    resourceConfig = {
+      model: '',
+      selectedInstance: [],
+      selectedKpi: []
+    }
+  }) {
+    this.resourceConfig = resourceConfig
   }
 
   /**
@@ -12,8 +16,12 @@ export default class GaugeDataConfig {
    * @returns {Promise<any>}
    */
   async getOption () {
-    const { model, selectedInstance, selectedKpi } = this
-    return getComponentValues({ model, selectedInstance, selectedKpi })
-      .then(([data]) => data ? data.value : 0)
+    try {
+      // 没有记录时返回长度为0的数组
+      const [data] = await getComponentValues(this.resourceConfig)
+      return data ? data.value : 0
+    } catch (e) {
+      return 0
+    }
   }
 }
