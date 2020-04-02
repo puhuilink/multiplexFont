@@ -57,7 +57,7 @@
           <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = Object.assign({}, initialQueryParams)">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -104,6 +104,12 @@ const layout = {
   wrapper: { span: 16, offset: 2 }
 }
 
+const initialQueryParams = {
+  model: '',
+  title: '',
+  kpi_code: []
+}
+
 export default {
   name: 'BaselineDefinition',
   components: {
@@ -119,6 +125,7 @@ export default {
       layout,
       // 搜索： 展开/关闭
       advanced: false,
+      initialQueryParams,
       // 查询参数
       queryParams: {
         model: '',
