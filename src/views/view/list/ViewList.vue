@@ -152,12 +152,6 @@ export default {
           scopedSlots: { customRender: 'viewName' }
         },
         {
-          title: '视图类型',
-          dataIndex: 'view_type',
-          sorter: true,
-          width: 200
-        },
-        {
           title: '视图创建者',
           dataIndex: 'creator',
           sorter: true,
@@ -206,7 +200,11 @@ export default {
             view_title: {
               _ilike: `%${this.queryParams.view_title.trim()}%`
             }
-          } : {}
+          } : {},
+          // 老系统才区分视图类型，新系统只有一种类型
+          view_type: {
+            _eq: 'h5'
+          }
         }
       }).then(r => r.data)
     },
