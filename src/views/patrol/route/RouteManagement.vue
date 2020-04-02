@@ -9,18 +9,17 @@
       :columns="columns"
       :data="loadData"
       :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
-      :customRow="customRow"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <template #query>
         <a-form layout="inline">
           <div :class="{ fold: !advanced }">
-            <a-row :gutter="48">
+            <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="巡检区域"
                   :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
                   <a-select
                     allowClear
@@ -37,7 +36,7 @@
                 <a-form-item
                   label="路线名称"
                   :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
                   <a-input v-model="queryParam.route_name" placeholder=""/>
                 </a-form-item>
@@ -51,7 +50,7 @@
                   <a-form-item
                     label="路线编号"
                     :labelCol="{ span: 4 }"
-                    :wrapperCol="{ span: 14 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
                     style="width: 100%">
                     <a-input v-model="queryParam.route_code" placeholder=""/>
                   </a-form-item>
@@ -63,7 +62,7 @@
           <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -216,16 +215,6 @@ export default {
       this.advanced = !this.advanced
     },
     /**
-     * 日期时间空间选择
-     */
-    onDataChange (value, dateString) {
-      console.log('Selected Time: ', value)
-      console.log('Formatted Selected Time: ', dateString)
-    },
-    onDataOk (value) {
-      console.log('onOk: ', value)
-    },
-    /**
      * 选中行更改事件
      * @param selectedRowKeys
      * @param selectedRows
@@ -233,18 +222,6 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     },
     /**
      * 删除选中项
