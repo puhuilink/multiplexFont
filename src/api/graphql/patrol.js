@@ -101,6 +101,47 @@ export const queryTaskInfo = gql`query ($where: task_info_bool_exp = {}, $limit:
     }
 }`
 
+export const queryTaskCiList = gql`query ($where: task_ci_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [task_ci_order_by!]) {
+  pagination: task_ci_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data:  task_ci (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+    ascription
+    ci_name
+    create_time
+    file_urls
+    is_enable
+    level_no
+    is_update
+    memo
+    route_code
+    status
+    task_ci_id
+    task_code
+    update_time
+    urmp_ci_code
+    urmp_rf_code
+    }
+}`
+
+export const queryTaskKpi = gql`query xunjian($where: task_kpi_bool_exp = {}) {
+  task_kpi (where: $where) {
+    is_enable
+    kpi_name
+    kpi_value
+    route_code
+    task_code
+    task_kpi_id
+    task_kpi_status
+    update_time
+    urmp_ci_code
+    urmp_kpi_code
+    urmp_kpi_type
+    urmp_kpi_value_type
+  }
+}`
 // mutation
 
 export const updateRoute = gql`mutation update ($where: route_info_bool_exp!, $val: route_info_set_input) {

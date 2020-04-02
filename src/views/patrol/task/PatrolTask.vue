@@ -180,7 +180,7 @@
       <template #operation>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="see"
+          @click="seeDetail"
         >
           查看
         </a-button>

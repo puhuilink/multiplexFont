@@ -4,6 +4,8 @@ import {
   queryPlanList,
   queryUserGroupList,
   queryTaskInfo,
+  queryTaskCiList,
+  queryTaskKpi,
   updatePlan,
   deleteRouteArr,
   deletePlanArr
@@ -40,6 +42,24 @@ export const getUserGroupList = function (variables = {}) {
 export const getTaskInfoList = function (variables = {}) {
   return apollo.clients.patrol.query({
     query: queryTaskInfo,
+    variables: {
+      ...variables
+    }
+  })
+}
+
+export const getTaskCiList = function (variables = {}) {
+  return apollo.clients.patrol.query({
+    query: queryTaskCiList,
+    variables: {
+      ...variables
+    }
+  })
+}
+
+export const getTaskKpi = function (variables = {}) {
+  return apollo.clients.patrol.query({
+    query: queryTaskKpi,
     variables: {
       ...variables
     }
