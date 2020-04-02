@@ -464,7 +464,9 @@ export default {
     beforeImport (file) {
       const reader = new FileReader()
       reader.onload = () => {
-        this.import(reader.result)
+        this.import(
+          JSON.parse(reader.result)
+        )
       }
       reader.readAsText(file)
       return false
@@ -473,7 +475,7 @@ export default {
      * 导入视图配置
      */
     import (options) {
-      this.viewOptions = _.omit(JSON.parse(options), ['id', 'name'])
+      this.viewOptions = _.omit(options, ['id', 'name'])
       // 实例化部件对象
       const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
       // 更新视图对象

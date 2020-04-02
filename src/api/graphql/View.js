@@ -74,3 +74,9 @@ export const queryKpiAndInstanceInfo = gql`query ($instanceIdList: [String!], $k
     kpicode_s
   }
 }`
+
+export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
+  data: t_view(where: {view_id: {_eq: $viewId}}) {
+    content
+  }
+}`
