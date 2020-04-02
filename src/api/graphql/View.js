@@ -80,3 +80,15 @@ export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
     content
   }
 }`
+
+// export const mutationUpdateViewContent = gql`mutation ($viewId: numeric, $content: String) {
+//   update_t_view (where: {
+//     view_id: {
+//       _eq: $viewId
+//     }
+//   }, _set: {
+//     content: $content
+//   }) {
+//     affected_rows
+//   }
+// }`

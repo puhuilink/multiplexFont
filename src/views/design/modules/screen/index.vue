@@ -107,6 +107,7 @@
     </div>
     <!-- E 比例条 -->
 
+    <!-- <a-spin spinning wrapperClassName="screen__spin"></a-spin> -->
   </div>
 </template>
 
@@ -452,9 +453,21 @@ export default {
     /**
      * 保存视图配置
      */
-    save () {
-      this.viewOptions = this.view.getOption()
-      updateViewDesign()
+    async save () {
+      // TODO: loading
+      try {
+        this.loading = true
+        this.viewOptions = this.view.getOption()
+        await updateViewDesign(this.$route.query.id, this.viewOptions)
+        this.$notification.success({
+          message: '系统提示',
+          description: '保存成功'
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     /**
      * 导入视图配置前置操作
@@ -523,11 +536,15 @@ export default {
      * @returns {Promise<any>}
      */
     async init () {
+      // TODO: loading
       try {
+        this.loading = true
         const options = await getViewDesign(this.$route.query.id)
         this.import(options)
       } catch (e) {
         throw e
+      } finally {
+        this.loading = false
       }
     }
   },
@@ -612,6 +629,14 @@ export default {
         width: 120px;
         margin-left: 16px;
       }
+    }
+
+    &__spin {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
     }
   }
 

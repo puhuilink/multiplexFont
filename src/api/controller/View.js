@@ -35,9 +35,20 @@ export const updateView = function (viewId, set = {}) {
     mutation: mutationUpdateView,
     variables: {
       viewId,
-      set
+      set: {
+        ...set,
+        updator: store.state.user.name,
+        updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+      }
     }
-  })
+  }).then(r => r.data.update_t_view.affected_rows)
+    .then(row => {
+      if (row === 1) {
+        return true
+      } else {
+        throw new Error('更新视图配置失败')
+      }
+    })
 }
 
 /**
@@ -57,7 +68,6 @@ export const addView = function (object = {}) {
       'protect_level': '1',
       // FIXME: name 还是 id ？
       creator: store.state.user.name,
-      // TODO: 放到 hasura webhook 处理？
       createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
     }
   ]
@@ -117,7 +127,26 @@ export const getViewDesign = async function (viewId) {
  * 更新视图配置
  * @return {Promise<any>}
  */
-export const updateViewDesign = async function () {}
+export const updateViewDesign = async function (viewId, content) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationUpdateView,
+    variables: {
+      viewId: Number(viewId),
+      set: {
+        content: content ? JSON.stringify(content) : '',
+        updator: store.state.user.name,
+        updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+      }
+    }
+  }).then(r => r.data.update_t_view.affected_rows)
+    .then(row => {
+      if (row === 1) {
+        return true
+      } else {
+        throw new Error('更新视图配置失败')
+      }
+    })
+}
 
 /**
  * 根据传入的 [instance_id_s] 批量获取其基础信息
