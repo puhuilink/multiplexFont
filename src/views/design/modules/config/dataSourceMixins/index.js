@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
-import ProprietaryMixins from '../propietaryMixins'
+import { ScreenMutations } from '@/store/modules/screen'
 
 export default {
-  mixins: [ProprietaryMixins],
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
@@ -24,6 +23,23 @@ export default {
         _.get(this.resourceConfig, 'selectedKpi.length') &&
         _.get(this.resourceConfig, 'selectedInstance.length')
       )
+    }
+  },
+  methods: {
+    ...mapMutations('screen', {
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+    }),
+    change (loadingDynamicData = false) {
+      const activeWidget = _.cloneDeep(this.activeWidget)
+      const { render } = this.activeWidget
+      Object.assign(activeWidget.config, this.config)
+      this.activateWidget({
+        widget: Object.assign(activeWidget, { render })
+      })
+      this.$nextTick(() => {
+        // 调整数据源过程中不需要反复刷新数据，只有显式要求刷新时再主动刷新
+        loadingDynamicData && render.mergeOption(this.config, loadingDynamicData)
+      })
     }
   }
 }
