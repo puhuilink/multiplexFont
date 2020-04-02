@@ -1,14 +1,14 @@
 <template>
   <DataSourceTemplate>
     <template #real>
-      <!-- <a-tooltip placement="top" title="加载假数据" arrowPointAtCenter>
-        <a-button>模拟</a-button>
-      </a-tooltip> -->
       <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
         <a-button :disabled="!available" @click="change(true)">预览</a-button>
       </a-tooltip>
 
-      <ComboSelect :multiple="false" v-model="resourceConfig" />
+      <ComboSelect
+        multiple
+        v-model="resourceConfig"
+      />
 
     </template>
   </DataSourceTemplate>
@@ -20,7 +20,7 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 
 export default {
-  name: 'GaugeDataSource',
+  name: 'BarDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,

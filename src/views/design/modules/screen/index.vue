@@ -21,16 +21,16 @@
               <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
             </a-tooltip>
             <a-tooltip placement="top" title="导出">
-              <a-button type="primary" @click="exportFile"><a-icon type="export" /></a-button>
+              <a-button type="primary" @click="exportFile"><a-icon type="upload" /></a-button>
             </a-tooltip>
             <a-upload
               name="file"
-              :before-upload="beforeUpload"
+              :before-upload="beforeImport"
               :show-upload-list="false"
               :multiple="false"
             >
               <a-tooltip placement="top" title="导入">
-                <a-button type="primary"><a-icon type="upload" /></a-button>
+                <a-button type="primary"><a-icon type="download" /></a-button>
               </a-tooltip>
             </a-upload>
             <a-popconfirm
@@ -132,6 +132,7 @@ import Widget from '@/components/Widget/index'
 import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
+import { updateViewDesign, getViewDesign } from '@/api/controller/View'
 
 export default {
   name: 'Screen',
@@ -453,31 +454,38 @@ export default {
      */
     save () {
       this.viewOptions = this.view.getOption()
+      updateViewDesign()
     },
     /**
-     * 导入视图配置
+     * 导入视图配置前置操作
      * @param file
      * @returns {boolean}
      */
-    beforeUpload (file) {
+    beforeImport (file) {
       const reader = new FileReader()
       reader.onload = () => {
-        this.viewOptions = _.omit(JSON.parse(reader.result), ['id', 'name'])
-        // 实例化部件对象
-        const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
-        // 更新视图对象
-        this.setView({
-          view: new View({
-            ...this.view,
-            ...this.viewOptions,
-            ...{ widgets }
-          })
-        })
-        // 设置视图样式
-        this.setStyle({ type: 'input' })
+        this.import(reader.result)
       }
       reader.readAsText(file)
       return false
+    },
+    /**
+     * 导入视图配置
+     */
+    import (options) {
+      this.viewOptions = _.omit(JSON.parse(options), ['id', 'name'])
+      // 实例化部件对象
+      const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
+      // 更新视图对象
+      this.setView({
+        view: new View({
+          ...this.view,
+          ...this.viewOptions,
+          ...{ widgets }
+        })
+      })
+      // 设置视图样式
+      this.setStyle({ type: 'input' })
     },
     /**
      * 导出视图配置至json文件
@@ -507,7 +515,22 @@ export default {
      */
     preview () {
       this.$router.push('/preview')
+    },
+    /**
+     * 初始化数据
+     * @returns {Promise<any>}
+     */
+    async init () {
+      try {
+        const options = await getViewDesign(this.$route.query.id)
+        this.import(options)
+      } catch (e) {
+        throw e
+      }
     }
+  },
+  created () {
+    this.init()
   },
   beforeDestroy () {
     this.isSubscribed = false

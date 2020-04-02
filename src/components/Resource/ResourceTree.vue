@@ -201,12 +201,12 @@ export default {
     select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
       if (selected) {
         this.selectedKey = selectedKey
-        console.log(selectedNode)
         const dataRef = selectedNode.data.props.dataRef
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
-          'name_s': dataRef.name_s
+          'name_s': dataRef.name_s,
+          'tree_s': dataRef.parenttree_s + dataRef.name_s
         })
       } else {
         // FIXME: 新增后可以不用重置

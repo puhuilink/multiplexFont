@@ -94,27 +94,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
+import { editInstance, addInstance } from '@/api/controller/Instance'
 
-const insert = gql`mutation ($objects: [ngecc_instance_values_insert_input!]! = []) {
-  insert_ngecc_instance_values (objects: $objects) {
-    returning {
-      did
-    }
-  }
-}`
-
-const update = gql`mutation update ($where: ngecc_instance_values_bool_exp!, $val: ngecc_instance_values_set_input) {
-  update_ngecc_instance_values (
-    where: $where,
-    _set: $val
-  ) {
-      returning {
-      rid
-    }
-  }
-}`
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -138,10 +119,12 @@ export default {
   }),
   computed: {},
   methods: {
-    add () {
+    add (parentNameS, parentTreeS) {
       this.title = '新增'
       this.visible = true
-      // this.submit = this.insert
+      this.submit = this.insert
+      this.parentNameS = parentNameS
+      this.parentTreeS = parentTreeS
     },
     /**
      * 编辑
@@ -165,18 +148,14 @@ export default {
      * 新增
      */
     async insert () {
-      const values = await this.getFormFields()
+      let value = await this.getFormFields()
+      value = {
+        ...value,
+        'parentname_s': this.parentNameS,
+        'parenttree_s': this.parentTreeS
+      }
       this.loading = true
-      // FIXME: 上 mongo 对照下最初表的设计
-      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
-      return apollo.clients.resource.mutate({
-        mutation: insert,
-        variables: {
-          objects: [{
-            ...values
-          }]
-        }
-      }).then(res => {
+      return addInstance(value).then(res => {
         this.$notification.success({
           message: '系统提示',
           description: '新建成功'
@@ -193,21 +172,9 @@ export default {
      * 编辑
      */
     async update () {
-      const values = await this.getFormFields()
+      const value = await this.getFormFields()
       this.loading = true
-      return apollo.clients.resource.mutate({
-        mutation: update,
-        variables: {
-          where: {
-            'rid': {
-              '_eq': this.record.rid
-            }
-          },
-          val: {
-            ...values
-          }
-        }
-      }).then(res => {
+      return editInstance(this.record.did, value).then(res => {
         this.$notification.success({
           message: '系统提示',
           description: '编辑成功'

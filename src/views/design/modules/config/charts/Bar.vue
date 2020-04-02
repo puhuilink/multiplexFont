@@ -9,7 +9,7 @@
 <template>
   <div class="bar-config">
     <a-tabs
-      defaultActiveKey="1"
+      defaultActiveKey="3"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
@@ -293,7 +293,7 @@
       <a-tab-pane tab="数据配置" key="3">
 
         <!-- S 数据配置模板 -->
-        <DataSourceTemplate />
+        <BarDataSource />
         <!-- E 数据配置模板 -->
 
       </a-tab-pane>
@@ -305,11 +305,11 @@
 import '@/assets/less/template.less'
 import CommonTemplate from '../common/index.vue'
 import ChartProprietaryTemplate from '../chartProprietary'
-import DataSourceTemplate from '../dataSource'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import SingleColorSelector from '@/components/SingleColorSelector'
 import LinearColorSelector from '@/components/LinearColorSelector'
+import BarDataSource from '../dataSource/BarDataSource'
 
 export default {
   name: 'Bar',
@@ -318,9 +318,9 @@ export default {
     CommonTemplate,
     ChartProprietaryTemplate,
     ColorPicker,
-    DataSourceTemplate,
     SingleColorSelector,
-    LinearColorSelector
+    LinearColorSelector,
+    BarDataSource
   },
   data: () => ({
     singleColor: 'rgba(7,171,253,1)',

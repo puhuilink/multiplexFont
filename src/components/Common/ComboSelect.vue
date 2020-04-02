@@ -16,7 +16,7 @@
         required
       >
         <CiInstanceSelect
-          :multiple="false"
+          :multiple="multiple"
           :parentNameS="formData.model"
           :value="formData.selectedInstance"
           @input="onInstanceInput"
@@ -24,7 +24,6 @@
       </a-form-item>
       <a-form-item
         label="Kpi"
-        :multiple="multiple"
         :labelCol="formItemLayout.labelCol"
         :wrapperCol="formItemLayout.wrapperCol"
         required

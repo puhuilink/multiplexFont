@@ -27,6 +27,8 @@
                   _eq: selectedNode.name_s
                 }
               }"
+              :parentNameS="selectedNode.name_s"
+              :parentTreeS="selectedNode.tree_s"
             />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>

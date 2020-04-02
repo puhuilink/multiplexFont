@@ -86,10 +86,11 @@ export default class Chart {
   /**
    * 设置新的配置项渲染图表
    * @param config widget 配置项
+   * @param {Boolean} loadingDynamicData 是否同时绘制动态数据
    */
-  mergeOption (config) {
+  async mergeOption (config, loadingDynamicData = false) {
     // 向外暴露 echarts 配置
-    this.chartConfig = this.mappingOption(config)
+    this.chartConfig = await this.mappingOption(config, loadingDynamicData)
     // 如果数据为空则清空图表
     if (_.isEmpty(this.chartConfig.series)) {
       this.chart.clear()

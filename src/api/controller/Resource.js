@@ -12,12 +12,21 @@ import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
 import store from '@/store'
 
+/**
+ * 资源实例列表
+ * @return {Promise<any>}
+ */
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
     query: queryResourceModelList
   }).then(r => r.data)
 }
 
+/**
+ * 资源模型列表
+ * @param {Boolean} withChildren 是否同时查出其子代资源实例
+ * @return {Promise<any>}
+ */
 export const getModelList = function (withChildren = false) {
   return apollo.clients.resource.query({
     query: queryModelList,
@@ -27,6 +36,11 @@ export const getModelList = function (withChildren = false) {
   }).then(r => r.data)
 }
 
+/**
+ * 资源实例列表
+ * @param {*} where
+ * @return {Promise<any>}
+ */
 export const getInstanceList = function (where = {}) {
   return apollo.clients.resource.query({
     query: queryInsanceList,
@@ -36,6 +50,11 @@ export const getInstanceList = function (where = {}) {
   }).then(r => r.data)
 }
 
+/**
+ * 获取Kpi列表
+ * @param {*} where
+ * @return {Promise<any>}
+ */
 export const getKpiList = function (where = {}) {
   return apollo.clients.resource.query({
     query: queryKpiList(where),
@@ -50,6 +69,11 @@ export const getKpiList = function (where = {}) {
   }).then(r => r.data)
 }
 
+/**
+ * 获取某一个资源模型下的Kpi列表
+ * @param {String} nodeType 资源模型name
+ * @return {Promise<any>}
+ */
 export const getKpiSelectList = function (nodeType = '') {
   return apollo.clients.resource.query({
     query: queryKpiSelectList(nodeType),
@@ -99,7 +123,6 @@ export const editModelOld = function (did, set = {}) {
 
 /**
  * （批量）新增资源模型
- * TODO: 数组参数改为对象
  * @param {Array} objects
  * @return {*}
  */
@@ -116,7 +139,6 @@ export const addModels = function (objects = []) {
 
 /**
  * 旧系统（批量）新增资源模型
- * TODO: 数组参数改为对象
  * @param {Array} objects
  * @return {*}
  */
@@ -131,10 +153,18 @@ export const addModelsOld = function (objects = []) {
   return oldRequest.post('/urmp/api/rest/post/modelService/add', [data, data.parentName, '', []])
 }
 
+/**
+ * 删除资源模型
+ * @param {*} name
+ */
 export const deleteModel = function (name) {
   // return deleteModelOld(name)
 }
 
+/**
+ * 旧系统删除资源模型
+ * @param {*} name
+ */
 export const deleteModelOld = function (name) {
   return oldRequest.post('/urmp/api/rest/post/modelService/remove', [
     name,
