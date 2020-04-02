@@ -65,6 +65,7 @@ export default {
       immediate: true,
       handler (v) {
         // this._value = []
+        this.options = []
         if (v) {
           this.loadData()
         }
