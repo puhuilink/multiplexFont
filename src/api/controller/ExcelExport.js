@@ -12,7 +12,7 @@ export const getHistoryEcxel = function (data) {
   })
 }
 // TODO: 地址需要转换为巡检的地址
-export const getPatrolTask = function (data) {
+export const getPatrolTaskExcel = function (data) {
   return axios({
     url: '/taskInfo/exportTask',
     method: 'post',
@@ -22,7 +22,7 @@ export const getPatrolTask = function (data) {
 }
 
 // TODO: 地址需要转换为巡检的地址
-export const getPatrolObject = function (data) {
+export const getPatrolObjectExcel = function (data) {
   return axios({
     url: '/taskCi/exportTaskCi',
     method: 'post',
