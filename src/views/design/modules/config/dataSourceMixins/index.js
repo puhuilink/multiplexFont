@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import '@/assets/less/template.less'
+import ProprietaryMixins from '../propietaryMixins'
 
 export default {
+  mixins: [ProprietaryMixins],
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {

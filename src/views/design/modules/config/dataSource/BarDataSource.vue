@@ -17,12 +17,11 @@
 <script>
 import { ComboSelect } from '@/components/Common'
 import DataSourceTemplate from './index'
-import ProprietaryMixins from '../propietaryMixins'
 import DataSourceMixins from '../dataSourceMixins'
 
 export default {
   name: 'BarDataSource',
-  mixins: [ProprietaryMixins, DataSourceMixins],
+  mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
     ComboSelect
