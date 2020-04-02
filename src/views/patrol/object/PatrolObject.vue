@@ -111,7 +111,7 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import { STable } from '@/components'
-import { getPatrolObject } from '@/api/controller/ExcelExport'
+import { getPatrolObjectExcel } from '@/api/controller/ExcelExport'
 import { getTaskCiList } from '@/api/controller/patrol'
 import detail from '../modules/PODetail'
 import kpi from '../modules/KpiList'
@@ -359,7 +359,7 @@ export default {
      * 导出
      */
     async  exportExcel (e) {
-      const file = await getPatrolObject(e)
+      const file = await getPatrolObjectExcel(e)
       this.downloadFile(file, '巡检检查对象列表')
     }
   }
