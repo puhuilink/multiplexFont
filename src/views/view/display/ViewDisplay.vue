@@ -3,6 +3,12 @@
     <div slot="headerContent">
       <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
       <div>描述</div>
+      <a-select style="width: 300px;">
+        <a-select-option
+          v-for="(group, idx) in viewGroupList"
+          :key="idx"
+        >{{ group.view_title }}</a-select-option>
+      </a-select>
     </div>
     <div slot="extra">
       <a-row class="more-info">
@@ -26,6 +32,9 @@ import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
+import {
+  getViewListByGroup
+} from '@/api/controller/ViewGroup'
 
 export default {
   name: 'ViewDisplay',
@@ -37,7 +46,10 @@ export default {
     return {
       timeFix: timeFix(),
       avatar: '',
-      user: {}
+      user: {},
+      loading: false,
+      viewGroupList: [],
+      viewList: []
     }
   },
   computed: {
@@ -47,11 +59,31 @@ export default {
     }),
     userInfo () {
       return this.$store.getters.userInfo
+    },
+    filterviewList () {
+      return this.viewList
+    }
+  },
+  methods: {
+    async fetch () {
+      try {
+        this.loading = true
+        const [allViewList, allViewGoupList] = await getViewListByGroup()
+        this.viewList = allViewList
+        this.viewGroupList = allViewGoupList
+      } catch (e) {
+        this.viewList = []
+        this.viewGroupList = []
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   },
   created () {
     this.user = this.userInfo
     this.avatar = this.userInfo.avatar
+    this.fetch()
   }
 }
 </script>
