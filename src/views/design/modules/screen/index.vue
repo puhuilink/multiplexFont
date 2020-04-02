@@ -6,109 +6,109 @@
 * Email: dong.xing@outlook.com
 */
 <template>
-  <div class="screen">
-    <div class="screen__header">
-      <div class="screen__control" @click="panelControl('left')">
-        <span v-if="leftPanelExpand">
-          <a-icon type="menu-fold" />
-        </span>
-        <a-button v-else type="link" icon="appstore">组件库</a-button>
-      </div>
-      <div class="screen__center">
-        <div class="screen__bar">
-          <a-button-group>
-            <a-tooltip placement="top" title="保存">
-              <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
-            </a-tooltip>
-            <a-tooltip placement="top" title="导出">
-              <a-button type="primary" @click="exportFile"><a-icon type="upload" /></a-button>
-            </a-tooltip>
-            <a-upload
-              name="file"
-              :before-upload="beforeImport"
-              :show-upload-list="false"
-              :multiple="false"
-            >
-              <a-tooltip placement="top" title="导入">
-                <a-button type="primary"><a-icon type="download" /></a-button>
-              </a-tooltip>
-            </a-upload>
-            <a-popconfirm
-              title="确定清空画板？"
-              @confirm="clear"
-              okText="确定"
-              cancelText="取消">
-              <a-button type="danger" icon="delete">清空</a-button>
-            </a-popconfirm>
-          </a-button-group>
+  <a-spin :spinning="loading">
+    <div class="screen">
+      <div class="screen__header">
+        <div class="screen__control" @click="panelControl('left')">
+          <span v-if="leftPanelExpand">
+            <a-icon type="menu-fold" />
+          </span>
+          <a-button v-else type="link" icon="appstore">组件库</a-button>
         </div>
+        <div class="screen__center">
+          <div class="screen__bar">
+            <a-button-group>
+              <a-tooltip placement="top" title="保存">
+                <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
+              </a-tooltip>
+              <a-tooltip placement="top" title="导出">
+                <a-button type="primary" @click="exportFile"><a-icon type="upload" /></a-button>
+              </a-tooltip>
+              <a-upload
+                name="file"
+                :before-upload="beforeImport"
+                :show-upload-list="false"
+                :multiple="false"
+              >
+                <a-tooltip placement="top" title="导入">
+                  <a-button type="primary"><a-icon type="download" /></a-button>
+                </a-tooltip>
+              </a-upload>
+              <a-popconfirm
+                title="确定清空画板？"
+                @confirm="clear"
+                okText="确定"
+                cancelText="取消">
+                <a-button type="danger" icon="delete">清空</a-button>
+              </a-popconfirm>
+            </a-button-group>
+          </div>
 
-        <a-tooltip placement="top" title="预览">
-          <a-button type="primary" @click="preview"><a-icon type="eye" /></a-button>
+          <a-tooltip placement="top" title="预览">
+            <a-button type="primary" @click="preview"><a-icon type="eye" /></a-button>
+          </a-tooltip>
+        </div>
+        <div class="screen__control" @click="panelControl('right')">
+          <span v-if="rightPanelExpand">
+            <a-icon type="menu-unfold" />
+          </span>
+          <a-button v-else type="link" icon="setting">配置</a-button>
+        </div>
+      </div>
+
+      <!-- S 画板 -->
+      <div
+        ref="page"
+        class="page"
+        @click.self="() => select$.next({ el: 'page' })">
+
+        <div class="gauge" ref="gauge"></div>
+        <!-- / 标尺 -->
+
+        <div ref="view" class="view">
+
+          <Widget
+            v-for="widget in widgets"
+            :widget="widget"
+            :key="widget.widgetId"
+            :ref="widget.widgetId"
+            @select="(selectWidget) => select$.next({ el: 'widget', widget: selectWidget })"
+          />
+          <!-- / 部件渲染 -->
+
+          <Wrapper ref="wrapper" v-stream:adjust="adjust$" />
+          <!-- / 选择指示器 -->
+
+        </div>
+        <!-- / 视图 -->
+
+      </div>
+      <!-- E 画板 -->
+
+      <!-- S 比例条 -->
+      <div class="scale-bar">
+        <a-tooltip placement="top">
+          <template slot="title">
+            自动比例：{{ isAutoResize ? '已开启' : '已关闭' }}
+          </template>
+          <a-switch
+            size="small"
+            v-model="isAutoResize"
+            @change="() => isAutoResize && change$.next({ type: 'resize' })" />
         </a-tooltip>
+        <a-slider
+          class="scale-bar__slider"
+          @change="() => change$.next({ type: 'scale', value: scale })"
+          :disabled="isAutoResize"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          v-model="scale" />
+        <p class="scale-bar__number">缩放比：{{ this.scale.toFixed(2) }}</p>
       </div>
-      <div class="screen__control" @click="panelControl('right')">
-        <span v-if="rightPanelExpand">
-          <a-icon type="menu-unfold" />
-        </span>
-        <a-button v-else type="link" icon="setting">配置</a-button>
-      </div>
+      <!-- E 比例条 -->
     </div>
-
-    <!-- S 画板 -->
-    <div
-      ref="page"
-      class="page"
-      @click.self="() => select$.next({ el: 'page' })">
-
-      <div class="gauge" ref="gauge"></div>
-      <!-- / 标尺 -->
-
-      <div ref="view" class="view">
-
-        <Widget
-          v-for="widget in widgets"
-          :widget="widget"
-          :key="widget.widgetId"
-          :ref="widget.widgetId"
-          @select="(selectWidget) => select$.next({ el: 'widget', widget: selectWidget })"
-        />
-        <!-- / 部件渲染 -->
-
-        <Wrapper ref="wrapper" v-stream:adjust="adjust$" />
-        <!-- / 选择指示器 -->
-
-      </div>
-      <!-- / 视图 -->
-
-    </div>
-    <!-- E 画板 -->
-
-    <!-- S 比例条 -->
-    <div class="scale-bar">
-      <a-tooltip placement="top">
-        <template slot="title">
-          自动比例：{{ isAutoResize ? '已开启' : '已关闭' }}
-        </template>
-        <a-switch
-          size="small"
-          v-model="isAutoResize"
-          @change="() => isAutoResize && change$.next({ type: 'resize' })" />
-      </a-tooltip>
-      <a-slider
-        class="scale-bar__slider"
-        @change="() => change$.next({ type: 'scale', value: scale })"
-        :disabled="isAutoResize"
-        :min="0"
-        :max="1"
-        :step="0.01"
-        v-model="scale" />
-      <p class="scale-bar__number">缩放比：{{ this.scale.toFixed(2) }}</p>
-    </div>
-    <!-- E 比例条 -->
-
-    <!-- <a-spin spinning wrapperClassName="screen__spin"></a-spin> -->
-  </div>
+  </a-spin>
 </template>
 
 <script>
@@ -454,7 +454,6 @@ export default {
      * 保存视图配置
      */
     async save () {
-      // TODO: loading
       try {
         this.loading = true
         this.viewOptions = this.view.getOption()
@@ -536,7 +535,6 @@ export default {
      * @returns {Promise<any>}
      */
     async init () {
-      // TODO: loading
       try {
         this.loading = true
         const options = await getViewDesign(this.$route.query.id)
