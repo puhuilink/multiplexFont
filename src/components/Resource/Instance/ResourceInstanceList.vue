@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      :rowKey="el => el.rid"
+      :rowKey="el => el.did"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
     >
@@ -69,15 +69,28 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceInstanceSchema from './ResourceInstanceSchema'
 
-const query = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
+const queryInstance = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
+  pagination: ngecc_instance_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+    did
+    label_s
+    name_s
+    parentname_s
+  }
+}`
+
+const queryKpi = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
   pagination: ngecc_instance_values_aggregate(where: $where) {
     aggregate {
       count
     }
   }
   data: ngecc_instance_values(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    id_s
-    rid
+    did
     domain_s
     label_s
     name_s
@@ -94,6 +107,14 @@ export default {
     where: {
       type: Object,
       default: () => ({})
+    },
+    parentNameS: {
+      type: String,
+      default: ''
+    },
+    parentTreeS: {
+      type: String,
+      default: ''
     }
   },
   components: {
@@ -168,7 +189,10 @@ export default {
   },
   methods: {
     add () {
-      this.$refs['schema'].add()
+      this.$refs['schema'].add(
+        this.parentNameS,
+        this.parentTreeS
+      )
     },
     edit () {
       const [record] = this.selectRows
@@ -183,10 +207,10 @@ export default {
       this.selectedRowKeys = []
       this.selectedRows = []
       return apollo.clients.resource.query({
-        query,
+        query: this.parentNameS === 'Kpi' ? queryKpi : queryInstance,
         variables: {
           orderBy: {
-            rid: 'desc'
+            ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
           },
           ...parameter,
           where: {
