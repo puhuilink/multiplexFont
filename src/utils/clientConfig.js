@@ -8,7 +8,7 @@ import { onError } from 'apollo-link-error'
 const linkList = ['8071', '8072', '8073', '8074'].map(port => new HttpLink({
   uri: `http://10.1.8.177:${port}/v1/graphql`,
   headers: {
-    'x-hasura-admin-secret': 'zhongjiao'
+    'x-hasura-admin-secret': port === '8073' ? 'myadminsecretkey' : 'zhongjiao'
   }
 }))
 
