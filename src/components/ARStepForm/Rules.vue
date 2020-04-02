@@ -114,7 +114,7 @@
 
 <script>
 import screening from '@/views/alarm/screening'
-import queryList from '@/api/alarm/queryList'
+import queryList from '@/api/controller/AlarmqQueryList'
 
 export default {
   name: 'Rules',

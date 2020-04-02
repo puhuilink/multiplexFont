@@ -161,13 +161,13 @@
       <!-- E 搜索 -->
 
       <!-- S 操作 -->
-      <a-row type="flex" justify="space-between" >
+      <a-row>
         <a-col
           :xs="24"
           :sm="24"
           :md="24"
-          :lg="4"
-          :xl="10"
+          :lg="{span: 8}"
+          :xl="{span: 8}"
           class="table-operator">
           <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
           <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
@@ -177,8 +177,8 @@
           :xs="24"
           :sm="24"
           :md="24"
-          :lg="20"
-          :xl="14"
+          :lg="{span: 8, offset:8}"
+          :xl="{span: 8, offset:8}"
         >
           <a-input-search
             placeholder="输入关键字"
@@ -196,6 +196,14 @@
             title="关闭自动刷新" />
           <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
           <audio src="" id="eventAudio" loop="loop" hidden></audio>
+        </a-col>
+        <a-col
+          :xs="24"
+          :sm="24"
+          :md="24"
+          :lg="{span: 8,offset:16}"
+          :xl="{span: 8,offset:16}"
+        >
           <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
             <a-badge
               :count="text | levelFilter"
@@ -289,7 +297,7 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import queryList from '@/api/alarm/queryList'
+import queryList from '@/api/controller/AlarmqQueryList'
 import screening from '../screening'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
@@ -553,7 +561,7 @@ export default {
           where: {
             ...this.where,
             state: {
-              _eq: this.tabkey
+              _eq: this.tabKey
             },
             arising_time: {
               _gte: '2018-5-31 00:00:00',
@@ -767,7 +775,7 @@ export default {
     }
   }
 .levelContent{
-  display: inline;
+  display: inline-block;
   line-height: 14px;
   padding:10px;
   .levelIcon{
