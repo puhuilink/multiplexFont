@@ -18,6 +18,10 @@
         <a-tree
           v-else
           :autoExpandParent="autoExpandParent"
+          class="ResourceTree__tree"
+          :style="{
+            height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
+          }"
           defaultExpandAll
           :expandedKeys="expandedKeys"
           :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
@@ -231,6 +235,9 @@ export default {
 
 <style lang="less">
 .ResourceTree {
+  &__tree {
+    overflow: auto;
+  }
   &__hidden-tab {
     .ant-tabs-bar {
       display: none;
