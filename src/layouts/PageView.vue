@@ -62,8 +62,8 @@ export default {
   },
   props: {
     avatar: {
-      type: String,
-      default: null
+      type: [String, Boolean],
+      default: false
     },
     title: {
       type: [String, Boolean],

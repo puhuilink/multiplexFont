@@ -1,29 +1,15 @@
 <template>
-  <page-view :avatar="avatar" :title="false">
-    <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
-      <div>描述</div>
+  <div class="ViewDisplay__view">
+    <div class="ViewDisplay__view-header">
       <a-select style="width: 300px;">
         <a-select-option
           v-for="(group, idx) in viewGroupList"
           :key="idx"
         >{{ group.view_title }}</a-select-option>
       </a-select>
-    </div>
-    <div slot="extra">
-      <a-row class="more-info">
-        <a-col :span="8">
-          <head-info title="项目" content="56" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="图表" content="8/24" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="项目" content="2,223" :center="false" />
-        </a-col>
-      </a-row>
-    </div>
 
+      <a-input autofocus style="width: 200px;" placeholder="搜索..."></a-input>
+    </div>
     <div class="ViewDisplay__view-content">
       <a-row>
         <a-col
@@ -49,8 +35,7 @@
         </a-col>
       </a-row>
     </div>
-
-  </page-view>
+  </div>
 </template>
 
 <script>
@@ -229,8 +214,22 @@ export default {
   }
 
   .ViewDisplay__view {
-    &-content {
-      // margin: -12px;
+    position: relative;
+
+    &-header {
+      padding: 4px 22px 12px 22px;
+      // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
+      margin: 0 -24px 0 -24px;
+      width: calc(100% + 48px);
+      border: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 64px;
+      background-color: rgb(255, 255, 255);
+      z-index: 9;
     }
 
     &-item {
