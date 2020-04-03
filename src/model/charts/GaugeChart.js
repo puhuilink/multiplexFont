@@ -21,13 +21,9 @@ export default class GaugeChart extends Chart {
 
     switch (sourceType) {
       case 'real': {
-        if (!loadingDynamicData) {
-          break
-        }
-        try {
+        if (loadingDynamicData) {
           itemOptions.series.data[0].value = await dataConfig.dbDataConfig.getOption()
-        } catch (e) {
-          itemOptions.series.data[0].value = 0
+          break
         }
       }
     }

@@ -1,24 +1,57 @@
 <template>
-  <page-view :avatar="avatar" :title="false">
-    <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
-      <div>描述</div>
+  <div class="ViewDisplay__view">
+    <div class="ViewDisplay__view-header">
+      <a-select style="width: 300px;" v-model="selectedGroupName">
+        <a-select-option
+          v-for="(group, idx) in viewGroupList"
+          :key="idx"
+          :value="group.view_title"
+        >{{ group.view_title }}</a-select-option>
+      </a-select>
+
+      <a-input
+        allowClear
+        autofocus
+        style="width: 200px;"
+        placeholder="按视图标题搜索..."
+        v-model="queryTitle"
+      />
     </div>
-    <div slot="extra">
-      <a-row class="more-info">
-        <a-col :span="8">
-          <head-info title="项目" content="56" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="图表" content="8/24" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="项目" content="2,223" :center="false" />
+    <div class="ViewDisplay__view-content">
+      <a-row>
+        <a-col
+          v-for="(view, idx) in filterviewList"
+          :key="idx"
+          :xs="24"
+          :md="12"
+          :lg="8"
+          :xxl="6"
+          style="padding: 7px;"
+        >
+          <router-link
+            :to="{
+              name: 'Design',
+              query: {
+                id: view.view_id,
+                title: view.view_title
+              }
+            }">
+            <div class="ViewDisplay__view-item">
+              <img :src="previewImg" :alt="view.view__title">
+              <div class="ViewDisplay__view-item-info">
+                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_creator">
+                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ view.creator }}</span>
+                </p>
+              </div>
+              {{ view.view__title }}
+            </div>
+          </router-link>
         </a-col>
       </a-row>
     </div>
-
-  </page-view>
+  </div>
 </template>
 
 <script>
@@ -26,6 +59,12 @@ import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
+import {
+  getViewListByGroup
+} from '@/api/controller/ViewGroup'
+import previewImg from '@/assets/images/view__preview_default.jpg'
+
+const ALL_VIEW = '所有视图'
 
 export default {
   name: 'ViewDisplay',
@@ -37,7 +76,13 @@ export default {
     return {
       timeFix: timeFix(),
       avatar: '',
-      user: {}
+      user: {},
+      loading: false,
+      viewGroupList: [],
+      viewList: [],
+      queryTitle: '',
+      selectedGroupName: ALL_VIEW,
+      previewImg
     }
   },
   computed: {
@@ -47,11 +92,49 @@ export default {
     }),
     userInfo () {
       return this.$store.getters.userInfo
+    },
+    filterviewList () {
+      const { selectedGroupName, viewGroupList, viewList } = this
+      let list = []
+      // 分组筛选条件
+      if (selectedGroupName === ALL_VIEW) {
+        list = viewList
+      } else {
+        // 选中的分组
+        // eslint-disable-next-line
+        const selectedGroup = viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
+        // eslint-disable-next-line
+        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(view_id))
+      }
+      // 加上搜索条件，当 input allowClear 时，title 为 undefined
+      return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+    }
+  },
+  methods: {
+    async fetch () {
+      try {
+        this.loading = true
+        const [allViewList, allViewGoupList] = await getViewListByGroup()
+        this.viewList = allViewList
+        this.viewGroupList = [
+          ...allViewGoupList,
+          {
+            view_title: ALL_VIEW
+          }
+        ]
+      } catch (e) {
+        this.viewList = []
+        this.viewGroupList = []
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   },
   created () {
     this.user = this.userInfo
     this.avatar = this.userInfo.avatar
+    this.fetch()
   }
 }
 </script>
@@ -165,6 +248,88 @@ export default {
 
     .headerContent .title .welcome-text {
       display: none;
+    }
+  }
+
+  .ViewDisplay__view {
+    position: relative;
+
+    &-header {
+      padding: 0px 22px 14px 22px;
+      // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
+      margin: 0 -24px 0 -24px;
+      width: calc(100% + 48px);
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 64px;
+      background-color: rgb(255, 255, 255);
+      z-index: 9;
+    }
+
+    &-item {
+      box-sizing: border-box;
+      // 给定宽高，避免图片加载等过程中导致重绘
+      width: 363px;
+      height: 259px;
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      box-shadow: 0 0 32px #f0f0f0;
+      transform: scale(1);
+      transition: transform .4s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.04);
+        transition: transform .4s ease;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+
+      &-info {
+        padding: 12px;
+        padding-bottom: 0;
+
+        &_title {
+          font-family: 微软雅黑;
+          font-size: 16px;
+          font-weight: bold;
+          display: block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          word-break: break-all;
+          color: rgb(51, 51, 51);
+          overflow: hidden;
+          margin: 0px 0px 8px;
+        }
+
+        &_creator {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          span {
+            line-height: 12px;
+            overflow: hidden;
+            margin: 2px 0 2px 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            background-repeat: no-repeat;
+            background-size: contain;
+            font-family: 微软雅黑;
+            font-size: 12px;
+            color: rgb(124, 132, 145);
+          }
+        }
+      }
     }
   }
 

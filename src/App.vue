@@ -36,4 +36,7 @@ export default {
       margin-right: 5px;
     }
 }
+.ant-fullcalendar-fullscreen .ant-fullcalendar-header .ant-radio-group{
+  display:none !important
+}
 </style>

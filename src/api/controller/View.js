@@ -1,14 +1,14 @@
 import apollo from '@/utils/apollo'
 import moment from 'moment'
 import store from '@/store'
-import Timeout from 'await-timeout'
 import { parse } from 'graphql'
 import {
   mutationInsertViews,
   mutationUpdateView,
   queryViewList,
   generateDynamicQueryWithKpiCi,
-  queryKpiAndInstanceInfo
+  queryKpiAndInstanceInfo,
+  queryViewContent
 } from '../graphql/View'
 // import _ from 'lodash'
 
@@ -35,9 +35,20 @@ export const updateView = function (viewId, set = {}) {
     mutation: mutationUpdateView,
     variables: {
       viewId,
-      set
+      set: {
+        ...set,
+        updator: store.state.user.name,
+        updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+      }
     }
-  })
+  }).then(r => r.data.update_t_view.affected_rows)
+    .then(row => {
+      if (row === 1) {
+        return true
+      } else {
+        throw new Error('更新视图配置失败')
+      }
+    })
 }
 
 /**
@@ -57,7 +68,6 @@ export const addView = function (object = {}) {
       'protect_level': '1',
       // FIXME: name 还是 id ？
       creator: store.state.user.name,
-      // TODO: 放到 hasura webhook 处理？
       createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
     }
   ]
@@ -93,19 +103,50 @@ export const addViews = function (objects = {}) {
  * @return {Promise<String>}
  */
 export const getViewDesign = async function (viewId) {
-  // eslint-disable-next-line
-  const MOCK = JSON.stringify(
-    { 'id': 'view-cba048a5-b5aa-46be-982c-063d7d54869f', 'name': '', 'config': { 'type': 'View', 'commonConfig': { 'width': 1920, 'height': 1080, 'top': 0, 'left': 0, 'zIndex': 0, 'colorMode': 'single', 'backgroundColor': 'rgba(255,255,255,1)', 'border': { 'borderStyle': 'solid', 'borderColor': '#333', 'borderWidth': 0, 'borderRadius': { 'borderTopLeftRadius': 0, 'borderTopRightRadius': 0, 'borderBottomRightRadius': 0, 'borderBottomLeftRadius': 0 } }, 'padding': [0, 0, 0, 0] }, 'proprietaryConfig': { 'mode': 'single', 'backgroundColor': 'rgba(255,255,255,1)', 'backgroundImage': '', 'backgroundRepeat': 'no-repeat', 'backgroundSize': '', 'scaleMode': 'auto' }, 'dataConfig': { 'sourceType': 'null', 'staticData': null } }, 'views': [], 'widgets': [{ 'widgetId': 'widget-dba005a7-57ec-4b12-846e-ee8e298be0d4', 'config': { 'category': 'CHART', 'type': 'Bar', 'commonConfig': { 'width': 522.825, 'height': 522.825, 'top': 107.868, 'left': 336.266, 'zIndex': 2, 'colorMode': 'single', 'backgroundColor': 'rgba(255,255,255,1)', 'border': { 'borderStyle': 'solid', 'borderColor': '#333', 'borderWidth': 0, 'borderRadius': { 'borderTopLeftRadius': 0, 'borderTopRightRadius': 0, 'borderBottomRightRadius': 0, 'borderBottomLeftRadius': 0 } }, 'padding': [0, 0, 0, 0] }, 'proprietaryConfig': { 'barType': 'multiple', 'legend': { 'show': false, 'orient': 'horizontal', 'top': 'auto', 'right': 'auto', 'bottom': 'auto', 'left': 'auto', 'icon': 'circle', 'textStyle': { 'color': 'rgba(0, 0, 0, 1)', 'fontStyle': 'normal', 'fontSize': 12, 'fontWeight': 'normal' } }, 'barItemStyle': { 'type': 'single', 'colorType': 'default', 'colorScheme': 'default', 'color': 'rgba(7,171,253,1)', 'barBorderRadius': [0, 0, 0, 0] }, 'barWidthType': 'auto', 'barWidth': 'auto', 'xAxis': { 'show': true, 'type': 'category', 'boundaryGap': true, 'showName': false, 'name': '', 'nameLocation': 'end', 'nameTextStyle': { 'color': 'rgba(0, 0, 0, 1)', 'fontStyle': 'normal', 'fontSize': 12, 'fontWeight': 'normal' }, 'nameGap': 15, 'gridIndex': 1, 'axisLine': { 'show': true, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'axisTick': { 'show': true, 'length': 5, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'axisLabel': { 'color': 'rgba(0, 0, 0, 1)', 'fontStyle': 'normal', 'fontSize': 12, 'fontWeight': 'normal', 'show': true, 'rotate': 0, 'margin': 8 }, 'splitLine': { 'show': false, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'aixsName': 'x', 'position': 'bottom' }, 'yAxis': { 'show': true, 'type': 'category', 'boundaryGap': true, 'showName': false, 'name': '', 'nameLocation': 'end', 'nameTextStyle': { 'color': 'rgba(0, 0, 0, 1)', 'fontStyle': 'normal', 'fontSize': 12, 'fontWeight': 'normal' }, 'nameGap': 15, 'gridIndex': 1, 'axisLine': { 'show': true, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'axisTick': { 'show': true, 'length': 5, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'axisLabel': { 'color': 'rgba(0, 0, 0, 1)', 'fontStyle': 'normal', 'fontSize': 12, 'fontWeight': 'normal', 'show': true, 'rotate': 0, 'margin': 8 }, 'splitLine': { 'show': false, 'lineStyle': { 'color': 'rgba(0,0,0,1)', 'width': 2, 'type': 'solid' } }, 'aixsName': 'y', 'position': 'left' } }, 'dataConfig': { 'sourceType': 'real', 'staticData': { 'legend': {}, 'xAxis': { 'type': 'category', 'data': ['Forest', 'Steppe', 'Desert', 'Wetland'] }, 'yAxis': { 'type': 'value' }, 'singleSeries': [{ 'name': 'Forest', 'type': 'bar', 'stack': 'stack', 'data': [320, 0, 0, 0] }, { 'name': 'Steppe', 'type': 'bar', 'stack': 'stack', 'data': [0, 182, 0, 0] }, { 'name': 'Desert', 'type': 'bar', 'stack': 'stack', 'data': [0, 0, 201, 0] }, { 'name': 'Wetland', 'type': 'bar', 'stack': 'stack', 'data': [0, 0, 0, 400] }], 'multipleSeries': [{ 'name': 'Forest', 'type': 'bar', 'stack': null, 'data': [320, 332, 301, 334, 390] }, { 'name': 'Steppe', 'type': 'bar', 'stack': null, 'data': [220, 182, 191, 234, 290] }, { 'name': 'Desert', 'type': 'bar', 'stack': null, 'data': [150, 232, 201, 154, 190] }, { 'name': 'Wetland', 'type': 'bar', 'stack': null, 'data': [98, 77, 101, 99, 40] }] }, 'dbDataConfig': { 'model': 'Linux', 'selectedInstance': ['557768655516558', '351162445667438'], 'selectedKpi': ['2008', '1101020511'] } } } }, { 'widgetId': 'widget-2c344761-e0c0-46a5-99c0-c95a5601acdc', 'config': { 'category': 'CHART', 'type': 'gauge', 'commonConfig': { 'width': 400, 'height': 400, 'top': 172.484, 'left': 937.587, 'zIndex': 3, 'colorMode': 'single', 'backgroundColor': 'rgba(255,255,255,1)', 'border': { 'borderStyle': 'solid', 'borderColor': '#333', 'borderWidth': 0, 'borderRadius': { 'borderTopLeftRadius': 0, 'borderTopRightRadius': 0, 'borderBottomRightRadius': 0, 'borderBottomLeftRadius': 0 } }, 'padding': [0, 0, 0, 0] }, 'proprietaryConfig': { 'series': { 'name': '速度', 'type': 'gauge', 'min': 0, 'max': 220, 'splitNumber': 11, 'radius': '80%', 'axisLine': { 'lineStyle': { 'color': [[0.09, 'lime'], [0.82, '#1e90ff'], [1, '#ff4500']], 'width': 3, 'shadowColor': '#fff', 'shadowBlur': 10 } }, 'axisLabel': { 'fontWeight': 'bolder', 'color': '#fff', 'shadowColor': '#fff', 'shadowBlur': 10 }, 'axisTick': { 'length': 15, 'lineStyle': { 'color': 'auto', 'shadowColor': '#fff', 'shadowBlur': 10 } }, 'splitLine': { 'length': 25, 'lineStyle': { 'width': 3, 'color': '#fff', 'shadowColor': '#fff', 'shadowBlur': 10 } }, 'pointer': { 'shadowColor': '#fff', 'shadowBlur': 5 }, 'title': { 'textStyle': { 'fontWeight': 'bolder', 'fontSize': 20, 'fontStyle': 'italic', 'color': '#fff', 'shadowColor': '#fff', 'shadowBlur': 10, 'text': 'text' } }, 'detail': { 'backgroundColor': 'rgba(30,144,255,0.8)', 'borderWidth': 1, 'borderColor': '#fff', 'shadowColor': '#fff', 'shadowBlur': 5, 'offsetCenter': [0, '50%'], 'textStyle': { 'fontWeight': 'bolder', 'color': '#fff' } }, 'data': [{ 'value': 100, 'name': 'km/h' }] }, 'backgroundColor': '#1b1b1b' }, 'dataConfig': { 'sourceType': 'real', 'staticData': null, 'dbDataConfig': { 'model': 'Linux', 'selectedInstance': ['557768655516084'], 'selectedKpi': ['2008'] } } } }] }
-  )
-  await Timeout.set(300)
-  return !viewId ? null : null
+  return apollo.clients.alert.query({
+    query: queryViewContent,
+    variables: {
+      viewId: Number(viewId)
+    }
+  })
+    .then(r => r.data.data)
+    .then(([item]) => item || {})
+    .then(({ content }) => JSON.parse(content))
+    .then(content => {
+      // 老系统视图没有 id 字段
+      if (content && content.id) {
+        return content
+      } else {
+        throw new Error('老系统视图，将返回空画布')
+      }
+    })
+    .catch(err => Promise.reject(err))
 }
 
 /**
  * 更新视图配置
  * @return {Promise<any>}
  */
-export const updateViewDesign = async function () {}
+export const updateViewDesign = async function (viewId, content) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationUpdateView,
+    variables: {
+      viewId: Number(viewId),
+      set: {
+        content: content ? JSON.stringify(content) : '',
+        updator: store.state.user.name,
+        updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+      }
+    }
+  }).then(r => r.data.update_t_view.affected_rows)
+    .then(row => {
+      if (row === 1) {
+        return true
+      } else {
+        throw new Error('更新视图配置失败')
+      }
+    })
+}
 
 /**
  * 根据传入的 [instance_id_s] 批量获取其基础信息

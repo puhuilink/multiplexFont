@@ -51,8 +51,8 @@ export default {
       required: false
     },
     avatar: {
-      type: String,
-      default: '',
+      type: [String, Boolean],
+      default: false,
       required: false
     }
   },

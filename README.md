@@ -36,10 +36,10 @@
 - [x] 折线图
 - [x] 柱形图
 - [x] 拓扑图
-- [ ] 文本
-- [ ] 时间
-- [ ] 图片
-- [ ] 饼图
+- [x] 文本
+- [x] 时间
+- [x] 图片
+- [x] 饼图
 - [ ] 地图
 
 #### 项目结构
@@ -266,3 +266,28 @@
 6. 配置面板属性更新，更新当前部件配置
 7. 重新映射部件配置为部件实例对象规则的属性，更新该部件对象
 8. 重新渲染该部件视图
+
+#### （动态）数据查询配置
+
+1. @/model/config/dataConfig/dynamicData 下建立数据配置文件
+2. @/model/factory/dynamicDataFactory 处注册数据配置文件
+3. @/views/design/modules/config/dataSource 下建立数据源组件
+4. 将第3步建立的组件注册到@/views/design/modules/config/charts/xxx.vue下
+
+#### (动态)数据流向
+
+1. 实例化 Chart 的同时也实例化其 DataConfig
+2. 数据源组件的表单信息与 DataConfig.dbDataConfig 进行双向绑定
+3. 显式调用 widget.render.mergeOption() 会强制刷新组件配置
+4. Chart.mappingOption 方法里显式调用 dataConfig.getOption() 加载动态数据，此时需返回 promise
+5. dataConfig.getOption 方法负责调取接口与数据处理（调用失败或记录不存在时返回0）
+6. 第4步的promise被reslove，合并 option 并刷新 echarts
+
+#### (动态)数据接口
+
+1. 传入要查询指标的 KpiCode 数组与 Ci 的 Ciid数组
+2. 根据 KpiCode 查询出 Kpi 的 label（文字）；根据 Ciid 查询出 Ci 的 label（文字）
+3. 组合 KpiCode 与 Ciid。假设传入2条KpiCode，2条Ciid，则生成四条查询请求
+4. 合并查询请求到一个请求体中，查询指标
+5. 拿到查询出的指标，此时指标里没有 label，将第2步拿到的 label 进行组合（指标为空时按值为 0 处理）
+6. 将组合后的结果（Array<{ instanceLabel, kpiLabel, value }>）返回

@@ -30,7 +30,7 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET,
       removeWidget: ScreenMutations.REMOVE_WIDGET
     }),
-    change (loadingDynamicData = false) {
+    change () {
       const activeWidget = _.cloneDeep(this.activeWidget)
       const { render } = this.activeWidget
       Object.assign(activeWidget.config, this.config)
@@ -38,7 +38,7 @@ export default {
         widget: Object.assign(activeWidget, { render })
       })
       this.$nextTick(() => {
-        render.mergeOption(this.config, loadingDynamicData)
+        render.mergeOption(this.config)
       })
     }
   }
