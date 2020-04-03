@@ -159,6 +159,7 @@ export default {
     rightPanelExpand: true,
     backgroundColor: 'rgba(255,255,255,1)',
     scale: 1,
+    loading: false,
     isAutoResize: true,
     isSubscribed: true,
     isResize: false,
