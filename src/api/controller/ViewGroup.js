@@ -15,10 +15,11 @@ export const getViewGroupList = async function () {
     return apollo.clients.alert.query({
       query: queryViewGroupList,
       variables: {
-        viewNameList: [
+        viewNameList: _.uniq([
           ...groupIds,
+          // 当用户是 administrator 时，其组名与用户名一样
           userId
-        ]
+        ])
       }
     }).then(r => r.data.viewGroupList)
   } catch (e) {
@@ -29,6 +30,7 @@ export const getViewGroupList = async function () {
 /**
  * 获取多个分组下的所有视图
  * @param {*} groupIds
+ * @FIXME: 用户登录时有其相应视图权限，可以直接拿到，目前登录接口未返回权限部分
  */
 export const getViewListByGroup = async function (groupIds) {
   try {

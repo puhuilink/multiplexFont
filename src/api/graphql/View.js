@@ -13,6 +13,7 @@ export const queryViewList = gql`query ($where: t_view_bool_exp! = {}, $limit: I
     view_name
     view_type
     creator
+    createdate
     view_img
   }
 }`

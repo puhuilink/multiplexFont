@@ -24,6 +24,32 @@
       </a-row>
     </div>
 
+    <div class="ViewDisplay__view-content">
+      <a-row>
+        <a-col
+          v-for="(view, idx) in viewList"
+          :key="idx"
+          :xs="24"
+          :md="12"
+          :lg="8"
+          :xxl="6"
+          style="padding: 7px;"
+        >
+          <div class="ViewDisplay__view-item">
+            <img :src="previewImg" :alt="view.view__title">
+            <div class="ViewDisplay__view-item-info">
+              <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+              <p class="ViewDisplay__view-item-info_creator">
+                <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                <span><a-icon type="user" />{{ view.creator }}</span>
+              </p>
+            </div>
+            {{ view.view__title }}
+          </div>
+        </a-col>
+      </a-row>
+    </div>
+
   </page-view>
 </template>
 
@@ -35,6 +61,7 @@ import HeadInfo from '@/components/tools/HeadInfo'
 import {
   getViewListByGroup
 } from '@/api/controller/ViewGroup'
+import previewImg from '@/assets/images/view__preview_default.jpg'
 
 export default {
   name: 'ViewDisplay',
@@ -49,7 +76,8 @@ export default {
       user: {},
       loading: false,
       viewGroupList: [],
-      viewList: []
+      viewList: [],
+      previewImg
     }
   },
   computed: {
@@ -197,6 +225,71 @@ export default {
 
     .headerContent .title .welcome-text {
       display: none;
+    }
+  }
+
+  .ViewDisplay__view {
+    &-content {
+      // margin: -12px;
+    }
+
+    &-item {
+      box-sizing: border-box;
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      box-shadow: 0 0 32px #f0f0f0;
+      transform: scale(1);
+      transition: transform .4s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.05);
+        transition: transform .4s ease;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+
+      &-info {
+        padding: 12px;
+        padding-bottom: 0;
+
+        &_title {
+          font-family: 微软雅黑;
+          font-size: 16px;
+          font-weight: bold;
+          display: block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          word-break: break-all;
+          color: rgb(51, 51, 51);
+          overflow: hidden;
+          margin: 0px 0px 8px;
+        }
+
+        &_creator {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          span {
+            line-height: 12px;
+            overflow: hidden;
+            margin: 2px 0 2px 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            background-repeat: no-repeat;
+            background-size: contain;
+            font-family: 微软雅黑;
+            font-size: 12px;
+            color: rgb(124, 132, 145);
+          }
+        }
+      }
     }
   }
 
