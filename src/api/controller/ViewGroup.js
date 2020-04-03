@@ -38,7 +38,8 @@ export const getViewListByGroup = async function (groupIds) {
     // content 应当存放关联视图的 id，老系统一些旧数据存放了 xml 等其他信息，此处需要过滤
     const filterViewGoupList = viewGroupList.filter(({ content }) => content && !content.includes('<'))
     filterViewGoupList.forEach(viewGroup => {
-      viewGroup.viewIds = viewGroup.content.split(',')
+      // viewId 本身为 numeric 类型
+      viewGroup.viewIds = viewGroup.content.split(',').map(id => Number(id))
     })
     // 拉平所有需要查询的数组，并去重
     const viewIds = _.uniq(

@@ -1,19 +1,26 @@
 <template>
   <div class="ViewDisplay__view">
     <div class="ViewDisplay__view-header">
-      <a-select style="width: 300px;">
+      <a-select style="width: 300px;" v-model="selectedGroupName">
         <a-select-option
           v-for="(group, idx) in viewGroupList"
           :key="idx"
+          :value="group.view_title"
         >{{ group.view_title }}</a-select-option>
       </a-select>
 
-      <a-input autofocus style="width: 200px;" placeholder="搜索..."></a-input>
+      <a-input
+        allowClear
+        autofocus
+        style="width: 200px;"
+        placeholder="按视图标题搜索..."
+        v-model="queryTitle"
+      />
     </div>
     <div class="ViewDisplay__view-content">
       <a-row>
         <a-col
-          v-for="(view, idx) in viewList"
+          v-for="(view, idx) in filterviewList"
           :key="idx"
           :xs="24"
           :md="12"
@@ -48,6 +55,8 @@ import {
 } from '@/api/controller/ViewGroup'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
+const ALL_VIEW = '所有视图'
+
 export default {
   name: 'ViewDisplay',
   components: {
@@ -62,6 +71,8 @@ export default {
       loading: false,
       viewGroupList: [],
       viewList: [],
+      queryTitle: '',
+      selectedGroupName: ALL_VIEW,
       previewImg
     }
   },
@@ -74,7 +85,20 @@ export default {
       return this.$store.getters.userInfo
     },
     filterviewList () {
-      return this.viewList
+      const { selectedGroupName, viewGroupList, viewList } = this
+      let list = []
+      // 分组筛选条件
+      if (selectedGroupName === ALL_VIEW) {
+        list = viewList
+      } else {
+        // 选中的分组
+        // eslint-disable-next-line
+        const selectedGroup = viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
+        // eslint-disable-next-line
+        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(view_id))
+      }
+      // 加上搜索条件，当 input allowClear 时，title 为 undefined
+      return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
     }
   },
   methods: {
@@ -83,7 +107,12 @@ export default {
         this.loading = true
         const [allViewList, allViewGoupList] = await getViewListByGroup()
         this.viewList = allViewList
-        this.viewGroupList = allViewGoupList
+        this.viewGroupList = [
+          ...allViewGoupList,
+          {
+            view_title: ALL_VIEW
+          }
+        ]
       } catch (e) {
         this.viewList = []
         this.viewGroupList = []
@@ -217,11 +246,11 @@ export default {
     position: relative;
 
     &-header {
-      padding: 4px 22px 12px 22px;
+      padding: 0px 22px 14px 22px;
       // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
       margin: 0 -24px 0 -24px;
       width: calc(100% + 48px);
-      border: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -234,6 +263,9 @@ export default {
 
     &-item {
       box-sizing: border-box;
+      // 给定宽高，避免图片加载等过程中导致重绘
+      width: 363px;
+      height: 259px;
       border: 1px solid #f0f0f0;
       border-radius: 4px;
       box-shadow: 0 0 32px #f0f0f0;
@@ -242,7 +274,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        transform: scale(1.05);
+        transform: scale(1.04);
         transition: transform .4s ease;
       }
 
