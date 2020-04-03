@@ -28,17 +28,26 @@
           :xxl="6"
           style="padding: 7px;"
         >
-          <div class="ViewDisplay__view-item">
-            <img :src="previewImg" :alt="view.view__title">
-            <div class="ViewDisplay__view-item-info">
-              <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
-              <p class="ViewDisplay__view-item-info_creator">
-                <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
-                <span><a-icon type="user" />{{ view.creator }}</span>
-              </p>
+          <router-link
+            :to="{
+              name: 'Design',
+              query: {
+                id: view.view_id,
+                title: view.view_title
+              }
+            }">
+            <div class="ViewDisplay__view-item">
+              <img :src="previewImg" :alt="view.view__title">
+              <div class="ViewDisplay__view-item-info">
+                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_creator">
+                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ view.creator }}</span>
+                </p>
+              </div>
+              {{ view.view__title }}
             </div>
-            {{ view.view__title }}
-          </div>
+          </router-link>
         </a-col>
       </a-row>
     </div>
