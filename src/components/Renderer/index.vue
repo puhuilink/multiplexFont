@@ -26,8 +26,8 @@
 <script>
 import { fromEvent } from 'rxjs'
 import { takeWhile, startWith } from 'rxjs/operators'
-import Widget from '@/components/Widget/index'
 import anime from 'animejs'
+import Widget from '@/components/Widget/index'
 
 export default {
   name: 'Renderer',

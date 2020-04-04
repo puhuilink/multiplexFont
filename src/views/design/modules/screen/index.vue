@@ -59,7 +59,7 @@
     <div
       ref="page"
       class="page"
-      @click.self="() => select$.next({ el: 'page' })">
+      @click.self="() => select$.next({ el: 'view' })">
 
       <div class="gauge" ref="gauge"></div>
       <!-- / 标尺 -->
@@ -240,10 +240,6 @@ export default {
         switch (el) {
           case 'view':
             activeWidget = this.view
-            styles = { display: 'none' }
-            break
-          case 'page':
-            activeWidget = null
             styles = { display: 'none' }
             break
           case 'widget':

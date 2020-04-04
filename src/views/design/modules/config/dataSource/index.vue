@@ -40,7 +40,39 @@
         <slot name="real" v-show="sourceType === 'real'"></slot>
       </a-collapse-panel>
 
+      <!-- S 静态数据编辑 -->
+      <a-collapse-panel header="静态数据编辑" key="3" v-show="config.dataConfig.sourceType === 'static'">
+
+        <div class="data-source__wrap">
+          <AceEditor
+            class="data-source__editor"
+            language="json"
+            :code="code"
+            @change="staticSourceChange" />
+        </div>
+
+      </a-collapse-panel>
+      <!-- E 静态数据编辑 -->
+
     </a-collapse>
+
+    <!-- S 静态数据编辑 -->
+    <div class="data-source__modify" v-if="config.dataConfig.sourceType === 'static'">
+      <div class="data-source__control">
+        <p>数据编辑</p>
+        <a-button type="primary" shape="circle" :icon="isFullscreen ? 'fullscreen' : 'fullscreen-exit'" @click="switchMode" />
+      </div>
+      <div class="data-source__wrap">
+
+        <AceEditor
+          class="data-source__editor"
+          language="json"
+          :code="code"
+          @change="staticSourceChange" />
+
+      </div>
+    </div>
+    <!-- E 静态数据编辑 -->
 
   </div>
 </template>
@@ -48,11 +80,15 @@
 <script>
 import '@/assets/less/template.less'
 import _ from 'lodash'
+import AceEditor from 'vue-ace-editor-valid'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 
 export default {
   name: 'DataSourceTemplate',
+  components: {
+    AceEditor
+  },
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
@@ -60,12 +96,50 @@ export default {
     },
     sourceType () {
       return this.config.dataConfig.sourceType || 'null'
+    },
+    code () {
+      // 柱形图根据类型调整样式
+      const { barType } = this.config.proprietaryConfig
+      return this.activeWidget.config.dataConfig.staticDataConfig.getCode(barType)
     }
   },
   methods: {
     ...mapMutations('screen', {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
+    /**
+     * 静态资源修改
+     * @param code 静态资源代码
+     */
+    staticSourceChange (code) {
+      if (code !== '') {
+        switch (this.config.type) {
+          case 'Lines':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
+          case 'Bar':
+            const { barType } = this.config.proprietaryConfig
+            const typeMapping = new Map([
+              ['single', 'singleSeries'],
+              ['multiple', 'multipleSeries']
+            ])
+            Object.assign(
+              this.config.dataConfig.staticDataConfig.staticData,
+              Object.assign(_.omit(JSON.parse(code), ['series'])),
+              {
+                [typeMapping.get(barType)]: JSON.parse(code).series
+              }
+            )
+            break
+          default:
+            break
+        }
+        this.change()
+      }
+    },
     change () {
       const activeWidget = _.cloneDeep(this.activeWidget)
       const { render } = this.activeWidget
