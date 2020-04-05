@@ -83,6 +83,7 @@ export default {
           title: label_s
           key: name_s
           parentKey: parentname_s
+          parentname_s: parentname_s
           instanceList: instanceList_aggregate @include(if: $instanceListCount) {
             aggregate {
               count
@@ -210,7 +211,10 @@ export default {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
           'name_s': dataRef.name_s,
-          'tree_s': dataRef.parenttree_s + dataRef.name_s
+          'name': dataRef.name_s,
+          'tree_s': dataRef.parenttree_s + dataRef.name_s,
+          'parentname_s': dataRef.parentname_s,
+          'parentname': dataRef.parentname_s
         })
       } else {
         // FIXME: 新增后可以不用重置
