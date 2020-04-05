@@ -19,8 +19,8 @@
         视图 TODO
         <Preview
           v-if="viewId"
-          :title="viewTitle"
-          :id="viewId"
+          :viewTitle="viewTitle"
+          :viewId="viewId"
         />
       </a-col>
     </a-row>
@@ -32,7 +32,7 @@ import {
   ResourceTree
 } from '@/components/Resource'
 import { getViewList } from '@/api/controller/View'
-import Preview from '@/views/preview'
+import Preview from '@/components/View/Preview'
 
 export default {
   name: 'TreeNavigation',
@@ -74,9 +74,6 @@ export default {
     // 选中 Ci 对应的视图的 Id
     viewId: {
       get () {
-        if (!this.viewTitle) {
-          return null
-        }
         const view = this.allViewList.find(el => el.view_title === this.viewTitle)
         return view ? view.view_id : null
       }

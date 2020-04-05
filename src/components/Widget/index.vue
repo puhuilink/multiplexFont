@@ -19,6 +19,7 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
+import Widget from '../../model/widget'
 
 export default {
   name: 'Widget',
@@ -41,6 +42,9 @@ export default {
     }
   },
   mounted () {
+    if (!(this.widget instanceof Widget)) {
+      Object.assign(this.widget, new Widget(this.widget))
+    }
     const { category, type } = this.widget.config
     const widgetFactory = category === 'CHART'
       ? Factory.createChartFactory()
