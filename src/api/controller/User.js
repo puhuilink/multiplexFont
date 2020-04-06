@@ -2,14 +2,29 @@ import apollo from '@/utils/apollo'
 import moment from 'moment'
 import { axios } from '@/utils/request'
 import { oldRequest } from '@/utils/oldRequest'
-
 import {
   mutationInsertUsers,
   mutationUpdateUser
 } from '../graphql/User'
+const CryptoJS = require('crypto-js')
 
-export const login = function (data = {}) {
-  return axios.post('/user/login', data)
+export const login = function ({ userId, pwd }) {
+  // 从环境读入而非硬编码到 JS 文件里
+  const key = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_KEY)
+  const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
+
+  // 加密密码
+  const encryptedPwd = CryptoJS.AES.encrypt(pwd, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.ZeroPadding
+  }).toString()
+
+  // 请求
+  return axios.post('/user/login', {
+    userId,
+    encryptedPwd
+  })
 }
 
 /**

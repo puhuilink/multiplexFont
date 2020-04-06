@@ -34,11 +34,11 @@
           <a-form-item>
             <a-input
               size="large"
-              type="encryptedPwd"
+              type="pwd"
               autocomplete="false"
               placeholder="密码: admin"
               v-decorator="[
-                'encryptedPwd',
+                'pwd',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
               ]"
             >
@@ -76,7 +76,8 @@
 
       <!-- E--去除tab分页切换--lyz -->
 
-      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误" />
+      <!-- 登录失败有 notification 提示 -->
+      <!-- <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误" /> -->
       <a-form-item>
         <a-input
           size="large"
@@ -98,7 +99,7 @@
           autocomplete="false"
           placeholder="密码"
           v-decorator="[
-            'encryptedPwd',
+            'pwd',
             {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
           ]"
         >
@@ -110,7 +111,7 @@
         <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
         <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
-          class="forge-encryptedPwd"
+          class="forge-pwd"
           style="float: right;"
         >忘记密码</router-link>
       </a-form-item> -->
@@ -207,7 +208,7 @@ export default {
       state.loginBtn = true
       this.isLoginError = false
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'encryptedPwd'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'pwd'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
@@ -215,8 +216,8 @@ export default {
           const loginParams = { ...values }
           delete loginParams.userId
           loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-          // loginParams.encryptedPwd = md5(values.encryptedPwd)
-          loginParams.encryptedPwd = values.encryptedPwd
+          // loginParams.pwd = md5(values.pwd)
+          loginParams.pwd = values.pwd
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -305,6 +306,7 @@ export default {
         description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
         duration: 4
       })
+      throw err
     }
   }
 }
@@ -327,7 +329,7 @@ export default {
     height: 40px;
   }
 
-  .forge-encryptedPwd {
+  .forge-pwd {
     font-size: 14px;
   }
 
