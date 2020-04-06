@@ -76,7 +76,7 @@
 
       <!-- E--去除tab分页切换--lyz -->
 
-      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误（admin)" />
+      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误" />
       <a-form-item>
         <a-input
           size="large"
@@ -205,6 +205,7 @@ export default {
       } = this
 
       state.loginBtn = true
+      this.isLoginError = false
 
       const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'encryptedPwd'] : ['mobile', 'captcha']
 
