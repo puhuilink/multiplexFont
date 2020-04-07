@@ -50,6 +50,11 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  const { data: { code, msg } } = response
+  // TODO: 与后端统一 http status?
+  if (code && code !== 200) {
+    return Promise.reject(new Error(msg))
+  }
   return response.data
 }, err)
 
