@@ -54,11 +54,18 @@ export default {
     this.render = widgetFactory.create(type, {
       widget: this.widget
     })
-
-    // 如果在编辑状态，将渲染的元素更新至部件
-    !this.onlyShow && this.activateWidget({
-      widget: this.selectWidget
-    })
+    console.log(this.widget.config, this.render)
+    if (this.onlyShow) {
+      // 如果在视图展示状态下，组件（轮询）动态加载数据
+      // 获取当前实例
+      // const { widget: { config }, render } = this
+      this.render.intervalRefresh()
+    } else {
+      // 如果在编辑状态，将渲染的元素更新至部件
+      this.activateWidget({
+        widget: this.selectWidget
+      })
+    }
   },
   methods: {
     ...mapMutations('screen', {

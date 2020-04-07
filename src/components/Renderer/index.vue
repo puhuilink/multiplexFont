@@ -13,6 +13,7 @@
         only-show
         v-if="view.widgets.length > 0"
         v-for="widget in view.widgets"
+        onlyShow
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"

@@ -99,8 +99,30 @@ export default class Chart {
     this.chart.setOption(this.chartConfig)
   }
 
+  refresh () {
+    this.mergeOption(this.config, true)
+  }
+
+  /**
+   * 轮询
+   */
+  intervalRefresh () {
+    this.refresh()
+    // 存在自动刷新时间设置则开启定时刷新
+    const { dataConfig: { dbDataConfig } } = this.config
+    if (dbDataConfig.hasOwnProperty('refreshTime')) {
+      this.timer = setInterval(
+        this.refresh,
+        // 分钟
+        Number(dbDataConfig.refreshTime) * 1000 * 60
+      )
+    }
+  }
+
   /**
    * 销毁事件
    */
-  destroy () {}
+  destroy () {
+    clearInterval(this.timer)
+  }
 }
