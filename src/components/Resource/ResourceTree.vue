@@ -24,7 +24,7 @@
           }"
           defaultExpandAll
           :expandedKeys="expandedKeys"
-          :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
+          :filterTreeNode="filterNode"
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
           @expand="expand"
@@ -62,11 +62,12 @@ import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 // eslint-disable-next-line
 import { deleteModel } from '@/api/controller/Resource'
+import _ from 'lodash'
 
 export default {
   name: 'ResourceTree',
   apollo: {
-    // FIXME: instanceList 应当也包含子代的 children
+    // TODO: 在 hasura 层通过 RelationShips 直接构造好树结构
     // TODO: subscribe 节点增加 / 删除
     dataSource: {
       query: gql`query ($instanceList: Boolean!) {
@@ -84,7 +85,7 @@ export default {
           key: name_s
           parentKey: parentname_s
           parentname_s: parentname_s
-          children: instanceList @include(if: $instanceList) {
+          instanceList @include(if: $instanceList) {
             did
             _id_s
             name_s
@@ -177,6 +178,11 @@ export default {
     editSuccess () {
       this.$apollo.queries.dataSource.refetch()
     },
+    filterNode ({ title = '' }) {
+      const { searchValue = '' } = this
+      // FIXME: 数据库存在空数据
+      return searchValue && (title || '').toLowerCase().includes(searchValue.toLowerCase())
+    },
     async onDelete () {
       if (!await deleteCheck.sureDelete()) {
         return
@@ -222,7 +228,7 @@ export default {
         })
       } else {
         // FIXME: 新增后可以不用重置
-        this.selectedNode = null
+        // this.selectedNode = null
         this.selectedKey = ''
         this.$emit('select', null)
       }
@@ -233,9 +239,12 @@ export default {
      * @return {Undefined}
      */
     search ({ target: { value } }) {
-      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京（可能与内存泄漏有关：上次搜索后未重置状态）
       this.searchValue = value
+      if (!value) {
+        return
+      }
       this.expandedKeys = search(value, this.dataSource)
+      this.autoExpandParent = true
     }
   }
 }

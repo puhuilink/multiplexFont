@@ -12,9 +12,11 @@ function buildNode (node) {
 
 function buildChildren (parent, collection = []) {
   if (parent) {
-    // 当 model 下存在 instance 列表时，其 children 在查询时已经挂载
-    parent.children = (parent.children && parent.children.length) ? parent.children : collection.filter(el => el.parentKey === parent.key)
-    // parent.children = collection.filter(el => el.parentKey === parent.key)
+    // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
+    parent.children = [
+      ...parent.instanceList || [],
+      ...collection.filter(el => el.parentKey === parent.key)
+    ]
     parent.children.forEach(el => {
       el.parent = parent
     })
@@ -52,6 +54,18 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
   return roots
 }
 
+function matchNodeTitle ({ title = '' }, value = '') {
+  // FIXME: 数据库存在空数据
+  return (title || '')
+    .toLowerCase()
+    .trim()
+    .includes(
+      value
+        .toLowerCase()
+        .trim()
+    )
+}
+
 /**
  * 查询匹配名称的树节点的 key
  * @param {String} title
@@ -59,16 +73,34 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
  * @return {Array<String>}
  */
 function search (title = '', collection) {
+  if (!title) {
+    return
+  }
   const matchedNodes = []
   // 如果一个节点匹配条件，其所有父代也被认为匹配条件
   function recursiveMatchParent (node) {
+    matchedNodes.push(node)
     node && node.parent && matchedNodes.push(node.parent)
     node && node.parent && node.parent.parent && recursiveMatchParent(node.parent)
   }
   // 扁平化遍历匹配
+  // FIXME: model 是一维数组扁平化查询，其下方的 instance 列表需要进入到内部查询
   collection
-    .filter(node => node.title.toLowerCase().includes(title.toLowerCase()))
+    .filter(node => {
+      if ((matchNodeTitle(node, title))) {
+        return true
+      }
+      if ((node.instanceList || []).find(instance => matchNodeTitle(instance, title))) {
+        return true
+      }
+      // else if (node.children.find(el => el.title.toLowerCase().includes(title.toLowerCase()))) {
+      //   return true
+      // } else {
+      //   return false
+      // }
+    })
     .forEach(recursiveMatchParent)
+  console.log(matchedNodes)
   // 去重
   const result = Array.from(
     new Set(matchedNodes.map(node => node.key))
