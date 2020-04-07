@@ -9,7 +9,7 @@
 <template>
   <div class="data-source common-template">
 
-    <a-collapse :activeKey="[1, 2]" :bordered="false">
+    <a-collapse :activeKey="[1, 2, 3]" :bordered="false">
 
       <!-- S 数据源 -->
       <a-collapse-panel header="数据源类型" key="1">
@@ -41,7 +41,7 @@
       </a-collapse-panel>
 
       <!-- S 静态数据编辑 -->
-      <a-collapse-panel header="静态数据编辑" key="3" v-show="config.dataConfig.sourceType === 'static'">
+      <a-collapse-panel header="静态数据编辑" key="3" v-show="sourceType === 'static'">
 
         <div class="data-source__wrap">
           <AceEditor
@@ -55,24 +55,6 @@
       <!-- E 静态数据编辑 -->
 
     </a-collapse>
-
-    <!-- S 静态数据编辑 -->
-    <div class="data-source__modify" v-if="config.dataConfig.sourceType === 'static'">
-      <div class="data-source__control">
-        <p>数据编辑</p>
-        <a-button type="primary" shape="circle" :icon="isFullscreen ? 'fullscreen' : 'fullscreen-exit'" @click="switchMode" />
-      </div>
-      <div class="data-source__wrap">
-
-        <AceEditor
-          class="data-source__editor"
-          language="json"
-          :code="code"
-          @change="staticSourceChange" />
-
-      </div>
-    </div>
-    <!-- E 静态数据编辑 -->
 
   </div>
 </template>
@@ -158,6 +140,16 @@ export default {
 
   &__select {
     width: 100%;
+  }
+
+  &__wrap {
+    height: calc(100vh - 388px);
+  }
+
+  &__editor {
+    border-radius: 4px;
+    background: #f1f1f1;
+    font-size: 14px;
   }
 }
 </style>

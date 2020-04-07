@@ -56,11 +56,11 @@
         </div>
       </div>
 
-    <!-- S 画板 -->
-    <div
-      ref="page"
-      class="page"
-      @click.self="() => select$.next({ el: 'view' })">
+      <!-- S 画板 -->
+      <div
+        ref="page"
+        class="page"
+        @click.self="() => select$.next({ el: 'view' })">
 
         <div class="gauge" ref="gauge"></div>
         <!-- / 标尺 -->
@@ -77,10 +77,10 @@
           <!-- / 部件渲染 -->
 
           <Wrapper ref="wrapper" v-stream:adjust="adjust$" />
-          <!-- / 选择指示器 -->
+        <!-- / 选择指示器 -->
 
         </div>
-        <!-- / 视图 -->
+      <!-- / 视图 -->
 
       </div>
       <!-- E 画板 -->

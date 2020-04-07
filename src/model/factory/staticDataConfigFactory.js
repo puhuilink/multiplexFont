@@ -9,12 +9,12 @@ import LinesStaticDataConfig from '../config/dataConfig/staticDataConfig/LinesSt
 import BarStaticDataConfig from '../config/dataConfig/staticDataConfig/BarStaticDataConfig'
 
 export default class StaticDataConfigFactory {
-  static create (type) {
+  static create (type, staticDataConfig = {}) {
     switch (type) {
       case 'Lines':
-        return LinesStaticDataConfig
+        return new LinesStaticDataConfig(staticDataConfig)
       case 'Bar':
-        return BarStaticDataConfig
+        return new BarStaticDataConfig(staticDataConfig)
       default:
         return null
     }
