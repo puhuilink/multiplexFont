@@ -13,6 +13,7 @@
         only-show
         v-if="view.widgets.length > 0"
         v-for="widget in view.widgets"
+        onlyShow
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"
@@ -26,8 +27,8 @@
 <script>
 import { fromEvent } from 'rxjs'
 import { takeWhile, startWith } from 'rxjs/operators'
-import Widget from '@/components/Widget/index'
 import anime from 'animejs'
+import Widget from '@/components/Widget/index'
 
 export default {
   name: 'Renderer',

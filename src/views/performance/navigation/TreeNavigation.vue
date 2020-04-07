@@ -10,6 +10,7 @@
       <a-col :span="6">
         <ResourceTree
           hiddenTab
+          instanceList
           :rootKeys="['BJDC', 'XMDC']"
           @select="onSelectCi"
         />
@@ -86,9 +87,10 @@ export default {
      */
     async fetchAllViewList () {
       try {
-        this.allViewList = await getViewList({
+        const { data: { data } } = await getViewList({
           limit: 9999
         })
+        this.allViewList = data
       } catch (e) {
         this.allViewList = []
         throw e

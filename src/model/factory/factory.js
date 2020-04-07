@@ -9,7 +9,7 @@
 import ChartFactory from './chartFactory'
 import ElementFactory from './elementFactory'
 import ChartProprietaryConfigFactory from './chartProprietaryConfigFactory'
-import StaticDataFactory from './staticDataFactory'
+import StaticDataConfigFactory from './staticDataConfigFactory'
 import DynamicDataFactory from './dynamicDataFactory'
 import { NodeFactory } from './nodeFactory'
 
@@ -21,7 +21,7 @@ export default class Factory {
   static createChartProprietaryConfigFactory = () => ChartProprietaryConfigFactory
 
   // 创建图表静态数据配置工厂
-  static createStaticDataFactory = () => StaticDataFactory
+  static createStaticDataConfigFactory = () => StaticDataConfigFactory
 
   // 创建图标动态数据配置工厂
   static createDynamicDataFactory = () => DynamicDataFactory

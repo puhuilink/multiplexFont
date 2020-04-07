@@ -9,42 +9,39 @@ import LineChart from '../charts/LineChart'
 import BarChart from '../charts/BarChart'
 import TopologyChart from '../charts/TopologyChart'
 import TextsChart from '../charts/TextsChart'
-import HealthDegreeChart from '../charts/HealthDegreeChart'
 import RectChart from '../charts/RectChart'
 import ClockChart from '../charts/ClockChart'
 import CircleChart from '../charts/CircleChart'
 import TriangleChart from '../charts/TriangleChart'
 import ImageChart from '../charts/ImageChart'
 import GaugeChart from '../charts/GaugeChart'
-import DegreeRing from '../charts/DegreeRing'
+import DegreeRingChart from '../charts/DegreeRingChart'
 
 export default class ChartFactory {
-  static create (type, widget) {
+  static create (type, { widget }) {
     switch (type) {
       case 'Lines':
-        return new LineChart(widget)
+        return new LineChart({ widget })
       case 'Bar':
-        return new BarChart(widget)
+        return new BarChart({ widget })
       case 'Texts':
-        return new TextsChart(widget)
+        return new TextsChart({ widget })
       case 'Topology':
-        return new TopologyChart(widget)
-      case 'HealthDegree':
-        return new HealthDegreeChart(widget)
+        return new TopologyChart({ widget })
       case 'Rect':
-        return new RectChart(widget)
+        return new RectChart({ widget })
       case 'Clock':
-        return new ClockChart(widget)
+        return new ClockChart({ widget })
       case 'Circle':
-        return new CircleChart(widget)
+        return new CircleChart({ widget })
       case 'Triangle':
-        return new TriangleChart(widget)
+        return new TriangleChart({ widget })
       case 'Image':
-        return new ImageChart(widget)
+        return new ImageChart({ widget })
       case 'gauge':
         return new GaugeChart(widget)
       case 'DegreeRing':
-        return new DegreeRing(widget)
+        return new DegreeRingChart(widget)
       default:
         return null
     }

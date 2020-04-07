@@ -6,9 +6,11 @@ export default class GaugeDataConfig {
       model: '',
       selectedInstance: [],
       selectedKpi: []
-    }
+    },
+    refreshTime = 0
   }) {
     this.resourceConfig = resourceConfig
+    this.refreshTime = refreshTime
   }
 
   /**

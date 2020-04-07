@@ -6,7 +6,6 @@
       <a-col :xl="6" :xxl="4">
         <ResourceTree
           class="ResourceInstance-tree"
-          instanceListCount
           @select="select"
         />
       </a-col>

@@ -10,7 +10,6 @@ import Lines from './charts/Lines'
 import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
-import HealthDegree from './charts/HealthDegree'
 import Rects from './charts/Rects'
 import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
@@ -25,7 +24,6 @@ const charts = {
   Lines,
   Texts,
   Topology,
-  HealthDegree,
   Rects,
   Clock,
   CircleConfig,

@@ -14,7 +14,8 @@ const assetsCDN = {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
-    axios: 'axios'
+    axios: 'axios',
+    ace: 'ace'
   },
   css: [],
   // https://unpkg.com/browse/vue@2.6.10/
@@ -35,7 +36,7 @@ const vueConfig = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     // if prod, add externals
-    externals: isProd ? assetsCDN.externals : {}
+    externals: isProd ? assetsCDN.externals : { ace: 'ace' }
   },
 
   chainWebpack: (config) => {
