@@ -17,6 +17,7 @@ import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
 import ImageConfig from './charts/ImageConfig'
 import Gauge from './charts/Gauge'
+import AlarmListConfig from './elements/AlarmListConfig'
 
 // 图表模板配置
 const charts = {
@@ -35,6 +36,7 @@ const charts = {
 
 // 元素模板配置
 const elements = {
+  AlarmListConfig
 }
 
 // 模板配置组件

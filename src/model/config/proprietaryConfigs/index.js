@@ -897,6 +897,17 @@ class ImageGraphic extends Graphic {
   }
 }
 
+/**
+ * 告警列表 props 配置
+ */
+class AlarmListProps {
+  constructor ({
+    title = 'alarm list'
+  }) {
+    this.title = title
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
@@ -913,5 +924,6 @@ export {
   RectGraphic,
   CircleGraphic,
   TriangleGraphic,
-  ImageGraphic
+  ImageGraphic,
+  AlarmListProps
 }
