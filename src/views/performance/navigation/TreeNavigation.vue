@@ -35,7 +35,6 @@ import {
 } from '@/components/Resource'
 import { getViewList } from '@/api/controller/View'
 import Preview from '@/components/View/Preview'
-import Timeout from 'await-timeout'
 
 export default {
   name: 'TreeNavigation',
