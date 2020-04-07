@@ -13,6 +13,7 @@ export const queryViewList = gql`query ($where: t_view_bool_exp! = {}, $limit: I
     view_name
     view_type
     creator
+    createdate
     view_img
   }
 }`
@@ -74,3 +75,21 @@ export const queryKpiAndInstanceInfo = gql`query ($instanceIdList: [String!], $k
     kpicode_s
   }
 }`
+
+export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
+  data: t_view(where: {view_id: {_eq: $viewId}}) {
+    content
+  }
+}`
+
+// export const mutationUpdateViewContent = gql`mutation ($viewId: numeric, $content: String) {
+//   update_t_view (where: {
+//     view_id: {
+//       _eq: $viewId
+//     }
+//   }, _set: {
+//     content: $content
+//   }) {
+//     affected_rows
+//   }
+// }`

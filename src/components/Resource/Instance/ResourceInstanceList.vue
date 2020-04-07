@@ -65,41 +65,11 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import ResourceInstanceSchema from './ResourceInstanceSchema'
-
-const queryInstance = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
-  pagination: ngecc_instance_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    did
-    label_s
-    name_s
-    parentname_s
-  }
-}`
-
-const queryKpi = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
-  pagination: ngecc_instance_values_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: ngecc_instance_values(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    did
-    domain_s
-    label_s
-    name_s
-    parentname_s
-    valuecode_s
-    valuelabel_s
-    nodetype_s
-  }
-}`
+import {
+  getInstanceList
+} from '@/api/controller/Instance'
+import { getKpiList } from '@/api/controller/Kpi'
 
 export default {
   name: 'ResourceInstanceList',
@@ -206,24 +176,22 @@ export default {
     loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return apollo.clients.resource.query({
-        query: this.parentNameS === 'Kpi' ? queryKpi : queryInstance,
-        variables: {
-          orderBy: {
-            ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
-          },
-          ...parameter,
-          where: {
-            ...this.where,
-            ...this.queryParams.name_s ? {
-              name_s: {
-                _ilike: `%${this.queryParams.name_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.label_s ? { label_s: {
-              _ilike: `%${this.queryParams.label_s.trim()}%`
-            } } : {}
-          }
+      const handler = this.parentNameS === 'Kpi' ? getKpiList : getInstanceList
+      return handler({
+        orderBy: {
+          ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
+        },
+        ...parameter,
+        where: {
+          ...this.where,
+          ...this.queryParams.name_s ? {
+            name_s: {
+              _ilike: `%${this.queryParams.name_s.trim()}%`
+            }
+          } : {},
+          ...this.queryParams.label_s ? { label_s: {
+            _ilike: `%${this.queryParams.label_s.trim()}%`
+          } } : {}
         }
       }).then(r => r.data)
     },

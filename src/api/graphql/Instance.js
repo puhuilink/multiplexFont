@@ -28,3 +28,17 @@ export const queryLastestId = gql`query MyQuery {
     }
   }
 }`
+
+export const queryInstanceList = gql`query instanceList($where: ngecc_instance_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_order_by!]) {
+  pagination: ngecc_instance_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: ngecc_instance(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
+    did
+    label_s
+    name_s
+    parentname_s
+  }
+}`

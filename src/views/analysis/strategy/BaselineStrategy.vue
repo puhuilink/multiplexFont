@@ -279,12 +279,12 @@ export default {
             } : {},
             ...this.queryParams.cycle_count !== undefined ? {
               cycle_count: {
-                _eq: Number(this.queryParams.cycle_countcycle_count)
+                _eq: Number(this.queryParams.cycle_count)
               }
             } : {},
             ...this.queryParams.cron_expression !== undefined ? {
               cron_expression: {
-                _eq: `${this.queryParams.cron_expression.trim()}`
+                _like: `%${this.queryParams.cron_expression.trim()}%`
               }
             } : {}
           }

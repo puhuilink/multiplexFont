@@ -8,7 +8,6 @@
       style="min-width: 200px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
-      @change="handleChange"
       @select="select"
       :filterOption="filterOption"
     >
@@ -16,7 +15,7 @@
         <span slot="label">{{ group.label }}</span>
         <a-select-option
           v-for="(item, itemIdx) in group.children"
-          :key="itemIdx"
+          :key="`${itemIdx}-${item.label}`"
           :value="item.value"
         >
           {{ item.label }}
@@ -54,7 +53,7 @@ export default {
         return this.value
       },
       set (v = '') {
-        this.$emit('input', v)
+        this.$emit('input', v, this.label)
       }
     }
   },
@@ -81,8 +80,14 @@ export default {
       // console.log(arguments)
       this._value = value
     },
-    select () {
-      // console.log(arguments)
+    select (value) {
+      const { key } = arguments[1].data
+      const label = key.split('-').pop()
+      // antd 提供了 labelInValue 属性来抛出 label，但这也改变了 value 传值的结构
+      // 此处在绑定 key 时记录了 label
+      this.$emit('input:label', label)
+      this.label = label
+      this._value = value
     }
   },
   created () {

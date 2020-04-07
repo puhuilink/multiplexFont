@@ -1,5 +1,10 @@
 import apollo from '@/utils/apollo'
-import { insertInstance, updateInstance, queryLastestId } from '../graphql/Instance'
+import {
+  insertInstance,
+  updateInstance,
+  queryLastestId,
+  queryInstanceList
+} from '../graphql/Instance'
 import { varcharUuid } from '@/utils/util'
 import store from '@/store'
 
@@ -48,5 +53,12 @@ export const editInstance = function (did, value) {
         ...value
       }
     }
+  })
+}
+
+export const getInstanceList = function (variables) {
+  return apollo.clients.resource.query({
+    query: queryInstanceList,
+    variables
   })
 }
