@@ -238,7 +238,7 @@ export default {
     search: _.debounce(function (value) {
       this.expandedKeys = search(value, this.dataSource)
       this.autoExpandParent = true
-    }, 500),
+    }, 300),
     /**
      * 查询树节点输入
      * @event

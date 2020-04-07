@@ -23,7 +23,6 @@
           :viewId="viewId"
           :ciId="selectedCi._id_s"
         />
-
         <!-- <p style="margin-top: 10px" v-else>请选择左侧节点进行展示</p> -->
       </a-col>
     </a-row>
@@ -114,8 +113,8 @@ export default {
     },
     async onSelectCi (ci) {
       // 触发 v-if 刷新
-      this.selectedCi = null
-      await Timeout.set(10)
+      // this.selectedCi = null
+      // await Timeout.set(10)
       this.selectedCi = ci
     }
   },

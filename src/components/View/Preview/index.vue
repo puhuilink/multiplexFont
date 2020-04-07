@@ -2,11 +2,12 @@
   <div class="preview" :style="styles">
 
     <template v-if="loading">
-      <a-spin spinning></a-spin>
+      <a-spin spinning size="large"></a-spin>
     </template>
 
     <template v-else>
       <Renderer
+        class="preview__renderer"
         v-if="preview"
         :ciId="ciId"
         :view="preview"
@@ -20,6 +21,8 @@
 import { mapState } from 'vuex'
 import Renderer from '@/components/Renderer'
 import { getViewDesign } from '@/api/controller/View'
+import Timeout from 'await-timeout'
+
 export default {
   name: 'Preview',
   props: {
@@ -47,6 +50,13 @@ export default {
   computed: {
     ...mapState('screen', ['view'])
   },
+  watch: {
+    async ciId () {
+      this.loading = true
+      await Timeout.set(300)
+      this.loading = false
+    }
+  },
   methods: {
     async fetch (viewviewId) {
       try {
@@ -66,13 +76,22 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .preview {
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: stretch;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
+  // widows: 100vw;
+
+  .ant-spin {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 }
 </style>
