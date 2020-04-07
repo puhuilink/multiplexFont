@@ -1,12 +1,13 @@
 /**
-* 柱形图静态数据
-* Author: dong xing
-* Date: 2019/11/26
-* Time: 2:24 下午
-* Email: dong.xing@outlook.com
-*/
+ * 柱形图静态数据
+ * Author: dong xing
+ * Date: 2019/11/26
+ * Time: 2:24 下午
+ * Email: dong.xing@outlook.com
+ */
 
-const BarStaticData = {
+import _ from 'lodash'
+const defaultBarStaticData = {
   legend: {},
   xAxis: {
     type: 'category',
@@ -69,4 +70,21 @@ const BarStaticData = {
   ]
 }
 
-export default BarStaticData
+export default class BarStaticDataConfig {
+  constructor ({
+    staticData = defaultBarStaticData
+  }) {
+    this.staticData = staticData
+  }
+
+  /**
+   * 获取柱形图静态数据代码
+   * @returns {string}
+   */
+  getCode (barType) {
+    const originalSource = _.omit(_.cloneDeep(this.staticData), ['singleSeries', 'multipleSeries'])
+    const series = barType === 'single' ? _.cloneDeep(this.staticData.singleSeries) : _.cloneDeep(this.staticData.multipleSeries)
+    Object.assign(originalSource, { series })
+    return JSON.stringify(originalSource, null, '\t')
+  }
+}

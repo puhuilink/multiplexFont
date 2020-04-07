@@ -19,7 +19,7 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
-import Widget from '../../model/widget'
+import Widget from '@/model/widget'
 
 export default {
   name: 'Widget',
