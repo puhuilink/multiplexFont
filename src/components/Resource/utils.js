@@ -100,7 +100,6 @@ function search (title = '', collection) {
       // }
     })
     .forEach(recursiveMatchParent)
-  console.log(matchedNodes)
   // 去重
   const result = Array.from(
     new Set(matchedNodes.map(node => node.key))

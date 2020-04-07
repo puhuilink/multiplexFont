@@ -9,7 +9,7 @@
           style="padding: 8px;"
           placeholder="搜索资源树"
           :value="searchValue"
-          @change="search"
+          @change="change"
         />
         <a-spin
           v-if="$apollo.queries.dataSource.loading"
@@ -233,18 +233,21 @@ export default {
         this.$emit('select', null)
       }
     },
+    search: _.debounce(function (value) {
+      this.expandedKeys = search(value, this.dataSource)
+      this.autoExpandParent = true
+    }, 500),
     /**
      * 查询树节点输入
      * @event
      * @return {Undefined}
      */
-    search ({ target: { value } }) {
+    change: function ({ target: { value } }) {
       this.searchValue = value
       if (!value) {
         return
       }
-      this.expandedKeys = search(value, this.dataSource)
-      this.autoExpandParent = true
+      this.search(value)
     }
   }
 }
