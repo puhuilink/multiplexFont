@@ -14,6 +14,7 @@ export const login = function ({ userId, pwd }) {
   const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
 
   // 加密密码
+  // eslint-disable-next-line
   const encryptedPwd = CryptoJS.AES.encrypt(pwd, key, {
     iv: iv,
     mode: CryptoJS.mode.CBC,
@@ -23,7 +24,9 @@ export const login = function ({ userId, pwd }) {
   // 请求
   return axios.post('/user/login', {
     userId,
-    encryptedPwd
+    // encryptedPwd
+    // 后端接口还未开启加密情况下明文传输
+    encryptedPwd: pwd
   })
 }
 
