@@ -94,17 +94,8 @@
               </a-collapse-panel>
               <!-- E 数值设置 -->
 
-              <!-- S 内圆设置 -->
+              <!-- S 内圆(健康环) -->
               <a-collapse-panel header="内圆设置" key="2">
-                <!-- <div class="comment-template__item">
-                  <p class="comment-template__leading">颜色:</p>
-                  <div class="comment-template__inner">
-                    <LinearColorPicker
-                      v-model="config.proprietaryConfig.innerCircle.color"
-                      @change="linearColorChange(config)" />
-                  </div>
-                </div> -->
-
                 <div class="comment-template__item">
                   <p class="comment-template__leading">浅颜色:</p>
                   <div class="comment-template__inner">
@@ -133,7 +124,7 @@
                   </div>
                 </div>
               </a-collapse-panel>
-              <!-- E 内圆设置 -->
+              <!-- E 内圆 -->
 
               <!-- S 刻度设置 -->
               <a-collapse-panel header="刻度设置" key="3">

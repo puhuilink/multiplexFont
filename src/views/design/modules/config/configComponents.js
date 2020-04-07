@@ -10,13 +10,14 @@ import Lines from './charts/Lines'
 import Bar from './charts/Bar'
 import Texts from './charts/Texts'
 import Topology from './charts/Topology'
-import HealthDegree from './charts/HealthDegree.vue'
+import HealthDegree from './charts/HealthDegree'
 import Rects from './charts/Rects'
 import Clock from './charts/Clock'
 import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
 import ImageConfig from './charts/ImageConfig'
 import Gauge from './charts/Gauge'
+import DegreeRingConfig from './charts/DegreeRingConfig'
 
 // 图表模板配置
 const charts = {
@@ -30,7 +31,8 @@ const charts = {
   CircleConfig,
   TriangleConfig,
   ImageConfig,
-  Gauge
+  Gauge,
+  DegreeRingConfig
 }
 
 // 元素模板配置

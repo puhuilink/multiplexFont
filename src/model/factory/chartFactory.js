@@ -16,6 +16,7 @@ import CircleChart from '../charts/CircleChart'
 import TriangleChart from '../charts/TriangleChart'
 import ImageChart from '../charts/ImageChart'
 import GaugeChart from '../charts/GaugeChart'
+import DegreeRing from '../charts/DegreeRing'
 
 export default class ChartFactory {
   static create (type, widget) {
@@ -42,6 +43,8 @@ export default class ChartFactory {
         return new ImageChart(widget)
       case 'gauge':
         return new GaugeChart(widget)
+      case 'DegreeRing':
+        return new DegreeRing(widget)
       default:
         return null
     }

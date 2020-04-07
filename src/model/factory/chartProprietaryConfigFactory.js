@@ -11,6 +11,7 @@ import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProp
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
 import HealthDegreeProprietaryConfig from '../config/proprietaryConfigs/HealthDegreeProprietaryConfig'
+import DegreeRingPropritaryConfig from '../config/proprietaryConfigs/DegreeRingPropritaryConfig'
 import ClockProprietaryConfig from '../config/proprietaryConfigs/ClockProprietaryConfig'
 import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryConfig'
 import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
@@ -43,6 +44,8 @@ export default class ChartProprietaryConfigFactory {
         return new ViewProprietaryConfig(proprietaryConfig)
       case 'HealthDegree':
         return new HealthDegreeProprietaryConfig(proprietaryConfig)
+      case 'DegreeRing':
+        return new DegreeRingPropritaryConfig(proprietaryConfig)
       case 'gauge':
         return new GaugePropritaryConfig(proprietaryConfig)
       default:
