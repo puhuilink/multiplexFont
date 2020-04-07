@@ -82,8 +82,9 @@ export default {
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: stretch;
-  height: 100vh;
   width: 100%;
+  height: calc(100vh - 110px);
+  // height: 100vh;
   // widows: 100vw;
 
   .ant-spin {
