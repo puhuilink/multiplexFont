@@ -18,6 +18,10 @@
         <a-tree
           v-else
           :autoExpandParent="autoExpandParent"
+          class="ResourceTree__tree"
+          :style="{
+            height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
+          }"
           defaultExpandAll
           :expandedKeys="expandedKeys"
           :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
@@ -79,6 +83,7 @@ export default {
           title: label_s
           key: name_s
           parentKey: parentname_s
+          parentname_s: parentname_s
           instanceList: instanceList_aggregate @include(if: $instanceListCount) {
             aggregate {
               count
@@ -206,7 +211,10 @@ export default {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
           'name_s': dataRef.name_s,
-          'tree_s': dataRef.parenttree_s + dataRef.name_s
+          'name': dataRef.name_s,
+          'tree_s': dataRef.parenttree_s + dataRef.name_s,
+          'parentname_s': dataRef.parentname_s,
+          'parentname': dataRef.parentname_s
         })
       } else {
         // FIXME: 新增后可以不用重置
@@ -231,6 +239,9 @@ export default {
 
 <style lang="less">
 .ResourceTree {
+  &__tree {
+    overflow: auto;
+  }
   &__hidden-tab {
     .ant-tabs-bar {
       display: none;

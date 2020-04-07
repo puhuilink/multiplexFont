@@ -19,6 +19,7 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
+import Widget from '../../model/widget'
 
 export default {
   name: 'Widget',
@@ -41,6 +42,10 @@ export default {
     }
   },
   mounted () {
+    // 在直接使用配置渲染情况中，此时 widget prop 并不是 Wdiget 的实例，需要将其实例化
+    if (!(this.widget instanceof Widget)) {
+      Object.assign(this.widget, new Widget(this.widget))
+    }
     const { category, type } = this.widget.config
     const widgetFactory = category === 'CHART'
       ? Factory.createChartFactory()
