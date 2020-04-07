@@ -46,9 +46,6 @@ const user = {
           Vue.ls.set(ACCESS_TOKEN, response.data.token, 7 * 24 * 60 * 60 * 1000)
           Vue.ls.set(USER, response.data)
           commit('SET_TOKEN', response.data.token)
-          commit('SET_ID', response.data)
-          commit('SET_NAME', { name: response.data.staffName, welcome: welcome() })
-          commit('SET_AVATAR', '/avatar.jpg')
           resolve()
         }).catch(error => {
           reject(error)
@@ -60,6 +57,7 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise(async (resolve, reject) => {
         try {
+          const user = Vue.ls.get(USER)
           // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
           const response = info()
           // const response= await getInfo()
@@ -76,12 +74,16 @@ const user = {
             })
             role.permissionList = role.permissions.map(permission => { return permission.permissionId })
             commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+            commit('SET_INFO', {
+              ...result,
+              ...user
+            })
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          const user = Vue.ls.get(USER)
+          commit('SET_TOKEN', user.token)
+          commit('SET_ID', user)
           commit('SET_NAME', { name: user.staffName, welcome: welcome() })
           commit('SET_AVATAR', '/avatar.jpg')
 
