@@ -45,6 +45,7 @@
 
         <div class="data-source__wrap">
           <AceEditor
+            v-if="code"
             class="data-source__editor"
             language="json"
             :code="code"
@@ -82,7 +83,9 @@ export default {
     code () {
       // 柱形图根据类型调整样式
       const { barType } = this.config.proprietaryConfig
-      return this.config.dataConfig.staticDataConfig.getCode(barType)
+      const getCode = _.get(this.activeWidget, 'config.dataConfig.staticDataConfig.getCode')
+      return getCode ? getCode(barType) : null
+      // return this.activeWidget.config.dataConfig.staticDataConfig.getCode(barType)
     }
   },
   methods: {

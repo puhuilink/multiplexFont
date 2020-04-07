@@ -3,7 +3,21 @@ import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
 
+const formItemLayout = {
+  labelCol: {
+    span: 6,
+    offset: 0
+  },
+  wrapperCol: {
+    span: 16,
+    offset: 2
+  }
+}
+
 export default {
+  data: () => ({
+    formItemLayout
+  }),
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
@@ -15,6 +29,17 @@ export default {
       },
       set (v) {
         Object.assign(this.config.dataConfig.dbDataConfig.resourceConfig, v)
+        this.change()
+      }
+    },
+    refreshTime: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.refreshTime
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig, {
+          refreshTime: v
+        })
         this.change()
       }
     },
