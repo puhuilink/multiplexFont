@@ -17,12 +17,13 @@
       </a-col>
 
       <a-col :span="18">
-        视图 TODO
         <Preview
           v-if="viewId"
           :viewTitle="viewTitle"
           :viewId="viewId"
         />
+
+        <p style="margin-top: 10px" v-else>请选择左侧节点进行展示</p>
       </a-col>
     </a-row>
   </div>
