@@ -43,7 +43,7 @@
         <div class="ResourceTree__tabBarExtraContent">
           <a-button icon="upload"></a-button>
           <a-button icon="download"></a-button>
-          <template v-if="!instanceListCount">
+          <template v-if="!instanceList">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
             <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
@@ -69,7 +69,7 @@ export default {
     // FIXME: instanceList 应当也包含子代的 children
     // TODO: subscribe 节点增加 / 删除
     dataSource: {
-      query: gql`query ($instanceListCount: Boolean!) {
+      query: gql`query ($instanceList: Boolean!) {
         dataSource: ngecc_model {
           did
           label_s
@@ -84,10 +84,14 @@ export default {
           key: name_s
           parentKey: parentname_s
           parentname_s: parentname_s
-          instanceList: instanceList_aggregate @include(if: $instanceListCount) {
-            aggregate {
-              count
-            }
+          children: instanceList @include(if: $instanceList) {
+            did
+            _id_s
+            name_s
+            title: label_s
+            key: name_s
+            parentKey: parentname_s
+            parentname_s: parentname_s
           }
         }
       }`,
@@ -97,7 +101,7 @@ export default {
       // 响应式，当数据变化时，触发刷新
       variables () {
         return {
-          instanceListCount: this.instanceListCount
+          instanceList: this.instanceList
         }
       }
     }
@@ -113,7 +117,7 @@ export default {
       default: false
     },
     // 统计节点下的实例列表数量
-    instanceListCount: {
+    instanceList: {
       type: Boolean,
       default: false
     },

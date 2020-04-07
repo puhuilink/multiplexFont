@@ -10,6 +10,7 @@
       <a-col :span="6">
         <ResourceTree
           hiddenTab
+          instanceList
           :rootKeys="['BJDC', 'XMDC']"
           @select="onSelectCi"
         />

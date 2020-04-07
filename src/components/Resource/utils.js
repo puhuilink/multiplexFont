@@ -1,3 +1,8 @@
+/**
+ * @abort
+ * @param {*} node
+ */
+// eslint-disable-next-line
 function buildNode (node) {
   if (node && node.instanceList) {
     const count = node.instanceList.aggregate.count
@@ -7,7 +12,9 @@ function buildNode (node) {
 
 function buildChildren (parent, collection = []) {
   if (parent) {
-    parent.children = collection.filter(el => el.parentKey === parent.key)
+    // 当 model 下存在 instance 列表时，其 children 在查询时已经挂载
+    parent.children = (parent.children && parent.children.length) ? parent.children : collection.filter(el => el.parentKey === parent.key)
+    // parent.children = collection.filter(el => el.parentKey === parent.key)
     parent.children.forEach(el => {
       el.parent = parent
     })
@@ -33,12 +40,13 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
         roots.push(el)
         // 找到后弹出
         // TODO: 是否会影响长度，或者用逆序？
+        // TODO: 匹配完成后跳出循环
         // rootKeys.splice(index, 1)
       }
     })
   })
   roots.forEach(el => {
-    buildNode(el)
+    // buildNode(el)
     recursiveBuildChildren(el, collection)
   })
   return roots
@@ -55,7 +63,7 @@ function search (title = '', collection) {
   // 如果一个节点匹配条件，其所有父代也被认为匹配条件
   function recursiveMatchParent (node) {
     node && node.parent && matchedNodes.push(node.parent)
-    node && node.parent && node.parent.parent && recursiveMatchParent(node.pareny)
+    node && node.parent && node.parent.parent && recursiveMatchParent(node.parent)
   }
   // 扁平化遍历匹配
   collection
