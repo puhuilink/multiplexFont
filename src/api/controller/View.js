@@ -37,7 +37,7 @@ export const updateView = function (viewId, set = {}) {
       viewId,
       set: {
         ...set,
-        updator: store.state.user.name,
+        updator: store.state.user.userId,
         updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
       }
     }
@@ -67,7 +67,7 @@ export const addView = function (object = {}) {
       // FIXME: 个人创建为0，组创建为1？
       'protect_level': '1',
       // FIXME: name 还是 id ？
-      creator: store.state.user.name,
+      creator: store.state.user.userId,
       createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
     }
   ]
@@ -136,7 +136,7 @@ export const updateViewDesign = async function (viewId, content) {
       viewId: Number(viewId),
       set: {
         content: content ? JSON.stringify(content) : '',
-        updator: store.state.user.name,
+        updator: store.state.user.userId,
         updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
       }
     }
