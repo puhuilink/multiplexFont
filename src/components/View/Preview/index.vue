@@ -6,7 +6,11 @@
     </template>
 
     <template v-else>
-      <Renderer :view="preview" v-if="preview" />
+      <Renderer
+        v-if="preview"
+        :ciId="ciId"
+        :view="preview"
+      />
     </template>
 
   </div>
@@ -27,6 +31,10 @@ export default {
     styles: {
       type: Object,
       default: () => ({})
+    },
+    ciId: {
+      type: String,
+      default: ''
     }
   },
   components: {

@@ -20,6 +20,7 @@ import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
+import _ from 'lodash'
 
 export default {
   name: 'Widget',
@@ -31,6 +32,11 @@ export default {
     onlyShow: {
       type: Boolean,
       default: false
+    },
+    // 外部 Ci
+    ciId: {
+      type: String,
+      default: ''
     }
   },
   data: () => ({
@@ -42,6 +48,15 @@ export default {
     }
   },
   mounted () {
+    const dbDataConfig = _.get(this, 'widget.config.dataConfig.dbDataConfig')
+    const externalCi = _.get(dbDataConfig, 'externalCi')
+    // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
+    if (externalCi && this.ciId) {
+      // TODO: 数据流向？
+      dbDataConfig.resourceConfig.selectedInstance = [
+        this.ciId
+      ]
+    }
     // 在直接使用配置渲染情况中，此时 widget prop 并不是 Wdiget 的实例，需要将其实例化
     if (!(this.widget instanceof Widget)) {
       Object.assign(this.widget, new Widget(this.widget))
@@ -54,7 +69,6 @@ export default {
     this.render = widgetFactory.create(type, {
       widget: this.widget
     })
-    console.log(this.widget.config, this.render)
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       // 获取当前实例

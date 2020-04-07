@@ -81,6 +81,7 @@ export default {
           order_i
           icon_s
           parenttree_s
+          _id_s
           title: label_s
           key: name_s
           parentKey: parentname_s
@@ -224,7 +225,8 @@ export default {
           'name': dataRef.name_s,
           'tree_s': dataRef.parenttree_s + dataRef.name_s,
           'parentname_s': dataRef.parentname_s,
-          'parentname': dataRef.parentname_s
+          'parentname': dataRef.parentname_s,
+          '_id_s': dataRef._id_s
         })
       } else {
         // FIXME: 新增后可以不用重置
