@@ -17,12 +17,13 @@
       </a-col>
 
       <a-col :span="18">
-        视图 TODO
         <Preview
           v-if="viewId"
           :viewTitle="viewTitle"
           :viewId="viewId"
+          :ciId="selectedCi._id_s"
         />
+        <!-- <p style="margin-top: 10px" v-else>请选择左侧节点进行展示</p> -->
       </a-col>
     </a-row>
   </div>
@@ -109,7 +110,10 @@ export default {
         throw e
       }
     },
-    onSelectCi (ci) {
+    async onSelectCi (ci) {
+      // 触发 v-if 刷新
+      // this.selectedCi = null
+      // await Timeout.set(10)
       this.selectedCi = ci
     }
   },

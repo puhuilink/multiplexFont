@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { logout } from '@/api/login'
 import { info } from '@/mock/services/user'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 import { login } from '@/api/controller/User'
 
@@ -12,7 +12,8 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    userId: ''
   },
 
   mutations: {
@@ -31,6 +32,9 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_ID: (state, { userId }) => {
+      state.userId = userId
     }
   },
 
@@ -39,8 +43,9 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          Vue.ls.set(ACCESS_TOKEN, response.data, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', response.data)
+          Vue.ls.set(ACCESS_TOKEN, response.data.token, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(USER, response.data)
+          commit('SET_TOKEN', response.data.token)
           resolve()
         }).catch(error => {
           reject(error)
@@ -52,6 +57,7 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise(async (resolve, reject) => {
         try {
+          const user = Vue.ls.get(USER)
           // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
           const response = info()
           // const response= await getInfo()
@@ -68,13 +74,18 @@ const user = {
             })
             role.permissionList = role.permissions.map(permission => { return permission.permissionId })
             commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+            commit('SET_INFO', {
+              ...result,
+              ...user
+            })
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
+          commit('SET_TOKEN', user.token)
+          commit('SET_ID', user)
+          commit('SET_NAME', { name: user.staffName, welcome: welcome() })
+          commit('SET_AVATAR', '/avatar.jpg')
 
           resolve(response)
         } catch (e) {

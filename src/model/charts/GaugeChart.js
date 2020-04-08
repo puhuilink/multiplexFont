@@ -16,13 +16,20 @@ export default class GaugeChart extends Chart {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const itemOptions = proprietaryConfig.getOption()
-    dataConfig.dbDataConfig.getOption()
     const { sourceType } = dataConfig
 
+    const [data] = itemOptions.series.data
+
     switch (sourceType) {
+      case 'static': {
+        const staticData = dataConfig.staticDataConfig.staticData
+        Object.assign(data, staticData)
+        break
+      }
       case 'real': {
         if (loadingDynamicData) {
-          itemOptions.series.data[0].value = await dataConfig.dbDataConfig.getOption()
+          const dynamicData = await dataConfig.dbDataConfig.getOption()
+          Object.assign(data, dynamicData)
           break
         }
       }

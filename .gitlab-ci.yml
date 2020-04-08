@@ -8,7 +8,7 @@ build_job:
   - echo "删除服务器上一次拉取的项目"
   - rm -rf /root/gitlab/project/web 
   - echo "删除nginx配置文件夹中，上一次的dist文件"
-  - rm -rf /etc/nginx/html
+  - cp -R /etc/nginx/html /root/gitlab/project
   - echo "拉取代码"
   - cd /root/gitlab/project/
   - git clone http://10.1.8.174/tongyijiankong/web.git
@@ -29,6 +29,7 @@ build_job:
 deploy_job: 
  stage: deploy
  script: 
+  - rm -rf /etc/nginx/html
   - echo "将打包完成后的dist文件复制到Nginx文件下"
   - cp -r /root/gitlab/project/web/dist /etc/nginx/html
   - echo "重启nginx服务"

@@ -2,11 +2,16 @@
   <div class="preview" :style="styles">
 
     <template v-if="loading">
-      <a-spin spinning></a-spin>
+      <a-spin spinning size="large"></a-spin>
     </template>
 
     <template v-else>
-      <Renderer :view="preview" v-if="preview" />
+      <Renderer
+        class="preview__renderer"
+        v-if="preview"
+        :ciId="ciId"
+        :view="preview"
+      />
     </template>
 
   </div>
@@ -16,6 +21,8 @@
 import { mapState } from 'vuex'
 import Renderer from '@/components/Renderer'
 import { getViewDesign } from '@/api/controller/View'
+import Timeout from 'await-timeout'
+
 export default {
   name: 'Preview',
   props: {
@@ -27,6 +34,10 @@ export default {
     styles: {
       type: Object,
       default: () => ({})
+    },
+    ciId: {
+      type: String,
+      default: ''
     }
   },
   components: {
@@ -38,6 +49,13 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['view'])
+  },
+  watch: {
+    async ciId () {
+      this.loading = true
+      await Timeout.set(300)
+      this.loading = false
+    }
   },
   methods: {
     async fetch (viewviewId) {
@@ -58,13 +76,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .preview {
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: stretch;
-  height: 100vh;
-  width: 100vw;
+  width: 100%;
+  height: calc(100vh - 110px);
+  // height: 100vh;
+  // widows: 100vw;
+
+  .ant-spin {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 }
 </style>

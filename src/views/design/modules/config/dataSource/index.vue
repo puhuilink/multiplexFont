@@ -83,8 +83,9 @@ export default {
     code () {
       // 柱形图根据类型调整样式
       const { barType } = this.config.proprietaryConfig
-      const getCode = _.get(this.activeWidget, 'config.dataConfig.staticDataConfig.getCode')
-      return getCode ? getCode.call(this.activeWidget.config.dataConfig.staticDataConfig, barType) : null
+      // const getCode = _.get(this.activeWidget, 'config.dataConfig.staticDataConfig.getCode')
+      // return getCode ? getCode(barType) : null
+      return this.activeWidget.config.dataConfig.staticDataConfig.getCode(barType)
     }
   },
   methods: {
@@ -99,6 +100,12 @@ export default {
       if (code !== '') {
         // 在不同类型的静态数据配置类中配置自己的更新方法
         this.config.dataConfig.staticDataConfig.updateStaticData(this.config, code)
+      // case 'Gauge':
+      //   Object.assign(
+      //     this.config.dataConfig.staticDataConfig,
+      //     { staticData: JSON.parse(code) }
+      //   )
+      //   break
         this.change()
       }
     },

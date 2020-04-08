@@ -23,6 +23,17 @@
           v-model.number="refreshTime"
         />
       </a-form-item>
+
+      <a-form-item
+        label="外部CI可用"
+        :labelCol="formItemLayout.labelCol"
+        :wrapperCol="formItemLayout.wrapperCol"
+      >
+        <a-checkbox
+          :checked="!!externalCi"
+          @input="externalCi = $event"
+        />
+      </a-form-item>
     </template>
   </DataSourceTemplate>
 </template>

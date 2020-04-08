@@ -168,7 +168,7 @@ export const deleteModel = function (name) {
 export const deleteModelOld = function (name) {
   return oldRequest.post('/urmp/api/rest/post/modelService/remove', [
     name,
-    store.state.user.name,
+    store.state.user.info.userId,
     ['']
   ])
 }

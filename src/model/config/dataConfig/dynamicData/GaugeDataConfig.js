@@ -7,10 +7,13 @@ export default class GaugeDataConfig {
       selectedInstance: [],
       selectedKpi: []
     },
-    refreshTime = 0
+    refreshTime = 0,
+    // 外部 Ci 是否可用
+    externalCi = true
   }) {
     this.resourceConfig = resourceConfig
     this.refreshTime = refreshTime
+    this.externalCi = externalCi
   }
 
   /**
@@ -21,9 +24,13 @@ export default class GaugeDataConfig {
     try {
       // 没有记录时返回长度为0的数组
       const [data] = await getComponentValues(this.resourceConfig)
-      return data ? data.value : 0
+      return {
+        value: data ? data.value : 0
+      }
     } catch (e) {
-      return 0
+      return {
+        value: 0
+      }
     }
   }
 }
