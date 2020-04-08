@@ -456,7 +456,7 @@ class YAixs extends Aixs {
 
 /**
  * 饼图基础配置
- * 官方配置： https://www.echartsjs.com/zh/option.html#pes-pie.type
+ * 官方配置： https://www.echartsjs.com/zh/option.html#series-pie.type
  */
 class SeriesPie {
   constructor ({
