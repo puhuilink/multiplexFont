@@ -16,7 +16,45 @@ const formItemLayout = {
 
 export default {
   data: () => ({
-    formItemLayout
+    formItemLayout,
+    timeOptionList: [
+      {
+        name: '实时',
+        value: ''
+      },
+      {
+        name: '最近15分钟',
+        value: ''
+      },
+      {
+        name: '最近30分钟',
+        value: ''
+      },
+      {
+        name: '最近1小时',
+        value: ''
+      },
+      {
+        name: '最近2小时',
+        value: ''
+      },
+      {
+        name: '最近3小时',
+        value: ''
+      },
+      {
+        name: '最近1天',
+        value: ''
+      },
+      {
+        name: '最近1周',
+        value: ''
+      },
+      {
+        name: '最近2周',
+        value: ''
+      }
+    ]
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),

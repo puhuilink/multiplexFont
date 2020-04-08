@@ -302,15 +302,16 @@ export default {
       // 计算策略 id
       'uuid_policy': '',
       // 周期类型（年）
-      'cycle_year_num': 0,
+      'cycle_year_num': 3,
       // 周期类型（月）
-      'cycle_month_num': 0,
+      'cycle_month_num': 10,
       // 周期类型（周）
-      'cycle_week_num': 0,
+      'cycle_week_num': 10,
       // 周期类型（天）
-      'cycle_day_num': 0,
+      'cycle_day_num': 10,
       // 周期类型（季度）
-      'cycle_quarter_num': 0,
+      // FIXME: 季度当前未使用到
+      // 'cycle_quarter_num': 0,
       // 默认周期类型
       'cycle_default_type': 'Week',
       // 数值精度

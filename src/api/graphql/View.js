@@ -46,12 +46,17 @@ export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!
  */
 export const generateDynamicQueryWithKpiCi = (options = []) => {
   // hasura 每条数据的返回值键名不能重复，此处以索引做区分，后期再合并为数组
+  const timeRange = ({ arisingTimeStart, arisingTimeEnd }) => `,
+    arising_time: {_gte: "${arisingTimeStart}"}
+    arising_time: {_gle: "${arisingTimeEnd}"}
+  `
   /* eslint-disable */
-  return options.map(({ kpi_code, ci_id }, index) => (
+  return options.map(({ kpi_code, ci_id, arisingTimeStart, arisingTimeEnd }, index) => (
     `data${index}: t_kpi_current(where: {
       _and: {
         kpi_code: {_eq: ${kpi_code}},
         ci_id: {_eq: "${ci_id}"}}
+        ${arisingTimeStart ? timeRange(arisingTimeStart, arisingTimeEnd) : ''}
     }) {
       value: kpi_value_num
       kpi_code
