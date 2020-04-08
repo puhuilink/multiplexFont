@@ -41,7 +41,7 @@ const charts = [
     category: 'CHART', type: 'Image', name: '图片', icon: 'picture', width: 300, height: 300
   },
   {
-    category: 'CHART', type: 'gauge', name: '仪表盘', icon: 'dashboard', width: 400, height: 400
+    category: 'CHART', type: 'Gauge', name: '仪表盘', icon: 'dashboard', width: 400, height: 400
   },
   {
     category: 'CHART', type: 'DegreeRing', name: '环度', icon: 'info-circle', width: 300, height: 300

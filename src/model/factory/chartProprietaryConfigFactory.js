@@ -43,7 +43,7 @@ export default class ChartProprietaryConfigFactory {
         return new ViewProprietaryConfig(proprietaryConfig)
       case 'DegreeRing':
         return new DegreeRingProprietaryConfig(proprietaryConfig)
-      case 'gauge':
+      case 'Gauge':
         return new GaugePropritaryConfig(proprietaryConfig)
       default:
         return null

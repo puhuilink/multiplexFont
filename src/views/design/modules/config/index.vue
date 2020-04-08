@@ -59,7 +59,7 @@ export default {
       ['Clock', 'Clock'],
       ['Image', 'ImageConfig'],
       ['View', 'ViewConfig'],
-      ['gauge', 'Gauge'],
+      ['Gauge', 'Gauge'],
       ['DegreeRing', 'DegreeRingConfig']
     ])
   }),
