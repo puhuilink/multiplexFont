@@ -41,7 +41,7 @@ export default class ChartFactory {
       case 'gauge':
         return new GaugeChart(widget)
       case 'DegreeRing':
-        return new DegreeRingChart(widget)
+        return new DegreeRingChart({ widget })
       default:
         return null
     }

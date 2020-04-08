@@ -3,8 +3,9 @@
  */
 
 import Chart from './index'
+import echartsLiquidfill from 'echarts-liquidfill'
 
-export default class DegreeRing extends Chart {
+export default class DegreeRingChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
   }

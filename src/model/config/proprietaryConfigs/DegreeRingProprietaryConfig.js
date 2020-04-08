@@ -3,6 +3,7 @@
  */
 import _ from 'lodash'
 import { TextStyle } from './index'
+import echartsLiquidfill from 'echarts-liquidfill'
 
 class Title {
   constructor ({
@@ -72,7 +73,7 @@ class InnerCircle {
   }
 }
 
-export default class HealthDegreeProprietaryConfig {
+export default class DegreeRingProprietaryConfig {
   constructor ({
     innerCircle = {}
   }) {

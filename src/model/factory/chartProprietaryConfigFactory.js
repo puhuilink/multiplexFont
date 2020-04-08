@@ -10,7 +10,7 @@ import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryCon
 import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
-import DegreeRingPropritaryConfig from '../config/proprietaryConfigs/DegreeRingPropritaryConfig'
+import DegreeRingProprietaryConfig from '../config/proprietaryConfigs/DegreeRingProprietaryConfig'
 import ClockProprietaryConfig from '../config/proprietaryConfigs/ClockProprietaryConfig'
 import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryConfig'
 import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
@@ -42,7 +42,7 @@ export default class ChartProprietaryConfigFactory {
       case 'View':
         return new ViewProprietaryConfig(proprietaryConfig)
       case 'DegreeRing':
-        return new DegreeRingPropritaryConfig(proprietaryConfig)
+        return new DegreeRingProprietaryConfig(proprietaryConfig)
       case 'gauge':
         return new GaugePropritaryConfig(proprietaryConfig)
       default:

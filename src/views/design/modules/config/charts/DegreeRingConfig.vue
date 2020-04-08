@@ -4,7 +4,7 @@
 <template>
   <div class="texts-config">
     <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="">
+      <a-tab-pane tab="公共属性" key="1">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
@@ -31,7 +31,7 @@
             </a-collapse-panel>
 
             <!-- S 文字设置 -->
-            <a-collapse-panel header="文字设置" key="2">
+            <a-collapse-panel header="文字设置" key="2" v-if="chartsType">
 
               <div class="comment-template__item">
                 <p class="comment-template__leading">字体大小:</p>
@@ -91,7 +91,7 @@
             </a-collapse-panel>
             <!-- E 文字 -->
 
-            <a-collapse-panel header="内圆设置" key="3">
+            <a-collapse-panel header="内圆设置" key="3" v-if="chartsType">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -113,7 +113,7 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="刻度设置" key="4">
+            <a-collapse-panel header="刻度设置" key="4" v-if="chartsType">
               <div class="comment-template__item">
                 <p class="comment-template__leading">显示:</p>
                 <div class="comment-template__inner comment-template__end">
@@ -179,7 +179,7 @@
 <script>
 // FIXME: 目前数据都已拿到，但是图没有渲染出来
 import '@/assets/less/template.less'
-import _ from 'lodash'
+// import _ from 'lodash'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'

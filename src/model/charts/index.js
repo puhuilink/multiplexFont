@@ -7,7 +7,7 @@
  */
 import anime from 'animejs'
 import echarts from 'echarts'
-import 'echarts-liquidfill/src/liquidFill.js'
+import echartsLiquidfill from 'echarts-liquidfill'
 import _ from 'lodash'
 
 export default class Chart {
