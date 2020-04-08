@@ -100,12 +100,6 @@ export default {
       if (code !== '') {
         // 在不同类型的静态数据配置类中配置自己的更新方法
         this.config.dataConfig.staticDataConfig.updateStaticData(this.config, code)
-      // case 'Gauge':
-      //   Object.assign(
-      //     this.config.dataConfig.staticDataConfig,
-      //     { staticData: JSON.parse(code) }
-      //   )
-      //   break
         this.change()
       }
     },
