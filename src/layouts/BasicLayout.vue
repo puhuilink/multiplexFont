@@ -143,7 +143,8 @@ export default {
     toggle () {
       this.collapsed = !this.collapsed
       this.setSidebar(!this.collapsed)
-      triggerWindowResizeEvent()
+      setTimeout(triggerWindowResizeEvent)
+      // triggerWindowResizeEvent()
     },
     paddingCalc () {
       let left = ''

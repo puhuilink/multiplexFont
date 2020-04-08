@@ -23,7 +23,8 @@ export default class BarChart extends Chart {
       barType, legend, barWidth, xAxis, yAxis,
       itemStyle: { color, ...otherItemStyle }
     } = proprietaryConfig.getOption()
-    const { sourceType, staticData, dbDataConfig } = dataConfig
+    const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
+
     let series = []
 
     // 总体配置

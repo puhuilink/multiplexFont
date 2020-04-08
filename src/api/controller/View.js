@@ -37,7 +37,7 @@ export const updateView = function (viewId, set = {}) {
       viewId,
       set: {
         ...set,
-        updator: store.state.user.name,
+        updator: store.state.user.info.userId,
         updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
       }
     }
@@ -67,7 +67,7 @@ export const addView = function (object = {}) {
       // FIXME: 个人创建为0，组创建为1？
       'protect_level': '1',
       // FIXME: name 还是 id ？
-      creator: store.state.user.name,
+      creator: store.state.user.info.userId,
       createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
     }
   ]
@@ -103,6 +103,8 @@ export const addViews = function (objects = {}) {
  * @return {Promise<String>}
  */
 export const getViewDesign = async function (viewId) {
+  // const option = `{"id":"view-6b5d78bd-6d88-48ee-a73e-01c2119a6b9b","name":"","config":{"type":"View","commonConfig":{"width":1920,"height":1080,"top":0,"left":0,"zIndex":0,"colorMode":"single","backgroundColor":"rgba(255,255,255,1)","border":{"borderStyle":"solid","borderColor":"#333","borderWidth":0,"borderRadius":{"borderTopLeftRadius":0,"borderTopRightRadius":0,"borderBottomRightRadius":0,"borderBottomLeftRadius":0}},"padding":[0,0,0,0]},"proprietaryConfig":{"mode":"single","backgroundColor":"rgba(255,255,255,1)","backgroundImage":"","backgroundRepeat":"no-repeat","backgroundSize":"","scaleMode":"auto"},"dataConfig":{"sourceType":"null","staticData":null}},"views":[],"widgets":[{"widgetId":"widget-d1549018-1654-4d7d-acb3-6753be01a49c","config":{"category":"CHART","type":"Circle","commonConfig":{"width":300,"height":300,"top":101.264,"left":188.347,"zIndex":0,"colorMode":"single","backgroundColor":"rgba(255,255,255,1)","border":{"borderStyle":"solid","borderColor":"#333","borderWidth":0,"borderRadius":{"borderTopLeftRadius":0,"borderTopRightRadius":0,"borderBottomRightRadius":0,"borderBottomLeftRadius":0}},"padding":[0,0,0,0]},"proprietaryConfig":{"graphic":{"top":0,"left":0,"right":0,"bottom":0,"style":{"colorMode":"single","fill":"rgba(64,169,255, 1)","stroke":"rgba(12,142,255, 1)","lineWidth":0},"type":"circle","shape":{"cx":0,"cy":0,"r":150}}},"dataConfig":{"sourceType":"null","staticData":null}}},{"widgetId":"widget-ace9a1d0-5848-4091-a26d-16e3956f867d","config":{"category":"CHART","type":"Clock","commonConfig":{"width":300,"height":100,"top":166.92,"left":578.559,"zIndex":1,"colorMode":"single","backgroundColor":"rgba(255,255,255,1)","border":{"borderStyle":"solid","borderColor":"#333","borderWidth":0,"borderRadius":{"borderTopLeftRadius":0,"borderTopRightRadius":0,"borderBottomRightRadius":0,"borderBottomLeftRadius":0}},"padding":[0,0,0,0]},"proprietaryConfig":{"title":{"text":"2020-04-05 16:19:39","link":"","target":"blank","textStyle":{"color":"rgba(0, 0, 0, 1)","fontStyle":"normal","fontSize":24,"fontWeight":"normal"},"position":{"mode":"center","editablePosition":[],"top":"center","bottom":"auto","left":"center","right":"auto"}},"xAxis":{"show":false},"yAxis":{"show":false},"format":"YYYY-MM-DD HH:mm:ss"},"dataConfig":{"sourceType":"null","staticData":null}}}]}`
+  // return JSON.parse(option)
   return apollo.clients.alert.query({
     query: queryViewContent,
     variables: {
@@ -134,7 +136,7 @@ export const updateViewDesign = async function (viewId, content) {
       viewId: Number(viewId),
       set: {
         content: content ? JSON.stringify(content) : '',
-        updator: store.state.user.name,
+        updator: store.state.user.info.userId,
         updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
       }
     }

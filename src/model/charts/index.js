@@ -99,8 +99,27 @@ export default class Chart {
     this.chart.setOption(this.chartConfig)
   }
 
+  refresh () {
+    this.mergeOption(this.config, true)
+  }
+
+  /**
+   * 轮询
+   */
+  intervalRefresh () {
+    this.refresh()
+    // 存在自动刷新时间设置则开启定时刷新
+    const refreshTime = _.get(this, 'config.dataConfig.dbDataConfig.refreshTime')
+    if (refreshTime > 0) {
+      console.log(`${this.config.type}组件实例开启轮询`)
+      this.timer = setInterval(() => { this.refresh() }, refreshTime * 1000 * 60)
+    }
+  }
+
   /**
    * 销毁事件
    */
-  destroy () {}
+  destroy () {
+    clearInterval(this.timer)
+  }
 }

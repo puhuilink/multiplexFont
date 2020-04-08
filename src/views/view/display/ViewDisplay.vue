@@ -37,7 +37,7 @@
               }
             }">
             <div class="ViewDisplay__view-item">
-              <img :src="previewImg" :alt="view.view__title">
+              <img :src="view.view_img | img" :alt="view.view__title">
               <div class="ViewDisplay__view-item-info">
                 <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
@@ -71,6 +71,11 @@ export default {
   components: {
     PageView,
     HeadInfo
+  },
+  filters: {
+    img (img) {
+      return img ? `http://10.1.13.19:48080/${img}` : previewImg
+    }
   },
   data () {
     return {
@@ -273,8 +278,8 @@ export default {
     &-item {
       box-sizing: border-box;
       // 给定宽高，避免图片加载等过程中导致重绘
-      width: 363px;
-      height: 259px;
+      // width: 363px;
+      // height: 259px;
       border: 1px solid #f0f0f0;
       border-radius: 4px;
       box-shadow: 0 0 32px #f0f0f0;
@@ -283,13 +288,14 @@ export default {
       cursor: pointer;
 
       &:hover {
-        transform: scale(1.04);
+        transform: scale(1.03);
         transition: transform .4s ease;
       }
 
       img {
         width: 100%;
-        height: auto;
+        // 指定高度，保证各图片对齐，并一定程度减少浏览器回流与重绘
+        height: 143px;
         border-radius: 4px;
       }
 

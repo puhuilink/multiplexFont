@@ -18,30 +18,30 @@ import ImageChart from '../charts/ImageChart'
 import GaugeChart from '../charts/GaugeChart'
 
 export default class ChartFactory {
-  static create (type, widget) {
+  static create (type, { widget }) {
     switch (type) {
       case 'Lines':
-        return new LineChart(widget)
+        return new LineChart({ widget })
       case 'Bar':
-        return new BarChart(widget)
+        return new BarChart({ widget })
       case 'Texts':
-        return new TextsChart(widget)
+        return new TextsChart({ widget })
       case 'Topology':
-        return new TopologyChart(widget)
+        return new TopologyChart({ widget })
       case 'HealthDegree':
-        return new HealthDegreeChart(widget)
+        return new HealthDegreeChart({ widget })
       case 'Rect':
-        return new RectChart(widget)
+        return new RectChart({ widget })
       case 'Clock':
-        return new ClockChart(widget)
+        return new ClockChart({ widget })
       case 'Circle':
-        return new CircleChart(widget)
+        return new CircleChart({ widget })
       case 'Triangle':
-        return new TriangleChart(widget)
+        return new TriangleChart({ widget })
       case 'Image':
-        return new ImageChart(widget)
-      case 'gauge':
-        return new GaugeChart(widget)
+        return new ImageChart({ widget })
+      case 'Gauge':
+        return new GaugeChart({ widget })
       default:
         return null
     }
