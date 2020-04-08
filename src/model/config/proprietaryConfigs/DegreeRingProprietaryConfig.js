@@ -37,15 +37,14 @@ class InnerCircle {
     color = '#195ba6',
     center = ['50%', '50%'],
     data = [1],
+    itemStyle = {
+      opacity: 1,
+      color: '#195ba6'
+    },
     backgroundStyle = {
       borderWidth: 2,
       borderColor: '#1789fb',
-      color: '#1c233f'
-    },
-    itemStyle = {
-      opacity: 0.5,
-      shadowBlur: 10,
-      shadowColor: '#f60'
+      color: '#fff'
     },
     outline = {
       show: false,
@@ -57,7 +56,7 @@ class InnerCircle {
     },
     label = {
       formatter: '100',
-      fontSize: 12,
+      fontSize: 20,
       color: '#fff'
     }
   }) {
@@ -75,8 +74,14 @@ class InnerCircle {
 
 export default class DegreeRingProprietaryConfig {
   constructor ({
-    innerCircle = {}
+    type = '',
+    title = {},
+    innerCircle = {},
+    innerRing = {},
+    excircle = {}
   }) {
+    this.type = type
+    this.title = new Title(title)
     this.innerCircle = new InnerCircle(innerCircle)
   }
 
@@ -85,7 +90,7 @@ export default class DegreeRingProprietaryConfig {
    */
   getOption () {
     return Object.assign(_.cloneDeep(this), {
-      innerCircle: this.innerCircle
+      series: this.innerCircle
     })
   }
 }

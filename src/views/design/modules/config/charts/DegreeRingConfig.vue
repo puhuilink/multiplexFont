@@ -91,12 +91,12 @@
             </a-collapse-panel>
             <!-- E 文字 -->
 
-            <a-collapse-panel header="内圆设置" key="3" v-if="chartsType">
+            <a-collapse-panel header="内圆设置" key="3" v-if="chartsType==='healthDegree'">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
                   <ColorPicker
-                    v-model="config.proprietaryConfig.innerCircle.color"
+                    v-model="config.proprietaryConfig.innerCircle.itemStyle.color"
                     @change="change" />
                 </div>
               </div>
@@ -194,7 +194,7 @@ export default {
     GaugeDataSource
   },
   data: () => ({
-    chartsType: '',
+    chartsType: 'healthDegree',
     titleUnit: 0
     // zone: '40-60;60-80;80-100',
     // zoneColor: 'rgba(86,198,62,1)-rgba(40,131,38,1);rgba(249,197,87,1)-rgba(207,87,27,1);rgba(227,35,30,1)-rgba(158,24,13,1) '
@@ -203,8 +203,21 @@ export default {
   },
   methods: {
     chartsTypeChange (value) {
+      switch (value) {
+        case 'healthDegree':
+          this.config.proprietaryConfig.innerCircle.data = [1]
+          this.config.proprietaryConfig.innerCircle.label.color = '#fff'
+          break
+        case 'progressRing':
+          this.config.proprietaryConfig.innerCircle.outline.itemStyle.borderWidth = 10
+          break
+        case 'healthRing':
+          this.config.proprietaryConfig.innerCircle.outline.itemStyle.borderWidth = 8
+          break
+      }
       if (value !== 'healthDegree') {
-        this.config.proprietaryConfig.innerCircle.color = '#0000000'
+        this.config.proprietaryConfig.innerCircle.data = [0]
+        this.config.proprietaryConfig.innerCircle.label.color = '#000'
       }
       this.change()
     },
@@ -228,9 +241,9 @@ export default {
      * 小数点位数改变
      */
     titleUnitChange (e) {
-      const titleNum = this.config.proprietaryConfig.innerCircle.formatter
+      const titleNum = Number(this.config.proprietaryConfig.innerCircle.label.formatter)
       const textChange = this.fomatFloat(titleNum, e)
-      this.config.proprietaryConfig.innerCircle.formatter = textChange
+      this.config.proprietaryConfig.innerCircle.label.formatter = textChange + ''
       this.change()
     }
   }

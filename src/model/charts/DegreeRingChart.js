@@ -3,7 +3,7 @@
  */
 
 import Chart from './index'
-import echartsLiquidfill from 'echarts-liquidfill'
+// import echartsLiquidfill from 'echarts-liquidfill'
 
 export default class DegreeRingChart extends Chart {
   constructor ({ widget }) {
@@ -15,8 +15,7 @@ export default class DegreeRingChart extends Chart {
    */
   mappingOption ({ commonConfig, proprietaryConfig, dataConfig }) {
     const { grid } = commonConfig.getOption()
-    const { innerCircle } = proprietaryConfig.getOption()
-    console.log('innerCircle', innerCircle)
-    return { grid, innerCircle }
+    const { series } = proprietaryConfig.getOption()
+    return { grid, series }
   }
 }
