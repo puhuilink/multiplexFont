@@ -209,7 +209,7 @@
 
     <!-- 第三步 -->
     <div class="BaselineDefinitionSchema__content" v-show="current === 2">
-      <a-calendar @panelChange="panelChange">
+      <a-calendar @panelChange="panelChange" @select="panelChange">
         <template slot="dateCellRender" slot-scope="value" v-if="calenderItem(value)">
           <a-select
             :value="calenderItem(value).cycle_info"
@@ -442,17 +442,7 @@ export default {
       async handler (current) {
         // 到第三部日期选择时，默认请求当月配置
         if (current === 2) {
-          const uuid = _.get(this, 'record.uuid')
-          try {
-          // TODO: loading
-            const list = await getBaselintCalendar(uuid)
-            list.forEach(el => {
-              el.cycle_info = el.cycle_info || this.defaultOptionValue
-            })
-            this.formData2 = list
-          } catch (e) {
-            this.formData2 = []
-          }
+          await this.fetchCalenderList()
         }
       }
     }
@@ -484,6 +474,19 @@ export default {
     },
     cancel () {
       this.visible = false
+    },
+    async fetchCalenderList (moment) {
+      const uuid = _.get(this, 'record.uuid')
+      try {
+        // TODO: loading
+        const list = await getBaselintCalendar(uuid, moment)
+        list.forEach(el => {
+          el.cycle_info = el.cycle_info || this.defaultOptionValue
+        })
+        this.formData2 = list
+      } catch (e) {
+        this.formData2 = []
+      }
     },
     /**
      * 转换输入的文字为整数
@@ -565,8 +568,8 @@ export default {
      * 切换年份 / 月份回调
      * @param {Moment} moment 切换的 moment 实例对象
      */
-    panelChange (moment) {
-      getBaselintCalendar('', moment)
+    async panelChange (moment) {
+      await this.fetchCalenderList(moment)
     }
   }
 }
