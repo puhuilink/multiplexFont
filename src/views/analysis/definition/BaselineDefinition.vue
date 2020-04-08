@@ -70,6 +70,7 @@
         <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
+          @click="edit"
         >
           编辑
         </a-button>
@@ -157,7 +158,7 @@ export default {
         {
           title: 'KPI名称',
           dataIndex: 'kpi_label',
-          // width: 100,
+          width: 100,
           sorter: true
         },
         {
@@ -224,7 +225,7 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
-      this.$refs['schema'].edtt(record)
+      this.$refs['schema'].edit(record)
     },
     /**
      * 查询

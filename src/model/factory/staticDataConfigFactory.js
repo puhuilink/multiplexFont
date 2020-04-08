@@ -7,6 +7,7 @@
 */
 import LinesStaticDataConfig from '../config/dataConfig/staticDataConfig/LinesStaticDataConfig'
 import BarStaticDataConfig from '../config/dataConfig/staticDataConfig/BarStaticDataConfig'
+import GaugeStaticDataConfig from '../config/dataConfig/staticDataConfig/GaugeStaticDataConfig'
 
 export default class StaticDataConfigFactory {
   static create (type, staticDataConfig = {}) {
@@ -15,7 +16,10 @@ export default class StaticDataConfigFactory {
         return new LinesStaticDataConfig(staticDataConfig)
       case 'Bar':
         return new BarStaticDataConfig(staticDataConfig)
+      case 'Gauge':
+        return new GaugeStaticDataConfig(staticDataConfig)
       default:
+        console.log('unknown staticDataConfig type: ' + type)
         return null
     }
   }

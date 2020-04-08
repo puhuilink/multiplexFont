@@ -38,7 +38,7 @@ export default class ChartFactory {
         return new TriangleChart({ widget })
       case 'Image':
         return new ImageChart({ widget })
-      case 'gauge':
+      case 'Gauge':
         return new GaugeChart({ widget })
       case 'DegreeRing':
         return new DegreeRingChart({ widget })
