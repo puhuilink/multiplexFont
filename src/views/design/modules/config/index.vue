@@ -59,7 +59,8 @@ export default {
       ['Clock', 'Clock'],
       ['Image', 'ImageConfig'],
       ['View', 'ViewConfig'],
-      ['Gauge', 'Gauge']
+      ['gauge', 'Gauge'],
+      ['DegreeRing', 'DegreeRingConfig']
     ])
   }),
   computed: {

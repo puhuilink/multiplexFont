@@ -1,9 +1,11 @@
 /*
- * 健康度
+ * 环度部件对象
  */
-import Chart from './index'
 
-export default class HealthDegreeChart extends Chart {
+import Chart from './index'
+// import echartsLiquidfill from 'echarts-liquidfill'
+
+export default class DegreeRingChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
   }
@@ -13,8 +15,7 @@ export default class HealthDegreeChart extends Chart {
    */
   mappingOption ({ commonConfig, proprietaryConfig, dataConfig }) {
     const { grid } = commonConfig.getOption()
-    const { title, series } = proprietaryConfig.getOption()
-    const [inside, outside] = series
-    return { grid, title, series: [inside, outside] }
+    const { series } = proprietaryConfig.getOption()
+    return { grid, series }
   }
 }
