@@ -3,7 +3,6 @@
  */
 import _ from 'lodash'
 import { TextStyle } from './index'
-// eslint-disable-next-line no-unused-vars
 import echartsLiquidfill from 'echarts-liquidfill'
 
 class Title {
