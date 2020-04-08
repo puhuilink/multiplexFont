@@ -902,9 +902,13 @@ class ImageGraphic extends Graphic {
  */
 class AlarmListProps {
   constructor ({
-    title = 'alarm list'
+    // 接口参数对象
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
   }) {
-    this.title = title
+    this.params = params
+    this.isCallInterface = isCallInterface
   }
 }
 

@@ -1,4 +1,15 @@
+/**
+* 元素
+* Author: dong xing
+* Date: 2020/4/8
+* Time: 11:24
+* Email: dong.xing@outlook.com
+*/
+
+import _ from 'lodash'
 import anime from 'animejs'
+import store from '@/store'
+import { ScreenMutations } from '@/store/modules/screen'
 
 export default class Element {
   constructor ({ widget, element }) {
@@ -6,6 +17,7 @@ export default class Element {
     this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
+    this.widget = widget
   }
 
   /**
@@ -43,7 +55,39 @@ export default class Element {
   /**
    * 设置专有属性样式，与图表对象使用同一方法m名
    */
-  mergeOption (config) {}
+  mergeOption (config, loadingDynamicData = false) {}
+
+  /**
+   * 更新元素组件的props
+   * @param props
+   */
+  updateProps (props) {
+    if (this.widget) {
+      const widget = Object.assign(_.cloneDeep(this.widget), { render: this.widget.render })
+      Object.assign(widget.config.proprietaryConfig.props, props)
+      store.commit(`screen/${ScreenMutations.ACTIVATE_WIDGET}`, { widget })
+    }
+  }
+
+  refresh () {
+    this.mergeOption(this.widget.config, true)
+  }
+
+  /**
+   * 轮询
+   */
+  intervalRefresh () {
+    this.refresh()
+    // 存在自动刷新时间设置则开启定时刷新
+    const { dataConfig: { dbDataConfig } } = this.widget.config
+    if (dbDataConfig.hasOwnProperty('refreshTime')) {
+      this.timer = setInterval(
+        () => this.refresh(),
+        // 分钟
+        Number(dbDataConfig.refreshTime) * 1000 * 60
+      )
+    }
+  }
 
   resize () {}
 

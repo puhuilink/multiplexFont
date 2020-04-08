@@ -48,7 +48,7 @@ export default {
   computed: {
     // 选择的部件
     selectWidget () {
-      return Object.assign(this.widget, { render: this.render })
+      return Object.assign({}, this.widget, { render: this.render })
     },
     // 在类型为元素时使用组件进行渲染
     useComponent () {
@@ -77,7 +77,6 @@ export default {
       widget: this.widget,
       element: this.$refs.element && this.$refs.element.$el
     })
-    console.log(this.widget.config, this.render)
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       // 获取当前实例

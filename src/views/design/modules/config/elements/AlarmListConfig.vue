@@ -21,7 +21,11 @@
 
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2" class="visible-collapse-panel">
+<!--      <a-tab-pane tab="专有属性" key="2">-->
+<!--      </a-tab-pane>-->
+
+      <a-tab-pane tab="数据配置" key="3">
+        <AlarmListDataSource />
       </a-tab-pane>
 
     </a-tabs>
@@ -32,12 +36,14 @@
 import '@/assets/less/template.less'
 import CommonTemplate from '../common/index'
 import ProprietaryMixins from '../proprietaryMixins'
+import AlarmListDataSource from '../dataSource/AlarmListDataSource'
 
 export default {
   name: 'AlarmListConfig',
   mixins: [ProprietaryMixins],
   components: {
-    CommonTemplate
+    CommonTemplate,
+    AlarmListDataSource
   }
 }
 </script>

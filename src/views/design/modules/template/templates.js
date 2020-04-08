@@ -49,7 +49,7 @@ const charts = [
 // 元素模板
 const elements = [
   {
-    category: 'ELEMENT', type: 'AlarmList', name: '告警列表', icon: 'bell', width: 1200, height: 600
+    category: 'ELEMENT', type: 'AlarmList', name: '告警列表', icon: 'bell', width: 1200, height: 560
   }
 ]
 

@@ -84,8 +84,7 @@ export default {
       // 柱形图根据类型调整样式
       const { barType } = this.config.proprietaryConfig
       const getCode = _.get(this.activeWidget, 'config.dataConfig.staticDataConfig.getCode')
-      return getCode ? getCode(barType) : null
-      // return this.activeWidget.config.dataConfig.staticDataConfig.getCode(barType)
+      return getCode ? getCode.call(this.activeWidget.config.dataConfig.staticDataConfig, barType) : null
     }
   },
   methods: {
