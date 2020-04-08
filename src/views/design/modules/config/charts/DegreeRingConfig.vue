@@ -17,8 +17,7 @@
               <div class="comment-template__item">
                 <p class="comment-template__leading">类型:</p>
                 <div class="comment-template__inner">
-                  <a-select
-                    allowClear
+                                                                                               <a-select
                     v-model="chartsType"
                     @change="chartsTypeChange">
                     <a-select-option value="healthDegree">健康度</a-select-option>
@@ -91,7 +90,7 @@
             </a-collapse-panel>
             <!-- E 文字 -->
 
-            <a-collapse-panel header="内圆设置" key="3" v-if="chartsType==='healthDegree'">
+            <a-collapse-panel header="圆设置" key="3" v-if="chartsType==='healthDegree'">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -113,7 +112,29 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="刻度设置" key="4" v-if="chartsType">
+            <a-collapse-panel header="环设置" key="4" v-if="chartsType!=='healthDegree'">
+              <div class="comment-template__item">
+                <p class="comment-template__leading">颜色:</p>
+                <div class="comment-template__inner">
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.innerCircle.backgroundStyle.borderColor"
+                    @change="change" />
+                </div>
+              </div>
+              <!-- / 颜色 -->
+              <div class="comment-template__item">
+                <p class="comment-template__leading">半径:</p>
+                <div class="comment-template__inner">
+                  <a-input
+                    type="number"
+                    v-model="config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth"
+                    @change="change"
+                  />
+                </div>
+              </div>
+            </a-collapse-panel>
+
+            <a-collapse-panel header="刻度设置" key="5" v-if="chartsType">
               <div class="comment-template__item">
                 <p class="comment-template__leading">显示:</p>
                 <div class="comment-template__inner comment-template__end">
@@ -184,6 +205,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import GaugeDataSource from '../dataSource/GaugeDataSource'
+import { ItemStyle } from '../../../../../model/config/proprietaryConfigs'
 
 export default {
   name: 'DegreeRingConfig',
@@ -209,15 +231,16 @@ export default {
           this.config.proprietaryConfig.innerCircle.label.color = '#fff'
           break
         case 'progressRing':
-          this.config.proprietaryConfig.innerCircle.outline.itemStyle.borderWidth = 10
+          this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
           break
         case 'healthRing':
-          this.config.proprietaryConfig.innerCircle.outline.itemStyle.borderWidth = 8
+          this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
           break
       }
       if (value !== 'healthDegree') {
         this.config.proprietaryConfig.innerCircle.data = [0]
         this.config.proprietaryConfig.innerCircle.label.color = '#000'
+        this.config.proprietaryConfig.innerCircle.itemStyle.opacity = 0
       }
       this.change()
     },
