@@ -46,7 +46,8 @@ export const getBaselintCalendar = async function (baselineDefId, month) {
         // 1代表库数据，0代表默认数据？
         status: 0,
         // 默认是 10天？
-        'cycle_info': '30（天）',
+        'cycle_info': null,
+        // 'cycle_info': '30（天）',
         calendar: defaultCalendar[i]
       }
     }

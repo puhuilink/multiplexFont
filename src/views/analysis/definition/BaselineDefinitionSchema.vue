@@ -282,7 +282,7 @@ export default {
   // FIXME: 关联查询只差了父子代，子孙代未查出
   data: (vm) => ({
     // 当前步骤
-    current: 2,
+    current: 0,
     form0: vm.$form.createForm(vm),
     form1: vm.$form.createForm(vm),
     form2: vm.$form.createForm(vm),
@@ -363,6 +363,37 @@ export default {
         ]
       }
     },
+
+    defaultOptionValue: {
+      get () {
+        /* eslint-disable camelcase */
+        const {
+          cycle_year_num,
+          cycle_month_num,
+          cycle_week_num,
+          cycle_day_num,
+          cycle_default_type
+        } = this.formData1
+        let value
+        switch (cycle_default_type) {
+          case 'Year':
+            value = `${cycle_year_num} （年）`
+            break
+          case 'Month':
+            value = `${cycle_month_num} （月）`
+            break
+          case 'Week':
+            value = `${cycle_week_num} （周）`
+            break
+          case 'Day':
+            value = `${cycle_day_num} （日）`
+            break
+          default:
+            break
+        }
+        return value
+      }
+    },
     // 数字输入框默认配置
     numberProps: {
       get () {
@@ -414,7 +445,11 @@ export default {
           const uuid = _.get(this, 'record.uuid')
           try {
           // TODO: loading
-            this.formData2 = await getBaselintCalendar(uuid)
+            const list = await getBaselintCalendar(uuid)
+            list.forEach(el => {
+              el.cycle_info = el.cycle_info || this.defaultOptionValue
+            })
+            this.formData2 = list
           } catch (e) {
             this.formData2 = []
           }
