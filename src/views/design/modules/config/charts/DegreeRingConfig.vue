@@ -17,7 +17,7 @@
               <div class="comment-template__item">
                 <p class="comment-template__leading">类型:</p>
                 <div class="comment-template__inner">
-                                                                                               <a-select
+                  <a-select
                     v-model="chartsType"
                     @change="chartsTypeChange">
                     <a-select-option value="healthDegree">健康度</a-select-option>
@@ -205,6 +205,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import GaugeDataSource from '../dataSource/GaugeDataSource'
+// eslint-disable-next-line
 import { ItemStyle } from '../../../../../model/config/proprietaryConfigs'
 
 export default {

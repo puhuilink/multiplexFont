@@ -3,7 +3,8 @@
  */
 import _ from 'lodash'
 import { TextStyle } from './index'
-import echartsLiquidfill from 'echarts-liquidfill'
+// eslint-disable-next-line
+import echartsLiquidfill from 'echarts-liquidfill'
 
 class Title {
   constructor ({
