@@ -35,8 +35,8 @@ export const addInstance = async function (Value) {
     ...Value,
     did,
     _id_s: varcharUuid(),
-    creator_s: store.state.user.name,
-    updator_s: store.state.user.name
+    creator_s: store.state.user.info.userId,
+    updator_s: store.state.user.info.userId
   }])
 }
 

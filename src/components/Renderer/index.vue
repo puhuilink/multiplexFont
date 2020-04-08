@@ -17,6 +17,7 @@
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"
+        :ciId="ciId"
         @select="() => $emit('change', { el: 'widget', widget })"
       />
       <!-- / 部件渲染 -->
@@ -43,6 +44,11 @@ export default {
     view: {
       type: Object,
       default: () => {}
+    },
+    // 外部 Ci id
+    ciId: {
+      type: String,
+      default: ''
     }
   },
   mounted () {

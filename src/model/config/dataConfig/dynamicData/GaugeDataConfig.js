@@ -7,10 +7,13 @@ export default class GaugeDataConfig {
       selectedInstance: [],
       selectedKpi: []
     },
-    refreshTime = 0
+    refreshTime = 0,
+    // 外部 Ci 是否可用
+    externalCi = true
   }) {
     this.resourceConfig = resourceConfig
     this.refreshTime = refreshTime
+    this.externalCi = externalCi
   }
 
   /**

@@ -86,7 +86,7 @@ export const updateModelAttrOld = function (rid, value) {
   // TODO: mapping
   return oldRequest.post('/urmp/api/rest/post/instanceService/update', [
     value,
-    store.state.user.name,
+    store.state.user.info.userId,
     []
   ])
 }
