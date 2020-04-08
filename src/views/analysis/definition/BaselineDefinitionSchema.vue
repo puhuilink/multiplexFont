@@ -6,7 +6,7 @@
     :maskClosable="false"
     :title="title"
     v-model="visible"
-    :width="940"
+    :width="1024"
     wrapClassName="BaselineDefinitionSchema__modal"
     @cancel="cancel"
     :afterClose="reset"
@@ -70,7 +70,7 @@
           style="width: 80%"
         >
           <CiInstanceSelect
-            labelInValue
+            multiple
             :parentNameS="formData0.model"
             :value="formData0.ci"
             @input="onInstanceInput"
@@ -85,6 +85,7 @@
           required
         >
           <KpiSelect
+            multiple
             v-model="formData0.kpi"
             :nodetypeS="formData0.model"
             placeholder />
@@ -133,8 +134,8 @@
               <a-radio
                 name="cycle_default_type"
                 :value="'cycle_day_num'"
-                :checked="formData1.cycle_default_type === 'cycle_day_num'"
-                @change="formData1.cycle_default_type = 'cycle_day_num'"
+                :checked="formData1.cycle_default_type === 'Day'"
+                @change="formData1.cycle_default_type = 'Day'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -155,8 +156,8 @@
               <a-radio
                 name="cycle_default_type"
                 :value="'cycle_week_num'"
-                :checked="formData1.cycle_default_type === 'cycle_week_num'"
-                @change="formData1.cycle_default_type = 'cycle_week_num'"
+                :checked="formData1.cycle_default_type === 'Week'"
+                @change="formData1.cycle_default_type = 'Week'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -177,8 +178,8 @@
               <a-radio
                 name="cycle_default_type"
                 :value="'cycle_month_num'"
-                :checked="formData1.cycle_default_type === 'cycle_month_num'"
-                @change="formData1.cycle_default_type = 'cycle_month_num'"
+                :checked="formData1.cycle_default_type === 'Month'"
+                @change="formData1.cycle_default_type = 'Month'"
               >是否默认</a-radio>
             </a-form-item>
           </a-form-item>
@@ -198,8 +199,8 @@
             <a-radio
               name="cycle_default_type"
               value="cycle_year_num"
-              :checked="formData1.cycle_default_type === 'cycle_year_num'"
-              @change="formData1.cycle_default_type = 'cycle_year_num'"
+              :checked="formData1.cycle_default_type === 'Year'"
+              @change="formData1.cycle_default_type = 'Year'"
             >是否默认</a-radio>
           </a-form-item>
         </div>
@@ -208,7 +209,23 @@
 
     <!-- 第三步 -->
     <div class="BaselineDefinitionSchema__content" v-show="current === 2">
-      <a-calendar />
+      <a-calendar @panelChange="panelChange">
+        <template slot="dateCellRender" slot-scope="value" v-if="calenderItem(value)">
+          <a-select
+            :value="calenderItem(value).cycle_info"
+            :key="`${calenderItem(value).calendar}`"
+            style="width: 100%"
+            @change="e => setCalendarDate(e, calenderItem(value))"
+          >
+            <a-select-option
+              v-for="(option, idx) in calenderItemOptionList"
+              :key="`${calenderItem(value).calendar}/${idx}/${option.name}`"
+            >
+              {{ option.name }}
+            </a-select-option>
+          </a-select>
+        </template>
+      </a-calendar>
     </div>
 
     <template #footer>
@@ -227,6 +244,8 @@ import {
   KpiSelect,
   BaselineStrategySelect
 } from '@/components/Common'
+import { getBaselintCalendar } from '@/api/controller/BaselineCalendar'
+import _ from 'lodash'
 
 const TYPES = [
   {
@@ -263,7 +282,7 @@ export default {
   // FIXME: 关联查询只差了父子代，子孙代未查出
   data: (vm) => ({
     // 当前步骤
-    current: 0,
+    current: 2,
     form0: vm.$form.createForm(vm),
     form1: vm.$form.createForm(vm),
     form2: vm.$form.createForm(vm),
@@ -273,16 +292,10 @@ export default {
       // 基线标题
       title: '',
       // Kpi，以逗号分隔的字符串数组
-      // 'kpi_code': '',
-      // 'kpi_label': '',
       kpi: [],
       // Ci 实例，以逗号分隔的字符串数组
-      // 'ci_label': '',
-      // 'ci_id': '',
       ci: [],
       // Ci 类型
-      // 'ci_type_name': '',
-      // 'ci_type_label': ''
       model: ''
     },
     formData1: {
@@ -299,16 +312,18 @@ export default {
       // 周期类型（季度）
       'cycle_quarter_num': 0,
       // 默认周期类型
-      'cycle_default_type': 'cycle_week_num',
+      'cycle_default_type': 'Week',
       // 数值精度
       'round_num': 0
     },
+    formData2: [],
     // 按钮是否 loading
     loading: false,
     layout,
     options: {
       types: TYPES
     },
+    record: null,
     // 弹窗标题
     title: '',
     // 弹窗是否可见
@@ -317,6 +332,37 @@ export default {
     submit: () => { }
   }),
   computed: {
+    calenderItemOptionList: {
+      get () {
+        const { formData1 } = this
+        /* eslint-disable camelcase */
+        const {
+          cycle_year_num,
+          cycle_month_num,
+          cycle_week_num,
+          cycle_day_num
+          // cycle_default_type
+        } = formData1
+        return [
+          {
+            name: `${cycle_year_num} （年）`,
+            value: cycle_year_num
+          },
+          {
+            name: `${cycle_month_num} （月）`,
+            value: cycle_month_num
+          },
+          {
+            name: `${cycle_week_num} （周）`,
+            value: cycle_week_num
+          },
+          {
+            name: `${cycle_day_num} （日）`,
+            value: cycle_day_num
+          }
+        ]
+      }
+    },
     // 数字输入框默认配置
     numberProps: {
       get () {
@@ -359,13 +405,47 @@ export default {
       }
     }
   },
+  watch: {
+    current: {
+      immediate: true,
+      async handler (current) {
+        // 到第三部日期选择时，默认请求当月配置
+        if (current === 2) {
+          const uuid = _.get(this, 'record.uuid')
+          try {
+          // TODO: loading
+            this.formData2 = await getBaselintCalendar(uuid)
+          } catch (e) {
+            this.formData2 = []
+          }
+        }
+      }
+    }
+  },
   methods: {
     add () {
       this.visible = true
       this.title = '新建动态基线定义'
     },
-    edit () {
-
+    edit (record = {}) {
+      this.visible = true
+      this.title = '编辑动态基线定义'
+      this.record = {
+        ...record
+      }
+      // 合并第一步数据
+      Object.assign(this.formData0, {
+        'gen_type': record.gen_type,
+        'kpi': record.kpi_code.split(',').filter(e => !!e),
+        title: record.title,
+        ci: record.ci_id.split(',').filter(e => !!e),
+        model: record.ci_type_name
+      })
+      // 合并第二步数据
+      Object.assign(
+        this.formData1,
+        _.pick(record, Object.keys(this.formData1))
+      )
     },
     cancel () {
       this.visible = false
@@ -396,7 +476,7 @@ export default {
     /**
      * 下一步
      */
-    next () {
+    async next () {
       // if (this.current === 1) {
       //   this.form1.validateFields((err, value) => {
       //     if (!err) {
@@ -420,9 +500,38 @@ export default {
         })
       })
     },
+    calenderItem (value) {
+      const date = value.format('YYYY-MM-DD')
+      const item = this.formData2.find(({ calendar }) => calendar === date)
+      if (item) {
+        // return (
+        //   <a-select>
+        //     <a-select-option>test</a-select-option>
+        //   </a-select>
+        // )
+        return item
+      } else {
+        return ''
+      }
+    },
     reset () {
       // this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    setCalendarDate (event, item) {
+      // select-option 的 key
+      const [calendar, , value] = event.split('/')
+      // item.calendar_info = value
+      const targetItem = this.formData2.find(el => el.calendar === calendar)
+      targetItem.cycle_info = value
+      console.log(targetItem)
+    },
+    /**
+     * 切换年份 / 月份回调
+     * @param {Moment} moment 切换的 moment 实例对象
+     */
+    panelChange (moment) {
+      getBaselintCalendar('', moment)
     }
   }
 }

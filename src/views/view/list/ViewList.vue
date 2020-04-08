@@ -263,8 +263,8 @@ export default {
 }
 </script>
 <style scoped lang="less">
-  .fold {
-    display: inline-block;
-    width: calc(100% - 216px);
-  }
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>
