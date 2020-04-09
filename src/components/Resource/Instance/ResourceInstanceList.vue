@@ -70,6 +70,7 @@ import {
   getInstanceList
 } from '@/api/controller/Instance'
 import { getKpiList } from '@/api/controller/Kpi'
+import { getModelAttributeList } from '@/api/controller/ModelAttributes'
 
 export default {
   name: 'ResourceInstanceList',
@@ -85,6 +86,10 @@ export default {
     parentTreeS: {
       type: String,
       default: ''
+    },
+    // eslint-disable-next-line vue/require-default-prop
+    parentDid: {
+      type: Number
     }
   },
   components: {
@@ -99,49 +104,45 @@ export default {
     // 选中行
     selectRows: [],
     // 选中行的 key
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    columns: [
+      // {
+      //   title: 'ID',
+      //   dataIndex: 'id_s',
+      //   sorter: true,
+      //   width: 180
+      // },
+      {
+        title: '名称',
+        dataIndex: 'name_s',
+        sorter: true,
+        width: 600
+      },
+      {
+        title: '显示名称',
+        dataIndex: 'label_s',
+        sorter: true,
+        width: 300
+      },
+      {
+        title: '父节点',
+        dataIndex: 'parentname_s',
+        width: 300
+      },
+      {
+        title: '所属节点类型',
+        dataIndex: 'nodetype_s',
+        width: 300
+      }
+    ]
   }),
   computed: {
     // TODO: 列不全
     // TODO: td 溢出省略号或自动增长但与表头保持对齐
-    columns: {
-      get () {
-        return [
-          // {
-          //   title: 'ID',
-          //   dataIndex: 'id_s',
-          //   sorter: true,
-          //   width: 180
-          // },
-          {
-            title: '名称',
-            dataIndex: 'name_s',
-            sorter: true,
-            width: 600
-          },
-          {
-            title: '显示名称',
-            dataIndex: 'label_s',
-            sorter: true,
-            width: 300
-          },
-          {
-            title: '父节点',
-            dataIndex: 'parentname_s',
-            width: 300
-          },
-          {
-            title: '所属节点类型',
-            dataIndex: 'nodetype_s',
-            width: 300
-          }
-        ]
-      }
-    },
     scrollX: {
       get () {
         return this.columns
-          .filter(e => e.width)
+          .map(e => e.width || 0)
           .reduce((a, b) => a + b) + 36
       }
     }
@@ -173,7 +174,8 @@ export default {
      * @param {Object} parameter CTable 回传的分页与排序条件
      * @return {Function: <Promise<Any>>}
      */
-    loadData (parameter) {
+    async loadData (parameter) {
+      await this.loadColumns()
       this.selectedRowKeys = []
       this.selectedRows = []
       const handler = this.parentNameS === 'Kpi' ? getKpiList : getInstanceList
@@ -194,6 +196,37 @@ export default {
           } } : {}
         }
       }).then(r => r.data)
+    },
+    async loadColumns () {
+      try {
+        const options = {
+          orderBy: {
+            rid: 'desc'
+          },
+          limit: 999,
+          where: {
+            did: {
+              '_eq': this.parentDid
+            }
+          }
+        }
+        const columns = (await getModelAttributeList(options)
+          .then(r => r.data.data))
+          .filter(e => !e.hidden_b)
+          .map(e => ({
+            title: e.label_s,
+            dataIndex: e.name_s,
+            width: e.width_i,
+            sorter: true
+          }))
+
+        this.columns = [
+          ...this.columns,
+          ...columns
+        ]
+      } catch (e) {
+        throw e
+      }
     },
     query () {
       this.$refs['table'].refresh(true)
