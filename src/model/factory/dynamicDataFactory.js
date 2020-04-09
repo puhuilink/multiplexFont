@@ -5,6 +5,7 @@
 import _ from 'lodash'
 import GaugeDataConfig from '../config/dataConfig/dynamicData/GaugeDataConfig'
 import BarDataConfig from '../config/dataConfig/dynamicData/BarDataConfig'
+import DegreeDataConfig from '../config/dataConfig/dynamicData/DegreeRingDataConfig'
 import AlarmListDataConfig from '../config/dataConfig/dynamicData/AlarmListDataConfig'
 
 export default class DynamicDataFactory {
@@ -18,6 +19,8 @@ export default class DynamicDataFactory {
         return new AlarmListDataConfig(dbDataConfig)
       case 'View':
         return
+      case 'DegreeRing':
+        return new DegreeDataConfig(dbDataConfig)
       default:
         console.log('unknown dbDataConfig type', type)
         // throw new Error('unknown type')
