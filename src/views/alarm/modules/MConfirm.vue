@@ -11,7 +11,7 @@
     destroyOnClose
   >
     <p>备注</p>
-    <a-textarea placeholder="请输入备注" :rows="6" v-model="comments"/>
+    <a-textarea placeholder="请输入备注" :rows="6" v-model="comments" :maxLength="500"/>
   </a-modal>
 </template>
 
@@ -53,14 +53,16 @@ export default {
           }
         }
       }).then(r => {
-        console.log(r)
-        this.visible = false
         this.confirmLoading = false
-        // this.$message.info('确认告警成功！')
+        this.$notification.success({
+          message: '系统提示',
+          description: '告警确认成功'
+        })
+        this.$emit('ok')
+        this.handleCancel()
       })
     },
     handleCancel (e) {
-      console.log('Clicked cancel button')
       this.visible = false
     }
   }
