@@ -142,7 +142,7 @@ export default {
     scrollX: {
       get () {
         return this.columns
-          .filter(e => e.width)
+          .map(e => e.width || 0)
           .reduce((a, b) => a + b) + 36
       }
     }
