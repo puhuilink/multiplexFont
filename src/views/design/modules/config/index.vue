@@ -60,7 +60,8 @@ export default {
       ['Image', 'ImageConfig'],
       ['View', 'ViewConfig'],
       ['Gauge', 'Gauge'],
-      ['DegreeRing', 'DegreeRingConfig']
+      ['DegreeRing', 'DegreeRingConfig'],
+      ['AlarmList', 'AlarmListConfig']
     ])
   }),
   computed: {

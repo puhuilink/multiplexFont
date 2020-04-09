@@ -2,10 +2,11 @@
  * 动态数据工厂
  */
 
+import _ from 'lodash'
 import GaugeDataConfig from '../config/dataConfig/dynamicData/GaugeDataConfig'
 import BarDataConfig from '../config/dataConfig/dynamicData/BarDataConfig'
 import DegreeDataConfig from '../config/dataConfig/dynamicData/DegreeRingDataConfig'
-import _ from 'lodash'
+import AlarmListDataConfig from '../config/dataConfig/dynamicData/AlarmListDataConfig'
 
 export default class DynamicDataFactory {
   static create (type, dbDataConfig) {
@@ -14,6 +15,8 @@ export default class DynamicDataFactory {
         return new GaugeDataConfig(dbDataConfig)
       case 'Bar':
         return new BarDataConfig(dbDataConfig)
+      case 'AlarmList':
+        return new AlarmListDataConfig(dbDataConfig)
       case 'View':
         return
       case 'DegreeRing':

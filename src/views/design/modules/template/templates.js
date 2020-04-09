@@ -50,9 +50,9 @@ const charts = [
 
 // 元素模板
 const elements = [
-  // {
-  //   category: 'ELEMENT', type: 'text', name: '文本', icon: 'font-colors', width: 300, height: 200
-  // }
+  {
+    category: 'ELEMENT', type: 'AlarmList', name: '告警列表', icon: 'bell', width: 1200, height: 560
+  }
 ]
 
 // 可拓展模板

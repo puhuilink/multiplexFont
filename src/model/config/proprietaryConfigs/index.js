@@ -897,6 +897,21 @@ class ImageGraphic extends Graphic {
   }
 }
 
+/**
+ * 告警列表 props 配置
+ */
+class AlarmListProps {
+  constructor ({
+    // 接口参数对象
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
+  }) {
+    this.params = params
+    this.isCallInterface = isCallInterface
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
@@ -913,5 +928,6 @@ export {
   RectGraphic,
   CircleGraphic,
   TriangleGraphic,
-  ImageGraphic
+  ImageGraphic,
+  AlarmListProps
 }
