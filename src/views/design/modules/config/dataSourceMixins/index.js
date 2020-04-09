@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
+import { timeRangeSelectOptions } from '@/model/config/dataConfig/dynamicData'
 
 const formItemLayout = {
   labelCol: {
@@ -17,44 +18,10 @@ const formItemLayout = {
 export default {
   data: () => ({
     formItemLayout,
-    timeOptionList: [
-      {
-        name: '实时',
-        value: ''
-      },
-      {
-        name: '最近15分钟',
-        value: ''
-      },
-      {
-        name: '最近30分钟',
-        value: ''
-      },
-      {
-        name: '最近1小时',
-        value: ''
-      },
-      {
-        name: '最近2小时',
-        value: ''
-      },
-      {
-        name: '最近3小时',
-        value: ''
-      },
-      {
-        name: '最近1天',
-        value: ''
-      },
-      {
-        name: '最近1周',
-        value: ''
-      },
-      {
-        name: '最近2周',
-        value: ''
-      }
-    ]
+    timeRangeSelectOptions: timeRangeSelectOptions.map(el => ({
+      ...el,
+      value: JSON.stringify(el.value)
+    }))
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
@@ -97,6 +64,29 @@ export default {
         _.get(this.resourceConfig, 'selectedKpi.length') &&
         _.get(this.resourceConfig, 'selectedInstance.length')
       )
+    },
+    // 不是所有的视图组件都需要配置 timeRange
+    timeRange: {
+      get () {
+        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange')
+      }
+    },
+    timeRangeStart: {
+      get () {
+        try {
+          return JSON.stringify(this.timeRange.timeRangeStart)
+        } catch (e) {
+          return null
+        }
+      },
+      set (v) {
+        if (this.timeRange) {
+          Object.assign(this.timeRange, {
+            timeRangeStart: JSON.parse(v)
+          })
+          this.change()
+        }
+      }
     }
   },
   methods: {

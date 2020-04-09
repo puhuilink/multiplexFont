@@ -13,10 +13,11 @@
         :labelCol="formItemLayout.labelCol"
         :wrapperCol="formItemLayout.wrapperCol"
       >
-        <a-select style="width: 100%">
+        <a-select style="width: 100%" v-model="timeRangeStart">
           <a-select-option
-            v-for="(option, idx) in timeOptionList"
+            v-for="(option, idx) in timeRangeSelectOptions"
             :key="idx"
+            :value="option.value"
           >
             {{ option.name }}
           </a-select-option>
