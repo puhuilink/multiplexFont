@@ -8,6 +8,7 @@
 import LinesStaticDataConfig from '../config/dataConfig/staticDataConfig/LinesStaticDataConfig'
 import BarStaticDataConfig from '../config/dataConfig/staticDataConfig/BarStaticDataConfig'
 import GaugeStaticDataConfig from '../config/dataConfig/staticDataConfig/GaugeStaticDataConfig'
+import DegreeRingStaticDataConfig from '../config/dataConfig/staticDataConfig/DegreeRingStaticDataConfig'
 
 export default class StaticDataConfigFactory {
   static create (type, staticDataConfig = {}) {
@@ -18,6 +19,8 @@ export default class StaticDataConfigFactory {
         return new BarStaticDataConfig(staticDataConfig)
       case 'Gauge':
         return new GaugeStaticDataConfig(staticDataConfig)
+      case 'DegreeRing':
+        return new DegreeRingStaticDataConfig(staticDataConfig)
       default:
         console.log('unknown staticDataConfig type: ' + type)
         return null
