@@ -198,11 +198,11 @@
 </template>
 
 <script>
-// FIXME: 目前数据都已拿到，但是图没有渲染出来
+// FIXME: 目前只有静态数据
 import '@/assets/less/template.less'
 // import _ from 'lodash'
 import CommonTemplate from '../common'
-import ProprietaryMixins from '../propietaryMixins'
+import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import DegreeRingDataSource from '../dataSource/DegreeRingDataSource'
 // eslint-disable-next-line
