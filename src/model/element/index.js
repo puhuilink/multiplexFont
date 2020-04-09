@@ -79,17 +79,16 @@ export default class Element {
   intervalRefresh () {
     this.refresh()
     // 存在自动刷新时间设置则开启定时刷新
-    const { dataConfig: { dbDataConfig } } = this.widget.config
-    if (dbDataConfig.hasOwnProperty('refreshTime')) {
-      this.timer = setInterval(
-        () => this.refresh(),
-        // 分钟
-        Number(dbDataConfig.refreshTime) * 1000 * 60
+    const refreshTime = _.get(this, 'widget.config.dataConfig.dbDataConfig.refreshTime')
+    if (refreshTime > 0) {
+      this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60
       )
     }
   }
 
   resize () {}
 
-  destroy () {}
+  destroy () {
+    clearInterval(this.timer)
+  }
 }

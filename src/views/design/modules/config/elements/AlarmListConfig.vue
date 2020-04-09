@@ -21,8 +21,8 @@
 
       </a-tab-pane>
 
-<!--      <a-tab-pane tab="专有属性" key="2">-->
-<!--      </a-tab-pane>-->
+      <!--      <a-tab-pane tab="专有属性" key="2">-->
+      <!--      </a-tab-pane>-->
 
       <a-tab-pane tab="数据配置" key="3">
         <AlarmListDataSource />
