@@ -9,215 +9,6 @@
       :activeTabKey="tabKey"
       @tabChange="tabKey => onTabChange(tabKey, 'key')"
     >
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="CI域">
-                <!-- <a-select
-                  allowClear
-                  v-model="queryParam.CIDomain"
-                  placeholder="请选择CI域"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in CIDomain"
-                    :key="index"
-                    :label="group.label"
-                  >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select-opt-group>
-                </a-select> -->
-                <a-select
-                  allowClear
-                  v-model="queryParam.domains"
-                  placeholder="请选择CI域"
-                >
-                  <a-select-option
-                    v-for="item in queryList.domainList"
-                    :key="item.name_s"
-                  >
-                    {{ item.label_s }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="CI类型">
-                <a-select
-                  allowClear
-                  v-model="queryParam.node_types"
-                  placeholder="请选择CI类型"
-                  @change="ciTypeChange"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in queryList.typeList"
-                    :key="index"
-                    :label="group[0].parentname_s"
-                    :allowClear="true"
-                  >
-                    <template v-for="(groupitem,indexs) in group">
-                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                    </template>
-                  </a-select-opt-group>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="12" :sm="24">
-                <a-form-item label="CI实例">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.node_ids"
-                    placeholder="请选择CI实例"
-                    @change="CIInstanceChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.CIInstance"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="(groupitem,indexs) in group">
-                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="告警类型">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.alert_id"
-                    placeholder="请选择告警类型"
-                    @change="alarmTypeChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.alertList"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="groupitem in group">
-                        <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="采集系统">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.agent_id"
-                    placeholder="请选择采集系统"
-                    @change="agentChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.agentList"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="(groupitem,indexs) in group">
-                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
-
-      <!-- S 操作 -->
-      <a-row>
-        <a-col
-          :xs="24"
-          :sm="24"
-          :md="24"
-          :lg="{span: 8}"
-          :xl="{span: 8}"
-          class="table-operator">
-          <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
-          <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
-          <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
-        </a-col>
-        <a-col
-          :xs="24"
-          :sm="24"
-          :md="24"
-          :lg="{span: 8, offset:8}"
-          :xl="{span: 8, offset:8}"
-        >
-          <a-input-search
-            placeholder="输入关键字"
-            style="width: 200px"
-            @search="onSearch"
-          />
-          <a-icon style="padding:0px 15px;" type="setting" />
-          <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
-          <a-icon
-            style="padding:0px 12px; color:#1890ff"
-            spin
-            type="sync"
-            v-else
-            @click="refresh"
-            title="关闭自动刷新" />
-          <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
-          <audio src="" id="eventAudio" loop="loop" hidden></audio>
-        </a-col>
-        <a-col
-          :xs="24"
-          :sm="24"
-          :md="24"
-          :lg="{span: 8,offset:16}"
-          :xl="{span: 8,offset:16}"
-        >
-          <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
-            <a-badge
-              :count="text | levelFilter"
-              :title="text | levelTitleFilter"
-              :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
-                text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
-                  text==0?{backgroundColor:'#00c356'}:{}"
-            />
-            <span style="padding-left:7px; ">{{ value }}</span>
-          </div>
-        </a-col>
-      </a-row>
-      <!-- E 操作 -->
-
       <!-- S 列表 -->
       <CTable
         ref="table"
@@ -229,6 +20,196 @@
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
+
+        <template #query>
+          <a-form layout="inline">
+            <div :class="{ fold: !advanced }">
+              <a-row >
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="CI域"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      allowClear
+                      v-model="queryParam.domains"
+                      placeholder="请选择CI域"
+                    >
+                      <a-select-option
+                        v-for="item in queryList.domainList"
+                        :key="item.name_s"
+                      >
+                        {{ item.label_s }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="CI类型"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <CiModelSelect
+                      :value="queryParam.model"
+                      @input="onModelInput"
+                    />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <template v-if="advanced">
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="CI实例"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <CiInstanceSelect
+                        multiple
+                        :parentNameS="queryParam.model"
+                        :value="queryParam.node_id"
+                        @input="onInstanceInput"
+                      />
+                    </a-form-item>
+                  </a-col>
+                  <!-- TODO: 告警类型来源不明 需要二次商议 -->
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="告警类型"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        mode="multiple"
+                        :maxTagCount="2"
+                        v-model="queryParam.alert_id"
+                        placeholder="请选择告警类型"
+                        @change="alarmTypeChange"
+                      >
+                        <!-- <a-select-option value="checkall" key="checkall" >全选</a-select-option> -->
+                        <a-select-opt-group
+                          v-for="(group,index) in queryList.alertList"
+                          :key="index"
+                          :label="group[0].parentname_s"
+                          :allowClear="true"
+                        >
+                          <template v-for="groupitem in group">
+                            <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+                          </template>
+                        </a-select-opt-group>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="采集系统"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        mode="multiple"
+                        :maxTagCount="2"
+                        v-model="queryParam.agent_id"
+                        placeholder="请选择采集系统"
+                        @change="agentChange"
+                      >
+                        <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                        <a-select-opt-group
+                          v-for="(group,index) in queryList.agentList"
+                          :key="index"
+                          :label="group[0].parentname_s"
+                          :allowClear="true"
+                        >
+                          <template v-for="(groupitem,indexs) in group">
+                            <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                          </template>
+                        </a-select-opt-group>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </template>
+              </a-row>
+            </div>
+            <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+              <a-button type="primary" @click="query">查询</a-button>
+              <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-form>
+        </template>
+
+        <template #operation >
+          <a-row :style=" advanced?{ 'margin-top': '40px'}:{} ">
+            <a-col
+              :xs="24"
+              :sm="24"
+              :md="24"
+              :lg="{span: 8}"
+              :xl="{span: 6}"
+              class="table-operator">
+              <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
+              <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
+              <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
+            </a-col>
+            <a-col
+              :xs="24"
+              :sm="24"
+              :md="24"
+              :lg="{span: 12}"
+              :xl="{span: 9}"
+              style="text-align: right;"
+            >
+              <a-input-search
+                placeholder="输入关键字"
+                style="width: 200px"
+                @search="onSearch"
+              />
+              <a-icon style="padding:0px 15px;" type="setting" />
+              <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
+              <a-icon
+                style="padding:0px 12px; color:#1890ff"
+                spin
+                type="sync"
+                v-else
+                @click="refresh"
+                title="关闭自动刷新" />
+              <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
+              <audio src="" id="eventAudio" loop="loop" hidden></audio>
+            </a-col>
+            <a-col
+              :xs="24"
+              :sm="24"
+              :md="24"
+              :lg="{span: 12, offset: 12}"
+              :xl="{span: 9}"
+              style="text-align: right;"
+            >
+              <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
+                <a-badge
+                  :count="text | levelFilter"
+                  :title="text | levelTitleFilter"
+                  :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
+                    text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
+                      text==0?{backgroundColor:'#00c356'}:{}"
+                />
+                <span style="padding-left:7px; ">{{ value }}</span>
+              </div>
+            </a-col>
+          </a-row>
+        </template>
+
         <span slot="level" slot-scope="text">
           <a-badge
             :count="text | levelFilter"
@@ -306,6 +287,10 @@ import MDetail from '../modules/MDetail'
 import EventQuery from '../modules/MEventQuery'
 import Operation from '../modules/OperationLog'
 import correlation from '../modules/MCorrelation'
+import {
+  CiModelSelect,
+  CiInstanceSelect
+} from '@/components/Common'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
@@ -356,9 +341,7 @@ const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $ar
     aggregate {
       count
     }
-  }
-}`
-const menuQuery = gql`query($arising_time_gte: timestamp!, $arising_time_lte: timestamp!){
+  },
   m1: t_alert_aggregate(where: {state: {_eq: 0}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
@@ -403,7 +386,9 @@ export default {
     MDetail,
     EventQuery,
     Operation,
-    correlation
+    correlation,
+    CiModelSelect,
+    CiInstanceSelect
   },
   data () {
     return {
@@ -540,7 +525,6 @@ export default {
   },
   created () {
     this.getLevelList()
-    this.getMenuList()
     this.getqueryList()
   },
   computed: {
@@ -569,17 +553,17 @@ export default {
             },
             ...this.queryParam.domains ? {
               domains: {
-                _eq: this.queryParam.domains
+                _ilike: '/' + `%${this.queryParam.domains}$%` + '/'
               }
             } : {},
-            ...this.queryParam.node_types ? {
+            ...this.queryParam.model ? {
               node_types: {
-                _eq: this.queryParam.node_types
+                _ilike: this.queryParam.model
               }
             } : {},
-            ...this.queryParam.node_ids ? {
-              node_ids: {
-                _in: this.queryParam.node_ids
+            ...this.queryParam.node_id ? {
+              node_id: {
+                _in: this.queryParam.node_id
               }
             } : {},
             ...this.queryParam.alert_id ? {
@@ -599,6 +583,16 @@ export default {
     eventQuery () {
       // return console.log(this.record)
       this.$refs.eventQuery.open(this.record)
+    },
+    onModelInput (str = '') {
+      this.queryParam.model = str
+      // 重置选中的 Ci 实例
+      this.queryParam.node_id = []
+    },
+    onInstanceInput (arr = []) {
+      // FIXME: 有时候抛出的 arr 是字符串？
+      this.queryParam.node_id = Array.isArray(arr) ? arr : []
+      // TODO: 重置 kpi ？
     },
     /**
      * 获取现有的告警级别列表
@@ -620,20 +614,6 @@ export default {
           1: r.data.L2.aggregate.count,
           0: r.data.L1.aggregate.count
         }
-      })
-    },
-    /**
-     * 获取tab的告警数量列表
-     */
-    getMenuList () {
-      return apollo.clients.alert.query({
-        query: menuQuery,
-        variables: {
-          // arising_time: today
-          arising_time_gte: '2018-5-31 00:00:00',
-          arising_time_lte: '2018-5-31 23:59:59'
-        }
-      }).then(r => {
         const alarmMenuList = {
           0: r.data.m1.aggregate.count,
           1: r.data.m2.aggregate.count,
@@ -652,7 +632,6 @@ export default {
      */
     async getqueryList () {
       this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
       this.queryList.alertList = await queryList.alertList()
       this.queryList.agentList = await queryList.agentList()
     },
@@ -687,7 +666,6 @@ export default {
         this.timer = setInterval(() => {
           this.$refs['table'].refresh(true)
           this.getLevelList()
-          this.getMenuList()
         }, 30000)
       } else {
         clearInterval(this.timer)

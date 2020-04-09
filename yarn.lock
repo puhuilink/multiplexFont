@@ -4390,6 +4390,11 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+echarts-liquidfill@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/echarts-liquidfill/-/echarts-liquidfill-2.0.5.tgz#0d505a75c2dfb69950e18d440bdf3fe1795a0eed"
+  integrity sha512-3G19W5ngoh1L3BXYuD34g0Vd30ORWvQtyxRuL+7vmOZ3FkF6xkgD4pfcCL7QVAQOr+XZ4OiD2ot6dNGsRhflcg==
+
 echarts@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/echarts/-/echarts-4.5.0.tgz#2111960645a345eb819ddac4792a2c065bdff162"

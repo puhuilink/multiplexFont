@@ -125,10 +125,13 @@ export default {
           }
         }
       }).then(res => {
-        // this.cancel()
-        this.visible = false
         this.confirmLoading = false
-        // this.$emit('table').refresh(true)
+        this.$notification.success({
+          message: '系统提示',
+          description: '告警解决'
+        })
+        this.$emit('ok')
+        this.handleCancel()
       }).catch(err => {
         throw err
       }).finally(() => {

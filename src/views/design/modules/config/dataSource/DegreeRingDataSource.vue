@@ -8,22 +8,6 @@
         <a-button :disabled="!available" @click="change(true)">预览</a-button>
       </a-tooltip>
 
-      <a-form-item
-        label="时间"
-        :labelCol="formItemLayout.labelCol"
-        :wrapperCol="formItemLayout.wrapperCol"
-      >
-        <a-select style="width: 100%" v-model="timeRangeStart">
-          <a-select-option
-            v-for="(option, idx) in timeRangeSelectOptions"
-            :key="idx"
-            :value="option.value"
-          >
-            {{ option.name }}
-          </a-select-option>
-        </a-select>
-      </a-form-item>
-
       <ComboSelect :multiple="false" v-model="resourceConfig" />
 
       <a-form-item
@@ -60,7 +44,7 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 
 export default {
-  name: 'GaugeDataSource',
+  name: 'DegreeRingDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,

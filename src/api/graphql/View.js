@@ -42,17 +42,26 @@ export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!
 /**
  * 根据传入的 Array<{ kpi_code, ci_id }> 拼接视图组件查询语句
  * @param {Array<Object>} options
+ * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
  * @return {String}
  */
-export const generateDynamicQueryWithKpiCi = (options = []) => {
+export const generateDynamicQueryWithKpiCi = (options = [], timeRange) => {
   // hasura 每条数据的返回值键名不能重复，此处以索引做区分，后期再合并为数组
+  const _timeRange = timeRange ? `,
+  _and: {
+    arising_time: {_gte: "${timeRange.timeRangeStart}"},
+    _and: {arising_time: {_lte: "${timeRange.timeRangeEnd}"}
+    }
+  }` : ''
   /* eslint-disable */
   return options.map(({ kpi_code, ci_id }, index) => (
     `data${index}: t_kpi_current(where: {
       _and: {
         kpi_code: {_eq: ${kpi_code}},
-        ci_id: {_eq: "${ci_id}"}}
-    }) {
+        ci_id: {_eq: "${ci_id}"}
+        ${_timeRange}
+      }
+    }, limit: 1, order_by: {arising_time: desc_nulls_last}) {
       value: kpi_value_num
       kpi_code
       ci_id

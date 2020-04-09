@@ -97,8 +97,42 @@ export default {
      */
     staticSourceChange (code) {
       if (code !== '') {
-        // 在不同类型的静态数据配置类中配置自己的更新方法
-        this.config.dataConfig.staticDataConfig.updateStaticData(this.config, code)
+        switch (this.config.type) {
+          case 'Lines':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
+          case 'Bar':
+            const { barType } = this.config.proprietaryConfig
+            const typeMapping = new Map([
+              ['single', 'singleSeries'],
+              ['multiple', 'multipleSeries']
+            ])
+            Object.assign(
+              this.config.dataConfig.staticDataConfig.staticData,
+              Object.assign(_.omit(JSON.parse(code), ['series'])),
+              {
+                [typeMapping.get(barType)]: JSON.parse(code).series
+              }
+            )
+            break
+          case 'Gauge':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
+          case 'DegreeRing':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
+          default:
+            break
+        }
         this.change()
       }
     },

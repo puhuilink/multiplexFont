@@ -188,12 +188,16 @@ const compose = ({ selectedKpi, selectedInstance }) => {
 /**
  * 获取视图组件的指标
  * @param {*} option
+ * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
  * @return {Promise<any}
  */
-const getViewComponentKpiValueList = (option) => {
+const getViewComponentKpiValueList = (option, timeRange) => {
   const queryMeta = compose(option)
-  const query = generateDynamicQueryWithKpiCi(queryMeta)
-  return apollo.clients.cache.query({ query: parse(`{ ${query} }`) })
+  const query = generateDynamicQueryWithKpiCi(queryMeta, timeRange)
+
+  const server = timeRange ? apollo.clients.alert : apollo.clients.cache
+
+  return server.query({ query: parse(`{ ${query} }`) })
     .then(r => r.data)
     .then(r => Object.values(r))
     .then(list => {
@@ -209,15 +213,16 @@ const getViewComponentKpiValueList = (option) => {
 /**
  * 获取视图组件的实时数据
  * @param {*} data 视图组件配置
+ * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
  * @return {Promise<any>}
  */
-export const getComponentValues = async (data) => {
+export const getComponentValues = async (data, timeRange) => {
   try {
     // 1. 获取指标对应的label信息
     // 2. 获取指标的值
     const [{ kpiList, instanceList }, valueList] = await Promise.all([
       getKpiAndInstanceList(data.selectedInstance),
-      getViewComponentKpiValueList(data)
+      getViewComponentKpiValueList(data, timeRange)
     ])
     // 组合指标label与value
     const kpiMap = {}

@@ -28,6 +28,7 @@
               }"
               :parentNameS="selectedNode.name_s"
               :parentTreeS="selectedNode.tree_s"
+              :parentDid="selectedNode.did"
             />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>
