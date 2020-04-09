@@ -22,4 +22,16 @@ export default class GaugeStaticDataConfig {
     const staticData = _.cloneDeep(this.staticData)
     return JSON.stringify(staticData, null, '\t')
   }
+
+  /**
+   * 更新静态数据
+   * @param config
+   * @param code
+   */
+  updateStaticData (config, code) {
+    Object.assign(
+      config.dataConfig.staticDataConfig,
+      { staticData: JSON.parse(code) }
+    )
+  }
 }

@@ -59,7 +59,8 @@ export default {
       ['Clock', 'Clock'],
       ['Image', 'ImageConfig'],
       ['View', 'ViewConfig'],
-      ['Gauge', 'Gauge']
+      ['Gauge', 'Gauge'],
+      ['AlarmList', 'AlarmListConfig']
     ])
   }),
   computed: {

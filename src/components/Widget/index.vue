@@ -12,6 +12,11 @@
     :id="widget.widgetId"
     :ref="widget.widgetId"
     @click.stop="() => $emit('select', selectWidget)">
+
+    <!-- S 元素部件 -->
+    <component v-if="useComponent" :is="elementName" :elementProps="elementProps" ref="element" />
+    <!-- E 元素部件 -->
+
   </div>
 </template>
 
@@ -19,11 +24,15 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
+import { ELEMENTS, ELEMENTMAPPING } from '../Elements'
 import Widget from '@/model/widget'
 import _ from 'lodash'
 
 export default {
   name: 'Widget',
+  components: {
+    ...ELEMENTS
+  },
   props: {
     widget: {
       type: Object,
@@ -43,8 +52,21 @@ export default {
     render: null
   }),
   computed: {
+    // 选择的部件
     selectWidget () {
       return Object.assign({}, this.widget, { render: this.render })
+    },
+    // 在类型为元素时使用组件进行渲染
+    useComponent () {
+      return this.widget.config.category === 'ELEMENT'
+    },
+    // 元素组件名
+    elementName () {
+      return ELEMENTMAPPING.get(this.widget.config.type)
+    },
+    // 元素配置
+    elementProps () {
+      return this.widget.config.proprietaryConfig.props
     }
   },
   mounted () {
@@ -67,7 +89,8 @@ export default {
       : Factory.createElementFactory()
     // 根据类型创建图表
     this.render = widgetFactory.create(type, {
-      widget: this.widget
+      widget: this.widget,
+      element: this.$refs.element && this.$refs.element.$el
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
@@ -93,13 +116,13 @@ export default {
 </script>
 
 <style scoped lang="less">
-.widget {
-  position: absolute !important;
-  overflow: hidden;
+  .widget {
+    position: absolute !important;
+    overflow: hidden;
 
-  &--hover:hover {
-    box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+    &--hover:hover {
+      box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+    }
   }
-}
 
 </style>
