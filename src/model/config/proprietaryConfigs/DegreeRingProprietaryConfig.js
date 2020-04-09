@@ -37,7 +37,9 @@ class InnerCircle {
     radius = '150',
     color = '#195ba6',
     center = ['50%', '50%'],
-    data = [1],
+    data = [
+      { value: 0.1 }
+    ],
     itemStyle = {
       opacity: 1,
       color: '#195ba6'
@@ -56,7 +58,12 @@ class InnerCircle {
       }
     },
     label = {
-      formatter: '100',
+      formatter: function (param) {
+        // return param.seriesName + '\n'
+        // + param.name + '\n'
+        // + 'Value: ' + param.value;
+        return param.value * 100 + '%'
+      },
       fontSize: 20,
       color: '#fff'
     }

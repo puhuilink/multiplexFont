@@ -125,6 +125,12 @@ export default {
               { staticData: JSON.parse(code) }
             )
             break
+          case 'DegreeRing':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
           default:
             break
         }

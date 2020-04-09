@@ -190,7 +190,7 @@
       </a-tab-pane>
 
       <a-tab-pane tab="数据配置" key="3" forceRender>
-        <!-- <GaugeDataSource /> -->
+        <DegreeRingDataSource />
       </a-tab-pane>
 
     </a-tabs>
@@ -204,7 +204,7 @@ import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../propietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
-import GaugeDataSource from '../dataSource/GaugeDataSource'
+import DegreeRingDataSource from '../dataSource/DegreeRingDataSource'
 // eslint-disable-next-line
 import { ItemStyle } from '../../../../../model/config/proprietaryConfigs'
 
@@ -214,7 +214,7 @@ export default {
   components: {
     CommonTemplate,
     ColorPicker,
-    GaugeDataSource
+    DegreeRingDataSource
   },
   data: () => ({
     chartsType: 'healthDegree',
@@ -230,6 +230,7 @@ export default {
         case 'healthDegree':
           this.config.proprietaryConfig.innerCircle.data = [1]
           this.config.proprietaryConfig.innerCircle.label.color = '#fff'
+          this.config.proprietaryConfig.innerCircle.itemStyle.opacity = 1
           break
         case 'progressRing':
           this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8

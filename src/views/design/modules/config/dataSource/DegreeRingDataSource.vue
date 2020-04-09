@@ -44,7 +44,7 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 
 export default {
-  name: 'DegreeDataSource',
+  name: 'DegreeRingDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
