@@ -11,6 +11,7 @@ import {
   queryViewContent
 } from '../graphql/View'
 // import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 // TODO: default argus
 export const getViewList = function (variables = {}) {
@@ -242,4 +243,8 @@ export const getComponentValues = async (data, timeRange) => {
   } catch (e) {
     throw e
   }
+}
+
+export const copyView = async (viewId) => {
+  return axios.get(`/view/copy?viewId=${viewId}`)
 }
