@@ -91,7 +91,7 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import { PageView } from '@/layouts'
-import { getViewList, copyView } from '@/api/controller/View'
+import { getViewList, copyView, deleteViews } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
 import Template from '../../design/modules/template/index'
@@ -272,8 +272,21 @@ export default {
     /**
      * 处理删除事件
      */
-    handleDelete () {
-      console.log('Delete: ', this.selectedRows)
+    async handleDelete () {
+      // console.log('Delete: ', this.selectedRows)
+      try {
+        this.loading = false
+        await deleteViews(this.selectedRowKeys)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // refresh 后会自动结束 loading
+        this.$refs['table'].refresh()
+      } catch (e) {
+        this.loading = false
+        throw e
+      }
     }
   }
 }
