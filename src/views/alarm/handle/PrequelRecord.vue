@@ -293,12 +293,7 @@ export default {
       let [startTime, endTime] = e
       startTime = startTime.format('YYYY-MM-DDTHH:mm:ss')
       endTime = endTime.format('YYYY-MM-DDTHH:mm:ss')
-      // console.log(startTime)
-      this.queryParam = {
-        ...this.queryParam,
-        // startTime,
-        send_time: [startTime, endTime]
-      }
+      this.queryParam.send_time = [startTime, endTime]
     },
     timeCancel () {
       delete (this.queryParam.send_time)
@@ -336,8 +331,8 @@ export default {
             } : {},
             ...this.queryParam.send_time ? {
               send_time: {
-                _gt: this.queryParams.send_time[0],
-                _lt: this.queryParams.send_time[1]
+                _gt: this.queryParam.send_time[0],
+                _lt: this.queryParam.send_time[1]
               }
             } : {},
             ...this.queryParam.send_by ? {
