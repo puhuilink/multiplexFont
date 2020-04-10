@@ -170,7 +170,7 @@ export default {
         })
         this.$notification.success({
           message: '系统提示',
-          description: '编辑成功'
+          description: this.mode === 'Edit' ? '编辑成功' : '新增成功'
         })
         this.$emit('editSuccess')
         this.cancel()
