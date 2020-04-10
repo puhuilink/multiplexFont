@@ -232,7 +232,7 @@
       <a-button v-show="current !== 0" @click="prev">上一步</a-button>
       <a-button v-show="current !== 2" @click="next" :disabled="disabled">下一步</a-button>
       <a-button @click="cancel">取消</a-button>
-      <a-button v-show="current === 2">保存</a-button>
+      <a-button v-show="current === 2" :loading="loading" @click="submit">保存</a-button>
     </template>
   </a-modal>
 </template>
@@ -246,6 +246,7 @@ import {
 } from '@/components/Common'
 import { getBaselintCalendar } from '@/api/controller/BaselineCalendar'
 import _ from 'lodash'
+import { addBaselintDef, editBaselineDef } from '@/api/controller/BaselineDef'
 
 const TYPES = [
   {
@@ -452,6 +453,7 @@ export default {
     add () {
       this.visible = true
       this.title = '新建动态基线定义'
+      this.submit = this.insert
     },
     edit (record = {}) {
       this.visible = true
@@ -459,6 +461,7 @@ export default {
       this.record = {
         ...record
       }
+      this.submit = this.update
       // 合并第一步数据
       Object.assign(this.formData0, {
         'gen_type': record.gen_type,
@@ -503,9 +506,6 @@ export default {
       // 重置选中的 Ci 实例
       this.formData0.ci = []
       this.formData0.kpi = []
-      console.log(
-        this.formData0.kpi
-      )
     },
     onInstanceInput (arr = []) {
       // FIXME: 有时候抛出的 arr 是字符串？
@@ -571,6 +571,44 @@ export default {
      */
     async panelChange (moment) {
       await this.fetchCalenderList(moment)
+    },
+    async insert () {
+      try {
+        this.loading = true
+        await addBaselintDef({
+          ...this.formData0,
+          ...this.formData1
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '新增成功'
+        })
+        this.$emit('addSuccess')
+        this.visible = false
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async update () {
+      try {
+        this.loading = true
+        await editBaselineDef(this.record.uuid, {
+          ...this.formData0,
+          ...this.formData1
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+        this.$emit('editSuccess')
+        this.visible = false
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

@@ -31,3 +31,40 @@ export const queryBaselineDefList = gql`query ($where: t_baseline_def_bool_exp =
     uuid_policy
   }
 }`
+
+export const mutationUpdateBaselineDef = gql`mutation ($uuid: String, $set:t_baseline_def_set_input){
+  update_t_baseline_def (where: {
+    uuid: {
+      _eq: $uuid
+    }
+  }, _set: $set) {
+    affected_rows
+  }
+}`
+
+export const queryResourceInfo = gql`query ($modelName: String, $insatnceList: [String!], $kpiCodeList: [String!]) {
+  # model label
+  model: ngecc_model (where: {
+    name_s: {
+      _eq: $modelName
+    }
+  }) {
+    label: label_s
+  }
+  # instance label
+	ci: ngecc_instance (where: {
+    _id_s: {
+      _in: $insatnceList
+    }
+  }) {
+    label: label_s
+  }
+  # kpi label
+  kpi: ngecc_instance_values (where: {
+    kpicode_s: {
+      _in: $kpiCodeList
+    }
+  }) {
+    label: label_s
+  }
+}`

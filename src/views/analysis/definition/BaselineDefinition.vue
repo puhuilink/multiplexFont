@@ -84,7 +84,11 @@
 
     </CTable>
 
-    <BaselineDefinitionSchema ref="schema" />
+    <BaselineDefinitionSchema
+      ref="schema"
+      @editSuccess="$refs['table'].refresh(false)"
+      @addSuccess="() => { this.queryParams = {}; this.$refs['table'].refresh(true) }"
+    />
 
   </div>
 </template>
@@ -153,13 +157,27 @@ export default {
           title: '节点实例',
           dataIndex: 'ci_label',
           width: 300,
-          sorter: true
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: 'KPI名称',
           dataIndex: 'kpi_label',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: '周期',
