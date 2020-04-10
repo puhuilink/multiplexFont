@@ -86,22 +86,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-
-// FIXME: uuid ?
-const insert = gql`mutation insert_baseline_policy ($objects: [t_baseline_policy_insert_input!]! = []) {
-  insert_t_baseline_policy (objects: $objects) {
-    affected_rows
-  }
-}`
-
-const update = gql`mutation update_baseline_policy($uuid: String, $object: t_baseline_policy_set_input) {
-  update_t_baseline_policy(where: {uuid: {_eq: $uuid}}, _set: $object) {
-    affected_rows
-  }
-}
-`
+import { addBaselinePolicy, editBaselinePolicy } from '@/api/controller/BaselinePolicy'
 
 export default {
   name: 'FTDetail',
@@ -139,7 +124,7 @@ export default {
         }
         await this.$nextTick()
         this.form.setFieldsValue(record)
-      } else if (mode === 'See') {
+      } else if (mode === 'Add') {
         this.submit = this.insert
       }
       this.mode = mode
@@ -161,12 +146,9 @@ export default {
       try {
         this.loading = true
         const value = await this.getFormFields()
-        await apollo.clients.alert.mutate({
-          mutation: update,
-          variables: {
-            uuid: this.record.uuid,
-            object: value
-          }
+        await editBaselinePolicy({
+          uuid: this.record.uuid,
+          ...value
         })
         this.$notification.success({
           message: '系统提示',
@@ -186,13 +168,8 @@ export default {
     async insert () {
       try {
         this.loading = true
-        // const value = await this.getFormFields()
-        await apollo.clients.alert.mutate({
-          mutation: insert,
-          variables: {
-
-          }
-        })
+        const value = await this.getFormFields()
+        await addBaselinePolicy(value)
         this.$emit('addSuccess')
         this.cancel()
       } catch (e) {

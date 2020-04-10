@@ -70,7 +70,7 @@
 
       <template #operation>
         <a-button
-          @click="$refs.detail.open({}, 'New')"
+          @click="$refs.detail.open({}, 'Add')"
         >
           新建
         </a-button>
