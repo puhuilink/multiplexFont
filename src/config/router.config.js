@@ -250,14 +250,14 @@ export const asyncRouterMap = [
       {
         path: '/analysis',
         name: 'analysis',
-        redirect: '/analysis/strategy',
+        redirect: '/analysis/policy',
         component: RouteView,
         meta: { title: '数据分析', keepAlive: true, icon: 'deployment-unit', permission: [ 'analysis' ] },
         children: [
           {
-            path: '/analysis/strategy',
+            path: '/analysis/policy',
             name: 'BaselineStrategy',
-            component: () => import('@/views/analysis/strategy/BaselineStrategy'),
+            component: () => import('@/views/analysis/policy/BaselinePolicy'),
             meta: { title: '动态基线策略管理', keepAlive: true, permission: [ 'analysis' ] }
           },
           {

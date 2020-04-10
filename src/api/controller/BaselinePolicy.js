@@ -1,7 +1,10 @@
 import apollo from '@/utils/apollo'
 import {
   mutationInsert,
-  mutationUpdate
+  mutationUpdate,
+  mutationDelete,
+  queryList,
+  queryAllBaselinePolicyList
 } from '../graphql/BaselinePolicy'
 import uuid from 'uuid/v4'
 
@@ -26,4 +29,26 @@ export const editBaselinePolicy = function ({ uuid, ...value }) {
       object: value
     }
   })
+}
+
+export const deleteBaselinePolicies = function (uuids) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationDelete,
+    variables: {
+      uuids
+    }
+  })
+}
+
+export const queryBaselineList = function (variables) {
+  return apollo.clients.alert.query({
+    query: queryList,
+    variables
+  })
+}
+
+export const getAllBaselinePolicyList = function () {
+  return apollo.clients.alert.query({
+    query: queryAllBaselinePolicyList
+  }).then(r => r.data)
 }
