@@ -42,6 +42,12 @@ export const mutationUpdateBaselineDef = gql`mutation ($uuid: String, $set:t_bas
   }
 }`
 
+export const mutationAddBaselintDefs = gql`mutation ($objects: [t_baseline_def_insert_input!]!) {
+  insert_t_baseline_def (objects: $objects) {
+    affected_rows
+  }
+}`
+
 export const queryResourceInfo = gql`query ($modelName: String, $insatnceList: [String!], $kpiCodeList: [String!]) {
   # model label
   model: ngecc_model (where: {
