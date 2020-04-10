@@ -93,6 +93,7 @@
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
         >
           删除
         </a-button>
