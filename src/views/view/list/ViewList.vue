@@ -58,7 +58,7 @@
       <template #operation>
         <a-button @click="$refs['title'].add()">新建</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy">复制</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading">复制</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign">设计</a-button>
         <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
       </template>
@@ -91,7 +91,7 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import { PageView } from '@/layouts'
-import { getViewList } from '@/api/controller/View'
+import { getViewList, copyView } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
 import Template from '../../design/modules/template/index'
@@ -111,6 +111,8 @@ export default {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
+      // 复制按钮 loading
+      copyLoading: false,
       // 视图类型
       viewTypes: [
         { label: '综合视图', value: 'comprehensive' },
@@ -242,8 +244,22 @@ export default {
     /**
      * 处理复制事件
      */
-    handleCopy () {
-      console.log('Copy: ', this.selectedRows)
+    async handleCopy () {
+      // console.log('Copy: ', this.selectedRows)
+      const [viewId] = this.selectedRowKeys
+      try {
+        this.copyLoading = true
+        await copyView(viewId)
+        this.$notification.success({
+          message: '系统提示',
+          description: '复制成功'
+        })
+        this.$refs['table'].refresh()
+      } catch (e) {
+        throw e
+      } finally {
+        this.copyLoading = false
+      }
     },
     /**
      * 处理设计事件

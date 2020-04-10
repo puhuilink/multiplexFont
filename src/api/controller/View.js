@@ -11,6 +11,7 @@ import {
   queryViewContent
 } from '../graphql/View'
 // import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 // TODO: default argus
 export const getViewList = function (variables = {}) {
@@ -195,7 +196,7 @@ const getViewComponentKpiValueList = (option, timeRange) => {
   const queryMeta = compose(option)
   const query = generateDynamicQueryWithKpiCi(queryMeta, timeRange)
 
-  const server = timeRange ? apollo.clients.alert : apollo.clients.cache
+  const server = (timeRange && timeRange.timeRangeStart !== timeRange.timeRangeEnd) ? apollo.clients.alert : apollo.clients.cache
 
   return server.query({ query: parse(`{ ${query} }`) })
     .then(r => r.data)
@@ -213,10 +214,12 @@ const getViewComponentKpiValueList = (option, timeRange) => {
 /**
  * 获取视图组件的实时数据
  * @param {*} data 视图组件配置
- * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
+ * @param {Object | Null} timeRange 要查询的时间段：不传之或值为 falsy 时直接查询最新数据
+ * @param {Number} limit 要查询的条数：不传值或值为 falsy 时查询所有条目
  * @return {Promise<any>}
  */
-export const getComponentValues = async (data, timeRange) => {
+export const getComponentValues = async (data, timeRange, limit) => {
+  // TODO: limit 动态判断？
   try {
     // 1. 获取指标对应的label信息
     // 2. 获取指标的值
@@ -242,4 +245,8 @@ export const getComponentValues = async (data, timeRange) => {
   } catch (e) {
     throw e
   }
+}
+
+export const copyView = async (viewId) => {
+  return axios.get(`/view/copy?viewId=${viewId}`)
 }

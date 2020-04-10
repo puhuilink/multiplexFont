@@ -42,7 +42,7 @@ export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!
 /**
  * 根据传入的 Array<{ kpi_code, ci_id }> 拼接视图组件查询语句
  * @param {Array<Object>} options
- * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
+ * @param {Object | Undefined} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
  * @return {String}
  */
 export const generateDynamicQueryWithKpiCi = (options = [], timeRange) => {
@@ -61,7 +61,7 @@ export const generateDynamicQueryWithKpiCi = (options = [], timeRange) => {
         ci_id: {_eq: "${ci_id}"}
         ${_timeRange}
       }
-    }, limit: 1, order_by: {arising_time: desc_nulls_last}) {
+    }, order_by: {arising_time: desc_nulls_last}) {
       value: kpi_value_num
       kpi_code
       ci_id
