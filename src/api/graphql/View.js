@@ -61,7 +61,7 @@ export const generateDynamicQueryWithKpiCi = (options = [], timeRange) => {
         ci_id: {_eq: "${ci_id}"}
         ${_timeRange}
       }
-    }, limit: 1, order_by: {arising_time: desc_nulls_last}) {
+    }, order_by: {arising_time: desc_nulls_last}) {
       value: kpi_value_num
       kpi_code
       ci_id

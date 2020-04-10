@@ -214,10 +214,12 @@ const getViewComponentKpiValueList = (option, timeRange) => {
 /**
  * 获取视图组件的实时数据
  * @param {*} data 视图组件配置
- * @param {Object | Null} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
+ * @param {Object | Null} timeRange 要查询的时间段：不传之或值为 falsy 时直接查询最新数据
+ * @param {Number} limit 要查询的条数：不传值或值为 falsy 时查询所有条目
  * @return {Promise<any>}
  */
-export const getComponentValues = async (data, timeRange) => {
+export const getComponentValues = async (data, timeRange, limit) => {
+  // TODO: limit 动态判断？
   try {
     // 1. 获取指标对应的label信息
     // 2. 获取指标的值
