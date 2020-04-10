@@ -12,12 +12,12 @@
               <a-form-item label="故障状态">
                 <a-select
                   allowClear
-                  v-model="queryParam.faultStatus"
+                  v-model="queryParam.incident_state"
                   placeholder="请选择"
                   default-value="checkall"
                 >
                   <a-select-option
-                    v-for="item in faultStatus"
+                    v-for="item in incidentStateList"
                     :key="item.value"
                     :value="item.value"
                   >
@@ -35,7 +35,7 @@
                   default-value="checkall"
                 >
                   <a-select-option
-                    v-for="item in faultStatus"
+                    v-for="item in incidentStateList"
                     :key="item.value"
                     :value="item.value"
                   >
@@ -48,7 +48,7 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="故障类型">
-                  <a-input v-model="queryParam.faultType" placeholder=""/>
+                  <a-input v-model="queryParam.incident_type" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
@@ -107,22 +107,24 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <s-table
+      <C-table
         ref="table"
         size="small"
-        rowKey="key"
+        rowKey="incident_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: 2000, y:400 }"
+        :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       >
+        <!-- <template #query>
+        </template> -->
         <span slot="message" slot-scope="text">
-          <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+          <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
         </span>
-      </s-table>
+      </C-table>
       <!-- E 列表 -->
     </a-card>
   </div>
@@ -130,34 +132,44 @@
 
 <script>
 import { STable, Ellipsis } from '@/components'
-import { getGenerateFaultList } from '@/api/generateFault'
+// import { getGenerateFaultList } from '@/api/generateFault'
 import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
-  pagination: t_alert_aggregate(where: $where) {
+const query = gql`query($where: t_incident_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_order_by!]) {
+  pagination: t_incident_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
-    state
-    dev_name
-    app_name
-    severity
-    message
-    first_arising_time
-    arising_time
-    count
-    agent_id
-    close_time
-    close_by
+  data: t_incident(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
+    active_by
+    active_time
+    forward_destination
+    forward_records
+    forward_type
+    incident_alert_size
+    incident_description
+    incident_id
+    incident_severity
+    incident_state
+    incident_type
+    life_cycle
+    mandatory_alert_ids
+    optional_alert_ids
+    order_comments
     order_id
-    alert_id
-    related
-    instance
-    instance2
+    order_status
+    prepare_time
+    resolve_by
+    resolve_time
+    rule_id
+    rule_title
+    seal_time
+    send_count
+    send_cycle
+    update_time
   }
 }`
 export default {
@@ -173,25 +185,25 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
-      faultStatus: [
+      incidentStateList: [
         {
-          value: '0',
+          value: -10,
           label: '已取消'
         },
         {
-          value: '1',
+          value: 0,
           label: '已产生'
         },
         {
-          value: '2',
+          vlaue: 10,
           label: '已激活'
         },
         {
-          value: '3',
+          value: 20,
           label: '已封挡'
         },
         {
-          value: '4',
+          value: 30,
           label: '已解决'
         }
       ],
@@ -199,96 +211,96 @@ export default {
       columns: [
         {
           title: '故障编号',
-          dataIndex: 'id',
+          dataIndex: 'incident_id',
           sorter: true,
           align: 'center',
-          width: 100,
-          fixed: 'left'
+          width: 200
         },
         {
           title: '故障状态',
-          dataIndex: 'faultStatus',
+          dataIndex: 'incident_state',
           align: 'center',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            this.incidentStateList.forEach(element => {
+              if (element.value === text) {
+                text = element.label
+              }
+            })
+            return text
+          }
         },
         {
           title: '前转规则名称',
-          dataIndex: 'forwardRule',
+          dataIndex: 'forward_rule_title',
           align: 'left',
           width: 200
         },
         {
           title: '故障级别',
-          dataIndex: 'faultLevel',
+          dataIndex: 'incident_severity',
           align: 'center',
           width: 100,
           sorter: true
         },
         {
           title: '故障类型',
-          dataIndex: 'faultType',
-          align: 'center',
+          dataIndex: 'incident_type',
           width: 120,
           sorter: true
         },
         {
           title: '故障描述',
-          dataIndex: 'message',
-          align: 'center',
+          dataIndex: 'incident_description',
           width: 300,
-          scopedSlots: { customRender: 'message' }
+          scopedSlots: { customRender: 'message' },
+          sorter: true
+          // ellipsis: true
         },
         {
           title: '最大告警数量',
-          dataIndex: 'maxCount',
-          align: 'center',
-          width: 120
+          dataIndex: 'incident_alertSize',
+          width: 150,
+          sorter: true
         },
         {
           title: '创建人',
-          dataIndex: 'originator',
-          align: 'center',
-          width: 100
+          dataIndex: 'active_by',
+          width: 150,
+          sorter: true
         },
         {
           title: '解决人',
-          dataIndex: 'solveMan',
-          align: 'center',
-          width: 100
+          dataIndex: 'resolve_by',
+          width: 150,
+          sorter: true
         },
         {
           title: '产生时间',
-          dataIndex: 'productTime',
-          align: 'center',
-          width: 140
+          dataIndex: 'active_time',
+          width: 180,
+          sorter: true
         },
         {
           title: '激活时间',
-          dataIndex: 'activeTime',
-          align: 'center',
-          width: 140
+          dataIndex: 'send_active_time',
+          width: 180,
+          sorter: true
         },
         {
           title: '封挡时间',
-          dataIndex: 'blockTime',
-          align: 'center',
-          width: 140
+          dataIndex: 'seal_time',
+          width: 180,
+          sorter: true
         },
         {
           title: '解决时间',
-          dataIndex: 'solveTime',
-          align: 'center',
-          width: 140
+          dataIndex: 'prepare_time',
+          sorter: true,
+          width: 180
         }
       ],
-      loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getGenerateFaultList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -296,12 +308,73 @@ export default {
     }
   },
   filters: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
   methods: {
     /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+
+    loadData (parameter) {
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.where,
+            ...this.queryParam.domains ? {
+              domains: {
+                _eq: this.queryParam.domains
+              }
+            } : {},
+            ...this.queryParam.node_types ? {
+              node_types: {
+                _eq: this.queryParam.node_types
+              }
+            } : {},
+            ...this.queryParam.node_ids ? {
+              node_ids: {
+                _in: this.queryParam.node_ids
+              }
+            } : {},
+            ...this.queryParam.alert_id ? {
+              alert_id: {
+                _in: this.queryParam.alert_id
+              }
+            } : {},
+            ...this.queryParam.agent_id ? {
+              agent_id: {
+                _in: this.queryParam.agent_id
+              }
+            } : {},
+            ...this.queryParam.state ? {
+              state: {
+                _eq: this.queryParam.state
+              }
+            } : {},
+            ...this.queryParam.severity ? {
+              severity: {
+                _eq: this.queryParam.severity
+              }
+            } : {},
+            ...this.queryParam.message ? {
+              message: {
+                _ilike: this.queryParam.message
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
     },
     /**
      * 日期时间空间选择
