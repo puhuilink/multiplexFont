@@ -131,12 +131,41 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getGenerateFaultList } from '@/api/generateFault'
+import CTable from '@/components/Table/CTable'
+import gql from 'graphql-tag'
+import apollo from '@/utils/apollo'
 
+const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
+  pagination: t_alert_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: t_alert(offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
+    state
+    dev_name
+    app_name
+    severity
+    message
+    first_arising_time
+    arising_time
+    count
+    agent_id
+    close_time
+    close_by
+    order_id
+    alert_id
+    related
+    instance
+    instance2
+  }
+}`
 export default {
   name: 'GenerateFault',
   components: {
     STable,
-    Ellipsis
+    Ellipsis,
+    CTable
   },
   data () {
     return {

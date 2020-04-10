@@ -260,7 +260,6 @@ export default {
   created () {
     window.form = this.form
     // this.form.setFieldsValue(record)
-    this.getqueryList()
   },
   beforeMount () {
   },
@@ -269,6 +268,7 @@ export default {
       this.visible = true
       this.record = record
       this.mode = mode
+      this.getqueryList()
     },
     async getqueryList () {
       this.queryList.userList = await queryList.userList()
