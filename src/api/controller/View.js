@@ -196,7 +196,7 @@ const getViewComponentKpiValueList = (option, timeRange) => {
   const queryMeta = compose(option)
   const query = generateDynamicQueryWithKpiCi(queryMeta, timeRange)
 
-  const server = timeRange ? apollo.clients.alert : apollo.clients.cache
+  const server = (timeRange && timeRange.timeRangeStart !== timeRange.timeRangeEnd) ? apollo.clients.alert : apollo.clients.cache
 
   return server.query({ query: parse(`{ ${query} }`) })
     .then(r => r.data)
