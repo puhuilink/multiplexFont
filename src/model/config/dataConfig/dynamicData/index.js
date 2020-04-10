@@ -60,18 +60,12 @@ export class TimeRange {
 
   /**
    * 获取时间段
-   * @return {Object | null} // 时间段长度为0时，返回 null
+   * @return {{ timeRangeStart: String, timeRangeEnd: String }} // 时间段
    */
   static getOption () {
-    const timeRangeStart = moment().add(this.timeRangeStart).format(TimeRange.FORMAT)
-    const timeRangeEnd = moment().add(this.timeRangeEnd).format(TimeRange.FORMAT)
-    if (timeRangeEnd === timeRangeStart) {
-      return null
-    } else {
-      return {
-        timeRangeStart: moment().add(this.timeRangeStart).format(TimeRange.FORMAT),
-        timeRangeEnd: moment().add(this.timeRangeEnd).format(TimeRange.FORMAT)
-      }
+    return {
+      timeRangeStart: moment().add(this.timeRangeStart).format(TimeRange.FORMAT),
+      timeRangeEnd: moment().add(this.timeRangeEnd).format(TimeRange.FORMAT)
     }
   }
 }

@@ -71,6 +71,8 @@ import {
 } from '@/api/controller/Instance'
 import { getKpiList } from '@/api/controller/Kpi'
 import { getModelAttributeList } from '@/api/controller/ModelAttributes'
+// eslint-disable-next-line
+import { Ellipsis } from '@/components'
 
 export default {
   name: 'ResourceInstanceList',
@@ -116,7 +118,8 @@ export default {
         title: '名称',
         dataIndex: 'name_s',
         sorter: true,
-        width: 600
+        width: 300
+        // fixed: true
       },
       {
         title: '显示名称',
@@ -125,14 +128,9 @@ export default {
         width: 300
       },
       {
-        title: '父节点',
-        dataIndex: 'parentname_s',
-        width: 300
-      },
-      {
         title: '所属节点类型',
         dataIndex: 'nodetype_s',
-        width: 300
+        width: 200
       }
     ]
   }),
@@ -144,6 +142,11 @@ export default {
         return this.columns
           .map(e => e.width || 0)
           .reduce((a, b) => a + b) + 36
+      }
+    },
+    columnFieldList: {
+      get () {
+        return this.columns.map(e => e.dataIndex)
       }
     }
   },
@@ -216,14 +219,30 @@ export default {
           .map(e => ({
             title: e.label_s,
             dataIndex: e.name_s,
-            width: e.width_i,
+            // 老系统的宽度指定较小，当文字长度不够用时会发生换行，14 为当前 font-size
+            width: (e.label_s.length * 14) <= Number(e.width_i) ? Number(e.width_i) + 20 : 200,
             sorter: true
           }))
 
         this.columns = [
           ...this.columns,
           ...columns
-        ]
+        ].map(el => ({
+          ...el,
+          customRender: (text, record) => {
+            const originalTitle = el.dataIndex
+            const title = originalTitle.toLowerCase()
+            const value = record[originalTitle] || record[title] || record[`${title}_s`] || record[`${title}_i`] || record[`${title}_b`] || record[`${title}_t`] || ''
+            const ellipsis = this.$createElement(Ellipsis, {
+              props: {
+                width: el.width - 20 + 'px',
+                length: el.width / 10,
+                tooltip: true
+              }
+            }, [value])
+            return ellipsis
+          }
+        }))
       } catch (e) {
         throw e
       }
