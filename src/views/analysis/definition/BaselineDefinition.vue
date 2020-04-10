@@ -58,10 +58,10 @@
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
             <a-button style="margin-left: 8px" @click="queryParams = Object.assign({}, initialQueryParams)">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
+            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+            </a> -->
           </span>
         </a-form>
       </template>
@@ -233,7 +233,7 @@ export default {
   computed: {
     scrollX: {
       get () {
-        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2)) + 36
       }
     }
   },
