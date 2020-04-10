@@ -72,7 +72,7 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
+        <!-- <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="edit"
@@ -82,6 +82,17 @@
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
+        >
+          删除
+        </a-button> -->
+        <a-button>新建</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
         >
           删除
         </a-button>
