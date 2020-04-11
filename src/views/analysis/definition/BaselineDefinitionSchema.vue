@@ -244,9 +244,20 @@ import {
   KpiSelect,
   BaselineStrategySelect
 } from '@/components/Common'
-import { getBaselintCalendar } from '@/api/controller/BaselineCalendar'
+import { getBaselineCalendar, addBaselineCalendar } from '@/api/controller/BaselineCalendar'
 import _ from 'lodash'
 import { addBaselintDef, editBaselineDef } from '@/api/controller/BaselineDef'
+
+const cycleTypeMap = function (str) {
+  switch (str.charAt(str.length - 2)) {
+    case '天':
+      return 'Day'
+    case '月':
+      return 'Month'
+    case '年':
+      return 'Year'
+  }
+}
 
 const TYPES = [
   {
@@ -319,6 +330,7 @@ export default {
       'round_num': 0
     },
     formData2: [],
+    changedCalendar: new Map(),
     // 按钮是否 loading
     loading: false,
     layout,
@@ -442,6 +454,8 @@ export default {
     current: {
       immediate: true,
       async handler (current) {
+        // reset
+        this.changedCalendar = new Map()
         // 到第三部日期选择时，默认请求当月配置
         if (current === 2) {
           await this.fetchCalenderList()
@@ -483,9 +497,9 @@ export default {
       const uuid = _.get(this, 'record.uuid')
       try {
         // TODO: loading
-        const list = await getBaselintCalendar(uuid, moment)
+        const list = await getBaselineCalendar(uuid, moment)
         list.forEach(el => {
-          el.cycle_info = el.cycle_info || this.defaultOptionValue
+          el.cycle_info = el.cycle_info || this.changedCalendar.get(el.calendar) || this.defaultOptionValue
         })
         this.formData2 = list
       } catch (e) {
@@ -563,7 +577,12 @@ export default {
       // item.calendar_info = value
       const targetItem = this.formData2.find(el => el.calendar === calendar)
       targetItem.cycle_info = value
-      console.log(targetItem)
+      // console.log(targetItem)
+      if (value !== this.defaultOptionValue) {
+        this.changedCalendar.set(targetItem.calendar, value)
+      } else {
+        this.changedCalendar.has(targetItem.calendar) && this.changedCalendar.delete(targetItem.calendar)
+      }
     },
     /**
      * 切换年份 / 月份回调
@@ -575,10 +594,15 @@ export default {
     async insert () {
       try {
         this.loading = true
-        await addBaselintDef({
+        const uuid = await addBaselintDef({
           ...this.formData0,
           ...this.formData1
-        })
+        }).then(r => r.data.data.returning[0].uuid)
+        await addBaselineCalendar(uuid, Array.from(this.changedCalendar).map(([key, value]) => ({
+          calendar: key,
+          'cycle_info': value,
+          'cycle_type': cycleTypeMap(value)
+        })))
         this.$notification.success({
           message: '系统提示',
           description: '新增成功'

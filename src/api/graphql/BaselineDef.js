@@ -43,8 +43,10 @@ export const mutationUpdateBaselineDef = gql`mutation ($uuid: String, $set:t_bas
 }`
 
 export const mutationAddBaselintDefs = gql`mutation ($objects: [t_baseline_def_insert_input!]!) {
-  insert_t_baseline_def (objects: $objects) {
-    affected_rows
+  data: insert_t_baseline_def (objects: $objects) {
+    returning {
+      uuid
+    }
   }
 }`
 
