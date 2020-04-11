@@ -5,7 +5,8 @@ import {
   queryBaselineDefList,
   queryResourceInfo,
   mutationUpdateBaselineDef,
-  mutationAddBaselintDefs
+  mutationAddBaselintDefs,
+  mutationDeleteBaselineDefList
 } from '../graphql/BaselineDef'
 
 export const getBaselineDefList = function (variables = {}) {
@@ -65,6 +66,15 @@ export const editBaselineDef = async function (uuid, { kpi, ci, model, ...set })
         ...set,
         ...resourceInfo
       }
+    }
+  })
+}
+
+export const deleteBaselineDefs = async function (uuids) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationDeleteBaselineDefList,
+    variables: {
+      uuids
     }
   })
 }

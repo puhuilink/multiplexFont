@@ -76,3 +76,20 @@ export const queryResourceInfo = gql`query ($modelName: String, $insatnceList: [
     label: label_s
   }
 }`
+
+export const mutationDeleteBaselineDefList = gql`mutation ($uuids: [String!]) {
+  delete_t_baseline_calendar (where: {
+    uuid_def: {
+      _in: $uuids
+    }
+  }) {
+    affected_rows
+  }
+  delete_t_baseline_def (where: {
+    uuid: {
+      _in: $uuids
+    }
+  }) {
+    affected_rows
+  }
+}`

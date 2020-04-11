@@ -99,7 +99,7 @@ import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../design/modules/template/index'
-import { getBaselineDefList } from '@/api/controller/BaselineDef'
+import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import { getResourceInstanceList } from '@/api/controller/Resource'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 import { CiModelSelect, KpiSelect } from '@/components/Common'
@@ -301,8 +301,19 @@ export default {
     * 删除选中项
     */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-    console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        await deleteBaselineDefs(this.selectedRowKeys)
+        this.$refs['table'].refresh()
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+      } catch (e) {
+        throw e
+      }
     }
   },
   created () {
