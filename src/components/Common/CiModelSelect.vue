@@ -53,7 +53,9 @@ export default {
         return this.value
       },
       set (v = '') {
-        this.$emit('input', v, this.label)
+        // clear 时触发为 空
+        const label = v ? this.label : ''
+        this.$emit('input', v, label)
       }
     }
   },
@@ -79,10 +81,12 @@ export default {
     handleChange (value) {
       // console.log(arguments)
       this._value = value
+      console.log(value)
     },
     select (value) {
       const { key } = arguments[1].data
       const label = key.split('-').pop()
+      console.log(label)
       // antd 提供了 labelInValue 属性来抛出 label，但这也改变了 value 传值的结构
       // 此处在绑定 key 时记录了 label
       this.$emit('input:label', label)

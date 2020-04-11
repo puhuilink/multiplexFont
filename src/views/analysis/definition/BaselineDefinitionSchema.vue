@@ -290,8 +290,6 @@ export default {
     BaselineStrategySelect
   },
   props: {},
-  // TODO: 库里不光存放了 ci、kpi的值，还存放其 label 作为冗余
-  // FIXME: 关联查询只差了父子代，子孙代未查出
   data: (vm) => ({
     // 当前步骤
     current: 0,
