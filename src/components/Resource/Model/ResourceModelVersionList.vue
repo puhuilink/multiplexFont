@@ -8,6 +8,37 @@
       :rowSelection="null"
       :scroll="{ x: 1000, y: 850}"
     >
+
+      <template #query>
+        <a-form layout="inline">
+          <div class="fold">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="版本号"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input
+                    allowClear
+                    type="number"
+                    min="0"
+                    v-model.number="queryParams.version_i"
+                    placeholder=""/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(15.5px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+          </span>
+        </a-form>
+      </template>
     </CTable>
   </div>
 </template>
@@ -105,10 +136,18 @@ export default {
         variables: {
           ...parameter,
           where: {
-            ...this.where
+            ...this.where,
+            ...(this.queryParams.version_i !== undefined && this.queryParams.version_i !== '') ? {
+              version_i: {
+                _eq: Number(this.queryParams.version_i)
+              }
+            } : {}
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中
@@ -129,5 +168,8 @@ export default {
 </script>
 
 <style lang="less">
-
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>
