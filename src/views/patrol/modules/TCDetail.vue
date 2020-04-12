@@ -38,7 +38,7 @@ export default {
       columns: [
         {
           title: '状态',
-          dataIndex: 'task_status'
+          dataIndex: 'work_state'
         },
         {
           title: '开始时间',

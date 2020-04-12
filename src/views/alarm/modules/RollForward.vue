@@ -231,12 +231,11 @@ export default {
       ITypeList: []
     }
   },
-  created () {
-    this.getUserList()
-    this.getIncidentType()
-  },
+  created () {},
   methods: {
     open (idList, record) {
+      this.getUserList()
+      this.getIncidentType()
       this.visible = true
       this.idList = idList
       this.record = record
