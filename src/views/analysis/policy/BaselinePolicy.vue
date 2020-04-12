@@ -2,7 +2,7 @@
  * 动态基线策略
  */
 <template>
-  <div class="baseline-strategy">
+  <div class="baseline-policy">
     <!-- S 列表 -->
     <CTable
       ref="table"
@@ -70,7 +70,7 @@
 
       <template #operation>
         <a-button
-          @click="$refs.detail.open({}, 'New')"
+          @click="$refs.detail.open({}, 'Add')"
         >
           新建
         </a-button>
@@ -105,51 +105,11 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/BSDetail'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-import Template from '../../design/modules/template/index'
-
-const query = gql`query instanceList($where: t_baseline_policy_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_baseline_policy_order_by!]) {
-    pagination: t_baseline_policy_aggregate(where: $where) {
-      aggregate {
-        count
-      }
-    }
-  data:  t_baseline_policy (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
-    bottomlinedata_provider
-    bottomlinedata_range_from
-    bottomlinedata_range_to
-    cal_interval
-    cron_expression
-    cycle_count
-    middledata_provider
-    middlelinedata_range_from
-    middlelinedata_range_to
-    sample_radio
-    sigma
-    status
-    title
-    toplinedata_provider
-    toplinedata_range_from
-    update_time
-    uuid
-    toplinedata_range_to
-  }
-}`
-
-const deletePolicy = gql`mutation delete_baseline_policy($uuids: [String!]! = []) {
-  delete_t_baseline_policy(where: {uuid: {
-    _in: $uuids
-  }}) {
-    affected_rows
-  }
-}
-`
+import { queryBaselineList, deleteBaselinePolicies } from '@/api/controller/BaselinePolicy'
 
 export default {
-  name: 'BaselineStrategy',
+  name: 'BaselinePolicy',
   components: {
-    Template,
     CTable,
     Ellipsis,
     detail
@@ -241,14 +201,7 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await apollo.clients.alert.mutate({
-          mutation: deletePolicy,
-          variables: {
-            uuids: [
-              ...this.selectedRowKeys
-            ]
-          }
-        })
+        await deleteBaselinePolicies(this.selectedRowKeys)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
@@ -262,32 +215,26 @@ export default {
       }
     },
     loadData (parameter) {
-      // return console.log(
-      //   this.queryParams.title.trim()
-      // )
       // 清空选中
       this.selectedRowKeys = []
-      return apollo.clients.alert.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.queryParams.title ? {
-              title: {
-                _ilike: `%${this.queryParams.title.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.cycle_count !== undefined ? {
-              cycle_count: {
-                _eq: Number(this.queryParams.cycle_count)
-              }
-            } : {},
-            ...this.queryParams.cron_expression !== undefined ? {
-              cron_expression: {
-                _like: `%${this.queryParams.cron_expression.trim()}%`
-              }
-            } : {}
-          }
+      return queryBaselineList({
+        ...parameter,
+        where: {
+          ...this.queryParams.title ? {
+            title: {
+              _ilike: `%${this.queryParams.title.trim()}%`
+            }
+          } : {},
+          ...this.queryParams.cycle_count !== undefined ? {
+            cycle_count: {
+              _eq: Number(this.queryParams.cycle_count)
+            }
+          } : {},
+          ...this.queryParams.cron_expression !== undefined ? {
+            cron_expression: {
+              _like: `%${this.queryParams.cron_expression.trim()}%`
+            }
+          } : {}
         }
       }).then(r => r.data)
     },

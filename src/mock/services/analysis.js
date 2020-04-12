@@ -72,5 +72,5 @@ const definitionList = (options) => {
   })
 }
 
-Mock.mock(/\/strategy\/list/, 'get', strategyList)
+Mock.mock(/\/policy\/list/, 'get', strategyList)
 Mock.mock(/\/definition\/list/, 'get', definitionList)

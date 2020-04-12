@@ -2,7 +2,7 @@
 import { axios } from '@/utils/request'
 
 const api = {
-  strategyList: '/strategy/list',
+  strategyList: '/policy/list',
   definitionList: '/definition/list'
 }
 

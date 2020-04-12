@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { getAllBaselineStrategyList } from '@/api/controller/Baseline'
+import { getAllBaselinePolicyList } from '@/api/controller/BaselinePolicy'
 
 export default {
   name: 'BaselineStrategySelect',
@@ -55,7 +55,7 @@ export default {
     async loadData (query = {}) {
       try {
         this.loading = true
-        const { data } = await getAllBaselineStrategyList(query)
+        const { data } = await getAllBaselinePolicyList(query)
         this.options = data
       } catch (e) {
         this.options = []
