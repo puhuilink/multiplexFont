@@ -7,11 +7,18 @@ import {
   queryInsanceList,
   queryKpiList,
   queryKpiSelectList,
-  mutationBatchDeleteModel
+  mutationBatchDeleteModel,
+  queryMaxDid
 } from '../graphql/Resource'
 import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
 import store from '@/store'
+
+const fetchMaxModelDid = function () {
+  return apollo.clients.resource.query({
+    query: queryMaxDid
+  }).then(r => r.data.data.aggregate.max.did)
+}
 
 /**
  * 资源实例列表
@@ -127,7 +134,7 @@ export const editModelOld = function (did, set = {}) {
  * @param {Array} objects
  * @return {*}
  */
-export const addModels = function (objects = []) {
+const addModels = function (objects = []) {
   // return addModelsOld(objects)
   // （旧系统的）构建树方式，是认为 name_s 唯一的
   return apollo.clients.resource.mutate({
@@ -136,6 +143,14 @@ export const addModels = function (objects = []) {
       objects
     }
   })
+}
+
+export const addModel = async function (object = {}) {
+  const did = (await fetchMaxModelDid()) + 1
+  return addModels([{
+    ...object,
+    did
+  }])
 }
 
 /**

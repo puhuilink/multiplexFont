@@ -131,6 +131,17 @@ export const mutationBatchDeleteModel = gql`mutation ($nameList: [String!], $did
   }
 }`
 
+export const queryMaxDid = gql`query MyQuery {
+  data: ngecc_model_aggregate {
+    aggregate {
+      max {
+        did
+      }
+    }
+  }
+}
+`
+
 // export const queryKpiSelectList = gql`query ($where: ngecc_instance_values_bool_exp! = {}) {
 //   data: ngecc_instance_values (where: $where) {
 //     label: label_s
