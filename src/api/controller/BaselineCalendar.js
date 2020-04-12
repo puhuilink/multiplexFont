@@ -16,7 +16,7 @@ export const getBaselineCalendar = async function (baselineDefId, month) {
   const startDay = Number(moment(month).startOf('month').format('DD'))
   const endDay = Number(moment(month).endOf('month').format('DD'))
 
-  console.log(startDay, endDay)
+  // console.log(startDay, endDay)
   const defaultCalendar = []
 
   for (let m = moment(calendarStart); m.isSameOrBefore(moment(calendarEnd)); m.add(1, 'days')) {

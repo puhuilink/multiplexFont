@@ -88,6 +88,60 @@ export const queryKpiSelectList = nodeType => {
   }
 }
 
+export const mutationBatchDeleteModel = gql`mutation ($nameList: [String!], $didList: [Int!]) {
+  # model
+  delete_ngecc_model (where: {
+    name_s: {
+      _in: $nameList
+    }
+  }) {
+    affected_rows
+  }
+  # ci
+  delete_ngecc_instance (where: {
+    parentname_s: {
+      _in: $nameList
+    }
+  }) {
+    affected_rows
+  }
+  # kpi
+  delete_ngecc_instance_values (where: {
+    parentname_s: {
+      _in: $nameList
+    }
+  }) {
+    affected_rows
+  }
+  # relation attribute
+  delete_ngecc_relationattribute (where: {
+    did: {
+      _in:$didList
+    }
+  }) {
+    affected_rows
+  }
+  # model attribute
+  delete_ngecc_model_attributes (where: {
+    did: {
+      _in:$didList
+    }
+  }) {
+    affected_rows
+  }
+}`
+
+export const queryMaxDid = gql`query MyQuery {
+  data: ngecc_model_aggregate {
+    aggregate {
+      max {
+        did
+      }
+    }
+  }
+}
+`
+
 // export const queryKpiSelectList = gql`query ($where: ngecc_instance_values_bool_exp! = {}) {
 //   data: ngecc_instance_values (where: $where) {
 //     label: label_s

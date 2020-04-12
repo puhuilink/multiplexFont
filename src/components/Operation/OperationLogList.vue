@@ -6,8 +6,86 @@
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="null"
-      :scroll="{ x: 1820, y: `calc(100vh - 290px)`}"
+      :scroll="{ x: scrolX, y: `calc(100vh - 290px)`}"
     >
+
+      <template #query>
+        <a-form layout="inline" :style="{ overflow: advanced ? 'hidden' : 'auto' }">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="操作人"
+                  :md="12"
+                  :sm="24"
+                  :labelCol="{ span: 6 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParams.operator_s"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="操作节点名称"
+                  :labelCol="{ span: 6 }"
+                  :wrapperCol="{ span: 14, offset: 2 }"
+                  style="width: 100%">
+                  <a-input v-model.number="queryParams.name_s" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row>
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="操作类型"
+                    :labelCol="{ span: 6 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%">
+                    <a-select v-model="queryParams.operation_s">
+                      <a-select-option
+                        v-for="operation in operationList"
+                        :key="operation.value"
+                        :value="operation.value"
+                      > {{ operation.name }} </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="操作结果类型"
+                    :labelCol="{ span: 6 }"
+                    :wrapperCol="{ span: 14, offset: 2 }"
+                    style="width: 100%">
+                    <a-select v-model="queryParams.operationresult_s">
+                      <a-select-option
+                        v-for="operationResult in operationResultList"
+                        :key="operationResult.value"
+                        :value="operationResult.value"
+                      > {{ operationResult.name }} </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '0'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
     </CTable>
   </div>
 </template>
@@ -36,6 +114,36 @@ const query = gql`query ($where:ngecc_operationlog_bool_exp = {}, $limit: Int! =
   }
 }`
 
+const operationList = [
+  {
+    name: 'ADD',
+    value: 'ADD'
+  },
+  {
+    name: 'UPDATE',
+    value: 'UPDATE'
+  },
+  {
+    name: 'DELETE',
+    value: 'DELETE'
+  },
+  {
+    name: 'SETPERMISSION',
+    value: 'SETPERMISSION'
+  }
+]
+
+const operationResultList = [
+  {
+    name: 'SUCCESS',
+    value: 'SUCCESS'
+  },
+  {
+    name: 'FAILED',
+    value: 'FAILED'
+  }
+]
+
 export default {
   name: 'OperationLogList',
   components: {
@@ -48,10 +156,14 @@ export default {
     }
   },
   data: () => ({
+    // 搜索： 展开/关闭
+    advanced: false,
     // 查询参数
     queryParams: {},
     // 选中行的 key
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    operationList,
+    operationResultList
   }),
   computed: {
     // FIXME: 小屏下只展示出了部分列
@@ -60,7 +172,7 @@ export default {
         return [
           {
             title: '操作人',
-            dataIndex: 'modelname_s',
+            dataIndex: 'operator_s',
             sorter: true,
             width: 180
           },
@@ -74,7 +186,7 @@ export default {
             title: '操作节点名称',
             dataIndex: 'name_s',
             sorter: true,
-            width: 500
+            width: 400
           },
           {
             title: '数据关联编号',
@@ -92,16 +204,21 @@ export default {
             title: '操作结果类型',
             dataIndex: 'operationresult_s',
             sorter: true,
-            width: 180
+            width: 220
           },
           {
             title: '是否为关系',
             dataIndex: 'relation_b',
             sorter: true,
-            width: 180,
+            width: 160,
             customRender: val => val ? '是' : '否'
           }
         ]
+      }
+    },
+    scrolX: {
+      get () {
+        return this.columns.map(el => el.width || 60).reduce((x1, x2) => x1 + x2) + 36
       }
     }
   },
@@ -124,15 +241,54 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
+      /* eslint-disable camelcase */
+      const {
+        where,
+        queryParams: {
+          operator_s,
+          name_s,
+          operation_s,
+          operationresult_s
+        }
+      } = this
       return apollo.clients.resource.query({
         query,
         variables: {
           ...parameter,
           where: {
-            ...this.where
+            ...where,
+            ...operator_s ? {
+              operator_s: {
+                _ilike: `%${operator_s.trim()}%`
+              }
+            } : {},
+            ...name_s ? {
+              name_s: {
+                _ilike: `%${name_s.trim()}%`
+              }
+            } : {},
+            ...operation_s ? {
+              operation_s: {
+                _ilike: `%${operation_s.trim()}%`
+              }
+            } : {},
+            ...operationresult_s ? {
+              operationresult_s: {
+                _ilike: `%${operationresult_s.trim()}%`
+              }
+            } : {}
           }
         }
       }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
+    },
+    /**
+     * 重置组件数据
+     */
+    reset () {
+      Object.assign(this.$data, this.$options.data.apply(this))
     },
     /**
      * 表格行选中
@@ -143,15 +299,18 @@ export default {
       this.selectedRowKeys = selectedRowKeys
     },
     /**
-     * 重置组件数据
+     * 切换搜索栏展开 / 收起状态
      */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
+    toggleAdvanced () {
+      this.advanced = !this.advanced
     }
   }
 }
 </script>
 
 <style lang="less">
-
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>
