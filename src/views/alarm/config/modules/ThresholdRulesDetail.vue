@@ -411,7 +411,6 @@ export default {
   },
   created () {
     window.form = this.form
-    this.getqueryList()
   },
   beforeMount () {
   },
@@ -423,6 +422,7 @@ export default {
         this.queryList.kpiList = await queryList.kpiList(record.node_type)
       }
       this.mode = mode
+      this.getqueryList()
     },
     /**
      * 获取筛选项的下拉列表的值

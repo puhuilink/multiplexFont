@@ -92,14 +92,21 @@
       </template>
 
       <template #operation>
-        <a-button
+        <!-- <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="seeDetail"
         >
           详情查看
         </a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button> -->
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
+        >
+          详情查看
+        </a-button>
+        <a-button :disabled="selectedRowKeys.length == 0">导出</a-button>
       </template>
+
       <a slot="action" slot-scope="text, record" @click="seeKpi(record)">查看</a>
     </CTable>
 
