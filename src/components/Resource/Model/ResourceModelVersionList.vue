@@ -6,7 +6,7 @@
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="null"
-      :scroll="{ x: 1000, y: 850}"
+      :scroll="{ x: scrolX, y: 850}"
     >
 
       <template #query>
@@ -109,6 +109,11 @@ export default {
             width: 300
           }
         ]
+      }
+    },
+    scrolX: {
+      get () {
+        return this.columns.map(el => el.width || 60).reduce((x1, x2) => x1 + x2) + 36
       }
     }
   },

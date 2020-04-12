@@ -6,7 +6,7 @@
       :columns="columns"
       rowKey="_id_x"
       :rowSelection="null"
-      :scroll="{ x: 1820, y: `calc(100vh - 290px)`}"
+      :scroll="{ x: scrolX, y: `calc(100vh - 290px)`}"
     >
     </CTable>
   </div>
@@ -74,7 +74,7 @@ export default {
             title: '操作节点名称',
             dataIndex: 'name_s',
             sorter: true,
-            width: 500
+            width: 400
           },
           {
             title: '数据关联编号',
@@ -92,16 +92,21 @@ export default {
             title: '操作结果类型',
             dataIndex: 'operationresult_s',
             sorter: true,
-            width: 180
+            width: 220
           },
           {
             title: '是否为关系',
             dataIndex: 'relation_b',
             sorter: true,
-            width: 180,
+            width: 160,
             customRender: val => val ? '是' : '否'
           }
         ]
+      }
+    },
+    scrolX: {
+      get () {
+        return this.columns.map(el => el.width || 60).reduce((x1, x2) => x1 + x2) + 36
       }
     }
   },
