@@ -40,7 +40,7 @@
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item
-                  label="节点类型"
+                  label="KPI"
                   :labelCol="layout.label"
                   :wrapperCol="layout.wrapper"
                   style="width: 100%"
