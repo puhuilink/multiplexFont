@@ -40,7 +40,7 @@
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item
-                  label="节点类型"
+                  label="KPI"
                   :labelCol="layout.label"
                   :wrapperCol="layout.wrapper"
                   style="width: 100%"
@@ -58,10 +58,10 @@
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
             <a-button style="margin-left: 8px" @click="queryParams = Object.assign({}, initialQueryParams)">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
+            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+            </a> -->
           </span>
         </a-form>
       </template>
@@ -84,7 +84,11 @@
 
     </CTable>
 
-    <BaselineDefinitionSchema ref="schema" />
+    <BaselineDefinitionSchema
+      ref="schema"
+      @editSuccess="$refs['table'].refresh(false)"
+      @addSuccess="() => { this.queryParams = {}; this.$refs['table'].refresh(true) }"
+    />
 
   </div>
 </template>
@@ -95,7 +99,7 @@ import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../design/modules/template/index'
-import { getBaselineDefList } from '@/api/controller/Baseline'
+import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import { getResourceInstanceList } from '@/api/controller/Resource'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 import { CiModelSelect, KpiSelect } from '@/components/Common'
@@ -153,13 +157,27 @@ export default {
           title: '节点实例',
           dataIndex: 'ci_label',
           width: 300,
-          sorter: true
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: 'KPI名称',
           dataIndex: 'kpi_label',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: '周期',
@@ -215,7 +233,7 @@ export default {
   computed: {
     scrollX: {
       get () {
-        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2)) + 36
       }
     }
   },
@@ -283,8 +301,19 @@ export default {
     * 删除选中项
     */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-    console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        await deleteBaselineDefs(this.selectedRowKeys)
+        this.$refs['table'].refresh()
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+      } catch (e) {
+        throw e
+      }
     }
   },
   created () {

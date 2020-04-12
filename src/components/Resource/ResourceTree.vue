@@ -56,12 +56,11 @@
 
 <script>
 import gql from 'graphql-tag'
-import { buildTree, search } from './utils'
+import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
-// eslint-disable-next-line
-import { deleteModel } from '@/api/controller/Resource'
+import { deleteModelList } from '@/api/controller/Resource'
 import _ from 'lodash'
 
 export default {
@@ -192,7 +191,9 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
-        await deleteModel(this.selectedKey)
+        const [nameList, didList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        console.log(nameList, didList)
+        await deleteModelList(nameList, didList)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
       } catch (e) {

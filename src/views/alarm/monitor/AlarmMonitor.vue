@@ -54,6 +54,7 @@
                     style="width: 100%"
                   >
                     <CiModelSelect
+                      v-model="queryParam.model"
                       :value="queryParam.model"
                       @input="onModelInput"
                     />
@@ -71,6 +72,7 @@
                     >
                       <CiInstanceSelect
                         multiple
+                        v-model="queryParam.node_id"
                         :parentNameS="queryParam.model"
                         :value="queryParam.node_id"
                         @input="onInstanceInput"
@@ -192,7 +194,7 @@
               :xs="24"
               :sm="24"
               :md="24"
-              :lg="{span: 12, offset: 12}"
+              :lg="{span: 24}"
               :xl="{span: 9}"
               style="text-align: right;"
             >

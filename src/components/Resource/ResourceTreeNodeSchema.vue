@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import { editModel, addModels } from '@/api/controller/Resource'
+import { editModel, addModel } from '@/api/controller/Resource'
 
 const formItemLayout = {
   labelCol: {
@@ -208,11 +208,11 @@ export default {
       try {
         const values = await this.getFormFields()
         this.loading = true
-        await addModels([{
+        await addModel({
           ...values,
           parentname_s: this.parentName,
           parenttree_s: this.parentTree
-        }])
+        })
         this.$notification.success({
           message: '系统提示',
           description: '新建成功'

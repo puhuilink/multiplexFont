@@ -3,6 +3,7 @@
     <a-select
       :labelInValue="labelInValue"
       :mode="multiple ? 'multiple' : 'default'"
+      allowClear
       style="min-width: 200px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
@@ -57,7 +58,9 @@ export default {
       },
       set (v) {
         // 为维护字段一致性，对外统一暴露为数组格式
-        this.$emit('input', this.multiple ? v : [v])
+        // 当 multiple 为 true 时，v 为数组；反之为 string 或 undefined (当 allowClaear 触发时)
+        const arr = v ? [v] : []
+        this.$emit('input', this.multiple ? v : arr)
       }
     }
   },
@@ -65,7 +68,6 @@ export default {
     parentNameS: {
       immediate: true,
       handler (v) {
-        console.log('parentNameS', v)
         if (v) {
           this.loadData({
             'parentname_s': {

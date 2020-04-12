@@ -178,9 +178,15 @@
       </template>
 
       <template #operation>
-        <a-button
+        <!-- <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="seeDetail"
+        >
+          查看
+        </a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button> -->
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
         >
           查看
         </a-button>
@@ -346,9 +352,20 @@ export default {
         // TODO: 未知字段名
         {
           title: '异常',
-          dataIndex: 'abnormal',
+          dataIndex: 'task_state',
           width: 80,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case 'Y':
+                text = '无异常'
+                break
+              case 'N':
+                text = '有异常'
+                break
+            }
+            return text
+          }
         },
         {
           title: '执行人',

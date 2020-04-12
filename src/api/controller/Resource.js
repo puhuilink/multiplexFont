@@ -6,11 +6,19 @@ import {
   queryModelList,
   queryInsanceList,
   queryKpiList,
-  queryKpiSelectList
+  queryKpiSelectList,
+  mutationBatchDeleteModel,
+  queryMaxDid
 } from '../graphql/Resource'
 import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
 import store from '@/store'
+
+const fetchMaxModelDid = function () {
+  return apollo.clients.resource.query({
+    query: queryMaxDid
+  }).then(r => r.data.data.aggregate.max.did)
+}
 
 /**
  * 资源实例列表
@@ -126,7 +134,7 @@ export const editModelOld = function (did, set = {}) {
  * @param {Array} objects
  * @return {*}
  */
-export const addModels = function (objects = []) {
+const addModels = function (objects = []) {
   // return addModelsOld(objects)
   // （旧系统的）构建树方式，是认为 name_s 唯一的
   return apollo.clients.resource.mutate({
@@ -135,6 +143,14 @@ export const addModels = function (objects = []) {
       objects
     }
   })
+}
+
+export const addModel = async function (object = {}) {
+  const did = (await fetchMaxModelDid()) + 1
+  return addModels([{
+    ...object,
+    did
+  }])
 }
 
 /**
@@ -154,11 +170,19 @@ export const addModelsOld = function (objects = []) {
 }
 
 /**
- * 删除资源模型
- * @param {*} name
+ * 删除资源模型：删除一个节点时，也需要删除其子节点和相关的关联数据
+ * @param {Array<String>} nameList 要删除的模型及其子孙代拉平的name_s数组
+ * @param {Array<Number>} didList 与nameList 对应的 did 数组
  */
-export const deleteModel = function (name) {
+export const deleteModelList = function (nameList, didList) {
   // return deleteModelOld(name)
+  return apollo.clients.resource.mutate({
+    mutation: mutationBatchDeleteModel,
+    variables: {
+      nameList,
+      didList
+    }
+  })
 }
 
 /**

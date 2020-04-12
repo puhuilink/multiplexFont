@@ -8,7 +8,8 @@ import {
   queryViewList,
   generateDynamicQueryWithKpiCi,
   queryKpiAndInstanceInfo,
-  queryViewContent
+  queryViewContent,
+  mutationDeletViews
 } from '../graphql/View'
 // import _ from 'lodash'
 import { axios } from '@/utils/request'
@@ -50,6 +51,15 @@ export const updateView = function (viewId, set = {}) {
         throw new Error('更新视图配置失败')
       }
     })
+}
+
+export const deleteViews = function (viewIdList = []) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationDeletViews,
+    variables: {
+      viewIdList
+    }
+  })
 }
 
 /**

@@ -1,21 +1,22 @@
 import apollo from '@/utils/apollo'
 import moment from 'moment'
-import { queryByBaselineDefIdAndDateRange } from '../graphql/BaselineCalendar'
+import { queryByBaselineDefIdAndDateRange, mutationInsertCalendars } from '../graphql/BaselineCalendar'
 import Timeout from 'await-timeout'
+import uuid from 'uuid/v4'
 
 /**
  * @param {String} baselineDefId 动态基线定义 id
  * @param {Moment} month 月份 格式：YYYY-MM
  * @return {Promise<any>}
  */
-export const getBaselintCalendar = async function (baselineDefId, month) {
+export const getBaselineCalendar = async function (baselineDefId, month) {
   // month 为空默认返回当月
   const calendarStart = moment(month).startOf('month').format('YYYY-MM-DD')
   const calendarEnd = moment(month).endOf('month').format('YYYY-MM-DD')
   const startDay = Number(moment(month).startOf('month').format('DD'))
   const endDay = Number(moment(month).endOf('month').format('DD'))
 
-  console.log(startDay, endDay)
+  // console.log(startDay, endDay)
   const defaultCalendar = []
 
   for (let m = moment(calendarStart); m.isSameOrBefore(moment(calendarEnd)); m.add(1, 'days')) {
@@ -55,4 +56,25 @@ export const getBaselintCalendar = async function (baselineDefId, month) {
   } catch (e) {
     throw e
   }
+}
+
+export const updateBaselineCalendar = async function (baselineDefId, calendar) {
+
+}
+
+export const addBaselineCalendar = async function (baselineDefId, calendarList) {
+  const objects = calendarList.map(calendar => ({
+    ...calendar,
+    'uuid_def': baselineDefId,
+    // 控制长度在33之内（与数据表保持一致）
+    uuid: uuid().replace(/-/g, ''),
+    status: 1,
+    'update_time': moment().format('YYYY-MM-DDTHH:mm:ss')
+  }))
+  return apollo.clients.alert.mutate({
+    mutation: mutationInsertCalendars,
+    variables: {
+      objects
+    }
+  })
 }

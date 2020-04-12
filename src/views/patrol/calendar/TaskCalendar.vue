@@ -35,9 +35,10 @@
             <li class="item" v-for="(item, index) in getListData(value)" :key="index">
               <span
                 class="dot"
-                :style="item.task_status=='A'?{backgroundColor:'#f8f9fa'}:item.task_status=='B'?{backgroundColor:'#007bff'}:
-                  item.task_status=='D'?{backgroundColor:'#28a745'}:item.task_status=='E'?{backgroundColor:'#dc3545'}:
-                    item.type=='F'?{backgroundColor:'#ffc107'}:{}"
+                :style="item.work_state==''?{backgroundColor:'#f8f9fa'}:item.work_state=='未执行'
+                  ?{backgroundColor:'#007bff'}:item.work_state=='执行完成'
+                    ?{backgroundColor: '#28a745'}:item.work_state=='执行失败'
+                      ?{backgroundColor:'#dc3545'}:item.work_state=='执行完成发现异常'?{backgroundColor: '#ffc107'}:{}"
               ></span>
               <span>{{ item.work_start_time }}</span>
               <span>{{ item.content }}</span>
@@ -62,11 +63,12 @@ import detail from '../modules/TCDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import moment from 'moment'
-const queryBefore = gql`query xunjian ($where: task_info_bool_exp = {}){
-  data: task_info(where: $where) {
+const queryBefore = gql`query xunjian ($where: xj_task_info_bool_exp = {}){
+  data: xj_task_info(where: $where) {
     task_id
     task_name
     task_status
+    task_state
     plan_code
     plan_start_time
     df_transactor_code
@@ -75,8 +77,8 @@ const queryBefore = gql`query xunjian ($where: task_info_bool_exp = {}){
     transactor_code
   }
 }`
-const queryLater = gql`query xunjian($where: plan_info_bool_exp = {}) {
-  data: plan_info(where: $where) {
+const queryLater = gql`query xunjian($where: xj_plan_info_bool_exp = {}) {
+  data: xj_plan_info(where: $where) {
     ascription
     create_time
     create_user_code
@@ -115,12 +117,12 @@ export default {
       },
       performStatus: [
         {
-          type: 'A',
+          type: '',
           color: '#f8f9fa',
           label: '无状态'
         },
         {
-          type: 'B',
+          type: 'AB',
           color: '#007bff',
           label: '未执行'
         },
@@ -130,17 +132,19 @@ export default {
         //   label: '执行中'
         // },
         {
-          type: 'D',
+          // 异常为否
+          type: 'DE',
           color: '#28a745',
           label: '执行完成'
         },
         {
-          type: 'E',
+          type: 'F',
           color: '#dc3545',
           label: '执行失败'
         },
         {
-          type: 'F',
+          // 异常为是
+          type: 'DE',
           color: '#ffc107',
           label: '执行完成发现异常'
         }
@@ -163,7 +167,7 @@ export default {
       // this.getListData()
     },
     async loadBeforeData (parameter) {
-      return apollo.clients.patrol.query({
+      return apollo.clients.alert.query({
         query: queryBefore,
         variables: {
           ...parameter,
@@ -184,7 +188,8 @@ export default {
         const list = r.data.data.map(r => ({
           ...r,
           work_start_date: r.plan_start_time.split('T')[0],
-          work_start_time: r.plan_start_time.split('T')[1].substring(0, 5)
+          work_start_time: r.plan_start_time.split('T')[1].substring(0, 5),
+          work_state: this.getWorkState(r)
         })
         )
         const group = list.map(el => el.work_start_date).filter((el, i, curArr) => curArr.indexOf(el) === i)
@@ -203,8 +208,26 @@ export default {
         return bList || []
       })
     },
+    getWorkState (e) {
+      let workState
+      switch (e.task_status) {
+        case 'A' || 'B':
+          workState = '未执行'
+          break
+        case 'D' || 'E':
+          e.task_state === 'Y' ? workState = '执行完成' : workState = '执行完成发现异常'
+          break
+        case 'F':
+          workState = '执行失败'
+          break
+        default:
+          workState = e.task_status
+          break
+      }
+      return workState
+    },
     async loadLaterData (parameter) {
-      return apollo.clients.patrol.query({
+      return apollo.clients.alert.query({
         query: queryLater,
         variables: {
           ...parameter,
@@ -250,7 +273,6 @@ export default {
     onSelect (value) {
       console.log(value)
       this.selectedValue = value
-      // this.$refs.detail.open(value)
       let chooseData
       const calendarData = this.allDataList
       for (let i = 0; i < calendarData.length; i++) {

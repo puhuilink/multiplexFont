@@ -9,3 +9,9 @@ export const queryByBaselineDefIdAndDateRange = gql`query ($baselineDefId: Strin
   }
 }
 `
+
+export const mutationInsertCalendars = gql`mutation ($objects: [t_baseline_calendar_insert_input!]!) {
+  insert_t_baseline_calendar (objects: $objects) {
+    affected_rows
+  }
+}`
