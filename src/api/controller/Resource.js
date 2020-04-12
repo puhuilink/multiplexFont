@@ -6,7 +6,8 @@ import {
   queryModelList,
   queryInsanceList,
   queryKpiList,
-  queryKpiSelectList
+  queryKpiSelectList,
+  mutationBatchDeleteModel
 } from '../graphql/Resource'
 import { oldRequest } from '@/utils/oldRequest'
 import { modelMapping } from '../mapping/Resource'
@@ -154,11 +155,19 @@ export const addModelsOld = function (objects = []) {
 }
 
 /**
- * 删除资源模型
- * @param {*} name
+ * 删除资源模型：删除一个节点时，也需要删除其子节点和相关的关联数据
+ * @param {Array<String>} nameList 要删除的模型及其子孙代拉平的name_s数组
+ * @param {Array<Number>} didList 与nameList 对应的 did 数组
  */
-export const deleteModel = function (name) {
+export const deleteModelList = function (nameList, didList) {
   // return deleteModelOld(name)
+  return apollo.clients.resource.mutate({
+    mutation: mutationBatchDeleteModel,
+    variables: {
+      nameList,
+      didList
+    }
+  })
 }
 
 /**
