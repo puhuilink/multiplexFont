@@ -17,10 +17,12 @@
         v-model="queryTitle"
       />
     </div>
+
+    <!-- S 视图列表 -->
     <div class="ViewDisplay__view-content">
       <a-row>
         <a-col
-          v-for="(view, idx) in filterviewList"
+          v-for="(view, idx) in filterViewList"
           :key="idx"
           :xs="24"
           :md="12"
@@ -28,29 +30,26 @@
           :xxl="6"
           style="padding: 7px;"
         >
-          <router-link
-            :to="{
-              name: 'Design',
-              query: {
-                id: view.view_id,
-                title: view.view_title
-              }
-            }">
-            <div class="ViewDisplay__view-item">
-              <img :src="view.view_img | img" :alt="view.view__title">
-              <div class="ViewDisplay__view-item-info">
-                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
-                <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ view.creator }}</span>
-                </p>
-              </div>
-              {{ view.view__title }}
+          <div class="ViewDisplay__view-item" @click="preview(view)">
+            <img :src="view.view_img | img" :alt="view.view__title">
+            <div class="ViewDisplay__view-item-info">
+              <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+              <p class="ViewDisplay__view-item-info_creator">
+                <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                <span><a-icon type="user" />{{ view.creator }}</span>
+              </p>
             </div>
-          </router-link>
+            {{ view.view__title }}
+          </div>
         </a-col>
       </a-row>
     </div>
+    <!-- E 视图列表 -->
+
+    <!-- S 视图预览 -->
+    <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
+    <!-- E 视图预览 -->
+
   </div>
 </template>
 
@@ -59,9 +58,8 @@ import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
-import {
-  getViewListByGroup
-} from '@/api/controller/ViewGroup'
+import ViewPreview from './modules/viewPreview'
+import { getViewListByGroup } from '@/api/controller/ViewGroup'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
 const ALL_VIEW = '所有视图'
@@ -70,7 +68,8 @@ export default {
   name: 'ViewDisplay',
   components: {
     PageView,
-    HeadInfo
+    HeadInfo,
+    ViewPreview
   },
   filters: {
     img (img) {
@@ -87,7 +86,9 @@ export default {
       viewList: [],
       queryTitle: '',
       selectedGroupName: ALL_VIEW,
-      previewImg
+      previewImg,
+      visible: false,
+      currentView: null
     }
   },
   computed: {
@@ -98,7 +99,7 @@ export default {
     userInfo () {
       return this.$store.getters.userInfo
     },
-    filterviewList () {
+    filterViewList () {
       const { selectedGroupName, viewGroupList, viewList } = this
       let list = []
       // 分组筛选条件
@@ -134,6 +135,10 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    preview (view) {
+      this.visible = true
+      this.currentView = view
     }
   },
   created () {

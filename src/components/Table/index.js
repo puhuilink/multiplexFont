@@ -113,7 +113,6 @@ export default {
       pageSize: this.pageSize,
       showSizeChanger: this.showSizeChanger
     }) || false
-    console.log('this.localPagination', this.localPagination)
     this.needTotalList = this.initTotalList(this.columns)
     this.loadData()
   },

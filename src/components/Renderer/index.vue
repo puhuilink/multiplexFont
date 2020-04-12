@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { fromEvent } from 'rxjs'
+import { fromEvent, Subject, merge } from 'rxjs'
 import { takeWhile, startWith } from 'rxjs/operators'
 import anime from 'animejs'
 import Widget from '@/components/Widget/index'
@@ -38,7 +38,8 @@ export default {
   },
   data: () => ({
     isSubscribed: true,
-    scale: [1, 1]
+    scale: [1, 1],
+    scaleMode$: new Subject()
   }),
   props: {
     view: {
@@ -52,7 +53,10 @@ export default {
     }
   },
   mounted () {
-    fromEvent(window, 'resize')
+    merge(
+      this.scaleMode$,
+      fromEvent(window, 'resize')
+    )
       .pipe(
         takeWhile(() => this.isSubscribed),
         startWith('')
@@ -111,6 +115,11 @@ export default {
         })
       })
   },
+  methods: {
+    setScaleMode () {
+      this.scaleMode$.next()
+    }
+  },
   beforeDestroy () {
     this.isSubscribed = false
   }
@@ -125,7 +134,7 @@ export default {
   &__content {
     width: 100%;
     height: 100%;
-    overflow: visible;
+    overflow: hidden;
   }
 }
 </style>
