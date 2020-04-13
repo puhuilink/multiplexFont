@@ -863,11 +863,12 @@ class ImageStyle {
  */
 class ImageGraphic extends Graphic {
   constructor ({
+    style = {},
     ...graphicOption
   }) {
     super(graphicOption)
     this.type = 'image'
-    this.style = new ImageStyle(this.style)
+    this.style = new ImageStyle(style)
   }
 
   /**
