@@ -33,6 +33,7 @@
 <script>
 import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
 import { getViewList } from '@/api/controller/View'
+import _ from 'lodash'
 
 const formItemLayout = {
   labelCol: {
@@ -116,7 +117,12 @@ export default {
             chosen: false
           })
         }))
-        this.targetKeys = this.selectedKeys.map(key => Number(key))
+        const targetKeys = this.selectedKeys.map(key => Number(key))
+        // 旧系统数据库存有冗余数据，此处去重，保证保存时能清理到
+        this.targetKeys = _.intersection(
+          targetKeys,
+          this.dataSource.map(el => el.view_id)
+        )
       } catch (e) {
         this.datSource = []
         throw e
