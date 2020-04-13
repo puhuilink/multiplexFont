@@ -84,7 +84,7 @@
       </a-row>
 
       <a-form-item v-bind="formItemLayout">
-        <a-col class="gutter-row" :span="16" :offset="8">
+        <a-col class="gutter-row" :span="24" :offset="8">
           <a-button
             size="large"
             type="primary"
@@ -104,7 +104,9 @@
 
 <script>
 import { mixinDevice } from '@/utils/mixin.js'
+// eslint-disable-next-line no-unused-vars
 import { getSmsCaptcha } from '@/api/login'
+import { mapActions } from 'vuex'
 
 const levelNames = {
   0: '低',
@@ -165,6 +167,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['Logout']),
     handlePasswordLevel (rule, value, callback) {
       let level = 0
 
@@ -182,19 +185,21 @@ export default {
       }
       this.state.passwordLevel = level
       this.state.percent = level * 30
-      if (level >= 2) {
-        if (level >= 3) {
-          this.state.percent = 100
-        }
-        callback()
-      } else {
-        if (level === 0) {
-          this.state.percent = 10
-        }
-        callback(new Error('密码强度不够'))
-      }
+
       if (value.length < 8) {
         callback(new Error('密码长度不够'))
+      } else {
+        if (level >= 2) {
+          if (level >= 3) {
+            this.state.percent = 100
+          }
+          callback()
+        } else {
+          if (level === 0) {
+            this.state.percent = 10
+          }
+          callback(new Error('密码强度不够'))
+        }
       }
     },
 
@@ -231,13 +236,23 @@ export default {
       validateFields({ force: true }, (err, values) => {
         if (!err) {
           state.passwordLevelChecked = false
-          $router.push({ name: 'login', params: { ...values } })
+          return this.Logout({}).then(() => {
+            setTimeout(() => {
+              window.location.reload()
+            }, 16)
+          }).catch(err => {
+            this.$message.error({
+              title: '错误',
+              description: err.message
+            })
+          })
         }
       })
     },
 
     getCaptcha (e) {
       e.preventDefault()
+      // eslint-disable-next-line no-unused-vars
       const { form: { validateFields }, state, $message, $notification } = this
 
       validateFields(['mobile'], { force: true },
@@ -253,22 +268,22 @@ export default {
               }
             }, 1000)
 
-            const hide = $message.loading('验证码发送中..', 0)
+            // const hide = $message.loading('验证码发送中..', 0)
 
-            getSmsCaptcha({ mobile: values.mobile }).then(res => {
-              setTimeout(hide, 2500)
-              $notification['success']({
-                message: '提示',
-                description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-                duration: 8
-              })
-            }).catch(err => {
-              setTimeout(hide, 1)
-              clearInterval(interval)
-              state.time = 60
-              state.smsSendBtn = false
-              this.requestFailed(err)
-            })
+            // getSmsCaptcha({ mobile: values.mobile }).then(res => {
+            //   setTimeout(hide, 2500)
+            //   $notification['success']({
+            //     message: '提示',
+            //     description: '验证码获取成功，您的验证码为：' + res.result.captcha,
+            //     duration: 8
+            //   })
+            // }).catch(err => {
+            //   setTimeout(hide, 1)
+            //   clearInterval(interval)
+            //   state.time = 60
+            //   state.smsSendBtn = false
+            //   this.requestFailed(err)
+            // })
           }
         }
       )
