@@ -15,7 +15,6 @@ import { axios } from '@/utils/request'
 
 export const getViewList = function (variables = {}) {
   const where = variables.where || {}
-  console.log('where', where)
   return apollo.clients.alert.query({
     query: queryViewList,
     variables: {

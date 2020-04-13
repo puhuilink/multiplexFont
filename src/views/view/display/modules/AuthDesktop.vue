@@ -32,6 +32,7 @@
 
 <script>
 import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
+import { getViewList } from '@/api/controller/View'
 
 const formItemLayout = {
   labelCol: {
@@ -58,6 +59,10 @@ export default {
     groupId: {
       type: String,
       default: ''
+    },
+    selectedKeys: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: (vm) => ({
@@ -93,7 +98,25 @@ export default {
       try {
         const groupViewList = await getViewListInGroupAuth(groupId).then(r => r.data.data)
         // console.log(groupViewList)
-        this.datSource = groupViewList.map(el => Number(el.view_id))
+        const viewIdList = groupViewList.map(el => Number(el.view_id))
+        this.dataSource = await getViewList({
+          limit: 9999,
+          where: {
+            view_id: {
+              _in: viewIdList
+            }
+          }
+        }).then(r => r.data.data).then(r => r.map(el => {
+          // console.log(el.view_id, el.view_title)
+          return ({
+            ...el,
+            title: el['view_title'],
+            key: el['view_id'].toString(),
+            description: '',
+            chosen: false
+          })
+        }))
+        this.targetKeys = this.selectedKeys.map(key => Number(key))
       } catch (e) {
         this.datSource = []
         throw e

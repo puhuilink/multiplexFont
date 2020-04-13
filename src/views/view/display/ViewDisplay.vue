@@ -67,6 +67,7 @@
     <AuthDesktop
       :visible.sync="authDesktop.visible"
       :title="selectedGroupName"
+      :selectedKeys="selectedGroup.viewIds"
       :groupId="selectedGroup.group_id"
     />
 
@@ -113,7 +114,7 @@ export default {
       currentView: null,
       ALL_VIEW,
       authDesktop: {
-        visible: true
+        visible: false
       }
     }
   },
