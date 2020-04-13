@@ -73,9 +73,9 @@ export default {
     /**
      * 用户组当前授予的视图
      */
-    async fetchGroupViewList (groupIds) {
+    async fetchGroupViewList (groupId) {
       try {
-        const groupViewList = await getViewListInGroupAuth(groupIds).then(r => r.data.data)
+        const groupViewList = await getViewListInGroupAuth(groupId).then(r => r.data.data)
         // console.log(groupViewList)
         this.targetKeys = groupViewList.map(el => Number(el.view_id))
       } catch (e) {

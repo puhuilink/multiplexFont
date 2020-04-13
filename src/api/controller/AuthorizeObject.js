@@ -35,6 +35,7 @@ export const getGroupViewDesktopList = async function (groupIds) {
   for await (const groupViewDesktop of groupViewDesktopList) {
     const [desktop] = await getDesktopItemList(groupViewDesktop.viewId)
     desktop.viewIds = desktop.content.split(',')
+    desktop.group_id = groupViewDesktop.group_id
     desktopList.push(desktop)
   }
   const viewIds = desktopList.map(desktop => desktop.viewIds).flat(2)

@@ -10,6 +10,7 @@ export const queryGroupViewDesktopList = gql`query ($groupIds: [String!]) {
     }
   }) {
     groupId: group_id
+    group_id
     viewId: object_id
     groupInfo {
       group_name
