@@ -14,34 +14,70 @@
 
 <script>
 import { getViewList } from '@/api/controller/View'
+import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
 
 export default {
   name: 'AuthView',
-  data () {
-    return {
-      viewList: [],
-      // 所有数据
-      mockData: [],
-      // 选中数据
-      targetKeys: []
+  props: {
+    // 用户组 id
+    groupId: {
+      type: String,
+      default: ''
+    }
+  },
+  data: () => ({
+    viewList: [],
+    // 所有数据
+    mockData: [],
+    // 选中数据
+    targetKeys: [],
+    groupViewList: []
+  }),
+  watch: {
+    groupId: {
+      immediate: true,
+      handler (groupId) {
+        groupId && this.fetchGroupViewList(groupId)
+      }
     }
   },
   created () {
     // this.getMock()
-    this.fetch()
+    this.fetchAllViewList()
   },
   methods: {
-    async fetch () {
+    async fetchAllViewList () {
       try {
         this.loading = true
         // {key: string.isRequired,title: string.isRequired,description: string,disabled: bool}
-        this.viewList = await getViewList({ limit: 9999 })
-          .then(r => r.data.data)
-          .then(r => r.filter(r => !!r.view_id && !!r.view_title))
+        const viewList = await getViewList({ limit: 9999 }).then(r => r.data.data)
+        this.viewList = viewList
+          .filter(r => !!r.view_id)
+          .map(el => ({
+            ...el,
+            title: el['view_title'],
+            key: el['view_id'].toString(),
+            description: '',
+            chosen: false
+          }))
+        // debugger
       } catch (e) {
         this.viewList = []
       } finally {
         this.loading = false
+      }
+    },
+    /**
+     * 用户组当前授予的视图
+     */
+    async fetchGroupViewList (groupIds) {
+      try {
+        const groupViewList = await getViewListInGroupAuth(groupIds).then(r => r.data.data)
+        console.log(groupViewList)
+        this.targetKeys = groupViewList.map(el => Number(el.view_id))
+      } catch (e) {
+        this.targetKeys = []
+        throw e
       }
     },
     getMock () {

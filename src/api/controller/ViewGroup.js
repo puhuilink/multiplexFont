@@ -2,7 +2,8 @@ import apollo from '@/utils/apollo'
 import store from '@/store'
 // import { getGroupInfoByUserId } from './UserGroup'
 import {
-  queryViewGroupList
+  queryViewGroupList,
+  groupAuthViewList
 } from '../graphql/ViewGroup'
 import { getViewList } from './View'
 import _ from 'lodash'
@@ -34,7 +35,6 @@ export const getViewGroupList = async function () {
 export const getViewListByGroup = async function (groupIds) {
   try {
     const viewGroupList = await getViewGroupList()
-    console.log('viewGroupList', viewGroupList)
     // content 应当存放关联视图的 id，老系统一些旧数据存放了 xml 等其他信息，此处需要过滤
     const filterViewGoupList = viewGroupList.filter(({ content }) => content && !content.includes('<'))
     filterViewGoupList.forEach(viewGroup => {
@@ -60,4 +60,13 @@ export const getViewListByGroup = async function (groupIds) {
   } catch (e) {
     throw e
   }
+}
+
+export const getViewListInGroupAuth = async function (groupId) {
+  return apollo.clients.alert.query({
+    query: groupAuthViewList,
+    variables: {
+      groupId
+    }
+  })
 }

@@ -14,7 +14,7 @@
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
-        <AuthView />
+        <AuthView groupId="administrator" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
         <AuthMenu />
@@ -50,13 +50,17 @@ export default {
     loading: false,
     record: null,
     title: '',
-    visible: false
+    visible: false,
+    authView: {
+      groupId: ''
+    }
   }),
   computed: {},
   methods: {
     edit (record) {
       this.title = '授权'
       this.visible = true
+      this.authView.groupId = record['group_id']
     },
     cancel () {
       this.visible = false
