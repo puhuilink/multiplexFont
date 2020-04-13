@@ -11,14 +11,21 @@ import {
   queryViewContent,
   mutationDeletViews
 } from '../graphql/View'
-// import _ from 'lodash'
 import { axios } from '@/utils/request'
 
-// TODO: default argus
 export const getViewList = function (variables = {}) {
+  const where = variables.variables || {}
   return apollo.clients.alert.query({
     query: queryViewList,
-    variables
+    variables: {
+      ...variables,
+      where: {
+        ...where,
+        'view_type': {
+          _eq: 'h5'
+        }
+      }
+    }
   })
 }
 

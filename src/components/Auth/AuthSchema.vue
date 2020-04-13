@@ -2,6 +2,7 @@
   <a-modal
     centered
     :confirmLoading="loading"
+    destroyOnClose
     :title="title"
     :width="720"
     wrapClassName="AuthSchema__modal"

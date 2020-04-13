@@ -1,31 +1,49 @@
 <template>
   <a-transfer
-    :dataSource="mockData"
+    :dataSource="viewList"
     showSearch
     :filterOption="filterOption"
     :targetKeys="targetKeys"
     @change="handleChange"
     @search="handleSearch"
-    :render="item => item.title"
+    :render="item => item.view_title"
+    :rowKey="item => item.view_id"
   >
   </a-transfer>
 </template>
 
 <script>
+import { getViewList } from '@/api/controller/View'
+
 export default {
   name: 'AuthView',
   data () {
     return {
+      viewList: [],
       // 所有数据
       mockData: [],
       // 选中数据
       targetKeys: []
     }
   },
-  mounted () {
-    this.getMock()
+  created () {
+    // this.getMock()
+    this.fetch()
   },
   methods: {
+    async fetch () {
+      try {
+        this.loading = true
+        // {key: string.isRequired,title: string.isRequired,description: string,disabled: bool}
+        this.viewList = await getViewList({ limit: 9999 })
+          .then(r => r.data.data)
+          .then(r => r.filter(r => !!r.view_id && !!r.view_title))
+      } catch (e) {
+        this.viewList = []
+      } finally {
+        this.loading = false
+      }
+    },
     getMock () {
       const targetKeys = []
       const mockData = []
@@ -51,7 +69,10 @@ export default {
      * @return {boolean}
      */
     filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
+      const title = option['view_title'] || ''
+      return title.includes(
+        inputValue.trim().toLowerCase()
+      )
     },
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
