@@ -65,6 +65,7 @@
     <!-- E 视图预览 -->
 
     <AuthDesktop
+      v-if="selectedGroup"
       :visible.sync="authDesktop.visible"
       :title="selectedGroupName"
       :selectedKeys="selectedGroup.viewIds"
@@ -133,6 +134,9 @@ export default {
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
+      if (!selectedGroup) {
+        return []
+      }
       let list = []
       // 分组筛选条件
       if (selectedGroup.view_title === ALL_VIEW) {
