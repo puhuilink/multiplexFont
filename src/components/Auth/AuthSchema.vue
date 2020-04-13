@@ -2,6 +2,7 @@
   <a-modal
     centered
     :confirmLoading="loading"
+    destroyOnClose
     :title="title"
     :width="720"
     wrapClassName="AuthSchema__modal"
@@ -13,15 +14,19 @@
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
-        <AuthView />
+        <AuthView :groupId="authView.groupId" />
       </a-tab-pane>
-      <a-tab-pane tab="菜单模块" forceRender key="2">TODO</a-tab-pane>
+      <a-tab-pane tab="菜单模块" forceRender key="2">
+        <AuthMenu />
+      </a-tab-pane>
     </a-tabs>
   </a-modal>
 </template>
 
 <script>
 import AuthView from './AuthView'
+import AuthMenu from './AuthMenu'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -34,7 +39,8 @@ const formItemLayout = {
 export default {
   name: 'AuthSchema',
   components: {
-    AuthView
+    AuthView,
+    AuthMenu
   },
   props: {},
   data: (vm) => ({
@@ -44,13 +50,17 @@ export default {
     loading: false,
     record: null,
     title: '',
-    visible: false
+    visible: false,
+    authView: {
+      groupId: ''
+    }
   }),
   computed: {},
   methods: {
     edit (record) {
       this.title = '授权'
       this.visible = true
+      this.authView.groupId = record['group_id']
     },
     cancel () {
       this.visible = false

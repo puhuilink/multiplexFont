@@ -46,9 +46,31 @@
     </div>
     <!-- E 视图列表 -->
 
+    <!-- S 操作按钮 -->
+    <div class="ViewDisplay__operation">
+      <a-button
+        shape="circle"
+        size="large"
+        type="primary"
+        icon="plus"
+        class="ViewDisplay__operation__add"
+        v-show="selectedGroupName !== ALL_VIEW"
+        @click="editDesktop"
+      ></a-button>
+    </div>
+    <!-- E 操作按钮 -->
+
     <!-- S 视图预览 -->
     <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
     <!-- E 视图预览 -->
+
+    <AuthDesktop
+      v-if="selectedGroup"
+      :visible.sync="authDesktop.visible"
+      :title="selectedGroupName"
+      :selectedKeys="selectedGroup.viewIds"
+      :groupId="selectedGroup.group_id"
+    />
 
   </div>
 </template>
@@ -58,8 +80,9 @@ import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
+import AuthDesktop from './modules/AuthDesktop'
 import ViewPreview from './modules/viewPreview'
-import { getViewListByGroup } from '@/api/controller/ViewGroup'
+import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
 const ALL_VIEW = '所有视图'
@@ -67,6 +90,7 @@ const ALL_VIEW = '所有视图'
 export default {
   name: 'ViewDisplay',
   components: {
+    AuthDesktop,
     PageView,
     HeadInfo,
     ViewPreview
@@ -88,7 +112,11 @@ export default {
       selectedGroupName: ALL_VIEW,
       previewImg,
       visible: false,
-      currentView: null
+      currentView: null,
+      ALL_VIEW,
+      authDesktop: {
+        visible: false
+      }
     }
   },
   computed: {
@@ -99,18 +127,23 @@ export default {
     userInfo () {
       return this.$store.getters.userInfo
     },
+    selectedGroup () {
+      const { selectedGroupName, viewGroupList } = this
+      // eslint-disable-next-line
+      return viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
+    },
     filterViewList () {
-      const { selectedGroupName, viewGroupList, viewList } = this
+      const { selectedGroup, viewList } = this
+      if (!selectedGroup) {
+        return []
+      }
       let list = []
       // 分组筛选条件
-      if (selectedGroupName === ALL_VIEW) {
+      if (selectedGroup.view_title === ALL_VIEW) {
         list = viewList
       } else {
-        // 选中的分组
         // eslint-disable-next-line
-        const selectedGroup = viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
-        // eslint-disable-next-line
-        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(view_id))
+        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
       }
       // 加上搜索条件，当 input allowClear 时，title 为 undefined
       return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
@@ -120,10 +153,10 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const [allViewList, allViewGoupList] = await getViewListByGroup()
-        this.viewList = allViewList
+        const [viewList, viewGroupList] = await getGroupViewDesktopList()
+        this.viewList = viewList
         this.viewGroupList = [
-          ...allViewGoupList,
+          ...viewGroupList,
           {
             view_title: ALL_VIEW
           }
@@ -135,6 +168,9 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    editDesktop () {
+      this.authDesktop.visible = true
     },
     preview (view) {
       this.visible = true
@@ -340,6 +376,20 @@ export default {
             color: rgb(124, 132, 145);
           }
         }
+      }
+    }
+  }
+
+  .ViewDisplay {
+
+    &__operation {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 8px;
+
+      &__add {
+
       }
     }
   }

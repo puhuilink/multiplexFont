@@ -1,5 +1,7 @@
 <template>
-  <div class="AuthMenu"></div>
+  <div class="AuthMenu">
+    TODO
+  </div>
 </template>
 
 <script>
