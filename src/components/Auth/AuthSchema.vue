@@ -14,7 +14,7 @@
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
-        <AuthView groupId="administrator" />
+        <AuthView :groupId="authView.groupId" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
         <AuthMenu />

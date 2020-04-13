@@ -53,13 +53,16 @@ export default {
         const viewList = await getViewList({ limit: 9999 }).then(r => r.data.data)
         this.viewList = viewList
           .filter(r => !!r.view_id)
-          .map(el => ({
-            ...el,
-            title: el['view_title'],
-            key: el['view_id'].toString(),
-            description: '',
-            chosen: false
-          }))
+          .map(el => {
+            // console.log(el.view_id, el.view_title)
+            return ({
+              ...el,
+              title: el['view_title'],
+              key: el['view_id'].toString(),
+              description: '',
+              chosen: false
+            })
+          })
         // debugger
       } catch (e) {
         this.viewList = []
@@ -73,7 +76,7 @@ export default {
     async fetchGroupViewList (groupIds) {
       try {
         const groupViewList = await getViewListInGroupAuth(groupIds).then(r => r.data.data)
-        console.log(groupViewList)
+        // console.log(groupViewList)
         this.targetKeys = groupViewList.map(el => Number(el.view_id))
       } catch (e) {
         this.targetKeys = []

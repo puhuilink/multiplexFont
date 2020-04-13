@@ -59,7 +59,7 @@ import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 import ViewPreview from './modules/viewPreview'
-import { getViewListByGroup } from '@/api/controller/ViewGroup'
+import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
 const ALL_VIEW = '所有视图'
@@ -110,7 +110,7 @@ export default {
         // eslint-disable-next-line
         const selectedGroup = viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
         // eslint-disable-next-line
-        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(view_id))
+        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
       }
       // 加上搜索条件，当 input allowClear 时，title 为 undefined
       return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
@@ -120,10 +120,10 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const [allViewList, allViewGoupList] = await getViewListByGroup()
-        this.viewList = allViewList
+        const [viewList, viewGroupList] = await getGroupViewDesktopList()
+        this.viewList = viewList
         this.viewGroupList = [
-          ...allViewGoupList,
+          ...viewGroupList,
           {
             view_title: ALL_VIEW
           }
