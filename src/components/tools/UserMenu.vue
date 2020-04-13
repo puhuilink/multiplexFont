@@ -25,8 +25,10 @@
           <!--            <span>测试</span>-->
           <!--          </a-menu-item>-->
           <a-menu-item key="1">
-            <a-icon type="setting"/>
-            <span>密码修改</span>
+            <a href="javascript:;" @click="handleChangePsd">
+              <a-icon type="setting"/>
+              <span>重置密码</span>
+            </a>
           </a-menu-item>
           <a-menu-divider/>
           <a-menu-item key="3">
@@ -75,6 +77,9 @@ export default {
         onCancel () {
         }
       })
+    },
+    handleChangePsd () {
+      this.$router.push({ name: 'PsdChange' })
     }
   }
 }

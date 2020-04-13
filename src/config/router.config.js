@@ -337,6 +337,23 @@ export const asyncRouterMap = [
             meta: { title: '巡检检查对象', keepAlive: true, permission: [ 'patrol' ] }
           }
         ]
+      },
+
+      // 个人设置
+      {
+        path: '/user',
+        name: 'user',
+        redirect: '/user/PsdChange',
+        component: RouteView,
+        meta: { title: '个人中心', keepAlive: true, icon: 'user', permission: [ 'user' ] },
+        children: [
+          {
+            path: '/PsdChange',
+            name: 'PsdChange',
+            component: () => import('@/views/user/PsdChange'),
+            meta: { title: '重置密码' }
+          }
+        ]
       }
 
       // 以下是示例页面路由，待之后进行删除
