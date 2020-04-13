@@ -15,13 +15,17 @@
       <a-tab-pane tab="视图管理" key="1">
         <AuthView />
       </a-tab-pane>
-      <a-tab-pane tab="菜单模块" forceRender key="2">TODO</a-tab-pane>
+      <a-tab-pane tab="菜单模块" forceRender key="2">
+        <AuthMenu />
+      </a-tab-pane>
     </a-tabs>
   </a-modal>
 </template>
 
 <script>
 import AuthView from './AuthView'
+import AuthMenu from './AuthMenu'
+
 const formItemLayout = {
   labelCol: {
     // span: 6
@@ -34,7 +38,8 @@ const formItemLayout = {
 export default {
   name: 'AuthSchema',
   components: {
-    AuthView
+    AuthView,
+    AuthMenu
   },
   props: {},
   data: (vm) => ({
