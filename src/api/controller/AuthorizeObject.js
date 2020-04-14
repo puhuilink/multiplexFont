@@ -14,13 +14,7 @@ export const getDesktopItemList = function (desktopId) {
     variables: {
       desktopId: Number(desktopId)
     }
-  })
-    .then(r => r.data.data)
-    .then(r => r.map(item => ({
-      ...item,
-      // 老系统旧版本视图存放了 xml
-      content: item.content.includes('<') ? '' : item.content
-    })))
+  }).then(r => r.data.data)
 }
 
 /**
@@ -44,8 +38,7 @@ export const getGroupViewDesktopList = async function (groupIds) {
     desktop.group_id = groupViewDesktop.group_id
     desktopList.push(desktop)
   }
-  console.log('eee')
-  const viewIds = desktopList.map(desktop => desktop.viewIds).flat(2).filter(el => !!el)
+  const viewIds = desktopList.map(desktop => desktop.viewIds).flat(2)
   console.log('viewIds', viewIds)
   const viewList = await getViewList({
     where: {
