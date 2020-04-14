@@ -5,26 +5,27 @@ import { ApolloClient } from 'apollo-client'
 import { notification } from 'ant-design-vue'
 import { onError } from 'apollo-link-error'
 
-const linkList = ['28071', '28072', '28073', '28074'].map(port => new HttpLink({
-  // uri: `http://10.1.8.177:${port}/v1/graphql`,
-  //   hasura接口对应地址：
-  // http://10.1.8.177:8071/v1/graphql，对应https://10.1.8.177:28071
-  // http://10.1.8.177:8072/v1/graphql，对应https://10.1.8.177:28072
-  // http://10.1.8.177:8073/v1/graphql，对应https://10.1.8.177:28073
-  // http://10.1.8.177:8074/v1/graphql，对应https://10.1.8.177:28074
-  uri: `https://10.1.8.177:${port}`,
-  headers: {
-    'x-hasura-admin-secret': port === '28073' ? 'myadminsecretkey' : 'zhongjiao'
-  }
-}))
-
-// const linkList = ['8071', '8072', '8073', '8074'].map(port => new HttpLink({
-//   uri: `http://10.1.8.177:${port}/v1/graphql`,
-//   // uri: port === '8072' ? 'https://10.1.8.177:28081/' : `http://10.1.8.177:${port}/v1/graphql`,
+// FIXME: 此处部分设备无法访问
+// const linkList = ['28071', '28072', '28073', '28074'].map(port => new HttpLink({
+//   // uri: `http://10.1.8.177:${port}/v1/graphql`,
+//   //   hasura接口对应地址：
+//   // http://10.1.8.177:8071/v1/graphql，对应https://10.1.8.177:28071
+//   // http://10.1.8.177:8072/v1/graphql，对应https://10.1.8.177:28072
+//   // http://10.1.8.177:8073/v1/graphql，对应https://10.1.8.177:28073
+//   // http://10.1.8.177:8074/v1/graphql，对应https://10.1.8.177:28074
+//   uri: `https://10.1.8.177:${port}`,
 //   headers: {
-//     'x-hasura-admin-secret': port === '8073' ? 'myadminsecretkey' : 'zhongjiao'
+//     'x-hasura-admin-secret': port === '28073' ? 'myadminsecretkey' : 'zhongjiao'
 //   }
 // }))
+
+const linkList = ['8071', '8072', '8073', '8074'].map(port => new HttpLink({
+  uri: `http://10.1.8.177:${port}/v1/graphql`,
+  // uri: port === '8072' ? 'https://10.1.8.177:28081/' : `http://10.1.8.177:${port}/v1/graphql`,
+  headers: {
+    'x-hasura-admin-secret': port === '8073' ? 'myadminsecretkey' : 'zhongjiao'
+  }
+}))
 
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
   console.log({ graphQLErrors, networkError })
