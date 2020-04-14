@@ -153,6 +153,14 @@ const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
   }) {
     affected_rows
   }
+  # 删除权限
+  delete_t_authorize_object (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
 }`
 
 const updateGroupFlag = gql`mutation update_group_flag ($groupId: String!, $flag: numeric) {

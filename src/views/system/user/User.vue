@@ -164,7 +164,7 @@ const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
   }) {
     affected_rows
   }
-  # 删除用户自定义视图
+  # 删除权限
   delete_t_authorize_object (where: {
     user_id: {
       _in: $userIds
