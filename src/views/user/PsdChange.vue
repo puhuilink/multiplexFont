@@ -84,7 +84,7 @@
       </a-row>
 
       <a-form-item v-bind="formItemLayout">
-        <a-col class="gutter-row" :span="24" :offset="8">
+        <a-col class="gutter-row" :span="24" :offset="12">
           <a-button
             size="large"
             type="primary"
