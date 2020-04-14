@@ -263,7 +263,8 @@ export default {
       this.$refs['groupUser'].edit(record)
     },
     auth () {
-      this.$refs['auth'].edit()
+      const [record] = this.selectedRows
+      this.$refs['auth'].edit(record)
     },
     add () {
       this.$refs['schema'].add()

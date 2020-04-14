@@ -232,7 +232,7 @@ export default {
     },
 
     handleSubmit () {
-      // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line
       const { form: { validateFields }, state, $router } = this
       validateFields({ force: true }, (err, values) => {
         if (!err) {
