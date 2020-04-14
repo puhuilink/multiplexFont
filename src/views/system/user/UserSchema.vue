@@ -198,7 +198,7 @@
 </template>
 
 <script>
-import { addUsers, updateUser } from '@/api/controller/User'
+import { addUser, updateUser } from '@/api/controller/User'
 
 const formItemLayout = {
   labelCol: {
@@ -269,7 +269,7 @@ export default {
       try {
         const values = await this.getFormFields()
         this.loading = true
-        await addUsers([values])
+        await addUser(values)
         this.$emit('addSuccess')
         this.$notification.success({
           message: '系统提示',

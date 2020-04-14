@@ -91,6 +91,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <GroupAdministratorSchema
@@ -146,6 +147,14 @@ const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
   }
   #   关联解除
   delete_t_user_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除权限
+  delete_t_authorize_object (where: {
     group_id: {
       _in: $groupIds
     }

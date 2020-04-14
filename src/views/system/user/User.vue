@@ -107,6 +107,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <UserGroupSchema
@@ -159,6 +160,25 @@ const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
   delete_t_user_group (where: {
     user_id: {
       _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除权限
+  delete_t_authorize_object (where: {
+    user_id: {
+      _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除桌面
+  delete_t_view (where: {
+    view_name: {
+      _in: $userIds
+    }
+    view_title: {
+      _eq: "自定义"
     }
   }) {
     affected_rows

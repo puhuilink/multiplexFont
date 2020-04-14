@@ -101,6 +101,16 @@ export const mutationDeletViews = gql`mutation ($viewIdList: [numeric!]) {
   }
 }`
 
+export const queryMaxDid = gql`query MyQuery {
+  data: t_view_aggregate {
+    aggregate {
+      max {
+        view_id
+      }
+    }
+  }
+}`
+
 // export const mutationUpdateViewContent = gql`mutation ($viewId: numeric, $content: String) {
 //   update_t_view (where: {
 //     view_id: {

@@ -104,7 +104,7 @@ import transfer from '@/assets/network-icons/transfer.png'
 import VPN from '@/assets/network-icons/VPN.png'
 import WAN from '@/assets/network-icons/WAN.png'
 import Windows from '@/assets/network-icons/Windows.png'
-
+import ApplicationSystem1 from '@/assets/network-icons/ApplicationSystem1.png'
 export default {
   name: 'IconPicker',
   props: {
@@ -138,7 +138,8 @@ export default {
       { name: 'Switch', img: Switch },
       { name: 'VPN', img: VPN },
       { name: 'WAN', img: WAN },
-      { name: 'Windows', img: Windows }
+      { name: 'Windows', img: Windows },
+      { name: 'ApplicationSystem1', img: ApplicationSystem1 }
     ]
   }),
   methods: {

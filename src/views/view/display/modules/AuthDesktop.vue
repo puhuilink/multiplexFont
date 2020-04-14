@@ -11,6 +11,7 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
+    @ok="submit"
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
@@ -18,11 +19,10 @@
           :dataSource="dataSource"
           showSearch
           :filterOption="filterOption"
-          :targetKeys="targetKeys"
+          :targetKeys="_targetKeys"
           @change="handleChange"
           @search="handleSearch"
           :render="item => item.view_title"
-          :rowKey="item => item.view_id"
         >
         </a-transfer>
       </a-tab-pane>
@@ -31,8 +31,10 @@
 </template>
 
 <script>
-import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
+import { getViewListInGroupAuth, getViewListInUserAuth } from '@/api/controller/ViewGroup'
+import { editDesktopContent } from '@/api/controller/ViewDesktop'
 import { getViewList } from '@/api/controller/View'
+// eslint-disable-next-line
 import _ from 'lodash'
 
 const formItemLayout = {
@@ -61,9 +63,17 @@ export default {
       type: String,
       default: ''
     },
+    userId: {
+      type: String,
+      default: ''
+    },
     selectedKeys: {
       type: Array,
       default: () => ([])
+    },
+    desktopId: {
+      type: String,
+      default: ''
     }
   },
   data: (vm) => ({
@@ -75,14 +85,38 @@ export default {
     dataSource: [],
     targetKeys: []
   }),
-  computed: {},
+  computed: {
+    dataSourceKeys () {
+      return this.dataSource.map(el => el.key)
+    },
+    _targetKeys: {
+      get () {
+        // 求交集，去除历史冗余数据
+        return this.targetKeys
+        // return _.intersection(
+        //   this.targetKeys,
+        //   this.dataSourceKeys
+        // )
+      },
+      set (v) {
+        this.targetKeys = v
+      }
+    }
+  },
   watch: {
     visible: {
       immediate: true,
       handler () {
-        const { visible, groupId } = this
-        if (visible && groupId) {
+        const { visible, groupId, userId } = this
+        // if (visible && groupId) {
+        //   this.fetchGroupViewList(groupId)
+        // }
+        if (!visible) {
+
+        } else if (groupId) {
           this.fetchGroupViewList(groupId)
+        } else if (userId) {
+          this.fetchUserViewList(userId)
         }
       }
     }
@@ -117,12 +151,38 @@ export default {
             chosen: false
           })
         }))
-        const targetKeys = this.selectedKeys.map(key => Number(key))
-        // 旧系统数据库存有冗余数据，此处去重，保证保存时能清理到
-        this.targetKeys = _.intersection(
-          targetKeys,
-          this.dataSource.map(el => el.view_id)
-        )
+        this.targetKeys = this.selectedKeys.map(key => `${key}`)
+      } catch (e) {
+        this.datSource = []
+        throw e
+      }
+    },
+    /**
+     * 用户当前授予的视图
+     */
+    async fetchUserViewList (userId) {
+      try {
+        const groupViewList = await getViewListInUserAuth(userId).then(r => r.data.data)
+        // console.log(groupViewList)
+        const viewIdList = groupViewList.map(el => Number(el.view_id))
+        this.dataSource = await getViewList({
+          limit: 9999,
+          where: {
+            view_id: {
+              _in: viewIdList
+            }
+          }
+        }).then(r => r.data.data).then(r => r.map(el => {
+          // console.log(el.view_id, el.view_title)
+          return ({
+            ...el,
+            title: el['view_title'],
+            key: el['view_id'].toString(),
+            description: '',
+            chosen: false
+          })
+        }))
+        this.targetKeys = this.selectedKeys.map(key => `${key}`)
       } catch (e) {
         this.datSource = []
         throw e
@@ -143,6 +203,23 @@ export default {
     reset () {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async submit () {
+      const { _targetKeys, desktopId } = this
+      try {
+        await editDesktopContent(Number(desktopId), _targetKeys)
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑桌面成功'
+        })
+        // this.visible = false
+        this.cancel()
+        this.$emit('success')
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

@@ -90,7 +90,18 @@
             </a-collapse-panel>
             <!-- E 文字 -->
 
-            <a-collapse-panel header="圆设置" key="3" v-if="chartsType==='healthDegree'">
+            <a-collapse-panel header="底色设置" key="3">
+              <div class="comment-template__item">
+                <p class="comment-template__leading">颜色:</p>
+                <div class="comment-template__inner">
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.innerCircle.backgroundStyle.color"
+                    @change="change" />
+                </div>
+              </div>
+            </a-collapse-panel>
+
+            <a-collapse-panel header="圆设置" key="4" v-if="chartsType==='healthDegree'">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -112,7 +123,7 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="环设置" key="4" v-if="chartsType!=='healthDegree'">
+            <a-collapse-panel header="环设置" key="5" v-if="chartsType!=='healthDegree'">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -134,7 +145,7 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="刻度设置" key="5" v-if="chartsType">
+            <a-collapse-panel header="刻度设置" key="6" v-if="chartsType">
               <div class="comment-template__item">
                 <p class="comment-template__leading">显示:</p>
                 <div class="comment-template__inner comment-template__end">
@@ -231,12 +242,21 @@ export default {
           this.config.proprietaryConfig.innerCircle.data = [1]
           this.config.proprietaryConfig.innerCircle.label.color = '#fff'
           this.config.proprietaryConfig.innerCircle.itemStyle.opacity = 1
+          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
+            return param.value
+          }
           break
         case 'progressRing':
           this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
+          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
+            return param.value
+          }
           break
         case 'healthRing':
           this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
+          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
+            return param.value * 100 + '%'
+          }
           break
       }
       if (value !== 'healthDegree') {
@@ -268,7 +288,7 @@ export default {
     titleUnitChange (e) {
       const titleNum = Number(this.config.proprietaryConfig.innerCircle.label.formatter)
       const textChange = this.fomatFloat(titleNum, e)
-      this.config.proprietaryConfig.innerCircle.label.formatter = textChange + ''
+      this.config.proprietaryConfig.innerCircle.data[0].value = textChange
       this.change()
     }
   }

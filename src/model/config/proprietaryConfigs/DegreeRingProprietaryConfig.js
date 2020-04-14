@@ -62,7 +62,7 @@ class InnerCircle {
         // return param.seriesName + '\n'
         // + param.name + '\n'
         // + 'Value: ' + param.value;
-        return param.value * 100 + '%'
+        return param.value
       },
       fontSize: 20,
       color: '#fff'
