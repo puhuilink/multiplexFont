@@ -49,4 +49,23 @@ export const getUserDesktop = function (userId) {
   })
 }
 
-// export const allViewDesk
+/**
+ * 新增用户桌面（在新增用户时）
+ * @abort
+ * 多个 mutation 应合并到一起提交到 hasura，在遇到异常时才能正常回滚
+ * @param {*} userId
+ */
+// export const addUserDesktop = function (userId) {
+//   const desktop = {
+//     view_name: userId,
+//     view_title: '自定义',
+//     view_type: 'desktop',
+//     creator: userId
+//   }
+//   return apollo.clients.alert.mutate({
+//     mutation: mutationInsertDesktop,
+//     variables: {
+//       objects: [desktop]
+//     }
+//   })
+// }

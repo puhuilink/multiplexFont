@@ -1,4 +1,4 @@
-// import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 import { parse } from 'graphql'
 
 // 超级管理员自定义桌面
@@ -50,3 +50,9 @@ export const queryUserDesktop = (userId) => {
     }`)
   }
 }
+
+export const mutationInsertDesktop = gql`mutation ($objects: [t_authorize_object_insert_input!]!) {
+  insert_t_authorize_object (objects: $objects) {
+    affected_rows
+  }
+}`
