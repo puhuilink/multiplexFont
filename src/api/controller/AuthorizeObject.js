@@ -44,9 +44,8 @@ export const getGroupViewDesktopList = async function (groupIds) {
     desktop.group_id = groupViewDesktop.group_id
     desktopList.push(desktop)
   }
-  console.log('eee')
   const viewIds = desktopList.map(desktop => desktop.viewIds).flat(2).filter(el => !!el)
-  console.log('viewIds', viewIds)
+  // console.log('viewIds', viewIds)
   const viewList = await getViewList({
     where: {
       view_id: {
@@ -58,6 +57,6 @@ export const getGroupViewDesktopList = async function (groupIds) {
     },
     limit: 9999
   }).then(r => r.data.data)
-  console.log(viewList, 'viewList')
+  // console.log(viewList, 'viewList')
   return [viewList, desktopList]
 }

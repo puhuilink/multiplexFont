@@ -15,9 +15,9 @@ import _ from 'lodash'
   * @return {Promise<any>}
   */
 export const getUserDesktop = function (userId) {
-  console.log(
-    queryUserDesktop(userId)
-  )
+  // console.log(
+  //   queryUserDesktop(userId)
+  // )
   return apollo.clients.alert.query({
     query: queryUserDesktop(userId)
   }).then(r => r.data.data).then(async r => {

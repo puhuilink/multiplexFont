@@ -1,77 +1,79 @@
 <template>
   <div class="ViewDisplay__view">
-    <div class="ViewDisplay__view-header">
-      <a-select style="width: 300px;" v-model="selectedGroupName">
-        <a-select-option
-          v-for="(group, idx) in groupDesktopList"
-          :key="idx"
-          :value="group.view_title"
-        >{{ group.view_title }}</a-select-option>
-      </a-select>
+    <a-spin :spinning="loading">
+      <div class="ViewDisplay__view-header">
+        <a-select style="width: 300px;" v-model="selectedGroupName">
+          <a-select-option
+            v-for="(group, idx) in groupDesktopList"
+            :key="idx"
+            :value="group.view_title"
+          >{{ group.view_title }}</a-select-option>
+        </a-select>
 
-      <a-input
-        allowClear
-        autofocus
-        style="width: 200px;"
-        placeholder="按视图标题搜索..."
-        v-model="queryTitle"
-      />
-    </div>
+        <a-input
+          allowClear
+          autofocus
+          style="width: 200px;"
+          placeholder="按视图标题搜索..."
+          v-model="queryTitle"
+        />
+      </div>
 
-    <!-- S 视图列表 -->
-    <div class="ViewDisplay__view-content">
-      <a-row>
-        <a-col
-          v-for="(view, idx) in filterViewList"
-          :key="idx"
-          :xs="24"
-          :md="12"
-          :lg="8"
-          :xxl="6"
-          style="padding: 7px;"
-        >
-          <div class="ViewDisplay__view-item" @click="preview(view)">
-            <img :src="view.view_img | img" :alt="view.view__title">
-            <div class="ViewDisplay__view-item-info">
-              <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
-              <p class="ViewDisplay__view-item-info_creator">
-                <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
-                <span><a-icon type="user" />{{ view.creator }}</span>
-              </p>
+      <!-- S 视图列表 -->
+      <div class="ViewDisplay__view-content">
+        <a-row>
+          <a-col
+            v-for="(view, idx) in filterViewList"
+            :key="idx"
+            :xs="24"
+            :md="12"
+            :lg="8"
+            :xxl="6"
+            style="padding: 7px;"
+          >
+            <div class="ViewDisplay__view-item" @click="preview(view)">
+              <img :src="view.view_img | img" :alt="view.view__title">
+              <div class="ViewDisplay__view-item-info">
+                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_creator">
+                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ view.creator }}</span>
+                </p>
+              </div>
+              {{ view.view__title }}
             </div>
-            {{ view.view__title }}
-          </div>
-        </a-col>
-      </a-row>
-    </div>
-    <!-- E 视图列表 -->
+          </a-col>
+        </a-row>
+      </div>
+      <!-- E 视图列表 -->
 
-    <!-- S 操作按钮 -->
-    <div class="ViewDisplay__operation">
-      <a-button
-        shape="circle"
-        size="large"
-        type="primary"
-        icon="plus"
-        class="ViewDisplay__operation__add"
-        v-show="selectedGroupName !== ALL_VIEW"
-        @click="editDesktop"
-      ></a-button>
-    </div>
-    <!-- E 操作按钮 -->
+      <!-- S 操作按钮 -->
+      <div class="ViewDisplay__operation">
+        <a-button
+          shape="circle"
+          size="large"
+          type="primary"
+          icon="plus"
+          class="ViewDisplay__operation__add"
+          v-show="selectedGroupName !== ALL_VIEW"
+          @click="editDesktop"
+        ></a-button>
+      </div>
+      <!-- E 操作按钮 -->
 
-    <!-- S 视图预览 -->
-    <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
-    <!-- E 视图预览 -->
+      <!-- S 视图预览 -->
+      <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
+      <!-- E 视图预览 -->
 
-    <AuthDesktop
-      v-if="selectedGroup"
-      :visible.sync="authDesktop.visible"
-      :title="selectedGroupName"
-      :selectedKeys="selectedGroup.viewIds"
-      :groupId="selectedGroup.group_id"
-    />
+      <AuthDesktop
+        v-if="selectedGroup"
+        :visible.sync="authDesktop.visible"
+        :title="selectedGroupName"
+        :selectedKeys="selectedGroup.viewIds"
+        :groupId="selectedGroup.group_id"
+      />
 
+    </a-spin>
   </div>
 </template>
 
