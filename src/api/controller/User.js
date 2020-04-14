@@ -61,6 +61,15 @@ export const addUsers = function (objects = []) {
   })
 }
 
+/**
+ * 新增单个用户
+ * @param {Objet} object
+ * @return {Promise}
+ */
+export const addUser = function (object) {
+  return addUsers([object])
+}
+
 export const updateUser = function (object = {}) {
   //  TODO: 字段校验？统一拦截器？
   if (!object.user_id) {
