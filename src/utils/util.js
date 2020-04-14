@@ -96,17 +96,46 @@ export function varcharUuid (length) {
 /**
  * 由原始权限列表，构建菜单级别权限树
  */
-export function getButtonTree (tree, list) {
+export function getMenuTree (tree, list) {
   if (!tree) {
     tree = {
-      code: 'M'
+      code: 'F',
+      key: 'F'
     }
   }
   const childrenList = list.filter(child => child.parentCode === tree.code)
   if (childrenList.length > 0) {
     tree.children = []
-    childrenList.forEach(item => getButtonTree(item, list))
-    tree.children = (childrenList)
+    childrenList.map(item => {
+      item.key = item.code
+      getMenuTree(item, list)
+      return item
+    })
+    tree.children = childrenList
+  }
+  return tree
+}
+
+/**
+ * 由原始权限列表，构建菜单级别权限树
+ */
+export function getButtonTree (tree, list) {
+  if (!tree) {
+    tree = {
+      code: 'M',
+      key: 'M'
+    }
+  }
+  const childrenList = list.filter(child => child.parentCode === tree.code)
+  if (childrenList.length > 0) {
+    tree.children = []
+    childrenList.map(item => {
+      item.key = item.code
+      item.title = item.name
+      getButtonTree(item, list)
+      return item
+    })
+    tree.children = childrenList
   }
   return tree
 }

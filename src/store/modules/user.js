@@ -1,10 +1,10 @@
 import Vue from 'vue'
-import { logout, getPermission } from '@/api/login'
+import { logout } from '@/api/login'
+import { getGroupPermission } from '@/api/system'
 // import { info } from '@/mock/services/user'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { welcome, getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
-import { notification } from 'ant-design-vue'
 
 const user = {
   state: {
@@ -59,7 +59,7 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           let originalPermission = []
-          const permission = await getPermission(user.userId)
+          const permission = await getGroupPermission(user.organizeList[0].groupId)
           if (permission.code === 200) {
             originalPermission = permission.data
           }
@@ -71,8 +71,6 @@ const user = {
           const buttonTree = getButtonTree(null, buttonOriginalPermission)
           const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
           const userPermission = Object.assign({}, user, permissionTree)
-
-          console.log('userPermission: ', userPermission)
 
           if (userPermission.permissions && userPermission.permissions.length > 0) {
             commit('SET_ROLES', userPermission)

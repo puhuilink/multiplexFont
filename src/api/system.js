@@ -4,7 +4,10 @@ import { axios } from '@/utils/request'
 const api = {
   userList: '/user/list',
   groupList: '/group/list',
-  auditList: '/audit/list'
+  auditList: '/audit/list',
+  modifyUserPermission: '/function/changeUserFunction',
+  Permission: '/function/getUserFunction',
+  GroupPermission: '/function/getGroupFunction'
 }
 
 export default api
@@ -45,5 +48,52 @@ export function getAuditList (parameter) {
     url: api.auditList,
     method: 'get',
     params: parameter
+  })
+}
+
+/**
+ * 修改用户权限
+ * @param id
+ * @param authorizeObjectList
+ * @returns {AxiosPromise}
+ */
+export function modifyUserPermission (id, authorizeObjectList) {
+  return axios({
+    url: api.modifyUserPermission,
+    method: 'post',
+    data: {
+      id,
+      authorizeObjectList
+    }
+  })
+}
+
+/**
+ * 获取用户权限
+ * @param userId
+ * @returns {AxiosPromise}
+ */
+export function getPermission (userId) {
+  return axios({
+    url: api.Permission,
+    method: 'get',
+    params: {
+      userId
+    }
+  })
+}
+
+/**
+ * 获取用户组权限
+ * @param groupId
+ * @returns {AxiosPromise}
+ */
+export function getGroupPermission (groupId) {
+  return axios({
+    url: api.GroupPermission,
+    method: 'get',
+    params: {
+      groupId
+    }
   })
 }

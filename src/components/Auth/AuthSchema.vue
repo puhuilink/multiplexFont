@@ -8,6 +8,7 @@
     wrapClassName="AuthSchema__modal"
     v-model="visible"
     @cancel="cancel"
+    @ok="save"
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
@@ -17,7 +18,7 @@
         <AuthView :groupId="authView.groupId" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
-        <AuthMenu />
+        <AuthMenu :userId="userId" ref="menu" />
       </a-tab-pane>
     </a-tabs>
   </a-modal>
@@ -26,6 +27,7 @@
 <script>
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
+import { modifyUserPermission } from '@/api/system'
 
 const formItemLayout = {
   labelCol: {
@@ -53,13 +55,14 @@ export default {
     visible: false,
     authView: {
       groupId: ''
-    }
+    },
+    userId: ''
   }),
-  computed: {},
   methods: {
     edit (record) {
       this.title = '授权'
       this.visible = true
+      this.userId = record.user_id
       this.authView.groupId = record['group_id']
     },
     cancel () {
@@ -68,6 +71,25 @@ export default {
     reset () {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async save () {
+      try {
+        this.loading = true
+        const menu = this.$refs.menu.getCheckedMenu()
+        const { code } = await modifyUserPermission(this.userId, menu)
+        if (code === 200) {
+          this.$notification.success({
+            message: '保存成功'
+          })
+        }
+      } catch (e) {
+        this.$notification.error({
+          message: '保存异常，请稍后再试'
+        })
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

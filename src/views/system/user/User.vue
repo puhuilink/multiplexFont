@@ -87,7 +87,7 @@
         <a-button @click="resetPwd" :disabled="!hasSelectedOne">重置密码</a-button>
         <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
         <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
-        <a-button @click="allocateAuth" :disabled="!hasSelected">分配权限</a-button>
+        <a-button @click="allocateAuth" :disabled="!hasSelectedOne">分配权限</a-button>
       </template>
 
       <span slot="job_title" slot-scope="text">
@@ -277,7 +277,8 @@ export default {
       this.$refs['schema'].edit(record)
     },
     allocateAuth () {
-      this.$refs['auth'].edit()
+      const [record] = this.selectedRows
+      this.$refs['auth'].edit(record)
     },
     allocateGroup () {
       const [record] = this.selectedRows

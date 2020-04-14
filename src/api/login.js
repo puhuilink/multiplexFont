@@ -66,18 +66,3 @@ export function get2step (parameter) {
     data: parameter
   })
 }
-
-/**
- * 获取用户权限
- * @param userId
- * @returns {AxiosPromise}
- */
-export function getPermission (userId) {
-  return axios({
-    url: api.Permission,
-    method: 'get',
-    params: {
-      userId
-    }
-  })
-}
