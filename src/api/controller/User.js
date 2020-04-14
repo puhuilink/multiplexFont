@@ -77,7 +77,7 @@ export const addUser = async function (user) {
     view_id: viewId + 1,
     view_name: user.user_id,
     view_title: '自定义',
-    view_type: 'view',
+    view_type: 'desktop',
     creator: user.user_id,
     content: '',
     protect_level: '0'

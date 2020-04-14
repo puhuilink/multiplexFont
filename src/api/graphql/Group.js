@@ -1,10 +1,14 @@
 import gql from 'graphql-tag'
 
-export const mutationInsert = gql`mutation ($objects: [t_group_insert_input!]!) {
-  insert_t_group (objects: $objects) {
+export const mutationInsert = gql`mutation ($groups: [t_group_insert_input!]!, $views: [t_view_insert_input!]!) {
+  insert_t_group (objects: $groups) {
     returning {
       group_id
     }
+  }
+  # 新建工作组展示桌面
+  insert_t_view (objects: $views) {
+    affected_rows
   }
 }`
 
