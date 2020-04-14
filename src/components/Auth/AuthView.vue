@@ -3,11 +3,10 @@
     :dataSource="viewList"
     showSearch
     :filterOption="filterOption"
-    :targetKeys="targetKeys"
+    :targetKeys="_targetKeys"
     @change="handleChange"
     @search="handleSearch"
     :render="item => item.view_title"
-    :rowKey="item => item.view_id"
   >
   </a-transfer>
 </template>
@@ -15,6 +14,7 @@
 <script>
 import { getViewList } from '@/api/controller/View'
 import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
+import _ from 'lodash'
 
 export default {
   name: 'AuthView',
@@ -33,6 +33,20 @@ export default {
     targetKeys: [],
     groupViewList: []
   }),
+  computed: {
+    dataSourceKeys () {
+      return this.viewList.map(el => el.key)
+    },
+    _targetKeys: {
+      get () {
+        // 求交集，去除历史冗余数据
+        return _.intersection(this.targetKeys, this.dataSourceKeys)
+      },
+      set (v) {
+        this.targetKeys = v
+      }
+    }
+  },
   watch: {
     groupId: {
       immediate: true,
@@ -40,10 +54,6 @@ export default {
         groupId && this.fetchGroupViewList(groupId)
       }
     }
-  },
-  created () {
-    // this.getMock()
-    this.fetchAllViewList()
   },
   methods: {
     async fetchAllViewList () {
@@ -75,9 +85,9 @@ export default {
      */
     async fetchGroupViewList (groupId) {
       try {
-        const groupViewList = await getViewListInGroupAuth(groupId).then(r => r.data.data)
-        // console.log(groupViewList)
-        this.targetKeys = groupViewList.map(el => Number(el.view_id))
+        const groupViewList = (await getViewListInGroupAuth(groupId).then(r => r.data.data)).map(el => `${el.view_id}`)
+        // this.targetKeys = _.intersection(this.viewList.map(el => el.key), groupViewList)
+        this.targetKeys = groupViewList
       } catch (e) {
         this.targetKeys = []
         throw e
@@ -120,6 +130,9 @@ export default {
     handleSearch (dir, value) {
       // console.log('search:', dir, value)
     }
+  },
+  created () {
+    this.fetchAllViewList()
   }
 }
 </script>

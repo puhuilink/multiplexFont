@@ -310,7 +310,7 @@ export default {
     position: relative;
 
     &-header {
-      padding: 0px 22px 14px 22px;
+      padding: 12px 22px 14px 22px;
       // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
       margin: 0 -24px 0 -24px;
       width: calc(100% + 48px);
