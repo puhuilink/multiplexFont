@@ -14,6 +14,7 @@
 <script>
 import { getViewList } from '@/api/controller/View'
 import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
+// eslint-disable-next-line
 import _ from 'lodash'
 
 export default {
@@ -23,6 +24,11 @@ export default {
     groupId: {
       type: String,
       default: ''
+    },
+    // 选中的 viewIds
+    viewIds: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: () => ({
@@ -40,10 +46,13 @@ export default {
     _targetKeys: {
       get () {
         // 求交集，去除历史冗余数据
-        return _.intersection(this.targetKeys, this.dataSourceKeys)
+        // TODO: 旧数据可能有用
+        // return _.intersection(this.targetKeys, this.dataSourceKeys)
+        return this.targetKeys
       },
       set (v) {
         this.targetKeys = v
+        this.$emit('update:viewIds', [...v])
       }
     }
   },
@@ -86,30 +95,11 @@ export default {
     async fetchGroupViewList (groupId) {
       try {
         const groupViewList = (await getViewListInGroupAuth(groupId).then(r => r.data.data)).map(el => `${el.view_id}`)
-        // this.targetKeys = _.intersection(this.viewList.map(el => el.key), groupViewList)
-        this.targetKeys = groupViewList
+        this._targetKeys = groupViewList
       } catch (e) {
-        this.targetKeys = []
+        this._targetKeys = []
         throw e
       }
-    },
-    getMock () {
-      const targetKeys = []
-      const mockData = []
-      for (let i = 0; i < 20; i++) {
-        const data = {
-          key: i.toString(),
-          title: `content${i + 1}`,
-          description: `description of content${i + 1}`,
-          chosen: Math.random() * 2 > 1
-        }
-        if (data.chosen) {
-          targetKeys.push(data.key)
-        }
-        mockData.push(data)
-      }
-      this.mockData = mockData
-      this.targetKeys = targetKeys
     },
     /**
      * 过滤条件
@@ -125,7 +115,7 @@ export default {
     },
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
-      this.targetKeys = targetKeys
+      this._targetKeys = targetKeys
     },
     handleSearch (dir, value) {
       // console.log('search:', dir, value)

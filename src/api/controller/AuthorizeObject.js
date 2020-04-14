@@ -2,7 +2,11 @@
  * 权限分配模块
  */
 
-import { queryGroupViewDesktopList, queryDesktopItemList } from '../graphql/AuthorizeObject'
+import {
+  queryGroupViewDesktopList,
+  queryDesktopItemList,
+  mutationUpdateGroupViewAuth
+} from '../graphql/AuthorizeObject'
 import { getViewList } from './View'
 import apollo from '@/utils/apollo'
 import store from '@/store'
@@ -54,4 +58,24 @@ export const getGroupViewDesktopList = async function (groupIds) {
   }).then(r => r.data.data)
   // console.log(viewList, 'viewList')
   return [viewList, desktopList]
+}
+
+/**
+ * 为工作组分配视图权限
+ * @param {String} groupId 工作组id
+ * @param {Array<String>} viewIds 视图id列表
+ */
+export const allocateGroupViewAuth = function (groupId, viewIds = []) {
+  const objects = viewIds.map(viewId => ({
+    group_id: `${groupId}`,
+    object_id: `${viewId}`,
+    object_type: '4'
+  }))
+  return apollo.clients.alert.mutate({
+    mutation: mutationUpdateGroupViewAuth,
+    variables: {
+      groupId,
+      objects
+    }
+  })
 }

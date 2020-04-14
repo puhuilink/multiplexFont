@@ -11,10 +11,11 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
+    @ok="submit"
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
-        <AuthView :groupId="authView.groupId" />
+        <AuthView :groupId="authView.groupId" :viewIds.sync="authView.viewIds" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
         <AuthMenu />
@@ -26,6 +27,8 @@
 <script>
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
+// eslint-disable-next-line
+import { allocateGroupViewAuth } from '@/api/controller/AuthorizeObject'
 
 const formItemLayout = {
   labelCol: {
@@ -52,6 +55,8 @@ export default {
     title: '',
     visible: false,
     authView: {
+      // 选中的 viewId
+      viewIds: [],
       groupId: ''
     }
   }),
@@ -60,6 +65,7 @@ export default {
     edit (record) {
       this.title = '授权'
       this.visible = true
+      this.record = { ...record }
       this.authView.groupId = record['group_id']
     },
     cancel () {
@@ -68,6 +74,22 @@ export default {
     reset () {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async submit () {
+      try {
+        this.loading = true
+        await allocateGroupViewAuth(this.record['group_id'], this.authView.viewIds)
+        this.visible = false
+        this.$notification.success({
+          message: '系统提示',
+          description: '分配权限成功'
+        })
+        this.$emit('success')
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

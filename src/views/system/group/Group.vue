@@ -91,6 +91,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <GroupAdministratorSchema

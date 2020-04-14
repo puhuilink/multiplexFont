@@ -30,3 +30,19 @@ export const queryDesktopItemList = gql`query ($desktopId: numeric) {
     content
   }
 }`
+
+export const mutationUpdateGroupViewAuth = gql`mutation ($groupId: String, $objects: [t_authorize_object_insert_input!]!) {
+  delete_t_authorize_object (where: {
+    group_id: {
+      _eq: $groupId
+    }
+    object_type: {
+      _eq: "4"
+    }
+  }) {
+    affected_rows
+  }
+  insert_t_authorize_object (objects: $objects) {
+    affected_rows
+  }
+}`
