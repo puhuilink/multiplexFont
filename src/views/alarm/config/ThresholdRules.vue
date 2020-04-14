@@ -142,7 +142,7 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import screening from '../screening'
-import queryList from '@/api/alarm/queryList'
+import queryList from '@/api/controller/AlarmqQueryList'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/ThresholdRulesDetail'
 import gql from 'graphql-tag'

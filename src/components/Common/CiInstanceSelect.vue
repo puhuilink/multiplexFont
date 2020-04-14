@@ -1,7 +1,9 @@
 <template>
   <div class="CiInstanceSelect">
     <a-select
-      mode="multiple"
+      :labelInValue="labelInValue"
+      :mode="multiple ? 'multiple' : 'default'"
+      allowClear
       style="min-width: 200px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
@@ -11,6 +13,7 @@
         v-for="(item, itemIdx) in options"
         :key="itemIdx"
         :value="item.value"
+        v-if="item.value"
       >
         {{ item.label }}
       </a-select-option>
@@ -25,14 +28,23 @@ export default {
   name: 'CiInstanceSelect',
   components: {},
   props: {
+    // eslint-disable-next-line
     value: {
-      type: Array,
-      default: () => ([])
+      // type: Array,
+      // default: () => ([])
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
     'parentNameS': {
       type: String,
       default: ''
+    },
+    labelInValue: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -44,17 +56,19 @@ export default {
       get () {
         return this.value
       },
-      set (v = '') {
-        this.$emit('input', v)
+      set (v) {
+        // 为维护字段一致性，对外统一暴露为数组格式
+        // 当 multiple 为 true 时，v 为数组；反之为 string 或 undefined (当 allowClaear 触发时)
+        const arr = v ? [v] : []
+        this.$emit('input', this.multiple ? v : arr)
       }
     }
   },
   watch: {
     parentNameS: {
-      immediate: false,
+      immediate: true,
       handler (v) {
         if (v) {
-          this.$emit('input', '')
           this.loadData({
             'parentname_s': {
               '_eq': this.parentNameS
@@ -62,7 +76,6 @@ export default {
           })
         } else {
           this.options = []
-          this.$emit('input', '')
         }
       }
     }

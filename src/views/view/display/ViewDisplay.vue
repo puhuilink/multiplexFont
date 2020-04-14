@@ -1,24 +1,83 @@
 <template>
-  <page-view :avatar="avatar" :title="false">
-    <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
-      <div>描述</div>
-    </div>
-    <div slot="extra">
-      <a-row class="more-info">
-        <a-col :span="8">
-          <head-info title="项目" content="56" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="图表" content="8/24" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="项目" content="2,223" :center="false" />
-        </a-col>
-      </a-row>
-    </div>
+  <div class="ViewDisplay__view">
+    <a-spin :spinning="loading">
+      <div class="ViewDisplay__view-header">
+        <a-select style="width: 300px;" v-model="selectedGroupName">
+          <a-select-option
+            v-for="(group, idx) in groupDesktopList"
+            :key="idx"
+            :value="group.view_title"
+          >{{ group.view_title }}</a-select-option>
+        </a-select>
 
-  </page-view>
+        <a-input
+          allowClear
+          autofocus
+          style="width: 200px;"
+          placeholder="按视图标题搜索..."
+          v-model="queryTitle"
+        />
+      </div>
+
+      <!-- S 视图列表 -->
+      <div class="ViewDisplay__view-content">
+        <a-row>
+          <a-col
+            v-for="(view, idx) in filterViewList"
+            :key="idx"
+            :xs="24"
+            :md="12"
+            :lg="8"
+            :xxl="6"
+            style="padding: 7px;"
+          >
+            <div class="ViewDisplay__view-item" @click="preview(view)">
+              <img :src="view.view_img | img" :alt="view.view__title">
+              <div class="ViewDisplay__view-item-info">
+                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_creator">
+                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ view.creator }}</span>
+                </p>
+              </div>
+              {{ view.view__title }}
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+      <!-- E 视图列表 -->
+
+      <!-- S 操作按钮 -->
+      <div class="ViewDisplay__operation">
+        <a-button
+          shape="circle"
+          size="large"
+          type="primary"
+          icon="plus"
+          class="ViewDisplay__operation__add"
+          v-show="selectedGroupName !== ALL_VIEW"
+          @click="editDesktop"
+        ></a-button>
+      </div>
+      <!-- E 操作按钮 -->
+
+      <!-- S 视图预览 -->
+      <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
+      <!-- E 视图预览 -->
+
+      <AuthDesktop
+        v-if="selectedGroup"
+        :visible.sync="authDesktop.visible"
+        :title="selectedGroupName"
+        :selectedKeys="selectedGroup.viewIds"
+        :groupId="selectedGroup.group_id"
+        :userId="selectedGroup.view_name"
+        :desktopId="selectedGroup.view_id"
+        @success="fetch"
+      />
+
+    </a-spin>
+  </div>
 </template>
 
 <script>
@@ -26,18 +85,45 @@ import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
+import AuthDesktop from './modules/AuthDesktop'
+import ViewPreview from './modules/viewPreview'
+import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
+import { getUserDesktop } from '@/api/controller/ViewDesktop'
+import previewImg from '@/assets/images/view__preview_default.jpg'
+import _ from 'lodash'
+
+const ALL_VIEW = '所有视图'
 
 export default {
   name: 'ViewDisplay',
   components: {
+    AuthDesktop,
     PageView,
-    HeadInfo
+    HeadInfo,
+    ViewPreview
+  },
+  filters: {
+    img (img) {
+      return img ? `http://10.1.13.19:48080/${img}` : previewImg
+    }
   },
   data () {
     return {
       timeFix: timeFix(),
       avatar: '',
-      user: {}
+      user: {},
+      loading: false,
+      groupDesktopList: [],
+      viewList: [],
+      queryTitle: '',
+      selectedGroupName: ALL_VIEW,
+      previewImg,
+      visible: false,
+      currentView: null,
+      ALL_VIEW,
+      authDesktop: {
+        visible: false
+      }
     }
   },
   computed: {
@@ -47,11 +133,66 @@ export default {
     }),
     userInfo () {
       return this.$store.getters.userInfo
+    },
+    selectedGroup () {
+      const { selectedGroupName, groupDesktopList } = this
+      // eslint-disable-next-line
+      return groupDesktopList.find(({ view_title }) => view_title === selectedGroupName)
+    },
+    filterViewList () {
+      const { selectedGroup, viewList } = this
+      let list = []
+      // 分组筛选条件
+      if (selectedGroup.view_title === ALL_VIEW) {
+        list = viewList
+      } else {
+        // eslint-disable-next-line
+        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
+      }
+      // 加上搜索条件，当 input allowClear 时，title 为 undefined
+      list = list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+      // 当多个桌面有相同项时，去重
+      return _.uniqBy(list, e => e.view_id)
+    }
+  },
+  methods: {
+    async fetch () {
+      try {
+        this.loading = true
+        const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
+        const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
+        console.log(selfDesktop)
+        this.viewList = [
+          ...groupDesktopViewList,
+          ...selfDesktopViewList
+        ]
+        this.groupDesktopList = [
+          ...groupDesktopList,
+          selfDesktop,
+          {
+            view_title: ALL_VIEW
+          }
+        ]
+      } catch (e) {
+        this.viewList = []
+        this.groupDesktopList = []
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    editDesktop () {
+      this.authDesktop.visible = true
+    },
+    preview (view) {
+      this.visible = true
+      this.currentView = view
     }
   },
   created () {
     this.user = this.userInfo
     this.avatar = this.userInfo.avatar
+    this.fetch()
   }
 }
 </script>
@@ -165,6 +306,103 @@ export default {
 
     .headerContent .title .welcome-text {
       display: none;
+    }
+  }
+
+  .ViewDisplay__view {
+    position: relative;
+
+    &-header {
+      padding: 12px 22px 14px 22px;
+      // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
+      margin: 0 -24px 0 -24px;
+      width: calc(100% + 48px);
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 64px;
+      background-color: rgb(255, 255, 255);
+      z-index: 9;
+    }
+
+    &-item {
+      box-sizing: border-box;
+      // 给定宽高，避免图片加载等过程中导致重绘
+      // width: 363px;
+      // height: 259px;
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      box-shadow: 0 0 32px #f0f0f0;
+      transform: scale(1);
+      transition: transform .4s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.03);
+        transition: transform .4s ease;
+      }
+
+      img {
+        width: 100%;
+        // 指定高度，保证各图片对齐，并一定程度减少浏览器回流与重绘
+        height: 143px;
+        border-radius: 4px;
+      }
+
+      &-info {
+        padding: 12px;
+        padding-bottom: 0;
+
+        &_title {
+          font-family: 微软雅黑;
+          font-size: 16px;
+          font-weight: bold;
+          display: block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          word-break: break-all;
+          color: rgb(51, 51, 51);
+          overflow: hidden;
+          margin: 0px 0px 8px;
+        }
+
+        &_creator {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          span {
+            line-height: 12px;
+            overflow: hidden;
+            margin: 2px 0 2px 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            background-repeat: no-repeat;
+            background-size: contain;
+            font-family: 微软雅黑;
+            font-size: 12px;
+            color: rgb(124, 132, 145);
+          }
+        }
+      }
+    }
+  }
+
+  .ViewDisplay {
+
+    &__operation {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 8px;
+
+      // &__add {
+
+      // }
     }
   }
 

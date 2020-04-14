@@ -23,6 +23,7 @@ export default {
 }
 </script>
 <style lang="less">
+  @import 'assets/less/common';
   #app {
     height: 100%;
   }
@@ -34,5 +35,21 @@ export default {
     button{
       margin-right: 5px;
     }
+}
+.ant-fullcalendar-fullscreen .ant-fullcalendar-header .ant-radio-group{
+  display:none !important
+}
+
+// 操作按钮样式
+.opration{
+  margin-bottom: 10px;
+  button{
+    margin-right: 5px;
+  }
+}
+// 搜索框样式
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>

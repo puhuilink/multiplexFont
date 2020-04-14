@@ -231,12 +231,11 @@ export default {
       ITypeList: []
     }
   },
-  created () {
-    this.getUserList()
-    this.getIncidentType()
-  },
+  created () {},
   methods: {
     open (idList, record) {
+      this.getUserList()
+      this.getIncidentType()
       this.visible = true
       this.idList = idList
       this.record = record
@@ -294,10 +293,13 @@ export default {
           }
         }
       }).then(res => {
-        // this.cancel()
+        this.$notification.success({
+          message: '系统提示',
+          description: '告警前转成功'
+        })
+        this.$emit('ok')
         this.visible = false
         this.confirmLoading = false
-        // this.$emit('table').refresh(true)
       }).catch(err => {
         throw err
       }).finally(() => {

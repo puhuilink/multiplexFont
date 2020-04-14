@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
+import { ALLPERMISSION } from '@/utils/menu'
 
 /**
  * Action 权限指令
@@ -19,14 +20,27 @@ const action = Vue.directive('action', {
     const actionName = binding.arg
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
-    const permissionId = elVal instanceof String && [elVal] || elVal
+    const [permissionId] = elVal instanceof String && [elVal] || elVal
+    const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
+    const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
+    // TODO 还有些按钮权限未添加，后续优化
     roles.permissions.forEach(p => {
-      if (!permissionId.includes(p.permissionId)) {
+      if (!roles.allPermission.includes(permissionId)) {
         return
       }
-      if (p.actionList && !p.actionList.includes(actionName)) {
-        el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+
+      if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
+        // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
+        if (p.actionList && !p.actionList.includes(actionName)) {
+          el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+        }
       }
+      // if (!permissionId.includes(p.permissionId)) {
+      //   return
+      // }
+      // if (p.actionList && !p.actionList.includes(actionName)) {
+      //   el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+      // }
     })
   }
 })

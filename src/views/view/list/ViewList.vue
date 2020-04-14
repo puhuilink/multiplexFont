@@ -56,11 +56,11 @@
       </template>
 
       <template #operation>
-        <a-button @click="$refs['title'].add()">新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy">复制</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign">设计</a-button>
-        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
+        <a-button @click="$refs['title'].add()" v-action:M0201>新建</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit" v-action:M0202>编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign" v-action:M0203>设计</a-button>
+        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0" v-action:M0204>删除</a-button>
       </template>
 
       <span slot="viewTitle" slot-scope="text">
@@ -91,10 +91,10 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import { PageView } from '@/layouts'
-import { getViewList } from '@/api/controller/View'
+import { getViewList, copyView, deleteViews } from '@/api/controller/View'
 import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 import { Ellipsis } from '@/components'
 
 export default {
@@ -111,6 +111,8 @@ export default {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
+      // 复制按钮 loading
+      copyLoading: false,
       // 视图类型
       viewTypes: [
         { label: '综合视图', value: 'comprehensive' },
@@ -150,12 +152,6 @@ export default {
           sorter: true,
           width: 300,
           scopedSlots: { customRender: 'viewName' }
-        },
-        {
-          title: '视图类型',
-          dataIndex: 'view_type',
-          sorter: true,
-          width: 200
         },
         {
           title: '视图创建者',
@@ -206,7 +202,11 @@ export default {
             view_title: {
               _ilike: `%${this.queryParams.view_title.trim()}%`
             }
-          } : {}
+          } : {},
+          // 老系统才区分视图类型，新系统只有一种类型
+          view_type: {
+            _eq: 'h5'
+          }
         }
       }).then(r => r.data)
     },
@@ -244,29 +244,56 @@ export default {
     /**
      * 处理复制事件
      */
-    handleCopy () {
-      console.log('Copy: ', this.selectedRows)
+    async handleCopy () {
+      // console.log('Copy: ', this.selectedRows)
+      const [viewId] = this.selectedRowKeys
+      try {
+        this.copyLoading = true
+        await copyView(viewId)
+        this.$notification.success({
+          message: '系统提示',
+          description: '复制成功'
+        })
+        this.$refs['table'].refresh()
+      } catch (e) {
+        throw e
+      } finally {
+        this.copyLoading = false
+      }
     },
     /**
      * 处理设计事件
      */
     handleDesign () {
       const [ row ] = this.selectedRows
-      const { id, title } = row
+      const { view_id: id, view_title: title } = row
       this.$router.push({ name: 'Design', query: { id, title } })
     },
     /**
      * 处理删除事件
      */
-    handleDelete () {
-      console.log('Delete: ', this.selectedRows)
+    async handleDelete () {
+      // console.log('Delete: ', this.selectedRows)
+      try {
+        this.loading = false
+        await deleteViews(this.selectedRowKeys)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // refresh 后会自动结束 loading
+        this.$refs['table'].refresh()
+      } catch (e) {
+        this.loading = false
+        throw e
+      }
     }
   }
 }
 </script>
 <style scoped lang="less">
-  .fold {
-    display: inline-block;
-    width: calc(100% - 216px);
-  }
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
+}
 </style>

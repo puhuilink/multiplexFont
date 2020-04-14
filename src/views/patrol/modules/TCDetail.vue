@@ -3,7 +3,7 @@
  */
 <template>
   <a-modal
-    :title="'详情'"
+    :title="'任务详情'"
     style="top: 40px;"
     :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
     :width="900"
@@ -13,10 +13,16 @@
     destroyOnClose
     @cancel="handleCancel"
   >
-    <a-row class="form-row" :gutter="16">
-      巡检日历详情
-    </a-row>
-
+    <h4>
+      <!-- {{ recordList[0].work_start_date || '' }} -->
+    </h4>
+    <a-table
+      size="small"
+      row-key="work_start_time"
+      :columns="columns"
+      :dataSource="recordList"
+      :pagination="false"
+    />
   </a-modal>
 </template>
 
@@ -28,7 +34,26 @@ export default {
       form: this.$form.createForm(this),
       visible: false,
       loading: false,
-      record: ''
+      recordList: '',
+      columns: [
+        {
+          title: '状态',
+          dataIndex: 'work_state'
+        },
+        {
+          title: '开始时间',
+          dataIndex: 'work_start_time'
+        },
+        {
+          title: '任务名称',
+          dataIndex: 'task_name'
+        },
+        // TODO: 这里的人员是展示默认值吗
+        {
+          title: '人员',
+          dataIndex: 'df_transactor_name'
+        }
+      ]
     }
   },
   beforeCreate () {
@@ -42,8 +67,7 @@ export default {
   methods: {
     async open (record) {
       this.visible = true
-      this.record = record
-      console.log(record)
+      this.recordList = record
     },
     handleCancel (e) {
       console.log('Clicked cancel button')

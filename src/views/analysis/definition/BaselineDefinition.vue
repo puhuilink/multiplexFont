@@ -17,103 +17,68 @@
         <a-form layout="inline">
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="12" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="动态基线名称"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
+                  :labelCol="layout.label"
+                  :wrapperCol="layout.wrapper"
                   style="width: 100%">
                   <a-input v-model="queryParams.title" placeholder=""/>
                 </a-form-item>
               </a-col>
-              <a-col :md="12" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="节点类型"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
+                  :labelCol="layout.label"
+                  :wrapperCol="layout.wrapper"
                   style="width: 100%">
-                  <a-select
-                    allowClear
-                    v-model="queryParams.ci_type_label"
-                    placeholder="请选择"
-                  >
-                    <a-select-opt-group
-                      v-for="(group,index) in nodeType"
-                      :key="index"
-                      :label="group.label"
-                      :allowClear="true"
-                    >
-                      <a-select-option
-                        v-for="item in group.options"
-                        :key="item.value"
-                        :value="item.value"
-                      >
-                        {{ item.label }}
-                      </a-select-option>
-                    </a-select-opt-group>
-                  </a-select>
+                  <ci-model-select
+                    :value="queryParams.model"
+                    @input="onModelInput"
+                  />
                 </a-form-item>
               </a-col>
-            </a-row>
-
-            <a-row>
-              <!-- 多余筛选框是否展示 -->
-              <template v-if="advanced">
-                <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="KPI"
-                    :labelCol="{ span: 4 }"
-                    :wrapperCol="{ span: 14, offset: 2 }"
-                    style="width: 100%"
-                  >
-                    <a-select
-                      allowClear
-                      v-model="queryParams.kpi"
-                      placeholder="请选择"
-                    >
-                      <a-select-opt-group
-                        v-for="(group,index) in nodeType"
-                        :key="index"
-                        :label="group.label"
-                        :allowClear="true"
-                      >
-                        <a-select-option
-                          v-for="item in group.options"
-                          :key="item.value"
-                          :value="item.value"
-                        >
-                          {{ item.label }}
-                        </a-select-option>
-                      </a-select-opt-group>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-              </template>
+              <a-col :md="8" :sm="24">
+                <a-form-item
+                  label="KPI"
+                  :labelCol="layout.label"
+                  :wrapperCol="layout.wrapper"
+                  style="width: 100%"
+                >
+                  <KpiSelect
+                    :nodetypeS="queryParams.model"
+                    v-model="queryParams.kpi_code"
+                  />
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
           <!-- TODO: 统一管理布局 -->
           <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
+            <a-button style="margin-left: 8px" @click="queryParams = Object.assign({}, initialQueryParams)">重置</a-button>
+            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+            </a> -->
           </span>
         </a-form>
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
+        <a-button @click="add" v-action:M1304>新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
+          @click="edit"
+          v-action:M1305
         >
           编辑
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
+          v-action:M1306
         >
           删除
         </a-button>
@@ -121,7 +86,11 @@
 
     </CTable>
 
-    <BaselineDefinitionSchema ref="schema" />
+    <BaselineDefinitionSchema
+      ref="schema"
+      @editSuccess="$refs['table'].refresh(false)"
+      @addSuccess="() => { this.queryParams = {}; this.$refs['table'].refresh(true) }"
+    />
 
   </div>
 </template>
@@ -131,10 +100,22 @@ import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
 import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
-import Template from '../../design/moduels/template/index'
-import { getBaselineDefList } from '@/api/controller/Baseline'
+import Template from '../../design/modules/template/index'
+import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import { getResourceInstanceList } from '@/api/controller/Resource'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
+import { CiModelSelect, KpiSelect } from '@/components/Common'
+
+const layout = {
+  label: { span: 6 },
+  wrapper: { span: 16, offset: 2 }
+}
+
+const initialQueryParams = {
+  model: '',
+  title: '',
+  kpi_code: []
+}
 
 export default {
   name: 'BaselineDefinition',
@@ -142,14 +123,22 @@ export default {
     Template,
     CTable,
     Ellipsis,
+    CiModelSelect,
+    KpiSelect,
     BaselineDefinitionSchema
   },
   data () {
     return {
-    // 搜索： 展开/关闭
+      layout,
+      // 搜索： 展开/关闭
       advanced: false,
+      initialQueryParams,
       // 查询参数
-      queryParams: {},
+      queryParams: {
+        model: '',
+        title: '',
+        kpi_code: []
+      },
       nodeType: screening.CIType,
       // 告警列表表头
       columns: [
@@ -170,13 +159,27 @@ export default {
           title: '节点实例',
           dataIndex: 'ci_label',
           width: 300,
-          sorter: true
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: 'KPI名称',
           dataIndex: 'kpi_label',
-          // width: 100,
-          sorter: true
+          width: 100,
+          sorter: true,
+          customRender: text => {
+            return this.$createElement('div', {
+              domProps: {
+                innerHTML: (text || '').replace(/,/g, '<br />')
+              }
+            })
+          }
         },
         {
           title: '周期',
@@ -207,14 +210,15 @@ export default {
                 _ilike: `%${this.queryParams.title.trim()}%`
               }
             } : {},
-            ...this.queryParams.ci_type_label ? {
+            ...this.queryParams.label ? {
               ci_type_label: {
-                _ilike: `%${this.queryParams.ci_type_label.trim()}%`
+                _eq: `${this.queryParams.label}`
               }
             } : {},
-            ...this.queryParams.kpi ? {
-              kpi: {
-                _ilike: `%${this.queryParams.kpi.trim()}%`
+            ...this.queryParams.kpi_code && this.queryParams.kpi_code.length ? {
+              kpi_code: {
+                // 一条记录可能绑定多个 Kpi，在数据表中是一个以逗号分隔的字符串
+                _like: `%${this.queryParams.kpi_code[0]}%`
               }
             } : {}
           }
@@ -231,7 +235,7 @@ export default {
   computed: {
     scrollX: {
       get () {
-        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2)) + 36
       }
     }
   },
@@ -241,7 +245,7 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
-      this.$refs['schema'].edtt(record)
+      this.$refs['schema'].edit(record)
     },
     /**
      * 查询
@@ -265,6 +269,14 @@ export default {
     },
     onDataOk (value) {
       console.log('onOk: ', value)
+    },
+    onModelInput (value, label) {
+      if (this.queryParams.model === value) {
+        return
+      }
+      this.queryParams.model = value
+      this.queryParams.label = label
+      this.queryParams.kpi_code = []
     },
     /**
     * 选中行更改事件
@@ -291,8 +303,19 @@ export default {
     * 删除选中项
     */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-    console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        await deleteBaselineDefs(this.selectedRowKeys)
+        this.$refs['table'].refresh()
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+      } catch (e) {
+        throw e
+      }
     }
   },
   created () {

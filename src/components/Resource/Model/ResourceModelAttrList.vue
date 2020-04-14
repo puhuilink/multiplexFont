@@ -70,42 +70,9 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
-import Template from '../../../views/design/moduels/template/index'
+import Template from '../../../views/design/modules/template/index'
+import { getModelAttributeList } from '@/api/controller/ModelAttributes'
 
-const query = gql`query ($where:ngecc_model_attributes_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_model_attributes_order_by!]) {
-  pagination: ngecc_model_attributes_aggregate (where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: ngecc_model_attributes (offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    alertmessage_s
-    allowinheritance_b
-    allownull_b
-    assetsattr_b
-    datatype_s
-    displaytype_s
-    did
-    defaultvalue_s
-    edit_b
-    _id_s
-    label_s
-    matchtype_s
-    hidden_b
-    name_s
-    operationvalue_s
-    order_i
-    rid
-    sourcevalue_s
-    sourcetype_s
-    searchfield_b
-    tabgroup_s
-    uniquenessscope_s
-    uniqueness_b
-    width_i
-  }
-}
-`
 const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
   delete_ngecc_model_attributes (where: {
     rid: {
@@ -258,28 +225,47 @@ export default {
     loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return apollo.clients.resource.query({
-        query,
-        variables: {
-          orderBy: {
-            rid: 'desc'
-          },
-          ...parameter,
-          where: {
-            ...this.where,
-            ...this.queryParams.label_s ? {
-              label_s: {
-                _ilike: `%${this.queryParams.label_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.name_s ? {
-              name_s: {
-                _ilike: `%${this.queryParams.name_s.trim()}%`
-              }
-            } : {}
-          }
+      return getModelAttributeList({
+        orderBy: {
+          rid: 'desc'
+        },
+        ...parameter,
+        where: {
+          ...this.where,
+          ...this.queryParams.label_s ? {
+            label_s: {
+              _ilike: `%${this.queryParams.label_s.trim()}%`
+            }
+          } : {},
+          ...this.queryParams.name_s ? {
+            name_s: {
+              _ilike: `%${this.queryParams.name_s.trim()}%`
+            }
+          } : {}
         }
       }).then(r => r.data)
+      // return apollo.clients.resource.query({
+      //   query,
+      //   variables: {
+      //     orderBy: {
+      //       rid: 'desc'
+      //     },
+      //     ...parameter,
+      //     where: {
+      //       ...this.where,
+      //       ...this.queryParams.label_s ? {
+      //         label_s: {
+      //           _ilike: `%${this.queryParams.label_s.trim()}%`
+      //         }
+      //       } : {},
+      //       ...this.queryParams.name_s ? {
+      //         name_s: {
+      //           _ilike: `%${this.queryParams.name_s.trim()}%`
+      //         }
+      //       } : {}
+      //     }
+      //   }
+      // }).then(r => r.data)
     },
     query () {
       this.$refs['table'].refresh(true)

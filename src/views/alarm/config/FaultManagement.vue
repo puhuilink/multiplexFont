@@ -11,23 +11,22 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="前转路径名称">
-                <a-input v-model="queryParam.forwardName" placeholder=""/>
+                <a-input v-model="queryParam.forward_path_title" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="前转类型">
                 <a-select
                   allowClear
-                  v-model="queryParam.forwardType"
+                  v-model="queryParam.forward_type"
                   placeholder="请选择"
-                  default-value="checkall"
+                  default-value=""
                 >
                   <a-select-option
-                    v-for="item in forwardType"
-                    :key="item"
-                    :value="item"
+                    v-for="item in screening.forwardType"
+                    :key="item.value"
                   >
-                    {{ item }}
+                    {{ item.label }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -36,25 +35,25 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="系统前转目标">
-                  <a-input v-model="queryParam.systemTarget" placeholder=""/>
+                  <a-input v-model="queryParam.forward_user" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item label="状态">
                   <a-select
-                    defaultValue="checkAll"
+                    defaultValue=""
                     style="width: 100%;"
-                    v-model="queryParam.ruleStatus"
+                    v-model="queryParam.enabled"
                   >
-                    <a-select-option value="using">启用</a-select-option>
-                    <a-select-option value="forbidden">禁用</a-select-option>
+                    <a-select-option :value="true">启用</a-select-option>
+                    <a-select-option :value="false">禁用</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
+                <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -142,7 +141,10 @@
       <!-- E 列表 -->
 
       <!-- S 模块 -->
-      <detail ref="detail"></detail>
+      <detail
+        ref="detail"
+        @addSuccess="$refs['table'].refresh(false)"
+      ></detail>
       <correlation ref="correlation"></correlation>
       <!-- E 模块 -->
     </a-card>
@@ -157,14 +159,15 @@ import detail from './modules/FMDetail'
 import correlation from './modules/FMCorrelation'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import screening from '../screening'
 
-const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_path_order_by!]) {
-    pagination: t_forward_path_aggregate(where: {}) {
+const query = gql`query instanceList($where:t_forward_path_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_path_order_by!]) {
+    pagination: t_forward_path_aggregate(where: $where) {
       aggregate {
         count
       }
     }
-  data: t_forward_path (offset: $offset, limit: $limit, order_by: $orderBy) {
+  data: t_forward_path (offset: $offset, limit: $limit, order_by: $orderBy, where: $where) {
     enabled
     forward_comment
     forward_destination
@@ -181,6 +184,17 @@ const query = gql`query instanceList($limit: Int! = 0, $offset: Int! = 10,  $ord
   }
 }`
 
+const deleteAttrs = gql`mutation ($idList: [Int!] = []) {
+  # instance表删除
+  delete_t_forward_path (where: {
+    forward_path_id: {
+      _in: $idList
+    }
+  }) {
+    affected_rows
+  }
+}`
+
 const enableUpdate = gql`mutation update_t_forward_path ($id: [numeric!] = [], $enabled: Boolean!) {
   update_t_forward_path(
     where: {
@@ -190,7 +204,7 @@ const enableUpdate = gql`mutation update_t_forward_path ($id: [numeric!] = [], $
     },
     _set: {
       enabled: $enabled
-    }
+    } 
   ) {
     affected_rows
   }
@@ -206,13 +220,11 @@ export default {
   },
   data () {
     return {
+      screening,
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
       queryParam: {},
-      forwardType: [
-        '运维系统', '邮件', '短信'
-      ],
       columns: [
         {
           title: '前转路径名称',
@@ -224,7 +236,19 @@ export default {
           title: '前转类型',
           dataIndex: 'forward_type',
           width: 100,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            switch (text) {
+              case 'EOMS':
+                return '运维系统'
+              case 'Email':
+                return '邮件'
+              case 'SMS':
+                return '短信'
+              default:
+                return text
+            }
+          }
         },
         {
           title: '系统前转目标',
@@ -274,17 +298,6 @@ export default {
           dataIndex: 'forward_comment'
         }
       ],
-      loadData: parameter => {
-        // 清空选中
-        this.selectedRowKeys = []
-        return apollo.clients.alert.query({
-          query,
-          variables: {
-            ...parameter,
-            ...this.queryParams
-          }
-        }).then(r => r.data)
-      },
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
@@ -295,9 +308,9 @@ export default {
     statusTitleFilter (type) {
       type += ''
       switch (type) {
-        case '0':
+        case 'true':
           return '已启用'
-        case '1':
+        case 'false':
           return '已禁用'
         default:
           return ''
@@ -333,21 +346,70 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
-          },
           dblclick: () => {
-            this.$refs.detail.open(record, 'Edit')
+            this.$refs['detail'].open(record, 'Edit')
           }
         }
       }
+    },
+    loadData (parameter) {
+      // 清空选中
+      this.selectedRowKeys = []
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          ...parameter,
+          where: {
+            ...this.queryParam.forward_path_title ? {
+              forward_path_title: {
+                _ilike: `%${this.queryParam.forward_path_title.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.forward_type ? {
+              forward_type: {
+                _eq: this.queryParam.forward_type
+              }
+            } : {},
+            ...this.queryParam.enabled ? {
+              enabled: {
+                _eq: this.queryParam.enabled
+              }
+            } : {}
+          }
+        }
+      }).then(r => r.data)
+    },
+    query () {
+      this.$refs['table'].refresh(true)
     },
     /**
      * 删除选中项
      */
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await apollo.clients.alert.mutate({
+          mutation: deleteAttrs,
+          variables: {
+            idList: [
+              ...this.selectedRowKeys
+            ]
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
      * 确定启用
@@ -357,7 +419,7 @@ export default {
         return
       }
       try {
-        this.$refs.table.loading = true
+        this.$refs['table'].loading = true
         await apollo.clients.alert.mutate({
           mutation: enableUpdate,
           variables: {
@@ -366,11 +428,11 @@ export default {
           }
         })
         // TODO: toast
-        this.$refs.table.refresh(true)
+        this.$refs['table'].refresh(true)
       } catch (e) {
         throw e
       } finally {
-        this.$refs.table.loading = false
+        this.$refs['table'].loading = false
         // this.$message.info(value ? '成功启用' : '成功停用')
       }
     }

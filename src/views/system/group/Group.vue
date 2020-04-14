@@ -68,13 +68,13 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!isValid">删除</a-button>
-        <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
-        <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
-        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
-        <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
+        <a-button @click="add" v-action:M0106>新建</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne" v-action:M0101>编辑</a-button>
+        <a-button @click="batchDelete" :disabled="!isValid" v-action:M0108>删除</a-button>
+        <a-button @click="allocateUser" :disabled="!hasSelectedOne" v-action:M0101>分配用户</a-button>
+        <a-button @click="allocateAdmin" :disabled="!hasSelectedOne" v-action:M0101>分配管理员</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne" v-action:M0101>更改状态</a-button>
+        <a-button @click="auth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
 
       <span slot="note" slot-scope="text">
@@ -91,6 +91,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <GroupAdministratorSchema
@@ -115,7 +116,7 @@ import GroupUserSchema from './GroupUserSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_group_order_by!])  {
@@ -146,6 +147,14 @@ const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
   }
   #   关联解除
   delete_t_user_group (where: {
+    group_id: {
+      _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除权限
+  delete_t_authorize_object (where: {
     group_id: {
       _in: $groupIds
     }
@@ -263,7 +272,8 @@ export default {
       this.$refs['groupUser'].edit(record)
     },
     auth () {
-      this.$refs['auth'].edit()
+      const [record] = this.selectedRows
+      this.$refs['auth'].edit(record)
     },
     add () {
       this.$refs['schema'].add()

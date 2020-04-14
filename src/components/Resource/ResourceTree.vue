@@ -9,7 +9,7 @@
           style="padding: 8px;"
           placeholder="搜索资源树"
           :value="searchValue"
-          @change="search"
+          @change="change"
         />
         <a-spin
           v-if="$apollo.queries.dataSource.loading"
@@ -18,9 +18,13 @@
         <a-tree
           v-else
           :autoExpandParent="autoExpandParent"
+          class="ResourceTree__tree"
+          :style="{
+            height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
+          }"
           defaultExpandAll
           :expandedKeys="expandedKeys"
-          :filterTreeNode="node => searchValue && node.title.toLowerCase().includes(searchValue.toLowerCase())"
+          :filterTreeNode="filterNode"
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
           @expand="expand"
@@ -39,7 +43,7 @@
         <div class="ResourceTree__tabBarExtraContent">
           <a-button icon="upload"></a-button>
           <a-button icon="download"></a-button>
-          <template v-if="!instanceListCount">
+          <template v-if="!instanceList">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
             <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
@@ -52,18 +56,20 @@
 
 <script>
 import gql from 'graphql-tag'
-import { buildTree, search } from './utils'
+import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
-import Template from '../../views/design/moduels/template/index'
+import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
+import { deleteModelList } from '@/api/controller/Resource'
+import _ from 'lodash'
 
 export default {
   name: 'ResourceTree',
   apollo: {
-    // FIXME: instanceList 应当也包含子代的 children
+    // TODO: 在 hasura 层通过 RelationShips 直接构造好树结构
     // TODO: subscribe 节点增加 / 删除
     dataSource: {
-      query: gql`query ($instanceListCount: Boolean!) {
+      query: gql`query ($instanceList: Boolean!) {
         dataSource: ngecc_model {
           did
           label_s
@@ -74,13 +80,19 @@ export default {
           order_i
           icon_s
           parenttree_s
+          _id_s
           title: label_s
           key: name_s
           parentKey: parentname_s
-          instanceList: instanceList_aggregate @include(if: $instanceListCount) {
-            aggregate {
-              count
-            }
+          parentname_s: parentname_s
+          instanceList @include(if: $instanceList) {
+            did
+            _id_s
+            name_s
+            title: label_s
+            key: name_s
+            parentKey: parentname_s
+            parentname_s: parentname_s
           }
         }
       }`,
@@ -90,7 +102,7 @@ export default {
       // 响应式，当数据变化时，触发刷新
       variables () {
         return {
-          instanceListCount: this.instanceListCount
+          instanceList: this.instanceList
         }
       }
     }
@@ -106,7 +118,7 @@ export default {
       default: false
     },
     // 统计节点下的实例列表数量
-    instanceListCount: {
+    instanceList: {
       type: Boolean,
       default: false
     },
@@ -166,6 +178,11 @@ export default {
     editSuccess () {
       this.$apollo.queries.dataSource.refetch()
     },
+    filterNode ({ title = '' }) {
+      const { searchValue = '' } = this
+      // FIXME: 数据库存在空数据
+      return searchValue && (title || '').toLowerCase().includes(searchValue.toLowerCase())
+    },
     async onDelete () {
       if (!await deleteCheck.sureDelete()) {
         return
@@ -174,12 +191,14 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
+        const [nameList, didList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        console.log(nameList, didList)
+        await deleteModelList(nameList, didList)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
       } catch (e) {
         throw e
       } finally {
-
       }
     },
     /**
@@ -199,29 +218,39 @@ export default {
     select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
       if (selected) {
         this.selectedKey = selectedKey
-        console.log(selectedNode)
         const dataRef = selectedNode.data.props.dataRef
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
-          'name_s': dataRef.name_s
+          'name_s': dataRef.name_s,
+          'name': dataRef.name_s,
+          'tree_s': dataRef.parenttree_s + dataRef.name_s,
+          'parentname_s': dataRef.parentname_s,
+          'parentname': dataRef.parentname_s,
+          '_id_s': dataRef._id_s
         })
       } else {
         // FIXME: 新增后可以不用重置
-        this.selectedNode = null
+        // this.selectedNode = null
         this.selectedKey = ''
         this.$emit('select', null)
       }
     },
+    search: _.debounce(function (value) {
+      this.expandedKeys = search(value, this.dataSource)
+      this.autoExpandParent = true
+    }, 300),
     /**
      * 查询树节点输入
      * @event
      * @return {Undefined}
      */
-    search ({ target: { value } }) {
-      // FIXME: 查询功能在“资源模型”下貌似搜索不到太深层级，如linux，北京
+    change: function ({ target: { value } }) {
       this.searchValue = value
-      this.expandedKeys = search(value, this.dataSource)
+      if (!value) {
+        return
+      }
+      this.search(value)
     }
   }
 }
@@ -229,6 +258,9 @@ export default {
 
 <style lang="less">
 .ResourceTree {
+  &__tree {
+    overflow: auto;
+  }
   &__hidden-tab {
     .ant-tabs-bar {
       display: none;

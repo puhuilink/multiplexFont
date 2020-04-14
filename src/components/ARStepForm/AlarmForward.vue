@@ -12,20 +12,22 @@
         <a-select
           mode="multiple"
           allowClear
-          placeholder=""
+          placeholder="请选择故障级别"
           v-decorator="[
-            'alarmLevel',
-            { rules: [{ required: true, message: '请选择故障级别' }] },
+            'incidentSeverity',
+            {
+              initialValue: record.incidentSeverity
+            }
           ]"
-          @change="alarmLevelChange"
         >
-          <a-select-option value="checkall" key="checkall">全选</a-select-option>
+          <!-- @change="alarmLevelChange" -->
+          <!-- <a-select-option value="checkall" key="checkall">全选</a-select-option> -->
           <a-select-option
-            v-for="item in levelList"
-            :key="item"
-            :value="item"
+            v-for="item in screening.severityList"
+            :key="item.value"
+            :value="item.value"
           >
-            {{ item }}
+            {{ item.text }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -37,17 +39,16 @@
         <a-select
           allowClear
           style="width: 100%"
-          v-decorator="['alarmLevel', {
-            initialValue: '',
-            rules: [{ required: true, message: '故障分类不能为空!' }]
+          v-decorator="['incidentType', {
+            initialValue: record.incidentType
           }]"
         >
           <a-select-option
-            v-for="item in screening.levelList"
-            :key="item.level"
-            :value="item.level"
+            v-for="item in queryList.faultList"
+            :key="item.type_id"
+            :value="item.type_id"
           >
-            {{ item.text }}
+            {{ item.type_title }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -58,7 +59,7 @@
       >
         <a-input-number
           style="width: 100%"
-          v-decorator="['alarmCount', { initialValue: '' }]"
+          v-decorator="['incidentAlertSize', { initialValue: record.incidentAlertSize }]"
         />
       </a-form-item>
       <a-form-item
@@ -68,7 +69,7 @@
       >
         <a-input-number
           style="width: 100%"
-          v-decorator="['timeNum', { initialValue: '' }]"
+          v-decorator="['lifeCycleStr', { initialValue:record.lifeCycleStr }]"
         />
       </a-form-item>
       <a-form-item
@@ -79,13 +80,14 @@
         <a-select
           allowClear
           style="width: 100%"
-          v-decorator="['time', {
-            initialValue: ''
+          v-decorator="['lifeCycleUnit', {
+            initialValue: record.lifeCycleUnit
           }]"
           placeholder="请选择"
         >
-          <a-select-option value="0">分钟</a-select-option>
-          <a-select-option value="1">小时</a-select-option>
+          <a-select-option value="s">秒</a-select-option>
+          <a-select-option value="m">分钟</a-select-option>
+          <a-select-option value="h">小时</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -94,7 +96,7 @@
         :wrapperCol="wrapperCol"
       >
         <a-input
-          v-decorator="['icon', { initialValue: '', rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+          v-decorator="['incidentDescription', { initialValue: record.incidentDescription }]"
         />
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
@@ -106,9 +108,17 @@
 </template>
 
 <script>
+import queryList from '@/api/controller/AlarmqQueryList'
 import screening from '@/views/alarm/screening'
+
 export default {
   name: 'AlarmForWard',
+  props: {
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       screening,
@@ -119,16 +129,25 @@ export default {
       timer: 0,
       levelList: [
         'INFO', 'WARNING', 'MINOR', 'MAJOR', 'CRITICAL'
-      ]
+      ],
+      queryList: {}
     }
   },
+  created () {
+    this.getqueryList()
+  },
   methods: {
+    async getqueryList () {
+      queryList.faultList().then((e) => {
+        this.queryList.faultList = e
+      })
+    },
     nextStep () {
       const { form: { validateFields } } = this
       // 先校验，通过表单校验后，才进入下一步
       validateFields((err, values) => {
         if (!err) {
-          this.$emit('nextStep')
+          this.$emit('nextStep', values)
         }
       })
     },

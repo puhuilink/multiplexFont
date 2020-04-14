@@ -1,48 +1,134 @@
 <template>
   <a-transfer
-    :dataSource="mockData"
+    :dataSource="viewList"
     showSearch
     :filterOption="filterOption"
-    :targetKeys="targetKeys"
+    :targetKeys="_targetKeys"
     @change="handleChange"
     @search="handleSearch"
-    :render="item => item.title"
+    :render="item => item.view_title"
   >
   </a-transfer>
 </template>
 
 <script>
+import { getViewList } from '@/api/controller/View'
+import { getViewListInGroupAuth, getViewListInUserAuth } from '@/api/controller/ViewGroup'
+// eslint-disable-next-line
+import _ from 'lodash'
+
 export default {
   name: 'AuthView',
-  data () {
-    return {
-      // 所有数据
-      mockData: [],
-      // 选中数据
-      targetKeys: []
+  props: {
+    // 用户组 id
+    groupId: {
+      type: String,
+      default: ''
+    },
+    // 选中的 viewIds
+    viewIds: {
+      type: Array,
+      default: () => ([])
+    },
+    record: {
+      type: Object,
+      default: () => ({})
     }
   },
-  mounted () {
-    this.getMock()
+  data: () => ({
+    viewList: [],
+    // 所有数据
+    mockData: [],
+    // 选中数据
+    targetKeys: [],
+    groupViewList: []
+  }),
+  computed: {
+    dataSourceKeys () {
+      return this.viewList.map(el => el.key)
+    },
+    _targetKeys: {
+      get () {
+        // 求交集，去除历史冗余数据
+        // TODO: 旧数据可能有用
+        // return _.intersection(this.targetKeys, this.dataSourceKeys)
+        return this.targetKeys
+      },
+      set (v) {
+        this.targetKeys = v
+        this.$emit('update:viewIds', [...v])
+      }
+    }
+  },
+  watch: {
+    groupId: {
+      immediate: true,
+      handler (groupId) {
+        groupId && this.fetchGroupViewList(groupId)
+      }
+    },
+    record: {
+      immediate: true,
+      deep: true,
+      handler (record) {
+        const groupId = _.get(record, 'group_id')
+        const userId = _.get(record, 'user_id')
+        if (groupId) {
+          this.fetchGroupViewList(groupId)
+        } else if (userId) {
+          this.fetchUserViewList(userId)
+        }
+      }
+    }
   },
   methods: {
-    getMock () {
-      const targetKeys = []
-      const mockData = []
-      for (let i = 0; i < 20; i++) {
-        const data = {
-          key: i.toString(),
-          title: `content${i + 1}`,
-          description: `description of content${i + 1}`,
-          chosen: Math.random() * 2 > 1
-        }
-        if (data.chosen) {
-          targetKeys.push(data.key)
-        }
-        mockData.push(data)
+    async fetchAllViewList () {
+      try {
+        this.loading = true
+        // {key: string.isRequired,title: string.isRequired,description: string,disabled: bool}
+        const viewList = await getViewList({ limit: 9999 }).then(r => r.data.data)
+        this.viewList = viewList
+          .filter(r => !!r.view_id)
+          .map(el => {
+            // console.log(el.view_id, el.view_title)
+            return ({
+              ...el,
+              title: el['view_title'],
+              key: el['view_id'].toString(),
+              description: '',
+              chosen: false
+            })
+          })
+        // debugger
+      } catch (e) {
+        this.viewList = []
+      } finally {
+        this.loading = false
       }
-      this.mockData = mockData
-      this.targetKeys = targetKeys
+    },
+    /**
+     * 用户组当前授予的视图
+     */
+    async fetchGroupViewList (groupId) {
+      try {
+        const groupViewList = (await getViewListInGroupAuth(groupId).then(r => r.data.data)).map(el => `${el.view_id}`)
+        this._targetKeys = groupViewList
+      } catch (e) {
+        this._targetKeys = []
+        throw e
+      }
+    },
+    /**
+     * 用户当前授予的视图
+     */
+    async fetchUserViewList (userId) {
+      try {
+        const groupViewList = (await getViewListInUserAuth(userId).then(r => r.data.data)).map(el => `${el.view_id}`)
+        this._targetKeys = groupViewList
+      } catch (e) {
+        this._targetKeys = []
+        throw e
+      }
     },
     /**
      * 过滤条件
@@ -51,15 +137,21 @@ export default {
      * @return {boolean}
      */
     filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
+      const title = option['view_title'] || ''
+      return title.includes(
+        inputValue.trim().toLowerCase()
+      )
     },
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
-      this.targetKeys = targetKeys
+      this._targetKeys = targetKeys
     },
     handleSearch (dir, value) {
       // console.log('search:', dir, value)
     }
+  },
+  created () {
+    this.fetchAllViewList()
   }
 }
 </script>

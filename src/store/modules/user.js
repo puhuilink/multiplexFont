@@ -1,7 +1,10 @@
 import Vue from 'vue'
-import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { welcome } from '@/utils/util'
+import { logout } from '@/api/login'
+import { getGroupPermission } from '@/api/system'
+// import { info } from '@/mock/services/user'
+import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
+import { welcome, getTree, getButtonTree } from '@/utils/util'
+import { login } from '@/api/controller/User'
 
 const user = {
   state: {
@@ -10,7 +13,9 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    userId: '',
+    userOriginalPermission: null
   },
 
   mutations: {
@@ -29,53 +34,88 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_ID: (state, { userId }) => {
+      state.userId = userId
     }
   },
-
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
+          Vue.ls.set(ACCESS_TOKEN, response.data.token, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(USER, response.data)
+          commit('SET_TOKEN', response.data.token)
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
     },
-
     // 获取用户信息
-    GetInfo ({ commit }) {
-      return new Promise((resolve, reject) => {
-        getInfo().then(response => {
-          const result = response.result
+    GetInfo ({ commit, dispatch }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const user = Vue.ls.get(USER)
+          let originalPermission = []
+          const permission = await getGroupPermission(user.organizeList[0].groupId)
+          if (permission.code === 200) {
+            originalPermission = permission.data
+          }
+          // 菜单权限列表
+          const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
+          // 按钮权限列表
+          const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
 
-          if (result.role && result.role.permissions.length > 0) {
-            const role = result.role
-            role.permissions = result.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
-              }
+          const buttonTree = getButtonTree(null, buttonOriginalPermission)
+          const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+          const userPermission = Object.assign({}, user, permissionTree)
+
+          if (userPermission.permissions && userPermission.permissions.length > 0) {
+            commit('SET_ROLES', userPermission)
+            commit('SET_INFO', {
+              ...userPermission,
+              ...user
             })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
+          // // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
+          // const response = info()
+          // // const response= await getInfo()
+          // const result = response.result
+          //
+          // if (result.role && result.role.permissions.length > 0) {
+          //   const role = result.role
+          //   role.permissions = result.role.permissions
+          //   role.permissions.map(per => {
+          //     if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
+          //       const action = per.actionEntitySet.map(action => { return action.action })
+          //       per.actionList = action
+          //     }
+          //   })
+          //   role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+          //   console.log('role: ', result.role)
+          //   commit('SET_ROLES', result.role)
+          //   commit('SET_INFO', {
+          //     ...result,
+          //     ...user
+          //   })
+          // } else {
+          //   reject(new Error('getInfo: roles must be a non-null array !'))
+          // }
 
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
+          commit('SET_TOKEN', user.token)
+          commit('SET_ID', user)
+          commit('SET_NAME', { name: user.staffName, welcome: welcome() })
+          commit('SET_AVATAR', '/avatar.jpg')
+
+          resolve(userPermission)
+        } catch (e) {
+          reject(e)
+        }
       })
     },
 

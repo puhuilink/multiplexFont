@@ -61,6 +61,7 @@ export default {
       width: 100%;
       min-height: 100%;
       padding:180px 0 144px;
+      padding:90px 0 0;
       position: relative;
 
       a {
@@ -152,6 +153,7 @@ export default {
       height: 100%;
       background: #f0f2f5 url(~@/assets/images/bg-login.jpg) no-repeat 50%;
       background-size: 100%;
+      background-size: cover;
     }
   }
 </style>

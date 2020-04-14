@@ -81,13 +81,13 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
-        <a-button @click="resetPwd" :disabled="!hasSelectedOne">重置密码</a-button>
-        <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
-        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
-        <a-button @click="allocateAuth" :disabled="!hasSelected">分配权限</a-button>
+        <a-button @click="add" v-action:M0101>新建</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
+        <a-button @click="batchDelete" :disabled="!hasSelected" v-action:M0103>删除</a-button>
+        <a-button @click="resetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
+        <a-button @click="allocateGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
+        <a-button @click="allocateAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
 
       <span slot="job_title" slot-scope="text">
@@ -99,7 +99,6 @@
       </span>
     </cTable>
     <!-- E 列表 -->
-    <!--  FIXME: apollo 有缓存，此处不会触发刷新  -->
     <UserSchema
       ref="schema"
       @addSuccess="() => { this.queryParams = {}; this.query() }"
@@ -108,6 +107,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <UserGroupSchema
@@ -125,7 +125,7 @@ import UserGroupSchema from './UserGroupSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 
 const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {
@@ -160,6 +160,25 @@ const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
   delete_t_user_group (where: {
     user_id: {
       _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除权限
+  delete_t_authorize_object (where: {
+    user_id: {
+      _in: $userIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除桌面
+  delete_t_view (where: {
+    view_name: {
+      _in: $userIds
+    }
+    view_title: {
+      _eq: "自定义"
     }
   }) {
     affected_rows
@@ -278,7 +297,8 @@ export default {
       this.$refs['schema'].edit(record)
     },
     allocateAuth () {
-      this.$refs['auth'].edit()
+      const [record] = this.selectedRows
+      this.$refs['auth'].edit(record)
     },
     allocateGroup () {
       const [record] = this.selectedRows

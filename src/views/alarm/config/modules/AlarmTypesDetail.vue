@@ -239,7 +239,7 @@ export default {
         mutation: update,
         variables: {
           where: {
-            'name_S': {
+            'name_s': {
               '_eq': this.record.name_s
             }
           },

@@ -100,7 +100,7 @@ import deleteCheck from '@/components/DeleteCheck'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
-import Template from '../../design/moduels/template/index'
+import Template from '../../design/modules/template/index'
 
 const query = gql`query ($where: ngecc_instance_values_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
   pagination: ngecc_instance_values_aggregate(where: $where) {

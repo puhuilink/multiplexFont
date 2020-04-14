@@ -261,8 +261,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
+import { addModelRelationAttr, updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
 
 const formItemLayout = {
   labelCol: {
@@ -378,25 +377,6 @@ const options = {
   ]
 }
 
-const insert = gql`mutation insert_relationattribute ($objects: [ngecc_relationattribute_insert_input!]! = []) {
-  insert_ngecc_relationattribute (objects: $objects) {
-    affected_rows
-  }
-}`
-
-const update = gql`mutation update_relationattribute($did: Int!, $object: ngecc_relationattribute_set_input) {
-  update_ngecc_relationattribute(
-    where: {
-      did:
-        {_eq: $did}
-      }
-    _set: $object
-  ) {
-    affected_rows
-  }
-}
-`
-
 export default {
   name: 'ResourceModelRelationSchema',
   components: {},
@@ -447,17 +427,7 @@ export default {
       try {
         this.loading = true
         const value = await this.getFormFields()
-        await apollo.clients.resource.mutate({
-          mutation: insert,
-          variables: {
-            objects: [
-              {
-                ...value,
-                'source_s': this.sourceS
-              }
-            ]
-          }
-        })
+        await addModelRelationAttr(this.sourceS, value)
         this.$notification.success({
           message: '系统提示',
           description: '编辑成功'
@@ -475,15 +445,7 @@ export default {
       try {
         this.loading = true
         const value = await this.getFormFields()
-        await apollo.clients.resource.mutate({
-          mutation: update,
-          variables: {
-            did: this.record.did,
-            object: {
-              ...value
-            }
-          }
-        })
+        await updateModelRelationAttr(this.record.did, value)
         this.$notification.success({
           message: '系统提示',
           description: '编辑成功'

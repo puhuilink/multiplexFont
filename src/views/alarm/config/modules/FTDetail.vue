@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import screening from '../../screening'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
@@ -94,7 +95,8 @@ export default {
       record: '',
       // 开启的父级操作来源
       mode: '',
-      typeList: []
+      typeList: [],
+      screening
     }
   },
   beforeCreate () {
@@ -129,6 +131,9 @@ export default {
         if (!err) {
           console.log('Received values of form: ', values)
           values.parent_type_id = values.parent_type_title
+          if (this.mode === 'New') {
+            values.type_id = screening.createUniqueId()
+          }
           this.typeList.find(item => {
             if (item.type_title === values.parent_type_title) {
               values.parent_type_id = item.type_id

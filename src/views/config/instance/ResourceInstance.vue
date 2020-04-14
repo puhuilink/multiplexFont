@@ -6,7 +6,6 @@
       <a-col :xl="6" :xxl="4">
         <ResourceTree
           class="ResourceInstance-tree"
-          instanceListCount
           @select="select"
         />
       </a-col>
@@ -27,6 +26,9 @@
                   _eq: selectedNode.name_s
                 }
               }"
+              :parentNameS="selectedNode.name_s"
+              :parentTreeS="selectedNode.tree_s"
+              :parentDid="selectedNode.did"
             />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>
@@ -99,8 +101,8 @@ export default {
 
   &-tree {
     margin-right: 8px;
-    height: calc(100vh - 270px);
-    overflow-y: auto;
+    // height: calc(100vh - 270px);
+    // overflow-y: auto;
   }
 
   &-table {

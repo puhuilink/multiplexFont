@@ -1,104 +1,160 @@
 <template>
   <div class="plan-management">
-    <a-card :borderd="false">
 
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
+    <CTable
+      ref="table"
+      rowKey="plan_id"
+      :columns="columns"
+      :data="loadData"
+      :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    >
+      <template #query>
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="巡检区域">
-                <a-select
-                  allowClear
-                  v-model="queryParam.checkArea"
-                  placeholder="请选择"
-                  default-value="checkall"
-                >
-                  <a-select-option value="0">北京机房</a-select-option>
-                  <a-select-option value="1">厦门机房</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="计划名称">
-                <a-input v-model="queryParam.planName" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="执行小组">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="巡检区域"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset:2 }"
+                  style="width: 100%">
                   <a-select
                     allowClear
-                    v-model="queryParam.executiveGroup"
+                    v-model="queryParam.ascription"
                     placeholder="请选择"
-                    default-value="checkall"
+                    default-value=""
                   >
-                    <a-select-option value="0">超级管理员组</a-select-option>
-                    <a-select-option value="1">服务管理流程组</a-select-option>
-                    <a-select-option value="2">厦门监控组</a-select-option>
-                    <a-select-option value="3">北京监控组</a-select-option>
+                    <a-select-option
+                      v-for="item in ascriptionList"
+                      :key="item.code"
+                    >{{ item.name }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="计划类型">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.planType"
-                    placeholder="请选择"
-                    default-value="checkall"
-                  >
-                    <a-select-option value="0">例行巡检</a-select-option>
-                    <a-select-option value="1">临时巡检</a-select-option>
-                  </a-select>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="计划名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset:2 }"
+                  style="width: 100%">
+                  <a-input v-model="queryParam.plan_name" placeholder=""/>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="是否启用">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.useing"
-                    placeholder="请选择"
-                    default-value="checkall"
-                  >
-                    <a-select-option value="0">是</a-select-option>
-                    <a-select-option value="1">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="计划编号">
-                  <a-input v-model="queryParam.planCode" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="路线编号">
-                  <a-input v-model="queryParam.routeCode" placeholder=""/>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
+            </a-row>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
-        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
+            <a-row>
+              <!-- 多余筛选框是否展示 -->
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="执行小组"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%">
+                    <a-select
+                      allowClear
+                      v-model="queryParam.group_code"
+                      placeholder="请选择"
+                      default-value=""
+                    >
+                      <a-select-option
+                        v-for="item in userGroupList"
+                        :key="item.group_code"
+                      >{{ item.group_name }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="计划类型"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%">
+                    <a-select
+                      allowClear
+                      v-model="queryParam.plan_type"
+                      placeholder="请选择"
+                      default-value=""
+                    >
+                      <a-select-option
+                        v-for="item in planTypeList"
+                        :key="item.code"
+                      >{{ item.name }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="是否启用"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%">
+                    <a-select
+                      allowClear
+                      v-model="queryParam.is_enable"
+                      placeholder="请选择"
+                      default-value=""
+                    >
+                      <a-select-option
+                        v-for="item in enableList"
+                        :key="item.code"
+                      >{{ item.name }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="路线编号"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%">
+                    <a-input v-model="queryParam.route_code" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="计划编号"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%">
+                    <a-input v-model="queryParam.plan_code" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+          </div>
+          <!-- TODO: 统一管理布局 -->
+          <!-- TODO: 居中 span -->
+          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
+            <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
+          </span>
+        </a-form>
+      </template>
+
+      <template #operation>
+        <!-- <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          @click="edit"
+        >
+          编辑
+        </a-button>
+        <a-button
+          :disabled="selectedRowKeys.length == 0"
+          @click="deleteCtrl"
+        >
+          删除
+        </a-button> -->
+        <a-button >新建</a-button>
+        <a-button
+          :disabled="selectedRowKeys.length !== 1"
         >
           编辑
         </a-button>
@@ -108,45 +164,26 @@
         >
           删除
         </a-button>
-      </div>
-      <!-- E 操作栏 -->
+      </template>
 
-      <!-- S 列表 -->
-      <s-table
-        ref="table"
-        size="small"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ y:400 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      >
-        <span slot="planCode" slot-scope="text">
-          <ellipsis :length="10" tooltip >{{ text }}</ellipsis>
-        </span>
-      </s-table>
-      <!-- E 列表 -->
-
-      <!-- S 模块 -->
-      <detail ref="detail"></detail>
-      <!-- E 模块 -->
-    </a-card>
+      <span slot="planCode" slot-scope="text">
+        <ellipsis :length="15" tooltip>{{ text }}</ellipsis>
+      </span>
+    </CTable>
   </div>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-import { getPlan } from '@/api/patrol'
+import { Ellipsis } from '@/components'
+import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/PMDetail'
+import { getPlanList, deletePlan, getUserGroupList } from '@/api/controller/patrol'
 
 export default {
   name: 'Plan',
   components: {
-    STable,
+    CTable,
     Ellipsis,
     detail
   },
@@ -156,53 +193,113 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
+      // TODO:数据来源不清晰，暂做静态处理
+      ascriptionList: [
+        {
+          code: 'MachineRoom-BJ',
+          name: '北京机房'
+        },
+        {
+          code: 'MachineRoom-XM',
+          name: '厦门机房'
+        }
+      ],
+      planTypeList: [
+        {
+          code: 'A',
+          name: '例行巡检'
+        },
+        {
+          code: 'B',
+          name: '临时巡检'
+        }
+      ],
+      enableList: [
+        {
+          code: 0,
+          name: '否'
+        },
+        {
+          code: 1,
+          name: '是'
+        }
+      ],
       // 告警列表表头
       columns: [
         {
           title: '巡检区域',
-          dataIndex: 'checkArea',
-          align: 'center',
-          width: 120
+          dataIndex: 'ascription',
+          width: 150,
+          sorter: true,
+          customRender: (text) => {
+            this.ascriptionList.forEach(element => {
+              if (element.code === text) {
+                text = element.name
+              }
+            })
+            return text
+          }
         },
         {
           title: '计划名称',
-          dataIndex: 'planName',
-          align: 'center',
+          dataIndex: 'plan_name',
           width: 150,
           sorter: true
         },
         {
           title: '执行小组',
-          dataIndex: 'executiveGroup',
-          align: 'center',
+          dataIndex: 'group_code',
           width: 150,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            this.userGroupList.forEach(element => {
+              if (element.group_code === text) {
+                text = element.group_name
+              }
+            })
+            return text
+          }
         },
         {
           title: '计划类型',
-          dataIndex: 'planType',
+          dataIndex: 'plan_type',
           align: 'center',
           width: 120,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            this.planTypeList.forEach(element => {
+              if (element.code === text) {
+                text = element.name
+              }
+            })
+            return text
+          }
         },
         {
           title: '是否启用',
-          dataIndex: 'useing',
+          dataIndex: 'is_enable',
           align: 'center',
           width: 150,
-          sorter: true
+          sorter: true,
+          customRender: (text) => {
+            this.enableList.forEach(element => {
+              if (element.code === text) {
+                text = element.name
+              }
+            })
+            return text
+          }
         },
         {
           title: '计划编码',
-          dataIndex: 'planCode',
-          align: 'center',
+          dataIndex: 'plan_code',
           width: 150,
           sorter: true,
           scopedSlots: { customRender: 'planCode' }
         },
         {
           title: '相关路线编码',
-          dataIndex: 'routeCode',
+          dataIndex: 'route_code',
           sorter: true
         }
         // {
@@ -212,36 +309,78 @@ export default {
         // }
       ],
       loadData: parameter => {
-        // this.selectedRowKeys = []
-        return getPlan(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.result
-          })
+        this.selectedRowKeys = []
+        const variables = {
+          ...parameter,
+          where: {
+            ...this.queryParam.ascription ? {
+              ascription: {
+                _eq: this.queryParam.ascription
+              }
+            } : {},
+            ...this.queryParam.plan_name ? {
+              plan_name: {
+                _ilike: `%${this.queryParam.plan_name.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.group_code ? {
+              group_code: {
+                _eq: this.queryParam.group_code
+              }
+            } : {},
+            ...this.queryParam.plan_type ? {
+              plan_type: {
+                _eq: this.queryParam.plan_type
+              }
+            } : {},
+            ...this.queryParam.is_enable ? {
+              is_enable: {
+                _eq: this.queryParam.is_enable
+              }
+            } : {},
+            ...this.queryParam.route_code ? {
+              route_code: {
+                _ilike: `%${this.queryParam.route_code.trim()}%`
+              }
+            } : {},
+            ...this.queryParam.plan_code ? {
+              plan_code: {
+                _ilike: `%${this.queryParam.plan_code.trim()}%`
+              }
+            } : {}
+          }
+        }
+        return getPlanList(variables).then(r => r.data)
       },
+      userGroupList: [],
       // 已选行特性值
       selectedRowKeys: [],
       // 已选行数据
       selectedRows: []
     }
   },
+  created () {
+    this.getGroupList()
+  },
   filters: {},
-  computed: {},
+  computed: {
+    scrollX: {
+      get () {
+        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
+      }
+    }
+  },
   methods: {
+    async getGroupList () {
+      await getUserGroupList().then(r => {
+        this.userGroupList = r.data.data
+      })
+    },
     /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    /**
-     * 日期时间空间选择
-     */
-    onDataChange (value, dateString) {
-      console.log('Selected Time: ', value)
-      console.log('Formatted Selected Time: ', dateString)
-    },
-    onDataOk (value) {
-      console.log('onOk: ', value)
     },
     /**
      * 选中行更改事件
@@ -252,24 +391,42 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
+    add () {
+      this.$refs['detail'].open('', 'New')
+    },
+    edit () {
+      // const [record] = this.selectedRows
+      // this.$refs['detail'].edtt(record)
+      this.$refs.detail.open(this.selectedRows[0], 'Edit')
     },
     /**
-     * 删除选中项
+     * 查询
+     * @param {Boolean} firstPage 是否从第一页开始
      */
+    query (firstPage = true) {
+      this.$refs['table'].refresh(firstPage)
+    },
     async deleteCtrl () {
-      await deleteCheck.sureDelete() &&
-        console.log('确定删除')
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        const variables = {
+          IDs: this.selectedRowKeys
+        }
+        await deletePlan(variables)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        // FIXME: 是否存在分页问题
+        this.$refs['table'].refresh(false)
+      } catch (e) {
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     }
   }
 }
@@ -281,5 +438,9 @@ export default {
   button{
     margin-right: 5px;
   }
+}
+.fold {
+  display: inline-block;
+  width: calc(100% - 216px);
 }
 </style>

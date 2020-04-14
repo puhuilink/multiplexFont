@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      :rowKey="el => el.rid"
+      :rowKey="el => el.did"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
     >
@@ -65,28 +65,14 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import ResourceInstanceSchema from './ResourceInstanceSchema'
-
-const query = gql`query instanceList($where: ngecc_instance_values_bool_exp! = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
-  pagination: ngecc_instance_values_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: ngecc_instance_values(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    id_s
-    rid
-    domain_s
-    label_s
-    name_s
-    parentname_s
-    valuecode_s
-    valuelabel_s
-    nodetype_s
-  }
-}`
+import {
+  getInstanceList
+} from '@/api/controller/Instance'
+import { getKpiList } from '@/api/controller/Kpi'
+import { getModelAttributeList } from '@/api/controller/ModelAttributes'
+// eslint-disable-next-line
+import { Ellipsis } from '@/components'
 
 export default {
   name: 'ResourceInstanceList',
@@ -94,6 +80,18 @@ export default {
     where: {
       type: Object,
       default: () => ({})
+    },
+    parentNameS: {
+      type: String,
+      default: ''
+    },
+    parentTreeS: {
+      type: String,
+      default: ''
+    },
+    // eslint-disable-next-line vue/require-default-prop
+    parentDid: {
+      type: Number
     }
   },
   components: {
@@ -108,50 +106,47 @@ export default {
     // 选中行
     selectRows: [],
     // 选中行的 key
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    columns: [
+      // {
+      //   title: 'ID',
+      //   dataIndex: 'id_s',
+      //   sorter: true,
+      //   width: 180
+      // },
+      {
+        title: '名称',
+        dataIndex: 'name_s',
+        sorter: true,
+        width: 300
+        // fixed: true
+      },
+      {
+        title: '显示名称',
+        dataIndex: 'label_s',
+        sorter: true,
+        width: 300
+      },
+      {
+        title: '所属节点类型',
+        dataIndex: 'nodetype_s',
+        width: 200
+      }
+    ]
   }),
   computed: {
     // TODO: 列不全
     // TODO: td 溢出省略号或自动增长但与表头保持对齐
-    columns: {
-      get () {
-        return [
-          // {
-          //   title: 'ID',
-          //   dataIndex: 'id_s',
-          //   sorter: true,
-          //   width: 180
-          // },
-          {
-            title: '名称',
-            dataIndex: 'name_s',
-            sorter: true,
-            width: 600
-          },
-          {
-            title: '显示名称',
-            dataIndex: 'label_s',
-            sorter: true,
-            width: 300
-          },
-          {
-            title: '父节点',
-            dataIndex: 'parentname_s',
-            width: 300
-          },
-          {
-            title: '所属节点类型',
-            dataIndex: 'nodetype_s',
-            width: 300
-          }
-        ]
-      }
-    },
     scrollX: {
       get () {
         return this.columns
-          .filter(e => e.width)
+          .map(e => e.width || 0)
           .reduce((a, b) => a + b) + 36
+      }
+    },
+    columnFieldList: {
+      get () {
+        return this.columns.map(e => e.dataIndex)
       }
     }
   },
@@ -168,7 +163,10 @@ export default {
   },
   methods: {
     add () {
-      this.$refs['schema'].add()
+      this.$refs['schema'].add(
+        this.parentNameS,
+        this.parentTreeS
+      )
     },
     edit () {
       const [record] = this.selectRows
@@ -179,29 +177,75 @@ export default {
      * @param {Object} parameter CTable 回传的分页与排序条件
      * @return {Function: <Promise<Any>>}
      */
-    loadData (parameter) {
+    async loadData (parameter) {
+      await this.loadColumns()
       this.selectedRowKeys = []
       this.selectedRows = []
-      return apollo.clients.resource.query({
-        query,
-        variables: {
+      const handler = this.parentNameS === 'Kpi' ? getKpiList : getInstanceList
+      return handler({
+        orderBy: {
+          ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
+        },
+        ...parameter,
+        where: {
+          ...this.where,
+          ...this.queryParams.name_s ? {
+            name_s: {
+              _ilike: `%${this.queryParams.name_s.trim()}%`
+            }
+          } : {},
+          ...this.queryParams.label_s ? { label_s: {
+            _ilike: `%${this.queryParams.label_s.trim()}%`
+          } } : {}
+        }
+      }).then(r => r.data)
+    },
+    async loadColumns () {
+      try {
+        const options = {
           orderBy: {
             rid: 'desc'
           },
-          ...parameter,
+          limit: 999,
           where: {
-            ...this.where,
-            ...this.queryParams.name_s ? {
-              name_s: {
-                _ilike: `%${this.queryParams.name_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.label_s ? { label_s: {
-              _ilike: `%${this.queryParams.label_s.trim()}%`
-            } } : {}
+            did: {
+              '_eq': this.parentDid
+            }
           }
         }
-      }).then(r => r.data)
+        const columns = (await getModelAttributeList(options)
+          .then(r => r.data.data))
+          .filter(e => !e.hidden_b)
+          .map(e => ({
+            title: e.label_s,
+            dataIndex: e.name_s,
+            // 老系统的宽度指定较小，当文字长度不够用时会发生换行，14 为当前 font-size
+            width: (e.label_s.length * 14) <= Number(e.width_i) ? Number(e.width_i) + 20 : 200,
+            sorter: true
+          }))
+
+        this.columns = [
+          ...this.columns,
+          ...columns
+        ].map(el => ({
+          ...el,
+          customRender: (text, record) => {
+            const originalTitle = el.dataIndex
+            const title = originalTitle.toLowerCase()
+            const value = record[originalTitle] || record[title] || record[`${title}_s`] || record[`${title}_i`] || record[`${title}_b`] || record[`${title}_t`] || ''
+            const ellipsis = this.$createElement(Ellipsis, {
+              props: {
+                width: el.width - 20 + 'px',
+                length: el.width / 10,
+                tooltip: true
+              }
+            }, [value])
+            return ellipsis
+          }
+        }))
+      } catch (e) {
+        throw e
+      }
     },
     query () {
       this.$refs['table'].refresh(true)

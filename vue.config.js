@@ -14,7 +14,8 @@ const assetsCDN = {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
-    axios: 'axios'
+    axios: 'axios',
+    ace: 'ace'
   },
   css: [],
   // https://unpkg.com/browse/vue@2.6.10/
@@ -35,7 +36,7 @@ const vueConfig = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     // if prod, add externals
-    externals: isProd ? assetsCDN.externals : {}
+    externals: isProd ? assetsCDN.externals : { ace: 'ace' }
   },
 
   chainWebpack: (config) => {
@@ -93,20 +94,31 @@ const vueConfig = {
 
   devServer: {
     // development server port 8000
-    port: 8080
+    port: 8080,
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
-    // proxy: {
-    //   '/api': {
-    //     target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
-    //     ws: false,
-    //     changeOrigin: true
-    //   }
-    // }
+    proxy: {
+      '/urmp': {
+        target: 'http://10.1.13.19:48080/',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/urmp': ''
+        }
+      },
+      '/api': {
+        target: 'http://10.1.8.176:28081/',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/api': ''
+        }
+      }
+    }
   },
 
   // disable source map in production
   productionSourceMap: false,
-  lintOnSave: undefined,
+  lintOnSave: 'warning',
   // babel-loader no-ignore node_modules/*
   transpileDependencies: []
 }

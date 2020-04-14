@@ -1,13 +1,10 @@
-function buildNode (node) {
-  if (node && node.instanceList) {
-    const count = node.instanceList.aggregate.count
-    node.title += count ? `(${count})` : ''
-  }
-}
-
 function buildChildren (parent, collection = []) {
   if (parent) {
-    parent.children = collection.filter(el => el.parentKey === parent.key)
+    // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
+    parent.children = [
+      ...parent.instanceList || [],
+      ...collection.filter(el => el.parentKey === parent.key)
+    ]
     parent.children.forEach(el => {
       el.parent = parent
     })
@@ -33,15 +30,28 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
         roots.push(el)
         // 找到后弹出
         // TODO: 是否会影响长度，或者用逆序？
+        // TODO: 匹配完成后跳出循环
         // rootKeys.splice(index, 1)
       }
     })
   })
   roots.forEach(el => {
-    buildNode(el)
+    // buildNode(el)
     recursiveBuildChildren(el, collection)
   })
   return roots
+}
+
+function matchNodeTitle ({ title = '' }, value = '') {
+  // FIXME: 数据库存在空数据
+  return (title || '')
+    .toLowerCase()
+    .trim()
+    .includes(
+      value
+        .toLowerCase()
+        .trim()
+    )
 }
 
 /**
@@ -51,15 +61,32 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
  * @return {Array<String>}
  */
 function search (title = '', collection) {
+  if (!title) {
+    return
+  }
   const matchedNodes = []
   // 如果一个节点匹配条件，其所有父代也被认为匹配条件
   function recursiveMatchParent (node) {
+    matchedNodes.push(node)
     node && node.parent && matchedNodes.push(node.parent)
-    node && node.parent && node.parent.parent && recursiveMatchParent(node.pareny)
+    node && node.parent && node.parent.parent && recursiveMatchParent(node.parent)
   }
   // 扁平化遍历匹配
+  // FIXME: model 是一维数组扁平化查询，其下方的 instance 列表需要进入到内部查询
   collection
-    .filter(node => node.title.toLowerCase().includes(title.toLowerCase()))
+    .filter(node => {
+      if ((matchNodeTitle(node, title))) {
+        return true
+      }
+      if ((node.instanceList || []).find(instance => matchNodeTitle(instance, title))) {
+        return true
+      }
+      // else if (node.children.find(el => el.title.toLowerCase().includes(title.toLowerCase()))) {
+      //   return true
+      // } else {
+      //   return false
+      // }
+    })
     .forEach(recursiveMatchParent)
   // 去重
   const result = Array.from(
@@ -68,7 +95,22 @@ function search (title = '', collection) {
   return result
 }
 
+function flatChildrenNodeNameListAndDidList (node) {
+  const nameList = []
+  const didList = [];
+  (function recursive (el) {
+    nameList.push(el['name_s'])
+    didList.push(el['did'])
+    if (el.children && el.children.length) {
+      // debugger
+      el.children.forEach(recursive)
+    }
+  }(node))
+  return [nameList, didList]
+}
+
 export {
   buildTree,
-  search
+  search,
+  flatChildrenNodeNameListAndDidList
 }

@@ -8,7 +8,8 @@
       >
         <a-input
           :style="{width: 'calc(100% - 100px)'}"
-          v-decorator="['name', {
+          v-decorator="['title', {
+            initialValue: record.title,
             rules: [{required: true, message: '规则名称必须填写'}]}
           ]"
         />
@@ -20,14 +21,14 @@
       >
         <a-radio-group
           name="radioGroup"
-          v-decorator="['type', {
-            initialValue: 1,
+          v-decorator="['ruleMode', {
+            initialValue: record.ruleMode,
             rules: [{required: true, message: '规则模式必须填写'}]}
           ]"
         >
-          <a-radio :value="1">正常模式</a-radio>
-          <a-radio :value="2">日志模式</a-radio>
-          <a-radio :value="3">测试模式</a-radio>
+          <a-radio value="0">正常模式</a-radio>
+          <a-radio value="1">日志模式</a-radio>
+          <a-radio value="2">测试模式</a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item
@@ -35,10 +36,16 @@
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-radio-group name="radioGroup" :defaultValue="1">
-          <a-radio :value="1">低</a-radio>
-          <a-radio :value="2">高</a-radio>
-          <a-radio :value="3">中</a-radio>
+        <a-radio-group
+          name="radioGroup"
+          v-decorator="['priority', {
+            initialValue: record.priority,
+            rules: [{required: true, message: '启用必须填写'}]}
+          ]"
+        >
+          <a-radio value="0">低</a-radio>
+          <a-radio value="10">中</a-radio>
+          <a-radio value="20">高</a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item
@@ -48,13 +55,13 @@
       >
         <a-radio-group
           name="radioGroup"
-          v-decorator="['useing', {
-            initialValue: '1',
+          v-decorator="['enabled', {
+            initialValue: record.enabled,
             rules: [{required: true, message: '启用必须填写'}]}
           ]"
         >
-          <a-radio :value="1">是</a-radio>
-          <a-radio :value="2">否</a-radio>
+          <a-radio value="true">是</a-radio>
+          <a-radio value="false">否</a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
@@ -68,6 +75,12 @@
 <script>
 export default {
   name: 'Basis',
+  props: {
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },
@@ -81,7 +94,7 @@ export default {
       // 先校验，通过表单校验后，才进入下一步
       validateFields((err, values) => {
         if (!err) {
-          this.$emit('nextStep')
+          this.$emit('nextStep', values)
         }
       })
     }

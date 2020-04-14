@@ -5,15 +5,15 @@
 * Time: 5:36 下午
 * Email: dong.xing@outlook.com
 */
-// import TextElement from '../element/TextElement';
+import AlarmListElement from '../element/AlarmListElement'
 
 export default class ElementFactory {
-  // create(type) {
-  //   switch (type) {
-  //     case 'text':
-  //       return new TextElement();
-  //     default:
-  //       return null;
-  //   }
-  // }
+  static create (type, widget) {
+    switch (type) {
+      case 'AlarmList':
+        return new AlarmListElement(widget)
+      default:
+        return null
+    }
+  }
 }

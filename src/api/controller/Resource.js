@@ -5,15 +5,36 @@ import {
   queryResourceModelList,
   queryModelList,
   queryInsanceList,
-  queryKpiList
+  queryKpiList,
+  queryKpiSelectList,
+  mutationBatchDeleteModel,
+  queryMaxDid
 } from '../graphql/Resource'
+import { oldRequest } from '@/utils/oldRequest'
+import { modelMapping } from '../mapping/Resource'
+import store from '@/store'
 
+const fetchMaxModelDid = function () {
+  return apollo.clients.resource.query({
+    query: queryMaxDid
+  }).then(r => r.data.data.aggregate.max.did)
+}
+
+/**
+ * 资源实例列表
+ * @return {Promise<any>}
+ */
 export const getResourceInstanceList = function () {
   return apollo.clients.resource.query({
     query: queryResourceModelList
   }).then(r => r.data)
 }
 
+/**
+ * 资源模型列表
+ * @param {Boolean} withChildren 是否同时查出其子代资源实例
+ * @return {Promise<any>}
+ */
 export const getModelList = function (withChildren = false) {
   return apollo.clients.resource.query({
     query: queryModelList,
@@ -23,6 +44,11 @@ export const getModelList = function (withChildren = false) {
   }).then(r => r.data)
 }
 
+/**
+ * 资源实例列表
+ * @param {*} where
+ * @return {Promise<any>}
+ */
 export const getInstanceList = function (where = {}) {
   return apollo.clients.resource.query({
     query: queryInsanceList,
@@ -32,9 +58,14 @@ export const getInstanceList = function (where = {}) {
   }).then(r => r.data)
 }
 
+/**
+ * 获取Kpi列表
+ * @param {*} where
+ * @return {Promise<any>}
+ */
 export const getKpiList = function (where = {}) {
   return apollo.clients.resource.query({
-    query: queryKpiList,
+    query: queryKpiList(where),
     variables: {
       where: {
         ...where,
@@ -44,6 +75,30 @@ export const getKpiList = function (where = {}) {
       }
     }
   }).then(r => r.data)
+}
+
+/**
+ * 获取某一个资源模型下的Kpi列表
+ * @param {String} nodeType 资源模型name
+ * @return {Promise<any>}
+ */
+export const getKpiSelectList = function (nodeType = '') {
+  return apollo.clients.resource.query({
+    query: queryKpiSelectList(nodeType),
+    variables: {
+      'nodeType': nodeType
+    }
+  }).then(r => {
+    // 此处查询出 nodeType 为 nodeType 和 CommonCI 时的并集
+    // 当 nodeType !== CommonCi 时查询出两个结果
+    const { data, data2 } = r.data
+    return {
+      data: [
+        ...data,
+        ...data2 || []
+      ]
+    }
+  })
 }
 
 /**
@@ -62,18 +117,82 @@ export const editModel = function (did, set = {}) {
 }
 
 /**
+ * 旧系统更新模型
+ */
+export const editModelOld = function (did, set = {}) {
+  const data = {}
+  Object.keys(set).forEach(key => {
+    if (modelMapping[key]) {
+      data[modelMapping[key]] = set[key]
+    }
+  })
+  return oldRequest.post('/urmp/api/rest/post/modelService/update', [data, '', []])
+}
+
+/**
  * （批量）新增资源模型
  * @param {Array} objects
  * @return {*}
  */
-export const addModels = function (objects = []) {
-  // TODO: 数据表 did 唯一，是否要（需要）做 name_s 唯一？
-  // TODO: 旧的业务逻辑，确实是根据 name_s 唯一的，如何迁移到以 did 构建树？
-  // FIXME: 目前的构建树方式，是认为 name_s 唯一的
+const addModels = function (objects = []) {
+  // return addModelsOld(objects)
+  // （旧系统的）构建树方式，是认为 name_s 唯一的
   return apollo.clients.resource.mutate({
     mutation: mutationInsertModels,
     variables: {
       objects
     }
   })
+}
+
+export const addModel = async function (object = {}) {
+  const did = (await fetchMaxModelDid()) + 1
+  return addModels([{
+    ...object,
+    did
+  }])
+}
+
+/**
+ * 旧系统（批量）新增资源模型
+ * @param {Array} objects
+ * @return {*}
+ */
+export const addModelsOld = function (objects = []) {
+  const [object] = objects
+  const data = {}
+  Object.keys(object).forEach(key => {
+    if (modelMapping[key]) {
+      data[modelMapping[key]] = object[key]
+    }
+  })
+  return oldRequest.post('/urmp/api/rest/post/modelService/add', [data, data.parentName, '', []])
+}
+
+/**
+ * 删除资源模型：删除一个节点时，也需要删除其子节点和相关的关联数据
+ * @param {Array<String>} nameList 要删除的模型及其子孙代拉平的name_s数组
+ * @param {Array<Number>} didList 与nameList 对应的 did 数组
+ */
+export const deleteModelList = function (nameList, didList) {
+  // return deleteModelOld(name)
+  return apollo.clients.resource.mutate({
+    mutation: mutationBatchDeleteModel,
+    variables: {
+      nameList,
+      didList
+    }
+  })
+}
+
+/**
+ * 旧系统删除资源模型
+ * @param {*} name
+ */
+export const deleteModelOld = function (name) {
+  return oldRequest.post('/urmp/api/rest/post/modelService/remove', [
+    name,
+    store.state.user.info.userId,
+    ['']
+  ])
 }

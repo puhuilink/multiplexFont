@@ -7,14 +7,44 @@
 */
 import LinesProprietaryConfig from '../config/proprietaryConfigs/LinesProprietaryConfig'
 import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryConfig'
+import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
+import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
+import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
+import DegreeRingProprietaryConfig from '../config/proprietaryConfigs/DegreeRingProprietaryConfig'
+import ClockProprietaryConfig from '../config/proprietaryConfigs/ClockProprietaryConfig'
+import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryConfig'
+import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
+import TriangleChartProprietaryConfig from '../config/proprietaryConfigs/TriangleProprietaryConfig'
+import ImageProprietaryConfig from '../config/proprietaryConfigs/ImageProprietaryConfig'
+import GaugePropritaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
 
 export default class ChartProprietaryConfigFactory {
-  static create ({ type, proprietaryConfig }) {
+  static create ({ type, proprietaryConfig = {} }) {
     switch (type) {
       case 'Lines':
-        return new LinesProprietaryConfig(proprietaryConfig || {})
+        return new LinesProprietaryConfig(proprietaryConfig)
       case 'Bar':
-        return new BarProprietaryConfig(proprietaryConfig || {})
+        return new BarProprietaryConfig(proprietaryConfig)
+      case 'Texts':
+        return new TextsProprietaryConfig(proprietaryConfig)
+      case 'Clock':
+        return new ClockProprietaryConfig(proprietaryConfig)
+      case 'Topology':
+        return new TopologyProprietaryConfig(proprietaryConfig)
+      case 'Rect':
+        return new RectProprietaryConfig(proprietaryConfig)
+      case 'Circle':
+        return new CircleProprietaryConfig(proprietaryConfig)
+      case 'Triangle':
+        return new TriangleChartProprietaryConfig(proprietaryConfig)
+      case 'Image':
+        return new ImageProprietaryConfig(proprietaryConfig)
+      case 'View':
+        return new ViewProprietaryConfig(proprietaryConfig)
+      case 'DegreeRing':
+        return new DegreeRingProprietaryConfig(proprietaryConfig)
+      case 'Gauge':
+        return new GaugePropritaryConfig(proprietaryConfig)
       default:
         return null
     }
