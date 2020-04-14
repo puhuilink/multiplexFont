@@ -96,6 +96,7 @@ import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
 import Template from '../../design/modules/template/index'
 import { Ellipsis } from '@/components'
+import deleteCheck from '@/components/DeleteCheck'
 
 export default {
   name: 'ViewList',
@@ -274,6 +275,9 @@ export default {
      */
     async handleDelete () {
       // console.log('Delete: ', this.selectedRows)
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
       try {
         this.loading = false
         await deleteViews(this.selectedRowKeys)
