@@ -230,7 +230,8 @@ export default {
       state.loginBtn = true
       this.isLoginError = false
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'pwd'] : ['mobile', 'captcha']
+      // const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'pwd'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === ['userId', 'pwd', 'mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {

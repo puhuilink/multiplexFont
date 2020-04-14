@@ -1,76 +1,79 @@
 <template>
   <div class="ViewDisplay__view">
-    <div class="ViewDisplay__view-header">
-      <a-select style="width: 300px;" v-model="selectedGroupName">
-        <a-select-option
-          v-for="(group, idx) in viewGroupList"
-          :key="idx"
-          :value="group.view_title"
-        >{{ group.view_title }}</a-select-option>
-      </a-select>
+    <a-spin :spinning="loading">
+      <div class="ViewDisplay__view-header">
+        <a-select style="width: 300px;" v-model="selectedGroupName">
+          <a-select-option
+            v-for="(group, idx) in groupDesktopList"
+            :key="idx"
+            :value="group.view_title"
+          >{{ group.view_title }}</a-select-option>
+        </a-select>
 
-      <a-input
-        allowClear
-        autofocus
-        style="width: 200px;"
-        placeholder="按视图标题搜索..."
-        v-model="queryTitle"
-      />
-    </div>
+        <a-input
+          allowClear
+          autofocus
+          style="width: 200px;"
+          placeholder="按视图标题搜索..."
+          v-model="queryTitle"
+        />
+      </div>
 
-    <!-- S 视图列表 -->
-    <div class="ViewDisplay__view-content">
-      <a-row>
-        <a-col
-          v-for="(view, idx) in filterViewList"
-          :key="idx"
-          :xs="24"
-          :md="12"
-          :lg="8"
-          :xxl="6"
-          style="padding: 7px;"
-        >
-          <div class="ViewDisplay__view-item" @click="preview(view)">
-            <img :src="view.view_img | img" :alt="view.view__title">
-            <div class="ViewDisplay__view-item-info">
-              <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
-              <p class="ViewDisplay__view-item-info_creator">
-                <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
-                <span><a-icon type="user" />{{ view.creator }}</span>
-              </p>
+      <!-- S 视图列表 -->
+      <div class="ViewDisplay__view-content">
+        <a-row>
+          <a-col
+            v-for="(view, idx) in filterViewList"
+            :key="idx"
+            :xs="24"
+            :md="12"
+            :lg="8"
+            :xxl="6"
+            style="padding: 7px;"
+          >
+            <div class="ViewDisplay__view-item" @click="preview(view)">
+              <img :src="view.view_img | img" :alt="view.view__title">
+              <div class="ViewDisplay__view-item-info">
+                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_creator">
+                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ view.creator }}</span>
+                </p>
+              </div>
+              {{ view.view__title }}
             </div>
-            {{ view.view__title }}
-          </div>
-        </a-col>
-      </a-row>
-    </div>
-    <!-- E 视图列表 -->
+          </a-col>
+        </a-row>
+      </div>
+      <!-- E 视图列表 -->
 
-    <!-- S 操作按钮 -->
-    <div class="ViewDisplay__operation">
-      <a-button
-        shape="circle"
-        size="large"
-        type="primary"
-        icon="plus"
-        class="ViewDisplay__operation__add"
-        v-show="selectedGroupName !== ALL_VIEW"
-        @click="editDesktop"
-      ></a-button>
-    </div>
-    <!-- E 操作按钮 -->
+      <!-- S 操作按钮 -->
+      <div class="ViewDisplay__operation">
+        <a-button
+          shape="circle"
+          size="large"
+          type="primary"
+          icon="plus"
+          class="ViewDisplay__operation__add"
+          v-show="selectedGroupName !== ALL_VIEW"
+          @click="editDesktop"
+        ></a-button>
+      </div>
+      <!-- E 操作按钮 -->
 
-    <!-- S 视图预览 -->
-    <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
-    <!-- E 视图预览 -->
+      <!-- S 视图预览 -->
+      <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
+      <!-- E 视图预览 -->
 
-    <AuthDesktop
-      :visible.sync="authDesktop.visible"
-      :title="selectedGroupName"
-      :selectedKeys="selectedGroup.viewIds"
-      :groupId="selectedGroup.group_id"
-    />
+      <AuthDesktop
+        v-if="selectedGroup"
+        :visible.sync="authDesktop.visible"
+        :title="selectedGroupName"
+        :selectedKeys="selectedGroup.viewIds"
+        :groupId="selectedGroup.group_id"
+      />
 
+    </a-spin>
   </div>
 </template>
 
@@ -82,6 +85,7 @@ import HeadInfo from '@/components/tools/HeadInfo'
 import AuthDesktop from './modules/AuthDesktop'
 import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
+import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
 const ALL_VIEW = '所有视图'
@@ -105,7 +109,7 @@ export default {
       avatar: '',
       user: {},
       loading: false,
-      viewGroupList: [],
+      groupDesktopList: [],
       viewList: [],
       queryTitle: '',
       selectedGroupName: ALL_VIEW,
@@ -127,9 +131,9 @@ export default {
       return this.$store.getters.userInfo
     },
     selectedGroup () {
-      const { selectedGroupName, viewGroupList } = this
+      const { selectedGroupName, groupDesktopList } = this
       // eslint-disable-next-line
-      return viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
+      return groupDesktopList.find(({ view_title }) => view_title === selectedGroupName)
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
@@ -149,17 +153,23 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const [viewList, viewGroupList] = await getGroupViewDesktopList()
-        this.viewList = viewList
-        this.viewGroupList = [
-          ...viewGroupList,
+        const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
+        const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
+        console.log(selfDesktop)
+        this.viewList = [
+          ...groupDesktopViewList,
+          ...selfDesktopViewList
+        ]
+        this.groupDesktopList = [
+          ...groupDesktopList,
+          selfDesktop,
           {
             view_title: ALL_VIEW
           }
         ]
       } catch (e) {
         this.viewList = []
-        this.viewGroupList = []
+        this.groupDesktopList = []
         throw e
       } finally {
         this.loading = false
@@ -297,7 +307,7 @@ export default {
     position: relative;
 
     &-header {
-      padding: 0px 22px 14px 22px;
+      padding: 12px 22px 14px 22px;
       // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
       margin: 0 -24px 0 -24px;
       width: calc(100% + 48px);
@@ -384,9 +394,9 @@ export default {
       justify-content: center;
       margin: 8px;
 
-      &__add {
+      // &__add {
 
-      }
+      // }
     }
   }
 
