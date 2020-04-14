@@ -136,7 +136,7 @@ const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offs
 }
 `
 
-const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
+const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = [], $desktopNames: [String!] = []) {
   #   group 表删除
   delete_t_group (where: {
     group_id: {
@@ -157,6 +157,17 @@ const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = []) {
   delete_t_authorize_object (where: {
     group_id: {
       _in: $groupIds
+    }
+  }) {
+    affected_rows
+  }
+  # 删除桌面
+  delete_t_view (where: {
+    view_name: {
+      _in: $groupIds
+    }
+    view_title: {
+      _in: $desktopNames
     }
   }) {
     affected_rows
@@ -282,12 +293,14 @@ export default {
       await deleteCheck.sureDelete()
       try {
         this.$refs['table'].loading = true
+        const desktopNames = this.selectedRowKeys.map(id => `${id}桌面`)
         await apollo.clients.alert.mutate({
           mutation: deleteGroup,
           variables: {
             groupIds: [
               ...this.selectedRowKeys
-            ]
+            ],
+            desktopNames
           }
         })
         this.$notification.success({

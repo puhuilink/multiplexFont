@@ -305,7 +305,9 @@ export default {
       this.$refs['group'].edit(record)
     },
     async batchDelete () {
-      await deleteCheck.sureDelete()
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
       try {
         this.$refs['table'].loading = true
         await apollo.clients.alert.mutate({

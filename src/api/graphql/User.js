@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const mutationInsertUsers = gql`mutation insert_user ($objects: [t_user_insert_input!]!$views: [t_view_insert_input!]!) {
+export const mutationInsertUsers = gql`mutation insert_user ($objects: [t_user_insert_input!]!, $views: [t_view_insert_input!]!) {
   # 新建用户
   insert_t_user (objects: $objects) {
     returning {
