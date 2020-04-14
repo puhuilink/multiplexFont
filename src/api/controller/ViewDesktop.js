@@ -25,7 +25,7 @@ export const getUserDesktop = function (userId) {
     // console.log('data.content', data.content)
     // 老系统视图
     data.content = data.content.includes('<') ? '' : data.content
-    data.viewIds = data.content.split(',')
+    data.viewIds = data.content.split(',').filter(id => !!id)
     let viewList
     if (data.viewIds.length) {
       viewList = await getViewList({
