@@ -9,9 +9,16 @@ import {
   generateDynamicQueryWithKpiCi,
   queryKpiAndInstanceInfo,
   queryViewContent,
-  mutationDeletViews
+  mutationDeletViews,
+  queryMaxDid
 } from '../graphql/View'
 import { axios } from '@/utils/request'
+
+export const fetchLastesdViewId = function () {
+  return apollo.clients.alert.query({
+    query: queryMaxDid
+  }).then(r => r.data.data.aggregate.max.view_id)
+}
 
 export const getViewList = function (variables = {}) {
   const where = variables.where || {}

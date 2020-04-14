@@ -71,6 +71,9 @@
         :title="selectedGroupName"
         :selectedKeys="selectedGroup.viewIds"
         :groupId="selectedGroup.group_id"
+        :userId="selectedGroup.view_name"
+        :desktopId="selectedGroup.view_id"
+        @success="fetch"
       />
 
     </a-spin>
@@ -87,6 +90,7 @@ import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
+import _ from 'lodash'
 
 const ALL_VIEW = '所有视图'
 
@@ -137,9 +141,6 @@ export default {
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
-      if (!selectedGroup) {
-        return []
-      }
       let list = []
       // 分组筛选条件
       if (selectedGroup.view_title === ALL_VIEW) {
@@ -149,7 +150,9 @@ export default {
         list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
       }
       // 加上搜索条件，当 input allowClear 时，title 为 undefined
-      return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+      list = list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+      // 当多个桌面有相同项时，去重
+      return _.uniqBy(list, e => e.view_id)
     }
   },
   methods: {
@@ -310,7 +313,7 @@ export default {
     position: relative;
 
     &-header {
-      padding: 0px 22px 14px 22px;
+      padding: 12px 22px 14px 22px;
       // 父元素给了 24px 的左右 margin，当 header 吸顶时两侧会有留白，此处给占满宽度
       margin: 0 -24px 0 -24px;
       width: calc(100% + 48px);

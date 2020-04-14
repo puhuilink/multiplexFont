@@ -6,6 +6,7 @@ import {
   mutationInsertUsers,
   mutationUpdateUser
 } from '../graphql/User'
+import { fetchLastesdViewId } from './View'
 const CryptoJS = require('crypto-js')
 
 export const login = function ({ userId, pwd }) {
@@ -39,9 +40,10 @@ export const loginOld = function () {
 /**
  * （批量）新增用户
  * @param {Array<Object>} objects
+ * @param {Array<Object>} views
  * @return {Promise}
  */
-export const addUsers = function (objects = []) {
+const addUsers = function (objects = [], views = []) {
   return apollo.clients.alert.mutate({
     mutation: mutationInsertUsers,
     variables: {
@@ -51,14 +53,35 @@ export const addUsers = function (objects = []) {
         auth_method: 'DB',
         // TODO: 放到 hasura webhook 处理？
         createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
-      }))
-    }
-  }).catch(err => {
-    // TODO: notification
-    if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-      throw new Error('用户名已存在')
+      })),
+      views
     }
   })
+  // .catch(err => {
+  // // TODO: notification
+  //   if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
+  //     throw new Error('用户名已存在')
+  //   }
+  // })
+}
+
+/**
+ * 新增单个用户
+ * @param {Objet} object
+ * @return {Promise}
+ */
+export const addUser = async function (user) {
+  const viewId = await fetchLastesdViewId()
+  const view = {
+    view_id: viewId + 1,
+    view_name: user.user_id,
+    view_title: '自定义',
+    view_type: 'view',
+    creator: user.user_id,
+    content: '',
+    protect_level: '0'
+  }
+  return addUsers([user], [view])
 }
 
 export const updateUser = function (object = {}) {
