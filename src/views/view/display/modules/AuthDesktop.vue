@@ -18,11 +18,10 @@
           :dataSource="dataSource"
           showSearch
           :filterOption="filterOption"
-          :targetKeys="targetKeys"
+          :targetKeys="_targetKeys"
           @change="handleChange"
           @search="handleSearch"
           :render="item => item.view_title"
-          :rowKey="item => item.view_id"
         >
         </a-transfer>
       </a-tab-pane>
@@ -75,7 +74,23 @@ export default {
     dataSource: [],
     targetKeys: []
   }),
-  computed: {},
+  computed: {
+    dataSourceKeys () {
+      return this.dataSource.map(el => el.key)
+    },
+    _targetKeys: {
+      get () {
+        // 求交集，去除历史冗余数据
+        return _.intersection(
+          this.targetKeys,
+          this.dataSourceKeys
+        )
+      },
+      set (v) {
+        this.targetKeys = v
+      }
+    }
+  },
   watch: {
     visible: {
       immediate: true,
@@ -117,12 +132,7 @@ export default {
             chosen: false
           })
         }))
-        const targetKeys = this.selectedKeys.map(key => Number(key))
-        // 旧系统数据库存有冗余数据，此处去重，保证保存时能清理到
-        this.targetKeys = _.intersection(
-          targetKeys,
-          this.dataSource.map(el => el.view_id)
-        )
+        this.targetKeys = this.selectedKeys.map(key => `${key}`)
       } catch (e) {
         this.datSource = []
         throw e
