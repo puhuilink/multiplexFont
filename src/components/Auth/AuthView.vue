@@ -13,7 +13,7 @@
 
 <script>
 import { getViewList } from '@/api/controller/View'
-import { getViewListInGroupAuth } from '@/api/controller/ViewGroup'
+import { getViewListInGroupAuth, getViewListInUser } from '@/api/controller/ViewGroup'
 // eslint-disable-next-line
 import _ from 'lodash'
 
@@ -29,6 +29,10 @@ export default {
     viewIds: {
       type: Array,
       default: () => ([])
+    },
+    record: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -61,6 +65,19 @@ export default {
       immediate: true,
       handler (groupId) {
         groupId && this.fetchGroupViewList(groupId)
+      }
+    },
+    record: {
+      immediate: true,
+      deep: true,
+      handler (record) {
+        const groupId = _.get(record, 'group_id')
+        const userId = _.get(record, 'user_id')
+        if (groupId) {
+          this.fetchGroupViewList(groupId)
+        } else if (userId) {
+          this.fetchUserViewList(userId)
+        }
       }
     }
   },
@@ -95,6 +112,18 @@ export default {
     async fetchGroupViewList (groupId) {
       try {
         const groupViewList = (await getViewListInGroupAuth(groupId).then(r => r.data.data)).map(el => `${el.view_id}`)
+        this._targetKeys = groupViewList
+      } catch (e) {
+        this._targetKeys = []
+        throw e
+      }
+    },
+    /**
+     * 用户当前授予的视图
+     */
+    async fetchUserViewList (userId) {
+      try {
+        const groupViewList = (await getViewListInUser(userId).then(r => r.data.data)).map(el => `${el.view_id}`)
         this._targetKeys = groupViewList
       } catch (e) {
         this._targetKeys = []

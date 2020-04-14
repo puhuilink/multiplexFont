@@ -107,6 +107,7 @@
 
     <AuthScheme
       ref="auth"
+      @success="$refs['table'].refresh(false)"
     />
 
     <UserGroupSchema
@@ -277,7 +278,8 @@ export default {
       this.$refs['schema'].edit(record)
     },
     allocateAuth () {
-      this.$refs['auth'].edit()
+      const [record] = this.selectedRows
+      this.$refs['auth'].edit(record)
     },
     allocateGroup () {
       const [record] = this.selectedRows

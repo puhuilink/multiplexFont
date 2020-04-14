@@ -15,7 +15,7 @@
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="视图管理" key="1">
-        <AuthView :groupId="authView.groupId" :viewIds.sync="authView.viewIds" />
+        <AuthView :record="authView.record" :viewIds.sync="authView.viewIds" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
         <AuthMenu />
@@ -25,10 +25,10 @@
 </template>
 
 <script>
+/* eslint-disable camelcase */
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
-// eslint-disable-next-line
-import { allocateGroupViewAuth } from '@/api/controller/AuthorizeObject'
+import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
 
 const formItemLayout = {
   labelCol: {
@@ -57,7 +57,7 @@ export default {
     authView: {
       // 选中的 viewId
       viewIds: [],
-      groupId: ''
+      record: null
     }
   }),
   computed: {},
@@ -66,7 +66,7 @@ export default {
       this.title = '授权'
       this.visible = true
       this.record = { ...record }
-      this.authView.groupId = record['group_id']
+      this.authView.record = { ...record }
     },
     cancel () {
       this.visible = false
@@ -78,7 +78,12 @@ export default {
     async submit () {
       try {
         this.loading = true
-        await allocateGroupViewAuth(this.record['group_id'], this.authView.viewIds)
+        const { authView: { viewIds }, record: { user_id, group_id } } = this
+        if (user_id) {
+          await allocateUserViewAuth(user_id, viewIds)
+        } else if (group_id) {
+          await allocateGroupViewAuth(group_id, viewIds)
+        }
         this.visible = false
         this.$notification.success({
           message: '系统提示',

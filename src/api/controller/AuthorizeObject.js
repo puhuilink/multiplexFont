@@ -5,7 +5,8 @@
 import {
   queryGroupViewDesktopList,
   queryDesktopItemList,
-  mutationUpdateGroupViewAuth
+  mutationUpdateGroupViewAuth,
+  mutationUpdateUserViewAuth
 } from '../graphql/AuthorizeObject'
 import { getViewList } from './View'
 import apollo from '@/utils/apollo'
@@ -75,6 +76,26 @@ export const allocateGroupViewAuth = function (groupId, viewIds = []) {
     mutation: mutationUpdateGroupViewAuth,
     variables: {
       groupId,
+      objects
+    }
+  })
+}
+
+/**
+ * 为用户分配视图权限
+ * @param {String} groupId 工作组id
+ * @param {Array<String>} viewIds 视图id列表
+ */
+export const allocateUserViewAuth = function (userId, viewIds = []) {
+  const objects = viewIds.map(viewId => ({
+    user_id: `${userId}`,
+    object_id: `${viewId}`,
+    object_type: '4'
+  }))
+  return apollo.clients.alert.mutate({
+    mutation: mutationUpdateUserViewAuth,
+    variables: {
+      userId,
       objects
     }
   })
