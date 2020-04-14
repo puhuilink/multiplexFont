@@ -13,7 +13,7 @@
 
 <script>
 import { getViewList } from '@/api/controller/View'
-import { getViewListInGroupAuth, getViewListInUser } from '@/api/controller/ViewGroup'
+import { getViewListInGroupAuth, getViewListInUserAuth } from '@/api/controller/ViewGroup'
 // eslint-disable-next-line
 import _ from 'lodash'
 
@@ -123,7 +123,7 @@ export default {
      */
     async fetchUserViewList (userId) {
       try {
-        const groupViewList = (await getViewListInUser(userId).then(r => r.data.data)).map(el => `${el.view_id}`)
+        const groupViewList = (await getViewListInUserAuth(userId).then(r => r.data.data)).map(el => `${el.view_id}`)
         this._targetKeys = groupViewList
       } catch (e) {
         this._targetKeys = []

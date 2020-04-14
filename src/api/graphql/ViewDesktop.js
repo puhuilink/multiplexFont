@@ -56,3 +56,10 @@ export const mutationInsertDesktop = gql`mutation ($objects: [t_authorize_object
     affected_rows
   }
 }`
+
+export const mutationUpdateDesktopContent = gql`mutation ($viewId: numeric, $set: t_view_set_input) {
+  update_t_view(where: {view_id: {_eq: $viewId}}, _set: $set) {
+    affected_rows
+  }
+}
+`

@@ -4,7 +4,7 @@
  */
 
 // import store from '@/store'
-import { queryUserDesktop } from '../graphql/ViewDesktop'
+import { queryUserDesktop, mutationUpdateDesktopContent } from '../graphql/ViewDesktop'
 import apollo from '@/utils/apollo'
 import { getViewList } from './View'
 import _ from 'lodash'
@@ -69,3 +69,20 @@ export const getUserDesktop = function (userId) {
 //     }
 //   })
 // }
+
+/**
+ * 更新桌面关联的视图
+ * @param {Number} desktopId 视图桌面 id
+ * @param {Array<any>} viewIds 要关联的视图 id
+ */
+export const editDesktopContent = function (desktopId, viewIds = []) {
+  return apollo.clients.alert.mutate({
+    mutation: mutationUpdateDesktopContent,
+    variables: {
+      viewId: desktopId,
+      set: {
+        content: viewIds.join(',')
+      }
+    }
+  })
+}

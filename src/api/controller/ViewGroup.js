@@ -10,7 +10,7 @@ export const getViewListInGroupAuth = async function (groupId) {
   })
 }
 
-export const getViewListInUser = async function (userId) {
+export const getViewListInUserAuth = async function (userId) {
   return apollo.clients.alert.query({
     query: userAuthViewList,
     variables: {

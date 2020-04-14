@@ -71,6 +71,9 @@
         :title="selectedGroupName"
         :selectedKeys="selectedGroup.viewIds"
         :groupId="selectedGroup.group_id"
+        :userId="selectedGroup.view_name"
+        :desktopId="selectedGroup.view_id"
+        @success="fetch"
       />
 
     </a-spin>
