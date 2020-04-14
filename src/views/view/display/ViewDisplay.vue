@@ -90,6 +90,7 @@ import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
+import _ from 'lodash'
 
 const ALL_VIEW = '所有视图'
 
@@ -149,7 +150,9 @@ export default {
         list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
       }
       // 加上搜索条件，当 input allowClear 时，title 为 undefined
-      return list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+      list = list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
+      // 当多个桌面有相同项时，去重
+      return _.uniqBy(list, e => e.view_id)
     }
   },
   methods: {
