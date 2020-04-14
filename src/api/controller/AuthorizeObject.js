@@ -40,7 +40,7 @@ export const getGroupViewDesktopList = async function (groupIds) {
   for await (const groupViewDesktop of groupViewDesktopList) {
     const [desktop] = await getDesktopItemList(groupViewDesktop.viewId)
     const { content } = desktop
-    desktop.viewIds = content.includes('<') ? [] : content.split(',')
+    desktop.viewIds = (content.includes('<') ? [] : content.split(',')).filter(id => !!id)
     desktop.group_id = groupViewDesktop.group_id
     desktopList.push(desktop)
   }
