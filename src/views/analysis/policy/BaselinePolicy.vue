@@ -71,18 +71,21 @@
       <template #operation>
         <a-button
           @click="$refs.detail.open({}, 'Add')"
+          v-action:M1301
         >
           新建
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="$refs.detail.open(selectedRows[0], 'Edit')"
+          v-action:M1302
         >
           编辑
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
+          v-action:M1303
         >
           删除
         </a-button>

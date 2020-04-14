@@ -81,13 +81,13 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!hasSelected">删除</a-button>
-        <a-button @click="resetPwd" :disabled="!hasSelectedOne">重置密码</a-button>
-        <a-button @click="allocateGroup" :disabled="!hasSelectedOne">分配工作组</a-button>
-        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
-        <a-button @click="allocateAuth" :disabled="!hasSelectedOne">分配权限</a-button>
+        <a-button @click="add" v-action:M0101>新建</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
+        <a-button @click="batchDelete" :disabled="!hasSelected" v-action:M0103>删除</a-button>
+        <a-button @click="resetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
+        <a-button @click="allocateGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
+        <a-button @click="allocateAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
 
       <span slot="job_title" slot-scope="text">
