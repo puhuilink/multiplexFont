@@ -137,9 +137,6 @@ export default {
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
-      if (!selectedGroup) {
-        return []
-      }
       let list = []
       // 分组筛选条件
       if (selectedGroup.view_title === ALL_VIEW) {

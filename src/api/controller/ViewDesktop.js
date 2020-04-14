@@ -24,9 +24,11 @@ export const getUserDesktop = function (userId) {
     const data = Array.isArray(r) ? r[0] : r
     // console.log('data.content', data.content)
     // 老系统视图
-    data.content = data.content.includes('<') ? '' : data.content
-    data.viewIds = data.content.split(',').filter(id => !!id)
+    const { content } = data
+    // data.content = data.content.includes('<') ? '' : data.content
+    data.viewIds = content.includes('<') ? [] : content.split(',')
     let viewList
+    console.log('data.viewIds', data.viewIds)
     if (data.viewIds.length) {
       viewList = await getViewList({
         where: {
