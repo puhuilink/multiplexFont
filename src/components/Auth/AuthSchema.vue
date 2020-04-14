@@ -18,7 +18,7 @@
         <AuthView :record="authView.record" :viewIds.sync="authView.viewIds" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
-        <AuthMenu :userId="userId" ref="menu" />
+        <AuthMenu :record="authView.record" ref="menu" />
       </a-tab-pane>
     </a-tabs>
   </a-modal>
@@ -28,7 +28,7 @@
 /* eslint-disable camelcase */
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
-import { modifyUserPermission } from '@/api/system'
+import { modifyUserPermission, modifyGroupPermission } from '@/api/system'
 import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
 
 const formItemLayout = {
@@ -58,9 +58,9 @@ export default {
     authView: {
       // 选中的 viewId
       viewIds: [],
-      record: null,
-      userId: ''
-    }
+      record: null
+    },
+    userId: ''
   }),
   methods: {
     edit (record) {
@@ -69,6 +69,7 @@ export default {
       this.userId = record.user_id
       this.record = { ...record }
       this.authView.record = { ...record }
+      console.log(record)
     },
     cancel () {
       this.visible = false
@@ -80,14 +81,15 @@ export default {
     async submit () {
       try {
         this.loading = true
+        const menu = this.$refs.menu.getCheckedMenu()
         const { authView: { viewIds }, record: { user_id, group_id } } = this
         if (user_id) {
           await allocateUserViewAuth(user_id, viewIds)
+          await modifyUserPermission(user_id, menu)
         } else if (group_id) {
           await allocateGroupViewAuth(group_id, viewIds)
+          await modifyGroupPermission(group_id, menu)
         }
-        const menu = this.$refs.menu.getCheckedMenu()
-        await modifyUserPermission(this.userId, menu)
         this.visible = false
         this.$notification.success({
           message: '系统提示',

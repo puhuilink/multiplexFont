@@ -14,16 +14,16 @@
 
 <script>
 import { MENU, MODULE, ALLPERMISSION } from '@/utils/menu'
-import { getPermission } from '@/api/system'
+import { getUserPermission, getGroupPermission } from '@/api/system'
 import { getMenuTree, getButtonTree } from '@/utils/util'
 
 export default {
   name: 'AuthMenu',
   components: {},
   props: {
-    userId: {
-      type: String,
-      default: ''
+    record: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -41,18 +41,22 @@ export default {
     async getInitMenu () {
       try {
         this.loading = true
-        if (this.userId) {
-          this.menuPermission = await getPermission(this.userId)
-          const menuOriginalPermission = this.menuPermission.data.filter(item => /^F/.test(item.code))
-          const buttonOriginalPermission = this.menuPermission.data.filter(item => !/^F/.test(item.code))
-          if (menuOriginalPermission.length > 0) {
-            const menuTree = getMenuTree(null, menuOriginalPermission)
-            this.setCheckedKeys(menuTree)
-          }
-          if (buttonOriginalPermission.length > 0) {
-            const buttonTree = getButtonTree(null, buttonOriginalPermission)
-            this.setCheckedKeys(buttonTree)
-          }
+        const { user_id: userId, group_id: groupId } = this.record
+        if (userId) {
+          this.menuPermission = await getUserPermission(userId)
+        }
+        if (groupId) {
+          this.menuPermission = await getGroupPermission(groupId)
+        }
+        const menuOriginalPermission = this.menuPermission.data.filter(item => /^F/.test(item.code))
+        const buttonOriginalPermission = this.menuPermission.data.filter(item => !/^F/.test(item.code))
+        if (menuOriginalPermission.length > 0) {
+          const menuTree = getMenuTree(null, menuOriginalPermission)
+          this.setCheckedKeys(menuTree)
+        }
+        if (buttonOriginalPermission.length > 0) {
+          const buttonTree = getButtonTree(null, buttonOriginalPermission)
+          this.setCheckedKeys(buttonTree)
         }
       } catch (error) {
         throw error
