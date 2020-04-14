@@ -68,13 +68,13 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="batchDelete" :disabled="!isValid">删除</a-button>
-        <a-button @click="allocateUser" :disabled="!hasSelectedOne">分配用户</a-button>
-        <a-button @click="allocateAdmin" :disabled="!hasSelectedOne">分配管理员</a-button>
-        <a-button @click="toggleFlag" :disabled="!hasSelectedOne">更改状态</a-button>
-        <a-button @click="auth" :disabled="!hasSelectedOne">分配权限</a-button>
+        <a-button @click="add" v-action:M0106>新建</a-button>
+        <a-button @click="edit" :disabled="!hasSelectedOne" v-action:M0101>编辑</a-button>
+        <a-button @click="batchDelete" :disabled="!isValid" v-action:M0108>删除</a-button>
+        <a-button @click="allocateUser" :disabled="!hasSelectedOne" v-action:M0101>分配用户</a-button>
+        <a-button @click="allocateAdmin" :disabled="!hasSelectedOne" v-action:M0101>分配管理员</a-button>
+        <a-button @click="toggleFlag" :disabled="!hasSelectedOne" v-action:M0101>更改状态</a-button>
+        <a-button @click="auth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
 
       <span slot="note" slot-scope="text">

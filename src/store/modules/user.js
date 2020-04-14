@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import { logout } from '@/api/login'
-import { info } from '@/mock/services/user'
+import { getGroupPermission } from '@/api/system'
+// import { info } from '@/mock/services/user'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
-import { welcome } from '@/utils/util'
+import { welcome, getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
 
 const user = {
@@ -13,7 +14,8 @@ const user = {
     avatar: '',
     roles: [],
     info: {},
-    userId: ''
+    userId: '',
+    userOriginalPermission: null
   },
 
   mutations: {
@@ -37,7 +39,6 @@ const user = {
       state.userId = userId
     }
   },
-
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
@@ -52,42 +53,66 @@ const user = {
         })
       })
     },
-
     // 获取用户信息
-    GetInfo ({ commit }) {
+    GetInfo ({ commit, dispatch }) {
       return new Promise(async (resolve, reject) => {
         try {
           const user = Vue.ls.get(USER)
-          // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
-          const response = info()
-          // const response= await getInfo()
-          const result = response.result
+          let originalPermission = []
+          const permission = await getGroupPermission(user.organizeList[0].groupId)
+          if (permission.code === 200) {
+            originalPermission = permission.data
+          }
+          // 菜单权限列表
+          const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
+          // 按钮权限列表
+          const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
 
-          if (result.role && result.role.permissions.length > 0) {
-            const role = result.role
-            role.permissions = result.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
-              }
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
+          const buttonTree = getButtonTree(null, buttonOriginalPermission)
+          const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+          const userPermission = Object.assign({}, user, permissionTree)
+
+          if (userPermission.permissions && userPermission.permissions.length > 0) {
+            commit('SET_ROLES', userPermission)
             commit('SET_INFO', {
-              ...result,
+              ...userPermission,
               ...user
             })
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
+          // // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
+          // const response = info()
+          // // const response= await getInfo()
+          // const result = response.result
+          //
+          // if (result.role && result.role.permissions.length > 0) {
+          //   const role = result.role
+          //   role.permissions = result.role.permissions
+          //   role.permissions.map(per => {
+          //     if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
+          //       const action = per.actionEntitySet.map(action => { return action.action })
+          //       per.actionList = action
+          //     }
+          //   })
+          //   role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+          //   console.log('role: ', result.role)
+          //   commit('SET_ROLES', result.role)
+          //   commit('SET_INFO', {
+          //     ...result,
+          //     ...user
+          //   })
+          // } else {
+          //   reject(new Error('getInfo: roles must be a non-null array !'))
+          // }
+
           commit('SET_TOKEN', user.token)
           commit('SET_ID', user)
           commit('SET_NAME', { name: user.staffName, welcome: welcome() })
           commit('SET_AVATAR', '/avatar.jpg')
 
-          resolve(response)
+          resolve(userPermission)
         } catch (e) {
           reject(e)
         }

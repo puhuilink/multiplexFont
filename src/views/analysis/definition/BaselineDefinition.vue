@@ -67,16 +67,18 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
+        <a-button @click="add" v-action:M1304>新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="edit"
+          v-action:M1305
         >
           编辑
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
           @click="deleteCtrl"
+          v-action:M1306
         >
           删除
         </a-button>

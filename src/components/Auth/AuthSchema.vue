@@ -18,7 +18,7 @@
         <AuthView :record="authView.record" :viewIds.sync="authView.viewIds" />
       </a-tab-pane>
       <a-tab-pane tab="菜单模块" forceRender key="2">
-        <AuthMenu />
+        <AuthMenu :record="authView.record" ref="menu" />
       </a-tab-pane>
     </a-tabs>
   </a-modal>
@@ -28,6 +28,7 @@
 /* eslint-disable camelcase */
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
+import { modifyUserPermission, modifyGroupPermission } from '@/api/system'
 import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
 
 const formItemLayout = {
@@ -58,15 +59,17 @@ export default {
       // 选中的 viewId
       viewIds: [],
       record: null
-    }
+    },
+    userId: ''
   }),
-  computed: {},
   methods: {
     edit (record) {
       this.title = '授权'
       this.visible = true
+      this.userId = record.user_id
       this.record = { ...record }
       this.authView.record = { ...record }
+      console.log(record)
     },
     cancel () {
       this.visible = false
@@ -78,11 +81,14 @@ export default {
     async submit () {
       try {
         this.loading = true
+        const menu = this.$refs.menu.getCheckedMenu()
         const { authView: { viewIds }, record: { user_id, group_id } } = this
         if (user_id) {
           await allocateUserViewAuth(user_id, viewIds)
+          await modifyUserPermission(user_id, menu)
         } else if (group_id) {
           await allocateGroupViewAuth(group_id, viewIds)
+          await modifyGroupPermission(group_id, menu)
         }
         this.visible = false
         this.$notification.success({
@@ -91,6 +97,9 @@ export default {
         })
         this.$emit('success')
       } catch (e) {
+        this.$notification.error({
+          message: '保存异常，请稍后再试!'
+        })
         throw e
       } finally {
         this.loading = false

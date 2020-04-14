@@ -56,11 +56,11 @@
       </template>
 
       <template #operation>
-        <a-button @click="$refs['title'].add()">新建</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading">复制</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign">设计</a-button>
-        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
+        <a-button @click="$refs['title'].add()" v-action:M0201>新建</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit" v-action:M0202>编辑</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
+        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign" v-action:M0203>设计</a-button>
+        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0" v-action:M0204>删除</a-button>
       </template>
 
       <span slot="viewTitle" slot-scope="text">

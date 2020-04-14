@@ -92,3 +92,101 @@ export function numbericUuid (length) {
 export function varcharUuid (length) {
   return `${numbericUuid()}`
 }
+
+/**
+ * 由原始权限列表，构建菜单级别权限树
+ */
+export function getMenuTree (tree, list) {
+  if (!tree) {
+    tree = {
+      code: 'F',
+      key: 'F'
+    }
+  }
+  const childrenList = list.filter(child => child.parentCode === tree.code)
+  if (childrenList.length > 0) {
+    tree.children = []
+    childrenList.map(item => {
+      item.key = item.code
+      getMenuTree(item, list)
+      return item
+    })
+    tree.children = childrenList
+  }
+  return tree
+}
+
+/**
+ * 由原始权限列表，构建菜单级别权限树
+ */
+export function getButtonTree (tree, list) {
+  if (!tree) {
+    tree = {
+      code: 'M',
+      key: 'M'
+    }
+  }
+  const childrenList = list.filter(child => child.parentCode === tree.code)
+  if (childrenList.length > 0) {
+    tree.children = []
+    childrenList.map(item => {
+      item.key = item.code
+      item.title = item.name
+      getButtonTree(item, list)
+      return item
+    })
+    tree.children = childrenList
+  }
+  return tree
+}
+
+// 全部视图权限
+let allPermission = []
+/**
+ * 由原始权限列表，分离菜单权限数组，构建菜单树
+ */
+export function getTree (tree, list, buttonTree) {
+  if (!tree) {
+    tree = {
+      code: 'F'
+    }
+  }
+  const childrenList = list.filter(child => child.parentCode === tree.code)
+  if (childrenList.length > 0) {
+    tree.permissions = []
+    childrenList.map(item => {
+      const actions = buttonTree.children.find(button => button.name === (item.name || ''))
+      if (actions) {
+        item.actionEntitySet = actions.children
+        item.actionList = actions.children.map(action => action.code)
+        item.permissionId = item.code
+        item.permissionName = item.name
+      }
+      getTree(item, list, buttonTree)
+      return item
+    })
+    tree.permissions = childrenList
+    tree.permissionList = childrenList.map(item => item.code)
+    tree.allPermission = allPermission = [...allPermission, ...tree.permissionList]
+  }
+  return tree
+}
+
+/**
+ * 将菜单树与按钮树合并
+ * @param menuTree
+ * @param buttonTree
+ */
+export function mergePermission (menuTree, buttonTree) {
+  if (menuTree.children && menuTree.children.length > 0) {
+    menuTree.children.map(item => {
+      const action = buttonTree.children.find(button => button.name === (item.name || ''))
+      if (action) {
+        item.action = action
+      }
+      mergePermission(item, buttonTree)
+      return item
+    })
+  }
+  return menuTree
+}
