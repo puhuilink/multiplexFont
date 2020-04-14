@@ -3,7 +3,7 @@
     <div class="ViewDisplay__view-header">
       <a-select style="width: 300px;" v-model="selectedGroupName">
         <a-select-option
-          v-for="(group, idx) in viewGroupList"
+          v-for="(group, idx) in groupDesktopList"
           :key="idx"
           :value="group.view_title"
         >{{ group.view_title }}</a-select-option>
@@ -83,6 +83,7 @@ import HeadInfo from '@/components/tools/HeadInfo'
 import AuthDesktop from './modules/AuthDesktop'
 import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
+import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 
 const ALL_VIEW = '所有视图'
@@ -106,7 +107,7 @@ export default {
       avatar: '',
       user: {},
       loading: false,
-      viewGroupList: [],
+      groupDesktopList: [],
       viewList: [],
       queryTitle: '',
       selectedGroupName: ALL_VIEW,
@@ -128,9 +129,9 @@ export default {
       return this.$store.getters.userInfo
     },
     selectedGroup () {
-      const { selectedGroupName, viewGroupList } = this
+      const { selectedGroupName, groupDesktopList } = this
       // eslint-disable-next-line
-      return viewGroupList.find(({ view_title }) => view_title === selectedGroupName)
+      return groupDesktopList.find(({ view_title }) => view_title === selectedGroupName)
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
@@ -153,17 +154,23 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const [viewList, viewGroupList] = await getGroupViewDesktopList()
-        this.viewList = viewList
-        this.viewGroupList = [
-          ...viewGroupList,
+        const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
+        const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
+        console.log(selfDesktop)
+        this.viewList = [
+          ...groupDesktopViewList,
+          ...selfDesktopViewList
+        ]
+        this.groupDesktopList = [
+          ...groupDesktopList,
+          selfDesktop,
           {
             view_title: ALL_VIEW
           }
         ]
       } catch (e) {
         this.viewList = []
-        this.viewGroupList = []
+        this.groupDesktopList = []
         throw e
       } finally {
         this.loading = false
@@ -388,9 +395,9 @@ export default {
       justify-content: center;
       margin: 8px;
 
-      &__add {
+      // &__add {
 
-      }
+      // }
     }
   }
 
