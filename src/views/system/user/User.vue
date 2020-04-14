@@ -172,6 +172,17 @@ const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
   }) {
     affected_rows
   }
+  # 删除桌面
+  delete_t_view (where: {
+    view_name: {
+      _in: $userIds
+    }
+    view_title: {
+      _eq: "自定义"
+    }
+  }) {
+    affected_rows
+  }
 }`
 
 const updateUserFlag = gql`mutation update_user_flag ($userId: String!, $flag: numeric) {
