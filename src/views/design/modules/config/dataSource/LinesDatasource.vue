@@ -21,7 +21,7 @@
         </a-select>
       </a-form-item>
 
-      <ComboSelect :multiple="false" v-model="resourceConfig" />
+      <ComboSelect :multiple="true" v-model="resourceConfig" />
 
       <a-form-item
         label="刷新时间"
@@ -57,7 +57,7 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 
 export default {
-  name: 'GaugeDataSource',
+  name: 'LinesDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,

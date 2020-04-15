@@ -10,7 +10,7 @@
   <transition name="preview">
     <div class="view-preview" v-if="visible">
 
-      <p class="view-preview__title">{{ viewList[index].view_name }}</p>
+      <p class="view-preview__title">{{ title }}</p>
 
       <a-spin :spinning="isLoading">
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
@@ -24,17 +24,19 @@
       <!-- S 控制条 -->
       <div class="view-preview__control">
 
-        <a-tooltip placement="top" title="上一个">
-          <a-icon type="left" @click="preView" />
-        </a-tooltip>
+        <template v-if="!isDesignMode">
+          <a-tooltip placement="top" title="上一个">
+            <a-icon type="left" @click="preView" />
+          </a-tooltip>
 
-        <a-tooltip placement="top" :title="isPolling ? '暂停' : '播放'">
-          <a-icon :type="isPolling ? 'pause-circle' : 'play-circle'" @click="startPolling" />
-        </a-tooltip>
+          <a-tooltip placement="top" :title="isPolling ? '暂停' : '播放'">
+            <a-icon :type="isPolling ? 'pause-circle' : 'play-circle'" @click="startPolling" />
+          </a-tooltip>
 
-        <a-tooltip placement="top" title="下一个">
-          <a-icon type="right" @click="nextView" />
-        </a-tooltip>
+          <a-tooltip placement="top" title="下一个">
+            <a-icon type="right" @click="nextView" />
+          </a-tooltip>
+        </template>
 
         <!--        <a-tooltip placement="top" title="时间轴">-->
         <!--          <a-icon type="clock-circle" />-->
@@ -79,6 +81,7 @@
 import _ from 'lodash'
 import { getViewDesign } from '@/api/controller/View'
 import Renderer from '@/components/Renderer'
+import Timeout from 'await-timeout'
 
 export default {
   name: 'ViewPreview',
@@ -97,6 +100,11 @@ export default {
     currentView: {
       type: Object,
       default: () => ({})
+    },
+    // 是否在视图设计中预览，反之为在视图展示中预览
+    isDesignMode: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -116,6 +124,15 @@ export default {
         Object.assign(this.view.config.proprietaryConfig, {
           scaleMode: mode
         })
+      }
+    },
+    title: {
+      get () {
+        if (this.isDesignMode) {
+          return _.get(this.$route.query, 'title')
+        } else {
+          return this.viewList[this.index].view_name
+        }
       }
     }
   },
@@ -144,7 +161,7 @@ export default {
      * @param id
      * @returns {Promise<void>}
      */
-    async getViewConfig (id) {
+    async getViewConfigFromApi (id) {
       try {
         this.isLoading = true
         this.view = await getViewDesign(id)
@@ -154,6 +171,20 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    async getViewConfigFromStore () {
+      this.isLoading = true
+      await Timeout.set(300)
+      // 当从设计页面进入时，此时的 view 与 widgets 已有全局唯一 id
+      const option = _.cloneDeep(
+        this.$store.state.screen.view.getOption()
+      )
+      option.id += '-copy'
+      option.widgets.forEach(widget => {
+        widget.widgetId += '-copy'
+      })
+      this.view = option
+      this.isLoading = false
     },
     /**
      * 设置缩放模式
@@ -207,16 +238,20 @@ export default {
         this.index = 0
       }
       const view = this.viewList[this.index]
-      this.getViewConfig(view.view_id)
+      this.getViewConfigFromApi(view.view_id)
     }
   },
   watch: {
     visible (v) {
       if (v) {
         this.view = null
-        const idList = this.viewList.map(view => view.view_id)
-        this.index = idList.indexOf(this.currentView.view_id)
-        this.getViewConfig(this.currentView.view_id)
+        if (this.isDesignMode) {
+          this.getViewConfigFromStore()
+        } else {
+          const idList = this.viewList.map(view => view.view_id)
+          this.index = idList.indexOf(this.currentView.view_id)
+          this.getViewConfigFromApi(this.currentView.view_id)
+        }
       } else {
         clearInterval(this.timer)
       }
