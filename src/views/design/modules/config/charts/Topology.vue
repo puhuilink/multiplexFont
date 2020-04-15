@@ -338,7 +338,8 @@ export default {
        */
     checkGridStatus () {
       const { render: { chart } } = this.activeWidget
-      const [hasGridPlugin] = chart.get('plugins')
+      // eslint-disable-next-line no-unused-vars
+      const [_, hasGridPlugin] = chart.get('plugins')
       this.isDisplayGrid = !!hasGridPlugin
     },
     /**
@@ -346,7 +347,8 @@ export default {
        */
     gridChange () {
       const { render: { chart } } = this.activeWidget
-      const [grid] = chart.get('plugins')
+      // eslint-disable-next-line no-unused-vars
+      const [_, grid] = chart.get('plugins')
       this.isDisplayGrid ? chart.addPlugin(new Grid()) : chart.removePlugin(grid)
     }
   }
