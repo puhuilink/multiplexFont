@@ -21,7 +21,7 @@ export default class ClockChart extends Chart {
   }
 
   endTimer () {
-    clearImmediate(this.timer)
+    clearInterval(this.timer)
     this.timer = null
   }
 

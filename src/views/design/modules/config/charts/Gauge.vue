@@ -1,6 +1,6 @@
 <template>
   <div class="texts-config">
-    <a-tabs defaultActiveKey="3" tabPosition="top" :style="{ height: '100%'}">
+    <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
       <a-tab-pane tab="公共属性" key="">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
