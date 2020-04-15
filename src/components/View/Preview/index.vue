@@ -51,27 +51,27 @@ export default {
     ...mapState('screen', ['view'])
   },
   watch: {
-    async ciId () {
-      this.loading = true
-      await Timeout.set(300)
-      this.loading = false
+    ciId () {
+      this.fetch()
     }
   },
   methods: {
-    async fetch (viewviewId) {
+    async fetch () {
       try {
         this.loading = true
-        const option = await getViewDesign(viewviewId)
-        this.loading = false
-        return option
+        this.preview = this.viewId ? await getViewDesign(this.viewId) : this.view.getOption()
       } catch (e) {
+        throw e
+      } finally {
+        // 触发 v-if 强制更新
+        await Timeout.set(300)
+        await this.$nextTick()
         this.loading = false
-        return null
       }
     }
   },
   async created () {
-    this.preview = this.viewId ? await this.fetch(this.viewId) : this.view.getOption()
+    this.fetch()
   }
 }
 </script>
