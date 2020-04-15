@@ -137,7 +137,7 @@ export default {
     selectedGroup () {
       const { selectedGroupName, groupDesktopList } = this
       // eslint-disable-next-line
-      return groupDesktopList.find(({ view_title }) => view_title === selectedGroupName)
+      return groupDesktopList.length > 0 ? groupDesktopList.find(({ view_title }) => view_title === selectedGroupName) : []
     },
     filterViewList () {
       const { selectedGroup, viewList } = this
@@ -161,7 +161,6 @@ export default {
         this.loading = true
         const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
         const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
-        console.log(selfDesktop)
         this.viewList = [
           ...groupDesktopViewList,
           ...selfDesktopViewList
