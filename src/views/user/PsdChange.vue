@@ -22,7 +22,7 @@
             <div :class="['user-register', passwordLevelClass]">强度：<span>{{ passwordLevelName }}</span></div>
             <a-progress :percent="state.percent" :showInfo="false" :strokeColor=" passwordLevelColor " />
             <div style="margin-top: 10px;">
-              <span>请至少输入 8 个字符。请不要使用容易被猜到的密码。</span>
+              <span>8位以上，必须含数字/英文大写/英文小写三种组合</span>
             </div>
           </div>
         </template>
@@ -178,24 +178,30 @@ export default {
       if (/[0-9]/.test(value)) {
         level++
       }
-      // 判断字符串中有没有字母
-      if (/[a-zA-Z]/.test(value)) {
+      // 判断字符串中有没有大写字母
+      if (/[A-Z]/.test(value)) {
         level++
       }
-      // 判断字符串中有没有特殊符号
-      if (/[^0-9a-zA-Z_]/.test(value)) {
+
+      // 判断字符串中有没有小写字母
+      if (/[a-z]/.test(value)) {
         level++
       }
+      // // 判断字符串中有没有特殊符号
+      // if (/[^0-9a-zA-Z_]/.test(value)) {
+      //   level++
+      // }
+
       this.state.passwordLevel = level
       this.state.percent = level * 30
 
       if (value.length < 8) {
         callback(new Error('密码长度不够'))
       } else {
-        if (level >= 2) {
-          if (level >= 3) {
-            this.state.percent = 100
-          }
+        if (level >= 3) {
+          this.state.percent = 100
+          // if (level >= 3) {
+          // }
           callback()
         } else {
           if (level === 0) {
