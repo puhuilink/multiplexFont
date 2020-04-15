@@ -157,6 +157,8 @@ export function getTree (tree, list, buttonTree) {
     childrenList.map(item => {
       const actions = buttonTree.children.find(button => button.name === (item.name || ''))
       if (actions) {
+        // hack
+        actions.children = actions.children || []
         item.actionEntitySet = actions.children
         item.actionList = actions.children.map(action => action.code)
         item.permissionId = item.code
