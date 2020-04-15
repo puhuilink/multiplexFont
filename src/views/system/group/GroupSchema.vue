@@ -128,7 +128,7 @@
           >
             <a-textarea
               v-decorator="[
-                'username',
+                'note',
               ]"
             />
           </a-form-item>
@@ -140,9 +140,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import moment from 'moment'
+import { addGroup, editGroup } from '@/api/controller/Group'
 
 const formItemLayout = {
   labelCol: {
@@ -152,25 +151,6 @@ const formItemLayout = {
     span: 23
   }
 }
-
-const insert = gql`mutation ($objects: [t_group_insert_input!]!) {
-  insert_t_group (objects: $objects) {
-    returning {
-      group_id
-    }
-  }
-}`
-
-const update = gql`mutation update ($where: t_group_bool_exp!, $group: t_group_set_input) {
-  update_t_group (
-    where: $where,
-    _set: $group
-  ) {
-    returning {
-      group_id
-    }
-  }
-}`
 
 export default {
   name: 'UserSchema',
@@ -260,15 +240,7 @@ export default {
     async insert () {
       const values = await this.getFormFields()
       this.loading = true
-      return apollo.clients.alert.mutate({
-        mutation: insert,
-        variables: {
-          objects: [{
-            ...values,
-            createdate: moment().format('YYYY-MM-DDTHH:mm:ss')
-          }]
-        }
-      }).then(res => {
+      return addGroup(values).then(res => {
         this.$emit('addSuccess')
         this.$notification.success({
           message: '系统提示',
@@ -290,18 +262,15 @@ export default {
     async update () {
       const values = await this.getFormFields()
       this.loading = true
-      return apollo.clients.alert.mutate({
-        mutation: update,
-        variables: {
-          where: {
-            'group_id': {
-              '_eq': this.record.group_id
-            }
-          },
-          group: {
-            ...values,
-            updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+      return editGroup({
+        where: {
+          'group_id': {
+            '_eq': this.record.group_id
           }
+        },
+        group: {
+          ...values,
+          updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
         }
       }).then(res => {
         this.$emit('editSuccess')

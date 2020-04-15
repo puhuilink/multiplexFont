@@ -71,12 +71,13 @@ const addUsers = function (objects = [], views = []) {
  * @return {Promise}
  */
 export const addUser = async function (user) {
+  // TODO: 数据表已调整为 id 自增
   const viewId = await fetchLastesdViewId()
   const view = {
     view_id: viewId + 1,
     view_name: user.user_id,
     view_title: '自定义',
-    view_type: 'view',
+    view_type: 'desktop',
     creator: user.user_id,
     content: '',
     protect_level: '0'

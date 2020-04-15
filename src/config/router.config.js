@@ -347,7 +347,7 @@ export const asyncRouterMap = [
         name: 'user',
         redirect: '/user/PsdChange',
         component: RouteView,
-        meta: { title: '个人中心', keepAlive: true, icon: 'user', permission: [ 'user' ] },
+        meta: { title: '个人中心', keepAlive: true, icon: 'user' },
         children: [
           {
             path: '/PsdChange',
