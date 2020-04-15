@@ -28,7 +28,6 @@ export const getUserDesktop = function (userId) {
     // data.content = data.content.includes('<') ? '' : data.content
     data.viewIds = (content.includes('<') ? [] : content.split(',')).filter(id => !!id)
     let viewList
-    console.log('data.viewIds', data.viewIds)
     if (data.viewIds.length) {
       viewList = await getViewList({
         where: {

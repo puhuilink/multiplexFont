@@ -37,3 +37,18 @@ export const userAuthViewList = gql`query ($userId: String) {
     view_id: object_id
   }
 }`
+
+// administrator 桌面，写死
+export const administratorAuthViewList = gql`query {
+  data: t_view (where: {
+    view_id: {
+      _eq: "1"
+    }
+  }) {
+    view_id
+    view_name
+    view_title
+    view_type
+    content
+  }
+}`
