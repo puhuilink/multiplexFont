@@ -108,6 +108,8 @@
       </div>
       <!-- E 比例条 -->
     </div>
+
+    <ViewPreview :visible.sync="visible" isDesignMode />
   </a-spin>
 </template>
 
@@ -134,12 +136,14 @@ import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import { updateViewDesign, getViewDesign } from '@/api/controller/View'
+import ViewPreview from '@/views/view/display/modules/viewPreview'
 
 export default {
   name: 'Screen',
   components: {
     Wrapper,
-    Widget
+    Widget,
+    ViewPreview
   },
   mixins: [AdjustMixins],
   // 选择器调整事件流
@@ -168,7 +172,9 @@ export default {
     // 滚动条
     perfectScrollBar: null,
     // 视图配置
-    viewOptions: null
+    viewOptions: null,
+    // 视图预览页面是否可见
+    visible: false
   }),
   mounted () {
     const { platform } = navigator
@@ -521,7 +527,7 @@ export default {
      * 预览视图
      */
     preview () {
-      this.$router.push('/preview')
+      this.visible = true
     },
     /**
      * 初始化数据
@@ -546,6 +552,8 @@ export default {
     this.isSubscribed = false
     // 销毁滚动条
     this.perfectScrollBar && this.perfectScrollBar.destroy()
+    // 清空画布
+    this.clear()
   }
 }
 </script>

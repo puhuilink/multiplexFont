@@ -8,7 +8,7 @@
           type="password"
           autocomplete="false"
           placeholder="原始密码"
-          v-decorator="['oldPsd', {rules: [{ required: true, message: '请输入原始密码' }], validateTrigger: ['change', 'blur']}]"
+          v-decorator="['encryptedPwd', {rules: [{ required: true, message: '请输入原始密码' }], validateTrigger: ['change', 'blur']}]"
         ></a-input>
       </a-form-item>
 
@@ -22,7 +22,7 @@
             <div :class="['user-register', passwordLevelClass]">强度：<span>{{ passwordLevelName }}</span></div>
             <a-progress :percent="state.percent" :showInfo="false" :strokeColor=" passwordLevelColor " />
             <div style="margin-top: 10px;">
-              <span>请至少输入 8 个字符。请不要使用容易被猜到的密码。</span>
+              <span>8位以上，必须含数字/英文大写/英文小写三种组合</span>
             </div>
           </div>
         </template>
@@ -34,7 +34,7 @@
             @click="handlePasswordInputClick"
             autocomplete="false"
             placeholder="至少8位密码，区分大小写"
-            v-decorator="['password', {rules: [{ required: true, message: '至少8位密码，区分大小写'}, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
+            v-decorator="['newEncryptedPwd', {rules: [{ required: true, message: '至少8位密码，区分大小写'}, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
           ></a-input>
         </a-form-item>
       </a-popover>
@@ -90,9 +90,9 @@
             type="primary"
             htmlType="submit"
             class="register-button"
-            :loading="registerBtn"
+            :loading="loading"
             @click.stop.prevent="handleSubmit"
-            :disabled="registerBtn">确定重置
+            :disabled="loading">确定重置
           </a-button>
         </a-col>
         <!-- <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link> -->
@@ -106,7 +106,9 @@
 import { mixinDevice } from '@/utils/mixin.js'
 // eslint-disable-next-line no-unused-vars
 import { getSmsCaptcha } from '@/api/login'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import { resetPwd } from '@/api/controller/User'
+// import Timeout from 'await-timeout'
 
 const levelNames = {
   0: '低',
@@ -152,10 +154,11 @@ export default {
         percent: 10,
         progressColor: '#FF0000'
       },
-      registerBtn: false
+      loading: false
     }
   },
   computed: {
+    ...mapGetters(['userId']),
     passwordLevelClass () {
       return levelClass[this.state.passwordLevel]
     },
@@ -175,24 +178,30 @@ export default {
       if (/[0-9]/.test(value)) {
         level++
       }
-      // 判断字符串中有没有字母
-      if (/[a-zA-Z]/.test(value)) {
+      // 判断字符串中有没有大写字母
+      if (/[A-Z]/.test(value)) {
         level++
       }
-      // 判断字符串中有没有特殊符号
-      if (/[^0-9a-zA-Z_]/.test(value)) {
+
+      // 判断字符串中有没有小写字母
+      if (/[a-z]/.test(value)) {
         level++
       }
+      // // 判断字符串中有没有特殊符号
+      // if (/[^0-9a-zA-Z_]/.test(value)) {
+      //   level++
+      // }
+
       this.state.passwordLevel = level
       this.state.percent = level * 30
 
       if (value.length < 8) {
         callback(new Error('密码长度不够'))
       } else {
-        if (level >= 2) {
-          if (level >= 3) {
-            this.state.percent = 100
-          }
+        if (level >= 3) {
+          this.state.percent = 100
+          // if (level >= 3) {
+          // }
           callback()
         } else {
           if (level === 0) {
@@ -233,20 +242,22 @@ export default {
 
     handleSubmit () {
       // eslint-disable-next-line
-      const { form: { validateFields }, state, $router } = this
-      validateFields({ force: true }, (err, values) => {
+      const { form: { validateFields }, state, $router, userId } = this
+      validateFields({ force: true }, async (err, values) => {
         if (!err) {
           state.passwordLevelChecked = false
-          return this.Logout({}).then(() => {
-            setTimeout(() => {
-              window.location.reload()
-            }, 16)
-          }).catch(err => {
-            this.$message.error({
-              title: '错误',
-              description: err.message
+          this.loading = true
+          try {
+            await resetPwd({
+              ...values,
+              userId
             })
-          })
+            this.requestSuccess()
+          } catch (e) {
+            throw e
+          } finally {
+            this.loading = false
+          }
         }
       })
     },
@@ -289,13 +300,43 @@ export default {
         }
       )
     },
+    requestSuccess () {
+      let secondsToGo = 3
+      const modal = this.$success({
+        footer: null,
+        closable: false,
+        keyboard: false,
+        title: '重置密码成功',
+        content: `${secondsToGo}秒后将重定向到登录页面`
+      })
+      const interval = setInterval(() => {
+        secondsToGo -= 1
+        modal.update({
+          content: `${secondsToGo}秒后将重定向到登录页面`
+        })
+      }, 1000)
+      setTimeout(() => {
+        clearInterval(interval)
+        modal.destroy()
+        this.Logout({}).then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 16)
+        }).catch(err => {
+          this.$message.error({
+            title: '错误',
+            description: err.message
+          })
+        })
+      }, secondsToGo * 1000)
+    },
     requestFailed (err) {
       this.$notification['error']({
         message: '错误',
         description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
         duration: 4
       })
-      this.registerBtn = false
+      this.loading = false
     }
   },
   watch: {

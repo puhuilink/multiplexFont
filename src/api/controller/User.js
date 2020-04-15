@@ -8,18 +8,19 @@ import {
 } from '../graphql/User'
 import { fetchLastesdViewId } from './View'
 const CryptoJS = require('crypto-js')
+// 从环境读入而非硬编码到 JS 文件里
+const key = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_KEY)
+const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
+
+const encrypt = (pwd) => CryptoJS.AES.encrypt(pwd, key, {
+  iv: iv,
+  mode: CryptoJS.mode.CBC
+  // padding: CryptoJS.pad.ZeroPadding
+}).toString()
 
 export const login = function ({ userId, pwd }) {
-  // 从环境读入而非硬编码到 JS 文件里
-  const key = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_KEY)
-  const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
-
   // 加密密码
-  const encryptedPwd = CryptoJS.AES.encrypt(pwd, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC
-    // padding: CryptoJS.pad.ZeroPadding
-  }).toString()
+  const encryptedPwd = encrypt(pwd)
 
   // 请求
   return axios.post('/user/login', {
@@ -35,6 +36,15 @@ export const login = function ({ userId, pwd }) {
 export const loginOld = function () {
   console.dir(oldRequest)
   return oldRequest.post('/rest/DoLogin/DoLogin', ['administrator', 'zhongjiao@123'])
+}
+
+export const resetPwd = function ({ userId, encryptedPwd, newEncryptedPwd }) {
+  const data = {
+    userId,
+    encryptedPwd: encrypt(encryptedPwd),
+    newEncryptedPwd: encrypt(newEncryptedPwd)
+  }
+  return axios.post('/user/changePassword', data)
 }
 
 /**

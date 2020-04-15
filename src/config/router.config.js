@@ -492,13 +492,6 @@ export const asyncRouterMap = [
     props: route => route.query
   },
   {
-    path: '/preview',
-    name: 'Preview',
-    hidden: true,
-    component: () => import('@/views/preview'),
-    meta: { title: '视图预览', permission: [ 'F002002' ] }
-  },
-  {
     path: '*', redirect: '/404', hidden: true
   }
 ]

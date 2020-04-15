@@ -8,7 +8,7 @@
 <template>
   <div class="lines-config">
     <a-tabs
-      defaultActiveKey="1"
+      defaultActiveKey="3"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
@@ -258,7 +258,7 @@
       <a-tab-pane tab="数据配置" key="3">
 
         <!-- S 数据配置模板 -->
-        <DataSourceTemplate />
+        <LinesDatasource />
         <!-- E 数据配置模板 -->
 
       </a-tab-pane>
@@ -272,8 +272,8 @@ import CommonTemplate from '../common/index.vue'
 import ChartProprietaryTemplate from '../chartProprietary'
 import ColorPicker from '@/components/ColorPicker'
 import LinearColorPicker from '@/components/LinearColorPicker'
-import DataSourceTemplate from '../dataSource'
 import ProprietaryMixins from '../proprietaryMixins'
+import LinesDatasource from '../dataSource/LinesDatasource'
 
 export default {
   name: 'Lines',
@@ -282,7 +282,7 @@ export default {
     CommonTemplate,
     ChartProprietaryTemplate,
     ColorPicker,
-    DataSourceTemplate,
+    LinesDatasource,
     LinearColorPicker
   },
   data: () => ({
