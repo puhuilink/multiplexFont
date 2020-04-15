@@ -546,6 +546,8 @@ export default {
     this.isSubscribed = false
     // 销毁滚动条
     this.perfectScrollBar && this.perfectScrollBar.destroy()
+    // 清空画布
+    this.clear()
   }
 }
 </script>
