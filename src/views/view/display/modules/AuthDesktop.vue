@@ -164,29 +164,40 @@ export default {
       try {
         let viewIdList
         if (userId === '超级管理员桌面') {
-          viewIdList = await getViewListInUserAuth(userId)
+          this.dataSource = await getViewList({
+            limit: 999
+          }).then(r => r.data.data).then(r => r.map(el => {
+            // console.log(el.view_id, el.view_title)
+            return ({
+              ...el,
+              title: el['view_title'],
+              key: el['view_id'].toString(),
+              description: '',
+              chosen: false
+            })
+          }))
         } else {
           const groupViewList = await getViewListInUserAuth(userId).then(r => r.data.data)
           // console.log(groupViewList)
           viewIdList = groupViewList.map(el => Number(el.view_id))
-        }
-        this.dataSource = await getViewList({
-          limit: 9999,
-          where: {
-            view_id: {
-              _in: viewIdList
+          this.dataSource = await getViewList({
+            limit: 9999,
+            where: {
+              view_id: {
+                _in: viewIdList
+              }
             }
-          }
-        }).then(r => r.data.data).then(r => r.map(el => {
-          // console.log(el.view_id, el.view_title)
-          return ({
-            ...el,
-            title: el['view_title'],
-            key: el['view_id'].toString(),
-            description: '',
-            chosen: false
-          })
-        }))
+          }).then(r => r.data.data).then(r => r.map(el => {
+            // console.log(el.view_id, el.view_title)
+            return ({
+              ...el,
+              title: el['view_title'],
+              key: el['view_id'].toString(),
+              description: '',
+              chosen: false
+            })
+          }))
+        }
         this.targetKeys = this.selectedKeys.map(key => `${key}`)
       } catch (e) {
         this.datSource = []
@@ -212,6 +223,7 @@ export default {
     async submit () {
       const { _targetKeys, desktopId } = this
       try {
+        this.loading = true
         await editDesktopContent(Number(desktopId), _targetKeys)
         this.$notification.success({
           message: '系统提示',
