@@ -72,7 +72,7 @@ export default {
       default: () => ([])
     },
     desktopId: {
-      type: String,
+      type: [String, Number],
       default: ''
     }
   },
@@ -162,9 +162,14 @@ export default {
      */
     async fetchUserViewList (userId) {
       try {
-        const groupViewList = await getViewListInUserAuth(userId).then(r => r.data.data)
-        // console.log(groupViewList)
-        const viewIdList = groupViewList.map(el => Number(el.view_id))
+        let viewIdList
+        if (userId === '超级管理员桌面') {
+          viewIdList = await getViewListInUserAuth(userId)
+        } else {
+          const groupViewList = await getViewListInUserAuth(userId).then(r => r.data.data)
+          // console.log(groupViewList)
+          viewIdList = groupViewList.map(el => Number(el.view_id))
+        }
         this.dataSource = await getViewList({
           limit: 9999,
           where: {

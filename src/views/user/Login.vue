@@ -235,7 +235,7 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
+          // console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.userId
           loginParams[!state.loginType ? 'email' : 'userId'] = values.userId

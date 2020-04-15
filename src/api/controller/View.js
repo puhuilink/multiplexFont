@@ -27,10 +27,10 @@ export const getViewList = function (variables = {}) {
     variables: {
       ...variables,
       where: {
-        ...where,
         'view_type': {
           _eq: 'h5'
-        }
+        },
+        ...where
       }
     }
   })
