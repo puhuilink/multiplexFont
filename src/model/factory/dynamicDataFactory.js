@@ -7,7 +7,7 @@ import GaugeDataConfig from '../config/dataConfig/dynamicData/GaugeDataConfig'
 import BarDataConfig from '../config/dataConfig/dynamicData/BarDataConfig'
 import DegreeDataConfig from '../config/dataConfig/dynamicData/DegreeRingDataConfig'
 import AlarmListDataConfig from '../config/dataConfig/dynamicData/AlarmListDataConfig'
-
+import LinesDataConfig from '../config/dataConfig/dynamicData/LinesDataConfig'
 export default class DynamicDataFactory {
   static create (type, dbDataConfig) {
     switch (_.upperFirst(type)) {
@@ -17,6 +17,8 @@ export default class DynamicDataFactory {
         return new BarDataConfig(dbDataConfig)
       case 'AlarmList':
         return new AlarmListDataConfig(dbDataConfig)
+      case 'Lines':
+        return new LinesDataConfig(dbDataConfig)
       case 'View':
         return
       case 'DegreeRing':
