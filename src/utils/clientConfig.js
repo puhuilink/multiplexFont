@@ -1,4 +1,5 @@
 import { HttpLink } from 'apollo-link-http'
+// import { BatchHttpLink } from 'apollo-link-batch-http'
 import { ApolloLink } from 'apollo-link'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
@@ -60,10 +61,31 @@ const defaultOptions = {
   }
 }
 
+const middlewareLink = new ApolloLink((operation, forward) => {
+  // operation.setContext({
+  //   headers: {
+  //     authorization: localStorage.getItem('token') || null
+  //   }
+  // })
+  console.log(operation)
+  // debugger
+  return forward(operation)
+})
+
+const addDatesLink = new ApolloLink((operation, forward) => {
+  return forward(operation).map(response => {
+    response.data.lastLoginDate = new Date()
+    return response
+  })
+})
+
 const clientList = linkList.map(link => new ApolloClient({
   // 顺序很重要？
+  // 原理是中间件？
   link: ApolloLink.from([
     errorHandler,
+    middlewareLink,
+    addDatesLink,
     link
   ]),
   cache: new InMemoryCache(),

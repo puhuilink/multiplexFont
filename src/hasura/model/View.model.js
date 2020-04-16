@@ -32,7 +32,7 @@ export class ViewModel {
     const query = hasura('products')
       .where({ 'id': 1, 'product_locales': { 'name': { '_ilike': 'test' } } })
       .with('product_locales', query => {
-        return query.select('name').where({ 'locales_id': 1 })
+        return query.select(['name', 'age'].join(',')).where({ 'locales_id': 1 })
       })
       .compose('address', query => {
         return query
