@@ -173,15 +173,15 @@ export default {
       }
     },
     async getViewConfigFromStore () {
+      this.view = null
       this.isLoading = true
       await Timeout.set(300)
       // 当从设计页面进入时，此时的 view 与 widgets 已有全局唯一 id
-      const option = _.cloneDeep(
-        this.$store.state.screen.view.getOption()
-      )
+      const option = this.$store.state.screen.view.getOption()
       option.id += '-copy'
-      option.widgets.forEach(widget => {
+      option.widgets = option.widgets.map(widget => {
         widget.widgetId += '-copy'
+        return widget
       })
       this.view = option
       this.isLoading = false
