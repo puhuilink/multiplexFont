@@ -33,7 +33,11 @@ var Hasura = /** @class */ (function () {
         configurable: true
     });
     Hasura.prototype.select = function (fields) {
-        this._fields += ' ' + fields.replace(/,/g, ' ');
+        if (Array.isArray(fields)) {
+            this._fields += ' ' + fields.join(',').replace(/,/g, ' ');
+        } else {
+            this._fields += ' ' + fields.replace(/,/g, ' ');
+        }
         return this;
     };
     Hasura.prototype.alias = function (alias) {

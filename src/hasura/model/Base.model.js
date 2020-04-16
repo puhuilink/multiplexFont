@@ -24,7 +24,7 @@ export class BaseModel {
   }) {
     return this.hasura(this.table)
       .where(where)
-      .select(fields.join(','))
+      .select(fields)
       .orderBy(orderBy)
       .paginate(limit, offset)
       // .query()
