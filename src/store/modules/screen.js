@@ -70,13 +70,15 @@ export default {
     },
     // 设置激活的部件，并修改widgets中的部件
     [ScreenMutations.ACTIVATE_WIDGET] (state, payload) {
-      state.activeWidget = payload.widget
       // 如果选择的是部件，深度复制激活部件，保留render对象，则更新部件的配置
       if (payload.widget && payload.widget.widgetId) {
         const activeWidget = state.view.widgets.find(
           widget => widget.widgetId === payload.widget.widgetId
         )
         Object.assign(activeWidget, _.omit(payload.widget, ['render']))
+        state.activeWidget = activeWidget
+      } else {
+        state.activeWidget = payload.widget
       }
     },
     // 修改拓扑图可编辑状态
