@@ -2,44 +2,27 @@
 
 export class BaseModel {
   constructor () {
+    // 对应数据表的名字
     this.table = 'base'
-  }
-
-  allList ({
-    where = {},
-    orderBy = { rest: 'asc' }
-  }) {
-    return this.hasura(this.table)
-      .where(where)
-      .orderBy(orderBy)
-      .query()
-  }
-
-  listWithPagination ({
-    where = {},
-    orderBy = { rest: 'asc' },
-    limit = 9999,
-    offset = 0,
-    fields = ['id']
-  }) {
-    return this.hasura(this.table)
-      .where(where)
-      .select(fields)
-      .orderBy(orderBy)
-      .paginate(limit, offset)
-      // .query()
+    // 对应 appllo client
+    this.hasura = null
   }
 
   find ({
     where = {},
-    orderBy = { rest: 'asc' },
-    limit = 9999,
+    orderBy = {},
+    fields = [],
+    limit = 0,
     offset = 0
   }) {
-    this.hasura(this.table)
+    const v = this.hasura(this.table)
       .where(where)
       .orderBy(orderBy)
-      .paginate(limit, offset)
-      .query()
+      .select(fields)
+    if (limit || offset) {
+      return v.paginate(limit, offset)
+    } else {
+      return v
+    }
   }
 }

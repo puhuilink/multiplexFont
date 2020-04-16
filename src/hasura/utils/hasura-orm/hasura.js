@@ -86,17 +86,39 @@ var Hasura = /** @class */ (function () {
         this._with += qr.parsed();
         return this;
     };
+    // Hasura.prototype.parsed = function () {
+    //     if (!this._fields) {
+    //         this._fields = 'id';
+    //     }
+    //     return this._paginate + " " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
+    //         ? '(' + helper_1.stringify(this._schemaArguments) + ')'
+    //         : '') + "{  " + this.getFields() + " }";
+    // };
+    // 前端固定数据格式
     Hasura.prototype.parsed = function () {
         if (!this._fields) {
             this._fields = 'id';
         }
-        return this._paginate + " " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
+        return this._paginate + " " + "data: " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
             ? '(' + helper_1.stringify(this._schemaArguments) + ')'
             : '') + "{  " + this.getFields() + " }";
     };
     Hasura.prototype.getFields = function () {
         return this._fields + " " + this._with;
     };
+    // Hasura.prototype.paginate = function (limit, offset) {
+    //     delete this._schemaArguments['limit'];
+    //     delete this._schemaArguments['offset'];
+    //     var args = helper_1.stringify(this._schemaArguments);
+    //     if (args) {
+    //         args = "(" + helper_1.stringify(this._schemaArguments) + ")";
+    //     }
+    //     this._paginate = " " + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
+    //     this.limit(limit);
+    //     this.offset(offset);
+    //     return this;
+    // };
+    // 前端固定数据格式
     Hasura.prototype.paginate = function (limit, offset) {
         delete this._schemaArguments['limit'];
         delete this._schemaArguments['offset'];
@@ -104,7 +126,8 @@ var Hasura = /** @class */ (function () {
         if (args) {
             args = "(" + helper_1.stringify(this._schemaArguments) + ")";
         }
-        this._paginate = " " + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
+        // this._schema = "data: " + this._schema
+        this._paginate = " pagination:" + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
         this.limit(limit);
         this.offset(offset);
         return this;
