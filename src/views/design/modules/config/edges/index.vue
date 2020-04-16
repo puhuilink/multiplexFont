@@ -127,12 +127,17 @@ export default {
   },
   methods: {
     ...mapMutations('screen', {
+      updateEdge: ScreenMutations.ACTIVATE_EDGE,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     change () {
-      const { render: { chart } } = this.activeWidget
+      const { render } = this.activeWidget
       // 根据配置更新视图
-      chart.updateItem(this.model.id, this.model)
+      render.chart.updateItem(this.model.id, this.model)
+      // 更新边配置
+      this.updateEdge({
+        activeEdge: render.chart.find('edge', edge => edge.getModel().id === this.model.id)
+      })
       // 更新配置
       this.updateTopologyConfig()
     },

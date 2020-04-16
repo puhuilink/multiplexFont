@@ -141,7 +141,7 @@ export default {
       const { render } = this.activeWidget
       Object.assign(activeWidget.config, this.config)
       this.activateWidget({
-        widget: Object.assign(activeWidget, { render })
+        widget: Object.assign(activeWidget, { config: this.config })
       })
       render.mergeOption(this.config)
     }
