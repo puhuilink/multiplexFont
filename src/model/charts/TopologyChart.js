@@ -34,30 +34,6 @@ export default class TopologyChart extends Chart {
       plugins: [],
       modes: {
         default: [
-          // 'zoom-canvas',
-          // 'drag-canvas',
-          // 'drag-node',
-          // 'select-node',
-          // {
-          //   type: 'brush-select',
-          //   trigger: 'ctrl',
-          //   includeEdges: true
-          // },
-          // {
-          //   type: 'tooltip', // 节点提示框
-          //   formatText (model) {
-          //     // 提示框文本内容
-          //     return 'label: ' + model.label + '<br/>'
-          //   }
-          // },
-          // {
-          //   type: 'edge-tooltip', // 边提示框
-          //   formatText (model) { // 边提示框文本内容
-          //     return 'label: ' + model.label +
-          //       '<br/> source: ' + model.source +
-          //       '<br/> target: ' + model.target
-          //   }
-          // }
         ],
         edit: [
           'zoom-canvas',
@@ -113,7 +89,7 @@ export default class TopologyChart extends Chart {
     this.read(proprietaryConfig)
 
     // 对于缩放事件的监听
-    this.chart.on('wheelzoom', e => {
+    this.chart.on('wheelzoom', () => {
       console.log(this.chart.getZoom())
     })
 
@@ -129,7 +105,7 @@ export default class TopologyChart extends Chart {
     })
 
     // 对于节点离开事件
-    this.chart.on('node:mouseleave', e => {
+    this.chart.on('node:mouseleave', () => {
       // 隐藏右键菜单
       this.hideContentMenu()
     })
@@ -146,25 +122,26 @@ export default class TopologyChart extends Chart {
     })
 
     // 对于边离开事件
-    this.chart.on('edge:mouseleave', e => {
+    this.chart.on('edge:mouseleave', () => {
       // 隐藏右键菜单
       this.hideContentMenu()
     })
 
-    // 节点点击事件
-    this.chart.on('node:click', ({ item }) => {
+    // 节点鼠标按下事件，设置当前节点为激活节点
+    this.chart.on('node:mousedown', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-        activeNode: item
+        activeNode: _.cloneDeep(item)
       })
     })
 
-    // 节点拖动事件
-    this.chart.on('node:drag', ({ item }) => {
+    // 节点拖动结束事件，更新当前激活节点配置，更新配置
+    this.chart.on('node:dragend', ({ item }) => {
       const activeNode = store.state.screen.activeNode
       if (activeNode) {
         store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-          activeNode: item
+          activeNode: _.cloneDeep(item)
         })
+        store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
       }
     })
 
@@ -176,7 +153,7 @@ export default class TopologyChart extends Chart {
     // 边点击事件
     this.chart.on('edge:click', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_EDGE, {
-        activeEdge: item
+        activeEdge: _.cloneDeep(item)
       })
     })
 
@@ -186,7 +163,7 @@ export default class TopologyChart extends Chart {
     })
 
     // 画布点击事件
-    this.chart.on('canvas:click', e => {
+    this.chart.on('canvas:click', () => {
       // 清空激活的节点
       store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
         activeNode: null
@@ -288,14 +265,6 @@ export default class TopologyChart extends Chart {
         model.display ? edge.show() : edge.hide()
       })
     }
-  }
-
-  /**
-   * 保存配置
-   * @param widget
-   */
-  save ({ proprietaryConfig }) {
-    Object.assign(proprietaryConfig, _.cloneDeep(this.chart.save()))
   }
 
   /**

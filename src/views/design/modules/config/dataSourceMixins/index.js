@@ -96,9 +96,8 @@ export default {
     change (loadingDynamicData = false) {
       const activeWidget = _.cloneDeep(this.activeWidget)
       const { render } = this.activeWidget
-      Object.assign(activeWidget.config, this.config)
       this.activateWidget({
-        widget: Object.assign(activeWidget, { render })
+        widget: Object.assign(activeWidget, { config: this.config })
       })
       this.$nextTick(() => {
         // 调整数据源过程中不需要反复刷新数据，只有显式要求刷新时再主动刷新
