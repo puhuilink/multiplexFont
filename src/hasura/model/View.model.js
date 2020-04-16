@@ -1,35 +1,18 @@
 /* eslint-disable camelcase */
-import hasura from '../hasura'
+import { BaseModel } from './Base.model'
+import { HasuraFactory } from '../utils//hasuraFactory'
+// export const VIEW_MODEL_SCHEMA = new Map
+import { alert } from '@/utils/clientConfig'
 
-export class ViewModel {
-  static schema = 't_view'
-  // constructor ({
-  //   view_id,
-  //   view_name,
-  //   view_title,
-  //   view_type,
-  //   protect_level,
-  //   content,
-  //   creator,
-  //   createdate,
-  //   updator,
-  //   updatedate,
-  //   view_img
-  // }) {
-  //   this.view_id = view_id
-  //   this.view_name = view_name
-  //   this.view_title = view_title
-  //   this.view_type = view_type
-  //   this.protect_level = protect_level
-  //   this.content = content
-  //   this.creator = creator
-  //   this.createdate = createdate
-  //   this.updator = updator
-  //   this.updatedate = updatedate
-  //   this.view_img = view_img
-  // }
+export class ViewModel extends BaseModel {
+  constructor (options = {}) {
+    super(options)
+    this.table = 't_view'
+    this.hasura = HasuraFactory.create(alert)
+  }
+
   add () {
-    const query = hasura('products')
+    const query = this.hasura('products')
       .where({ 'id': 1, 'product_locales': { 'name': { '_ilike': 'test' } } })
       .with('product_locales', query => {
         return query.select(['name', 'age'].join(',')).where({ 'locales_id': 1 })
@@ -50,5 +33,24 @@ export class ViewModel {
       .query()
 
     console.log(query)
+  }
+
+  find (options = {}) {
+    const query = this.allList(options)
+    console.log(query)
+  }
+
+  async findWithPagination (options) {
+    // const query = await this.listWithPagination(options).await(false)
+    const query = await this.listWithPagination({
+      orderBy: { view_id: 'desc' },
+      fields: ['view_id'],
+      ...options
+    }).await(false)
+    console.log(query)
+  }
+
+  findOne () {
+
   }
 }

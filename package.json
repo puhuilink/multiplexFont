@@ -31,7 +31,6 @@
     "graphql-svelte": "^1.1.9",
     "graphql-tag": "^2.10.1",
     "graphql.macro": "^1.4.2",
-    "hasura-orm": "^0.1.8",
     "lodash": "^4.17.15",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",

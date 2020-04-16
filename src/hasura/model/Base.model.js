@@ -1,9 +1,33 @@
 /* eslint-disable camelcase */
-import hasura from '../hasura'
 
 export class BaseModel {
   constructor () {
-    this.schema = 'base'
+    this.table = 'base'
+  }
+
+  allList ({
+    where = {},
+    orderBy = { rest: 'asc' }
+  }) {
+    return this.hasura(this.table)
+      .where(where)
+      .orderBy(orderBy)
+      .query()
+  }
+
+  listWithPagination ({
+    where = {},
+    orderBy = { rest: 'asc' },
+    limit = 9999,
+    offset = 0,
+    fields = ['id']
+  }) {
+    return this.hasura(this.table)
+      .where(where)
+      .select(fields.join(','))
+      .orderBy(orderBy)
+      .paginate(limit, offset)
+      // .query()
   }
 
   find ({
@@ -12,7 +36,7 @@ export class BaseModel {
     limit = 9999,
     offset = 0
   }) {
-    hasura(this.schema)
+    this.hasura(this.table)
       .where(where)
       .orderBy(orderBy)
       .paginate(limit, offset)

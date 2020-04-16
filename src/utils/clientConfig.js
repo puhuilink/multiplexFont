@@ -72,12 +72,12 @@ const middlewareLink = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
-const addDatesLink = new ApolloLink((operation, forward) => {
-  return forward(operation).map(response => {
-    response.data.lastLoginDate = new Date()
-    return response
-  })
-})
+// const addDatesLink = new ApolloLink((operation, forward) => {
+//   return forward(operation).map(response => {
+//     response.data.lastLoginDate = new Date()
+//     return response
+//   })
+// })
 
 const clientList = linkList.map(link => new ApolloClient({
   // 顺序很重要？
@@ -85,7 +85,7 @@ const clientList = linkList.map(link => new ApolloClient({
   link: ApolloLink.from([
     errorHandler,
     middlewareLink,
-    addDatesLink,
+    // addDatesLink,
     link
   ]),
   cache: new InMemoryCache(),
