@@ -13,6 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var graphql  = require('graphql')
 var hasura_1 = require("./hasura");
 var Delete = /** @class */ (function (_super) {
     __extends(Delete, _super);
@@ -28,7 +29,7 @@ var Delete = /** @class */ (function (_super) {
         return " " + this._alias + this._schema + " " + ('(' + this.schemaArguments + ' )') + "{ " + (this._fields ? ' returning { ' + this._fields + ' }' : 'affected_rows') + " }";
     };
     Delete.prototype.mutate = function () {
-        return this.provider.mutate({ query: this.query() });
+        return this.provider.mutate({ mutation: graphql.parse(this.query()) });
     };
     Delete.prototype.query = function () {
         return "mutation { " + this.parsed() + " " + this._compose + " } ";

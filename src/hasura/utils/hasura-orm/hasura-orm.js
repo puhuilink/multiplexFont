@@ -17,6 +17,7 @@ var update_1 = require("./update");
 var insert_1 = require("./insert");
 var hasura_1 = require("./hasura");
 var delete_1 = require("./delete");
+var graphql = require("graphql")
 var HasuraORM = /** @class */ (function (_super) {
     __extends(HasuraORM, _super);
     function HasuraORM(_schema, provider, _with, _fields, _schemaArguments, _alias) {
@@ -35,6 +36,24 @@ var HasuraORM = /** @class */ (function (_super) {
     };
     HasuraORM.prototype.delete = function (args) {
         return new delete_1.default(this._schema, this.provider, this._with, this._fields, this._schemaArguments, this._alias).delete(args);
+    };
+    // 批量操作
+    HasuraORM.prototype.batchMutate = function () {
+        const hasuraInstanceList = Array.from(arguments)
+        // hasuraInstanceList.forEach(hasuraInstance => {
+        //     console.log(hasuraInstance.provider, 'provider')
+        // })
+        const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
+        if (!isSameProvider) {
+            throw new Error('批量查询需要同一provider')
+        }
+        const [{ provider }] = hasuraInstanceList
+        const query = `mutation {
+            ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
+        }`
+        console.log(query)
+        // FIXME: return promise，then 时才执行
+        return provider.mutate({ mutation: graphql.parse(query) })
     };
     return HasuraORM;
 }(hasura_1.default));

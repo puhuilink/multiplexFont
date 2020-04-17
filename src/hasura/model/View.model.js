@@ -1,28 +1,38 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import { BaseModel } from './Base.model'
-import { HasuraFactory } from '../utils//hasuraFactory'
 import { alert } from '@/utils/clientConfig'
 import _ from 'lodash'
+import HasuraORM from '../utils/hasura-orm'
 
 export class ViewModel extends BaseModel {
   constructor (options = {}) {
     super(options)
-    this.table = 't_view'
-    this.hasura = HasuraFactory.create(alert)
+    this.schema = 't_view'
+    this.hasuraORM = new HasuraORM(this.schema, alert)
   }
 
-  async find (options) {
-    const { data } = await super.find({
+  find (options = {}) {
+    // const { data } = await super.find({
+    //   orderBy: { view_id: 'desc' },
+    //   fields: ['view_id'],
+    //   ...options
+    // })
+    //   .await()
+    // return data
+    return super.find({
       orderBy: { view_id: 'desc' },
       fields: ['view_id'],
       ...options
     })
-      .await()
-    return data
   }
 
-  async findOne (options) {
-    const { data } = await this.find(options)
-    return _.first(data)
+  findOne (options) {
+    // const { data } = await this.find(options)
+    // return _.first(data)
+    console.log(
+      this.find(options)
+    )
+    return this.find(options).paginate(1, 0)
   }
 }

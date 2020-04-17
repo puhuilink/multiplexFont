@@ -1,4 +1,12 @@
-import { ViewController } from './controller/View.controller'
+/* eslint-disable no-unused-vars */
 
-const viewController = new ViewController()
-viewController.add()
+import {
+  ViewController,
+  UserController
+} from './controller'
+
+// const viewController = new ViewController()
+// viewController.add()
+const userController = new UserController()
+// userController.add()
+userController.batchDelete()

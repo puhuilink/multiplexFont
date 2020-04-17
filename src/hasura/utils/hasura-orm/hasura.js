@@ -69,6 +69,23 @@ var Hasura = /** @class */ (function () {
         this._compose += qr.parsed();
         return this;
     };
+    // 批量查询支持
+    Hasura.prototype.batchQuery = function () {
+        const hasuraInstanceList = Array.from(arguments)
+        // hasuraInstanceList.forEach(hasuraInstance => {
+        //     console.log(hasuraInstance.provider, 'provider')
+        // })
+        const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
+        if (!isSameProvider) {
+            throw new Error('批量查询需要同一provider')
+        }
+        const [{ provider }] = hasuraInstanceList
+        const query = `query{
+            ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
+        }`
+        console.log(query)
+        return provider.query({ query: graphql.parse(query) })
+    },
     Hasura.prototype.where = function (condition) {
         Object.keys(condition).map(function (con) {
             if (typeof condition[con] !== 'object' && condition[con][0] !== '_') {
@@ -86,39 +103,26 @@ var Hasura = /** @class */ (function () {
         this._with += qr.parsed();
         return this;
     };
-    // Hasura.prototype.parsed = function () {
-    //     if (!this._fields) {
-    //         this._fields = 'id';
-    //     }
-    //     return this._paginate + " " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
-    //         ? '(' + helper_1.stringify(this._schemaArguments) + ')'
-    //         : '') + "{  " + this.getFields() + " }";
-    // };
-    // 前端固定数据格式
     Hasura.prototype.parsed = function () {
         if (!this._fields) {
             this._fields = 'id';
         }
-        return this._paginate + " " + "data: " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
+        return this._paginate + " " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
             ? '(' + helper_1.stringify(this._schemaArguments) + ')'
             : '') + "{  " + this.getFields() + " }";
     };
+    // 前端固定数据格式
+    // Hasura.prototype.parsed = function () {
+    //     if (!this._fields) {
+    //         this._fields = 'id';
+    //     }
+    //     return this._paginate + " " + "data: " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
+    //         ? '(' + helper_1.stringify(this._schemaArguments) + ')'
+    //         : '') + "{  " + this.getFields() + " }";
+    // };
     Hasura.prototype.getFields = function () {
         return this._fields + " " + this._with;
     };
-    // Hasura.prototype.paginate = function (limit, offset) {
-    //     delete this._schemaArguments['limit'];
-    //     delete this._schemaArguments['offset'];
-    //     var args = helper_1.stringify(this._schemaArguments);
-    //     if (args) {
-    //         args = "(" + helper_1.stringify(this._schemaArguments) + ")";
-    //     }
-    //     this._paginate = " " + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
-    //     this.limit(limit);
-    //     this.offset(offset);
-    //     return this;
-    // };
-    // 前端固定数据格式
     Hasura.prototype.paginate = function (limit, offset) {
         delete this._schemaArguments['limit'];
         delete this._schemaArguments['offset'];
@@ -126,12 +130,25 @@ var Hasura = /** @class */ (function () {
         if (args) {
             args = "(" + helper_1.stringify(this._schemaArguments) + ")";
         }
-        // this._schema = "data: " + this._schema
-        this._paginate = " pagination:" + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
+        this._paginate = " " + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
         this.limit(limit);
         this.offset(offset);
         return this;
     };
+    // 前端固定数据格式
+    // Hasura.prototype.paginate = function (limit, offset) {
+    //     delete this._schemaArguments['limit'];
+    //     delete this._schemaArguments['offset'];
+    //     var args = helper_1.stringify(this._schemaArguments);
+    //     if (args) {
+    //         args = "(" + helper_1.stringify(this._schemaArguments) + ")";
+    //     }
+    //     // this._schema = "data: " + this._schema
+    //     this._paginate = " pagination:" + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
+    //     this.limit(limit);
+    //     this.offset(offset);
+    //     return this;
+    // };
     Hasura.prototype.query = function () {
         return "query {  " + this.parsed() + " " + this._compose + " }";
     };

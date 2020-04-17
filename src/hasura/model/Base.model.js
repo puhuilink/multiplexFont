@@ -1,11 +1,9 @@
 /* eslint-disable camelcase */
-
+import HasuraORM from '../utils/hasura-orm'
 export class BaseModel {
   constructor () {
-    // 对应数据表的名字
-    this.table = 'base'
-    // 对应 appllo client
-    this.hasura = null
+    this.schema = 'base'
+    this.hasuraORM = new HasuraORM(this.schema, '')
   }
 
   find ({
@@ -15,7 +13,7 @@ export class BaseModel {
     limit = 0,
     offset = 0
   }) {
-    const v = this.hasura(this.table)
+    const v = this.hasuraORM
       .where(where)
       .orderBy(orderBy)
       .select(fields)
@@ -24,5 +22,15 @@ export class BaseModel {
     } else {
       return v
     }
+  }
+
+  findOne (options) {
+    return this
+      .find(options)
+      .paginate(1, 0)
+  }
+
+  delete (argus) {
+    return this.hasuraORM.delete(argus)
   }
 }
