@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { UserModel, ViewModel, ViewDesktopModel } from '../model'
 import { batchQuery, batchMutate } from '../utils/hasura-orm'
+import { log } from '../Decorator/log.decorator'
 
 export class UserController {
   async add () {
@@ -45,6 +46,7 @@ export class UserController {
     console.log(res)
   }
 
+  @log
   /**
    * 批量删除用户
    * @param {Array<String>} userIdList 用户 id 数组
