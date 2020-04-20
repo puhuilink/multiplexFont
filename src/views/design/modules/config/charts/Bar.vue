@@ -9,7 +9,7 @@
 <template>
   <div class="bar-config">
     <a-tabs
-      defaultActiveKey="3"
+      defaultActiveKey="1"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
