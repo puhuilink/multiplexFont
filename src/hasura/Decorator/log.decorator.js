@@ -1,10 +1,13 @@
 import store from '@/store'
+import colors from 'colors'
 
+colors.enable()
 const { getters } = store
 
 /**
  * 类方法中文标签
  * @param {String} value
+ * @return {Function<Decorator>}
  */
 export const label = function (value = '') {
   return function (target, name, descriptor) {
@@ -16,6 +19,13 @@ export const label = function (value = '') {
   }
 }
 
+/**
+ * 记录经由接口进行的操作，后期可扩展到数据库日志
+ * @param {*} target
+ * @param {*} name
+ * @param {*} descriptor
+ * @return {any}
+ */
 export const log = function (target, name, descriptor) {
   // 编译时
   const { value: originalValue } = descriptor
@@ -24,7 +34,9 @@ export const log = function (target, name, descriptor) {
     // 运行时
     const { userId } = getters
     const { label } = descriptor
-    console.log(`${userId} 执行了 ${label}, 参数：`, ...Array.from(arguments))
+    console.log(
+      colors.red(`log：${userId} 执行了 ${label}, 参数：`, ...Array.from(arguments))
+    )
     return originalValue.apply(this, arguments)
   }
 
