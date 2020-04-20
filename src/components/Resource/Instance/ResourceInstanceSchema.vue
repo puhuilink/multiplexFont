@@ -47,7 +47,7 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="数据权威域"
+            label="数据权限域"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
