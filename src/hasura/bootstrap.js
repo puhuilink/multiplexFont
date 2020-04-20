@@ -5,8 +5,13 @@ import {
   UserController
 } from './controller'
 
-// const viewController = new ViewController()
-// viewController.add()
-const userController = new UserController()
-// userController.add()
-userController.batchDelete()
+export default function boostrap () {
+  setTimeout(() => {
+    // const viewController = new ViewController()
+    // viewController.add()
+    const userController = new UserController()
+    // userController.add()
+    userController.batchDelete()
+    // FIXME: vuex 挂载需要时间
+  }, 1000)
+}

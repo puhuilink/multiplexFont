@@ -1,8 +1,8 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-unused-vars */
-import { UserModel, ViewModel, ViewDesktopModel } from '../model'
+import { UserModel, ViewModel, ViewDesktopModel, UserProxyModel } from '../model'
 import { batchQuery, batchMutate } from '../utils/hasura-orm'
-import { log } from '../Decorator/log.decorator'
+import { log } from '../decorator/log.decorator'
 
 export class UserController {
   async add () {
@@ -46,13 +46,15 @@ export class UserController {
     console.log(res)
   }
 
-  @log
   /**
    * 批量删除用户
    * @param {Array<String>} userIdList 用户 id 数组
    * @return {Promise<any>}
    */
   async batchDelete (userIdList = []) {
+    const userProxy = new UserProxyModel()
+    userProxy.delete(['thx'])
+    return
     // user 表删除
     const userModel = new UserModel({})
     // userModel.delete({

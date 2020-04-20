@@ -10,7 +10,6 @@ import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
 // import { loginOld } from '@/api/controller/User'
 import './plugins'
-import './hasura/bootstrap'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
