@@ -33,6 +33,20 @@
               <a-collapse-panel header="图形" key="1">
 
                 <div class="comment-template__item">
+                  <p class="comment-template__leading">图形方向:</p>
+                  <div class="comment-template__inner">
+                    <div class="comment-template__inner comment-template__end">
+                      <a-switch
+                        checkedChildren="横向"
+                        unCheckedChildren="纵向"
+                        v-model="config.proprietaryConfig.reverse"
+                        @change="change" />
+                    </div>
+                  </div>
+                </div>
+                <!-- / 反转 x / y 轴 -->
+
+                <div class="comment-template__item">
                   <p class="comment-template__leading">显示类型:</p>
                   <div class="comment-template__inner">
                     <a-select
