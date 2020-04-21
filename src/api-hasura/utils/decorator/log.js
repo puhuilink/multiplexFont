@@ -1,5 +1,5 @@
-import store from '@/api-hasura/utils/decorator/@/store'
-import colors from '@/api-hasura/utils/decorator/colors'
+import store from '@/store'
+import colors from 'colors'
 
 colors.enable()
 const { getters } = store

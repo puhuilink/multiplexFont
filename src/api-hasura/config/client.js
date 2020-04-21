@@ -4,7 +4,7 @@ import {
   alert,
   patrol,
   resource
-} from '@/api-hasura/config/@/utils/clientConfig'
+} from '@/utils/clientConfig'
 
 export {
   cache,

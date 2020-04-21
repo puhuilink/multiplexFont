@@ -198,7 +198,9 @@
 </template>
 
 <script>
+/* eslint-disable no-unreachable */
 import { addUser, updateUser } from '@/api/controller/User'
+import { UserService } from '@/api-hasura'
 
 const formItemLayout = {
   labelCol: {
@@ -268,6 +270,8 @@ export default {
     async insert () {
       try {
         const values = await this.getFormFields()
+        UserService.add(values)
+        return
         this.loading = true
         await addUser(values)
         this.$emit('addSuccess')
