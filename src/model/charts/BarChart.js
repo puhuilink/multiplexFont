@@ -7,6 +7,17 @@
 */
 import Chart from './index'
 
+const reverseAxis = function ({ xAxis, yAxis, ...data }) {
+  return {
+    ...data,
+    xAxis: {
+      ...yAxis
+    },
+    yAxis: {
+      ...xAxis
+    }
+  }
+}
 export default class BarChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
@@ -20,7 +31,7 @@ export default class BarChart extends Chart {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const {
-      barType, legend, barWidth, xAxis, yAxis,
+      barType, legend, barWidth, xAxis, yAxis, reverse,
       itemStyle: { color, ...otherItemStyle }
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
@@ -72,6 +83,6 @@ export default class BarChart extends Chart {
         break
       }
     }
-    return Object.assign({}, option)
+    return Object.assign({}, reverse ? reverseAxis(option) : option)
   }
 }
