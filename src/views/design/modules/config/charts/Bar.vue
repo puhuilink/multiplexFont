@@ -32,7 +32,7 @@
 
               <a-collapse-panel header="图形" key="1">
 
-                <div class="comment-template__item">
+                <!-- <div class="comment-template__item">
                   <p class="comment-template__leading">图形方向:</p>
                   <div class="comment-template__inner">
                     <div class="comment-template__inner comment-template__end">
@@ -43,7 +43,8 @@
                         @change="change" />
                     </div>
                   </div>
-                </div>
+                </div> -->
+                <!-- FIXME: 反转后轴线样式未反转 -->
                 <!-- / 反转 x / y 轴 -->
 
                 <div class="comment-template__item">
