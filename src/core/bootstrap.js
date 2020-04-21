@@ -14,7 +14,6 @@ import {
   DEFAULT_MULTI_TAB
 } from '@/store/mutation-types'
 import config from '@/config/defaultSettings'
-import hasuraBoostrap from '../hasura/bootstrap'
 
 export default function Initializer () {
   console.log(`API_URL: ${process.env.VUE_APP_API_BASE_URL}`)
@@ -30,8 +29,6 @@ export default function Initializer () {
   store.commit('TOGGLE_COLOR', Vue.ls.get(DEFAULT_COLOR, config.primaryColor))
   store.commit('TOGGLE_MULTI_TAB', Vue.ls.get(DEFAULT_MULTI_TAB, config.multiTab))
   store.commit('SET_TOKEN', Vue.ls.get(ACCESS_TOKEN))
-
-  hasuraBoostrap()
 
   // last step
 }
