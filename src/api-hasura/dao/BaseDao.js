@@ -1,5 +1,5 @@
 class BaseDao {
-  static add () {}
+  static add ({}) {}
 
   static update () {}
 
@@ -15,6 +15,11 @@ class BaseDao {
   static batchDelete () {
     const { hasuraORM } = this
     return hasuraORM.delete(arguments)
+  }
+
+  static batchDeleteWithPrimaryKey (primaryKeyList = []) {
+    const { batchDelete, primaryKey } = this
+    return batchDelete({ [primaryKey]: { _in: primaryKeyList } })
   }
 }
 

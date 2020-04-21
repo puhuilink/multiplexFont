@@ -1,0 +1,7 @@
+class AuthorizeObjectDao {
+
+}
+
+export {
+  AuthorizeObjectDao
+}

@@ -1,0 +1,7 @@
+class UserGroupDao {
+
+}
+
+export {
+  UserGroupDao
+}

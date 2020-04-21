@@ -12,12 +12,12 @@ const provider = function (v) {
 
 const schema = function (v = '') {
   return function (target, name, descriptor) {
-    const { provider, schema } = target
     Object.defineProperty(target, 'schema', {
       get () {
         return v
       }
     })
+    const { provider, schema } = target
     Object.defineProperty(target, 'hasuraORM', {
       get () {
         return new HasuraORM(schema, provider)
@@ -26,7 +26,18 @@ const schema = function (v = '') {
   }
 }
 
+const primaryKey = function (v) {
+  return function (target, name, descriptor) {
+    Object.defineProperty(target, 'primaryKey', {
+      get () {
+        return v
+      }
+    })
+  }
+}
+
 export {
   provider,
+  primaryKey,
   schema
 }

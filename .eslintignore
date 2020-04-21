@@ -1,1 +1,3 @@
 src/hasura/utils/hasura-orm
+src/api-hasura/utils/hasura-orm
+src/api-hasura/utils/hasura-orm/*
