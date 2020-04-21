@@ -49,50 +49,25 @@
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="节点类型">
-            <a-select
-              allowClear
-              :disabled="mode=='See'"
-              style="width: 100%"
+            <!-- :value="formData0.node_type" -->
+            <CiModelSelect
+              @input="onModelInput"
               v-decorator="['node_type', {
                 initialValue: record.node_type,
                 rules: [{ required: true, message: '节点类型不能为空!' }]
               }]"
-              @change="ciTypeChange"
-            >
-              <a-select-opt-group
-                v-for="(group,index) in queryList.typeList"
-                :key="index"
-                :label="group[0].parentname_s"
-                :allowClear="true"
-              >
-                <template v-for="(groupitem,indexs) in group">
-                  <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                </template>
-              </a-select-opt-group>
-            </a-select>
+            />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="节点过滤">
-            <a-select
-              allowClear
-              :disabled="mode=='See'"
-              style="width: 100%"
-              v-decorator="['node_ids', { initialValue: record.node_ids }]"
-              @change="CIInstanceChange"
-            >
-              <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-              <a-select-opt-group
-                v-for="(group,index) in queryList.nodeList"
-                :key="index"
-                :label="group[0].parentname_s"
-                :allowClear="true"
-              >
-                <template v-for="(groupitem,indexs) in group">
-                  <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                </template>
-              </a-select-opt-group>
-            </a-select>
+            <CiInstanceSelect
+              v-decorator="['node_ids', {
+                initialValue: record.node_ids
+              }]"
+              :parentNameS="formData0.node_type"
+              @input="onInstanceInput"
+            />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
@@ -105,17 +80,15 @@
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
           <a-form-item label="KPI类型">
-            <a-select
-              allowClear
-              :disabled="mode=='See'"
-              style="width: 100%"
+            <KpiSelect
+              placeholder
+              :nodetypeS="formData0.node_type"
               v-decorator="['kpi_code', {
                 initialValue: record.kpi_code,
                 rules: [{ required: true, message: 'KPI类型不能为空!' }]
               }]"
-            >
-              <a-select-option v-for="(group,index) in queryList.kpiList" :key="index" :value="group.kpicode_s" >{{ group.label_s }}</a-select-option>
-            </a-select>
+              @input="onKpiInput"
+            />
           </a-form-item>
         </a-col>
         <a-col :lg="12" :md="12" :sm="24">
@@ -168,7 +141,7 @@
             <a-radio-group
               v-decorator="[
                 'enabled',
-                { initialValue: record.enabled,
+                { initialValue: record.enabled || true,
                   rules: [{ required: true, message: '启用不能为空!' }]
                 }
               ]"
@@ -212,7 +185,7 @@
             >
               <a-select-option v-for="item in thresholdTypeOptions" :key="item.name" :value="item.name">{{ item.label }}</a-select-option>
             </a-select>
-            <a-select
+            <!-- <a-select
               allowClear
               :disabled="mode=='See'"
               style="width: 24%;margin-right:1%"
@@ -221,7 +194,7 @@
               }]"
             >
               <a-select-option v-for="item in udapvalueTypeOptions" :key="item.name" :value="item.name">{{ item.label }}</a-select-option>
-            </a-select>
+            </a-select> -->
             <a-input
               style="width: 24%"
               :disabled="mode=='See'"
@@ -281,6 +254,18 @@ import screening from '../../screening'
 import queryList from '@/api/controller/AlarmqQueryList'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import {
+  CiModelSelect,
+  CiInstanceSelect,
+  KpiSelect
+} from '@/components/Common'
+
+const query = gql`query MyQuery ($where: t_threshold_bool_exp! = {}) {
+  data: t_threshold(where: $where) {
+    title
+    id
+  }
+}`
 
 const insert = gql`mutation ($objects: [t_threshold_insert_input!]! = []) {
   insert_t_threshold (objects: $objects) {
@@ -303,9 +288,15 @@ const update = gql`mutation update ($where: t_threshold_bool_exp!, $val: t_thres
 
 export default {
   name: 'ThresholdRulesDetail',
+  components: {
+    CiModelSelect,
+    CiInstanceSelect,
+    KpiSelect
+  },
   data () {
     return {
       form: this.$form.createForm(this),
+      formData0: {},
       queryList: {},
       visible: false,
       loading: false,
@@ -418,9 +409,6 @@ export default {
     async open (record, mode) {
       this.visible = true
       this.record = record
-      if (record.node_type) {
-        this.queryList.kpiList = await queryList.kpiList(record.node_type)
-      }
       this.mode = mode
       this.getqueryList()
     },
@@ -429,12 +417,33 @@ export default {
      */
     async getqueryList () {
       this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
       this.queryList.alertList = await queryList.alertList()
     },
-    async ciTypeChange (value) {
-      this.queryList.kpiList = await queryList.kpiList(value)
-      this.queryList.nodeList = await queryList.nodeList(value)
+    onModelInput (str = '') {
+      this.formData0 = {
+        node_type: str,
+        node_ids: [],
+        kpi_code: []
+      }
+      this.form.setFieldsValue({
+        node_type: str,
+        node_ids: [],
+        kpi_code: []
+      })
+    },
+    onInstanceInput (arr = []) {
+      // FIXME: 有时候抛出的 arr 是字符串？
+      this.formData0.node_ids = Array.isArray(arr) ? arr : []
+      // TODO: 重置 kpi ？
+      this.form.setFieldsValue({
+        node_ids: Array.isArray(arr) ? arr : []
+      })
+    },
+    onKpiInput (arr = []) {
+      this.formData0.kpi_code = Array.isArray(arr) ? arr : []
+      this.form.setFieldsValue({
+        kpi_code: Array.isArray(arr) ? arr : []
+      })
     },
     /**
      * ci实例改变 筛选是否全选
@@ -448,18 +457,45 @@ export default {
     /**
      * 表单效验
      */
-    handleSubmit (e) {
+    async handleSubmit (e) {
       e.preventDefault()
+      const info = this.form.getFieldsValue()
+      const InfoExist = await this.queryInfoExist(info.title)
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           console.log(values)
           if (this.mode === 'New') {
-            this.insert(values)
+            if (InfoExist.length === 0) {
+              values.id = screening.createUniqueId()
+              values.kpi_code = Number(values.kpi_code[0])
+              values.node_ids = values.node_ids[0]
+              this.insert(values)
+            } else {
+              this.$notification.error({
+                message: '系统提示',
+                description: '该规则名称已存在，请更改名称'
+              })
+            }
           } else if (this.mode === 'Edit') {
-            this.update(values)
+            if (InfoExist.length === 0 || InfoExist.id === this.record.id) {
+              this.update(values)
+            }
           }
         }
       })
+    },
+
+    async queryInfoExist (e) {
+      return apollo.clients.alert.query({
+        query,
+        variables: {
+          where: {
+            title: {
+              _eq: e
+            }
+          }
+        }
+      }).then(res => res.data.data)
     },
     /**
      * 新增

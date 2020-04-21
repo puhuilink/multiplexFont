@@ -1,3 +1,4 @@
+/* eslint-disable standard/object-curly-even-spacing */
 <template>
   <div class="icon-picker">
     <div class="comment-template__item" :class="{ 'icon-picker__clear': !icon.show}">
@@ -105,6 +106,10 @@ import VPN from '@/assets/network-icons/VPN.png'
 import WAN from '@/assets/network-icons/WAN.png'
 import Windows from '@/assets/network-icons/Windows.png'
 import ApplicationSystem1 from '@/assets/network-icons/ApplicationSystem1.png'
+import nwRouter1 from '@/assets/network-icons/nw-router1.png'
+import nwRouter2 from '@/assets/network-icons/nw-router2.png'
+import nwRouter3 from '@/assets/network-icons/nw-router3.png'
+
 export default {
   name: 'IconPicker',
   props: {
@@ -139,7 +144,10 @@ export default {
       { name: 'VPN', img: VPN },
       { name: 'WAN', img: WAN },
       { name: 'Windows', img: Windows },
-      { name: 'ApplicationSystem1', img: ApplicationSystem1 }
+      { name: 'ApplicationSystem1', img: ApplicationSystem1 },
+      { name: 'nwRouter1', img: nwRouter1 },
+      { name: 'nwRouter2', img: nwRouter2 },
+      { name: 'nwRouter3', img: nwRouter3 }
     ]
   }),
   methods: {
