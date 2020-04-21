@@ -17,7 +17,7 @@ var update_1 = require("./update");
 var insert_1 = require("./insert");
 var hasura_1 = require("./hasura");
 var delete_1 = require("./delete");
-var graphql = require("graphql")
+var graphql = require("@/api-hasura/utils/hasura-orm/graphql")
 var HasuraORM = /** @class */ (function (_super) {
     __extends(HasuraORM, _super);
     function HasuraORM(_schema, provider, _with, _fields, _schemaArguments, _alias) {

@@ -9,7 +9,6 @@
 <script>
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import { AppDeviceEnquire } from '@/utils/mixin'
-import { UserService } from '@/apiV2'
 
 export default {
   mixins: [AppDeviceEnquire],
@@ -17,10 +16,6 @@ export default {
     return {
       locale: zhCN
     }
-  },
-  async mounted () {
-    await UserService.batchDelete(['thx_api_test'])
-    // UserApi.batchDelete(['thx_api_test'])
   }
 }
 </script>

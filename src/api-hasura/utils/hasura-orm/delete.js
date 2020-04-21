@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var graphql  = require('graphql')
+var graphql  = require('@/api-hasura/utils/hasura-orm/graphql')
 var hasura_1 = require("./hasura");
 var Delete = /** @class */ (function (_super) {
     __extends(Delete, _super);

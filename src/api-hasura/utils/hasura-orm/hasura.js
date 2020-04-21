@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var helper_1 = require("./helper");
 var hasura_orm_1 = require("./hasura-orm");
-var graphql  = require('graphql')
+var graphql  = require('@/api-hasura/utils/hasura-orm/graphql')
 var Hasura = /** @class */ (function () {
     function Hasura(schema, provider, _with, _fields, _schemaArguments, _alias) {
         if (provider === void 0) { provider = {}; }
