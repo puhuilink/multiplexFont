@@ -3,7 +3,7 @@
  */
 <template>
   <div class="texts-config">
-    <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
+    <a-tabs defaultActiveKey="2" tabPosition="top" :style="{ height: '100%'}">
       <a-tab-pane tab="公共属性" key="1">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
@@ -114,10 +114,12 @@
               <div class="comment-template__item">
                 <p class="comment-template__leading">半径:</p>
                 <div class="comment-template__inner">
-                  <a-input
-                    type="number"
-                    v-model="config.proprietaryConfig.innerCircle.radius"
-                    @change="change()"
+                  <a-slider
+                    :min="10"
+                    :max="90"
+                    tooltipVisible
+                    :value="~~config.proprietaryConfig.innerCircle.radius.replace('%', '')"
+                    @change="radiusChange"
                   />
                 </div>
               </div>
@@ -242,21 +244,12 @@ export default {
           this.config.proprietaryConfig.innerCircle.data = [1]
           this.config.proprietaryConfig.innerCircle.label.color = '#fff'
           this.config.proprietaryConfig.innerCircle.itemStyle.opacity = 1
-          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
-            return param.value
-          }
           break
         case 'progressRing':
           this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
-          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
-            return param.value
-          }
           break
         case 'healthRing':
           this.config.proprietaryConfig.innerCircle.backgroundStyle.borderWidth = 8
-          this.config.proprietaryConfig.innerCircle.label.formatter = function (param) {
-            return param.value * 100 + '%'
-          }
           break
       }
       if (value !== 'healthDegree') {
@@ -288,7 +281,11 @@ export default {
     titleUnitChange (e) {
       const titleNum = Number(this.config.proprietaryConfig.innerCircle.label.formatter)
       const textChange = this.fomatFloat(titleNum, e)
-      this.config.proprietaryConfig.innerCircle.data[0].value = textChange
+      this.config.proprietaryConfig.innerCircle.label.formatter = textChange + ''
+      this.change()
+    },
+    radiusChange (value) {
+      this.config.proprietaryConfig.innerCircle.radius = `${value}%`
       this.change()
     }
   }
