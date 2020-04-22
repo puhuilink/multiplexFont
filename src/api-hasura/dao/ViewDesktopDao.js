@@ -1,7 +1,6 @@
 import { ViewDao } from './ViewDao'
 
 class ViewDesktopDao extends ViewDao {
-
   static batchDelete (where) {
     // TODO: where 若传入空对象会清空所有
     return super.batchDelete({
