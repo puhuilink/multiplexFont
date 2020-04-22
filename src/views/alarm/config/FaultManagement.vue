@@ -4,108 +4,6 @@
 <template>
   <div class="fault-management ">
     <a-card :bordered="false">
-
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="前转路径名称">
-                <a-input v-model="queryParam.forward_path_title" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="前转类型">
-                <a-select
-                  allowClear
-                  v-model="queryParam.forward_type"
-                  placeholder="请选择"
-                  default-value=""
-                >
-                  <a-select-option
-                    v-for="item in screening.forwardType"
-                    :key="item.value"
-                  >
-                    {{ item.label }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="系统前转目标">
-                  <a-input v-model="queryParam.forward_user" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="状态">
-                  <a-select
-                    defaultValue=""
-                    style="width: 100%;"
-                    v-model="queryParam.enabled"
-                  >
-                    <a-select-option :value="true">启用</a-select-option>
-                    <a-select-option :value="false">禁用</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
-
-      <!-- S 操作栏 -->
-      <div class="opration">
-        <a-button
-          @click="$refs.detail.open('', 'New')"
-        >
-          新建
-        </a-button>
-        <a-button
-          :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit')"
-        >
-          编辑
-        </a-button>
-        <a-button
-          :disabled="selectedRowKeys.length == 0"
-          @click="deleteCtrl"
-        >
-          删除
-        </a-button>
-        <a-button
-          :disabled="!this.selectedRowKeys.length > 0"
-          @click="enableCtrl(true)"
-        >
-          启用
-        </a-button>
-        <a-button
-          :disabled="!this.selectedRowKeys.length > 0"
-          @click="enableCtrl(false)"
-        >
-          停用
-        </a-button>
-        <a-button
-          :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.correlation.open(selectedRows[0])"
-        >
-          关联故障
-        </a-button>
-      </div>
-      <!-- E 操作栏 -->
-
       <!-- S 列表 -->
       <CTable
         ref="table"
@@ -118,6 +16,125 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         showPagination="auto"
       >
+
+        <template #query>
+          <a-form layout="inline">
+            <a-row >
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="前转路径名称"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset:2 }"
+                  style="width: 100%"
+                >
+                  <a-input v-model="queryParam.forward_path_title" placeholder=""/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="前转类型"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 14, offset:2 }"
+                  style="width: 100%"
+                >
+                  <a-select
+                    allowClear
+                    v-model="queryParam.forward_type"
+                    placeholder="请选择"
+                    default-value=""
+                  >
+                    <a-select-option
+                      v-for="item in screening.forwardType"
+                      :key="item.value"
+                    >
+                      {{ item.label }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <!-- 多余筛选框是否展示 -->
+              <template v-if="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="系统前转目标"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-input v-model="queryParam.forward_user" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="状态"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      defaultValue=""
+                      style="width: 100%;"
+                      v-model="queryParam.enabled"
+                    >
+                      <a-select-option :value="true">启用</a-select-option>
+                      <a-select-option :value="false">禁用</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+              </template>
+            </a-row>
+            <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+              <a-button type="primary" @click="query">查询</a-button>
+              <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-form>
+        </template>
+
+        <template #operation>
+          <div class="opration">
+            <a-button
+              @click="$refs.detail.open('', 'New')"
+            >
+              新建
+            </a-button>
+            <a-button
+              :disabled="selectedRowKeys.length !== 1"
+              @click="$refs.detail.open(selectedRows[0], 'Edit')"
+            >
+              编辑
+            </a-button>
+            <a-button
+              :disabled="selectedRowKeys.length == 0"
+              @click="deleteCtrl"
+            >
+              删除
+            </a-button>
+            <a-button
+              :disabled="!selectedRowKeys.length > 0"
+              @click="enableCtrl(true)"
+            >
+              启用
+            </a-button>
+            <a-button
+              :disabled="!selectedRowKeys.length > 0"
+              @click="enableCtrl(false)"
+            >
+              停用
+            </a-button>
+            <a-button
+              :disabled="selectedRowKeys.length !== 1"
+              @click="$refs.correlation.open(selectedRows[0])"
+            >
+              关联故障
+            </a-button>
+          </div>
+        </template>
         <span slot="status" slot-scope="text">
           <a-icon
             v-if="text"
@@ -161,7 +178,7 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import screening from '../screening'
 
-const query = gql`query instanceList($where:t_forward_path_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_path_order_by!]) {
+const query = gql`query($where:t_forward_path_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_path_order_by!]) {
     pagination: t_forward_path_aggregate(where: $where) {
       aggregate {
         count
@@ -184,7 +201,7 @@ const query = gql`query instanceList($where:t_forward_path_bool_exp = {}, $limit
   }
 }`
 
-const deleteAttrs = gql`mutation ($idList: [Int!] = []) {
+const deleteAttrs = gql`mutation ($idList: [numeric!] = []) {
   # instance表删除
   delete_t_forward_path (where: {
     forward_path_id: {
@@ -257,19 +274,6 @@ export default {
           sorter: true
         },
         {
-          title: '其他前转目标',
-          dataIndex: 'forward_destination',
-          width: 150,
-          sorter: true
-        },
-        {
-          title: '应用说明',
-          dataIndex: 'app_note_s',
-          sorter: true,
-          width: 350,
-          scopedSlots: { customRender: 'appExplain' }
-        },
-        {
           title: '前转周期',
           dataIndex: 'send_cycle',
           width: 100,
@@ -296,6 +300,19 @@ export default {
           title: '备注',
           width: 100,
           dataIndex: 'forward_comment'
+        },
+        {
+          title: '其他前转目标',
+          dataIndex: 'forward_destination',
+          width: 150,
+          sorter: true
+        },
+        {
+          title: '应用说明',
+          dataIndex: 'app_note_s',
+          sorter: true,
+          width: 350,
+          scopedSlots: { customRender: 'appExplain' }
         }
       ],
       // 已选行特性值
@@ -370,6 +387,11 @@ export default {
                 _eq: this.queryParam.forward_type
               }
             } : {},
+            ...this.queryParam.forward_user ? {
+              forward_user: {
+                _ilike: `%${this.queryParam.forward_user.trim()}%`
+              }
+            } : {},
             ...this.queryParam.enabled ? {
               enabled: {
                 _eq: this.queryParam.enabled
@@ -386,6 +408,7 @@ export default {
      * 删除选中项
      */
     async deleteCtrl () {
+      console.log(this.selectedRowKeys)
       if (!await deleteCheck.sureDelete()) {
         return
       }
@@ -423,12 +446,11 @@ export default {
         await apollo.clients.alert.mutate({
           mutation: enableUpdate,
           variables: {
-            id: this.selectedRowKeys,
+            id: [...this.selectedRowKeys],
             enabled: value
           }
         })
-        // TODO: toast
-        this.$refs['table'].refresh(true)
+        this.query()
       } catch (e) {
         throw e
       } finally {
