@@ -16,11 +16,29 @@
     <div class="wrapper__handler wrapper__handler--bc" ref="bc"></div>
     <div class="wrapper__handler wrapper__handler--bl" ref="bl"></div>
     <div class="wrapper__handler wrapper__handler--cl" ref="cl"></div>
-    <div class="wrapper__move" ref="move"></div>
+    <div class="wrapper__move" ref="move">
+      <a-dropdown :trigger="['contextmenu']">
+        <div
+          :style="{
+            height: '100%'
+          }"
+        >
+        </div>
+        <a-menu slot="overlay" class="wrapper__menu">
+          <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
+          <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
+          <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary': '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
+          <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
+          <a-menu-divider />
+          <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+        </a-menu>
+      </a-dropdown>
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { Subject, fromEvent, merge } from 'rxjs'
 import {
   takeWhile, takeUntil, switchMap,
@@ -28,13 +46,17 @@ import {
   first
 } from 'rxjs/operators'
 import anime from 'animejs'
-import AdjustMixins from './AdjustMixins.vue'
+import AdjustMixins from './AdjustMixins'
+import Widget from '@/model/widget'
+import WrapperService from '@/components/Wrapper/WrapperService'
 
 export default {
   name: 'Wrapper',
   data: () => ({
     isSubscribed: true,
-    originalState: null
+    originalState: null,
+    config: null,
+    wrapperService: new WrapperService()
   }),
   mixins: [AdjustMixins],
   mounted () {
@@ -209,15 +231,21 @@ export default {
       })
     return {}
   },
+  computed: {
+    // 是否允许同步配置
+    isAllowAsync () {
+      return this.config && this.activeWidget && this.config.type === this.activeWidget.config.type
+    }
+  },
   methods: {
     /**
-     * 设置
-     * @param display
-     * @param top
-     * @param left
-     * @param width
-     * @param height
-     */
+       * 设置
+       * @param display
+       * @param top
+       * @param left
+       * @param width
+       * @param height
+       */
     setSize ({
       display, top, left, width, height
     }) {
@@ -228,6 +256,56 @@ export default {
         width,
         height
       })
+    },
+    /**
+       * 复制部件
+       */
+    copyWidget () {
+      const { config } = this.activeWidget
+      const { commonConfig: { top, left, zIndex } } = config
+      const copyConfig = _.cloneDeep(config)
+      Object.assign(copyConfig.commonConfig, {
+        top: top + 48,
+        left: left + 48,
+        zIndex: zIndex + 1
+      })
+      const copyWidget = new Widget({ config: copyConfig })
+      // 将复制的部件添加入部件列表中
+      this.addWidget({ widget: copyWidget })
+      // 选择器选中该部件
+      this.wrapperService.next({ el: 'widget', widget: copyWidget })
+    },
+    /**
+       * 复制配置
+       */
+    copyConfig () {
+      this.config = _.cloneDeep(this.activeWidget.config)
+    },
+    /**
+       * 粘贴配置
+       */
+    syncConfig () {
+      const activeWidget = _.cloneDeep(this.activeWidget)
+      const { render, config: { commonConfig: { width, height, top, left } } } = this.activeWidget
+      // 保留当前部件基础配置不变
+      Object.assign(this.config.commonConfig, {
+        width,
+        height,
+        top,
+        left
+      })
+      this.activateWidget({
+        widget: Object.assign(activeWidget, { config: this.config })
+      })
+      this.$nextTick(() => {
+        render.setConfig(this.config)
+      })
+    },
+    /**
+       * 删除部件
+       */
+    deleteWidget () {
+      this.removeWidget({ widgetId: this.activeWidget.widgetId })
     }
   },
   beforeDestroy () {
@@ -237,93 +315,105 @@ export default {
 </script>
 
 <style scoped lang="less">
-.wrapper {
-  top: 0;
-  left: 0;
-  height: 300px;
-  width: 300px;
-  position: absolute;
-  box-sizing: border-box;
-  padding: 5px;
-  border: 1px solid #0098f7;
-  z-index: 1000;
-  display: none;
-
-  &__mask {
-    display: none;
-    position: fixed;
-    background: transparent;
-    width: 100%;
-    height: 100%;
+  .wrapper {
     top: 0;
     left: 0;
-    z-index: 999;
-  }
-
-  &__move {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    cursor: move;
-    z-index: 1000;
-    pointer-events: auto;
-  }
-
-  &__handler {
+    height: 300px;
+    width: 300px;
     position: absolute;
-    height: 10px;
-    width: 10px;
-    border-radius: 2px;
-    background: #0098f7;
+    box-sizing: border-box;
+    padding: 5px;
+    border: 1px solid #0098f7;
     z-index: 1000;
+    display: none;
 
-    &--tl {
-      top: -5px;
-      left: -5px;
-      cursor: nwse-resize;
+    &__mask {
+      display: none;
+      position: fixed;
+      background: transparent;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 999;
     }
 
-    &--tc {
-      top: -5px;
-      left: calc(50% - 5px);
-      cursor: ns-resize;
+    &__move {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      cursor: move;
+      z-index: 1000;
+      pointer-events: auto;
     }
 
-    &--tr {
-      top: -5px;
-      right: -5px;
-      cursor: nesw-resize;
+    &__handler {
+      position: absolute;
+      height: 10px;
+      width: 10px;
+      border-radius: 2px;
+      background: #0098f7;
+      z-index: 1000;
+
+      &--tl {
+        top: -5px;
+        left: -5px;
+        cursor: nwse-resize;
+      }
+
+      &--tc {
+        top: -5px;
+        left: calc(50% - 5px);
+        cursor: ns-resize;
+      }
+
+      &--tr {
+        top: -5px;
+        right: -5px;
+        cursor: nesw-resize;
+      }
+
+      &--cr {
+        top: calc(50% - 5px);
+        right: -5px;
+        cursor: ew-resize;
+      }
+
+      &--br {
+        bottom: -5px;
+        right: -5px;
+        cursor: nwse-resize;
+      }
+
+      &--bc {
+        bottom: -5px;
+        right: calc(50% - 5px);
+        cursor: ns-resize;
+      }
+
+      &--bl {
+        bottom: -5px;
+        left: -5px;
+        cursor: nesw-resize;
+      }
+
+      &--cl {
+        top: calc(50% - 5px);
+        left: -5px;
+        cursor: ew-resize;
+      }
     }
 
-    &--cr {
-      top: calc(50% - 5px);
-      right: -5px;
-      cursor: ew-resize;
-    }
+    &__menu {
+      width: 160px;
 
-    &--br {
-      bottom: -5px;
-      right: -5px;
-      cursor: nwse-resize;
-    }
+      &--primary {
+        color: #1890ff;
+      }
 
-    &--bc {
-      bottom: -5px;
-      right: calc(50% - 5px);
-      cursor: ns-resize;
-    }
-
-    &--bl {
-      bottom: -5px;
-      left: -5px;
-      cursor: nesw-resize;
-    }
-
-    &--cl {
-      top: calc(50% - 5px);
-      left: -5px;
-      cursor: ew-resize;
+      &--danger {
+        color: #ff4d4f;
+      }
     }
   }
-}
 </style>
