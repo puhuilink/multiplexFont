@@ -188,7 +188,7 @@ export default class TopologyChart extends Chart {
       const type = this.menuItem.get('type')
       if (type === 'node') {
         // 如果当前激活节点和删除节点一致，则置空激活节点
-        if (store.state.screen.activeNode === this.menuItem) {
+        if (store.state.screen.activeNode.get('id') === this.menuItem.get('id')) {
           // 清空激活的节点
           store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
             activeNode: null
@@ -196,7 +196,7 @@ export default class TopologyChart extends Chart {
         }
       } else if (type === 'edge') {
         // 如果当前激活边和删除边一致，则置空激活边
-        if (store.state.screen.activeEdge === this.menuItem) {
+        if (store.state.screen.activeEdge.get('id') === this.menuItem.get('id')) {
           // 清空激活的节点
           store.commit('screen/' + ScreenMutations.ACTIVATE_EDGE, {
             activeEdge: null
@@ -254,7 +254,6 @@ export default class TopologyChart extends Chart {
       nodes.forEach(node => {
         const model = node.getModel()
         this.chart.setItemState(node, model.animateType, true)
-        model.display ? node.show() : node.hide()
       })
     }
     // 设置边动画
@@ -262,7 +261,6 @@ export default class TopologyChart extends Chart {
       edges.forEach(edge => {
         const model = edge.getModel()
         this.chart.setItemState(edge, 'active', model.animate)
-        model.display ? edge.show() : edge.hide()
       })
     }
   }
@@ -280,7 +278,9 @@ export default class TopologyChart extends Chart {
   }
 
   mergeOption (config) {
+    console.log(config)
     this.config = config
+    this.read(config.proprietaryConfig)
     this.chart.zoomTo(config.proprietaryConfig.zoom)
   }
 
