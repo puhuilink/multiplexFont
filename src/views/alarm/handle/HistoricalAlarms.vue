@@ -6,212 +6,6 @@
   <div class="historical-alarms">
     <a-card :bordered="false">
 
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="CI域">
-                <!-- <a-select
-                  allowClear
-                  v-model="queryParam.CIDomain"
-                  placeholder="请选择CI域"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in CIDomain"
-                    :key="index"
-                    :label="group.label"
-                  >
-                    <a-select-option
-                      v-for="item in group.options"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select-opt-group>
-                </a-select> -->
-                <a-select
-                  allowClear
-                  v-model="queryParam.domains"
-                  placeholder="请选择CI域"
-                >
-                  <a-select-option
-                    v-for="item in queryList.domainList"
-                    :key="item.name_s"
-                  >
-                    {{ item.label_s }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="CI类型">
-                <a-select
-                  allowClear
-                  v-model="queryParam.node_types"
-                  placeholder="请选择CI类型"
-                  @change="ciTypeChange"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in queryList.typeList"
-                    :key="index"
-                    :label="group[0].parentname_s"
-                    :allowClear="true"
-                  >
-                    <template v-for="(groupitem,indexs) in group">
-                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                    </template>
-                  </a-select-opt-group>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="12" :sm="24">
-                <a-form-item label="CI实例">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.node_ids"
-                    placeholder="请选择CI实例"
-                    @change="CIInstanceChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.CIInstance"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="(groupitem,indexs) in group">
-                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="告警类型">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.alert_id"
-                    placeholder="请选择告警类型"
-                    @change="alarmTypeChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.alertList"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="groupitem in group">
-                        <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="告警状态">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.state"
-                    placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option value="" key="" >所有</a-select-option>
-                    <a-select-option
-                      v-for="item in alarmState"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="告警级别">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.severity"
-                    placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option value="" key="" >所有</a-select-option>
-                    <a-select-option
-                      v-for="item in alarmLevel"
-                      :key="item.value"
-                      :value="item.value"
-                    >
-                      {{ item.text }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="告警信息">
-                  <a-input v-model="queryParam.message" placeholder="请输入"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="采集系统">
-                  <a-select
-                    allowClear
-                    mode="multiple"
-                    :maxTagCount="2"
-                    v-model="queryParam.agent_id"
-                    placeholder="请选择采集系统"
-                    @change="agentChange"
-                  >
-                    <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                    <a-select-opt-group
-                      v-for="(group,index) in queryList.agentList"
-                      :key="index"
-                      :label="group[0].parentname_s"
-                      :allowClear="true"
-                    >
-                      <template v-for="(groupitem,indexs) in group">
-                        <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                      </template>
-                    </a-select-opt-group>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="首次告警时间">
-                  <a-date-picker showTime placeholder="Select Time" @change="onDataChange" @ok="onDataOk" />
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
-
-      <!-- S 操作栏 -->
-      <div class="opration">
-        <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected" v-action:M0110>前转</a-button>
-        <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
-      </div>
-      <!-- E 操作栏 -->
-
       <!-- S 列表 -->
       <CTable
         ref="table"
@@ -223,6 +17,215 @@
         :customRow="customRow"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
+
+        <template #query>
+          <a-form layout="inline">
+            <div :class="{ fold: !advanced }">
+              <a-row>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="CI域"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      allowClear
+                      v-model="queryParam.domains"
+                      placeholder="请选择CI域"
+                    >
+                      <a-select-option
+                        v-for="item in queryList.domainList"
+                        :key="item.name_s"
+                      >
+                        {{ item.label_s }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="CI类型"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <CiModelSelect
+                      v-model="queryParam.model"
+                      :value="queryParam.model"
+                      @input="onModelInput"
+                    />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+
+              <a-row>
+                <template v-if="advanced">
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="CI实例"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <CiInstanceSelect
+                        multiple
+                        :parentNameS="queryParam.model"
+                        :value="queryParam.node_id"
+                        @input="onInstanceInput"
+                      />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="告警类型"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        mode="multiple"
+                        :maxTagCount="2"
+                        v-model="queryParam.alert_id"
+                        placeholder="请选择告警类型"
+                        @change="alarmTypeChange"
+                      >
+                        <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                        <a-select-opt-group
+                          v-for="(group,index) in queryList.alertList"
+                          :key="index"
+                          :label="group[0].parentname_s"
+                          :allowClear="true"
+                        >
+                          <template v-for="groupitem in group">
+                            <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+                          </template>
+                        </a-select-opt-group>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="告警状态"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        v-model="queryParam.state"
+                        placeholder="请选择"
+                        default-value=""
+                      >
+                        <a-select-option value="" key="" >所有</a-select-option>
+                        <a-select-option
+                          v-for="item in alarmState"
+                          :key="item.value"
+                          :value="item.value"
+                        >
+                          {{ item.label }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="告警级别"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        v-model="queryParam.severity"
+                        placeholder="请选择"
+                        default-value=""
+                      >
+                        <a-select-option value="" key="" >所有</a-select-option>
+                        <a-select-option
+                          v-for="item in alarmLevel"
+                          :key="item.value"
+                          :value="item.value"
+                        >
+                          {{ item.text }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="告警信息"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-input v-model="queryParam.message" placeholder="请输入"/>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="采集系统"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-select
+                        allowClear
+                        mode="multiple"
+                        :maxTagCount="2"
+                        v-model="queryParam.agent_id"
+                        placeholder="请选择采集系统"
+                        @change="agentChange"
+                      >
+                        <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                        <a-select-opt-group
+                          v-for="(group,index) in queryList.agentList"
+                          :key="index"
+                          :label="group[0].parentname_s"
+                          :allowClear="true"
+                        >
+                          <template v-for="(groupitem,indexs) in group">
+                            <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                          </template>
+                        </a-select-opt-group>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="12" :sm="24">
+                    <a-form-item
+                      label="首次告警时间"
+                      :labelCol="{ span: 4 }"
+                      :wrapperCol="{ span: 14, offset:2 }"
+                      style="width: 100%"
+                    >
+                      <a-date-picker showTime placeholder="Select Time" @change="onDataChange" @ok="onDataOk" style="width: 100%"/>
+                    </a-form-item>
+                  </a-col>
+                </template>
+              </a-row>
+            </div>
+
+            <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+              <a-button type="primary" @click="query">查询</a-button>
+              <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-form>
+        </template>
+
+        <template #operation>
+          <div class="opration">
+            <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected" v-action:M0110>前转</a-button>
+            <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
+            <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
+          </div>
+          <!-- / 操作栏 -->
+        </template>
+
         <span slot="level" slot-scope="text">
           <a-badge
             :count="text | levelFilter"
@@ -267,6 +270,10 @@ import screening from '../screening'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
 import MDetail from '../modules/MDetail'
+import {
+  CiModelSelect,
+  CiInstanceSelect
+} from '@/components/Common'
 
 const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_order_by!]) {
   pagination: t_alert_aggregate(where: $where) {
@@ -301,7 +308,9 @@ export default {
     Ellipsis,
     RollForward,
     MSolve,
-    MDetail
+    MDetail,
+    CiModelSelect,
+    CiInstanceSelect
   },
   data () {
     return {
@@ -529,12 +538,14 @@ export default {
     toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    /**
-     * ci实例改变
-     */
-    CIInstanceChange (value) {
-      console.log(value)
-      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
+    onModelInput (str = '') {
+      this.queryParam.model = str
+      // 重置选中的 Ci 实例
+      this.queryParam.node_id = []
+    },
+    onInstanceInput (arr = []) {
+      // FIXME: 有时候抛出的 arr 是字符串？
+      this.queryParam.node_id = Array.isArray(arr) ? arr : []
     },
     /**
      * 告警类型改变
