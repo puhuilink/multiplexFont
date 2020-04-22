@@ -32,6 +32,7 @@
                     <a-select
                       allowClear
                       v-model="queryParam.domains"
+                      notFoundContent="数据获取中，请稍后"
                       placeholder="请选择CI域"
                     >
                       <a-select-option
@@ -86,6 +87,7 @@
                       <a-select
                         allowClear
                         mode="multiple"
+                        notFoundContent="数据获取中，请稍后"
                         :maxTagCount="2"
                         v-model="queryParam.alert_id"
                         placeholder="请选择告警类型"
@@ -174,6 +176,7 @@
                         allowClear
                         mode="multiple"
                         :maxTagCount="2"
+                        notFoundContent="数据获取中，请稍后"
                         v-model="queryParam.agent_id"
                         placeholder="请选择采集系统"
                         @change="agentChange"
@@ -522,7 +525,6 @@ export default {
      */
     async getqueryList () {
       this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
       this.queryList.alertList = await queryList.alertList()
       this.queryList.agentList = await queryList.agentList()
     },
