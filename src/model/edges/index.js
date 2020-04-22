@@ -39,8 +39,7 @@ export default class Edge {
     label = '',
     labelCfg = defaultLabelCfg,
     // 启用动画
-    animate = false,
-    display = true
+    animate = false
   }) {
     this.id = 'edge-' + uuid()
     this.source = source
@@ -51,6 +50,5 @@ export default class Edge {
     this.label = label
     this.labelCfg = labelCfg
     this.animate = animate
-    this.display = display
   }
 }
