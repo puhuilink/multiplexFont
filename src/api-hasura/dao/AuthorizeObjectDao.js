@@ -1,4 +1,6 @@
-class AuthorizeObjectDao {
+import { BaseDao } from './BaseDao'
+
+class AuthorizeObjectDao extends BaseDao {
 
 }
 

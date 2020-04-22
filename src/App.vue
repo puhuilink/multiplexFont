@@ -19,7 +19,13 @@ export default {
     }
   },
   async created () {
-    await UserService.update({ key: 'test_value' })
+    // await UserService.update({ key: 'test_value' })
+    try {
+      await UserService.add({ user_id: 'admin', phone: '13290035443', mobile_phone: '18910395262', email: 'wangyw@ccccltd.cn' })
+    } catch (e) {
+      console.log(e)
+    }
+    // await UserService.add({ mobile_phone: '', email: '' })
   }
 }
 </script>

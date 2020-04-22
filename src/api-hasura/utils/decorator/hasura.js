@@ -20,6 +20,7 @@ const schema = function (v = '') {
     const { provider, schema } = target
     Object.defineProperty(target, 'hasuraORM', {
       get () {
+        // 运行时产生新实例
         return new HasuraORM(schema, provider)
       }
     })

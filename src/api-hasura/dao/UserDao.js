@@ -1,14 +1,18 @@
 import { BaseDao } from './BaseDao'
-import { primaryKey, provider, schema } from '../utils/decorator/hasura'
 import { batchQuery } from '../utils/hasura-orm'
 import { alert } from '../config/client'
-import { override } from 'core-decorators'
 
-@schema('t_user')
-@primaryKey('user_id')
-@provider(alert)
 class UserDao extends BaseDao {
-  @override
+  static schema = 't_user'
+  static provider = alert
+
+  static fieldsMapping = new Map([
+    ['user_id', '用户名'],
+    ['email', 'Email'],
+    ['phone', '办公电话'],
+    ['mobile_phone', '移动电话']
+  ])
+
   static async add ({
     user_id,
     email,

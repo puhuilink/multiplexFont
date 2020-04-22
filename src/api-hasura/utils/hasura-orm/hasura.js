@@ -75,15 +75,17 @@ var Hasura = /** @class */ (function () {
     // hasuraInstanceList.forEach(hasuraInstance => {
     //     console.log(hasuraInstance.provider, 'provider')
     // })
-    const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
-    if (!isSameProvider) {
-      throw new Error('批量查询需要同一provider')
-    }
+    // FIXME: 检查机制不对
+    // const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
+    // if (!isSameProvider) {
+    //   throw new Error('批量查询需要同一provider')
+    // }
     const [{ provider }] = hasuraInstanceList
+    // console.dir(provider)
     const query = `query{
             ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
         }`
-    console.log(query)
+    // console.log(query)
     return provider.query({ query: graphql.parse(query) })
   },
   Hasura.prototype.where = function (condition) {

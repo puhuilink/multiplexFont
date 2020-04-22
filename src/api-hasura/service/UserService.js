@@ -1,12 +1,13 @@
+import { BaseService } from './BaseService'
 import { label, log } from '../utils/decorator/log'
-import { batchMutate, batchQuery } from '../utils/hasura-orm'
-import { defaultCreateInfo, defaultUpdateInfo } from '../utils/mixin/autoComplete'
+import { batchMutate } from '../utils/hasura-orm'
+import { defaultUpdateInfo } from '../utils/mixin/autoComplete'
 import { AuthorizeObjectDao } from '../dao/AuthorizeObjectDao'
 import { UserDao } from '../dao/UserDao'
 import { ViewDesktopDao } from '../dao/ViewDesktopDao'
 import { UserGroupDao } from '../dao/UserGroupDao'
 
-class UserService {
+class UserService extends BaseService {
   @log
   @label('新增用户')
   /**
@@ -15,25 +16,17 @@ class UserService {
    * @return {Promise<any>}
    */
   static async add ({ ...argus }) {
-    const { user_id = '', phone = '', mobile_phone = '', email = '' } = argus
-    // FIMXE: single query with or
-    await batchQuery(
-      // 检测用户名是否可用
-      UserDao.find({ where: { user_id: { _eq: user_id } } }),
-      // 检测手机号是否可用
-      UserDao.find({ where: { phone: { _eq: phone } } }),
-      // 检测移动电话是否可用
-      UserDao.find({ where: { mobile_phone: { _eq: mobile_phone } } }),
-      // 检测邮箱是否可用
-      UserDao.find({ where: { email: { _eq: email } } })
-    )
-
-    await batchMutate(
-      // 新建用户
-      UserDao.add({ ...argus, ...defaultCreateInfo() }),
-      // 新建用户自定义桌面
-      ViewDesktopDao.add({ user_id })
-    )
+    try {
+      await this.uniqueValidate(['user_id', 'phone', 'mobile_phone', 'email'], argus, UserDao)
+      // await batchMutate(
+      // // 新建用户
+      //   UserDao.add({ ...argus, ...defaultCreateInfo() }),
+      //   // 新建用户自定义桌面
+      //   ViewDesktopDao.add({ user_id })
+      // )
+    } catch (e) {
+      throw e
+    }
   }
 
   @log
