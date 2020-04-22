@@ -9,7 +9,6 @@
 <script>
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import { AppDeviceEnquire } from '@/utils/mixin'
-import { UserService } from '@/api-hasura'
 
 export default {
   mixins: [AppDeviceEnquire],
@@ -17,15 +16,6 @@ export default {
     return {
       locale: zhCN
     }
-  },
-  async created () {
-    // await UserService.update({ key: 'test_value' })
-    try {
-      await UserService.add({ user_id: 'admin', phone: '13290035443', mobile_phone: '18910395262', email: 'wangyw@ccccltd.cn' })
-    } catch (e) {
-      console.log(e)
-    }
-    // await UserService.add({ mobile_phone: '', email: '' })
   }
 }
 </script>

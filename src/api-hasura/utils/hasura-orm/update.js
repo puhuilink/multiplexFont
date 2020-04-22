@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var hasura_1 = require("./hasura");
 var insert_1 = require("./insert");
 var helper_1 = require("./helper");
+var graphql = require('graphql')
 var Update = /** @class */ (function (_super) {
     __extends(Update, _super);
     function Update(_schema, provider, _with, _fields, _schemaArguments, _alias) {
@@ -37,7 +38,9 @@ var Update = /** @class */ (function (_super) {
         return this;
     };
     Update.prototype.mutate = function () {
-        return this.provider.mutate({ query: this.query() });
+        // console.dir(this)
+        // console.log(this.query())
+        return this.provider.mutate({ mutation: graphql.parse(this.query()) });
     };
     Update.prototype.insert = function (schema, callback) {
         var qr = callback(new insert_1.default(schema, this.provider));

@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import { label, log } from '../utils/decorator/log'
 import { batchMutate } from '../utils/hasura-orm'
-import { defaultUpdateInfo } from '../utils/mixin/autoComplete'
 import { AuthorizeObjectDao } from '../dao/AuthorizeObjectDao'
 import { UserDao } from '../dao/UserDao'
 import { ViewDesktopDao } from '../dao/ViewDesktopDao'
@@ -12,18 +11,18 @@ class UserService extends BaseService {
   @label('新增用户')
   /**
    * 新增用户
-   * @param {Array<String>} userIdList
+   * @param {Objetc} user
    * @return {Promise<any>}
    */
-  static async add ({ ...argus }) {
+  static async add (user = {}) {
     try {
-      await this.uniqueValidate(['user_id', 'phone', 'mobile_phone', 'email'], argus, UserDao)
-      // await batchMutate(
-      // // 新建用户
-      //   UserDao.add({ ...argus, ...defaultCreateInfo() }),
-      //   // 新建用户自定义桌面
-      //   ViewDesktopDao.add({ user_id })
-      // )
+      await this.uniqueValidate(user, UserDao)
+      await batchMutate(
+      // 新建用户
+        UserDao.add(user)
+        // 新建用户自定义桌面
+        // ViewDesktopDao.add({ user_id: user['user_id'], view_title: '自定义' })
+      )
     } catch (e) {
       throw e
     }
@@ -50,8 +49,9 @@ class UserService extends BaseService {
     )
   }
 
-  static async update (argus) {
-    defaultUpdateInfo()
+  static async update (user) {
+    await this.uniqueValidate(user, UserDao, false)
+    await UserDao.update(user).mutate()
   }
 }
 

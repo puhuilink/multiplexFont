@@ -3,10 +3,16 @@ class BaseDao {
   static createHasuraORM () {
     return new HasuraORM(this.schema, this.provider)
   }
-  // eslint-disable-next-line no-empty-pattern
-  static add ({}) {}
 
-  static update () {}
+  static add (argus) {
+    const hasuraORM = this.createHasuraORM()
+    return hasuraORM.insert(argus)
+  }
+
+  static update (argus) {
+    const hasuraORM = this.createHasuraORM()
+    return hasuraORM.update(argus)
+  }
 
   static find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0 }) {
     const hasuraORM = this.createHasuraORM()

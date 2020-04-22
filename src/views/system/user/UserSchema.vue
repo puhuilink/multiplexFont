@@ -198,6 +198,7 @@
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-unreachable */
 import { addUser, updateUser } from '@/api/controller/User'
 import { UserService } from '@/api-hasura'
@@ -269,11 +270,10 @@ export default {
      */
     async insert () {
       try {
-        const values = await this.getFormFields()
-        UserService.add(values)
-        return
         this.loading = true
-        await addUser(values)
+        const values = await this.getFormFields()
+        await UserService.add(values)
+        // await addUser(values)
         this.$emit('addSuccess')
         this.$notification.success({
           message: '系统提示',
@@ -281,6 +281,10 @@ export default {
         })
         this.cancel()
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.loading = false
@@ -293,7 +297,11 @@ export default {
       try {
         const values = await this.getFormFields()
         this.loading = true
-        await updateUser({
+        // await updateUser({
+        //   'user_id': this.record.user_id,
+        //   ...values
+        // })
+        await UserService.update({
           'user_id': this.record.user_id,
           ...values
         })
@@ -304,11 +312,16 @@ export default {
         })
         this.cancel()
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.loading = false
       }
     },
+    // FIXME: 直接保存也会通过
     async getFormFields () {
       return new Promise((resolve, reject) => {
         this.form.validateFields((err, values) => {

@@ -48,6 +48,7 @@ var HasuraORM = /** @class */ (function (_super) {
       throw new Error('批量查询需要同一provider')
     }
     const [{ provider }] = hasuraInstanceList
+    console.log(hasuraInstanceList)
     const query = `mutation {
             ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
         }`
