@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var hasura_1 = require("./hasura");
 var helper_1 = require("./helper");
+var graphql = require('graphql')
 var Insert = /** @class */ (function (_super) {
     __extends(Insert, _super);
     function Insert(_schema, provider, _with, _fields, _schemaArguments, _alias) {
@@ -36,7 +37,7 @@ var Insert = /** @class */ (function (_super) {
         return this;
     };
     Insert.prototype.mutate = function () {
-        return this.provider.mutate({ query: this.query() });
+        return this.provider.mutate({ mutation: graphql.parse(this.query()) });
     };
     Insert.prototype.parsed = function () {
         var args = this.schemaArguments + this._object;

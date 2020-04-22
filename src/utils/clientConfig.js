@@ -19,14 +19,8 @@ const linkList = ['28079', '28078', '28077', '28076'].map(port => new HttpLink({
   }
 }))
 
-// const linkList = ['8071', '8072', '8073', '8074'].map(port => new HttpLink({
-//   uri: `http://10.1.8.177:${port}/v1/graphql`,
-//   // uri: port === '8072' ? 'https://10.1.8.177:28081/' : `http://10.1.8.177:${port}/v1/graphql`,
-//   headers: {
-//     'x-hasura-admin-secret': port === '8073' ? 'myadminsecretkey' : 'zhongjiao'
-//   }
-// }))
-
+// TODO: 此处包装后传递到 service 层
+// eslint-disable-next-line no-unused-vars
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
   console.log({ graphQLErrors, networkError })
   if (networkError && networkError.statusCode === 401) {
@@ -83,7 +77,7 @@ const clientList = linkList.map(link => new ApolloClient({
   // 顺序很重要？
   // 原理是中间件？
   link: ApolloLink.from([
-    errorHandler,
+    // errorHandler,
     middlewareLink,
     // addDatesLink,
     link

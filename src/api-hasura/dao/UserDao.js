@@ -1,9 +1,9 @@
 import { BaseDao } from './BaseDao'
 import { alert } from '../config/client'
-import { defaultCreateInfo, defaultUpdateInfo } from '../utils/mixin/autoComplete'
+import { defaultCreateDate, defaultUpdateDate } from '../utils/mixin/autoComplete'
 
 class UserDao extends BaseDao {
-  // 对应数据表名
+  // 对应 hasura schema
   static schema = 't_user'
   // 对应 vue-apollo
   static provider = alert
@@ -23,12 +23,12 @@ class UserDao extends BaseDao {
     return super.add({
       auth_method: 'DB',
       ...user,
-      ...defaultCreateInfo()
+      ...defaultCreateDate()
     })
   }
 
   static update ({ user_id, ...user }) {
-    return super.update({ ...user, ...defaultUpdateInfo() }).where({ user_id })
+    return super.update({ ...user, ...defaultUpdateDate() }).where({ user_id })
   }
 }
 

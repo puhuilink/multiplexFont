@@ -18,8 +18,9 @@ class UserService extends BaseService {
     try {
       await this.uniqueValidate(user, UserDao)
       await batchMutate(
-      // 新建用户
+        // 新建用户
         UserDao.add(user)
+        // TODO
         // 新建用户自定义桌面
         // ViewDesktopDao.add({ user_id: user['user_id'], view_title: '自定义' })
       )
