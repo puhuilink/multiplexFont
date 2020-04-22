@@ -23,10 +23,9 @@ class BaseDao {
     return chain
   }
 
-  // eslint-disable-next-line no-empty-pattern
-  static batchDelete ({}) {
+  static batchDelete (argus) {
     const hasuraORM = this.createHasuraORM()
-    return hasuraORM.delete(arguments)
+    return hasuraORM.delete(argus)
   }
 }
 

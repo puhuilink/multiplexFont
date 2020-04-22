@@ -127,6 +127,7 @@ import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
 import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
+import { UserService } from '@/api-hasura'
 
 const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {
   pagination: t_user_aggregate(where: $where) {
@@ -146,44 +147,6 @@ const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offse
   }
 }
 `
-
-const deleteUser = gql`mutation delete_user ($userIds: [String!] = []) {
-  #   user 表删除
-  delete_t_user (where: {
-    user_id: {
-      _in: $userIds
-    }
-  }) {
-    affected_rows
-  }
-  #   关联解除
-  delete_t_user_group (where: {
-    user_id: {
-      _in: $userIds
-    }
-  }) {
-    affected_rows
-  }
-  # 删除权限
-  delete_t_authorize_object (where: {
-    user_id: {
-      _in: $userIds
-    }
-  }) {
-    affected_rows
-  }
-  # 删除桌面
-  delete_t_view (where: {
-    view_name: {
-      _in: $userIds
-    }
-    view_title: {
-      _eq: "自定义"
-    }
-  }) {
-    affected_rows
-  }
-}`
 
 const updateUserFlag = gql`mutation update_user_flag ($userId: String!, $flag: numeric) {
   update_t_user(
@@ -310,14 +273,7 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await apollo.clients.alert.mutate({
-          mutation: deleteUser,
-          variables: {
-            userIds: [
-              ...this.selectedRowKeys
-            ]
-          }
-        })
+        await UserService.batchDelete(this.selectedRowKeys)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
@@ -325,6 +281,10 @@ export default {
         // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.$refs['table'].loading = false

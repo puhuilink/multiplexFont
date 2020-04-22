@@ -43,10 +43,11 @@ var HasuraORM = /** @class */ (function (_super) {
     // hasuraInstanceList.forEach(hasuraInstance => {
     //     console.log(hasuraInstance.provider, 'provider')
     // })
-    const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
-    if (!isSameProvider) {
-      throw new Error('批量查询需要同一provider')
-    }
+    // FIXME: 检测机制有问题
+    // const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
+    // if (!isSameProvider) {
+    //   throw new Error('批量mutate需要同一provider')
+    // }
     const [{ provider }] = hasuraInstanceList
     console.log(hasuraInstanceList)
     const query = `mutation {

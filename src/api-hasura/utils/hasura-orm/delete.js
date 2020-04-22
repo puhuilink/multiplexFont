@@ -23,6 +23,7 @@ var Delete = /** @class */ (function (_super) {
         return _super.call(this, 'delete_' + _schema, provider, _with, _fields, _schemaArguments, _alias) || this;
     }
     Delete.prototype.delete = function (condition) {
+        console.log(condition)
         return this.where(condition);
     };
     Delete.prototype.parsed = function () {

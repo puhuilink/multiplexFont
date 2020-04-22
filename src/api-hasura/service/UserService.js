@@ -19,10 +19,10 @@ class UserService extends BaseService {
       await this.uniqueValidate(user, UserDao)
       await batchMutate(
         // 新建用户
-        UserDao.add(user)
+        UserDao.add(user),
         // TODO
         // 新建用户自定义桌面
-        // ViewDesktopDao.add({ user_id: user['user_id'], view_title: '自定义' })
+        ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
       )
     } catch (e) {
       throw e
@@ -41,7 +41,7 @@ class UserService extends BaseService {
       // 删除用户
       UserDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户自定义桌面
-      ViewDesktopDao.batchDelete({ view_title: { _eq: '自定义' }, view_name: { _in: userIdList } }),
+      ViewDesktopDao.batchDelete({ view_name: { _in: userIdList } }),
       // 删除用户与用户组关联
       UserGroupDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户的权限

@@ -10,6 +10,7 @@ class ModelService extends BaseService {
   static async add (model = {}) {
     try {
       await this.uniqueValidate(model, ModelDao)
+      // TODO: 自增 id
       await ModelDao.add(model).mutate()
     } catch (e) {
       throw e
