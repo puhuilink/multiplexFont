@@ -269,64 +269,60 @@ export default {
      * 新增
      */
     async insert () {
-      try {
-        this.loading = true
-        const values = await this.getFormFields()
-        await UserService.add(values)
-        // await addUser(values)
-        this.$emit('addSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.cancel()
-      } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
-        throw e
-      } finally {
-        this.loading = false
-      }
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await UserService.add(values)
+          // await addUser(values)
+          this.$emit('addSuccess')
+          this.$notification.success({
+            message: '系统提示',
+            description: '新建成功'
+          })
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
+      })
     },
     /**
      * 编辑
      */
     async update () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        // await updateUser({
-        //   'user_id': this.record.user_id,
-        //   ...values
-        // })
-        await UserService.update({
-          'user_id': this.record.user_id,
-          ...values
-        })
-        this.$emit('editSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.cancel()
-      } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    // FIXME: 直接保存也会通过
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          // await updateUser({
+          //   'user_id': this.record.user_id,
+          //   ...values
+          // })
+          await UserService.update({
+            'user_id': this.record.user_id,
+            ...values
+          })
+          this.$emit('editSuccess')
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
       })
     },
     reset () {
