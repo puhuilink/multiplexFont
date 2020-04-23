@@ -74,12 +74,11 @@
                     style="width: 100%"
                   >
                     <a-select
-                      defaultValue=""
                       style="width: 100%;"
                       v-model="queryParam.enabled"
                     >
-                      <a-select-option :value="true">启用</a-select-option>
-                      <a-select-option :value="false">禁用</a-select-option>
+                      <a-select-option value="true">启用</a-select-option>
+                      <a-select-option value="false">禁用</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
@@ -394,7 +393,7 @@ export default {
             } : {},
             ...this.queryParam.enabled ? {
               enabled: {
-                _eq: this.queryParam.enabled
+                _eq: this.queryParam.enabled === 'true'
               }
             } : {}
           }
