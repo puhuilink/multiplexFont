@@ -27,35 +27,22 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="节点类型">
-                <a-select
-                  allowClear
-                  v-model="queryParam.node_types"
-                  placeholder="请选择"
-                  @change="ciTypeChange"
-                >
-                  <a-select-opt-group
-                    v-for="(group,index) in queryList.typeList"
-                    :key="index"
-                    :label="group[0].parentname_s"
-                    :allowClear="true"
-                  >
-                    <template v-for="(groupitem,indexs) in group">
-                      <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                    </template>
-                  </a-select-opt-group>
-                </a-select>
+                <CiModelSelect
+                  v-model="queryParam.model"
+                  :value="queryParam.model"
+                  @input="onModelInput"
+                />
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="KPI">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.kpi_code"
-                    placeholder="请先选择节点类型"
-                  >
-                    <a-select-option v-for="(group,index) in queryList.kpiList" :key="index" :value="group.kpicode_s" >{{ group.label_s }}</a-select-option>
-                  </a-select>
+                  <KpiSelect
+                    multiple
+                    v-model="queryParam.kpi"
+                    :nodetypeS="queryParam.model"
+                    placeholder
+                  />
                 </a-form-item>
               </a-col>
             </template>
@@ -147,6 +134,10 @@ import deleteCheck from '@/components/DeleteCheck'
 import detail from './modules/ThresholdRulesDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import {
+  CiModelSelect,
+  KpiSelect
+} from '@/components/Common'
 
 const query = gql`query instanceList($where: t_threshold_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_threshold_order_by!]) {
     pagination: t_threshold_aggregate(where: $where) {
@@ -176,7 +167,7 @@ const query = gql`query instanceList($where: t_threshold_bool_exp! = {}, $limit:
     udapvalue_type
   }
 }`
-const deleteAttrs = gql`mutation ($idList: [Int!] = []) {
+const deleteAttrs = gql`mutation ($idList: [numeric!] = []) {
   delete_t_threshold (where: {
     id: {
       _in: $idList
@@ -189,7 +180,9 @@ export default {
   name: 'ThresholdRules',
   components: {
     CTable,
-    detail
+    detail,
+    CiModelSelect,
+    KpiSelect
   },
   data () {
     return {
@@ -291,16 +284,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * 获取筛选项的下拉列表的值
-     */
-    async getqueryList () {
-      this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
-    },
-    async ciTypeChange (value) {
-      this.queryList.kpiList = await queryList.kpiList(value)
-    },
     query () {
       this.$refs['table'].refresh(true)
     },
@@ -316,9 +299,9 @@ export default {
                 _eq: this.queryParam.domain
               }
             } : {},
-            ...this.queryParam.node_types ? {
-              node_types: {
-                _eq: this.queryParam.node_types
+            ...this.queryParam.model ? {
+              node_type: {
+                _eq: this.queryParam.model
               }
             } : {},
             ...this.queryParam.kpi_code ? {
@@ -331,17 +314,21 @@ export default {
       }).then(r => r.data)
     },
     /**
+     * 获取筛选项的下拉列表的值
+     */
+    async getqueryList () {
+      this.queryList.domainList = await queryList.domainList()
+    },
+    onModelInput (str = '') {
+      this.queryParam.model = str
+      // 重置选中的 Ci 实例
+      this.queryParam.node_id = []
+    },
+    /**
      * 筛选展开开关
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    /**
-     * ci实例改变
-     */
-    CIInstanceChange (value) {
-      console.log(value)
-      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
     },
     /**
      * 告警类型改变
@@ -380,11 +367,13 @@ export default {
      * 删除选中项
      */
     async deleteCtrl () {
+      console.log(this.selectedRowKeys)
       if (!await deleteCheck.sureDelete()) {
         return
       }
       try {
         this.$refs['table'].loading = true
+        console.log(this.selectedRowKeys)
         await apollo.clients.alert.mutate({
           mutation: deleteAttrs,
           variables: {

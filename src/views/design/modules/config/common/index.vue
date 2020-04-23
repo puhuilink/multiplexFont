@@ -335,7 +335,7 @@ export default {
       switch (type) {
         case 'native':
           const { render } = this.activeWidget
-          render.setStyle(this.config)
+          render.setConfig(this.config)
           break
         case 'padding':
           // 图表Padding样式更改，只需更新数据即可
@@ -408,10 +408,7 @@ export default {
     updateActiveWidget () {
       const activeWidget = _.cloneDeep(this.activeWidget)
       this.activateWidget({
-        widget: Object.assign(activeWidget, {
-          config: this.config,
-          render: this.activeWidget.render
-        })
+        widget: Object.assign(activeWidget, { config: this.config })
       })
     }
   }

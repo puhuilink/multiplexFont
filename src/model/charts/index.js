@@ -79,6 +79,15 @@ export default class Chart {
   }
 
   /**
+   * 完整配置设置
+   * @param config
+   */
+  setConfig (config) {
+    this.setStyle(config)
+    this.mergeOption(config)
+  }
+
+  /**
    * 映射成 echarts 配置项
    */
   // eslint-disable-next-line class-methods-use-this

@@ -2,43 +2,17 @@
  * 环度专有属性配置项
  */
 import _ from 'lodash'
-import { TextStyle } from './index'
 // eslint-disable-next-line
 import echartsLiquidfill from 'echarts-liquidfill'
-
-class Title {
-  constructor ({
-    text = 85,
-    left = 'center',
-    top = 'center',
-    textStyle = {
-      color: '#fff',
-      fontSize: 58,
-      fontFamily: 'DINAlternate-Bold'
-    }
-  }) {
-    this.text = text
-    this.left = left
-    this.top = top
-    this.textStyle = new TextStyle(textStyle)
-  }
-
-  /**
-   * 获取圆内标题配置
-   */
-  getOption () {
-    return Object.assign(_.cloneDeep(this))
-  }
-}
 
 class InnerCircle {
   constructor ({
     type = 'liquidFill',
-    radius = '150',
+    radius = '80%',
     color = '#195ba6',
     center = ['50%', '50%'],
     data = [
-      { value: 0.1 }
+      { value: 1 }
     ],
     itemStyle = {
       opacity: 1,
@@ -58,12 +32,7 @@ class InnerCircle {
       }
     },
     label = {
-      formatter: function (param) {
-        // return param.seriesName + '\n'
-        // + param.name + '\n'
-        // + 'Value: ' + param.value;
-        return param.value
-      },
+      formatter: '100',
       fontSize: 20,
       color: '#fff'
     }
@@ -83,13 +52,9 @@ class InnerCircle {
 export default class DegreeRingProprietaryConfig {
   constructor ({
     type = '',
-    title = {},
-    innerCircle = {},
-    innerRing = {},
-    excircle = {}
+    innerCircle = {}
   }) {
     this.type = type
-    this.title = new Title(title)
     this.innerCircle = new InnerCircle(innerCircle)
   }
 

@@ -18,18 +18,6 @@
           <template v-slot:header="{ model }">
 
             <div class="comment-template__item">
-              <p class="comment-template__leading">显示:</p>
-              <div class="comment-template__inner comment-template__end">
-                <a-switch
-                  checkedChildren="显示"
-                  unCheckedChildren="隐藏"
-                  v-model="model.display"
-                  @change="displayChange" />
-              </div>
-            </div>
-            <!-- / 默认动画 -->
-
-            <div class="comment-template__item">
               <p class="comment-template__leading">默认动画:</p>
               <div class="comment-template__inner comment-template__end">
                 <a-switch
@@ -127,12 +115,17 @@ export default {
   },
   methods: {
     ...mapMutations('screen', {
+      updateEdge: ScreenMutations.ACTIVATE_EDGE,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     change () {
-      const { render: { chart } } = this.activeWidget
+      const { render } = this.activeWidget
       // 根据配置更新视图
-      chart.updateItem(this.model.id, this.model)
+      render.chart.updateItem(this.model.id, this.model)
+      // 更新边配置
+      this.updateEdge({
+        activeEdge: render.chart.find('edge', edge => edge.getModel().id === this.model.id)
+      })
       // 更新配置
       this.updateTopologyConfig()
     },
@@ -142,13 +135,6 @@ export default {
     animateChange () {
       const { render: { chart } } = this.activeWidget
       chart.setItemState(this.model.id, 'active', this.model.animate)
-      this.change()
-    },
-    /**
-     * 显示更新
-     */
-    displayChange () {
-      this.model.display ? this.activeEdge.show() : this.activeEdge.hide()
       this.change()
     }
   }

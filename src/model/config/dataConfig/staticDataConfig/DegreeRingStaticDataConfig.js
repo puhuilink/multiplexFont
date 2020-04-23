@@ -4,9 +4,7 @@
 
 import _ from 'lodash'
 
-const defaultDegreeRingStaticData = {
-  value: 0
-}
+const defaultDegreeRingStaticData = '100'
 
 export default class DegreeRingStaticDataConfig {
   constructor ({

@@ -49,7 +49,6 @@ export default class Element {
       ...border.getOption(),
       background: colorMode === 'single' ? backgroundColor : `linear-gradient(${backgroundColor.angle}deg, ${backgroundColor.start}, ${backgroundColor.end})`
     })
-    this.mergeOption(config)
   }
 
   /**
@@ -71,6 +70,15 @@ export default class Element {
 
   refresh () {
     this.mergeOption(this.widget.config, true)
+  }
+
+  /**
+   * 完整配置设置
+   * @param config
+   */
+  setConfig (config) {
+    this.setStyle(config)
+    this.mergeOption(config)
   }
 
   /**

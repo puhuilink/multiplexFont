@@ -23,7 +23,9 @@ export default class BarProprietaryConfig {
     barWidthType = 'auto',
     barWidth = 'auto',
     xAxis = {},
-    yAxis = {}
+    yAxis = {},
+    // 是否反转 x 轴与 y 轴
+    reverse = false
   }) {
     this.barType = barType
     this.legend = new Legend(legend)
@@ -32,6 +34,7 @@ export default class BarProprietaryConfig {
     this.barWidth = barWidth
     this.xAxis = new XAixs(xAxis)
     this.yAxis = new YAixs(yAxis)
+    this.reverse = reverse
   }
 
   /**

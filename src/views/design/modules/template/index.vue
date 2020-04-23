@@ -217,7 +217,7 @@ export default {
       )
       .subscribe(({ event, data }) => {
         if (this.isWithinTopologyScope(event)) {
-          const { render, config } = this.activeWidget
+          const { render } = this.activeWidget
           const graph = render.chart
           const { pageX, pageY } = event
           // 将屏幕/页面坐标转换为视口坐标
@@ -238,7 +238,7 @@ export default {
           // 添加节点
           graph.addItem('node', node)
           // 同步配置
-          render.save(config)
+          this.updateTopologyConfig()
         }
         // 从当前文档中移除该dom节点
         document.body.removeChild(this.cloneNode)
@@ -247,7 +247,8 @@ export default {
   methods: {
     ...mapMutations('screen', {
       addWidget: ScreenMutations.ADD_WIDGET,
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+      updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     isWithinScope ({ pageX, pageY }) {
       const { xRange, yRange } = this.view.area
