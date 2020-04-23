@@ -1,6 +1,6 @@
 import { stringify } from './helper'
 import HasuraORM from './hasura-orm'
-import { parse } from '@/api-hasura/utils/hasura-orm/graphql'
+import { parse } from 'graphql'
 
 export default class Hasura {
   constructor (schema, provider = {}, _with = '', _fields = '', _schemaArguments = {}) {

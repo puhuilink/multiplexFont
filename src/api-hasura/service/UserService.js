@@ -1,10 +1,12 @@
 import { BaseService } from './BaseService'
 import { label, log } from '../utils/decorator/log'
-import { mutate } from '../utils/hasura-orm'
-import { AuthorizeObjectDao } from '../dao/AuthorizeObjectDao'
-import { UserDao } from '../dao/UserDao'
-import { ViewDesktopDao } from '../dao/ViewDesktopDao'
-import { UserGroupDao } from '../dao/UserGroupDao'
+import { mutate } from '../utils/hasura-orm/index'
+import {
+  AuthorizeObjectDao,
+  UserDao,
+  UserGroupDao,
+  ViewDesktopDao
+} from '../dao/index'
 
 class UserService extends BaseService {
   @log

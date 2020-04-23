@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService'
-import { ModelDao } from '../dao/ModelDao'
+import { ModelDao } from '../dao/index'
 import { mutate } from '../utils/hasura-orm'
 
 class ModelService extends BaseService {

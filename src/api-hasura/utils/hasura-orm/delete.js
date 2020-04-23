@@ -1,5 +1,5 @@
 import Hasura from './hasura'
-import { parse } from '@/api-hasura/utils/hasura-orm/graphql'
+import { parse } from 'graphql'
 
 export default class Delete extends Hasura {
   constructor (_schema, provider = {}, _with, _fields, _schemaArguments) {

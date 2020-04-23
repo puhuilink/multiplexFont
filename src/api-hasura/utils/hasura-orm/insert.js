@@ -1,6 +1,6 @@
 import Hasura from './hasura'
 import { stringify, hasRelation } from './helper'
-import { parse } from '@/api-hasura/utils/hasura-orm/graphql'
+import { parse } from 'graphql'
 
 export default class Insert extends Hasura {
   constructor (_schema, provider = {}, _with = '', _fields = '', _schemaArguments = {}) {

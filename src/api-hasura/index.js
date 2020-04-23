@@ -1,5 +1,4 @@
-import { UserService } from './service/UserService'
-import { ModelService } from './service/ModelService'
+import { UserService, ModelService } from './service/index'
 
 export {
   UserService,
