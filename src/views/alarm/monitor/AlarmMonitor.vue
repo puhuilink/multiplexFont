@@ -161,9 +161,18 @@
               :lg="{span: 8}"
               :xl="{span: 6}"
               class="table-operator">
-              <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
-              <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
-              <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
+              <a-button
+                @click="$refs.confirm.open(selectedRowKeys)"
+                :disabled="!selectedRowKeys.length > 0 || tabKey==='5'"
+              >确认</a-button>
+              <a-button
+                @click="$refs.rollForward.open(selectedRowKeys, selectedRows)"
+                :disabled="!selectedRowKeys.length > 0 || tabKey==='10'"
+              >前转</a-button>
+              <a-button
+                @click="$refs.resolve.open(selectedRowKeys)"
+                :disabled="!selectedRowKeys.length > 0 || tabKey==='20'"
+              >解决</a-button>
             </a-col>
             <a-col
               :xs="24"

@@ -165,7 +165,7 @@ function dateToTime (date) {
  */
 function createUniqueId () {
   const unx = Date.now()
-  const length = 20 - unx.toString().length
+  const length = 16 - unx.toString().length
   if (length > 0) {
     var data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     var nums = ''
