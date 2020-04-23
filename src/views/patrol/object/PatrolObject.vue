@@ -35,7 +35,7 @@
 
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="检查对象名称"
+                  label="检查对象"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset:2 }"
                   style="width: 100%">
