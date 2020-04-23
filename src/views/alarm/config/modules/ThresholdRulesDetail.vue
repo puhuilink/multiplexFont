@@ -170,7 +170,8 @@
               :disabled="mode=='See'"
               style="width: 24%;margin-right:1%"
               v-decorator="['condition', {
-                initialValue: record.condition?record.condition:'compare(value,ref)=0'
+                initialValue: record.condition?record.condition:'compare(value,ref)=0',
+                rules: [{ required: true, message: '不能为空!' }]
               }]"
             >
               <a-select-option v-for="item in conditionOptions" :key="item.name" :value="item.name">{{ item.label }}</a-select-option>
@@ -198,7 +199,7 @@
             <a-input
               style="width: 24%"
               :disabled="mode=='See'"
-              v-decorator="['ref_value', { initialValue: record.ref_value }]"
+              v-decorator="['ref_value', { initialValue: record.ref_value, rules: [{ required: true, message: '不能为空!' }]}]"
             />
           </a-form-item>
         </a-col>
@@ -208,7 +209,7 @@
               当满足
               <a-input-number
                 :disabled="mode=='See'"
-                v-decorator="['enter_count', { initialValue: record.enter_count?record.enter_count:1, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+                v-decorator="['enter_count', { initialValue: record.enter_count?record.enter_count:1, rules: [{ required: true, message: '不能为空!' }] }]"
               />
               次时激活
             </template>
@@ -216,7 +217,7 @@
               以后每
               <a-input-number
                 :disabled="mode=='See'"
-                v-decorator="['keep_count', { initialValue: record.keep_count?record.keep_count:0, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+                v-decorator="['keep_count', { initialValue: record.keep_count?record.keep_count:0, rules: [{ required: true, message: '不能为空!' }] }]"
               />
               次时重复发送
             </template>
@@ -224,7 +225,7 @@
               不满足
               <a-input-number
                 :disabled="mode=='See'"
-                v-decorator="['exit_count', { initialValue: record.exit_count?record.exit_count:1, rules: [{ required: true, message: '显示名称不能为空!' }] }]"
+                v-decorator="['exit_count', { initialValue: record.exit_count?record.exit_count:1, rules: [{ required: true, message: '不能为空!' }] }]"
               />
               次时恢复
             </template>
