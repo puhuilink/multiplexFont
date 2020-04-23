@@ -7,7 +7,7 @@ class BaseDao {
    * @return {HasuraORM}
    */
   static _createHasuraORM () {
-    return new HasuraORM(this.SCHEMA, this.PROVIDER)
+    return new HasuraORM(this.SCHEMA, this.PROVIDER, '', [ ...this.FIELDS_MAPPING.keys() ])
   }
 
   /**
