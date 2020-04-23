@@ -321,7 +321,7 @@ export default {
       try {
         this.$refs['table'].loading = true
         const [record] = this.selectedRows
-        apollo.clients.alert.mutate({
+        await apollo.clients.alert.mutate({
           mutation: updateUserFlag,
           variables: {
             userId: record.user_id,
