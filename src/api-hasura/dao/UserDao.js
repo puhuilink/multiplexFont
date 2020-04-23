@@ -31,6 +31,7 @@ class UserDao extends BaseDao {
 
   @override
   static async add (user) {
+    // FIXME: 第一步异常后仍进入到第二步
     await this._uniqueValidate(user)
     return super.add({
       auth_method: 'DB',

@@ -1,18 +1,11 @@
-'use strict'
-Object.defineProperty(exports, '__esModule', { value: true })
-var helper_1 = require('./helper')
-var hasura_orm_1 = require('./hasura-orm')
-var graphql = require('graphql')
-var Hasura = /** @class */ (function () {
-  function Hasura (schema, provider, _with, _fields, _schemaArguments, _alias) {
-    if (provider === void 0) { provider = {} }
-    if (_with === void 0) { _with = '' }
-    if (_fields === void 0) { _fields = '' }
-    if (_schemaArguments === void 0) { _schemaArguments = {} }
-    if (_alias === void 0) { _alias = '' }
+import { stringify } from './helper'
+import HasuraORM from './hasura-orm'
+import { parse } from '@/api-hasura/utils/hasura-orm/graphql'
+
+export default class Hasura {
+  constructor (schema, provider = {}, _with = '', _fields = '', _schemaArguments = {}) {
     this._fields = ''
     this._paginate = ''
-    this._alias = ''
     this._where = {}
     this._schemaArguments = {}
     this._with = ''
@@ -23,16 +16,11 @@ var Hasura = /** @class */ (function () {
     this._with = _with
     this._fields = _fields
     this._schemaArguments = _schemaArguments
-    this._alias = _alias
   }
-  Object.defineProperty(Hasura.prototype, 'schemaArguments', {
-    get: function () {
-      return helper_1.stringify(this._schemaArguments)
-    },
-    enumerable: true,
-    configurable: true
-  })
-  Hasura.prototype.select = function (fields) {
+  get schemaArguments () {
+    return stringify(this._schemaArguments)
+  }
+  select (fields) {
     if (Array.isArray(fields)) {
       this._fields += ' ' + fields.join(',').replace(/,/g, ' ')
     } else {
@@ -40,37 +28,32 @@ var Hasura = /** @class */ (function () {
     }
     return this
   }
-  Hasura.prototype.alias = function (alias) {
-    this._alias = alias + ':'
-    return this
+  addArg (type, value) {
+    this._schemaArguments = Object.assign(this._schemaArguments, { [type]: value })
   }
-  Hasura.prototype.addArg = function (type, value) {
-    var _a
-    this._schemaArguments = Object.assign(this._schemaArguments, (_a = {}, _a[type] = value, _a))
-  }
-  Hasura.prototype.limit = function (limit) {
+  limit (limit) {
     this.addArg('limit', limit)
     return this
   }
-  Hasura.prototype.offset = function (offset) {
+  offset (offset) {
     this.addArg('offset', offset)
     return this
   }
-  Hasura.prototype.distinct = function (distinct) {
+  distinct (distinct) {
     this.addArg('distinct_on', distinct)
     return this
   }
-  Hasura.prototype.orderBy = function (orderBy) {
+  orderBy (orderBy) {
     this.addArg('order_by', orderBy)
     return this
   }
-  Hasura.prototype.compose = function (schema, callback) {
-    var qr = callback(new hasura_orm_1.default(schema, this.provider))
+  compose (schema, callback) {
+    const qr = callback(new HasuraORM(schema, this.provider))
     this._compose += qr.parsed()
     return this
   }
-  Hasura.prototype.where = function (condition) {
-    Object.keys(condition).map(function (con) {
+  where (condition) {
+    Object.keys(condition).map(con => {
       if (typeof condition[con] !== 'object' && condition[con][0] !== '_') {
         condition[con] = {
           _eq: condition[con]
@@ -81,33 +64,55 @@ var Hasura = /** @class */ (function () {
     this._schemaArguments = Object.assign(this._schemaArguments, { where: this._where })
     return this
   }
-  Hasura.prototype.with = function (schema, callback) {
-    var qr = callback(new Hasura(schema, this.provider))
+  with (schema, callback) {
+    const qr = callback(new Hasura(schema, this.provider))
     this._with += qr.parsed()
     return this
   }
-  Hasura.prototype.parsed = function () {
+  parsed () {
     if (!this._fields) {
       this._fields = 'id'
     }
-    return this._paginate + ' ' + this._alias + this._schema + ' ' + (Object.keys(this._schemaArguments).length > 0
-      ? '(' + helper_1.stringify(this._schemaArguments) + ')'
-      : '') + '{  ' + this.getFields() + ' }'
+    return `${this._paginate} ${this._alias} ${this._schema} ${Object.keys(this._schemaArguments).length > 0
+      ? '(' + stringify(this._schemaArguments) + ')'
+      : ''}{  ${this.getFields()} }`
   }
-  // 前端固定数据格式
-  // Hasura.prototype.parsed = function () {
-  //     if (!this._fields) {
-  //         this._fields = 'id';
-  //     }
-  //     return this._paginate + " " + "data: " + this._alias + this._schema + " " + (Object.keys(this._schemaArguments).length > 0
-  //         ? '(' + helper_1.stringify(this._schemaArguments) + ')'
-  //         : '') + "{  " + this.getFields() + " }";
-  // };
-  Hasura.prototype.getFields = function () {
-    return this._fields + ' ' + this._with
+  getFields () {
+    return `${this._fields} ${this._with}`
   }
-  Hasura.prototype.max = async function (field) {
-    const { data } = await this.provider.query({ query: graphql.parse(`{
+  paginate (limit, offset) {
+    delete this._schemaArguments['limit']
+    delete this._schemaArguments['offset']
+    let args = stringify(this._schemaArguments)
+    if (args) {
+      args = `(${stringify(this._schemaArguments)})`
+    }
+    this._paginate = ` ${this._schema}_aggregate${args} {
+      aggregate {
+        count
+      }
+    }`
+    this.limit(limit)
+    this.offset(offset)
+    return this
+  }
+  query () {
+    return `query {  ${this.parsed()} ${this._compose} }`
+  }
+  subscriptionQuery () {
+    return `subscription {  ${this.parsed()} ${this._compose} }`
+  }
+  get (cache = true) {
+    return this.provider.get({ query: this.query() }, cache)
+  }
+  await (cache = true) {
+    return this.provider.query({ query: parse(this.query()) }, (cache = true))
+  }
+  subscription () {
+    return this.provider.subscription({ query: this.subscriptionQuery() })
+  }
+  async max (field) {
+    const { data } = await this.provider.query({ query: parse(`{
       ${this._schema}_aggregate {
         aggregate {
           max {
@@ -119,51 +124,8 @@ var Hasura = /** @class */ (function () {
     })
     return data[`${this._schema}_aggregate`]['aggregate']['max'][field]
   }
-  Hasura.prototype.paginate = function (limit, offset) {
-    delete this._schemaArguments['limit']
-    delete this._schemaArguments['offset']
-    var args = helper_1.stringify(this._schemaArguments)
-    if (args) {
-      args = '(' + helper_1.stringify(this._schemaArguments) + ')'
-    }
-    this._paginate = ' ' + this._schema + '_aggregate' + args + ' {\n      aggregate {\n        count\n      }\n    }'
-    this.limit(limit)
-    this.offset(offset)
+  alias (alias) {
+    this._alias = alias + ':'
     return this
   }
-  // 前端固定数据格式
-  // Hasura.prototype.paginate = function (limit, offset) {
-  //     delete this._schemaArguments['limit'];
-  //     delete this._schemaArguments['offset'];
-  //     var args = helper_1.stringify(this._schemaArguments);
-  //     if (args) {
-  //         args = "(" + helper_1.stringify(this._schemaArguments) + ")";
-  //     }
-  //     // this._schema = "data: " + this._schema
-  //     this._paginate = " pagination:" + this._schema + "_aggregate" + args + " {\n      aggregate {\n        count\n      }\n    }";
-  //     this.limit(limit);
-  //     this.offset(offset);
-  //     return this;
-  // };
-  Hasura.prototype.query = function () {
-    return 'query {  ' + this.parsed() + ' ' + this._compose + ' }'
-  }
-  Hasura.prototype.subscriptionQuery = function () {
-    return 'subscription {  ' + this.parsed() + ' ' + this._compose + ' }'
-  }
-  Hasura.prototype.get = function (cache) {
-    if (cache === void 0) { cache = true }
-    return this.provider.get({ query: this.query() }, cache)
-  }
-  Hasura.prototype.await = function (cache) {
-    if (cache === void 0) { cache = true }
-    // return this.provider.query({ query: this.query() }, (cache = true));
-    return this.provider.query({ query: graphql.parse(this.query()) }, (cache = true))
-  }
-  Hasura.prototype.subscription = function () {
-    return this.provider.subscription({ query: this.subscriptionQuery() })
-  }
-  return Hasura
-}())
-exports.default = Hasura
-// # sourceMappingURL=hasura.js.map
+}

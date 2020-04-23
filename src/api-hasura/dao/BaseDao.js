@@ -1,4 +1,5 @@
-import HasuraORM, { query } from '../utils/hasura-orm'
+import HasuraORM, { query } from '../utils/hasura-orm/index'
+// import HasuraORM, { query } from '../utils/hasura-orm'
 import _ from 'lodash'
 class BaseDao {
   /**

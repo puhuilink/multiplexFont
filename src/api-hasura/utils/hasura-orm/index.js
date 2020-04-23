@@ -1,5 +1,5 @@
-import hasuraOrm from './hasura-orm'
-import { parse } from 'graphql'
+import HasuraORM from './hasura-orm'
+import { parse } from '@/api-hasura/utils/hasura-orm/graphql'
 
 const mutate = async function () {
   // TODO: provider检测
@@ -14,11 +14,11 @@ const query = async function () {
   const hasuraInstanceList = await Promise.all(Array.from(arguments))
   const [{ provider }] = hasuraInstanceList
   const query = `query{ ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())} }`
-  // throw new Error(query)
   return provider.query({ query: parse(query) })
 }
 
-export default hasuraOrm
+export default HasuraORM
+
 export {
   query,
   mutate
