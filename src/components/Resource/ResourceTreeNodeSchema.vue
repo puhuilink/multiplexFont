@@ -210,7 +210,6 @@ export default {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
-          const values = await this.getFormFields()
           this.loading = true
           // await addModel({
           //   ...values,
