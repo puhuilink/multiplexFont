@@ -58,11 +58,19 @@ const user = {
       return new Promise(async (resolve, reject) => {
         try {
           const user = Vue.ls.get(USER)
-          let originalPermission = []
-          const permission = await getGroupPermission(user.organizeList[0].groupId)
-          if (permission.code === 200) {
-            originalPermission = permission.data
+          const originalPermission = []
+          const results = await Promise.all(user.organizeList.map(organize => getGroupPermission(organize.groupId)))
+          const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
+          const permissionList = results.flatMap(item => item.data)
+          if (!status) {
+            this.$message.error('用户权限数据获取失败，请稍后尝试！')
+            return
           }
+          permissionList.forEach(permission => {
+            if (!originalPermission.some(item => item.code === permission.code)) {
+              originalPermission.push(permission)
+            }
+          })
           // 菜单权限列表
           const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
           // 按钮权限列表
@@ -82,7 +90,7 @@ const user = {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          // // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
+          // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
           // const response = info()
           // // const response= await getInfo()
           // const result = response.result
