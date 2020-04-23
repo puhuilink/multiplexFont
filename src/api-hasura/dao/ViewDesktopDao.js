@@ -1,14 +1,14 @@
 import { ViewDao } from './ViewDao'
 
 class ViewDesktopDao extends ViewDao {
-  static add (view) {
+  static async add (view) {
     return super.add({
       ...view,
       view_type: 'desktop'
     })
   }
 
-  static addUserDesktop ({ view_name }) {
+  static async addUserDesktop ({ view_name }) {
     return this.add({
       view_name,
       view_title: '自定义',
@@ -16,7 +16,7 @@ class ViewDesktopDao extends ViewDao {
     })
   }
 
-  static addGroupDesktop ({ view_name }) {
+  static async addGroupDesktop ({ view_name }) {
     return this.add({
       view_name: view_name,
       view_title: `${view_name}桌面`,
@@ -24,7 +24,7 @@ class ViewDesktopDao extends ViewDao {
     })
   }
 
-  static batchDelete (where) {
+  static async batchDelete (where) {
     return super.batchDelete({
       ...where,
       view_type: {
@@ -33,7 +33,7 @@ class ViewDesktopDao extends ViewDao {
     })
   }
 
-  static batchDeleteUserDesktop (where) {
+  static async batchDeleteUserDesktop (where) {
     return this.batchDelete({
       ...where,
       view_title: { _eq: '自定义' }
@@ -41,7 +41,7 @@ class ViewDesktopDao extends ViewDao {
   }
 
   // TODO: api
-  static batchDeleteGroupDesktop (where) {
+  static async batchDeleteGroupDesktop (where) {
     return this.batchDelete({
       ...where,
       view_title: { _eq: '自定义' }

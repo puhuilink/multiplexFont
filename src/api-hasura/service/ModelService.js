@@ -1,5 +1,6 @@
 import { BaseService } from './BaseService'
 import { ModelDao } from '../dao/ModelDao'
+import { mutate } from '../utils/hasura-orm'
 
 class ModelService extends BaseService {
   /**
@@ -9,9 +10,10 @@ class ModelService extends BaseService {
    */
   static async add (model = {}) {
     try {
-      await this.uniqueValidate(model, ModelDao)
-      // TODO: 自增 id
-      await ModelDao.add(model).mutate()
+      await mutate(
+        ModelDao.add(model)
+      )
+      // await ModelDao.add(model).mutate()
     } catch (e) {
       throw e
     }
@@ -22,13 +24,10 @@ class ModelService extends BaseService {
    * @param {Objetc} model
    * @return {Promise<any>}
    */
-  static async update (model = {}) {
-    try {
-      await this.uniqueValidate(model, ModelDao, false)
-      await ModelDao.update(model).mutate()
-    } catch (e) {
-      throw e
-    }
+  static async update (model, where) {
+    await mutate(
+      ModelDao.update(model, where)
+    )
   }
 }
 

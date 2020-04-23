@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { label, log } from '../utils/decorator/log'
-import { batchMutate } from '../utils/hasura-orm'
+import { mutate } from '../utils/hasura-orm'
 import { AuthorizeObjectDao } from '../dao/AuthorizeObjectDao'
 import { UserDao } from '../dao/UserDao'
 import { ViewDesktopDao } from '../dao/ViewDesktopDao'
@@ -15,18 +15,13 @@ class UserService extends BaseService {
    * @return {Promise<any>}
    */
   static async add (user = {}) {
-    try {
-      await this.uniqueValidate(user, UserDao)
-      await batchMutate(
-        // 新建用户
-        UserDao.add(user),
-        // TODO
-        // 新建用户自定义桌面
-        ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
-      )
-    } catch (e) {
-      throw e
-    }
+    await mutate(
+      // 新建用户
+      UserDao.add(user),
+      // TODO
+      // 新建用户自定义桌面
+      ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
+    )
   }
 
   @log
@@ -37,7 +32,7 @@ class UserService extends BaseService {
    * @return {Promise<any>}
    */
   static async batchDelete (userIdList = []) {
-    await batchMutate(
+    await mutate(
       // 删除用户
       UserDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户自定义桌面
@@ -50,9 +45,10 @@ class UserService extends BaseService {
     )
   }
 
-  static async update (user) {
-    await this.uniqueValidate(user, UserDao, false)
-    await UserDao.update(user).mutate()
+  static async update (user, where) {
+    await mutate(
+      UserDao.update(user, where)
+    )
   }
 }
 

@@ -6,14 +6,14 @@ class ViewDao extends BaseDao {
   static SCHEMA = 't_view'
   static PROVIDER = alert
 
-  static add (view) {
+  static async add (view) {
     return super.add({
       ...view,
       ...defaultCreateDate()
     })
   }
 
-  static update ({ view_id, ...view }) {
+  static async update ({ view_id, ...view }) {
     return super.update({ ...view, ...defaultUpdateDate() }).where({ view_id })
   }
 }

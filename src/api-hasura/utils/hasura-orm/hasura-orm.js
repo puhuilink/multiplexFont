@@ -37,26 +37,6 @@ var HasuraORM = /** @class */ (function (_super) {
   HasuraORM.prototype.delete = function (args) {
     return new delete_1.default(this._schema, this.provider, this._with, this._fields, this._schemaArguments, this._alias).delete(args)
   }
-  // 批量操作
-  HasuraORM.prototype.batchMutate = function () {
-    const hasuraInstanceList = Array.from(arguments)
-    // hasuraInstanceList.forEach(hasuraInstance => {
-    //     console.log(hasuraInstance.provider, 'provider')
-    // })
-    // FIXME: 检测机制有问题
-    // const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
-    // if (!isSameProvider) {
-    //   throw new Error('批量mutate需要同一provider')
-    // }
-    const [{ provider }] = hasuraInstanceList
-    console.log(hasuraInstanceList)
-    const query = `mutation {
-            ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
-        }`
-    console.log(query)
-    // FIXME: return promise，then 时才执行
-    return provider.mutate({ mutation: graphql.parse(query) })
-  }
   return HasuraORM
 }(hasura_1.default))
 exports.default = HasuraORM

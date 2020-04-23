@@ -69,25 +69,6 @@ var Hasura = /** @class */ (function () {
     this._compose += qr.parsed()
     return this
   }
-  // 批量查询支持
-  Hasura.prototype.batchQuery = function () {
-    const hasuraInstanceList = Array.from(arguments)
-    // hasuraInstanceList.forEach(hasuraInstance => {
-    //     console.log(hasuraInstance.provider, 'provider')
-    // })
-    // FIXME: 检查机制不对
-    // const isSameProvider = hasuraInstanceList.reduce((pre, next) => pre.provider === next.provider)
-    // if (!isSameProvider) {
-    //   throw new Error('批量查询需要同一provider')
-    // }
-    const [{ provider }] = hasuraInstanceList
-    // console.dir(provider)
-    const query = `query{
-            ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())}
-        }`
-    // console.log(query)
-    return provider.query({ query: graphql.parse(query) })
-  },
   Hasura.prototype.where = function (condition) {
     Object.keys(condition).map(function (con) {
       if (typeof condition[con] !== 'object' && condition[con][0] !== '_') {
@@ -124,6 +105,19 @@ var Hasura = /** @class */ (function () {
   // };
   Hasura.prototype.getFields = function () {
     return this._fields + ' ' + this._with
+  }
+  Hasura.prototype.max = async function (field) {
+    const { data } = await this.provider.query({ query: graphql.parse(`{
+      ${this._schema}_aggregate {
+        aggregate {
+          max {
+            ${field}
+          }
+        }
+      }
+    }`)
+    })
+    return data[`${this._schema}_aggregate`]['aggregate']['max'][field]
   }
   Hasura.prototype.paginate = function (limit, offset) {
     delete this._schemaArguments['limit']

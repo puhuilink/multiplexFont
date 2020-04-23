@@ -198,9 +198,6 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-unreachable */
-import { addUser, updateUser } from '@/api/controller/User'
 import { UserService } from '@/api-hasura'
 
 const formItemLayout = {
@@ -274,7 +271,6 @@ export default {
         try {
           this.loading = true
           await UserService.add(values)
-          // await addUser(values)
           this.$emit('addSuccess')
           this.$notification.success({
             message: '系统提示',
@@ -300,14 +296,10 @@ export default {
         if (err) return
         try {
           this.loading = true
-          // await updateUser({
-          //   'user_id': this.record.user_id,
-          //   ...values
-          // })
-          await UserService.update({
-            'user_id': this.record.user_id,
-            ...values
-          })
+          await UserService.update(
+            values,
+            { 'user_id': this.record.user_id }
+          )
           this.$emit('editSuccess')
           this.$notification.success({
             message: '系统提示',

@@ -244,10 +244,10 @@ export default {
         try {
           this.loading = true
           // await editModel(this.record.did, values)
-          await ModelService.update({
-            did: this.record.did,
-            ...values
-          })
+          await ModelService.update(
+            values,
+            { did: this.record.did }
+          )
           this.$notification.success({
             message: '系统提示',
             description: '编辑成功'
