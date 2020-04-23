@@ -209,7 +209,10 @@ export default {
             _eq: 'h5'
           }
         }
-      }).then(r => r.data)
+      }).then(r => {
+        console.log(r)
+        return r.data
+      })
     },
     /**
      * 筛选展开开关

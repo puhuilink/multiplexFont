@@ -11,6 +11,8 @@ class InnerCircle {
     radius = '80%',
     color = '#195ba6',
     center = ['50%', '50%'],
+    amplitude = 0,
+    waveAnimation = 0,
     data = [
       { value: 1 }
     ],
@@ -41,6 +43,8 @@ class InnerCircle {
     this.radius = radius
     this.color = color
     this.center = center
+    this.amplitude = amplitude
+    this.waveAnimation = waveAnimation
     this.data = data
     this.backgroundStyle = backgroundStyle
     this.itemStyle = itemStyle

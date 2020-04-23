@@ -306,7 +306,7 @@ export default {
             } : {},
             ...this.queryParam.kpi_code ? {
               kpi_code: {
-                _eq: this.queryParam.kpi_code
+                _in: this.queryParam.kpi
               }
             } : {}
           }
