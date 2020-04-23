@@ -129,6 +129,13 @@
             <a-textarea
               v-decorator="[
                 'note',
+                {
+                  rules: [
+                    {
+                      max: 128,
+                      message: '最多输入128个字符'
+                    }]
+                }
               ]"
             />
           </a-form-item>
