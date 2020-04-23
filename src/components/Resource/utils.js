@@ -2,7 +2,8 @@ function buildChildren (parent, collection = []) {
   if (parent) {
     // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
     parent.children = [
-      ...parent.instanceList || [],
+      // FIXME
+      // ...parent.instanceList || [],
       ...collection.filter(el => el.parentKey === parent.key)
     ]
     parent.children.forEach(el => {
