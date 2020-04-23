@@ -20,7 +20,6 @@ class UserService extends BaseService {
     await mutate(
       // 新建用户
       UserDao.add(user),
-      // TODO
       // 新建用户自定义桌面
       ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
     )
