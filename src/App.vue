@@ -16,9 +16,6 @@ export default {
     return {
       locale: zhCN
     }
-  },
-  mounted () {
-
   }
 }
 </script>

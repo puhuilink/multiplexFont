@@ -68,6 +68,8 @@ export default {
   apollo: {
     // TODO: 在 hasura 层通过 RelationShips 直接构造好树结构
     // TODO: subscribe 节点增加 / 删除
+    // TODO: 排序
+    // TODO: 默认展开层级
     dataSource: {
       query: gql`query ($instanceList: Boolean!) {
         dataSource: ngecc_model {
