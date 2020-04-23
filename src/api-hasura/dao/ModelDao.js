@@ -4,9 +4,9 @@ import { defaultCreateTime, defaultUpdateTime } from '../utils/mixin/autoComplet
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
-  static schema = 'ngecc_model'
+  static SCHEMA = 'ngecc_model'
   // 对应 vue-apollo
-  static provider = resource
+  static PROVIDER = resource
   // 唯一字段
   static UNIQUE_FIELDS = ['name_s']
   // 主键

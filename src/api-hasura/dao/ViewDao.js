@@ -3,8 +3,8 @@ import { alert } from '../config/client'
 import { defaultCreateDate, defaultUpdateDate } from '../utils/mixin/autoComplete'
 
 class ViewDao extends BaseDao {
-  static schema = 't_view'
-  static provider = alert
+  static SCHEMA = 't_view'
+  static PROVIDER = alert
 
   static add (view) {
     return super.add({

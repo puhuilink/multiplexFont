@@ -4,9 +4,9 @@ import { defaultCreateDate, defaultUpdateDate } from '../utils/mixin/autoComplet
 
 class UserDao extends BaseDao {
   // 对应 hasura schema
-  static schema = 't_user'
+  static SCHEMA = 't_user'
   // 对应 vue-apollo
-  static provider = alert
+  static PROVIDER = alert
   // 唯一字段
   static UNIQUE_FIELDS = ['user_id', 'email', 'phone', 'mobile_phone']
   // 主键
