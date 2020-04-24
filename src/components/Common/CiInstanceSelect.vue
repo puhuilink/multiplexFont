@@ -1,6 +1,8 @@
 <template>
   <div class="CiInstanceSelect">
     <a-select
+      showSearch
+      :filterOption="filterOption"
       :labelInValue="labelInValue"
       :mode="multiple ? 'multiple' : 'default'"
       allowClear
@@ -102,6 +104,11 @@ export default {
     },
     handleChange (value) {
       this._value = value
+    },
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
     }
   }
 }
