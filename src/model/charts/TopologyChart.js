@@ -390,6 +390,8 @@ export default class TopologyChart extends Chart {
         this.chart.setItemState(edge, 'active', model.animate)
       })
     }
+    // 读取配置后更新配置属性
+    store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
   }
 
   /**

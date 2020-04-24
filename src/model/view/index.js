@@ -63,16 +63,12 @@ export default class View {
    */
   getOption () {
     const { id, name, config, views, widgets } = this
-    return _.cloneDeep({
+    return {
       id,
       name,
       config,
       views,
-      widgets: _.cloneDeep(widgets).map(item => {
-        // 删除部件渲染对象，以持久化数据
-        delete item.render
-        return item
-      })
-    })
+      widgets: widgets.map(widget => widget.getOption())
+    }
   }
 }
