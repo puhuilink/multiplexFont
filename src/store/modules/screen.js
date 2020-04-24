@@ -91,10 +91,10 @@ export default {
     },
     // 更新拓扑节点配置
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
-      const { render: { chart } } = state.activeWidget
+      const { render } = state.activeWidget
       // 如果是拓扑图的实例对象
-      if (Object.getPrototypeOf(chart).constructor.name === 'e') {
-        const options = _.cloneDeep(chart.save())
+      if (render && render.chart && Object.getPrototypeOf(render.chart).constructor.name === 'e') {
+        const options = _.cloneDeep(render.chart.save())
         options.edges = options.edges.map(edge => _.omit(edge, ['sourceNode', 'targetNode']))
         Object.assign(state.activeWidget.config.proprietaryConfig, options)
         console.log(state.activeWidget.config.proprietaryConfig)
