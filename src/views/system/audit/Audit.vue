@@ -73,9 +73,7 @@
                       :placeholder="['开始时间', '结束时间']"
                       :showTime="{ format: 'HH:mm:ss' }"
                       style="width: 100%"
-                      @ok="timeOk"
-                      @cancel="timeCancel"
-                      @change="timeChange"
+                      v-model="queryParams.operation_time"
                     />
                   </a-form-item>
                 </a-col>
@@ -87,7 +85,7 @@
           <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="resetQuery">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? '收起' : '展开' }}
               <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -112,11 +110,11 @@
 
 <script>
 import { Ellipsis } from '@/components'
-// import { getAuditList } from '@/api/system'
 import AuditSchema from './AuditSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
+import { generateQuery } from '@/utils/graphql'
 
 const labelCol = {
   span: 4
@@ -225,33 +223,7 @@ export default {
         variables: {
           ...parameter,
           where: {
-            // ...this.where,
-            ...this.queryParams.module_name ? {
-              module_name: {
-                _ilike: `%${this.queryParams.module_name.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.user_id ? {
-              user_id: {
-                _ilike: `%${this.queryParams.user_id.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.actionname ? {
-              actionname: {
-                _ilike: `%${this.queryParams.actionname.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.client_ip ? {
-              client_ip: {
-                _ilike: `%${this.queryParams.client_ip.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.operation_time ? {
-              operation_time: {
-                _gt: this.queryParams.operation_time[0],
-                _lt: this.queryParams.operation_time[1]
-              }
-            } : {}
+            ...generateQuery(this.queryParams)
           }
         }
       }).then(r => r.data)
@@ -262,36 +234,6 @@ export default {
     show () {
       const [record] = this.selectedRows
       this.$refs['schema'].show(record)
-    },
-    /**
-     * 选中时间但还未确定，或取消时间
-     * @param {Array<Moment>} e
-     */
-    timeChange (e) {
-      // 执行了 clear 操作
-      if (!e.length) {
-        delete (this.queryParams.operation_time)
-      }
-    },
-    /**
-     * 选中时间并确定
-     * @param {Array<Moment>} e
-     */
-    timeOk (e) {
-      // console.log(e)
-      let [startTime, endTime] = e
-      startTime = startTime.format('YYYY-MM-DDTHH:mm:ss')
-      endTime = endTime.format('YYYY-MM-DDTHH:mm:ss')
-      // console.log(startTime)
-      this.queryParams = {
-        ...this.queryParams,
-        // startTime,
-        operation_time: [startTime, endTime]
-      }
-    },
-    timeCancel () {
-      delete (this.queryParams.operation_time)
-      // TODO: allowclear 触发后
     },
     /**
     * 筛选展开开关
@@ -307,6 +249,9 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
+    },
+    resetQuery (key) {
+      this.queryParams = Object.assign({}, this.$options.data.apply(this).queryParams)
     },
     /**
     * 行属性,表格点击事件

@@ -43,7 +43,7 @@
               v-decorator="[
                 'name_s',
                 {
-                  rules: [{ required: true, message: '' }],
+                  rules: [{ required: true, message: '属性名称必填' }],
                   // initialValue: 'name'
                 },
               ]"
