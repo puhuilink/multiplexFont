@@ -16,6 +16,21 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
+            label="显示名称"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'label_s',
+                { rules: [{ required: true, message: '显示名称必填' }] },
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
             label="名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
@@ -25,21 +40,6 @@
               v-decorator="[
                 'name_s',
                 { rules: [{ required: true, message: '名称必填' }] },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="显示名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'label_s',
-                { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />
           </a-form-item>
