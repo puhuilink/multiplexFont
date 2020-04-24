@@ -84,7 +84,7 @@ import detail from './modules/FTDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 
-const query = gql`query instanceList($where: t_incident_type_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_type_order_by!]) {
+const query = gql`query($where: t_incident_type_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_type_order_by!]) {
     pagination: t_incident_type_aggregate(where: $where) {
       aggregate {
         count

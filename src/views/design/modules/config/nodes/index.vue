@@ -305,7 +305,7 @@ export default {
     animateTypeChange () {
       const { render: { chart } } = this.activeWidget
       const { id, animateType } = this.model
-      chart.clearItemStates(this.activeNode)
+      chart.clearItemStates(id)
       chart.setItemState(id, animateType, true)
       // 更新配置
       this.change()

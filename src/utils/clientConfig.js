@@ -1,5 +1,4 @@
 import { HttpLink } from 'apollo-link-http'
-// import { BatchHttpLink } from 'apollo-link-batch-http'
 import { ApolloLink } from 'apollo-link'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
@@ -20,16 +19,15 @@ const linkList = ['28079', '28078', '28077', '28076'].map(port => new HttpLink({
 }))
 
 // TODO: 此处包装后传递到 service 层
-// eslint-disable-next-line no-unused-vars
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
   console.log({ graphQLErrors, networkError })
-  if (networkError && networkError.statusCode === 401) {
+  if (networkError) {
     notification.error({
-      message: '系统异常',
+      message: '系统提示',
       description: '请检查网络连接是否正常'
     })
-    // TODO: throw error
   }
+  // 确保只在 dev 环境下提示
   if (graphQLErrors) {
     notification.error({
       message: '系统内部异常',
@@ -39,7 +37,6 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
         return text
       }).join('/\r/\n')
     })
-    // throw new Error(graphQLErrors)
     // TODO: throw error
   }
 })
@@ -77,7 +74,7 @@ const clientList = linkList.map(link => new ApolloClient({
   // 顺序很重要？
   // 原理是中间件？
   link: ApolloLink.from([
-    // errorHandler,
+    errorHandler,
     middlewareLink,
     // addDatesLink,
     link

@@ -101,6 +101,7 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
 import Template from '../../design/modules/template/index'
+import { generateQuery } from '@/utils/graphql'
 
 const query = gql`query ($where: ngecc_instance_values_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instance_values_order_by!]) {
   pagination: ngecc_instance_values_aggregate(where: $where) {
@@ -234,29 +235,7 @@ export default {
           ...parameter,
           where: {
             ...this.where,
-            'parentname_s': {
-              '_eq': 'Kpi'
-            },
-            ...this.queryParams.name_s ? {
-              name_s: {
-                _ilike: `%${this.queryParams.name_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.label_s ? {
-              label_s: {
-                _ilike: `%${this.queryParams.label_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.kpicode_s ? {
-              kpicode_s: {
-                _ilike: `%${this.queryParams.kpicode_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.nodetype_s ? {
-              nodetype_s: {
-                _ilike: `%${this.queryParams.nodetype_s.trim()}%`
-              }
-            } : {}
+            ...generateQuery(this.queryParams)
           }
         }
       }).then(r => r.data)

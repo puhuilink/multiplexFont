@@ -112,6 +112,7 @@
           >
             <a-select
               mode="multiple"
+              :maxTagCount="2"
               v-decorator="[
                 'target',
                 { rules: [{
