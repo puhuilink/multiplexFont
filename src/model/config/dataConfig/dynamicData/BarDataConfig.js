@@ -30,28 +30,28 @@ export default class BarDataConfig {
       try {
         // 拿到的数据是一条kpi与一条ci的搭配数组
         const res = await getComponentValues(this.resourceConfig)
-        // // 按 ci 进行分组
-        // const groupedData = _.groupBy(res, 'instanceLabel')
-        // 按 kpi 进行分组
-        const groupedData = _.groupBy(res, 'kpiLabel')
+        const groupByKpi = _.groupBy(res, 'kpiLabel')
+        const groupByCi = _.groupBy(res, 'instanceLabel')
         const valueAxis = {
           type: 'value'
         }
         const categoryAxis = {
           type: 'category',
-          data: Object.keys(groupedData)
+          data: Object.keys(groupByKpi)
         }
         // 纵向 / 横向图
         // const isVertical = false
         const isVertical = true
 
-        this.legend = {}
+        this.legend = {
+          data: Object.keys(_.groupBy(res, 'instanceLabel'))
+        }
         this.xAxis = isVertical ? categoryAxis : valueAxis
         this.yAxis = !isVertical ? categoryAxis : valueAxis
-        this.series = Object.keys(groupedData).map(key => ({
+        this.series = Object.keys(groupByCi).map(key => ({
           type: 'bar',
           name: key,
-          data: groupedData[key].map(item => item ? item.value : 0)
+          data: groupByCi[key].map(item => item ? item.value : 0)
         }))
       } catch (e) {
         this.resetData()
@@ -59,6 +59,7 @@ export default class BarDataConfig {
       }
     }
     const { legend, xAxis, yAxis, series } = this
+    console.log({ legend, xAxis, yAxis, series })
     return _.cloneDeep({ legend, xAxis, yAxis, series })
   }
 

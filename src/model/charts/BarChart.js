@@ -26,8 +26,6 @@ export default class BarChart extends Chart {
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
 
-    console.log(dbDataConfig.resetData)
-
     let series = []
     // 总体配置
     const option = { color, grid, legend, series, xAxis: [xAxis], yAxis: [yAxis] }
@@ -79,13 +77,12 @@ export default class BarChart extends Chart {
       }
     }
     return Object.assign({}, option, {
-      // TODO: ci 数据未完全展示
-      // tooltip: {
-      //   trigger: 'axis',
-      //   axisPointer: { // 坐标轴指示器，坐标轴触发有效
-      //     type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-      //   }
-      // }
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        }
+      }
     })
   }
 }
