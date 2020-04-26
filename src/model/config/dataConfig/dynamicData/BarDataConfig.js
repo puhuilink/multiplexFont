@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { getComponentValues } from '@/api/controller/View'
+// import { KpiCurrentService } from '@/api-hasura'
 
 const initialOption = {
   legend: {},
@@ -30,6 +31,12 @@ export default class BarDataConfig {
       try {
         // 拿到的数据是一条kpi与一条ci的搭配数组
         const res = await getComponentValues(this.resourceConfig)
+        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
+        // const res = await KpiCurrentService.getValue(this.resourceConfig)
+        // console.log(res)
+        // getComponentValues(this.resourceConfig).then(res => {
+        //   console.log('res', res)
+        // })
         const groupByKpi = _.groupBy(res, 'kpiLabel')
         const groupByCi = _.groupBy(res, 'instanceLabel')
         const valueAxis = {

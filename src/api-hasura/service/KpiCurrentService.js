@@ -45,10 +45,10 @@ class KpiCurrentService extends BaseService {
    * 查询最新值
    * @param {Array<String>} selectedKpi 选中的 kpi
    * @param {Array<String>} selectedInstance 选中的 ci
-   * @param {Array<Moment>} timeRange 时间区间
+   * @param {Array<String>} timeRange 时间区间
    * @return {Promise<Array<any>>}
    */
-  static async getValue ({ selectedKpi = [], selectedInstance = [] }, { timeRangeStart, timeRangeEnd }) {
+  static async getValue ({ selectedKpi = [], selectedInstance = [] }, { timeRangeStart, timeRangeEnd } = {}) {
     const { _getKpiAndCiInfo, _composeKpiAndCi } = this
 
     const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
@@ -79,8 +79,8 @@ class KpiCurrentService extends BaseService {
             'ci_id',
             'kpi_code',
             'arising_time',
-            'kpi_value_num',
-            'kpi_value_txt'
+            'value: kpi_value_num'
+            // 'kpi_value_txt'
           ],
           alias: 'kpiValueList'
         })

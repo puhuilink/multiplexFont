@@ -36,6 +36,7 @@ export default class LineChart extends Chart {
 
     switch (sourceType) {
       case 'static': {
+        dbDataConfig.resetData()
         series = staticData.series.map((item) => {
           Object.assign(item, line)
           return item
@@ -71,6 +72,10 @@ export default class LineChart extends Chart {
       }
     }
 
-    return option
+    return Object.assign({}, option, {
+      tooltip: {
+        trigger: 'axis'
+      }
+    })
   }
 }

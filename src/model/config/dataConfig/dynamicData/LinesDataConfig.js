@@ -1,7 +1,7 @@
-import { getComponentValues } from '@/api/controller/View'
+// import { getComponentValues } from '@/api/controller/View'
 import { TimeRange } from './index'
 import _ from 'lodash'
-// import { KpiCurrentService } from '@/api-hasura'
+import { KpiCurrentService } from '@/api-hasura'
 
 const initialOption = {
   legend: {},
@@ -41,7 +41,8 @@ export default class LinesDataConfig {
         // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
         //   console.log('result', res)
         // })
-        const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
+        // const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
+        const res = await KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
         // console.log(
         //   res
         // )
@@ -51,6 +52,7 @@ export default class LinesDataConfig {
         // }
         const groupByKpi = _.groupBy(res, 'kpiLabel')
         const groupByCi = _.groupBy(res, 'instanceLabel')
+        const groupByTime = _.groupBy(res, 'arising_time')
         console.log(
           groupByKpi,
           groupByCi
@@ -60,11 +62,12 @@ export default class LinesDataConfig {
         }
         const categoryAxis = {
           type: 'category',
-          data: Object.keys(groupByKpi)
+          // data: Object.keys(groupByKpi)
+          data: Object.keys(groupByTime)
         }
 
         this.legend = {
-          data: Object.keys(_.groupBy(res, 'instanceLabel'))
+          data: Object.keys(groupByCi)
         }
         // TODO: 交换 x / y 轴配置实现 纵向 / 横向切换
         this.xAxis = categoryAxis
