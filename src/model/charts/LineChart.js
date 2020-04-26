@@ -52,7 +52,6 @@ export default class LineChart extends Chart {
       }
       case 'real': {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
-        console.log(dynamicData)
         series = dynamicData.series.map((item) => {
           return {
             ...item
@@ -64,6 +63,9 @@ export default class LineChart extends Chart {
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {
           legend: Object.assign(legend, dynamicLegend),
+          // legend: Object.assign(legend, {
+          //   data: ['折线图示例']
+          // }),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
           series
@@ -75,6 +77,15 @@ export default class LineChart extends Chart {
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis'
+        // formatter: function (params) {
+        //   // params = params[0];
+        //   // var date = new Date(params.name);
+        //   // return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+        //   return 'test'
+        // },
+        // axisPointer: { // 坐标轴指示器，坐标轴触发有效
+        //   type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        // }
       }
     })
   }

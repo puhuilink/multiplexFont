@@ -36,33 +36,19 @@ export default class LinesDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        // 没有记录时返回长度为0的数组
-        // 引入配置时，timeRange 未经实例化，可以直接调用静态方法获取时间段
+        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
         // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
         //   console.log('result', res)
         // })
         // const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
         const res = await KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-        // console.log(
-        //   res
-        // )
-        // const [data] = res
-        // return {
-        //   value: data ? data.value : 0
-        // }
-        const groupByKpi = _.groupBy(res, 'kpiLabel')
         const groupByCi = _.groupBy(res, 'instanceLabel')
         const groupByTime = _.groupBy(res, 'arising_time')
-        console.log(
-          groupByKpi,
-          groupByCi
-        )
         const valueAxis = {
           type: 'value'
         }
         const categoryAxis = {
           type: 'category',
-          // data: Object.keys(groupByKpi)
           data: Object.keys(groupByTime)
         }
 
@@ -74,7 +60,7 @@ export default class LinesDataConfig {
         this.yAxis = valueAxis
         this.series = Object.keys(groupByCi).map(key => ({
           type: 'line',
-          // name: key,
+          name: key,
           data: groupByCi[key].map(item => item ? item.value : 0)
         }))
       } catch (e) {
