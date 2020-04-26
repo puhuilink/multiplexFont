@@ -18,6 +18,7 @@ import ImageConfig from './charts/ImageConfig'
 import Gauge from './charts/Gauge'
 import DegreeRingConfig from './charts/DegreeRingConfig'
 import AlarmListConfig from './elements/AlarmListConfig'
+import TextHealthConfig from './charts/TextHealthConfig'
 
 // 图表模板配置
 const charts = {
@@ -31,7 +32,8 @@ const charts = {
   TriangleConfig,
   ImageConfig,
   Gauge,
-  DegreeRingConfig
+  DegreeRingConfig,
+  TextHealthConfig
 }
 
 // 元素模板配置

@@ -45,6 +45,9 @@ const charts = [
   },
   {
     category: 'CHART', type: 'DegreeRing', name: '环度', icon: 'info-circle', width: 300, height: 300
+  },
+  {
+    category: 'CHART', type: 'TextHealth', name: '文本健康度', icon: 'underline', width: 200, height: 100
   }
 ]
 
