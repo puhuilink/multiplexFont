@@ -59,7 +59,7 @@ export default class BarDataConfig {
       }
     }
     const { legend, xAxis, yAxis, series } = this
-    console.log({ legend, xAxis, yAxis, series })
+    // console.log({ legend, xAxis, yAxis, series })
     return _.cloneDeep({ legend, xAxis, yAxis, series })
   }
 
