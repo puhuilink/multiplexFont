@@ -36,6 +36,7 @@ class KpiCurrentService extends BaseService {
 
     // 组合返回体
   }
+
   /**
    * 获取一条或多条最新指标
    * @param {Array<Object>} argus 要获取指标的配置

@@ -127,13 +127,15 @@ class AreaStyle {
  * @param colorType 颜色类型 'default' | 'custom'
  */
 class BarItemStyle {
-  constructor ({
-    type = 'single',
-    colorType = 'default',
-    colorScheme = 'default',
-    color = 'rgba(7,171,253,1)',
-    barBorderRadius = [0, 0, 0, 0]
-  }) {
+  constructor (argus = {}) {
+    // 允许传入部分参数，未指定项赋予默认值
+    const { type, color, colorType, colorScheme, barBorderRadius } = Object.assign({}, {
+      type: 'single',
+      colorType: 'default',
+      colorScheme: 'default',
+      color: 'rgba(7,171,253,1)',
+      barBorderRadius: [0, 0, 0, 0]
+    }, argus)
     this.type = type
     this.colorType = colorType
     this.colorScheme = colorScheme

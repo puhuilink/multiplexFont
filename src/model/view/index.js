@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 
-import _ from 'lodash'
+// import _ from 'lodash'
 import uuid from 'uuid/v4'
 import Config from '../config'
 import { Range } from '../common'
