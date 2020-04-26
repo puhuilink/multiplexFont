@@ -34,17 +34,17 @@ export default class LinesDataConfig {
    * @returns {Promise<any>}
    */
   async getOption (loadingDynamicData) {
-    KpiCurrentService._getKpiAndCiInfo(this.resourceConfig).then(r => {
-      console.log('r', r)
-    })
     if (loadingDynamicData) {
       try {
         // 没有记录时返回长度为0的数组
         // 引入配置时，timeRange 未经实例化，可以直接调用静态方法获取时间段
+        KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
+          console.log('res', res)
+        })
         const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-        console.log(
-          res
-        )
+        // console.log(
+        //   res
+        // )
         // const [data] = res
         // return {
         //   value: data ? data.value : 0
