@@ -84,11 +84,14 @@ class BaseDao {
    * @param {Object} argus
    * @return {Promise<HasuraORM>}
    */
-  static async find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0 }) {
+  static async find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0, alias = '' }) {
     const hasuraORM = this._createHasuraORM()
     let chain = hasuraORM.where(where).orderBy(orderBy).select(fields)
     if (limit || offset) {
       chain = chain.paginate(limit, offset)
+    }
+    if (alias) {
+      chain = chain.alias(alias)
     }
     return chain
   }

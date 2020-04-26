@@ -25,7 +25,6 @@ export default class ChartProprietaryConfigFactory {
       case 'Lines':
         return new LinesProprietaryConfig(proprietaryConfig)
       case 'Bar':
-        console.log(proprietaryConfig)
         return new BarProprietaryConfig(proprietaryConfig)
       case 'Texts':
         return new TextsProprietaryConfig(proprietaryConfig)
