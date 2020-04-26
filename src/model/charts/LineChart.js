@@ -24,7 +24,7 @@ export default class LineChart extends Chart {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const { legend, xAxis, yAxis, ...options } = proprietaryConfig.getOption()
-    const { sourceType, staticDataConfig: { staticData } } = dataConfig
+    const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     const line = {
       type: 'line',
       ...options
@@ -50,12 +50,24 @@ export default class LineChart extends Chart {
         break
       }
       case 'real': {
-        if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getOption()
-          // Object.assign(data, dynamicData)
-          console.log('dynamicData', dynamicData)
-          break
-        }
+        const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
+        console.log(dynamicData)
+        series = dynamicData.series.map((item) => {
+          return {
+            ...item
+            // ...bar
+            // barWidth,
+            // stack: barType === 'single' ? '总量' : false
+          }
+        })
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        Object.assign(option, {
+          legend: Object.assign(legend, dynamicLegend),
+          xAxis: Object.assign(xAxis, dynamicXAxis),
+          yAxis: Object.assign(yAxis, dynamicYAxis),
+          series
+        })
+        break
       }
     }
 

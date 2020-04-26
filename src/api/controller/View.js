@@ -13,6 +13,7 @@ import {
   queryMaxDid
 } from '../graphql/View'
 import { axios } from '@/utils/request'
+// import { KpiCurrentService } from '@/api-hasura/index'
 
 export const fetchLastesdViewId = function () {
   return apollo.clients.alert.query({
@@ -181,6 +182,12 @@ export const updateViewDesign = async function (viewId, content) {
  * @return {Promise<any>}
  */
 const getKpiAndInstanceList = ({ selectedKpi: kpiCodeList, selectedInstance: instanceIdList }) => {
+  // KpiCurrentService._getKpiAndCiInfo({
+  //   selectedKpi: kpiCodeList,
+  //   selectedInstance: instanceIdList
+  // }).then(r => {
+  //   console.log('r', r)
+  // })
   return apollo.clients.resource.query({
     query: queryKpiAndInstanceInfo,
     variables: {
@@ -226,6 +233,7 @@ const getViewComponentKpiValueList = (option, timeRange) => {
     .then(r => r.data)
     .then(r => Object.values(r))
     .then(list => {
+      console.log(list)
       return list.map((item, index) => {
         // 当记录不存在时值为空，要为其设置默认值0，并绑定mapping关系（可以从请求参数中获取）
         // eslint-disable-next-line
@@ -261,6 +269,7 @@ export const getComponentValues = async (data, timeRange, limit) => {
     instanceList.forEach(({ label_s, _id_s }) => {
       instanceMap[_id_s] = label_s
     })
+    console.log(valueList, instanceMap)
     return valueList.map(value => ({
       ...value,
       kpiLabel: kpiMap[value.kpi_code],

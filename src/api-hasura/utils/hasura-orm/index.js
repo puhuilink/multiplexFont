@@ -19,7 +19,11 @@ const query = async function () {
   // TODO: provider检测
   const hasuraInstanceList = await Promise.all(Array.from(arguments))
   const [{ provider }] = hasuraInstanceList
-  const query = `query{ ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())} }`
+  const query = `query{ ${hasuraInstanceList.map(hasuraInstance => {
+    // console.log(hasuraInstance.parsed())
+    return hasuraInstance.parsed()
+  })} }`
+  console.log('query', query)
   return provider.query({ query: parse(query) })
 }
 

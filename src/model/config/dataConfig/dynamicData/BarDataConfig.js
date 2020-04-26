@@ -39,15 +39,13 @@ export default class BarDataConfig {
           type: 'category',
           data: Object.keys(groupByKpi)
         }
-        // 纵向 / 横向图
-        // const isVertical = false
-        const isVertical = true
 
         this.legend = {
           data: Object.keys(_.groupBy(res, 'instanceLabel'))
         }
-        this.xAxis = isVertical ? categoryAxis : valueAxis
-        this.yAxis = !isVertical ? categoryAxis : valueAxis
+        // TODO: 交换 x / y 轴配置实现 纵向 / 横向切换
+        this.xAxis = categoryAxis
+        this.yAxis = valueAxis
         this.series = Object.keys(groupByCi).map(key => ({
           type: 'bar',
           name: key,
@@ -59,7 +57,6 @@ export default class BarDataConfig {
       }
     }
     const { legend, xAxis, yAxis, series } = this
-    // console.log({ legend, xAxis, yAxis, series })
     return _.cloneDeep({ legend, xAxis, yAxis, series })
   }
 

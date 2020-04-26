@@ -22,17 +22,12 @@ class KpiCurrentService extends BaseService {
       })
     })
 
-    // 生成 ci 与 kpi 的基本信息的查询语句
-    const infoQueryList = await Promise.all([
-      ...selectedKpi.map(kpicode_s => InstanceValuesDao.find({ where: { kpicode_s }, fields: ['kpicode_s', 'label_s'] })),
-      ...selectedInstance.map(_id_s => InstanceDao.find({ where: { _id_s }, fields: ['_id_s', 'label_s'] }))
-    ])
-
     // 查询基本信息与指标值
-    await query(
-      ...infoQueryList,
-      ...composedValue.map(({ ci_id, kpi_code }) => KpiCurrentLastestDao.findLastestOne({ where: { ci_id, kpi_code }, fields: ['ci_id', 'kpi_code', 'kpi_value_num'] }))
+    const { data } = await query(
+      InstanceDao.find({ where: { _id_s: { _in: selectedInstance } }, fields: ['_id_s', 'label_s'], alias: 'ci' }),
+      InstanceValuesDao.find({ where: { kpicode_s: { _in: selectedKpi } }, fields: ['kpicode_s', 'label_s'], alias: 'kpi' })
     )
+    return data
 
     // 组合返回体
   }
