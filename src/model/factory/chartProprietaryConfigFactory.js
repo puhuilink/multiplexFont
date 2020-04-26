@@ -17,6 +17,7 @@ import CircleProprietaryConfig from '../config/proprietaryConfigs/CirclePropriet
 import TriangleChartProprietaryConfig from '../config/proprietaryConfigs/TriangleProprietaryConfig'
 import ImageProprietaryConfig from '../config/proprietaryConfigs/ImageProprietaryConfig'
 import GaugePropritaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
+import TextHealthProprietaryConfig from '../config/proprietaryConfigs/TextHealthProprietaryConfig'
 
 export default class ChartProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -46,6 +47,8 @@ export default class ChartProprietaryConfigFactory {
         return new DegreeRingProprietaryConfig(proprietaryConfig)
       case 'Gauge':
         return new GaugePropritaryConfig(proprietaryConfig)
+      case 'TextHealth':
+        return new TextHealthProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

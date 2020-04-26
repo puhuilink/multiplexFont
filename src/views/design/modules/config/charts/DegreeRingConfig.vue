@@ -211,7 +211,6 @@
 </template>
 
 <script>
-// FIXME: 目前只有静态数据
 import '@/assets/less/template.less'
 // import _ from 'lodash'
 import CommonTemplate from '../common'

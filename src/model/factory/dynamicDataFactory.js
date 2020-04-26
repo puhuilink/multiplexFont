@@ -8,6 +8,7 @@ import BarDataConfig from '../config/dataConfig/dynamicData/BarDataConfig'
 import DegreeDataConfig from '../config/dataConfig/dynamicData/DegreeRingDataConfig'
 import AlarmListDataConfig from '../config/dataConfig/dynamicData/AlarmListDataConfig'
 import LinesDataConfig from '../config/dataConfig/dynamicData/LinesDataConfig'
+import TextHealthDataConfig from '../config/dataConfig/dynamicData/TextHealthDataConfig'
 export default class DynamicDataFactory {
   static create (type, dbDataConfig) {
     switch (_.upperFirst(type)) {
@@ -23,6 +24,8 @@ export default class DynamicDataFactory {
         return
       case 'DegreeRing':
         return new DegreeDataConfig(dbDataConfig)
+      case 'TextHealth':
+        return new TextHealthDataConfig(dbDataConfig)
       default:
         console.log('unknown dbDataConfig type', type)
         // throw new Error('unknown type')

@@ -1,42 +1,37 @@
-/*
- * 环度部件对象
- */
-
+/**
+* 文本健康度chart配置
+*/
 import Chart from './index'
-// import echartsLiquidfill from 'echarts-liquidfill'
 
-export default class DegreeRingChart extends Chart {
+export default class TextsChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
   }
 
   /**
    * 映射成 echarts 配置项
-   * @param {Boolean} loadingDynamicData 是否请求动态数据
-   * @return {Promise<any>}
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { series } = proprietaryConfig.getOption()
+    const { title } = proprietaryConfig.getOption()
     const { sourceType } = dataConfig
 
-    // const [data] = series.data
     switch (sourceType) {
       case 'static': {
         const staticData = dataConfig.staticDataConfig.staticData
         // Object.assign(data, staticData)
-        series.label.formatter = staticData + ''
+        title.text = staticData + ''
         break
       }
       case 'real': {
         if (loadingDynamicData) {
           const dynamicData = await dataConfig.dbDataConfig.getOption()
           // Object.assign(data, dynamicData)
-          series.label.formatter = dynamicData + ''
+          title.text = dynamicData + ''
           break
         }
       }
     }
-    return { grid, series }
+    return { grid, title }
   }
 }
