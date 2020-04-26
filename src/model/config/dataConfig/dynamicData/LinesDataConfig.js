@@ -1,7 +1,7 @@
 import { getComponentValues } from '@/api/controller/View'
 import { TimeRange } from './index'
 import _ from 'lodash'
-import { KpiCurrentService } from '@/api-hasura'
+// import { KpiCurrentService } from '@/api-hasura'
 
 const initialOption = {
   legend: {},
@@ -38,9 +38,9 @@ export default class LinesDataConfig {
       try {
         // 没有记录时返回长度为0的数组
         // 引入配置时，timeRange 未经实例化，可以直接调用静态方法获取时间段
-        KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
-          console.log('res', res)
-        })
+        // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
+        //   console.log('result', res)
+        // })
         const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
         // console.log(
         //   res

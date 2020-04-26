@@ -24,8 +24,8 @@ class KpiCurrentService extends BaseService {
 
     // 构建 hash map
     return {
-      ci: new Map(ciList.map(ci => [ci._id_s, ci.label_s])),
-      kpi: new Map(kpiList.map(kpi => [kpi.kpicode_s, kpi.label_s]))
+      ci: new Map(ciList.map(ci => [`${ci._id_s}`, ci.label_s])),
+      kpi: new Map(kpiList.map(kpi => [`${kpi.kpicode_s}`, kpi.label_s]))
     }
 
     // 组合返回体
@@ -51,8 +51,6 @@ class KpiCurrentService extends BaseService {
   static async getValue ({ selectedKpi = [], selectedInstance = [] }, { timeRangeStart, timeRangeEnd }) {
     const { _getKpiAndCiInfo, _composeKpiAndCi } = this
 
-    // eslint-disable-next-line no-unused-vars
-    const { ci, kpi } = await _getKpiAndCiInfo(selectedKpi, selectedInstance)
     const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
 
     // 起始时间与结束时间不相同时，认为是按时间范围查找
@@ -66,26 +64,35 @@ class KpiCurrentService extends BaseService {
     // 存在时间范围从历史值中查找，反之从最新值查找
     const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
-    const { data: { kpiCurrentValue } } = await query(
-      dao.find({
-        where: {
-          _or: argus.map(({ ci_id, kpi_code }) => ({
-            ci_id: { _eq: ci_id },
-            kpi_code: { _eq: kpi_code },
-            ...timeRangeQuery
-          }))
-        },
-        fields: [
-          'ci_id',
-          'kpi_code',
-          'arising_time',
-          'kpi_value_num',
-          'kpi_value_txt'
-        ],
-        alias: 'kpiCurrentValue'
-      })
-    )
-    console.log('kpiCurrentValue', kpiCurrentValue)
+    const [{ ci, kpi }, { data: { kpiValueList } }] = await Promise.all([
+      _getKpiAndCiInfo(selectedKpi, selectedInstance),
+      query(
+        dao.find({
+          where: {
+            _or: argus.map(({ ci_id, kpi_code }) => ({
+              ci_id: { _eq: ci_id },
+              kpi_code: { _eq: kpi_code },
+              ...timeRangeQuery
+            }))
+          },
+          fields: [
+            'ci_id',
+            'kpi_code',
+            'arising_time',
+            'kpi_value_num',
+            'kpi_value_txt'
+          ],
+          alias: 'kpiValueList'
+        })
+      )
+    ])
+
+    // 拼接返回结果
+    return kpiValueList.map(kpiValue => ({
+      ...kpiValue,
+      kpiLabel: kpi.get(`${kpiValue.kpi_code}`),
+      instanceLabel: ci.get(`${kpiValue.ci_id}`)
+    }))
   }
 }
 
