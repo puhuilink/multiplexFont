@@ -159,6 +159,10 @@
         </div>
       </a-tab-pane>
 
+      <a-tab-pane tab="数据配置" key="3" forceRender>
+        <TextHealthDataSource />
+      </a-tab-pane>
+
     </a-tabs>
   </div>
 </template>
@@ -168,13 +172,15 @@ import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
+import TextHealthDataSource from '../dataSource/TextHealthDataSource'
 
 export default {
   name: 'TextHealthConfig',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
-    ColorPicker
+    ColorPicker,
+    TextHealthDataSource
   },
   methods: {
     positionChange () {
