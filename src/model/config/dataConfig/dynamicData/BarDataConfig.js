@@ -1,6 +1,13 @@
 import _ from 'lodash'
 import { getComponentValues } from '@/api/controller/View'
 
+const initialOption = {
+  legend: {},
+  xAxis: {},
+  yAxis: {},
+  series: []
+}
+
 export default class BarDataConfig {
   constructor ({
     resourceConfig = {
@@ -10,42 +17,53 @@ export default class BarDataConfig {
     }
   }) {
     this.resourceConfig = resourceConfig
+    this.resetData()
   }
 
   /**
    * 与静态数据保持一致的数据结构
+   * @param {Boolean} loadingDynamicData 是否请求动态数据
    * @returns {Promise<any>}
    */
-  async getOption () {
-    try {
-      // 拿到的数据是一条kpi与一条ci的搭配数组
-      const res = await getComponentValues(this.resourceConfig)
-      // 按 ci 进行分组
-      const groupedData = _.groupBy(res, 'instanceLabel')
-      // TODO: 单列 / 多列？
-      return {
-        legend: {},
-        xAxis: {
-          type: 'category',
-          data: Object.keys(groupedData)
-        },
-        yAxis: {
+  async getOption (loadingDynamicData) {
+    if (loadingDynamicData) {
+      try {
+        // 拿到的数据是一条kpi与一条ci的搭配数组
+        const res = await getComponentValues(this.resourceConfig)
+        const groupByKpi = _.groupBy(res, 'kpiLabel')
+        const groupByCi = _.groupBy(res, 'instanceLabel')
+        const valueAxis = {
           type: 'value'
-        },
-        singleSeries: Object.keys(groupedData).map(key => ({
+        }
+        const categoryAxis = {
+          type: 'category',
+          data: Object.keys(groupByKpi)
+        }
+        // 纵向 / 横向图
+        // const isVertical = false
+        const isVertical = true
+
+        this.legend = {
+          data: Object.keys(_.groupBy(res, 'instanceLabel'))
+        }
+        this.xAxis = isVertical ? categoryAxis : valueAxis
+        this.yAxis = !isVertical ? categoryAxis : valueAxis
+        this.series = Object.keys(groupByCi).map(key => ({
           type: 'bar',
-          stack: null,
           name: key,
-          data: groupedData[key].map(item => item ? item.value : 0)
+          data: groupByCi[key].map(item => item ? item.value : 0)
         }))
-      }
-    } catch (e) {
-      return {
-        legend: {},
-        xAxis: {},
-        yAxis: {},
-        singleSeries: []
+      } catch (e) {
+        this.resetData()
+        throw e
       }
     }
+    const { legend, xAxis, yAxis, series } = this
+    console.log({ legend, xAxis, yAxis, series })
+    return _.cloneDeep({ legend, xAxis, yAxis, series })
+  }
+
+  resetData () {
+    Object.assign(this, _.cloneDeep(initialOption))
   }
 }
