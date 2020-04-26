@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 import Chart from './index'
-import _ from 'lodash'
+// import _ from 'lodash'
 
 export default class BarChart extends Chart {
   constructor ({ widget }) {
@@ -19,7 +19,6 @@ export default class BarChart extends Chart {
    * @return {Promise<any>}
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
-    console.dir(this)
     const { grid } = commonConfig.getOption()
     const {
       barType, legend, barWidth, xAxis, yAxis,
@@ -27,11 +26,9 @@ export default class BarChart extends Chart {
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
 
-    let series = []
+    console.log(dbDataConfig.resetData)
 
-    console.log(
-      _.cloneDeep(proprietaryConfig.getOption())
-    )
+    let series = []
     // 总体配置
     const option = { color, grid, legend, series, xAxis: [xAxis], yAxis: [yAxis] }
 
@@ -43,6 +40,7 @@ export default class BarChart extends Chart {
 
     switch (sourceType) {
       case 'static': {
+        dbDataConfig.resetData()
         series = staticData[barType === 'single' ? 'singleSeries' : 'multipleSeries'].map((item) => {
           Object.assign(item, bar, { barWidth })
           return item
@@ -57,34 +55,36 @@ export default class BarChart extends Chart {
         break
       }
       case 'null': {
+        dbDataConfig.resetData()
         break
       }
       case 'real': {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
-        console.log(
-          _.cloneDeep(dynamicData),
-          loadingDynamicData
-        )
-        series = dynamicData.singleSeries.map((item) => {
-          Object.assign(item, bar, { barWidth })
-          return item
+        series = dynamicData.series.map((item) => {
+          return {
+            ...item,
+            ...bar,
+            barWidth,
+            stack: barType === 'single' ? '总量' : false
+          }
         })
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
-          series,
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: { // 坐标轴指示器，坐标轴触发有效
-              type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-            }
-          }
+          series
         })
         break
       }
     }
-    return Object.assign({}, option)
+    return Object.assign({}, option, {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        }
+      }
+    })
   }
 }

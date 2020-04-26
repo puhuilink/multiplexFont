@@ -5,8 +5,7 @@ const initialOption = {
   legend: {},
   xAxis: {},
   yAxis: {},
-  singleSeries: [],
-  multipleSeries: []
+  series: []
 }
 
 export default class BarDataConfig {
@@ -18,7 +17,7 @@ export default class BarDataConfig {
     }
   }) {
     this.resourceConfig = resourceConfig
-    Object.assign(this, _.cloneDeep(initialOption))
+    this.resetData()
   }
 
   /**
@@ -31,12 +30,10 @@ export default class BarDataConfig {
       try {
         // 拿到的数据是一条kpi与一条ci的搭配数组
         const res = await getComponentValues(this.resourceConfig)
-        console.log(res)
         // // 按 ci 进行分组
         // const groupedData = _.groupBy(res, 'instanceLabel')
         // 按 kpi 进行分组
         const groupedData = _.groupBy(res, 'kpiLabel')
-        // TODO: 单列 / 多列？
         const valueAxis = {
           type: 'value'
         }
@@ -47,26 +44,25 @@ export default class BarDataConfig {
         // 纵向 / 横向图
         // const isVertical = false
         const isVertical = true
-        // 是否堆叠
-        // const stack = false
-        const stack = '总量'
 
         this.legend = {}
         this.xAxis = isVertical ? categoryAxis : valueAxis
         this.yAxis = !isVertical ? categoryAxis : valueAxis
-        this.singleSeries = Object.keys(groupedData).map(key => ({
+        this.series = Object.keys(groupedData).map(key => ({
           type: 'bar',
-          stack: stack,
           name: key,
           data: groupedData[key].map(item => item ? item.value : 0)
         }))
-        this.multipleSeries = []
       } catch (e) {
-        Object.assign(this, _.cloneDeep(initialOption))
+        this.resetData()
         throw e
       }
     }
-    const { legend, xAxis, yAxis, singleSeries, multipleSeries } = this
-    return _.cloneDeep({ legend, xAxis, yAxis, singleSeries, multipleSeries })
+    const { legend, xAxis, yAxis, series } = this
+    return _.cloneDeep({ legend, xAxis, yAxis, series })
+  }
+
+  resetData () {
+    Object.assign(this, _.cloneDeep(initialOption))
   }
 }
