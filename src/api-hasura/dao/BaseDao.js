@@ -2,6 +2,8 @@ import HasuraORM, { query } from '../utils/hasura-orm/index'
 // import HasuraORM, { query } from '../utils/hasura-orm'
 import _ from 'lodash'
 class BaseDao {
+  static FIELDS_MAPPING = new Map()
+
   /**
    * 生成一个新的 hasuraORM 实例
    * @return {HasuraORM}
