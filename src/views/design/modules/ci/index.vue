@@ -35,7 +35,21 @@ export default {
     },
     async fetch ({ name_s }) {
       const data = await ViewDesignService.nodeByCi(name_s)
-      console.log(data)
+      if (data) {
+        // TODO: 其他属性引入
+        const { label_s, name_s, parentname_s, values: { icon_s } } = data
+        const option = {
+          // 显示名称
+          label_s,
+          // model
+          parentname_s,
+          // ci
+          name_s,
+          // icon
+          icon_s
+        }
+        console.log(option)
+      }
     }
   }
 }

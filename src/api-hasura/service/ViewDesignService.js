@@ -17,7 +17,8 @@ class ViewDesignService extends BaseService {
           'label_s',
           'name_s',
           '_id_s',
-          `instanceValues {
+          'parentname_s',
+          `values: instanceValues {
             icon_s
           }`
         ]
