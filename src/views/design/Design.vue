@@ -27,6 +27,7 @@
                 instanceList
                 hiddenTab
                 :rootKeys="['CommonCi']"
+                @select="onSelect"
               />
             </a-tab-pane>
           </a-tabs>
@@ -49,6 +50,7 @@ import Screen from './modules/screen/index'
 import Template from './modules/template/index'
 import Config from './modules/config/index'
 import { ResourceTree } from '@/components/Resource'
+import { InstanceService } from '@/api-hasura'
 
 export default {
   name: 'Design',
@@ -78,6 +80,16 @@ export default {
     },
     rightPanelControl (control) {
       this.rightPanelExpand = control
+    },
+    async onSelect ({ name_s }) {
+      const detail = await InstanceService.find({
+        where: { name_s },
+        fields: [
+          '_id_s',
+          'label_s'
+        ]
+      })
+      console.log(detail)
     }
   },
   beforeRouteLeave (to, from, next) {
