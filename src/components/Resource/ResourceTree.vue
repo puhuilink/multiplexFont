@@ -205,6 +205,10 @@ export default {
         await deleteModelList(nameList, didList)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
       } catch (e) {
         throw e
       } finally {
