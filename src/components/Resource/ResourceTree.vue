@@ -23,10 +23,12 @@
             height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
           }"
           defaultExpandAll
+          :draggable="draggable"
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
+          v-on="$listeners"
           @expand="expand"
           @select="select"
         />
@@ -114,6 +116,10 @@ export default {
     ResourceTreeNodeSchema
   },
   props: {
+    draggable: {
+      type: Boolean,
+      default: false
+    },
     // 隐藏分页
     hiddenTab: {
       type: Boolean,

@@ -23,12 +23,7 @@
             </a-tab-pane>
             <a-tab-pane tab="视图" key="2"></a-tab-pane>
             <a-tab-pane tab="CI" key="3">
-              <ResourceTree
-                instanceList
-                hiddenTab
-                :rootKeys="['CommonCi']"
-                @select="onSelect"
-              />
+              <Ci />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -49,8 +44,7 @@
 import Screen from './modules/screen/index'
 import Template from './modules/template/index'
 import Config from './modules/config/index'
-import { ResourceTree } from '@/components/Resource'
-import { InstanceService } from '@/api-hasura'
+import Ci from './modules/ci/index'
 
 export default {
   name: 'Design',
@@ -58,7 +52,7 @@ export default {
     Screen,
     Template,
     Config,
-    ResourceTree
+    Ci
   },
   data: () => ({
     // 左区域展开
@@ -80,16 +74,6 @@ export default {
     },
     rightPanelControl (control) {
       this.rightPanelExpand = control
-    },
-    async onSelect ({ name_s }) {
-      const detail = await InstanceService.find({
-        where: { name_s },
-        fields: [
-          '_id_s',
-          'label_s'
-        ]
-      })
-      console.log(detail)
     }
   },
   beforeRouteLeave (to, from, next) {

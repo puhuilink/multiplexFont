@@ -96,6 +96,7 @@ class BaseDao {
     return chain
   }
 
+  // FIXME: findOne 异常
   /**
    * 查询一条数据
    * @param {Object} argus
