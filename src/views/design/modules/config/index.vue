@@ -62,7 +62,8 @@ export default {
       ['Gauge', 'Gauge'],
       ['DegreeRing', 'DegreeRingConfig'],
       ['AlarmList', 'AlarmListConfig'],
-      ['TextHealth', 'TextHealthConfig']
+      ['TextHealth', 'TextHealthConfig'],
+      ['List', 'ListConfig']
     ])
   }),
   computed: {

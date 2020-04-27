@@ -7,13 +7,16 @@
 */
 
 import AlarmListElement from './AlarmListElement'
+import ListElement from './ListElement.vue'
 
 const ELEMENTMAPPING = new Map([
-  ['AlarmList', 'AlarmListElement']
+  ['AlarmList', 'AlarmListElement'],
+  ['List', 'ListElement']
 ])
 
 const ELEMENTS = {
-  AlarmListElement
+  AlarmListElement,
+  ListElement
 }
 
 export {
