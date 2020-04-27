@@ -1,7 +1,13 @@
 import { UserService } from './UserService'
 import { ModelService } from './ModelService'
+import { KpiCurrentService } from './KpiCurrentService'
+import { InstanceService } from './InstanceService'
+import { ViewDesignService } from './ViewDesignService'
 
 export {
   UserService,
-  ModelService
+  ModelService,
+  KpiCurrentService,
+  InstanceService,
+  ViewDesignService
 }

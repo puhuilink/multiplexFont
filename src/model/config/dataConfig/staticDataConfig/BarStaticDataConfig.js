@@ -82,8 +82,11 @@ export default class BarStaticDataConfig {
    * @returns {string}
    */
   getCode (barType) {
-    const originalSource = _.omit(_.cloneDeep(this.staticData), ['singleSeries', 'multipleSeries'])
-    const series = barType === 'single' ? _.cloneDeep(this.staticData.singleSeries) : _.cloneDeep(this.staticData.multipleSeries)
+    const { staticData } = this
+    const { singleSeries, multipleSeries } = staticData
+    // 单列多列、是否堆叠、样式等配置从属性配置页面设置
+    const originalSource = _.omit(_.cloneDeep(staticData), ['singleSeries', 'multipleSeries'])
+    const series = _.cloneDeep(barType === 'single' ? singleSeries : multipleSeries).map(el => _.omit(el, ['stack', 'itemStyle', 'barWidth']))
     Object.assign(originalSource, { series })
     return JSON.stringify(originalSource, null, '\t')
   }

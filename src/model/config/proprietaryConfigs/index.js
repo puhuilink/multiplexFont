@@ -127,13 +127,15 @@ class AreaStyle {
  * @param colorType 颜色类型 'default' | 'custom'
  */
 class BarItemStyle {
-  constructor ({
-    type = 'single',
-    colorType = 'default',
-    colorScheme = 'default',
-    color = 'rgba(7,171,253,1)',
-    barBorderRadius = [0, 0, 0, 0]
-  }) {
+  constructor (argus = {}) {
+    // 允许传入部分参数，未指定项赋予默认值
+    const { type, color, colorType, colorScheme, barBorderRadius } = Object.assign({}, {
+      type: 'single',
+      colorType: 'default',
+      colorScheme: 'default',
+      color: 'rgba(7,171,253,1)',
+      barBorderRadius: [0, 0, 0, 0]
+    }, argus)
     this.type = type
     this.colorType = colorType
     this.colorScheme = colorScheme
@@ -913,6 +915,21 @@ class AlarmListProps {
   }
 }
 
+/**
+ * 列表 props 配置
+ */
+class ListProps {
+  constructor ({
+    // 接口参数对象
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
+  }) {
+    this.params = params
+    this.isCallInterface = isCallInterface
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
@@ -930,5 +947,6 @@ export {
   CircleGraphic,
   TriangleGraphic,
   ImageGraphic,
-  AlarmListProps
+  AlarmListProps,
+  ListProps
 }

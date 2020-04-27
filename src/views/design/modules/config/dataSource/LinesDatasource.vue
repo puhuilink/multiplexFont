@@ -2,7 +2,7 @@
   <DataSourceTemplate>
     <template #real>
       <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-        <a-button :disabled="!available" @click="change(true)">预览</a-button>
+        <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button>
       </a-tooltip>
 
       <a-form-item

@@ -37,7 +37,6 @@ export default class DegreeRingChart extends Chart {
         }
       }
     }
-    console.log()
     return { grid, series }
   }
 }
