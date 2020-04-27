@@ -6,59 +6,93 @@ import {
 } from '../dao/index'
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
+import _ from 'lodash'
 
 class KpiCurrentService extends BaseService {
   /**
    * 获取选中的 ci 与 kpi 的基本信息
-   * @param {{Object}} param0
-   * @return {Promise<Array<HasuraORM>>}
+   * @param {Array<String>} selectedKpi 选中的 kpi
+   * @param {Array<String>} selectedInstance 选中的 ci
+   * @return {Promise<Object>}
    */
-  static async _getKpiAndCiInfo ({ selectedKpi = [], selectedInstance = [] }) {
-    // 将 ci 与 kpi 一一组合
+  static async _getKpiAndCiInfo (selectedKpi = [], selectedInstance = []) {
+    // 查询基本信息与指标值
+    const { data: { ciList, kpiList } } = await query(
+      InstanceDao.find({ where: { _id_s: { _in: selectedInstance } }, fields: ['_id_s', 'label_s'], alias: 'ciList' }),
+      InstanceValuesDao.find({ where: { kpicode_s: { _in: selectedKpi } }, fields: ['kpicode_s', 'label_s'], alias: 'kpiList' })
+    )
+
+    // 构建 hash map
+    return {
+      ci: new Map(ciList.map(ci => [`${ci._id_s}`, ci.label_s])),
+      kpi: new Map(kpiList.map(kpi => [`${kpi.kpicode_s}`, kpi.label_s]))
+    }
+
+    // 组合返回体
+  }
+
+  static _composeKpiAndCi (selectedKpi = [], selectedInstance = []) {
     const composedValue = []
     selectedInstance.forEach(ci_id => {
       selectedKpi.forEach(kpi_code => {
         composedValue.push({ kpi_code, ci_id })
       })
     })
+    return composedValue
+  }
 
-    // 生成 ci 与 kpi 的基本信息的查询语句
-    const infoQueryList = await Promise.all([
-      ...selectedKpi.map(kpicode_s => InstanceValuesDao.find({ where: { kpicode_s }, fields: ['kpicode_s', 'label_s'] })),
-      ...selectedInstance.map(_id_s => InstanceDao.find({ where: { _id_s }, fields: ['_id_s', 'label_s'] }))
+  /**
+   * 查询最新值
+   * @param {Array<String>} selectedKpi 选中的 kpi
+   * @param {Array<String>} selectedInstance 选中的 ci
+   * @param {Array<String>} timeRange 时间区间
+   * @return {Promise<Array<any>>}
+   */
+  static async getValue ({ selectedKpi = [], selectedInstance = [] }, { timeRangeStart, timeRangeEnd } = {}) {
+    const { _getKpiAndCiInfo, _composeKpiAndCi } = this
+
+    const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
+
+    // 起始时间与结束时间不相同时，认为是按时间范围查找
+    const timeRangeQuery = (timeRangeStart && timeRangeStart !== timeRangeEnd) ? {
+      arising_time: {
+        _gte: `"${timeRangeStart}"`,
+        _lte: `"${timeRangeEnd}"`
+      }
+    } : {}
+
+    // 存在时间范围从历史值中查找，反之从最新值查找
+    const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
+
+    const [{ ci, kpi }, { data: { kpiValueList } }] = await Promise.all([
+      _getKpiAndCiInfo(selectedKpi, selectedInstance),
+      query(
+        dao.find({
+          where: {
+            _or: argus.map(({ ci_id, kpi_code }) => ({
+              ci_id: { _eq: ci_id },
+              kpi_code: { _eq: kpi_code },
+              ...timeRangeQuery
+            }))
+          },
+          fields: [
+            'ci_id',
+            'kpi_code',
+            'arising_time',
+            'value: kpi_value_num'
+            // 'kpi_value_txt'
+          ],
+          alias: 'kpiValueList'
+        })
+      )
     ])
 
-    // 查询基本信息与指标值
-    await query(
-      ...infoQueryList,
-      ...composedValue.map(({ ci_id, kpi_code }) => KpiCurrentLastestDao.findLastestOne({ where: { ci_id, kpi_code }, fields: ['ci_id', 'kpi_code', 'kpi_value_num'] }))
-    )
-
-    // 组合返回体
-  }
-
-  /**
-   * 获取一条或多条最新指标
-   * @param {Array<Object>} argus 要获取指标的配置
-   * @return {Promise<any>}
-   */
-  static async latestValue (argus = []) {
-    await query(
-      ...argus.map(({ ci_id, kpi_code }) => KpiCurrentLastestDao.findLastestOne({ where: { ci_id, kpi_code }, fields: ['ci_id', 'kpi_code', 'kpi_value_num'] }))
-    )
-  }
-
-  /**
-   * 获取一条或多条历史指标
-   * @param {Array<Object>} argus 要获取指标的配置
-   * @return {Promise<any>}
-   */
-  static async historyValue (argus = []) {
-    await query(
-      ...argus.map(({ ci_id, kpi_code }) => KpiCurrentHistoryDao.find({
-        where: { ci_id, kpi_code }
-      }))
-    )
+    // 拼接返回结果
+    return kpiValueList.map(kpiValue => ({
+      ...kpiValue,
+      kpiLabel: kpi.get(`${kpiValue.kpi_code}`),
+      instanceLabel: ci.get(`${kpiValue.ci_id}`)
+    }))
   }
 }
 

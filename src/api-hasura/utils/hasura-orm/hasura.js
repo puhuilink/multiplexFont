@@ -16,15 +16,19 @@ export default class Hasura {
     this._with = _with
     this._fields = _fields
     this._schemaArguments = _schemaArguments
+    // TODO: alias 放置于构造函数
+    this._alias = ''
   }
   get schemaArguments () {
     return stringify(this._schemaArguments)
   }
   select (fields) {
     if (Array.isArray(fields)) {
-      this._fields += ' ' + fields.join(',').replace(/,/g, ' ')
+      this._fields = fields.join(',').replace(/,/g, ' ')
+      // this._fields += ' ' + fields.join(',').replace(/,/g, ' ')
     } else {
-      this._fields += ' ' + fields.replace(/,/g, ' ')
+      this._fields = fields.replace(/,/g, ' ')
+      // this._fields += ' ' + fields.replace(/,/g, ' ')
     }
     return this
   }

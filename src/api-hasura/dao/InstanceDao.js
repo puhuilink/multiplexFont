@@ -1,5 +1,5 @@
 import { BaseDao } from './BaseDao'
-import { alert } from '../config/client'
+import { resource } from '../config/client'
 // eslint-disable-next-line no-unused-vars
 import { override, readonly } from 'core-decorators'
 
@@ -7,7 +7,7 @@ class InstanceDao extends BaseDao {
   @readonly
   static SCHEMA = 'ngecc_instance'
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = resource
 
   @readonly
   static FIELDS_MAPPING = new Map([

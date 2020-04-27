@@ -1,5 +1,6 @@
 import { BaseDao } from './BaseDao'
 import { alert } from '../config/client'
+// eslint-disable-next-line no-unused-vars
 import { override, readonly } from 'core-decorators'
 
 class KpiCurrentDao extends BaseDao {
@@ -15,10 +16,10 @@ class KpiCurrentDao extends BaseDao {
     ['kpi_value_num', 'kpi_value_num']
   ])
 
-  @override
-  static async find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0 }) {
-    await super.find({ where })
-  }
+  // @override
+  // static async find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0 }) {
+  //   await super.find({ where })
+  // }
 
   static async findLastestOne (argus = {}) {
     await this.findOne({ ...argus, orderBy: { arising_time: 'desc_nulls_last' } })

@@ -24,7 +24,7 @@ export default class LineChart extends Chart {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const { legend, xAxis, yAxis, ...options } = proprietaryConfig.getOption()
-    const { sourceType, staticDataConfig: { staticData } } = dataConfig
+    const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     const line = {
       type: 'line',
       ...options
@@ -36,6 +36,7 @@ export default class LineChart extends Chart {
 
     switch (sourceType) {
       case 'static': {
+        dbDataConfig.resetData()
         series = staticData.series.map((item) => {
           Object.assign(item, line)
           return item
@@ -50,15 +51,42 @@ export default class LineChart extends Chart {
         break
       }
       case 'real': {
-        if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getOption()
-          // Object.assign(data, dynamicData)
-          console.log('dynamicData', dynamicData)
-          break
-        }
+        const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
+        series = dynamicData.series.map((item) => {
+          return {
+            ...item
+            // ...bar
+            // barWidth,
+            // stack: barType === 'single' ? '总量' : false
+          }
+        })
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        Object.assign(option, {
+          legend: Object.assign(legend, dynamicLegend),
+          // legend: Object.assign(legend, {
+          //   data: ['折线图示例']
+          // }),
+          xAxis: Object.assign(xAxis, dynamicXAxis),
+          yAxis: Object.assign(yAxis, dynamicYAxis),
+          series
+        })
+        break
       }
     }
 
-    return option
+    return Object.assign({}, option, {
+      tooltip: {
+        trigger: 'axis'
+        // formatter: function (params) {
+        //   // params = params[0];
+        //   // var date = new Date(params.name);
+        //   // return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+        //   return 'test'
+        // },
+        // axisPointer: { // 坐标轴指示器，坐标轴触发有效
+        //   type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        // }
+      }
+    })
   }
 }

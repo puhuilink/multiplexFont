@@ -1,14 +1,14 @@
 import { BaseDao } from './BaseDao'
-import { alert } from '../config/client'
+import { resource } from '../config/client'
 // eslint-disable-next-line no-unused-vars
 import { override, readonly } from 'core-decorators'
 
 class InstanceValuesDao extends BaseDao {
   @readonly
-  static SCHEMA = 'ngecc_instance'
+  static SCHEMA = 'ngecc_instance_values'
 
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = resource
 
   @readonly
   static UNIQUE_FIELDS = ['kpicode_s']
