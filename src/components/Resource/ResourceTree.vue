@@ -119,11 +119,12 @@ export default {
       type: Boolean,
       default: false
     },
-    // 统计节点下的实例列表数量
+    // 将其实例也构建到树中
     instanceList: {
       type: Boolean,
       default: false
     },
+    // TODO: instanceListCount
     // 根节点
     rootKeys: {
       type: Array,
