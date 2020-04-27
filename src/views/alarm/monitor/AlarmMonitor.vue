@@ -264,9 +264,9 @@
       <!-- E 表格右击菜单 -->
 
       <!-- S model模块 -->
-      <m-confirm ref="confirm" @ok="() => $refs['table'].refresh(true)"></m-confirm>
-      <roll-forward ref="rollForward" @ok="() => $refs['table'].refresh(true)"></roll-forward>
-      <m-solve ref="resolve" @ok="() => $refs['table'].refresh(true)"></m-solve>
+      <m-confirm ref="confirm" @ok="query()"></m-confirm>
+      <roll-forward ref="rollForward" @ok="query()"></roll-forward>
+      <m-solve ref="resolve" @ok="query()"></m-solve>
       <m-detail
         ref="detail"
         @handleForward="$refs.rollForward.open()"
@@ -666,6 +666,7 @@ export default {
       this.queryList.CIInstance = await queryList.nodeList(value)
     },
     query () {
+      this.getLevelList()
       this.$refs['table'].refresh(true)
     },
     /**
