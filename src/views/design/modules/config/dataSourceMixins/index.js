@@ -21,7 +21,8 @@ export default {
     timeRangeSelectOptions: timeRangeSelectOptions.map(el => ({
       ...el,
       value: JSON.stringify(el.value)
-    }))
+    })),
+    btnLoading: false
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
@@ -93,16 +94,21 @@ export default {
     ...mapMutations('screen', {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
-    change (loadingDynamicData = false) {
+    async change (loadingDynamicData = false) {
+      this.btnLoading = true
       const activeWidget = _.cloneDeep(this.activeWidget)
       const { render } = this.activeWidget
+      // 设置当前选中不见
       this.activateWidget({
         widget: Object.assign(activeWidget, { config: this.config })
       })
-      this.$nextTick(() => {
-        // 调整数据源过程中不需要反复刷新数据，只有显式要求刷新时再主动刷新
-        loadingDynamicData && render.mergeOption(this.config, loadingDynamicData)
+      await this.$nextTick()
+      // 此处可能会改变数据，需要再次提交 vuex
+      await render.mergeOption(this.config, loadingDynamicData)
+      this.activateWidget({
+        widget: Object.assign(activeWidget, { config: this.config })
       })
+      this.btnLoading = false
     }
   }
 }

@@ -67,9 +67,9 @@
         <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
       </span>
 
-      <span slot="viewName" slot-scope="text">
+      <!-- <span slot="viewName" slot-scope="text">
         <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
-      </span>
+      </span> -->
 
       <span slot="img" slot-scope="text">
         <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
@@ -147,13 +147,13 @@ export default {
           width: 300,
           scopedSlots: { customRender: 'viewTitle' }
         },
-        {
-          title: '视图名称',
-          dataIndex: 'view_name',
-          sorter: true,
-          width: 300,
-          scopedSlots: { customRender: 'viewName' }
-        },
+        // {
+        //   title: '视图名称',
+        //   dataIndex: 'view_name',
+        //   sorter: true,
+        //   width: 300,
+        //   scopedSlots: { customRender: 'viewName' }
+        // },
         {
           title: '视图创建者',
           dataIndex: 'creator',
@@ -209,7 +209,10 @@ export default {
             _eq: 'h5'
           }
         }
-      }).then(r => r.data)
+      }).then(r => {
+        console.log(r)
+        return r.data
+      })
     },
     /**
      * 筛选展开开关

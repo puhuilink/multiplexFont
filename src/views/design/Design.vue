@@ -17,12 +17,14 @@
     <div class="content">
       <transition name="panel">
         <div class="left" v-show="leftPanelExpand">
-          <a-tabs defaultActiveKey="1">
+          <a-tabs defaultActiveKey="3">
             <a-tab-pane tab="组件库" key="1">
               <Template />
             </a-tab-pane>
             <a-tab-pane tab="视图" key="2"></a-tab-pane>
-            <a-tab-pane tab="CI" key="3"></a-tab-pane>
+            <a-tab-pane tab="CI" key="3">
+              <Ci />
+            </a-tab-pane>
           </a-tabs>
         </div>
       </transition>
@@ -42,13 +44,15 @@
 import Screen from './modules/screen/index'
 import Template from './modules/template/index'
 import Config from './modules/config/index'
+import Ci from './modules/ci/index'
 
 export default {
   name: 'Design',
   components: {
     Screen,
     Template,
-    Config
+    Config,
+    Ci
   },
   data: () => ({
     // 左区域展开

@@ -16,6 +16,7 @@ import TriangleChart from '../charts/TriangleChart'
 import ImageChart from '../charts/ImageChart'
 import GaugeChart from '../charts/GaugeChart'
 import DegreeRingChart from '../charts/DegreeRingChart'
+import TextHealthChart from '../charts/TextHealthChart'
 
 export default class ChartFactory {
   static create (type, { widget }) {
@@ -42,6 +43,8 @@ export default class ChartFactory {
         return new GaugeChart({ widget })
       case 'DegreeRing':
         return new DegreeRingChart({ widget })
+      case 'TextHealth':
+        return new TextHealthChart({ widget })
       default:
         return null
     }

@@ -326,7 +326,7 @@ export default {
       try {
         this.$refs['table'].loading = true
         const [record] = this.selectedRows
-        apollo.clients.alert.mutate({
+        await apollo.clients.alert.mutate({
           mutation: updateGroupFlag,
           variables: {
             groupId: record.group_id,

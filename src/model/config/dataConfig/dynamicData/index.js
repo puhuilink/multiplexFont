@@ -44,6 +44,14 @@ export const timeRangeSelectOptions = [
   {
     name: '最近2周',
     value: Object.assign({}, defaultTimeStart, { weeks: '-2' })
+  },
+  {
+    name: '最近1月',
+    value: Object.assign({}, defaultTimeStart, { months: '-1' })
+  },
+  {
+    name: '最近2月',
+    value: Object.assign({}, defaultTimeStart, { months: '-2' })
   }
 ]
 

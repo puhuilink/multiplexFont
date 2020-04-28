@@ -16,6 +16,21 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
+            label="显示名称"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-input
+              v-decorator="[
+                'label_s',
+                { rules: [{ required: true, message: '显示名称必填' }] },
+              ]"
+            />
+          </a-form-item>
+        </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
             label="名称"
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
@@ -25,21 +40,6 @@
               v-decorator="[
                 'name_s',
                 { rules: [{ required: true, message: '名称必填' }] },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="显示名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'label_s',
-                { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />
           </a-form-item>
@@ -135,7 +135,9 @@
 </template>
 
 <script>
-import { editModel, addModel } from '@/api/controller/Resource'
+// eslint-disable-next-line no-unused-vars
+import { addModel } from '@/api/controller/Resource'
+import { ModelService } from '@/api-hasura'
 
 const formItemLayout = {
   labelCol: {
@@ -205,48 +207,62 @@ export default {
       this.visible = false
     },
     async insert () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await addModel({
-          ...values,
-          parentname_s: this.parentName,
-          parenttree_s: this.parentTree
-        })
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.$emit('addSuccess')
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          // await addModel({
+          //   ...values,
+          //   parentname_s: this.parentName,
+          //   parenttree_s: this.parentTree
+          // })
+          await ModelService.add({
+            ...values,
+            parentname_s: this.parentName,
+            parenttree_s: this.parentTree
+          })
+          this.$notification.success({
+            message: '系统提示',
+            description: '新建成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
+      })
     },
     async update () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await editModel(this.record.did, values)
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.$emit('editSuccess')
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          // await editModel(this.record.did, values)
+          await ModelService.update(
+            values,
+            { did: this.record.did }
+          )
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.$emit('editSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
       })
     },
     reset () {

@@ -112,6 +112,7 @@
           >
             <a-select
               mode="multiple"
+              :maxTagCount="2"
               v-decorator="[
                 'target',
                 { rules: [{
@@ -135,7 +136,7 @@
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
           >
-            <a-textarea placeholder="请输入描述" :rows="4" v-decorator="['content']"/>
+            <a-textarea placeholder="请输入描述" :rows="4" v-decorator="['content']" :maxLength="500"/>
           </a-form-item>
         </a-form>
       </a-spin>

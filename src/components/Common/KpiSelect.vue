@@ -1,6 +1,8 @@
 <template>
   <div class="KpiSelect">
     <a-select
+      showSearch
+      :filterOption="filterOption"
       :labelInValue="labelInValue"
       :mode="multiple ? 'multiple' : 'default'"
       allowClear
@@ -97,6 +99,11 @@ export default {
     handleChange (value) {
       // console.log(value)
       this._value = value
+    },
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
     }
   }
 }

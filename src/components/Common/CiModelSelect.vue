@@ -86,7 +86,7 @@ export default {
     select (value) {
       const { key } = arguments[1].data
       const label = key.split('-').pop()
-      console.log(label)
+      // console.log(label)
       // antd 提供了 labelInValue 属性来抛出 label，但这也改变了 value 传值的结构
       // 此处在绑定 key 时记录了 label
       this.$emit('input:label', label)
