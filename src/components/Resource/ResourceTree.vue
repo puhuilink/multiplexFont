@@ -72,10 +72,6 @@ export default {
     ResourceTreeNodeSchema
   },
   props: {
-    defauleExpandDepth: {
-      type: Number,
-      default: 2
-    },
     draggable: {
       type: Boolean,
       default: false
@@ -239,7 +235,11 @@ export default {
   },
   async created () {
     await this.fetch()
-    // TODO: defauleExpandDepth
+    await this.$nextTick()
+    // 默认展开一层
+    // TODO: 支持 props 指定默认展开层级
+    const expandedKeys = this.treeData.map(el => el.key)
+    this.expandedKeys = expandedKeys
   }
 }
 </script>
