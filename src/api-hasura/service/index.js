@@ -6,6 +6,7 @@ import { ViewDesignService } from './ViewDesignService'
 import { AuditService } from './AuditService'
 import { OperationLogService } from './OperationLogService'
 import { ModelHistoryService } from './ModelHistoryService'
+import { InstanceHistoryService } from './InstanceHistoryService'
 
 export {
   UserService,
@@ -15,5 +16,6 @@ export {
   ViewDesignService,
   AuditService,
   OperationLogService,
-  ModelHistoryService
+  ModelHistoryService,
+  InstanceHistoryService
 }

@@ -14,7 +14,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import { ModelHistoryService } from '@/api-hasura'
+import { InstanceHistoryService } from '@/api-hasura'
 
 export default {
   name: 'ResourceInstanceVersionList',
@@ -91,7 +91,7 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      return ModelHistoryService.find({
+      return InstanceHistoryService.find({
         ...parameter,
         where: {
           ...this.where

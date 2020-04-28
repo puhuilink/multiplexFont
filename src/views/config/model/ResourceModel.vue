@@ -47,17 +47,17 @@
             />
           </a-tab-pane>
 
-          <!-- <a-tab-pane tab="版本" key="4" forceRender>
+          <a-tab-pane tab="版本" key="4" forceRender>
             <ResourceModelVersionList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
+                parentName: {
                   _eq: selectedNode.name
                 }
               }"
             />
-          </a-tab-pane> -->
+          </a-tab-pane>
         </a-tabs>
       </a-col>
 
