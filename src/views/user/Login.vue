@@ -165,7 +165,10 @@
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
-// import { getSmsCaptcha, get2step } from '@/api/login'
+import CryptoJS, { AES } from 'crypto-js'
+import { sendCaptcha } from '@/api/login'
+
+const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
 export default {
   components: {
@@ -181,6 +184,7 @@ export default {
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
+      captcha: null,
       state: {
         time: 60,
         loginBtn: false,
@@ -236,17 +240,23 @@ export default {
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           // console.log('login form', values)
+          // eslint-disable-next-line no-undef
           const loginParams = { ...values }
-          delete loginParams.userId
-          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-          // loginParams.pwd = md5(values.pwd)
-          loginParams.pwd = values.pwd
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
+          if (loginParams.captcha === this.captcha) {
+            delete loginParams.userId
+            loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+            // loginParams.pwd = md5(values.pwd)
+            loginParams.pwd = values.pwd
+            Login(loginParams)
+              .then((res) => this.loginSuccess(res))
+              .catch(err => this.requestFailed(err))
+              .finally(() => {
+                state.loginBtn = false
+              })
+          } else {
+            state.loginBtn = false
+            this.$message.error('验证码错误，请重新填写！')
+          }
         } else {
           setTimeout(() => {
             state.loginBtn = false
@@ -260,8 +270,20 @@ export default {
 
       validateFields(['mobile'], { force: true }, (err, values) => {
         if (!err) {
-          state.smsSendBtn = true
+          this.captcha = new Array(6)
+            .fill('')
+            .map(() => (Math.random() * 9).toFixed())
+            .join('')
+          const message = {
+            mobile: values.mobile,
+            content: `【中国交建】 验证码 ${this.captcha}，您正在登陆中国交建统一监控管理平台，请确认。`
+          }
+          const securityMessage = AES.encrypt(JSON.stringify(message), key, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7
+          }).toString()
 
+          state.smsSendBtn = true
           const interval = window.setInterval(() => {
             if (state.time-- <= 0) {
               state.time = 60
@@ -270,21 +292,17 @@ export default {
             }
           }, 1000)
 
-          // const hide = this.$message.loading('验证码发送中..', 0)
-          // getSmsCaptcha({ mobile: values.mobile }).then(res => {
-          //   setTimeout(hide, 2500)
-          //   this.$notification['success']({
-          //     message: '提示',
-          //     description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-          //     duration: 8
-          //   })
-          // }).catch(err => {
-          //   setTimeout(hide, 1)
-          //   clearInterval(interval)
-          //   state.time = 60
-          //   state.smsSendBtn = false
-          //   this.requestFailed(err)
-          // })
+          sendCaptcha(securityMessage)
+            .then(() => {
+              this.$message.success('短信已发送！')
+            })
+            .catch(e => {
+              this.$message.error('短信发送异常，请稍后尝试!')
+              state.time = 60
+              state.smsSendBtn = false
+              window.clearInterval(interval)
+              throw e
+            })
         }
       })
     },
