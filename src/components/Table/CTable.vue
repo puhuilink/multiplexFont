@@ -57,12 +57,36 @@ export default {
       'CTable-operation': true,
       'CTable-operation_hidden': !this.$slots.operation
     }}>{ this.$slots ? this.$slots.operation : '' }</div>
+
+    // TODO: 列溢出自动 tooltip
+    // const { columns: propsColumns } = this.$attrs
+    // const columns = propsColumns.map(({ customRender, width, ...column }) => ({
+    //   ...column,
+    //   width,
+    //   customRender: customRender || (text => {
+    //     // console.log(text)
+    //     if (typeof text === 'string' && width) {
+    //       const length = Math.round(width / 14)
+    //       if (text.length < length) {
+    //         return text
+    //       }
+    //       return h('a-tooltip', {
+    //         props: {
+    //           title: text
+    //         }
+    //       }, [text.slice(0, length) + '...'])
+    //     }
+    //     return text
+    //   })
+    // }))
+
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',
       props: {
         ...this.$props,
         ...this.$attrs,
+        // columns,
         pageSize: this.pagination.pageSize
       },
       on: {
