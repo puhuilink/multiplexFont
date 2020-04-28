@@ -221,6 +221,7 @@ export default {
       return apollo.clients.alert.query({
         query,
         variables: {
+          orderBy: { operation_time: 'desc' },
           ...parameter,
           where: {
             ...generateQuery(this.queryParams)
