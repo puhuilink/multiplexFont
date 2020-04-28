@@ -11,9 +11,9 @@
       </a-col>
 
       <!-- / content -->
-      <!-- <a-col :xl="18" :xxl="20">
+      <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
-          <a-tab-pane tab="属性列表" key="1" forceRender>
+          <!-- <a-tab-pane tab="属性列表" key="1" forceRender>
             <ResourceModelAttrList
               v-if="selectedNode"
               class="ResourceInstance-table"
@@ -28,19 +28,19 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{ source_s: {
-                _eq: selectedNode.name_s
+                _eq: selectedNode.name
               } }"
             />
-          </a-tab-pane>
+          </a-tab-pane> -->
           <a-tab-pane tab="操作日志" key="3" forceRender>
             <OperationLogList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                modelname_s: {
-                  _eq: selectedNode.name_s
+                modelName: {
+                  _eq: selectedNode.name
                 },
-                operationtype_s: {
+                operationType: {
                   _eq: 'model'
                 }
               }"
@@ -53,13 +53,13 @@
               class="ResourceInstance-table"
               :where="{
                 parentname_s: {
-                  _eq: selectedNode.name_s
+                  _eq: selectedNode.name
                 }
               }"
             />
           </a-tab-pane>
         </a-tabs>
-      </a-col> -->
+      </a-col>
 
     </a-row>
   </div>

@@ -4,7 +4,8 @@ import {
   KpiCurrentService,
   InstanceService,
   ViewDesignService,
-  AuditService
+  AuditService,
+  OperationLogService
 } from './service/index'
 
 export {
@@ -13,5 +14,6 @@ export {
   KpiCurrentService,
   InstanceService,
   ViewDesignService,
-  AuditService
+  AuditService,
+  OperationLogService
 }
