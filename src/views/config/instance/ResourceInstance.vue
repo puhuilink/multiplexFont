@@ -6,7 +6,7 @@
       <a-col :xl="6" :xxl="4">
         <ResourceTree
           class="ResourceInstance-tree"
-          @select="select"
+          @selectNode="selectNode"
         />
       </a-col>
 
@@ -16,46 +16,45 @@
       <!-- / content -->
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
-          <a-tab-pane tab="实例列表" key="1" forceRender>
-            <!-- FIXME: 同一个parentname_s 对应的 did 不同 -->
+          <!-- <a-tab-pane tab="实例列表" key="1" forceRender>
             <ResourceInstanceList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
-                  _eq: selectedNode.name_s
+                parentName: {
+                  _eq: selectedNode.name
                 }
               }"
-              :parentNameS="selectedNode.name_s"
+              :parentNameS="selectedNode.name"
               :parentTreeS="selectedNode.tree_s"
               :parentDid="selectedNode.did"
             />
-          </a-tab-pane>
+          </a-tab-pane> -->
           <a-tab-pane tab="操作日志" key="2" forceRender>
             <OperationLogList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                modelname_s: {
-                  _eq: selectedNode.name_s
+                modelName: {
+                  _eq: selectedNode.name
                 },
-                operationtype_s: {
+                operationType: {
                   _eq: 'instance'
                 }
               }"
             />
           </a-tab-pane>
-          <a-tab-pane tab="版本" key="3" forceRender>
+          <!-- <a-tab-pane tab="版本" key="3" forceRender>
             <ResourceInstanceVersionList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
-                  _eq: selectedNode.name_s
+                parentName: {
+                  _eq: selectedNode.name
                 }
               }"
             />
-          </a-tab-pane>
+          </a-tab-pane> -->
         </a-tabs>
       </a-col>
 
@@ -88,7 +87,8 @@ export default {
      * @param {Object | Null} selectedNode 选中节点的数据
      * @return {Undefined}
      */
-    select (selectedNode) {
+    selectNode (selectedNode) {
+      console.log(selectedNode)
       this.selectedNode = selectedNode
     }
   }

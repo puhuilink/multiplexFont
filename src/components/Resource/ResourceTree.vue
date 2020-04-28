@@ -223,7 +223,7 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
-        this.$emit('select', {
+        this.$emit('selectNode', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
           'name': dataRef.name,
@@ -237,7 +237,7 @@ export default {
         // FIXME: 新增后可以不用重置
         // this.selectedNode = null
         this.selectedKey = ''
-        this.$emit('select', null)
+        this.$emit('selectNode', null)
       }
     },
     search: _.debounce(function (value) {
