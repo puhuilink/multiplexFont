@@ -4,9 +4,9 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_x"
+      rowKey="_id"
       :rowSelection="null"
-      :scroll="{ x: 1000, y: `calc(100vh - 290px)`}"
+      :scroll="{ x: scrollX, y: `calc(100vh - 290px)`}"
     >
     </CTable>
   </div>
@@ -14,23 +14,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-
-const query = gql`query ($where: ngecc_instancehistory_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_instancehistory_order_by!]) {
-  data: ngecc_instancehistory(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
-    createtime_t
-    label_s
-    version_i
-    name_s
-    _id_x
-  }
-  pagination: ngecc_instancehistory_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-}`
+import { ModelHistoryService } from '@/api-hasura'
 
 export default {
   name: 'ResourceInstanceVersionList',
@@ -55,29 +39,36 @@ export default {
         return [
           {
             title: '编号',
-            dataIndex: '_id_x',
+            dataIndex: '_id',
             sorter: true,
             width: 300
           },
           {
             title: '创建时间',
-            dataIndex: 'createtime_t',
+            dataIndex: 'createTime',
             sorter: true,
             width: 300
           },
           {
             title: '版本',
-            dataIndex: 'version_i',
+            dataIndex: 'version',
             sorter: true,
             width: 100
           },
           {
             title: '名称',
-            dataIndex: 'label_s',
+            dataIndex: 'label',
             sorter: true,
             width: 300
           }
         ]
+      }
+    },
+    scrollX: {
+      get () {
+        return this.columns
+          .map(e => e.width || 60)
+          .reduce((a, b) => a + b) + 62
       }
     }
   },
@@ -100,14 +91,13 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      return apollo.clients.resource.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.where
-          }
-        }
+      return ModelHistoryService.find({
+        ...parameter,
+        where: {
+          ...this.where
+        },
+        fields: this.columns.map(column => column.dataIndex),
+        alias: 'data'
       }).then(r => r.data)
     },
     /**

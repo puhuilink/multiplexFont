@@ -5,7 +5,8 @@ import {
   InstanceService,
   ViewDesignService,
   AuditService,
-  OperationLogService
+  OperationLogService,
+  ModelHistoryService
 } from './service/index'
 
 export {
@@ -15,5 +16,6 @@ export {
   InstanceService,
   ViewDesignService,
   AuditService,
-  OperationLogService
+  OperationLogService,
+  ModelHistoryService
 }

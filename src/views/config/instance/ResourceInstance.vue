@@ -44,7 +44,7 @@
               }"
             />
           </a-tab-pane>
-          <!-- <a-tab-pane tab="版本" key="3" forceRender>
+          <a-tab-pane tab="版本" key="3" forceRender>
             <ResourceInstanceVersionList
               v-if="selectedNode"
               class="ResourceInstance-table"
@@ -54,7 +54,7 @@
                 }
               }"
             />
-          </a-tab-pane> -->
+          </a-tab-pane>
         </a-tabs>
       </a-col>
 

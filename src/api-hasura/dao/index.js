@@ -12,6 +12,7 @@ import { AuditDao } from './AuditDao'
 import { RelationAttributeDao } from './RelationAttributeDao'
 import { RelationInstanceDao } from './RelationInstanceDao'
 import { OperationLogDao } from './OperationLogDao'
+import { ModelHistoryDao } from './ModelHistoryDao'
 
 export {
   AuthorizeObjectDao,
@@ -27,5 +28,6 @@ export {
   AuditDao,
   RelationAttributeDao,
   RelationInstanceDao,
-  OperationLogDao
+  OperationLogDao,
+  ModelHistoryDao
 }

@@ -5,6 +5,7 @@ import { InstanceService } from './InstanceService'
 import { ViewDesignService } from './ViewDesignService'
 import { AuditService } from './AuditService'
 import { OperationLogService } from './OperationLogService'
+import { ModelHistoryService } from './ModelHistoryService'
 
 export {
   UserService,
@@ -13,5 +14,6 @@ export {
   InstanceService,
   ViewDesignService,
   AuditService,
-  OperationLogService
+  OperationLogService,
+  ModelHistoryService
 }
