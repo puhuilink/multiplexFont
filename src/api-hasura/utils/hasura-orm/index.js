@@ -24,7 +24,7 @@ const query = async function () {
     // console.log(hasuraInstance.parsed())
     return hasuraInstance.parsed()
   })} }`
-  // console.log('query', query)
+  console.log(query)
   return provider.query({ query: parse(query) })
 }
 

@@ -24,7 +24,7 @@ export default class Hasura {
   }
   select (fields) {
     if (Array.isArray(fields)) {
-      this._fields = fields.join(',').replace(/,/g, ' ')
+      this._fields = fields.filter(v => !!v).join(',').replace(/,/g, ' ')
       // this._fields += ' ' + fields.join(',').replace(/,/g, ' ')
     } else {
       this._fields = fields.replace(/,/g, ' ')

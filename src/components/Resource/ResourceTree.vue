@@ -137,15 +137,15 @@ export default {
             'parentKey: parentName',
             'parentTree',
             'order',
-            !this.instanceList ? `` : `instanceList: {
-              '_id',
-              'name',
-              'key: name',
-              'label',
-              'title: label',
-              'parentName',
-              'parentKey: parentName',
-              'parentTree',
+            !this.instanceList ? `` : `instanceList {
+              _id
+              name
+              key: name
+              label
+              title: label
+              parentName
+              parentKey: parentName
+              parentTree
             }`
           ],
           alias: 'dataSource'

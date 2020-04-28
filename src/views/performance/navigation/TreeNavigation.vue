@@ -12,7 +12,7 @@
           hiddenTab
           instanceList
           :rootKeys="['BJDC', 'XMDC']"
-          @select="onSelectCi"
+          @selectNode="selectNode"
         />
       </a-col>
 
@@ -110,7 +110,7 @@ export default {
         throw e
       }
     },
-    async onSelectCi (ci) {
+    async selectNode (ci) {
       // 触发 v-if 刷新
       // this.selectedCi = null
       // await Timeout.set(10)
