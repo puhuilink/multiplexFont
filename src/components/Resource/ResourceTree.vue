@@ -61,7 +61,6 @@ import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
-import { deleteModelList } from '@/api/controller/Resource'
 import _ from 'lodash'
 import { ModelService } from '@/api-hasura'
 
@@ -191,9 +190,10 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
-        const [nameList, didList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        console.log(nameList, didList)
-        await deleteModelList(nameList, didList)
+        const [nameList, _idList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        console.log(nameList, _idList)
+        // await deleteModelList(nameList, _idList)
+        await ModelService.delete(nameList)
         await this.fetch()
         this.selectedKey = ''
         this.$notification.success({

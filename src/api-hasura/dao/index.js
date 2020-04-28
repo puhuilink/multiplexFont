@@ -9,6 +9,8 @@ import { KpiCurrentLastestDao } from './KpiCurrentLastestDao'
 import { InstanceDao } from './InstanceDao'
 import { InstanceValuesDao } from './InstanceValuesDao'
 import { AuditDao } from './AuditDao'
+import { RelationAttributeDao } from './RelationAttributeDao'
+import { RelationInstanceDao } from './RelationInstanceDao'
 
 export {
   AuthorizeObjectDao,
@@ -21,5 +23,7 @@ export {
   KpiCurrentLastestDao,
   InstanceDao,
   InstanceValuesDao,
-  AuditDao
+  AuditDao,
+  RelationAttributeDao,
+  RelationInstanceDao
 }

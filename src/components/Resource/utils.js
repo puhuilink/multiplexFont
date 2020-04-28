@@ -97,16 +97,16 @@ function search (title = '', collection) {
 
 function flatChildrenNodeNameListAndDidList (node) {
   const nameList = []
-  const didList = [];
+  const _idList = [];
   (function recursive (el) {
-    nameList.push(el['name_s'])
-    didList.push(el['did'])
+    nameList.push(el['name'])
+    _idList.push(el['_id'])
     if (el.children && el.children.length) {
       // debugger
       el.children.forEach(recursive)
     }
   }(node))
-  return [nameList, didList]
+  return [nameList, _idList]
 }
 
 export {

@@ -9,6 +9,7 @@ const mutate = async function () {
   const hasuraORMList = await Promise.all(Array.from(arguments))
   const [{ provider }] = hasuraORMList
   const query = `mutation { ${hasuraORMList.map(hasuraORM => hasuraORM.parsed())} }`
+  console.log(query)
   return provider.mutate({ mutation: parse(query) })
 }
 

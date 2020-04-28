@@ -1,6 +1,11 @@
 import { BaseService } from './BaseService'
-import { ModelDao } from '../dao/index'
-import { mutate, query } from '../utils/hasura-orm'
+import {
+  ModelDao,
+  InstanceDao,
+  RelationAttributeDao
+  // RelationInstanceDao
+} from '../dao/index'
+import { mutate, query } from '../utils/hasura-orm/index'
 
 class ModelService extends BaseService {
   /**
@@ -36,6 +41,22 @@ class ModelService extends BaseService {
       ModelDao.find(argus)
     )
     return res
+  }
+
+  static async delete (nameList = []) {
+    console.log(nameList)
+    await mutate(
+      // 资源模型删除
+      ModelDao.batchDelete({ name: { _in: nameList } }),
+      // 模型关系属性删除
+      RelationAttributeDao.batchDelete({ source: { _in: nameList } }),
+      // 其挂载的资源实例也删除
+      InstanceDao.batchDelete({ parentName: { _in: nameList } })
+      // 其挂载的资源实例的关联实例
+      // TODO
+      // RelationInstanceDao.batchDelete()
+      // TODO: 日志与版本
+    )
   }
 }
 
