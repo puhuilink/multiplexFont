@@ -12,7 +12,7 @@
           @change="change"
         />
         <a-spin
-          v-if="$apollo.queries.dataSource.loading"
+          v-if="loading"
           spinning
         />
         <a-tree
@@ -57,65 +57,25 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import { deleteModelList } from '@/api/controller/Resource'
 import _ from 'lodash'
+import { ModelService } from '@/api-hasura'
 
 export default {
   name: 'ResourceTree',
-  apollo: {
-    // TODO: 在 hasura 层通过 RelationShips 直接构造好树结构
-    // TODO: subscribe 节点增加 / 删除
-    // TODO: 排序
-    // TODO: 默认展开层级
-    dataSource: {
-      query: gql`query ($instanceList: Boolean!) {
-        dataSource: ngecc_model {
-          did
-          label_s
-          name_s
-          batch_b
-          edit_b
-          encrypt_s
-          order_i
-          icon_s
-          parenttree_s
-          _id_s
-          title: label_s
-          key: name_s
-          parentKey: parentname_s
-          parentname_s: parentname_s
-          instanceList @include(if: $instanceList) {
-            did
-            _id_s
-            name_s
-            title: label_s
-            key: name_s
-            parentKey: parentname_s
-            parentname_s: parentname_s
-          }
-        }
-      }`,
-      result () {
-        this.autoExpandParent = true
-      },
-      // 响应式，当数据变化时，触发刷新
-      variables () {
-        return {
-          instanceList: this.instanceList
-        }
-      }
-    }
-  },
   components: {
     Template,
     ResourceTreeNodeSchema
   },
   props: {
+    defauleExpandDepth: {
+      type: Number,
+      default: 2
+    },
     draggable: {
       type: Boolean,
       default: false
@@ -168,8 +128,19 @@ export default {
     }
   },
   methods: {
+    async fetch () {
+      try {
+        this.loading = true
+        this.dataSource = await ModelService.tree(this.instanceList)
+      } catch (e) {
+        this.dataSource = []
+        throw e
+      } finally {
+        this.autoExpandParent = true
+        this.loading = false
+      }
+    },
     add () {
-      // eslint-disable-next-line
       const { parenttree_s, name_s } = this.selectedNode
       // 父节点位置加上自身的名字，就是自身节点的位置
       this.$refs['schema'].add(
@@ -179,13 +150,13 @@ export default {
       )
     },
     addSuccess () {
-      this.$apollo.queries.dataSource.refetch()
+      this.fetch()
     },
     edit () {
       this.$refs['schema'].edit({ ...this.selectedNode })
     },
     editSuccess () {
-      this.$apollo.queries.dataSource.refetch()
+      this.fetch()
     },
     filterNode ({ title = '' }) {
       const { searchValue = '' } = this
@@ -203,7 +174,7 @@ export default {
         const [nameList, didList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
         console.log(nameList, didList)
         await deleteModelList(nameList, didList)
-        await this.$apollo.queries.dataSource.refetch()
+        await this.fetch()
         this.selectedKey = ''
         this.$notification.success({
           message: '系统提示',
@@ -265,6 +236,10 @@ export default {
       }
       this.search(value)
     }
+  },
+  async created () {
+    await this.fetch()
+    // TODO: defauleExpandDepth
   }
 }
 </script>
