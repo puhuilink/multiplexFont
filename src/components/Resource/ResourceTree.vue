@@ -127,7 +127,32 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        this.dataSource = await ModelService.tree(this.instanceList)
+        const { data: { dataSource } } = await ModelService.find({
+          fields: [
+            '_id',
+            'name',
+            'key: name',
+            'label',
+            'title: label',
+            'parentName',
+            'parentKey: parentName',
+            'parentTree',
+            'order',
+            !this.instanceList ? `` : `instanceList: {
+              '_id',
+              'name',
+              'key: name',
+              'label',
+              'title: label',
+              'parentName',
+              'parentKey: parentName',
+              'parentTree',
+            }`
+          ],
+          alias: 'dataSource'
+        }, this.instanceList)
+        // console.log(dataSource)
+        this.dataSource = dataSource
       } catch (e) {
         this.dataSource = []
         throw e
