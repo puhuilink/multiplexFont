@@ -283,6 +283,15 @@ export default {
             padding: CryptoJS.pad.Pkcs7
           }).toString()
 
+          const decryptMessage = AES.decrypt(securityMessage, key, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7
+          }).toString(CryptoJS.enc.Utf8)
+
+          console.log(JSON.stringify(message))
+          console.log(securityMessage)
+          console.log(decryptMessage)
+
           state.smsSendBtn = true
           const interval = window.setInterval(() => {
             if (state.time-- <= 0) {
