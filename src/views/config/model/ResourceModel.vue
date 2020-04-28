@@ -11,7 +11,7 @@
       </a-col>
 
       <!-- / content -->
-      <a-col :xl="18" :xxl="20">
+      <!-- <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="属性列表" key="1" forceRender>
             <ResourceModelAttrList
@@ -59,7 +59,7 @@
             />
           </a-tab-pane>
         </a-tabs>
-      </a-col>
+      </a-col> -->
 
     </a-row>
   </div>

@@ -3,6 +3,13 @@ import moment from 'moment'
 
 const { getters } = store
 
+const defaultInfo = function (timeKey, userKey) {
+  return {
+    [userKey]: getters.userId,
+    [timeKey]: moment().format('YYYY-MM-DDTHH:mm:ss')
+  }
+}
+
 /**
  * 默认创建人与时间戳
  * @param {Boolean} withPostfix 字段是否带下标
@@ -45,5 +52,6 @@ export {
   defaultCreateDate,
   defaultUpdateDate,
   defaultCreateTime,
-  defaultUpdateTime
+  defaultUpdateTime,
+  defaultInfo
 }

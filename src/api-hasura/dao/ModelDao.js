@@ -1,7 +1,8 @@
 import { BaseDao } from './BaseDao'
 import { alert } from '../config/client'
-import { defaultCreateTime, defaultUpdateTime } from '../utils/mixin/autoComplete'
+import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
+import { varcharUuid } from '@/utils/util'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
@@ -18,7 +19,7 @@ class ModelDao extends BaseDao {
 
   // 主键
   @readonly
-  static PRIMARY_KEY = '_id'
+  static PRIMARY_KEY = 'name'
 
   // 字段与显示文字
   @readonly
@@ -30,18 +31,17 @@ class ModelDao extends BaseDao {
   static async add (model) {
     // 验证唯一字段是否有冲突
     await this._uniqueValidate(model)
-    // 自增 id
     return super.add({
-      // TODO: uuid
+      _id: varcharUuid(),
       ...model,
-      ...defaultCreateTime(true)
+      ...defaultInfo('createTime', 'creator')
     })
   }
 
   @override
   static async update ({ ...model }, { _id }) {
     await this._uniqueValidate({ ...model, _id }, false)
-    return super.update({ ...model, ...defaultUpdateTime(true) }, { _id })
+    return super.update({ ...model, ...defaultInfo('updateTime', 'updator') }, { _id })
   }
 }
 

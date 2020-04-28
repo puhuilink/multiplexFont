@@ -151,7 +151,6 @@ export default {
           ],
           alias: 'dataSource'
         }, this.instanceList)
-        // console.log(dataSource)
         this.dataSource = dataSource
       } catch (e) {
         this.dataSource = []
@@ -162,12 +161,12 @@ export default {
       }
     },
     add () {
-      const { parenttree_s, name_s } = this.selectedNode
+      const { parentTree, name } = this.selectedNode
       // 父节点位置加上自身的名字，就是自身节点的位置
       this.$refs['schema'].add(
-        name_s,
+        name,
         // eslint-disable-next-line
-        `${parenttree_s}${name_s}`
+        `${parentTree}${name}`
       )
     },
     addSuccess () {
@@ -227,11 +226,11 @@ export default {
         this.$emit('select', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
-          'name_s': dataRef.name_s,
-          'name': dataRef.name_s,
-          'tree_s': dataRef.parenttree_s + dataRef.name_s,
+          'name': dataRef.name,
+          'name_s': dataRef.name,
+          'tree_s': dataRef.parentTree + dataRef.name,
           'parentname_s': dataRef.parentname_s,
-          'parentname': dataRef.parentname_s,
+          'parentName': dataRef.parentname_s,
           '_id_s': dataRef._id_s
         })
       } else {
@@ -263,8 +262,7 @@ export default {
     await this.$nextTick()
     // 默认展开一层
     // TODO: 支持 props 指定默认展开层级
-    const expandedKeys = this.treeData.map(el => el.key)
-    this.expandedKeys = expandedKeys
+    this.expandedKeys = this.treeData.map(el => el.key)
   }
 }
 </script>
