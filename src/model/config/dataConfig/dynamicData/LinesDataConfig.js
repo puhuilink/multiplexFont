@@ -37,13 +37,19 @@ export default class LinesDataConfig {
     if (loadingDynamicData) {
       try {
         // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
-        // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(res => {
-        //   console.log('result', res)
+        // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(data => {
+        //   console.log('result', data)
         // })
-        // const res = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-        const res = await KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-        const groupByCi = _.groupBy(res, 'instanceLabel')
-        const groupByTime = _.groupBy(res, 'arising_time')
+        // const data = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
+        const { selectedInstance, selectedKpi } = this.resourceConfig
+        const { data } = await KpiCurrentService.getValue({
+          selectedInstance,
+          selectedKpi,
+          timeRange: TimeRange.getOption.apply(this.timeRange),
+          orderBy: { arising_time: 'asc' }
+        })
+        const groupByCi = _.groupBy(data, 'instanceLabel')
+        const groupByTime = _.groupBy(data, 'arising_time')
         const valueAxis = {
           type: 'value'
         }

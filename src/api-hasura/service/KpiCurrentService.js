@@ -48,8 +48,18 @@ class KpiCurrentService extends BaseService {
    * @param {Array<String>} timeRange 时间区间
    * @return {Promise<Array<any>>}
    */
-  static async getValue ({ selectedKpi = [], selectedInstance = [] }, { timeRangeStart, timeRangeEnd } = {}) {
+  static async getValue ({
+    where = {},
+    limit = 0,
+    offset = 0,
+    orderBy = { arising_time: 'desc' },
+    fields = [],
+    selectedKpi = [],
+    selectedInstance = [],
+    timeRange = {}
+  }) {
     const { _getKpiAndCiInfo, _composeKpiAndCi } = this
+    const { timeRangeStart, timeRangeEnd } = timeRange || {}
 
     const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
 
@@ -64,7 +74,7 @@ class KpiCurrentService extends BaseService {
     // 存在时间范围从历史值中查找，反之从最新值查找
     const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
-    const [{ ci, kpi }, { data: { kpiValueList } }] = await Promise.all([
+    const [{ ci, kpi }, { data }] = await Promise.all([
       _getKpiAndCiInfo(selectedKpi, selectedInstance),
       query(
         dao.find({
@@ -72,27 +82,32 @@ class KpiCurrentService extends BaseService {
             _or: argus.map(({ ci_id, kpi_code }) => ({
               ci_id: { _eq: ci_id },
               kpi_code: { _eq: kpi_code },
+              ...where,
               ...timeRangeQuery
             }))
           },
-          fields: [
+          fields: _.uniq([
             'ci_id',
             'kpi_code',
             'arising_time',
-            'value: kpi_value_num'
-            // 'kpi_value_txt'
-          ],
-          alias: 'kpiValueList'
+            'value: kpi_value_num',
+            ...fields
+          ]),
+          limit,
+          offset,
+          alias: 'data',
+          orderBy
         })
       )
     ])
 
-    // 拼接返回结果
-    return kpiValueList.map(kpiValue => ({
+    data.data = data.data.map(kpiValue => ({
       ...kpiValue,
       kpiLabel: kpi.get(`${kpiValue.kpi_code}`),
       instanceLabel: ci.get(`${kpiValue.ci_id}`)
     }))
+
+    return data
   }
 }
 

@@ -91,7 +91,12 @@ export default class Hasura {
     if (args) {
       args = `(${stringify(this._schemaArguments)})`
     }
-    this._paginate = ` ${this._schema}_aggregate${args} {
+    // this._paginate = ` ${this._schema}_aggregate${args} {
+    //   aggregate {
+    //     count
+    //   }
+    // }`
+    this._paginate = `pagination: ${this._schema}_aggregate${args} {
       aggregate {
         count
       }

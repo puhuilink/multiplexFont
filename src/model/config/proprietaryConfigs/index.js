@@ -920,11 +920,13 @@ class AlarmListProps {
  */
 class ListProps {
   constructor ({
+    styleConfig = {},
     // 接口参数对象
     params = {},
     // 是否调用接口
     isCallInterface = false
   }) {
+    this.styleConfig = styleConfig
     this.params = params
     this.isCallInterface = isCallInterface
   }
