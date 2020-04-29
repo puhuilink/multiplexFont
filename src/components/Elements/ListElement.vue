@@ -4,7 +4,6 @@
     <!-- S 列表 -->
     <CTable
       ref="table"
-      rowKey="alert_id"
       :columns="columns"
       :data="loadData"
       :alert="false"
@@ -20,25 +19,24 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import CTable from '@/components/Table/CTable'
 
-const query = gql`query instanceList($where: t_alert_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_alert_order_by!]) {
-  pagination: t_alert_aggregate(where: $where) {
+const query = gql`query instanceList($where: t_kpi_current_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10, $orderBy: [t_kpi_current_order_by!]) {
+  pagination: t_kpi_current_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data: t_alert(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    arising_time
-    first_arising_time
-    message
-    state
-    app_name
-    dev_name
-    instance
-    alert_id
-    severity
-    count
+  data: t_kpi_current(offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
     agent_id
-    agent_name
+    arising_index
+    arising_time
+    ci_id
+    insert_time
+    instance_id
+    kpi_code
+    kpi_value_num
+    kpi_value_txt
+    notes
+    task_id
   }
 }`
 
@@ -58,67 +56,26 @@ export default {
   },
   data () {
     return {
-      tabKey: '0',
-      // 搜索： 展开/关闭
-      advanced: false,
       columns: [
         {
-          title: '级别',
-          dataIndex: 'severity',
+          title: '时间',
+          dataIndex: 'arising_time',
           width: 75,
           fixed: 'left',
-          sorter: true,
-          scopedSlots: { customRender: 'level' }
+          sorter: true
         },
         {
-          title: '状态',
+          title: '名称',
           dataIndex: 'state',
           width: 75,
-          sorter: true,
-          scopedSlots: { customRender: 'state' }
+          sorter: true
         },
         {
-          title: 'CI名称',
-          dataIndex: 'dev_name',
+          title: 'kpi值',
+          dataIndex: 'kpi_value_num',
           width: 200,
           sorter: true
-        },
-        {
-          title: '应用名称',
-          dataIndex: 'app_name',
-          width: 300,
-          sorter: true
-        },
-        {
-          title: '消息内容',
-          dataIndex: 'message',
-          width: 420,
-          scopedSlots: { customRender: 'message' }
-        },
-        {
-          title: '首次告警时间',
-          dataIndex: 'first_arising_time',
-          width: 150,
-          sorter: true
-        },
-        {
-          title: '最近告警时间',
-          dataIndex: 'arising_time',
-          width: 150,
-          sorter: true
-        },
-        {
-          title: '次数',
-          dataIndex: 'count',
-          width: 70,
-          sorter: true
-        },
-        {
-          title: '采集系统',
-          dataIndex: 'agent_id',
-          sorter: true
         }
-
       ],
       // 自动刷新的定时器
       timer: null
@@ -131,41 +88,20 @@ export default {
      * @param {Object} parameter CTable 回传的分页与排序条件
      */
     loadData (parameter) {
-      // 清空选中
-      this.selectedRowKeys = []
       return apollo.clients.alert.query({
         query,
         variables: {
           ...parameter,
           where: {
             ...this.where,
-            arising_time: {
-              _gte: '2018-5-31 00:00:00',
-              _lte: '2018-5-31 23:59:59'
-            },
-            ...this.elementProps.domains ? {
-              domains: {
-                _eq: this.elementProps.domains
+            ...this.elementProps.params.resourceConfig ? {
+              ci_id: {
+                _in: this.elementProps.params.resourceConfig.selectedInstance
               }
             } : {},
-            ...this.elementProps.model ? {
-              node_types: {
-                _eq: this.elementProps.model
-              }
-            } : {},
-            ...this.elementProps.selectedInstance ? {
-              node_ids: {
-                _in: this.elementProps.selectedInstance
-              }
-            } : {},
-            ...this.elementProps.alarmType ? {
-              alert_id: {
-                _in: this.elementProps.alarmType
-              }
-            } : {},
-            ...this.elementProps.collectionSystem ? {
-              agent_id: {
-                _in: this.elementProps.collectionSystem
+            ...this.elementProps.params.resourceConfig ? {
+              kpi_code: {
+                _in: this.elementProps.params.resourceConfig.selectedKpi
               }
             } : {}
           }
