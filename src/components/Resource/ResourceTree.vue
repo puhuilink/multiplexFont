@@ -23,10 +23,12 @@
             height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
           }"
           defaultExpandAll
+          :draggable="draggable"
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
+          v-on="$listeners"
           @expand="expand"
           @select="select"
         />
@@ -114,16 +116,21 @@ export default {
     ResourceTreeNodeSchema
   },
   props: {
+    draggable: {
+      type: Boolean,
+      default: false
+    },
     // 隐藏分页
     hiddenTab: {
       type: Boolean,
       default: false
     },
-    // 统计节点下的实例列表数量
+    // 将其实例也构建到树中
     instanceList: {
       type: Boolean,
       default: false
     },
+    // TODO: instanceListCount
     // 根节点
     rootKeys: {
       type: Array,
@@ -198,6 +205,10 @@ export default {
         await deleteModelList(nameList, didList)
         await this.$apollo.queries.dataSource.refetch()
         this.selectedKey = ''
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
       } catch (e) {
         throw e
       } finally {

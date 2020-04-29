@@ -2,6 +2,8 @@ import HasuraORM, { query } from '../utils/hasura-orm/index'
 // import HasuraORM, { query } from '../utils/hasura-orm'
 import _ from 'lodash'
 class BaseDao {
+  static FIELDS_MAPPING = new Map()
+
   /**
    * 生成一个新的 hasuraORM 实例
    * @return {HasuraORM}
@@ -96,6 +98,7 @@ class BaseDao {
     return chain
   }
 
+  // FIXME: findOne 异常
   /**
    * 查询一条数据
    * @param {Object} argus

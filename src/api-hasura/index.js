@@ -1,11 +1,17 @@
 import {
   UserService,
   ModelService,
-  KpiCurrentService
+  KpiCurrentService,
+  InstanceService,
+  ViewDesignService,
+  AuditService
 } from './service/index'
 
 export {
   UserService,
   ModelService,
-  KpiCurrentService
+  KpiCurrentService,
+  InstanceService,
+  ViewDesignService,
+  AuditService
 }

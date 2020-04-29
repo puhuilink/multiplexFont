@@ -66,3 +66,17 @@ export function get2step (parameter) {
     data: parameter
   })
 }
+
+/**
+ * 发送验证码
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function sendCaptcha (data) {
+  return axios({
+    // baseURL: 'http://validmessage.cluster.local/sendMessage',
+    baseURL: 'https://test8080.cluster.local/sendMessage',
+    method: 'post',
+    data
+  })
+}

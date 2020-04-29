@@ -7,7 +7,6 @@
         <ResourceTree
           class="ResourceInstance-tree"
           @select="select"
-          instanceList
         />
       </a-col>
 
