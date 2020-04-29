@@ -2,7 +2,6 @@
   <div class="ResourceTree" :class="{ 'ResourceTree__hidden-tab': hiddenTab }">
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="资源树" key="1">
-        <!-- TODO: 固定搜索栏 -->
         <a-input-search
           allowClear
           autoFocus
@@ -260,9 +259,9 @@ export default {
   async created () {
     await this.fetch()
     await this.$nextTick()
-    // 默认展开一层
+    // 默认展开根节点
     // TODO: 支持 props 指定默认展开层级
-    this.expandedKeys = this.treeData.map(el => el.key)
+    this.expandedKeys = [ ...this.rootKeys ]
   }
 }
 </script>

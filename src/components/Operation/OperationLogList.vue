@@ -240,10 +240,7 @@ export default {
           'relation'
         ],
         alias: 'data'
-      }).then(r => {
-        console.log(r.data)
-        return r.data
-      })
+      }).then(r => r.data)
     },
     query () {
       this.$refs['table'].refresh(true)

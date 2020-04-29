@@ -35,7 +35,6 @@ class ModelService extends BaseService {
     )
   }
 
-  // TODO: 拆分
   static async find (argus = {}) {
     const res = await query(
       ModelDao.find(argus)

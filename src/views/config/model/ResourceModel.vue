@@ -13,17 +13,17 @@
       <!-- / content -->
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
-          <!-- <a-tab-pane tab="属性列表" key="1" forceRender>
+          <a-tab-pane tab="属性列表" key="1" forceRender>
             <ResourceModelAttrList
               v-if="selectedNode"
               class="ResourceInstance-table"
               operationType="model"
-              :where="{ did: {
-                _eq: selectedNode.did
+              :where="{ name: {
+                _eq: selectedNode.name
               } }"
             />
           </a-tab-pane>
-          <a-tab-pane tab="关系属性" key="2" forceRender>
+          <!-- <a-tab-pane tab="关系属性" key="2" forceRender>
             <ResourceModelRelationAttrList
               v-if="selectedNode"
               class="ResourceInstance-table"
@@ -97,9 +97,7 @@ export default {
      * @return {Undefined}
      */
     selectNode (selectedNode) {
-      this.selectedNode = {
-        ...selectedNode
-      }
+      this.selectedNode = selectedNode
     }
   }
 }
