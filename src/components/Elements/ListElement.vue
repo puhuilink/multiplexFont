@@ -3,7 +3,7 @@
 
     <!-- S 列表 -->
     <CTable
-      rowKey="arising_time"
+      :rowKey="el => `${el.arising_time}-${el.kpi_value_num}-${Math.random()}`"
       ref="table"
       :columns="columns"
       :data="loadData"
@@ -41,7 +41,7 @@ export default {
         {
           title: '时间',
           dataIndex: 'arising_time',
-          width: 150,
+          width: 180,
           // fixed: 'left',
           sorter: true
         },
@@ -49,7 +49,7 @@ export default {
           title: 'ci',
           // 该字段非数据表字段，为接口返回拼接字段
           dataIndex: 'instanceLabel',
-          width: 200
+          width: 260
         },
         {
           title: 'kpi',
