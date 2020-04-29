@@ -25,7 +25,7 @@
       >
         <CiInstanceSelect
           :multiple="multiple"
-          :parentNameS="formData.model"
+          :parentName="formData.model"
           :value="formData.selectedInstance"
           @input="onInstanceInput"
         />
@@ -40,7 +40,7 @@
         <KpiSelect
           :multiple="multiple"
           v-model="formData.selectedKpi"
-          :nodetypeS="formData.model"
+          :nodeType="formData.model"
           placeholder
         />
       </a-form-item>

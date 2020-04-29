@@ -4,9 +4,10 @@ import { query } from '../utils/hasura-orm/index'
 
 class InstanceService extends BaseService {
   static async find (argus = {}) {
-    await query(
+    const res = await query(
       InstanceDao.find(argus)
     )
+    return res
   }
 }
 
