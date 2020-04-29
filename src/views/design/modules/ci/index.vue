@@ -15,12 +15,14 @@ import Factory from '@/model/factory/factory'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
+import IconPicker from '@/components/IconPicker'
 
 export default {
   name: 'Ci',
   components: {
     ResourceTree
   },
+  mixins: [IconPicker],
   props: {},
   data: () => ({
   }),
@@ -35,17 +37,20 @@ export default {
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     async dragend ({ event, node: { dataRef } }) {
-      const { label_s: label, icon_s: name } = await this.fetch(dataRef)
+      const options = await this.fetch(dataRef)
+      const target = this.icons.find(icon => icon.name === options.icon_s)
+      const other = this.icons.find(icon => icon.name === 'Others')
+      const icon = target || other
       const data = {
         height: 64,
-        label,
+        label: dataRef.title,
         radius: '50%',
         shape: 'circle',
         width: 64,
         icon: {
-          name,
+          name: icon.name,
           height: 64,
-          img: '',
+          img: icon.img,
           position: 'inside',
           show: true,
           width: 64

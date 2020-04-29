@@ -202,7 +202,6 @@ export default {
       { name: 'WaterChillers', img: WaterChillers },
       { name: 'WaterLeakage', img: WaterLeakage },
       { name: 'WirelessAP', img: WirelessAP }
-
     ]
   }),
   methods: {
