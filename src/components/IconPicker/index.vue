@@ -109,6 +109,33 @@ import ApplicationSystem1 from '@/assets/network-icons/ApplicationSystem1.png'
 import nwRouter1 from '@/assets/network-icons/nw-router1.png'
 import nwRouter2 from '@/assets/network-icons/nw-router2.png'
 import nwRouter3 from '@/assets/network-icons/nw-router3.png'
+import Agent from '@/assets/network-icons/Agent.png'
+import AirCondition from '@/assets/network-icons/AirCondition.png'
+import Alarm from '@/assets/network-icons/Alarm.png'
+import Alert from '@/assets/network-icons/Alert.png'
+import BladeChassis from '@/assets/network-icons/BladeChassis.png'
+import Cable from '@/assets/network-icons/Cable.png'
+import Circle_blue_small from '@/assets/network-icons/Circle_blue_small.png'
+import DB_SQLServer from '@/assets/network-icons/DB_SQLServer.png'
+import Humidifier from '@/assets/network-icons/Humidifier.png'
+import jfdwIcon from '@/assets/network-icons/jfdwIcon.png'
+import MachineRoom from '@/assets/network-icons/MachineRoom.png'
+import NetworkCluster from '@/assets/network-icons/NetworkCluster.png'
+import nwApplicationSystem2 from '@/assets/network-icons/nw-ApplicationSystem2.png'
+import Others from '@/assets/network-icons/Others.png'
+import PAU from '@/assets/network-icons/PAU.png'
+import PowerSwitch from '@/assets/network-icons/PowerSwitch.png'
+import Rack from '@/assets/network-icons/Rack.png'
+import RackTempSensor from '@/assets/network-icons/RackTempSensor.png'
+import SmokeSensor from '@/assets/network-icons/SmokeSensor.png'
+import StatNode_Total from '@/assets/network-icons/StatNode_Total.png'
+import StorageCluster from '@/assets/network-icons/StorageCluster.png'
+import UPS from '@/assets/network-icons/UPS.png'
+import VideoSurveillanceSystem from '@/assets/network-icons/VideoSurveillanceSystem.png'
+import VM from '@/assets/network-icons/VM.png'
+import WaterChillers from '@/assets/network-icons/WaterChillers.png'
+import WaterLeakage from '@/assets/network-icons/WaterLeakage.png'
+import WirelessAP from '@/assets/network-icons/WirelessAP.png'
 
 export default {
   name: 'IconPicker',
@@ -147,7 +174,35 @@ export default {
       { name: 'ApplicationSystem1', img: ApplicationSystem1 },
       { name: 'nwRouter1', img: nwRouter1 },
       { name: 'nwRouter2', img: nwRouter2 },
-      { name: 'nwRouter3', img: nwRouter3 }
+      { name: 'nwRouter3', img: nwRouter3 },
+      { name: 'Agent', img: Agent },
+      { name: 'AirCondition', img: AirCondition },
+      { name: 'Alarm', img: Alarm },
+      { name: 'Alert', img: Alert },
+      { name: 'BladeChassis', img: BladeChassis },
+      { name: 'Cable', img: Cable },
+      { name: 'Circle_blue_small', img: Circle_blue_small },
+      { name: 'DB_SQLServer', img: DB_SQLServer },
+      { name: 'Humidifier', img: Humidifier },
+      { name: 'jfdwIcon', img: jfdwIcon },
+      { name: 'MachineRoom', img: MachineRoom },
+      { name: 'NetworkCluster', img: NetworkCluster },
+      { name: 'nwApplicationSystem2', img: nwApplicationSystem2 },
+      { name: 'Others', img: Others },
+      { name: 'PAU', img: PAU },
+      { name: 'PowerSwitch', img: PowerSwitch },
+      { name: 'Rack', img: Rack },
+      { name: 'RackTempSensor', img: RackTempSensor },
+      { name: 'SmokeSensor', img: SmokeSensor },
+      { name: 'StatNode_Total', img: StatNode_Total },
+      { name: 'StorageCluster', img: StorageCluster },
+      { name: 'UPS', img: UPS },
+      { name: 'VideoSurveillanceSystem', img: VideoSurveillanceSystem },
+      { name: 'VM', img: VM },
+      { name: 'WaterChillers', img: WaterChillers },
+      { name: 'WaterLeakage', img: WaterLeakage },
+      { name: 'WirelessAP', img: WirelessAP }
+
     ]
   }),
   methods: {
