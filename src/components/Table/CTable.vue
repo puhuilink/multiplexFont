@@ -1,5 +1,16 @@
 <script>
 import GraphTable from './GraphTable'
+const defaultPagination = {
+  // TODO: 查询全部
+  pageSizeOptions: ['50', '100'],
+  defaultCurrent: 1,
+  pageSize: 50,
+  defaultPageSize: 50,
+  hideOnSinglePage: false,
+  showQuickJumper: true,
+  showSizeChanger: true,
+  showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+}
 
 export default {
   // custom table
@@ -8,17 +19,7 @@ export default {
     ...GraphTable.props,
     pagination: {
       type: Object,
-      default: () => ({
-        // TODO: 查询全部
-        pageSizeOptions: ['50', '100'],
-        defaultCurrent: 1,
-        pageSize: 50,
-        defaultPageSize: 50,
-        hideOnSinglePage: false,
-        showQuickJumper: true,
-        showSizeChanger: true,
-        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
-      })
+      default: () => Object.assign({}, defaultPagination)
     },
     size: {
       type: String,
@@ -80,14 +81,18 @@ export default {
     //   })
     // }))
 
+    // 允许增量入参
+    const pagination = Object.assign({}, defaultPagination, this.$props.pagination)
+
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',
       props: {
         ...this.$props,
         ...this.$attrs,
+        pagination,
         // columns,
-        pageSize: this.pagination.pageSize
+        pageSize: pagination.pageSize
       },
       on: {
         ...this.$listeners
