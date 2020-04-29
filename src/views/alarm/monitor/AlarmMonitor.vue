@@ -167,11 +167,11 @@
               >确认</a-button>
               <a-button
                 @click="$refs.rollForward.open(selectedRowKeys, selectedRows)"
-                :disabled="!selectedRowKeys.length > 0 || tabKey==='10'"
+                :disabled="!selectedRowKeys.length > 0 "
               >前转</a-button>
               <a-button
                 @click="$refs.resolve.open(selectedRowKeys)"
-                :disabled="!selectedRowKeys.length > 0 || tabKey==='20'"
+                :disabled="!selectedRowKeys.length > 0 || tabKey==='20' || tabKey==='30'"
               >解决</a-button>
             </a-col>
             <a-col
