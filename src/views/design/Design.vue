@@ -21,7 +21,7 @@
             <a-tab-pane tab="组件库" key="1">
               <Template />
             </a-tab-pane>
-            <a-tab-pane tab="视图" key="2"></a-tab-pane>
+            <!--            <a-tab-pane tab="视图" key="2"></a-tab-pane>-->
             <a-tab-pane tab="CI" key="3">
               <Ci />
             </a-tab-pane>

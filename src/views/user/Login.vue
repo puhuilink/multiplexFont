@@ -278,19 +278,11 @@ export default {
             mobile: values.mobile,
             content: `【中国交建】 验证码 ${this.captcha}，您正在登陆中国交建统一监控管理平台，请确认。`
           }
+
           const securityMessage = AES.encrypt(JSON.stringify(message), key, {
             mode: CryptoJS.mode.ECB,
             padding: CryptoJS.pad.Pkcs7
           }).toString()
-
-          const decryptMessage = AES.decrypt(securityMessage, key, {
-            mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7
-          }).toString(CryptoJS.enc.Utf8)
-
-          console.log(JSON.stringify(message))
-          console.log(securityMessage)
-          console.log(decryptMessage)
 
           state.smsSendBtn = true
           const interval = window.setInterval(() => {

@@ -167,7 +167,7 @@ export default {
       })
 
     // 节点移动至拓扑视图操作
-    this.nodeMouseDown$
+    merge(this.nodeMouseDown$, this.ciService$)
       .pipe(
         takeWhile(() => this.isSubscribed),
         filter(() => this.topologyEditable),
@@ -190,7 +190,7 @@ export default {
         }),
         map(() => this.documentMove$.pipe(takeUntil(this.documentUp$))),
         switchMap(move$ => merge(this.documentUp$.pipe(first()), move$)),
-        withLatestFrom(this.nodeMouseDown$, (event, { data }) => ({ event, data })),
+        withLatestFrom(merge(this.nodeMouseDown$, this.ciService$), (event, { data }) => ({ event, data })),
         tap(({ event, data }) => {
           const { pageX, pageY } = event
           const { width, height, radius } = data

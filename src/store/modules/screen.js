@@ -97,7 +97,6 @@ export default {
         const options = _.cloneDeep(render.chart.save())
         options.edges = options.edges.map(edge => _.omit(edge, ['sourceNode', 'targetNode']))
         Object.assign(state.activeWidget.config.proprietaryConfig, options)
-        console.log(state.activeWidget.config.proprietaryConfig)
       }
     },
     // 设置激活的拓扑边

@@ -6,15 +6,12 @@ import { notification } from 'ant-design-vue'
 import { onError } from 'apollo-link-error'
 
 // FIXME: 此处部分设备无法访问到数据，可能与 https 协议有关，与运维联系
-const linkList = ['28079', '28078', '28077', '28076'].map(port => new HttpLink({
-  //   hasura接口对应地址：
-  // http://10.1.13.17:31588/v1/graphql，对应https://10.1.8.176:28079
-  // http://10.1.13.17:31490/v1/graphql，对应https://10.1.8.176:28078
-  // http://10.1.13.17:32495/v1/graphql，对应https://10.1.8.176:28077
-  // http://10.1.13.17:31377/v1/graphql，对应https://10.1.8.176:28076
-  uri: `https://10.1.8.176:${port}`,
+const linkList = [
+  'cache', 'main', 'xunjian', 'ngecc'
+].map(domain => new HttpLink({
+  uri: `https://vic.${domain}.cluster.local/v1/graphql`,
   headers: {
-    'x-hasura-admin-secret': port === '28077' ? 'myadminsecretkey' : 'zhongjiao'
+    'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
   }
 }))
 
