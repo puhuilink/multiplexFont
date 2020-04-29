@@ -508,6 +508,8 @@ export default {
 
 <style scoped lang="less">
   .bar-config {
+    height: calc(100% - 57px);
+
     &__colors {
       display: flex;
       flex-flow: row wrap;

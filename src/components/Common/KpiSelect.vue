@@ -10,6 +10,7 @@
       :value="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
       @change="handleChange"
+      :maxTagCount="5"
     >
       <a-select-option
         v-for="(item, itemIdx) in options"
