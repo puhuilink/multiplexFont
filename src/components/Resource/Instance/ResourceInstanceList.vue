@@ -109,6 +109,8 @@ export default {
     ResourceInstanceSchema
   },
   data: () => ({
+    // 第几次加载数据
+    timer: 0,
     // 查询栏是否展开
     advanced: true,
     // 查询参数
@@ -117,32 +119,7 @@ export default {
     selectRows: [],
     // 选中行的 key
     selectedRowKeys: [],
-    columns: [
-      // {
-      //   title: 'ID',
-      //   dataIndex: 'id_s',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '名称',
-      //   dataIndex: 'name',
-      //   sorter: true,
-      //   width: 300
-      //   // fixed: true
-      // },
-      // {
-      //   title: '显示名称',
-      //   dataIndex: 'label',
-      //   sorter: true,
-      //   width: 300
-      // },
-      // {
-      //   title: '所属节点类型',
-      //   dataIndex: 'nodeType',
-      //   width: 200
-      // }
-    ]
+    columns: []
   }),
   computed: {
     // TODO: 列不全
@@ -169,14 +146,19 @@ export default {
       immediate: true,
       deep: true,
       async handler () {
-        // 重置查询条件
+        // 重置数据
         this.reset()
         // 等待 table 挂载
         await this.$nextTick()
-        // 获取 columns 后再获取数据，避免页面闪烁
-        await this.loadColumns()
+        // this.$refs['table'].loading = true
+        // FIXME: loadColumns 在 loadData 之后完成，会造成页面闪烁
+        this.loadColumns()
         // 重新查询
-        this.$refs['table'].refresh(true)
+        // 组件 created 时，CTable 组件会执行一次 loadData
+        // 此处加上判断，避免重复调用
+        if (this.timer > 1) {
+          this.timer && this.$refs['table'].refresh(true)
+        }
       }
     }
   },
@@ -197,6 +179,7 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     async loadData (parameter) {
+      this.timer++
       this.selectedRowKeys = []
       this.selectedRows = []
       return InstanceService.find({
@@ -212,10 +195,7 @@ export default {
         ],
         alias: 'data',
         ...parameter
-      }).then(r => {
-        console.log(r.data)
-        return r.data
-      })
+      }).then(r => r.data)
     },
     async loadColumns () {
       const { parentName } = this.where
