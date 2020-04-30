@@ -116,7 +116,7 @@ const vueConfig = {
       },
       // hasura cache
       '/cache': {
-        target: 'http://10.1.13.17:31588/v1/graphql',
+        target: 'http://10.1.13.17:31588/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -125,7 +125,7 @@ const vueConfig = {
       },
       // hasura main
       '/main': {
-        target: 'http://10.1.13.17:31490/v1/graphql',
+        target: 'http://10.1.13.17:31490/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -134,7 +134,7 @@ const vueConfig = {
       },
       // hasura xunjian
       '/xunjian': {
-        target: 'http://10.1.13.17:32495/v1/graphql',
+        target: 'http://10.1.13.17:32495/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -143,7 +143,7 @@ const vueConfig = {
       },
       // hasura ngecc
       '/ngecc': {
-        target: 'http://10.1.13.17:32125/v1/graphql',
+        target: 'http://10.1.13.17:32125/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
