@@ -20,6 +20,7 @@ import DegreeRingConfig from './charts/DegreeRingConfig'
 import AlarmListConfig from './elements/AlarmListConfig'
 import TextHealthConfig from './charts/TextHealthConfig'
 import ListConfig from './elements/ListConfig'
+import PieConfig from './charts/PieConfig'
 
 // 图表模板配置
 const charts = {
@@ -34,7 +35,8 @@ const charts = {
   ImageConfig,
   Gauge,
   DegreeRingConfig,
-  TextHealthConfig
+  TextHealthConfig,
+  PieConfig
 }
 
 // 元素模板配置

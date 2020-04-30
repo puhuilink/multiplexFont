@@ -24,7 +24,7 @@
       <a-tab-pane tab="专有属性" key="2">
 
         <!-- S 专有配置模板 -->
-        <ChartProprietaryTemplate>
+        <ChartProprietaryTemplate show-x-axis show-y-axis>
 
           <template v-slot:header>
 

@@ -145,7 +145,7 @@
       </a-collapse-panel>
       <!-- / 图例 -->
 
-      <a-collapse-panel header="X坐标轴" key="2">
+      <a-collapse-panel header="X坐标轴" v-if="showXAxis" key="2">
 
         <div class="comment-template__item">
           <p class="comment-template__leading">显示:</p>
@@ -562,7 +562,7 @@
       </a-collapse-panel>
       <!-- / X坐标轴 -->
 
-      <a-collapse-panel header="Y坐标轴" key="3">
+      <a-collapse-panel header="Y坐标轴" v-if="showYAxis" key="3">
 
         <div class="comment-template__item">
           <p class="comment-template__leading">显示:</p>
@@ -971,6 +971,16 @@ export default {
   mixins: [ProprietaryMixins],
   components: {
     ColorPicker
+  },
+  props: {
+    showXAxis: {
+      type: Boolean,
+      default: false
+    },
+    showYAxis: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     icons: [
