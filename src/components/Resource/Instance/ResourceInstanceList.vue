@@ -11,37 +11,40 @@
 
       <template #query>
         <a-form layout="inline">
-          <div class="fold">
+          <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="12" :sm="24">
+              <a-col
+                v-for="(field, index) in queryFields"
+                :key="index"
+                :md="12"
+                :sm="24"
+                v-show="index <= 1 || (index > 1 && advanced)"
+              >
                 <a-form-item
-                  :labelCol="{ span: 2 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  label="名称"
+                  :labelCol="{ span: 6 }"
+                  :wrapperCol="{ span: 12, offset: 4 }"
+                  :label="field.label"
                   style="width: 100%"
                 >
-                  <a-input allowClear v-model="queryParams.name" />
+                  <a-input allowClear v-model="queryParams[field.name]" />
                 </a-form-item>
               </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  label="显示名称"
-                  style="width: 100%"
-                >
-                  <a-input allowClear v-model="queryParams.label" />
-                </a-form-item>
-              </a-col>
-
             </a-row>
           </div>
 
           <!-- TODO: 统一管理布局 -->
           <!-- TODO: 居中 span -->
-          <span :style="advanced && { float: 'right', overflow: 'hidden', transform: 'translateY(6.5PX)' } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+          <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+            <template v-if="queryFields.length">
+              <!-- FIXME: 查询接口入参错误 -->
+              <!-- FIXME: 查询匹配条件动态 -->
+              <a-button type="primary" @click="query">查询</a-button>
+              <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            </template>
+            <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryFields.length > 2">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a>
           </span>
         </a-form>
       </template>
@@ -110,7 +113,7 @@ export default {
   },
   data: () => ({
     // 查询栏是否展开
-    advanced: true,
+    advanced: false,
     // 查询参数
     queryParams: {},
     // 选中行
@@ -136,6 +139,11 @@ export default {
     columnFieldList: {
       get () {
         return this.columns.map(e => e.dataIndex)
+      }
+    },
+    queryFields: {
+      get () {
+        return this.columns.filter(field => !!field.searchField)
       }
     }
   },
@@ -204,12 +212,14 @@ export default {
         // name 是唯一字段，查询出的 model 是长度为1的数组
         const [model] = modelList
         const { attributes } = model
-        const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map(({ label, name, width }) => ({
-          title: label,
+        // console.log(attributes)
+        const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map((column) => ({
+          ...column,
+          title: column.label,
           dataIndex: name,
           // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
-          width: width ? width + 60 : 120,
-          customRender: (text, record) => _.get(record, `values.${name}`),
+          width: column.width ? column.width + 60 : 120,
+          customRender: (text, record) => _.get(record, `values.${column.name}`),
           ellipsis: true
         })))
         this.columns = columns
@@ -241,11 +251,7 @@ export default {
      * @event
      */
     toggleAdvanced () {
-      this.advanced = !this.andvaced
-      if (!this.advanced) {
-        delete (this.queryParams.email)
-        delete (this.queryParams.flag)
-      }
+      this.advanced = !this.advanced
     }
   },
   created () {
