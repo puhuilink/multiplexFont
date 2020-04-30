@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      :rowKey="el => el.did"
+      :rowKey="el => el._id"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
       :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
     >
@@ -20,7 +20,7 @@
                   label="名称"
                   style="width: 100%"
                 >
-                  <a-input allowClear v-model="queryParams.name_s" />
+                  <a-input allowClear v-model="queryParams.name" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -30,7 +30,7 @@
                   label="显示名称"
                   style="width: 100%"
                 >
-                  <a-input allowClear v-model="queryParams.label_s" />
+                  <a-input allowClear v-model="queryParams.label" />
                 </a-form-item>
               </a-col>
 
@@ -66,13 +66,23 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import ResourceInstanceSchema from './ResourceInstanceSchema'
-import {
-  getInstanceList
-} from '@/api/controller/Instance'
-import { getKpiList } from '@/api/controller/Kpi'
-import { getModelAttributeList } from '@/api/controller/ModelAttributes'
-// eslint-disable-next-line
-import { Ellipsis } from '@/components'
+// import { Ellipsis } from '@/components'
+import { InstanceService, ModelService } from '@/api-hasura/index'
+import { generateQuery } from '@/utils/graphql'
+import _ from 'lodash'
+
+const defaultColumns = [
+  {
+    title: 'ID',
+    dataIndex: '_id',
+    width: 180
+  },
+  {
+    title: 'parent',
+    dataIndex: 'parentName',
+    width: 120
+  }
+]
 
 export default {
   name: 'ResourceInstanceList',
@@ -114,24 +124,24 @@ export default {
       //   sorter: true,
       //   width: 180
       // },
-      {
-        title: '名称',
-        dataIndex: 'name_s',
-        sorter: true,
-        width: 300
-        // fixed: true
-      },
-      {
-        title: '显示名称',
-        dataIndex: 'label_s',
-        sorter: true,
-        width: 300
-      },
-      {
-        title: '所属节点类型',
-        dataIndex: 'nodetype_s',
-        width: 200
-      }
+      // {
+      //   title: '名称',
+      //   dataIndex: 'name',
+      //   sorter: true,
+      //   width: 300
+      //   // fixed: true
+      // },
+      // {
+      //   title: '显示名称',
+      //   dataIndex: 'label',
+      //   sorter: true,
+      //   width: 300
+      // },
+      // {
+      //   title: '所属节点类型',
+      //   dataIndex: 'nodeType',
+      //   width: 200
+      // }
     ]
   }),
   computed: {
@@ -139,9 +149,13 @@ export default {
     // TODO: td 溢出省略号或自动增长但与表头保持对齐
     scrollX: {
       get () {
-        return this.columns
-          .map(e => e.width || 0)
-          .reduce((a, b) => a + b) + 36
+        if (_.isEmpty(this.columns)) {
+          return true
+        } else {
+          return this.columns
+            .map(e => e.width || 0)
+            .reduce((a, b) => a + b) + 36
+        }
       }
     },
     columnFieldList: {
@@ -152,10 +166,15 @@ export default {
   },
   watch: {
     '$props': {
+      immediate: true,
       deep: true,
-      handler () {
+      async handler () {
         // 重置查询条件
         this.reset()
+        // 等待 table 挂载
+        await this.$nextTick()
+        // 获取 columns 后再获取数据，避免页面闪烁
+        await this.loadColumns()
         // 重新查询
         this.$refs['table'].refresh(true)
       }
@@ -178,72 +197,53 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     async loadData (parameter) {
-      await this.loadColumns()
       this.selectedRowKeys = []
       this.selectedRows = []
-      const handler = this.parentNameS === 'Kpi' ? getKpiList : getInstanceList
-      return handler({
-        orderBy: {
-          ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
-        },
-        ...parameter,
+      return InstanceService.find({
         where: {
           ...this.where,
-          ...this.queryParams.name_s ? {
-            name_s: {
-              _ilike: `%${this.queryParams.name_s.trim()}%`
-            }
-          } : {},
-          ...this.queryParams.label_s ? { label_s: {
-            _ilike: `%${this.queryParams.label_s.trim()}%`
-          } } : {}
-        }
-      }).then(r => r.data)
+          ...generateQuery(this.queryParams)
+        },
+        fields: [
+          '_id',
+          'parentName',
+          'name',
+          'values'
+        ],
+        alias: 'data',
+        ...parameter
+      }).then(r => {
+        console.log(r.data)
+        return r.data
+      })
     },
     async loadColumns () {
+      const { parentName } = this.where
       try {
-        const options = {
-          orderBy: {
-            rid: 'desc'
-          },
-          limit: 999,
+        const { data: { modelList } } = await ModelService.find({
           where: {
-            did: {
-              '_eq': this.parentDid
-            }
-          }
-        }
-        const columns = (await getModelAttributeList(options)
-          .then(r => r.data.data))
-          .filter(e => !e.hidden_b)
-          .map(e => ({
-            title: e.label_s,
-            dataIndex: e.name_s,
-            // 老系统的宽度指定较小，当文字长度不够用时会发生换行，14 为当前 font-size
-            width: (e.label_s.length * 14) <= Number(e.width_i) ? Number(e.width_i) + 20 : 200,
-            sorter: true
-          }))
-
-        this.columns = [
-          ...this.columns,
-          ...columns
-        ].map(el => ({
-          ...el,
-          customRender: (text, record) => {
-            const originalTitle = el.dataIndex
-            const title = originalTitle.toLowerCase()
-            const value = record[originalTitle] || record[title] || record[`${title}_s`] || record[`${title}_i`] || record[`${title}_b`] || record[`${title}_t`] || ''
-            const ellipsis = this.$createElement(Ellipsis, {
-              props: {
-                width: el.width - 20 + 'px',
-                length: el.width / 10,
-                tooltip: true
-              }
-            }, [value])
-            return ellipsis
-          }
-        }))
+            name: parentName
+          },
+          fields: [
+            'attributes'
+          ],
+          alias: 'modelList'
+        })
+        // name 是唯一字段，查询出的 model 是长度为1的数组
+        const [model] = modelList
+        const { attributes } = model
+        console.log(attributes)
+        const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map(({ label, name, width }) => ({
+          title: label,
+          dataIndex: name,
+          // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
+          width: width ? width + 60 : 120,
+          customRender: (text, record) => _.get(record, `values.${name}`),
+          ellipsis: true
+        })))
+        this.columns = columns
       } catch (e) {
+        this.columns = []
         throw e
       }
     },

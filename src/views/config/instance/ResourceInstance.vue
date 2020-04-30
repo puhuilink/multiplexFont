@@ -16,20 +16,18 @@
       <!-- / content -->
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
-          <!-- <a-tab-pane tab="实例列表" key="1" forceRender>
+          <a-tab-pane tab="实例列表" key="1" forceRender>
             <ResourceInstanceList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentName: {
-                  _eq: selectedNode.name
-                }
+                parentName: selectedNode.name
               }"
               :parentNameS="selectedNode.name"
               :parentTreeS="selectedNode.tree_s"
               :parentDid="selectedNode.did"
             />
-          </a-tab-pane> -->
+          </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>
             <OperationLogList
               v-if="selectedNode"
@@ -88,7 +86,6 @@ export default {
      * @return {Undefined}
      */
     selectNode (selectedNode) {
-      console.log(selectedNode)
       this.selectedNode = selectedNode
     }
   }
