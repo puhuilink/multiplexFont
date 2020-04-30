@@ -105,6 +105,7 @@ const vueConfig = {
           '/urmp': ''
         }
       },
+      // 登录及权限
       '/api': {
         target: 'http://10.1.8.176:28081/',
         ws: false,
@@ -113,6 +114,43 @@ const vueConfig = {
           '/api': ''
         }
       },
+      // hasura cache
+      '/cache': {
+        target: 'http://10.1.13.17:31588/v1/graphql',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/cache': ''
+        }
+      },
+      // hasura main
+      '/main': {
+        target: 'http://10.1.13.17:31490/v1/graphql',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/main': ''
+        }
+      },
+      // hasura xunjian
+      '/xunjian': {
+        target: 'http://10.1.13.17:32495/v1/graphql',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/xunjian': ''
+        }
+      },
+      // hasura ngecc
+      '/ngecc': {
+        target: 'http://10.1.13.17:32125/v1/graphql',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/ngecc': ''
+        }
+      },
+      // 短信验证
       '/sms': {
         target: 'http://10.1.13.17:32538/',
         ws: false,
