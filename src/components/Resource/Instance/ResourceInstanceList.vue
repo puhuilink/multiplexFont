@@ -91,11 +91,11 @@ export default {
       type: Object,
       default: () => ({})
     },
-    parentNameS: {
+    parentName: {
       type: String,
       default: ''
     },
-    parentTreeS: {
+    parentTree: {
       type: String,
       default: ''
     },
@@ -154,9 +154,10 @@ export default {
   },
   methods: {
     add () {
+      const { parentName, parentTree } = this.where
       this.$refs['schema'].add(
-        this.parentNameS,
-        this.parentTreeS
+        parentName,
+        parentTree
       )
     },
     edit () {
@@ -201,7 +202,6 @@ export default {
         // name 是唯一字段，查询出的 model 是长度为1的数组
         const [model] = modelList
         const { attributes } = model
-        console.log(attributes)
         const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map(({ label, name, width }) => ({
           title: label,
           dataIndex: name,

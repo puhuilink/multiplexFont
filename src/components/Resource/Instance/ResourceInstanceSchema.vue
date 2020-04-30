@@ -12,89 +12,17 @@
     @ok="submit"
     cancelText="取消"
   >
-    <a-form :form="form" layout="vertical">
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'name_s',
-                { rules: [{ required: true, message: '名称必填' }] },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="显示名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'label_s',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="数据权限域"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'domain_s',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="字典编码"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'valuecode_s',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="字典名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'valuelabel_s',
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </a-form>
+    <a-spin v-if="loading" spinning></a-spin>
+    <DynamicForm v-else :form="form" :fields="attributes" />
   </a-modal>
 </template>
 
 <script>
 import { editInstance, addInstance } from '@/api/controller/Instance'
+// eslint-disable-next-line no-unused-vars
+import { InstanceService, ModelService } from '@/api-hasura/index'
+import DynamicForm from '../Utils/DynamicForm'
+import _ from 'lodash'
 
 const formItemLayout = {
   labelCol: {
@@ -106,11 +34,14 @@ const formItemLayout = {
 }
 export default {
   name: 'ResourceInstanceSchema',
-  components: {},
+  components: {
+    DynamicForm
+  },
   props: {},
   data: (vm) => ({
     form: vm.$form.createForm(vm),
     formItemLayout,
+    attributes: [],
     loading: false,
     record: null,
     submit: () => {},
@@ -119,12 +50,35 @@ export default {
   }),
   computed: {},
   methods: {
-    add (parentNameS, parentTreeS) {
+    async loadAttributes (parentName, parentTree) {
+      try {
+        this.loading = true
+        const { data: { modelList } } = await ModelService.find({
+          where: {
+            name: parentName
+          },
+          fields: [
+            'attributes'
+          ],
+          alias: 'modelList'
+        })
+        // name 是唯一字段，查询出的 model 是长度为1的数组
+        const [model] = modelList
+        const { attributes } = model
+        this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    add (parentName, parentTree) {
       this.title = '新增'
       this.visible = true
       this.submit = this.insert
-      this.parentNameS = parentNameS
-      this.parentTreeS = parentTreeS
+      this.parentName = parentName
+      this.parentTree = parentTree
+      this.loadAttributes(parentName)
     },
     /**
      * 编辑
@@ -138,6 +92,7 @@ export default {
       this.record = {
         ...record
       }
+      this.loadAttributes()
       await this.$nextTick()
       this.form.setFieldsValue(record)
     },
@@ -151,8 +106,8 @@ export default {
       let value = await this.getFormFields()
       value = {
         ...value,
-        'parentname_s': this.parentNameS,
-        'parenttree_s': this.parentTreeS
+        'parentname_s': this.parentName,
+        'parenttree_s': this.parentTree
       }
       this.loading = true
       return addInstance(value).then(res => {
