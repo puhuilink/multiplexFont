@@ -161,8 +161,10 @@ export default {
       )
     },
     edit () {
-      const [record] = this.selectRows
-      this.$refs['schema'].edit(record)
+      // const [_id] = this.selectRowKeys
+      const [instance] = this.selectRows
+      const { parentName, _id } = instance
+      this.$refs['schema'].edit(parentName, _id)
     },
     /**
      * 加载表格数据

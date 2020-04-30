@@ -5,15 +5,21 @@
     :title="title"
     v-model="visible"
     :width="940"
-    wrapClassName="ResourceModelRelationSchema__modal"
+    wrapClassName="ResourceInstanceSchema__modal"
     @cancel="cancel"
     :afterClose="reset"
     okText="保存"
     @ok="submit"
     cancelText="取消"
   >
-    <a-spin v-if="loading" spinning></a-spin>
-    <DynamicForm v-else :form="form" :fields="attributes" />
+    <a-tabs defaultActiveKey="1">
+      <a-tab-pane tab="基本信息" key="1">
+        <a-spin v-if="loading" spinning></a-spin>
+        <DynamicForm v-else :form="form" :fields="attributes" />
+      </a-tab-pane>
+
+      <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
+    </a-tabs>
   </a-modal>
 </template>
 
@@ -24,14 +30,6 @@ import { InstanceService, ModelService } from '@/api-hasura/index'
 import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
 
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
 export default {
   name: 'ResourceInstanceSchema',
   components: {
@@ -40,10 +38,9 @@ export default {
   props: {},
   data: (vm) => ({
     form: vm.$form.createForm(vm),
-    formItemLayout,
     attributes: [],
     loading: false,
-    record: null,
+    instance: null,
     submit: () => {},
     title: '',
     visible: false
@@ -72,6 +69,27 @@ export default {
         this.loading = false
       }
     },
+    async loadData (_id) {
+      try {
+        const { data: { instanceList } } = await InstanceService.find({
+          where: {
+            _id
+          },
+          fields: [
+            '_id',
+            'name',
+            'label',
+            'values'
+          ],
+          alias: 'instanceList'
+        })
+        const [instance] = instanceList
+        this.instance = instance
+        console.log(this.instance)
+      } catch (e) {
+        this.instance = null
+      }
+    },
     add (parentName, parentTree) {
       this.title = '新增'
       this.visible = true
@@ -82,19 +100,18 @@ export default {
     },
     /**
      * 编辑
-     * @param {Object} record
+     * @param {String} parentName
+     * @param {String} _id 实例 id
      * @return {Promise<Undefined>}
      */
-    async edit (record) {
+    async edit (parentName, _id) {
       this.title = '编辑'
       this.submit = this.update
       this.visible = true
-      this.record = {
-        ...record
-      }
-      this.loadAttributes()
+      this.loadAttributes(parentName)
+      this.loadData(_id)
       await this.$nextTick()
-      this.form.setFieldsValue(record)
+      this.form.setFieldsValue(this.instance.values)
     },
     cancel () {
       this.visible = false
@@ -129,7 +146,7 @@ export default {
     async update () {
       const value = await this.getFormFields()
       this.loading = true
-      return editInstance(this.record.did, value).then(res => {
+      return editInstance(this.instance.did, value).then(res => {
         this.$notification.success({
           message: '系统提示',
           description: '编辑成功'
@@ -158,5 +175,24 @@ export default {
 </script>
 
 <style lang="less">
-
+.ResourceInstanceSchema__modal {
+  .ant-modal-body {
+    padding-top: 0;
+    height: 508px;
+  }
+  .ant-transfer {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+  .ant-transfer-operation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ant-transfer-list {
+    height: 400px;
+    flex: 1;
+  }
+}
 </style>
