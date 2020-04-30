@@ -50,12 +50,11 @@
       </template>
     </CTable>
 
-    <!-- <ResourceModelAttrSchema
-      :did="where.did._eq"
+    <ResourceModelAttrSchema
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="query"
-    /> -->
+    />
   </div>
 </template>
 

@@ -14,8 +14,8 @@
   >
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="基本信息" key="1">
-        <a-spin v-if="loading" spinning></a-spin>
-        <DynamicForm v-else :form="form" :fields="attributes" />
+        <a-spin v-show="loading" spinning></a-spin>
+        <DynamicForm v-show="!loading" :form="form" :fields="attributes" />
       </a-tab-pane>
 
       <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
@@ -29,6 +29,7 @@ import { editInstance, addInstance } from '@/api/controller/Instance'
 import { InstanceService, ModelService } from '@/api-hasura/index'
 import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
+import Timeout from 'await-timeout'
 
 export default {
   name: 'ResourceInstanceSchema',
@@ -85,9 +86,8 @@ export default {
         })
         const [instance] = instanceList
         this.instance = instance
-        console.log(this.instance)
       } catch (e) {
-        this.instance = null
+        this.instance = {}
       }
     },
     add (parentName, parentTree) {
@@ -108,10 +108,15 @@ export default {
       this.title = '编辑'
       this.submit = this.update
       this.visible = true
-      this.loadAttributes(parentName)
-      this.loadData(_id)
+      await Promise.all([
+        this.loadAttributes(parentName),
+        this.loadData(_id)
+      ])
       await this.$nextTick()
-      this.form.setFieldsValue(this.instance.values)
+      console.log(22)
+      const keys = this.attributes.map(attribute => attribute.name)
+      await Timeout.set()
+      this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
     },
     cancel () {
       this.visible = false

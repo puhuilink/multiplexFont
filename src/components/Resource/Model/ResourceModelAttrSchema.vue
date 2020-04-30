@@ -25,7 +25,7 @@
           >
             <a-input
               v-decorator="[
-                'label_s',
+                'label',
                 { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />
@@ -41,7 +41,7 @@
             <a-input
               :disabled="title === '编辑'"
               v-decorator="[
-                'name_s',
+                'name',
                 {
                   rules: [{ required: true, message: '属性名称必填' }],
                   // initialValue: 'name'
@@ -61,7 +61,7 @@
           >
             <a-input
               v-decorator="[
-                'width_i'
+                'width'
               ]"
             />
           </a-form-item>
@@ -75,7 +75,7 @@
           >
             <a-select
               v-decorator="[
-                'datatype_s',
+                'datatype',
                 {
                   initialValue: 'STRING'
                 },
@@ -100,7 +100,7 @@
           >
             <a-select
               v-decorator="[
-                'displaytype_s',
+                'displayType',
                 {
                   initialValue: 'TEXT',
                   rules: [
@@ -129,7 +129,7 @@
           >
             <a-select
               v-decorator="[
-                'sourcetype_s',
+                'sourceType',
               ]"
             >
               <a-select-option
@@ -151,7 +151,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'searchfield_b',
+                'searchField',
                 {
                   valuePropName: 'checked'
                 }
@@ -167,7 +167,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allownull_b',
+                'allowNull',
                 {
                   valuePropName: 'checked'
                 }
@@ -185,7 +185,7 @@
           >
             <a-input
               v-decorator="[
-                'matchtype_s'
+                'matchType'
               ]"
             />
           </a-form-item>
@@ -199,7 +199,7 @@
           >
             <a-input
               v-decorator="[
-                'sourcevalue_s',
+                'sourceValue',
               ]">
             </a-input>
           </a-form-item>
@@ -215,7 +215,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allowinheritance_b',
+                'allowInheritance',
                 {
                   valuePropName: 'checked'
                 }
@@ -232,7 +232,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'hidden_b',
+                'hidden',
                 {
                   valuePropName: 'checked'
                 }
@@ -266,7 +266,7 @@
           >
             <a-select
               v-decorator="[
-                'tabgroup_s'
+                'tabGroup'
               ]"
             >
               <a-select-option
@@ -288,7 +288,7 @@
           >
             <a-input
               v-decorator="[
-                'defaultvalue_s'
+                'defaultValue'
               ]"
             />
           </a-form-item>
@@ -302,7 +302,7 @@
           >
             <a-input
               v-decorator="[
-                'operationvalue_s'
+                'operationValue'
               ]"
             />
           </a-form-item>
@@ -320,7 +320,7 @@
             <a-input
               type="number"
               v-decorator="[
-                'order_i'
+                'order'
               ]"
             />
           </a-form-item>
@@ -334,7 +334,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'uniqueness_b',
+                'uniqueness',
                 {
                   valuePropName: 'checked'
                 }
@@ -354,7 +354,7 @@
             <a-input
               type="number"
               v-decorator="[
-                'uniquenessscope_s'
+                'uniquenessScope'
               ]"
             />
           </a-form-item>
@@ -368,7 +368,7 @@
           >
             <a-input
               v-decorator="[
-                'pattern_s'
+                'pattern'
               ]"
             />
           </a-form-item>
@@ -384,7 +384,7 @@
           >
             <a-input
               v-decorator="[
-                'alertmessage_s'
+                'alertmessage'
               ]"
             />
           </a-form-item>
@@ -398,7 +398,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'assetsattr_b',
+                'assetsAttr',
                 {
                   valuePropName: 'checked'
                 }
@@ -497,20 +497,20 @@ const options = {
       value: 'URMPTREE'
     }
   ],
+  // FIXME: 具体作用方式
   tabgroup: [
     {
       name: '基本关系',
       value: 'base'
+    },
+    {
+      name: '关系信息',
+      value: '?'
+    },
+    {
+      name: '其他信息',
+      value: '??'
     }
-    // TODO: 找出剩余两种关系的值
-    // {
-    //   name: '关系信息',
-    //   value: '?'
-    // },
-    // {
-    //   name: '其他信息',
-    //   value: '??'
-    // }
   ]
 }
 

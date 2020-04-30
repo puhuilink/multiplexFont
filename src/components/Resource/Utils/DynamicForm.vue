@@ -13,8 +13,7 @@ export default {
     },
     form: {
       type: Object,
-      required: true,
-      default: () => ({})
+      required: true
     }
   },
   render (h) {
@@ -24,7 +23,7 @@ export default {
         <a-row>
           {
             ...fields.map((field, index) => (
-              <a-col md={12} span={24}>
+              <a-col md={12} span={24} key={index}>
                 <DynamicFormItem form={form} field={field} />
               </a-col>
             ))

@@ -18,14 +18,9 @@ export default {
     },
     form: {
       type: Object,
-      required: true,
-      default: () => ({})
+      required: true
     }
   },
-  data: (vm) => ({
-    fields: []
-  }),
-  computed: {},
   methods: {
     renderFormItem (field) {
       const { labelCol, wrapperCol, renderFormItenChild, getFieldDecorator } = this
@@ -59,6 +54,7 @@ export default {
     getFieldDecorator (field) {
       const { form } = this
       const { label, name, defaultValue, allowNull, pattern } = field
+      console.log(name)
       const options = {
         initialValue: defaultValue,
         id: name,
@@ -78,27 +74,23 @@ export default {
     renderInput (field) {
       // const { edit } = field
       // FIXME: 数据库数据恒为 false
-      const edit = true
-      return <a-input disabled={!edit}></a-input>
+      // const edit = true
+      return <a-input></a-input>
     },
     renderCheckbox (field) {
-      const { defaultValue } = field
-      return <a-checkbox defaultValue={defaultValue} />
+      return <a-checkbox />
     },
     renderSelect (field) {
       return <a-select></a-select>
     },
     renderTextarea (field) {
-      const { defaultValue } = field
-      return <a-textarea defaultValue={defaultValue} autosize />
+      return <a-textarea autosize />
     },
     renderDate (field) {
-      const { defaultValue } = field
-      return <a-date-picker style={{ width: '100%' }} defaultValue={defaultValue} />
+      return <a-date-picker style={{ width: '100%' }} />
     },
     renderDateTime (field) {
-      const { defaultValue } = field
-      return <a-date-picker style={{ width: '100%' }} defaultValue={defaultValue} showTime />
+      return <a-date-picker style={{ width: '100%' }} showTime />
     },
     renderRadio (field) {}
   },
