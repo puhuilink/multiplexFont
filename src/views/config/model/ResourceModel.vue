@@ -23,15 +23,15 @@
               } }"
             />
           </a-tab-pane>
-          <!-- <a-tab-pane tab="关系属性" key="2" forceRender>
+          <a-tab-pane tab="关系属性" key="2" forceRender>
             <ResourceModelRelationAttrList
               v-if="selectedNode"
               class="ResourceInstance-table"
-              :where="{ source_s: {
+              :where="{ source: {
                 _eq: selectedNode.name
               } }"
             />
-          </a-tab-pane> -->
+          </a-tab-pane>
           <a-tab-pane tab="操作日志" key="3" forceRender>
             <OperationLogList
               v-if="selectedNode"

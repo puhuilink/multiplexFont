@@ -7,6 +7,7 @@ import { AuditService } from './AuditService'
 import { OperationLogService } from './OperationLogService'
 import { ModelHistoryService } from './ModelHistoryService'
 import { InstanceHistoryService } from './InstanceHistoryService'
+import { RelationAttributeService } from './RelationAttributeService'
 
 export {
   UserService,
@@ -17,5 +18,6 @@ export {
   AuditService,
   OperationLogService,
   ModelHistoryService,
-  InstanceHistoryService
+  InstanceHistoryService,
+  RelationAttributeService
 }

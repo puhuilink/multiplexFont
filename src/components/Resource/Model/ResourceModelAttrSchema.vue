@@ -520,7 +520,9 @@ export default {
   props: {
     did: {
       type: Number,
-      required: true
+      default: 0
+      // TODO
+      // required: true
     }
   },
   data: (vm) => ({

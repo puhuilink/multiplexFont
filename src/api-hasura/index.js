@@ -7,7 +7,8 @@ import {
   AuditService,
   OperationLogService,
   ModelHistoryService,
-  InstanceHistoryService
+  InstanceHistoryService,
+  RelationAttributeService
 } from './service/index'
 
 export {
@@ -19,5 +20,6 @@ export {
   AuditService,
   OperationLogService,
   ModelHistoryService,
-  InstanceHistoryService
+  InstanceHistoryService,
+  RelationAttributeService
 }
