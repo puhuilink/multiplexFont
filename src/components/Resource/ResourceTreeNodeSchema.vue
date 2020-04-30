@@ -135,8 +135,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import { addModel } from '@/api/controller/Resource'
 import { ModelService } from '@/api-hasura'
 
 const formItemLayout = {

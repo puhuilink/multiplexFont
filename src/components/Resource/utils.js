@@ -1,9 +1,11 @@
+import _ from 'lodash'
+
 function buildChildren (parent, collection = []) {
   if (parent) {
     // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
     parent.children = [
       ...parent.instanceList || [],
-      ...collection.filter(el => el.parentKey === parent.key)
+      ..._.orderBy(collection.filter(el => el.parentKey === parent.key), ['orderBy'], 'asc')
     ]
     parent.children.forEach(el => {
       el.parent = parent
@@ -21,19 +23,14 @@ function recursiveBuildChildren (parent, collection = []) {
   }
 }
 
-// TODO: 节点筛选出来后，slice 处理数组，加快下次遍历
 function buildTree (collection = [], rootKeys = ['Ci']) {
   const roots = []
-  collection.forEach(el => {
-    rootKeys.forEach((key, index) => {
-      if (el.key === key) {
-        roots.push(el)
-        // 找到后弹出
-        // TODO: 是否会影响长度，或者用逆序？
-        // TODO: 匹配完成后跳出循环
-        // rootKeys.splice(index, 1)
-      }
-    })
+  _.forEach(collection, el => {
+    if (roots.length === rootKeys.length) {
+      // break
+      return false
+    }
+    rootKeys.includes(el.key) && roots.push(el)
   })
   roots.forEach(el => {
     // buildNode(el)
