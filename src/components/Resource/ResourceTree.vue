@@ -44,7 +44,7 @@
         <div class="ResourceTree__tabBarExtraContent">
           <a-button icon="upload"></a-button>
           <a-button icon="download"></a-button>
-          <template v-if="!instanceList">
+          <template v-if="!onlyExcelOption">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
             <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
@@ -76,6 +76,11 @@ export default {
     },
     // 隐藏分页
     hiddenTab: {
+      type: Boolean,
+      default: false
+    },
+    // 只展示导入、导出 excel的按钮
+    onlyExcelOption: {
       type: Boolean,
       default: false
     },

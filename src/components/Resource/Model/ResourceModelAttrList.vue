@@ -46,7 +46,6 @@
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
       </template>
     </CTable>
 

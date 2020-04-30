@@ -5,6 +5,7 @@
       <!-- / tree -->
       <a-col :xl="6" :xxl="4">
         <ResourceTree
+          onlyExcelOption
           class="ResourceInstance-tree"
           @selectNode="selectNode"
         />
