@@ -5,13 +5,20 @@ import { ApolloClient } from 'apollo-client'
 import { notification } from 'ant-design-vue'
 import { onError } from 'apollo-link-error'
 
-// FIXME: 此处部分设备无法访问到数据，可能与 https 协议有关，与运维联系
-const linkList = [
-  'cache', 'main', 'xunjian', 'ngecc'
-].map(domain => new HttpLink({
-  uri: `https://vic.${domain}.cluster.local/v1/graphql`,
+// const linkList = [
+//   'cache', 'main', 'xunjian', 'ngecc'
+// ].map(domain => new HttpLink({
+//   // uri: `https://vic.${domain}.cluster.local/v1/graphql`,
+//   uri: `/${domain}`,
+//   headers: {
+//     'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
+//   }
+// }))
+
+const linkList = ['31588', '31490', '32495', '32125'].map(port => new HttpLink({
+  uri: `http://10.1.13.17:${port}/v1/graphql`,
   headers: {
-    'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
+    'x-hasura-admin-secret': port === '32495' ? 'myadminsecretkey' : 'zhongjiao'
   }
 }))
 
