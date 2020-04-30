@@ -109,8 +109,6 @@ export default {
     ResourceInstanceSchema
   },
   data: () => ({
-    // 第几次加载数据
-    timer: 0,
     // 查询栏是否展开
     advanced: true,
     // 查询参数
@@ -143,22 +141,14 @@ export default {
   },
   watch: {
     '$props': {
-      immediate: true,
+      immediate: false,
       deep: true,
       async handler () {
-        // 重置数据
+        // 重置当前数据
         this.reset()
-        // 等待 table 挂载
-        await this.$nextTick()
-        // this.$refs['table'].loading = true
         // FIXME: loadColumns 在 loadData 之后完成，会造成页面闪烁
         this.loadColumns()
-        // 重新查询
-        // 组件 created 时，CTable 组件会执行一次 loadData
-        // 此处加上判断，避免重复调用
-        if (this.timer > 1) {
-          this.timer && this.$refs['table'].refresh(true)
-        }
+        this.$refs['table'].refresh(true)
       }
     }
   },
@@ -179,7 +169,6 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     async loadData (parameter) {
-      this.timer++
       this.selectedRowKeys = []
       this.selectedRows = []
       return InstanceService.find({
@@ -256,6 +245,10 @@ export default {
         delete (this.queryParams.flag)
       }
     }
+  },
+  created () {
+    this.loadColumns()
+    // CTable created 时会触发 loadData
   }
 }
 </script>
