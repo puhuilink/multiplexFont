@@ -70,6 +70,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.widget)
     const dbDataConfig = _.get(this, 'widget.config.dataConfig.dbDataConfig')
     const externalCi = _.get(dbDataConfig, 'externalCi')
     // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
