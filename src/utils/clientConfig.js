@@ -9,7 +9,8 @@ import { onError } from 'apollo-link-error'
 const linkList = [
   'cache', 'main', 'xunjian', 'ngecc'
 ].map(domain => new HttpLink({
-  uri: `https://vic.${domain}.cluster.local/v1/graphql`,
+  // uri: `https://vic.${domain}.cluster.local/v1/graphql`,
+  uri: `/${domain}`,
   headers: {
     'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
   }
