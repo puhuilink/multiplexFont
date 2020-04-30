@@ -74,7 +74,7 @@ export function get2step (parameter) {
  */
 export function sendCaptcha (data) {
   return axios({
-    baseURL: 'https://sms.cluster.local/sendMessage',
+    baseURL: '/sendMessage',
     method: 'post',
     data
   })

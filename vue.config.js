@@ -112,6 +112,14 @@ const vueConfig = {
         pathRewrite: {
           '/api': ''
         }
+      },
+      '/sendMessage': {
+        target: 'http://10.1.13.17:32538/',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/sendMessage': '/sendMessage'
+        }
       }
     }
   },
