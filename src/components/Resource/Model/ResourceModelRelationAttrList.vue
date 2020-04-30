@@ -74,7 +74,7 @@ import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
 import _ from 'lodash'
 
-const fields = [
+export const fields = [
   '_id',
   'name',
   'label',
@@ -244,6 +244,10 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
+      // console.log(
+      //   record,
+      //   _.pick(record, [...fields])
+      // )
       this.$refs['schema'].edit(_.pick(record, [...fields]))
     },
     /**

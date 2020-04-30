@@ -25,7 +25,7 @@
           >
             <a-input
               v-decorator="[
-                'name_s',
+                'name',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -40,7 +40,7 @@
           >
             <a-input
               v-decorator="[
-                'label_s',
+                'label',
                 {
                   rules: [{ required: true, message: '显示名称必填' }],
                   // initialValue: 'name'
@@ -60,7 +60,7 @@
           >
             <a-input
               v-decorator="[
-                'target_s',
+                'target',
                 { rules: [{ required: true, message: '目标必填' }] },
               ]"
             />
@@ -75,7 +75,7 @@
           >
             <a-select
               v-decorator="[
-                'mappingtype_s',
+                'mappingType',
                 {
                   initialValue: 'one'
                 },
@@ -100,7 +100,7 @@
           >
             <a-select
               v-decorator="[
-                'relationtype_s',
+                'relationType',
                 {
                   initialValue: 'Belongs To'
                 },
@@ -123,7 +123,7 @@
           >
             <a-select
               v-decorator="[
-                'tabgroup_s',
+                'tabGroup',
                 {
                   initialValue: '基本信息'
                 },
@@ -149,7 +149,7 @@
             <a-input
               type="number"
               v-decorator="[
-                'order_i',
+                'order',
               ]"
             />
           </a-form-item>
@@ -163,7 +163,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allowinheritance_b',
+                'allowInheritance',
                 {
                   valuePropName: 'checked'
                 }
@@ -181,7 +181,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'searchfield_b',
+                'searchField',
                 {
                   valuePropName: 'checked'
                 }
@@ -216,7 +216,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allownull_b',
+                'allowNull',
                 {
                   valuePropName: 'checked'
                 }
@@ -232,7 +232,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'assetattr_b',
+                'assetAttr',
                 {
                   valuePropName: 'checked'
                 }
@@ -250,7 +250,7 @@
           >
             <a-input
               v-decorator="[
-                'defaultvalue_s',
+                'defaultValue',
               ]"
             />
           </a-form-item>
@@ -262,6 +262,8 @@
 
 <script>
 import { addModelRelationAttr, updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
+import { fields } from './ResourceModelRelationAttrList'
+import _ from 'lodash'
 
 const formItemLayout = {
   labelCol: {
@@ -418,7 +420,7 @@ export default {
       }
       await this.$nextTick()
       // FIXME: checkbox
-      this.form.setFieldsValue(record)
+      this.form.setFieldsValue(_.pick(record, [...fields]))
     },
     cancel () {
       this.visible = false
