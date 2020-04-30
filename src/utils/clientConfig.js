@@ -11,7 +11,7 @@ const linkList = [
 ].map(domain => new HttpLink({
   uri: `https://vic.${domain}.cluster.local/v1/graphql`,
   headers: {
-    'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
+    'x-hasura-admin-secret': 'zhongjiao'
   }
 }))
 
