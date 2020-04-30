@@ -1,64 +1,6 @@
 <template>
   <div class="alarm-list-element">
-    <!-- S 操作 -->
-    <a-row>
-      <a-col
-        :xs="24"
-        :sm="24"
-        :md="24"
-        :lg="{span: 8}"
-        :xl="{span: 8}"
-        class="table-operator">
-        <a-button @click="$refs.confirm.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">确认</a-button>
-        <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!selectedRowKeys.length > 0">前转</a-button>
-        <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!selectedRowKeys.length > 0">解决</a-button>
-      </a-col>
-      <a-col
-        :xs="24"
-        :sm="24"
-        :md="24"
-        :lg="{span: 8, offset:8}"
-        :xl="{span: 8, offset:8}"
-      >
-        <a-input-search
-          placeholder="输入关键字"
-          style="width: 200px"
-          @search="onSearch"
-        />
-        <a-icon style="padding:0px 15px;" type="setting" />
-        <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
-        <a-icon
-          style="padding:0px 12px; color:#1890ff"
-          spin
-          type="sync"
-          v-else
-          @click="refresh"
-          title="关闭自动刷新" />
-        <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
-        <audio src="" id="eventAudio" loop="loop" hidden></audio>
-      </a-col>
-      <a-col
-        :xs="24"
-        :sm="24"
-        :md="24"
-        :lg="{span: 8,offset:16}"
-        :xl="{span: 8,offset:16}"
-      >
-        <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
-          <a-badge
-            :count="text | levelFilter"
-            :title="text | levelTitleFilter"
-            :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
-              text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
-                text==0?{backgroundColor:'#00c356'}:{}"
-          />
-          <span style="padding-left:7px; ">{{ value }}</span>
-        </div>
-      </a-col>
-    </a-row>
-    <!-- E 操作 -->
 
-    <!-- S 列表 -->
     <CTable
       ref="table"
       rowKey="alert_id"
@@ -69,6 +11,80 @@
       :customRow="customRow"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
+
+      <template #operation >
+        <a-row >
+          <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="{span: 8}"
+            :xl="{span: 6}"
+            class="table-operator">
+            <a-button
+              @click="$refs.confirm.open(selectedRowKeys)"
+              :disabled="!selectedRowKeys.length > 0 || tabKey==='5'"
+            >确认</a-button>
+            <a-button
+              @click="$refs.rollForward.open(selectedRowKeys, selectedRows)"
+              :disabled="!selectedRowKeys.length > 0 "
+            >前转</a-button>
+            <a-button
+              @click="$refs.resolve.open(selectedRowKeys)"
+              :disabled="!selectedRowKeys.length > 0 || tabKey==='20' || tabKey==='30'"
+            >解决</a-button>
+          </a-col>
+          <!-- <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="{span: 12}"
+            :xl="{span: 9}"
+            style="text-align: right;"
+          >
+            <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
+            <a-icon
+              style="padding:0px 12px; color:#1890ff"
+              spin
+              type="sync"
+              v-else
+              @click="refresh"
+              title="关闭自动刷新" />
+            <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
+            <audio src="" id="eventAudio" loop="loop" hidden></audio>
+          </a-col> -->
+          <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="{span: 24}"
+            :xl="{span: 18}"
+            style="text-align: right;"
+          >
+            <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
+            <a-icon
+              style="padding:0px 12px; color:#1890ff"
+              spin
+              type="sync"
+              v-else
+              @click="refresh"
+              title="关闭自动刷新" />
+            <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
+            <audio src="" id="eventAudio" loop="loop" hidden></audio>
+            <div class="levelContent" v-for=" (value, text) in alarmLevelList" :key="text">
+              <a-badge
+                :count="text | levelFilter"
+                :title="text | levelTitleFilter"
+                :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
+                  text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
+                    text==0?{backgroundColor:'#00c356'}:{}"
+              />
+              <span style="padding-left:7px; ">{{ value }}</span>
+            </div>
+          </a-col>
+        </a-row>
+      </template>
+
       <span slot="level" slot-scope="text">
         <a-badge
           :count="text | levelFilter"
@@ -92,26 +108,8 @@
         <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
       </span>
     </CTable>
-    <!-- E 列表 -->
+    <!-- / 列表 -->
 
-    <!-- S 表格右击菜单 -->
-    <a-menu :style="menuStyle" v-if="menuVisible">
-      <a-menu-item @click="$refs.confirm.open(selectedRowKeys)">
-        <a-icon type="pushpin" />
-        确认告警
-      </a-menu-item>
-      <a-menu-item @click="$refs.rollForward.open(selectedRowKeys, selectedRows)">
-        <a-icon type="to-top" />
-        前转告警
-      </a-menu-item>
-      <a-menu-item @click="$refs.resolve.open(selectedRowKeys)">
-        <a-icon type="tool" />
-        解决告警
-      </a-menu-item>
-    </a-menu>
-    <!-- E 表格右击菜单 -->
-
-    <!-- S model模块 -->
     <m-confirm ref="confirm" @ok="() => $refs['table'].refresh(true)"></m-confirm>
     <roll-forward ref="rollForward" @ok="() => $refs['table'].refresh(true)"></roll-forward>
     <m-solve ref="resolve" @ok="() => $refs['table'].refresh(true)"></m-solve>
@@ -126,7 +124,7 @@
     <event-query ref="eventQuery"></event-query>
     <operation ref="operation"></operation>
     <correlation ref="correlation"></correlation>
-    <!-- E model模块 -->
+    <!-- / model模块 -->
   </div>
 </template>
 
@@ -135,7 +133,6 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import { Ellipsis } from '@/components'
 import CTable from '@/components/Table/CTable'
-import queryList from '@/api/controller/AlarmqQueryList'
 import screening from '@/views/alarm/screening'
 import MConfirm from '@/views/alarm/modules/MConfirm'
 import RollForward from '@/views/alarm/modules/RollForward'
@@ -191,9 +188,7 @@ const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $ar
     aggregate {
       count
     }
-  }
-}`
-const menuQuery = gql`query($arising_time_gte: timestamp!, $arising_time_lte: timestamp!){
+  },
   m1: t_alert_aggregate(where: {state: {_eq: 0}, arising_time: {_gte: $arising_time_gte, _lte: $arising_time_lte}}) {
     aggregate {
       count
@@ -267,10 +262,8 @@ export default {
           tab: '已忽略告警'
         }
       ],
-      tabKey: '0',
       // 搜索： 展开/关闭
       advanced: false,
-      queryList: {},
       // 自动刷新
       autoRefresh: false,
       // 是否播放告警音频
@@ -339,14 +332,6 @@ export default {
       alarmLevelList: {},
       selectedRowKeys: [],
       selectedRows: [],
-      // 表格右击菜单数据
-      menuVisible: false,
-      menuStyle: {
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        border: '1px solid #eee'
-      },
       record: {}
     }
   },
@@ -374,11 +359,7 @@ export default {
       }
     }
   },
-  created () {
-    this.getLevelList()
-    this.getMenuList()
-    this.getqueryList()
-  },
+  created () {},
   methods: {
     /**
      * 加载表格数据
@@ -387,44 +368,47 @@ export default {
     loadData (parameter) {
       // 清空选中
       this.selectedRowKeys = []
-      return apollo.clients.alert.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.where,
-            arising_time: {
-              _gte: '2018-5-31 00:00:00',
-              _lte: '2018-5-31 23:59:59'
-            },
-            ...this.elementProps.domains ? {
-              domains: {
-                _eq: this.elementProps.domains
-              }
-            } : {},
-            ...this.elementProps.model ? {
-              node_types: {
-                _eq: this.elementProps.model
-              }
-            } : {},
-            ...this.elementProps.selectedInstance ? {
-              node_ids: {
-                _in: this.elementProps.selectedInstance
-              }
-            } : {},
-            ...this.elementProps.alarmType ? {
-              alert_id: {
-                _in: this.elementProps.alarmType
-              }
-            } : {},
-            ...this.elementProps.collectionSystem ? {
-              agent_id: {
-                _in: this.elementProps.collectionSystem
-              }
-            } : {}
+      const { resourceConfig } = this.elementProps.params
+      if (resourceConfig) {
+        return apollo.clients.alert.query({
+          query,
+          variables: {
+            ...parameter,
+            where: {
+              ...this.where,
+              arising_time: {
+                _gte: '2018-5-31 00:00:00',
+                _lte: '2018-5-31 23:59:59'
+              },
+              ...this.elementProps.domains ? {
+                domains: {
+                  _eq: resourceConfig.domains
+                }
+              } : {},
+              ...this.elementProps.model ? {
+                node_types: {
+                  _eq: resourceConfig.model
+                }
+              } : {},
+              ...this.elementProps.selectedInstance ? {
+                node_ids: {
+                  _in: resourceConfig.selectedInstance
+                }
+              } : {},
+              ...this.elementProps.alarmType ? {
+                alert_id: {
+                  _in: resourceConfig.alarmType
+                }
+              } : {},
+              ...this.elementProps.collectionSystem ? {
+                agent_id: {
+                  _in: resourceConfig.collectionSystem
+                }
+              } : {}
+            }
           }
-        }
-      }).then(r => r.data)
+        }).then(r => r.data)
+      }
     },
     eventQuery () {
       // return console.log(this.record)
@@ -450,20 +434,6 @@ export default {
           1: r.data.L2.aggregate.count,
           0: r.data.L1.aggregate.count
         }
-      })
-    },
-    /**
-     * 获取tab的告警数量列表
-     */
-    getMenuList () {
-      return apollo.clients.alert.query({
-        query: menuQuery,
-        variables: {
-          // arising_time: today
-          arising_time_gte: '2018-5-31 00:00:00',
-          arising_time_lte: '2018-5-31 23:59:59'
-        }
-      }).then(r => {
         const alarmMenuList = {
           0: r.data.m1.aggregate.count,
           1: r.data.m2.aggregate.count,
@@ -477,48 +447,22 @@ export default {
         }
       })
     },
-    /**
-     * 获取筛选项的下拉列表的值
-     */
-    async getqueryList () {
-      this.queryList.domainList = await queryList.domainList()
-      this.queryList.typeList = await queryList.typeList()
-      this.queryList.alertList = await queryList.alertList()
-      this.queryList.agentList = await queryList.agentList()
-    },
-    /**
-     * tab切换开关
-     */
-    onTabChange (key, type) {
-      this.tabKey = key
-      this.autoRefresh = false
-      clearInterval(this.timer)
-      this[type] = key
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    async ciTypeChange (value) {
-      this.queryList.CIInstance = await queryList.nodeList(value)
-    },
     query () {
       this.$refs['table'].refresh(true)
     },
     /**
      * 30s自动刷新
      */
-    refresh () {
-      this.autoRefresh = !this.autoRefresh
+    refresh (e) {
+      if (e > 0) {
+        this.autoRefresh = !this.autoRefresh
+      }
+      const refreshCycle = e * 60000
       if (this.autoRefresh) {
         this.timer = setInterval(() => {
-          this.$refs['table'].refresh(true)
+          this.query()
           this.getLevelList()
-          this.getMenuList()
-        }, 30000)
+        }, refreshCycle)
       } else {
         clearInterval(this.timer)
       }
@@ -544,13 +488,6 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    /**
-     * 点击隐藏表格小菜单
-     */
-    bodyClick () {
-      this.menuVisible = false
-      document.body.removeEventListener('click', this.bodyClick)
-    },
     onSearch (value) {
       console.log(value)
     },
@@ -560,14 +497,6 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          contextmenu: e => {
-            e.preventDefault()
-            this.menuData = record
-            this.menuVisible = true
-            this.menuStyle.top = e.clientY - 80 + 'px'
-            this.menuStyle.left = e.clientX - 250 + 'px'
-            document.body.addEventListener('click', this.bodyClick)
-          },
           dblclick: () => {
             this.record = record
             this.$refs.detail.open(record, 'monitorSee')
@@ -582,7 +511,23 @@ export default {
         props.isCallInterface = false
         this.$refs['table'].refresh()
       }
+      if (props.params.resourceConfig) {
+        this.getLevelList()
+      }
+      if (props.params.refreshTime) {
+        this.refresh(props.params.refreshTime)
+      }
     }
+  },
+  beforeDestroy () {
+    // 清除定时器
+    clearInterval(this.timer)
+    console.log('beforeDestroy')
+  },
+  destroyed () {
+    // 清除定时器
+    // clearInterval(this.timer)
+    console.log('destroyed')
   }
 }
 </script>

@@ -117,15 +117,11 @@ export default {
     /**
      * 30s自动刷新
      */
-    refresh () {
-      this.autoRefresh = !this.autoRefresh
-      if (this.autoRefresh) {
-        this.timer = setInterval(() => {
-          this.$refs['table'].refresh(true)
-        }, 30000)
-      } else {
-        clearInterval(this.timer)
-      }
+    refresh (e) {
+      const refreshCycle = e * 60000
+      this.timer = setInterval(() => {
+        this.$refs['table'].refresh(true)
+      }, refreshCycle)
     }
   },
   watch: {
@@ -134,7 +130,20 @@ export default {
         props.isCallInterface = false
         this.$refs['table'].refresh()
       }
+      if (props.params.refreshTime) {
+        this.refresh(props.params.refreshTime)
+      }
     }
+  },
+  beforeDestroy () {
+    // 清除定时器
+    clearInterval(this.timer)
+    console.log('beforeDestroy')
+  },
+  destroyed () {
+    // 清除定时器
+    // clearInterval(this.timer)
+    console.log('destroyed')
   }
 }
 </script>
