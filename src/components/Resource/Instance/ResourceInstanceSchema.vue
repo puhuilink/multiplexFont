@@ -104,7 +104,7 @@ export default {
             'name',
             'label',
             'value: name',
-            `instanceList {
+            `children: instanceList {
               label
               value: name
               parentName
@@ -113,7 +113,11 @@ export default {
           alias: 'targetList'
         })
         relationAttributeList.forEach((attribute, index) => {
-          attribute['targetList'] = targetList[index]
+          Object.assign(attribute, {
+            // 为 DynamicForm / DynamicFormItem 保持一致入参
+            selectGroupList: targetList[index] ? [targetList[index]] : [],
+            displayType: 'SELECT'
+          })
         })
         // console.log(relationAttributeList)
         this.relationAttributeList = relationAttributeList
@@ -150,7 +154,7 @@ export default {
       this.loading = true
       await Promise.all([
         this.loadAttributes(parentName),
-        this.loadRelationAttributes(parentName)
+        this.loadRelationTargetList(parentName)
       ])
     },
     /**

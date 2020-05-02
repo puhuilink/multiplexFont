@@ -1,4 +1,6 @@
 <script>
+import moment from 'moment'
+
 export default {
   name: 'DynamicFormItem',
   components: {},
@@ -52,11 +54,10 @@ export default {
       }
     },
     getFieldDecorator (field) {
-      const { form } = this
-      const { label, name, defaultValue, allowNull, pattern } = field
-      console.log(name)
+      const { form, makeInitialValue } = this
+      const { label, name, allowNull, pattern } = field
       const options = {
-        initialValue: defaultValue,
+        initialValue: makeInitialValue(field),
         id: name,
         rules: [
           ...allowNull ? [{
@@ -71,6 +72,14 @@ export default {
       }
       return form.getFieldDecorator(name, options)
     },
+    makeInitialValue (field) {
+      const { defaultValue, displayType } = field
+      switch (displayType) {
+        case 'DATE': return moment(defaultValue)
+        case 'DATETIME': return moment(defaultValue)
+        default: return defaultValue
+      }
+    },
     renderInput (field) {
       // const { edit } = field
       // FIXME: 数据库数据恒为 false
@@ -81,7 +90,31 @@ export default {
       return <a-checkbox />
     },
     renderSelect (field) {
-      return <a-select></a-select>
+      // TODO: defaultValue
+      const filterOption = (input, option) => {
+        const text = option.componentOptions.children[0].text || ''
+        return text.toLowerCase().includes(
+          input.toLowerCase()
+        )
+      }
+
+      const renderSelectOption = itemList => itemList.map(({ label, value }, index) => (
+        <a-select-option value={value}>{label}</a-select-option>
+      ))
+
+      const renderSelectGroup = groupList => groupList.map(({ label, children, index }) => (
+        <a-select-opt-group key={index} label={label}>
+          { ...renderSelectOption(children) }
+        </a-select-opt-group>
+      ))
+
+      // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
+      const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
+      return (
+        <a-select filterOption={filterOption} showSearch allowClear mode={ mappingType === 'one' ? 'default' : 'multiple' }>
+          { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
+        </a-select>
+      )
     },
     renderTextarea (field) {
       return <a-textarea autosize />
