@@ -32,6 +32,11 @@ export default {
   name: 'CiModelSelect',
   components: {},
   props: {
+    // FIXME: v-decorator 无法动态传入？
+    decorator: {
+      type: Array,
+      default: () => (['model', {}])
+    },
     // labelInValue 为真时格式为 object，否则为 string
     // eslint-disable-next-line
     value: {

@@ -58,12 +58,36 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <!-- TODO: 接受值 -->
+            <a-select
+              showSearch
+              allowClear
+              style="min-width: 200px"
+              :notFoundContent="loading ? '加载中...' : '暂无数据'"
+              :filterOption="filterOption"
               v-decorator="[
                 'target',
                 { rules: [{ required: true, message: '目标必填' }] },
               ]"
-            />
+            >
+              <a-select-opt-target v-for="(target, idx) in targetList" :key="idx">
+                <span slot="label">{{ target.label }}</span>
+                <a-select-option
+                  v-for="(item, itemIdx) in target.children"
+                  :key="`${itemIdx}-${item.label}`"
+                  :value="item.value"
+                >
+                  {{ item.label }}
+                </a-select-option>
+              </a-select-opt-target>
+            </a-select>
+            <!-- <CiModelSelect /> -->
+            <!-- <a-input
+              v-decorator="[
+                'target',
+                { rules: [{ required: true, message: '目标必填' }] },
+              ]"
+            /> -->
           </a-form-item>
         </a-col>
 
@@ -264,6 +288,8 @@
 import { addModelRelationAttr, updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
 import { fields } from './ResourceModelRelationAttrList'
 import _ from 'lodash'
+import { CiModelSelect } from '@/components/Common/index'
+import { ModelService } from '@/api-hasura/index'
 
 const formItemLayout = {
   labelCol: {
@@ -381,13 +407,17 @@ const options = {
 
 export default {
   name: 'ResourceModelRelationSchema',
-  components: {},
+  components: {
+    CiModelSelect
+  },
   props: {},
   data: (vm) => ({
     sourceS: null,
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
+    targetLoading: false,
+    targetList: [],
     options,
     record: null,
     submit: () => {},
@@ -396,6 +426,36 @@ export default {
   }),
   computed: {},
   methods: {
+    filterOption (input, option) {
+      const text = option.componentOptions.children[0].text || ''
+      return text.toLowerCase().includes(
+        input.toLowerCase()
+      )
+    },
+    async loadTarget () {
+      try {
+        this.targetLoading = true
+        const { data: { targetList } } = await ModelService.find({
+          fields: [
+            'label',
+            'value: name',
+            `children {
+              label
+              value: name
+              parentName
+            }`
+          ],
+          'alias': 'targetList'
+        })
+        // const { targetList } = await getModelList(true)
+        this.targetList = targetList
+      } catch (e) {
+        this.targetList = []
+        throw e
+      } finally {
+        this.targetLoading = false
+      }
+    },
     /**
      * 新增
      * @param {String} sourceS 关联
@@ -463,6 +523,7 @@ export default {
     async getFormFields () {
       return new Promise((resolve, reject) => {
         this.form.validateFields((err, values) => {
+          console.log(values)
           err ? reject(err) : resolve(values)
         })
       })
