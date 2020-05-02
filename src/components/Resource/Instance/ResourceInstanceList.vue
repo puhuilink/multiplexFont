@@ -1,62 +1,64 @@
 <template>
   <div class="ResourceInstanceList">
-    <CTable
-      ref="table"
-      :data="loadData"
-      :columns="columns"
-      :rowKey="el => el._id"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
-    >
+    <a-spin :spinning="loading">
+      <CTable
+        ref="table"
+        :data="loadData"
+        :columns="columns"
+        :rowKey="el => el._id"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+        :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
+      >
 
-      <template #query>
-        <a-form layout="inline">
-          <div :class="{ fold: !advanced }">
-            <a-row>
-              <a-col
-                v-for="(field, index) in queryFields"
-                :key="index"
-                :md="12"
-                :sm="24"
-                v-show="index <= 1 || (index > 1 && advanced)"
-              >
-                <a-form-item
-                  :labelCol="{ span: 6 }"
-                  :wrapperCol="{ span: 12, offset: 4 }"
-                  :label="field.label"
-                  style="width: 100%"
+        <template #query>
+          <a-form layout="inline">
+            <div :class="{ fold: !advanced }">
+              <a-row>
+                <a-col
+                  v-for="(field, index) in queryFields"
+                  :key="index"
+                  :md="12"
+                  :sm="24"
+                  v-show="index <= 1 || (index > 1 && advanced)"
                 >
-                  <a-input allowClear v-model="queryParams[field.name]" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </div>
+                  <a-form-item
+                    :labelCol="{ span: 8 }"
+                    :wrapperCol="{ span: 12, offset: 4 }"
+                    :label="field.label"
+                    style="width: 100%"
+                  >
+                    <a-input allowClear v-model="queryParams[field.name]" />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
 
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
-            <template v-if="queryFields.length">
-              <!-- FIXME: 查询接口入参错误 -->
-              <!-- FIXME: 查询匹配条件动态 -->
-              <a-button type="primary" @click="query">查询</a-button>
-              <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            </template>
-            <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryFields.length > 2">
-              {{ advanced ? '收起' : '展开' }}
-              <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
-          </span>
-        </a-form>
-      </template>
+            <!-- TODO: 统一管理布局 -->
+            <!-- TODO: 居中 span -->
+            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+              <template v-if="queryFields.length">
+                <!-- FIXME: 查询接口入参错误 -->
+                <!-- FIXME: 查询匹配条件动态 -->
+                <a-button type="primary" @click="query">查询</a-button>
+                <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+              </template>
+              <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryFields.length > 2">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-form>
+        </template>
 
-      <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
-      </template>
+        <template #operation>
+          <a-button @click="add">新建</a-button>
+          <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+          <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button>数据检查</a-button>
+        </template>
 
-    </CTable>
+      </CTable>
+    </a-spin>
 
     <ResourceInstanceSchema
       ref="schema"
@@ -114,6 +116,7 @@ export default {
   data: () => ({
     // 查询栏是否展开
     advanced: false,
+    loading: false,
     // 查询参数
     queryParams: {},
     // 选中行
@@ -154,7 +157,6 @@ export default {
       async handler () {
         // 重置当前数据
         this.reset()
-        // FIXME: loadColumns 在 loadData 之后完成，会造成页面闪烁
         this.loadColumns()
         this.$refs['table'].refresh(true)
       }
@@ -200,6 +202,7 @@ export default {
     async loadColumns () {
       const { parentName } = this.where
       try {
+        this.loading = true
         const { data: { modelList } } = await ModelService.find({
           where: {
             name: parentName
@@ -226,6 +229,8 @@ export default {
       } catch (e) {
         this.columns = []
         throw e
+      } finally {
+        this.loading = false
       }
     },
     query () {
@@ -265,5 +270,6 @@ export default {
 .fold {
   display: inline-block;
   width: calc(100% - 216px);
+  padding-right: 10px;
 }
 </style>
