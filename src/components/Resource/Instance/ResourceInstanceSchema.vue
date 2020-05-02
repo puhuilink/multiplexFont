@@ -1,6 +1,7 @@
 <template>
   <a-modal
     centered
+    destroyOnClose
     :confirmLoading="loading"
     :title="title"
     v-model="visible"
@@ -21,8 +22,8 @@
 
         <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
 
-        <a-tab-pane tab="关系信息" key="3" forceRender>
-          <DynamicForm v-show="!loading" :form="relationAttributeListForm" :fields="relationAttributeList" />
+        <a-tab-pane tab="关系信息" key="3" forceRender v-if="relationAttributeList.length">
+          <DynamicForm :form="relationAttributeListForm" :fields="relationAttributeList" />
         </a-tab-pane>
 
       </a-tabs>
@@ -83,8 +84,9 @@ export default {
         const [model] = modelList
         const { attributes, relationAttributeList } = model
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
+        // FIXME: 关系信息 tab 页签闪烁
         this.relationAttributeList = relationAttributeList
-        await this.loadRelationTargetList()
+        this.relationAttributeList.length && await this.loadRelationTargetList()
       } catch (e) {
         this.relationAttributeList = []
         throw e
@@ -95,6 +97,7 @@ export default {
     async loadRelationTargetList () {
       const { relationAttributeList } = this
       const modelList = relationAttributeList.map(({ target }) => target)
+      console.log(modelList)
       try {
         const { data: { targetList } } = await ModelService.find({
           where: {
@@ -172,13 +175,14 @@ export default {
         this.loadData(_id)
       ])
       await this.$nextTick()
-      console.log(22)
       const keys = this.attributes.map(attribute => attribute.name)
       await Timeout.set()
       this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
     },
     cancel () {
       this.visible = false
+      // FIXME: afterClose 未生效?
+      // this.reset()
     },
     /**
      * 新增
@@ -231,7 +235,8 @@ export default {
       })
     },
     reset () {
-      this.form.resetFields()
+      this.form && this.form.resetFields && this.form.resetFields()
+      console.log(222)
       Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
