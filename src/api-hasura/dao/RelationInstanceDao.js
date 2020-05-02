@@ -10,6 +10,12 @@ class RelationInstanceDao extends BaseDao {
   // 对应 vue-apollo
   @readonly
   static PROVIDER = alert
+
+  // 字段与显示文字
+  @readonly
+  static FIELDS_MAPPING = new Map([
+    ['_id', '_id']
+  ])
 }
 
 export {

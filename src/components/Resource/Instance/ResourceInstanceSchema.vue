@@ -12,21 +12,28 @@
     @ok="submit"
     cancelText="取消"
   >
-    <a-tabs defaultActiveKey="1">
-      <a-tab-pane tab="基本信息" key="1">
-        <a-spin v-show="loading" spinning></a-spin>
-        <DynamicForm v-show="!loading" :form="form" :fields="attributes" />
-      </a-tab-pane>
+    <a-spin :spinning="loading">
+      <a-tabs defaultActiveKey="1">
 
-      <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
-    </a-tabs>
+        <a-tab-pane tab="基本信息" key="1">
+          <DynamicForm :form="attributesForm" :fields="attributes" />
+        </a-tab-pane>
+
+        <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
+
+        <a-tab-pane tab="关系信息" key="3" forceRender>
+          <DynamicForm v-show="!loading" :form="relationAttributeListForm" :fields="relationAttributeList" />
+        </a-tab-pane>
+
+      </a-tabs>
+    </a-spin>
   </a-modal>
 </template>
 
 <script>
 import { editInstance, addInstance } from '@/api/controller/Instance'
 // eslint-disable-next-line no-unused-vars
-import { InstanceService, ModelService } from '@/api-hasura/index'
+import { InstanceService, ModelService, RelationAttributeService } from '@/api-hasura/index'
 import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
 import Timeout from 'await-timeout'
@@ -38,8 +45,10 @@ export default {
   },
   props: {},
   data: (vm) => ({
-    form: vm.$form.createForm(vm),
+    attributesForm: vm.$form.createForm(vm),
     attributes: [],
+    relationAttributeList: [],
+    relationAttributeListForm: vm.$form.createForm(vm),
     loading: false,
     instance: null,
     submit: () => {},
@@ -70,6 +79,28 @@ export default {
         this.loading = false
       }
     },
+    async loadRelationAttributes (source) {
+      try {
+        const { data: { relationAttributeList } } = await RelationAttributeService.find({
+          where: {
+            source
+          },
+          fields: [
+            '_id',
+            'label',
+            'name',
+            'defaultValue',
+            'allowNull',
+            'sourceValue'
+          ],
+          alias: 'relationAttributeList'
+        })
+        this.relationAttributeList = relationAttributeList
+      } catch (e) {
+        this.relationAttributeList = []
+        throw e
+      }
+    },
     async loadData (_id) {
       try {
         const { data: { instanceList } } = await InstanceService.find({
@@ -90,13 +121,23 @@ export default {
         this.instance = {}
       }
     },
-    add (parentName, parentTree) {
+    async add (parentName, parentTree) {
       this.title = '新增'
       this.visible = true
       this.submit = this.insert
       this.parentName = parentName
       this.parentTree = parentTree
-      this.loadAttributes(parentName)
+      try {
+        this.loading = true
+        await Promise.all([
+          this.loadAttributes(parentName),
+          this.loadRelationAttributes(parentName)
+        ])
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     /**
      * 编辑
@@ -108,15 +149,23 @@ export default {
       this.title = '编辑'
       this.submit = this.update
       this.visible = true
-      await Promise.all([
-        this.loadAttributes(parentName),
-        this.loadData(_id)
-      ])
-      await this.$nextTick()
-      console.log(22)
-      const keys = this.attributes.map(attribute => attribute.name)
-      await Timeout.set()
-      this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
+      try {
+        this.loading = true
+        await Promise.all([
+          this.loadAttributes(parentName),
+          this.loadRelationAttributes(parentName),
+          this.loadData(_id)
+        ])
+        await this.$nextTick()
+        console.log(22)
+        const keys = this.attributes.map(attribute => attribute.name)
+        await Timeout.set()
+        this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     cancel () {
       this.visible = false
@@ -184,6 +233,7 @@ export default {
   .ant-modal-body {
     padding-top: 0;
     height: 508px;
+    overflow: auto;
   }
   .ant-transfer {
     display: flex;
