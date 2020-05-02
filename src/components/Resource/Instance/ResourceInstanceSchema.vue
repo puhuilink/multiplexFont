@@ -72,7 +72,9 @@ export default {
               name,
               defaultValue
               allowNull
+              mappingType
               sourceValue
+              target
             }`
           ],
           alias: 'modelList'
@@ -82,11 +84,41 @@ export default {
         const { attributes, relationAttributeList } = model
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
         this.relationAttributeList = relationAttributeList
+        await this.loadRelationTargetList()
       } catch (e) {
         this.relationAttributeList = []
         throw e
       } finally {
         this.loading = false
+      }
+    },
+    async loadRelationTargetList () {
+      const { relationAttributeList } = this
+      const modelList = relationAttributeList.map(({ target }) => target)
+      try {
+        const { data: { targetList } } = await ModelService.find({
+          where: {
+            name: { _in: modelList }
+          },
+          fields: [
+            'name',
+            'label',
+            'value: name',
+            `instanceList {
+              label
+              value: name
+              parentName
+            }`
+          ],
+          alias: 'targetList'
+        })
+        relationAttributeList.forEach((attribute, index) => {
+          attribute['targetList'] = targetList[index]
+        })
+        // console.log(relationAttributeList)
+        this.relationAttributeList = relationAttributeList
+      } catch (e) {
+        throw e
       }
     },
     async loadData (_id) {
