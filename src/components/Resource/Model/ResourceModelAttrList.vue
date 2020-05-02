@@ -65,6 +65,7 @@ import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
+import _ from 'lodash'
 
 const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
   delete_ngecc_model_attributes (where: {
@@ -106,70 +107,69 @@ export default {
           {
             title: '显示名称',
             dataIndex: 'label',
-            // sorter: true,
+            sorter: true,
             width: 180
           },
           {
             title: '属性名称',
             dataIndex: 'name',
-            // sorter: true,
+            sorter: true,
             width: 300
           },
           {
             title: '显示宽度',
             dataIndex: 'width',
-            sorter: (a, b) => a > b,
-            // sorter: true,
+            sorter: true,
             width: 120
           },
           {
             title: '数据类型',
             dataIndex: 'dataType',
-            // sorter: true,
+            sorter: true,
             width: 120
           },
           {
             title: '显示类型',
             dataIndex: 'displayType',
-            // sorter: true,
+            sorter: true,
             width: 180
           },
           {
             title: '源类型',
             dataIndex: 'sourceType',
-            // sorter: true,
+            sorter: true,
             width: 180
           },
           {
             title: '作为查询',
             dataIndex: 'searchField',
-            // sorter: true,
+            sorter: true,
             width: 180
           },
           {
             title: '非空',
             dataIndex: 'allowNull',
-            // sorter: true,
+            sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '源值',
             dataIndex: 'sourceValue',
-            // sorter: true,
+            sorter: true,
             width: 180
           },
           {
             title: '继承',
             dataIndex: 'allowInheritance',
-            // sorter: true,
+            sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '隐藏',
             dataIndex: 'hidden',
-            // sorter: true,
+            sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           }
@@ -248,10 +248,13 @@ export default {
       }).then(r => {
         const { data: { modelList } } = r//  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
         const [model] = modelList
-        // console.log(model)
+        // TODO: 查询条件
+        // console.log(this.queryParams)
         const { attributes } = model
+        const { orderBy = { label: 'asc' } } = parameter
+        const [[ key, sort ]] = Object.entries(orderBy)
         return {
-          data: attributes,
+          data: _.orderBy(attributes, [key], [sort]),
           pagination: {
             aggregate: {
               count: attributes.length
@@ -259,25 +262,6 @@ export default {
           }
         }
       })
-      // return getModelAttributeList({
-      //   orderBy: {
-      //     rid: 'desc'
-      //   },
-      //   ...parameter,
-      //   where: {
-      //     ...this.where,
-      //     ...this.queryParams.label ? {
-      //       label: {
-      //         _ilike: `%${this.queryParams.label.trim()}%`
-      //       }
-      //     } : {},
-      //     ...this.queryParams.name ? {
-      //       name: {
-      //         _ilike: `%${this.queryParams.name.trim()}%`
-      //       }
-      //     } : {}
-      //   }
-      // }).then(r => r.data)
     },
     query () {
       this.$refs['table'].refresh(true)
