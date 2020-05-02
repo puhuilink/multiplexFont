@@ -63,14 +63,14 @@
               showSearch
               allowClear
               style="min-width: 200px"
-              :notFoundContent="loading ? '加载中...' : '暂无数据'"
+              :notFoundContent="targetLoading ? '加载中...' : '暂无数据'"
               :filterOption="filterOption"
               v-decorator="[
                 'target',
                 { rules: [{ required: true, message: '目标必填' }] },
               ]"
             >
-              <a-select-opt-target v-for="(target, idx) in targetList" :key="idx">
+              <a-select-opt-group v-for="(target, idx) in targetList" :key="idx">
                 <span slot="label">{{ target.label }}</span>
                 <a-select-option
                   v-for="(item, itemIdx) in target.children"
@@ -79,7 +79,7 @@
                 >
                   {{ item.label }}
                 </a-select-option>
-              </a-select-opt-target>
+              </a-select-opt-group>
             </a-select>
             <!-- <CiModelSelect /> -->
             <!-- <a-input
@@ -465,6 +465,7 @@ export default {
       this.visible = true
       this.sourceS = sourceS
       this.submit = this.insert
+      this.loadTarget()
     },
     /**
        * 编辑
@@ -479,6 +480,7 @@ export default {
         ...record
       }
       await this.$nextTick()
+      this.loadTarget()
       // FIXME: checkbox
       this.form.setFieldsValue(_.pick(record, [...fields]))
     },
