@@ -65,40 +65,28 @@ export default {
             name: parentName
           },
           fields: [
-            'attributes'
+            'attributes',
+            `relationAttributeList {
+              _id,
+              label
+              name,
+              defaultValue
+              allowNull
+              sourceValue
+            }`
           ],
           alias: 'modelList'
         })
         // name 是唯一字段，查询出的 model 是长度为1的数组
         const [model] = modelList
-        const { attributes } = model
+        const { attributes, relationAttributeList } = model
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async loadRelationAttributes (source) {
-      try {
-        const { data: { relationAttributeList } } = await RelationAttributeService.find({
-          where: {
-            source
-          },
-          fields: [
-            '_id',
-            'label',
-            'name',
-            'defaultValue',
-            'allowNull',
-            'sourceValue'
-          ],
-          alias: 'relationAttributeList'
-        })
         this.relationAttributeList = relationAttributeList
       } catch (e) {
         this.relationAttributeList = []
         throw e
+      } finally {
+        this.loading = false
       }
     },
     async loadData (_id) {
@@ -127,17 +115,11 @@ export default {
       this.submit = this.insert
       this.parentName = parentName
       this.parentTree = parentTree
-      try {
-        this.loading = true
-        await Promise.all([
-          this.loadAttributes(parentName),
-          this.loadRelationAttributes(parentName)
-        ])
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
+      this.loading = true
+      await Promise.all([
+        this.loadAttributes(parentName),
+        this.loadRelationAttributes(parentName)
+      ])
     },
     /**
      * 编辑
@@ -149,23 +131,15 @@ export default {
       this.title = '编辑'
       this.submit = this.update
       this.visible = true
-      try {
-        this.loading = true
-        await Promise.all([
-          this.loadAttributes(parentName),
-          this.loadRelationAttributes(parentName),
-          this.loadData(_id)
-        ])
-        await this.$nextTick()
-        console.log(22)
-        const keys = this.attributes.map(attribute => attribute.name)
-        await Timeout.set()
-        this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
+      await Promise.all([
+        this.loadAttributes(parentName),
+        this.loadData(_id)
+      ])
+      await this.$nextTick()
+      console.log(22)
+      const keys = this.attributes.map(attribute => attribute.name)
+      await Timeout.set()
+      this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
     },
     cancel () {
       this.visible = false
