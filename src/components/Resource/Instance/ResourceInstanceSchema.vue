@@ -1,7 +1,6 @@
 <template>
   <a-modal
     centered
-    destroyOnClose
     :confirmLoading="loading"
     :title="title"
     v-model="visible"
@@ -20,11 +19,74 @@
           <DynamicForm :form="attributesForm" :fields="attributes" />
         </a-tab-pane>
 
-        <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointInOutstanceList">
+        <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointOutInstanceList">
           <DynamicForm :form="relationAttributeListForm" :fields="relationAttributeList" />
         </a-tab-pane>
 
-        <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">指入关系</a-tab-pane>
+        <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
+          <CTable
+            ref="pointInTable"
+            rowKey="_id"
+            :columns="[
+              {
+                title: 'ID',
+                dataIndex: '_id',
+                sorter: true
+              },{
+                title: '名称',
+                dataIndex: 'name',
+                sorter: true
+              },
+              {
+                title: '显示名称',
+                dataIndex: 'label',
+                sorter: true
+              }
+            ]"
+            :scroll="{ y: 480 }"
+            :data="loadPointInData"
+          >
+
+            <template #query>
+              <a-form layout="inline">
+                <div class="fold">
+                  <a-row>
+                    <a-col :md="12" :sm="24">
+                      <a-form-item
+                        label="ID"
+                        :labelCol="{ span: 4 }"
+                        :wrapperCol="{ span: 14, offset: 2 }"
+                        style="width: 100%"
+                      >
+                        <a-input allowClear v-model="pointInQueryParams._id" placeholder=""/>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :md="12" :sm="24">
+                      <a-form-item
+                        label="显示名称"
+                        :labelCol="{ span: 4 }"
+                        :wrapperCol="{ span: 14, offset: 2 }"
+                        style="width: 100%"
+                      >
+                        <a-input allowClear v-model="pointInQueryParams.label" placeholder=""/>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                </div>
+
+                <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
+                  <a-button type="primary" @click="$refs['pointInTable'].refresh(true)">查询</a-button>
+                  <a-button style="margin-left: 8px" @click="pointInQueryParams = {}">重置</a-button>
+                  <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
+              {{ advanced ? '收起' : '展开' }}
+              <a-icon :type="advanced ? 'up' : 'down'"/>
+            </a> -->
+                </span>
+              </a-form>
+            </template>
+
+          </CTable>
+        </a-tab-pane>
 
         <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
           <div ref="relationTopologicalGraph" style="width: 100%; height: 400px;"></div>
@@ -48,11 +110,14 @@ import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
 import Timeout from 'await-timeout'
 import echarts from 'echarts'
+import CTable from '@/components/Table/CTable'
+import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'ResourceInstanceSchema',
   components: {
-    DynamicForm
+    DynamicForm,
+    CTable
   },
   props: {},
   data: (vm) => ({
@@ -64,6 +129,7 @@ export default {
     spinning: false,
     instance: null,
     submit: () => {},
+    pointInQueryParams: {},
     title: '',
     visible: false
   }),
@@ -72,13 +138,13 @@ export default {
       const { instance } = this
       return instance && instance.pointInInstanceList.length
     },
-    hasPointInOutstanceList () {
+    hasPointOutInstanceList () {
       const { instance } = this
       return instance && instance.pointOutInstanceList.length
     },
     hasTopologicalGraph () {
-      const { hasPointInInstanceList, hasPointInOutstanceList } = this
-      return hasPointInInstanceList || hasPointInOutstanceList
+      const { hasPointInInstanceList, hasPointOutInstanceList } = this
+      return hasPointInInstanceList || hasPointOutInstanceList
     }
   },
   methods: {
@@ -169,11 +235,53 @@ export default {
     async loadData (_id) {
       try {
         this.instance = await InstanceService.detail(_id)
+        this.setFormValue()
         this.hasTopologicalGraph && this.setRelationTopologicalGraph()
       } catch (e) {
         this.instance = null
         throw e
       }
+    },
+    async loadPointInData (parameter) {
+      const { instance: { pointInInstanceList } } = this
+      return InstanceService.find({
+        where: {
+          name: {
+            _in: pointInInstanceList.map(({ source }) => source)
+          },
+          ...generateQuery(this.pointInQueryParams)
+        },
+        fields: [
+          '_id',
+          'name',
+          'label'
+        ],
+        alias: 'data',
+        ...parameter
+      }).then(r => r.data)
+    },
+    setFormValue () {
+      const {
+        instance: {
+          values,
+          pointInInstanceList,
+          pointOutInstanceList
+        },
+        attributesForm,
+        attributes,
+        relationAttributeListForm,
+        relationAttributeList
+      } = this
+
+      // 模型属性
+      const attrNameList = attributes.map(({ name }) => name)
+      console.log(_.pick(values, [...attrNameList]))
+      attributesForm && attributesForm.setFieldsValue(_.pick(values, [...attrNameList]))
+
+      // 关系属性
+      // const relationAttrNameList = relationAttributeList.map(({ name }) => name)
+      // console.log(_.pick(pointOutInstanceList, [...relationAttrNameList]))
+      // relationAttributeListForm && relationAttributeListForm.setFieldsValue(_.pick(pointOutInstanceList, [...relationAttrNameList]))
     },
     /**
      * 绘制关系拓扑图
@@ -183,9 +291,6 @@ export default {
         const { name, label, pointInInstanceList, pointOutInstanceList } = this.instance
         // 等待 DOM 挂载
         await Timeout.set()
-        // 初始化关系拓扑图
-        // TODO: window resize event
-        // 指出关系
         const pointOutOption = pointOutInstanceList.map(({ target }) => ({
           name: target,
           target,
@@ -263,8 +368,9 @@ export default {
         }
         myChart.setOption(option)
       }
-      window.addEventListener('resize', setChart)
-      this.$on('beforeDestroy', () => window.removeEventListener('resize', setChart))
+      // FIXME
+      // window.addEventListener('resize', setChart)
+      // this.$on('beforeDestroy', () => window.removeEventListener('resize', setChart))
       setChart()
     },
     async add (parentName, parentTree) {
@@ -351,8 +457,9 @@ export default {
       })
     },
     reset () {
-      this.form && this.form.resetFields && this.form.resetFields()
-      console.log(222)
+      const { attributesForm, relationAttributeListForm } = this
+      attributesForm.resetFields()
+      relationAttributeListForm.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     }
   }

@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable no-eval */
 import moment from 'moment'
 
 export default {
@@ -25,11 +26,14 @@ export default {
   },
   methods: {
     renderFormItem (field) {
+      // eslint-disable-next-line no-unused-vars
       const { labelCol, wrapperCol, renderFormItenChild, getFieldDecorator } = this
       const { label } = field
+      // FIXME: 使用 getFieldDecorator 会导致无法输入，可能是 form this 指向问题？
+      // { getFieldDecorator(field)(renderFormItenChild(field)) }
       return (
         <a-form-item label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
-          { getFieldDecorator(field)(renderFormItenChild(field)) }
+          { renderFormItenChild(field) }
         </a-form-item>
       )
     },
@@ -60,11 +64,11 @@ export default {
         initialValue: makeInitialValue(field),
         id: name,
         rules: [
-          ...allowNull ? [{
+          ...eval(allowNull) ? [{
             required: true,
             message: `${label}必填`
           }] : [],
-          ...pattern ? [{
+          ...eval(pattern) ? [{
             pattern,
             messahe: `${label}格式错误`
           }] : []
