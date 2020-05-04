@@ -20,11 +20,13 @@
           <DynamicForm :form="attributesForm" :fields="attributes" />
         </a-tab-pane>
 
-        <a-tab-pane tab="关系拓扑图" key="2" forceRender>关系拓扑图</a-tab-pane>
-
-        <a-tab-pane tab="关系信息" key="3" forceRender v-if="relationAttributeList.length">
+        <a-tab-pane tab="关系信息" key="2" forceRender v-if="instance && instance.pointOutInstanceList.length">
           <DynamicForm :form="relationAttributeListForm" :fields="relationAttributeList" />
         </a-tab-pane>
+
+        <a-tab-pane tab="指入关系" key="3" forceRender v-if="instance && instance.pointInInstanceList.length">指入关系</a-tab-pane>
+
+        <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="instance && (instance.pointOutInstanceList.length || instance.pointInInstanceList.length)">关系拓扑图</a-tab-pane>
 
       </a-tabs>
     </a-spin>
@@ -32,9 +34,14 @@
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
 import { editInstance, addInstance } from '@/api/controller/Instance'
-// eslint-disable-next-line no-unused-vars
-import { InstanceService, ModelService, RelationAttributeService } from '@/api-hasura/index'
+import {
+  InstanceService,
+  ModelService,
+  RelationAttributeService,
+  RelationInstanceService
+} from '@/api-hasura/index'
 import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
 import Timeout from 'await-timeout'
@@ -58,6 +65,11 @@ export default {
   }),
   computed: {},
   methods: {
+    /**
+     * 加载实例的属性与关系属性（继承自模型）
+     * @param {String} parentName 其所属模型的 name
+     * @return {Promise<any>}
+     */
     async loadAttributes (parentName, parentTree) {
       try {
         this.loading = true
@@ -94,6 +106,10 @@ export default {
         this.loading = false
       }
     },
+    /**
+     * 加载其关系属性关联的实例
+     * @return {Promise<any>}
+     */
     async loadRelationTargetList () {
       const { relationAttributeList } = this
       const modelList = relationAttributeList.map(({ target }) => target)
@@ -128,24 +144,17 @@ export default {
         throw e
       }
     },
+    /**
+     * 加载实例详情
+     * @param {String} _id 实例 id
+     * @return {Promise<any>}
+     */
     async loadData (_id) {
       try {
-        const { data: { instanceList } } = await InstanceService.find({
-          where: {
-            _id
-          },
-          fields: [
-            '_id',
-            'name',
-            'label',
-            'values'
-          ],
-          alias: 'instanceList'
-        })
-        const [instance] = instanceList
-        this.instance = instance
+        this.instance = await InstanceService.detail(_id)
       } catch (e) {
-        this.instance = {}
+        this.instance = null
+        throw e
       }
     },
     async add (parentName, parentTree) {
@@ -177,7 +186,7 @@ export default {
       await this.$nextTick()
       const keys = this.attributes.map(attribute => attribute.name)
       await Timeout.set()
-      this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
+      // this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
     },
     cancel () {
       this.visible = false
