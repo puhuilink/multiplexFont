@@ -10,12 +10,11 @@ export default {
     fields: {
       type: Array,
       default: () => ([])
-    },
-    form: {
-      type: Object,
-      required: true
     }
   },
+  data: (vm) => ({
+    form: vm.$form.createForm(vm)
+  }),
   render (h) {
     const { form, fields } = this
     return (

@@ -45,9 +45,9 @@ class ModelService extends BaseService {
   static async delete (nameList = []) {
     // 模型下挂载的实例节点
     const { data: instanceList } = await query(
-      InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['_id'], alias: 'instanceList' })
+      InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['name'], alias: 'instanceList' })
     )
-    const instanceIdList = instanceList.map(({ _id }) => _id)
+    const instanceNameList = instanceList.map(({ name }) => name)
 
     await mutate(
       // 资源模型删除
@@ -56,10 +56,16 @@ class ModelService extends BaseService {
       RelationAttributeDao.batchDelete({ source: { _in: nameList } }),
       // 其挂载的资源实例也删除
       InstanceDao.batchDelete({ parentName: { _in: nameList } }),
-      // 其挂载的资源实例的关联实例
-      RelationInstanceDao.batchDelete({ instanceId: { _in: instanceIdList } })
-      // TODO: 日志与版本
+      // 其挂载的资源实例的（被）关联实例
+      RelationInstanceDao.batchDelete({
+        _or: [
+          { source: { _in: instanceNameList } },
+          { target: { _in: instanceNameList } }
+        ]
+      })
     )
+
+    // TODO: 日志与版本
   }
 }
 

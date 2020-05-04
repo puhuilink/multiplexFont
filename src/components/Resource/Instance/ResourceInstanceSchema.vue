@@ -1,6 +1,7 @@
 <template>
   <a-modal
     centered
+    destroyOnClose
     :confirmLoading="loading"
     :title="title"
     v-model="visible"
@@ -12,15 +13,15 @@
     @ok="submit"
     cancelText="取消"
   >
-    <a-spin :spinning="spinning">
+    <a-spin :spinning="spinning" v-if="visible">
       <a-tabs defaultActiveKey="1">
 
         <a-tab-pane tab="基本信息" key="1">
-          <DynamicForm :form="attributesForm" :fields="attributes" />
+          <DynamicForm ref="attrFormWrapper" :fields="attributes" />
         </a-tab-pane>
 
         <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointOutInstanceList">
-          <DynamicForm :form="relationAttributeListForm" :fields="relationAttributeList" />
+          <DynamicForm ref="relationAttrFormWrapper" :fields="relationAttributeList" />
         </a-tab-pane>
 
         <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
@@ -121,10 +122,9 @@ export default {
   },
   props: {},
   data: (vm) => ({
-    attributesForm: vm.$form.createForm(vm),
+    advanced: false,
     attributes: [],
     relationAttributeList: [],
-    relationAttributeListForm: vm.$form.createForm(vm),
     loading: false,
     spinning: false,
     instance: null,
@@ -260,28 +260,39 @@ export default {
         ...parameter
       }).then(r => r.data)
     },
-    setFormValue () {
+    async setFormValue () {
       const {
         instance: {
           values,
           pointInInstanceList,
           pointOutInstanceList
         },
-        attributesForm,
         attributes,
-        relationAttributeListForm,
         relationAttributeList
       } = this
 
+      const { attrFormWrapper, relationAttrFormWrapper } = this.$refs
+
       // 模型属性
       const attrNameList = attributes.map(({ name }) => name)
-      console.log(_.pick(values, [...attrNameList]))
-      attributesForm && attributesForm.setFieldsValue(_.pick(values, [...attrNameList]))
+      // console.log(_.pick(values, [...attrNameList]))
+      // 等待 form 挂载
+      await this.$nextTick()
+      // TODO: 如果将 form 直接由当前组件生成，可能要用到 wrappedComponentRef
+      // attrFormWrapper && attrFormWrapper.setFieldsValue(_.pick(values, [...attrNameList]))
+      attrFormWrapper && attrFormWrapper.form.setFieldsValue(_.pick(values, [...attrNameList]))
 
       // 关系属性
-      // const relationAttrNameList = relationAttributeList.map(({ name }) => name)
+      const relationAttrNameList = relationAttributeList.map(({ name }) => name)
       // console.log(_.pick(pointOutInstanceList, [...relationAttrNameList]))
-      // relationAttributeListForm && relationAttributeListForm.setFieldsValue(_.pick(pointOutInstanceList, [...relationAttrNameList]))
+      relationAttrFormWrapper && relationAttrFormWrapper.form.setFieldsValue(_.pick(pointOutInstanceList, [...relationAttrNameList]))
+    },
+    async getFormFields () {
+      return new Promise((resolve, reject) => {
+        this.form.validateFields((err, values) => {
+          err ? reject(err) : resolve(values)
+        })
+      })
     },
     /**
      * 绘制关系拓扑图
@@ -449,17 +460,8 @@ export default {
         this.loading = false
       })
     },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
-      })
-    },
     reset () {
-      const { attributesForm, relationAttributeListForm } = this
-      attributesForm.resetFields()
-      relationAttributeListForm.resetFields()
+      // 表单元素会在 destroyOnClose 时重置
       Object.assign(this.$data, this.$options.data.apply(this))
     }
   }

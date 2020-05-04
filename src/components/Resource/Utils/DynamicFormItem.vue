@@ -30,10 +30,10 @@ export default {
       const { labelCol, wrapperCol, renderFormItenChild, getFieldDecorator } = this
       const { label } = field
       // FIXME: 使用 getFieldDecorator 会导致无法输入，可能是 form this 指向问题？
-      // { getFieldDecorator(field)(renderFormItenChild(field)) }
+      // { renderFormItenChild(field) }
       return (
         <a-form-item label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
-          { renderFormItenChild(field) }
+          { getFieldDecorator(field)(renderFormItenChild(field)) }
         </a-form-item>
       )
     },
@@ -62,7 +62,7 @@ export default {
       const { label, name, allowNull, pattern } = field
       const options = {
         initialValue: makeInitialValue(field),
-        id: name,
+        // id: name,
         rules: [
           ...eval(allowNull) ? [{
             required: true,
@@ -74,6 +74,8 @@ export default {
           }] : []
         ]
       }
+      // console.log(options)
+      console.log('form', form)
       return form.getFieldDecorator(name, options)
     },
     makeInitialValue (field) {
