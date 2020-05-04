@@ -2,8 +2,8 @@ import { BaseService } from './BaseService'
 import {
   ModelDao,
   InstanceDao,
-  RelationAttributeDao
-  // RelationInstanceDao
+  RelationAttributeDao,
+  RelationInstanceDao
 } from '../dao/index'
 import { mutate, query } from '../utils/hasura-orm/index'
 
@@ -43,17 +43,21 @@ class ModelService extends BaseService {
   }
 
   static async delete (nameList = []) {
-    console.log(nameList)
+    // 模型下挂载的实例节点
+    const { data: instanceList } = await query(
+      InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['_id'], alias: 'instanceList' })
+    )
+    const instanceIdList = instanceList.map(({ _id }) => _id)
+
     await mutate(
       // 资源模型删除
       ModelDao.batchDelete({ name: { _in: nameList } }),
       // 模型关系属性删除
       RelationAttributeDao.batchDelete({ source: { _in: nameList } }),
       // 其挂载的资源实例也删除
-      InstanceDao.batchDelete({ parentName: { _in: nameList } })
+      InstanceDao.batchDelete({ parentName: { _in: nameList } }),
       // 其挂载的资源实例的关联实例
-      // TODO
-      // RelationInstanceDao.batchDelete()
+      RelationInstanceDao.batchDelete({ instanceId: { _in: instanceIdList } })
       // TODO: 日志与版本
     )
   }
