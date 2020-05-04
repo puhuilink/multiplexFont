@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable no-eval */
 import moment from 'moment'
+import _ from 'lodash'
 
 export default {
   name: 'DynamicFormItem',
@@ -52,6 +53,7 @@ export default {
         case 'TEXT': return renderInput(field)
         case 'CHECKBOX': return renderCheckbox(field)
         case 'SELECT': return renderSelect(field)
+        case 'SELECTED': return renderSelect(field)
         case 'DATE': return renderDate(field)
         case 'DATETIME': return renderDateTime(field)
         case 'TEXTAREA': return renderTextarea(field)
@@ -59,10 +61,11 @@ export default {
     },
     getFieldDecorator (field) {
       const { form, makeInitialValue } = this
-      const { label, name, allowNull, pattern } = field
+      const { label, name, allowNull, pattern, defaultValue } = field
       const options = {
-        initialValue: makeInitialValue(field),
-        // id: name,
+        ...defaultValue ? {
+          initialValue: makeInitialValue(field)
+        } : {},
         rules: [
           ...eval(allowNull) ? [{
             required: true,
@@ -74,8 +77,6 @@ export default {
           }] : []
         ]
       }
-      // console.log(options)
-      console.log('form', form)
       return form.getFieldDecorator(name, options)
     },
     makeInitialValue (field) {
@@ -96,9 +97,8 @@ export default {
       return <a-checkbox />
     },
     renderSelect (field) {
-      // TODO: defaultValue
       const filterOption = (input, option) => {
-        const text = option.componentOptions.children[0].text || ''
+        const text = _.get(option, 'componentOptions.children[0].text', '')
         return text.toLowerCase().includes(
           input.toLowerCase()
         )
