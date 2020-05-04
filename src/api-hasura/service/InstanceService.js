@@ -36,7 +36,8 @@ class InstanceService extends BaseService {
           instanceId: _id
         },
         fields: [
-          '_id'
+          '_id',
+          'target'
         ],
         alias: 'pointOutInstanceList'
       }),
@@ -46,7 +47,8 @@ class InstanceService extends BaseService {
           targetId: _id
         },
         fields: [
-          '_id'
+          '_id',
+          'source'
         ],
         alias: 'pointInInstanceList'
       })
@@ -57,7 +59,7 @@ class InstanceService extends BaseService {
       pointInInstanceList,
       pointOutInstanceList
     })
-    // console.log(instance)
+    console.log(instance)
 
     return instance
   }

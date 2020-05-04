@@ -13,20 +13,22 @@
     @ok="submit"
     cancelText="取消"
   >
-    <a-spin :spinning="loading">
+    <a-spin :spinning="spinning">
       <a-tabs defaultActiveKey="1">
 
         <a-tab-pane tab="基本信息" key="1">
           <DynamicForm :form="attributesForm" :fields="attributes" />
         </a-tab-pane>
 
-        <a-tab-pane tab="关系信息" key="2" forceRender v-if="instance && instance.pointOutInstanceList.length">
+        <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointInOutstanceList">
           <DynamicForm :form="relationAttributeListForm" :fields="relationAttributeList" />
         </a-tab-pane>
 
-        <a-tab-pane tab="指入关系" key="3" forceRender v-if="instance && instance.pointInInstanceList.length">指入关系</a-tab-pane>
+        <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">指入关系</a-tab-pane>
 
-        <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="instance && (instance.pointOutInstanceList.length || instance.pointInInstanceList.length)">关系拓扑图</a-tab-pane>
+        <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
+          <div ref="relationTopologicalGraph" style="width: 100%; height: 400px;"></div>
+        </a-tab-pane>
 
       </a-tabs>
     </a-spin>
@@ -45,6 +47,7 @@ import {
 import DynamicForm from '../Utils/DynamicForm'
 import _ from 'lodash'
 import Timeout from 'await-timeout'
+import echarts from 'echarts'
 
 export default {
   name: 'ResourceInstanceSchema',
@@ -58,12 +61,26 @@ export default {
     relationAttributeList: [],
     relationAttributeListForm: vm.$form.createForm(vm),
     loading: false,
+    spinning: false,
     instance: null,
     submit: () => {},
     title: '',
     visible: false
   }),
-  computed: {},
+  computed: {
+    hasPointInInstanceList () {
+      const { instance } = this
+      return instance && instance.pointInInstanceList.length
+    },
+    hasPointInOutstanceList () {
+      const { instance } = this
+      return instance && instance.pointOutInstanceList.length
+    },
+    hasTopologicalGraph () {
+      const { hasPointInInstanceList, hasPointInOutstanceList } = this
+      return hasPointInInstanceList || hasPointInOutstanceList
+    }
+  },
   methods: {
     /**
      * 加载实例的属性与关系属性（继承自模型）
@@ -72,7 +89,7 @@ export default {
      */
     async loadAttributes (parentName, parentTree) {
       try {
-        this.loading = true
+        this.spinning = true
         const { data: { modelList } } = await ModelService.find({
           where: {
             name: parentName
@@ -103,7 +120,7 @@ export default {
         this.relationAttributeList = []
         throw e
       } finally {
-        this.loading = false
+        this.spinning = false
       }
     },
     /**
@@ -152,10 +169,103 @@ export default {
     async loadData (_id) {
       try {
         this.instance = await InstanceService.detail(_id)
+        this.hasTopologicalGraph && this.setRelationTopologicalGraph()
       } catch (e) {
         this.instance = null
         throw e
       }
+    },
+    /**
+     * 绘制关系拓扑图
+     */
+    setRelationTopologicalGraph () {
+      const setChart = async () => {
+        const { name, label, pointInInstanceList, pointOutInstanceList } = this.instance
+        // 等待 DOM 挂载
+        await Timeout.set()
+        // 初始化关系拓扑图
+        // TODO: window resize event
+        // 指出关系
+        const pointOutOption = pointOutInstanceList.map(({ target }) => ({
+          name: target,
+          target,
+          symbolSize: 20,
+          source: label,
+          draggable: true
+        }))
+        const pointInOption = pointInInstanceList.map(({ source }) => ({
+          name: source,
+          source,
+          symbolSize: 20,
+          target: label,
+          draggable: true
+        }))
+        const myChart = echarts.init(this.$refs['relationTopologicalGraph'])
+        const centerPoint = {
+          name: label,
+          fixed: true,
+          x: myChart.getWidth() / 2,
+          y: myChart.getHeight() / 2,
+          // 图形大小
+          symbolSize: 20,
+          id: label,
+          draggable: false
+        }
+        const data = [
+          centerPoint,
+          ...pointOutOption,
+          ...pointInOption
+        ]
+        const edges = [
+          // centerPoint,
+          ...pointOutOption,
+          ...pointInOption
+        ]
+        // console.log(pointOutOption, pointInOption)
+        const option = {
+          toolbox: {
+            show: true,
+            feature: {
+              restore: {
+                show: true
+              },
+              saveAsImage: {
+                show: true
+              }
+            }
+          },
+          tooltip: {
+            show: true
+          },
+          legend: [{
+            data: data.map(({ name }) => name)
+          }],
+          series: [{
+            type: 'graph',
+            layout: 'force',
+            animation: false,
+            // 所有点
+            data: data,
+            force: {
+              gravity: 0,
+              repulsion: 100,
+              // 点与点间距离
+              edgeLength: 135
+            },
+            edgeSymbol: ['circle', 'arrow'],
+            edgeSymbolSize: [0, 10],
+            // 点与点的连线关系
+            links: edges.map(({ source, target }) => ({
+              source: source,
+              target: target
+            }))
+          }]
+        }
+        myChart.setOption(option)
+      }
+      window.addEventListener('resize', setChart)
+      this.$on('beforeDestroy', () => window.removeEventListener('resize', setChart))
+      setChart()
     },
     async add (parentName, parentTree) {
       this.title = '新增'
@@ -163,7 +273,6 @@ export default {
       this.submit = this.insert
       this.parentName = parentName
       this.parentTree = parentTree
-      this.loading = true
       await Promise.all([
         this.loadAttributes(parentName),
         this.loadRelationTargetList(parentName)
@@ -190,8 +299,6 @@ export default {
     },
     cancel () {
       this.visible = false
-      // FIXME: afterClose 未生效?
-      // this.reset()
     },
     /**
      * 新增
