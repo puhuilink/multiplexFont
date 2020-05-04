@@ -52,7 +52,6 @@ export default {
       switch (displayType) {
         case 'TEXT': return renderInput(field)
         case 'CHECKBOX': return renderCheckbox(field)
-        case 'SELECT': return renderSelect(field)
         case 'SELECTED': return renderSelect(field)
         case 'DATE': return renderDate(field)
         case 'DATETIME': return renderDateTime(field)
@@ -115,10 +114,11 @@ export default {
       ))
 
       // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
-      const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
+      const { selectGroupList = [], mappingType = 'one' } = field
+      // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
       return (
         <a-select filterOption={filterOption} showSearch allowClear mode={ mappingType === 'one' ? 'default' : 'multiple' }>
-          { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
+          { ...renderSelectGroup(selectGroupList) }
         </a-select>
       )
     },

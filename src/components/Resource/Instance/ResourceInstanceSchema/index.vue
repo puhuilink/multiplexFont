@@ -2,7 +2,7 @@
   <a-modal
     centered
     destroyOnClose
-    :confirmLoading="loading"
+    :confirmLoading="submitLoading"
     :title="title"
     v-model="visible"
     :width="940"
@@ -25,72 +25,11 @@
         </a-tab-pane>
 
         <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
-          <CTable
-            ref="pointInTable"
-            rowKey="_id"
-            :columns="[
-              {
-                title: 'ID',
-                dataIndex: '_id',
-                sorter: true
-              },{
-                title: '名称',
-                dataIndex: 'name',
-                sorter: true
-              },
-              {
-                title: '显示名称',
-                dataIndex: 'label',
-                sorter: true
-              }
-            ]"
-            :scroll="{ y: 480 }"
-            :data="loadPointInData"
-          >
-
-            <template #query>
-              <a-form layout="inline">
-                <div class="fold">
-                  <a-row>
-                    <a-col :md="12" :sm="24">
-                      <a-form-item
-                        label="ID"
-                        :labelCol="{ span: 4 }"
-                        :wrapperCol="{ span: 14, offset: 2 }"
-                        style="width: 100%"
-                      >
-                        <a-input allowClear v-model="pointInQueryParams._id" placeholder=""/>
-                      </a-form-item>
-                    </a-col>
-                    <a-col :md="12" :sm="24">
-                      <a-form-item
-                        label="显示名称"
-                        :labelCol="{ span: 4 }"
-                        :wrapperCol="{ span: 14, offset: 2 }"
-                        style="width: 100%"
-                      >
-                        <a-input allowClear v-model="pointInQueryParams.label" placeholder=""/>
-                      </a-form-item>
-                    </a-col>
-                  </a-row>
-                </div>
-
-                <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
-                  <a-button type="primary" @click="$refs['pointInTable'].refresh(true)">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="pointInQueryParams = {}">重置</a-button>
-                  <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? '收起' : '展开' }}
-              <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a> -->
-                </span>
-              </a-form>
-            </template>
-
-          </CTable>
+          <CiPointInList :pointInInstanceList="instance.pointInInstanceList" />
         </a-tab-pane>
 
         <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
-          <div ref="relationTopologicalGraph" style="width: 100%; height: 400px;"></div>
+          <CiTopologicalGraph :instance="instance" />
         </a-tab-pane>
 
       </a-tabs>
@@ -107,41 +46,49 @@ import {
   RelationAttributeService,
   RelationInstanceService
 } from '@/api-hasura/index'
-import DynamicForm from '../Utils/DynamicForm'
+import DynamicForm from '../../Utils/DynamicForm'
 import _ from 'lodash'
 import Timeout from 'await-timeout'
-import echarts from 'echarts'
-import CTable from '@/components/Table/CTable'
-import { generateQuery } from '@/utils/graphql'
+import CiPointInList from './modules/CiPointInList'
+import CiTopologicalGraph from './modules/CiTopologicalGraph'
 
 export default {
   name: 'ResourceInstanceSchema',
   components: {
     DynamicForm,
-    CTable
+    CiPointInList,
+    CiTopologicalGraph
   },
   props: {},
   data: (vm) => ({
-    advanced: false,
+    // 资源实例属性
     attributes: [],
+    // 资源实例关系属性
     relationAttributeList: [],
-    loading: false,
+    // 提交按钮 loading
+    submitLoading: false,
+    // 主区域 loading
     spinning: false,
+    // 编辑状态下资源实例数据
     instance: null,
+    // modal submit 回调
     submit: () => {},
-    pointInQueryParams: {},
+    // modal 标题
     title: '',
+    // modal visible
     visible: false
   }),
   computed: {
+    hasPointOutInstanceList () {
+      const { relationAttributeList } = this
+      return relationAttributeList.length
+    },
+    // 只在编辑时展示（可读）
     hasPointInInstanceList () {
       const { instance } = this
       return instance && instance.pointInInstanceList.length
     },
-    hasPointOutInstanceList () {
-      const { instance } = this
-      return instance && instance.pointOutInstanceList.length
-    },
+    // 只在编辑时展示（可读）
     hasTopologicalGraph () {
       const { hasPointInInstanceList, hasPointOutInstanceList } = this
       return hasPointInInstanceList || hasPointOutInstanceList
@@ -218,7 +165,7 @@ export default {
           Object.assign(attribute, {
             // 为 DynamicForm / DynamicFormItem 保持一致入参
             selectGroupList: targetList[index] ? [targetList[index]] : [],
-            displayType: 'SELECT'
+            displayType: 'SELECTED'
           })
         })
         // console.log(relationAttributeList)
@@ -236,29 +183,10 @@ export default {
       try {
         this.instance = await InstanceService.detail(_id)
         this.setFormValue()
-        this.hasTopologicalGraph && this.setRelationTopologicalGraph()
       } catch (e) {
         this.instance = null
         throw e
       }
-    },
-    async loadPointInData (parameter) {
-      const { instance: { pointInInstanceList } } = this
-      return InstanceService.find({
-        where: {
-          name: {
-            _in: pointInInstanceList.map(({ source }) => source)
-          },
-          ...generateQuery(this.pointInQueryParams)
-        },
-        fields: [
-          '_id',
-          'name',
-          'label'
-        ],
-        alias: 'data',
-        ...parameter
-      }).then(r => r.data)
     },
     async setFormValue () {
       const {
@@ -293,96 +221,6 @@ export default {
           err ? reject(err) : resolve(values)
         })
       })
-    },
-    /**
-     * 绘制关系拓扑图
-     */
-    setRelationTopologicalGraph () {
-      const setChart = async () => {
-        const { name, label, pointInInstanceList, pointOutInstanceList } = this.instance
-        // 等待 DOM 挂载
-        await Timeout.set()
-        const pointOutOption = pointOutInstanceList.map(({ target }) => ({
-          name: target,
-          target,
-          symbolSize: 20,
-          source: label,
-          draggable: true
-        }))
-        const pointInOption = pointInInstanceList.map(({ source }) => ({
-          name: source,
-          source,
-          symbolSize: 20,
-          target: label,
-          draggable: true
-        }))
-        const myChart = echarts.init(this.$refs['relationTopologicalGraph'])
-        const centerPoint = {
-          name: label,
-          fixed: true,
-          x: myChart.getWidth() / 2,
-          y: myChart.getHeight() / 2,
-          // 图形大小
-          symbolSize: 20,
-          id: label,
-          draggable: false
-        }
-        const data = [
-          centerPoint,
-          ...pointOutOption,
-          ...pointInOption
-        ]
-        const edges = [
-          // centerPoint,
-          ...pointOutOption,
-          ...pointInOption
-        ]
-        // console.log(pointOutOption, pointInOption)
-        const option = {
-          toolbox: {
-            show: true,
-            feature: {
-              restore: {
-                show: true
-              },
-              saveAsImage: {
-                show: true
-              }
-            }
-          },
-          tooltip: {
-            show: true
-          },
-          legend: [{
-            data: data.map(({ name }) => name)
-          }],
-          series: [{
-            type: 'graph',
-            layout: 'force',
-            animation: false,
-            // 所有点
-            data: data,
-            force: {
-              gravity: 0,
-              repulsion: 100,
-              // 点与点间距离
-              edgeLength: 135
-            },
-            edgeSymbol: ['circle', 'arrow'],
-            edgeSymbolSize: [0, 10],
-            // 点与点的连线关系
-            links: edges.map(({ source, target }) => ({
-              source: source,
-              target: target
-            }))
-          }]
-        }
-        myChart.setOption(option)
-      }
-      // FIXME
-      // window.addEventListener('resize', setChart)
-      // this.$on('beforeDestroy', () => window.removeEventListener('resize', setChart))
-      setChart()
     },
     async add (parentName, parentTree) {
       this.title = '新增'
@@ -427,7 +265,7 @@ export default {
         'parentname_s': this.parentName,
         'parenttree_s': this.parentTree
       }
-      this.loading = true
+      this.submitLoading = true
       return addInstance(value).then(res => {
         this.$notification.success({
           message: '系统提示',
@@ -438,7 +276,7 @@ export default {
       }).catch(err => {
         throw err
       }).finally(() => {
-        this.loading = false
+        this.submitLoading = false
       })
     },
     /**
@@ -446,7 +284,7 @@ export default {
      */
     async update () {
       const value = await this.getFormFields()
-      this.loading = true
+      this.submitLoading = true
       return editInstance(this.instance.did, value).then(res => {
         this.$notification.success({
           message: '系统提示',
@@ -457,7 +295,7 @@ export default {
       }).catch(err => {
         throw err
       }).finally(() => {
-        this.loading = false
+        this.submitLoading = false
       })
     },
     reset () {

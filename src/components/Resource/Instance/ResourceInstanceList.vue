@@ -70,7 +70,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceInstanceSchema from './ResourceInstanceSchema'
+import ResourceInstanceSchema from './ResourceInstanceSchema/index'
 // import { Ellipsis } from '@/components'
 import { InstanceService, ModelService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
