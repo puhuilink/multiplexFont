@@ -44,7 +44,7 @@ class ModelService extends BaseService {
 
   static async delete (nameList = []) {
     // 模型下挂载的实例节点
-    const { data: instanceList } = await query(
+    const { data: { instanceList } } = await query(
       InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['name'], alias: 'instanceList' })
     )
     const instanceNameList = instanceList.map(({ name }) => name)
