@@ -25,7 +25,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="显示名称"
-                  :labelCol="{ span: 4 }"
+                  :labelCol="{ span: 6 }"
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
@@ -92,6 +92,7 @@ export default {
       const { pointInInstanceList } = this
       return InstanceService.find({
         where: {
+          // TODO: 当 this.pointInQueryParams 也包含 name 时会覆盖默认 name，改为 _and
           name: {
             _in: pointInInstanceList.map(({ source }) => source)
           },

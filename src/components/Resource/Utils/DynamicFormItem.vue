@@ -61,17 +61,18 @@ export default {
     getFieldDecorator (field) {
       const { form, makeInitialValue } = this
       const { label, name, allowNull, pattern, defaultValue } = field
+      console.log(pattern)
       const options = {
         ...defaultValue ? {
           initialValue: makeInitialValue(field)
         } : {},
         rules: [
-          ...eval(allowNull) ? [{
+          ...eval(`${allowNull}`) ? [{
             required: true,
             message: `${label}必填`
           }] : [],
-          ...eval(pattern) ? [{
-            pattern,
+          ...`${pattern}` ? [{
+            pattern: `${pattern}`,
             messahe: `${label}格式错误`
           }] : []
         ]
