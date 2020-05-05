@@ -1,7 +1,13 @@
 import HasuraORM, { query } from '../utils/hasura-orm/index'
-// import HasuraORM, { query } from '../utils/hasura-orm'
+import { readonly } from 'core-decorators'
 import _ from 'lodash'
+import { alert } from '../config/client'
+
 class BaseDao {
+  // 对应 vue-apollo
+  @readonly
+  static PROVIDER = alert
+
   static FIELDS_MAPPING = new Map()
 
   /**
@@ -75,7 +81,7 @@ class BaseDao {
    */
   static async update (set, where) {
     if (_.isEmpty(where)) {
-      throw new Error('删除参数不允许传入空对象，这会导致删除所有数据')
+      throw new Error('更新参数不允许传入空对象，这会导致删除所有数据')
     }
     const hasuraORM = this._createHasuraORM()
     return hasuraORM.update(set).where(where)

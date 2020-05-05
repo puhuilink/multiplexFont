@@ -3,6 +3,7 @@ import { alert } from '../config/client'
 import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
+import _ from 'lodash'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
@@ -42,6 +43,16 @@ class ModelDao extends BaseDao {
   static async update ({ ...model }, { _id }) {
     await this._uniqueValidate({ ...model, _id }, false)
     return super.update({ ...model, ...defaultInfo('updateTime', 'updator') }, { _id })
+  }
+
+  static async addAttr (attr = {}, where = {}) {
+    // TODO: 同一 model 下的 attr.name 不能重复
+    if (_.isEmpty(where)) {
+      throw new Error('更新参数不允许传入空对象，这会导致删除所有数据')
+    }
+    // return super.update(attr, where)
+    const hasuraORM = this._createHasuraORM()
+    return hasuraORM.append({ attributes: attr }).where(where)
   }
 }
 

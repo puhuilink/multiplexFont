@@ -50,6 +50,7 @@
     </CTable>
 
     <ResourceModelAttrSchema
+      :where="{ name: this.where.name }"
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="query"

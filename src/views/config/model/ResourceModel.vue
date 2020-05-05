@@ -18,9 +18,7 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               operationType="model"
-              :where="{ name: {
-                _eq: selectedNode.name
-              } }"
+              :where="{ name: selectedNode.name }"
             />
           </a-tab-pane>
           <a-tab-pane tab="关系属性" key="2" forceRender>

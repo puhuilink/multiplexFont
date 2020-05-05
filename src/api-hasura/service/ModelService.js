@@ -24,6 +24,13 @@ class ModelService extends BaseService {
     }
   }
 
+  static async addAttr (attr = {}, where = {}) {
+    const res = await mutate(
+      ModelDao.addAttr(attr, where)
+    )
+    console.log(res)
+  }
+
   /**
    * 更新模型节点
    * @param {Objetc} model
