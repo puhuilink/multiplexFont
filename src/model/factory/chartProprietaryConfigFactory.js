@@ -7,6 +7,7 @@
 */
 import LinesProprietaryConfig from '../config/proprietaryConfigs/LinesProprietaryConfig'
 import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryConfig'
+import PieProprietaryConfig from '../config/proprietaryConfigs/PieProprietaryConfig'
 import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
@@ -26,6 +27,8 @@ export default class ChartProprietaryConfigFactory {
         return new LinesProprietaryConfig(proprietaryConfig)
       case 'Bar':
         return new BarProprietaryConfig(proprietaryConfig)
+      case 'Pie':
+        return new PieProprietaryConfig(proprietaryConfig)
       case 'Texts':
         return new TextsProprietaryConfig(proprietaryConfig)
       case 'Clock':
