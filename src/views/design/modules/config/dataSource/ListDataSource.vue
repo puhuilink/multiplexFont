@@ -24,7 +24,7 @@
         </a-select>
       </a-form-item>
 
-      <ComboSelect :multiple="false" v-model="resourceConfig" />
+      <ComboSelect :multiple="true" v-model="resourceConfig" />
 
       <a-form-item
         label="刷新时间"
