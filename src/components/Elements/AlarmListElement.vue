@@ -240,28 +240,7 @@ export default {
   },
   data () {
     return {
-      tabList: [
-        {
-          key: '0',
-          tab: '待处理告警'
-        },
-        {
-          key: '5',
-          tab: '已确认告警'
-        },
-        {
-          key: '10',
-          tab: '已前转告警'
-        },
-        {
-          key: '20',
-          tab: '已解决告警'
-        },
-        {
-          key: '30',
-          tab: '已忽略告警'
-        }
-      ],
+      tabKey: '0',
       // 搜索： 展开/关闭
       advanced: false,
       // 自动刷新
@@ -376,6 +355,9 @@ export default {
             ...parameter,
             where: {
               ...this.where,
+              state: {
+                _eq: this.tabKey
+              },
               arising_time: {
                 _gte: '2018-5-31 00:00:00',
                 _lte: '2018-5-31 23:59:59'
@@ -433,17 +415,6 @@ export default {
           2: r.data.L3.aggregate.count,
           1: r.data.L2.aggregate.count,
           0: r.data.L1.aggregate.count
-        }
-        const alarmMenuList = {
-          0: r.data.m1.aggregate.count,
-          1: r.data.m2.aggregate.count,
-          2: r.data.m3.aggregate.count,
-          3: r.data.m4.aggregate.count,
-          4: r.data.m5.aggregate.count
-        }
-        for (const i in alarmMenuList) {
-          const tabText = this.tabList[i].tab.substr(0, 5)
-          this.tabList[i].tab = tabText + '（' + alarmMenuList[i] + '）'
         }
       })
     },
