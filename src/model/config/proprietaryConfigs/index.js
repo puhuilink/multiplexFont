@@ -122,7 +122,7 @@ class AreaStyle {
 }
 
 /**
- * 柱形图形样式
+ * 柱形图与折线图形样式
  * @param type 类型 'single' | 'combination' | 'linear'
  * @param colorType 颜色类型 'default' | 'custom'
  */

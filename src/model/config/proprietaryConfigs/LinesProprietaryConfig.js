@@ -8,6 +8,7 @@
 
 import _ from 'lodash'
 import {
+  BarItemStyle,
   LineStyle, Legend, XAixs,
   YAixs, ItemStyle, AreaStyle
 } from './index'
@@ -23,6 +24,8 @@ import {
  */
 export default class LinesProprietaryConfig {
   constructor ({
+    barType = 'single',
+    barItemStyle = {},
     smooth = true,
     showSymbol = true,
     symbol = 'emptyCircle',
@@ -47,6 +50,8 @@ export default class LinesProprietaryConfig {
     this.legend = new Legend(legend)
     this.xAxis = new XAixs(xAxis)
     this.yAxis = new YAixs(yAxis)
+    this.barType = barType
+    this.barItemStyle = new BarItemStyle(barItemStyle)
   }
 
   /**
@@ -56,7 +61,8 @@ export default class LinesProprietaryConfig {
     return Object.assign(_.cloneDeep(this), {
       areaStyle: this.areaStyle.getOption(),
       xAxis: this.xAxis.getOption(),
-      yAxis: this.yAxis.getOption()
+      yAxis: this.yAxis.getOption(),
+      itemStyle: this.barItemStyle.getOption()
     })
   }
 }
