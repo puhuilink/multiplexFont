@@ -12,7 +12,7 @@ import { parse } from 'graphql'
 const mutate = async function () {
   // TODO: provider检测
   const hasuraORMList = await Promise.all(Array.from(arguments))
-  console.log(hasuraORMList)
+  // console.log(hasuraORMList)
   const [{ provider }] = hasuraORMList
   const query = `mutation { ${hasuraORMList.map(hasuraORM => hasuraORM.parsed())} }`
   console.log(query)

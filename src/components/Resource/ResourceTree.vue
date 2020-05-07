@@ -214,16 +214,14 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
-        const [nameList, _idList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        console.log(nameList, _idList)
-        // await deleteModelList(nameList, _idList)
+        const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
         await ModelService.delete(nameList)
-        await this.fetch()
         this.selectedKey = ''
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
+        await this.fetch()
       } catch (e) {
         throw e
       } finally {

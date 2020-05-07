@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import {
   InstanceDao
-  // InstanceValuesDao
 } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
 // import _ from 'lodashj'
