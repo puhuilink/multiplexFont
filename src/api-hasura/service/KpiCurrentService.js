@@ -1,8 +1,7 @@
 import {
   KpiCurrentHistoryDao,
   KpiCurrentLastestDao,
-  InstanceDao,
-  InstanceValuesDao
+  InstanceDao
 } from '../dao/index'
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
@@ -17,15 +16,45 @@ class KpiCurrentService extends BaseService {
    */
   static async _getKpiAndCiInfo (selectedKpi = [], selectedInstance = []) {
     // 查询基本信息与指标值
-    const { data: { ciList, kpiList } } = await query(
-      InstanceDao.find({ where: { _id_s: { _in: selectedInstance } }, fields: ['_id_s', 'label_s'], alias: 'ciList' }),
-      InstanceValuesDao.find({ where: { kpicode_s: { _in: selectedKpi } }, fields: ['kpicode_s', 'label_s'], alias: 'kpiList' })
+    const { data } = await query(
+      InstanceDao.find({
+        where: {
+          _id: {
+            _in: selectedInstance
+          }
+        },
+        fields: [
+          '_id',
+          'label'
+        ],
+        alias: 'ciList'
+      }),
+      // TODO: jsonb 不支持批量查询，只能拆分为多个单查询再合并结果
+      ...selectedKpi.map((kpiCode, index) => InstanceDao.find({
+        where: {
+          parentName: {
+            _eq: 'Kpi'
+          },
+          values: {
+            _contains: { kpiCode }
+          }
+        },
+        fields: [
+          `label: values(path: "$.label")`,
+          `kpiCode: values(path: "$.kpiCode")`
+        ],
+        alias: `kpiCode${index}`
+      }))
     )
+
+    const { ciList, ...KpiListMerge } = data
+    const kpiList = Object.values(KpiListMerge).flat()
+    // console.log(ciList, Object.values(KpiListMerge).flat())
 
     // 构建 hash map
     return {
-      ci: new Map(ciList.map(ci => [`${ci._id_s}`, ci.label_s])),
-      kpi: new Map(kpiList.map(kpi => [`${kpi.kpicode_s}`, kpi.label_s]))
+      ci: new Map(ciList.map(ci => [`${ci._id}`, ci.label])),
+      kpi: new Map(kpiList.map(kpi => [`${kpi.kpiCode}`, kpi.label]))
     }
 
     // 组合返回体

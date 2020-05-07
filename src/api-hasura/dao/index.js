@@ -7,7 +7,6 @@ import { ViewDesktopDao } from './ViewDesktopDao'
 import { KpiCurrentHistoryDao } from './KpiCurrentHistoryDao'
 import { KpiCurrentLastestDao } from './KpiCurrentLastestDao'
 import { InstanceDao } from './InstanceDao'
-import { InstanceValuesDao } from './InstanceValuesDao'
 import { AuditDao } from './AuditDao'
 import { RelationAttributeDao } from './RelationAttributeDao'
 import { RelationInstanceDao } from './RelationInstanceDao'
@@ -25,7 +24,6 @@ export {
   KpiCurrentHistoryDao,
   KpiCurrentLastestDao,
   InstanceDao,
-  InstanceValuesDao,
   AuditDao,
   RelationAttributeDao,
   RelationInstanceDao,
