@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService'
-import { label, log } from '../utils/decorator/log'
+import { log, moduleName } from '../utils/decorator/log'
 import { mutate } from '../utils/hasura-orm/index'
 import {
   AuthorizeObjectDao,
@@ -8,9 +8,9 @@ import {
   ViewDesktopDao
 } from '../dao/index'
 
+@moduleName('用户模块')
 class UserService extends BaseService {
-  @log
-  @label('新增用户')
+  @log('新增用户')
   /**
    * 新增用户
    * @param {Objetc} user
@@ -25,8 +25,7 @@ class UserService extends BaseService {
     )
   }
 
-  @log
-  @label('删除用户')
+  @log('删除用户')
   /**
    * 删除用户
    * @param {Array<String>} userIdList
