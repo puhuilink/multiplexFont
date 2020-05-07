@@ -330,13 +330,13 @@ export const asyncRouterMap = [
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡检任务单', keepAlive: true, permission: [ 'F010004' ] }
+            meta: { title: '巡更任务单', keepAlive: true, permission: [ 'F010004' ] }
           },
           {
             path: '/patrol/object',
             name: 'PatrolObject',
             component: () => import('@/views/patrol/object/PatrolObject'),
-            meta: { title: '巡检检查对象', keepAlive: true, permission: [ 'F010005' ] }
+            meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
           }
         ]
       },
