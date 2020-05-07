@@ -19,43 +19,67 @@ export default class Hasura {
     // TODO: alias 放置于构造函数
     this._alias = ''
   }
+
   get schemaArguments () {
     return stringify(this._schemaArguments)
   }
-  select (fields) {
-    if (Array.isArray(fields)) {
-      this._fields = fields.filter(v => !!v).join(',').replace(/,/g, ' ')
-      // this._fields += ' ' + fields.join(',').replace(/,/g, ' ')
-    } else {
-      this._fields = fields.replace(/,/g, ' ')
-      // this._fields += ' ' + fields.replace(/,/g, ' ')
-    }
+
+  /**
+   * 要查询的字段
+   * @param {Array<String>} fields 要查询的字段，传入 undefined 或 null 等空值会被忽略
+   * @return {Hasura} this
+   */
+  select (fields = []) {
+    this._fields = fields.filter(v => !!v).join(',').replace(/,/g, ' ')
     return this
   }
+
   addArg (type, value) {
     this._schemaArguments = Object.assign(this._schemaArguments, { [type]: value })
   }
+
+  /**
+   * 查询数量
+   * @param {*} limit
+   */
   limit (limit) {
     this.addArg('limit', limit)
     return this
   }
+
+  /**
+   * 偏移量
+   * @param {*} offset
+   */
   offset (offset) {
     this.addArg('offset', offset)
     return this
   }
+
+  /**
+   * 聚合查询
+   * @param {*} distinct
+   */
   distinct (distinct) {
     this.addArg('distinct_on', distinct)
     return this
   }
+
+  /**
+   * 排序字段
+   * @param {*} orderBy
+   */
   orderBy (orderBy) {
     this.addArg('order_by', orderBy)
     return this
   }
+
   compose (schema, callback) {
     const qr = callback(new HasuraORM(schema, this.provider))
     this._compose += qr.parsed()
     return this
   }
+
   where (condition) {
     Object.keys(condition).map(con => {
       if (typeof condition[con] !== 'object' && condition[con][0] !== '_') {
@@ -68,11 +92,13 @@ export default class Hasura {
     this._schemaArguments = Object.assign(this._schemaArguments, { where: this._where })
     return this
   }
+
   with (schema, callback) {
     const qr = callback(new Hasura(schema, this.provider))
     this._with += qr.parsed()
     return this
   }
+
   parsed () {
     if (!this._fields) {
       this._fields = 'id'
@@ -81,9 +107,11 @@ export default class Hasura {
       ? '(' + stringify(this._schemaArguments) + ')'
       : ''}{  ${this.getFields()} }`
   }
+
   getFields () {
     return `${this._fields} ${this._with}`
   }
+
   paginate (limit, offset) {
     delete this._schemaArguments['limit']
     delete this._schemaArguments['offset']
@@ -105,21 +133,31 @@ export default class Hasura {
     this.offset(offset)
     return this
   }
+
   query () {
     return `query {  ${this.parsed()} ${this._compose} }`
   }
+
   subscriptionQuery () {
     return `subscription {  ${this.parsed()} ${this._compose} }`
   }
+
   get (cache = true) {
     return this.provider.get({ query: this.query() }, cache)
   }
+
+  /**
+   * 执行 graphql query 语句
+   * @return {Promise<any>}
+   */
   await (cache = true) {
     return this.provider.query({ query: parse(this.query()) }, (cache = true))
   }
+
   subscription () {
     return this.provider.subscription({ query: this.subscriptionQuery() })
   }
+
   async max (field) {
     const { data } = await this.provider.query({ query: parse(`{
       ${this._schema}_aggregate {
@@ -133,6 +171,12 @@ export default class Hasura {
     })
     return data[`${this._schema}_aggregate`]['aggregate']['max'][field]
   }
+
+  /**
+   * 为返回值指定别名
+   * @param {String} alias
+   * @return {HasuraORM} this
+   */
   alias (alias) {
     this._alias = alias + ':'
     return this

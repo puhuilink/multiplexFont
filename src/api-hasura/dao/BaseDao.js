@@ -95,9 +95,11 @@ class BaseDao {
   static async find ({ where = {}, orderBy = {}, fields = [], limit = 0, offset = 0, alias = '' }) {
     const hasuraORM = this._createHasuraORM()
     let chain = hasuraORM.where(where).orderBy(orderBy).select(fields)
+    // 当传入有效 limit 或 有效 offset 时进行分页，否则返回所有数据
     if (limit || offset) {
       chain = chain.paginate(limit, offset)
     }
+    // 返回变量的别名，不指定则返回 hasura 默认 shcema
     if (alias) {
       chain = chain.alias(alias)
     }

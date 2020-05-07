@@ -1,8 +1,13 @@
+// fork form
+// https://github.com/timeshift92/hasura-orm
+
 import HasuraORM from './hasura-orm'
 import { parse } from 'graphql'
 
 /**
  * 执行一条或多条操作
+ * @param {Promise<HasuraORM>}
+ * @return {Promise<any>}
  */
 const mutate = async function () {
   // TODO: provider检测
@@ -16,6 +21,8 @@ const mutate = async function () {
 
 /**
  * 执行一条或多条查询
+ * @param {Promise<HasuraORM>}
+ * @return {Promise<any>}
  */
 const query = async function () {
   // TODO: provider检测
@@ -25,7 +32,7 @@ const query = async function () {
     // console.log(hasuraInstance.parsed())
     return hasuraInstance.parsed()
   })} }`
-  // console.log(query)
+  console.log(query)
   return provider.query({ query: parse(query) })
 }
 
