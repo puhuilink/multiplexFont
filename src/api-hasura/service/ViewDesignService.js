@@ -7,20 +7,17 @@ import { query } from '../utils/hasura-orm/index'
 // import _ from 'lodashj'
 
 class ViewDesignService extends BaseService {
-  static async nodeByCi (name_s) {
+  static async nodeByCiName (name) {
     const { data: { nodes: [node] } } = await query(
       InstanceDao.find({
-        where: { name_s },
+        where: { name },
         alias: 'nodes',
-        // 关联表：InstanceValuesDao
         fields: [
-          'label_s',
-          'name_s',
-          '_id_s',
-          'parentname_s',
-          `values: instanceValues {
-            icon_s
-          }`
+          'label',
+          'name',
+          '_id',
+          'parentName',
+          `icon: values(path: "$.icon")`
         ]
       })
     )
