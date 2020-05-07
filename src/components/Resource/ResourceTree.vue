@@ -25,12 +25,20 @@
           :draggable="draggable"
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
+          showIcon
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
           v-on="$listeners"
           @expand="expand"
           @select="select"
-        />
+        >
+          <template slot="custom" slot-scope="{ dataRef: { icon } }">
+            <!-- <a-icon :type="selected ? 'frown' : 'frown-o'" /> -->
+            <!-- {{ icon }} -->
+            <img :src="resolveIcon(icon)" class="ResourceTree__tree_icon" alt="">
+            <!-- <a-icon type="message" :style="{ fontSize: '16px', color: '#08c' }" /> -->
+          </template>
+        </a-tree>
 
         <ResourceTreeNodeSchema
           ref="schema"
@@ -127,6 +135,16 @@ export default {
     }
   },
   methods: {
+    bug (argus) {
+      console.log(argus)
+    },
+    resolveIcon (icon) {
+      try {
+        return require(`@/assets/network-icons/${icon}.png`)
+      } catch (e) {
+        return require(`@/assets/network-icons/Others.png`)
+      }
+    },
     async fetch () {
       try {
         this.loading = true
@@ -134,6 +152,7 @@ export default {
           fields: [
             '_id',
             'name',
+            'icon: icon',
             'key: name',
             'label',
             'title: label',
@@ -150,6 +169,7 @@ export default {
               parentName
               parentKey: parentName
               parentTree
+              icon: values(path: "$.icon")
             }`
           ],
           alias: 'dataSource'
@@ -273,8 +293,19 @@ export default {
 
 <style lang="less">
 .ResourceTree {
+  overflow: auto;
+
   &__tree {
     overflow: auto;
+
+    // icon slot antd 默认控制了宽高
+    &_icon {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      vertical-align: super;
+    }
   }
   &__hidden-tab {
     .ant-tabs-bar {

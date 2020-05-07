@@ -1,11 +1,13 @@
 <template>
-  <ResourceTree
-    instanceList
-    hiddenTab
-    draggable
-    :rootKeys="['CommonCi']"
-    @dragend="dragend"
-  />
+  <div class="Ci">
+    <ResourceTree
+      instanceList
+      hiddenTab
+      draggable
+      :rootKeys="['CommonCi']"
+      @dragend="dragend"
+    />
+  </div>
 </template>
 
 <script>
@@ -127,5 +129,7 @@ export default {
 </script>
 
 <style lang="less">
-
+.Ci {
+  overflow: auto;
+}
 </style>
