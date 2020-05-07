@@ -9,7 +9,7 @@ export default {
   props: {
     labelCol: {
       type: Object,
-      default: () => ({ span: 6 })
+      default: () => ({ span: 24 })
     },
     wrapperCol: {
       type: Object,

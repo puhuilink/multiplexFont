@@ -310,8 +310,11 @@ export default {
 .ResourceInstanceSchema__modal {
   .ant-modal-body {
     padding-top: 0;
+  }
+  .ant-tabs-tabpane {
+    padding-top: 0;
     height: 508px;
-    overflow: auto;
+    overflow-y: auto;
   }
   .ant-transfer {
     display: flex;
