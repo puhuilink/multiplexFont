@@ -306,7 +306,7 @@ export const asyncRouterMap = [
         name: 'patrol',
         redirect: '/patrol/calendar',
         component: RouteView,
-        meta: { title: '巡检管理', keepAlive: true, icon: 'environment', permission: [ 'F010' ] },
+        meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: [ 'F010' ] },
         children: [
           {
             path: '/patrol/calendar',
