@@ -48,7 +48,7 @@ export default class LinesDataConfig {
           timeRange: TimeRange.getOption.apply(this.timeRange),
           orderBy: { arising_time: 'asc' }
         })
-        console.log(data)
+        // console.log(data)
         const groupByCi = _.groupBy(data, 'instanceLabel')
         const groupByTime = _.groupBy(data, 'arising_time')
         const valueAxis = {

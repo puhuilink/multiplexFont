@@ -5,6 +5,8 @@
  * Time: 4:48 下午
  * Email: dong.xing@outlook.com
  */
+import _ from 'lodash'
+
 const defaultLinesStaticData = {
   legend: {
     data: ['折线图示例']
@@ -17,7 +19,11 @@ const defaultLinesStaticData = {
     type: 'value'
   },
   series: [
-    { name: '折线图示例', data: [820, 932, 901, 934, 1290, 1330, 1320] }
+    {
+      type: 'line',
+      name: '折线图示例',
+      data: [820, 932, 901, 934, 1290, 1330, 1320]
+    }
   ]
 }
 
@@ -25,7 +31,7 @@ export default class LinesStaticDataConfig {
   constructor ({
     staticData = defaultLinesStaticData
   }) {
-    this.staticData = staticData
+    this.staticData = _.cloneDeep(staticData)
   }
 
   /**
@@ -33,7 +39,11 @@ export default class LinesStaticDataConfig {
    * @returns {string}
    */
   getCode () {
-    return JSON.stringify(this.staticData, null, '\t')
+    const { staticData: { series, ...code } } = this
+    return JSON.stringify({
+      ...code,
+      series: series.map(el => _.pick(el, ['name', 'data']))
+    }, null, '\t')
   }
 
   /**

@@ -36,6 +36,8 @@ export default class BarChart extends Chart {
       itemStyle: otherItemStyle
     }
 
+    console.log(bar)
+
     switch (sourceType) {
       case 'static': {
         dbDataConfig.resetData()
