@@ -14,8 +14,9 @@
     >
       <a-select-option
         v-for="(item, itemIdx) in options"
+        v-if="item.label"
         :key="itemIdx"
-        :value="item.value"
+        :value="item.values.kpiCode"
       >
         {{ item.label }}
       </a-select-option>
@@ -24,7 +25,9 @@
 </template>
 
 <script>
-import { getKpiSelectList } from '@/api/controller/Resource'
+// import { getKpiSelectList } from '@/api/controller/Resource'
+import { InstanceService } from '@/api-hasura/index'
+import _ from 'lodash'
 
 export default {
   name: 'KpiSelect',
@@ -40,7 +43,7 @@ export default {
       default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
-    'nodetypeS': {
+    'nodeType': {
       type: String,
       default: ''
     },
@@ -67,7 +70,7 @@ export default {
     }
   },
   watch: {
-    nodetypeS: {
+    nodeType: {
       immediate: true,
       handler (v) {
         // this._value = []
@@ -88,8 +91,29 @@ export default {
     async loadData () {
       try {
         this.loading = true
-        const { data } = await getKpiSelectList(this.nodetypeS)
-        this.options = data
+        // const { data } = await getKpiSelectList(this.nodeTypeS)
+        const nodeTypeList = _.uniq(['CommonCi', this.nodeType]).filter(v => !!v)
+        const { data: { options } } = await InstanceService.find({
+          where: {
+            _or: nodeTypeList.map(nodeType => ({
+              parentName: {
+                _eq: 'Kpi'
+              },
+              values: {
+                _contains: {
+                  nodeType: nodeType
+                }
+              }
+            }))
+          },
+          fields: [
+            'label',
+            'values',
+            '_id'
+          ],
+          alias: 'options'
+        })
+        this.options = options
       } catch (e) {
         this.options = []
         throw e

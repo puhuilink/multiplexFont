@@ -6,7 +6,7 @@
       <a-col :xl="6" :xxl="4">
         <ResourceTree
           class="ResourceInstance-tree"
-          @select="select"
+          @selectNode="selectNode"
         />
       </a-col>
 
@@ -18,17 +18,15 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               operationType="model"
-              :where="{ did: {
-                _eq: selectedNode.did
-              } }"
+              :where="{ name: selectedNode.name }"
             />
           </a-tab-pane>
           <a-tab-pane tab="关系属性" key="2" forceRender>
             <ResourceModelRelationAttrList
               v-if="selectedNode"
               class="ResourceInstance-table"
-              :where="{ source_s: {
-                _eq: selectedNode.name_s
+              :where="{ source: {
+                _eq: selectedNode.name
               } }"
             />
           </a-tab-pane>
@@ -37,10 +35,10 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                modelname_s: {
-                  _eq: selectedNode.name_s
+                modelName: {
+                  _eq: selectedNode.name
                 },
-                operationtype_s: {
+                operationType: {
                   _eq: 'model'
                 }
               }"
@@ -52,8 +50,8 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
-                  _eq: selectedNode.name_s
+                parentName: {
+                  _eq: selectedNode.name
                 }
               }"
             />
@@ -96,10 +94,8 @@ export default {
      * @param {Object | Null} selectedNode 选中节点的数据
      * @return {Undefined}
      */
-    select (selectedNode) {
-      this.selectedNode = {
-        ...selectedNode
-      }
+    selectNode (selectedNode) {
+      this.selectedNode = selectedNode
     }
   }
 }

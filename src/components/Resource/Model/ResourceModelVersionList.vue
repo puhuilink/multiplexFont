@@ -1,70 +1,23 @@
 <template>
-  <div class="ResourceModelVersionList">
+  <div class="ResourceInstanceVersionList">
     <CTable
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_x"
+      rowKey="_id"
       :rowSelection="null"
-      :scroll="{ x: scrolX, y: 850}"
+      :scroll="{ x: scrollX, y: `calc(100vh - 290px)`}"
     >
-
-      <template #query>
-        <a-form layout="inline">
-          <div class="fold">
-            <a-row>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="版本号"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  style="width: 100%"
-                >
-                  <a-input
-                    allowClear
-                    type="number"
-                    min="0"
-                    v-model.number="queryParams.version_i"
-                    placeholder=""/>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </div>
-
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(15.5px)` } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-          </span>
-        </a-form>
-      </template>
     </CTable>
   </div>
 </template>
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-
-const query = gql`query ($where: ngecc_modelhistory_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_modelhistory_order_by!]) {
-  data: ngecc_modelhistory(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
-    createtime_t
-    label_s
-    version_i
-    name_s
-    _id_x
-  }
-  pagination: ngecc_modelhistory_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-}`
+import { ModelHistoryService } from '@/api-hasura'
 
 export default {
-  name: 'ResourceModelVersionList',
+  name: 'ResourceInstanceVersionList',
   components: {
     CTable
   },
@@ -86,34 +39,36 @@ export default {
         return [
           {
             title: '编号',
-            dataIndex: '_id_x',
+            dataIndex: '_id',
             sorter: true,
             width: 300
           },
           {
             title: '创建时间',
-            dataIndex: 'createtime_t',
+            dataIndex: 'createTime',
             sorter: true,
             width: 300
           },
           {
             title: '版本',
-            dataIndex: 'version_i',
+            dataIndex: 'version',
             sorter: true,
             width: 100
           },
           {
             title: '名称',
-            dataIndex: 'label_s',
+            dataIndex: 'label',
             sorter: true,
             width: 300
           }
         ]
       }
     },
-    scrolX: {
+    scrollX: {
       get () {
-        return this.columns.map(el => el.width || 60).reduce((x1, x2) => x1 + x2) + 36
+        return this.columns
+          .map(e => e.width || 60)
+          .reduce((a, b) => a + b) + 62
       }
     }
   },
@@ -136,23 +91,14 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      return apollo.clients.resource.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.where,
-            ...(this.queryParams.version_i !== undefined && this.queryParams.version_i !== '') ? {
-              version_i: {
-                _eq: Number(this.queryParams.version_i)
-              }
-            } : {}
-          }
-        }
+      return ModelHistoryService.find({
+        ...parameter,
+        where: {
+          ...this.where
+        },
+        fields: this.columns.map(column => column.dataIndex),
+        alias: 'data'
       }).then(r => r.data)
-    },
-    query () {
-      this.$refs['table'].refresh(true)
     },
     /**
      * 表格行选中
@@ -173,8 +119,5 @@ export default {
 </script>
 
 <style lang="less">
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-}
+
 </style>

@@ -4,9 +4,9 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="did"
+      rowKey="_id"
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
-      :scroll="{ x: 1760, y: 850}"
+      :scroll="{ x: scrollX, y: 850}"
     >
       <template #query>
         <a-form layout="inline">
@@ -19,7 +19,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.name_s" placeholder=""/>
+                  <a-input v-model="queryParams.name" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -29,7 +29,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.label_s" placeholder=""/>
+                  <a-input v-model="queryParams.label" placeholder=""/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -51,8 +51,6 @@
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
-        <a-button>筛选</a-button>
       </template>
     </CTable>
 
@@ -70,29 +68,23 @@ import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import ResourceModelRelationSchema from './ResourceModelRelationSchema'
 import deleteCheck from '@/components/DeleteCheck'
+import { generateQuery } from '@/utils/graphql'
+import { RelationAttributeService } from '@/api-hasura/index'
+import _ from 'lodash'
 
-const query = gql`query ($where:ngecc_relationattribute_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_relationattribute_order_by!]) {
-  pagination: ngecc_relationattribute_aggregate (where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: ngecc_relationattribute (offset: $offset, limit: $limit, where: $where, order_by: $orderBy) {
-    did
-    _id_s
-    name_s
-    label_s
-    source_s
-    target_s
-    mappingtype_s
-    relationtype_s
-    tabgroup_s
-    order_i
-    allowinheritance_b
-    allownull_b
-  }
-}
-`
+export const fields = [
+  '_id',
+  'name',
+  'label',
+  'source',
+  'target',
+  'mappingType',
+  'relationType',
+  'tabGroup',
+  'order',
+  'allowInheritance',
+  'allowNull'
+]
 
 const deleteAttrs = gql`mutation delete_relationattributes ($dids: [Int!] = []) {
   delete_ngecc_relationattribute (where: {
@@ -132,68 +124,75 @@ export default {
         return [
           {
             title: '名称',
-            dataIndex: 'name_s',
+            dataIndex: 'name',
             sorter: true,
             width: 180
           },
           {
             title: '显示名称',
-            dataIndex: 'label_s',
+            dataIndex: 'label',
             sorter: true,
             width: 300
           },
           {
             title: '源',
-            dataIndex: 'source_s',
+            dataIndex: 'source',
             sorter: true,
             width: 100
           },
           {
             title: '目标',
-            dataIndex: 'target_s',
+            dataIndex: 'target',
             sorter: true,
             width: 100
           },
           {
             title: '映射类型',
-            dataIndex: 'mappingtype_s',
+            dataIndex: 'mappingType',
             sorter: true,
             width: 180
           },
           {
             title: '关系类型',
-            dataIndex: 'relationtype_s',
+            dataIndex: 'relationType',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '所属分组',
-            dataIndex: 'tabgroup_s',
+            dataIndex: 'tabGroup',
             sorter: true,
             width: 180
           },
           {
             title: '排序',
-            dataIndex: 'order_i',
+            dataIndex: 'order',
             sorter: true,
             width: 180
           },
           {
             title: '是否继承',
-            dataIndex: 'allowinheritance_b',
+            dataIndex: 'allowInheritance',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '非空',
-            dataIndex: 'allownull_b',
+            dataIndex: 'allowNull',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           }
         ]
+      }
+    },
+    scrollX: {
+      get () {
+        return this.columns
+          .map(e => e.width || 60)
+          .reduce((a, b) => a + b) + 62
       }
     }
   },
@@ -212,7 +211,7 @@ export default {
   methods: {
     add () {
       this.$refs['schema'].add(
-        this.where.source_s._eq
+        this.where.source._eq
       )
     },
     async batchDelete () {
@@ -243,7 +242,11 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
-      this.$refs['schema'].edit(record)
+      // console.log(
+      //   record,
+      //   _.pick(record, [...fields])
+      // )
+      this.$refs['schema'].edit(_.pick(record, [...fields]))
     },
     /**
      * 加载表格数据
@@ -253,25 +256,25 @@ export default {
     loadData (parameter) {
       this.selectedRows = []
       this.selectedRowKeys = []
-      return apollo.clients.resource.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.where,
-            ...this.queryParams.label_s ? {
-              label_s: {
-                _ilike: `%${this.queryParams.label_s.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.name_s ? {
-              name_s: {
-                _ilike: `%${this.queryParams.name_s.trim()}%`
-              }
-            } : {}
-          }
-        }
+      return RelationAttributeService.find({
+        where: {
+          ...this.where,
+          ...generateQuery(this.queryParams)
+        },
+        alias: 'data',
+        fields: [...fields],
+        ...parameter
       }).then(r => r.data)
+      // return apollo.clients.resource.query({
+      //   query,
+      //   variables: {
+      //     ...parameter,
+      //     where: {
+      //       ...this.where,
+      //       ...generateQuery(this.queryParams)
+      //     }
+      //   }
+      // }).then(r => r.data)
     },
     query () {
       this.$refs['table'].refresh(true)

@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import { getInstanceList } from '@/api/controller/Resource'
+// import { getInstanceList } from '@/api/controller/Resource'
+import { InstanceService } from '@/api-hasura/index'
 
 export default {
   name: 'CiInstanceSelect',
@@ -41,7 +42,7 @@ export default {
       default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
-    'parentNameS': {
+    'parentName': {
       type: String,
       default: ''
     },
@@ -68,13 +69,13 @@ export default {
     }
   },
   watch: {
-    parentNameS: {
+    parentName: {
       immediate: true,
       handler (v) {
         if (v) {
           this.loadData({
-            'parentname_s': {
-              '_eq': this.parentNameS
+            'parentName': {
+              '_eq': this.parentName
             }
           })
         } else {
@@ -88,14 +89,24 @@ export default {
      * 加载列表
      * TODO: 数据量较大，可分页加载，向下滑动时分页
      * TODO: 全选
-     * @param query
+     * @param where
      * @return {Promise<void>}
      */
-    async loadData (query = {}) {
+    async loadData (where = {}) {
       try {
         this.loading = true
-        const { data } = await getInstanceList(query)
-        this.options = data
+        const { data: { options } } = await InstanceService.find({
+          where,
+          fields: [
+            '_id',
+            'value: _id',
+            'label',
+            'name',
+            'parentName'
+          ],
+          alias: 'options'
+        })
+        this.options = options
       } catch (e) {
         this.options = []
         throw e

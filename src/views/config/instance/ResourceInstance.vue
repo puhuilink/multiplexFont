@@ -5,8 +5,9 @@
       <!-- / tree -->
       <a-col :xl="6" :xxl="4">
         <ResourceTree
+          onlyExcelOption
           class="ResourceInstance-tree"
-          @select="select"
+          @selectNode="selectNode"
         />
       </a-col>
 
@@ -17,16 +18,13 @@
       <a-col :xl="18" :xxl="20">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="实例列表" key="1" forceRender>
-            <!-- FIXME: 同一个parentname_s 对应的 did 不同 -->
             <ResourceInstanceList
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
-                  _eq: selectedNode.name_s
-                }
+                parentName: selectedNode.name
               }"
-              :parentNameS="selectedNode.name_s"
+              :parentNameS="selectedNode.name"
               :parentTreeS="selectedNode.tree_s"
               :parentDid="selectedNode.did"
             />
@@ -36,10 +34,10 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                modelname_s: {
-                  _eq: selectedNode.name_s
+                modelName: {
+                  _eq: selectedNode.name
                 },
-                operationtype_s: {
+                operationType: {
                   _eq: 'instance'
                 }
               }"
@@ -50,8 +48,8 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentname_s: {
-                  _eq: selectedNode.name_s
+                parentName: {
+                  _eq: selectedNode.name
                 }
               }"
             />
@@ -88,7 +86,7 @@ export default {
      * @param {Object | Null} selectedNode 选中节点的数据
      * @return {Undefined}
      */
-    select (selectedNode) {
+    selectNode (selectedNode) {
       this.selectedNode = selectedNode
     }
   }

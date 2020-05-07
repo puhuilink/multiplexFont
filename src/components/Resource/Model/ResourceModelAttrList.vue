@@ -4,9 +4,10 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      :rowKey="el => `${el.rid}`"
+      :rowKey="el => `${el.name}`"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: 1580, y: 850}"
+      :scroll="{ x: scrollX, y: 600}"
+      :showPagination="false"
     >
       <template #query>
         <a-form layout="inline">
@@ -19,7 +20,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.name_s" placeholder=""/>
+                  <a-input v-model="queryParams.name" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -29,21 +30,15 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.label_s" placeholder=""/>
+                  <a-input v-model="queryParams.label" placeholder=""/>
                 </a-form-item>
               </a-col>
             </a-row>
           </div>
 
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
             <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            <!--            <a @click="toggleAdvanced" style="margin-left: 8px">-->
-            <!--              {{ advanced ? '收起' : '展开' }}-->
-            <!--              <a-icon :type="advanced ? 'up' : 'down'"/>-->
-            <!--            </a>-->
           </span>
         </a-form>
       </template>
@@ -51,12 +46,11 @@
         <a-button @click="add">新建</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
       </template>
     </CTable>
 
     <ResourceModelAttrSchema
-      :did="where.did._eq"
+      :where="{ name: this.where.name }"
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="query"
@@ -71,7 +65,8 @@ import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
-import { getModelAttributeList } from '@/api/controller/ModelAttributes'
+import { ModelService } from '@/api-hasura'
+import _ from 'lodash'
 
 const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
   delete_ngecc_model_attributes (where: {
@@ -112,62 +107,79 @@ export default {
         return [
           {
             title: '显示名称',
-            dataIndex: 'label_s',
+            dataIndex: 'label',
             sorter: true,
             width: 180
           },
           {
             title: '属性名称',
-            dataIndex: 'name_s',
+            dataIndex: 'name',
             sorter: true,
             width: 300
           },
           {
             title: '显示宽度',
-            dataIndex: 'width_i',
+            dataIndex: 'width',
             sorter: true,
-            width: 100
+            width: 120
           },
           {
             title: '数据类型',
-            dataIndex: 'datatype_s',
+            dataIndex: 'dataType',
             sorter: true,
-            width: 100
+            width: 120
           },
           {
             title: '显示类型',
-            dataIndex: 'displaytype_s',
+            dataIndex: 'displayType',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '源类型',
+            dataIndex: 'sourceType',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '作为查询',
+            dataIndex: 'searchField',
             sorter: true,
             width: 180
           },
           {
             title: '非空',
-            dataIndex: 'allownull_b',
+            dataIndex: 'allowNull',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '源值',
-            dataIndex: 'sourcevalue_s',
+            dataIndex: 'sourceValue',
             sorter: true,
             width: 180
           },
           {
             title: '继承',
-            dataIndex: 'allowinheritance_b',
+            dataIndex: 'allowInheritance',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           },
           {
             title: '隐藏',
-            dataIndex: 'hidden_b',
+            dataIndex: 'hidden',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
           }
         ]
+      }
+    },
+    scrollX: {
+      get () {
+        return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2) + 62
       }
     }
   },
@@ -222,50 +234,35 @@ export default {
      * @param {Object} parameter CTable 回传的分页与排序条件
      * @return {Function: <Promise<Any>>}
      */
-    loadData (parameter) {
+    async loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return getModelAttributeList({
-        orderBy: {
-          rid: 'desc'
-        },
-        ...parameter,
+      return ModelService.find({
         where: {
-          ...this.where,
-          ...this.queryParams.label_s ? {
-            label_s: {
-              _ilike: `%${this.queryParams.label_s.trim()}%`
+          ...this.where
+        },
+        fields: [
+          'name',
+          'attributes'
+        ],
+        alias: 'modelList'
+      }).then(r => {
+        const { data: { modelList } } = r//  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
+        const [model] = modelList
+        // TODO: 查询条件
+        // console.log(this.queryParams)
+        const { attributes } = model
+        const { orderBy = { label: 'asc' } } = parameter
+        const [[ key, sort ]] = Object.entries(orderBy)
+        return {
+          data: _.orderBy(attributes, [key], [sort]),
+          pagination: {
+            aggregate: {
+              count: attributes.length
             }
-          } : {},
-          ...this.queryParams.name_s ? {
-            name_s: {
-              _ilike: `%${this.queryParams.name_s.trim()}%`
-            }
-          } : {}
+          }
         }
-      }).then(r => r.data)
-      // return apollo.clients.resource.query({
-      //   query,
-      //   variables: {
-      //     orderBy: {
-      //       rid: 'desc'
-      //     },
-      //     ...parameter,
-      //     where: {
-      //       ...this.where,
-      //       ...this.queryParams.label_s ? {
-      //         label_s: {
-      //           _ilike: `%${this.queryParams.label_s.trim()}%`
-      //         }
-      //       } : {},
-      //       ...this.queryParams.name_s ? {
-      //         name_s: {
-      //           _ilike: `%${this.queryParams.name_s.trim()}%`
-      //         }
-      //       } : {}
-      //     }
-      //   }
-      // }).then(r => r.data)
+      })
     },
     query () {
       this.$refs['table'].refresh(true)

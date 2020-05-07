@@ -8,6 +8,12 @@ export default class Insert extends Hasura {
     this._object = ''
     this._batch = false
   }
+
+  /**
+   * 插入入参
+   * @param  {Object} args 的内容
+   * @return {HasuraORM} this
+   */
   insert (args) {
     if (!args.on_conflict || !args.objects) {
       this._batch = true
@@ -15,9 +21,19 @@ export default class Insert extends Hasura {
     this._object += stringify(hasRelation(args), !this._batch) + ' , '
     return this
   }
+
+  /**
+   * 执行 graphql  mutation 语句
+   * @return {Promise<any>}
+   */
   mutate () {
     return this.provider.mutate({ query: parse(this.query()) })
   }
+
+  /**
+   * 生成 graphql 语句体
+   * @return {String}
+   */
   parsed () {
     const args = this.schemaArguments + this._object
     let schemaArgs = '(' + args + ')'
@@ -26,6 +42,11 @@ export default class Insert extends Hasura {
     }
     return ` ${this._schema} ${schemaArgs} {  ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
   }
+
+  /**
+   * 生成最终执行的 graphql 语句
+   * @return {String}
+   */
   query () {
     return `mutation {  ${this.parsed()}  }`
   }

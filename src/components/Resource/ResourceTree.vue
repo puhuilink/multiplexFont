@@ -2,7 +2,6 @@
   <div class="ResourceTree" :class="{ 'ResourceTree__hidden-tab': hiddenTab }">
     <a-tabs defaultActiveKey="1">
       <a-tab-pane tab="资源树" key="1">
-        <!-- TODO: 固定搜索栏 -->
         <a-input-search
           allowClear
           autoFocus
@@ -12,7 +11,7 @@
           @change="change"
         />
         <a-spin
-          v-if="$apollo.queries.dataSource.loading"
+          v-if="loading"
           spinning
         />
         <a-tree
@@ -26,12 +25,20 @@
           :draggable="draggable"
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
+          showIcon
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
           v-on="$listeners"
           @expand="expand"
           @select="select"
-        />
+        >
+          <template slot="custom" slot-scope="{ dataRef: { icon } }">
+            <!-- <a-icon :type="selected ? 'frown' : 'frown-o'" /> -->
+            <!-- {{ icon }} -->
+            <img :src="resolveIcon(icon)" class="ResourceTree__tree_icon" alt="">
+            <!-- <a-icon type="message" :style="{ fontSize: '16px', color: '#08c' }" /> -->
+          </template>
+        </a-tree>
 
         <ResourceTreeNodeSchema
           ref="schema"
@@ -45,7 +52,7 @@
         <div class="ResourceTree__tabBarExtraContent">
           <a-button icon="upload"></a-button>
           <a-button icon="download"></a-button>
-          <template v-if="!instanceList">
+          <template v-if="!onlyExcelOption">
             <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
             <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
             <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
@@ -57,60 +64,15 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
-import { deleteModelList } from '@/api/controller/Resource'
 import _ from 'lodash'
+import { ModelService } from '@/api-hasura'
 
 export default {
   name: 'ResourceTree',
-  apollo: {
-    // TODO: 在 hasura 层通过 RelationShips 直接构造好树结构
-    // TODO: subscribe 节点增加 / 删除
-    // TODO: 排序
-    // TODO: 默认展开层级
-    dataSource: {
-      query: gql`query ($instanceList: Boolean!) {
-        dataSource: ngecc_model {
-          did
-          label_s
-          name_s
-          batch_b
-          edit_b
-          encrypt_s
-          order_i
-          icon_s
-          parenttree_s
-          _id_s
-          title: label_s
-          key: name_s
-          parentKey: parentname_s
-          parentname_s: parentname_s
-          instanceList @include(if: $instanceList) {
-            did
-            _id_s
-            name_s
-            title: label_s
-            key: name_s
-            parentKey: parentname_s
-            parentname_s: parentname_s
-          }
-        }
-      }`,
-      result () {
-        this.autoExpandParent = true
-      },
-      // 响应式，当数据变化时，触发刷新
-      variables () {
-        return {
-          instanceList: this.instanceList
-        }
-      }
-    }
-  },
   components: {
     Template,
     ResourceTreeNodeSchema
@@ -122,6 +84,11 @@ export default {
     },
     // 隐藏分页
     hiddenTab: {
+      type: Boolean,
+      default: false
+    },
+    // 只展示导入、导出 excel的按钮
+    onlyExcelOption: {
       type: Boolean,
       default: false
     },
@@ -168,24 +135,71 @@ export default {
     }
   },
   methods: {
+    bug (argus) {
+      console.log(argus)
+    },
+    resolveIcon (icon) {
+      try {
+        return require(`@/assets/network-icons/${icon}.png`)
+      } catch (e) {
+        return require(`@/assets/network-icons/Others.png`)
+      }
+    },
+    async fetch () {
+      try {
+        this.loading = true
+        const { data: { dataSource } } = await ModelService.find({
+          fields: [
+            '_id',
+            'name',
+            'icon: icon',
+            'key: name',
+            'label',
+            'title: label',
+            'parentName',
+            'parentKey: parentName',
+            'parentTree',
+            'order',
+            !this.instanceList ? `` : `instanceList {
+              _id
+              name
+              key: name
+              label
+              title: label
+              parentName
+              parentKey: parentName
+              parentTree
+              icon: values(path: "$.icon")
+            }`
+          ],
+          alias: 'dataSource'
+        }, this.instanceList)
+        this.dataSource = dataSource
+      } catch (e) {
+        this.dataSource = []
+        throw e
+      } finally {
+        this.autoExpandParent = true
+        this.loading = false
+      }
+    },
     add () {
-      // eslint-disable-next-line
-      const { parenttree_s, name_s } = this.selectedNode
+      const { parentTree, name } = this.selectedNode
       // 父节点位置加上自身的名字，就是自身节点的位置
       this.$refs['schema'].add(
-        name_s,
+        name,
         // eslint-disable-next-line
-        `${parenttree_s}${name_s}`
+        `${parentTree}${name}`
       )
     },
     addSuccess () {
-      this.$apollo.queries.dataSource.refetch()
+      this.fetch()
     },
     edit () {
       this.$refs['schema'].edit({ ...this.selectedNode })
     },
     editSuccess () {
-      this.$apollo.queries.dataSource.refetch()
+      this.fetch()
     },
     filterNode ({ title = '' }) {
       const { searchValue = '' } = this
@@ -200,10 +214,11 @@ export default {
       try {
         // TODO: 删除接口
         // 删除成功重置
-        const [nameList, didList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        console.log(nameList, didList)
-        await deleteModelList(nameList, didList)
-        await this.$apollo.queries.dataSource.refetch()
+        const [nameList, _idList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        console.log(nameList, _idList)
+        // await deleteModelList(nameList, _idList)
+        await ModelService.delete(nameList)
+        await this.fetch()
         this.selectedKey = ''
         this.$notification.success({
           message: '系统提示',
@@ -232,21 +247,21 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
-        this.$emit('select', {
+        this.$emit('selectNode', {
           'did': dataRef.did,
           'label_s': dataRef.label_s,
-          'name_s': dataRef.name_s,
-          'name': dataRef.name_s,
-          'tree_s': dataRef.parenttree_s + dataRef.name_s,
+          'name': dataRef.name,
+          'name_s': dataRef.name,
+          'tree_s': dataRef.parentTree + dataRef.name,
           'parentname_s': dataRef.parentname_s,
-          'parentname': dataRef.parentname_s,
+          'parentName': dataRef.parentname_s,
           '_id_s': dataRef._id_s
         })
       } else {
         // FIXME: 新增后可以不用重置
         // this.selectedNode = null
         this.selectedKey = ''
-        this.$emit('select', null)
+        this.$emit('selectNode', null)
       }
     },
     search: _.debounce(function (value) {
@@ -265,14 +280,32 @@ export default {
       }
       this.search(value)
     }
+  },
+  async created () {
+    await this.fetch()
+    await this.$nextTick()
+    // 默认展开根节点
+    // TODO: 支持 props 指定默认展开层级
+    this.expandedKeys = [ ...this.rootKeys ]
   }
 }
 </script>
 
 <style lang="less">
 .ResourceTree {
+  overflow: auto;
+
   &__tree {
     overflow: auto;
+
+    // icon slot antd 默认控制了宽高
+    &_icon {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      vertical-align: super;
+    }
   }
   &__hidden-tab {
     .ant-tabs-bar {
