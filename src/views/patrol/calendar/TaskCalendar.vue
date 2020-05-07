@@ -63,8 +63,8 @@ import detail from '../modules/TCDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import moment from 'moment'
-const queryBefore = gql`query xunjian ($where: xj_task_info_bool_exp = {}){
-  data: xj_task_info(where: $where) {
+const queryBefore = gql`query xunjian ($where: t_xj_task_info_bool_exp = {}){
+  data: t_xj_task_info(where: $where) {
     task_id
     task_name
     task_status
@@ -77,8 +77,8 @@ const queryBefore = gql`query xunjian ($where: xj_task_info_bool_exp = {}){
     transactor_code
   }
 }`
-const queryLater = gql`query xunjian($where: xj_plan_info_bool_exp = {}) {
-  data: xj_plan_info(where: $where) {
+const queryLater = gql`query xunjian($where: t_xj_plan_info_bool_exp = {}) {
+  data: t_xj_plan_info(where: $where) {
     ascription
     create_time
     create_user_code
@@ -164,7 +164,7 @@ export default {
     async ascriptionChange (e) {
       this.ascriptionChoose = e.target.value
       this.queryParam.ascription = e.target.value
-      // this.getListData()
+      this.getAllData()
     },
     async loadBeforeData (parameter) {
       return apollo.clients.alert.query({
@@ -242,7 +242,7 @@ export default {
           }
         }
       }).then(r => {
-        // console.log(r)
+        console.log(r.data.data)
         const list = r.data.data.map(r => ({
           ...r,
           work_start_date: r.start_time.split('T')[0],
