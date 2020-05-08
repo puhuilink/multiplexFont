@@ -287,24 +287,24 @@ export default {
           // console.log('login form', values)
           // eslint-disable-next-line no-undef
           const loginParams = { ...values }
-          // if (loginParams.captcha === this.captcha) {
-          delete loginParams.userId
-          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-          loginParams.pwd = values.pwd
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
-          // } else {
-          //   state.loginBtn = false
-          //   if (this.captcha === null) {
-          //     this.$message.warn('验证码已过期，请重新获取验证码！')
-          //   } else {
-          //     this.$message.error('验证码错误，请重新填写！')
-          //   }
-          // }
+          if (loginParams.captcha === this.captcha) {
+            delete loginParams.userId
+            loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+            loginParams.pwd = values.pwd
+            Login(loginParams)
+              .then((res) => this.loginSuccess(res))
+              .catch(err => this.requestFailed(err))
+              .finally(() => {
+                state.loginBtn = false
+              })
+          } else {
+            state.loginBtn = false
+            if (this.captcha === null) {
+              this.$message.warn('验证码已过期，请重新获取验证码！')
+            } else {
+              this.$message.error('验证码错误，请重新填写！')
+            }
+          }
         } else {
           setTimeout(() => {
             state.loginBtn = false
