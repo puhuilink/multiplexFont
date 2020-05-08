@@ -52,6 +52,14 @@
       >
         <AlarmTypeSelect :form.sync="formData" />
       </a-form-item>
+      <a-form-item
+        v-if="hasDetailInstance"
+        label="Instance"
+        :labelCol="formItemLayout.labelCol"
+        :wrapperCol="formItemLayout.wrapperCol"
+      >
+        <a-input :value="formData.detailInstance.join(',')" @change="ondetailInstanceInput" />
+      </a-form-item>
     </a-form>
   </div>
 </template>
@@ -83,7 +91,8 @@ const formData = {
   model: '',
   selectedInstance: [],
   selectedKpi: [],
-  alarmType: []
+  alarmType: [],
+  detailInstance: []
 }
 
 export default {
@@ -116,6 +125,10 @@ export default {
     hasAlarmType: {
       type: Boolean,
       default: false
+    },
+    hasDetailInstance: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -142,6 +155,9 @@ export default {
     },
     onInstanceInput (arr = []) {
       this.formData.selectedInstance = Array.isArray(arr) ? arr : []
+    },
+    ondetailInstanceInput ({ target: { value } }) {
+      this.formData.detailInstance = value.split(',').filter(v => !!v)
     }
   },
   created () {

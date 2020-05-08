@@ -15,7 +15,7 @@ const mutate = async function () {
   // console.log(hasuraORMList)
   const [{ provider }] = hasuraORMList
   const query = `mutation { ${hasuraORMList.map(hasuraORM => hasuraORM.parsed())} }`
-  console.log(query)
+  // console.log(query)
   return provider.mutate({ mutation: parse(query) })
 }
 
@@ -32,7 +32,7 @@ const query = async function () {
     // console.log(hasuraInstance.parsed())
     return hasuraInstance.parsed()
   })} }`
-  console.log(query)
+  // console.log(query)
   return provider.query({ query: parse(query) })
 }
 
