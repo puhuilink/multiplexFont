@@ -82,7 +82,10 @@
           placeholder="账户名"
           v-decorator="[
             'userId',
-            {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
+            {rules: [
+              { required: true, message: '请输入帐户名' },
+              { min: 4, message: '用户名最少4位'},
+              { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
           ]"
         >
           <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -97,7 +100,8 @@
           placeholder="密码"
           v-decorator="[
             'pwd',
-            {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
+            {
+              rules: [{ required: true, message: '请输入密码'}, { validator: handlePasswordLevel }], validateTrigger: ['change', 'blur']}
           ]"
         >
           <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -184,7 +188,8 @@ export default {
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
-      captcha: null,
+      captcha: undefined,
+      timer: null,
       state: {
         time: 60,
         loginBtn: false,
@@ -207,6 +212,46 @@ export default {
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
+    handlePasswordLevel (rule, value, callback) {
+      let level = 0
+
+      // 判断这个字符串中有没有数字
+      if (/[0-9]/.test(value)) {
+        level++
+      }
+      // 判断字符串中有没有大写字母
+      if (/[A-Z]/.test(value)) {
+        level++
+      }
+
+      // 判断字符串中有没有小写字母
+      if (/[a-z]/.test(value)) {
+        level++
+      }
+      // // 判断字符串中有没有特殊符号
+      // if (/[^0-9a-zA-Z_]/.test(value)) {
+      //   level++
+      // }
+
+      this.state.passwordLevel = level
+      this.state.percent = level * 30
+
+      if (value.length < 8) {
+        callback(new Error('密码至少8位'))
+      } else {
+        if (level >= 3) {
+          this.state.percent = 100
+          // if (level >= 3) {
+          // }
+          callback()
+        } else {
+          if (level === 0) {
+            this.state.percent = 10
+          }
+          callback(new Error('英文字母区分大小写以及数字'))
+        }
+      }
+    },
     // handler
     handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
@@ -242,21 +287,24 @@ export default {
           // console.log('login form', values)
           // eslint-disable-next-line no-undef
           const loginParams = { ...values }
-          if (loginParams.captcha === this.captcha) {
-            delete loginParams.userId
-            loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-            // loginParams.pwd = md5(values.pwd)
-            loginParams.pwd = values.pwd
-            Login(loginParams)
-              .then((res) => this.loginSuccess(res))
-              .catch(err => this.requestFailed(err))
-              .finally(() => {
-                state.loginBtn = false
-              })
-          } else {
-            state.loginBtn = false
-            this.$message.error('验证码错误，请重新填写！')
-          }
+          // if (loginParams.captcha === this.captcha) {
+          delete loginParams.userId
+          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+          loginParams.pwd = values.pwd
+          Login(loginParams)
+            .then((res) => this.loginSuccess(res))
+            .catch(err => this.requestFailed(err))
+            .finally(() => {
+              state.loginBtn = false
+            })
+          // } else {
+          //   state.loginBtn = false
+          //   if (this.captcha === null) {
+          //     this.$message.warn('验证码已过期，请重新获取验证码！')
+          //   } else {
+          //     this.$message.error('验证码错误，请重新填写！')
+          //   }
+          // }
         } else {
           setTimeout(() => {
             state.loginBtn = false
@@ -264,19 +312,29 @@ export default {
         }
       })
     },
+    // 随机验证码
+    randomCaptcha () {
+      return new Array(6)
+        .fill('')
+        .map(() => (Math.random() * 9).toFixed())
+        .join('')
+    },
+    // 获取验证码
     getCaptcha (e) {
       e.preventDefault()
       const { form: { validateFields }, state } = this
 
       validateFields(['mobile'], { force: true }, (err, values) => {
         if (!err) {
-          this.captcha = new Array(6)
-            .fill('')
-            .map(() => (Math.random() * 9).toFixed())
-            .join('')
+          this.captcha = this.randomCaptcha()
+          if (this.timer) clearTimeout(this.timer)
+
+          // 开启三分钟定时器，清空验证码
+          this.timer = setTimeout(() => { this.captcha = null }, 3 * 60000)
+
           const message = {
             mobile: values.mobile,
-            content: `【中国交建】 验证码 ${this.captcha}，您正在登陆中国交建统一监控管理平台，请确认。`
+            content: `【中国交建】 验证码 ${this.captcha} 三分钟内有效，您正在登陆中国交建统一监控管理平台，请确认。`
           }
 
           const securityMessage = AES.encrypt(JSON.stringify(message), key, {
