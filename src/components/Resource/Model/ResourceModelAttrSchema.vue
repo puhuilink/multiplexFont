@@ -25,8 +25,11 @@
           >
             <a-input
               v-decorator="[
-                'label_s',
-                { rules: [{ required: true, message: '显示名称必填' }] },
+                'label',
+                {
+                  initialValue: '',
+                  rules: [{ required: true, message: '显示名称必填' }]
+                },
               ]"
             />
           </a-form-item>
@@ -41,8 +44,9 @@
             <a-input
               :disabled="title === '编辑'"
               v-decorator="[
-                'name_s',
+                'name',
                 {
+                  initialValue: '',
                   rules: [{ required: true, message: '属性名称必填' }],
                   // initialValue: 'name'
                 },
@@ -61,7 +65,10 @@
           >
             <a-input
               v-decorator="[
-                'width_i'
+                'width',
+                {
+                  initialValue: 0
+                }
               ]"
             />
           </a-form-item>
@@ -75,7 +82,7 @@
           >
             <a-select
               v-decorator="[
-                'datatype_s',
+                'datatype',
                 {
                   initialValue: 'STRING'
                 },
@@ -100,7 +107,7 @@
           >
             <a-select
               v-decorator="[
-                'displaytype_s',
+                'displayType',
                 {
                   initialValue: 'TEXT',
                   rules: [
@@ -129,7 +136,10 @@
           >
             <a-select
               v-decorator="[
-                'sourcetype_s',
+                'sourceType',
+                {
+                  initialValue: '',
+                }
               ]"
             >
               <a-select-option
@@ -151,8 +161,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'searchfield_b',
+                'searchField',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -167,8 +178,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'allownull_b',
+                'allowNull',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -185,7 +197,10 @@
           >
             <a-input
               v-decorator="[
-                'matchtype_s'
+                'matchType',
+                {
+                  initialValue: '',
+                }
               ]"
             />
           </a-form-item>
@@ -199,7 +214,10 @@
           >
             <a-input
               v-decorator="[
-                'sourcevalue_s',
+                'sourceValue',
+                {
+                  initialValue: '',
+                }
               ]">
             </a-input>
           </a-form-item>
@@ -215,8 +233,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'allowinheritance_b',
+                'allowInheritance',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]">
@@ -232,8 +251,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'hidden_b',
+                'hidden',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -252,6 +272,7 @@
               v-decorator="[
                 'edit_b',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -266,7 +287,7 @@
           >
             <a-select
               v-decorator="[
-                'tabgroup_s'
+                'tabGroup'
               ]"
             >
               <a-select-option
@@ -288,7 +309,10 @@
           >
             <a-input
               v-decorator="[
-                'defaultvalue_s'
+                'defaultValue',
+                {
+                  initialValue: '',
+                }
               ]"
             />
           </a-form-item>
@@ -302,7 +326,7 @@
           >
             <a-input
               v-decorator="[
-                'operationvalue_s'
+                'operationValue'
               ]"
             />
           </a-form-item>
@@ -320,7 +344,10 @@
             <a-input
               type="number"
               v-decorator="[
-                'order_i'
+                'order',
+                {
+                  initialValue: 0,
+                }
               ]"
             />
           </a-form-item>
@@ -334,8 +361,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'uniqueness_b',
+                'uniqueness',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -354,7 +382,7 @@
             <a-input
               type="number"
               v-decorator="[
-                'uniquenessscope_s'
+                'uniquenessScope'
               ]"
             />
           </a-form-item>
@@ -368,7 +396,7 @@
           >
             <a-input
               v-decorator="[
-                'pattern_s'
+                'pattern'
               ]"
             />
           </a-form-item>
@@ -384,7 +412,10 @@
           >
             <a-input
               v-decorator="[
-                'alertmessage_s'
+                'alertmessage',
+                {
+                  initialValue: '',
+                }
               ]"
             />
           </a-form-item>
@@ -398,8 +429,9 @@
           >
             <a-checkbox
               v-decorator="[
-                'assetsattr_b',
+                'assetsAttr',
                 {
+                  initialValue: false,
                   valuePropName: 'checked'
                 }
               ]"></a-checkbox>
@@ -411,7 +443,8 @@
 </template>
 
 <script>
-import { addModelAttr, updateModelAttr } from '@/api/controller/ModelAttr'
+import { updateModelAttr } from '@/api/controller/ModelAttr'
+import { ModelService } from '@/api-hasura/index'
 
 const formItemLayout = {
   labelCol: {
@@ -497,20 +530,20 @@ const options = {
       value: 'URMPTREE'
     }
   ],
+  // FIXME: 具体作用方式
   tabgroup: [
     {
       name: '基本关系',
       value: 'base'
+    },
+    {
+      name: '关系信息',
+      value: '?'
+    },
+    {
+      name: '其他信息',
+      value: '??'
     }
-    // TODO: 找出剩余两种关系的值
-    // {
-    //   name: '关系信息',
-    //   value: '?'
-    // },
-    // {
-    //   name: '其他信息',
-    //   value: '??'
-    // }
   ]
 }
 
@@ -518,9 +551,9 @@ export default {
   name: 'ResourceModelAttrSchema',
   components: {},
   props: {
-    did: {
-      type: Number,
-      required: true
+    where: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: (vm) => ({
@@ -562,12 +595,9 @@ export default {
      * 新增
      */
     async insert () {
-      const value = {
-        ...await this.getFormFields(),
-        did: this.did
-      }
+      const value = await this.getFormFields()
       this.loading = true
-      return addModelAttr(value).then(res => {
+      return ModelService.addAttr(value, this.where).then(res => {
         this.$notification.success({
           message: '系统提示',
           description: '新建成功'

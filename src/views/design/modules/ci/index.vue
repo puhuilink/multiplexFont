@@ -1,11 +1,13 @@
 <template>
-  <ResourceTree
-    instanceList
-    hiddenTab
-    draggable
-    :rootKeys="['CommonCi']"
-    @dragend="dragend"
-  />
+  <div class="Ci">
+    <ResourceTree
+      instanceList
+      hiddenTab
+      draggable
+      :rootKeys="['CommonCi']"
+      @dragend="dragend"
+    />
+  </div>
 </template>
 
 <script>
@@ -38,7 +40,7 @@ export default {
     }),
     async dragend ({ event, node: { dataRef } }) {
       const options = await this.fetch(dataRef)
-      const target = this.icons.find(icon => icon.name === options.icon_s)
+      const target = this.icons.find(icon => icon.name === options.icon)
       const other = this.icons.find(icon => icon.name === 'Others')
       const icon = target || other
       const data = {
@@ -81,20 +83,20 @@ export default {
         this.updateTopologyConfig()
       }
     },
-    async fetch ({ name_s }) {
-      const data = await ViewDesignService.nodeByCi(name_s)
+    async fetch ({ name }) {
+      const data = await ViewDesignService.nodeByCiName(name)
       if (data) {
         // TODO: 其他属性引入
-        const { label_s, name_s, parentname_s, values: { icon_s } } = data
+        const { label, name, parentName, icon } = data
         const option = {
           // 显示名称
-          label_s,
+          label,
           // model
-          parentname_s,
+          parentName,
           // ci
-          name_s,
+          name,
           // icon
-          icon_s
+          icon
         }
         return option
       }
@@ -127,5 +129,7 @@ export default {
 </script>
 
 <style lang="less">
-
+.Ci {
+  overflow: auto;
+}
 </style>

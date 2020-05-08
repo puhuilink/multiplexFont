@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { getComponentValues } from '@/api/controller/View'
-// import { KpiCurrentService } from '@/api-hasura'
+// import { getComponentValues } from '@/api/controller/View'
+import { KpiCurrentService } from '@/api-hasura'
+import { TimeRange } from './index'
 
 const initialOption = {
   legend: {},
@@ -14,10 +15,18 @@ export default class BarDataConfig {
     resourceConfig = {
       model: '',
       selectedInstance: [],
-      selectedKpi: []
-    }
+      selectedKpi: [],
+      detailInstance: []
+    },
+    refreshTime = 0,
+    // 外部 Ci 是否可用
+    externalCi = true,
+    timeRange = new TimeRange()
   }) {
     this.resourceConfig = resourceConfig
+    this.externalCi = externalCi
+    this.refreshTime = refreshTime
+    this.timeRange = timeRange
     this.resetData()
   }
 
@@ -29,16 +38,19 @@ export default class BarDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        // 拿到的数据是一条kpi与一条ci的搭配数组
-        const res = await getComponentValues(this.resourceConfig)
+        // const data = await getComponentValues(this.resourceConfig)
         // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
-        // const res = await KpiCurrentService.getValue(this.resourceConfig)
-        // console.log(res)
-        // getComponentValues(this.resourceConfig).then(res => {
-        //   console.log('res', res)
-        // })
-        const groupByKpi = _.groupBy(res, 'kpiLabel')
-        const groupByCi = _.groupBy(res, 'instanceLabel')
+        // const { data } = await KpiCurrentService.getValue(this.resourceConfig)
+        const { selectedInstance, selectedKpi, detailInstance } = this.resourceConfig
+        const { data } = await KpiCurrentService.getValue({
+          selectedInstance,
+          selectedKpi,
+          detailInstance,
+          timeRange: TimeRange.getOption.apply(this.timeRange),
+          orderBy: { arising_time: 'asc' }
+        })
+        const groupByKpi = _.groupBy(data, 'kpiLabel')
+        const groupByCi = _.groupBy(data, 'instanceLabel')
         const valueAxis = {
           type: 'value'
         }
@@ -48,7 +60,7 @@ export default class BarDataConfig {
         }
 
         this.legend = {
-          data: Object.keys(_.groupBy(res, 'instanceLabel'))
+          data: Object.keys(_.groupBy(data, 'instanceLabel'))
         }
         // TODO: 交换 x / y 轴配置实现 纵向 / 横向切换
         this.xAxis = categoryAxis

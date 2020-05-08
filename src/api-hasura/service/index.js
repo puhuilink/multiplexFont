@@ -4,6 +4,11 @@ import { KpiCurrentService } from './KpiCurrentService'
 import { InstanceService } from './InstanceService'
 import { ViewDesignService } from './ViewDesignService'
 import { AuditService } from './AuditService'
+import { OperationLogService } from './OperationLogService'
+import { ModelHistoryService } from './ModelHistoryService'
+import { InstanceHistoryService } from './InstanceHistoryService'
+import { RelationAttributeService } from './RelationAttributeService'
+import { RelationInstanceService } from './RelationInstanceService'
 
 export {
   UserService,
@@ -11,5 +16,10 @@ export {
   KpiCurrentService,
   InstanceService,
   ViewDesignService,
-  AuditService
+  AuditService,
+  OperationLogService,
+  ModelHistoryService,
+  InstanceHistoryService,
+  RelationAttributeService,
+  RelationInstanceService
 }

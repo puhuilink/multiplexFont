@@ -1,8 +1,7 @@
 import {
   KpiCurrentHistoryDao,
   KpiCurrentLastestDao,
-  InstanceDao,
-  InstanceValuesDao
+  InstanceDao
 } from '../dao/index'
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
@@ -17,28 +16,78 @@ class KpiCurrentService extends BaseService {
    */
   static async _getKpiAndCiInfo (selectedKpi = [], selectedInstance = []) {
     // 查询基本信息与指标值
-    const { data: { ciList, kpiList } } = await query(
-      InstanceDao.find({ where: { _id_s: { _in: selectedInstance } }, fields: ['_id_s', 'label_s'], alias: 'ciList' }),
-      InstanceValuesDao.find({ where: { kpicode_s: { _in: selectedKpi } }, fields: ['kpicode_s', 'label_s'], alias: 'kpiList' })
+    const { data } = await query(
+      InstanceDao.find({
+        where: {
+          _id: {
+            _in: selectedInstance
+          }
+        },
+        fields: [
+          '_id',
+          'label'
+        ],
+        alias: 'ciList'
+      }),
+      // TODO: jsonb 不支持批量查询，只能拆分为多个单查询再合并结果
+      ...selectedKpi.map((kpiCode, index) => InstanceDao.find({
+        where: {
+          parentName: {
+            _eq: 'Kpi'
+          },
+          values: {
+            _contains: { kpiCode }
+          }
+        },
+        fields: [
+          `label: values(path: "$.label")`,
+          `kpiCode: values(path: "$.kpiCode")`
+        ],
+        alias: `kpiCode${index}`
+      }))
     )
+
+    const { ciList, ...KpiListMerge } = data
+    const kpiList = Object.values(KpiListMerge).flat()
+    // console.log(ciList, Object.values(KpiListMerge).flat())
 
     // 构建 hash map
     return {
-      ci: new Map(ciList.map(ci => [`${ci._id_s}`, ci.label_s])),
-      kpi: new Map(kpiList.map(kpi => [`${kpi.kpicode_s}`, kpi.label_s]))
+      ci: new Map(ciList.map(ci => [`${ci._id}`, ci.label])),
+      kpi: new Map(kpiList.map(kpi => [`${kpi.kpiCode}`, kpi.label]))
     }
-
-    // 组合返回体
   }
 
-  static _composeKpiAndCi (selectedKpi = [], selectedInstance = []) {
+  static _composeKpiAndCi (selectedKpi = [], selectedInstance = [], detailInstance = []) {
     const composedValue = []
     selectedInstance.forEach(ci_id => {
       selectedKpi.forEach(kpi_code => {
-        composedValue.push({ kpi_code, ci_id })
+        composedValue.push({
+          kpi_code: { _eq: kpi_code },
+          ci_id: { _eq: ci_id }
+        })
       })
     })
-    return composedValue
+
+    // console.log(detailInstance)
+    let result = []
+    // detailInstance 是可选的，长度为 0 时不会进入遍历
+    if (_.isEmpty(detailInstance)) {
+      result = composedValue
+    } else {
+      composedValue.forEach((el, index) => {
+        detailInstance.forEach(instance_id => {
+          result.push({
+            ...el,
+            ...instance_id ? {
+              instance_id: { _eq: instance_id }
+            } : {}
+          })
+        })
+      })
+    }
+
+    return result
   }
 
   /**
@@ -56,12 +105,11 @@ class KpiCurrentService extends BaseService {
     fields = [],
     selectedKpi = [],
     selectedInstance = [],
+    detailInstance = [],
     timeRange = {}
   }) {
-    const { _getKpiAndCiInfo, _composeKpiAndCi } = this
+    const { _getKpiAndCiInfo } = this
     const { timeRangeStart, timeRangeEnd } = timeRange || {}
-
-    const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
 
     // 起始时间与结束时间不相同时，认为是按时间范围查找
     const timeRangeQuery = (timeRangeStart && timeRangeStart !== timeRangeEnd) ? {
@@ -74,14 +122,15 @@ class KpiCurrentService extends BaseService {
     // 存在时间范围从历史值中查找，反之从最新值查找
     const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
+    const argus = this._composeKpiAndCi(selectedKpi, selectedInstance, detailInstance)
+
     const [{ ci, kpi }, { data }] = await Promise.all([
       _getKpiAndCiInfo(selectedKpi, selectedInstance),
       query(
         dao.find({
           where: {
-            _or: argus.map(({ ci_id, kpi_code }) => ({
-              ci_id: { _eq: ci_id },
-              kpi_code: { _eq: kpi_code },
+            _or: argus.map(argu => ({
+              ...argu,
               ...where,
               ...timeRangeQuery
             }))
@@ -89,6 +138,7 @@ class KpiCurrentService extends BaseService {
           fields: _.uniq([
             'ci_id',
             'kpi_code',
+            'instance_id',
             'arising_time',
             'value: kpi_value_num',
             ...fields

@@ -4,7 +4,7 @@
       ref="table"
       :data="loadData"
       :columns="columns"
-      rowKey="_id_x"
+      rowKey="_id"
       :rowSelection="null"
       :scroll="{ x: scrolX, y: `calc(100vh - 290px)`}"
     >
@@ -22,7 +22,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.operator_s"></a-input>
+                  <a-input v-model="queryParams.operator"></a-input>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -31,7 +31,7 @@
                   :labelCol="{ span: 6 }"
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
-                  <a-input v-model.number="queryParams.name_s" />
+                  <a-input v-model.number="queryParams.name" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -44,7 +44,7 @@
                     :labelCol="{ span: 6 }"
                     :wrapperCol="{ span: 14, offset: 2 }"
                     style="width: 100%">
-                    <a-select v-model="queryParams.operation_s">
+                    <a-select v-model="queryParams.operation">
                       <a-select-option
                         v-for="operation in operationList"
                         :key="operation.value"
@@ -60,7 +60,7 @@
                     :labelCol="{ span: 6 }"
                     :wrapperCol="{ span: 14, offset: 2 }"
                     style="width: 100%">
-                    <a-select v-model="queryParams.operationresult_s">
+                    <a-select v-model="queryParams.operationResult">
                       <a-select-option
                         v-for="operationResult in operationResultList"
                         :key="operationResult.value"
@@ -92,27 +92,8 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-
-const query = gql`query ($where:ngecc_operationlog_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [ngecc_operationlog_order_by!]) {
-  data: ngecc_operationlog(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
-    _id_x
-    modelname_s
-    name_s
-    operator_s
-    operation_s
-    operatingtime_t
-    operationresult_s
-    relationid_s
-    relation_b
-  }
-  pagination: ngecc_operationlog_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-}`
+import { OperationLogService } from '@/api-hasura'
+import { generateQuery } from '@/utils/graphql'
 
 const operationList = [
   {
@@ -172,43 +153,43 @@ export default {
         return [
           {
             title: '操作人',
-            dataIndex: 'operator_s',
+            dataIndex: 'operator',
             sorter: true,
             width: 180
           },
           {
             title: '操作时间',
-            dataIndex: 'operatingtime_t',
+            dataIndex: 'operatingTime',
             sorter: true,
             width: 300
           },
           {
             title: '操作节点名称',
-            dataIndex: 'name_s',
+            dataIndex: 'name',
             sorter: true,
             width: 400
           },
           {
             title: '数据关联编号',
-            dataIndex: 'relationid_s',
+            dataIndex: 'relationId',
             sorter: true,
             width: 300
           },
           {
             title: '操作类型',
-            dataIndex: 'operation_s',
+            dataIndex: 'operation',
             sorter: true,
             width: 180
           },
           {
             title: '操作结果类型',
-            dataIndex: 'operationresult_s',
+            dataIndex: 'operationResult',
             sorter: true,
             width: 220
           },
           {
             title: '是否为关系',
-            dataIndex: 'relation_b',
+            dataIndex: 'relation',
             sorter: true,
             width: 160,
             customRender: val => val ? '是' : '否'
@@ -241,44 +222,24 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      /* eslint-disable camelcase */
-      const {
-        where,
-        queryParams: {
-          operator_s,
-          name_s,
-          operation_s,
-          operationresult_s
-        }
-      } = this
-      return apollo.clients.resource.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...where,
-            ...operator_s ? {
-              operator_s: {
-                _ilike: `%${operator_s.trim()}%`
-              }
-            } : {},
-            ...name_s ? {
-              name_s: {
-                _ilike: `%${name_s.trim()}%`
-              }
-            } : {},
-            ...operation_s ? {
-              operation_s: {
-                _ilike: `%${operation_s.trim()}%`
-              }
-            } : {},
-            ...operationresult_s ? {
-              operationresult_s: {
-                _ilike: `%${operationresult_s.trim()}%`
-              }
-            } : {}
-          }
-        }
+      return OperationLogService.find({
+        ...parameter,
+        where: {
+          ...this.where,
+          ...generateQuery(this.queryParams)
+        },
+        fields: [
+          '_id',
+          'modelName',
+          'name',
+          'operator',
+          'operation',
+          'operatingTime',
+          'operationResult',
+          'relationId',
+          'relation'
+        ],
+        alias: 'data'
       }).then(r => r.data)
     },
     query () {

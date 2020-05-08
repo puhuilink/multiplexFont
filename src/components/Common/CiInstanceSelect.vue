@@ -1,31 +1,5 @@
-<template>
-  <div class="CiInstanceSelect">
-    <a-select
-      showSearch
-      :filterOption="filterOption"
-      :labelInValue="labelInValue"
-      :mode="multiple ? 'multiple' : 'default'"
-      allowClear
-      style="min-width: 200px"
-      v-model="_value"
-      :notFoundContent="loading ? '加载中...' : '暂无数据'"
-      @change="handleChange"
-      :maxTagCount="5"
-    >
-      <a-select-option
-        v-for="(item, itemIdx) in options"
-        :key="itemIdx"
-        :value="item.value"
-        v-if="item.value"
-      >
-        {{ item.label }}
-      </a-select-option>
-    </a-select>
-  </div>
-</template>
-
 <script>
-import { getInstanceList } from '@/api/controller/Resource'
+import { InstanceService } from '@/api-hasura/index'
 
 export default {
   name: 'CiInstanceSelect',
@@ -41,11 +15,15 @@ export default {
       default: false
     },
     // 父节点，不传时不进行查询（数据量太大）
-    'parentNameS': {
+    'parentName': {
       type: String,
       default: ''
     },
     labelInValue: {
+      type: Boolean,
+      default: false
+    },
+    toolTip: {
       type: Boolean,
       default: false
     }
@@ -65,16 +43,34 @@ export default {
         const arr = v ? [v] : []
         this.$emit('input', this.multiple ? v : arr)
       }
+    },
+    tooltipTitle () {
+      let kpiList
+      try {
+        kpiList = this._value.map(v => {
+          const { label, value } = this.options.find(option => option.value === v)
+          return {
+            label,
+            value
+          }
+        })
+      } catch (e) {
+        kpiList = []
+        throw e
+      } finally {
+        // eslint-disable-next-line no-unsafe-finally
+        return kpiList.map(({ label, value }) => `${label}: ${value}`).join('<br />')
+      }
     }
   },
   watch: {
-    parentNameS: {
+    parentName: {
       immediate: true,
       handler (v) {
         if (v) {
           this.loadData({
-            'parentname_s': {
-              '_eq': this.parentNameS
+            'parentName': {
+              '_eq': this.parentName
             }
           })
         } else {
@@ -88,14 +84,24 @@ export default {
      * 加载列表
      * TODO: 数据量较大，可分页加载，向下滑动时分页
      * TODO: 全选
-     * @param query
+     * @param where
      * @return {Promise<void>}
      */
-    async loadData (query = {}) {
+    async loadData (where = {}) {
       try {
         this.loading = true
-        const { data } = await getInstanceList(query)
-        this.options = data
+        const { data: { options } } = await InstanceService.find({
+          where,
+          fields: [
+            '_id',
+            'value: _id',
+            'label',
+            'name',
+            'parentName'
+          ],
+          alias: 'options'
+        })
+        this.options = options
       } catch (e) {
         this.options = []
         throw e
@@ -111,6 +117,46 @@ export default {
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       )
     }
+  },
+  render (h) {
+    const {
+      tooltipTitle, filterOption, labelInValue, options,
+      multiple, _value, loading, handleChange, toolTip
+    } = this
+
+    const selectWithoutTooltip = (
+      <a-select
+        showSearch
+        filterOption={filterOption}
+        labelInValue={labelInValue}
+        mode={ multiple ? 'multiple' : 'default' }
+        allowClear
+        value={_value}
+        notFoundContent={loading ? '加载中...' : '暂无数据'}
+        onChange={handleChange}
+        maxTagCount={5}
+        style={{ minWidth: '200px' }}
+      >
+        { ...options.map((option, index) => (
+          <a-select-option
+            key={index}
+            value={option.value}
+          >{ option.label }</a-select-option>
+        )) }
+      </a-select>
+    )
+
+    const toolTipText = h('p', {
+      domProps: { innerHTML: tooltipTitle },
+      slot: 'title'
+    })
+    const selectWithTooltip = h('ATooltip', [toolTipText, selectWithoutTooltip])
+
+    return (
+      <div className="CiInstanceSelect">
+        { toolTip ? selectWithTooltip : selectWithoutTooltip }
+      </div>
+    )
   }
 }
 </script>

@@ -24,8 +24,9 @@
         required
       >
         <CiInstanceSelect
+          :toolTip="toolTip"
           :multiple="multiple"
-          :parentNameS="formData.model"
+          :parentName="formData.model"
           :value="formData.selectedInstance"
           @input="onInstanceInput"
         />
@@ -38,9 +39,10 @@
         required
       >
         <KpiSelect
+          :toolTip="toolTip"
           :multiple="multiple"
           v-model="formData.selectedKpi"
-          :nodetypeS="formData.model"
+          :nodeType="formData.model"
           placeholder
         />
       </a-form-item>
@@ -51,6 +53,14 @@
         :wrapperCol="formItemLayout.wrapperCol"
       >
         <AlarmTypeSelect :form.sync="formData" />
+      </a-form-item>
+      <a-form-item
+        v-if="hasDetailInstance"
+        label="Instance"
+        :labelCol="formItemLayout.labelCol"
+        :wrapperCol="formItemLayout.wrapperCol"
+      >
+        <a-input :value="formData.detailInstance.join(',')" @change="ondetailInstanceInput" />
       </a-form-item>
     </a-form>
   </div>
@@ -83,7 +93,8 @@ const formData = {
   model: '',
   selectedInstance: [],
   selectedKpi: [],
-  alarmType: []
+  alarmType: [],
+  detailInstance: []
 }
 
 export default {
@@ -116,6 +127,14 @@ export default {
     hasAlarmType: {
       type: Boolean,
       default: false
+    },
+    hasDetailInstance: {
+      type: Boolean,
+      default: false
+    },
+    toolTip: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
@@ -142,6 +161,9 @@ export default {
     },
     onInstanceInput (arr = []) {
       this.formData.selectedInstance = Array.isArray(arr) ? arr : []
+    },
+    ondetailInstanceInput ({ target: { value } }) {
+      this.formData.detailInstance = value.split(',').filter(v => !!v)
     }
   },
   created () {

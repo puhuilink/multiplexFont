@@ -29,6 +29,7 @@ export default {
     config () {
       return _.cloneDeep(this.activeWidget.config)
     },
+    // 外部 Ci 可用
     externalCi: {
       get () {
         return this.config.dataConfig.dbDataConfig.externalCi
@@ -95,20 +96,25 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     async change (loadingDynamicData = false) {
-      this.btnLoading = true
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
-      // 设置当前选中不见
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
-      })
-      await this.$nextTick()
-      // 此处可能会改变数据，需要再次提交 vuex
-      await render.mergeOption(this.config, loadingDynamicData)
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
-      })
-      this.btnLoading = false
+      try {
+        this.btnLoading = true
+        const activeWidget = _.cloneDeep(this.activeWidget)
+        const { render } = this.activeWidget
+        // 设置当前选中不见
+        this.activateWidget({
+          widget: Object.assign(activeWidget, { config: this.config })
+        })
+        await this.$nextTick()
+        // 此处可能会改变数据，需要再次提交 vuex
+        await render.mergeOption(this.config, loadingDynamicData)
+        this.activateWidget({
+          widget: Object.assign(activeWidget, { config: this.config })
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.btnLoading = false
+      }
     }
   }
 }
