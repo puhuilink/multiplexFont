@@ -63,7 +63,8 @@ export default {
       ['DegreeRing', 'DegreeRingConfig'],
       ['AlarmList', 'AlarmListConfig'],
       ['TextHealth', 'TextHealthConfig'],
-      ['List', 'ListConfig']
+      ['List', 'ListConfig'],
+      ['Pie', 'PieConfig']
     ])
   }),
   computed: {

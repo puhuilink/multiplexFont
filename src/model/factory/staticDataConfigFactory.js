@@ -7,6 +7,7 @@
 */
 import LinesStaticDataConfig from '../config/dataConfig/staticDataConfig/LinesStaticDataConfig'
 import BarStaticDataConfig from '../config/dataConfig/staticDataConfig/BarStaticDataConfig'
+import PieStaticDataConfig from '../config/dataConfig/staticDataConfig/PieStaticDataConfig'
 import GaugeStaticDataConfig from '../config/dataConfig/staticDataConfig/GaugeStaticDataConfig'
 import DegreeRingStaticDataConfig from '../config/dataConfig/staticDataConfig/DegreeRingStaticDataConfig'
 import TextHealthStaticDataConfig from '../config/dataConfig/staticDataConfig/TextHealthStaticDataConfig'
@@ -18,6 +19,8 @@ export default class StaticDataConfigFactory {
         return new LinesStaticDataConfig(staticDataConfig)
       case 'Bar':
         return new BarStaticDataConfig(staticDataConfig)
+      case 'Pie':
+        return new PieStaticDataConfig(staticDataConfig)
       case 'Gauge':
         return new GaugeStaticDataConfig(staticDataConfig)
       case 'DegreeRing':

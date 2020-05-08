@@ -20,6 +20,7 @@
 import CTable from '@/components/Table/CTable'
 import { KpiCurrentService } from '@/api-hasura'
 import { TimeRange } from '@/model/config/dataConfig/dynamicData/index'
+import _ from 'lodash'
 
 export default {
   name: 'ListElement',
@@ -46,22 +47,10 @@ export default {
           sorter: true
         },
         {
-          title: 'ci',
+          title: '名称',
           // 该字段非数据表字段，为接口返回拼接字段
           dataIndex: 'instanceLabel',
           width: 260
-        },
-        {
-          title: 'kpi',
-          // 该字段非数据表字段，为接口返回拼接字段
-          dataIndex: 'kpiLabel',
-          width: 150
-        },
-        {
-          title: '值',
-          dataIndex: 'kpi_value_num',
-          width: 100,
-          sorter: true
         }
       ],
       // 自动刷新的定时器
@@ -104,6 +93,21 @@ export default {
             'arising_time'
           ],
           ...parameter
+        }).then(r => {
+          const groupByKpi = _.groupBy(r.data, 'kpiLabel')
+          Object.keys(groupByKpi).forEach(key => {
+            this.columns.push({
+              title: key,
+              dataIndex: 'kpiLabel',
+              width: 150,
+              customRender: (text, record) => {
+                if (record.kpiLabel === key) {
+                  return record.kpi_value_num
+                }
+              }
+            })
+          })
+          return r
         })
       }
     },
@@ -113,15 +117,11 @@ export default {
     /**
      * 30s自动刷新
      */
-    refresh () {
-      this.autoRefresh = !this.autoRefresh
-      if (this.autoRefresh) {
-        this.timer = setInterval(() => {
-          this.$refs['table'].refresh(true)
-        }, 30000)
-      } else {
-        clearInterval(this.timer)
-      }
+    refresh (e) {
+      const refreshCycle = e * 60000
+      this.timer = setInterval(() => {
+        this.$refs['table'].refresh(true)
+      }, refreshCycle)
     }
   },
   watch: {
@@ -130,7 +130,20 @@ export default {
         props.isCallInterface = false
         this.$refs['table'].refresh()
       }
+      if (props.params.refreshTime) {
+        this.refresh(props.params.refreshTime)
+      }
     }
+  },
+  beforeDestroy () {
+    // 清除定时器
+    clearInterval(this.timer)
+    console.log('beforeDestroy')
+  },
+  destroyed () {
+    // 清除定时器
+    // clearInterval(this.timer)
+    console.log('destroyed')
   }
 }
 </script>

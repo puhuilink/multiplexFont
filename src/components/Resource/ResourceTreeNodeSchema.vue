@@ -22,7 +22,7 @@
           >
             <a-input
               v-decorator="[
-                'label_s',
+                'label',
                 { rules: [{ required: true, message: '显示名称必填' }] },
               ]"
             />
@@ -38,7 +38,7 @@
             <a-input
               :disabled="title === '编辑'"
               v-decorator="[
-                'name_s',
+                'name',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -72,7 +72,7 @@
               :min="0"
               :max="99"
               v-decorator="[
-                'order_i',
+                'order',
               ]"
             />
           </a-form-item>
@@ -88,7 +88,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'edit_b',
+                'edit',
                 {
                   valuePropName: 'checked'
                 }
@@ -105,7 +105,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'batch_b',
+                'batch',
                 {
                   valuePropName: 'checked'
                 }
@@ -124,7 +124,7 @@
           >
             <a-input
               v-decorator="[
-                'encrypt_s',
+                'encrypt',
               ]"
             />
           </a-form-item>
@@ -135,8 +135,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import { addModel } from '@/api/controller/Resource'
 import { ModelService } from '@/api-hasura'
 
 const formItemLayout = {
@@ -211,15 +209,10 @@ export default {
         if (err) return
         try {
           this.loading = true
-          // await addModel({
-          //   ...values,
-          //   parentname_s: this.parentName,
-          //   parenttree_s: this.parentTree
-          // })
           await ModelService.add({
             ...values,
-            parentname_s: this.parentName,
-            parenttree_s: this.parentTree
+            parentName: this.parentName,
+            parentTree: this.parentTree
           })
           this.$notification.success({
             message: '系统提示',
@@ -243,10 +236,10 @@ export default {
         if (err) return
         try {
           this.loading = true
-          // await editModel(this.record.did, values)
+          // await editModel(this.record._id, values)
           await ModelService.update(
             values,
-            { did: this.record.did }
+            { _id: this.record._id }
           )
           this.$notification.success({
             message: '系统提示',

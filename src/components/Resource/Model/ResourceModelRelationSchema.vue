@@ -25,7 +25,7 @@
           >
             <a-input
               v-decorator="[
-                'name_s',
+                'name',
                 { rules: [{ required: true, message: '名称必填' }] },
               ]"
             />
@@ -40,7 +40,7 @@
           >
             <a-input
               v-decorator="[
-                'label_s',
+                'label',
                 {
                   rules: [{ required: true, message: '显示名称必填' }],
                   // initialValue: 'name'
@@ -58,12 +58,36 @@
             :label-col="formItemLayout.labelCol"
             :wrapper-col="formItemLayout.wrapperCol"
           >
-            <a-input
+            <!-- TODO: 接受值 -->
+            <a-select
+              showSearch
+              allowClear
+              style="min-width: 200px"
+              :notFoundContent="targetLoading ? '加载中...' : '暂无数据'"
+              :filterOption="filterOption"
               v-decorator="[
-                'target_s',
+                'target',
                 { rules: [{ required: true, message: '目标必填' }] },
               ]"
-            />
+            >
+              <a-select-opt-group v-for="(target, idx) in targetList" :key="idx">
+                <span slot="label">{{ target.label }}</span>
+                <a-select-option
+                  v-for="(item, itemIdx) in target.children"
+                  :key="`${itemIdx}-${item.label}`"
+                  :value="item.value"
+                >
+                  {{ item.label }}
+                </a-select-option>
+              </a-select-opt-group>
+            </a-select>
+            <!-- <CiModelSelect /> -->
+            <!-- <a-input
+              v-decorator="[
+                'target',
+                { rules: [{ required: true, message: '目标必填' }] },
+              ]"
+            /> -->
           </a-form-item>
         </a-col>
 
@@ -75,7 +99,7 @@
           >
             <a-select
               v-decorator="[
-                'mappingtype_s',
+                'mappingType',
                 {
                   initialValue: 'one'
                 },
@@ -100,7 +124,7 @@
           >
             <a-select
               v-decorator="[
-                'relationtype_s',
+                'relationType',
                 {
                   initialValue: 'Belongs To'
                 },
@@ -123,7 +147,7 @@
           >
             <a-select
               v-decorator="[
-                'tabgroup_s',
+                'tabGroup',
                 {
                   initialValue: '基本信息'
                 },
@@ -149,7 +173,7 @@
             <a-input
               type="number"
               v-decorator="[
-                'order_i',
+                'order',
               ]"
             />
           </a-form-item>
@@ -163,7 +187,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allowinheritance_b',
+                'allowInheritance',
                 {
                   valuePropName: 'checked'
                 }
@@ -181,7 +205,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'searchfield_b',
+                'searchField',
                 {
                   valuePropName: 'checked'
                 }
@@ -216,7 +240,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'allownull_b',
+                'allowNull',
                 {
                   valuePropName: 'checked'
                 }
@@ -232,7 +256,7 @@
           >
             <a-checkbox
               v-decorator="[
-                'assetattr_b',
+                'assetAttr',
                 {
                   valuePropName: 'checked'
                 }
@@ -250,7 +274,7 @@
           >
             <a-input
               v-decorator="[
-                'defaultvalue_s',
+                'defaultValue',
               ]"
             />
           </a-form-item>
@@ -262,6 +286,10 @@
 
 <script>
 import { addModelRelationAttr, updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
+import { fields } from './ResourceModelRelationAttrList'
+import _ from 'lodash'
+import { CiModelSelect } from '@/components/Common/index'
+import { ModelService } from '@/api-hasura/index'
 
 const formItemLayout = {
   labelCol: {
@@ -379,13 +407,17 @@ const options = {
 
 export default {
   name: 'ResourceModelRelationSchema',
-  components: {},
+  components: {
+    CiModelSelect
+  },
   props: {},
   data: (vm) => ({
     sourceS: null,
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
+    targetLoading: false,
+    targetList: [],
     options,
     record: null,
     submit: () => {},
@@ -394,6 +426,36 @@ export default {
   }),
   computed: {},
   methods: {
+    filterOption (input, option) {
+      const text = option.componentOptions.children[0].text || ''
+      return text.toLowerCase().includes(
+        input.toLowerCase()
+      )
+    },
+    async loadTarget () {
+      try {
+        this.targetLoading = true
+        const { data: { targetList } } = await ModelService.find({
+          fields: [
+            'label',
+            'value: name',
+            `children {
+              label
+              value: name
+              parentName
+            }`
+          ],
+          'alias': 'targetList'
+        })
+        // const { targetList } = await getModelList(true)
+        this.targetList = targetList
+      } catch (e) {
+        this.targetList = []
+        throw e
+      } finally {
+        this.targetLoading = false
+      }
+    },
     /**
      * 新增
      * @param {String} sourceS 关联
@@ -403,6 +465,7 @@ export default {
       this.visible = true
       this.sourceS = sourceS
       this.submit = this.insert
+      this.loadTarget()
     },
     /**
        * 编辑
@@ -417,8 +480,9 @@ export default {
         ...record
       }
       await this.$nextTick()
+      this.loadTarget()
       // FIXME: checkbox
-      this.form.setFieldsValue(record)
+      this.form.setFieldsValue(_.pick(record, [...fields]))
     },
     cancel () {
       this.visible = false
@@ -461,6 +525,7 @@ export default {
     async getFormFields () {
       return new Promise((resolve, reject) => {
         this.form.validateFields((err, values) => {
+          console.log(values)
           err ? reject(err) : resolve(values)
         })
       })

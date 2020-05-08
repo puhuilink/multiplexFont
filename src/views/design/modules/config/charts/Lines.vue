@@ -69,14 +69,15 @@
                 </div>
                 <!-- / 粗细 -->
 
-                <div class="comment-template__item">
+                <!-- <div class="comment-template__item">
                   <p class="comment-template__leading">颜色:</p>
                   <div class="comment-template__inner">
                     <ColorPicker
                       v-model="config.proprietaryConfig.lineStyle.color"
                       @change="change"/>
                   </div>
-                </div>
+                </div> -->
+                <!-- 已合并到 Color 组件中 -->
                 <!-- / 颜色 -->
 
               </a-collapse-panel>
@@ -246,6 +247,13 @@
               </a-collapse-panel>
               <!-- / 填充样式 -->
 
+              <a-collapse-panel header="折线颜色" key="4">
+
+                <Color />
+
+              </a-collapse-panel>
+              <!-- / 颜色 -->
+
             </a-collapse>
             <!-- E 折线图专有配置 -->
 
@@ -274,6 +282,7 @@ import ColorPicker from '@/components/ColorPicker'
 import LinearColorPicker from '@/components/LinearColorPicker'
 import ProprietaryMixins from '../proprietaryMixins'
 import LinesDatasource from '../dataSource/LinesDatasource'
+import Color from '../common/Color'
 
 export default {
   name: 'Lines',
@@ -283,7 +292,8 @@ export default {
     ChartProprietaryTemplate,
     ColorPicker,
     LinesDatasource,
-    LinearColorPicker
+    LinearColorPicker,
+    Color
   },
   data: () => ({
     singleColor: 'rgba(7,171,253,1)',

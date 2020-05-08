@@ -60,7 +60,7 @@
                     >
                       <a-select-option
                         v-for="item in userGroupList"
-                        :key="item.group_code"
+                        :key="item.group_id"
                       >{{ item.group_name }}</a-select-option>
                     </a-select>
                   </a-form-item>
@@ -253,7 +253,7 @@ export default {
           sorter: true,
           customRender: (text) => {
             this.userGroupList.forEach(element => {
-              if (element.group_code === text) {
+              if (element.group_id === text) {
                 text = element.group_name
               }
             })
@@ -373,6 +373,7 @@ export default {
   methods: {
     async getGroupList () {
       await getUserGroupList().then(r => {
+        console.log(r.data)
         this.userGroupList = r.data.data
       })
     },

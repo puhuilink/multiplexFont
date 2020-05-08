@@ -1,59 +1,64 @@
 <template>
   <div class="ResourceInstanceList">
-    <CTable
-      ref="table"
-      :data="loadData"
-      :columns="columns"
-      :rowKey="el => el.did"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
-    >
+    <a-spin :spinning="loading">
+      <CTable
+        ref="table"
+        :data="loadData"
+        :columns="columns"
+        :rowKey="el => el._id"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+        :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
+      >
 
-      <template #query>
-        <a-form layout="inline">
-          <div class="fold">
-            <a-row>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  :labelCol="{ span: 2 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  label="名称"
-                  style="width: 100%"
+        <template #query>
+          <a-form layout="inline">
+            <div :class="{ fold: !advanced }">
+              <a-row>
+                <a-col
+                  v-for="(field, index) in queryFields"
+                  :key="index"
+                  :md="12"
+                  :sm="24"
+                  v-show="index <= 1 || (index > 1 && advanced)"
                 >
-                  <a-input allowClear v-model="queryParams.name_s" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  label="显示名称"
-                  style="width: 100%"
-                >
-                  <a-input allowClear v-model="queryParams.label_s" />
-                </a-form-item>
-              </a-col>
+                  <a-form-item
+                    :labelCol="{ span: 8 }"
+                    :wrapperCol="{ span: 12, offset: 4 }"
+                    :label="field.label"
+                    style="width: 100%"
+                  >
+                    <a-input allowClear v-model="queryParams[field.name]" />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
 
-            </a-row>
-          </div>
+            <!-- TODO: 统一管理布局 -->
+            <!-- TODO: 居中 span -->
+            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+              <template v-if="queryFields.length">
+                <!-- FIXME: 查询接口入参错误 -->
+                <!-- FIXME: 查询匹配条件动态 -->
+                <a-button type="primary" @click="query">查询</a-button>
+                <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+              </template>
+              <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryFields.length > 2">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-form>
+        </template>
 
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style="advanced && { float: 'right', overflow: 'hidden', transform: 'translateY(6.5PX)' } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-          </span>
-        </a-form>
-      </template>
+        <template #operation>
+          <a-button @click="add">新建</a-button>
+          <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+          <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button>数据检查</a-button>
+        </template>
 
-      <template #operation>
-        <a-button @click="add">新建</a-button>
-        <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
-        <a-button>数据检查</a-button>
-      </template>
-
-    </CTable>
+      </CTable>
+    </a-spin>
 
     <ResourceInstanceSchema
       ref="schema"
@@ -65,14 +70,24 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceInstanceSchema from './ResourceInstanceSchema'
-import {
-  getInstanceList
-} from '@/api/controller/Instance'
-import { getKpiList } from '@/api/controller/Kpi'
-import { getModelAttributeList } from '@/api/controller/ModelAttributes'
-// eslint-disable-next-line
-import { Ellipsis } from '@/components'
+import ResourceInstanceSchema from './ResourceInstanceSchema/index'
+// import { Ellipsis } from '@/components'
+import { InstanceService, ModelService } from '@/api-hasura/index'
+import { generateQuery } from '@/utils/graphql'
+import _ from 'lodash'
+
+const defaultColumns = [
+  {
+    title: 'ID',
+    dataIndex: '_id',
+    width: 180
+  },
+  {
+    title: 'parent',
+    dataIndex: 'parentName',
+    width: 120
+  }
+]
 
 export default {
   name: 'ResourceInstanceList',
@@ -81,11 +96,11 @@ export default {
       type: Object,
       default: () => ({})
     },
-    parentNameS: {
+    parentName: {
       type: String,
       default: ''
     },
-    parentTreeS: {
+    parentTree: {
       type: String,
       default: ''
     },
@@ -100,77 +115,66 @@ export default {
   },
   data: () => ({
     // 查询栏是否展开
-    advanced: true,
+    advanced: false,
+    loading: false,
     // 查询参数
     queryParams: {},
     // 选中行
     selectRows: [],
     // 选中行的 key
     selectedRowKeys: [],
-    columns: [
-      // {
-      //   title: 'ID',
-      //   dataIndex: 'id_s',
-      //   sorter: true,
-      //   width: 180
-      // },
-      {
-        title: '名称',
-        dataIndex: 'name_s',
-        sorter: true,
-        width: 300
-        // fixed: true
-      },
-      {
-        title: '显示名称',
-        dataIndex: 'label_s',
-        sorter: true,
-        width: 300
-      },
-      {
-        title: '所属节点类型',
-        dataIndex: 'nodetype_s',
-        width: 200
-      }
-    ]
+    columns: []
   }),
   computed: {
     // TODO: 列不全
     // TODO: td 溢出省略号或自动增长但与表头保持对齐
     scrollX: {
       get () {
-        return this.columns
-          .map(e => e.width || 0)
-          .reduce((a, b) => a + b) + 36
+        if (_.isEmpty(this.columns)) {
+          return true
+        } else {
+          return this.columns
+            .map(e => e.width || 0)
+            .reduce((a, b) => a + b) + 36
+        }
       }
     },
     columnFieldList: {
       get () {
         return this.columns.map(e => e.dataIndex)
       }
+    },
+    queryFields: {
+      get () {
+        return this.columns.filter(field => !!field.searchField)
+      }
     }
   },
   watch: {
     '$props': {
+      immediate: false,
       deep: true,
-      handler () {
-        // 重置查询条件
+      async handler () {
+        // 重置当前数据
         this.reset()
-        // 重新查询
+        this.loadColumns()
         this.$refs['table'].refresh(true)
       }
     }
   },
   methods: {
     add () {
+      const { parentName, parentTree } = this.where
       this.$refs['schema'].add(
-        this.parentNameS,
-        this.parentTreeS
+        parentName,
+        parentTree
       )
     },
     edit () {
-      const [record] = this.selectRows
-      this.$refs['schema'].edit(record)
+      // const [_id] = this.selectRowKeys
+      const [instance] = this.selectRows
+      const { parentName, _id } = instance
+      this.$refs['schema'].edit(parentName, _id)
     },
     /**
      * 加载表格数据
@@ -178,73 +182,55 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     async loadData (parameter) {
-      await this.loadColumns()
       this.selectedRowKeys = []
       this.selectedRows = []
-      const handler = this.parentNameS === 'Kpi' ? getKpiList : getInstanceList
-      return handler({
-        orderBy: {
-          ...this.parentNameS === 'Kpi' ? { rid: 'desc' } : { did: 'desc' }
-        },
-        ...parameter,
+      return InstanceService.find({
         where: {
           ...this.where,
-          ...this.queryParams.name_s ? {
-            name_s: {
-              _ilike: `%${this.queryParams.name_s.trim()}%`
-            }
-          } : {},
-          ...this.queryParams.label_s ? { label_s: {
-            _ilike: `%${this.queryParams.label_s.trim()}%`
-          } } : {}
-        }
+          ...generateQuery(this.queryParams)
+        },
+        fields: [
+          '_id',
+          'parentName',
+          'name',
+          'values'
+        ],
+        alias: 'data',
+        ...parameter
       }).then(r => r.data)
     },
     async loadColumns () {
+      const { parentName } = this.where
       try {
-        const options = {
-          orderBy: {
-            rid: 'desc'
-          },
-          limit: 999,
+        this.loading = true
+        const { data: { modelList } } = await ModelService.find({
           where: {
-            did: {
-              '_eq': this.parentDid
-            }
-          }
-        }
-        const columns = (await getModelAttributeList(options)
-          .then(r => r.data.data))
-          .filter(e => !e.hidden_b)
-          .map(e => ({
-            title: e.label_s,
-            dataIndex: e.name_s,
-            // 老系统的宽度指定较小，当文字长度不够用时会发生换行，14 为当前 font-size
-            width: (e.label_s.length * 14) <= Number(e.width_i) ? Number(e.width_i) + 20 : 200,
-            sorter: true
-          }))
-
-        this.columns = [
-          ...this.columns,
-          ...columns
-        ].map(el => ({
-          ...el,
-          customRender: (text, record) => {
-            const originalTitle = el.dataIndex
-            const title = originalTitle.toLowerCase()
-            const value = record[originalTitle] || record[title] || record[`${title}_s`] || record[`${title}_i`] || record[`${title}_b`] || record[`${title}_t`] || ''
-            const ellipsis = this.$createElement(Ellipsis, {
-              props: {
-                width: el.width - 20 + 'px',
-                length: el.width / 10,
-                tooltip: true
-              }
-            }, [value])
-            return ellipsis
-          }
-        }))
+            name: parentName
+          },
+          fields: [
+            'attributes'
+          ],
+          alias: 'modelList'
+        })
+        // name 是唯一字段，查询出的 model 是长度为1的数组
+        const [model] = modelList
+        const { attributes } = model
+        // console.log(attributes)
+        const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map((column) => ({
+          ...column,
+          title: column.label,
+          dataIndex: name,
+          // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
+          width: column.width ? column.width + 60 : 120,
+          customRender: (text, record) => _.get(record, `values.${column.name}`),
+          ellipsis: true
+        })))
+        this.columns = columns
       } catch (e) {
+        this.columns = []
         throw e
+      } finally {
+        this.loading = false
       }
     },
     query () {
@@ -270,12 +256,12 @@ export default {
      * @event
      */
     toggleAdvanced () {
-      this.advanced = !this.andvaced
-      if (!this.advanced) {
-        delete (this.queryParams.email)
-        delete (this.queryParams.flag)
-      }
+      this.advanced = !this.advanced
     }
+  },
+  created () {
+    this.loadColumns()
+    // CTable created 时会触发 loadData
   }
 }
 </script>
@@ -284,5 +270,6 @@ export default {
 .fold {
   display: inline-block;
   width: calc(100% - 216px);
+  padding-right: 10px;
 }
 </style>

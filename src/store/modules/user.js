@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import { logout } from '@/api/login'
 import { getGroupPermission } from '@/api/system'
-// import { info } from '@/mock/services/user'
+import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { welcome, getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
+// import { info } from '@/mock/services/user'
 
 const user = {
   state: {
@@ -44,9 +45,11 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          Vue.ls.set(ACCESS_TOKEN, response.data.token, 7 * 24 * 60 * 60 * 1000)
-          Vue.ls.set(USER, response.data)
-          commit('SET_TOKEN', response.data.token)
+          // const res = JSON.parse(decrypt(response.data))
+          const data = JSON.parse(decrypt(response.data))
+          Vue.ls.set(ACCESS_TOKEN, data.token, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(USER, data)
+          commit('SET_TOKEN', data.token)
           resolve()
         }).catch(error => {
           reject(error)

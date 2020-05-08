@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 
 // query
-export const queryRouteList = gql`query ($where: route_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [route_info_order_by!]) {
-  pagination: route_info_aggregate(where: $where) {
+export const queryRouteList = gql`query ($where: t_xj_route_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_xj_route_info_order_by!]) {
+  pagination: t_xj_route_info_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data:  route_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+  data:  t_xj_route_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
       ascription
       create_time
       create_user_code
@@ -21,13 +21,13 @@ export const queryRouteList = gql`query ($where: route_info_bool_exp = {}, $limi
     }
 }`
 
-export const queryPlanList = gql`query ($where: plan_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [plan_info_order_by!]) {
-  pagination: plan_info_aggregate(where: $where) {
+export const queryPlanList = gql`query ($where: t_xj_plan_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_xj_plan_info_order_by!]) {
+  pagination: t_xj_plan_info_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data:  plan_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+  data:  t_xj_plan_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
     ascription
     create_user
     create_user_code
@@ -50,25 +50,29 @@ export const queryPlanList = gql`query ($where: plan_info_bool_exp = {}, $limit:
 }`
 
 export const queryUserGroupList = gql`query{
-  data:  user_group_info {
-    update_time
-    is_enable
-    group_name
-    group_id
-    group_code
-    create_user_code
-    create_time
+  data:  t_group {
     ascription
+    createdate
+    domain
+    creator
+    flag
+    group_id
+    group_name
+    group_type
+    note
+    parent_id
+    updatedate
+    updator
     }
 }`
 
-export const queryTaskInfo = gql`query ($where: task_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [task_info_order_by!]) {
-  pagination: task_info_aggregate(where: $where) {
+export const queryTaskInfo = gql`query ($where: t_xj_task_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_xj_task_info_order_by!]) {
+  pagination: t_xj_task_info_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data:  task_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+  data:  t_xj_task_info (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
     ascription
     create_time
     df_group_code
@@ -101,13 +105,13 @@ export const queryTaskInfo = gql`query ($where: task_info_bool_exp = {}, $limit:
     }
 }`
 
-export const queryTaskCiList = gql`query ($where: task_ci_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [task_ci_order_by!]) {
-  pagination: task_ci_aggregate(where: $where) {
+export const queryTaskCiList = gql`query ($where: t_xj_task_ci_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_xj_task_ci_order_by!]) {
+  pagination: t_xj_task_ci_aggregate(where: $where) {
     aggregate {
       count
     }
   }
-  data:  task_ci (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
+  data:  t_xj_task_ci (where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
     ascription
     ci_name
     create_time
@@ -126,8 +130,8 @@ export const queryTaskCiList = gql`query ($where: task_ci_bool_exp = {}, $limit:
     }
 }`
 
-export const queryTaskKpi = gql`query xunjian($where: task_kpi_bool_exp = {}) {
-  task_kpi (where: $where) {
+export const queryTaskKpi = gql`query xunjian($where: t_xj_task_kpi_bool_exp = {}) {
+  t_xj_task_kpi (where: $where) {
     is_enable
     kpi_name
     kpi_value
@@ -144,8 +148,8 @@ export const queryTaskKpi = gql`query xunjian($where: task_kpi_bool_exp = {}) {
 }`
 // mutation
 
-export const updateRoute = gql`mutation update ($where: route_info_bool_exp!, $val: route_info_set_input) {
-  update_route_info  (
+export const updateRoute = gql`mutation update ($where: t_xj_route_info_bool_exp!, $val: t_xj_route_info_set_input) {
+  update_t_xj_route_info  (
     where: $where,
     _set: $val
   ) {
@@ -155,8 +159,8 @@ export const updateRoute = gql`mutation update ($where: route_info_bool_exp!, $v
   }
 }`
 
-export const updatePlan = gql`mutation update ($where: plan_info_bool_exp!, $val: plan_info_set_input) {
-  update_plan_info  (
+export const updatePlan = gql`mutation update ($where: t_xj_plan_info_bool_exp!, $val: t_xj_plan_info_set_input) {
+  update_t_xj_plan_info  (
     where: $where,
     _set: $val
   ) {
@@ -168,7 +172,7 @@ export const updatePlan = gql`mutation update ($where: plan_info_bool_exp!, $val
 
 // delete
 export const deleteRouteArr = gql`mutation ($IDs: [Int!] = []) {
-  delete_route_info (where: {
+  delete_t_xj_route_info (where: {
     route_id: {
       _in: $IDs
     }
@@ -178,7 +182,7 @@ export const deleteRouteArr = gql`mutation ($IDs: [Int!] = []) {
 }`
 
 export const deletePlanArr = gql`mutation ($IDs: [Int!] = []) {
-  delete_plan_info (where: {
+  delete_t_xj_plan_info (where: {
     plan_id: {
       _in: $IDs
     }

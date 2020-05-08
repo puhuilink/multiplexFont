@@ -1,48 +1,58 @@
 import { BaseDao } from './BaseDao'
-import { resource } from '../config/client'
-import { defaultCreateTime, defaultUpdateTime } from '../utils/mixin/autoComplete'
+import { alert } from '../config/client'
+import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
+import { varcharUuid } from '@/utils/util'
+import _ from 'lodash'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
   @readonly
-  static SCHEMA = 'ngecc_model'
+  static SCHEMA = 't_cmdb_model'
 
   // 对应 vue-apollo
   @readonly
-  static PROVIDER = resource
+  static PROVIDER = alert
 
   // 唯一字段
   @readonly
-  static UNIQUE_FIELDS = ['name_s', 'did']
+  static UNIQUE_FIELDS = ['name']
 
   // 主键
   @readonly
-  static PRIMARY_KEY = 'did'
+  static PRIMARY_KEY = 'name'
 
   // 字段与显示文字
   @readonly
   static FIELDS_MAPPING = new Map([
-    ['name_s', '名称']
+    ['name', '名称']
   ])
 
   @override
   static async add (model) {
     // 验证唯一字段是否有冲突
     await this._uniqueValidate(model)
-    // 自增 id
-    const did = (await this._fetchMaxPrimarykey()) + 1
     return super.add({
-      did,
+      _id: varcharUuid(),
       ...model,
-      ...defaultCreateTime(true)
+      ...defaultInfo('createTime', 'creator')
     })
   }
 
   @override
-  static async update ({ ...model }, { did }) {
-    await this._uniqueValidate({ ...model, did }, false)
-    return super.update({ ...model, ...defaultUpdateTime(true) }, { did })
+  static async update ({ ...model }, { _id }) {
+    await this._uniqueValidate({ ...model, _id }, false)
+    return super.update({ ...model, ...defaultInfo('updateTime', 'updator') }, { _id })
+  }
+
+  static async addAttr (attr = {}, where = {}) {
+    // TODO: 同一 model 下的 attr.name 不能重复
+    if (_.isEmpty(where)) {
+      throw new Error('更新参数不允许传入空对象，这会导致删除所有数据')
+    }
+    // return super.update(attr, where)
+    const hasuraORM = this._createHasuraORM()
+    return hasuraORM.append({ attributes: attr }).where(where)
   }
 }
 

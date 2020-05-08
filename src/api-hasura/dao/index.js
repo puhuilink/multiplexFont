@@ -7,8 +7,12 @@ import { ViewDesktopDao } from './ViewDesktopDao'
 import { KpiCurrentHistoryDao } from './KpiCurrentHistoryDao'
 import { KpiCurrentLastestDao } from './KpiCurrentLastestDao'
 import { InstanceDao } from './InstanceDao'
-import { InstanceValuesDao } from './InstanceValuesDao'
 import { AuditDao } from './AuditDao'
+import { RelationAttributeDao } from './RelationAttributeDao'
+import { RelationInstanceDao } from './RelationInstanceDao'
+import { OperationLogDao } from './OperationLogDao'
+import { ModelHistoryDao } from './ModelHistoryDao'
+import { InstanceHistoryDao } from './InstanceHistoryDao'
 
 export {
   AuthorizeObjectDao,
@@ -20,6 +24,10 @@ export {
   KpiCurrentHistoryDao,
   KpiCurrentLastestDao,
   InstanceDao,
-  InstanceValuesDao,
-  AuditDao
+  AuditDao,
+  RelationAttributeDao,
+  RelationInstanceDao,
+  OperationLogDao,
+  ModelHistoryDao,
+  InstanceHistoryDao
 }
