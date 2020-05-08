@@ -22,7 +22,9 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentName: selectedNode.name
+                parentName: {
+                  _eq: selectedNode.name
+                }
               }"
               :parentNameS="selectedNode.name"
               :parentTreeS="selectedNode.tree_s"

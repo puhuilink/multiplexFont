@@ -184,10 +184,25 @@ export default {
     async loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return InstanceService.find({
+      // InstanceService.list({
+      //   where: {
+      //     ...this.where,
+      //     values: _.pickBy(this.queryParams, v => !!v)
+      //   },
+      //   fields: [
+      //     '_id',
+      //     'parentName',
+      //     'name',
+      //     'values'
+      //   ]
+      // }).then(r => {
+      //   console.log(r.data)
+      // })
+      return InstanceService.list({
         where: {
           ...this.where,
-          ...generateQuery(this.queryParams)
+          values: _.pickBy(this.queryParams, v => !!v)
+          // ...generateQuery(this.queryParams)
         },
         fields: [
           '_id',
