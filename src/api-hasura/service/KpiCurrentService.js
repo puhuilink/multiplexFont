@@ -56,18 +56,38 @@ class KpiCurrentService extends BaseService {
       ci: new Map(ciList.map(ci => [`${ci._id}`, ci.label])),
       kpi: new Map(kpiList.map(kpi => [`${kpi.kpiCode}`, kpi.label]))
     }
-
-    // 组合返回体
   }
 
-  static _composeKpiAndCi (selectedKpi = [], selectedInstance = []) {
+  static _composeKpiAndCi (selectedKpi = [], selectedInstance = [], detailInstance = []) {
     const composedValue = []
     selectedInstance.forEach(ci_id => {
       selectedKpi.forEach(kpi_code => {
-        composedValue.push({ kpi_code, ci_id })
+        composedValue.push({
+          kpi_code: { _eq: kpi_code },
+          ci_id: { _eq: ci_id }
+        })
       })
     })
-    return composedValue
+
+    // console.log(detailInstance)
+    let result = []
+    // detailInstance 是可选的，长度为 0 时不会进入遍历
+    if (_.isEmpty(detailInstance)) {
+      result = composedValue
+    } else {
+      composedValue.forEach((el, index) => {
+        detailInstance.forEach(instance_id => {
+          result.push({
+            ...el,
+            ...instance_id ? {
+              instance_id: { _eq: instance_id }
+            } : {}
+          })
+        })
+      })
+    }
+
+    return result
   }
 
   /**
@@ -85,12 +105,11 @@ class KpiCurrentService extends BaseService {
     fields = [],
     selectedKpi = [],
     selectedInstance = [],
+    detailInstance = [],
     timeRange = {}
   }) {
-    const { _getKpiAndCiInfo, _composeKpiAndCi } = this
+    const { _getKpiAndCiInfo } = this
     const { timeRangeStart, timeRangeEnd } = timeRange || {}
-
-    const argus = _composeKpiAndCi(selectedKpi, selectedInstance)
 
     // 起始时间与结束时间不相同时，认为是按时间范围查找
     const timeRangeQuery = (timeRangeStart && timeRangeStart !== timeRangeEnd) ? {
@@ -103,14 +122,15 @@ class KpiCurrentService extends BaseService {
     // 存在时间范围从历史值中查找，反之从最新值查找
     const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
+    const argus = this._composeKpiAndCi(selectedKpi, selectedInstance, detailInstance)
+
     const [{ ci, kpi }, { data }] = await Promise.all([
       _getKpiAndCiInfo(selectedKpi, selectedInstance),
       query(
         dao.find({
           where: {
-            _or: argus.map(({ ci_id, kpi_code }) => ({
-              ci_id: { _eq: ci_id },
-              kpi_code: { _eq: kpi_code },
+            _or: argus.map(argu => ({
+              ...argu,
               ...where,
               ...timeRangeQuery
             }))
@@ -118,6 +138,7 @@ class KpiCurrentService extends BaseService {
           fields: _.uniq([
             'ci_id',
             'kpi_code',
+            'instance_id',
             'arising_time',
             'value: kpi_value_num',
             ...fields

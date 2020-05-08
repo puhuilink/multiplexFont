@@ -29,6 +29,7 @@ export default {
     config () {
       return _.cloneDeep(this.activeWidget.config)
     },
+    // 外部 Ci 可用
     externalCi: {
       get () {
         return this.config.dataConfig.dbDataConfig.externalCi

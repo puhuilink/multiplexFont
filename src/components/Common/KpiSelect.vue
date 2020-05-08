@@ -1,32 +1,5 @@
-<template>
-  <div class="KpiSelect">
-    <a-select
-      showSearch
-      :filterOption="filterOption"
-      :labelInValue="labelInValue"
-      :mode="multiple ? 'multiple' : 'default'"
-      allowClear
-      style="min-width: 200px"
-      :value="_value"
-      :notFoundContent="loading ? '加载中...' : '暂无数据'"
-      @change="handleChange"
-      :maxTagCount="5"
-    >
-      <a-select-option
-        v-for="(item, itemIdx) in options"
-        v-if="item.label"
-        :key="itemIdx"
-        :value="item.values.kpiCode"
-      >
-        {{ item.label }}
-      </a-select-option>
-    </a-select>
-  </div>
-</template>
-
 <script>
-// import { getKpiSelectList } from '@/api/controller/Resource'
-import { InstanceService } from '@/api-hasura/index'
+import { InstanceService, ModelService } from '@/api-hasura/index'
 import _ from 'lodash'
 
 export default {
@@ -42,12 +15,16 @@ export default {
       type: Boolean,
       default: false
     },
-    // 父节点，不传时不进行查询（数据量太大）
+    // 所属模型节点，不传时不进行查询（数据量太大）
     'nodeType': {
       type: String,
       default: ''
     },
     labelInValue: {
+      type: Boolean,
+      default: false
+    },
+    toolTip: {
       type: Boolean,
       default: false
     }
@@ -66,6 +43,24 @@ export default {
         // 当 multiple 为 true 时，v 为数组；反之为 string 或 undefined (当 allowClaear 触发时)
         const arr = v ? [v] : []
         this.$emit('input', this.multiple ? v : arr)
+      }
+    },
+    tooltipTitle () {
+      let kpiList
+      try {
+        kpiList = this._value.map(value => {
+          const { label, values: { kpiCode } } = this.options.find(option => option.values.kpiCode === value)
+          return {
+            label,
+            kpiCode
+          }
+        })
+      } catch (e) {
+        kpiList = []
+        throw e
+      } finally {
+        // eslint-disable-next-line no-unsafe-finally
+        return kpiList.map(({ label, kpiCode }) => `${label}: ${kpiCode}`).join('<br />')
       }
     }
   },
@@ -91,8 +86,19 @@ export default {
     async loadData () {
       try {
         this.loading = true
-        // const { data } = await getKpiSelectList(this.nodeTypeS)
-        const nodeTypeList = _.uniq(['CommonCi', this.nodeType]).filter(v => !!v)
+        // hack: nodeType 应该传入选中模型的 parntName，但应用传入了模型的 name，后期统一调整
+        const { nodeType } = this
+        const { data: { modelList: [model] } } = await ModelService.find({
+          where: {
+            name: nodeType
+          },
+          fields: [
+            'parentName'
+          ],
+          alias: 'modelList'
+        })
+        const { parentName } = model
+        const nodeTypeList = _.uniq(['CommonCi', parentName]).filter(v => !!v)
         const { data: { options } } = await InstanceService.find({
           where: {
             _or: nodeTypeList.map(nodeType => ({
@@ -130,6 +136,46 @@ export default {
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       )
     }
+  },
+  render (h) {
+    const {
+      tooltipTitle, filterOption, labelInValue, options,
+      multiple, _value, loading, handleChange, toolTip
+    } = this
+
+    const selectWithoutTooltip = (
+      <a-select
+        showSearch
+        filterOption={filterOption}
+        labelInValue={labelInValue}
+        mode={ multiple ? 'multiple' : 'default' }
+        allowClear
+        value={_value}
+        notFoundContent={loading ? '加载中...' : '暂无数据'}
+        onChange={handleChange}
+        maxTagCount={5}
+        style={{ minWidth: '200px' }}
+      >
+        { ...options.map((option, index) => (
+          <a-select-option
+            key={index}
+            value={option.values.kpiCode}
+          >{ option.label }</a-select-option>
+        )) }
+      </a-select>
+    )
+
+    const toolTipText = h('p', {
+      domProps: { innerHTML: tooltipTitle },
+      slot: 'title'
+    })
+    const selectWithTooltip = h('ATooltip', [toolTipText, selectWithoutTooltip])
+
+    return (
+      <div className="KpiSelect">
+        { toolTip ? selectWithTooltip : selectWithoutTooltip }
+      </div>
+    )
   }
 }
 </script>
