@@ -85,11 +85,11 @@
         >
           删除
         </a-button> -->
-        <a-button>新建</a-button>
         <a-button
-          :disabled="selectedRowKeys.length !== 1"
+          :disabled="selectedRowKeys.length == 0"
+          @click="seeDetail"
         >
-          编辑
+          查看
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
@@ -211,7 +211,10 @@ export default {
     edit () {
       // const [record] = this.selectedRows
       // this.$refs['detail'].edtt(record)
-      this.$refs.detail.open(this.selectedRows[0], 'Edit')
+      this.$refs['detail'].open(this.selectedRows[0], 'Edit')
+    },
+    seeDetail () {
+      this.$refs['detail'].open(this.selectedRows[0], 'See')
     },
     /**
      * 查询
