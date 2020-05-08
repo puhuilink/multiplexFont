@@ -17,7 +17,7 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡检区域"
+                  label="巡更区域"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
@@ -138,7 +138,7 @@ export default {
           sorter: true
         },
         {
-          title: '巡检区域',
+          title: '巡更区域',
           dataIndex: 'ascription',
           width: 200,
           sorter: true,

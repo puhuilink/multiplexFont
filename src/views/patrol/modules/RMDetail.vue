@@ -1,5 +1,5 @@
 /*
- * 巡检  路线管理 新增/编辑
+ * 巡更  路线管理 新增/编辑
  */
 <template>
   <a-modal
@@ -27,7 +27,7 @@
           :lg="{ span: 8 }"
           class=""
         >
-          巡检区域：
+          巡更区域：
           <a-select
             allowClear
             style="width: 240px"

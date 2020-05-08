@@ -165,6 +165,7 @@ export default {
       this.ascriptionChoose = e.target.value
       this.queryParam.ascription = e.target.value
       this.getAllData()
+      this.getListData()
     },
     async loadBeforeData (parameter) {
       return apollo.clients.alert.query({

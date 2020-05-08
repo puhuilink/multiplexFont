@@ -15,7 +15,7 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡检区域"
+                  label="巡更区域"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset:2 }"
                   style="width: 100%">
@@ -68,7 +68,7 @@
                 </a-col>
                 <a-col :md="12" :sm="24">
                   <a-form-item
-                    label="巡检日期范围"
+                    label="巡更日期范围"
                     :labelCol="{ span: 4 }"
                     :wrapperCol="{ span: 14, offset:2 }"
                     style="width: 100%">
@@ -192,7 +192,7 @@ export default {
           width: 100
         },
         {
-          title: '巡检区域',
+          title: '巡更区域',
           dataIndex: 'ascription',
           width: 120,
           customRender: (text) => {
@@ -343,7 +343,7 @@ export default {
       this.selectedRows = selectedRows
     },
     /**
-     * 巡检日期范围改变
+     * 巡更日期范围改变
      */
     doDateChange (date, dateStr) {
       this.queryParam.dateStr = dateStr
@@ -367,7 +367,7 @@ export default {
      */
     async  exportExcel (e) {
       const file = await getPatrolObjectExcel(e)
-      this.downloadFile(file, '巡检检查对象列表')
+      this.downloadFile(file, '巡更检查对象列表')
     },
     downloadFile (file, filename = '') {
       const blob = new Blob(

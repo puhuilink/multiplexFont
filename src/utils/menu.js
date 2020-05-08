@@ -788,7 +788,7 @@ const MENU = [{
       'functionType': '5',
       'icon': '',
       'module': 'http://xunjian-sim.ccccltd.cn:48081/#/inspection/mission',
-      'name': '巡检计划',
+      'name': '巡更计划',
       'note': '',
       'order': 0,
       'parentCode': 'F',
@@ -855,14 +855,14 @@ const MENU = [{
           'functionType': '5',
           'icon': '',
           'module': 'http://xunjian-sim.ccccltd.cn:48081/#/inspection/mission',
-          'name': '巡检任务单',
+          'name': '巡更任务单',
           'note': '',
           'order': 0,
           'parentCode': 'F010',
           'updateDate': null,
           'updator': '',
           'key': 'F010004',
-          'title': '巡检任务单'
+          'title': '巡更任务单'
         },
         {
           'childs': [],
@@ -872,17 +872,17 @@ const MENU = [{
           'functionType': '5',
           'icon': '',
           'module': 'http://xunjian-sim.ccccltd.cn:48081/#/inspection/historicalnode',
-          'name': '巡检检查对象',
+          'name': '巡更检查对象',
           'note': '',
           'order': 0,
           'parentCode': 'F010',
           'updateDate': null,
           'updator': '',
           'key': 'F010005',
-          'title': '巡检检查对象'
+          'title': '巡更检查对象'
         }
       ],
-      'title': '巡检计划'
+      'title': '巡更计划'
     }
   ]
 }]
@@ -3393,7 +3393,7 @@ const ALLPERMISSION = [
     'objectType': '5',
     'domainName': null,
     'code': 'F010',
-    'name': '巡检计划',
+    'name': '巡更计划',
     'parentCode': 'F',
     'functionType': '5',
     'functionModule': 'http://xunjian.ccccltd.cn:48081/#/inspection/mission',
@@ -3441,7 +3441,7 @@ const ALLPERMISSION = [
         'objectType': '5',
         'domainName': null,
         'code': 'F010004',
-        'name': '巡检任务单',
+        'name': '巡更任务单',
         'parentCode': 'F010',
         'functionType': '5',
         'functionModule': 'http://xunjian.ccccltd.cn:48081/#/inspection/mission',
@@ -3453,7 +3453,7 @@ const ALLPERMISSION = [
         'objectType': '5',
         'domainName': null,
         'code': 'F010005',
-        'name': '巡检检查对象',
+        'name': '巡更检查对象',
         'parentCode': 'F010',
         'functionType': '5',
         'functionModule': 'http://xunjian.ccccltd.cn:48081/#/inspection/historicalnode',
@@ -4157,7 +4157,7 @@ const ALLPERMISSION = [
     'objectType': '5',
     'domainName': null,
     'code': 'F010004',
-    'name': '巡检任务单',
+    'name': '巡更任务单',
     'parentCode': 'F010',
     'functionType': '5',
     'functionModule': 'http://xunjian.ccccltd.cn:48081/#/inspection/mission',
@@ -4763,7 +4763,7 @@ const ALLPERMISSION = [
     'objectType': '5',
     'domainName': null,
     'code': 'F010005',
-    'name': '巡检检查对象',
+    'name': '巡更检查对象',
     'parentCode': 'F010',
     'functionType': '5',
     'functionModule': 'http://xunjian.ccccltd.cn:48081/#/inspection/historicalnode',
