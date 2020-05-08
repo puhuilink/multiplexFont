@@ -26,7 +26,7 @@
 
 <script>
 // import { getKpiSelectList } from '@/api/controller/Resource'
-import { InstanceService } from '@/api-hasura/index'
+import { InstanceService, ModelService } from '@/api-hasura/index'
 import _ from 'lodash'
 
 export default {
@@ -42,7 +42,7 @@ export default {
       type: Boolean,
       default: false
     },
-    // 父节点，不传时不进行查询（数据量太大）
+    // 所属模型节点，不传时不进行查询（数据量太大）
     'nodeType': {
       type: String,
       default: ''
@@ -91,8 +91,19 @@ export default {
     async loadData () {
       try {
         this.loading = true
-        // const { data } = await getKpiSelectList(this.nodeTypeS)
-        const nodeTypeList = _.uniq(['CommonCi', this.nodeType]).filter(v => !!v)
+        // hack: nodeType 应该传入选中模型的 parntName，但应用传入了模型的 name，后期统一调整
+        const { nodeType } = this
+        const { data: { modelList: [model] } } = await ModelService.find({
+          where: {
+            name: nodeType
+          },
+          fields: [
+            'parentName'
+          ],
+          alias: 'modelList'
+        })
+        const { parentName } = model
+        const nodeTypeList = _.uniq(['CommonCi', parentName]).filter(v => !!v)
         const { data: { options } } = await InstanceService.find({
           where: {
             _or: nodeTypeList.map(nodeType => ({
