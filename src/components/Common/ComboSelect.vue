@@ -24,6 +24,7 @@
         required
       >
         <CiInstanceSelect
+          :toolTip="toolTip"
           :multiple="multiple"
           :parentName="formData.model"
           :value="formData.selectedInstance"
@@ -38,6 +39,7 @@
         required
       >
         <KpiSelect
+          :toolTip="toolTip"
           :multiple="multiple"
           v-model="formData.selectedKpi"
           :nodeType="formData.model"
@@ -129,6 +131,10 @@ export default {
     hasDetailInstance: {
       type: Boolean,
       default: false
+    },
+    toolTip: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
