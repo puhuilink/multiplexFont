@@ -12,15 +12,24 @@ class RelationAttributeDao extends BaseDao {
   @readonly
   static PROVIDER = alert
 
+  // 唯一字段
+  @readonly
+  static UNIQUE_FIELDS = ['name']
+
+  // 主键
+  @readonly
+  static PRIMARY_KEY = '_id'
+
   // 字段与显示文字
   @readonly
   static FIELDS_MAPPING = new Map([
     ['_id', '_id'],
-    ['name', 'name']
+    ['name', '名称'],
+    ['label', '显式名称']
   ])
 
   static async add (argus = {}) {
-    // TODO: validate
+    await this._uniqueValidate(argus)
     const data = {
       ...argus,
       _id: varcharUuid()
@@ -28,7 +37,6 @@ class RelationAttributeDao extends BaseDao {
     return super.add(data)
   }
   static async update (set, where) {
-    // TODO: validate
     return super.update(set, where)
   }
 }
