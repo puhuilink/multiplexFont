@@ -6,36 +6,38 @@
  */
 <template>
   <div class="TreeNavigation">
-    <a-row>
-      <a-col :span="6">
-        <!-- TODO: rootKeys 对应 treeView 中 nodes -->
-        <ResourceTree
-          hiddenTab
-          instanceList
-          :rootKeys="['BJDC', 'XMDC']"
-          @selectNode="selectNode"
-        />
-      </a-col>
+    <a-spin :spinning="spinning">
+      <a-row>
 
-      <a-col :span="18">
-        <Preview
-          v-if="viewId"
-          :viewTitle="viewTitle"
-          :viewId="viewId"
-          :ciId="selectedCi._id_s"
-        />
-        <!-- <p style="margin-top: 10px" v-else>请选择左侧节点进行展示</p> -->
-      </a-col>
-    </a-row>
+        <a-col :span="6">
+          <ResourceTree
+            v-if="treeConfig"
+            hiddenTab
+            instanceList
+            :rootKeys="treeConfig.nodes.split(',')"
+            @selectNode="selectNode"
+          />
+        </a-col>
+
+        <a-col :span="18">
+          <Preview
+            v-if="viewId"
+            :viewTitle="viewTitle"
+            :viewId="viewId"
+            :ciId="selectedCi._id"
+          />
+        </a-col>
+
+      </a-row>
+    </a-spin>
   </div>
 </template>
 
 <script>
-import {
-  ResourceTree
-} from '@/components/Resource'
+import { ResourceTree } from '@/components/Resource'
 import { getViewList } from '@/api/controller/View'
 import Preview from '@/components/View/Preview'
+import _ from 'lodash'
 
 export default {
   name: 'TreeNavigation',
@@ -47,10 +49,10 @@ export default {
     return {
       collapsed: false,
       allViewList: [],
-      // Ci 与 视图的关联关系
-      treeViewMapping: null,
       // 左侧树形结构选中的 Ci
-      selectedCi: null
+      selectedCi: null,
+      spinning: false,
+      treeConfig: null
     }
   },
   computed: {
@@ -60,13 +62,14 @@ export default {
         if (!this.selectedCi) {
           return null
         }
-        const { name, parentname } = this.selectedCi
+        const { name, parentName } = this.selectedCi
         // 如果自身配置了视图则直接加载，反之继承父元素的配置
         const self = this.treeViewMapping.find(el => el.name === name)
-        if (self && self.view) {
-          return self.view
+        console.log(self)
+        if (self) {
+          return self.view || self.childrenview
         } else {
-          const parent = this.treeViewMapping.find(el => el.name === parentname)
+          const parent = this.treeViewMapping.find(el => el.name === parentName)
           if (parent && parent.childrenview) {
             return parent.childrenview
           }
@@ -79,6 +82,11 @@ export default {
       get () {
         const view = this.allViewList.find(el => el.view_title === this.viewTitle)
         return view ? view.view_id : null
+      }
+    },
+    treeViewMapping: {
+      get () {
+        return _.get(this.treeConfig, 'views', null)
       }
     }
   },
@@ -105,9 +113,9 @@ export default {
     async fetchMappingConfig () {
       try {
         const config = await fetch('/treeView.json').then(r => r.json())
-        this.treeViewMapping = config.views
+        this.treeConfig = config
       } catch (e) {
-        this.treeViewMapping = null
+        this.treeConfig = null
         throw e
       }
     },
@@ -118,9 +126,18 @@ export default {
       this.selectedCi = ci
     }
   },
-  created () {
-    this.fetchMappingConfig()
-    this.fetchAllViewList()
+  async created () {
+    try {
+      this.spinning = true
+      await Promise.all([
+        this.fetchMappingConfig(),
+        this.fetchAllViewList()
+      ])
+    } catch (e) {
+      throw e
+    } finally {
+      this.spinning = false
+    }
   }
 }
 </script>
