@@ -34,7 +34,7 @@
             @click="handlePasswordInputClick"
             autocomplete="false"
             placeholder="至少8位密码，区分大小写"
-            v-decorator="['newEncryptedPwd', {rules: [{ required: true, message: '至少8位密码，区分大小写'}, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
+            v-decorator="['newEncryptedPwd', {rules: [{ required: true, min: 8, message: '至少8位密码，区分大小写'}, { validator: handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
           ></a-input>
         </a-form-item>
       </a-popover>

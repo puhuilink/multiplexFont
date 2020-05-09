@@ -7,24 +7,16 @@ import {
   mutationUpdateUser
 } from '../graphql/User'
 import { fetchLastesdViewId } from './View'
-const CryptoJS = require('crypto-js')
-// 从环境读入而非硬编码到 JS 文件里
-const key = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_KEY)
-const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
-
-const encrypt = (pwd) => CryptoJS.AES.encrypt(pwd, key, {
-  iv: iv,
-  mode: CryptoJS.mode.CBC
-  // padding: CryptoJS.pad.ZeroPadding
-}).toString()
+import { encrypt } from '@/utils/aes'
 
 export const login = function ({ userId, pwd }) {
   // 加密密码
   const encryptedPwd = encrypt(pwd)
+  const user = encrypt(userId)
 
   // 请求
   return axios.post('/user/login', {
-    userId,
+    userId: user,
     encryptedPwd
   })
 }
@@ -40,7 +32,7 @@ export const loginOld = function () {
 
 export const resetPwd = function ({ userId, encryptedPwd, newEncryptedPwd }) {
   const data = {
-    userId,
+    userId: encrypt(userId),
     encryptedPwd: encrypt(encryptedPwd),
     newEncryptedPwd: encrypt(newEncryptedPwd)
   }
