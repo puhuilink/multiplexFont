@@ -22,11 +22,12 @@
               v-if="selectedNode"
               class="ResourceInstance-table"
               :where="{
-                parentName: selectedNode.name
+                parentName: {
+                  _eq: selectedNode.name
+                }
               }"
-              :parentNameS="selectedNode.name"
-              :parentTreeS="selectedNode.tree_s"
-              :parentDid="selectedNode.did"
+              :parentName="selectedNode.name"
+              :parentTree="selectedNode.tree"
             />
           </a-tab-pane>
           <a-tab-pane tab="操作日志" key="2" forceRender>

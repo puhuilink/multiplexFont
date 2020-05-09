@@ -94,7 +94,8 @@ export default {
   data: () => ({
     advanced: false,
     // 查询参数
-    queryParams: {},
+    queryParams: {
+    },
     // 选中行
     selectedRows: [],
     // 选中行的 key
@@ -237,9 +238,20 @@ export default {
     async loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return ModelService.find({
+      const { queryParams } = this
+      console.log(Object
+        .entries(queryParams)
+        .filter(([key, value]) => !!value))
+      return ModelService.list({
         where: {
           ...this.where
+          // ...generateQuery(this.queryParams)
+          // FIXME: pg jsonb 匹配有问题
+          // values: Object
+          //   .entries(queryParams)
+          //   .filter(([key, value]) => !!value)
+          //   .map(([key, value]) => `attributes->>'${key}' LIKE '%${value}%'`)
+          //   .join(' AND ')
         },
         fields: [
           'name',

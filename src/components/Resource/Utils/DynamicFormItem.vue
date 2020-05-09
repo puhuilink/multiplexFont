@@ -3,6 +3,17 @@
 import moment from 'moment'
 import _ from 'lodash'
 
+export const makeFormItemValue = function (field, value) {
+  const { displayType = 'TEXT', mappingType = 'one' } = field
+  switch (displayType) {
+    case 'DATE': return moment(value)
+    case 'DATETIME': return moment(value)
+    case 'TEXT': return `${value}`
+    case 'SELECTED': return mappingType === 'one' ? value : [value]
+    default: return value
+  }
+}
+
 export default {
   name: 'DynamicFormItem',
   components: {},
@@ -23,6 +34,16 @@ export default {
     form: {
       type: Object,
       required: true
+    },
+    mode: {
+      type: String,
+      default: 'add',
+      validator: mode => ['add', 'edit'].includes(mode)
+    }
+  },
+  computed: {
+    isAdd () {
+      return this.mode === 'add'
     }
   },
   methods: {
@@ -59,38 +80,39 @@ export default {
       }
     },
     getFieldDecorator (field) {
-      const { form, makeInitialValue } = this
-      const { label, name, allowNull, pattern, defaultValue } = field
-      console.log(pattern)
+      const { form, isAdd } = this
+      const {
+        label,
+        name,
+        // 是否必填
+        allowNull = false,
+        pattern = '',
+        defaultValue
+      } = field
+      // console.log(pattern)
       const options = {
         ...defaultValue ? {
-          initialValue: makeInitialValue(field)
+          initialValue: makeFormItemValue(field, field.defaultValue)
         } : {},
         rules: [
-          ...eval(`${allowNull}`) ? [{
+          ...isAdd && eval(`${allowNull}`) ? [{
             required: true,
             message: `${label}必填`
           }] : [],
           ...`${pattern}` ? [{
             pattern: `${pattern}`,
-            messahe: `${label}格式错误`
+            message: `${label}格式错误`
           }] : []
         ]
       }
       return form.getFieldDecorator(name, options)
     },
-    makeInitialValue (field) {
-      const { defaultValue, displayType } = field
-      switch (displayType) {
-        case 'DATE': return moment(defaultValue)
-        case 'DATETIME': return moment(defaultValue)
-        default: return defaultValue
-      }
-    },
     renderInput (field) {
-      // const { edit } = field
-      // FIXME: 数据库数据恒为 false
-      // const edit = true
+      // TODO: 新增完成后，不允许再次编辑
+      // eslint-disable-next-line no-unused-vars
+      const { edit = false } = field
+      // eslint-disable-next-line no-unused-vars
+      const { isAdd } = this
       return <a-input></a-input>
     },
     renderCheckbox (field) {
