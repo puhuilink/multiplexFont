@@ -118,7 +118,6 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
-    // TODO: 列不全
     columns: {
       get () {
         return [
@@ -156,8 +155,8 @@ export default {
             title: '关系类型',
             dataIndex: 'relationType',
             sorter: true,
-            width: 180,
-            customRender: val => val ? '是' : '否'
+            width: 180
+            // customRender: val => val ? '是' : '否'
           },
           {
             title: '所属分组',
@@ -177,6 +176,25 @@ export default {
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '继承',
+            dataIndex: 'extendModelName',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '是否作为查询框',
+            dataIndex: 'searchField',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '匹配条件',
+            dataIndex: 'matchType',
+            sorter: true,
+            width: 180
           },
           {
             title: '非空',
