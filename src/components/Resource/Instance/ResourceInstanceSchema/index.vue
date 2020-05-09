@@ -17,20 +17,22 @@
       <a-tabs defaultActiveKey="1">
 
         <a-tab-pane tab="基本信息" key="1">
-          <DynamicForm ref="attrFormWrapper" :fields="attributes" />
+          <DynamicForm ref="attrFormWrapper" :fields="attributes" :mode="mode" />
         </a-tab-pane>
 
         <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointOutInstanceList">
-          <DynamicForm ref="relationAttrFormWrapper" :fields="relationAttributeList" />
+          <DynamicForm ref="relationAttrFormWrapper" :mode="mode" :fields="relationAttributeList" />
         </a-tab-pane>
 
-        <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
-          <CiPointInList :pointInInstanceList="instance.pointInInstanceList" />
-        </a-tab-pane>
+        <template v-if="mode === 'edit'">
+          <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
+            <CiPointInList :pointInInstanceList="instance.pointInInstanceList" />
+          </a-tab-pane>
 
-        <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
-          <CiTopologicalGraph :instance="instance" />
-        </a-tab-pane>
+          <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
+            <CiTopologicalGraph :instance="instance" />
+          </a-tab-pane>
+        </template>
 
       </a-tabs>
     </a-spin>
@@ -71,6 +73,8 @@ export default {
     spinning: false,
     // 编辑状态下资源实例数据
     instance: null,
+    // enum { add, edit }
+    mode: 'add',
     // modal submit 回调
     submit: () => {},
     // modal 标题
@@ -143,7 +147,6 @@ export default {
     async loadRelationTargetList () {
       const { relationAttributeList } = this
       const modelList = relationAttributeList.map(({ target }) => target)
-      console.log(modelList)
       try {
         const { data: { targetList } } = await ModelService.find({
           where: {
@@ -199,6 +202,8 @@ export default {
         relationAttributeList
       } = this
 
+      console.log(pointOutInstanceList)
+
       const { attrFormWrapper, relationAttrFormWrapper } = this.$refs
 
       // 模型属性
@@ -213,9 +218,25 @@ export default {
       // 关系属性
       const relationAttrNameList = relationAttributeList.map(({ name }) => name)
       // console.log(_.pick(pointOutInstanceList, [...relationAttrNameList]))
-      relationAttrFormWrapper && relationAttrFormWrapper.form.setFieldsValue(_.pick(pointOutInstanceList, [...relationAttrNameList]))
+
+      const data = _.groupBy(pointOutInstanceList, v => v.name)
+      Object.keys(data).forEach(key => {
+        const val = data[key].map(e => e.target)
+        const [test] = val
+        data[key] = test
+      })
+
+      // relationAttrFormWrapper && relationAttrFormWrapper.form.setFieldsValue(_.pick(data, [...relationAttrNameList]))
+      relationAttrFormWrapper && relationAttrFormWrapper.setFieldsValue(data)
+
+      console.log(relationAttrFormWrapper.form)
     },
     async getFormFields () {
+      const { attrFormWrapper, relationAttrFormWrapper } = this.$refs
+      // eslint-disable-next-line handle-callback-err
+      relationAttrFormWrapper.form.validateFields((err, values) => {
+        console.log(values)
+      })
       return new Promise((resolve, reject) => {
         this.form.validateFields((err, values) => {
           err ? reject(err) : resolve(values)
@@ -223,6 +244,7 @@ export default {
       })
     },
     async add (parentName, parentTree) {
+      this.mode = 'add'
       this.title = '新增'
       this.visible = true
       this.submit = this.insert
@@ -240,6 +262,7 @@ export default {
      * @return {Promise<Undefined>}
      */
     async edit (parentName, _id) {
+      this.mode = 'edit'
       this.title = '编辑'
       this.submit = this.update
       this.visible = true
