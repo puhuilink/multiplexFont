@@ -1,4 +1,4 @@
-// import _ from 'lodash'
+import _ from 'lodash'
 import moment from 'moment'
 
 const isAvailable = function (v) {
@@ -47,4 +47,69 @@ export const generateQuery = function (params = {}) {
     .map(([key, value]) => generate({ key, value }))
     .forEach((v) => { obj = { ...obj, ...v } })
   return obj
+}
+
+const generateJsonb = function (key, { matchType, name, dataType, value }) {
+  let _matchType
+  let _value
+  const _name = `'${name}'`
+  switch (matchType) {
+    case 'LIKE': {
+      _matchType = 'LIKE'
+      break
+    }
+    case 'EQ': {
+      _matchType = '='
+      break
+    }
+    default: {
+      _matchType = matchType
+      break
+    }
+  }
+
+  // console.log(value)
+
+  switch (dataType) {
+    case 'STRING': {
+      _value = matchType === 'LIKE' ? `'%${value}%'` : `'${value}'`
+      break
+    }
+    case 'BOOLEAN': {
+      _value = `'${Boolean(Number(value))}'`
+      break
+    }
+    default: {
+      _value = value
+      break
+    }
+  }
+  return `${key}->>${_name} ${_matchType} ${_value}`
+}
+
+export const generateJsonbQuery = function (fields = {}) {
+  const obj = {}
+  for (const [key, subFields] of Object.entries(fields)) {
+    obj[key] = subFields
+      .filter(({ value }) => isAvailable(value))
+      .map(subField => generateJsonb(key, subField))
+      .join(' AND ')
+  }
+
+  return _.pickBy(obj, v => !_.isEmpty(v))
+
+  // console.log(fields)
+  // Object
+  // .entries(fields)
+
+  // console.dir(
+  //   Object.entries(fields)
+  // )
+  // return Object
+  //   .entries(fields)
+  //   .filter(([ key, subField ]) => isAvailable(subField.value))
+  // .map(([key, subField]) => ([key, subField]))
+  // .filter(([, { value }]) => isAvailable(value))
+  // .map(([key, field]) => generateJsonb(key, field))
+  // .join(' AND ')
 }

@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import { BaseService } from './BaseService'
 import { InstanceDao, RelationInstanceDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
@@ -77,7 +76,8 @@ class InstanceService extends BaseService {
   static async list (argus = {}) {
     const { values, parentName } = argus.where
 
-    const sql = `
+    if (values && !_.isEmpty(values)) {
+      const sql = `
       SELECT
         "_id"
       FROM 
@@ -85,48 +85,48 @@ class InstanceService extends BaseService {
       WHERE
         "parentName" = '${parentName._eq}'
       AND
-        ${
-          _.isEmpty(values) ? true
-          : Object
-            .entries(values)
-            .map(([key, value]) => `values->>'${key}' LIKE '%${value}%'`)
-            .join(' AND ')
-        }
+        ${values}
       `
 
-    console.log(sql)
+      console.log(sql)
 
-    const { data: { result } } = await axios({
-        url: 'http://10.1.13.17:31490/v1/query',
+      const { data: { result } } = await axios({
+        url: '/main/v1/query',
         method: 'POST',
         data: {
           'type': 'run_sql',
           'args': {
-              'sql': sql
+            'sql': sql
           }
         },
         headers: {
           'x-hasura-admin-secret': 'zhongjiao'
         }
-    })
+      })
 
-    // console.log(argus)
-    // 第一个为查询的字段集合？
-    result.shift()
+      // 第一个为查询的字段集合？
+      result.shift()
 
-    const res = this.find({
-      ...argus,
-      where: {
-        _and: {
-          ..._.omit(argus.where, 'values'),
-          _id: {
-            _in: result.flat()
+      const res = await this.find({
+        ...argus,
+        where: {
+          _and: {
+            ..._.omit(argus.where, 'values'),
+            _id: {
+              _in: result.flat()
+            }
           }
         }
-      }
-    })
-    return res
-    // return result.flat()
+      })
+
+      return res
+    } else {
+      const res = await this.find({
+        ...argus,
+        where: _.omit(argus.where, ['values'])
+      })
+      return res
+    }
   }
 }
 

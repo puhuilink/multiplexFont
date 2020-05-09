@@ -1,6 +1,6 @@
 <script>
 import DynamicFormItem, { makeFormItemValue } from './DynamicFormItem'
-import _ from 'lodash'
+// import _ from 'lodash'
 
 export default {
   name: 'DynamicForm',
