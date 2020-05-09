@@ -391,7 +391,7 @@ export default class TopologyChart extends Chart {
       })
     }
     // 读取配置后更新配置属性
-    store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
+    // store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
   }
 
   /**
