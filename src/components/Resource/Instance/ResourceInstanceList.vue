@@ -11,7 +11,7 @@
       >
 
         <template #query>
-          <a-form layout="inline">
+          <a-form layout="inline" :style="{ overflow: hiddenOperation ? 'hidden' : 'visible' }">
             <div :class="{ fold: !advanced }">
               <a-row>
                 <a-col
@@ -35,7 +35,7 @@
 
             <!-- TODO: 统一管理布局 -->
             <!-- TODO: 居中 span -->
-            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: `translateY(${ hiddenOperation ? '0' : '6.5' }px)` } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
               <template v-if="queryFields.length">
                 <!-- FIXME: 查询接口入参错误 -->
                 <!-- FIXME: 查询匹配条件动态 -->
@@ -50,7 +50,7 @@
           </a-form>
         </template>
 
-        <template #operation>
+        <template #operation v-if="!hiddenOperation">
           <a-button @click="add">新建</a-button>
           <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
           <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
@@ -61,6 +61,7 @@
     </a-spin>
 
     <ResourceInstanceSchema
+      v-if="!hiddenOperation"
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="query"
@@ -73,7 +74,7 @@ import CTable from '@/components/Table/CTable'
 import ResourceInstanceSchema from './ResourceInstanceSchema/index'
 // import { Ellipsis } from '@/components'
 import { InstanceService, ModelService } from '@/api-hasura/index'
-import { generateQuery } from '@/utils/graphql'
+// import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 
 const defaultColumns = [
@@ -104,9 +105,9 @@ export default {
       type: String,
       default: ''
     },
-    // eslint-disable-next-line vue/require-default-prop
-    parentDid: {
-      type: Number
+    hiddenOperation: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
