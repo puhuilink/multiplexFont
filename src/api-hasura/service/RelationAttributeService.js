@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { RelationAttributeDao } from '../dao/index'
-import { query } from '../utils/hasura-orm/index'
+import { query, mutate } from '../utils/hasura-orm/index'
 
 class RelationAttributeService extends BaseService {
   static async find (argus = {}) {
@@ -8,6 +8,12 @@ class RelationAttributeService extends BaseService {
       RelationAttributeDao.find(argus)
     )
     return res
+  }
+
+  static async add (argus = {}) {
+    await mutate(
+      RelationAttributeDao.add(argus)
+    )
   }
 }
 

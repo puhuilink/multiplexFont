@@ -65,7 +65,6 @@ export default {
         const { name, parentName } = this.selectedCi
         // 如果自身配置了视图则直接加载，反之继承父元素的配置
         const self = this.treeViewMapping.find(el => el.name === name)
-        console.log(self)
         if (self) {
           return self.view || self.childrenview
         } else {
