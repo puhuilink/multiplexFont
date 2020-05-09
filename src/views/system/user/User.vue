@@ -186,14 +186,16 @@ export default {
           title: '用户名',
           dataIndex: 'user_id',
           sorter: true,
-          width: 180
+          width: 180,
+          ellipsis: true
           // fixed: 'left'
         },
         {
           title: '姓名',
           dataIndex: 'staff_name',
           width: 150,
-          sorter: true
+          sorter: true,
+          ellipsis: true
         },
         {
           title: '岗位职责',
@@ -205,7 +207,8 @@ export default {
           title: '办公电话',
           dataIndex: 'phone',
           width: 100,
-          sorter: true
+          sorter: true,
+          ellipsis: true
         },
         {
           title: '移动电话',
