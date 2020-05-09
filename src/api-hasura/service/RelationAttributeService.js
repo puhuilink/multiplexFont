@@ -15,6 +15,12 @@ class RelationAttributeService extends BaseService {
       RelationAttributeDao.add(argus)
     )
   }
+
+  static async update (set = {}, where = {}) {
+    await mutate(
+      RelationAttributeDao.update(set, where)
+    )
+  }
 }
 
 export {

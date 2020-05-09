@@ -27,6 +27,10 @@ class RelationAttributeDao extends BaseDao {
     }
     return super.add(data)
   }
+  static async update (set, where) {
+    // TODO: validate
+    return super.update(set, where)
+  }
 }
 
 export {

@@ -24,6 +24,7 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              :disabled="title === '编辑'"
               v-decorator="[
                 'name',
                 { rules: [{ required: true, message: '名称必填' }] },
@@ -304,9 +305,6 @@
 </template>
 
 <script>
-import { updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
-import { fields } from './ResourceModelRelationAttrList'
-import _ from 'lodash'
 import { CiModelSelect } from '@/components/Common/index'
 import { ModelService, RelationAttributeService } from '@/api-hasura/index'
 
@@ -470,7 +468,7 @@ export default {
       await this.$nextTick()
       this.loadTarget()
       // FIXME: checkbox
-      this.form.setFieldsValue(_.pick(record, [...fields]))
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
@@ -491,6 +489,10 @@ export default {
           this.$emit('addSuccess')
           this.cancel()
         } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
           throw e
         } finally {
           this.loading = false
@@ -499,28 +501,29 @@ export default {
     },
     // FIXME: 所有表单长度校验。。。
     async update () {
-      try {
-        this.loading = true
-        const value = await this.getFormFields()
-        await updateModelRelationAttr(this.record.did, value)
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.$emit('editSuccess')
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          console.log(values)
-          err ? reject(err) : resolve(values)
-        })
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await RelationAttributeService.update(
+            values,
+            { _id: this.record._id }
+          )
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
       })
     },
     reset () {
