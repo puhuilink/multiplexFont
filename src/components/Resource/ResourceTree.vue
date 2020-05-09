@@ -216,11 +216,12 @@ export default {
         // 删除成功重置
         const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
         await ModelService.delete(nameList)
-        this.selectedKey = ''
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
+        this.selectedKey = ''
+        this.$emit('selectNode', null)
         await this.fetch()
       } catch (e) {
         throw e
