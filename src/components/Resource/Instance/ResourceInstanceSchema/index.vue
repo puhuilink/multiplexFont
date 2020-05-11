@@ -95,8 +95,8 @@ export default {
     // 只在编辑时展示（只读）
     hasTopologicalGraph () {
       const { hasPointInInstanceList, hasPointOutInstanceList } = this
-      const pointInLength = _.get(this, 'pointInInstanceList.length', 0)
-      const pointOutLength = _.get(this, 'pointOutInstanceList.length', 0)
+      const pointInLength = _.get(this, 'instance.pointInInstanceList.length', 0)
+      const pointOutLength = _.get(this, 'instance.pointOutInstanceList.length', 0)
       // 至少两个点才构成一个关系图
       return pointInLength + pointOutLength >= 2
     }
