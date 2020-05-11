@@ -467,10 +467,11 @@
             <div class="comment-template__item">
               <p class="comment-template__leading">标签大小:</p>
               <div class="comment-template__inner">
-                <a-input
-                  type="number"
+                <a-slider
+                  :min="6"
+                  :max="32"
                   @change="change"
-                  v-model.number="config.proprietaryConfig.xAxis.axisLabel.fontSize" />
+                  v-model="config.proprietaryConfig.xAxis.axisLabel.fontSize" />
               </div>
             </div>
             <!-- / 标签大小 -->
@@ -856,10 +857,11 @@
             <div class="comment-template__item">
               <p class="comment-template__leading">标签大小:</p>
               <div class="comment-template__inner">
-                <a-input
-                  type="number"
+                <a-slider
+                  :min="6"
+                  :max="32"
                   @change="change"
-                  v-model.number="config.proprietaryConfig.yAxis.axisLabel.fontSize" />
+                  v-model="config.proprietaryConfig.yAxis.axisLabel.fontSize" />
               </div>
             </div>
             <!-- / 标签大小 -->
