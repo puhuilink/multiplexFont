@@ -17,19 +17,16 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡检区域"
+                  label="巡更区域"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.ascription"
+                  <a-cascader
+                    style="width: 100%"
                     placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option value="MachineRoom-BJ">北京机房</a-select-option>
-                    <a-select-option value="MachineRoom-XM">厦门机房</a-select-option>
-                  </a-select>
+                    :options="screening.ascriptionList"
+                    v-model="queryParam.ascription"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -85,11 +82,11 @@
         >
           删除
         </a-button> -->
-        <a-button>新建</a-button>
         <a-button
-          :disabled="selectedRowKeys.length !== 1"
+          :disabled="selectedRowKeys.length == 0"
+          @click="seeDetail"
         >
-          编辑
+          查看
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length == 0"
@@ -115,6 +112,7 @@ import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/RMDetail'
 import { getRouteList, deleteRoute } from '@/api/controller/patrol'
+import screening from '../screening'
 
 export default {
   name: 'RouteManagement',
@@ -125,6 +123,7 @@ export default {
   },
   data () {
     return {
+      screening,
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
@@ -138,7 +137,7 @@ export default {
           sorter: true
         },
         {
-          title: '巡检区域',
+          title: '巡更区域',
           dataIndex: 'ascription',
           width: 200,
           sorter: true,
@@ -173,7 +172,7 @@ export default {
           where: {
             ...this.queryParam.ascription ? {
               ascription: {
-                _eq: this.queryParam.ascription
+                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
               }
             } : {},
             ...this.queryParam.route_name ? {
@@ -211,7 +210,10 @@ export default {
     edit () {
       // const [record] = this.selectedRows
       // this.$refs['detail'].edtt(record)
-      this.$refs.detail.open(this.selectedRows[0], 'Edit')
+      this.$refs['detail'].open(this.selectedRows[0], 'Edit')
+    },
+    seeDetail () {
+      this.$refs['detail'].open(this.selectedRows[0], 'See')
     },
     /**
      * 查询

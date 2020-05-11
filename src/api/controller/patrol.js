@@ -1,6 +1,7 @@
 import apollo from '@/utils/apollo'
 import {
   queryRouteList,
+  queryRoutePointDetail,
   queryPlanList,
   queryUserGroupList,
   queryTaskInfo,
@@ -15,6 +16,14 @@ import {
 export const getRouteList = function (variables = {}) {
   return apollo.clients.alert.query({
     query: queryRouteList,
+    variables: {
+      ...variables
+    }
+  })
+}
+export const getRoutePointDetail = function (variables = {}) {
+  return apollo.clients.alert.query({
+    query: queryRoutePointDetail,
     variables: {
       ...variables
     }

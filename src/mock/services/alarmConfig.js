@@ -73,11 +73,11 @@ const TRList = (options) => {
       no: 'No ' + tmpKey,
       editable: false,
       'name|1': [
-        '动态基线告警', '巡检任务失败xm', '巡检任务失败bj'
+        '动态基线告警', '巡更任务失败xm', '巡更任务失败bj'
       ],
       'nodeType|1': [
         'AD负载均衡',
-        '巡检区域'
+        '巡更区域'
       ],
       'node|1': [
         '互联网链路负载', '厦门机房', '北京机房'
