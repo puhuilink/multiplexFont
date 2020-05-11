@@ -78,7 +78,7 @@
       </a-row> -->
 
       <a-divider>路线对象</a-divider>
-      <a-table v-if="mode" :rowKey="kpi_id" :columns="columns" :data-source="routePointList" size="middle" />
+      <a-table v-if="mode!==''" :rowKey="kpi_id" :columns="columns" :data-source="routePointList" size="middle" />
 
       <a-divider>机房点位图</a-divider>
       <a-card :bordered="false" hoverable style="width: 90%; margin:auto;">

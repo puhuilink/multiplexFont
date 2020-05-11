@@ -21,15 +21,12 @@
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.ascription"
+                  <a-cascader
+                    style="width: 100%"
                     placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option value="MachineRoom-BJ">北京机房</a-select-option>
-                    <a-select-option value="MachineRoom-XM">厦门机房</a-select-option>
-                  </a-select>
+                    :options="screening.ascriptionList"
+                    v-model="queryParam.ascription"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -115,6 +112,7 @@ import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/RMDetail'
 import { getRouteList, deleteRoute } from '@/api/controller/patrol'
+import screening from '../screening'
 
 export default {
   name: 'RouteManagement',
@@ -125,6 +123,7 @@ export default {
   },
   data () {
     return {
+      screening,
       // 搜索： 展开/关闭
       advanced: false,
       // 查询参数
@@ -173,7 +172,7 @@ export default {
           where: {
             ...this.queryParam.ascription ? {
               ascription: {
-                _eq: this.queryParam.ascription
+                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
               }
             } : {},
             ...this.queryParam.route_name ? {

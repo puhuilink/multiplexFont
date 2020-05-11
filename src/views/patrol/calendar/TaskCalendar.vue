@@ -7,11 +7,17 @@
 
       <!-- S 选择器 -->
       <div class="opration">
-        <a-radio-group :value="ascriptionChoose" @change="ascriptionChange">
+        <!-- <a-radio-group :value="ascriptionChoose" @change="ascriptionChange">
           <a-radio-button value="">全部</a-radio-button>
           <a-radio-button value="MachineRoom-BJ">北京机房</a-radio-button>
           <a-radio-button value="MachineRoom-XM">厦门机房</a-radio-button>
-        </a-radio-group>
+        </a-radio-group> -->
+        <a-cascader
+          :options="screening.ascriptionList"
+          placeholder="全部"
+          @change="ascriptionChange"
+          style="width: 280px"
+        />
       </div>
       <!-- E 选择器 -->
 
@@ -63,6 +69,8 @@ import detail from '../modules/TCDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import moment from 'moment'
+import screening from '../screening'
+
 const queryBefore = gql`query xunjian ($where: t_xj_task_info_bool_exp = {}){
   data: t_xj_task_info(where: $where) {
     task_id
@@ -106,6 +114,7 @@ export default {
   },
   data () {
     return {
+      screening,
       ascriptionChoose: '',
       dateQuery: {
         startDate: '',
@@ -162,8 +171,9 @@ export default {
   },
   methods: {
     async ascriptionChange (e) {
-      this.ascriptionChoose = e.target.value
-      this.queryParam.ascription = e.target.value
+      console.log(e)
+      this.ascriptionChoose = e[e.length - 1]
+      this.queryParam.ascription = e[e.length - 1]
       this.getAllData()
       this.getListData()
     },
@@ -243,7 +253,6 @@ export default {
           }
         }
       }).then(r => {
-        console.log(r.data.data)
         const list = r.data.data.map(r => ({
           ...r,
           work_start_date: r.start_time.split('T')[0],
