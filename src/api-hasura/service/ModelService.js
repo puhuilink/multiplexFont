@@ -34,6 +34,37 @@ class ModelService extends BaseService {
   }
 
   /**
+   * 获取模型下的属性（模型属性，关系属性分组等信息）
+   * @param {String} name 模型 name
+   */
+  static async attrInfo (name) {
+    const { data } = await query(
+      // 模型自身属性
+      ModelDao.find({
+        where: {
+          name
+        },
+        fields: ['attributes'],
+        alias: 'modelList'
+      }),
+      // 模型关联属性 (base)
+      RelationAttributeDao.find({
+        where: {
+          source: name
+        },
+        // Dao 层已配置全量 field，默认查询出所有字段
+        alias: 'relationAttributes'
+      })
+    )
+    const { modelList: [model], relationAttributes } = data
+    const { attributes } = model
+    return {
+      attributes,
+      relationAttributes
+    }
+  }
+
+  /**
    * 更新模型节点
    * @param {Objetc} model
    * @return {Promise<any>}

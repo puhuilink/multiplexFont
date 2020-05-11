@@ -30,7 +30,8 @@ export default class Hasura {
    * @return {Hasura} this
    */
   select (fields = []) {
-    this._fields = fields.filter(v => !!v).join(',').replace(/,/g, ' ')
+    const _fields = fields.length ? fields : this._fields
+    this._fields = _fields.filter(v => !!v).join(',').replace(/,/g, ' ')
     return this
   }
 
