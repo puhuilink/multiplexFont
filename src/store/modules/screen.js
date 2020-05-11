@@ -91,7 +91,7 @@ export default {
     },
     // 更新拓扑节点配置
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
-      const { render } = state.activeWidget
+      const { render } = state.activeWidget || { render: null }
       // 如果是拓扑图的实例对象
       if (render && render.chart && Object.getPrototypeOf(render.chart).constructor.name === 'e') {
         const options = _.cloneDeep(render.chart.save())

@@ -117,7 +117,7 @@ export default {
         <Item {...{ key: menu.path }}>
           <tag {...{ props, attrs }}>
             {this.renderIcon(menu.meta.icon)}
-            <span>{menu.meta.title}</span>
+            <span id={ `menu_${menu.meta.title}` }>{menu.meta.title}</span>
           </tag>
         </Item>
       )
@@ -131,7 +131,7 @@ export default {
         <SubMenu {...{ key: menu.path }}>
           <span slot="title">
             {this.renderIcon(menu.meta.icon)}
-            <span>{menu.meta.title}</span>
+            <span id={ `menu_${menu.meta.title}` }>{menu.meta.title}</span>
           </span>
           {itemArr}
         </SubMenu>

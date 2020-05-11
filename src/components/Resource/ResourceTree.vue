@@ -246,14 +246,11 @@ export default {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
         this.$emit('selectNode', {
-          'did': dataRef.did,
-          'label_s': dataRef.label_s,
+          'label': dataRef.label_s,
           'name': dataRef.name,
-          'name_s': dataRef.name,
-          'tree_s': dataRef.parentTree + dataRef.name,
-          'parentname_s': dataRef.parentname_s,
-          'parentName': dataRef.parentname_s,
-          '_id_s': dataRef._id_s
+          'tree': dataRef.parentTree + dataRef.name,
+          'parentName': dataRef.parentName,
+          '_id': dataRef._id
         })
       } else {
         // FIXME: 新增后可以不用重置
