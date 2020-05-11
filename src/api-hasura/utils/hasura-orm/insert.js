@@ -1,4 +1,5 @@
 import Hasura from './hasura'
+// eslint-disable-next-line no-unused-vars
 import { stringify, hasRelation } from './helper'
 import { parse } from 'graphql'
 

@@ -87,15 +87,18 @@ export default {
       const { relationAttributeList } = this
       return relationAttributeList.length
     },
-    // 只在编辑时展示（可读）
+    // 只在编辑时展示（只读）
     hasPointInInstanceList () {
       const { instance } = this
       return instance && instance.pointInInstanceList.length
     },
-    // 只在编辑时展示（可读）
+    // 只在编辑时展示（只读）
     hasTopologicalGraph () {
       const { hasPointInInstanceList, hasPointOutInstanceList } = this
-      return hasPointInInstanceList || hasPointOutInstanceList
+      const pointInLength = _.get(this, 'pointInInstanceList.length', 0)
+      const pointOutLength = _.get(this, 'pointOutInstanceList.length', 0)
+      // 至少两个点才构成一个关系图
+      return pointInLength + pointOutLength >= 2
     }
   },
   methods: {
