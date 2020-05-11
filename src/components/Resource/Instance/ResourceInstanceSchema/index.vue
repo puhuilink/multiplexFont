@@ -29,7 +29,8 @@ export default {
     // modal visible
     visible: false,
     parentName: '',
-    parentTree: ''
+    parentTree: '',
+    _id: ''
   }),
   computed: {},
   methods: {
@@ -114,6 +115,7 @@ export default {
       this.title = '编辑'
       // this.submit = this.update
       this.visible = true
+      this._id = _id
       await Promise.all([
         this.loadAttributes(parentName),
         this.loadData(_id)
@@ -143,19 +145,13 @@ export default {
     async submit () {
       this.$refs['form'].submit(async (err, values) => {
         if (err) return
+        console.log(values)
+        // return
+        // eslint-disable-next-line no-unreachable
         try {
           this.submitLoading = true
-          const { parentName, parentTree } = this
-          await InstanceService.add({
-            values,
-            parentName,
-            parentTree
-          })
-          this.$emit('addSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '新建成功'
-          })
+          const { insert, update } = this
+          await (this.title === '新增' ? insert(values) : update(values))
           this.cancel()
         } catch (e) {
           this.$notification.error({
@@ -167,6 +163,39 @@ export default {
           this.submitLoading = false
         }
       })
+    },
+    async insert (values) {
+      try {
+        const { parentName, parentTree } = this
+        await InstanceService.add({
+          values,
+          parentName,
+          parentTree
+        })
+        this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
+      } catch (e) {
+        throw e
+      }
+    },
+    async update (values) {
+      try {
+        const { _id } = this
+        await InstanceService.update({
+          values,
+          _id
+        }, { _id })
+        this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+      } catch (e) {
+        throw e
+      }
     }
   },
   render (h) {

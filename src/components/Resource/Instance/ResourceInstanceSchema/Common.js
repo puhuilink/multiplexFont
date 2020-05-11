@@ -42,7 +42,7 @@ export default {
       const { baseAttributes, renderTabPaneContent } = this
       // TODO: 当 baseAttributes 不包含 name 与 label 时，默认提供这两个 FormItem
       return (
-        <a-tab-pane tab="基本信息" key="base">
+        <a-tab-pane tab="基本信息" key="base" forceRender>
           { renderTabPaneContent(baseAttributes) }
         </a-tab-pane>
       )
@@ -53,7 +53,7 @@ export default {
         renderTabPaneContent
       } = this
       return _.isEmpty(relationAttributes) ? null : (
-        <a-tab-pane tab="关系信息" key="relation">
+        <a-tab-pane tab="关系信息" key="relation" forceRender>
           { renderTabPaneContent(relationAttributes) }
         </a-tab-pane>
       )
@@ -64,7 +64,7 @@ export default {
         renderTabPaneContent
       } = this
       return _.isEmpty(otherAttributes) ? null : (
-        <a-tab-pane tab="其他信息" key="other">
+        <a-tab-pane tab="其他信息" key="other" forceRender>
           { renderTabPaneContent(otherAttributes) }
         </a-tab-pane>
       )

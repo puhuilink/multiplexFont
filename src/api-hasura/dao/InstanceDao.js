@@ -33,6 +33,23 @@ class InstanceDao extends BaseDao {
     }
     return super.add(data)
   }
+
+  static async update ({ values, ...baseInfo }, where) {
+    // TODO: 唯一校验
+    const name = baseInfo.name || values.name
+    const label = baseInfo.label || values.label
+    const data = {
+      values,
+      ...baseInfo,
+      name,
+      label,
+      // TODO: version++
+      // version: 0,
+      ...defaultInfo('updateTime', 'updator')
+    }
+    console.log(data)
+    return super.update(data, where)
+  }
 }
 
 export {

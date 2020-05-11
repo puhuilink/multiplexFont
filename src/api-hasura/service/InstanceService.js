@@ -12,6 +12,12 @@ class InstanceService extends BaseService {
     return res
   }
 
+  static async update (instance = {}, where = {}) {
+    await mutate(
+      InstanceDao.update(instance, where)
+    )
+  }
+
   /**
    * 实例详情
    * @param {String} _id 实例 id
