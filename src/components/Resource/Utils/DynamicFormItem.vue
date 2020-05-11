@@ -9,7 +9,7 @@ export const makeFormItemValue = function (field, value) {
     case 'DATE': return moment(value)
     case 'DATETIME': return moment(value)
     case 'TEXT': return `${value}`
-    case 'SELECTED': return mappingType === 'one' ? value : [value]
+    case 'SELECTED': return mappingType === 'one' ? value : (value ? [value] : [])
     default: return value
   }
 }
@@ -138,7 +138,13 @@ export default {
       const { selectGroupList = [], mappingType = 'one' } = field
       // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
       return (
-        <a-select filterOption={filterOption} showSearch allowClear mode={ mappingType === 'one' ? 'default' : 'multiple' }>
+        <a-select
+          filterOption={filterOption}
+          showSearch
+          allowClear
+          mode={ mappingType === 'one' ? 'default' : 'multiple' }
+          notFoundContent="暂无内容"
+        >
           { ...renderSelectGroup(selectGroupList) }
         </a-select>
       )

@@ -63,7 +63,7 @@
     <ResourceInstanceSchema
       v-if="!hiddenOperation"
       ref="schema"
-      @addSuccess="() => { this.reset(); this.query() }"
+      @addSuccess="() => { this.query() }"
       @editSuccess="query"
     />
   </div>
