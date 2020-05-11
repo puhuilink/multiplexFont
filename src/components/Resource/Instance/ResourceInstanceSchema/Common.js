@@ -16,7 +16,9 @@ export default {
     }
   },
   data: (vm) => ({
-    form: vm.$form.createForm(vm)
+    form: vm.$form.createForm(vm),
+    // ['add', 'edit']
+    mode: 'add'
   }),
   computed: {
     baseAttributes () {
@@ -30,14 +32,17 @@ export default {
     },
     relationAttributes () {
       return this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'relation')
+    },
+    title () {
+      return this.mode === 'add' ? '新增' : '编辑'
     }
   },
   methods: {
-    renderTabPaneBase (tab = '基本信息') {
+    renderTabPaneBase () {
       const { baseAttributes, renderTabPaneContent } = this
       // TODO: 当 baseAttributes 不包含 name 与 label 时，默认提供这两个 FormItem
       return (
-        <a-tab-pane tab={tab} key="base">
+        <a-tab-pane tab="基本信息" key="base">
           { renderTabPaneContent(baseAttributes) }
         </a-tab-pane>
       )
@@ -65,14 +70,14 @@ export default {
       )
     },
     renderTabPaneContent (fields) {
-      const { form } = this
+      const { form, mode } = this
       return (
         <a-row>
           {
             ...fields.map((field, index) => (
               <a-col md={12} span={24} key={index}>
                 <DynamicFormItem
-                  mode="add"
+                  mode={mode}
                   form={form}
                   field={field} />
               </a-col>

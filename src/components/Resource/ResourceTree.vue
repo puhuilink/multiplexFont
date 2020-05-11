@@ -246,6 +246,7 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
+        console.log(dataRef)
         this.$emit('selectNode', {
           'label': dataRef.label_s,
           'name': dataRef.name,

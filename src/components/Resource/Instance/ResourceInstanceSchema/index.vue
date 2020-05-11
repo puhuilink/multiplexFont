@@ -8,7 +8,7 @@ import {
 import _ from 'lodash'
 
 export default {
-  name: 'Container',
+  name: 'ResourceInstanceSchema',
   components: {},
   props: {},
   data: (vm) => ({
@@ -27,7 +27,9 @@ export default {
     // modal 标题
     title: '',
     // modal visible
-    visible: false
+    visible: false,
+    parentName: '',
+    parentTree: ''
   }),
   computed: {},
   methods: {
@@ -93,7 +95,7 @@ export default {
       this.mode = 'add'
       this.title = '新增'
       this.visible = true
-      this.submit = this.insert
+      // this.submit = this.insert
       this.parentName = parentName
       this.parentTree = parentTree
       await Promise.all([
@@ -110,7 +112,7 @@ export default {
     async edit (parentName, _id) {
       this.mode = 'edit'
       this.title = '编辑'
-      this.submit = this.update
+      // this.submit = this.update
       this.visible = true
       await Promise.all([
         this.loadAttributes(parentName),
@@ -138,13 +140,38 @@ export default {
       // 表单元素会在 destroyOnClose 时重置
       Object.assign(this.$data, this.$options.data.apply(this))
     },
-    submit () {
-      this.visible = false
+    async submit () {
+      this.$refs['form'].submit(async (err, values) => {
+        if (err) return
+        try {
+          this.submitLoading = true
+          const { parentName, parentTree } = this
+          await InstanceService.add({
+            values,
+            parentName,
+            parentTree
+          })
+          this.$emit('addSuccess')
+          this.$notification.success({
+            message: '系统提示',
+            description: '新建成功'
+          })
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
     }
   },
   render (h) {
     const {
-      cancel, reset, submitLoading, spinning, title, visible,
+      cancel, reset, submitLoading, spinning, submit, title, visible,
       instance,
       attributes: attributeList,
       relationAttributes: relationAttributeList
@@ -163,6 +190,7 @@ export default {
         width={940}
         wrapClassName="ResourceInstanceSchema__modal"
         onCancel={cancel}
+        onOk={submit}
       >
         <a-spin spinning={spinning}>
           {
@@ -171,7 +199,8 @@ export default {
                 attributeList,
                 relationAttributeList,
                 instance
-              }
+              },
+              ref: 'form'
             })
           }
         </a-spin>

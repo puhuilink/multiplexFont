@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { InstanceDao, RelationInstanceDao } from '../dao/index'
-import { query } from '../utils/hasura-orm/index'
+import { query, mutate } from '../utils/hasura-orm/index'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -127,6 +127,12 @@ class InstanceService extends BaseService {
       })
       return res
     }
+  }
+
+  static async add (argus = {}) {
+    await mutate(
+      InstanceDao.add(argus)
+    )
   }
 }
 

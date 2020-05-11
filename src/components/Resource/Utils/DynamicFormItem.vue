@@ -91,15 +91,13 @@ export default {
       } = field
       // console.log(pattern)
       const options = {
-        ...defaultValue ? {
-          initialValue: makeFormItemValue(field, field.defaultValue)
-        } : {},
+        initialValue: makeFormItemValue(field, defaultValue),
         rules: [
           ...isAdd && eval(`${allowNull}`) ? [{
             required: true,
             message: `${label}必填`
           }] : [],
-          ...`${pattern}` ? [{
+          ...(`${pattern}` !== 'null' && `${pattern}` !== 'undefined' && `${pattern}`) ? [{
             pattern: `${pattern}`,
             message: `${label}格式错误`
           }] : []

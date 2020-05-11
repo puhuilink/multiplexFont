@@ -4,6 +4,14 @@ import Common from './Common'
 export default {
   name: 'Add',
   mixins: [Common],
+  data: () => ({
+    mode: 'add'
+  }),
+  methods: {
+    async submit (cb = () => {}) {
+      return this.form.validateFieldsAndScroll(cb)
+    }
+  },
   render (h) {
     const {
       form,

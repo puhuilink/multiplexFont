@@ -13,6 +13,9 @@ export default {
       default: () => ({})
     }
   },
+  data: () => ({
+    mode: 'edit'
+  }),
   computed: {
     hasPointIn () {
       const pointInLength = _.get(this, 'instance.pointOutInstanceList.length', 0)

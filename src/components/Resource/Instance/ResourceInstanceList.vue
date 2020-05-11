@@ -161,7 +161,7 @@ export default {
   },
   methods: {
     add () {
-      const { parentName, parentTree } = this.where
+      const { parentName, parentTree } = this
       this.$refs['schema'].add(
         parentName,
         parentTree
