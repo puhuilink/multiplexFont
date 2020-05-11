@@ -134,6 +134,17 @@ class InstanceService extends BaseService {
       InstanceDao.add(argus)
     )
   }
+
+  static async batchDelete (idList = []) {
+    await mutate(
+      InstanceDao.batchDelete({
+        _id: {
+          _in: idList
+        }
+      })
+      // TODO: 日志与历史版本
+    )
+  }
 }
 
 export {
