@@ -144,8 +144,8 @@ export default {
             customRender: val => val ? '是' : '否'
           },
           {
-            title: '源值',
-            dataIndex: 'sourceValue',
+            title: '匹配条件',
+            dataIndex: 'matchType',
             sorter: true,
             width: 180
           },
@@ -156,13 +156,12 @@ export default {
             width: 180,
             customRender: val => val ? '是' : '否'
           },
-          {
-            title: '继承至',
-            dataIndex: 'hidden',
-            sorter: true,
-            width: 180,
-            customRender: val => val ? '是' : '否'
-          },
+          // {
+          //   title: '继承至',
+          //   dataIndex: 'hidden',
+          //   sorter: true,
+          //   width: 180,
+          // },
           {
             title: '隐藏',
             dataIndex: 'hidden',
@@ -219,7 +218,7 @@ export default {
           },
           {
             title: '正则验证',
-            dataIndex: 'matchType',
+            dataIndex: 'pattern',
             sorter: true,
             width: 180
           },
