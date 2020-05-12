@@ -215,12 +215,13 @@ export default {
         // TODO: 删除接口
         // 删除成功重置
         const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        await ModelService.delete(nameList)
-        this.selectedKey = ''
+        await ModelService.batchDelete(nameList)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
+        this.selectedKey = ''
+        this.$emit('selectNode', null)
         await this.fetch()
       } catch (e) {
         throw e
@@ -245,15 +246,13 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
+        console.log(dataRef)
         this.$emit('selectNode', {
-          'did': dataRef.did,
-          'label_s': dataRef.label_s,
+          'label': dataRef.label_s,
           'name': dataRef.name,
-          'name_s': dataRef.name,
-          'tree_s': dataRef.parentTree + dataRef.name,
-          'parentname_s': dataRef.parentname_s,
-          'parentName': dataRef.parentname_s,
-          '_id_s': dataRef._id_s
+          'tree': dataRef.parentTree + dataRef.name,
+          'parentName': dataRef.parentName,
+          '_id': dataRef._id
         })
       } else {
         // FIXME: 新增后可以不用重置

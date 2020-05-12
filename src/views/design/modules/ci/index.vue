@@ -12,7 +12,6 @@
 
 <script>
 import { ResourceTree } from '@/components/Resource'
-import { ViewDesignService } from '@/api-hasura'
 import Factory from '@/model/factory/factory'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
@@ -38,9 +37,8 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
-    async dragend ({ event, node: { dataRef } }) {
-      const options = await this.fetch(dataRef)
-      const target = this.icons.find(icon => icon.name === options.icon)
+    dragend ({ event, node: { dataRef } }) {
+      const target = this.icons.find(icon => icon.name === dataRef.icon)
       const other = this.icons.find(icon => icon.name === 'Others')
       const icon = target || other
       const data = {
@@ -81,24 +79,6 @@ export default {
         graph.addItem('node', node)
         // 同步配置
         this.updateTopologyConfig()
-      }
-    },
-    async fetch ({ name }) {
-      const data = await ViewDesignService.nodeByCiName(name)
-      if (data) {
-        // TODO: 其他属性引入
-        const { label, name, parentName, icon } = data
-        const option = {
-          // 显示名称
-          label,
-          // model
-          parentName,
-          // ci
-          name,
-          // icon
-          icon
-        }
-        return option
       }
     },
     /**

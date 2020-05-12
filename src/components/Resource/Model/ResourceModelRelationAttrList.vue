@@ -64,8 +64,6 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import ResourceModelRelationSchema from './ResourceModelRelationSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import { generateQuery } from '@/utils/graphql'
@@ -85,16 +83,6 @@ export const fields = [
   'allowInheritance',
   'allowNull'
 ]
-
-const deleteAttrs = gql`mutation delete_relationattributes ($dids: [Int!] = []) {
-  delete_ngecc_relationattribute (where: {
-    did: {
-      _in: $dids
-    }
-  }) {
-    affected_rows
-  }
-}`
 
 export default {
   name: 'ResourceModelRelationAttrList',
@@ -118,7 +106,6 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
-    // TODO: 列不全
     columns: {
       get () {
         return [
@@ -156,8 +143,8 @@ export default {
             title: '关系类型',
             dataIndex: 'relationType',
             sorter: true,
-            width: 180,
-            customRender: val => val ? '是' : '否'
+            width: 180
+            // customRender: val => val ? '是' : '否'
           },
           {
             title: '所属分组',
@@ -177,6 +164,25 @@ export default {
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '继承',
+            dataIndex: 'extendModelName',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '是否作为查询框',
+            dataIndex: 'searchField',
+            sorter: true,
+            width: 180,
+            customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '匹配条件',
+            dataIndex: 'matchType',
+            sorter: true,
+            width: 180
           },
           {
             title: '非空',
@@ -220,21 +226,17 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await apollo.clients.resource.mutate({
-          mutation: deleteAttrs,
-          variables: {
-            dids: [
-              ...this.selectedRowKeys
-            ]
-          }
-        })
+        await RelationAttributeService.batchDelete(this.selectedRowKeys)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.$refs['table'].loading = false

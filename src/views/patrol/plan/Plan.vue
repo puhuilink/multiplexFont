@@ -15,7 +15,7 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡检区域"
+                  label="巡更区域"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset:2 }"
                   style="width: 100%">
@@ -207,11 +207,11 @@ export default {
       planTypeList: [
         {
           code: 'A',
-          name: '例行巡检'
+          name: '例行巡更'
         },
         {
           code: 'B',
-          name: '临时巡检'
+          name: '临时巡更'
         }
       ],
       enableList: [
@@ -227,7 +227,7 @@ export default {
       // 告警列表表头
       columns: [
         {
-          title: '巡检区域',
+          title: '巡更区域',
           dataIndex: 'ascription',
           width: 150,
           sorter: true,

@@ -275,6 +275,36 @@ class TextStyle {
 }
 
 /**
+ * 饼图标签配置
+ * @param show 显示
+ * @param position 标签的位置 'outside' | 'inside'
+ * @param alignTo 标签对齐方式 'none' | 'labelLine' | 'edge'
+ */
+class PieLabel extends TextStyle {
+  constructor ({
+    show = true,
+    position = 'outside',
+    alignTo = 'none',
+    ...props
+  }) {
+    super(props)
+    this.show = show
+    this.position = position
+    this.alignTo = alignTo
+  }
+
+  /**
+   * 映射饼图文本标签配置
+   * @returns {*}
+   */
+  getOption () {
+    return Object.assign(
+      _.cloneDeep(_.omit(this, ['color']))
+    )
+  }
+}
+
+/**
  * 位置对象
  * @param mode 位置所处模式 'center' | 'center_left' | 'center_right' | 'top_center' | 'bottom_center' | 'custom'
  * @param editablePosition 可编辑位置
@@ -1022,5 +1052,6 @@ export {
   TriangleGraphic,
   ImageGraphic,
   AlarmListProps,
-  ListProps
+  ListProps,
+  PieLabel
 }

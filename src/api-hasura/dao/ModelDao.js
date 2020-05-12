@@ -34,6 +34,7 @@ class ModelDao extends BaseDao {
     await this._uniqueValidate(model)
     return super.add({
       _id: varcharUuid(),
+      attributes: [],
       ...model,
       ...defaultInfo('createTime', 'creator')
     })

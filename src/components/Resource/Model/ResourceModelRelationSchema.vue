@@ -24,6 +24,7 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-input
+              :disabled="title === '编辑'"
               v-decorator="[
                 'name',
                 { rules: [{ required: true, message: '名称必填' }] },
@@ -43,7 +44,6 @@
                 'label',
                 {
                   rules: [{ required: true, message: '显示名称必填' }],
-                  // initialValue: 'name'
                 },
               ]"
             />
@@ -81,13 +81,6 @@
                 </a-select-option>
               </a-select-opt-group>
             </a-select>
-            <!-- <CiModelSelect /> -->
-            <!-- <a-input
-              v-decorator="[
-                'target',
-                { rules: [{ required: true, message: '目标必填' }] },
-              ]"
-            /> -->
           </a-form-item>
         </a-col>
 
@@ -101,12 +94,18 @@
               v-decorator="[
                 'mappingType',
                 {
+                  rules: [
+                    {
+                      required: true,
+                      message: '所属分组必填'
+                    }
+                  ],
                   initialValue: 'one'
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.map"
+                v-for="item in options.mappingType"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
@@ -126,7 +125,13 @@
               v-decorator="[
                 'relationType',
                 {
-                  initialValue: 'Belongs To'
+                  rules: [
+                    {
+                      required: true,
+                      message: '所属分组必填'
+                    }
+                  ],
+                  initialValue: 'BelongsTo'
                 },
               ]"
             >
@@ -149,12 +154,18 @@
               v-decorator="[
                 'tabGroup',
                 {
-                  initialValue: '基本信息'
+                  rules: [
+                    {
+                      required: true,
+                      message: '所属分组必填'
+                    }
+                  ],
+                  initialValue: 'base'
                 },
               ]"
             >
               <a-select-option
-                v-for="item in options.group"
+                v-for="item in options.tabGroup"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
@@ -174,6 +185,9 @@
               type="number"
               v-decorator="[
                 'order',
+                {
+                  initialValue: 0
+                }
               ]"
             />
           </a-form-item>
@@ -189,7 +203,8 @@
               v-decorator="[
                 'allowInheritance',
                 {
-                  valuePropName: 'checked'
+                  valuePropName: 'checked',
+                  initialValue: false
                 }
               ]"></a-checkbox>
           </a-form-item>
@@ -207,14 +222,14 @@
               v-decorator="[
                 'searchField',
                 {
-                  valuePropName: 'checked'
+                  valuePropName: 'checked',
+                  initialValue: false
                 }
               ]"></a-checkbox>
           </a-form-item>
         </a-col>
 
         <a-col :md="12" :span="24">
-          <!-- FIXME: VICUBE 此处为空？ -->
           <a-form-item
             label="匹配条件"
             :label-col="formItemLayout.labelCol"
@@ -222,7 +237,7 @@
           >
             <a-select>
               <a-select-option
-                v-for="item in []"
+                v-for="item in options.matchType"
                 :key="item.value"
                 :value="item.value"
               >{{ item.name }}</a-select-option>
@@ -242,7 +257,8 @@
               v-decorator="[
                 'allowNull',
                 {
-                  valuePropName: 'checked'
+                  valuePropName: 'checked',
+                  initialValue: false
                 }
               ]"></a-checkbox>
           </a-form-item>
@@ -256,9 +272,10 @@
           >
             <a-checkbox
               v-decorator="[
-                'assetAttr',
+                'assetsAttr',
                 {
-                  valuePropName: 'checked'
+                  valuePropName: 'checked',
+                  initialValue: false
                 }
               ]"></a-checkbox>
           </a-form-item>
@@ -275,6 +292,9 @@
             <a-input
               v-decorator="[
                 'defaultValue',
+                {
+                  initialValue: ''
+                }
               ]"
             />
           </a-form-item>
@@ -285,11 +305,8 @@
 </template>
 
 <script>
-import { addModelRelationAttr, updateModelRelationAttr } from '@/api/controller/ModelRelationAttr'
-import { fields } from './ResourceModelRelationAttrList'
-import _ from 'lodash'
 import { CiModelSelect } from '@/components/Common/index'
-import { ModelService } from '@/api-hasura/index'
+import { ModelService, RelationAttributeService } from '@/api-hasura/index'
 
 const formItemLayout = {
   labelCol: {
@@ -301,51 +318,7 @@ const formItemLayout = {
 }
 
 const options = {
-  type: [
-    {
-      name: 'STRING',
-      value: 'STRING'
-    },
-    {
-      name: 'INT',
-      value: 'INT'
-    },
-    {
-      name: 'DOUBLE',
-      value: 'DOUBLE'
-    },
-    {
-      name: 'LONG',
-      value: 'LONG'
-    },
-    {
-      name: 'DATE',
-      value: 'DATE'
-    }
-  ],
-  displayType: [
-    {
-      name: 'TEXT',
-      value: 'TEXT'
-    },
-    {
-      name: 'TEXTAREA',
-      value: 'TEXTAREA'
-    },
-    {
-      name: 'DATE',
-      value: 'DATE'
-    },
-    {
-      name: 'DATETIME',
-      value: 'DATETIME'
-    },
-    {
-      name: 'CHECKBOX',
-      value: 'CHECKBOX'
-    }
-  ],
-  map: [
+  mappingType: [
     {
       name: 'one',
       value: 'one'
@@ -358,38 +331,40 @@ const options = {
   relationType: [
     {
       name: 'Belongs To',
-      value: 'Belongs To'
+      value: 'LocationBelongsTo'
     },
     {
       name: 'Installed On',
-      value: 'Installed On'
+      value: 'InstalledOn'
     },
     {
       name: 'Located in',
-      value: 'Located in'
+      value: 'LocatedIn'
     },
     {
       name: 'Related To',
-      value: 'Related To'
+      value: 'RelatedTo'
     },
     {
       name: 'Connected To',
-      value: 'Connected To'
+      value: 'ConnectedTo'
     },
     {
       name: 'Pointed To',
-      value: 'Pointed To'
+      value: 'PointedTo'
     },
     {
       name: '交易路径下一环节',
+      // TODO: 待定
       value: '交易路径下一环节'
     },
     {
       name: '位置归属于',
+      // TODO: 待定
       value: '位置归属于'
     }
   ],
-  group: [
+  tabGroup: [
     {
       name: '基本信息',
       value: 'base'
@@ -399,8 +374,19 @@ const options = {
       value: 'relation'
     },
     {
+      // TODO: 待定
       name: '其他信息',
       value: 'other'
+    }
+  ],
+  matchType: [
+    {
+      name: '等于',
+      value: 'EQ'
+    },
+    {
+      name: '模糊',
+      value: 'LIKE'
     }
   ]
 }
@@ -412,7 +398,7 @@ export default {
   },
   props: {},
   data: (vm) => ({
-    sourceS: null,
+    source: null,
     form: vm.$form.createForm(vm),
     formItemLayout,
     loading: false,
@@ -458,12 +444,12 @@ export default {
     },
     /**
      * 新增
-     * @param {String} sourceS 关联
+     * @param {String} source 关联
      */
-    add (sourceS) {
+    add (source) {
       this.title = '新增'
       this.visible = true
-      this.sourceS = sourceS
+      this.source = source
       this.submit = this.insert
       this.loadTarget()
     },
@@ -482,52 +468,62 @@ export default {
       await this.$nextTick()
       this.loadTarget()
       // FIXME: checkbox
-      this.form.setFieldsValue(_.pick(record, [...fields]))
+      this.form.setFieldsValue(record)
     },
     cancel () {
       this.visible = false
     },
     async insert () {
-      try {
-        this.loading = true
-        const value = await this.getFormFields()
-        await addModelRelationAttr(this.sourceS, value)
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.$emit('addSuccess')
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await RelationAttributeService.add({
+            ...values,
+            source: this.source
+          })
+          this.$notification.success({
+            message: '系统提示',
+            description: '新增成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
+      })
     },
     // FIXME: 所有表单长度校验。。。
     async update () {
-      try {
-        this.loading = true
-        const value = await this.getFormFields()
-        await updateModelRelationAttr(this.record.did, value)
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.$emit('editSuccess')
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          console.log(values)
-          err ? reject(err) : resolve(values)
-        })
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await RelationAttributeService.update(
+            values,
+            { _id: this.record._id }
+          )
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
       })
     },
     reset () {

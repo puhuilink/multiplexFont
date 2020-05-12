@@ -146,8 +146,33 @@ export const queryTaskKpi = gql`query xunjian($where: t_xj_task_kpi_bool_exp = {
     urmp_kpi_value_type
   }
 }`
-// mutation
 
+export const queryRoutePointDetail = gql`query routePointDetail($routeCode: String!) {
+  rfList: t_xj_rf_info(where: {route_code: {_eq: $routeCode}}) {
+    create_time
+    route_code
+    rf_value
+    rf_name
+    urmp_rf_code
+  }
+  ciList: t_xj_ci_info(where: {route_code: {_eq: $routeCode}}) {
+    create_time
+    route_code
+    ci_name
+    urmp_rf_code
+    urmp_ci_code
+  }
+  kpiList: t_xj_kpi_info(where: {route_code: {_eq: $routeCode}}) {
+    urmp_kpi_type
+    urmp_kpi_code
+    urmp_ci_code
+    route_code
+    kpi_name
+    kpi_id
+  }
+}`
+
+// mutation
 export const updateRoute = gql`mutation update ($where: t_xj_route_info_bool_exp!, $val: t_xj_route_info_set_input) {
   update_t_xj_route_info  (
     where: $where,

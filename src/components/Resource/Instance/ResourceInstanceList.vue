@@ -11,11 +11,11 @@
       >
 
         <template #query>
-          <a-form layout="inline">
+          <a-form layout="inline" :style="{ overflow: hiddenOperation ? 'hidden' : 'visible' }">
             <div :class="{ fold: !advanced }">
               <a-row>
                 <a-col
-                  v-for="(field, index) in queryFields"
+                  v-for="(value, index) in queryParams.values"
                   :key="index"
                   :md="12"
                   :sm="24"
@@ -24,10 +24,10 @@
                   <a-form-item
                     :labelCol="{ span: 8 }"
                     :wrapperCol="{ span: 12, offset: 4 }"
-                    :label="field.label"
+                    :label="value.label"
                     style="width: 100%"
                   >
-                    <a-input allowClear v-model="queryParams[field.name]" />
+                    <a-input allowClear v-model="value.value" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -35,14 +35,14 @@
 
             <!-- TODO: 统一管理布局 -->
             <!-- TODO: 居中 span -->
-            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: 'translateY(6.5px)' } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
-              <template v-if="queryFields.length">
+            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: `translateY(${ hiddenOperation ? '0' : '6.5' }px)` } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+              <template v-if="queryParams.values.length">
                 <!-- FIXME: 查询接口入参错误 -->
                 <!-- FIXME: 查询匹配条件动态 -->
                 <a-button type="primary" @click="query">查询</a-button>
                 <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
               </template>
-              <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryFields.length > 2">
+              <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryParams.values.length > 2">
                 {{ advanced ? '收起' : '展开' }}
                 <a-icon :type="advanced ? 'up' : 'down'"/>
               </a>
@@ -50,10 +50,10 @@
           </a-form>
         </template>
 
-        <template #operation>
+        <template #operation v-if="!hiddenOperation">
           <a-button @click="add">新建</a-button>
           <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-          <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
           <a-button>数据检查</a-button>
         </template>
 
@@ -61,8 +61,9 @@
     </a-spin>
 
     <ResourceInstanceSchema
+      v-if="!hiddenOperation"
       ref="schema"
-      @addSuccess="() => { this.reset(); this.query() }"
+      @addSuccess="() => { this.query() }"
       @editSuccess="query"
     />
   </div>
@@ -71,10 +72,10 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import ResourceInstanceSchema from './ResourceInstanceSchema/index'
-// import { Ellipsis } from '@/components'
 import { InstanceService, ModelService } from '@/api-hasura/index'
-import { generateQuery } from '@/utils/graphql'
+import { generateJsonbQuery } from '@/utils/graphql'
 import _ from 'lodash'
+import deleteCheck from '@/components/DeleteCheck'
 
 const defaultColumns = [
   {
@@ -104,9 +105,9 @@ export default {
       type: String,
       default: ''
     },
-    // eslint-disable-next-line vue/require-default-prop
-    parentDid: {
-      type: Number
+    hiddenOperation: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -118,7 +119,9 @@ export default {
     advanced: false,
     loading: false,
     // 查询参数
-    queryParams: {},
+    queryParams: {
+      values: []
+    },
     // 选中行
     selectRows: [],
     // 选中行的 key
@@ -143,11 +146,6 @@ export default {
       get () {
         return this.columns.map(e => e.dataIndex)
       }
-    },
-    queryFields: {
-      get () {
-        return this.columns.filter(field => !!field.searchField)
-      }
     }
   },
   watch: {
@@ -164,7 +162,7 @@ export default {
   },
   methods: {
     add () {
-      const { parentName, parentTree } = this.where
+      const { parentName, parentTree } = this
       this.$refs['schema'].add(
         parentName,
         parentTree
@@ -176,6 +174,28 @@ export default {
       const { parentName, _id } = instance
       this.$refs['schema'].edit(parentName, _id)
     },
+    async batchDelete () {
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await InstanceService.batchDelete(this.selectedRowKeys)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        await this.$refs['table'].refresh(false)
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
+    },
     /**
      * 加载表格数据
      * @param {Object} parameter CTable 回传的分页与排序条件
@@ -184,10 +204,17 @@ export default {
     async loadData (parameter) {
       this.selectedRowKeys = []
       this.selectedRows = []
-      return InstanceService.find({
+
+      console.log(generateJsonbQuery(_.pick(this.queryParams, ['values'])))
+
+      return InstanceService.list({
         where: {
           ...this.where,
-          ...generateQuery(this.queryParams)
+          ..._.omit(this.queryParams, ['values']),
+          ...generateJsonbQuery(_.pick(this.queryParams, ['values']))
+          // values:
+          // values: _.pickBy(this.queryParams, v => !!v)
+          // ...generateQuery(this.queryParams)
         },
         fields: [
           '_id',
@@ -222,7 +249,11 @@ export default {
           dataIndex: name,
           // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
           width: column.width ? column.width + 60 : 120,
-          customRender: (text, record) => _.get(record, `values.${column.name}`),
+          customRender: (text, record) => {
+            const value = _.get(record, `values.${column.name}`)
+            // 数据表存储为 jsonb 类型，可能存储了 true、false 等值，此处需要转换为 String 格式
+            return (value !== null && value !== undefined) ? `${value}` : ''
+          },
           ellipsis: true
         })))
         this.columns = columns
@@ -230,6 +261,9 @@ export default {
         this.columns = []
         throw e
       } finally {
+        this.queryParams.values = this.columns
+          .filter(field => !!field.searchField)
+          .map(({ matchType, label, name, dataType }) => ({ matchType, label, name, dataType }))
         this.loading = false
       }
     },

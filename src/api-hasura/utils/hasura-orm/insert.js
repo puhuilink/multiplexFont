@@ -1,4 +1,5 @@
 import Hasura from './hasura'
+// eslint-disable-next-line no-unused-vars
 import { stringify, hasRelation } from './helper'
 import { parse } from 'graphql'
 
@@ -18,7 +19,11 @@ export default class Insert extends Hasura {
     if (!args.on_conflict || !args.objects) {
       this._batch = true
     }
-    this._object += stringify(hasRelation(args), !this._batch) + ' , '
+    this._object += stringify(
+      args,
+      // hasRelation(args),
+      !this._batch
+    ) + ' , '
     return this
   }
 

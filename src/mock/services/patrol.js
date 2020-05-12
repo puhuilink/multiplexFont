@@ -1,7 +1,7 @@
 import Mock from 'mockjs2'
 import { builder, getQueryParameters } from '../util'
 
-// 巡检日历模拟数据
+// 巡更日历模拟数据
 const calendarList = () => {
   const result = []
   result.push(Mock.mock({
@@ -10,7 +10,7 @@ const calendarList = () => {
         'taskTime|+1': [
           ' 7:30', '8:30'
         ],
-        'taskName|1': ['北京日常巡检', '厦门日常巡检'],
+        'taskName|1': ['北京日常巡更', '厦门日常巡更'],
         'transactorName|+1': ['王彦伟', '李明君'],
         'taskStatus|+1': ['A', 'B', 'C', 'D']
       }
@@ -41,7 +41,7 @@ const routeList = (options) => {
       no: 'No ' + tmpKey,
       editable: false,
       'wayName|1': [
-        '厦门', '厦门巡检路线', '北京-实际路线-对象'
+        '厦门', '厦门巡更路线', '北京-实际路线-对象'
       ],
       'checkArea|1': [
         '北京机房', '厦门机房'
@@ -85,7 +85,7 @@ const planList = (options) => {
       no: 'No ' + tmpKey,
       editable: false,
       'planName|1': [
-        '2020年度', '厦门巡检'
+        '2020年度', '厦门巡更'
       ],
       'checkArea|1': [
         '北京机房', '厦门机房'
@@ -98,7 +98,7 @@ const planList = (options) => {
         '北京监控组', '厦门监控组'
       ],
       'planType|1': [
-        '例行巡检'
+        '例行巡更'
       ],
       'useing|1': [
         '0', '1'
@@ -137,7 +137,7 @@ const taskList = (options) => {
       no: 'No ' + tmpKey,
       editable: false,
       'taskName|1': [
-        '2020年度', '厦门巡检'
+        '2020年度', '厦门巡更'
       ],
       'checkArea|1': [
         '北京机房', '厦门机房'
@@ -148,7 +148,7 @@ const taskList = (options) => {
         '0', '1', '2', '3', '4'
       ],
       'taskType|1': [
-        '例行巡检'
+        '例行巡更'
       ],
       'abnormal|1': [
         '0', '1'

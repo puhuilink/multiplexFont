@@ -1,6 +1,8 @@
 import { BaseService } from './BaseService'
 import { InstanceDao, RelationInstanceDao } from '../dao/index'
-import { query } from '../utils/hasura-orm/index'
+import { query, mutate } from '../utils/hasura-orm/index'
+import _ from 'lodash'
+import axios from 'axios'
 
 class InstanceService extends BaseService {
   static async find (argus = {}) {
@@ -8,6 +10,10 @@ class InstanceService extends BaseService {
       InstanceDao.find(argus)
     )
     return res
+  }
+
+  static async update (instance = {}, where = {}) {
+    await InstanceDao.update(instance, where)
   }
 
   /**
@@ -37,7 +43,9 @@ class InstanceService extends BaseService {
         },
         fields: [
           '_id',
-          'target'
+          'target',
+          'source',
+          'name'
         ],
         alias: 'pointOutInstanceList'
       }),
@@ -48,7 +56,9 @@ class InstanceService extends BaseService {
         },
         fields: [
           '_id',
-          'source'
+          'source',
+          'target',
+          'name'
         ],
         alias: 'pointInInstanceList'
       })
@@ -62,6 +72,83 @@ class InstanceService extends BaseService {
     console.log(instance)
 
     return instance
+  }
+
+  /**
+   * @param {*} argus 同 find
+   */
+  static async list (argus = {}) {
+    const { values, parentName } = argus.where
+
+    if (values && !_.isEmpty(values)) {
+      const sql = `
+      SELECT
+        "_id"
+      FROM 
+        t_cmdb_instance AS T 
+      WHERE
+        "parentName" = '${parentName._eq}'
+      AND
+        ${values}
+      `
+
+      console.log(sql)
+
+      const { data: { result } } = await axios({
+        url: '/main/v1/query',
+        method: 'POST',
+        data: {
+          'type': 'run_sql',
+          'args': {
+            'sql': sql
+          }
+        },
+        headers: {
+          'x-hasura-admin-secret': 'zhongjiao'
+        }
+      })
+
+      // 第一个为查询的字段集合？
+      result.shift()
+
+      const res = await this.find({
+        ...argus,
+        where: {
+          _and: {
+            ..._.omit(argus.where, 'values'),
+            _id: {
+              _in: result.flat()
+            }
+          }
+        }
+      })
+
+      return res
+    } else {
+      const res = await this.find({
+        ...argus,
+        where: _.omit(argus.where, ['values'])
+      })
+      return res
+    }
+  }
+
+  static async add (argus = {}) {
+    // await mutate(
+    //   InstanceDao.add(argus)
+    // )
+    await InstanceDao.add(argus)
+  }
+
+  static async batchDelete (idList = []) {
+    await mutate(
+      InstanceDao.batchDelete({
+        _id: {
+          _in: idList
+        }
+      })
+      // TODO: 日志与历史版本
+    )
   }
 }
 

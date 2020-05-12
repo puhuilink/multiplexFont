@@ -15,21 +15,16 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡检区域"
+                  label="巡更区域"
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset:2 }"
                   style="width: 100%">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.ascription"
+                  <a-cascader
+                    style="width: 100%"
                     placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option
-                      v-for="item in ascriptionList"
-                      :key="item.code"
-                    >{{ item.name }}</a-select-option>
-                  </a-select>
+                    :options="screening.ascriptionList"
+                    v-model="queryParam.ascription"
+                  />
                 </a-form-item>
               </a-col>
 
@@ -60,7 +55,7 @@
                       default-value=""
                     >
                       <a-select-option
-                        v-for="item in enableList"
+                        v-for="item in screening.enableList"
                         :key="item.code"
                       >{{ item.name }}</a-select-option>
                     </a-select>
@@ -68,7 +63,7 @@
                 </a-col>
                 <a-col :md="12" :sm="24">
                   <a-form-item
-                    label="巡检日期范围"
+                    label="巡更日期范围"
                     :labelCol="{ span: 4 }"
                     :wrapperCol="{ span: 14, offset:2 }"
                     style="width: 100%">
@@ -122,6 +117,7 @@ import { getPatrolObjectExcel } from '@/api/controller/ExcelExport'
 import { getTaskCiList } from '@/api/controller/patrol'
 import detail from '../modules/PODetail'
 import kpi from '../modules/KpiList'
+import screening from '../screening'
 
 export default {
   name: 'PatrolObject',
@@ -134,28 +130,8 @@ export default {
   data () {
     return {
       // 搜索： 展开/关闭
+      screening,
       advanced: false,
-      // TODO:数据来源不清晰，暂做静态处理
-      ascriptionList: [
-        {
-          code: 'MachineRoom-BJ',
-          name: '北京机房'
-        },
-        {
-          code: 'MachineRoom-XM',
-          name: '厦门机房'
-        }
-      ],
-      enableList: [
-        {
-          code: 0,
-          name: '否'
-        },
-        {
-          code: 1,
-          name: '是'
-        }
-      ],
       taskStateList: [
         {
           value: '0',
@@ -192,11 +168,11 @@ export default {
           width: 100
         },
         {
-          title: '巡检区域',
+          title: '巡更区域',
           dataIndex: 'ascription',
           width: 120,
           customRender: (text) => {
-            this.ascriptionList.forEach(element => {
+            this.screening.ascriptionList.forEach(element => {
               if (element.code === text) {
                 text = element.name
               }
@@ -266,7 +242,7 @@ export default {
           where: {
             ...this.queryParam.ascription ? {
               ascription: {
-                _eq: this.queryParam.ascription
+                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
               }
             } : {},
             ...this.queryParam.is_enable ? {
@@ -343,7 +319,7 @@ export default {
       this.selectedRows = selectedRows
     },
     /**
-     * 巡检日期范围改变
+     * 巡更日期范围改变
      */
     doDateChange (date, dateStr) {
       this.queryParam.dateStr = dateStr
@@ -367,7 +343,7 @@ export default {
      */
     async  exportExcel (e) {
       const file = await getPatrolObjectExcel(e)
-      this.downloadFile(file, '巡检检查对象列表')
+      this.downloadFile(file, '巡更检查对象列表')
     },
     downloadFile (file, filename = '') {
       const blob = new Blob(

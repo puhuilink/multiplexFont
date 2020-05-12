@@ -1,99 +1,38 @@
-<template>
-  <a-modal
-    centered
-    destroyOnClose
-    :confirmLoading="submitLoading"
-    :title="title"
-    v-model="visible"
-    :width="940"
-    wrapClassName="ResourceInstanceSchema__modal"
-    @cancel="cancel"
-    :afterClose="reset"
-    okText="保存"
-    @ok="submit"
-    cancelText="取消"
-  >
-    <a-spin :spinning="spinning" v-if="visible">
-      <a-tabs defaultActiveKey="1">
-
-        <a-tab-pane tab="基本信息" key="1">
-          <DynamicForm ref="attrFormWrapper" :fields="attributes" />
-        </a-tab-pane>
-
-        <a-tab-pane tab="关系信息" key="2" forceRender v-if="hasPointOutInstanceList">
-          <DynamicForm ref="relationAttrFormWrapper" :fields="relationAttributeList" />
-        </a-tab-pane>
-
-        <a-tab-pane tab="指入关系" key="3" forceRender v-if="hasPointInInstanceList">
-          <CiPointInList :pointInInstanceList="instance.pointInInstanceList" />
-        </a-tab-pane>
-
-        <a-tab-pane tab="关系拓扑图" key="4" forceRender v-if="hasTopologicalGraph">
-          <CiTopologicalGraph :instance="instance" />
-        </a-tab-pane>
-
-      </a-tabs>
-    </a-spin>
-  </a-modal>
-</template>
-
 <script>
-/* eslint-disable no-unused-vars */
-import { editInstance, addInstance } from '@/api/controller/Instance'
+import Edit from './Edit'
+import Add from './Add'
 import {
   InstanceService,
-  ModelService,
-  RelationAttributeService,
-  RelationInstanceService
+  ModelService
 } from '@/api-hasura/index'
-import DynamicForm from '../../Utils/DynamicForm'
 import _ from 'lodash'
-import Timeout from 'await-timeout'
-import CiPointInList from './modules/CiPointInList'
-import CiTopologicalGraph from './modules/CiTopologicalGraph'
 
 export default {
   name: 'ResourceInstanceSchema',
-  components: {
-    DynamicForm,
-    CiPointInList,
-    CiTopologicalGraph
-  },
+  components: {},
   props: {},
   data: (vm) => ({
     // 资源实例属性
     attributes: [],
     // 资源实例关系属性
-    relationAttributeList: [],
+    relationAttributes: [],
     // 提交按钮 loading
     submitLoading: false,
     // 主区域 loading
     spinning: false,
     // 编辑状态下资源实例数据
     instance: null,
-    // modal submit 回调
-    submit: () => {},
+    // enum { add, edit }
+    mode: 'add',
     // modal 标题
     title: '',
     // modal visible
-    visible: false
+    visible: false,
+    parentName: '',
+    parentTree: '',
+    _id: ''
   }),
-  computed: {
-    hasPointOutInstanceList () {
-      const { relationAttributeList } = this
-      return relationAttributeList.length
-    },
-    // 只在编辑时展示（可读）
-    hasPointInInstanceList () {
-      const { instance } = this
-      return instance && instance.pointInInstanceList.length
-    },
-    // 只在编辑时展示（可读）
-    hasTopologicalGraph () {
-      const { hasPointInInstanceList, hasPointOutInstanceList } = this
-      return hasPointInInstanceList || hasPointOutInstanceList
-    }
-  },
+  computed: {},
   methods: {
     /**
      * 加载实例的属性与关系属性（继承自模型）
@@ -103,34 +42,14 @@ export default {
     async loadAttributes (parentName, parentTree) {
       try {
         this.spinning = true
-        const { data: { modelList } } = await ModelService.find({
-          where: {
-            name: parentName
-          },
-          fields: [
-            'attributes',
-            `relationAttributeList {
-              _id,
-              label
-              name,
-              defaultValue
-              allowNull
-              mappingType
-              sourceValue
-              target
-            }`
-          ],
-          alias: 'modelList'
-        })
-        // name 是唯一字段，查询出的 model 是长度为1的数组
-        const [model] = modelList
-        const { attributes, relationAttributeList } = model
+        const { attributes, relationAttributes } = await ModelService.attrInfo(parentName)
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
+        this.relationAttributes = relationAttributes
+        this.relationAttributes.length && await this.loadRelationTargetList()
         // FIXME: 关系信息 tab 页签闪烁
-        this.relationAttributeList = relationAttributeList
-        this.relationAttributeList.length && await this.loadRelationTargetList()
       } catch (e) {
-        this.relationAttributeList = []
+        this.attributes = []
+        this.relationAttributes = []
         throw e
       } finally {
         this.spinning = false
@@ -141,9 +60,8 @@ export default {
      * @return {Promise<any>}
      */
     async loadRelationTargetList () {
-      const { relationAttributeList } = this
-      const modelList = relationAttributeList.map(({ target }) => target)
-      console.log(modelList)
+      const { relationAttributes } = this
+      const modelList = relationAttributes.map(({ target }) => target)
       try {
         const { data: { targetList } } = await ModelService.find({
           where: {
@@ -161,71 +79,24 @@ export default {
           ],
           alias: 'targetList'
         })
-        relationAttributeList.forEach((attribute, index) => {
+        relationAttributes.forEach((attribute, index) => {
           Object.assign(attribute, {
             // 为 DynamicForm / DynamicFormItem 保持一致入参
             selectGroupList: targetList[index] ? [targetList[index]] : [],
             displayType: 'SELECTED'
           })
         })
-        // console.log(relationAttributeList)
-        this.relationAttributeList = relationAttributeList
+        this.relationAttributes = relationAttributes
       } catch (e) {
+        this.relationAttributes = []
         throw e
       }
-    },
-    /**
-     * 加载实例详情
-     * @param {String} _id 实例 id
-     * @return {Promise<any>}
-     */
-    async loadData (_id) {
-      try {
-        this.instance = await InstanceService.detail(_id)
-        this.setFormValue()
-      } catch (e) {
-        this.instance = null
-        throw e
-      }
-    },
-    async setFormValue () {
-      const {
-        instance: {
-          values,
-          pointInInstanceList,
-          pointOutInstanceList
-        },
-        attributes,
-        relationAttributeList
-      } = this
-
-      const { attrFormWrapper, relationAttrFormWrapper } = this.$refs
-
-      // 模型属性
-      const attrNameList = attributes.map(({ name }) => name)
-      // console.log(_.pick(values, [...attrNameList]))
-      // 等待 form 挂载
-      await this.$nextTick()
-      // TODO: 如果将 form 直接由当前组件生成，可能要用到 wrappedComponentRef
-      // attrFormWrapper && attrFormWrapper.setFieldsValue(_.pick(values, [...attrNameList]))
-      attrFormWrapper && attrFormWrapper.form.setFieldsValue(_.pick(values, [...attrNameList]))
-
-      // 关系属性
-      const relationAttrNameList = relationAttributeList.map(({ name }) => name)
-      // console.log(_.pick(pointOutInstanceList, [...relationAttrNameList]))
-      relationAttrFormWrapper && relationAttrFormWrapper.form.setFieldsValue(_.pick(pointOutInstanceList, [...relationAttrNameList]))
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
-      })
     },
     async add (parentName, parentTree) {
+      this.mode = 'add'
       this.title = '新增'
       this.visible = true
-      this.submit = this.insert
+      // this.submit = this.insert
       this.parentName = parentName
       this.parentTree = parentTree
       await Promise.all([
@@ -240,68 +111,130 @@ export default {
      * @return {Promise<Undefined>}
      */
     async edit (parentName, _id) {
+      this.mode = 'edit'
       this.title = '编辑'
-      this.submit = this.update
+      // this.submit = this.update
       this.visible = true
+      this._id = _id
       await Promise.all([
         this.loadAttributes(parentName),
         this.loadData(_id)
       ])
-      await this.$nextTick()
-      const keys = this.attributes.map(attribute => attribute.name)
-      await Timeout.set()
-      // this.form.setFieldsValue(_.pick(this.instance.values, [...keys]))
     },
     cancel () {
       this.visible = false
     },
     /**
-     * 新增
+     * 加载实例详情
+     * @param {String} _id 实例 id
+     * @return {Promise<any>}
      */
-    async insert () {
-      let value = await this.getFormFields()
-      value = {
-        ...value,
-        'parentname_s': this.parentName,
-        'parenttree_s': this.parentTree
+    async loadData (_id) {
+      try {
+        this.instance = await InstanceService.detail(_id)
+        // this.setFormValue()
+      } catch (e) {
+        this.instance = null
+        throw e
       }
-      this.submitLoading = true
-      return addInstance(value).then(res => {
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.$emit('addSuccess')
-        this.cancel()
-      }).catch(err => {
-        throw err
-      }).finally(() => {
-        this.submitLoading = false
-      })
-    },
-    /**
-     * 编辑
-     */
-    async update () {
-      const value = await this.getFormFields()
-      this.submitLoading = true
-      return editInstance(this.instance.did, value).then(res => {
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.$emit('editSuccess')
-        this.cancel()
-      }).catch(err => {
-        throw err
-      }).finally(() => {
-        this.submitLoading = false
-      })
     },
     reset () {
       // 表单元素会在 destroyOnClose 时重置
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    async submit () {
+      this.$refs['form'].submit(async (err, values) => {
+        if (err) return
+        console.log(values)
+        // return
+        // eslint-disable-next-line no-unreachable
+        try {
+          this.submitLoading = true
+          const { insert, update } = this
+          await (this.title === '新增' ? insert(values) : update(values))
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
+    },
+    async insert (values) {
+      try {
+        const { parentName, parentTree } = this
+        await InstanceService.add({
+          values,
+          parentName,
+          parentTree
+        })
+        this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '新建成功'
+        })
+      } catch (e) {
+        throw e
+      }
+    },
+    async update (values) {
+      try {
+        const { _id } = this
+        await InstanceService.update({
+          values,
+          _id
+        }, { _id: { _eq: _id } })
+        this.$emit('addSuccess')
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑成功'
+        })
+      } catch (e) {
+        throw e
+      }
     }
+  },
+  render (h) {
+    const {
+      cancel, reset, submitLoading, spinning, submit, title, visible,
+      instance,
+      attributes: attributeList,
+      relationAttributes: relationAttributeList
+    } = this
+
+    return (
+      <a-modal
+        afterClose={reset}
+        cancelText="取消"
+        confirmLoading={submitLoading}
+        centered
+        destroyOnClose
+        okText="保存"
+        title={title}
+        visible={visible}
+        width={940}
+        wrapClassName="ResourceInstanceSchema__modal"
+        onCancel={cancel}
+        onOk={submit}
+      >
+        <a-spin spinning={spinning}>
+          {
+            h(title === '新增' ? Add : Edit, {
+              props: {
+                attributeList,
+                relationAttributeList,
+                instance
+              },
+              ref: 'form'
+            })
+          }
+        </a-spin>
+      </a-modal>
+    )
   }
 }
 </script>

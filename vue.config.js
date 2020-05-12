@@ -107,7 +107,7 @@ const vueConfig = {
       },
       // 登录及权限
       '/api': {
-        target: 'http://10.1.8.176:28081/',
+        target: 'http://10.1.8.178:31685/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {

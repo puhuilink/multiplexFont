@@ -18,11 +18,11 @@
       <transition name="panel">
         <div class="left" v-show="leftPanelExpand">
           <a-tabs defaultActiveKey="3">
-            <a-tab-pane tab="组件库" key="1">
+            <a-tab-pane tab="组件库" key="1" forceRender>
               <Template />
             </a-tab-pane>
             <!--            <a-tab-pane tab="视图" key="2"></a-tab-pane>-->
-            <a-tab-pane tab="CI" key="3">
+            <a-tab-pane tab="CI" key="3" forceRender>
               <Ci />
             </a-tab-pane>
           </a-tabs>
