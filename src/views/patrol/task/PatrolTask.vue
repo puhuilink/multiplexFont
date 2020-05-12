@@ -7,6 +7,7 @@
       :columns="columns"
       :data="loadData"
       :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
+      :customRow="customRow"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <template #query>
@@ -173,15 +174,9 @@
       </template>
 
       <template #operation>
-        <!-- <a-button
-          :disabled="selectedRowKeys.length !== 1"
-          @click="seeDetail"
-        >
-          查看
-        </a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button> -->
         <a-button
           :disabled="selectedRowKeys.length !== 1"
+          @click="seeDetail"
         >
           查看
         </a-button>
@@ -463,8 +458,8 @@ export default {
     customRow (record, index) {
       return {
         on: {
-          click: () => {
-            console.log(record, index)
+          dblclick: () => {
+            this.$refs['detail'].open(record)
           }
         }
       }

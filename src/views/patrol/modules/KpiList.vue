@@ -4,7 +4,7 @@
       :title="record=={} ? record.ci_name + '检查项详情' : ''"
       style="top: 40px;"
       :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
-      :width="900"
+      :width="600"
       :visible="visible"
       :loading="loading"
       destroyOnClose
@@ -83,7 +83,7 @@ export default {
         }
       }
       getTaskKpi(variables).then(r => {
-        this.innerData = r.data.task_kpi
+        this.innerData = r.data.t_xj_task_kpi
       })
     }
   }

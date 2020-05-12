@@ -7,6 +7,7 @@ import {
   queryTaskInfo,
   queryTaskCiList,
   queryTaskKpi,
+  queryTaskPointDetail,
   updatePlan,
   deleteRouteArr,
   deletePlanArr
@@ -69,6 +70,15 @@ export const getTaskCiList = function (variables = {}) {
 export const getTaskKpi = function (variables = {}) {
   return apollo.clients.alert.query({
     query: queryTaskKpi,
+    variables: {
+      ...variables
+    }
+  })
+}
+
+export const getTaskPointDetail = function (variables = {}) {
+  return apollo.clients.alert.query({
+    query: queryTaskPointDetail,
     variables: {
       ...variables
     }
