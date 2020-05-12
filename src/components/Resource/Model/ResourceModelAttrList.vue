@@ -60,23 +60,11 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
-
-const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
-  delete_ngecc_model_attributes (where: {
-    rid: {
-      _in: $rids
-    }
-  }) {
-    affected_rows
-  }
-}`
 
 export default {
   name: 'ResourceModelAttrList',
@@ -206,21 +194,23 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await apollo.clients.resource.mutate({
-          mutation: deleteAttrs,
-          variables: {
-            rids: [
-              ...this.selectedRowKeys
-            ]
+        const {
+          selectedRowKeys: attrNameList,
+          where: {
+            name: modelName
           }
-        })
+        } = this
+        await ModelService.batchDeleteAttr(modelName, attrNameList)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.$refs['table'].loading = false

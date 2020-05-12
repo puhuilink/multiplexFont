@@ -146,7 +146,7 @@ class ModelService extends BaseService {
     }
   }
 
-  static async delete (nameList = []) {
+  static async batchDelete (nameList = []) {
     // 模型下挂载的实例节点
     const { data: { instanceList } } = await query(
       InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['name'], alias: 'instanceList' })
@@ -170,6 +170,45 @@ class ModelService extends BaseService {
     )
 
     // TODO: 日志与版本
+  }
+
+  static async batchDeleteAttr (modelName, attrNameList = []) {
+    const sql = `
+      UPDATE
+        t_cmdb_model
+      SET
+        attributes = (
+          SELECT COALESCE(
+            (SELECT
+              jsonb_agg(elements.value) AS attributes
+            FROM
+                t_cmdb_model,
+                jsonb_array_elements(attributes) AS elements
+            WHERE 
+              name = '${modelName}'
+            AND
+              elements.value ->> 'name' NOT IN (${attrNameList.map(attrName => `'${attrName}'`).join(', ')})
+            GROUP BY _id),
+            '[]'
+          )
+        )
+      WHERE
+        name = '${modelName}'
+    `
+
+    await axios({
+      url: '/main/v1/query',
+      method: 'POST',
+      data: {
+        'type': 'run_sql',
+        'args': {
+          'sql': sql
+        }
+      },
+      headers: {
+        'x-hasura-admin-secret': 'zhongjiao'
+      }
+    })
   }
 }
 

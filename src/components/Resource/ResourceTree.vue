@@ -215,7 +215,7 @@ export default {
         // TODO: 删除接口
         // 删除成功重置
         const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        await ModelService.delete(nameList)
+        await ModelService.batchDelete(nameList)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
