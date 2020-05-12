@@ -13,9 +13,7 @@ class InstanceService extends BaseService {
   }
 
   static async update (instance = {}, where = {}) {
-    await mutate(
-      InstanceDao.update(instance, where)
-    )
+    await InstanceDao.update(instance, where)
   }
 
   /**
@@ -136,9 +134,10 @@ class InstanceService extends BaseService {
   }
 
   static async add (argus = {}) {
-    await mutate(
-      InstanceDao.add(argus)
-    )
+    // await mutate(
+    //   InstanceDao.add(argus)
+    // )
+    await InstanceDao.add(argus)
   }
 
   static async batchDelete (idList = []) {

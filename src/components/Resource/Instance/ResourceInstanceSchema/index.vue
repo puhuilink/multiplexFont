@@ -187,7 +187,7 @@ export default {
         await InstanceService.update({
           values,
           _id
-        }, { _id })
+        }, { _id: { _eq: _id } })
         this.$emit('addSuccess')
         this.$notification.success({
           message: '系统提示',
