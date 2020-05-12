@@ -215,12 +215,13 @@ export default {
         // TODO: 删除接口
         // 删除成功重置
         const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
-        await ModelService.delete(nameList)
-        this.selectedKey = ''
+        await ModelService.batchDelete(nameList)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
+        this.selectedKey = ''
+        this.$emit('selectNode', null)
         await this.fetch()
       } catch (e) {
         throw e
@@ -245,6 +246,7 @@ export default {
       if (selected) {
         this.selectedKey = selectedKey
         const dataRef = selectedNode.data.props.dataRef
+        console.log(dataRef)
         this.$emit('selectNode', {
           'label': dataRef.label_s,
           'name': dataRef.name,

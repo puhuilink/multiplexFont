@@ -1,9 +1,9 @@
 /*
- * 巡检任务单 详情
+ * 巡更任务单 详情
  */
 <template>
   <a-modal
-    title="巡检检查对象详情"
+    title="巡更检查对象详情"
     style="top: 40px;"
     :bodyStyle="{ maxHeight:'550px', overflow: 'auto'}"
     :width="900"
@@ -13,7 +13,7 @@
     @cancel="handleCancel"
   >
     <template>
-      巡检检查对象
+      巡更检查对象
     </template>
 
     <template slot="footer" >

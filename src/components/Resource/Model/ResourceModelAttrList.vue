@@ -60,23 +60,11 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import ResourceModelAttrSchema from './ResourceModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
-
-const deleteAttrs = gql`mutation ($rids: [Int!] = []) {
-  delete_ngecc_model_attributes (where: {
-    rid: {
-      _in: $rids
-    }
-  }) {
-    affected_rows
-  }
-}`
 
 export default {
   name: 'ResourceModelAttrList',
@@ -126,7 +114,7 @@ export default {
           },
           {
             title: '数据类型',
-            dataIndex: 'dataType',
+            dataIndex: 'datatype',
             sorter: true,
             width: 120
           },
@@ -169,11 +157,77 @@ export default {
             customRender: val => val ? '是' : '否'
           },
           {
-            title: '隐藏',
+            title: '继承至',
             dataIndex: 'hidden',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '隐藏',
+            dataIndex: 'hidden',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '不可编辑',
+            dataIndex: 'edit_b',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '所属分组',
+            dataIndex: 'tabGroup',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '默认值',
+            dataIndex: 'defaultValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '源值',
+            dataIndex: 'sourceValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '运算值',
+            dataIndex: 'operationValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '排序',
+            dataIndex: 'order',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '唯一验证',
+            dataIndex: 'uniqueness',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '唯一范围',
+            dataIndex: 'uniquenessScope',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '正则验证',
+            dataIndex: 'matchType',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '提示信息',
+            dataIndex: 'alertmessage',
+            sorter: true,
+            width: 180
           }
         ]
       }
@@ -206,21 +260,23 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await apollo.clients.resource.mutate({
-          mutation: deleteAttrs,
-          variables: {
-            rids: [
-              ...this.selectedRowKeys
-            ]
+        const {
+          selectedRowKeys: attrNameList,
+          where: {
+            name: modelName
           }
-        })
+        } = this
+        await ModelService.batchDeleteAttr(modelName, attrNameList)
         this.$notification.success({
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
         this.$refs['table'].refresh(false)
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
         throw e
       } finally {
         this.$refs['table'].loading = false

@@ -82,7 +82,7 @@ const clientList = linkList.map(link => new ApolloClient({
 
 // 缓存
 // 告警
-// 巡检
+// 巡更
 // 资源
 const [cache, alert, patrol, resource] = clientList
 

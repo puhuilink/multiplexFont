@@ -443,7 +443,6 @@
 </template>
 
 <script>
-import { updateModelAttr } from '@/api/controller/ModelAttr'
 import { ModelService } from '@/api-hasura/index'
 
 const formItemLayout = {
@@ -595,46 +594,57 @@ export default {
      * 新增
      */
     async insert () {
-      const value = await this.getFormFields()
-      this.loading = true
-      return ModelService.addAttr(value, this.where).then(res => {
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.$emit('addSuccess')
-        this.cancel()
-      }).catch(err => {
-        throw err
-      }).finally(() => {
-        this.loading = false
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await ModelService.addAttr(values, this.where)
+          this.$emit('addSuccess')
+          this.$notification.success({
+            message: '系统提示',
+            description: '成功'
+          })
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
       })
     },
     /**
      * 编辑
      */
     async update () {
-      const value = await this.getFormFields()
-      this.loading = true
-      return updateModelAttr(this.record.rid, value)
-        .then(res => {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        const {
+          where: {
+            name: modelName
+          }
+        } = this
+        try {
+          this.loading = true
+          await ModelService.updateAttr(modelName, values)
+          this.$emit('editSuccess')
           this.$notification.success({
             message: '系统提示',
             description: '编辑成功'
           })
-          this.$emit('editSuccess')
           this.cancel()
-        }).catch(err => {
-          throw err
-        }).finally(() => {
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
           this.loading = false
-        })
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
+        }
       })
     },
     reset () {
