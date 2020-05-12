@@ -19,17 +19,12 @@
                   :labelCol="{ span: 4 }"
                   :wrapperCol="{ span: 14, offset:2 }"
                   style="width: 100%">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.ascription"
+                  <a-cascader
+                    style="width: 100%"
                     placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option
-                      v-for="item in ascriptionList"
-                      :key="item.code"
-                    >{{ item.name }}</a-select-option>
-                  </a-select>
+                    :options="screening.ascriptionList"
+                    v-model="queryParam.ascription"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -78,7 +73,7 @@
                       default-value=""
                     >
                       <a-select-option
-                        v-for="item in planTypeList"
+                        v-for="item in screening.planTypeList"
                         :key="item.code"
                       >{{ item.name }}</a-select-option>
                     </a-select>
@@ -97,7 +92,7 @@
                       default-value=""
                     >
                       <a-select-option
-                        v-for="item in enableList"
+                        v-for="item in screening.enableList"
                         :key="item.code"
                       >{{ item.name }}</a-select-option>
                     </a-select>
@@ -139,22 +134,10 @@
       </template>
 
       <template #operation>
-        <!-- <a-button @click="add">新建</a-button>
+        <a-button @click="add">新建</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="edit"
-        >
-          编辑
-        </a-button>
-        <a-button
-          :disabled="selectedRowKeys.length == 0"
-          @click="deleteCtrl"
-        >
-          删除
-        </a-button> -->
-        <a-button >新建</a-button>
-        <a-button
-          :disabled="selectedRowKeys.length !== 1"
         >
           编辑
         </a-button>
@@ -170,6 +153,8 @@
         <ellipsis :length="15" tooltip>{{ text }}</ellipsis>
       </span>
     </CTable>
+
+    <detail ref="detail"></detail>
   </div>
 </template>
 
@@ -179,6 +164,7 @@ import CTable from '@/components/Table/CTable'
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/PMDetail'
 import { getPlanList, deletePlan, getUserGroupList } from '@/api/controller/patrol'
+import screening from '../screening'
 
 export default {
   name: 'Plan',
@@ -189,42 +175,10 @@ export default {
   },
   data () {
     return {
-      // 搜索： 展开/关闭
+      screening,
       advanced: false,
       // 查询参数
       queryParam: {},
-      // TODO:数据来源不清晰，暂做静态处理
-      ascriptionList: [
-        {
-          code: 'MachineRoom-BJ',
-          name: '北京机房'
-        },
-        {
-          code: 'MachineRoom-XM',
-          name: '厦门机房'
-        }
-      ],
-      planTypeList: [
-        {
-          code: 'A',
-          name: '例行巡更'
-        },
-        {
-          code: 'B',
-          name: '临时巡更'
-        }
-      ],
-      enableList: [
-        {
-          code: 0,
-          name: '否'
-        },
-        {
-          code: 1,
-          name: '是'
-        }
-      ],
-      // 告警列表表头
       columns: [
         {
           title: '巡更区域',
@@ -232,7 +186,7 @@ export default {
           width: 150,
           sorter: true,
           customRender: (text) => {
-            this.ascriptionList.forEach(element => {
+            this.screening.ascriptionList.forEach(element => {
               if (element.code === text) {
                 text = element.name
               }
@@ -263,11 +217,10 @@ export default {
         {
           title: '计划类型',
           dataIndex: 'plan_type',
-          align: 'center',
           width: 120,
           sorter: true,
           customRender: (text) => {
-            this.planTypeList.forEach(element => {
+            this.screening.planTypeList.forEach(element => {
               if (element.code === text) {
                 text = element.name
               }
@@ -278,11 +231,10 @@ export default {
         {
           title: '是否启用',
           dataIndex: 'is_enable',
-          align: 'center',
           width: 150,
           sorter: true,
           customRender: (text) => {
-            this.enableList.forEach(element => {
+            this.screening.enableList.forEach(element => {
               if (element.code === text) {
                 text = element.name
               }
@@ -315,7 +267,7 @@ export default {
           where: {
             ...this.queryParam.ascription ? {
               ascription: {
-                _eq: this.queryParam.ascription
+                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
               }
             } : {},
             ...this.queryParam.plan_name ? {
@@ -373,7 +325,6 @@ export default {
   methods: {
     async getGroupList () {
       await getUserGroupList().then(r => {
-        console.log(r.data)
         this.userGroupList = r.data.data
       })
     },
@@ -398,7 +349,7 @@ export default {
     edit () {
       // const [record] = this.selectedRows
       // this.$refs['detail'].edtt(record)
-      this.$refs.detail.open(this.selectedRows[0], 'Edit')
+      this.$refs['detail'].open(this.selectedRows[0], 'Edit')
     },
     /**
      * 查询
