@@ -6,7 +6,7 @@
         :data="loadData"
         :columns="columns"
         :rowKey="el => el._id"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
+        :rowSelection="hiddenOperation ? null : {selectedRowKeys: selectedRowKeys, onChange: selectRow}"
         :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
       >
 
@@ -133,12 +133,14 @@ export default {
     // TODO: td 溢出省略号或自动增长但与表头保持对齐
     scrollX: {
       get () {
-        if (_.isEmpty(this.columns)) {
+        const { hiddenOperation, columns } = this
+        if (_.isEmpty(columns)) {
           return true
         } else {
-          return this.columns
-            .map(e => e.width || 0)
-            .reduce((a, b) => a + b) + 36
+          // hiddenOperation 时不展示多选框
+          return columns
+            .map(e => e.width || 60)
+            .reduce((a, b) => a + b) + (hiddenOperation ? 0 : 36)
         }
       }
     },
