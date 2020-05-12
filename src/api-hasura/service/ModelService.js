@@ -75,6 +75,49 @@ class ModelService extends BaseService {
     )
   }
 
+  static async updateAttr (modelName, attr = {}) {
+    const { name: attrName } = attr
+    const sql = `
+      UPDATE 
+        t_cmdb_model t1 
+      SET 
+        attributes = jsonb_set (
+          attributes,
+          
+          ARRAY [ (
+            SELECT 
+              ORDINALITY::INT - 1 
+            FROM
+              t_cmdb_model t2,
+              jsonb_array_elements ( attributes ) WITH ORDINALITY 
+            WHERE
+              t1._id = t2._id
+            AND 
+              VALUE->> 'name' = '${attrName}' 
+            ) :: TEXT],
+            
+            '${JSON.stringify(attr)}' 
+        ) 
+      WHERE
+        name = '${modelName}'
+    `
+    // console.log(sql)
+
+    await axios({
+      url: '/main/v1/query',
+      method: 'POST',
+      data: {
+        'type': 'run_sql',
+        'args': {
+          'sql': sql
+        }
+      },
+      headers: {
+        'x-hasura-admin-secret': 'zhongjiao'
+      }
+    })
+  }
+
   static async find (argus = {}) {
     const res = await query(
       ModelDao.find(argus)
