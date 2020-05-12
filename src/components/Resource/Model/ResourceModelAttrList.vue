@@ -114,7 +114,7 @@ export default {
           },
           {
             title: '数据类型',
-            dataIndex: 'dataType',
+            dataIndex: 'datatype',
             sorter: true,
             width: 120
           },
@@ -157,11 +157,77 @@ export default {
             customRender: val => val ? '是' : '否'
           },
           {
-            title: '隐藏',
+            title: '继承至',
             dataIndex: 'hidden',
             sorter: true,
             width: 180,
             customRender: val => val ? '是' : '否'
+          },
+          {
+            title: '隐藏',
+            dataIndex: 'hidden',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '不可编辑',
+            dataIndex: 'edit_b',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '所属分组',
+            dataIndex: 'tabGroup',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '默认值',
+            dataIndex: 'defaultValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '源值',
+            dataIndex: 'sourceValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '运算值',
+            dataIndex: 'operationValue',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '排序',
+            dataIndex: 'order',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '唯一验证',
+            dataIndex: 'uniqueness',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '唯一范围',
+            dataIndex: 'uniquenessScope',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '正则验证',
+            dataIndex: 'matchType',
+            sorter: true,
+            width: 180
+          },
+          {
+            title: '提示信息',
+            dataIndex: 'alertmessage',
+            sorter: true,
+            width: 180
           }
         ]
       }
