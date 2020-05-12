@@ -1,5 +1,5 @@
 /*
- * 巡检  路线管理 新增/编辑
+ * 巡更  路线管理 新增/编辑
  */
 <template>
   <a-modal
@@ -20,14 +20,19 @@
           class=""
         >
           路线名称：
-          <a-input placeholder="请输入" style="width: 240px"/>
+          <a-input
+            v-model="record.route_name"
+            :disabled="mode=='See'"
+            placeholder="请输入"
+            style="width: 240px"
+          />
         </a-col>
-        <a-col
+        <!-- <a-col
           :xs="{ span: 8}"
           :lg="{ span: 8 }"
           class=""
         >
-          巡检区域：
+          巡更区域：
           <a-select
             allowClear
             style="width: 240px"
@@ -39,10 +44,10 @@
               :key="item.code"
             >{{ item.name }}</a-select-option>
           </a-select>
-        </a-col>
+        </a-col> -->
       </a-row>
 
-      <a-row :gutter="16" style="margin-top:20px">
+      <!-- <a-row :gutter="16" style="margin-top:20px">
         <a-col :span="8">
           <a-card title="点位" :bordered="true">
             <a-icon
@@ -70,7 +75,10 @@
             />
           </a-card>
         </a-col>
-      </a-row>
+      </a-row> -->
+
+      <a-divider>路线对象</a-divider>
+      <a-table v-if="mode!==''" :rowKey="kpi_id" :columns="columns" :data-source="routePointList" size="middle" />
 
       <a-divider>机房点位图</a-divider>
       <a-card :bordered="false" hoverable style="width: 90%; margin:auto;">
@@ -91,6 +99,7 @@
 </template>
 
 <script>
+import { getRoutePointDetail } from '@/api/controller/patrol'
 export default {
   name: 'RMDetail',
   data () {
@@ -108,6 +117,25 @@ export default {
           name: '厦门机房'
         }
       ],
+      columns: [
+        {
+          title: '检查点',
+          dataIndex: 'rf_name'
+        },
+        {
+          title: 'CI对象名称',
+          dataIndex: 'ci_name'
+        },
+        {
+          title: '检查项',
+          dataIndex: 'kpi_name'
+        },
+        {
+          title: '结果项',
+          dataIndex: 'urmp_kpi_type'
+        }
+      ],
+      routePointList: [],
       record: '',
       // 开启的父级操作来源
       mode: ''
@@ -125,8 +153,30 @@ export default {
     async open (record, mode) {
       this.visible = true
       this.record = record
-      console.log(record, mode)
+      this.getRoutePointList(record)
       this.mode = mode
+    },
+    getRoutePointList (record) {
+      const variables = {
+        routeCode: record.route_code
+      }
+      return getRoutePointDetail(variables).then(r => {
+        const pointList = r.data.kpiList
+        pointList.forEach(point => {
+          r.data.ciList.forEach(ci => {
+            if (ci.urmp_ci_code === point.urmp_ci_code) {
+              point.ci_name = ci.ci_name
+              point.urmp_rf_code = ci.urmp_rf_code
+            }
+          })
+          r.data.rfList.forEach(rf => {
+            if (rf.urmp_rf_code === point.urmp_rf_code) {
+              point.rf_name = rf.rf_name
+            }
+          })
+        })
+        this.routePointList = pointList
+      })
     },
     handleCancel (e) {
       console.log('Clicked cancel button')

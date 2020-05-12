@@ -17,7 +17,7 @@
           <a-row>
             <a-col :md="12" :span="24">
               <a-form-item
-                label="巡检填写类型"
+                label="巡更填写类型"
                 :label-col="formItemLayout.labelCol"
                 :wrapper-col="formItemLayout.wrapperCol"
               >
@@ -51,7 +51,7 @@
           <a-row>
             <a-col :md="12" :span="24">
               <a-form-item
-                label="是否巡检"
+                label="是否巡更"
                 :label-col="formItemLayout.labelCol"
                 :wrapper-col="formItemLayout.wrapperCol"
               >
