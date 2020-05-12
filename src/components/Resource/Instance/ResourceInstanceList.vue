@@ -53,7 +53,7 @@
         <template #operation v-if="!hiddenOperation">
           <a-button @click="add">新建</a-button>
           <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-          <a-button :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
           <a-button>数据检查</a-button>
         </template>
 
@@ -63,7 +63,7 @@
     <ResourceInstanceSchema
       v-if="!hiddenOperation"
       ref="schema"
-      @addSuccess="() => { this.reset(); this.query() }"
+      @addSuccess="() => { this.query() }"
       @editSuccess="query"
     />
   </div>
@@ -75,6 +75,7 @@ import ResourceInstanceSchema from './ResourceInstanceSchema/index'
 import { InstanceService, ModelService } from '@/api-hasura/index'
 import { generateJsonbQuery } from '@/utils/graphql'
 import _ from 'lodash'
+import deleteCheck from '@/components/DeleteCheck'
 
 const defaultColumns = [
   {
@@ -161,7 +162,7 @@ export default {
   },
   methods: {
     add () {
-      const { parentName, parentTree } = this.where
+      const { parentName, parentTree } = this
       this.$refs['schema'].add(
         parentName,
         parentTree
@@ -172,6 +173,28 @@ export default {
       const [instance] = this.selectRows
       const { parentName, _id } = instance
       this.$refs['schema'].edit(parentName, _id)
+    },
+    async batchDelete () {
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
+      try {
+        this.$refs['table'].loading = true
+        await InstanceService.batchDelete(this.selectedRowKeys)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+        await this.$refs['table'].refresh(false)
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: e } })
+        })
+        throw e
+      } finally {
+        this.$refs['table'].loading = false
+      }
     },
     /**
      * 加载表格数据

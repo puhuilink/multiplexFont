@@ -212,7 +212,7 @@ export default {
           await ModelService.add({
             ...values,
             parentName: this.parentName,
-            parentTree: this.parentTree
+            parentTree: `${this.parentTree}/`
           })
           this.$notification.success({
             message: '系统提示',

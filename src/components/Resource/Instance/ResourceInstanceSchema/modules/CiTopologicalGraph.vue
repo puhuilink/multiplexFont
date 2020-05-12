@@ -123,5 +123,7 @@ export default {
 </script>
 
 <style lang="less">
-
+.CiTopologicalGraph {
+  overflow: hidden;
+}
 </style>

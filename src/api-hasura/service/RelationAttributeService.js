@@ -21,6 +21,14 @@ class RelationAttributeService extends BaseService {
       RelationAttributeDao.update(set, where)
     )
   }
+
+  static async batchDelete (idList = []) {
+    await mutate(
+      // 关系属性删除
+      RelationAttributeDao.batchDelete({ _id: { _in: idList } })
+      // TODO: 实例的关系属性更新？
+    )
+  }
 }
 
 export {
