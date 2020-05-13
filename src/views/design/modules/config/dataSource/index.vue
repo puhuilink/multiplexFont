@@ -37,7 +37,9 @@
         <!-- 留给组件自己实现 -->
         <!-- <slot name="null" v-show="sourceType === 'null'"></slot> -->
         <!-- <slot name="static" v-show="sourceType === 'static'"></slot> -->
-        <slot name="real" v-show="sourceType === 'real'"></slot>
+        <div class="data-source__wrap">
+          <slot name="real" v-show="sourceType === 'real'"></slot>
+        </div>
       </a-collapse-panel>
 
       <!-- S 静态数据编辑 -->
@@ -155,7 +157,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .data-source {
 
   &__select {
@@ -164,6 +166,7 @@ export default {
 
   &__wrap {
     height: calc(100vh - 388px);
+    overflow-y: auto;
   }
 
   &__editor {
