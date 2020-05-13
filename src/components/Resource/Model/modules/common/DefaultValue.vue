@@ -7,7 +7,12 @@
       v-decorator="[
         'defaultValue',
         {
-          initialValue: ''
+          initialValue: '',
+          rules: [
+            {
+              max: 20,
+              message: '最多输入20个字符'
+            }]
         }
       ]"
     />

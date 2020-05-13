@@ -6,7 +6,17 @@
     <a-input
       v-decorator="[
         'label',
-        { rules: [{ required: true, message: '显示必填' }] },
+        { rules: [
+          {
+            required: true,
+            message: '显示名称必填'
+          },
+          {
+            max: 20,
+            message: '最多输入20个字符'
+          }
+        ]
+        },
       ]"
     />
   </a-form-item>

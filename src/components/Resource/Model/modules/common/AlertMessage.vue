@@ -8,7 +8,13 @@
         'alertmessage',
         {
           initialValue: '',
-        }
+          rules: [
+            {
+              max: 20,
+              message: '最多输入20个字符'
+            }
+          ]
+        },
       ]"
       v-bind="formChildProps"
     />

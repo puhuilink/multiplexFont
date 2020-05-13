@@ -6,6 +6,15 @@
     <a-input
       v-decorator="[
         'operationValue',
+        {
+          initialValue: '',
+          rules: [
+            {
+              max: 20,
+              message: '最多输入20个字符'
+            }
+          ]
+        }
       ]"
     />
   </a-form-item>
