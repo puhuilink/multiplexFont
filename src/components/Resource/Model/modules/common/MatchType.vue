@@ -5,8 +5,12 @@
   >
     <!-- :disabled="disabledMatchType" -->
     <a-select
+      v-bind="formChildProps"
       v-decorator="[
-        'matchType'
+        'matchType',
+        {
+          disabled: true
+        }
       ]"
     >
       <a-select-option
@@ -22,7 +26,7 @@
 import mixin from './mixin'
 
 export default {
-  name: 'Label',
+  name: 'MatchType',
   mixins: [mixin],
   data: () => ({
     options: {

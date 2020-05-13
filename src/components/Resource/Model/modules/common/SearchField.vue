@@ -4,6 +4,7 @@
     v-bind="formItemProps"
   >
     <a-checkbox
+      v-on="$listeners"
       v-decorator="[
         'searchField',
         {

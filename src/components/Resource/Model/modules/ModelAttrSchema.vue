@@ -25,6 +25,7 @@ import {
 } from './common/index'
 import mixin from './mixin'
 import _ from 'lodash'
+import Timeout from 'await-timeout'
 
 export default {
   name: 'ModelAttrScheme',
@@ -60,7 +61,9 @@ export default {
       }
       this.visible = true
       await this.$nextTick()
+      await Timeout.set(300)
       this.form.setFieldsValue(record)
+      this.searchFieldInput()
     },
     cancel () {
       this.visible = false
@@ -113,8 +116,8 @@ export default {
   },
   render () {
     const {
-      form, loading, title,
-      visible, cancel, reset, submit
+      form, loading, title, visible, disableMatchType,
+      cancel, reset, submit, searchFieldInput
     } = this
     return (
       <a-modal
@@ -140,9 +143,9 @@ export default {
               <DataType />,
               <DisplayType />,
               <SourceType />,
-              <SearchField />,
+              <SearchField onInput={searchFieldInput} />,
               <AllowNull />,
-              <MatchType />,
+              <MatchType formChildProps={{ disabled: disableMatchType }} />,
               <SourceValue />,
               <Hidden />,
               <Edit />,
