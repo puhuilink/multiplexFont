@@ -207,8 +207,8 @@
         </a-form>
       </template>
 
-      <span slot="action" slot-scope="text, record">
-        <a @click="seeRouteDetail(record)">查看详情</a>
+      <span slot="action" slot-scope="text, re">
+        <a @click="seeRouteDetail(re)">查看详情</a>
       </span>
     </CTable>
     <a-divider>任务排班</a-divider>
@@ -238,8 +238,10 @@ import { getRouteList } from '@/api/controller/patrol'
 import CTable from '@/components/Table/CTable'
 import routeDetail from '../modules/RMDetail'
 import gql from 'graphql-tag'
+// eslint-disable-next-line no-unused-vars
 import apollo from '@/utils/apollo'
 
+// eslint-disable-next-line no-unused-vars
 const currentUserList = gql`query ($groupId: String) {
   data: t_user_group (where: {group_id: { _eq: $groupId }}) {
     key: user_id
