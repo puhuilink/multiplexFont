@@ -76,34 +76,7 @@ class ModelService extends BaseService {
   }
 
   static async updateAttr (modelName, attr = {}) {
-    const { name: attrName } = attr
-    const sql = `
-      UPDATE 
-        t_cmdb_model t1 
-      SET 
-        attributes = jsonb_set (
-          attributes,
-          
-          ARRAY [ (
-            SELECT 
-              ORDINALITY::INT - 1 
-            FROM
-              t_cmdb_model t2,
-              jsonb_array_elements ( attributes ) WITH ORDINALITY 
-            WHERE
-              t1._id = t2._id
-            AND 
-              VALUE->> 'name' = '${attrName}' 
-            ) :: TEXT],
-            
-            '${JSON.stringify(attr)}' 
-        ) 
-      WHERE
-        name = '${modelName}'
-    `
-    // console.log(sql)
-
-    await MAIN_AXIOS.sql(sql)
+    await ModelDao.updateAttr(modelName, attr)
   }
 
   static async find (argus = {}) {
