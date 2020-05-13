@@ -2,6 +2,7 @@ import { BaseDao } from './BaseDao'
 import { alert } from '../config/client'
 import { readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
+import { ModelDao } from './ModelDao'
 
 class RelationAttributeDao extends BaseDao {
   // 对应 hasura schema
@@ -50,14 +51,37 @@ class RelationAttributeDao extends BaseDao {
 
   static async add (argus = {}) {
     await this._uniqueValidate(argus)
+    const { allowInheritance, source } = argus
+    if (allowInheritance) {
+      const res = await ModelDao.find({
+        where: { name: source },
+        fields: ['parentName']
+      })
+      console.log(res)
+    } else {
+      Object.assign(argus, { extendModelName: null })
+    }
     const data = {
       ...argus,
       _id: varcharUuid()
     }
     return super.add(data)
   }
-  static async update (set, where) {
-    return super.update(set, where)
+  static async update (argus, where) {
+    const { allowInheritance, source } = argus
+    if (allowInheritance) {
+      const modelHasuraORM = await ModelDao.find({
+        where: { name: source },
+        fields: ['parentName'],
+        alias: 'modelList'
+      })
+      const { data: { modelList: [model] } } = await modelHasuraORM.await()
+      const { parentName } = model
+      Object.assign(argus, { extendModelName: parentName })
+    } else {
+      Object.assign(argus, { extendModelName: null })
+    }
+    return super.update(argus, where)
   }
 }
 

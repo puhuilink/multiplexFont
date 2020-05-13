@@ -54,7 +54,7 @@
       </template>
     </CTable>
 
-    <ResourceModelRelationSchema
+    <ModelRelationAttrSchema
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="$refs['table'].refresh(false)"
@@ -64,7 +64,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceModelRelationSchema from './ResourceModelRelationSchema'
+import ModelRelationAttrSchema from './modules/ModelRelationAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
@@ -88,7 +88,7 @@ export default {
   name: 'ResourceModelRelationAttrList',
   components: {
     CTable,
-    ResourceModelRelationSchema
+    ModelRelationAttrSchema
   },
   props: {
     where: {
@@ -113,50 +113,58 @@ export default {
             title: '名称',
             dataIndex: 'name',
             sorter: true,
-            width: 180
+            width: 300,
+            ellipsis: true
           },
           {
             title: '显示名称',
             dataIndex: 'label',
             sorter: true,
-            width: 300
+            width: 300,
+            ellipsis: true
           },
           {
             title: '源',
             dataIndex: 'source',
             sorter: true,
-            width: 100
+            width: 100,
+            ellipsis: true
           },
           {
             title: '目标',
             dataIndex: 'target',
             sorter: true,
-            width: 100
+            width: 100,
+            ellipsis: true
           },
           {
             title: '映射类型',
             dataIndex: 'mappingType',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
           },
           {
             title: '关系类型',
             dataIndex: 'relationType',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
             // customRender: val => val ? '是' : '否'
           },
           {
             title: '所属分组',
             dataIndex: 'tabGroup',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
           },
           {
             title: '排序',
             dataIndex: 'order',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
           },
           {
             title: '是否继承',
@@ -169,7 +177,8 @@ export default {
             title: '继承',
             dataIndex: 'extendModelName',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
           },
           {
             title: '是否作为查询框',
@@ -182,7 +191,8 @@ export default {
             title: '匹配条件',
             dataIndex: 'matchType',
             sorter: true,
-            width: 180
+            width: 180,
+            ellipsis: true
           },
           {
             title: '非空',

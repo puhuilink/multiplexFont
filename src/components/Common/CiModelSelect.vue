@@ -5,7 +5,7 @@
       :labelInValue="labelInValue"
       showSearch
       allowClear
-      style="min-width: 200px"
+      style="min-width: 175px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
       @select="select"

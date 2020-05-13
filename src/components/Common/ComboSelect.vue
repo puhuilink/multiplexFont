@@ -83,7 +83,7 @@ const formItemLayout = {
     offset: 0
   },
   wrapperCol: {
-    span: 13,
+    span: 15,
     offset: 2
   }
 }
