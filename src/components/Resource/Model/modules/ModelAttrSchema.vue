@@ -16,6 +16,7 @@ import {
   OperationValue,
   Pattern,
   SearchField,
+  SourceType,
   SourceValue,
   TabGroup,
   Uniqueness,
@@ -23,6 +24,7 @@ import {
   Width
 } from './common/index'
 import mixin from './mixin'
+import _ from 'lodash'
 
 export default {
   name: 'ModelAttrScheme',
@@ -73,16 +75,10 @@ export default {
           this.loading = true
           await ModelService.addAttr(values, this.where)
           this.$emit('addSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '新增成功'
-          })
+          this.noticiAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.noticiError(e)
           throw e
         } finally {
           this.loading = false
@@ -104,16 +100,10 @@ export default {
           this.loading = true
           await ModelService.updateAttr(modelName, values)
           this.$emit('editSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '编辑成功'
-          })
+          this.noticiEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.noticiEditSuccess(e)
           throw e
         } finally {
           this.loading = false
@@ -130,6 +120,7 @@ export default {
       <a-modal
         centered
         confirmLoading={loading}
+        destroyOnClose
         title={title}
         visible={visible}
         width={940}
@@ -141,38 +132,42 @@ export default {
         onOk={submit}
       >
         <a-form form={form} layout="vertical">
-          <a-row>
-            {
-              ...[
-                <Label />,
-                <Name formChildProps={{ disabled: title === '编辑' }} />,
-                <Width />,
-                <DataType />,
-                <DisplayType />,
-                <SourceType />,
-                <SearchField />,
-                <AllowNull />,
-                <MatchType />,
-                <SourceValue />,
-                <Hidden />,
-                <Edit />,
-                <TabGroup />,
-                <AssetsAttr />,
-                <DefaultValue />,
-                <OperationValue />,
-                <Order />,
-                <Uniqueness />,
-                <UniquenessScope />,
-                <Pattern />,
-                <AlertMessage />,
-                <AssetsAttr />
-              ].map(el => (
-                <a-col md={12} span={24}>
-                  { el }
-                </a-col>
-              ))
-            }
-          </a-row>
+          {
+            ..._.chunk([
+              <Label />,
+              <Name formChildProps={{ disabled: title === '编辑' }} />,
+              <Width />,
+              <DataType />,
+              <DisplayType />,
+              <SourceType />,
+              <SearchField />,
+              <AllowNull />,
+              <MatchType />,
+              <SourceValue />,
+              <Hidden />,
+              <Edit />,
+              <TabGroup />,
+              <AssetsAttr />,
+              <DefaultValue />,
+              <OperationValue />,
+              <Order />,
+              <Uniqueness />,
+              <UniquenessScope />,
+              <Pattern />,
+              <AlertMessage />,
+              <AssetsAttr />
+            ], 2).map(els => (
+              <a-row>
+                {
+                  ...els.map(el => (
+                    <a-col md={12} span={24}>
+                      { el }
+                    </a-col>)
+                  )
+                }
+              </a-row>
+            ))
+          }
         </a-form>
       </a-modal>
     )

@@ -16,6 +16,7 @@ import OperationValue from './OperationValue'
 import Pattern from './Pattern'
 import RelationType from './RelationType'
 import SearchField from './SearchField'
+import SourceType from './SourceType'
 import SourceValue from './SourceValue'
 import TabGroup from './TabGroup'
 import Target from './Target'
@@ -42,6 +43,7 @@ export {
   Pattern,
   RelationType,
   SearchField,
+  SourceType,
   SourceValue,
   TabGroup,
   Target,

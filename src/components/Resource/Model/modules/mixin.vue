@@ -1,5 +1,8 @@
 <script>
+import OperationNotification from '@/components/OperationNotification'
+
 export default {
+  mixins: [OperationNotification],
   data: (vm) => ({
     form: vm.$form.createForm(vm),
     title: '新增',

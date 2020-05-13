@@ -17,6 +17,7 @@ import {
   Target
 } from './common/index'
 import mixin from './mixin'
+import _ from 'lodash'
 
 export default {
   name: 'ModelRelationSchema',
@@ -69,17 +70,11 @@ export default {
             ...values,
             source: this.source
           })
-          this.$notification.success({
-            message: '系统提示',
-            description: '新增成功'
-          })
           this.$emit('addSuccess')
+          this.noticiAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.noticiError(e)
           throw e
         } finally {
           this.loading = false
@@ -96,17 +91,11 @@ export default {
             values,
             { _id: this.record._id }
           )
-          this.$notification.success({
-            message: '系统提示',
-            description: '编辑成功'
-          })
-          this.$emit('addSuccess')
+          this.$emit('editSuccess')
+          this.noticiEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.noticiError(e)
           throw e
         } finally {
           this.loading = false
@@ -123,6 +112,7 @@ export default {
       <a-modal
         centered
         confirmLoading={loading}
+        destroyOnClose
         title={title}
         visible={visible}
         width={940}
@@ -134,29 +124,33 @@ export default {
         onOk={submit}
       >
         <a-form form={form} layout="vertical">
-          <a-row>
-            {
-              ...[
-                <Name formChildProps={{ disabled: title === '编辑' }} />,
-                <Label />,
-                <Target />,
-                <MappingType />,
-                <RelationType />,
-                <TabGroup />,
-                <Order />,
-                <AllowInheritance />,
-                <MatchType />,
-                <SearchField />,
-                <AllowNull />,
-                <AssetsAttr />,
-                <DefaultValue />
-              ].map(el => (
-                <a-col md={12} span={24}>
-                  { el }
-                </a-col>
-              ))
-            }
-          </a-row>
+          {
+            ..._.chunk([
+              <Name formChildProps={{ disabled: title === '编辑' }} />,
+              <Label />,
+              <Target />,
+              <MappingType />,
+              <RelationType />,
+              <TabGroup />,
+              <Order />,
+              <AllowInheritance />,
+              <SearchField />,
+              <MatchType />,
+              <AllowNull />,
+              <AssetsAttr />,
+              <DefaultValue />
+            ], 2).map(els => (
+              <a-row>
+                {
+                  ...els.map(el => (
+                    <a-col md={12} span={24}>
+                      { el }
+                    </a-col>)
+                  )
+                }
+              </a-row>
+            ))
+          }
         </a-form>
       </a-modal>
     )
