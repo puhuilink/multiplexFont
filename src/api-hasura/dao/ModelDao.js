@@ -4,6 +4,7 @@ import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
 import _ from 'lodash'
+import axios from 'axios'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
@@ -47,13 +48,49 @@ class ModelDao extends BaseDao {
   }
 
   static async addAttr (attr = {}, where = {}) {
-    // TODO: 同一 model 下的 attr.name 不能重复
     if (_.isEmpty(where)) {
       throw new Error('更新参数不允许传入空对象，这会导致删除所有数据')
     }
-    // return super.update(attr, where)
-    const hasuraORM = this._createHasuraORM()
-    return hasuraORM.append({ attributes: attr }).where(where)
+    // TODO: 同一 model 下的 attr.name 不能重复
+    const { name: attrName } = attr
+    const { name: modelName } = where
+    const { SCHEMA } = this
+    const sql = `
+    SELECT
+      jsonb_agg(elements.value) AS attributes
+    FROM
+        ${SCHEMA},
+        jsonb_array_elements(attributes) AS elements
+    WHERE 
+      name = '${modelName}'
+    AND
+      elements.value ->> 'name' = '${attrName}'
+    GROUP BY _id
+    `
+
+    // console.log(sql)
+    const { data: { result } } = await axios({
+      url: '/main/v1/query',
+      method: 'POST',
+      data: {
+        'type': 'run_sql',
+        'args': {
+          'sql': sql
+        }
+      },
+      headers: {
+        'x-hasura-admin-secret': 'zhongjiao'
+      }
+    })
+    // console.log(result)
+    const [, value] = result
+    if (value && value.length) {
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject(`已存在的属性名称：${attrName}`)
+    } else {
+      const hasuraORM = this._createHasuraORM()
+      return hasuraORM.append({ attributes: attr }).where(where)
+    }
   }
 }
 
