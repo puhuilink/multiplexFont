@@ -188,7 +188,7 @@ class ModelService extends BaseService {
         name = '${modelName}'
     `
 
-    await MAIN_AXIOS(sql)
+    await MAIN_AXIOS.sql(sql)
   }
 }
 
