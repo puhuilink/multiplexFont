@@ -509,14 +509,6 @@ const options = {
       value: 'CHECKBOX'
     },
     {
-      name: 'DATETIME',
-      value: 'DATETIME'
-    },
-    {
-      name: 'CHECKBOX',
-      value: 'CHECKBOX'
-    },
-    {
       name: 'RADIO',
       value: 'RADIO'
     },
@@ -525,6 +517,7 @@ const options = {
       value: 'SELECTED'
     },
     {
+      // TODO: 用途？
       name: 'URMPTREE',
       value: 'URMPTREE'
     }

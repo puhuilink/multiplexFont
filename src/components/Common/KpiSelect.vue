@@ -169,11 +169,15 @@ export default {
       domProps: { innerHTML: tooltipTitle },
       slot: 'title'
     })
-    const selectWithTooltip = h('ATooltip', [toolTipText, selectWithoutTooltip])
+    const selectWithTooltip = h('ATooltip', {
+      props: {
+        placement: 'left'
+      }
+    }, [toolTipText, selectWithoutTooltip])
 
     return (
       <div className="KpiSelect">
-        { toolTip ? selectWithTooltip : selectWithoutTooltip }
+        { (toolTip && tooltipTitle) ? selectWithTooltip : selectWithoutTooltip }
       </div>
     )
   }

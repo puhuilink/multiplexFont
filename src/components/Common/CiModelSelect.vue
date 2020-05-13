@@ -50,7 +50,9 @@ export default {
   },
   data: () => ({
     groups: [],
-    loading: false
+    loading: false,
+    // 选中项的 label
+    label: ''
   }),
   computed: {
     _value: {

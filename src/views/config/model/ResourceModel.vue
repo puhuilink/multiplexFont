@@ -3,7 +3,7 @@
     <a-row type="flex">
 
       <!-- / tree -->
-      <a-col :xl="6" :xxl="4">
+      <a-col :xl="8" :xxl="6">
         <ResourceTree
           class="ResourceInstance-tree"
           @selectNode="selectNode"
@@ -11,7 +11,7 @@
       </a-col>
 
       <!-- / content -->
-      <a-col :xl="18" :xxl="20">
+      <a-col :xl="16" :xxl="18">
         <a-tabs defaultActiveKey="1">
           <a-tab-pane tab="属性列表" key="1" forceRender>
             <ResourceModelAttrList
