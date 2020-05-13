@@ -4,7 +4,7 @@ import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
 import _ from 'lodash'
-import axios from 'axios'
+import { MAIN_AXIOS } from '@/utils/hasuraAxios'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
@@ -69,19 +69,20 @@ class ModelDao extends BaseDao {
     `
 
     // console.log(sql)
-    const { data: { result } } = await axios({
-      url: '/main/v1/query',
-      method: 'POST',
-      data: {
-        'type': 'run_sql',
-        'args': {
-          'sql': sql
-        }
-      },
-      headers: {
-        'x-hasura-admin-secret': 'zhongjiao'
-      }
-    })
+    const { data: { result } } = await MAIN_AXIOS.sql(sql)
+    // const { data: { result } } = await axios({
+    //   url: '/main/v1/query',
+    //   method: 'POST',
+    //   data: {
+    //     'type': 'run_sql',
+    //     'args': {
+    //       'sql': sql
+    //     }
+    //   },
+    //   headers: {
+    //     'x-hasura-admin-secret': 'zhongjiao'
+    //   }
+    // })
     // console.log(result)
     const [, value] = result
     if (value && value.length) {

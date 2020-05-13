@@ -6,8 +6,8 @@ import {
   RelationInstanceDao
 } from '../dao/index'
 import { mutate, query } from '../utils/hasura-orm/index'
-import axios from 'axios'
 import _ from 'lodash'
+import { MAIN_AXIOS } from '@/utils/hasuraAxios'
 
 class ModelService extends BaseService {
   /**
@@ -103,19 +103,7 @@ class ModelService extends BaseService {
     `
     // console.log(sql)
 
-    await axios({
-      url: '/main/v1/query',
-      method: 'POST',
-      data: {
-        'type': 'run_sql',
-        'args': {
-          'sql': sql
-        }
-      },
-      headers: {
-        'x-hasura-admin-secret': 'zhongjiao'
-      }
-    })
+    await MAIN_AXIOS.sql(sql)
   }
 
   static async find (argus = {}) {
@@ -142,19 +130,7 @@ class ModelService extends BaseService {
 
       console.log(sql)
 
-      const { data: { result } } = await axios({
-        url: '/main/v1/query',
-        method: 'POST',
-        data: {
-          'type': 'run_sql',
-          'args': {
-            'sql': sql
-          }
-        },
-        headers: {
-          'x-hasura-admin-secret': 'zhongjiao'
-        }
-      })
+      const { data: { result } } = await MAIN_AXIOS(sql)
 
       // 第一个为查询的字段集合？
       result.shift()
@@ -239,19 +215,7 @@ class ModelService extends BaseService {
         name = '${modelName}'
     `
 
-    await axios({
-      url: '/main/v1/query',
-      method: 'POST',
-      data: {
-        'type': 'run_sql',
-        'args': {
-          'sql': sql
-        }
-      },
-      headers: {
-        'x-hasura-admin-secret': 'zhongjiao'
-      }
-    })
+    await MAIN_AXIOS(sql)
   }
 }
 

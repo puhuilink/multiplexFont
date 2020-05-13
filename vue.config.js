@@ -8,6 +8,21 @@ function resolve (dir) {
 
 const isProd = process.env.NODE_ENV === 'production'
 
+const {
+  VUE_APP_HASURA_CACHE_URI,
+  // VUE_APP_HASURA_CACHE_KEY,
+  VUE_APP_HASURA_CACHE_ORIGINAL_URL,
+  VUE_APP_HASURA_MAIN_URI,
+  // VUE_APP_HASURA_MAIN_KEY,
+  VUE_APP_HASURA_MAIN_ORIGINAL_URL,
+  VUE_APP_HASURA_XUNJIAN_URI,
+  // VUE_APP_HASURA_XUNJIAN_KEY,
+  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
+  VUE_APP_HASURA_NGECC_URI,
+  // VUE_APP_HASURA_NGECC_KEY,
+  VUE_APP_HASURA_NEGCC_ORIGINAL_URL
+} = process.env
+
 const assetsCDN = {
   // webpack build externals
   externals: {
@@ -115,39 +130,39 @@ const vueConfig = {
         }
       },
       // hasura cache
-      '/cache': {
-        target: 'http://10.1.13.17:31588/',
+      [VUE_APP_HASURA_CACHE_URI]: {
+        target: VUE_APP_HASURA_CACHE_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '/cache': ''
+          [VUE_APP_HASURA_CACHE_URI]: ''
         }
       },
       // hasura main
-      '/main': {
-        target: 'http://10.1.13.17:31490/',
+      [VUE_APP_HASURA_MAIN_URI]: {
+        target: VUE_APP_HASURA_MAIN_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '/main': ''
+          [VUE_APP_HASURA_MAIN_URI]: ''
         }
       },
       // hasura xunjian
-      '/xunjian': {
-        target: 'http://10.1.13.17:32495/',
+      [VUE_APP_HASURA_XUNJIAN_URI]: {
+        target: VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '/xunjian': ''
+          [VUE_APP_HASURA_XUNJIAN_URI]: ''
         }
       },
       // hasura ngecc
-      '/ngecc': {
-        target: 'http://10.1.13.17:32125/',
+      [VUE_APP_HASURA_NGECC_URI]: {
+        target: VUE_APP_HASURA_NEGCC_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '/ngecc': ''
+          [VUE_APP_HASURA_NGECC_URI]: ''
         }
       },
       // 短信验证
