@@ -255,7 +255,7 @@ export default {
      * @param {Object} parameter CTable 回传的分页与排序条件
      * @return {Function: <Promise<Any>>}
      */
-    loadData (parameter) {
+    loadData (parameter = { orderBy: { order: 'asc' } }) {
       this.selectedRows = []
       this.selectedRowKeys = []
       return RelationAttributeService.find({
