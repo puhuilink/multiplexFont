@@ -81,12 +81,14 @@ const defaultColumns = [
   {
     title: 'ID',
     dataIndex: '_id',
-    width: 180
+    width: 180,
+    order: -2
   },
   {
     title: 'parent',
     dataIndex: 'parentName',
-    width: 120
+    width: 120,
+    order: -1
   }
 ]
 
@@ -258,7 +260,7 @@ export default {
           },
           ellipsis: true
         })))
-        this.columns = columns
+        this.columns = _.orderBy(columns, ['order'], ['asc'])
       } catch (e) {
         this.columns = []
         throw e

@@ -319,7 +319,7 @@ export default {
         // TODO: 查询条件
         // console.log(this.queryParams)
         const { attributes } = model
-        const { orderBy = { label: 'asc' } } = parameter
+        const { orderBy = { order: 'asc' } } = parameter
         const [[ key, sort ]] = Object.entries(orderBy)
         return {
           data: _.orderBy(attributes, [key], [sort]),

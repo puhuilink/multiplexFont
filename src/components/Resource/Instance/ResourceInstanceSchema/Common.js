@@ -22,16 +22,19 @@ export default {
   }),
   computed: {
     baseAttributes () {
-      return [
+      const attributes = [
         ...this.attributeList,
         ...this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'base')
       ]
+      return _.orderBy(attributes, ['order'], 'asc')
     },
     otherAttributes () {
-      return this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'other')
+      const attributes = this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'other')
+      return _.orderBy(attributes, ['order'], 'asc')
     },
     relationAttributes () {
-      return this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'relation')
+      const attributes = this.relationAttributeList.filter(({ tabGroup }) => tabGroup === 'relation')
+      return _.orderBy(attributes, ['order'], 'asc')
     },
     title () {
       return this.mode === 'add' ? '新增' : '编辑'
