@@ -53,6 +53,7 @@ export default {
       this.record = {
         ...record
       }
+      this.source = this.record.source
       await this.$nextTick()
       // FIXME: checkbox
       await Timeout.set(300)
@@ -87,10 +88,10 @@ export default {
         if (err) return
         try {
           this.loading = true
-          await RelationAttributeService.update(
-            values,
-            { _id: this.record._id }
-          )
+          await RelationAttributeService.update({
+            ...values,
+            source: this.source
+          }, { _id: this.record._id })
           this.$emit('editSuccess')
           this.noticiEditSuccess()
           this.cancel()

@@ -1,6 +1,7 @@
 <script>
 import { ModelService } from '@/api-hasura/index'
 import {
+  AllowInheritance,
   AlertMessage,
   AllowNull,
   AssetsAttr,
@@ -106,7 +107,7 @@ export default {
           this.noticiEditSuccess()
           this.cancel()
         } catch (e) {
-          this.noticiEditSuccess(e)
+          this.noticiError(e)
           throw e
         } finally {
           this.loading = false
@@ -147,10 +148,10 @@ export default {
               <AllowNull />,
               <MatchType formChildProps={{ disabled: disableMatchType }} />,
               <SourceValue />,
+              <AllowInheritance />,
               <Hidden />,
               <Edit />,
               <TabGroup />,
-              <AssetsAttr />,
               <DefaultValue />,
               <OperationValue />,
               <Order />,

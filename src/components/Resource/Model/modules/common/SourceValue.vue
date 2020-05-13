@@ -1,6 +1,6 @@
 <template>
   <a-form-item
-    label="运算值"
+    label="源值"
     v-bind="formItemProps"
   >
     <a-input
