@@ -54,7 +54,7 @@
       </template>
     </CTable>
 
-    <ResourceModelRelationSchema
+    <ModelRelationAttrSchema
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
       @editSuccess="$refs['table'].refresh(false)"
@@ -64,7 +64,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceModelRelationSchema from './ResourceModelRelationSchema'
+import ModelRelationAttrSchema from './modules/ModelRelationAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
@@ -88,7 +88,7 @@ export default {
   name: 'ResourceModelRelationAttrList',
   components: {
     CTable,
-    ResourceModelRelationSchema
+    ModelRelationAttrSchema
   },
   props: {
     where: {

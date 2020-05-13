@@ -49,7 +49,7 @@
       </template>
     </CTable>
 
-    <ResourceModelAttrSchema
+    <ModelAttrSchema
       :where="{ name: this.where.name }"
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
@@ -60,7 +60,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceModelAttrSchema from './ResourceModelAttrSchema'
+import ModelAttrSchema from './modules/ModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
@@ -71,7 +71,7 @@ export default {
   components: {
     Template,
     CTable,
-    ResourceModelAttrSchema
+    ModelAttrSchema
   },
   props: {
     where: {

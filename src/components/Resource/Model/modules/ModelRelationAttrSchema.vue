@@ -1,0 +1,165 @@
+<script>
+import { RelationAttributeService } from '@/api-hasura/index'
+import Timeout from 'await-timeout'
+import {
+  AllowInheritance,
+  AllowNull,
+  AssetsAttr,
+  DefaultValue,
+  Label,
+  MappingType,
+  MatchType,
+  Name,
+  Order,
+  SearchField,
+  RelationType,
+  TabGroup,
+  Target
+} from './common/index'
+import mixin from './mixin'
+
+export default {
+  name: 'ModelRelationSchema',
+  props: {},
+  mixins: [mixin],
+  data: (vm) => ({
+    source: null,
+    loading: false,
+    record: null,
+    submit: () => {}
+  }),
+  computed: {},
+  methods: {
+    /**
+     * 新增
+     * @param {String} source 关联
+     */
+    add (source) {
+      this.title = '新增'
+      this.visible = true
+      this.source = source
+      this.submit = this.insert
+    },
+    /**
+       * 编辑
+       * @param {Object} record
+       * @return {Undefined}
+       */
+    async edit (record) {
+      this.title = '编辑'
+      this.visible = true
+      this.submit = this.update
+      this.record = {
+        ...record
+      }
+      await this.$nextTick()
+      // FIXME: checkbox
+      await Timeout.set(300)
+      this.form.setFieldsValue(record)
+    },
+    cancel () {
+      this.visible = false
+    },
+    async insert () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await RelationAttributeService.add({
+            ...values,
+            source: this.source
+          })
+          this.$notification.success({
+            message: '系统提示',
+            description: '新增成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
+      })
+    },
+    // FIXME: 所有表单长度校验。。。
+    async update () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.loading = true
+          await RelationAttributeService.update(
+            values,
+            { _id: this.record._id }
+          )
+          this.$notification.success({
+            message: '系统提示',
+            description: '编辑成功'
+          })
+          this.$emit('addSuccess')
+          this.cancel()
+        } catch (e) {
+          this.$notification.error({
+            message: '系统提示',
+            description: h => h('p', { domProps: { innerHTML: e } })
+          })
+          throw e
+        } finally {
+          this.loading = false
+        }
+      })
+    }
+  },
+  render () {
+    const {
+      form, loading, title,
+      visible, cancel, reset, submit
+    } = this
+    return (
+      <a-modal
+        centered
+        confirmLoading={loading}
+        title={title}
+        visible={visible}
+        width={940}
+        wrapClassName="ModelSchema__modal"
+        onCancel={cancel}
+        afterClose={reset}
+        okText="保存"
+        cancelText="取消"
+        onOk={submit}
+      >
+        <a-form form={form} layout="vertical">
+          <a-row>
+            {
+              ...[
+                <Name formChildProps={{ disabled: title === '编辑' }} />,
+                <Label />,
+                <Target />,
+                <MappingType />,
+                <RelationType />,
+                <TabGroup />,
+                <Order />,
+                <AllowInheritance />,
+                <MatchType />,
+                <SearchField />,
+                <AllowNull />,
+                <AssetsAttr />,
+                <DefaultValue />
+              ].map(el => (
+                <a-col md={12} span={24}>
+                  { el }
+                </a-col>
+              ))
+            }
+          </a-row>
+        </a-form>
+      </a-modal>
+    )
+  }
+}
+</script>
