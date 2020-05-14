@@ -5,8 +5,8 @@
       rowKey="user_id"
       :columns="columns"
       :data="loadData"
-      :scroll="{ x: 1050, y:850 }"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :scroll="scroll"
+      :rowSelection="{ selectedRowKeys, selectedRows, onChange: selectRow }"
     >
       <template #query>
         <a-form layout="inline">
@@ -19,7 +19,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.user_id" placeholder=""/>
+                  <a-input v-model.trim="queryParams.user_id" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -29,7 +29,7 @@
                   :wrapperCol="{ span: 14, offset: 2 }"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.staff_name" placeholder=""/>
+                  <a-input v-model.trim="queryParams.staff_name" placeholder=""/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -43,7 +43,7 @@
                     :wrapperCol="{ span: 14, offset: 2 }"
                     style="width: 100%"
                   >
-                    <a-input v-model="queryParams.email" placeholder=""/>
+                    <a-input v-model.trim="queryParams.email" placeholder=""/>
                   </a-form-item>
                 </a-col>
                 <a-col :md="12" :sm="24">
@@ -128,6 +128,8 @@ import CTable from '@/components/Table/CTable'
 import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import { UserService } from '@/api-hasura'
+import List from '@/components/Mixins/Table/List'
+import { generateQuery } from '@/utils/graphql'
 
 const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {
   pagination: t_user_aggregate(where: $where) {
@@ -165,6 +167,7 @@ const updateUserFlag = gql`mutation update_user_flag ($userId: String!, $flag: n
 
 export default {
   name: 'User',
+  mixins: [List],
   components: {
     Template,
     STable,
@@ -176,10 +179,6 @@ export default {
   },
   data () {
     return {
-      // 搜索： 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParams: {},
       // 告警列表表头
       columns: [
         {
@@ -235,11 +234,7 @@ export default {
           // fixed: 'right',
           scopedSlots: { customRender: 'note' }
         }
-      ],
-      // 已选行特性值
-      selectedRowKeys: [],
-      // 已选行数据
-      selectedRows: []
+      ]
     }
   },
   filters: {},
@@ -347,8 +342,6 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      this.selectedRowKeys = []
-      this.selectedRows = []
       return apollo.clients.alert.query({
         query,
         variables: {
@@ -360,47 +353,10 @@ export default {
           ...parameter,
           where: {
             ...this.where,
-            ...this.queryParams.user_id ? {
-              user_id: {
-                _ilike: `%${this.queryParams.user_id.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.staff_name ? {
-              staff_name: {
-                _ilike: `%${this.queryParams.staff_name.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.hasOwnProperty('email') ? {
-              email: {
-                _ilike: `%${this.queryParams.email.trim()}%`
-              }
-            } : {},
-            ...this.queryParams.hasOwnProperty('flag') && this.queryParams.flag !== undefined ? {
-              flag: {
-                _eq: `${this.queryParams.flag}`
-              }
-            } : {}
+            ...generateQuery(this.queryParams)
           }
         }
       }).then(r => r.data)
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     },
     /**
      * 行属性,表格点击事件
@@ -424,9 +380,5 @@ export default {
   button{
     margin-right: 5px;
   }
-}
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
 }
 </style>

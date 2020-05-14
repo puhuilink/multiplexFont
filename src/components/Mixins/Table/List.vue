@@ -1,6 +1,7 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import _ from 'lodash'
+import { triggerWindowResizeEvent } from '@/utils/util'
 
 export default {
   name: 'List',
@@ -74,6 +75,8 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
+      // TODO: change scrollY
+      triggerWindowResizeEvent()
     }
   }
 }
