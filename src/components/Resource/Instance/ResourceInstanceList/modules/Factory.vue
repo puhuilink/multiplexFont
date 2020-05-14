@@ -31,6 +31,7 @@ export default {
     const { field, formItemProps, mapping } = this
     const { displayType = 'TEXT' } = field
     const Field = mapping.get(displayType)
+    console.log(displayType)
     return h(Field, {
       props: {
         field,

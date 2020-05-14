@@ -6,7 +6,7 @@
       ref="table"
       rowKey="_id"
       :rowSelection="null"
-      :scroll="{ x: scrollX, y: `calc(100vh - 290px)`}"
+      :scroll="scroll"
     >
       <template #query>
         <a-form layout="inline">
@@ -46,22 +46,12 @@
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
+import List from '@/components/Mixins/Table/List'
 
 export default {
   name: 'VersionList',
-  components: {
-    CTable
-  },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
+  mixins: [List],
   data: () => ({
-    // 查询参数
-    queryParams: {},
     formItemProps: {
       labelCol: {
         span: 4
@@ -72,13 +62,6 @@ export default {
       }
     }
   }),
-  computed: {
-    scrollX () {
-      return this.columns
-        .map(e => e.width || 60)
-        .reduce((a, b) => a + b)
-    }
-  },
   watch: {
     '$props': {
       immediate: false,
@@ -89,17 +72,6 @@ export default {
         // 重新查询
         this.$refs['table'].refresh(true)
       }
-    }
-  },
-  methods: {
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    resetQueryParams () {
-      Object.assign(this.$data.queryParams, this.$options.data.apply(this).queryParams)
-    },
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }

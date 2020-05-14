@@ -19,16 +19,17 @@
                   :key="index"
                   :md="12"
                   :sm="24"
-                  v-show="index <= 1 || (index > 1 && advanced)"
                 >
-                  <a-form-item
+                  <!-- v-show="index <= 1 || (index > 1 && advanced)" -->
+                  <!-- <a-form-item
                     :labelCol="{ span: 8 }"
                     :wrapperCol="{ span: 12, offset: 4 }"
                     :label="value.label"
                     style="width: 100%"
                   >
                     <a-input allowClear v-model="value.value" />
-                  </a-form-item>
+                  </a-form-item> -->
+                  <Factory :field="value" />
                 </a-col>
               </a-row>
             </div>
@@ -77,7 +78,7 @@ import { generateJsonbQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
 import Factory from './modules/Factory'
-import List from '../../Common/List'
+import List from '@/components/Mixins/Table/List'
 
 const defaultColumns = [
   {
@@ -247,7 +248,7 @@ export default {
       } finally {
         this.queryParams.values = this.columns
           .filter(field => !!field.searchField)
-          .map(({ matchType, label, name, dataType }) => ({ matchType, label, name, dataType }))
+          .map(({ matchType, label, name, dataType, displayType }) => ({ matchType, label, name, dataType, displayType }))
         this.loading = false
       }
     }

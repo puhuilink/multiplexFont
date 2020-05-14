@@ -1,8 +1,6 @@
 <template>
   <a-form-item
     :labelCol="{ span: 8 }"
-    :wrapperCol="{ span: 12, offset: 4 }"
-    :label="label"
     :bind="formItemProps"
     style="width: 100%"
   >

@@ -6,7 +6,7 @@
       :columns="columns"
       :rowKey="el => `${el.name}`"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: scrollX, y: 600}"
+      :scroll="scroll"
       :showPagination="false"
     >
       <template #query>
@@ -38,7 +38,7 @@
 
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
           </span>
         </a-form>
       </template>
@@ -65,11 +65,12 @@ import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
-import List from '../Common/List'
+import List from '@/components/Mixins/Table/List'
+import OperationNotification from '@/components/OperationNotification'
 
 export default {
   name: 'ResourceModelAttrList',
-  mixins: [List],
+  mixins: [List, OperationNotification],
   components: {
     Template,
     CTable,
@@ -251,16 +252,10 @@ export default {
           }
         } = this
         await ModelService.batchDeleteAttr(modelName, attrNameList)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.noticiDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
