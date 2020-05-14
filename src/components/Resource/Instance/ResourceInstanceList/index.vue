@@ -76,6 +76,8 @@ import { InstanceService, ModelService } from '@/api-hasura/index'
 import { generateJsonbQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
+import Factory from './modules/Factory'
+import List from '../../Common/List'
 
 const defaultColumns = [
   {
@@ -94,11 +96,8 @@ const defaultColumns = [
 
 export default {
   name: 'ResourceInstanceList',
+  mixins: [List],
   props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    },
     parentName: {
       type: String,
       default: ''
@@ -114,38 +113,18 @@ export default {
   },
   components: {
     CTable,
-    ResourceInstanceSchema
+    ResourceInstanceSchema,
+    Factory
   },
   data: () => ({
-    // 查询栏是否展开
-    advanced: false,
     loading: false,
     // 查询参数
     queryParams: {
       values: []
     },
-    // 选中行
-    selectRows: [],
-    // 选中行的 key
-    selectedRowKeys: [],
     columns: []
   }),
   computed: {
-    // TODO: 列不全
-    // TODO: td 溢出省略号或自动增长但与表头保持对齐
-    scrollX: {
-      get () {
-        const { hiddenOperation, columns } = this
-        if (_.isEmpty(columns)) {
-          return true
-        } else {
-          // hiddenOperation 时不展示多选框
-          return columns
-            .map(e => e.width || 60)
-            .reduce((a, b) => a + b) + (hiddenOperation ? 0 : 36)
-        }
-      }
-    },
     columnFieldList: {
       get () {
         return this.columns.map(e => e.dataIndex)
@@ -209,6 +188,7 @@ export default {
       this.selectedRowKeys = []
       this.selectedRows = []
 
+      console.log(_.pick(this.queryParams, ['values']))
       console.log(generateJsonbQuery(_.pick(this.queryParams, ['values'])))
 
       return InstanceService.list({
@@ -251,7 +231,7 @@ export default {
           ...column,
           title: column.label,
           dataIndex: name,
-          // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
+          // 老系统数据的 width 大都比较小，在 antd 框架下表现为容易溢出
           width: column.width ? column.width + 60 : 120,
           customRender: (text, record) => {
             const value = _.get(record, `values.${column.name}`)
@@ -270,31 +250,6 @@ export default {
           .map(({ matchType, label, name, dataType }) => ({ matchType, label, name, dataType }))
         this.loading = false
       }
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectRows = selectRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
-    },
-    /**
-     * 切换查询栏展开状态
-     * @event
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     }
   },
   created () {

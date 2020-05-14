@@ -95,6 +95,7 @@ export default {
     async update () {
       this.form.validateFields(async (err, values) => {
         if (err) return
+        console.log(values)
         const {
           where: {
             name: modelName

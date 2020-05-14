@@ -1,4 +1,4 @@
-import DynamicFormItem from '../../Utils/DynamicFormItem'
+import DynamicFormItem from '../../../Utils/DynamicFormItem'
 import _ from 'lodash'
 
 export default {

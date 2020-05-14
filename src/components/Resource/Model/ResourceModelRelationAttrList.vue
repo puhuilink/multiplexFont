@@ -69,41 +69,18 @@ import deleteCheck from '@/components/DeleteCheck'
 import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
 import _ from 'lodash'
-
-export const fields = [
-  '_id',
-  'name',
-  'label',
-  'source',
-  'target',
-  'mappingType',
-  'relationType',
-  'tabGroup',
-  'order',
-  'allowInheritance',
-  'allowNull'
-]
+import List from '../Common/List'
 
 export default {
   name: 'ResourceModelRelationAttrList',
+  mixins: [List],
   components: {
     CTable,
     ModelRelationAttrSchema
   },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data: () => ({
-    advanced: false,
     // 查询参数
-    queryParams: {},
-    // 选中行
-    selectedRows: [],
-    // 选中行的 key
-    selectedRowKeys: []
+    queryParams: {}
   }),
   computed: {
     columns: {
@@ -204,11 +181,12 @@ export default {
         ]
       }
     },
-    scrollX: {
+    fields: {
       get () {
-        return this.columns
-          .map(e => e.width || 60)
-          .reduce((a, b) => a + b) + 62
+        return [
+          '_id',
+          ...this.columns.map(({ dataIndex }) => dataIndex)
+        ]
       }
     }
   },
@@ -258,7 +236,7 @@ export default {
       //   record,
       //   _.pick(record, [...fields])
       // )
-      this.$refs['schema'].edit(_.pick(record, [...fields]))
+      this.$refs['schema'].edit(_.pick(record, this.fields))
     },
     /**
      * 加载表格数据
@@ -274,37 +252,9 @@ export default {
           ...generateQuery(this.queryParams)
         },
         alias: 'data',
-        fields: [...fields],
+        fields: this.fields,
         ...parameter
       }).then(r => r.data)
-      // return apollo.clients.resource.query({
-      //   query,
-      //   variables: {
-      //     ...parameter,
-      //     where: {
-      //       ...this.where,
-      //       ...generateQuery(this.queryParams)
-      //     }
-      //   }
-      // }).then(r => r.data)
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }

@@ -65,29 +65,19 @@ import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
+import List from '../Common/List'
 
 export default {
   name: 'ResourceModelAttrList',
+  mixins: [List],
   components: {
     Template,
     CTable,
     ModelAttrSchema
   },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data: () => ({
-    advanced: false,
     // 查询参数
-    queryParams: {
-    },
-    // 选中行
-    selectedRows: [],
-    // 选中行的 key
-    selectedRowKeys: []
+    queryParams: {}
   }),
   computed: {
     // TODO: 列不全
@@ -230,11 +220,6 @@ export default {
           }
         ]
       }
-    },
-    scrollX: {
-      get () {
-        return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2) + 62
-      }
     }
   },
   watch: {
@@ -314,7 +299,8 @@ export default {
         ],
         alias: 'modelList'
       }).then(r => {
-        const { data: { modelList } } = r//  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
+        const { data: { modelList } } = r
+        //  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
         const [model] = modelList
         // TODO: 查询条件
         // console.log(this.queryParams)
@@ -330,32 +316,7 @@ export default {
           }
         }
       })
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
 </script>
-
-<style lang="less">
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-}
-</style>
