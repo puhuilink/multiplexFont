@@ -1,11 +1,11 @@
 <template>
   <a-form-item
     :labelCol="{ span: 8 }"
-    :bind="formItemProps"
+    v-bind="formItemProps"
     style="width: 100%"
   >
     <a-checkbox v-model="field.value">
-      {{ field.name }}
+      {{ field.label }}
     </a-checkbox>
   </a-form-item>
 </template>

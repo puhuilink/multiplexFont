@@ -13,23 +13,15 @@
         <template #query>
           <a-form layout="inline" :style="{ overflow: hiddenOperation ? 'hidden' : 'visible' }">
             <div :class="{ fold: !advanced }">
-              <a-row>
+              <a-row v-for="(fields, index) in queryFields" :key="index">
                 <a-col
-                  v-for="(value, index) in queryParams.values"
-                  :key="index"
+                  v-for="(field, idx) in fields"
+                  :key="idx"
                   :md="12"
                   :sm="24"
+                  v-show="index <= 1 || (index > 1 && advanced)"
                 >
-                  <!-- v-show="index <= 1 || (index > 1 && advanced)" -->
-                  <!-- <a-form-item
-                    :labelCol="{ span: 8 }"
-                    :wrapperCol="{ span: 12, offset: 4 }"
-                    :label="value.label"
-                    style="width: 100%"
-                  >
-                    <a-input allowClear v-model="value.value" />
-                  </a-form-item> -->
-                  <Factory :field="value" />
+                  <Factory :field="field" />
                 </a-col>
               </a-row>
             </div>
@@ -129,6 +121,13 @@ export default {
     columnFieldList: {
       get () {
         return this.columns.map(e => e.dataIndex)
+      }
+    },
+    queryFields: {
+      get () {
+        const { advanced, queryParams: { values } } = this
+        const fields = advanced ? values : values.slice(0, 2)
+        return _.chunk(fields, 2)
       }
     }
   },

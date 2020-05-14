@@ -14,6 +14,9 @@ export default {
         wrapperCol: {
           span: 12,
           offset: 4
+        },
+        style: {
+          width: '100%'
         }
       })
     },

@@ -1,16 +1,24 @@
-<template>
-  <div class="'DatetimeField'"></div>
-</template>
-
 <script>
+import DateField from './DateField'
+
 export default {
   name: 'DatetimeField',
+  extends: DateField,
   components: {},
-  props: {},
   data: () => ({
   }),
   computed: {},
-  methods: {}
+  methods: {},
+  render (h) {
+    const { $props } = this
+    console.log($props)
+    return h(DateField, {
+      props: {
+        ...$props,
+        showTime: true
+      }
+    })
+  }
 }
 </script>
 

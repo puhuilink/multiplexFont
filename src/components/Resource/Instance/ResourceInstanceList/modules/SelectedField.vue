@@ -1,7 +1,7 @@
 <template>
   <a-form-item
     :label="field.label"
-    :bind="formItemProps"
+    v-bind="formItemProps"
     style="width: 100%"
   >
     <a-select

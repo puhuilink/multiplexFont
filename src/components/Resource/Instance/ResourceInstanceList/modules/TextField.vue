@@ -1,8 +1,7 @@
 <template>
   <a-form-item
-    :labelCol="{ span: 8 }"
     :label="field.label"
-    :bind="formItemProps"
+    v-bind="formItemProps"
     style="width: 100%"
   >
     <a-input
