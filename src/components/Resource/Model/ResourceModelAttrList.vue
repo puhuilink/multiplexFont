@@ -49,7 +49,7 @@
       </template>
     </CTable>
 
-    <ResourceModelAttrSchema
+    <ModelAttrSchema
       :where="{ name: this.where.name }"
       ref="schema"
       @addSuccess="() => { this.reset(); this.query() }"
@@ -60,7 +60,7 @@
 
 <script>
 import CTable from '@/components/Table/CTable'
-import ResourceModelAttrSchema from './ResourceModelAttrSchema'
+import ModelAttrSchema from './modules/ModelAttrSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
@@ -71,7 +71,7 @@ export default {
   components: {
     Template,
     CTable,
-    ResourceModelAttrSchema
+    ModelAttrSchema
   },
   props: {
     where: {
@@ -144,8 +144,8 @@ export default {
             customRender: val => val ? '是' : '否'
           },
           {
-            title: '源值',
-            dataIndex: 'sourceValue',
+            title: '匹配条件',
+            dataIndex: 'matchType',
             sorter: true,
             width: 180
           },
@@ -156,13 +156,12 @@ export default {
             width: 180,
             customRender: val => val ? '是' : '否'
           },
-          {
-            title: '继承至',
-            dataIndex: 'hidden',
-            sorter: true,
-            width: 180,
-            customRender: val => val ? '是' : '否'
-          },
+          // {
+          //   title: '继承至',
+          //   dataIndex: 'hidden',
+          //   sorter: true,
+          //   width: 180,
+          // },
           {
             title: '隐藏',
             dataIndex: 'hidden',
@@ -219,7 +218,7 @@ export default {
           },
           {
             title: '正则验证',
-            dataIndex: 'matchType',
+            dataIndex: 'pattern',
             sorter: true,
             width: 180
           },
@@ -320,7 +319,7 @@ export default {
         // TODO: 查询条件
         // console.log(this.queryParams)
         const { attributes } = model
-        const { orderBy = { label: 'asc' } } = parameter
+        const { orderBy = { order: 'asc' } } = parameter
         const [[ key, sort ]] = Object.entries(orderBy)
         return {
           data: _.orderBy(attributes, [key], [sort]),

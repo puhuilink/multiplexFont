@@ -26,6 +26,7 @@
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
           showIcon
+          showLine
           :selectedKeys="[selectedKey]"
           :treeData="treeData"
           v-on="$listeners"

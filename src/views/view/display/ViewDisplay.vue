@@ -10,20 +10,40 @@
           >{{ group.view_title }}</a-select-option>
         </a-select>
 
-        <a-input
-          allowClear
-          autofocus
-          style="width: 200px;"
-          placeholder="按视图标题搜索..."
-          v-model="queryTitle"
-        />
+        <div class="ViewDisplay__view-control">
+          <a-input
+            v-if="isThumbnail"
+            allowClear
+            autofocus
+            style="width: 200px;"
+            placeholder="按视图标题搜索..."
+            v-model="queryTitle"
+          />
+          <a-range-picker
+            v-else
+            :show-time="{ format: 'HH:mm' }"
+            format="YYYY-MM-DD HH:mm"
+            :placeholder="['开始时间', '结束时间']"
+            @change="dateChange"
+            @ok="dateSet" />
+          <div class="ViewDisplay__view-type">
+            <p class="ViewDisplay__view-button" :class="[isThumbnail && 'ViewDisplay__view-button--active']" @click="typeChange">
+              <a-icon type="appstore" />
+              缩略图
+            </p>
+            <p class="ViewDisplay__view-button" :class="[!isThumbnail && 'ViewDisplay__view-button--active']" @click="typeChange">
+              <a-icon type="bars" />
+              页签
+            </p>
+          </div>
+        </div>
       </div>
 
-      <!-- S 视图列表 -->
-      <div class="ViewDisplay__view-content">
+      <!-- S 视图缩略图 -->
+      <div class="ViewDisplay__view-content" v-if="isThumbnail">
         <a-row>
           <a-col
-            v-for="(view, idx) in filterViewList"
+            v-for="(viewConfig, idx) in filterViewList"
             :key="idx"
             :xs="24"
             :md="12"
@@ -31,21 +51,68 @@
             :xxl="6"
             style="padding: 7px;"
           >
-            <div class="ViewDisplay__view-item" @click="preview(view)">
-              <img :src="view.view_img | img" :alt="view.view__title">
+            <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
+              <img :src="viewConfig.view_img | img" :alt="viewConfig.view__title">
               <div class="ViewDisplay__view-item-info">
-                <p class="ViewDisplay__view-item-info_title">{{ view.view_title }}</p>
+                <p class="ViewDisplay__view-item-info_title">{{ viewConfig.view_title }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (view.createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ view.creator }}</span>
+                  <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ viewConfig.creator }}</span>
                 </p>
               </div>
-              {{ view.view__title }}
+              {{ viewConfig.view__title }}
             </div>
           </a-col>
         </a-row>
       </div>
-      <!-- E 视图列表 -->
+      <!-- E 视图缩略图 -->
+
+      <!-- S 视图页签 -->
+      <div class="ViewDisplay__view-tabs" :class="[isFullscreen && 'fullscreen']" v-else>
+        <a-tabs
+          :active-key="activeKey || filterViewList[0].view_id"
+          tab-position="top"
+          @change="tabsChange"
+        >
+          <div class="ViewDisplay__view-bar" slot="tabBarExtraContent">
+            <a-tooltip placement="top" :title="isPolling ? '暂停' : '播放'">
+              <a-icon :type="isPolling ? 'pause-circle' : 'play-circle'" @click="startPolling" />
+            </a-tooltip>
+            <a-tooltip placement="top" title="等宽">
+              <a-icon type="column-width" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
+            </a-tooltip>
+
+            <a-tooltip placement="top" title="等高">
+              <a-icon type="column-height" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
+            </a-tooltip>
+
+            <a-tooltip placement="top" title="拉伸">
+              <a-icon type="swap" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
+            </a-tooltip>
+
+            <a-tooltip placement="top" title="原始">
+              <a-icon type="pic-center" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
+            </a-tooltip>
+
+            <a-tooltip placement="top" title="自适应">
+              <a-icon type="border-outer" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
+            </a-tooltip>
+
+            <a-tooltip placement="top" :title="isFullscreen ? '退出全屏' : '全屏'">
+              <a-icon :type="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" @click="fullscreen" />
+            </a-tooltip>
+          </div>
+          <a-tab-pane v-for="viewConfig in filterViewList" :key="viewConfig.view_id" :tab="viewConfig.view_title"></a-tab-pane>
+        </a-tabs>
+        <a-spin :spinning="isLoading" >
+          <div class="ViewDisplay__view-tab-content">
+            <transition name="renderer">
+              <Renderer v-if="view" :view="view" ref="renderer" />
+            </transition>
+          </div>
+        </a-spin>
+      </div>
+      <!-- E 视图页签 -->
 
       <!-- S 操作按钮 -->
       <div class="ViewDisplay__operation">
@@ -62,7 +129,7 @@
       <!-- E 操作按钮 -->
 
       <!-- S 视图预览 -->
-      <ViewPreview :visible.sync="visible" :viewList="filterViewList" :currentView="currentView" />
+      <ViewPreview :visible.sync="isVisible" :viewList="filterViewList" :currentView="targetView" />
       <!-- E 视图预览 -->
 
       <AuthDesktop
@@ -81,6 +148,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { PageView } from '@/layouts'
@@ -90,7 +158,8 @@ import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
-import _ from 'lodash'
+import Renderer from '@/components/Renderer'
+import { getViewDesign } from '@/api/controller/View'
 
 const ALL_VIEW = '所有视图'
 
@@ -100,7 +169,8 @@ export default {
     AuthDesktop,
     PageView,
     HeadInfo,
-    ViewPreview
+    ViewPreview,
+    Renderer
   },
   filters: {
     img (img) {
@@ -114,16 +184,25 @@ export default {
       user: {},
       loading: false,
       groupDesktopList: [],
-      viewList: [],
+      viewLists: [],
       queryTitle: '',
       selectedGroupName: ALL_VIEW,
       previewImg,
-      visible: false,
-      currentView: null,
+      isVisible: false,
+      targetView: null,
       ALL_VIEW,
       authDesktop: {
         visible: false
-      }
+      },
+      activeKey: null,
+      // 缩略图模式
+      isThumbnail: true,
+      isLoading: false,
+      isFullscreen: false,
+      isPolling: false,
+      view: null,
+      index: 0,
+      timer: null
     }
   },
   computed: {
@@ -131,6 +210,16 @@ export default {
       nickname: (state) => state.user.nickname,
       welcome: (state) => state.user.welcome
     }),
+    scaleMode: {
+      get: function () {
+        return this.view ? _.get(this.view, 'config.proprietaryConfig.scaleMode') : 'auto'
+      },
+      set: function (mode) {
+        Object.assign(this.view.config.proprietaryConfig, {
+          scaleMode: mode
+        })
+      }
+    },
     userInfo () {
       return this.$store.getters.userInfo
     },
@@ -140,14 +229,14 @@ export default {
       return groupDesktopList.length > 0 ? groupDesktopList.find(({ view_title }) => view_title === selectedGroupName) : []
     },
     filterViewList () {
-      const { selectedGroup, viewList } = this
+      const { selectedGroup, viewLists } = this
       let list = []
       // 分组筛选条件
       if (selectedGroup.view_title === ALL_VIEW) {
-        list = viewList
+        list = viewLists
       } else {
         // eslint-disable-next-line
-        list = this.viewList.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
+        list = this.viewLists.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
       }
       // 加上搜索条件，当 input allowClear 时，title 为 undefined
       list = list.filter(({ view_title: title }) => title.toLocaleLowerCase().includes((this.queryTitle || '').trim().toLowerCase()))
@@ -161,7 +250,7 @@ export default {
         this.loading = true
         const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
         const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
-        this.viewList = [
+        this.viewLists = [
           ...groupDesktopViewList,
           ...selfDesktopViewList
         ]
@@ -173,7 +262,7 @@ export default {
           }
         ]
       } catch (e) {
-        this.viewList = []
+        this.viewLists = []
         this.groupDesktopList = []
         throw e
       } finally {
@@ -184,8 +273,87 @@ export default {
       this.authDesktop.visible = true
     },
     preview (view) {
-      this.visible = true
-      this.currentView = view
+      this.isVisible = true
+      this.targetView = view
+    },
+    dateChange (date) {
+      console.log(date)
+    },
+    dateSet (date) {
+      console.log(date)
+    },
+    typeChange () {
+      this.isThumbnail = !this.isThumbnail
+      if (!this.isThumbnail) {
+        this.tabsChange(this.filterViewList[0].view_id)
+      } else {
+        clearInterval(this.timer)
+      }
+    },
+    async tabsChange (id) {
+      try {
+        this.activeKey = id
+        this.view = null
+        this.isLoading = true
+        this.view = await getViewDesign(id)
+      } catch (e) {
+        this.view = null
+        throw e
+      } finally {
+        this.isLoading = false
+      }
+    },
+    /**
+     * 开启全屏
+     */
+    fullscreen () {
+      this.isFullscreen = !this.isFullscreen
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen()
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen()
+        }
+      }
+    },
+    /**
+     * 设置缩放模式
+     * @param scaleMode
+     */
+    setScaleMode (scaleMode) {
+      this.scaleMode = scaleMode
+      this.$refs.renderer.setScaleMode()
+    },
+    /**
+     * 根据编号获取视图
+     */
+    getIndexView () {
+      // 清空先前的数据
+      this.view = null
+      const length = this.filterViewList.length
+      if (this.index < 0) {
+        this.index = length - 1
+      } else if (this.index > length - 1) {
+        this.index = 0
+      }
+      const view = this.filterViewList[this.index]
+      this.tabsChange(view.view_id)
+    },
+    /**
+     * 开启轮训
+     */
+    startPolling () {
+      this.isPolling = !this.isPolling
+      clearInterval(this.timer)
+      // 开启定时器。每分钟切换视图
+      if (this.isPolling) {
+        this.timer = setInterval(() => {
+          if (this.isPolling) {
+            this.index += 1
+            this.getIndexView()
+          }
+        }, 1000 * 6)
+      }
     }
   },
   created () {
@@ -327,6 +495,87 @@ export default {
       z-index: 9;
     }
 
+    &-control {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    &-type {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      margin-left: 24px;
+    }
+
+    &-button {
+      flex: none;
+      height: 32px;
+      width: 96px;
+      cursor: pointer;
+      color: rgba(0, 0, 0, .67);
+      line-height: 32px;
+      text-align: center;
+      border: 1px solid rgba(0, 0, 0, .23);
+      margin: 0;
+
+      &:nth-of-type(1) {
+        border-right: none;
+        border-radius: 5px 0 0 5px;
+      }
+
+      &:nth-of-type(2) {
+        border-left: none;
+        border-radius: 0 5px 5px 0;
+      }
+
+      &--active {
+        background: #1890ff;
+        border: none;
+        color: white;
+      }
+    }
+
+    &-bar {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 45px;
+      width: 240px;
+
+      & i {
+        font-size: 18px;
+      }
+
+      &--active {
+        color: #1890ff !important;
+      }
+    }
+
+    &-spin {
+      width: 100%;
+      height: calc(100vh - 230px);
+    }
+
+    &-tabs.fullscreen {
+      position: fixed;
+      height: 100vh;
+      width: 100vw;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      background: white;
+    }
+
+    &-tab-content {
+      width: 100%;
+      height: calc(100vh - 230px);
+      overflow: auto;
+    }
+
     &-item {
       box-sizing: border-box;
       // 给定宽高，避免图片加载等过程中导致重绘
@@ -398,11 +647,13 @@ export default {
       display: flex;
       justify-content: center;
       margin: 8px;
-
-      // &__add {
-
-      // }
     }
   }
 
+  .renderer-enter-active, .renderer-leave-active {
+    transition: opacity 300ms ease-in-out;
+  }
+  .renderer-enter, .renderer-leave-to {
+    opacity: 0;
+  }
 </style>

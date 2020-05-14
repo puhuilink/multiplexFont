@@ -4,6 +4,7 @@ import { defaultInfo } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
 import _ from 'lodash'
+import { MAIN_AXIOS } from '@/utils/hasuraAxios'
 
 class ModelDao extends BaseDao {
   // 对应 hasura schema
@@ -46,14 +47,71 @@ class ModelDao extends BaseDao {
     return super.update({ ...model, ...defaultInfo('updateTime', 'updator') }, { _id })
   }
 
+  static async _validateAttrName (modelName, attrName) {
+    const { SCHEMA } = this
+    return new Promise(async (resolve, reject) => {
+      const sql = `
+        SELECT
+          jsonb_agg(elements.value) AS attributes
+        FROM
+            ${SCHEMA},
+            jsonb_array_elements(attributes) AS elements
+        WHERE 
+          name = '${modelName}'
+        AND
+          elements.value ->> 'name' = '${attrName}'
+        GROUP BY _id
+        `
+      const { data: { result } } = await MAIN_AXIOS.sql(sql)
+      const [, value] = result
+      if (value && value.length) {
+        // eslint-disable-next-line prefer-promise-reject-errors
+        reject(`已存在的属性名称：${attrName}`)
+      } else {
+        resolve(true)
+      }
+    })
+  }
+
   static async addAttr (attr = {}, where = {}) {
-    // TODO: 同一 model 下的 attr.name 不能重复
     if (_.isEmpty(where)) {
-      throw new Error('更新参数不允许传入空对象，这会导致删除所有数据')
+      throw new Error('更新参数不允许传入空对象，这会导致更新所有数据')
     }
-    // return super.update(attr, where)
+    const { name: attrName } = attr
+    const { name: modelName } = where
+    await this._validateAttrName(modelName, attrName)
     const hasuraORM = this._createHasuraORM()
     return hasuraORM.append({ attributes: attr }).where(where)
+  }
+
+  static async updateAttr (modelName, attr = {}) {
+    const { name: attrName } = attr
+    const { SCHEMA } = this
+    const sql = `
+      UPDATE 
+        ${SCHEMA} t1 
+      SET 
+        attributes = jsonb_set (
+          attributes,
+          
+          ARRAY [ (
+            SELECT 
+              ORDINALITY::INT - 1 
+            FROM
+              ${SCHEMA} t2,
+              jsonb_array_elements ( attributes ) WITH ORDINALITY 
+            WHERE
+              t1._id = t2._id
+            AND 
+              VALUE->> 'name' = '${attrName}' 
+            ) :: TEXT],
+            
+            '${JSON.stringify(attr)}' 
+        ) 
+      WHERE
+        name = '${modelName}'
+    `
+    return MAIN_AXIOS.sql(sql)
   }
 }
 

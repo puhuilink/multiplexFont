@@ -172,6 +172,58 @@ export const queryRoutePointDetail = gql`query routePointDetail($routeCode: Stri
   }
 }`
 
+export const queryTaskPointDetail = gql`query taskPointDetail($taskCode: String!) {
+  rfList: t_xj_task_rf(where: {task_code: {_eq: $taskCode}}) {
+    create_time
+    file_urls
+    is_enable
+    memo
+    rf_level_no
+    rf_name
+    rf_value
+    route_code
+    scan_type
+    state
+    task_code
+    update_time
+    urmp_rf_code
+    task_rf_status
+    task_rf_id
+  }
+  ciList: t_xj_task_ci(where: {task_code: {_eq: $taskCode}}) {
+    ascription
+    ci_name
+    create_time
+    file_urls
+    is_enable
+    is_update
+    level_no
+    memo
+    route_code
+    status
+    task_ci_id
+    task_code
+    update_time
+    urmp_ci_code
+    urmp_rf_code
+  }
+  kpiList: t_xj_task_kpi(where: {task_code: {_eq: $taskCode}}) {
+    create_time
+    kpi_name
+    kpi_value
+    is_enable
+    route_code
+    task_code
+    task_kpi_id
+    update_time
+    task_kpi_status
+    urmp_ci_code
+    urmp_kpi_code
+    urmp_kpi_type
+    urmp_kpi_value_type
+  }
+}`
+
 // mutation
 export const updateRoute = gql`mutation update ($where: t_xj_route_info_bool_exp!, $val: t_xj_route_info_set_input) {
   update_t_xj_route_info  (

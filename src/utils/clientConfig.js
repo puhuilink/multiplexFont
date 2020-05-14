@@ -5,14 +5,23 @@ import { ApolloClient } from 'apollo-client'
 import { notification } from 'ant-design-vue'
 import { onError } from 'apollo-link-error'
 
+const {
+  VUE_APP_HASURA_CACHE_URI,
+  VUE_APP_HASURA_CACHE_KEY,
+  VUE_APP_HASURA_MAIN_URI,
+  VUE_APP_HASURA_MAIN_KEY,
+  VUE_APP_HASURA_XUNJIAN_URI,
+  VUE_APP_HASURA_XUNJIAN_KEY,
+  VUE_APP_HASURA_NGECC_URI,
+  VUE_APP_HASURA_NGECC_KEY
+} = process.env
+
 const linkList = [
-  'cache', 'main', 'xunjian', 'ngecc'
-].map(domain => new HttpLink({
-  uri: `/${domain}/v1/graphql`,
-  headers: {
-    'x-hasura-admin-secret': domain === 'xunjian' ? 'myadminsecretkey' : 'zhongjiao'
-  }
-}))
+  new HttpLink({ uri: `${VUE_APP_HASURA_CACHE_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_CACHE_KEY } }),
+  new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } }),
+  new HttpLink({ uri: `${VUE_APP_HASURA_XUNJIAN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_XUNJIAN_KEY } }),
+  new HttpLink({ uri: `${VUE_APP_HASURA_NGECC_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_NGECC_KEY } })
+]
 
 // TODO: 此处包装后传递到 service 层
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
