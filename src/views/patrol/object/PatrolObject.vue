@@ -7,6 +7,7 @@
       :columns="columns"
       :data="loadData"
       :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
+      :customRow="customRow"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <template #query>
@@ -87,15 +88,9 @@
       </template>
 
       <template #operation>
-        <!-- <a-button
-          :disabled="selectedRowKeys.length !== 1"
-          @click="seeDetail"
-        >
-          详情查看
-        </a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button> -->
         <a-button
           :disabled="selectedRowKeys.length !== 1"
+          @click="seeDetail"
         >
           详情查看
         </a-button>
@@ -359,6 +354,15 @@ export default {
       downloadElement.click() // 点击下载
       document.body.removeChild(downloadElement)// 下载完成移除元素
       window.URL.revokeObjectURL(href) // 释放掉blob对象
+    },
+    customRow (record, index) {
+      return {
+        on: {
+          dblclick: () => {
+            this.$refs['detail'].open(record)
+          }
+        }
+      }
     }
   }
 }

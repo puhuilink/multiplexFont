@@ -5,7 +5,7 @@
       :labelInValue="labelInValue"
       showSearch
       allowClear
-      style="min-width: 200px"
+      style="min-width: 175px"
       v-model="_value"
       :notFoundContent="loading ? '加载中...' : '暂无数据'"
       @select="select"
@@ -50,7 +50,9 @@ export default {
   },
   data: () => ({
     groups: [],
-    loading: false
+    loading: false,
+    // 选中项的 label
+    label: ''
   }),
   computed: {
     _value: {

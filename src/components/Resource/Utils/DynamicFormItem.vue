@@ -51,8 +51,6 @@ export default {
       // eslint-disable-next-line no-unused-vars
       const { labelCol, wrapperCol, renderFormItenChild, getFieldDecorator } = this
       const { label } = field
-      // FIXME: 使用 getFieldDecorator 会导致无法输入，可能是 form this 指向问题？
-      // { renderFormItenChild(field) }
       return (
         <a-form-item label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
           { getFieldDecorator(field)(renderFormItenChild(field)) }
@@ -60,7 +58,7 @@ export default {
       )
     },
     renderFormItenChild (field) {
-      // field 有数据类型与显式类型之分
+      // field 有数据类型与显式类型
       const { displayType = 'TEXT' } = field
       const {
         renderInput,

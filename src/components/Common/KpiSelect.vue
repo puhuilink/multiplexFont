@@ -154,7 +154,7 @@ export default {
         notFoundContent={loading ? '加载中...' : '暂无数据'}
         onChange={handleChange}
         maxTagCount={5}
-        style={{ minWidth: '200px' }}
+        style={{ minWidth: '175px' }}
       >
         { ...options.map((option, index) => (
           <a-select-option
@@ -169,11 +169,15 @@ export default {
       domProps: { innerHTML: tooltipTitle },
       slot: 'title'
     })
-    const selectWithTooltip = h('ATooltip', [toolTipText, selectWithoutTooltip])
+    const selectWithTooltip = h('ATooltip', {
+      props: {
+        placement: 'left'
+      }
+    }, [toolTipText, selectWithoutTooltip])
 
     return (
       <div className="KpiSelect">
-        { toolTip ? selectWithTooltip : selectWithoutTooltip }
+        { (toolTip && tooltipTitle) ? selectWithTooltip : selectWithoutTooltip }
       </div>
     )
   }
