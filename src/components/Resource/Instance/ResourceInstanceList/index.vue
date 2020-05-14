@@ -71,6 +71,7 @@ import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
 import Factory from './modules/Factory'
 import List from '@/components/Mixins/Table/List'
+import OperationNotification from '@/components/OperationNotification'
 
 const defaultColumns = [
   {
@@ -89,7 +90,7 @@ const defaultColumns = [
 
 export default {
   name: 'ResourceInstanceList',
-  mixins: [List],
+  mixins: [List, OperationNotification],
   props: {
     parentName: {
       type: String,
@@ -153,7 +154,7 @@ export default {
     },
     edit () {
       // const [_id] = this.selectRowKeys
-      const [instance] = this.selectRows
+      const [instance] = this.selectedRows
       const { parentName, _id } = instance
       this.$refs['schema'].edit(parentName, _id)
     },
@@ -164,16 +165,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await InstanceService.batchDelete(this.selectedRowKeys)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.noticiDeleteSuccess()
         await this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

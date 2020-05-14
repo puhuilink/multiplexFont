@@ -46,6 +46,7 @@ export default {
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
         this.relationAttributes = relationAttributes
         this.relationAttributes.length && await this.loadRelationTargetList()
+        this.attributes.filter(el => !!el.sourceValue).length && await this.loadSourceValueList()
         // FIXME: 关系信息 tab 页签闪烁
       } catch (e) {
         this.attributes = []
@@ -91,6 +92,32 @@ export default {
         this.relationAttributes = []
         throw e
       }
+    },
+    async loadSourceValueList () {
+      const sourceValueAttrList = this.attributes.filter(el => !!el.sourceValue)
+      const sourceValueList = sourceValueAttrList.map(({ sourceValue }) => sourceValue)
+      const { data: { instanceList } } = await InstanceService.find({
+        where: {
+          name: {
+            _in: sourceValueList
+          }
+        },
+        fields: [
+          '_id',
+          'name',
+          `value: values(path: "$.valueCode")`,
+          `label: values(path: "$.valueLabel")`
+        ],
+        alias: 'instanceList'
+      })
+      sourceValueAttrList.forEach((attribute, index) => {
+        const selectOptionList = instanceList.filter(({ name }) => name === attribute.sourceValue)
+        Object.assign(attribute, {
+          // 为 DynamicForm / DynamicFormItem 保持一致入参
+          selectOptionList: selectOptionList,
+          displayType: 'SELECTED'
+        })
+      })
     },
     async add (parentName, parentTree) {
       this.mode = 'add'

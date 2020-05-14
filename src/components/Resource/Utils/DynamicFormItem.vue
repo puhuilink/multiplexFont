@@ -133,8 +133,9 @@ export default {
       ))
 
       // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
-      const { selectGroupList = [], mappingType = 'one' } = field
+      const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
       // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
+      console.log(selectOptionList)
       return (
         <a-select
           filterOption={filterOption}
@@ -143,7 +144,7 @@ export default {
           mode={ mappingType === 'one' ? 'default' : 'multiple' }
           notFoundContent="暂无内容"
         >
-          { ...renderSelectGroup(selectGroupList) }
+          { ...selectOptionList.length ? renderSelectOption(selectOptionList) : renderSelectGroup(selectGroupList) }
         </a-select>
       )
     },
