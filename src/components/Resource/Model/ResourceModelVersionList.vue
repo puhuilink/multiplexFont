@@ -1,38 +1,11 @@
-<template>
-  <div class="ResourceInstanceVersionList">
-    <CTable
-      ref="table"
-      :data="loadData"
-      :columns="columns"
-      rowKey="_id"
-      :rowSelection="null"
-      :scroll="{ x: scrollX, y: `calc(100vh - 290px)`}"
-    >
-    </CTable>
-  </div>
-</template>
-
 <script>
-import CTable from '@/components/Table/CTable'
 import { ModelHistoryService } from '@/api-hasura'
+import VersionList from '../Common/VersionList'
+import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'ResourceInstanceVersionList',
-  components: {
-    CTable
-  },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  data: () => ({
-    // 查询参数
-    queryParams: {},
-    // 选中行的 key
-    selectedRowKeys: []
-  }),
+  mixins: [VersionList],
   computed: {
     columns: {
       get () {
@@ -72,18 +45,6 @@ export default {
       }
     }
   },
-  watch: {
-    '$props': {
-      immediate: false,
-      deep: true,
-      handler () {
-        // 重置查询条件
-        this.reset()
-        // 重新查询
-        this.$refs['table'].refresh(true)
-      }
-    }
-  },
   methods: {
     /**
      * 加载表格数据
@@ -94,25 +55,12 @@ export default {
       return ModelHistoryService.find({
         ...parameter,
         where: {
+          ...generateQuery(this.queryParams),
           ...this.where
         },
         fields: this.columns.map(column => column.dataIndex),
         alias: 'data'
       }).then(r => r.data)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
