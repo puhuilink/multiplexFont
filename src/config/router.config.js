@@ -318,7 +318,7 @@ export const asyncRouterMap = [
             path: '/patrol/route',
             name: 'RouteManagement',
             component: () => import('@/views/patrol/route/RouteManagement'),
-            meta: { title: '路线管理', keepAlive: true, permission: [ 'F010002' ] }
+            meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
           },
           {
             path: '/patrol/plan',
