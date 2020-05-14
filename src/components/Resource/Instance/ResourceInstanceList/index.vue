@@ -13,22 +13,15 @@
         <template #query>
           <a-form layout="inline" :style="{ overflow: hiddenOperation ? 'hidden' : 'visible' }">
             <div :class="{ fold: !advanced }">
-              <a-row>
+              <a-row v-for="(fields, index) in queryFields" :key="index">
                 <a-col
-                  v-for="(value, index) in queryParams.values"
-                  :key="index"
+                  v-for="(field, idx) in fields"
+                  :key="idx"
                   :md="12"
                   :sm="24"
                   v-show="index <= 1 || (index > 1 && advanced)"
                 >
-                  <a-form-item
-                    :labelCol="{ span: 8 }"
-                    :wrapperCol="{ span: 12, offset: 4 }"
-                    :label="value.label"
-                    style="width: 100%"
-                  >
-                    <a-input allowClear v-model="value.value" />
-                  </a-form-item>
+                  <Factory :field="field" />
                 </a-col>
               </a-row>
             </div>
@@ -76,6 +69,9 @@ import { InstanceService, ModelService } from '@/api-hasura/index'
 import { generateJsonbQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
+import Factory from './modules/Factory'
+import List from '@/components/Mixins/Table/List'
+import OperationNotification from '@/components/OperationNotification'
 
 const defaultColumns = [
   {
@@ -94,11 +90,8 @@ const defaultColumns = [
 
 export default {
   name: 'ResourceInstanceList',
+  mixins: [List, OperationNotification],
   props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    },
     parentName: {
       type: String,
       default: ''
@@ -114,41 +107,28 @@ export default {
   },
   components: {
     CTable,
-    ResourceInstanceSchema
+    ResourceInstanceSchema,
+    Factory
   },
   data: () => ({
-    // 查询栏是否展开
-    advanced: false,
     loading: false,
     // 查询参数
     queryParams: {
       values: []
     },
-    // 选中行
-    selectRows: [],
-    // 选中行的 key
-    selectedRowKeys: [],
     columns: []
   }),
   computed: {
-    // TODO: 列不全
-    // TODO: td 溢出省略号或自动增长但与表头保持对齐
-    scrollX: {
-      get () {
-        const { hiddenOperation, columns } = this
-        if (_.isEmpty(columns)) {
-          return true
-        } else {
-          // hiddenOperation 时不展示多选框
-          return columns
-            .map(e => e.width || 60)
-            .reduce((a, b) => a + b) + (hiddenOperation ? 0 : 36)
-        }
-      }
-    },
     columnFieldList: {
       get () {
         return this.columns.map(e => e.dataIndex)
+      }
+    },
+    queryFields: {
+      get () {
+        const { advanced, queryParams: { values } } = this
+        const fields = advanced ? values : values.slice(0, 2)
+        return _.chunk(fields, 2)
       }
     }
   },
@@ -174,7 +154,7 @@ export default {
     },
     edit () {
       // const [_id] = this.selectRowKeys
-      const [instance] = this.selectRows
+      const [instance] = this.selectedRows
       const { parentName, _id } = instance
       this.$refs['schema'].edit(parentName, _id)
     },
@@ -185,16 +165,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await InstanceService.batchDelete(this.selectedRowKeys)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.noticiDeleteSuccess()
         await this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -209,6 +183,7 @@ export default {
       this.selectedRowKeys = []
       this.selectedRows = []
 
+      console.log(_.pick(this.queryParams, ['values']))
       console.log(generateJsonbQuery(_.pick(this.queryParams, ['values'])))
 
       return InstanceService.list({
@@ -251,7 +226,7 @@ export default {
           ...column,
           title: column.label,
           dataIndex: name,
-          // 老系统数据的 width 大都比较写，在 antd 框架下表现为容易溢出
+          // 老系统数据的 width 大都比较小，在 antd 框架下表现为容易溢出
           width: column.width ? column.width + 60 : 120,
           customRender: (text, record) => {
             const value = _.get(record, `values.${column.name}`)
@@ -267,34 +242,9 @@ export default {
       } finally {
         this.queryParams.values = this.columns
           .filter(field => !!field.searchField)
-          .map(({ matchType, label, name, dataType }) => ({ matchType, label, name, dataType }))
+          .map(el => ({ ...el }))
         this.loading = false
       }
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectRows = selectRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
-    },
-    /**
-     * 切换查询栏展开状态
-     * @event
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     }
   },
   created () {

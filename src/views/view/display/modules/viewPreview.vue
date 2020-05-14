@@ -216,7 +216,7 @@ export default {
       clearInterval(this.timer)
       // 开启定时器。每分钟切换视图
       if (this.isPolling) {
-        setInterval(() => {
+        this.timer = setInterval(() => {
           if (this.isPolling) {
             this.index += 1
             this.getIndexView()

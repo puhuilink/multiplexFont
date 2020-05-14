@@ -109,30 +109,30 @@
         </a-input>
       </a-form-item>
 
-      <a-form-item>
-        <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
-          <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-        </a-input>
-      </a-form-item>
+      <!--      <a-form-item>-->
+      <!--        <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">-->
+      <!--          <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
+      <!--        </a-input>-->
+      <!--      </a-form-item>-->
 
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="16">
-          <a-form-item>
-            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
-              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-        </a-col>
-        <a-col class="gutter-row" :span="8">
-          <a-button
-            class="getCaptcha"
-            tabindex="-1"
-            :disabled="state.smsSendBtn"
-            @click.stop.prevent="getCaptcha"
-            v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"
-          ></a-button>
-        </a-col>
-      </a-row>
+      <!--      <a-row :gutter="16">-->
+      <!--        <a-col class="gutter-row" :span="16">-->
+      <!--          <a-form-item>-->
+      <!--            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">-->
+      <!--              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
+      <!--            </a-input>-->
+      <!--          </a-form-item>-->
+      <!--        </a-col>-->
+      <!--        <a-col class="gutter-row" :span="8">-->
+      <!--          <a-button-->
+      <!--            class="getCaptcha"-->
+      <!--            tabindex="-1"-->
+      <!--            :disabled="state.smsSendBtn"-->
+      <!--            @click.stop.prevent="getCaptcha"-->
+      <!--            v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"-->
+      <!--          ></a-button>-->
+      <!--        </a-col>-->
+      <!--      </a-row>-->
 
       <!-- <a-form-item>
         <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
@@ -288,24 +288,25 @@ export default {
           // console.log('login form', values)
           // eslint-disable-next-line no-undef
           const loginParams = { ...values }
-          if (loginParams.captcha === this.captcha) {
-            delete loginParams.userId
-            loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-            loginParams.pwd = values.pwd
-            Login(loginParams)
-              .then((res) => this.loginSuccess(res))
-              .catch(err => this.requestFailed(err))
-              .finally(() => {
-                state.loginBtn = false
-              })
-          } else {
-            state.loginBtn = false
-            if (this.captcha === null) {
-              this.$message.warn('验证码已过期，请重新获取验证码！')
-            } else {
-              this.$message.error('验证码错误，请重新填写！')
-            }
-          }
+          // Todo 暂时注释验证码功能以方便开发
+          // if (loginParams.captcha === this.captcha) {
+          delete loginParams.userId
+          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+          loginParams.pwd = values.pwd
+          Login(loginParams)
+            .then((res) => this.loginSuccess(res))
+            .catch(err => this.requestFailed(err))
+            .finally(() => {
+              state.loginBtn = false
+            })
+          // } else {
+          //   state.loginBtn = false
+          //   if (this.captcha === null) {
+          //     this.$message.warn('验证码已过期，请重新获取验证码！')
+          //   } else {
+          //     this.$message.error('验证码错误，请重新填写！')
+          //   }
+          // }
         } else {
           setTimeout(() => {
             state.loginBtn = false
