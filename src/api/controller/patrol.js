@@ -1,6 +1,7 @@
 import apollo from '@/utils/apollo'
 import {
   queryRouteList,
+  queryRouteDetail,
   queryRoutePointDetail,
   queryPlanList,
   queryUserGroupList,
@@ -10,13 +11,22 @@ import {
   queryTaskPointDetail,
   updatePlan,
   deleteRouteArr,
-  deletePlanArr
+  deletePlanArr,
+  insertPlanObj
 } from '../graphql/patrol'
 
 // get
 export const getRouteList = function (variables = {}) {
   return apollo.clients.alert.query({
     query: queryRouteList,
+    variables: {
+      ...variables
+    }
+  })
+}
+export const getRouteDetail = function (variables = {}) {
+  return apollo.clients.alert.query({
+    query: queryRouteDetail,
     variables: {
       ...variables
     }
@@ -106,6 +116,16 @@ export const deleteRoute = function (variables = {}) {
 export const deletePlan = function (variables = {}) {
   return apollo.clients.alert.mutate({
     mutation: deletePlanArr,
+    variables: {
+      ...variables
+    }
+  })
+}
+
+// insert
+export const insertPlan = function (variables = {}) {
+  return apollo.clients.alert.mutate({
+    mutation: insertPlanObj,
     variables: {
       ...variables
     }
