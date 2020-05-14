@@ -105,7 +105,7 @@
           <a-tab-pane v-for="viewConfig in filterViewList" :key="viewConfig.view_id" :tab="viewConfig.view_title"></a-tab-pane>
         </a-tabs>
         <a-spin :spinning="isLoading" >
-          <div class="ViewDisplay__view-tab-content">
+          <div class="ViewDisplay__view-tab-content" :class="[isFullscreen && 'fullscreen']" >
             <transition name="renderer">
               <Renderer v-if="view" :view="view" ref="renderer" />
             </transition>
@@ -574,6 +574,10 @@ export default {
       width: 100%;
       height: calc(100vh - 230px);
       overflow: auto;
+    }
+
+    &-tab-content.fullscreen {
+      height: 100%;
     }
 
     &-item {
