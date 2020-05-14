@@ -1,38 +1,38 @@
 <template>
   <a-form-item
-    label="源值"
+    :label="field.label"
     v-bind="formItemProps"
+    style="width: 100%"
   >
     <a-select
+      v-model.number="field.value"
       v-bind="formChildProps"
       showSearch
       allowClear
       style="min-width: 200px"
       :notFoundContent="sourceValueLoading ? '加载中...' : '暂无数据'"
       :filterOption="filterOption"
-      v-decorator="[
-        'sourceValue'
-      ]"
     >
       <a-select-option
         v-for="(item, itemIdx) in sourceValueList"
         :key="`${itemIdx}-${item.label}`"
-        :value="item.name"
+        :value="item.values.valueCode"
       >
-        {{ item.label }}
+        {{ item.values.valueLabel }}
       </a-select-option>
     </a-select>
   </a-form-item>
 </template>
 
 <script>
-import mixin from './mixin'
 import { InstanceService } from '@/api-hasura/index'
-import _ from 'lodash'
+import mixin from './mixin'
 
 export default {
+  name: 'SelectedField',
   mixins: [mixin],
-  name: 'SourceValue',
+  components: {},
+  props: {},
   data: () => ({
     sourceValueList: [],
     sourceValueLoading: false
@@ -47,20 +47,24 @@ export default {
     async loadSourceValueList () {
       try {
         this.sourceValueLoading = true
+        const { sourceValue } = this.field
         const { data: { instanceList } } = await InstanceService.find({
           where: {
-            parentName: 'DictManager'
+            name: sourceValue
           },
           fields: [
             '_id',
             'name',
-            'label'
+            'label',
+            'values'
           ],
           alias: 'instanceList'
         })
-        this.sourceValueList = _.uniqWith(instanceList, (v1, v2) => v1.name === v2.name)
+        console.log(instanceList)
+        this.sourceValueList = instanceList
       } catch (e) {
         this.sourceValueList = []
+        throw e
       } finally {
         this.sourceValueLoading = false
       }

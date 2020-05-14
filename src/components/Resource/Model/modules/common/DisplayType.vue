@@ -4,6 +4,8 @@
     v-bind="formItemProps"
   >
     <a-select
+      v-on="$listeners"
+      v-bind="formChildProps"
       v-decorator="[
         'displayType',
         {

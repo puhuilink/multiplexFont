@@ -13,6 +13,12 @@ export default {
         description: '编辑成功'
       })
     },
+    noticiDeleteSuccess () {
+      this.$notification.success({
+        message: '系统提示',
+        description: '删除成功'
+      })
+    },
     noticiError (e) {
       this.$notification.error({
         message: '系统提示',

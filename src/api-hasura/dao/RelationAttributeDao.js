@@ -3,6 +3,7 @@ import { alert } from '../config/client'
 import { readonly } from 'core-decorators'
 import { varcharUuid } from '@/utils/util'
 import { ModelDao } from './ModelDao'
+import _ from 'lodash'
 
 class RelationAttributeDao extends BaseDao {
   // 对应 hasura schema
@@ -75,9 +76,11 @@ class RelationAttributeDao extends BaseDao {
         fields: ['parentName'],
         alias: 'modelList'
       })
-      const { data: { modelList: [model] } } = await modelHasuraORM.await()
-      const { parentName } = model
-      Object.assign(argus, { extendModelName: parentName })
+      // TODO: lodash.get
+      const { data: { modelList } } = await modelHasuraORM.await()
+      // 最顶层模型节点 parentName 为 null
+      const extendModelName = _.get(modelList, '0.parentName', null)
+      Object.assign(argus, { extendModelName })
     } else {
       Object.assign(argus, { extendModelName: null })
     }

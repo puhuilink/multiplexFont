@@ -64,7 +64,7 @@ export default {
       await this.$nextTick()
       await Timeout.set(300)
       this.form.setFieldsValue(record)
-      this.searchFieldInput()
+      this.initForm()
     },
     cancel () {
       this.visible = false
@@ -95,6 +95,7 @@ export default {
     async update () {
       this.form.validateFields(async (err, values) => {
         if (err) return
+        console.log(values)
         const {
           where: {
             name: modelName
@@ -117,8 +118,8 @@ export default {
   },
   render () {
     const {
-      form, loading, title, visible, disableMatchType,
-      cancel, reset, submit, searchFieldInput
+      form, loading, title, visible, disableMatchType, disableSourceType,
+      cancel, reset, submit, searchFieldInput, displayTypeSelect
     } = this
     return (
       <a-modal
@@ -142,12 +143,12 @@ export default {
               <Name formChildProps={{ disabled: title === '编辑' }} />,
               <Width />,
               <DataType />,
-              <DisplayType />,
-              <SourceType />,
+              <DisplayType onSelect={displayTypeSelect} />,
+              <SourceType formChildProps={{ disabled: disableSourceType }} />,
               <SearchField onInput={searchFieldInput} />,
               <AllowNull />,
               <MatchType formChildProps={{ disabled: disableMatchType }} />,
-              <SourceValue />,
+              <SourceValue formChildProps={{ disabled: disableSourceType }} />,
               <AllowInheritance />,
               <Hidden />,
               <Edit />,

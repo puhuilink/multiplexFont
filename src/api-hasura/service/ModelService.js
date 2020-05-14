@@ -143,7 +143,7 @@ class ModelService extends BaseService {
     const { data: { instanceList } } = await query(
       InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['name'], alias: 'instanceList' })
     )
-    const instanceNameList = instanceList.map(({ name }) => name)
+    const instanceNameList = instanceList.map(({ name }) => name).filter(name => !!name)
 
     await mutate(
       // 资源模型删除

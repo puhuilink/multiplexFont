@@ -252,14 +252,6 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
-    },
-    /**
      * 切换搜索栏展开 / 收起状态
      */
     toggleAdvanced () {

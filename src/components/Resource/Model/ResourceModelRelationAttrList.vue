@@ -6,7 +6,7 @@
       :columns="columns"
       rowKey="_id"
       :rowSelection="{selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: selectRow}"
-      :scroll="{ x: scrollX, y: 850}"
+      :scroll="scroll"
     >
       <template #query>
         <a-form layout="inline">
@@ -35,15 +35,9 @@
             </a-row>
           </div>
 
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            <!--            <a @click="toggleAdvanced" style="margin-left: 8px">-->
-            <!--              {{ advanced ? '收起' : '展开' }}-->
-            <!--              <a-icon :type="advanced ? 'up' : 'down'"/>-->
-            <!--            </a>-->
+            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
           </span>
         </a-form>
       </template>
@@ -69,41 +63,19 @@ import deleteCheck from '@/components/DeleteCheck'
 import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
 import _ from 'lodash'
-
-export const fields = [
-  '_id',
-  'name',
-  'label',
-  'source',
-  'target',
-  'mappingType',
-  'relationType',
-  'tabGroup',
-  'order',
-  'allowInheritance',
-  'allowNull'
-]
+import List from '@/components/Mixins/Table/List'
+import OperationNotification from '@/components/OperationNotification'
 
 export default {
   name: 'ResourceModelRelationAttrList',
+  mixins: [List, OperationNotification],
   components: {
     CTable,
     ModelRelationAttrSchema
   },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data: () => ({
-    advanced: false,
     // 查询参数
-    queryParams: {},
-    // 选中行
-    selectedRows: [],
-    // 选中行的 key
-    selectedRowKeys: []
+    queryParams: {}
   }),
   computed: {
     columns: {
@@ -187,13 +159,13 @@ export default {
             width: 180,
             customRender: val => val ? '是' : '否'
           },
-          {
-            title: '匹配条件',
-            dataIndex: 'matchType',
-            sorter: true,
-            width: 180,
-            ellipsis: true
-          },
+          // {
+          //   title: '匹配条件',
+          //   dataIndex: 'matchType',
+          //   sorter: true,
+          //   width: 180,
+          //   ellipsis: true
+          // },
           {
             title: '非空',
             dataIndex: 'allowNull',
@@ -204,11 +176,12 @@ export default {
         ]
       }
     },
-    scrollX: {
+    fields: {
       get () {
-        return this.columns
-          .map(e => e.width || 60)
-          .reduce((a, b) => a + b) + 62
+        return [
+          '_id',
+          ...this.columns.map(({ dataIndex }) => dataIndex)
+        ]
       }
     }
   },
@@ -237,16 +210,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await RelationAttributeService.batchDelete(this.selectedRowKeys)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.noticiDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -254,11 +221,7 @@ export default {
     },
     edit () {
       const [record] = this.selectedRows
-      // console.log(
-      //   record,
-      //   _.pick(record, [...fields])
-      // )
-      this.$refs['schema'].edit(_.pick(record, [...fields]))
+      this.$refs['schema'].edit(_.pick(record, this.fields))
     },
     /**
      * 加载表格数据
@@ -274,37 +237,9 @@ export default {
           ...generateQuery(this.queryParams)
         },
         alias: 'data',
-        fields: [...fields],
+        fields: this.fields,
         ...parameter
       }).then(r => r.data)
-      // return apollo.clients.resource.query({
-      //   query,
-      //   variables: {
-      //     ...parameter,
-      //     where: {
-      //       ...this.where,
-      //       ...generateQuery(this.queryParams)
-      //     }
-      //   }
-      // }).then(r => r.data)
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
