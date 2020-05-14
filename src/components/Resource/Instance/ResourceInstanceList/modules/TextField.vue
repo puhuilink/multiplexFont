@@ -1,6 +1,7 @@
 <template>
   <a-form-item
     :labelCol="{ span: 8 }"
+    :label="field.label"
     :bind="formItemProps"
     style="width: 100%"
   >
@@ -19,6 +20,7 @@
 
 <script>
 import mixin from './mixin'
+
 export default {
   name: 'TextField',
   mixins: [mixin],

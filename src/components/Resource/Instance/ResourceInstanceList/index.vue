@@ -248,7 +248,7 @@ export default {
       } finally {
         this.queryParams.values = this.columns
           .filter(field => !!field.searchField)
-          .map(({ matchType, label, name, dataType, displayType }) => ({ matchType, label, name, dataType, displayType }))
+          .map(el => ({ ...el }))
         this.loading = false
       }
     }
