@@ -40,7 +40,7 @@ export default {
   computed: {
     disabledQuery () {
       const { queryParams } = this
-      return _.isEmpty(_.pickBy(queryParams, v => v && v.length))
+      return _.isEmpty(_.pickBy(queryParams, v => v === 0 || v || v.length))
     },
     hasSelected () {
       return this.selectedRowKeys.length > 0

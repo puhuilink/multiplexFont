@@ -21,7 +21,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.user_id"/>
+                  <a-input v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -30,7 +30,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.staff_name"/>
+                  <a-input v-model.trim="queryParams.staff_name" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -42,7 +42,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.email"/>
+                  <a-input v-model.trim="queryParams.email" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
