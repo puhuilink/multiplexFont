@@ -256,7 +256,8 @@ export default {
               props: {
                 attributeList,
                 relationAttributeList,
-                instance
+                instance,
+                loading: spinning
               },
               ref: 'form'
             })
