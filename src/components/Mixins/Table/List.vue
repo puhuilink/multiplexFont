@@ -2,9 +2,11 @@
 import CTable from '@/components/Table/CTable'
 import _ from 'lodash'
 import { triggerWindowResizeEvent } from '@/utils/util'
+import OperationNotification from '@/components/OperationNotification'
 
 export default {
   name: 'List',
+  mixins: [OperationNotification],
   components: {
     CTable
   },
@@ -25,6 +27,10 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
+    rowSelection () {
+      const { selectedRows, selectedRowKeys, selectRow: onChange } = this
+      return { selectedRows, selectedRowKeys, onChange }
+    },
     scrollX () {
       return _.sum(this.columns.map(e => e.width || 60))
     },
@@ -40,21 +46,14 @@ export default {
     /**
      * 查询
      */
-    query () {
-      this.$refs['table'].refresh(true)
+    query (firstPage = true) {
+      this.$refs['table'].refresh(firstPage)
     },
     /**
      * 重置查询条件
      */
     resetQueryParams () {
       Object.assign(this.$data.queryParams, this.$options.data.apply(this).queryParams)
-    },
-    /**
-     * 重置选中行
-     */
-    resetSelectedRows () {
-      this.selectedRows = []
-      this.selectedRowKeys = []
     },
     /**
      * 重置组件数据
@@ -64,6 +63,7 @@ export default {
     },
     /**
      * 表格行选中
+     * @event
      */
     selectRow (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -75,7 +75,6 @@ export default {
      */
     toggleAdvanced () {
       this.advanced = !this.advanced
-      // TODO: change scrollY
       triggerWindowResizeEvent()
     }
   }

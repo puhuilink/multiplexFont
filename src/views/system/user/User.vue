@@ -6,7 +6,7 @@
       :columns="columns"
       :data="loadData"
       :scroll="scroll"
-      :rowSelection="{ selectedRowKeys, selectedRows, onChange: selectRow }"
+      :rowSelection="rowSelection"
     >
       <template #query>
         <a-form layout="inline">
@@ -118,37 +118,16 @@
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
+import { Ellipsis } from '@/components'
 import UserSchema from './UserSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './UserGroupSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import CTable from '@/components/Table/CTable'
-import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import { UserService } from '@/api-hasura'
 import List from '@/components/Mixins/Table/List'
 import { generateQuery } from '@/utils/graphql'
-
-const query = gql`query ($where: t_user_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_user_order_by!]) {
-  pagination: t_user_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: t_user(limit: $limit, offset: $offset, order_by: $orderBy, where: $where) {
-    user_id
-    staff_name
-    job_title
-    phone
-    mobile_phone
-    email
-    flag
-    note
-  }
-}
-`
 
 const updateUserFlag = gql`mutation update_user_flag ($userId: String!, $flag: numeric) {
   update_t_user(
@@ -169,9 +148,6 @@ export default {
   name: 'User',
   mixins: [List],
   components: {
-    Template,
-    STable,
-    CTable,
     Ellipsis,
     UserSchema,
     AuthScheme,
@@ -185,16 +161,14 @@ export default {
           title: '用户名',
           dataIndex: 'user_id',
           sorter: true,
-          width: 180,
-          ellipsis: true
+          width: 180
           // fixed: 'left'
         },
         {
           title: '姓名',
           dataIndex: 'staff_name',
           width: 150,
-          sorter: true,
-          ellipsis: true
+          sorter: true
         },
         {
           title: '岗位职责',
@@ -206,8 +180,7 @@ export default {
           title: '办公电话',
           dataIndex: 'phone',
           width: 100,
-          sorter: true,
-          ellipsis: true
+          sorter: true
         },
         {
           title: '移动电话',
@@ -237,7 +210,6 @@ export default {
       ]
     }
   },
-  filters: {},
   computed: {
     /**
      * 返回表格选中行
@@ -272,16 +244,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await UserService.batchDelete(this.selectedRowKeys)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.noticiDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.noticiError()
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -342,33 +308,15 @@ export default {
      * @return {Function: <Promise<Any>>}
      */
     loadData (parameter) {
-      return apollo.clients.alert.query({
-        query,
-        variables: {
-          // user 表没有id，并非默认按最新数据排序，此处手动指定
-          // TODO: 是否table默认都nulls_last
-          orderBy: {
-            'createdate': 'desc_nulls_last'
-          },
-          ...parameter,
-          where: {
-            ...this.where,
-            ...generateQuery(this.queryParams)
-          }
-        }
+      return UserService.find({
+        where: {
+          ...this.where,
+          ...generateQuery(this.queryParams)
+        },
+        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        ...parameter,
+        alias: 'data'
       }).then(r => r.data)
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     }
   }
 }
