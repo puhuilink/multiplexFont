@@ -5,6 +5,8 @@
     style="width: 100%"
   >
     <a-date-picker
+      :format="showTime ? 'YYYY-MM-DDTHH:mm:ss' : 'YYYY-MM-DD'"
+      :valueFormat="showTime ? 'YYYY-MM-DDTHH:mm:ss' : 'YYYY-MM-DD'"
       style="width: 100%"
       :placeholder="showTime ? '请选择时间' : '请选择日期'"
       :showTime="showTime"

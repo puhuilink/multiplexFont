@@ -78,7 +78,7 @@ export default {
       }
     },
     getFieldDecorator (field) {
-      const { form } = this
+      const { form, isAdd } = this
       const {
         label,
         name,
@@ -89,7 +89,9 @@ export default {
       } = field
       // console.log(pattern)
       const options = {
-        initialValue: makeFormItemValue(field, defaultValue),
+        ...isAdd && defaultValue ? {
+          initialValue: makeFormItemValue(field, defaultValue)
+        } : {},
         rules: [
           ...allowNull ? [{
             required: true,
@@ -152,10 +154,10 @@ export default {
       return <a-textarea autosize />
     },
     renderDate (field) {
-      return <a-date-picker style={{ width: '100%' }} />
+      return <a-date-picker valueFormat="YYYY-MM-DD" style={{ width: '100%' }} />
     },
     renderDateTime (field) {
-      return <a-date-picker style={{ width: '100%' }} showTime />
+      return <a-date-picker valueFormat="YYYY-MM-DDTHH:mm:ss" style={{ width: '100%' }} showTime />
     },
     renderRadio (field) {}
   },

@@ -86,14 +86,15 @@ class ModelDao extends BaseDao {
     AND
       elements.value ->> 'uniqueness' = 'true'
         `
-    // console.log(sql)
     const { data: { result } } = await MAIN_AXIOS.sql(sql)
-    // return result
-    // return result.slice(1)
     const [, attrList] = result
-    if (attrList) {
-      // eslint-disable-next-line no-eval
-      return eval(attrList[0])
+    if (attrList && attrList !== ['NULL']) {
+      try {
+        // eslint-disable-next-line no-eval
+        return eval(attrList[0])
+      } catch {
+        return []
+      }
     } else {
       return []
     }

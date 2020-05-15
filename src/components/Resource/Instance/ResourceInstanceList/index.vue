@@ -33,7 +33,7 @@
                 <!-- FIXME: 查询接口入参错误 -->
                 <!-- FIXME: 查询匹配条件动态 -->
                 <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+                <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
               </template>
               <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryParams.values.length > 2">
                 {{ advanced ? '收起' : '展开' }}
@@ -245,6 +245,10 @@ export default {
           .map(el => ({ ...el }))
         this.loading = false
       }
+    },
+    resetQueryParams () {
+      const { values } = this.queryParams
+      this.queryParams.values = values.map(el => ({ ...el, value: undefined }))
     }
   },
   created () {

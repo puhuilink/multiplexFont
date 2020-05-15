@@ -64,6 +64,11 @@ const generateJsonb = function (key, { matchType, name, dataType, value }) {
       _value = `'${Boolean(Number(value))}'`
       break
     }
+    case 'Data': {
+      // _value
+      console.log(value)
+      break
+    }
     default: {
       _value = value
       break
@@ -76,7 +81,7 @@ const generateJsonb = function (key, { matchType, name, dataType, value }) {
       break
     }
     case 'NE': {
-      _matchType = '<>'
+      _matchType = '!='
       break
     }
     case 'LIKE': {
@@ -111,7 +116,7 @@ const generateJsonb = function (key, { matchType, name, dataType, value }) {
       break
     }
     default: {
-      _matchType = matchType
+      _matchType = '='
       break
     }
   }
