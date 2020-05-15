@@ -154,7 +154,10 @@
       </span>
     </CTable>
 
-    <detail ref="detail"></detail>
+    <detail
+      ref="detail"
+      @addSuccess="$refs['table'].refresh(false)"
+    ></detail>
   </div>
 </template>
 
