@@ -43,7 +43,7 @@
           </div>
 
           <span :class="advanced ? 'expand' : 'collapse'">
-            <QueryBtn @click="query" :disabled="disabledQuery" />
+            <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
             <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
           </span>

@@ -38,10 +38,6 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
-    disabledQuery () {
-      const { queryParams } = this
-      return _.isEmpty(_.pickBy(queryParams, v => v === 0 || v || v.length))
-    },
     hasSelected () {
       return this.selectedRowKeys.length > 0
     },
@@ -56,7 +52,7 @@ export default {
       return _.sum(this.columns.map(e => e.width || 60))
     },
     scrollY () {
-      return 'calc(100vh - 300px)'
+      return 'calc(100vh - 310px)'
     },
     scroll () {
       const { scrollX: x = true, scrollY: y = true } = this
