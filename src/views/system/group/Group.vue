@@ -112,23 +112,7 @@ import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import List from '@/components/Mixins/Table/List'
 import { generateQuery } from '@/utils/graphql'
-
-const query = gql`query ($where: t_group_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_group_order_by!])  {
-  pagination: t_group_aggregate(where: $where) {
-    aggregate {
-      count
-    }
-  }
-  data: t_group (where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
-    group_id
-    group_name
-    group_type
-    group_id
-    flag
-    note
-  }
-}
-`
+import { GroupService } from '@/api-hasura/index'
 
 const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = [], $desktopNames: [String!] = []) {
   #   group 表删除
@@ -244,18 +228,14 @@ export default {
      * 加载表格数据回调
      */
     loadData (parameter) {
-      return apollo.clients.alert.query({
-        query,
-        variables: {
-          orderBy: {
-            'createdate': 'desc_nulls_last'
-          },
-          ...parameter,
-          where: {
-            ...this.where,
-            ...generateQuery(this.queryParams)
-          }
-        }
+      return GroupService.find({
+        where: {
+          ...this.where,
+          ...generateQuery(this.queryParams)
+        },
+        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        alias: 'data',
+        ...parameter
       }).then(r => r.data)
     },
     /**
