@@ -78,12 +78,12 @@ export default {
       }
     },
     getFieldDecorator (field) {
-      const { form, isAdd } = this
+      const { form } = this
       const {
         label,
         name,
         // 是否必填
-        allowNull = false,
+        allowNull,
         pattern = '',
         defaultValue
       } = field
@@ -91,7 +91,7 @@ export default {
       const options = {
         initialValue: makeFormItemValue(field, defaultValue),
         rules: [
-          ...isAdd && eval(`${allowNull}`) ? [{
+          ...allowNull ? [{
             required: true,
             message: `${label}必填`
           }] : [],
@@ -135,7 +135,7 @@ export default {
       // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
       const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
       // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
-      console.log(selectOptionList)
+      // console.log(selectOptionList)
       return (
         <a-select
           filterOption={filterOption}

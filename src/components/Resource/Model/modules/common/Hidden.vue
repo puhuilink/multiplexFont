@@ -1,11 +1,11 @@
 <template>
   <a-form-item
-    label="非空"
+    label="隐藏"
     v-bind="formItemProps"
   >
     <a-checkbox
       v-decorator="[
-        'allowNull',
+        'hidden',
         {
           valuePropName: 'checked',
           initialValue: false
@@ -19,7 +19,7 @@ import mixin from './mixin'
 
 export default {
   mixins: [mixin],
-  name: 'AllowNull'
+  name: 'Hidden'
 }
 </script>
 

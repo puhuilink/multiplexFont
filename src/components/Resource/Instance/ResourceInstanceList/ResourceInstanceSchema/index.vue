@@ -141,6 +141,7 @@ export default {
       this.mode = 'edit'
       this.title = '编辑'
       // this.submit = this.update
+      this.parentName = parentName
       this.visible = true
       this._id = _id
       await Promise.all([
@@ -213,6 +214,7 @@ export default {
         const { _id } = this
         await InstanceService.update({
           values,
+          parentName: this.parentName,
           _id
         }, { _id: { _eq: _id } })
         this.$emit('addSuccess')

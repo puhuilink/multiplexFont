@@ -200,7 +200,8 @@ export default {
             title: '唯一验证',
             dataIndex: 'uniqueness',
             sorter: true,
-            width: 180
+            width: 180,
+            customRender: val => val ? '是' : '否'
           },
           {
             title: '唯一范围',
