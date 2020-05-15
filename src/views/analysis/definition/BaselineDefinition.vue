@@ -19,7 +19,7 @@
                   label="动态基线名称"
                   v-bind="formItemLatout"
                   style="width: 100%">
-                  <a-input v-model="queryParams.title" placeholder=""/>
+                  <a-input allowClear v-model="queryParams.title" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">

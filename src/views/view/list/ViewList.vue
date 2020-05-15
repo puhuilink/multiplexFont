@@ -27,7 +27,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.number="queryParams.view_id" placeholder=""/>
+                  <a-input allowClear v-model.number="queryParams.view_id" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -36,7 +36,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.view_title" placeholder=""/>
+                  <a-input allowClear v-model.trim="queryParams.view_title" placeholder=""/>
                 </a-form-item>
               </a-col>
             </a-row>

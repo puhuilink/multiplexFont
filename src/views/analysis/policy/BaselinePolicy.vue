@@ -20,7 +20,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.title" />
+                  <a-input allowClear v-model.trim="queryParams.title" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -28,7 +28,7 @@
                   label="周期"
                   v-bind="formItemLatout"
                   style="width: 100%">
-                  <a-input type="number" v-model.number="queryParams.cycle_count" />
+                  <a-input allowClear type="number" v-model.number="queryParams.cycle_count" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -39,7 +39,7 @@
                   label="计算时间"
                   v-bind="formItemLatout"
                   style="width: 100%">
-                  <a-input v-model.trim="queryParams.cron_expression" />
+                  <a-input allowClear v-model.trim="queryParams.cron_expression" />
                 </a-form-item>
               </a-col>
             </a-row>

@@ -20,7 +20,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.group_id" />
+                  <a-input allowClear v-model.trim="queryParams.group_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
@@ -29,7 +29,7 @@
                   v-bind="formItemLatout"
                   style="width: 100%"
                 >
-                  <a-input v-model.trim="queryParams.group_name" />
+                  <a-input allowClear v-model.trim="queryParams.group_name" />
                 </a-form-item>
               </a-col>
             </a-row>
