@@ -3,12 +3,18 @@ import CTable from '@/components/Table/CTable'
 import _ from 'lodash'
 import { triggerWindowResizeEvent } from '@/utils/util'
 import OperationNotification from '@/components/OperationNotification'
+import QueryBtn from './Button/QueryBtn'
+import ResetBtn from './Button/ResetBtn'
+import ToggleBtn from './Button/ToggleBtn'
 
 export default {
   name: 'List',
   mixins: [OperationNotification],
   components: {
-    CTable
+    CTable,
+    QueryBtn,
+    ResetBtn,
+    ToggleBtn
   },
   props: {
     where: {
@@ -17,8 +23,13 @@ export default {
     }
   },
   data: () => ({
-    // 查询栏是否展开
+    // 查询区域是否展开
     advanced: false,
+    // 查询区域表单元素布局
+    formItemLatout: {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14, offset: 2 }
+    },
     // 查询参数
     queryParams: {},
     // 选中行
@@ -27,6 +38,16 @@ export default {
     selectedRowKeys: []
   }),
   computed: {
+    disabledQuery () {
+      const { queryParams } = this
+      return _.isEmpty(_.pickBy(queryParams, v => v && v.length))
+    },
+    hasSelected () {
+      return this.selectedRowKeys.length > 0
+    },
+    hasSelectedOne () {
+      return this.selectedRowKeys.length === 1
+    },
     rowSelection () {
       const { selectedRows, selectedRowKeys, selectRow: onChange } = this
       return { selectedRows, selectedRowKeys, onChange }
@@ -35,7 +56,7 @@ export default {
       return _.sum(this.columns.map(e => e.width || 60))
     },
     scrollY () {
-      return 'calc(100vh - 290px)'
+      return 'calc(100vh - 300px)'
     },
     scroll () {
       const { scrollX: x = true, scrollY: y = true } = this
@@ -82,8 +103,24 @@ export default {
 </script>
 
 <style lang="less">
+.form {}
+
 .fold {
+  flex: 1;
   display: inline-block;
   width: calc(100% - 216px);
 }
+
+.expand {
+  float: right;
+  overflow: hidden;
+  transform: translateY(15.5px);
+}
+
+.collapse {
+  float: right;
+  overflow: hidden;
+  transform: translateY(6.5px);
+}
+
 </style>

@@ -57,6 +57,12 @@ class UserService extends BaseService {
       UserDao.update(user, where)
     )
   }
+
+  static async toggleFlag (user_id, flag) {
+    await mutate(
+      UserDao.update({ flag }, { user_id })
+    )
+  }
 }
 
 export {

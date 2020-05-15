@@ -70,7 +70,14 @@ export default {
         ...this.$props,
         ...this.$attrs,
         pagination,
-        columns: columns.map(column => ({ ellipsis: true, ...column })),
+        columns: columns.map(column => ({
+          ellipsis: true,
+          ...column.tooltip ? {
+            customRender: v => (<a-tooltip title={v}>
+              <span>{v}</span>
+            </a-tooltip>)
+          } : {},
+          ...column })),
         pageSize: pagination.pageSize
       },
       on: {
