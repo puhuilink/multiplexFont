@@ -17,7 +17,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="工作组编号"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.group_id" />
@@ -26,7 +26,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="工作组名称"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.group_name" />
@@ -37,7 +37,7 @@
             <a-row v-show="advanced">
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   label="有效标识"
                   style="width: 100%"
                 >

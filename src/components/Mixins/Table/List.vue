@@ -26,7 +26,8 @@ export default {
     // 查询区域是否展开
     advanced: false,
     // 查询区域表单元素布局
-    formItemLatout: {
+    formItemLayout: {
+      // TODO: responsive
       labelCol: { span: 4 },
       wrapperCol: { span: 14, offset: 2 }
     },
@@ -49,7 +50,8 @@ export default {
       return { selectedRows, selectedRowKeys, onChange }
     },
     scrollX () {
-      return _.sum(this.columns.map(e => e.width || 60))
+      const { columns = [] } = this
+      return _.sum(columns.map(e => e.width || 60))
     },
     scrollY () {
       return 'calc(100vh - 310px)'
@@ -87,7 +89,7 @@ export default {
       this.selectedRows = selectedRows
     },
     /**
-     * 切换查询栏展开状态
+     * 切换查询区域展开状态
      * @event
      */
     toggleAdvanced () {
@@ -99,24 +101,25 @@ export default {
 </script>
 
 <style lang="less">
-.form {}
+.form {
 
-.fold {
-  flex: 1;
-  display: inline-block;
-  width: calc(100% - 216px);
+  .fold {
+    flex: 1;
+    display: inline-block;
+    width: calc(100% - 216px);
+  }
+
+  .expand {
+    float: right;
+    overflow: hidden;
+    transform: translateY(15.5px);
+  }
+
+  .collapse {
+    float: right;
+    overflow: hidden;
+    transform: translateY(6.5px);
+  }
+
 }
-
-.expand {
-  float: right;
-  overflow: hidden;
-  transform: translateY(15.5px);
-}
-
-.collapse {
-  float: right;
-  overflow: hidden;
-  transform: translateY(6.5px);
-}
-
 </style>

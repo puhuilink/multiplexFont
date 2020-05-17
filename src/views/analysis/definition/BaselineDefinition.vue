@@ -17,7 +17,7 @@
               <a-col :md="10" :sm="24">
                 <a-form-item
                   label="动态基线名称"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%">
                   <a-input allowClear v-model="queryParams.title" placeholder=""/>
                 </a-form-item>
@@ -25,7 +25,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item
                   label="节点类型"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%">
                   <ci-model-select
                     :value="queryParams.model"
@@ -36,7 +36,7 @@
               <a-col :md="8" :sm="24">
                 <a-form-item
                   label="KPI"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <KpiSelect
@@ -197,7 +197,7 @@ export default {
         this.$refs['table'].refresh()
         this.noticiDeleteSuccess()
       } catch (e) {
-        this.noticiError()
+        this.noticiError(e)
         throw e
       }
     },

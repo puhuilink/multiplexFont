@@ -17,7 +17,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="模块名称"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input v-model.trim="queryParams.module_name" />
@@ -26,7 +26,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="操作账号"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input v-model.trim="queryParams.user_id" />
@@ -39,7 +39,7 @@
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="功能名称"
-                    v-bind="formItemLatout"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
                     <a-input v-model.trim="queryParams.actionname" />
@@ -48,7 +48,7 @@
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="客户端IP"
-                    v-bind="formItemLatout"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
                     <a-input v-model.trim="queryParams.client_ip" />
@@ -59,7 +59,7 @@
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="时间范围"
-                    v-bind="formItemLatout"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
                     <a-range-picker

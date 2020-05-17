@@ -17,7 +17,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="策略名称"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.title" />
@@ -26,7 +26,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="周期"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%">
                   <a-input allowClear type="number" v-model.number="queryParams.cycle_count" />
                 </a-form-item>
@@ -37,7 +37,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="计算时间"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%">
                   <a-input allowClear v-model.trim="queryParams.cron_expression" />
                 </a-form-item>
@@ -156,7 +156,7 @@ export default {
         this.noticiDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.noticiError()
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

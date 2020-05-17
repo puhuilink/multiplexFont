@@ -24,7 +24,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="视图ID"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.number="queryParams.view_id" placeholder=""/>
@@ -33,7 +33,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="视图标题"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.view_title" placeholder=""/>

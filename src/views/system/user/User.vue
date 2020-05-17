@@ -18,7 +18,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="用户名"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
@@ -27,7 +27,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="姓名"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
@@ -39,7 +39,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="邮箱"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-input allowClear v-model.trim="queryParams.email" />
@@ -48,7 +48,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="有效标识"
-                  v-bind="formItemLatout"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
                   <a-select
@@ -233,7 +233,7 @@ export default {
         this.noticiDeleteSuccess()
         this.query(false)
       } catch (e) {
-        this.noticiError()
+        this.noticiError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
