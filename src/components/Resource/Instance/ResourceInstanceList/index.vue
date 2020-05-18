@@ -71,7 +71,7 @@ import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
 import Factory from './modules/Factory'
 import List from '@/components/Mixins/Table/List'
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 const defaultColumns = [
   {
@@ -165,10 +165,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await InstanceService.batchDelete(this.selectedRowKeys)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         await this.$refs['table'].refresh(false)
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

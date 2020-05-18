@@ -64,7 +64,7 @@ import { generateQuery } from '@/utils/graphql'
 import { RelationAttributeService } from '@/api-hasura/index'
 import _ from 'lodash'
 import List from '@/components/Mixins/Table/List'
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 export default {
   name: 'ResourceModelRelationAttrList',
@@ -210,10 +210,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await RelationAttributeService.batchDelete(this.selectedRowKeys)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

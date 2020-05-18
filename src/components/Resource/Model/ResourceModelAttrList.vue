@@ -66,7 +66,7 @@ import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
 import List from '@/components/Mixins/Table/List'
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 export default {
   name: 'ResourceModelAttrList',
@@ -254,10 +254,10 @@ export default {
           }
         } = this
         await ModelService.batchDeleteAttr(modelName, attrNameList)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

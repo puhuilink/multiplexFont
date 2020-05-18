@@ -1,25 +1,25 @@
 export default {
   name: 'OperationNotification',
   methods: {
-    noticiAddSuccess () {
+    notifyAddSuccess () {
       this.$notification.success({
         message: '系统提示',
         description: '新增成功'
       })
     },
-    noticiEditSuccess () {
+    notifyEditSuccess () {
       this.$notification.success({
         message: '系统提示',
         description: '编辑成功'
       })
     },
-    noticiDeleteSuccess () {
+    notifyDeleteSuccess () {
       this.$notification.success({
         message: '系统提示',
         description: '删除成功'
       })
     },
-    noticiError (e) {
+    notifyError (e) {
       this.$notification.error({
         message: '系统提示',
         description: h => h('p', { domProps: { innerHTML: e } })

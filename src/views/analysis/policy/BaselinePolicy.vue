@@ -153,10 +153,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await deleteBaselinePolicies(this.selectedRowKeys)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

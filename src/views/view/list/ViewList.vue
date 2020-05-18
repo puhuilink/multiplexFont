@@ -195,7 +195,7 @@ export default {
       try {
         this.$refs['table'].loading = false
         await deleteViews(this.selectedRowKeys)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         this.$refs['table'].refresh()
       } catch (e) {
         this.$refs['table'].loading = false

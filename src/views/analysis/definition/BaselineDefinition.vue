@@ -195,9 +195,9 @@ export default {
       try {
         await deleteBaselineDefs(this.selectedRowKeys)
         this.$refs['table'].refresh()
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       }
     },

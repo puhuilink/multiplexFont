@@ -1,5 +1,5 @@
 <script>
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 export default {
   name: 'Schema',
@@ -13,6 +13,8 @@ export default {
     form: vm.$form.createForm(vm),
     // modal visible
     visible: false,
+    // model confirm cb
+    submit: () => {},
     // modal title
     title: ''
   }),
@@ -25,7 +27,8 @@ export default {
       this.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
-    show () {
+    show (title) {
+      this.title = title
       this.visible = true
     }
   }

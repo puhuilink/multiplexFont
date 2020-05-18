@@ -230,10 +230,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await UserService.batchDeleteUser(this.selectedRowKeys)
-        this.noticiDeleteSuccess()
+        this.notifyDeleteSuccess()
         this.query(false)
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -275,7 +275,7 @@ export default {
         })
         this.query()
       } catch (e) {
-        this.noticiError(e)
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

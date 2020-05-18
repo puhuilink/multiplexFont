@@ -79,10 +79,10 @@ export default {
           this.loading = true
           await ModelService.addAttr(values, this.where)
           this.$emit('addSuccess')
-          this.noticiAddSuccess()
+          this.notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.noticiError(e)
+          this.notifyError(e)
           throw e
         } finally {
           this.loading = false
@@ -105,10 +105,10 @@ export default {
           this.loading = true
           await ModelService.updateAttr(modelName, values)
           this.$emit('editSuccess')
-          this.noticiEditSuccess()
+          this.notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.noticiError(e)
+          this.notifyError(e)
           throw e
         } finally {
           this.loading = false

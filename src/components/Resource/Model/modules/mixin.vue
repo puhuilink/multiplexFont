@@ -1,5 +1,5 @@
 <script>
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 export default {
   mixins: [OperationNotification],

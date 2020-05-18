@@ -2,7 +2,7 @@
 import CTable from '@/components/Table/CTable'
 import _ from 'lodash'
 import { triggerWindowResizeEvent } from '@/utils/util'
-import OperationNotification from '@/components/OperationNotification'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 import QueryBtn from './Button/QueryBtn'
 import ResetBtn from './Button/ResetBtn'
 import ToggleBtn from './Button/ToggleBtn'
