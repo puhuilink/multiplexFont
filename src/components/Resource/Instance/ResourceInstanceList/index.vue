@@ -6,12 +6,12 @@
         :data="loadData"
         :columns="columns"
         :rowKey="el => el._id"
-        :rowSelection="hiddenOperation ? null : {selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-        :scroll="{ x: scrollX, y: `calc(100vh - 370px)`}"
+        :rowSelection="hiddenOperation ? null : rowSelection"
+        :scroll="scroll"
       >
 
         <template #query>
-          <a-form layout="inline" :style="{ overflow: hiddenOperation ? 'hidden' : 'visible' }">
+          <a-form layout="inline" :class="hiddenOperation ? 'form_only' : 'form'">
             <div :class="{ fold: !advanced }">
               <a-row v-for="(fields, index) in queryFields" :key="index">
                 <a-col
@@ -26,27 +26,20 @@
               </a-row>
             </div>
 
-            <!-- TODO: 统一管理布局 -->
-            <!-- TODO: 居中 span -->
-            <span :style="advanced ? { float: 'right', overflow: 'hidden', transform: `translateY(${ hiddenOperation ? '0' : '6.5' }px)` } : { display: 'inline-block', transform: 'translateY(-15.5px)' } ">
+            <span :class="advanced ? 'expand' : 'collapse'">
               <template v-if="queryParams.values.length">
-                <!-- FIXME: 查询接口入参错误 -->
-                <!-- FIXME: 查询匹配条件动态 -->
-                <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
+                <QueryBtn @click="query" />
+                <ResetBtn @click="resetQueryParams" />
               </template>
-              <a @click="toggleAdvanced" style="margin-left: 8px" v-if="queryParams.values.length > 2">
-                {{ advanced ? '收起' : '展开' }}
-                <a-icon :type="advanced ? 'up' : 'down'"/>
-              </a>
+              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" v-if="queryParams.values.length > 2" />
             </span>
           </a-form>
         </template>
 
         <template #operation v-if="!hiddenOperation">
-          <a-button @click="add">新增</a-button>
-          <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-          <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button @click="onAdd">新增</a-button>
+          <a-button @click="onEdit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
+          <a-button @click="onBatchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
           <a-button>数据检查</a-button>
         </template>
 
@@ -56,22 +49,20 @@
     <ResourceInstanceSchema
       v-if="!hiddenOperation"
       ref="schema"
-      @addSuccess="() => { this.query() }"
-      @editSuccess="query"
+      @addSuccess="query()"
+      @editSuccess="query(false)"
     />
   </div>
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
 import ResourceInstanceSchema from './ResourceInstanceSchema/index'
 import { InstanceService, ModelService } from '@/api-hasura/index'
-import { generateJsonbQuery } from '@/utils/graphql'
+import { generateJsonbQuery, generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import deleteCheck from '@/components/DeleteCheck'
 import Factory from './modules/Factory'
 import List from '@/components/Mixins/Table/List'
-import OperationNotification from '@/components/Mixins/OperationNotification'
 
 const defaultColumns = [
   {
@@ -90,7 +81,7 @@ const defaultColumns = [
 
 export default {
   name: 'ResourceInstanceList',
-  mixins: [List, OperationNotification],
+  mixins: [List],
   props: {
     parentName: {
       type: String,
@@ -106,30 +97,37 @@ export default {
     }
   },
   components: {
-    CTable,
     ResourceInstanceSchema,
     Factory
   },
   data: () => ({
+    attributes: [],
     loading: false,
     // 查询参数
     queryParams: {
       values: []
-    },
-    columns: []
+    }
   }),
   computed: {
-    columnFieldList: {
-      get () {
-        return this.columns.map(e => e.dataIndex)
-      }
+    // 表格列
+    columns () {
+      const columns = defaultColumns.concat(this.attributes.map(({ label, name, width = 0 }) => ({
+        title: label,
+        dataIndex: `values.${name}`,
+        width: width + 60,
+        tooltip: true
+      })))
+      return _.orderBy(columns, ['order'], ['asc'])
     },
-    queryFields: {
-      get () {
-        const { advanced, queryParams: { values } } = this
-        const fields = advanced ? values : values.slice(0, 2)
-        return _.chunk(fields, 2)
-      }
+    // 查询区域内容
+    queryFields () {
+      const { advanced, queryParams: { values } } = this
+      const fields = advanced ? values : values.slice(0, 2)
+      return _.chunk(fields, 2)
+    },
+    // 表格纵向滚动高度
+    scrollY () {
+      return 'max(calc(100vh - 390px), 100px)'
     }
   },
   watch: {
@@ -137,28 +135,84 @@ export default {
       immediate: false,
       deep: true,
       async handler () {
-        // 重置当前数据
         this.reset()
-        this.loadColumns()
-        this.$refs['table'].refresh(true)
+        this.loadAttributes()
+        this.query()
       }
     }
   },
   methods: {
-    add () {
+    /**
+     * 根据模型属性
+     */
+    async loadAttributes () {
+      try {
+        this.loading = true
+        const { data: { modelList } } = await ModelService.find({
+          where: {
+            name: this.where.parentName
+          },
+          fields: [
+            'attributes'
+          ],
+          alias: 'modelList'
+        })
+        const [{ attributes }] = modelList
+        this.attributes = attributes
+      } catch (e) {
+        this.attributes = []
+        throw e
+      } finally {
+        // TODO: pick keys
+        this.queryParams.values = this.attributes.filter(field => !!field.searchField).map(el => ({ ...el, value: null }))
+        this.loading = false
+      }
+    },
+    /**
+     * 加载表格数据回调
+     */
+    async loadData (parameter) {
+      return InstanceService.list({
+        where: {
+          ...this.where,
+          ...generateQuery(_.omit(this.queryParams, ['values'])),
+          ...generateJsonbQuery(_.pick(this.queryParams, ['values']))
+        },
+        fields: [
+          '_id',
+          'parentName',
+          'name',
+          'values'
+        ],
+        alias: 'data',
+        ...parameter
+      }).then(r => r.data)
+    },
+    /**
+     * 新增实例
+     * @event
+     */
+    onAdd () {
       const { parentName, parentTree } = this
       this.$refs['schema'].add(
         parentName,
         parentTree
       )
     },
-    edit () {
-      // const [_id] = this.selectRowKeys
+    /**
+     * 编辑实例
+     * @event
+     */
+    onEdit () {
       const [instance] = this.selectedRows
       const { parentName, _id } = instance
       this.$refs['schema'].edit(parentName, _id)
     },
-    async batchDelete () {
+    /**
+     * 批量删除实例
+     * @event
+     */
+    async onBatchDelete () {
       if (!await deleteCheck.sureDelete()) {
         return
       }
@@ -175,93 +229,18 @@ export default {
       }
     },
     /**
-     * 加载表格数据
-     * @param {Object} parameter CTable 回传的分页与排序条件
-     * @return {Function: <Promise<Any>>}
+     * 重置查询条件
      */
-    async loadData (parameter) {
-      this.selectedRowKeys = []
-      this.selectedRows = []
-
-      console.log(_.pick(this.queryParams, ['values']))
-      console.log(generateJsonbQuery(_.pick(this.queryParams, ['values'])))
-
-      return InstanceService.list({
-        where: {
-          ...this.where,
-          ..._.omit(this.queryParams, ['values']),
-          ...generateJsonbQuery(_.pick(this.queryParams, ['values']))
-          // values:
-          // values: _.pickBy(this.queryParams, v => !!v)
-          // ...generateQuery(this.queryParams)
-        },
-        fields: [
-          '_id',
-          'parentName',
-          'name',
-          'values'
-        ],
-        alias: 'data',
-        ...parameter
-      }).then(r => r.data)
-    },
-    async loadColumns () {
-      const { parentName } = this.where
-      try {
-        this.loading = true
-        const { data: { modelList } } = await ModelService.find({
-          where: {
-            name: parentName
-          },
-          fields: [
-            'attributes'
-          ],
-          alias: 'modelList'
-        })
-        // name 是唯一字段，查询出的 model 是长度为1的数组
-        const [model] = modelList
-        const { attributes } = model
-        // console.log(attributes)
-        const columns = defaultColumns.concat(_.orderBy(attributes, ['orderBy'], ['asc']).map((column) => ({
-          ...column,
-          title: column.label,
-          dataIndex: name,
-          // 老系统数据的 width 大都比较小，在 antd 框架下表现为容易溢出
-          width: column.width ? column.width + 60 : 120,
-          customRender: (text, record) => {
-            const value = _.get(record, `values.${column.name}`)
-            // 数据表存储为 jsonb 类型，可能存储了 true、false 等值，此处需要转换为 String 格式
-            return (value !== null && value !== undefined) ? `${value}` : ''
-          },
-          ellipsis: true
-        })))
-        this.columns = _.orderBy(columns, ['order'], ['asc'])
-      } catch (e) {
-        this.columns = []
-        throw e
-      } finally {
-        this.queryParams.values = this.columns
-          .filter(field => !!field.searchField)
-          .map(el => ({ ...el }))
-        this.loading = false
-      }
-    },
     resetQueryParams () {
       const { values } = this.queryParams
       this.queryParams.values = values.map(el => ({ ...el, value: undefined }))
     }
   },
   created () {
-    this.loadColumns()
-    // CTable created 时会触发 loadData
+    this.loadAttributes()
   }
 }
 </script>
 
 <style lang="less">
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-  padding-right: 10px;
-}
 </style>
