@@ -78,7 +78,7 @@ export const deleteViews = function (viewIdList = []) {
 }
 
 /**
- * 新建视图（标题）
+ * 新增视图（标题）
  * @param {Object} object
  * @return {Promise<any>}
  */
@@ -107,7 +107,7 @@ export const addView = function (object = {}) {
 }
 
 /**
- * 批量新建视图（标题）
+ * 批量新增视图（标题）
  * @param {Array<Object>>} objects
  * @return {Promise<any>}
  */

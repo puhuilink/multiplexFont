@@ -34,7 +34,8 @@ export default {
         result.then(r => {
           // hack
           r.pageNo = r.pageNo || pageNo
-          // TODO: 重置 selectedRows?
+          // 重置选中项
+          this.clearSelected()
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.pageNo, // 返回结果中的当前分页数
             // hack

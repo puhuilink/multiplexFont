@@ -6,7 +6,7 @@
       :columns="columns"
       :rowKey="el => `${el.name}`"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: selectRow}"
-      :scroll="{ x: scrollX, y: 600}"
+      :scroll="scroll"
       :showPagination="false"
     >
       <template #query>
@@ -38,12 +38,12 @@
 
           <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
             <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
+            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
           </span>
         </a-form>
       </template>
       <template #operation>
-        <a-button @click="add">新建</a-button>
+        <a-button @click="add">新增</a-button>
         <a-button @click="edit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
         <a-button @click="batchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
       </template>
@@ -65,29 +65,20 @@ import deleteCheck from '@/components/DeleteCheck'
 import Template from '../../../views/design/modules/template/index'
 import { ModelService } from '@/api-hasura'
 import _ from 'lodash'
+import List from '@/components/Mixins/Table/List'
+import OperationNotification from '@/components/Mixins/OperationNotification'
 
 export default {
   name: 'ResourceModelAttrList',
+  mixins: [List, OperationNotification],
   components: {
     Template,
     CTable,
     ModelAttrSchema
   },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data: () => ({
-    advanced: false,
     // 查询参数
-    queryParams: {
-    },
-    // 选中行
-    selectedRows: [],
-    // 选中行的 key
-    selectedRowKeys: []
+    queryParams: {}
   }),
   computed: {
     // TODO: 列不全
@@ -134,7 +125,8 @@ export default {
             title: '作为查询',
             dataIndex: 'searchField',
             sorter: true,
-            width: 180
+            width: 180,
+            customRender: val => val ? '是' : '否'
           },
           {
             title: '非空',
@@ -208,7 +200,8 @@ export default {
             title: '唯一验证',
             dataIndex: 'uniqueness',
             sorter: true,
-            width: 180
+            width: 180,
+            customRender: val => val ? '是' : '否'
           },
           {
             title: '唯一范围',
@@ -229,11 +222,6 @@ export default {
             width: 180
           }
         ]
-      }
-    },
-    scrollX: {
-      get () {
-        return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2) + 62
       }
     }
   },
@@ -266,16 +254,10 @@ export default {
           }
         } = this
         await ModelService.batchDeleteAttr(modelName, attrNameList)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
+        this.notifyDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e } })
-        })
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -314,7 +296,8 @@ export default {
         ],
         alias: 'modelList'
       }).then(r => {
-        const { data: { modelList } } = r//  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
+        const { data: { modelList } } = r
+        //  name 全局唯一，根据 name 查询出来的是长度为 1 的数组
         const [model] = modelList
         // TODO: 查询条件
         // console.log(this.queryParams)
@@ -330,32 +313,7 @@ export default {
           }
         }
       })
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 表格行选中
-     * @event
-     * @return {Undefined}
-     */
-    selectRow (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
 </script>
-
-<style lang="less">
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-}
-</style>

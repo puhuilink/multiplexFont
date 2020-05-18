@@ -32,7 +32,7 @@ export const mutationUpdateView = gql`mutation ($viewId: numeric!, $set: t_view_
   }
 }`
 
-// 新建视图
+// 新增视图
 export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!]! = []) {
   insert_t_view (objects: $objects) {
     affected_rows

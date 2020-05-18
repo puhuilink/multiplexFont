@@ -1,37 +1,35 @@
 <template>
   <div class="audit">
     <CTable
-      ref="table"
-      rowKey="audit_id"
       :columns="columns"
       :data="loadData"
-      :scroll="{ x: scrollX, y:720 }"
-      :customRow="customRow"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, selectedRows: selectedRows, onChange: onSelectChange }"
+      ref="table"
+      rowKey="audit_id"
+      :rowSelection="rowSelection"
+      :scroll="scroll"
     >
 
+      <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="模块名称"
-                  :labelCol="labelCol"
-                  :wrapperCol="wrapperCol"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.module_name" placeholder=""/>
+                  <a-input v-model.trim="queryParams.module_name" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="操作账号"
-                  :labelCol="labelCol"
-                  :wrapperCol="wrapperCol"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.user_id" placeholder=""/>
+                  <a-input v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
               <!-- 多余筛选框是否展示 -->
@@ -41,21 +39,19 @@
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="功能名称"
-                    :labelCol="labelCol"
-                    :wrapperCol="wrapperCol"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
-                    <a-input v-model="queryParams.actionname" placeholder=""/>
+                    <a-input v-model.trim="queryParams.actionname" />
                   </a-form-item>
                 </a-col>
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="客户端IP"
-                    :labelCol="labelCol"
-                    :wrapperCol="wrapperCol"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
-                    <a-input v-model="queryParams.client_ip" placeholder=""/>
+                    <a-input v-model.trim="queryParams.client_ip" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -63,8 +59,7 @@
                 <a-col :md="12" :sm="24">
                   <a-form-item
                     label="时间范围"
-                    :labelCol="labelCol"
-                    :wrapperCol="wrapperCol"
+                    v-bind="formItemLayout"
                     style="width: 100%"
                   >
                     <a-range-picker
@@ -79,29 +74,22 @@
                 </a-col>
               </a-row>
             </div>
-
           </div>
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="resetQuery">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? '收起' : '展开' }}
-              <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+
+          <span :class="advanced ? 'expand' : 'collapse'">
+            <QueryBtn @click="query" />
+            <ResetBtn @click="resetQueryParams" />
+            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
           </span>
         </a-form>
       </template>
 
+      <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="show" :disabled="selectedRowKeys.length !== 1">查看</a-button>
+        <a-button @click="onShow" :disabled="!hasSelectedOne">查看</a-button>
       </template>
-      <span slot="operateContent" slot-scope="text">
-        <ellipsis :length="80" tooltip>{{ text }}</ellipsis>
-      </span>
     </CTable>
-    <!-- E 列表 -->
+
     <AuditSchema
       ref="schema"
     />
@@ -109,21 +97,11 @@
 </template>
 
 <script>
-import { Ellipsis } from '@/components'
 import AuditSchema from './AuditSchema'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
-import CTable from '@/components/Table/CTable'
 import { generateQuery } from '@/utils/graphql'
-
-const labelCol = {
-  span: 4
-}
-
-const wrapperCol = {
-  span: 14,
-  offset: 2
-}
+import List from '@/components/Mixins/Table/List'
 
 const query = gql`query ($where: t_audit_bool_exp = {}, $limit: Int! = 50, $offset: Int! = 0, $orderBy: [t_audit_order_by!]) {
     pagination: t_audit_aggregate(where: $where) {
@@ -144,78 +122,54 @@ const query = gql`query ($where: t_audit_bool_exp = {}, $limit: Int! = 50, $offs
 
 export default {
   name: 'Audit',
+  mixins: [List],
   components: {
-    CTable,
-    Ellipsis,
     AuditSchema
   },
-  data () {
-    return {
-      // 搜索： 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParams: {},
-      labelCol,
-      wrapperCol,
-      // 告警列表表头
-      columns: [
-        {
-          title: '日志编号',
-          dataIndex: 'audit_id',
-          sorter: true,
-          width: 100
-        },
-        {
-          title: '模块名称',
-          dataIndex: 'module_name',
-          width: 120,
-          sorter: true
-        },
-        {
-          title: '操作账号',
-          dataIndex: 'user_id',
-          width: 120,
-          sorter: true
-        },
-        {
-          title: '客户端IP',
-          dataIndex: 'client_ip',
-          width: 120
-        },
-        {
-          title: '功能名称',
-          dataIndex: 'actionname',
-          width: 120
-        },
-        {
-          title: '操作时间',
-          dataIndex: 'operation_time',
-          width: 180,
-          sorter: true
-        },
-        {
-          title: '操作内容',
-          dataIndex: 'content',
-          // sorter: true,
-          scopedSlots: { customRender: 'operateContent' }
-        }
-      ],
-      // 已选行特性值
-      selectedRowKeys: [],
-      // 已选行数据
-      selectedRows: []
-    }
-  },
-  filters: {},
-  computed: {
-    scrollX: {
-      get () {
-        return this.columns
-          .filter(e => e.width)
-          .reduce((a, b) => a + b)
+  data: () => ({
+    columns: [
+      {
+        title: '日志编号',
+        dataIndex: 'audit_id',
+        sorter: true,
+        width: 100
+      },
+      {
+        title: '模块名称',
+        dataIndex: 'module_name',
+        width: 120,
+        sorter: true
+      },
+      {
+        title: '操作账号',
+        dataIndex: 'user_id',
+        width: 120,
+        sorter: true
+      },
+      {
+        title: '客户端IP',
+        dataIndex: 'client_ip',
+        width: 120
+      },
+      {
+        title: '功能名称',
+        dataIndex: 'actionname',
+        width: 120
+      },
+      {
+        title: '操作时间',
+        dataIndex: 'operation_time',
+        width: 180,
+        sorter: true
+      },
+      {
+        title: '操作内容',
+        dataIndex: 'content',
+        width: 300,
+        tooltip: true
       }
-    }
-  },
+    ]
+  }),
   methods: {
     loadData (parameter) {
       return apollo.clients.alert.query({
@@ -229,57 +183,17 @@ export default {
         }
       }).then(r => r.data)
     },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    show () {
+    /**
+     * 查看详情
+     * @event
+     */
+    onShow () {
       const [record] = this.selectedRows
       this.$refs['schema'].show(record)
-    },
-    /**
-    * 筛选展开开关
-    */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    /**
-    * 选中行更改事件
-    * @param selectedRowKeys
-    * @param selectedRows
-    */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    resetQuery (key) {
-      this.queryParams = Object.assign({}, this.$options.data.apply(this).queryParams)
-    },
-    /**
-    * 行属性,表格点击事件
-    */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     }
   }
 }
 </script>
 
-<style scoped lang="less">
-  .opration{
-    margin-bottom: 10px;
-    button{
-      margin-right: 5px;
-    }
-  }
-
-  .fold {
-    display: inline-block;
-    width: calc(100% - 216px);
-  }
+<style lang="less">
 </style>

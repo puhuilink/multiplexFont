@@ -41,7 +41,7 @@ export default {
             ...attributeList,
             ...relationAttributeList
           ].map(({ name }) => name)
-          console.log(_.pick({ ...v, ...v.values }, keyList))
+          // console.log(_.pick({ ...v, ...v.values }, keyList))
           form.setFieldsValue(_.pick({ ...v, ...v.values }, keyList))
         }
       }

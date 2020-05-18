@@ -1,5 +1,5 @@
 import ResourceTree from './ResourceTree'
-import ResourceInstanceList from './Instance/ResourceInstanceList'
+import ResourceInstanceList from './Instance/ResourceInstanceList/index'
 import ResourceInstanceVersionList from './Instance/ResourceInstanceVersionList'
 import ResourceModelAttrList from './Model/ResourceModelAttrList'
 import ResourceModelRelationAttrList from './Model/ResourceModelRelationAttrList'

@@ -59,30 +59,9 @@ export default {
       'CTable-operation_hidden': !this.$slots.operation
     }}>{ this.$slots ? this.$slots.operation : '' }</div>
 
-    // TODO: 列溢出自动 tooltip
-    // const { columns: propsColumns } = this.$attrs
-    // const columns = propsColumns.map(({ customRender, width, ...column }) => ({
-    //   ...column,
-    //   width,
-    //   customRender: customRender || (text => {
-    //     // console.log(text)
-    //     if (typeof text === 'string' && width) {
-    //       const length = Math.round(width / 14)
-    //       if (text.length < length) {
-    //         return text
-    //       }
-    //       return h('a-tooltip', {
-    //         props: {
-    //           title: text
-    //         }
-    //       }, [text.slice(0, length) + '...'])
-    //     }
-    //     return text
-    //   })
-    // }))
-
     // 允许增量入参
     const pagination = Object.assign({}, defaultPagination, this.$props.pagination)
+    const columns = this.$props.columns || this.$attrs.columns
 
     // 表格区域
     const table = h(GraphTable, {
@@ -91,7 +70,14 @@ export default {
         ...this.$props,
         ...this.$attrs,
         pagination,
-        // columns,
+        columns: columns.map(column => ({
+          ellipsis: true,
+          ...column.tooltip ? {
+            customRender: v => (<a-tooltip title={v}>
+              <span>{v}</span>
+            </a-tooltip>)
+          } : {},
+          ...column })),
         pageSize: pagination.pageSize
       },
       on: {

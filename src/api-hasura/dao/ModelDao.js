@@ -73,6 +73,33 @@ class ModelDao extends BaseDao {
     })
   }
 
+  static async uniquenessAttrList (modelName) {
+    const { SCHEMA } = this
+    const sql = `
+    SELECT
+      jsonb_agg(elements.value) AS attributes
+    FROM
+        ${SCHEMA},
+        jsonb_array_elements(attributes) AS elements
+    WHERE 
+      name = '${modelName}'
+    AND
+      elements.value ->> 'uniqueness' = 'true'
+        `
+    const { data: { result } } = await MAIN_AXIOS.sql(sql)
+    const [, attrList] = result
+    if (attrList && attrList !== ['NULL']) {
+      try {
+        // eslint-disable-next-line no-eval
+        return eval(attrList[0])
+      } catch {
+        return []
+      }
+    } else {
+      return []
+    }
+  }
+
   static async addAttr (attr = {}, where = {}) {
     if (_.isEmpty(where)) {
       throw new Error('更新参数不允许传入空对象，这会导致更新所有数据')

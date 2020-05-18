@@ -6,7 +6,7 @@ export const mutationInsert = gql`mutation ($groups: [t_group_insert_input!]!, $
       group_id
     }
   }
-  # 新建工作组展示桌面
+  # 新增工作组展示桌面
   insert_t_view (objects: $views) {
     affected_rows
   }

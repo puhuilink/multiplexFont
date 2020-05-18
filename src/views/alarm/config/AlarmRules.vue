@@ -51,7 +51,7 @@
           :disabled="!checkRuleType"
           @click="$refs.detail.open('', 'New', queryParam.rule_type)"
           v-action:M0301
-        >新建</a-button>
+        >新增</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="$refs.detail.open(selectedRows[0], 'Edit', selectedRows[0].rule_type)"
@@ -378,7 +378,7 @@ export default {
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
+
         this.$refs['table'].refresh(false)
       } catch (e) {
         throw e

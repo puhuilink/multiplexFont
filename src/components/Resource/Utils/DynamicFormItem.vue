@@ -39,6 +39,10 @@ export default {
       type: String,
       default: 'add',
       validator: mode => ['add', 'edit'].includes(mode)
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -83,15 +87,17 @@ export default {
         label,
         name,
         // 是否必填
-        allowNull = false,
+        allowNull,
         pattern = '',
         defaultValue
       } = field
       // console.log(pattern)
       const options = {
-        initialValue: makeFormItemValue(field, defaultValue),
+        ...isAdd && defaultValue ? {
+          initialValue: makeFormItemValue(field, defaultValue)
+        } : {},
         rules: [
-          ...isAdd && eval(`${allowNull}`) ? [{
+          ...allowNull ? [{
             required: true,
             message: `${label}必填`
           }] : [],
@@ -133,17 +139,19 @@ export default {
       ))
 
       // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
-      const { selectGroupList = [], mappingType = 'one' } = field
+      const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
       // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
+      console.log(selectOptionList, field)
+      const { loading } = this
       return (
         <a-select
           filterOption={filterOption}
           showSearch
           allowClear
           mode={ mappingType === 'one' ? 'default' : 'multiple' }
-          notFoundContent="暂无内容"
+          notFoundContent={loading ? '加载中...' : '暂无内容'}
         >
-          { ...renderSelectGroup(selectGroupList) }
+          { ...selectOptionList.length ? renderSelectOption(selectOptionList) : renderSelectGroup(selectGroupList) }
         </a-select>
       )
     },
@@ -151,10 +159,10 @@ export default {
       return <a-textarea autosize />
     },
     renderDate (field) {
-      return <a-date-picker style={{ width: '100%' }} />
+      return <a-date-picker valueFormat="YYYY-MM-DD" style={{ width: '100%' }} />
     },
     renderDateTime (field) {
-      return <a-date-picker style={{ width: '100%' }} showTime />
+      return <a-date-picker valueFormat="YYYY-MM-DDTHH:mm:ss" style={{ width: '100%' }} showTime />
     },
     renderRadio (field) {}
   },
