@@ -229,7 +229,7 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        await UserService.batchDeleteUser(this.selectedRowKeys)
+        await UserService.batchDelete(this.selectedRowKeys)
         this.notifyDeleteSuccess()
         this.query(false)
       } catch (e) {
