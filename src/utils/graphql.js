@@ -3,10 +3,10 @@ import moment from 'moment'
 
 const isAvailable = function (v) {
   if (Array.isArray(v)) {
-    return v.length
+    return !!v.length
   }
   if (typeof v === 'string') {
-    return v.trim()
+    return !!v.trim()
   }
   return v !== undefined && v !== null
 }

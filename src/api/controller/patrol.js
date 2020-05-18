@@ -14,6 +14,9 @@ import {
   deletePlanArr,
   insertPlanObj
 } from '../graphql/patrol'
+import { wrapperLogFunc } from '@/api-hasura/utils/decorator/log'
+
+const MODULE_NAME = '巡更模块'
 
 // get
 export const getRouteList = function (variables = {}) {
@@ -113,14 +116,15 @@ export const deleteRoute = function (variables = {}) {
   })
 }
 
-export const deletePlan = function (variables = {}) {
+export const deletePlan = wrapperLogFunc(function (variables = {}) {
+  // return true
   return apollo.clients.alert.mutate({
     mutation: deletePlanArr,
     variables: {
       ...variables
     }
   })
-}
+}, MODULE_NAME, '删除计划')
 
 // insert
 export const insertPlan = function (variables = {}) {
