@@ -11,7 +11,7 @@
       >
 
         <template #query>
-          <a-form layout="inline" :class="hiddenOperation ? 'form_only' : 'form'">
+          <a-form layout="inline" :class="hiddenOperation ? 'form__only' : 'form'">
             <div :class="{ fold: !advanced }">
               <a-row v-for="(fields, index) in queryFields" :key="index">
                 <a-col
@@ -38,8 +38,8 @@
 
         <template #operation v-if="!hiddenOperation">
           <a-button @click="onAdd">新增</a-button>
-          <a-button @click="onEdit" :disabled="selectedRowKeys.length !== 1">编辑</a-button>
-          <a-button @click="onBatchDelete" :disabled="selectedRowKeys.length === 0">删除</a-button>
+          <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
+          <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
           <a-button>数据检查</a-button>
         </template>
 
@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     /**
-     * 根据模型属性
+     * 加载模型属性
      */
     async loadAttributes () {
       try {
@@ -233,7 +233,7 @@ export default {
      */
     resetQueryParams () {
       const { values } = this.queryParams
-      this.queryParams.values = values.map(el => ({ ...el, value: undefined }))
+      this.queryParams.values = values.map(el => ({ ...el, value: null }))
     }
   },
   created () {
