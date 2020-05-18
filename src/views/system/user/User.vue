@@ -74,7 +74,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAddUser" v-action:M0101>新建</a-button>
+        <a-button @click="onAddUser" v-action:M0101>新增</a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
         <a-button @click="onBatchDeleteUser" :disabled="!hasSelected" v-action:M0103>删除</a-button>
         <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>

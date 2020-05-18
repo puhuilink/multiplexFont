@@ -10,7 +10,7 @@
         <a-button
           :disabled="!checkRuleType"
         >
-          新建
+          新增
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"

@@ -464,7 +464,7 @@ export default {
   methods: {
     add () {
       this.visible = true
-      this.title = '新建动态基线定义'
+      this.title = '新增动态基线定义'
       this.submit = this.insert
     },
     edit (record = {}) {

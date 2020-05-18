@@ -51,7 +51,7 @@
           :disabled="!checkRuleType"
           @click="$refs.detail.open('', 'New', queryParam.rule_type)"
           v-action:M0301
-        >新建</a-button>
+        >新增</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="$refs.detail.open(selectedRows[0], 'Edit', selectedRows[0].rule_type)"

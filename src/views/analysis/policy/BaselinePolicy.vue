@@ -55,7 +55,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAdd" v-action:M1301 >新建</a-button>
+        <a-button @click="onAdd" v-action:M1301 >新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M1302 >编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M1303 >删除</a-button>
       </template>

@@ -1003,14 +1003,14 @@ const MODULE = [{
           'functionType': '2',
           'icon': '',
           'module': '',
-          'name': '新建工作组',
+          'name': '新增工作组',
           'note': '',
           'order': 0,
           'parentCode': 'M01',
           'updateDate': null,
           'updator': '',
           'key': 'M0106',
-          'title': '新建工作组'
+          'title': '新增工作组'
         },
         {
           'childs': [],
@@ -3049,14 +3049,14 @@ const ALLPERMISSION = [
         'objectType': '2',
         'domainName': null,
         'code': 'M0106',
-        'name': '新建工作组',
+        'name': '新增工作组',
         'parentCode': 'M01',
         'functionType': '2',
         'functionModule': '',
         'functionOrder': null,
         'interfaceAuth': '',
         'key': 'M0106',
-        'title': '新建工作组'
+        'title': '新增工作组'
       },
       {
         'objectType': '2',
@@ -4868,14 +4868,14 @@ const ALLPERMISSION = [
     'objectType': '2',
     'domainName': null,
     'code': 'M0106',
-    'name': '新建工作组',
+    'name': '新增工作组',
     'parentCode': 'M01',
     'functionType': '2',
     'functionModule': '',
     'functionOrder': null,
     'interfaceAuth': '',
     'key': 'M0106',
-    'title': '新建工作组'
+    'title': '新增工作组'
   },
   {
     'objectType': '2',

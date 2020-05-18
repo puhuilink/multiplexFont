@@ -30,13 +30,13 @@
         <a-button
           @click="add('New')"
         >
-          新建类型
+          新增类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="add('NewSon')"
         >
-          新建子类型
+          新增子类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"

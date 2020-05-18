@@ -52,7 +52,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="$refs['title'].add()" v-action:M0201>新建</a-button>
+        <a-button @click="handleAdd" v-action:M0201>新增</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit" v-action:M0202>编辑</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
         <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign" v-action:M0203>设计</a-button>
@@ -94,6 +94,7 @@ export default {
     copyLoading: false,
     // 视图类型
     viewTypes: [
+      // 此处为老系统分类列表，已 deprecated
       { label: '综合视图', value: 'comprehensive' },
       { label: '性能配置视图', value: 'performanceConfig' },
       { label: '拓扑视图', value: 'topology' },
@@ -150,6 +151,12 @@ export default {
           }
         }
       }).then(r => r.data)
+    },
+    /**
+     * 处理新增事件
+     */
+    handleAdd () {
+      this.$refs['title'].add()
     },
     /**
      * 处理编辑事件

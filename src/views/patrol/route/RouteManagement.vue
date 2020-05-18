@@ -69,7 +69,7 @@
       </template>
 
       <template #operation>
-        <!-- <a-button @click="add">新建</a-button>
+        <!-- <a-button @click="add">新增</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="edit"

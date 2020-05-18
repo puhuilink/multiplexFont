@@ -274,7 +274,7 @@ export default {
           this.$emit('addSuccess')
           this.$notification.success({
             message: '系统提示',
-            description: '新建成功'
+            description: '新增成功'
           })
           this.cancel()
         } catch (e) {

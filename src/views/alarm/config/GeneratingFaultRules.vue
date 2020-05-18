@@ -39,7 +39,7 @@
 
       <!-- S 操作栏 -->
       <div class="opration">
-        <a-button @click="$refs.detail.open('', 'New')">新建</a-button>
+        <a-button @click="$refs.detail.open('', 'New')">新增</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="$refs.detail.open(selectedRows[0], 'Edit')"

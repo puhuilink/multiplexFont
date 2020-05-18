@@ -68,7 +68,7 @@
           icon="plus"
           @click="$refs.detail.open('', 'New')"
         >
-          新建
+          新增
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
