@@ -61,7 +61,7 @@ export default {
       return _.sum(columns.map(e => e.width || 60))
     },
     scrollY () {
-      return 'calc(100vh - 310px)'
+      return 'max(calc(100vh - 310px), 100px)'
     },
     scroll () {
       const { scrollX: x = true, scrollY: y = true } = this
@@ -112,11 +112,12 @@ export default {
 
 // 查询区域与操作区域并存时
 .form {
+  margin-right: 10px;
 
   .fold {
     flex: 1;
     display: inline-block;
-    width: calc(100% - 196px);
+    width: calc(100% - 216px);
   }
 
   .expand {
@@ -128,19 +129,20 @@ export default {
   .collapse {
     float: right;
     overflow: hidden;
-    transform: translateY(6.5px);
+    transform: translateY(3.5px);
   }
 
 }
 
 // 只有查询区域没有操作区域时
 .form__only {
+  margin-right: 10px;
   padding-bottom: 30px;
 
   .fold {
     flex: 1;
     display: inline-block;
-    width: calc(100% - 196px);
+    width: calc(100% - 216px);
   }
 
   .expand {
