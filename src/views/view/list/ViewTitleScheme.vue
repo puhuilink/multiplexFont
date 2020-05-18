@@ -1,7 +1,7 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :title="title"
     :width="720"
     wrapClassName="ViewTitleSchema__modal"
@@ -13,28 +13,36 @@
     @ok="submit"
   >
     <a-form :form="form" layout="vertical">
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="标题"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
-          >
-            <a-input
-              v-decorator="[
-                'view_title',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: '标题必填'
-                    }
-                  ]
-                }
-              ]"
-            />
-          </a-form-item>
-        </a-col>
+      <a-row></a-row>
+      <a-col :md="12" :span="24">
+        <a-form-item
+          label="标题"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input
+            allowClear
+            v-decorator="[
+              'view_title',
+              {
+                rules: [
+                  {
+                    transform: value => value.trim()
+                  },
+                  {
+                    required: true,
+                    message: '标题必填'
+                  },
+                  {
+                    max: 30,
+                    message: '最多输入30个字符'
+                  }
+                ]
+              }
+            ]"
+          />
+        </a-form-item>
+      </a-col>
       </a-row>
     </a-form>
 
@@ -42,7 +50,8 @@
 </template>
 
 <script>
-import { addView, updateView } from '@/api/controller/View'
+import Schema from '@/components/Mixins/Modal/Schema'
+import { ViewListService } from '@/api-hasura/index'
 
 const formItemLayout = {
   labelCol: {
@@ -55,17 +64,14 @@ const formItemLayout = {
 
 export default {
   name: 'ViewTitleScheme',
+  mixins: [Schema],
   components: {},
   props: {},
   data: (vm) => ({
     activeTabKey: '1',
-    form: vm.$form.createForm(vm),
     formItemLayout,
-    loading: false,
     record: null,
-    submit: () => {},
-    title: '',
-    visible: false
+    submit: () => {}
   }),
   computed: {},
   methods: {
@@ -91,59 +97,44 @@ export default {
       this.submit = this.insert
       this.visible = true
     },
-    cancel () {
-      this.visible = false
-    },
     /**
      * 新建
      */
-    async insert () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await addView(values)
-        this.$emit('addSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
+    insert () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.confirmLoading = true
+          await ViewListService.add(values)
+          this.$emit('addSuccess')
+          this.noticiAddSuccess()
+          this.cancel()
+        } catch (e) {
+          this.noticiError(e)
+        } finally {
+          this.confirmLoading = false
+        }
+      })
     },
     /**
      * 编辑
      */
-    async update () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await updateView(this.record.view_id, values)
-        this.$emit('editSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
+    update () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.confirmLoading = true
+          const { view_id } = this.record
+          await ViewListService.update(values, { view_id })
+          this.$emit('editSuccess')
+          this.noticiEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.noticiError(e)
+        } finally {
+          this.confirmLoading = false
+        }
       })
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }

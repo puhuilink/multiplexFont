@@ -14,6 +14,7 @@ import { OperationLogDao } from './OperationLogDao'
 import { ModelHistoryDao } from './ModelHistoryDao'
 import { InstanceHistoryDao } from './InstanceHistoryDao'
 import { GroupDao } from './GroupDao'
+import { ViewListDao } from './ViewListDao'
 
 export {
   AuthorizeObjectDao,
@@ -31,5 +32,6 @@ export {
   OperationLogDao,
   ModelHistoryDao,
   InstanceHistoryDao,
-  GroupDao
+  GroupDao,
+  ViewListDao
 }

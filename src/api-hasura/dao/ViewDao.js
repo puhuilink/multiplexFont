@@ -12,10 +12,19 @@ class ViewDao extends BaseDao {
   @readonly
   static PROVIDER = alert
 
+   // 唯一字段
+   @readonly
+   static UNIQUE_FIELDS = ['view_id', 'view_title']
+
+   // 主键
+   @readonly
+   static PRIMARY_KEY = 'view_id'
+
   // 字段与显示文字
   @readonly
   static FIELDS_MAPPING = new Map([
-    ['view_id', 'view_id']
+    ['view_id', '视图ID'],
+    ['view_title', '视图标题']
   ])
 
   @override
@@ -26,9 +35,9 @@ class ViewDao extends BaseDao {
     })
   }
 
-  // FIXME: override 入参不一致
-  static async update ({ view_id, ...view }) {
-    return super.update({ ...view, ...defaultUpdateDate() }).where({ view_id })
+  static async update ({ ...view }, { ...where }) {
+    return super.update({ ...view, ...defaultUpdateDate() }, where)
+    // return super.update({ ...view, ...defaultUpdateDate() }).where({ view_id })
   }
 }
 
