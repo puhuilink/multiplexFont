@@ -101,6 +101,9 @@ export default {
 </script>
 
 <style lang="less">
+@import url('~@/utils/utils.less');
+
+// 查询区域与操作区域并存时
 .form {
 
   .fold {
@@ -119,6 +122,32 @@ export default {
     float: right;
     overflow: hidden;
     transform: translateY(6.5px);
+  }
+
+}
+
+// 只有查询区域没有操作区域时
+.form__only {
+  padding-bottom: 30px;
+
+  .fold {
+    flex: 1;
+    display: inline-block;
+    width: calc(100% - 216px);
+  }
+
+  .expand {
+    float: right;
+    overflow: hidden;
+    transform: translateY(6.5px);
+    .clearfix()
+  }
+
+  .collapse {
+    float: right;
+    overflow: hidden;
+    transform: translateY(0px);
+    .clearfix()
   }
 
 }
