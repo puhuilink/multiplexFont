@@ -138,7 +138,7 @@ export default {
         </a-select-opt-group>
       ))
 
-      // FIMXE: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
+      // FIXME: 当数据量庞大时，响应慢，主要表现在 Kpi 下有 3000+ 实例
       const { selectGroupList = [], selectOptionList = [], mappingType = 'one' } = field
       // { ...selectGroupList ? renderSelectGroup(selectGroupList) : renderSelectOption(selectOptionList) }
       console.log(selectOptionList, field)

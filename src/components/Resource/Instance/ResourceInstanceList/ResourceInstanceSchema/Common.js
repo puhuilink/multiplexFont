@@ -2,7 +2,7 @@ import DynamicFormItem from '../../../Utils/DynamicFormItem'
 import _ from 'lodash'
 
 export default {
-  name: 'Commin',
+  name: 'Common',
   props: {
     // 资源模型属性
     attributeList: {

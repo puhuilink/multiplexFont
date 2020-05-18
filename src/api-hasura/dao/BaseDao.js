@@ -99,7 +99,7 @@ class BaseDao {
     if (limit || offset) {
       chain = chain.paginate(limit, offset)
     }
-    // 返回变量的别名，不指定则返回 hasura 默认 shcema
+    // 返回变量的别名，不指定则返回 hasura 默认 schema
     if (alias) {
       chain = chain.alias(alias)
     }

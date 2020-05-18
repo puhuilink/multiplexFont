@@ -13,7 +13,7 @@ class UserService extends BaseService {
   @log('新增用户')
   /**
    * 新增用户
-   * @param {Objetc} user
+   * @param {Object} user
    * @return {Promise<any>}
    */
   static async add (user = {}) {
