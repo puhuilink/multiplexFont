@@ -10,6 +10,8 @@
       :alert="false"
       :scroll="{ x: scrollX, y: 350 }"
       :pagination="pagination"
+      :customHeaderRow="() => ({style: headerRowStyle})"
+      :customRow="() => ({style: rowStyle })"
     >
     </CTable>
     <!-- E 列表 -->
@@ -54,7 +56,9 @@ export default {
         }
       ],
       // 自动刷新的定时器
-      timer: null
+      timer: null,
+      rowStyle: {},
+      headerRowStyle: {}
     }
   },
   computed: {
@@ -126,6 +130,7 @@ export default {
   },
   watch: {
     elementProps (props) {
+      console.log(props)
       if (props.isCallInterface) {
         props.isCallInterface = false
         this.$refs['table'].refresh()
@@ -133,6 +138,8 @@ export default {
       if (props.params.refreshTime) {
         this.refresh(props.params.refreshTime)
       }
+      this.headerRowStyle = props.styleConfig.header
+      this.rowStyle = props.styleConfig.rows
     }
   },
   beforeDestroy () {
@@ -152,5 +159,7 @@ export default {
 .alarm-list-element {
   padding: 24px;
 }
-
+.rowClass{
+  background: red;
+}
 </style>
