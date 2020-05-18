@@ -27,9 +27,16 @@ export default {
     advanced: false,
     // 查询区域表单元素布局
     formItemLayout: {
-      // TODO: responsive
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14, offset: 2 }
+      labelCol: {
+        sm: { span: 8 },
+        md: { span: 8 },
+        xl: { span: 4 }
+      },
+      wrapperCol: {
+        sm: { span: 14, offset: 2 },
+        md: { span: 14, offset: 1 },
+        xl: { span: 14, offset: 2 }
+      }
     },
     // 查询参数
     queryParams: {},
@@ -109,7 +116,7 @@ export default {
   .fold {
     flex: 1;
     display: inline-block;
-    width: calc(100% - 216px);
+    width: calc(100% - 196px);
   }
 
   .expand {
@@ -133,7 +140,7 @@ export default {
   .fold {
     flex: 1;
     display: inline-block;
-    width: calc(100% - 216px);
+    width: calc(100% - 196px);
   }
 
   .expand {
@@ -146,7 +153,7 @@ export default {
   .collapse {
     float: right;
     overflow: hidden;
-    transform: translateY(0px);
+    transform: translateY(3px);
     .clearfix()
   }
 
