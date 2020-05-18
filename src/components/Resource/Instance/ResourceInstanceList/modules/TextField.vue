@@ -13,6 +13,7 @@
       v-else
       allowClear
       v-model.number="field.value"
+      style="width: 100%"
     />
   </a-form-item>
 </template>

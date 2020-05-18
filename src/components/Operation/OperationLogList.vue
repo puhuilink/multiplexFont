@@ -1,87 +1,76 @@
 <template>
   <div class="OperationLogList">
     <CTable
-      ref="table"
-      :data="loadData"
       :columns="columns"
+      :data="loadData"
+      ref="table"
       rowKey="_id"
       :rowSelection="null"
-      :scroll="{ x: scrolX, y: `calc(100vh - 290px)`}"
+      :scroll="scroll"
     >
 
       <template #query>
-        <a-form layout="inline" :style="{ overflow: advanced ? 'hidden' : 'auto' }">
+        <a-form layout="inline" class="form__only">
           <div :class="{ fold: !advanced }">
+
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="操作人"
-                  :md="12"
-                  :sm="24"
-                  :labelCol="{ span: 6 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
+                  v-bind="formItemLayout"
                   style="width: 100%"
                 >
-                  <a-input v-model="queryParams.operator"></a-input>
+                  <a-input v-model.trim="queryParams.operator" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="操作节点名称"
-                  :labelCol="{ span: 6 }"
-                  :wrapperCol="{ span: 14, offset: 2 }"
-                  style="width: 100%">
-                  <a-input v-model.number="queryParams.name" />
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
+                  <a-input v-model.trim="queryParams.name" />
                 </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
-              <template v-if="advanced">
-                <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="操作类型"
-                    :labelCol="{ span: 6 }"
-                    :wrapperCol="{ span: 14, offset: 2 }"
-                    style="width: 100%">
-                    <a-select v-model="queryParams.operation">
-                      <a-select-option
-                        v-for="operation in operationList"
-                        :key="operation.value"
-                        :value="operation.value"
-                      > {{ operation.name }} </a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-
-                <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="操作结果类型"
-                    :labelCol="{ span: 6 }"
-                    :wrapperCol="{ span: 14, offset: 2 }"
-                    style="width: 100%">
-                    <a-select v-model="queryParams.operationResult">
-                      <a-select-option
-                        v-for="operationResult in operationResultList"
-                        :key="operationResult.value"
-                        :value="operationResult.value"
-                      > {{ operationResult.name }} </a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-              </template>
+            <a-row v-show="advanced">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="操作类型"
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
+                  <a-select v-model="queryParams.operation">
+                    <a-select-option
+                      v-for="operation in operationList"
+                      :key="operation.value"
+                      :value="operation.value"
+                    > {{ operation.name }} </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="操作结果类型"
+                  v-bind="formItemLayout"
+                  style="width: 100%">
+                  <a-select v-model="queryParams.operationResult">
+                    <a-select-option
+                      v-for="operationResult in operationResultList"
+                      :key="operationResult.value"
+                      :value="operationResult.value"
+                    > {{ operationResult.name }} </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
 
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '0'}px)` } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParams = {}">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? '收起' : '展开' }}
-              <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+          <span :class="advanced ? 'expand' : 'collapse'">
+            <QueryBtn @click="query" />
+            <ResetBtn @click="resetQueryParams" />
+            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
           </span>
         </a-form>
       </template>
@@ -91,63 +80,44 @@
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
 import { OperationLogService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
-
-const operationList = [
-  {
-    name: 'ADD',
-    value: 'ADD'
-  },
-  {
-    name: 'UPDATE',
-    value: 'UPDATE'
-  },
-  {
-    name: 'DELETE',
-    value: 'DELETE'
-  },
-  {
-    name: 'SETPERMISSION',
-    value: 'SETPERMISSION'
-  }
-]
-
-const operationResultList = [
-  {
-    name: 'SUCCESS',
-    value: 'SUCCESS'
-  },
-  {
-    name: 'FAILED',
-    value: 'FAILED'
-  }
-]
+import List from '@/components/Mixins/Table/List'
 
 export default {
   name: 'OperationLogList',
-  components: {
-    CTable
-  },
-  props: {
-    where: {
-      type: Object,
-      default: () => ({})
-    }
-  },
+  mixins: [List],
   data: () => ({
-    // 搜索： 展开/关闭
-    advanced: false,
-    // 查询参数
-    queryParams: {},
-    // 选中行的 key
-    selectedRowKeys: [],
-    operationList,
-    operationResultList
+    operationList: [
+      {
+        name: 'ADD',
+        value: 'ADD'
+      },
+      {
+        name: 'UPDATE',
+        value: 'UPDATE'
+      },
+      {
+        name: 'DELETE',
+        value: 'DELETE'
+      },
+      {
+        name: 'SETPERMISSION',
+        value: 'SETPERMISSION'
+      }
+    ],
+    operationResultList: [
+      {
+        name: 'SUCCESS',
+        value: 'SUCCESS'
+      },
+      {
+        name: 'FAILED',
+        value: 'FAILED'
+      }
+    ]
   }),
   computed: {
-    // FIXME: 小屏下只展示出了部分列
     columns: {
       get () {
         return [
@@ -196,30 +166,21 @@ export default {
           }
         ]
       }
-    },
-    scrolX: {
-      get () {
-        return this.columns.map(el => el.width || 60).reduce((x1, x2) => x1 + x2) + 36
-      }
     }
   },
   watch: {
     '$props': {
       immediate: false,
       deep: true,
-      handler (val) {
-        // 重置查询条件
+      handler () {
         this.reset()
-        // 重新查询
-        this.$refs['table'].refresh(true)
+        this.query()
       }
     }
   },
   methods: {
     /**
-     * 加载表格数据
-     * @param {Object} parameter CTable 回传的分页与排序条件
-     * @return {Function: <Promise<Any>>}
+     * 加载表格数据回调
      */
     loadData (parameter) {
       return OperationLogService.find({
@@ -228,42 +189,13 @@ export default {
           ...this.where,
           ...generateQuery(this.queryParams)
         },
-        fields: [
-          '_id',
-          'modelName',
-          'name',
-          'operator',
-          'operation',
-          'operatingTime',
-          'operationResult',
-          'relationId',
-          'relation'
-        ],
+        fields: this.columns.map(({ dataIndex }) => dataIndex).concat(['_id']),
         alias: 'data'
       }).then(r => r.data)
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
-    /**
-     * 重置组件数据
-     */
-    reset () {
-      Object.assign(this.$data, this.$options.data.apply(this))
-    },
-    /**
-     * 切换搜索栏展开 / 收起状态
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     }
   }
 }
 </script>
 
 <style lang="less">
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-}
 </style>

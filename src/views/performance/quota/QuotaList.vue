@@ -1,5 +1,5 @@
 <template>
-  <div class="quota-list">
+  <div class="QuotaList">
     <ResourceInstanceList
       hiddenOperation
       :where="{
@@ -28,5 +28,4 @@ export default {
 </script>
 
 <style lang="less">
-
 </style>
