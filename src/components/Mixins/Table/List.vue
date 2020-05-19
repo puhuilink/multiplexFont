@@ -79,7 +79,7 @@ export default {
      * 重置查询条件
      */
     resetQueryParams () {
-      Object.assign(this.$data.queryParams, this.$options.data.apply(this).queryParams)
+      this.$data.queryParams = this.$options.data.apply(this).queryParams
     },
     /**
      * 重置组件数据
