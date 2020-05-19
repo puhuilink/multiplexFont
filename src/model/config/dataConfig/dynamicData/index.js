@@ -104,7 +104,7 @@ export class DynamicDataConfig {
     return KpiCurrentService.getValue({
       ...resourceConfig,
       timeRange: TimeRange.getOption.apply(timeRange),
-      orderBy: { arising_time: 'asc' },
+      orderBy: { arising_time: 'desc' },
       ...argus
     })
   }
