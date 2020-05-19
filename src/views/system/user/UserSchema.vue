@@ -156,7 +156,13 @@
               v-decorator="[
                 'note',
                 {
-                  initialValue: ''
+                  initialValue: '',
+                  rules: [
+                    {
+                      max: 128,
+                      message: '最多输入128个字符'
+                    }
+                  ]
                 }
               ]"
             />
