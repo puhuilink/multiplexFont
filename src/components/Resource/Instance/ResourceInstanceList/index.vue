@@ -113,9 +113,8 @@ export default {
       const columns = defaultColumns.concat(this.attributes.filter(({ hidden }) => !hidden).map(({ label, name, width = 0 }) => ({
         title: label,
         dataIndex: `values.${name}`,
-        width: width + 90
-        // FIXME: 数据量庞大情况下采用 tooltip 有性能问题
-        // tooltip: true
+        width: width + 90,
+        tooltip: true
       })))
       return _.orderBy(columns, ['order'], ['asc'])
     },

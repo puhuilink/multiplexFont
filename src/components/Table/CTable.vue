@@ -47,19 +47,16 @@ export default {
     }
   },
   render (h) {
-    // FIXME: 有时顶部不可见
-    // FIXME: td 宽度过大时自动省略号 + tooltip?
-    // TODO: 刷新时如何重置排序？场景多在于点击“查询”按钮时，或新增数据时。方案：在 refresh 后新增一个参数用于判断是否要进行排序
     // 顶部查询区域
     const query = <div class={{
       'CTable-query': true,
       'CTable-query_hidden': !this.$slots.query
-    }}>{ this.$slots ? this.$slots.query : '' }</div>
+    }}>{ this.$slots.query ? this.$slots.query : '' }</div>
     // 操作区域
     const operation = <div class={{
       'CTable-operation': true,
       'CTable-operation_hidden': !this.$slots.operation
-    }}>{ this.$slots ? this.$slots.operation : '' }</div>
+    }}>{ this.$slots.operation ? this.$slots.operation : '' }</div>
 
     // 允许增量入参
     const pagination = Object.assign({}, defaultPagination, this.$props.pagination)
@@ -75,9 +72,22 @@ export default {
         columns: columns.map(column => ({
           ellipsis: true,
           ...column.tooltip ? {
-            customRender: v => (<a-tooltip title={v} placement="topLeft" key={column.dataIndex}>
-              <span>{v}</span>
-            </a-tooltip>)
+            customRender: v => {
+              let value = v
+              if (typeof v === 'boolean') {
+                value = `${value}`
+              }
+              const { width = 0 } = column
+              const length = _.get(value, 'length', 0) * 14
+              // TODO: 截断 tooltip title
+              // TODO: 中英文字符宽度不一致
+              const tooltip = (
+                <a-tooltip title={value} placement="topLeft">
+                  <span>{value}</span>
+                </a-tooltip>
+              )
+              return (value && length > width) ? tooltip : value
+            }
           } : {},
           ...column })),
         pageSize: pagination.pageSize
@@ -86,9 +96,12 @@ export default {
         ...this.$listeners
       },
       scopedSlots: {
-        ...this.$scopedSlots
+        ..._.omit(this.$scopedSlots, ['query', 'operation'])
       }
     })
+
+    // FIXME: $scopedSlots.query 与 .$scopedSlots.operation 变化时，table 会重新绘制
+    // https://github.com/vuejs/vue/issues/6351
     return <div class="CTable">
       { query }
       { operation }
