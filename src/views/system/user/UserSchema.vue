@@ -26,6 +26,9 @@
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '用户名必填'
                     },
@@ -50,6 +53,9 @@
                 'staff_name',
                 {
                   rules: [
+                    {
+                      transform: value => value.trim()
+                    },
                     {
                       required: true,
                       message: '姓名必填'
