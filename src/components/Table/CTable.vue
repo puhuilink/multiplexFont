@@ -77,16 +77,16 @@ export default {
               if (typeof v === 'boolean') {
                 value = `${value}`
               }
+              // TODO: px vh?
               const { width = 0 } = column
               const length = _.get(value, 'length', 0) * 14
               // TODO: 截断 tooltip title
               // TODO: 中英文字符宽度不一致
-              const tooltip = (
+              return (value && length > width) ? (
                 <a-tooltip title={value} placement="topLeft">
                   <span>{value}</span>
                 </a-tooltip>
-              )
-              return (value && length > width) ? tooltip : value
+              ) : value
             }
           } : {},
           ...column })),
@@ -100,8 +100,10 @@ export default {
       }
     })
 
-    // FIXME: $scopedSlots.query 与 .$scopedSlots.operation 变化时，table 会重新绘制
+    // FIXME: 插槽更新时，其余部分也会触发 render
     // https://github.com/vuejs/vue/issues/6351
+    // beta 版已修复
+    // https://github.com/vuejs/vue/releases/tag/v2.6.0-beta.2
     return <div class="CTable">
       { query }
       { operation }
