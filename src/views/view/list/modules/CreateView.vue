@@ -1,5 +1,5 @@
 /**
-* 新建视图
+* 新增视图
 * Author: dong xing
 * Date: 2019/12/6
 * Time: 10:07 上午
@@ -8,7 +8,7 @@
 <template>
   <div class="create-view">
     <a-modal
-      title="新建视图"
+      title="新增视图"
       :width="640"
       :visible="visible"
       :confirmLoading="confirmLoading"

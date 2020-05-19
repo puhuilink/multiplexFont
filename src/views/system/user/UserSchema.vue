@@ -1,7 +1,7 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
     :width="940"
@@ -17,8 +17,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="用户名"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               :disabled="title === '编辑'"
@@ -27,8 +26,15 @@
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '用户名必填'
+                    },
+                    {
+                      max: 16,
+                      message: '最多输入16个字符'
                     }
                   ]
                 }
@@ -40,8 +46,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="姓名"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -49,8 +54,15 @@
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '姓名必填'
+                    },
+                    {
+                      max: 16,
+                      message: '最多输入16个字符'
                     }
                   ]
                 }
@@ -64,13 +76,23 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="岗位职责"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
                 'job_title',
-                { rules: [{ required: true, message: '名称必填' }] },
+                {
+                  rules: [
+                    {
+                      required: true,
+                      message: '名称必填'
+                    },
+                    {
+                      max: 64,
+                      message: '最多输入64个字符'
+                    }
+                  ]
+                },
               ]"
             />
           </a-form-item>
@@ -79,18 +101,23 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="办公电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
                 'phone',
-                { rules: [
-                  { required: true, message: '办公电话必填' },
-                  {
-                    pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
-                    message: '请输入正确的办公电话'
-                  }] },
+                {
+                  rules: [
+                    {
+                      required: true,
+                      message: '办公电话必填'
+                    },
+                    {
+                      pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
+                      message: '请输入正确的办公电话'
+                    }
+                  ]
+                },
               ]"
             />
           </a-form-item>
@@ -101,17 +128,18 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="移动电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
                 'mobile_phone',
                 {
-                  rules: [{
-                    pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
-                    message: '请输入正确的移动电话'
-                  }]
+                  rules: [
+                    {
+                      pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
+                      message: '请输入正确的移动电话'
+                    }
+                  ]
                 }
               ]"
             />
@@ -121,8 +149,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="Email"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -136,6 +163,10 @@
                     {
                       type: 'email',
                       message: '请输入正确的Email'
+                    },
+                    {
+                      max: 32,
+                      message: '最多输入32个字符'
                     }
                   ]
                 }
@@ -149,14 +180,19 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="备注"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-textarea
               v-decorator="[
                 'note',
                 {
-                  initialValue: ''
+                  initialValue: '',
+                  rules: [
+                    {
+                      max: 128,
+                      message: '最多输入128个字符'
+                    }
+                  ]
                 }
               ]"
             />
@@ -166,8 +202,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="有效标志"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-select
               v-decorator="[
@@ -199,25 +234,16 @@
 
 <script>
 import { UserService } from '@/api-hasura'
-
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
+import Schema from '@/components/Mixins/Modal/Schema'
+import _ from 'lodash'
 
 export default {
   name: 'UserSchema',
+  mixins: [Schema],
   components: {},
   props: {},
   data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
+    confirmLoading: false,
     options: {
       flag: [
         {
@@ -231,95 +257,68 @@ export default {
       ]
     },
     record: null,
-    submit: () => {},
-    title: '',
-    visible: false
+    submit: () => {}
   }),
   computed: {},
   methods: {
+    /**
+     * 打开新增窗口
+     */
     add () {
-      this.title = '新增'
       this.submit = this.insert
-      this.visible = true
+      this.show('新增')
     },
     /**
-       * 编辑
-       * @param {Object} record
-       * @return {Undefined}
-       */
+     * 打开编辑窗口
+     */
     async edit (record) {
-      this.record = {
-        ...record
-      }
-      this.title = '编辑'
+      this.record = { ...record }
       this.submit = this.update
-      this.visible = true
+      this.show('编辑')
       await this.$nextTick()
-      this.form.setFieldsValue({
-        ...record
-      })
-    },
-    cancel () {
-      this.visible = false
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     },
     /**
-     * 新增
+     * 调取新增接口
      */
     async insert () {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
-          this.loading = true
+          this.confirmLoading = true
           await UserService.add(values)
           this.$emit('addSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '新建成功'
-          })
+          this.notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.notifyError(e)
           throw e
         } finally {
-          this.loading = false
+          this.confirmLoading = false
         }
       })
     },
     /**
-     * 编辑
+     * 调取编辑接口
      */
     async update () {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
-          this.loading = true
-          await UserService.update(
-            values,
-            { 'user_id': this.record.user_id }
-          )
+          this.confirmLoading = true
+          const { user_id } = this.record
+          await UserService.update(values, { user_id })
           this.$emit('editSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '编辑成功'
-          })
+          this.notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.notifyError(e)
           throw e
         } finally {
-          this.loading = false
+          this.confirmLoading = false
         }
       })
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }

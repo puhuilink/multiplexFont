@@ -9,7 +9,9 @@ import {
   ModelHistoryService,
   InstanceHistoryService,
   RelationAttributeService,
-  RelationInstanceService
+  RelationInstanceService,
+  GroupService,
+  ViewListService
 } from './service/index'
 
 export {
@@ -23,5 +25,7 @@ export {
   ModelHistoryService,
   InstanceHistoryService,
   RelationAttributeService,
-  RelationInstanceService
+  RelationInstanceService,
+  GroupService,
+  ViewListService
 }

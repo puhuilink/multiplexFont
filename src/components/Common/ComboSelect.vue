@@ -60,7 +60,7 @@
         :labelCol="formItemLayout.labelCol"
         :wrapperCol="formItemLayout.wrapperCol"
       >
-        <a-input :value="formData.detailInstance.join(',')" @change="ondetailInstanceInput" />
+        <a-input :value="(formData.detailInstance || []).join(',')" @change="ondetailInstanceInput" />
       </a-form-item>
     </a-form>
   </div>

@@ -5,7 +5,7 @@ export default class PieChart extends Chart {
     super({ widget })
   }
 
-  mappingOption ({ commonConfig, proprietaryConfig, dataConfig }) {
+  async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const {
       legend, itemStyle: { color, ...otherItemStyle }, ...otherConfig
@@ -22,17 +22,27 @@ export default class PieChart extends Chart {
       ...otherConfig
     }
 
-    if (sourceType === 'static') {
-      series = staticData.series.map((item) => {
-        Object.assign(item, pie)
-        return item
-      })
-      const { legend: staticLegend } = staticData
-      Object.assign(option, {
-        legend: Object.assign(legend, staticLegend),
-        series
-      })
+    switch (sourceType) {
+      case 'static': {
+        series = staticData.series.map((item) => {
+          Object.assign(item, pie)
+          return item
+        })
+        const { legend: staticLegend } = staticData
+        Object.assign(option, {
+          legend: Object.assign(legend, staticLegend),
+          series
+        })
+        break
+      }
+      case 'real': {
+        if (loadingDynamicData) {
+          await dataConfig.dbDataConfig.getOption()
+        }
+        break
+      }
     }
+
     return option
   }
 }

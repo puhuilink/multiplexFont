@@ -1,5 +1,7 @@
 <script>
 import GraphTable from './GraphTable'
+import _ from 'lodash'
+
 const defaultPagination = {
   // TODO: 查询全部
   pageSizeOptions: ['50', '100'],
@@ -16,7 +18,7 @@ export default {
   // custom table
   name: 'CTable',
   props: {
-    ...GraphTable.props,
+    ..._.omit(GraphTable.props, ['loading']),
     pagination: {
       type: Object,
       default: () => Object.assign({}, defaultPagination)
@@ -45,44 +47,20 @@ export default {
     }
   },
   render (h) {
-    // FIXME: 有时顶部不可见
-    // FIXME: td 宽度过大时自动省略号 + tooltip?
-    // TODO: 刷新时如何重置排序？场景多在于点击“查询”按钮时，或新增数据时。方案：在 refresh 后新增一个参数用于判断是否要进行排序
     // 顶部查询区域
     const query = <div class={{
       'CTable-query': true,
       'CTable-query_hidden': !this.$slots.query
-    }}>{ this.$slots ? this.$slots.query : '' }</div>
+    }}>{ this.$slots.query ? this.$slots.query : '' }</div>
     // 操作区域
     const operation = <div class={{
       'CTable-operation': true,
       'CTable-operation_hidden': !this.$slots.operation
-    }}>{ this.$slots ? this.$slots.operation : '' }</div>
-
-    // TODO: 列溢出自动 tooltip
-    // const { columns: propsColumns } = this.$attrs
-    // const columns = propsColumns.map(({ customRender, width, ...column }) => ({
-    //   ...column,
-    //   width,
-    //   customRender: customRender || (text => {
-    //     // console.log(text)
-    //     if (typeof text === 'string' && width) {
-    //       const length = Math.round(width / 14)
-    //       if (text.length < length) {
-    //         return text
-    //       }
-    //       return h('a-tooltip', {
-    //         props: {
-    //           title: text
-    //         }
-    //       }, [text.slice(0, length) + '...'])
-    //     }
-    //     return text
-    //   })
-    // }))
+    }}>{ this.$slots.operation ? this.$slots.operation : '' }</div>
 
     // 允许增量入参
     const pagination = Object.assign({}, defaultPagination, this.$props.pagination)
+    const columns = this.$props.columns || this.$attrs.columns
 
     // 表格区域
     const table = h(GraphTable, {
@@ -91,16 +69,41 @@ export default {
         ...this.$props,
         ...this.$attrs,
         pagination,
-        // columns,
+        columns: columns.map(column => ({
+          ellipsis: true,
+          ...column.tooltip ? {
+            customRender: v => {
+              let value = v
+              if (typeof v === 'boolean') {
+                value = `${value}`
+              }
+              // TODO: px vh?
+              const { width = 0 } = column
+              const length = _.get(value, 'length', 0) * 14
+              // TODO: 截断 tooltip title
+              // TODO: 中英文字符宽度不一致
+              return (value && length > width) ? (
+                <a-tooltip title={value} placement="topLeft">
+                  <span>{value}</span>
+                </a-tooltip>
+              ) : value
+            }
+          } : {},
+          ...column })),
         pageSize: pagination.pageSize
       },
       on: {
         ...this.$listeners
       },
       scopedSlots: {
-        ...this.$scopedSlots
+        ..._.omit(this.$scopedSlots, ['query', 'operation'])
       }
     })
+
+    // FIXME: 插槽更新时，其余部分也会触发 render
+    // https://github.com/vuejs/vue/issues/6351
+    // beta 版已修复
+    // https://github.com/vuejs/vue/releases/tag/v2.6.0-beta.2
     return <div class="CTable">
       { query }
       { operation }

@@ -29,6 +29,7 @@
 <script>
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import { filterTransferOption } from '@/utils/util'
 
 const groupList = gql`query groupList {
   data: t_group {
@@ -103,9 +104,7 @@ export default {
        * @param option
        * @return {boolean}
        */
-    filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
-    },
+    filterOption: filterTransferOption('group_name'),
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys

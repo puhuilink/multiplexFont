@@ -5,7 +5,7 @@
   >
     <a-select
       v-decorator="[
-        'datatype',
+        'dataType',
         {
           initialValue: 'STRING'
         },
@@ -25,7 +25,7 @@ import mixin from './mixin'
 
 export default {
   mixins: [mixin],
-  name: 'AllowNull',
+  name: 'DataType',
   data: () => ({
     options: {
       type: [

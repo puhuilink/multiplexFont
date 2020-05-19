@@ -28,6 +28,7 @@
 <script>
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import { filterTransferOption } from '@/utils/util'
 
 // 组管理员必须是组内成员
 const currentUserList = gql`query ($groupId: String) {
@@ -107,9 +108,7 @@ export default {
        * @param option
        * @return {boolean}
        */
-    filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
-    },
+    filterOption: filterTransferOption('user.staff_name'),
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys

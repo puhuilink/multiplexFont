@@ -4,10 +4,11 @@
     v-bind="formItemProps"
   >
     <a-select
+      v-bind="formChildProps"
       v-decorator="[
         'sourceType',
         {
-          initialValue: '',
+          initialValue: 'DICT',
         }
       ]"
     >
@@ -29,7 +30,12 @@ export default {
   data: () => ({
     options: {
       // FIXME: 值从哪里来？
-      sourcetype: []
+      sourcetype: [
+        {
+          name: 'DICT',
+          value: 'DICT'
+        }
+      ]
     }
   })
 }

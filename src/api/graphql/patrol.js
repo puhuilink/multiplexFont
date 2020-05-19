@@ -21,6 +21,21 @@ export const queryRouteList = gql`query ($where: t_xj_route_info_bool_exp = {}, 
     }
 }`
 
+export const queryRouteDetail = gql`query ($where: t_xj_route_info_bool_exp = {}) {
+  data:  t_xj_route_info (where: $where) {
+      ascription
+      create_time
+      create_user_code
+      create_user_name
+      is_enable
+      rf_names
+      route_code
+      route_id
+      route_name
+      update_time
+    }
+}`
+
 export const queryPlanList = gql`query ($where: t_xj_plan_info_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_xj_plan_info_order_by!]) {
   pagination: t_xj_plan_info_aggregate(where: $where) {
     aggregate {
@@ -265,5 +280,14 @@ export const deletePlanArr = gql`mutation ($IDs: [Int!] = []) {
     }
   }) {
     affected_rows
+  }
+}`
+
+// insert
+export const insertPlanObj = gql`mutation set ($objects: [t_xj_plan_info_insert_input!]! = []) {
+  insert_t_xj_plan_info (objects: $objects) {
+    returning {
+      plan_id
+    }
   }
 }`

@@ -42,7 +42,7 @@ export const mutationUpdateBaselineDef = gql`mutation ($uuid: String, $set:t_bas
   }
 }`
 
-export const mutationAddBaselintDefs = gql`mutation ($objects: [t_baseline_def_insert_input!]!) {
+export const mutationAddBaselineDefs = gql`mutation ($objects: [t_baseline_def_insert_input!]!) {
   data: insert_t_baseline_def (objects: $objects) {
     returning {
       uuid
@@ -50,7 +50,7 @@ export const mutationAddBaselintDefs = gql`mutation ($objects: [t_baseline_def_i
   }
 }`
 
-export const queryResourceInfo = gql`query ($modelName: String, $insatnceList: [String!], $kpiCodeList: [String!]) {
+export const queryResourceInfo = gql`query ($modelName: String, $instanceList: [String!], $kpiCodeList: [String!]) {
   # model label
   model: ngecc_model (where: {
     name_s: {
@@ -62,7 +62,7 @@ export const queryResourceInfo = gql`query ($modelName: String, $insatnceList: [
   # instance label
 	ci: ngecc_instance (where: {
     _id_s: {
-      _in: $insatnceList
+      _in: $instanceList
     }
   }) {
     label: label_s

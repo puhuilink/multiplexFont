@@ -18,6 +18,7 @@ import ImageChart from '../charts/ImageChart'
 import GaugeChart from '../charts/GaugeChart'
 import DegreeRingChart from '../charts/DegreeRingChart'
 import TextHealthChart from '../charts/TextHealthChart'
+import PolarChart from '../charts/PolarChart'
 
 export default class ChartFactory {
   static create (type, { widget }) {
@@ -28,6 +29,8 @@ export default class ChartFactory {
         return new BarChart({ widget })
       case 'Pie':
         return new PieChart({ widget })
+      case 'Polar':
+        return new PolarChart({ widget })
       case 'Texts':
         return new TextsChart({ widget })
       case 'Topology':

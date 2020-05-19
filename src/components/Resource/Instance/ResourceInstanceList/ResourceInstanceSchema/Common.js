@@ -1,8 +1,8 @@
-import DynamicFormItem from '../../Utils/DynamicFormItem'
+import DynamicFormItem from '../../../Utils/DynamicFormItem'
 import _ from 'lodash'
 
 export default {
-  name: 'Commin',
+  name: 'Common',
   props: {
     // 资源模型属性
     attributeList: {
@@ -13,6 +13,10 @@ export default {
     relationAttributeList: {
       type: Array,
       default: () => ([])
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data: (vm) => ({
@@ -73,13 +77,14 @@ export default {
       )
     },
     renderTabPaneContent (fields) {
-      const { form, mode } = this
+      const { form, mode, loading } = this
       return (
         <a-row>
           {
             ...fields.map((field, index) => (
               <a-col md={12} span={24} key={index}>
                 <DynamicFormItem
+                  loading={loading}
                   mode={mode}
                   form={form}
                   field={field} />

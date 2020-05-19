@@ -30,13 +30,13 @@
         <a-button
           @click="add('New')"
         >
-          新建类型
+          新增类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="add('NewSon')"
         >
-          新建子类型
+          新增子类型
         </a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
@@ -248,7 +248,7 @@ export default {
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
+
         this.$refs['table'].refresh(false)
       } catch (e) {
         throw e

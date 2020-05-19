@@ -1,6 +1,7 @@
 import apollo from '@/utils/apollo'
 import {
   queryRouteList,
+  queryRouteDetail,
   queryRoutePointDetail,
   queryPlanList,
   queryUserGroupList,
@@ -10,13 +11,25 @@ import {
   queryTaskPointDetail,
   updatePlan,
   deleteRouteArr,
-  deletePlanArr
+  deletePlanArr,
+  insertPlanObj
 } from '../graphql/patrol'
+import { wrapperLogFunc } from '@/api-hasura/utils/decorator/log'
+
+const MODULE_NAME = '巡更模块'
 
 // get
 export const getRouteList = function (variables = {}) {
   return apollo.clients.alert.query({
     query: queryRouteList,
+    variables: {
+      ...variables
+    }
+  })
+}
+export const getRouteDetail = function (variables = {}) {
+  return apollo.clients.alert.query({
+    query: queryRouteDetail,
     variables: {
       ...variables
     }
@@ -103,9 +116,20 @@ export const deleteRoute = function (variables = {}) {
   })
 }
 
-export const deletePlan = function (variables = {}) {
+export const deletePlan = wrapperLogFunc(function (variables = {}) {
+  // return true
   return apollo.clients.alert.mutate({
     mutation: deletePlanArr,
+    variables: {
+      ...variables
+    }
+  })
+}, MODULE_NAME, '删除计划')
+
+// insert
+export const insertPlan = function (variables = {}) {
+  return apollo.clients.alert.mutate({
+    mutation: insertPlanObj,
     variables: {
       ...variables
     }

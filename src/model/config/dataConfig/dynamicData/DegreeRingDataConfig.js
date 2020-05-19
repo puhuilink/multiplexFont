@@ -1,24 +1,7 @@
 import { getComponentValues } from '@/api/controller/View'
-import { TimeRange } from './index'
+import { DynamicDataConfig, TimeRange } from './index'
 
-export default class DegreeRingDataConfig {
-  constructor ({
-    resourceConfig = {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: []
-    },
-    refreshTime = 0,
-    // 外部 Ci 是否可用
-    externalCi = true,
-    timeRange = new TimeRange()
-  }) {
-    this.resourceConfig = resourceConfig
-    this.refreshTime = refreshTime
-    this.externalCi = externalCi
-    this.timeRange = timeRange
-  }
-
+export default class DegreeRingDataConfig extends DynamicDataConfig {
   /**
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}
