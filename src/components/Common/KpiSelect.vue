@@ -2,6 +2,14 @@
 import { InstanceService, ModelService } from '@/api-hasura/index'
 import _ from 'lodash'
 
+// 监控对象模型节点
+const COMMON_CI = 'CommonCi'
+
+const isCommonCiChild = (argus = {}) => {
+  const { name = '', parentTree = '' } = argus
+  return name.includes(COMMON_CI) || parentTree.includes(COMMON_CI)
+}
+
 export default {
   name: 'KpiSelect',
   components: {},
@@ -86,40 +94,46 @@ export default {
     async loadData () {
       try {
         this.loading = true
-        // hack: nodeType 应该传入选中模型的 parntName，但应用传入了模型的 name，后期统一调整
         const { nodeType } = this
         const { data: { modelList: [model] } } = await ModelService.find({
           where: {
             name: nodeType
           },
           fields: [
-            'parentName'
+            'name',
+            'parentName',
+            'parentTree'
           ],
           alias: 'modelList'
         })
-        const { parentName } = model
-        const nodeTypeList = _.uniq(['CommonCi', parentName]).filter(v => !!v)
-        const { data: { options } } = await InstanceService.find({
-          where: {
-            _or: nodeTypeList.map(nodeType => ({
-              parentName: {
-                _eq: 'Kpi'
-              },
-              values: {
-                _contains: {
-                  nodeType: nodeType
+        // FIXME: 监控对象模型节点及其后代节点才能筛选 (待确认)
+        if (isCommonCiChild(model)) {
+          const { name, parentName } = model
+          const nodeTypeList = _.uniq([ COMMON_CI, name, parentName ])
+          const { data: { options } } = await InstanceService.find({
+            where: {
+              _or: nodeTypeList.map(nodeType => ({
+                parentName: {
+                  _eq: 'Kpi'
+                },
+                values: {
+                  _contains: {
+                    nodeType: nodeType
+                  }
                 }
-              }
-            }))
-          },
-          fields: [
-            'label',
-            'values',
-            '_id'
-          ],
-          alias: 'options'
-        })
-        this.options = options
+              }))
+            },
+            fields: [
+              'label',
+              'values',
+              '_id'
+            ],
+            alias: 'options'
+          })
+          this.options = options
+        } else {
+          this.options = []
+        }
       } catch (e) {
         this.options = []
         throw e
