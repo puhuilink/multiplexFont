@@ -197,6 +197,34 @@
               </a-collapse-panel>
               <!-- / 半径 -->
 
+              <a-collapse-panel header="遮罩" key="5">
+
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">显示:</p>
+                  <div class="comment-template__inner comment-template__end">
+                    <a-switch
+                      checkedChildren="开"
+                      unCheckedChildren="关"
+                      v-model="config.proprietaryConfig.polarMask.show"
+                      @change="change" />
+                  </div>
+                </div>
+                <!-- / 显示 -->
+
+                <div class="comment-template__item" v-if="config.proprietaryConfig.polarMask.show">
+                  <p class="comment-template__leading">颜色:</p>
+                  <div class="comment-template__inner">
+                    <ColorPicker
+                      v-model="config.proprietaryConfig.polarMask.color"
+                      @change="change"
+                    />
+                  </div>
+                </div>
+                <!-- / 颜色 -->
+
+              </a-collapse-panel>
+              <!-- / 遮罩 -->
+
             </a-collapse>
 
           </template>
