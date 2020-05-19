@@ -268,7 +268,7 @@ export default {
       try {
         this.$refs['table'].loading = true
         const [record] = this.selectedRows
-        await UserService.onToggleFlag(record.user_id, Number(!record.flag))
+        await UserService.toggleFlag(record.user_id, Number(!record.flag))
         this.$notification.success({
           message: '系统提示',
           description: '更改状态成功'
