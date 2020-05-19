@@ -53,20 +53,10 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import { ViewListService } from '@/api-hasura/index'
 import _ from 'lodash'
 
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
-
 export default {
   name: 'ViewTitleScheme',
   mixins: [Schema],
   data: () => ({
-    formItemLayout,
     record: null
   }),
   methods: {

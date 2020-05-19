@@ -19,7 +19,7 @@ class GroupDao extends BaseDao {
 
   // 主键
   @readonly
-  static PRIMARY_KEY = 'group_name'
+  static PRIMARY_KEY = 'group_id'
 
   // 字段与显示文字
   @readonly
@@ -29,20 +29,19 @@ class GroupDao extends BaseDao {
   ])
 
   // @override
-  // static async add (user) {
-  //   await this._uniqueValidate(user)
-  //   return super.add({
-  //     auth_method: 'DB',
-  //     ...user,
-  //     ...defaultCreateDate()
-  //   })
-  // }
+  static async add (group) {
+    await this._uniqueValidate(group)
+    return super.add({
+      ...group,
+      ...defaultCreateDate()
+    })
+  }
 
   // @override
-  // static async update ({ ...user }, { user_id }) {
-  //   await this._uniqueValidate({ ...user, user_id }, false)
-  //   return super.update({ ...user, ...defaultUpdateDate() }, { user_id })
-  // }
+  static async update ({ ...group }, { group_id }) {
+    await this._uniqueValidate({ ...group, group_id }, false)
+    return super.update({ ...group, ...defaultUpdateDate() }, { group_id })
+  }
 }
 
 export {
