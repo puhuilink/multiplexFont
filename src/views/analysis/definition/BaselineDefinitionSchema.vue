@@ -246,7 +246,7 @@ import {
 } from '@/components/Common'
 import { getBaselineCalendar, addBaselineCalendar } from '@/api/controller/BaselineCalendar'
 import _ from 'lodash'
-import { addBaselintDef, editBaselineDef } from '@/api/controller/BaselineDef'
+import { addBaselineDef, editBaselineDef } from '@/api/controller/BaselineDef'
 
 const cycleTypeMap = function (str) {
   switch (str.charAt(str.length - 2)) {
@@ -592,7 +592,7 @@ export default {
     async insert () {
       try {
         this.loading = true
-        const uuid = await addBaselintDef({
+        const uuid = await addBaselineDef({
           ...this.formData0,
           ...this.formData1
         }).then(r => r.data.data.returning[0].uuid)

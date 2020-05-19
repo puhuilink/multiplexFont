@@ -88,7 +88,7 @@ export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
   }
 }`
 
-export const mutationDeletViews = gql`mutation ($viewIdList: [numeric!]) {
+export const mutationDeleteViews = gql`mutation ($viewIdList: [numeric!]) {
   delete_t_view (where: {
     view_id: {
       _in: $viewIdList

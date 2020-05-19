@@ -6,7 +6,7 @@ import {
   mutationInsertUsers,
   mutationUpdateUser
 } from '../graphql/User'
-import { fetchLastesdViewId } from './View'
+import { fetchLastestViewId } from './View'
 import { encrypt } from '@/utils/aes'
 
 export const login = function ({ userId, pwd }) {
@@ -74,7 +74,7 @@ const addUsers = function (objects = [], views = []) {
  */
 export const addUser = async function (user) {
   // TODO: 数据表已调整为 id 自增
-  const viewId = await fetchLastesdViewId()
+  const viewId = await fetchLastestViewId()
   const view = {
     view_id: viewId + 1,
     view_name: user.user_id,

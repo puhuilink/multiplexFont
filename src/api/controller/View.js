@@ -9,13 +9,12 @@ import {
   generateDynamicQueryWithKpiCi,
   queryKpiAndInstanceInfo,
   queryViewContent,
-  mutationDeletViews,
+  mutationDeleteViews,
   queryMaxDid
 } from '../graphql/View'
 import { axios } from '@/utils/request'
-// import { KpiCurrentService } from '@/api-hasura/index'
 
-export const fetchLastesdViewId = function () {
+export const fetchLastestViewId = function () {
   return apollo.clients.alert.query({
     query: queryMaxDid
   }).then(r => r.data.data.aggregate.max.view_id)
@@ -70,7 +69,7 @@ export const updateView = function (viewId, set = {}) {
 
 export const deleteViews = function (viewIdList = []) {
   return apollo.clients.alert.mutate({
-    mutation: mutationDeletViews,
+    mutation: mutationDeleteViews,
     variables: {
       viewIdList
     }

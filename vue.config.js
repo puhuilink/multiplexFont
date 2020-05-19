@@ -20,7 +20,7 @@ const {
   VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
   VUE_APP_HASURA_NGECC_URI,
   // VUE_APP_HASURA_NGECC_KEY,
-  VUE_APP_HASURA_NEGCC_ORIGINAL_URL
+  VUE_APP_HASURA_NGECC_ORIGINAL_URL
 } = process.env
 
 const assetsCDN = {
@@ -158,7 +158,7 @@ const vueConfig = {
       },
       // hasura ngecc
       [VUE_APP_HASURA_NGECC_URI]: {
-        target: VUE_APP_HASURA_NEGCC_ORIGINAL_URL,
+        target: VUE_APP_HASURA_NGECC_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
