@@ -28,6 +28,7 @@
 <script>
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import { filterTransferOption } from '@/utils/util'
 
 const userList = gql`query {
   data: t_user {
@@ -91,15 +92,7 @@ export default {
         throw e
       }
     },
-    /**
-       * 过滤条件
-       * @param inputValue
-       * @param option
-       * @return {boolean}
-       */
-    filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
-    },
+    filterOption: filterTransferOption('title'),
     handleChange (targetKeys, direction, moveKeys) {
       // console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys

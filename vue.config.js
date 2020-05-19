@@ -20,7 +20,7 @@ const {
   VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
   VUE_APP_HASURA_NGECC_URI,
   // VUE_APP_HASURA_NGECC_KEY,
-  VUE_APP_HASURA_NEGCC_ORIGINAL_URL
+  VUE_APP_HASURA_NGECC_ORIGINAL_URL
 } = process.env
 
 const assetsCDN = {
@@ -122,7 +122,7 @@ const vueConfig = {
       },
       // 登录及权限
       '/api': {
-        target: 'http://10.1.8.178:31685/',
+        target: 'http://10.1.13.17:31685/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -158,7 +158,7 @@ const vueConfig = {
       },
       // hasura ngecc
       [VUE_APP_HASURA_NGECC_URI]: {
-        target: VUE_APP_HASURA_NEGCC_ORIGINAL_URL,
+        target: VUE_APP_HASURA_NGECC_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {

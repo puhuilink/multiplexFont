@@ -61,9 +61,26 @@ const taskStatusList = [
   }
 ]
 
+function createUniqueId () {
+  const unx = Date.now()
+  const length = 16 - unx.toString().length
+  if (length > 0) {
+    var data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    var nums = ''
+    for (var i = 0; i < length; i++) {
+      var r = parseInt(Math.random() * 10)
+      nums += data[r]
+    }
+    return unx + nums
+  } else {
+    return false
+  }
+}
+
 export default {
   ascriptionList,
   planTypeList,
   enableList,
-  taskStatusList
+  taskStatusList,
+  createUniqueId
 }

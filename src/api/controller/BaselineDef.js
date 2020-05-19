@@ -5,7 +5,7 @@ import {
   queryBaselineDefList,
   queryResourceInfo,
   mutationUpdateBaselineDef,
-  mutationAddBaselintDefs,
+  mutationAddBaselineDefs,
   mutationDeleteBaselineDefList
 } from '../graphql/BaselineDef'
 
@@ -24,7 +24,7 @@ const fetchResourceInfo = async function (model, ci, kpi) {
     query: queryResourceInfo,
     variables: {
       'modelName': model,
-      'insatnceList': ci,
+      'instanceList': ci,
       'kpiCodeList': kpi
     }
   })
@@ -40,10 +40,10 @@ const fetchResourceInfo = async function (model, ci, kpi) {
   }
 }
 
-export const addBaselintDef = async function ({ kpi, ci, model, ...object }) {
+export const addBaselineDef = async function ({ kpi, ci, model, ...object }) {
   const resourceInfo = await fetchResourceInfo(model, ci, kpi)
   return apollo.clients.alert.mutate({
-    mutation: mutationAddBaselintDefs,
+    mutation: mutationAddBaselineDefs,
     variables: {
       objects: [{
         ...object,

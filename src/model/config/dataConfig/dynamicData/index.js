@@ -4,6 +4,7 @@
 
 import _ from 'lodash'
 import moment from 'moment'
+import { KpiCurrentService } from '@/api-hasura'
 
 // https://itbilu.com/nodejs/npm/EJlmbFhgg.html
 const defaultTimeStart = {
@@ -76,4 +77,39 @@ export class TimeRange {
       timeRangeEnd: moment().add(this.timeRangeEnd).format(TimeRange.FORMAT)
     }
   }
+}
+
+export class DynamicDataConfig {
+  constructor ({
+    resourceConfig = {
+      model: '',
+      selectedInstance: [],
+      selectedKpi: [],
+      detailInstance: []
+    },
+    refreshTime = 0,
+    // 外部 Ci 是否可用
+    externalCi = true,
+    timeRange = new TimeRange()
+  }) {
+    this.resourceConfig = resourceConfig
+    this.externalCi = externalCi
+    this.refreshTime = refreshTime
+    this.timeRange = timeRange
+    this.resetData()
+  }
+
+  fetch (argus = {}) {
+    const { resourceConfig, timeRange } = this
+    return KpiCurrentService.getValue({
+      ...resourceConfig,
+      timeRange: TimeRange.getOption.apply(timeRange),
+      orderBy: { arising_time: 'desc' },
+      ...argus
+    })
+  }
+
+  getOption () {}
+
+  resetData () {}
 }

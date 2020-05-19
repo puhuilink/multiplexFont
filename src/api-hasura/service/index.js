@@ -9,6 +9,8 @@ import { ModelHistoryService } from './ModelHistoryService'
 import { InstanceHistoryService } from './InstanceHistoryService'
 import { RelationAttributeService } from './RelationAttributeService'
 import { RelationInstanceService } from './RelationInstanceService'
+import { GroupService } from './GroupService'
+import { ViewListService } from './ViewListService'
 
 export {
   UserService,
@@ -21,5 +23,7 @@ export {
   ModelHistoryService,
   InstanceHistoryService,
   RelationAttributeService,
-  RelationInstanceService
+  RelationInstanceService,
+  GroupService,
+  ViewListService
 }

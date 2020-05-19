@@ -3,10 +3,10 @@ import moment from 'moment'
 
 const isAvailable = function (v) {
   if (Array.isArray(v)) {
-    return v.length
+    return !!v.length
   }
   if (typeof v === 'string') {
-    return v.trim()
+    return !!v.trim()
   }
   return v !== undefined && v !== null
 }
@@ -53,30 +53,20 @@ const generateJsonb = function (key, { matchType, name, dataType, value }) {
   let _matchType
   let _value
   const _name = `'${name}'`
-  switch (matchType) {
-    case 'LIKE': {
-      _matchType = 'LIKE'
-      break
-    }
-    case 'EQ': {
-      _matchType = '='
-      break
-    }
-    default: {
-      _matchType = matchType
-      break
-    }
-  }
-
-  // console.log(value)
-
+  console.log(dataType)
   switch (dataType) {
     case 'STRING': {
       _value = matchType === 'LIKE' ? `'%${value}%'` : `'${value}'`
+      console.log(_value)
       break
     }
     case 'BOOLEAN': {
       _value = `'${Boolean(Number(value))}'`
+      break
+    }
+    case 'Data': {
+      // _value
+      console.log(value)
       break
     }
     default: {
@@ -84,6 +74,53 @@ const generateJsonb = function (key, { matchType, name, dataType, value }) {
       break
     }
   }
+
+  switch (matchType) {
+    case 'EQ': {
+      _matchType = '='
+      break
+    }
+    case 'NE': {
+      _matchType = '!='
+      break
+    }
+    case 'LIKE': {
+      _matchType = 'LIKE'
+      break
+    }
+    case 'GT': {
+      _matchType = '>'
+      break
+    }
+    case 'LT': {
+      _matchType = '<'
+      break
+    }
+    case 'LE': {
+      _matchType = '>='
+      break
+    }
+    case 'GE': {
+      _matchType = '<='
+      break
+    }
+    case 'IN': {
+      // TODO: split , 下同
+      _matchType = 'IN'
+      _value = `(${_value})`
+      break
+    }
+    case 'NOT_IN': {
+      _matchType = 'NOT IN'
+      _value = `(${_value})`
+      break
+    }
+    default: {
+      _matchType = '='
+      break
+    }
+  }
+
   return `${key}->>${_name} ${_matchType} ${_value}`
 }
 

@@ -46,6 +46,7 @@ export default {
         this.attributes = _.orderBy(attributes, ['orderBy'], ['asc'])
         this.relationAttributes = relationAttributes
         this.relationAttributes.length && await this.loadRelationTargetList()
+        this.attributes.filter(el => !!el.sourceValue).length && await this.loadSourceValueList()
         // FIXME: 关系信息 tab 页签闪烁
       } catch (e) {
         this.attributes = []
@@ -92,6 +93,32 @@ export default {
         throw e
       }
     },
+    async loadSourceValueList () {
+      const sourceValueAttrList = this.attributes.filter(el => !!el.sourceValue)
+      const sourceValueList = sourceValueAttrList.map(({ sourceValue }) => sourceValue)
+      const { data: { instanceList } } = await InstanceService.find({
+        where: {
+          name: {
+            _in: sourceValueList
+          }
+        },
+        fields: [
+          '_id',
+          'name',
+          `value: values(path: "$.valueCode")`,
+          `label: values(path: "$.valueLabel")`
+        ],
+        alias: 'instanceList'
+      })
+      sourceValueAttrList.forEach((attribute, index) => {
+        const selectOptionList = instanceList.filter(({ name }) => name === attribute.sourceValue)
+        Object.assign(attribute, {
+          // 为 DynamicForm / DynamicFormItem 保持一致入参
+          selectOptionList: selectOptionList,
+          displayType: 'SELECTED'
+        })
+      })
+    },
     async add (parentName, parentTree) {
       this.mode = 'add'
       this.title = '新增'
@@ -114,6 +141,7 @@ export default {
       this.mode = 'edit'
       this.title = '编辑'
       // this.submit = this.update
+      this.parentName = parentName
       this.visible = true
       this._id = _id
       await Promise.all([
@@ -175,7 +203,7 @@ export default {
         this.$emit('addSuccess')
         this.$notification.success({
           message: '系统提示',
-          description: '新建成功'
+          description: '新增成功'
         })
       } catch (e) {
         throw e
@@ -186,6 +214,7 @@ export default {
         const { _id } = this
         await InstanceService.update({
           values,
+          parentName: this.parentName,
           _id
         }, { _id: { _eq: _id } })
         this.$emit('addSuccess')
@@ -227,7 +256,8 @@ export default {
               props: {
                 attributeList,
                 relationAttributeList,
-                instance
+                instance,
+                loading: spinning
               },
               ref: 'form'
             })

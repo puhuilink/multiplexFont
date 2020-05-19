@@ -134,7 +134,7 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新建</a-button>
+        <a-button @click="add">新增</a-button>
         <a-button
           :disabled="selectedRowKeys.length !== 1"
           @click="edit"
@@ -154,7 +154,10 @@
       </span>
     </CTable>
 
-    <detail ref="detail"></detail>
+    <detail
+      ref="detail"
+      @addSuccess="$refs['table'].refresh(false)"
+    ></detail>
   </div>
 </template>
 
@@ -372,7 +375,7 @@ export default {
           message: '系统提示',
           description: '删除成功'
         })
-        // FIXME: 是否存在分页问题
+
         this.$refs['table'].refresh(false)
       } catch (e) {
         throw e

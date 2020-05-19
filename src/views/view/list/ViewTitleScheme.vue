@@ -1,33 +1,40 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :title="title"
     :width="720"
     wrapClassName="ViewTitleSchema__modal"
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    :rowKey="record => `${record.user_id}${record.user.staff_name}`"
     okText="保存"
     @ok="submit"
   >
+
     <a-form :form="form" layout="vertical">
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
             label="标题"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
+              allowClear
               v-decorator="[
                 'view_title',
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '标题必填'
+                    },
+                    {
+                      max: 30,
+                      message: '最多输入30个字符'
                     }
                   ]
                 }
@@ -42,108 +49,75 @@
 </template>
 
 <script>
-import { addView, updateView } from '@/api/controller/View'
-
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
+import Schema from '@/components/Mixins/Modal/Schema'
+import { ViewListService } from '@/api-hasura/index'
+import _ from 'lodash'
 
 export default {
   name: 'ViewTitleScheme',
-  components: {},
-  props: {},
-  data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
-    record: null,
-    submit: () => {},
-    title: '',
-    visible: false
+  mixins: [Schema],
+  data: () => ({
+    record: null
   }),
-  computed: {},
   methods: {
     /**
-     * 编辑
-     * @param {Object} record
-     * @return {Undefined}
+     * 打开新增窗口
+     */
+    add () {
+      this.submit = this.insert
+      this.show('新增')
+    },
+    /**
+     * 打开编辑窗口
      */
     async edit (record) {
-      this.record = {
-        ...record
-      }
-      this.title = '编辑'
+      this.record = { ...record }
       this.submit = this.update
-      this.visible = true
+      this.show('编辑')
       await this.$nextTick()
-      this.form.setFieldsValue({
-        ...record
-      })
-    },
-    add () {
-      this.title = '新建'
-      this.submit = this.insert
-      this.visible = true
-    },
-    cancel () {
-      this.visible = false
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     },
     /**
-     * 新建
+     * 调取新增接口
      */
-    async insert () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await addView(values)
-        this.$emit('addSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    /**
-     * 编辑
-     */
-    async update () {
-      try {
-        const values = await this.getFormFields()
-        this.loading = true
-        await updateView(this.record.view_id, values)
-        this.$emit('editSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.cancel()
-      } catch (e) {
-        throw e
-      } finally {
-        this.loading = false
-      }
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
+    insert () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.confirmLoading = true
+          await ViewListService.add(values)
+          this.$emit('addSuccess')
+          this.notifyAddSuccess()
+          this.cancel()
+        } catch (e) {
+          this.notifyError(e)
+          throw e
+        } finally {
+          this.confirmLoading = false
+        }
       })
     },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
+    /**
+     * 调取编辑接口
+     */
+    update () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        try {
+          this.confirmLoading = true
+          const { view_id } = this.record
+          await ViewListService.update(values, { view_id })
+          this.$emit('editSuccess')
+          this.notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.notifyError(e)
+          throw e
+        } finally {
+          this.confirmLoading = false
+        }
+      })
     }
   }
 }

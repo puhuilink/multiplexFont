@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
-import { log, moduleName } from '../utils/decorator/log'
-import { mutate } from '../utils/hasura-orm/index'
+// import { actionname, moduleName } from '../utils/decorator/log'
+import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AuthorizeObjectDao,
   UserDao,
@@ -8,24 +8,31 @@ import {
   ViewDesktopDao
 } from '../dao/index'
 
-@moduleName('用户模块')
+// @moduleName('用户模块')
 class UserService extends BaseService {
-  @log('新增用户')
+  // @actionname('新增用户')
   /**
    * 新增用户
-   * @param {Objetc} user
+   * @param {Object} user
    * @return {Promise<any>}
    */
   static async add (user = {}) {
     await mutate(
-      // 新建用户
+      // 新增用户
       UserDao.add(user),
-      // 新建用户自定义桌面
+      // 新增用户自定义桌面
       ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
     )
   }
 
-  @log('删除用户')
+  static async find (argus = {}) {
+    const res = query(
+      UserDao.find(argus)
+    )
+    return res
+  }
+
+  // @actionname('删除用户')
   /**
    * 删除用户
    * @param {Array<String>} userIdList
@@ -48,6 +55,12 @@ class UserService extends BaseService {
   static async update (user, where) {
     await mutate(
       UserDao.update(user, where)
+    )
+  }
+
+  static async toggleFlag (user_id, flag) {
+    await mutate(
+      UserDao.update({ flag }, { user_id })
     )
   }
 }

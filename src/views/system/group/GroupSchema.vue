@@ -1,7 +1,7 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
     :width="940"
@@ -17,8 +17,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="工作组名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -26,8 +25,15 @@
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '工作组名称必填'
+                    },
+                    {
+                      max: 30,
+                      message: '最多输入30个字符'
                     }
                   ]
                 }
@@ -38,8 +44,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="工作组编号"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               :disabled="title === '编辑'"
@@ -48,8 +53,15 @@
                 {
                   rules: [
                     {
+                      transform: value => value.trim()
+                    },
+                    {
                       required: true,
                       message: '工作组编号必填'
+                    },
+                    {
+                      max: 30,
+                      message: '最多输入30个字符'
                     }
                   ]
                 }
@@ -60,12 +72,10 @@
       </a-row>
 
       <a-row>
-
         <a-col :md="12" :span="24">
           <a-form-item
             label="有效标志"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-select
               v-decorator="[
@@ -92,18 +102,18 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="域"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-select
               allowClear
               v-decorator="[
                 'domain',
                 {
+                  initialValue: 'bjDomain',
                   rules: [
                     {
-                      // required: true,
-                      // message: '域必填'
+                      required: true,
+                      message: '域必填'
                     }
                   ]
                 }
@@ -123,18 +133,19 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="备注"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-textarea
               v-decorator="[
                 'note',
                 {
+                  initialValue: '',
                   rules: [
                     {
                       max: 128,
                       message: '最多输入128个字符'
-                    }]
+                    }
+                  ]
                 }
               ]"
             />
@@ -147,27 +158,16 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { addGroup, editGroup } from '@/api/controller/Group'
-
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
+import Schema from '@/components/Mixins/Modal/Schema'
+import { GroupService } from '@/api-hasura/index'
+import _ from 'lodash'
 
 export default {
   name: 'UserSchema',
+  mixins: [Schema],
   components: {},
   props: {},
   data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
     options: {
       flag: [
         {
@@ -199,100 +199,71 @@ export default {
       ]
     },
     record: null,
-    submit: () => {},
-    title: '',
-    visible: false
+    submit: () => {}
   }),
   computed: {},
   methods: {
+    /**
+     * 打开新增窗口
+     */
     add () {
-      this.title = '新增'
-      this.visible = true
       this.submit = this.insert
+      this.show('新增')
     },
     /**
-       * 编辑
-       * @param {Object} record
-       * @return {Undefined}
-       */
+     * 打开编辑窗口
+     */
     async edit (record) {
-      this.record = {
-        ...record
-      }
-      this.title = '编辑'
+      this.record = { ...record }
       this.submit = this.update
-      this.visible = true
+      this.show('编辑')
       await this.$nextTick()
-      this.form.setFieldsValue({
-        ...record
-      })
-    },
-    async getFormFields () {
-      return new Promise((resolve, reject) => {
-        this.form.validateFields((err, values) => {
-          err ? reject(err) : resolve(values)
-        })
-      })
-    },
-    cancel () {
-      this.visible = false
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     },
     /**
-     * 新增
+     * 调取新增接口
      */
-    async insert () {
-      const values = await this.getFormFields()
-      this.loading = true
-      return addGroup(values).then(res => {
-        this.$emit('addSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '新建成功'
-        })
-        this.cancel()
-      }).catch(err => {
-        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-          //  TODO: toast 已存在的工作组编号
-        }
-        throw err
-      }).finally(() => {
-        this.loading = false
+    insert () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        this.confirmLoading = true
+        return GroupService.add(values)
+          .then(res => {
+            this.$emit('addSuccess')
+            this.notifyAddSuccess()
+            this.cancel()
+          })
+          .catch(e => {
+            this.notifyError(e)
+            throw e
+          })
+          .finally(() => {
+            this.confirmLoading = false
+          })
       })
     },
     /**
-     * 编辑
+     * 调取编辑接口
      */
-    async update () {
-      const values = await this.getFormFields()
-      this.loading = true
-      return editGroup({
-        where: {
-          'group_id': {
-            '_eq': this.record.group_id
-          }
-        },
-        group: {
-          ...values,
-          updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
-        }
-      }).then(res => {
-        this.$emit('editSuccess')
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
-        this.cancel()
-      }).catch(err => {
-        if (/GraphQL error: Uniqueness violation. duplicate key value/.test(err.message)) {
-          //  TODO: toast 已存在的用户名
-        }
-        throw err
-      }).finally(() => {
-        this.loading = false
+    update () {
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        this.confirmLoading = true
+        const { group_id } = this.record
+        return GroupService.update(values, { group_id })
+          .then(res => {
+            this.$emit('editSuccess')
+            this.notifyEditSuccess()
+            this.cancel()
+          })
+          .catch(e => {
+            this.notifyError(e)
+            throw e
+          })
+          .finally(() => {
+            this.confirmLoading = false
+          })
       })
     }
   }
