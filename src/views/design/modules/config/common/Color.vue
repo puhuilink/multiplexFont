@@ -55,7 +55,7 @@
         </div>
         <!-- / 组合类型 -->
 
-        <div class="comment-template__item bar-config__colors">
+        <div class="comment-template__item color__items">
           <span
             v-for="(color, index)
               in getColors(config)"
@@ -108,7 +108,7 @@
         </div>
         <!-- / 组合类型 -->
 
-        <div class="comment-template__item bar-config__linear">
+        <div class="comment-template__item color__linear">
           <span
             v-for="(color, index)
               in getColors(config)"
@@ -322,5 +322,28 @@ export default {
 </script>
 
 <style lang="less">
+.color {
 
+  &__items {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    span {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &__linear {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    span {
+      width: 22px;
+      height: 72px;
+    }
+  }
+}
 </style>

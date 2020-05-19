@@ -64,7 +64,8 @@ export default {
       ['AlarmList', 'AlarmListConfig'],
       ['TextHealth', 'TextHealthConfig'],
       ['List', 'ListConfig'],
-      ['Pie', 'PieConfig']
+      ['Pie', 'PieConfig'],
+      ['Polar', 'PolarConfig']
     ])
   }),
   computed: {

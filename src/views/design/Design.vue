@@ -17,7 +17,7 @@
     <div class="content">
       <transition name="panel">
         <div class="left" v-show="leftPanelExpand">
-          <a-tabs defaultActiveKey="3">
+          <a-tabs defaultActiveKey="1">
             <a-tab-pane tab="组件库" key="1" forceRender>
               <Template />
             </a-tab-pane>
