@@ -56,8 +56,8 @@
                     v-model="queryParams.flag"
                     placeholder="请选择"
                   >
-                    <a-select-option value="1">有效</a-select-option>
-                    <a-select-option value="0">无效</a-select-option>
+                    <a-select-option :value="1">有效</a-select-option>
+                    <a-select-option :value="0">无效</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
