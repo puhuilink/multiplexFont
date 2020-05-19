@@ -136,6 +136,10 @@
                     {
                       type: 'email',
                       message: '请输入正确的Email'
+                    },
+                    {
+                      max: 32,
+                      message: '最多输入32个字符'
                     }
                   ]
                 }
