@@ -2004,10 +2004,10 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-ant-design-vue@^1.5.3:
-  version "1.5.5"
-  resolved "https://registry.yarnpkg.com/ant-design-vue/-/ant-design-vue-1.5.5.tgz#11e5fabedfb6f51ccedb3f7b1650d5f388157eb3"
-  integrity sha512-g/61l+KkNyUeMNoct3jU9N3Y8DW4BVtV7JutWjKt0/1/K8jekId2ix5c/JHCgnZH2MluOdf5MlAy2gaqQwEIwQ==
+ant-design-vue@^1.5.5:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/ant-design-vue/-/ant-design-vue-1.6.0.tgz#673e09e3ac56feb14154a711e52357fb7518cc32"
+  integrity sha512-Mbm2woWBGUWdKEj9VHVI025BX5dMquL+9WCFyMjOBP2lAt0/kn0yA5ouuTk9NxgbHCo//Yuny7p6h3KpCHSEMw==
   dependencies:
     "@ant-design/icons" "^2.1.1"
     "@ant-design/icons-vue" "^2.0.0"

@@ -7,14 +7,18 @@ export default class ListProprietaryConfig {
     props = {
       styleConfig: {
         header: {
-          color: 'rgba(240,240,240,1)',
-          textColor: 'rgba(80,80,80,1)',
-          fontSize: 12
+          backgroundColor: 'rgba(240,240,240,1)',
+          color: 'rgba(80,80,80,1)',
+          fontSize: '12px',
+          fontWeight: 'normal'
         },
         rows: {
-          textColor: 'rgba(112,116,120,1)',
-          fontSize: 12
-        }
+          backgroundColor: 'rgba(240,240,240,1)',
+          color: 'rgba(112,116,120,1)',
+          fontSize: '12px',
+          fontWeight: 'normal'
+        },
+        align: 'left'
       }
     }
   }) {

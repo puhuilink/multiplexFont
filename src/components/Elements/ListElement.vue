@@ -8,8 +8,10 @@
       :columns="columns"
       :data="loadData"
       :alert="false"
-      :scroll="{ x: scrollX, y: 350 }"
+      :scroll="{ x: scrollX, y: 'calc(80vh)' }"
       :pagination="pagination"
+      :customHeaderRow="() => ({style: headerRowStyle})"
+      :customRow="() => ({style: rowStyle })"
     >
     </CTable>
     <!-- E 列表 -->
@@ -43,18 +45,22 @@ export default {
           title: '时间',
           dataIndex: 'arising_time',
           width: 180,
-          // fixed: 'left',
+          align: 'left',
           sorter: true
         },
         {
           title: '名称',
           // 该字段非数据表字段，为接口返回拼接字段
           dataIndex: 'instanceLabel',
-          width: 260
+          align: 'left',
+          width: 260,
+          sorter: true
         }
       ],
       // 自动刷新的定时器
-      timer: null
+      timer: null,
+      rowStyle: {},
+      headerRowStyle: {}
     }
   },
   computed: {
@@ -100,6 +106,8 @@ export default {
               title: key,
               dataIndex: 'kpiLabel',
               width: 150,
+              align: 'left',
+              sorter: true,
               customRender: (text, record) => {
                 if (record.kpiLabel === key) {
                   return record.kpi_value_num
@@ -133,24 +141,37 @@ export default {
       if (props.params.refreshTime) {
         this.refresh(props.params.refreshTime)
       }
+      this.headerRowStyle = props.styleConfig.header
+      this.rowStyle = props.styleConfig.rows
+      this.columns.forEach(e => {
+        e.align = props.styleConfig.align
+      })
     }
   },
   beforeDestroy () {
     // 清除定时器
     clearInterval(this.timer)
-    console.log('beforeDestroy')
   },
   destroyed () {
     // 清除定时器
     // clearInterval(this.timer)
-    console.log('destroyed')
   }
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .alarm-list-element {
   padding: 24px;
+  .ant-table-thead > tr > th {
+    color:inherit !important;
+    font-weight: inherit !important;
+  }
 }
-
+tr > th {
+  color:inherit !important;
+  font-weight: inherit !important;
+}
+.rowClass{
+  background: red;
+}
 </style>
