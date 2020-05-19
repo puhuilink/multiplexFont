@@ -17,7 +17,8 @@ export default class ListProprietaryConfig {
           color: 'rgba(112,116,120,1)',
           fontSize: '12px',
           fontWeight: 'normal'
-        }
+        },
+        align: 'left'
       }
     }
   }) {

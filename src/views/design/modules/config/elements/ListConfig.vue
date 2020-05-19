@@ -109,6 +109,20 @@
                 </div>
               </div>
             </a-collapse-panel> -->
+            <a-collapse-panel header="其他设置" key="3">
+              <div class="comment-template__item">
+                <p class="comment-template__leading">对齐设置:</p>
+                <div class="comment-template__inner">
+                  <a-select
+                    v-model="config.proprietaryConfig.props.styleConfig.align"
+                    @change="change">
+                    <a-select-option value="left">左对齐</a-select-option>
+                    <a-select-option value="center">居中</a-select-option>
+                    <a-select-option value="right">右对齐</a-select-option>
+                  </a-select>
+                </div>
+              </div>
+            </a-collapse-panel>
           </a-collapse>
         </div>
       </a-tab-pane>
