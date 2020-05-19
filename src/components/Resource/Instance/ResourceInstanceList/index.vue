@@ -6,37 +6,36 @@
         :data="loadData"
         :columns="columns"
         :rowKey="el => el._id"
-        :rowSelection="hiddenOperation ? null : rowSelection"
+        :rowSelection="readOnly ? null : rowSelection"
         :scroll="scroll"
       >
 
+        <!-- / 查询区域 -->
         <template #query>
-          <a-form layout="inline" :class="hiddenOperation ? 'form__only' : 'form'">
+          <a-form layout="inline" :class="readOnly ? 'form__only' : 'form'">
             <div :class="{ fold: !advanced }">
-              <a-row v-for="(fields, index) in queryFields" :key="index">
+              <a-row v-for="(fields, index) in queryFields" :key="index" v-show="index === 0 || (index > 0 && advanced)">
                 <a-col
-                  v-for="(field, idx) in fields"
-                  :key="idx"
+                  v-for="field in fields"
+                  :key="field._id"
                   :md="12"
                   :sm="24"
-                  v-show="index <= 1 || (index > 1 && advanced)"
                 >
                   <Factory :field="field" />
                 </a-col>
               </a-row>
             </div>
 
-            <span :class="advanced ? 'expand' : 'collapse'">
-              <template v-if="queryParams.values.length">
-                <QueryBtn @click="query" />
-                <ResetBtn @click="resetQueryParams" />
-              </template>
-              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" v-if="queryParams.values.length > 2" />
+            <span :class="advanced ? 'expand' : 'collapse'" v-show="queryParams.values.length">
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" v-show="queryParams.values.length > 2" />
             </span>
           </a-form>
         </template>
 
-        <template #operation v-if="!hiddenOperation">
+        <!-- / 操作区域 -->
+        <template #operation v-if="!readOnly">
           <a-button @click="onAdd">新增</a-button>
           <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
           <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
@@ -47,7 +46,7 @@
     </a-spin>
 
     <ResourceInstanceSchema
-      v-if="!hiddenOperation"
+      v-if="!readOnly"
       ref="schema"
       @addSuccess="query()"
       @editSuccess="query(false)"
@@ -91,7 +90,7 @@ export default {
       type: String,
       default: ''
     },
-    hiddenOperation: {
+    readOnly: {
       type: Boolean,
       default: false
     }
@@ -111,19 +110,19 @@ export default {
   computed: {
     // 表格列
     columns () {
-      const columns = defaultColumns.concat(this.attributes.map(({ label, name, width = 0 }) => ({
+      const columns = defaultColumns.concat(this.attributes.filter(({ hidden }) => !hidden).map(({ label, name, width = 0 }) => ({
         title: label,
         dataIndex: `values.${name}`,
-        width: width + 60,
-        tooltip: true
+        width: width + 90
+        // FIXME: 数据量庞大情况下采用 tooltip 有性能问题
+        // tooltip: true
       })))
       return _.orderBy(columns, ['order'], ['asc'])
     },
     // 查询区域内容
     queryFields () {
-      const { advanced, queryParams: { values } } = this
-      const fields = advanced ? values : values.slice(0, 2)
-      return _.chunk(fields, 2)
+      const { queryParams: { values } } = this
+      return _.chunk(values, 2)
     },
     // 表格纵向滚动高度
     scrollY () {
@@ -163,8 +162,8 @@ export default {
         this.attributes = []
         throw e
       } finally {
-        // TODO: pick keys
-        this.queryParams.values = this.attributes.filter(field => !!field.searchField).map(el => ({ ...el, value: null }))
+        const keys = ['displayType', 'label', 'sourceValue', 'value']
+        this.queryParams.values = this.attributes.filter(({ searchField }) => !!searchField).map(el => Object.assign(_.pick(el, keys), { value: null }))
         this.loading = false
       }
     },
@@ -220,7 +219,7 @@ export default {
         this.$refs['table'].loading = true
         await InstanceService.batchDelete(this.selectedRowKeys)
         this.notifyDeleteSuccess()
-        await this.$refs['table'].refresh(false)
+        await this.query(false)
       } catch (e) {
         this.notifyError(e)
         throw e

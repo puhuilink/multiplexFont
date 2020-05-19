@@ -1,5 +1,7 @@
 <script>
 import GraphTable from './GraphTable'
+import _ from 'lodash'
+
 const defaultPagination = {
   // TODO: 查询全部
   pageSizeOptions: ['50', '100'],
@@ -16,7 +18,7 @@ export default {
   // custom table
   name: 'CTable',
   props: {
-    ...GraphTable.props,
+    ..._.omit(GraphTable.props, ['loading']),
     pagination: {
       type: Object,
       default: () => Object.assign({}, defaultPagination)
@@ -73,7 +75,7 @@ export default {
         columns: columns.map(column => ({
           ellipsis: true,
           ...column.tooltip ? {
-            customRender: v => (<a-tooltip title={v}>
+            customRender: v => (<a-tooltip title={v} placement="topLeft" key={column.dataIndex}>
               <span>{v}</span>
             </a-tooltip>)
           } : {},

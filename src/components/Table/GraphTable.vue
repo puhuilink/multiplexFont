@@ -6,6 +6,9 @@ export default {
   // custom table
   name: 'GraphTable',
   extends: STable,
+  props: {
+    ...STable.props
+  },
   methods: {
     /**
      * 加载数据方法

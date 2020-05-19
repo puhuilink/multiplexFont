@@ -1,5 +1,5 @@
 <template>
-  <a v-on="$listeners" v-bind="{ ...$props, ...$attrs }" style="margin-left: 8px">
+  <a v-on="$listeners" style="margin-left: 8px">
     {{ advanced ? '收起' : '展开' }}
     <a-icon :type="advanced ? 'up' : 'down'"/>
   </a>

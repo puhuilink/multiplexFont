@@ -1,7 +1,7 @@
 <template>
   <div class="QuotaList">
     <ResourceInstanceList
-      hiddenOperation
+      readOnly
       :where="{
         parentName: {
           _eq: 'Kpi'

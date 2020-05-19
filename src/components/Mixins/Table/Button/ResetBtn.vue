@@ -3,7 +3,10 @@
 </template>
 
 <script>
+import { Button } from 'ant-design-vue'
+
 export default {
-  name: 'ResetBtn'
+  name: 'ResetBtn',
+  extends: Button
 }
 </script>

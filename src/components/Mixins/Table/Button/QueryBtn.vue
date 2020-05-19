@@ -1,9 +1,11 @@
 <template>
-  <a-button type="primary" v-on="$listeners" v-bind="{ ...$props, ...$attrs }" style="margin-left: 8px">查询</a-button>
+  <a-button type="primary" v-on="$listeners" v-bind="$props" style="margin-left: 8px">查询</a-button>
 </template>
 
 <script>
+import { Button } from 'ant-design-vue'
 export default {
-  name: 'QueryBtn'
+  name: 'QueryBtn',
+  extends: Button
 }
 </script>
