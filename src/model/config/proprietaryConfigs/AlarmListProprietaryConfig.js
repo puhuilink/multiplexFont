@@ -10,8 +10,27 @@ import { AlarmListProps } from './index'
 
 export default class AlarmListProprietaryConfig {
   constructor ({
-    // 对应组件props属性
-    props = {}
+    props = {
+      styleConfig: {
+        button: {
+          backgroundColor: 'rgba(227,227,227,1)',
+          color: 'rgba(51,51,51,1)'
+        },
+        header: {
+          backgroundColor: 'rgba(240,240,240,1)',
+          color: 'rgba(80,80,80,1)',
+          fontSize: '12px',
+          fontWeight: 'normal'
+        },
+        rows: {
+          backgroundColor: 'rgba(240,240,240,1)',
+          color: 'rgba(112,116,120,1)',
+          fontSize: '12px',
+          fontWeight: 'normal'
+        },
+        align: 'left'
+      }
+    }
   }) {
     this.props = new AlarmListProps(props)
   }
