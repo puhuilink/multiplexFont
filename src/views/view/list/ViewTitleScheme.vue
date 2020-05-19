@@ -75,7 +75,8 @@ export default {
       this.submit = this.update
       this.show('编辑')
       await this.$nextTick()
-      this.form.setFieldsValue(_.pick(record, ['view_title']))
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     },
     /**
      * 调取新增接口

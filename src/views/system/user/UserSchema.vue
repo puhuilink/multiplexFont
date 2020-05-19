@@ -227,6 +227,7 @@
 <script>
 import { UserService } from '@/api-hasura'
 import Schema from '@/components/Mixins/Modal/Schema'
+import _ from 'lodash'
 
 export default {
   name: 'UserSchema',
@@ -252,30 +253,26 @@ export default {
   }),
   computed: {},
   methods: {
+    /**
+     * 打开新增窗口
+     */
     add () {
-      this.title = '新增'
       this.submit = this.insert
-      this.visible = true
+      this.show('新增')
     },
     /**
-       * 编辑
-       * @param {Object} record
-       * @return {Undefined}
-       */
+     * 打开编辑窗口
+     */
     async edit (record) {
-      this.record = {
-        ...record
-      }
-      this.title = '编辑'
+      this.record = { ...record }
       this.submit = this.update
-      this.visible = true
+      this.show('编辑')
       await this.$nextTick()
-      this.form.setFieldsValue({
-        ...record
-      })
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     },
     /**
-     * 新增
+     * 调取新增接口
      */
     async insert () {
       this.form.validateFields(async (err, values) => {
@@ -284,16 +281,10 @@ export default {
           this.confirmLoading = true
           await UserService.add(values)
           this.$emit('addSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '新增成功'
-          })
+          this.notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -301,28 +292,20 @@ export default {
       })
     },
     /**
-     * 编辑
+     * 调取编辑接口
      */
     async update () {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
           this.confirmLoading = true
-          await UserService.update(
-            values,
-            { 'user_id': this.record.user_id }
-          )
+          const { user_id } = this.record
+          await UserService.update(values, { user_id })
           this.$emit('editSuccess')
-          this.$notification.success({
-            message: '系统提示',
-            description: '编辑成功'
-          })
+          this.notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notification.error({
-            message: '系统提示',
-            description: h => h('p', { domProps: { innerHTML: e } })
-          })
+          this.notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
