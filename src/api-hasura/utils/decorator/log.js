@@ -3,26 +3,29 @@
  */
 import store from '@/store'
 import colors from 'colors'
-import moment from 'moment'
 import { isPromise } from '@/utils/util'
-// import { axios } from '@/utils/request'
+import { axios } from '@/utils/request'
 
 colors.enable()
 const { getters } = store
 
 /**
- * 审计
+ * 接口写入审计日志
  */
-const makeAudit = function (moduleName, actionname, argus) {
+const makeAudit = async function (moduleName, actionname, argus) {
   const { userId } = getters
 
-  return {
+  const data = {
     userId,
-    operationTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
     moduleName,
     actionname,
-    content: `执行了${actionname}: ${JSON.stringify(argus)}`
+    content: `${userId}执行了${actionname}: ${JSON.stringify(argus)}`
   }
+
+  await axios.post('/audit/add', data, {
+    // 无论成功或失败应该静默请求，用户无感知
+    validateStatus: () => true
+  })
 }
 
 /**
@@ -44,16 +47,16 @@ const actionname = function (value = '') {
 
     descriptor.value = async function () {
       // 运行时
-      const { moduleName } = target
       const result = originalValue.apply(this, arguments)
+      console.log(Array.from(arguments))
       if (isPromise(result)) {
         return result
           .then(r => {
-            console.log(makeAudit(moduleName, actionname, Array.from(arguments)))
+            makeAudit(target.moduleName, value, Array.from(arguments))
             return r
           })
       } else {
-        console.log(makeAudit(moduleName, actionname, Array.from(arguments)))
+        makeAudit(target.moduleName, value, Array.from(arguments))
         return result
       }
     }
@@ -72,11 +75,11 @@ const wrapperLogFunc = function (func, moduleName, actionname) {
     if (isPromise(result)) {
       return result
         .then(r => {
-          console.log(makeAudit(moduleName, actionname, Array.from(arguments)))
+          makeAudit(moduleName, actionname, Array.from(arguments))
           return r
         })
     } else {
-      console.log(makeAudit(moduleName, actionname, Array.from(arguments)))
+      makeAudit(moduleName, actionname, Array.from(arguments))
       return result
     }
   }
