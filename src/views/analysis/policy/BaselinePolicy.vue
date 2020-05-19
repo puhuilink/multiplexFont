@@ -11,7 +11,7 @@
 
       <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="12" :sm="24">
@@ -87,30 +87,35 @@ export default {
       {
         title: '策略名称',
         dataIndex: 'title',
-        sorter: true
+        sorter: true,
+        width: 150,
+        tooltip: true
       },
       {
         title: '周期',
         dataIndex: 'cycle_count',
         width: 150,
-        sorter: true
+        sorter: true,
+        tooltip: true
       },
       {
         title: '时间步长',
         dataIndex: 'cal_interval',
         width: 200,
-        sorter: true
+        sorter: true,
+        tooltip: true
       },
       {
         title: '样本密集区域',
         dataIndex: 'sample_radio',
         width: 250,
-        sorter: true
+        sorter: true,
+        tooltip: true
       },
       {
         title: '计算时间',
         dataIndex: 'cron_expression',
-        width: 120,
+        width: 180,
         sorter: true
       }
     ]

@@ -11,22 +11,24 @@
 
       <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="10" :sm="24">
                 <a-form-item
                   label="动态基线名称"
                   v-bind="formItemLayout"
-                  style="width: 100%">
-                  <a-input allowClear v-model="queryParams.title" placeholder=""/>
+                  style="width: 100%"
+                >
+                  <a-input allowClear v-model.trim="queryParams.title" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item
                   label="节点类型"
                   v-bind="formItemLayout"
-                  style="width: 100%">
+                  style="width: 100%"
+                >
                   <ci-model-select
                     :value="queryParams.model"
                     @input="onModelInput"
@@ -75,9 +77,6 @@
 </template>
 
 <script>
-import { Ellipsis } from '@/components'
-import CTable from '@/components/Table/CTable'
-import screening from '../../alarm/screening'
 import deleteCheck from '@/components/DeleteCheck'
 import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
@@ -90,20 +89,29 @@ export default {
   name: 'BaselineDefinition',
   mixins: [List],
   components: {
-    CTable,
-    Ellipsis,
     CiModelSelect,
     KpiSelect,
     BaselineDefinitionSchema
   },
   data: (vm) => ({
+    formItemLayout: {
+      labelCol: {
+        sm: { span: 8 },
+        md: { span: 8 },
+        xl: { span: 4 }
+      },
+      wrapperCol: {
+        sm: { span: 14, offset: 2 },
+        md: { span: 14, offset: 1 },
+        xl: { span: 12, offset: 4 }
+      }
+    },
     // 查询参数
     queryParams: {
       model: '',
       title: '',
       kpi_code: []
     },
-    nodeType: screening.CIType,
     columns: [
       {
         title: '动态基线名称',
