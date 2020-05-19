@@ -1,7 +1,5 @@
-// import { getComponentValues } from '@/api/controller/View'
-import { DynamicDataConfig, TimeRange } from './index'
+import { DynamicDataConfig } from './index'
 import _ from 'lodash'
-import { KpiCurrentService } from '@/api-hasura'
 
 const initialOption = {
   legend: {},
@@ -9,28 +7,12 @@ const initialOption = {
   yAxis: {},
   series: []
 }
+
 export default class LinesDataConfig extends DynamicDataConfig {
-  /**
-   * 与静态数据保持一致的数据结构
-   * @param {Boolean} loadingDynamicData 是否请求动态数据
-   * @returns {Promise<any>}
-   */
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / number 有关？
-        // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(data => {
-        //   console.log('result', data)
-        // })
-        // const data = await getComponentValues(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-        const { selectedInstance, selectedKpi } = this.resourceConfig
-        const { data } = await KpiCurrentService.getValue({
-          selectedInstance,
-          selectedKpi,
-          timeRange: TimeRange.getOption.apply(this.timeRange),
-          orderBy: { arising_time: 'asc' }
-        })
-        // console.log(data)
+        const { data } = await this.fetch()
         const groupByCi = _.groupBy(data, 'instanceLabel')
         const groupByTime = _.groupBy(data, 'arising_time')
         const valueAxis = {

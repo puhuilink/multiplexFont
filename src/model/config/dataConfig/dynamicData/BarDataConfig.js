@@ -1,7 +1,5 @@
 import _ from 'lodash'
-// import { getComponentValues } from '@/api/controller/View'
-import { KpiCurrentService } from '@/api-hasura'
-import { DynamicDataConfig, TimeRange } from './index'
+import { DynamicDataConfig } from './index'
 
 const initialOption = {
   legend: {},
@@ -11,25 +9,10 @@ const initialOption = {
 }
 
 export default class BarDataConfig extends DynamicDataConfig {
-  /**
-   * 与静态数据保持一致的数据结构
-   * @param {Boolean} loadingDynamicData 是否请求动态数据
-   * @returns {Promise<any>}
-   */
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        // const data = await getComponentValues(this.resourceConfig)
-        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / number 有关？
-        // const { data } = await KpiCurrentService.getValue(this.resourceConfig)
-        const { selectedInstance, selectedKpi, detailInstance } = this.resourceConfig
-        const { data } = await KpiCurrentService.getValue({
-          selectedInstance,
-          selectedKpi,
-          detailInstance,
-          timeRange: TimeRange.getOption.apply(this.timeRange),
-          orderBy: { arising_time: 'asc' }
-        })
+        const { data } = await this.fetch()
         const groupByKpi = _.groupBy(data, 'kpiLabel')
         const groupByCi = _.groupBy(data, 'instanceLabel')
         const valueAxis = {
