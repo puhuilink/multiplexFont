@@ -201,7 +201,6 @@ export function isPromise (obj) {
 
 export function filterTransferOption (key) {
   return function (inputValue = '', option) {
-    console.log(option)
     const value = _.get(option, key, '')
     return value.toLowerCase().indexOf(
       inputValue.trim().toLowerCase()

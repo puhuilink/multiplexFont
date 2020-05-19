@@ -8,11 +8,6 @@ export default class GaugeChart extends Chart {
     super({ widget })
   }
 
-  /**
-   * 映射成 echarts 配置项
-   * @param {Boolean} loadingDynamicData 是否请求动态数据
-   * @return {Promise<any>}
-   */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
     const itemOptions = proprietaryConfig.getOption()
