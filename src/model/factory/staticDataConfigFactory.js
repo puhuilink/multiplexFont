@@ -11,6 +11,7 @@ import PieStaticDataConfig from '../config/dataConfig/staticDataConfig/PieStatic
 import GaugeStaticDataConfig from '../config/dataConfig/staticDataConfig/GaugeStaticDataConfig'
 import DegreeRingStaticDataConfig from '../config/dataConfig/staticDataConfig/DegreeRingStaticDataConfig'
 import TextHealthStaticDataConfig from '../config/dataConfig/staticDataConfig/TextHealthStaticDataConfig'
+import PolarStaticDataConfig from '../config/dataConfig/staticDataConfig/PolarStaticDataConfig'
 
 export default class StaticDataConfigFactory {
   static create (type, staticDataConfig = {}) {
@@ -27,6 +28,8 @@ export default class StaticDataConfigFactory {
         return new DegreeRingStaticDataConfig(staticDataConfig)
       case 'TextHealth':
         return new TextHealthStaticDataConfig(staticDataConfig)
+      case 'Polar':
+        return new PolarStaticDataConfig(staticDataConfig)
       default:
         console.log('unknown staticDataConfig type: ' + type)
         return null

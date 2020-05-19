@@ -469,6 +469,181 @@ class SplitLine {
 }
 
 /**
+ * 极坐标角度轴
+ * @param type 坐标轴类型
+ * @param data 坐标轴数据
+ * @param axisLabel 坐标轴文本配置
+ */
+class AngleAxis {
+  constructor ({
+    type = 'category',
+    data = [],
+    axisLabel = {},
+    axisTick = {}
+  }) {
+    this.type = type
+    this.data = data
+    this.axisLabel = new AxisLabel(axisLabel)
+    this.axisTick = new AxisTick(axisTick)
+  }
+}
+
+/**
+ * 极坐标径向轴
+ */
+class RadiusAxis {
+  constructor ({
+    zlevel = 3,
+    splitNumber = 5,
+    axisLine = {},
+    splitLine = {},
+    axisLabel = {},
+    axisTick = {}
+  }) {
+    this.zlevel = zlevel
+    this.splitNumber = splitNumber
+    this.axisLine = new AxisLine(axisLine)
+    this.splitLine = new SplitLine(splitLine)
+    this.axisLabel = new AxisLabel(axisLabel)
+    this.axisTick = new AxisTick(axisTick)
+  }
+}
+
+/**
+ * 极坐标配置
+ */
+class Polar {
+  constructor ({
+    radius = {
+      inside: '20%',
+      outside: '80%'
+    }
+  }) {
+    this.radius = radius
+  }
+
+  /**
+   * 获取极坐标配置
+   * @returns {{radius: [string, string]}}
+   */
+  getOption () {
+    const { inside, outside } = this.radius
+    return {
+      radius: [inside, outside]
+    }
+  }
+}
+
+/**
+ * 极坐标背景渐变颜色
+ */
+class PolarLinearColors {
+  constructor ({
+    left = {
+      start: 'rgba(21,92,113,1)',
+      end: 'rgba(18,61,112,1)'
+    },
+    right = {
+      start: 'rgba(55,60,185,1)',
+      end: 'rgba(130,45,143,1)'
+    }
+  }) {
+    this.left = left
+    this.right = right
+  }
+
+  /**
+   * 获得极坐标背景渐变颜色配置
+   * @returns {({name: string, itemStyle: {color: {r: number, x: number, y: number, colorStops: [{offset: number, color: string}, {offset: number, color: string}], type: string}}, value: number}|{name: string, itemStyle: {color: {r: number, x: number, y: number, colorStops: [{offset: number, color: string}, {offset: number, color: string}], type: string}}, value: number})[]}
+   */
+  getOption () {
+    const { start: leftStartColor, end: leftEndColor } = this.left
+    const { start: rightStartColor, end: rightEndColor } = this.right
+    return [
+      {
+        value: 1,
+        name: 'right',
+        itemStyle: {
+          color: {
+            type: 'radial',
+            x: 0,
+            y: 0.5,
+            r: 1,
+            colorStops: [{
+              offset: 0.5, color: rightStartColor // 0% 处的颜色
+            }, {
+              offset: 1, color: rightEndColor // 100% 处的颜色
+            }]
+          }
+        }
+      },
+      {
+        value: 1,
+        name: 'left',
+        itemStyle: {
+          color: {
+            type: 'radial',
+            x: 1,
+            y: 0.5,
+            r: 1,
+            colorStops: [{
+              offset: 0.5, color: leftStartColor // 0% 处的颜色
+            }, {
+              offset: 1, color: leftEndColor // 100% 处的颜色
+            }]
+          }
+        }
+      }
+    ]
+  }
+}
+
+/**
+ * 雷达图配置
+ */
+class Radar {
+  constructor ({
+    indicator = [],
+    zlevel = 2,
+    radius = {
+      inside: '20%',
+      outside: '80%'
+    },
+    shape = 'circle',
+    splitNumber = 5,
+    splitArea = {
+      show: false
+    },
+    axisLine = {
+      show: true
+    },
+    splitLine = {
+      show: true
+    }
+  }) {
+    this.indicator = indicator
+    this.zlevel = zlevel
+    this.radius = radius
+    this.shape = shape
+    this.splitNumber = splitNumber
+    this.splitArea = splitArea
+    this.axisLine = new AxisLine(axisLine)
+    this.splitLine = new SplitLine(splitLine)
+  }
+
+  /**
+   * 获取雷达图配置
+   * @returns {any}
+   */
+  getOption () {
+    const { inside, outside } = this.radius
+    return Object.assign(_.cloneDeep(this), {
+      radius: [inside, outside]
+    })
+  }
+}
+
+/**
  * 坐标轴配置
  * @param aixsName = 坐标轴类型 'x' | 'y'
  * @param show 是否显示
@@ -1006,11 +1181,13 @@ class ImageGraphic extends Graphic {
  */
 class AlarmListProps {
   constructor ({
+    styleConfig = {},
     // 接口参数对象
     params = {},
     // 是否调用接口
     isCallInterface = false
   }) {
+    this.styleConfig = styleConfig
     this.params = params
     this.isCallInterface = isCallInterface
   }
@@ -1053,5 +1230,10 @@ export {
   ImageGraphic,
   AlarmListProps,
   ListProps,
-  PieLabel
+  PieLabel,
+  AngleAxis,
+  RadiusAxis,
+  Polar,
+  Radar,
+  PolarLinearColors
 }

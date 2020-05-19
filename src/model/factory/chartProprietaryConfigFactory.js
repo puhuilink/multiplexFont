@@ -8,6 +8,7 @@
 import LinesProprietaryConfig from '../config/proprietaryConfigs/LinesProprietaryConfig'
 import BarProprietaryConfig from '../config/proprietaryConfigs/BarProprietaryConfig'
 import PieProprietaryConfig from '../config/proprietaryConfigs/PieProprietaryConfig'
+import PolarProprietaryConfig from '../config/proprietaryConfigs/PolarProprietaryConfig'
 import TopologyProprietaryConfig from '../config/proprietaryConfigs/TopologyProprietaryConfig'
 import ViewProprietaryConfig from '../config/proprietaryConfigs/ViewProprietaryConfig'
 import TextsProprietaryConfig from '../config/proprietaryConfigs/TextsProprietaryConfig'
@@ -17,7 +18,7 @@ import RectProprietaryConfig from '../config/proprietaryConfigs/RectProprietaryC
 import CircleProprietaryConfig from '../config/proprietaryConfigs/CircleProprietaryConfig'
 import TriangleChartProprietaryConfig from '../config/proprietaryConfigs/TriangleProprietaryConfig'
 import ImageProprietaryConfig from '../config/proprietaryConfigs/ImageProprietaryConfig'
-import GaugePropritaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
+import GaugeProprietaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
 import TextHealthProprietaryConfig from '../config/proprietaryConfigs/TextHealthProprietaryConfig'
 
 export default class ChartProprietaryConfigFactory {
@@ -29,6 +30,8 @@ export default class ChartProprietaryConfigFactory {
         return new BarProprietaryConfig(proprietaryConfig)
       case 'Pie':
         return new PieProprietaryConfig(proprietaryConfig)
+      case 'Polar':
+        return new PolarProprietaryConfig(proprietaryConfig)
       case 'Texts':
         return new TextsProprietaryConfig(proprietaryConfig)
       case 'Clock':
@@ -48,7 +51,7 @@ export default class ChartProprietaryConfigFactory {
       case 'DegreeRing':
         return new DegreeRingProprietaryConfig(proprietaryConfig)
       case 'Gauge':
-        return new GaugePropritaryConfig(proprietaryConfig)
+        return new GaugeProprietaryConfig(proprietaryConfig)
       case 'TextHealth':
         return new TextHealthProprietaryConfig(proprietaryConfig)
       default:

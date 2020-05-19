@@ -21,6 +21,7 @@ import AlarmListConfig from './elements/AlarmListConfig'
 import TextHealthConfig from './charts/TextHealthConfig'
 import ListConfig from './elements/ListConfig'
 import PieConfig from './charts/PieConfig'
+import PolarConfig from './charts/PolarConfig'
 
 // 图表模板配置
 const charts = {
@@ -36,7 +37,8 @@ const charts = {
   Gauge,
   DegreeRingConfig,
   TextHealthConfig,
-  PieConfig
+  PieConfig,
+  PolarConfig
 }
 
 // 元素模板配置

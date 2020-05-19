@@ -20,6 +20,9 @@ const charts = [
     category: 'CHART', type: 'Pie', name: '饼图', icon: 'pie-chart', width: 300, height: 300
   },
   {
+    category: 'CHART', type: 'Polar', name: '极坐标图', icon: 'radar-chart', width: 600, height: 600
+  },
+  {
     category: 'CHART', type: 'Topology', name: '拓扑图', icon: 'branches', width: 800, height: 600
   },
   {
