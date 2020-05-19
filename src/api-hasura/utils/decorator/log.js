@@ -31,32 +31,31 @@ const makeAudit = async function (moduleName, actionname, argus) {
 /**
  * 模块名
  */
-const moduleName = function (value) {
-  return function testable (target) {
-    target.moduleName = value
+const moduleName = function (_moduleName = '') {
+  return function (target) {
+    target.moduleName = _moduleName
   }
 }
 
 /**
  * 模块下操作名
  */
-const actionname = function (value = '') {
+const actionname = function (_actionname = '') {
   return function (target, name, descriptor) {
     // 编译时
     const { value: originalValue } = descriptor
 
-    descriptor.value = async function () {
+    descriptor.value = function () {
       // 运行时
       const result = originalValue.apply(this, arguments)
-      console.log(Array.from(arguments))
       if (isPromise(result)) {
         return result
           .then(r => {
-            makeAudit(target.moduleName, value, Array.from(arguments))
+            makeAudit(target.moduleName, _actionname, Array.from(arguments))
             return r
           })
       } else {
-        makeAudit(target.moduleName, value, Array.from(arguments))
+        makeAudit(target.moduleName, _actionname, Array.from(arguments))
         return result
       }
     }
