@@ -42,6 +42,10 @@ class GroupDao extends BaseDao {
     await this._uniqueValidate({ ...group, group_id }, false)
     return super.update({ ...group, ...defaultUpdateDate() }, { group_id })
   }
+
+  static async toggleFlag (group_id, flag) {
+    return super.update({ flag, ...defaultUpdateDate() }, { group_id })
+  }
 }
 
 export {

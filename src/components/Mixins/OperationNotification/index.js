@@ -13,6 +13,12 @@ export default {
         description: '编辑成功'
       })
     },
+    notifyToggleFlagSuccess () {
+      this.$notification.success({
+        message: '系统提示',
+        description: '更改状态成功'
+      })
+    },
     notifyDeleteSuccess () {
       this.$notification.success({
         message: '系统提示',

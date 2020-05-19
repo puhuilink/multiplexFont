@@ -100,83 +100,19 @@
 </template>
 
 <script>
-import { Ellipsis } from '@/components'
 import GroupSchema from './GroupSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './GroupAdministratorSchema'
 import GroupUserSchema from './GroupUserSchema'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-import CTable from '@/components/Table/CTable'
-import Template from '../../design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import List from '@/components/Mixins/Table/List'
 import { generateQuery } from '@/utils/graphql'
 import { GroupService } from '@/api-hasura/index'
 
-const deleteGroup = gql`mutation delete_user ($groupIds: [String!] = [], $desktopNames: [String!] = []) {
-  #   group 表删除
-  delete_t_group (where: {
-    group_id: {
-      _in: $groupIds
-    }
-  }) {
-    affected_rows
-  }
-  #   关联解除
-  delete_t_user_group (where: {
-    group_id: {
-      _in: $groupIds
-    }
-  }) {
-    affected_rows
-  }
-  # 删除权限
-  delete_t_authorize_object (where: {
-    group_id: {
-      _in: $groupIds
-    }
-  }) {
-    affected_rows
-  }
-  # 删除桌面
-  delete_t_view (where: {
-    view_name: {
-      _in: $groupIds
-    }
-    view_title: {
-      _in: $desktopNames
-    }
-  }) {
-    affected_rows
-  }
-}`
-
-const updateGroupFlag = gql`mutation update_group_flag ($groupId: String!, $flag: numeric) {
-  update_t_group(
-    where: {
-      group_id: {
-        _eq: $groupId
-      }
-    },
-    _set: {
-      flag: $flag
-    }
-  ) {
-    affected_rows
-  }
-}`
-
-// 删除组会删除组，并且解除其组内用户的关联
-// 只能删除无效组
-
 export default {
   name: 'Group',
   mixins: [List],
   components: {
-    Template,
-    CTable,
-    Ellipsis,
     GroupSchema,
     AuthScheme,
     GroupAdministratorSchema,
@@ -275,23 +211,11 @@ export default {
       await deleteCheck.sureDelete()
       try {
         this.$refs['table'].loading = true
-        const desktopNames = this.selectedRowKeys.map(id => `${id}桌面`)
-        await apollo.clients.alert.mutate({
-          mutation: deleteGroup,
-          variables: {
-            groupIds: [
-              ...this.selectedRowKeys
-            ],
-            desktopNames
-          }
-        })
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
-
+        await GroupService.batchDelete(this.selectedRowKeys)
+        this.notifyDeleteSuccess()
         this.query(false)
       } catch (e) {
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
@@ -307,20 +231,12 @@ export default {
       }
       try {
         this.$refs['table'].loading = true
-        const [record] = this.selectedRows
-        await apollo.clients.alert.mutate({
-          mutation: updateGroupFlag,
-          variables: {
-            groupId: record.group_id,
-            flag: Number(!record.flag)
-          }
-        })
-        this.$notification.success({
-          message: '系统提示',
-          description: '编辑成功'
-        })
+        const [{ group_id, flag }] = this.selectedRows
+        await GroupService.toggleFlag(group_id, Number(!flag))
+        this.notifyToggleFlagSuccess()
         this.query(false)
       } catch (e) {
+        this.notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
