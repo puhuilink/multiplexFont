@@ -1,7 +1,7 @@
 import _ from 'lodash'
 // import { getComponentValues } from '@/api/controller/View'
 import { KpiCurrentService } from '@/api-hasura'
-import { TimeRange } from './index'
+import { DynamicDataConfig, TimeRange } from './index'
 
 const initialOption = {
   legend: {},
@@ -10,26 +10,7 @@ const initialOption = {
   series: []
 }
 
-export default class BarDataConfig {
-  constructor ({
-    resourceConfig = {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: [],
-      detailInstance: []
-    },
-    refreshTime = 0,
-    // 外部 Ci 是否可用
-    externalCi = true,
-    timeRange = new TimeRange()
-  }) {
-    this.resourceConfig = resourceConfig
-    this.externalCi = externalCi
-    this.refreshTime = refreshTime
-    this.timeRange = timeRange
-    this.resetData()
-  }
-
+export default class BarDataConfig extends DynamicDataConfig {
   /**
    * 与静态数据保持一致的数据结构
    * @param {Boolean} loadingDynamicData 是否请求动态数据
@@ -39,7 +20,7 @@ export default class BarDataConfig {
     if (loadingDynamicData) {
       try {
         // const data = await getComponentValues(this.resourceConfig)
-        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
+        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / number 有关？
         // const { data } = await KpiCurrentService.getValue(this.resourceConfig)
         const { selectedInstance, selectedKpi, detailInstance } = this.resourceConfig
         const { data } = await KpiCurrentService.getValue({

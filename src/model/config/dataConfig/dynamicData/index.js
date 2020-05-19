@@ -77,3 +77,28 @@ export class TimeRange {
     }
   }
 }
+
+export class DynamicDataConfig {
+  constructor ({
+    resourceConfig = {
+      model: '',
+      selectedInstance: [],
+      selectedKpi: [],
+      detailInstance: []
+    },
+    refreshTime = 0,
+    // 外部 Ci 是否可用
+    externalCi = true,
+    timeRange = new TimeRange()
+  }) {
+    this.resourceConfig = resourceConfig
+    this.externalCi = externalCi
+    this.refreshTime = refreshTime
+    this.timeRange = timeRange
+    this.resetData()
+  }
+
+  getOption () {}
+
+  resetData () {}
+}

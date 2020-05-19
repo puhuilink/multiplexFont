@@ -3,7 +3,7 @@
     <template #real>
       <RealDataSource
         useComboSelect
-        :comboSelectProps="{ multiple: false }"
+        :comboSelectProps="{ multiple: true }"
         useRefreshTime
         useTimeRange
       />
@@ -16,7 +16,7 @@ import DataSourceTemplate from './index'
 import RealDataSource from '../common/RealDataSource'
 
 export default {
-  name: 'GaugeDataSource',
+  name: 'PieDataSource',
   components: {
     DataSourceTemplate,
     RealDataSource

@@ -1,5 +1,5 @@
 // import { getComponentValues } from '@/api/controller/View'
-import { TimeRange } from './index'
+import { DynamicDataConfig, TimeRange } from './index'
 import _ from 'lodash'
 import { KpiCurrentService } from '@/api-hasura'
 
@@ -9,25 +9,7 @@ const initialOption = {
   yAxis: {},
   series: []
 }
-export default class LinesDataConfig {
-  constructor ({
-    resourceConfig = {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: []
-    },
-    refreshTime = 0,
-    // 外部 Ci 是否可用
-    externalCi = true,
-    timeRange = new TimeRange()
-  }) {
-    this.resourceConfig = resourceConfig
-    this.refreshTime = refreshTime
-    this.externalCi = externalCi
-    this.timeRange = timeRange
-    this.resetData()
-  }
-
+export default class LinesDataConfig extends DynamicDataConfig {
   /**
    * 与静态数据保持一致的数据结构
    * @param {Boolean} loadingDynamicData 是否请求动态数据
@@ -36,7 +18,7 @@ export default class LinesDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / nunber 有关？
+        // FIXME: 新旧接口查询出数据条目有出入，可能与 id 格式：string / number 有关？
         // KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange)).then(data => {
         //   console.log('result', data)
         // })

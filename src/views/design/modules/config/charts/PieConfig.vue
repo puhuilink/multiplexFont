@@ -337,7 +337,7 @@
       <a-tab-pane tab="数据配置" key="3">
 
         <!-- S 数据配置模板 -->
-        <DataSourceTemplate />
+        <PieDataSource />
         <!-- E 数据配置模板 -->
 
       </a-tab-pane>
@@ -353,6 +353,7 @@ import DataSourceTemplate from '../dataSource'
 import ProprietaryMixins from '../proprietaryMixins'
 import SingleColorSelector from '@/components/SingleColorSelector'
 import LinearColorSelector from '@/components/LinearColorSelector'
+import PieDataSource from '../dataSource/PieDataSource'
 
 export default {
   name: 'PieConfig',
@@ -362,7 +363,8 @@ export default {
     ChartProprietaryTemplate,
     DataSourceTemplate,
     SingleColorSelector,
-    LinearColorSelector
+    LinearColorSelector,
+    PieDataSource
   },
   data: () => ({
     combinationColors: [
