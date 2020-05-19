@@ -27,7 +27,7 @@
                   v-bind="formItemLayout"
                   style="width: 100%"
                 >
-                  <a-input allowClear v-model.number="queryParams.view_id" />
+                  <a-input-number style="width: 100%" allowClear v-model.number="queryParams.view_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
