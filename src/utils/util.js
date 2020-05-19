@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export function timeFix () {
   const time = new Date()
   const hour = time.getHours()
@@ -195,4 +197,14 @@ export function mergePermission (menuTree, buttonTree) {
 
 export function isPromise (obj) {
   return (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function'
+}
+
+export function filterTransferOption (key) {
+  return function (inputValue = '', option) {
+    console.log(option)
+    const value = _.get(option, key, '')
+    return value.toLowerCase().indexOf(
+      inputValue.trim().toLowerCase()
+    ) > -1
+  }
 }
