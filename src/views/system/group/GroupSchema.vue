@@ -230,10 +230,12 @@ export default {
             this.$emit('addSuccess')
             this.notifyAddSuccess()
             this.cancel()
-          }).catch(e => {
+          })
+          .catch(e => {
             this.notifyError(e)
             throw e
-          }).finally(() => {
+          })
+          .finally(() => {
             this.confirmLoading = false
           })
       })
@@ -251,10 +253,12 @@ export default {
             this.$emit('editSuccess')
             this.notifyEditSuccess()
             this.cancel()
-          }).catch(e => {
+          })
+          .catch(e => {
             this.notifyError(e)
             throw e
-          }).finally(() => {
+          })
+          .finally(() => {
             this.confirmLoading = false
           })
       })
