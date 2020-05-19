@@ -1,15 +1,6 @@
 <script>
 import OperationNotification from '@/components/Mixins/OperationNotification'
 
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
-
 export default {
   name: 'Schema',
   mixins: [OperationNotification],
@@ -20,7 +11,15 @@ export default {
     confirmLoading: false,
     // nested form
     form: vm.$form.createForm(vm),
-    formItemLayout,
+    formItemLayout: {
+      // TODO: responsive
+      labelCol: {
+        // span: 6
+      },
+      wrapperCol: {
+        span: 23
+      }
+    },
     // modal visible
     visible: false,
     // model confirm cb

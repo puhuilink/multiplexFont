@@ -1,7 +1,7 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
     :width="940"
@@ -17,8 +17,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="用户名"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               :disabled="title === '编辑'"
@@ -29,6 +28,10 @@
                     {
                       required: true,
                       message: '用户名必填'
+                    },
+                    {
+                      max: 16,
+                      message: '最多输入16个字符'
                     }
                   ]
                 }
@@ -40,8 +43,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="姓名"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -51,6 +53,10 @@
                     {
                       required: true,
                       message: '姓名必填'
+                    },
+                    {
+                      max: 16,
+                      message: '最多输入16个字符'
                     }
                   ]
                 }
@@ -64,13 +70,23 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="岗位职责"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
                 'job_title',
-                { rules: [{ required: true, message: '名称必填' }] },
+                {
+                  rules: [
+                    {
+                      required: true,
+                      message: '名称必填'
+                    },
+                    {
+                      max: 64,
+                      message: '最多输入64个字符'
+                    }
+                  ]
+                },
               ]"
             />
           </a-form-item>
@@ -79,8 +95,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="办公电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -101,8 +116,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="移动电话"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -121,8 +135,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="Email"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               v-decorator="[
@@ -153,8 +166,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="备注"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-textarea
               v-decorator="[
@@ -176,8 +188,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="有效标志"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-select
               v-decorator="[
@@ -209,25 +220,15 @@
 
 <script>
 import { UserService } from '@/api-hasura'
-
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
+import Schema from '@/components/Mixins/Modal/Schema'
 
 export default {
   name: 'UserSchema',
+  mixins: [Schema],
   components: {},
   props: {},
   data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
+    confirmLoading: false,
     options: {
       flag: [
         {
@@ -241,9 +242,7 @@ export default {
       ]
     },
     record: null,
-    submit: () => {},
-    title: '',
-    visible: false
+    submit: () => {}
   }),
   computed: {},
   methods: {
@@ -269,9 +268,6 @@ export default {
         ...record
       })
     },
-    cancel () {
-      this.visible = false
-    },
     /**
      * 新增
      */
@@ -279,7 +275,7 @@ export default {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
-          this.loading = true
+          this.confirmLoading = true
           await UserService.add(values)
           this.$emit('addSuccess')
           this.$notification.success({
@@ -294,7 +290,7 @@ export default {
           })
           throw e
         } finally {
-          this.loading = false
+          this.confirmLoading = false
         }
       })
     },
@@ -305,7 +301,7 @@ export default {
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
-          this.loading = true
+          this.confirmLoading = true
           await UserService.update(
             values,
             { 'user_id': this.record.user_id }
@@ -323,13 +319,9 @@ export default {
           })
           throw e
         } finally {
-          this.loading = false
+          this.confirmLoading = false
         }
       })
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
