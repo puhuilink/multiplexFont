@@ -137,19 +137,19 @@ export default {
       {
         title: '岗位职责',
         dataIndex: 'job_title',
-        width: 150,
+        width: 170,
         tooltip: true
       },
       {
         title: '办公电话',
         dataIndex: 'phone',
-        width: 100,
+        width: 120,
         sorter: true
       },
       {
         title: '移动电话',
         dataIndex: 'mobile_phone',
-        width: 100,
+        width: 120,
         sorter: true
       },
       {
@@ -161,7 +161,7 @@ export default {
       {
         title: '有效标志',
         dataIndex: 'flag',
-        width: 80,
+        width: 90,
         sorter: true,
         customRender: val => val ? '有效' : '无效'
       },
