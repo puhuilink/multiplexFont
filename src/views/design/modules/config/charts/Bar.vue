@@ -201,7 +201,20 @@ export default {
     Color
   },
   data: () => ({}),
-  methods: {}
+  methods: {
+    /**
+       * 柱条宽度类型更改
+       * @param config 配置
+       */
+    barWidthTypeChange (config) {
+      Object.assign(config.proprietaryConfig, {
+        barWidth: config.proprietaryConfig.barWidthType === 'custom'
+          ? 12
+          : 'auto'
+      })
+      this.change(config)
+    }
+  }
 }
 </script>
 
