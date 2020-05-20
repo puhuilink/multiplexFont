@@ -136,6 +136,7 @@ import VM from '@/assets/network-icons/VM.png'
 import WaterChillers from '@/assets/network-icons/WaterChillers.png'
 import WaterLeakage from '@/assets/network-icons/WaterLeakage.png'
 import WirelessAP from '@/assets/network-icons/WirelessAP.png'
+import cloud from '@/assets/network-icons/cloud.png'
 
 export default {
   name: 'IconPicker',
@@ -201,7 +202,8 @@ export default {
       { name: 'VM', img: VM },
       { name: 'WaterChillers', img: WaterChillers },
       { name: 'WaterLeakage', img: WaterLeakage },
-      { name: 'WirelessAP', img: WirelessAP }
+      { name: 'WirelessAP', img: WirelessAP },
+      { name: 'cloud', img: cloud }
     ]
   }),
   methods: {
