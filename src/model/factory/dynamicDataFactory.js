@@ -38,7 +38,7 @@ export default class DynamicDataFactory {
       case 'Polar':
         return new PolarDataConfig(dbDataConfig)
       default:
-        console.log('unknown dbDataConfig type', type)
+        // console.log('unknown dbDataConfig type', type)
         // throw new Error('unknown type')
     }
   }

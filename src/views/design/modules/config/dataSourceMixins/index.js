@@ -22,6 +22,19 @@ export default {
       ...el,
       value: JSON.stringify(el.value)
     })),
+    options: {
+      // TODO: 拆分为常量
+      xAxisType: [
+        {
+          name: '资源',
+          value: 'RESOURCE'
+        },
+        {
+          name: '时间',
+          value: 'TIME'
+        }
+      ]
+    },
     btnLoading: false
   }),
   computed: {
@@ -88,6 +101,15 @@ export default {
           })
           this.change()
         }
+      }
+    },
+    xAxisType: {
+      get () {
+        return _.get(this.config, 'dataConfig.dbDataConfig.xAxisType', 'RESOURCE')
+      },
+      set (xAxisType) {
+        Object.assign(this.config.dataConfig.dbDataConfig, { xAxisType })
+        this.change()
       }
     }
   },

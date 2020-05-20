@@ -6,7 +6,21 @@
 * Email: dong.xing@outlook.com
 */
 import Chart from './index'
-// import _ from 'lodash'
+import _ from 'lodash'
+
+export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
+  ...option,
+  xAxis: _.cloneDeep({
+    ...xAxis,
+    type: yAxis.type,
+    data: yAxis.data
+  }),
+  yAxis: _.cloneDeep({
+    ...yAxis,
+    type: xAxis.type,
+    data: xAxis.data
+  })
+})
 
 export default class BarChart extends Chart {
   constructor ({ widget }) {
@@ -57,7 +71,11 @@ export default class BarChart extends Chart {
         break
       }
       case 'real': {
-        const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
+        // 根据数据流向，静态数据在进入 mappingOption 前已经完成 reverse
+        // 而动态数据需要进入到 mappingOption 内部才能执行 reverse
+        const { reverse } = proprietaryConfig
+        let dynamicData = await dbDataConfig.getOption(loadingDynamicData, reverse)
+        dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
         series = dynamicData.series.map((item) => {
           return {
             ...item,
@@ -67,12 +85,16 @@ export default class BarChart extends Chart {
           }
         })
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+
         Object.assign(option, {
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
           series
         })
+
+        console.log(_.cloneDeep(option))
+
         break
       }
     }
