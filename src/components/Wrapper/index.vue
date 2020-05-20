@@ -262,12 +262,13 @@ export default {
        */
     copyWidget () {
       const { config } = this.activeWidget
-      const { commonConfig: { top, left, zIndex } } = config
+      const { commonConfig: { top, left } } = config
       const copyConfig = _.cloneDeep(config)
+      const zIndex = this.view.widgets.length
       Object.assign(copyConfig.commonConfig, {
         top: top + 48,
         left: left + 48,
-        zIndex: zIndex + 1
+        zIndex
       })
       const copyWidget = new Widget({ config: copyConfig })
       // 将复制的部件添加入部件列表中
