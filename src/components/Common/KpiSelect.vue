@@ -174,7 +174,7 @@ export default {
           <a-select-option
             key={index}
             value={option.values.kpiCode}
-          >{ option.label }</a-select-option>
+          >{ option.label || option.values.label }</a-select-option>
         )) }
       </a-select>
     )
