@@ -142,7 +142,35 @@
               </a-collapse-panel>
               <!-- / 刻度文本 -->
 
-              <a-collapse-panel header="分隔线" key="3">
+              <a-collapse-panel header="刻度线" key="3">
+
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">颜色:</p>
+                  <div class="comment-template__inner">
+                    <ColorPicker
+                      v-model="config.proprietaryConfig.radiusAxis.axisLine.lineStyle.color"
+                      @change="change"
+                    />
+                  </div>
+                </div>
+                <!-- / 颜色 -->
+
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">宽度:</p>
+                  <div class="comment-template__inner">
+                    <a-slider
+                      :min="1"
+                      :max="16"
+                      @change="change"
+                      v-model="config.proprietaryConfig.radiusAxis.axisLine.lineStyle.width" />
+                  </div>
+                </div>
+                <!-- / 颜色 -->
+
+              </a-collapse-panel>
+              <!-- / 分隔线 -->
+
+              <a-collapse-panel header="分隔线" key="4">
 
                 <div class="comment-template__item">
                   <p class="comment-template__leading">颜色:</p>
@@ -170,7 +198,7 @@
               </a-collapse-panel>
               <!-- / 分隔线 -->
 
-              <a-collapse-panel header="半径" key="4">
+              <a-collapse-panel header="半径" key="5">
 
                 <div class="comment-template__item">
                   <p class="comment-template__leading">内半径:</p>
@@ -197,7 +225,7 @@
               </a-collapse-panel>
               <!-- / 半径 -->
 
-              <a-collapse-panel header="遮罩" key="5">
+              <a-collapse-panel header="遮罩" key="6">
 
                 <div class="comment-template__item">
                   <p class="comment-template__leading">显示:</p>

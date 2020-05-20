@@ -89,17 +89,14 @@ export default class PolarChart extends Chart {
           return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
         })
 
-        // Fixme 重复触发
-        staticAngleAxis.data = polarMask.show ? ['', ...staticAngleAxis.data, ''] : staticAngleAxis.data
-
         Object.assign(option,
           {
             legend: Object.assign(legend, staticLegend),
             series: [...caculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
+            angleAxis: Object.assign(angleAxis, staticAngleAxis, { data: polarMask.show ? ['', ...staticAngleAxis.data, ''] : staticAngleAxis.data }),
             radar: Object.assign(radar, {
-              indicator: staticAngleAxis.data.map(() => ({ text: '' }))
+              indicator: [...angleAxis.data].map(() => ({ text: '' }))
             }),
-            angleAxis: Object.assign(angleAxis, staticAngleAxis),
             radiusAxis,
             polar
           }
@@ -116,7 +113,6 @@ export default class PolarChart extends Chart {
       }
     }
 
-    console.log(option)
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',

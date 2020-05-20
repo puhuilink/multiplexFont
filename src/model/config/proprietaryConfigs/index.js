@@ -495,12 +495,14 @@ class AngleAxis {
  */
 class RadiusAxis {
   constructor ({
-    zlevel = 3,
+    zlevel = 6,
     splitNumber = 5,
     axisLine = {},
     splitLine = {},
     axisLabel = {},
-    axisTick = {}
+    axisTick = {
+      show: false
+    }
   }) {
     this.zlevel = zlevel
     this.splitNumber = splitNumber
