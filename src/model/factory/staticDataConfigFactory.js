@@ -31,7 +31,7 @@ export default class StaticDataConfigFactory {
       case 'Polar':
         return new PolarStaticDataConfig(staticDataConfig)
       default:
-        console.log('unknown staticDataConfig type: ' + type)
+        // console.log('unknown staticDataConfig type: ' + type)
         return null
     }
   }

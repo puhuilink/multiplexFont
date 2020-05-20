@@ -11,17 +11,24 @@ const initialOption = {
 export default class BarDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
+      console.log(this)
+      const { xAxisType } = this
       try {
         const { data } = await this.fetch()
-        const groupByKpi = _.groupBy(data, 'kpiLabel')
+        // const groupByKpi = _.groupBy(data, 'kpiLabel')
         const groupByCi = _.groupBy(data, 'instanceLabel')
         const valueAxis = {
           type: 'value'
         }
         const categoryAxis = {
           type: 'category',
-          data: Object.keys(groupByKpi)
+          // data: Object.keys(groupByKpi)
+          data: Object.keys(
+            xAxisType === 'RESOURCE' ? _.groupBy(data, 'kpiLabel') : _.groupBy(data, 'arising_time')
+          )
         }
+
+        console.log(xAxisType === 'RESOURCE' ? _.groupBy(data, 'kpiLabel') : _.groupBy(data, 'arising_time'))
 
         this.legend = {
           data: Object.keys(_.groupBy(data, 'instanceLabel'))
