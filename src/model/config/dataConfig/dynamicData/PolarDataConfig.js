@@ -43,14 +43,14 @@ export default class PolarDataConfig extends DynamicDataConfig {
           return items
         })
 
-        this.series = {
+        this.series = [{
           data: Object.keys(groupLabel).map(label => {
             return {
               name: label,
               value: formatData.map(item => item.find(part => part.ci === label).value)
             }
           })
-        }
+        }]
         this.legend = {
           data: formatData.length > 0 ? formatData.map(item => Array.isArray(item) ? item[0].kpi : '') : []
         }
@@ -63,7 +63,7 @@ export default class PolarDataConfig extends DynamicDataConfig {
       }
     }
     const { legend, angleAxis, series } = this
-    return _.cloneDeep({ legend, angleAxis, series })
+    return _.cloneDeep({ legend, angleAxis: angleAxis || {}, series })
   }
 
   resetData () {
