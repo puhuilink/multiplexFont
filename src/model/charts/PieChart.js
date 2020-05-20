@@ -40,7 +40,7 @@ export default class PieChart extends Chart {
         break
       }
       case 'real': {
-        const { legend: dbLegend, series: dbSeries } = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        const { legend: dbLegend, series: dbSeries } = await dbDataConfig.getOption(loadingDynamicData)
         series = dbSeries.map((item) => {
           Object.assign(item, pie)
           return item
