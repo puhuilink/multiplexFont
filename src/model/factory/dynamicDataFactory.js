@@ -12,6 +12,7 @@ import LinesDataConfig from '../config/dataConfig/dynamicData/LinesDataConfig'
 import TextHealthDataConfig from '../config/dataConfig/dynamicData/TextHealthDataConfig'
 import ListDataConfig from '../config/dataConfig/dynamicData/ListDataConfig'
 import PieDataConfig from '../config/dataConfig/dynamicData/PieDataConfig'
+import PolarDataConfig from '../config/dataConfig/dynamicData/PolarDataConfig'
 
 export default class DynamicDataFactory {
   static create (type, dbDataConfig) {
@@ -34,6 +35,8 @@ export default class DynamicDataFactory {
         return new ListDataConfig(dbDataConfig)
       case 'Pie':
         return new PieDataConfig(dbDataConfig)
+      case 'Polar':
+        return new PolarDataConfig(dbDataConfig)
       default:
         // console.log('unknown dbDataConfig type', type)
         // throw new Error('unknown type')
