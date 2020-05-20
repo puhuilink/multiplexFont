@@ -6,6 +6,7 @@
         :comboSelectProps="{ multiple: true }"
         useRefreshTime
         useTimeRange
+        useXAxisType
       />
     </template>
   </DataSourceTemplate>
