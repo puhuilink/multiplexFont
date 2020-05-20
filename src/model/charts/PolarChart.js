@@ -4,6 +4,7 @@
 * Time: 5:11 下午
 */
 
+import _ from 'lodash'
 import Chart from './index'
 
 export default class PolarChart extends Chart {
@@ -20,7 +21,8 @@ export default class PolarChart extends Chart {
     const { grid } = commonConfig.getOption()
     const {
       legend, polarLinearColors, angleAxis,
-      radiusAxis, radar, polar, itemStyle: { color }
+      radiusAxis, radar, polar, polarMask,
+      itemStyle: { color }
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
 
@@ -50,6 +52,22 @@ export default class PolarChart extends Chart {
       data: polarLinearColors
     }
 
+    const mask = {
+      name: 'mask',
+      type: 'pie',
+      radius: ['20%', '80%'],
+      avoidLabelOverlap: false,
+      zlevel: 5,
+      silent: true,
+      label: {
+        show: false
+      },
+      labelLine: {
+        show: false
+      },
+      data: []
+    }
+
     switch (sourceType) {
       case 'static': {
         const {
@@ -58,14 +76,27 @@ export default class PolarChart extends Chart {
           angleAxis: staticAngleAxis
         } = staticData
 
+        const maskData = [polarMask.item, ...staticSeries[0].data.map(item => ({
+          value: 1,
+          name: 'mask',
+          itemStyle: {
+            color: 'rgba(0, 0, 0, 0)'
+          }
+        })), polarMask.item]
+        mask.data = maskData
+
+        const caculateSeries = _.cloneDeep(staticSeries).map(item => {
+          return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
+        })
+
         Object.assign(option,
           {
             legend: Object.assign(legend, staticLegend),
-            series: [...staticSeries.map(item => Object.assign(item, bar)), Object.assign(pie, polar)],
+            series: [...caculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
+            angleAxis: Object.assign(angleAxis, staticAngleAxis, { data: polarMask.show ? ['', ...staticAngleAxis.data, ''] : staticAngleAxis.data }),
             radar: Object.assign(radar, {
-              indicator: staticLegend.data.map(() => ({ text: '' }))
+              indicator: [...angleAxis.data].map(() => ({ text: '' }))
             }),
-            angleAxis: Object.assign(angleAxis, staticAngleAxis),
             radiusAxis,
             polar
           }

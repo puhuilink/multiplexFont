@@ -5,7 +5,7 @@
 */
 
 import _ from 'lodash'
-import { AngleAxis, BarItemStyle, Legend, Polar, PolarLinearColors, Radar, RadiusAxis } from './index'
+import { AngleAxis, BarItemStyle, Legend, Polar, PolarLinearColors, PolarMask, Radar, RadiusAxis } from './index'
 
 /**
  * 极坐标专有属性配置
@@ -21,7 +21,8 @@ export default class PolarProprietaryConfig {
     radiusAxis = {},
     polar = {},
     radar = {},
-    polarLinearColors = {}
+    polarLinearColors = {},
+    polarMask = {}
   }) {
     this.barItemStyle = new BarItemStyle(barItemStyle)
     this.legend = new Legend(legend)
@@ -30,6 +31,7 @@ export default class PolarProprietaryConfig {
     this.polar = new Polar(polar)
     this.radar = new Radar(radar)
     this.polarLinearColors = new PolarLinearColors(polarLinearColors)
+    this.polarMask = new PolarMask(polarMask)
   }
 
   /**
@@ -40,7 +42,8 @@ export default class PolarProprietaryConfig {
       itemStyle: this.barItemStyle.getOption(),
       polar: this.polar.getOption(),
       radar: this.radar.getOption(),
-      polarLinearColors: this.polarLinearColors.getOption()
+      polarLinearColors: this.polarLinearColors.getOption(),
+      polarMask: this.polarMask.getOption()
     })
   }
 }

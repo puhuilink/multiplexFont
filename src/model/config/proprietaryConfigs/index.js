@@ -479,7 +479,9 @@ class AngleAxis {
     type = 'category',
     data = [],
     axisLabel = {},
-    axisTick = {}
+    axisTick = {
+      show: false
+    }
   }) {
     this.type = type
     this.data = data
@@ -493,12 +495,14 @@ class AngleAxis {
  */
 class RadiusAxis {
   constructor ({
-    zlevel = 3,
+    zlevel = 6,
     splitNumber = 5,
     axisLine = {},
     splitLine = {},
     axisLabel = {},
-    axisTick = {}
+    axisTick = {
+      show: false
+    }
   }) {
     this.zlevel = zlevel
     this.splitNumber = splitNumber
@@ -506,6 +510,32 @@ class RadiusAxis {
     this.splitLine = new SplitLine(splitLine)
     this.axisLabel = new AxisLabel(axisLabel)
     this.axisTick = new AxisTick(axisTick)
+  }
+}
+
+/**
+ * 极坐标遮罩
+ */
+class PolarMask {
+  constructor ({
+    show = false,
+    color = 'rgba(0, 0, 0, 1)'
+  }) {
+    this.show = show
+    this.color = color
+  }
+
+  getOption () {
+    return {
+      show: this.show,
+      item: {
+        value: 1,
+        name: 'mask',
+        itemStyle: {
+          color: this.show ? this.color : 'rgba(0, 0, 0, 0)'
+        }
+      }
+    }
   }
 }
 
@@ -1235,5 +1265,6 @@ export {
   RadiusAxis,
   Polar,
   Radar,
-  PolarLinearColors
+  PolarLinearColors,
+  PolarMask
 }
