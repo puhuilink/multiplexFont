@@ -5,7 +5,7 @@ import _ from 'lodash'
 // 监控对象模型节点
 const COMMON_CI = 'CommonCi'
 
-const isCommonCiChild = (argus = {}) => {
+const isCommonCiOrChild = (argus = {}) => {
   const { name = '', parentTree = '' } = argus
   return name.includes(COMMON_CI) || parentTree.includes(COMMON_CI)
 }
@@ -107,7 +107,7 @@ export default {
           alias: 'modelList'
         })
         // FIXME: 监控对象模型节点及其后代节点才能筛选 (待确认)
-        if (isCommonCiChild(model)) {
+        if (isCommonCiOrChild(model)) {
           const { name, parentName } = model
           const nodeTypeList = _.uniq([ COMMON_CI, name, parentName ])
           const { data: { options } } = await InstanceService.find({
