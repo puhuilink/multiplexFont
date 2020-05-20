@@ -675,7 +675,7 @@ class Radar {
 
 /**
  * 坐标轴配置
- * @param aixsName = 坐标轴类型 'x' | 'y'
+ * @param axisName = 坐标轴类型 'x' | 'y'
  * @param show 是否显示
  * @param position x轴位置 'bottom' | 'top'
  * @param type 坐标轴数据类型 'category' | 'value' | 'time'
@@ -689,9 +689,9 @@ class Radar {
  * @param axisLabel 坐标轴刻度标签的相关设置
  * @param splitLine 坐标轴区域分隔线相关设置
  */
-class Aixs {
+class Axis {
   constructor ({
-    aixsName = '',
+    axisName = '',
     show = true,
     type = 'category',
     boundaryGap = true,
@@ -736,13 +736,13 @@ class Aixs {
  * x轴配置
  * 官方配置: https://echarts.apache.org/zh/option.html#xAxis
  */
-class XAixs extends Aixs {
+class XAxis extends Axis {
   constructor ({
     position = 'bottom',
     ...props
   }) {
     super(props)
-    this.aixsName = 'x'
+    this.axisName = 'x'
     this.position = position
   }
 }
@@ -751,13 +751,13 @@ class XAixs extends Aixs {
  * y轴配置
  * 官方配置: https://echarts.apache.org/zh/option.html#yAxis
  */
-class YAixs extends Aixs {
+class YAxis extends Axis {
   constructor ({
     position = 'left',
     ...props
   }) {
     super(props)
-    this.aixsName = 'y'
+    this.axisName = 'y'
     this.position = position
   }
 }
@@ -1249,8 +1249,8 @@ export {
   LineStyle,
   Graphic,
   Title,
-  XAixs,
-  YAixs,
+  XAxis,
+  YAxis,
   TextStyle,
   SeriesPie,
   SeriesGauge,
