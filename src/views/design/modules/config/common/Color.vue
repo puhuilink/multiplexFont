@@ -289,18 +289,6 @@ export default {
       this.change()
     },
     /**
-       * 柱条宽度类型更改
-       * @param config 配置
-       */
-    barWidthTypeChange (config) {
-      Object.assign(config.proprietaryConfig, {
-        barWidth: config.proprietaryConfig.barWidthType === 'custom'
-          ? 12
-          : 'auto'
-      })
-      this.change(config)
-    },
-    /**
        * 当颜色类型或者模式更改时，判断此时的颜色
        * @param config
        */

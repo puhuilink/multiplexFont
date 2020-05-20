@@ -1,6 +1,5 @@
 <template>
   <div class="CiModelSelect">
-    <!-- FIXME: 自定义 search 回调 -->
     <a-select
       :labelInValue="labelInValue"
       showSearch
@@ -32,11 +31,6 @@ export default {
   name: 'CiModelSelect',
   components: {},
   props: {
-    // FIXME: v-decorator 无法动态传入？
-    decorator: {
-      type: Array,
-      default: () => (['model', {}])
-    },
     // labelInValue 为真时格式为 object，否则为 string
     // eslint-disable-next-line
     value: {
@@ -68,6 +62,7 @@ export default {
   },
   methods: {
     filterOption (input, option) {
+      // TODO: trim
       const text = option.componentOptions.children[0].text || ''
       return text.toLowerCase().includes(
         input.toLowerCase()
@@ -88,7 +83,6 @@ export default {
           ],
           'alias': 'groups'
         })
-        // const { groups } = await getModelList(true)
         this.groups = groups
       } catch (e) {
         this.groups = []
@@ -105,9 +99,6 @@ export default {
     select (value) {
       const { key } = arguments[1].data
       const label = key.split('-').pop()
-      // console.log(label)
-      // antd 提供了 labelInValue 属性来抛出 label，但这也改变了 value 传值的结构
-      // 此处在绑定 key 时记录了 label
       this.$emit('input:label', label)
       this.label = label
       this._value = value

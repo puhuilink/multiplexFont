@@ -6,7 +6,7 @@ import { mutate } from '../utils/hasura-orm/index'
 
 class ViewListService extends BaseService {
   /**
-   * 新增视图表土
+   * 新增视图(标题)
    */
   static async add (argus = {}) {
     await mutate(
@@ -15,7 +15,7 @@ class ViewListService extends BaseService {
   }
 
   /**
-   * 编辑视图标题
+   * 编辑视图(标题)
    */
   static async update (view = {}, where = {}) {
     await mutate(
