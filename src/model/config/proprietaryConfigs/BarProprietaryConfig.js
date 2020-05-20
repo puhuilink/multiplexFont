@@ -22,6 +22,7 @@ export default class BarProprietaryConfig {
     legend = {},
     barWidthType = 'auto',
     barWidth = 'auto',
+    reverse = false,
     xAxis = {},
     yAxis = {}
   }) {
@@ -32,6 +33,7 @@ export default class BarProprietaryConfig {
     this.barWidth = barWidth
     this.xAxis = new XAxis(xAxis)
     this.yAxis = new YAxis(yAxis)
+    this.reverse = reverse
   }
 
   /**

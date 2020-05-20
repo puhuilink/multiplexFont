@@ -743,7 +743,7 @@ class XAxis extends Axis {
   }) {
     super(props)
     this.axisName = 'x'
-    this.position = position
+    this.position = ['bottom', 'top'].includes(position) ? position : 'bottom'
   }
 }
 
@@ -758,7 +758,7 @@ class YAxis extends Axis {
   }) {
     super(props)
     this.axisName = 'y'
-    this.position = position
+    this.position = ['left', 'right'].includes(position) ? position : 'left'
   }
 }
 
