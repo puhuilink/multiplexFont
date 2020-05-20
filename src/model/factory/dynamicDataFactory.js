@@ -35,7 +35,7 @@ export default class DynamicDataFactory {
       case 'Pie':
         return new PieDataConfig(dbDataConfig)
       default:
-        console.log('unknown dbDataConfig type', type)
+        // console.log('unknown dbDataConfig type', type)
         // throw new Error('unknown type')
     }
   }
