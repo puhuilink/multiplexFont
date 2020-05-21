@@ -42,12 +42,14 @@ export default class PolarDataConfig extends DynamicDataConfig {
           })
           return items
         })
-
         this.series = [{
           data: Object.keys(groupLabel).map(label => {
             return {
               name: label,
-              value: formatData.map(item => item.find(part => part.ci === label).value)
+              value: formatData.map(item => {
+                const target = item.find(part => part.ci === label)
+                return target ? target.value : 0
+              })
             }
           })
         }]
