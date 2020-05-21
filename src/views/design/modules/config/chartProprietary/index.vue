@@ -173,6 +173,7 @@
             </div>
           </div>
           <!-- / 位置 -->
+          <!-- / FIXME: x / y 轴其一更改方向异常 -->
 
           <div class="comment-template__item">
             <p class="comment-template__leading">数据类型:</p>

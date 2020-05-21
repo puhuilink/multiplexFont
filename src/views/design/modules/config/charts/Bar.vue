@@ -32,7 +32,7 @@
 
               <a-collapse-panel header="图形" key="1">
 
-                <!-- <div class="comment-template__item">
+                <div class="comment-template__item">
                   <p class="comment-template__leading">图形方向:</p>
                   <div class="comment-template__inner">
                     <div class="comment-template__inner comment-template__end">
@@ -40,11 +40,10 @@
                         checkedChildren="横向"
                         unCheckedChildren="纵向"
                         v-model="config.proprietaryConfig.reverse"
-                        @change="change" />
+                        @change="changeReverse" />
                     </div>
                   </div>
-                </div> -->
-                <!-- FIXME: 反转后轴线样式未反转 -->
+                </div>
                 <!-- / 反转 x / y 轴 -->
 
                 <div class="comment-template__item">
@@ -190,6 +189,7 @@ import ChartProprietaryTemplate from '../chartProprietary'
 import ProprietaryMixins from '../proprietaryMixins'
 import BarDataSource from '../dataSource/BarDataSource'
 import Color from '../common/Color'
+import { reverseOption } from '@/model/charts/BarChart'
 
 export default {
   name: 'Bar',
@@ -201,7 +201,27 @@ export default {
     Color
   },
   data: () => ({}),
-  methods: {}
+  methods: {
+    /**
+       * 柱条宽度类型更改
+       * @param config 配置
+       */
+    barWidthTypeChange (config) {
+      Object.assign(config.proprietaryConfig, {
+        barWidth: config.proprietaryConfig.barWidthType === 'custom'
+          ? 12
+          : 'auto'
+      })
+      this.change(config)
+    },
+    changeReverse () {
+      const { staticData } = this.config.dataConfig.staticDataConfig
+      const { proprietaryConfig } = this.config
+      Object.assign(staticData, reverseOption(staticData))
+      Object.assign(proprietaryConfig, reverseOption(proprietaryConfig))
+      this.change()
+    }
+  }
 }
 </script>
 

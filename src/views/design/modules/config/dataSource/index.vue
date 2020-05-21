@@ -106,6 +106,18 @@ export default {
               { staticData: JSON.parse(code) }
             )
             break
+          case 'Pie':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
+          case 'Polar':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
           case 'Bar':
             const { barType } = this.config.proprietaryConfig
             const typeMapping = new Map([

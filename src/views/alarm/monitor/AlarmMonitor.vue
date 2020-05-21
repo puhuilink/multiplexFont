@@ -240,9 +240,6 @@
                 text=='30'?{color:'#000000', fontSize:'18px'}:{}"
           />
         </span>
-        <span slot="message" slot-scope="text">
-          <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
-        </span>
       </CTable>
       <!-- E 列表 -->
 
@@ -285,12 +282,11 @@
 </template>
 
 <script>
-import { Ellipsis } from '@/components'
-import CTable from '@/components/Table/CTable'
+import screening from '../screening'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import queryList from '@/api/controller/AlarmqQueryList'
-import screening from '../screening'
+import CTable from '@/components/Table/CTable'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
@@ -382,15 +378,8 @@ const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $ar
 
 export default {
   name: 'AlarmMonitor',
-  // props: {
-  //   where: {
-  //     type: Object,
-  //     default: () => ({})
-  //   }
-  // },
   components: {
     CTable,
-    Ellipsis,
     MConfirm,
     RollForward,
     MSolve,
@@ -467,6 +456,7 @@ export default {
           title: '消息内容',
           dataIndex: 'message',
           width: 420,
+          tooltip: true,
           scopedSlots: { customRender: 'message' }
         },
         {

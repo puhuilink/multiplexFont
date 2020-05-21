@@ -479,7 +479,9 @@ class AngleAxis {
     type = 'category',
     data = [],
     axisLabel = {},
-    axisTick = {}
+    axisTick = {
+      show: false
+    }
   }) {
     this.type = type
     this.data = data
@@ -493,12 +495,14 @@ class AngleAxis {
  */
 class RadiusAxis {
   constructor ({
-    zlevel = 3,
+    zlevel = 6,
     splitNumber = 5,
     axisLine = {},
     splitLine = {},
     axisLabel = {},
-    axisTick = {}
+    axisTick = {
+      show: false
+    }
   }) {
     this.zlevel = zlevel
     this.splitNumber = splitNumber
@@ -506,6 +510,32 @@ class RadiusAxis {
     this.splitLine = new SplitLine(splitLine)
     this.axisLabel = new AxisLabel(axisLabel)
     this.axisTick = new AxisTick(axisTick)
+  }
+}
+
+/**
+ * 极坐标遮罩
+ */
+class PolarMask {
+  constructor ({
+    show = false,
+    color = 'rgba(0, 0, 0, 1)'
+  }) {
+    this.show = show
+    this.color = color
+  }
+
+  getOption () {
+    return {
+      show: this.show,
+      item: {
+        value: 1,
+        name: 'mask',
+        itemStyle: {
+          color: this.show ? this.color : 'rgba(0, 0, 0, 0)'
+        }
+      }
+    }
   }
 }
 
@@ -645,7 +675,7 @@ class Radar {
 
 /**
  * 坐标轴配置
- * @param aixsName = 坐标轴类型 'x' | 'y'
+ * @param axisName = 坐标轴类型 'x' | 'y'
  * @param show 是否显示
  * @param position x轴位置 'bottom' | 'top'
  * @param type 坐标轴数据类型 'category' | 'value' | 'time'
@@ -659,9 +689,9 @@ class Radar {
  * @param axisLabel 坐标轴刻度标签的相关设置
  * @param splitLine 坐标轴区域分隔线相关设置
  */
-class Aixs {
+class Axis {
   constructor ({
-    aixsName = '',
+    axisName = '',
     show = true,
     type = 'category',
     boundaryGap = true,
@@ -706,14 +736,14 @@ class Aixs {
  * x轴配置
  * 官方配置: https://echarts.apache.org/zh/option.html#xAxis
  */
-class XAixs extends Aixs {
+class XAxis extends Axis {
   constructor ({
     position = 'bottom',
     ...props
   }) {
     super(props)
-    this.aixsName = 'x'
-    this.position = position
+    this.axisName = 'x'
+    this.position = ['bottom', 'top'].includes(position) ? position : 'bottom'
   }
 }
 
@@ -721,14 +751,14 @@ class XAixs extends Aixs {
  * y轴配置
  * 官方配置: https://echarts.apache.org/zh/option.html#yAxis
  */
-class YAixs extends Aixs {
+class YAxis extends Axis {
   constructor ({
     position = 'left',
     ...props
   }) {
     super(props)
-    this.aixsName = 'y'
-    this.position = position
+    this.axisName = 'y'
+    this.position = ['left', 'right'].includes(position) ? position : 'left'
   }
 }
 
@@ -1181,11 +1211,13 @@ class ImageGraphic extends Graphic {
  */
 class AlarmListProps {
   constructor ({
+    styleConfig = {},
     // 接口参数对象
     params = {},
     // 是否调用接口
     isCallInterface = false
   }) {
+    this.styleConfig = styleConfig
     this.params = params
     this.isCallInterface = isCallInterface
   }
@@ -1217,8 +1249,8 @@ export {
   LineStyle,
   Graphic,
   Title,
-  XAixs,
-  YAixs,
+  XAxis,
+  YAxis,
   TextStyle,
   SeriesPie,
   SeriesGauge,
@@ -1233,5 +1265,6 @@ export {
   RadiusAxis,
   Polar,
   Radar,
-  PolarLinearColors
+  PolarLinearColors,
+  PolarMask
 }

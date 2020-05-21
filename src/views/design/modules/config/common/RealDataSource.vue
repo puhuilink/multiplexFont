@@ -4,6 +4,23 @@
       <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button>
     </a-tooltip>
 
+    <!-- / 横轴类型 -->
+    <a-form-item
+      label="横轴类型"
+      v-bind="formItemLayout"
+      v-if="useXAxisType"
+    >
+      <a-select style="width: 100%" v-model="xAxisType">
+        <a-select-option
+          v-for="(option, idx) in options.xAxisType"
+          :key="idx"
+          :value="option.value"
+        >
+          {{ option.name }}
+        </a-select-option>
+      </a-select>
+    </a-form-item>
+
     <!-- / 查询时间 -->
     <a-form-item
       label="时间"
@@ -84,6 +101,10 @@ export default {
       default: true
     },
     useTimeRange: {
+      type: Boolean,
+      default: false
+    },
+    useXAxisType: {
       type: Boolean,
       default: false
     }

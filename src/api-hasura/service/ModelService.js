@@ -12,7 +12,7 @@ import { MAIN_AXIOS } from '@/utils/hasuraAxios'
 class ModelService extends BaseService {
   /**
    * 新增模型节点
-   * @param {Objetc} model
+   * @param {Object} model
    * @return {Promise<any>}
    */
   static async add (model = {}) {
@@ -27,10 +27,9 @@ class ModelService extends BaseService {
   }
 
   static async addAttr (attr = {}, where = {}) {
-    const res = await mutate(
+    await mutate(
       ModelDao.addAttr(attr, where)
     )
-    console.log(res)
   }
 
   /**
@@ -66,7 +65,7 @@ class ModelService extends BaseService {
 
   /**
    * 更新模型节点
-   * @param {Objetc} model
+   * @param {Object} model
    * @return {Promise<any>}
    */
   static async update (model, where) {

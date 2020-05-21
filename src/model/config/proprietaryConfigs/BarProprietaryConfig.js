@@ -7,7 +7,7 @@
  */
 
 import _ from 'lodash'
-import { BarItemStyle, Legend, XAixs, YAixs } from './index'
+import { BarItemStyle, Legend, XAxis, YAxis } from './index'
 
 /**
  * 折现图专有属性配置
@@ -22,6 +22,7 @@ export default class BarProprietaryConfig {
     legend = {},
     barWidthType = 'auto',
     barWidth = 'auto',
+    reverse = false,
     xAxis = {},
     yAxis = {}
   }) {
@@ -30,8 +31,9 @@ export default class BarProprietaryConfig {
     this.barItemStyle = new BarItemStyle(barItemStyle)
     this.barWidthType = barWidthType
     this.barWidth = barWidth
-    this.xAxis = new XAixs(xAxis)
-    this.yAxis = new YAixs(yAxis)
+    this.xAxis = new XAxis(xAxis)
+    this.yAxis = new YAxis(yAxis)
+    this.reverse = reverse
   }
 
   /**

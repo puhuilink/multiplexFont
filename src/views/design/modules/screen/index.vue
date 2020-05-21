@@ -460,6 +460,10 @@ export default {
           description: '保存成功'
         })
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '保存失败'
+        })
         throw e
       } finally {
         this.loading = false
@@ -502,9 +506,23 @@ export default {
      * 导出视图配置至json文件
      */
     exportFile () {
-      const option = this.view.getOption()
-      const title = this.$route.query.title
-      downloadFile(`${title}.json`, JSON.stringify(option))
+      try {
+        const option = this.view.getOption()
+        const title = this.$route.query.title
+        // console.log(_.cloneDeep(option))
+        // console.log(JSON.stringify(_.cloneDeep(option)))
+        downloadFile(`${title}.json`, JSON.stringify(option))
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '导出失败'
+        })
+        throw e
+      }
     },
     /**
      * 清空画板

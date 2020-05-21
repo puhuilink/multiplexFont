@@ -10,7 +10,7 @@ export default class PieChart extends Chart {
     const {
       legend, itemStyle: { color, ...otherItemStyle }, ...otherConfig
     } = proprietaryConfig.getOption()
-    const { sourceType, staticDataConfig: { staticData } } = dataConfig
+    const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     let series = []
 
     // 总体配置
@@ -35,10 +35,20 @@ export default class PieChart extends Chart {
         })
         break
       }
+      case 'null': {
+        dbDataConfig.resetData()
+        break
+      }
       case 'real': {
-        if (loadingDynamicData) {
-          await dataConfig.dbDataConfig.getOption()
-        }
+        const { legend: dbLegend, series: dbSeries } = await dbDataConfig.getOption(loadingDynamicData)
+        series = dbSeries.map((item) => {
+          Object.assign(item, pie)
+          return item
+        })
+        Object.assign(option, {
+          legend: Object.assign(legend, dbLegend),
+          series
+        })
         break
       }
     }

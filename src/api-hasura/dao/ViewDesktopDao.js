@@ -33,20 +33,9 @@ class ViewDesktopDao extends ViewDao {
     })
   }
 
-  static async batchDeleteUserDesktop (where) {
-    return this.batchDelete({
-      ...where,
-      view_title: { _eq: '自定义' }
-    })
-  }
+  static async batchDeleteUserDesktop () {}
 
-  // TODO: api
-  static async batchDeleteGroupDesktop (where) {
-    return this.batchDelete({
-      ...where,
-      view_title: { _eq: '自定义' }
-    })
-  }
+  static async batchDeleteGroupDesktop () {}
 }
 
 export {

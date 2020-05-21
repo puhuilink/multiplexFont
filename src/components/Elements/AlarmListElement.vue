@@ -7,7 +7,9 @@
       :columns="columns"
       :data="loadData"
       :alert="false"
-      :scroll="{ x: 1800, y: 350 }"
+      :scroll="{ x: scrollX, y: 'calc(80vh)' }"
+      :pagination="pagination"
+      :customHeaderRow="() => ({style: headerRowStyle})"
       :customRow="customRow"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
@@ -24,35 +26,19 @@
             <a-button
               @click="$refs.confirm.open(selectedRowKeys)"
               :disabled="!selectedRowKeys.length > 0 || tabKey==='5'"
+              :style="buttonStyle"
             >确认</a-button>
             <a-button
               @click="$refs.rollForward.open(selectedRowKeys, selectedRows)"
               :disabled="!selectedRowKeys.length > 0 "
+              :style="buttonStyle"
             >前转</a-button>
             <a-button
               @click="$refs.resolve.open(selectedRowKeys)"
               :disabled="!selectedRowKeys.length > 0 || tabKey==='20' || tabKey==='30'"
+              :style="buttonStyle"
             >解决</a-button>
           </a-col>
-          <!-- <a-col
-            :xs="24"
-            :sm="24"
-            :md="24"
-            :lg="{span: 12}"
-            :xl="{span: 9}"
-            style="text-align: right;"
-          >
-            <a-icon style="padding:0px 12px;" type="sync" v-if="!autoRefresh" @click="refresh" title="打开自动刷新" />
-            <a-icon
-              style="padding:0px 12px; color:#1890ff"
-              spin
-              type="sync"
-              v-else
-              @click="refresh"
-              title="关闭自动刷新" />
-            <a-icon :style="playAudio?'padding:0px 15px;color:#1890ff':'padding:0px 15px;'" type="sound" @click="onClickSound" />
-            <audio src="" id="eventAudio" loop="loop" hidden></audio>
-          </a-col> -->
           <a-col
             :xs="24"
             :sm="24"
@@ -311,7 +297,10 @@ export default {
       alarmLevelList: {},
       selectedRowKeys: [],
       selectedRows: [],
-      record: {}
+      record: {},
+      rowStyle: {},
+      headerRowStyle: {},
+      buttonStyle: {}
     }
   },
   filters: {
@@ -335,6 +324,20 @@ export default {
           return '已忽略'
         default:
           return type
+      }
+    }
+  },
+  computed: {
+    scrollX () {
+      return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2)
+    },
+    pagination () {
+      return {
+        // 受限于组件的尺寸，提供相对符合展示效果的分页
+        // FIXME: 选择框定位溢出
+        pageSizeOptions: ['3', '10', '20', '50', '100'],
+        pageSize: 10,
+        defaultPageSize: 10
       }
     }
   },
@@ -467,6 +470,7 @@ export default {
      */
     customRow (record, index) {
       return {
+        style: this.rowStyle,
         on: {
           dblclick: () => {
             this.record = record
@@ -478,6 +482,7 @@ export default {
   },
   watch: {
     elementProps (props) {
+      console.log(props)
       if (props.isCallInterface) {
         props.isCallInterface = false
         this.$refs['table'].refresh()
@@ -488,6 +493,12 @@ export default {
       if (props.params.refreshTime) {
         this.refresh(props.params.refreshTime)
       }
+      this.headerRowStyle = props.styleConfig.header
+      this.rowStyle = props.styleConfig.rows
+      this.buttonStyle = props.styleConfig.button
+      this.columns.forEach(e => {
+        e.align = props.styleConfig.align
+      })
     }
   },
   beforeDestroy () {

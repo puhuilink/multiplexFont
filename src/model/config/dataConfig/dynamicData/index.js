@@ -87,6 +87,8 @@ export class DynamicDataConfig {
       selectedKpi: [],
       detailInstance: []
     },
+    // 横轴类型
+    xAxisType = 'RESOURCE',
     refreshTime = 0,
     // 外部 Ci 是否可用
     externalCi = true,
@@ -96,6 +98,7 @@ export class DynamicDataConfig {
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.timeRange = timeRange
+    this.xAxisType = xAxisType
     this.resetData()
   }
 

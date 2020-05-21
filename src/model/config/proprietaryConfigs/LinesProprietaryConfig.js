@@ -9,8 +9,8 @@
 import _ from 'lodash'
 import {
   BarItemStyle,
-  LineStyle, Legend, XAixs,
-  YAixs, ItemStyle, AreaStyle
+  LineStyle, Legend, XAxis,
+  YAxis, ItemStyle, AreaStyle
 } from './index'
 
 /**
@@ -48,8 +48,8 @@ export default class LinesProprietaryConfig {
     this.itemStyle = new ItemStyle(itemStyle)
     this.areaStyle = new AreaStyle(areaStyle)
     this.legend = new Legend(legend)
-    this.xAxis = new XAixs(xAxis)
-    this.yAxis = new YAixs(yAxis)
+    this.xAxis = new XAxis(xAxis)
+    this.yAxis = new YAxis(yAxis)
     this.barType = barType
     this.barItemStyle = new BarItemStyle(barItemStyle)
   }
