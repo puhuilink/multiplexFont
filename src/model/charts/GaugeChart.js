@@ -22,6 +22,7 @@ export default class GaugeChart extends Chart {
         break
       }
       case 'real': {
+        // TODO: old values
         if (loadingDynamicData) {
           const dynamicData = await dataConfig.dbDataConfig.getOption()
           Object.assign(data, dynamicData)
