@@ -93,8 +93,6 @@ export default class BarChart extends Chart {
           series
         })
 
-        console.log(_.cloneDeep(option))
-
         break
       }
     }

@@ -53,10 +53,10 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="handleAdd" v-action:M0201>新增</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleEdit" v-action:M0202>编辑</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
-        <a-button :disabled="selectedRowKeys.length !== 1" @click="handleDesign" v-action:M0203>设计</a-button>
-        <a-button @click="handleDelete" :disabled="selectedRowKeys.length === 0" v-action:M0204>删除</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="handleEdit" v-action:M0202>编辑</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="handleDesign" v-action:M0203>设计</a-button>
+        <a-button @click="handleDelete" :disabled="!hasSelected" v-action:M0204>删除</a-button>
       </template>
     </CTable>
 
@@ -203,7 +203,7 @@ export default {
         this.$refs['table'].loading = false
         await deleteViews(this.selectedRowKeys)
         this.notifyDeleteSuccess()
-        this.$refs['table'].refresh()
+        this.query(false)
       } catch (e) {
         this.$refs['table'].loading = false
         throw e
