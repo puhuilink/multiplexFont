@@ -35,6 +35,7 @@
         mode="month"
         @select="onSelect"
         @change="onChange"
+        @panelChange="onChange"
       >
         <ul class="events" slot="dateCellRender" slot-scope="value">
           <template v-if="getDataListOK">
@@ -297,7 +298,8 @@ export default {
         this.$refs['detail'].open(chooseData)
       }
     },
-    async onChange (value) {
+    onChange (value) {
+      console.log(value)
       this.getTheDate(value)
       this.getDataListOK = false
       this.getAllData()
