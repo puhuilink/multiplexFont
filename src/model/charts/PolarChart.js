@@ -70,6 +70,7 @@ export default class PolarChart extends Chart {
 
     switch (sourceType) {
       case 'static': {
+        this.chart.clear()
         const {
           legend: staticLegend,
           series: staticSeries,
@@ -107,6 +108,7 @@ export default class PolarChart extends Chart {
         break
       }
       case 'real': {
+        this.chart.resize()
         const {
           legend: dynamicLegend,
           series: dynamicSeries,
@@ -143,6 +145,7 @@ export default class PolarChart extends Chart {
         break
       }
     }
+
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',
