@@ -5,7 +5,7 @@
  * Time: 13:58
  * Email: dong.xing@outlook.com
  */
-
+import _ from 'lodash'
 import Factory from '../factory/factory'
 import CommonConfig from './commonConfig'
 import DataConfig from './dataConfig'
@@ -40,5 +40,25 @@ export default class Config {
    */
   getProprietaryConfigFactory (category) {
     return category === 'ELEMENT' ? elementProprietaryConfigFactory : chartProprietaryConfigFactory
+  }
+
+  /**
+   * 获取配置数据
+   * @returns {*}
+   */
+  getOption () {
+    const config = _.cloneDeep(this)
+    if (this.type === 'Topology') {
+      const edges = _.get(this.proprietaryConfig, 'edges')
+      Object.assign(config.proprietaryConfig, {
+        edges: edges ? edges.map(edge => {
+          Reflect.deleteProperty(edge, 'sourceNode')
+          Reflect.deleteProperty(edge, 'targetNode')
+          return edge
+        }) : []
+      })
+      console.log('topology: ', config)
+    }
+    return config
   }
 }

@@ -454,7 +454,6 @@ export default {
       try {
         this.loading = true
         this.viewOptions = this.view.getOption()
-        console.log(this.viewOptions)
         await updateViewDesign(this.$route.query.id, this.viewOptions)
         this.$notification.success({
           message: '系统提示',
