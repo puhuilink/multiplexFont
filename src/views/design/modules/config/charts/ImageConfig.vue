@@ -45,7 +45,7 @@
             <a-collapse-panel header="预览" key="2">
               <div class="image-config__screen">
                 <div class="image-config__screenshot">
-                  <img :src="config.proprietaryConfig.graphic.style.image" alt="" v-if="config.proprietaryConfig.graphic.style.image" />
+                  <img ref="img" :src="config.proprietaryConfig.graphic.style.image" alt="" v-if="config.proprietaryConfig.graphic.style.image" />
                   <p v-else>图片预览</p>
                 </div>
               </div>
@@ -95,6 +95,7 @@ export default {
         image.onload = () => resolve(image)
         image.onerror = reject
         image.src = url
+        console.log(this.$refs['img'])
       })
     }
   }

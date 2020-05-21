@@ -6,7 +6,6 @@
 * Email: dong.xing@outlook.com
 */
 
-import _ from 'lodash'
 import uuid from 'uuid/v4'
 import Config from '../config'
 
@@ -29,7 +28,7 @@ export default class Widget {
     const { widgetId, config } = this
     return {
       widgetId,
-      config: _.cloneDeep(config)
+      config: config.getOption()
     }
   }
 }

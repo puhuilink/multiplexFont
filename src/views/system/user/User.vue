@@ -280,7 +280,7 @@ export default {
         const [record] = this.selectedRows
         await UserService.toggleFlag(record.user_id, Number(!record.flag))
         this.notifyToggleFlagSuccess()
-        this.query()
+        this.query(false)
       } catch (e) {
         this.notifyError(e)
         throw e
