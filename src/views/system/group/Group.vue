@@ -11,7 +11,7 @@
 
       <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="12" :sm="24">
@@ -47,8 +47,8 @@
                     v-model="queryParams.flag"
                     placeholder="请选择"
                   >
-                    <a-select-option value="1">有效</a-select-option>
-                    <a-select-option value="0">无效</a-select-option>
+                    <a-select-option :value="1">有效</a-select-option>
+                    <a-select-option :value="0">无效</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -151,7 +151,7 @@ export default {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
       if (hasSelected) {
-        return selectedRows.filter(({ flag }) => !flag).length === selectedRows.length
+        return !selectedRows.find(({ flag }) => flag)
       } else {
         return false
       }
