@@ -1,5 +1,5 @@
 # ITOMS
-中交智能运维监控系统 - 测试生产推送
+中交智能运维监控系统
 
 ## 基础
 本项目基于 [ant-design-pro-vue](https://github.com/sendya/ant-design-pro-vue) 改造，如遇问题请查看[文档](https://pro.loacg.com/docs/getting-started)
