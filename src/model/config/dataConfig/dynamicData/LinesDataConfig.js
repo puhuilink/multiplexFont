@@ -26,7 +26,6 @@ export default class LinesDataConfig extends DynamicDataConfig {
         this.legend = {
           data: Object.keys(groupByCi)
         }
-        // TODO: 交换 x / y 轴配置实现 纵向 / 横向切换
         this.xAxis = categoryAxis
         this.yAxis = valueAxis
         this.series = Object.keys(groupByCi).map(key => ({
