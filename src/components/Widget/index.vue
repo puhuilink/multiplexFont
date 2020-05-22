@@ -118,7 +118,7 @@ export default {
 <style scoped lang="less">
   .widget {
     position: absolute !important;
-    overflow: hidden;
+    overflow: visible;
     transform: translate3d(0);
 
     &--hover:hover {
