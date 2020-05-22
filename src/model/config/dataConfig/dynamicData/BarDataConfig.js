@@ -14,7 +14,17 @@ export default class BarDataConfig extends DynamicDataConfig {
       const { xAxisType } = this
       try {
         const { data } = await this.fetch()
+        // console.log(data)
         const groupByCi = _.groupBy(data, 'instanceLabel')
+        const groupByInstance = {}
+        Object.values(groupByCi).forEach((value) => {
+          Object.assign(groupByInstance, { ..._.groupBy(value, 'instance_id') })
+        })
+
+        // TODO: 允许自定义图例显示内容
+        // TODO: 待测试功能完整性
+        const groupData = _.isEmpty(groupByInstance) ? groupByCi : groupByInstance
+
         const valueAxis = {
           type: 'value'
         }
@@ -26,14 +36,17 @@ export default class BarDataConfig extends DynamicDataConfig {
         }
 
         this.legend = {
-          data: Object.keys(_.groupBy(data, 'instanceLabel'))
+          data: Object.keys(
+            // _.groupBy(data, 'instanceLabel')
+            _.isEmpty(groupByInstance) ? groupByCi : groupByInstance
+          )
         }
         this.xAxis = categoryAxis
         this.yAxis = valueAxis
-        this.series = Object.keys(groupByCi).map(key => ({
+        this.series = Object.keys(groupData).map(key => ({
           type: 'bar',
           name: key,
-          data: groupByCi[key].map(item => item ? item.value : 0)
+          data: groupData[key].map(item => item ? item.value : 0)
         }))
       } catch (e) {
         this.resetData()

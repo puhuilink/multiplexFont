@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="x-dns-prefetch-control" content="on">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="prefetch" href="https://cdn.bootcdn.net">
+    <link rel="prefetch" href="https://cdn.jsdelivr.net">
     <link rel="icon" href="<%= BASE_URL %>logo.png">
     <title>中国交建</title>
     <style>#loading-mask{position:fixed;left:0;top:0;height:100%;width:100%;background:#fff;user-select:none;z-index:9999;overflow:hidden}.loading-wrapper{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%)}.loading-dot{animation:antRotate 1.2s infinite linear;transform:rotate(45deg);position:relative;display:inline-block;font-size:64px;width:64px;height:64px;box-sizing:border-box}.loading-dot i{width:22px;height:22px;position:absolute;display:block;background-color:#1890ff;border-radius:100%;transform:scale(.75);transform-origin:50% 50%;opacity:.3;animation:antSpinMove 1s infinite linear alternate}.loading-dot i:nth-child(1){top:0;left:0}.loading-dot i:nth-child(2){top:0;right:0;-webkit-animation-delay:.4s;animation-delay:.4s}.loading-dot i:nth-child(3){right:0;bottom:0;-webkit-animation-delay:.8s;animation-delay:.8s}.loading-dot i:nth-child(4){bottom:0;left:0;-webkit-animation-delay:1.2s;animation-delay:1.2s}@keyframes antRotate{to{-webkit-transform:rotate(405deg);transform:rotate(405deg)}}@-webkit-keyframes antRotate{to{-webkit-transform:rotate(405deg);transform:rotate(405deg)}}@keyframes antSpinMove{to{opacity:1}}@-webkit-keyframes antSpinMove{to{opacity:1}}</style>
@@ -27,8 +30,8 @@
     <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
     <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
     <% } %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.js" integrity="sha256-CvwZRDTGSAw2IQybkwEsxuHuo7SaVRIX+fofIG6G4Pk=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-json.min.js" integrity="sha256-oMH6MIx8AGl0OseaL8vGcdSb9ons1Jprkf4xXAyzvNc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/ace/1.4.11/ace.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/ace/1.4.11/mode-json.js"></script>
     <!-- built files will be auto injected -->
   </body>
 </html>

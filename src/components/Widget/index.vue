@@ -79,7 +79,7 @@ export default {
         this.ciId
       ]
     }
-    // 在直接使用配置渲染情况中，此时 widget prop 并不是 Wdiget 的实例，需要将其实例化
+    // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
     if (!(this.widget instanceof Widget)) {
       Object.assign(this.widget, new Widget(this.widget))
     }
@@ -118,7 +118,7 @@ export default {
 <style scoped lang="less">
   .widget {
     position: absolute !important;
-    overflow: hidden;
+    overflow: visible;
     transform: translate3d(0);
 
     &--hover:hover {
