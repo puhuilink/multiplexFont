@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 /**
 * 文件描述
 * Author: 组件库模板对象
@@ -7,7 +9,7 @@
 */
 export default class Template {
   constructor ({
-    category, name, type, icon, height, width
+    category, name, type, icon, height, width, ...argus
   }) {
     this.category = category
     this.name = name
@@ -15,5 +17,6 @@ export default class Template {
     this.icon = icon
     this.height = height
     this.width = width
+    Object.assign(this, _.pick(argus, 'backgroundColor'))
   }
 }

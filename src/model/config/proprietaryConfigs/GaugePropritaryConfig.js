@@ -72,11 +72,9 @@ export default class GaugeProprietaryConfig {
         }
       },
       data: [{ value: 0, name: 'km/h' }]
-    },
-    backgroundColor = '#1b1b1b'
+    }
   }) {
     this.series = new SeriesGauge(series)
-    this.backgroundColor = backgroundColor
   }
 
   /**
@@ -84,8 +82,7 @@ export default class GaugeProprietaryConfig {
    */
   getOption () {
     return Object.assign(_.cloneDeep(this), {
-      series: this.series,
-      backgroundColor: this.backgroundColor
+      series: this.series
     })
   }
 }

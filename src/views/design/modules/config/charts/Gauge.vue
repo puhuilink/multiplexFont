@@ -1,7 +1,7 @@
 <template>
   <div class="texts-config">
     <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="">
+      <a-tab-pane tab="公共属性" key="1">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
@@ -10,8 +10,20 @@
       <a-tab-pane tab="专有属性" key="2">
         <div class="texts-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
-            <!-- S 文本样式 -->
             <a-collapse-panel header="文本样式" key="1">
+              <div class="comment-template__item">
+                <p class="comment-template__leading">标题文字:</p>
+                <div class="comment-template__inner">
+                  <a-input
+                    v-model="config.proprietaryConfig.series.data[0].name"
+                    @change="change()"
+                  />
+                </div>
+              </div>
+
+            </a-collapse-panel>
+
+            <a-collapse-panel header="半径样式" key="2">
               <div class="comment-template__item">
                 <p class="comment-template__leading">最小值:</p>
                 <div class="comment-template__inner">
@@ -46,7 +58,9 @@
                   />
                 </div>
               </div>
+            </a-collapse-panel>
 
+            <a-collapse-panel header="线条样式" key="3">
               <div class="comment-template__item">
                 <p class="comment-template__leading">刻度区间:</p>
                 <div class="comment-template__inner">
@@ -111,22 +125,8 @@
                 </div>
               </div>
 
-              <div class="comment-template__item">
-                <p class="comment-template__leading">标题文字:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    v-model="config.proprietaryConfig.series.data[0].name"
-                    @change="change()"
-                  />
-                </div>
-              </div>
-              <!--
-              数值名称
-              刻度线颜色
-              分割线颜色
-              -->
             </a-collapse-panel>
-            <!-- E 文本样式 -->
+
           </a-collapse>
         </div>
       </a-tab-pane>
