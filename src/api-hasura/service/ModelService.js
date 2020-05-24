@@ -189,6 +189,40 @@ class ModelService extends BaseService {
 
     await MAIN_AXIOS.sql(sql)
   }
+
+  static async flatTree (rootKeys = ['Ci'], withInstance = false) {
+    const { data: { flatTreeData } } = await this.find({
+      where: {
+        _or: [
+          ...rootKeys.map(key => ({ name: { _ilike: `%${key}%` } })),
+          ...rootKeys.map(key => ({ parentTree: { _ilike: `%${key}%` } }))
+        ]
+      },
+      fields: [
+        '_id',
+        'name',
+        'icon',
+        'label',
+        'parentName',
+        'parentTree',
+        'order',
+        !withInstance ? `` : `instanceList {
+          _id
+          name
+          icon: values(path: "$.icon")
+          label
+          parentName
+          parentTree
+          order: values(path: "$.icon")
+        }`
+      ],
+      orderBy: {
+        order: 'desc'
+      },
+      alias: 'flatTreeData'
+    })
+    return flatTreeData
+  }
 }
 
 export {

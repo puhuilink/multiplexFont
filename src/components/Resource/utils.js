@@ -6,7 +6,7 @@ function buildChildren (parent, collection = []) {
     // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
     parent.children = [
       ...parent.instanceList || [],
-      ..._.orderBy(collection.filter(el => el.parentKey === parent.key), ['orderBy'], 'asc')
+      ..._.orderBy(collection.filter(el => el.parentName === parent.name), ['orderBy'], 'asc')
     ]
     parent.children.forEach(el => {
       el.parent = parent
@@ -32,7 +32,7 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
       // break
       return false
     }
-    rootKeys.includes(el.key) && roots.push(el)
+    rootKeys.includes(el.name) && roots.push(el)
   })
   roots.forEach(el => {
     // buildNode(el)
@@ -54,7 +54,7 @@ function matchNodeTitle ({ title = '' }, value = '') {
 }
 
 /**
- * 查询匹配名称的树节点的 key
+ * 查询匹配名称的树节点的 name
  * @param {String} title
  * @param {Array<Object>} collection
  * @return {Array<String>}
@@ -89,27 +89,25 @@ function search (title = '', collection) {
     .forEach(recursiveMatchParent)
   // 去重
   const result = Array.from(
-    new Set(matchedNodes.map(node => node.key))
+    new Set(matchedNodes.map(node => node.name))
   )
   return result
 }
 
-function flatChildrenNodeNameListAndDidList (node) {
-  const nameList = []
-  const _idList = [];
+function flatChildrenNameList (node) {
+  const nameList = [];
   (function recursive (el) {
     nameList.push(el['name'])
-    _idList.push(el['_id'])
     if (el.children && el.children.length) {
       // debugger
       el.children.forEach(recursive)
     }
   }(node))
-  return [nameList, _idList]
+  return nameList
 }
 
 export {
   buildTree,
   search,
-  flatChildrenNodeNameListAndDidList
+  flatChildrenNameList
 }

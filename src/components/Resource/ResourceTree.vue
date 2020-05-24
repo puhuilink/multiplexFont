@@ -25,6 +25,11 @@
           :draggable="draggable"
           :expandedKeys="expandedKeys"
           :filterTreeNode="filterNode"
+          :replaceFields="{
+            children:'children',
+            title:'label',
+            key:'name'
+          }"
           showIcon
           showLine
           :selectedKeys="[selectedKey]"
@@ -38,12 +43,6 @@
           </template>
         </a-tree>
 
-        <ResourceTreeNodeSchema
-          ref="schema"
-          @addSuccess="fetch"
-          @editSuccess="fetch"
-        />
-
       </a-tab-pane>
 
       <!-- / operation -->
@@ -54,7 +53,7 @@
         <a-tooltip title="导出 Excel">
           <a-button icon="download" />
         </a-tooltip>
-        <template v-if="!onlyExcelOption">
+        <template v-if="!onlyExcelOperation">
           <a-tooltip title="新增模型节点">
             <a-button icon="folder-add" :disabled="disabled" @click="onAdd" />
           </a-tooltip>
@@ -62,22 +61,29 @@
             <a-button icon="edit" :disabled="disabled" @click="onEdit" />
           </a-tooltip>
           <a-tooltip title="删除模型节点">
-            <a-button @click="onDelete" icon="delete" :disabled="disabled" />
+            <a-button icon="delete" :disabled="disabled" @click="onDelete" />
           </a-tooltip>
         </template>
       </div>
     </a-tabs>
+
+    <ResourceTreeNodeSchema
+      ref="schema"
+      @addSuccess="fetch"
+      @editSuccess="fetch"
+    />
   </div>
 </template>
 
 <script>
-import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
+import { buildTree, search, flatChildrenNameList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import _ from 'lodash'
 import { ModelService } from '@/api-hasura'
 import OperationNotification from '@/components/Mixins/OperationNotification'
+import defaultIcon from '@/assets/network-icons/Others.png'
 
 export default {
   name: 'ResourceTree',
@@ -95,52 +101,49 @@ export default {
       type: Boolean,
       default: false
     },
-    // 只展示导入、导出 excel的按钮
-    onlyExcelOption: {
+    onlyExcelOperation: {
       type: Boolean,
       default: false
     },
-    // 将其实例也构建到树中
     instanceList: {
       type: Boolean,
       default: false
     },
     rootKeys: {
       type: Array,
-      default: () => (['Ci'])
+      default: () => (['Ci']),
+      validator: v => !_.isEmpty(v)
     }
   },
   data: () => ({
-    dataSource: [],
-    loading: false,
-    selectedNode: null,
     autoExpandParent: true,
     expandedKeys: [],
+    flatTreeData: [],
+    loading: false,
+    selectedNode: null,
     searchValue: ''
   }),
   computed: {
     disabled () {
-      return !this.selectedKey
+      return !this.selectedNode
     },
     selectedKey () {
       const { selectedNode } = this
-      return selectedNode ? selectedNode.key : ''
+      return selectedNode ? selectedNode.name : ''
     },
     treeData () {
-      return buildTree(this.dataSource, this.rootKeys)
+      return buildTree(this.flatTreeData, this.rootKeys)
     },
     treeHeight () {
-      const { readOnly } = this
-      const height = readOnly ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
+      const height = this.readOnly ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
       return `max(${height}, 300px)`
     }
   },
   watch: {
     selectedNode (node) {
       if (node) {
-        const { _id, label, name, parentName, parentTree } = node
-        const option = { _id, label, name, parentName, parentTree, tree: parentTree + name }
-        this.$emit('selectNode', option)
+        const { _id, label, name, parentName, parentTree, tree } = node
+        this.$emit('selectNode', { _id, label, name, parentName, parentTree, tree })
       } else {
         this.$emit('selectNode', null)
       }
@@ -150,35 +153,9 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const { data: { dataSource } } = await ModelService.find({
-          fields: [
-            '_id',
-            'name',
-            'icon: icon',
-            'key: name',
-            'label',
-            'title: label',
-            'parentName',
-            'parentKey: parentName',
-            'parentTree',
-            'order',
-            !this.instanceList ? `` : `instanceList {
-              _id
-              name
-              key: name
-              label
-              title: label
-              parentName
-              parentKey: parentName
-              parentTree
-              icon: values(path: "$.icon")
-            }`
-          ],
-          alias: 'dataSource'
-        })
-        this.dataSource = dataSource
+        this.flatTreeData = await ModelService.flatTree(this.rootKeys, this.instanceList)
       } catch (e) {
-        this.dataSource = []
+        this.flatTreeData = []
         throw e
       } finally {
         this.autoExpandParent = true
@@ -195,13 +172,8 @@ export default {
      * @event
      */
     onAdd () {
-      const { parentTree, name } = this.selectedNode
-      // 父节点位置加上自身的名字，就是自身节点的位置
-      this.$refs['schema'].add(
-        name,
-        // eslint-disable-next-line
-        `${parentTree}${name}`
-      )
+      const { name, tree } = this.selectedNode
+      this.$refs['schema'].add(name, tree)
     },
     /**
      * 删除模型节点
@@ -212,7 +184,7 @@ export default {
         return
       }
       try {
-        const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        const nameList = flatChildrenNameList(this.selectedNode)
         await ModelService.batchDelete(nameList)
         this.notifyDeleteSuccess()
         this.selectedNode = null
@@ -243,8 +215,16 @@ export default {
      * @event
      */
     onSelect ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
-      this.autoExpandParent = true
-      this.selectedNode = selected ? selectedNode.data.props.dataRef : null
+      if (selected) {
+        const { dataRef } = selectedNode.data.props
+        const { parentTree, name } = dataRef
+        this.selectedNode = {
+          ...dataRef,
+          tree: `${parentTree}${name}`
+        }
+      } else {
+        this.selectedNode = null
+      }
     },
     /**
      * 查询框输入
@@ -252,9 +232,7 @@ export default {
      */
     onSearchValueChange ({ target: { value } }) {
       this.searchValue = value.trim()
-      if (this.searchValue) {
-        this.search(this.searchValue)
-      }
+      this.searchValue && this.search(this.searchValue)
     },
     /**
      * 加载节点 icon
@@ -263,14 +241,14 @@ export default {
       try {
         return require(`@/assets/network-icons/${icon}.png`)
       } catch (e) {
-        return require(`@/assets/network-icons/Others.png`)
+        return defaultIcon
       }
     },
     /**
      * 查询匹配数据
      */
     search: _.debounce(function (value) {
-      this.expandedKeys = search(value, this.dataSource)
+      this.expandedKeys = search(value, this.flatTreeData)
       this.autoExpandParent = true
     }, 300)
   },
