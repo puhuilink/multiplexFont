@@ -217,7 +217,7 @@ class ModelService extends BaseService {
         }`
       ],
       orderBy: {
-        order: 'desc'
+        order: 'asc_nulls_last'
       },
       alias: 'flatTreeData'
     })
