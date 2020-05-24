@@ -12,7 +12,7 @@
         <a-col :span="6">
           <ResourceTree
             v-if="treeConfig"
-            hiddenTab
+            readOnly
             instanceList
             :rootKeys="treeConfig.nodes.split(',')"
             @selectNode="selectNode"

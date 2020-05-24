@@ -2,7 +2,7 @@
   <div class="Ci">
     <ResourceTree
       instanceList
-      hiddenTab
+      readOnly
       draggable
       :rootKeys="['CommonCi']"
       @dragend="dragend"
