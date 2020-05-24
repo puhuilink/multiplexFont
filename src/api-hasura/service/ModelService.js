@@ -213,7 +213,7 @@ class ModelService extends BaseService {
           label
           parentName
           parentTree
-          order: values(path: "$.icon")
+          order: values(path: "$.order")
         }`
       ],
       orderBy: {

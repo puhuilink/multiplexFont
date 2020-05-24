@@ -5,8 +5,8 @@ function buildChildren (parent, collection = []) {
     parent.scopedSlots = { icon: 'custom' }
     // 当查询了 instanceList 时，一个 model 的 children 可能既包含 model 也包含 instance
     parent.children = [
-      ...parent.instanceList || [],
-      ..._.orderBy(collection.filter(el => el.parentName === parent.name), ['orderBy'], 'asc')
+      ..._.orderBy(parent.instanceList || [], ['order', 'asc']),
+      ..._.orderBy(collection.filter(el => el.parentName === parent.name), ['order'], 'asc')
     ]
     parent.children.forEach(el => {
       el.parent = parent
@@ -41,9 +41,9 @@ function buildTree (collection = [], rootKeys = ['Ci']) {
   return roots
 }
 
-function matchNodeTitle ({ title = '' }, value = '') {
+function matchNodeTitle ({ name = '' }, value = '') {
   // FIXME: 数据库存在空数据
-  return (title || '')
+  return (name || '')
     .toLowerCase()
     .trim()
     .includes(
@@ -55,12 +55,12 @@ function matchNodeTitle ({ title = '' }, value = '') {
 
 /**
  * 查询匹配名称的树节点的 name
- * @param {String} title
+ * @param {String} name
  * @param {Array<Object>} collection
  * @return {Array<String>}
  */
-function search (title = '', collection) {
-  if (!title) {
+function search (name = '', collection) {
+  if (!name) {
     return
   }
   const matchedNodes = []
@@ -74,13 +74,13 @@ function search (title = '', collection) {
   // FIXME: model 是一维数组扁平化查询，其下方的 instance 列表需要进入到内部查询
   collection
     .filter(node => {
-      if ((matchNodeTitle(node, title))) {
+      if ((matchNodeTitle(node, name))) {
         return true
       }
-      if ((node.instanceList || []).find(instance => matchNodeTitle(instance, title))) {
+      if ((node.instanceList || []).find(instance => matchNodeTitle(instance, name))) {
         return true
       }
-      // else if (node.children.find(el => el.title.toLowerCase().includes(title.toLowerCase()))) {
+      // else if (node.children.find(el => el.name.toLowerCase().includes(name.toLowerCase()))) {
       //   return true
       // } else {
       //   return false
