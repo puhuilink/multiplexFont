@@ -95,7 +95,6 @@ export default {
         image.onload = () => resolve(image)
         image.onerror = reject
         image.src = url
-        console.log(this.$refs['img'])
       })
     }
   }
