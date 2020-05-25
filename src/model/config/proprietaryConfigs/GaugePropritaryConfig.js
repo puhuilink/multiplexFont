@@ -108,7 +108,10 @@ const defaultOutSideSeries = _.cloneDeep(Object.assign({}, defaultInsideSeries, 
   radius: '80%',
   splitLine: {
     ...defaultInsideSeries.splitLine,
-    color: 'rgba(25, 123, 183, 1)'
+    lineStyle: {
+      ...defaultInsideSeries.splitLine.lineStyle,
+      color: 'rgba(25, 123, 183, 1)'
+    }
   },
   title: {
     show: false
