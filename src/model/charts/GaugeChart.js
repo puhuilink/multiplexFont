@@ -13,7 +13,9 @@ export default class GaugeChart extends Chart {
     const itemOptions = proprietaryConfig.getOption()
     const { sourceType } = dataConfig
 
-    const [data] = itemOptions.series.data
+    // const [data] = itemOptions.series.data
+    const [series] = itemOptions.series
+    const [data] = series.data
 
     switch (sourceType) {
       case 'static': {
