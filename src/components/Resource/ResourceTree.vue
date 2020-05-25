@@ -1,6 +1,8 @@
 <template>
-  <div class="ResourceTree" :class="{ 'ResourceTree__hidden-tab': hiddenTab }">
+  <div class="ResourceTree" :class="{ 'ResourceTree__read-only': readOnly }">
     <a-tabs defaultActiveKey="1">
+
+      <!-- / tree -->
       <a-tab-pane tab="资源树" key="1">
         <a-input-search
           allowClear
@@ -8,7 +10,7 @@
           style="padding: 8px;"
           placeholder="搜索资源树"
           :value="searchValue"
-          @change="change"
+          @change="onSearchValueChange"
         />
         <a-spin
           v-if="loading"
@@ -18,62 +20,77 @@
           v-else
           :autoExpandParent="autoExpandParent"
           class="ResourceTree__tree"
-          :style="{
-            height: this.hiddenTab ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
-          }"
           defaultExpandAll
           :draggable="draggable"
           :expandedKeys="expandedKeys"
-          :filterTreeNode="filterNode"
+          :filterTreeNode="filterTreeNode"
+          :replaceFields="{ title:'label', key:'name' }"
+          :selectedKeys="[selectedKey]"
           showIcon
           showLine
-          :selectedKeys="[selectedKey]"
+          :style="{ height: treeHeight }"
           :treeData="treeData"
           v-on="$listeners"
-          @expand="expand"
-          @select="select"
+          @expand="onExpand"
+          @select="onSelect"
         >
-          <template slot="custom" slot-scope="{ dataRef: { icon } }">
-            <!-- <a-icon :type="selected ? 'frown' : 'frown-o'" /> -->
-            <!-- {{ icon }} -->
-            <img :src="resolveIcon(icon)" class="ResourceTree__tree_icon" alt="">
-            <!-- <a-icon type="message" :style="{ fontSize: '16px', color: '#08c' }" /> -->
+          <template v-slot:custom="{ dataRef: { icon } }">
+            <img :src="resolveIcon(icon)" class="ResourceTree__tree_icon" />
           </template>
         </a-tree>
 
-        <ResourceTreeNodeSchema
-          ref="schema"
-          @addSuccess="addSuccess"
-          @editSuccess="editSuccess"
-        />
-
       </a-tab-pane>
 
-      <template slot="tabBarExtraContent">
-        <div class="ResourceTree__tabBarExtraContent">
-          <a-button icon="upload"></a-button>
-          <a-button icon="download"></a-button>
-          <template v-if="!onlyExcelOption">
-            <a-button icon="folder-add" :disabled="disabled" @click="add"></a-button>
-            <a-button icon="edit" :disabled="disabled" @click="edit"></a-button>
-            <a-button @click="onDelete" icon="delete" :disabled="disabled"></a-button>
-          </template>
-        </div>
-      </template>
+      <!-- / operation -->
+      <div slot="tabBarExtraContent" class="ResourceTree__tabBarExtraContent">
+
+        <a-tooltip title="导入 Excel">
+          <a-button icon="upload" />
+        </a-tooltip>
+
+        <a-tooltip title="导出 Excel">
+          <a-button icon="download" />
+        </a-tooltip>
+
+        <template v-if="!onlyExcelOperation">
+
+          <a-tooltip title="新增模型节点">
+            <a-button icon="folder-add" :disabled="disabled" @click="onAdd" />
+          </a-tooltip>
+
+          <a-tooltip title="编辑模型节点">
+            <a-button icon="edit" :disabled="disabled" @click="onEdit" />
+          </a-tooltip>
+
+          <a-tooltip title="删除模型节点">
+            <a-button icon="delete" :disabled="disabled" @click="onDelete" />
+          </a-tooltip>
+
+        </template>
+      </div>
     </a-tabs>
+
+    <ResourceTreeNodeSchema
+      ref="schema"
+      @addSuccess="fetch"
+      @editSuccess="fetch"
+    />
   </div>
 </template>
 
 <script>
-import { buildTree, search, flatChildrenNodeNameListAndDidList } from './utils'
+import { buildTree, search, flatChildrenNameList } from './utils'
 import ResourceTreeNodeSchema from './ResourceTreeNodeSchema'
 import Template from '../../views/design/modules/template/index'
 import deleteCheck from '@/components/DeleteCheck'
 import _ from 'lodash'
 import { ModelService } from '@/api-hasura'
+import OperationNotification from '@/components/Mixins/OperationNotification'
+import defaultIcon from '@/assets/network-icons/Others.png'
 
 export default {
   name: 'ResourceTree',
+  mixins: [OperationNotification],
   components: {
     Template,
     ResourceTreeNodeSchema
@@ -83,208 +100,164 @@ export default {
       type: Boolean,
       default: false
     },
-    // 隐藏分页
-    hiddenTab: {
+    onlyExcelOperation: {
       type: Boolean,
       default: false
     },
-    // 只展示导入、导出 excel的按钮
-    onlyExcelOption: {
+    readOnly: {
       type: Boolean,
       default: false
     },
-    // 将其实例也构建到树中
-    instanceList: {
-      type: Boolean,
-      default: false
-    },
-    // TODO: instanceListCount
-    // 根节点
     rootKeys: {
       type: Array,
-      default: () => (['Ci'])
+      default: () => (['Ci']),
+      validator: v => !_.isEmpty(v)
+    },
+    withInstance: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
-    dataSource: [],
-    loading: false,
-    selectedKey: '',
     autoExpandParent: true,
     expandedKeys: [],
+    flatTreeData: [],
+    loading: false,
+    selectedNode: null,
     searchValue: ''
   }),
   computed: {
-    disabled: {
-      get () {
-        return !this.selectedKey
-      }
+    disabled () {
+      return !this.selectedNode
     },
-    selectedNode: {
-      get () {
-        if (!this.selectedKey) {
-          return null
-        } else {
-          const value = this.dataSource.find(el => el.key === this.selectedKey)
-          return value
-        }
-      }
+    selectedKey () {
+      const { selectedNode } = this
+      return selectedNode ? selectedNode.name : ''
     },
-    treeData: {
-      get () {
-        return buildTree(this.dataSource, this.rootKeys)
+    treeData () {
+      return buildTree(this.flatTreeData, this.rootKeys)
+    },
+    treeHeight () {
+      const height = this.readOnly ? 'calc(100vh - 150px)' : 'calc(100vh - 175px)'
+      return `max(${height}, 300px)`
+    }
+  },
+  watch: {
+    selectedNode (node) {
+      if (node) {
+        const { _id, label, name, parentName, parentTree, tree } = node
+        this.$emit('selectNode', { _id, label, name, parentName, parentTree, tree })
+      } else {
+        this.$emit('selectNode', null)
       }
     }
   },
   methods: {
-    bug (argus) {
-      console.log(argus)
-    },
-    resolveIcon (icon) {
-      try {
-        return require(`@/assets/network-icons/${icon}.png`)
-      } catch (e) {
-        return require(`@/assets/network-icons/Others.png`)
-      }
-    },
     async fetch () {
       try {
         this.loading = true
-        const { data: { dataSource } } = await ModelService.find({
-          fields: [
-            '_id',
-            'name',
-            'icon: icon',
-            'key: name',
-            'label',
-            'title: label',
-            'parentName',
-            'parentKey: parentName',
-            'parentTree',
-            'order',
-            !this.instanceList ? `` : `instanceList {
-              _id
-              name
-              key: name
-              label
-              title: label
-              parentName
-              parentKey: parentName
-              parentTree
-              icon: values(path: "$.icon")
-            }`
-          ],
-          alias: 'dataSource'
-        }, this.instanceList)
-        this.dataSource = dataSource
+        this.flatTreeData = await ModelService.flatTree(this.rootKeys, this.withInstance)
       } catch (e) {
-        this.dataSource = []
+        this.flatTreeData = []
         throw e
       } finally {
         this.autoExpandParent = true
         this.loading = false
       }
     },
-    add () {
-      const { parentTree, name } = this.selectedNode
-      // 父节点位置加上自身的名字，就是自身节点的位置
-      this.$refs['schema'].add(
-        name,
-        // eslint-disable-next-line
-        `${parentTree}${name}`
-      )
-    },
-    addSuccess () {
-      this.fetch()
-    },
-    edit () {
-      this.$refs['schema'].edit({ ...this.selectedNode })
-    },
-    editSuccess () {
-      this.fetch()
-    },
-    filterNode ({ title = '' }) {
+    filterTreeNode (node = {}) {
       const { searchValue = '' } = this
-      // FIXME: 数据库存在空数据
+      const { title = '' } = node
       return searchValue && (title || '').toLowerCase().includes(searchValue.toLowerCase())
     },
+    /**
+     * 新增模型节点
+     * @event
+     */
+    onAdd () {
+      const { name, tree } = this.selectedNode
+      this.$refs['schema'].add(name, tree)
+    },
+    /**
+     * 删除模型节点
+     * @event
+     */
     async onDelete () {
       if (!await deleteCheck.sureDelete()) {
         return
       }
-      // 删除一个节点，其子节点都要删除，并且子节点相关联的表也应处理
       try {
-        // TODO: 删除接口
-        // 删除成功重置
-        const [nameList] = flatChildrenNodeNameListAndDidList(this.selectedNode)
+        const nameList = flatChildrenNameList(this.selectedNode)
         await ModelService.batchDelete(nameList)
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
-        this.selectedKey = ''
-        this.$emit('selectNode', null)
+        this.notifyDeleteSuccess()
+        this.selectedNode = null
         await this.fetch()
       } catch (e) {
+        this.notifyError(e)
         throw e
       } finally {
       }
     },
     /**
-     * 展开树节点触发
-     * @param {Array<String>} expandedKeys 展开的树节点
-     * @return {Undefined}
+     * 编辑模型节点
+     * @event
      */
-    expand (expandedKeys) {
+    onEdit () {
+      this.$refs['schema'].edit({ ...this.selectedNode })
+    },
+    /**
+     * 展开树节点
+     * @event
+     */
+    onExpand (expandedKeys) {
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
     },
     /**
-     * 选中/取消选中树节点触发
+     * 选中/取消选中树节点
      * @event
-     * @return {Undefined}
      */
-    select ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
+    onSelect ([selectedKey], { selected, selectedNodes: [selectedNode] }) {
       if (selected) {
-        this.selectedKey = selectedKey
-        const dataRef = selectedNode.data.props.dataRef
-        // console.log(dataRef)
-        this.$emit('selectNode', {
-          'label': dataRef.label_s,
-          'name': dataRef.name,
-          'tree': dataRef.parentTree + dataRef.name,
-          'parentName': dataRef.parentName,
-          '_id': dataRef._id
-        })
+        const { dataRef } = selectedNode.data.props
+        const { parentTree, name } = dataRef
+        this.selectedNode = {
+          ...dataRef,
+          tree: `${parentTree}${name}`
+        }
       } else {
-        // FIXME: 新增后可以不用重置
-        // this.selectedNode = null
-        this.selectedKey = ''
-        this.$emit('selectNode', null)
+        this.selectedNode = null
       }
     },
-    search: _.debounce(function (value) {
-      this.expandedKeys = search(value, this.dataSource)
-      this.autoExpandParent = true
-    }, 300),
     /**
-     * 查询树节点输入
+     * 查询框输入
      * @event
-     * @return {Undefined}
      */
-    change: function ({ target: { value } }) {
-      this.searchValue = value
-      if (!value) {
-        return
+    onSearchValueChange ({ target: { value } }) {
+      this.searchValue = value.trim()
+      this.searchValue && this.search(this.searchValue)
+    },
+    /**
+     * 加载节点 icon
+     */
+    resolveIcon (icon) {
+      try {
+        return require(`@/assets/network-icons/${icon}.png`)
+      } catch (e) {
+        return defaultIcon
       }
-      this.search(value)
-    }
+    },
+    /**
+     * 查询匹配数据
+     */
+    search: _.debounce(function (value) {
+      this.expandedKeys = search(value, this.flatTreeData)
+      this.autoExpandParent = true
+    }, 300)
   },
-  async created () {
-    await this.fetch()
-    await this.$nextTick()
-    // 默认展开根节点
-    // TODO: 支持 props 指定默认展开层级
+  created () {
     this.expandedKeys = [ ...this.rootKeys ]
+    this.fetch()
   }
 }
 </script>
@@ -305,11 +278,13 @@ export default {
       vertical-align: super;
     }
   }
-  &__hidden-tab {
+
+  &__read-only {
     .ant-tabs-bar {
       display: none;
     }
   }
+
   &__tabBarExtraContent {
     padding-right: 8px;
   }

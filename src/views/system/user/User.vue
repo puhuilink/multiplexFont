@@ -121,6 +121,7 @@ export default {
     UserGroupSchema
   },
   data: () => ({
+    // TODO: Object freeze
     columns: [
       {
         title: '用户名',
@@ -177,7 +178,7 @@ export default {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
       if (hasSelected) {
-        return selectedRows.filter(({ flag }) => !flag).length === selectedRows.length
+        return !selectedRows.find(({ flag }) => flag)
       } else {
         return false
       }

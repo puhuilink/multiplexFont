@@ -1,8 +1,8 @@
 <template>
   <div class="Ci">
     <ResourceTree
-      instanceList
-      hiddenTab
+      withInstance
+      readOnly
       draggable
       :rootKeys="['CommonCi']"
       @dragend="dragend"
