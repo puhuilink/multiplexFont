@@ -20,19 +20,15 @@
           v-else
           :autoExpandParent="autoExpandParent"
           class="ResourceTree__tree"
-          :style="{ height: treeHeight }"
           defaultExpandAll
           :draggable="draggable"
           :expandedKeys="expandedKeys"
-          :filterTreeNode="filterNode"
-          :replaceFields="{
-            children:'children',
-            title:'label',
-            key:'name'
-          }"
+          :filterTreeNode="filterTreeNode"
+          :replaceFields="{ title:'label', key:'name' }"
+          :selectedKeys="[selectedKey]"
           showIcon
           showLine
-          :selectedKeys="[selectedKey]"
+          :style="{ height: treeHeight }"
           :treeData="treeData"
           v-on="$listeners"
           @expand="onExpand"
@@ -47,22 +43,29 @@
 
       <!-- / operation -->
       <div slot="tabBarExtraContent" class="ResourceTree__tabBarExtraContent">
+
         <a-tooltip title="导入 Excel">
           <a-button icon="upload" />
         </a-tooltip>
+
         <a-tooltip title="导出 Excel">
           <a-button icon="download" />
         </a-tooltip>
+
         <template v-if="!onlyExcelOperation">
+
           <a-tooltip title="新增模型节点">
             <a-button icon="folder-add" :disabled="disabled" @click="onAdd" />
           </a-tooltip>
+
           <a-tooltip title="编辑模型节点">
             <a-button icon="edit" :disabled="disabled" @click="onEdit" />
           </a-tooltip>
+
           <a-tooltip title="删除模型节点">
             <a-button icon="delete" :disabled="disabled" @click="onDelete" />
           </a-tooltip>
+
         </template>
       </div>
     </a-tabs>
@@ -97,15 +100,11 @@ export default {
       type: Boolean,
       default: false
     },
-    readOnly: {
-      type: Boolean,
-      default: false
-    },
     onlyExcelOperation: {
       type: Boolean,
       default: false
     },
-    instanceList: {
+    readOnly: {
       type: Boolean,
       default: false
     },
@@ -113,6 +112,10 @@ export default {
       type: Array,
       default: () => (['Ci']),
       validator: v => !_.isEmpty(v)
+    },
+    withInstance: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -153,7 +156,7 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        this.flatTreeData = await ModelService.flatTree(this.rootKeys, this.instanceList)
+        this.flatTreeData = await ModelService.flatTree(this.rootKeys, this.withInstance)
       } catch (e) {
         this.flatTreeData = []
         throw e
@@ -162,7 +165,7 @@ export default {
         this.loading = false
       }
     },
-    filterNode (node = {}) {
+    filterTreeNode (node = {}) {
       const { searchValue = '' } = this
       const { title = '' } = node
       return searchValue && (title || '').toLowerCase().includes(searchValue.toLowerCase())

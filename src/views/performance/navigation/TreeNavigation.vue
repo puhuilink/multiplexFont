@@ -13,7 +13,7 @@
           <ResourceTree
             v-if="treeConfig"
             readOnly
-            instanceList
+            withInstance
             :rootKeys="treeConfig.nodes.split(',')"
             @selectNode="selectNode"
           />

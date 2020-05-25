@@ -1,7 +1,7 @@
 <template>
   <div class="Ci">
     <ResourceTree
-      instanceList
+      withInstance
       readOnly
       draggable
       :rootKeys="['CommonCi']"
