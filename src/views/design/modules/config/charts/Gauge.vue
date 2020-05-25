@@ -3,7 +3,7 @@
     <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
       <a-tab-pane tab="公共属性" key="1">
         <!-- S 公共配置模板 -->
-        <CommonTemplate />
+        <CommonTemplate :usePadding="false" />
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
@@ -44,7 +44,7 @@
             </a-collapse-panel>
 
             <a-collapse-panel
-              v-for="(header, index) in ['内圈线条样式', '外圈线条样式']"
+              v-for="(header, index) in ['内圈样式', '外圈样式']"
               :header="header"
               :key="2 + index"
             >
@@ -242,7 +242,7 @@ export default {
 .comment-template {
   &__leading {
     flex: none;
-    width: 100px;
+    width: 90px;
     margin: 0;
     text-align: left;
   }
