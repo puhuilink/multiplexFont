@@ -24,6 +24,24 @@ import { KpiCurrentService } from '@/api-hasura'
 import { TimeRange } from '@/model/config/dataConfig/dynamicData/index'
 import _ from 'lodash'
 
+const defaultColumns = [
+  {
+    title: '时间',
+    dataIndex: 'arising_time',
+    width: 180,
+    align: 'left',
+    sorter: true
+  },
+  {
+    title: '名称',
+    // 该字段非数据表字段，为接口返回拼接字段
+    dataIndex: 'instanceLabel',
+    align: 'left',
+    width: 260,
+    sorter: false
+  }
+]
+
 export default {
   name: 'ListElement',
   components: {
@@ -40,23 +58,7 @@ export default {
   },
   data () {
     return {
-      columns: [
-        {
-          title: '时间',
-          dataIndex: 'arising_time',
-          width: 180,
-          align: 'left',
-          sorter: true
-        },
-        {
-          title: '名称',
-          // 该字段非数据表字段，为接口返回拼接字段
-          dataIndex: 'instanceLabel',
-          align: 'left',
-          width: 260,
-          sorter: true
-        }
-      ],
+      columns: defaultColumns,
       // 自动刷新的定时器
       timer: null,
       rowStyle: {},
@@ -101,13 +103,14 @@ export default {
           ...parameter
         }).then(r => {
           const groupByKpi = _.groupBy(r.data, 'kpiLabel')
+          this.columns = _.cloneDeep(defaultColumns)
           Object.keys(groupByKpi).forEach(key => {
             this.columns.push({
               title: key,
               dataIndex: 'kpiLabel',
               width: 150,
               align: 'left',
-              sorter: true,
+              sorter: false,
               customRender: (text, record) => {
                 if (record.kpiLabel === key) {
                   return record.kpi_value_num
