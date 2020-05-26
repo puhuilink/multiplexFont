@@ -137,7 +137,7 @@ export default {
         dataIndex: 'flag',
         width: 120,
         sorter: true,
-        customRender: val => val ? '有效' : '失效'
+        customRender: val => val ? '有效' : '无效'
       },
       {
         title: '备注',
@@ -208,7 +208,9 @@ export default {
      * @event
      */
     async onBatchDelete () {
-      await deleteCheck.sureDelete()
+      if (!await deleteCheck.sureDelete()) {
+        return
+      }
       try {
         this.$refs['table'].loading = true
         await GroupService.batchDelete(this.selectedRowKeys)

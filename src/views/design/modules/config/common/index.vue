@@ -147,7 +147,7 @@
       <!-- E 圆角 -->
 
       <!-- S 边距 -->
-      <a-collapse-panel header="边距" key="4">
+      <a-collapse-panel header="边距" key="4" v-show="usePadding">
 
         <div class="comment-template__item">
           <p class="comment-template__leading">上:</p>
@@ -280,6 +280,12 @@ export default {
   components: {
     ColorPicker,
     LinearColorPicker
+  },
+  props: {
+    usePadding: {
+      type: Boolean,
+      default: true
+    }
   },
   data: () => ({
     singleColor: 'rgba(255, 255, 255, 1)',

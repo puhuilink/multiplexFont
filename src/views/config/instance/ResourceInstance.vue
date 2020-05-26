@@ -5,14 +5,11 @@
       <!-- / tree -->
       <a-col :xl="8" :xxl="6">
         <ResourceTree
-          onlyExcelOption
+          onlyExcelOperation
           class="ResourceInstance-tree"
           @selectNode="selectNode"
         />
       </a-col>
-
-      <!-- TODO: 目前只统计到一个节点对应的实例列表，vicube统计的是当前节点与其所有后代节点相关的实例列表 -->
-      <!-- TODO: 接上一条，在节点名字右侧展示其下方的实例列表数量 -->
 
       <!-- / content -->
       <a-col :xl="16" :xxl="18">

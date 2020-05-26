@@ -1,58 +1,113 @@
 <template>
   <div class="texts-config">
     <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="">
+      <a-tab-pane tab="公共属性" key="1">
         <!-- S 公共配置模板 -->
-        <CommonTemplate />
+        <CommonTemplate :usePadding="false" />
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
       <a-tab-pane tab="专有属性" key="2">
         <div class="texts-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
-            <!-- S 文本样式 -->
             <a-collapse-panel header="文本样式" key="1">
               <div class="comment-template__item">
-                <p class="comment-template__leading">最小值:</p>
+                <p class="comment-template__leading">标题文字:</p>
                 <div class="comment-template__inner">
                   <a-input
-                    type="number"
-                    v-model="config.proprietaryConfig.series.min"
+                    v-model="config.proprietaryConfig.series[0].data[0].name"
                     @change="change()"
                   />
                 </div>
               </div>
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">最大值:</p>
+                <p class="comment-template__leading">标题颜色:</p>
                 <div class="comment-template__inner">
-                  <a-input
-                    type="number"
-                    v-model="config.proprietaryConfig.series.max"
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.series[0].title.textStyle.color"
                     @change="change()"
                   />
                 </div>
               </div>
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">仪表半径:</p>
+                <p class="comment-template__leading">数值颜色:</p>
                 <div class="comment-template__inner">
-                  <a-slider
-                    :min="10"
-                    :max="90"
-                    tooltipVisible
-                    :value="~~config.proprietaryConfig.series.radius.replace('%', '')"
-                    @change="radiusChange"
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.series[0].detail.textStyle.color"
+                    @change="change()"
+                  />
+                </div>
+              </div>
+
+            </a-collapse-panel>
+
+            <a-collapse-panel
+              v-for="(header, index) in ['内圈样式', '外圈样式']"
+              :header="header"
+              :key="2 + index"
+            >
+
+              <template v-if="index === 0">
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">指针长度(%):</p>
+                  <div class="comment-template__inner">
+                    <a-input
+                      type="number"
+                      v-model="config.proprietaryConfig.series[index].pointer.length"
+                      @change="change()"
+                    />
+                  </div>
+                </div>
+
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">指针宽度:</p>
+                  <div class="comment-template__inner">
+                    <a-input
+                      type="number"
+                      v-model="config.proprietaryConfig.series[index].pointer.width"
+                      @change="change()"
+                    />
+                  </div>
+                </div>
+
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">指针颜色:</p>
+                  <div class="comment-template__inner">
+                    <ColorPicker
+                      v-model="config.proprietaryConfig.series[index].data[0].itemStyle.color"
+                      @change="change()"
+                    />
+                  </div>
+                </div>
+              </template>
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">轴线颜色:</p>
+                <div class="comment-template__inner">
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.series[index].axisLine.lineStyle.color[0][1]"
+                    @change="change()"
+                  />
+                </div>
+              </div>
+
+              <div class="comment-template__item" v-if="index === 0">
+                <p class="comment-template__leading">刻度值颜色:</p>
+                <div class="comment-template__inner">
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.series[index].axisLabel.color"
+                    @change="change()"
                   />
                 </div>
               </div>
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">刻度区间:</p>
+                <p class="comment-template__leading">刻度颜色:</p>
                 <div class="comment-template__inner">
-                  <a-input
-                    type="number"
-                    v-model="config.proprietaryConfig.series.max"
+                  <ColorPicker
+                    v-model="config.proprietaryConfig.series[index].axisTick.lineStyle.color"
                     @change="change()"
                   />
                 </div>
@@ -63,28 +118,29 @@
                 <div class="comment-template__inner">
                   <a-input
                     type="number"
-                    v-model="config.proprietaryConfig.series.axisTick.length"
+                    v-model="config.proprietaryConfig.series[index].axisTick.length"
                     @change="change()"
                   />
                 </div>
               </div>
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">刻度线颜色:</p>
-                <div class="comment-template__inner">
-                  <ColorPicker
-                    v-model="config.proprietaryConfig.series.axisTick.lineStyle.color"
-                    @change="change()"
-                  />
-                </div>
-              </div>
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">分割线长度:</p>
+                <p class="comment-template__leading">分隔线长度:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="number"
-                    v-model="config.proprietaryConfig.series.splitLine.length"
+                    v-model="config.proprietaryConfig.series[index].splitLine.length"
+                    @change="change()"
+                  />
+                </div>
+              </div>
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">分隔线宽度:</p>
+                <div class="comment-template__inner">
+                  <a-input
+                    type="number"
+                    v-model="config.proprietaryConfig.series[index].splitLine.lineStyle.width"
                     @change="change()"
                   />
                 </div>
@@ -94,7 +150,7 @@
                 <p class="comment-template__leading">分隔线颜色:</p>
                 <div class="comment-template__inner">
                   <ColorPicker
-                    v-model="config.proprietaryConfig.series.splitLine.lineStyle.color"
+                    v-model="config.proprietaryConfig.series[index].splitLine.lineStyle.color"
                     @change="change()"
                   />
                 </div>
@@ -105,33 +161,52 @@
                 <div class="comment-template__inner">
                   <a-input
                     type="number"
-                    v-model="config.proprietaryConfig.series.splitNumber"
+                    v-model="config.proprietaryConfig.series[index].splitNumber"
                     @change="change()"
                   />
                 </div>
               </div>
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">标题文字:</p>
+                <p class="comment-template__leading">最小值:</p>
                 <div class="comment-template__inner">
                   <a-input
-                    v-model="config.proprietaryConfig.series.data[0].name"
+                    type="number"
+                    v-model="config.proprietaryConfig.series[index].min"
                     @change="change()"
                   />
                 </div>
               </div>
-              <!--
-              数值名称
-              刻度线颜色
-              分割线颜色
-              -->
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">最大值:</p>
+                <div class="comment-template__inner">
+                  <a-input
+                    type="number"
+                    v-model="config.proprietaryConfig.series[index].max"
+                    @change="change()"
+                  />
+                </div>
+              </div>
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">仪表半径（%):</p>
+                <div class="comment-template__inner">
+                  <a-slider
+                    :min="10"
+                    :max="90"
+                    :value="~~config.proprietaryConfig.series[index].radius.replace('%', '')"
+                    @change="radiusChange($event, index)"
+                  />
+                </div>
+              </div>
             </a-collapse-panel>
-            <!-- E 文本样式 -->
+
           </a-collapse>
         </div>
       </a-tab-pane>
 
-      <a-tab-pane tab="数据配置" key="3" forceRender>
+      <a-tab-pane tab="数据配置" key="4" forceRender>
         <GaugeDataSource />
       </a-tab-pane>
 
@@ -155,8 +230,8 @@ export default {
     GaugeDataSource
   },
   methods: {
-    radiusChange (value) {
-      this.config.proprietaryConfig.series.radius = `${value}%`
+    radiusChange (value, index) {
+      this.config.proprietaryConfig.series[index].radius = `${value}%`
       this.change()
     }
   }
@@ -164,4 +239,12 @@ export default {
 </script>
 
 <style scoped lang="less">
+.comment-template {
+  &__leading {
+    flex: none;
+    width: 90px;
+    margin: 0;
+    text-align: left;
+  }
+}
 </style>
