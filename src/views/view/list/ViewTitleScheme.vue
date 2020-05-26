@@ -26,11 +26,12 @@
                 {
                   rules: [
                     {
-                      transform: value => value.trim()
-                    },
-                    {
                       required: true,
                       message: '标题必填'
+                    },
+                    {
+                      pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5_-]+$/,
+                      message: '仅支持中英文、数字与短横线'
                     },
                     {
                       max: 30,
