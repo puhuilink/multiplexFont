@@ -56,18 +56,15 @@ export default {
       })
     }
   },
-  data () {
-    return {
-      columns: defaultColumns,
-      // 自动刷新的定时器
-      timer: null,
-      rowStyle: {},
-      headerRowStyle: {}
-    }
-  },
+  data: () => ({
+    columns: defaultColumns,
+    timer: null,
+    rowStyle: {},
+    headerRowStyle: {}
+  }),
   computed: {
     scrollX () {
-      return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2)
+      return _.sum(this.columns.map(e => e.width || 60))
     },
     pagination () {
       return {
@@ -107,7 +104,6 @@ export default {
           Object.keys(groupByKpi).forEach(key => {
             this.columns.push({
               title: key,
-              dataIndex: 'kpiLabel',
               width: 150,
               align: 'left',
               sorter: false,
@@ -154,10 +150,6 @@ export default {
   beforeDestroy () {
     // 清除定时器
     clearInterval(this.timer)
-  },
-  destroyed () {
-    // 清除定时器
-    // clearInterval(this.timer)
   }
 }
 </script>
