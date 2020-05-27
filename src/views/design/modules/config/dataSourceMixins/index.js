@@ -119,7 +119,9 @@ export default {
     }),
     async change (loadingDynamicData = false) {
       try {
-        this.btnLoading = true
+        if (loadingDynamicData) {
+          this.btnLoading = true
+        }
         const activeWidget = _.cloneDeep(this.activeWidget)
         const { render } = this.activeWidget
         // 设置当前选中不见
