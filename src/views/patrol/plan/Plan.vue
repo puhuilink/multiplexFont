@@ -331,17 +331,9 @@ export default {
         this.userGroupList = r.data.data
       })
     },
-    /**
-     * 筛选展开开关
-     */
     toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
@@ -350,8 +342,6 @@ export default {
       this.$refs['detail'].open('', 'New')
     },
     edit () {
-      // const [record] = this.selectedRows
-      // this.$refs['detail'].edtt(record)
       this.$refs['detail'].open(this.selectedRows[0], 'Edit')
     },
     /**

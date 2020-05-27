@@ -5,13 +5,7 @@
   <div class="task-calendar">
     <a-card :bordered="false">
 
-      <!-- S 选择器 -->
       <div class="opration">
-        <!-- <a-radio-group :value="ascriptionChoose" @change="ascriptionChange">
-          <a-radio-button value="">全部</a-radio-button>
-          <a-radio-button value="MachineRoom-BJ">北京机房</a-radio-button>
-          <a-radio-button value="MachineRoom-XM">厦门机房</a-radio-button>
-        </a-radio-group> -->
         <a-cascader
           :options="screening.ascriptionList"
           placeholder="全部"
@@ -19,27 +13,25 @@
           style="width: 280px"
         />
       </div>
-      <!-- E 选择器 -->
+      <!-- / 选择器 -->
 
-      <!-- S 执行状况分类 -->
       <div class="perform">
         <div class="status-demo" v-for="p in performStatus" :key="p.label">
           <span class="demo-dot" :style="{background:p.color}"></span>
           <span>{{ p.label }}</span>
         </div>
       </div>
-      <!-- E 执行状况分类 -->
+      <!-- / 执行状况分类 -->
 
-      <!-- S 巡检日历 -->
       <a-calendar
         mode="month"
         @select="onSelect"
-        @change="onChange"
         @panelChange="onChange"
       >
+        <!-- @change="onChange" -->
         <ul class="events" slot="dateCellRender" slot-scope="value">
           <template v-if="getDataListOK">
-            <li class="item" v-for="(item, index) in getListData(value)" :key="index">
+            <li class="item ant-badge-status" v-for="(item, index) in getListData(value)" :key="index">
               <span
                 class="dot"
                 :style="item.work_state==''?{backgroundColor:'#f8f9fa'}:item.work_state=='未执行'
@@ -47,30 +39,26 @@
                     ?{backgroundColor: '#28a745'}:item.work_state=='执行失败'
                       ?{backgroundColor:'#dc3545'}:item.work_state=='执行完成发现异常'?{backgroundColor: '#ffc107'}:{}"
               ></span>
-              <span>{{ item.work_start_time }}</span>
-              <span>{{ item.content }}</span>
-              <span>{{ item.df_transactor_name }}</span>
-              <span>{{ item.task_name }}</span>
+              <span class="">{{ item.work_start_time }} {{ item.content }} {{ item.df_transactor_name }} {{ item.task_name }}</span>
             </li>
           </template>
         </ul>
       </a-calendar>
-      <!-- E 巡检日历 -->
+      <!-- / 巡检日历 -->
 
-      <!-- S 模块 -->
       <detail ref="detail"></detail>
-      <!-- E 模块 -->
+      <!-- / 模块 -->
     </a-card>
   </div>
 </template>
 
 <script>
-// import { getCalendar } from '@/api/patrol'
 import detail from '../modules/TCDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import moment from 'moment'
 import screening from '../screening'
+import _ from 'lodash'
 
 const queryBefore = gql`query xunjian ($where: t_xj_task_info_bool_exp = {}){
   data: t_xj_task_info(where: $where) {
@@ -223,10 +211,16 @@ export default {
     getWorkState (e) {
       let workState
       switch (e.task_status) {
-        case 'A' || 'B':
+        case 'A':
           workState = '未执行'
           break
-        case 'D' || 'E':
+        case 'B':
+          workState = '未执行'
+          break
+        case 'D':
+          e.task_state === 'Y' ? workState = '执行完成' : workState = '执行完成发现异常'
+          break
+        case 'E':
           e.task_state === 'Y' ? workState = '执行完成' : workState = '执行完成发现异常'
           break
         case 'F':
@@ -236,6 +230,15 @@ export default {
           workState = e.task_status
           break
       }
+      // if (e.task_status === 'A' || e.task_status === 'B') {
+      //   workState = '未执行'
+      // } else if (e.task_status === 'A' || e.task_status === 'B') {
+      //   e.task_state === 'Y' ? workState = '执行完成' : workState = '执行完成发现异常'
+      // } else if (e.task_status === 'F') {
+      //   workState = '执行失败'
+      // } else {
+      //   workState = e.task_status
+      // }
       return workState
     },
     async loadLaterData (parameter) {
@@ -245,6 +248,11 @@ export default {
           ...parameter,
           where: {
             ...this.where,
+            ...this.ascriptionChoose ? {
+              ascription: {
+                _eq: this.ascriptionChoose
+              }
+            } : {},
             start_time: {
               _lte: this.dateQuery.currentDate
             },
@@ -254,15 +262,53 @@ export default {
           }
         }
       }).then(r => {
-        const list = r.data.data.map(r => ({
+        const dayList = this.getIntervalDayList()
+        const dataList = r.data.data.map(r => ({
           ...r,
           work_start_date: r.start_time.split('T')[0],
           work_start_time: r.start_time.split('T')[1],
-          work_end_date: r.start_time.split('T')[0]
+          work_end_date: r.end_time.split('T')[0]
         })
         )
-        return list || []
+        dayList.forEach(day => {
+          dataList.forEach(data => {
+            var curTime = new Date(Date.parse(day.date)).getTime()
+            var startTime = new Date(Date.parse(data.work_start_date)).getTime()
+            var endTime = new Date(Date.parse(data.work_end_date)).getTime()
+            if (startTime < curTime && curTime < endTime) {
+              day.planList.push(data)
+            }
+          })
+          day.planList.forEach(plan => {
+            plan.cycleValue = plan.cycle_value.split(',')
+            plan.groupMember = plan.group_member.split(',')
+            plan.workTime = plan.work_time.split(',').filter(function (item) {
+              return item
+            })
+            // TODO: 根据周期类型去拼接taskList（具体字段见task_info表）
+            if (plan.cycle_type === 'W') {
+              console.log(111)
+            }
+            plan.taskList = plan.planList
+          })
+        })
+        return []
       })
+    },
+    getIntervalDayList () {
+      const start_time = moment(this.dateQuery.currentDate)
+      const end_time = moment(this.dateQuery.endDate).endOf('d')
+      const diff_times = end_time.diff(start_time, 'd')
+      const arr = []
+      _.times(diff_times, i => {
+        const new_start_time = moment(start_time) // 每次重新初始化开始时间，因为我碰到了深拷贝的问题
+        const planDate = {}
+        planDate.date = new_start_time.add(i + 1, 'days').format('YYYY-MM-DD')
+        planDate.planList = []
+        planDate.taskList = []
+        arr.push(planDate) // 数组下标从０开始，可以用它进行每次的天数递增
+      })
+      return arr
     },
     async getAllData () {
       const beforeData = await this.loadBeforeData()
@@ -328,17 +374,29 @@ export default {
 </script>
 
 <style scoped lang="less">
-.status-demo {
-  display: inline-block;
-  margin-right: 6px;
-
-  .demo-dot {
+.task-calendar {
+  .status-demo {
     display: inline-block;
-    width: 12px;
-    height: 12px;
-    margin-right: 4px;
+    margin-right: 6px;
+
+    .demo-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
+    }
   }
-}
+  .item {
+    span {
+      margin-right: 2px;
+    }
+    .dot  {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+  }
 
   .events {
     list-style: none;
@@ -358,16 +416,6 @@ export default {
   }
   .notes-month section {
     font-size: 28px;
-  }
-.item {
-  span {
-    margin-right: 2px;
-  }
-  .dot  {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
   }
 }
 </style>
