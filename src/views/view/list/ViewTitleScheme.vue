@@ -89,10 +89,10 @@ export default {
           this.confirmLoading = true
           await ViewListService.add(values)
           this.$emit('addSuccess')
-          this.notifyAddSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -110,10 +110,10 @@ export default {
           const { view_id } = this.record
           await ViewListService.update(values, { view_id })
           this.$emit('editSuccess')
-          this.notifyEditSuccess()
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false

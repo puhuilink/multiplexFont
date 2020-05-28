@@ -137,7 +137,7 @@ export default {
         dataIndex: 'flag',
         width: 120,
         sorter: true,
-        customRender: val => val ? '有效' : '无效'
+        customRender: flag => flag ? '有效' : '无效'
       },
       {
         title: '备注',
@@ -212,10 +212,10 @@ export default {
         onOk: () => GroupService
           .batchDelete(this.selectedRowKeys)
           .then(() => {
-            this.notifyDeleteSuccess()
+            this.$notifyDeleteSuccess()
             this.query(false)
           })
-          .catch(this.notifyError)
+          .catch(this.$notifyError)
       })
     },
     /**
@@ -230,10 +230,10 @@ export default {
         this.$refs['table'].loading = true
         const [{ group_id, flag }] = this.selectedRows
         await GroupService.toggleFlag(group_id, Number(!flag))
-        this.notifyToggleFlagSuccess()
+        this.$notifyToggleFlagSuccess()
         this.query(false)
       } catch (e) {
-        this.notifyError(e)
+        this.$notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

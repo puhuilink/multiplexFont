@@ -233,11 +233,11 @@ export default {
         return GroupService.add(values)
           .then(res => {
             this.$emit('addSuccess')
-            this.notifyAddSuccess()
+            this.$notifyAddSuccess()
             this.cancel()
           })
           .catch(e => {
-            this.notifyError(e)
+            this.$notifyError(e)
             throw e
           })
           .finally(() => {
@@ -256,11 +256,11 @@ export default {
         return GroupService.update(values, { group_id })
           .then(res => {
             this.$emit('editSuccess')
-            this.notifyEditSuccess()
+            this.$notifyEditSuccess()
             this.cancel()
           })
           .catch(e => {
-            this.notifyError(e)
+            this.$notifyError(e)
             throw e
           })
           .finally(() => {

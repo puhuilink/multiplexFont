@@ -199,10 +199,10 @@ export default {
       this.$confirmDelete({
         onOk: () => deleteBaselineDefs(this.selectedRowKeys)
           .then(() => {
-            this.notifyDeleteSuccess()
+            this.$notifyDeleteSuccess()
             this.query(false)
           })
-          .catch(this.notifyError)
+          .catch(this.$notifyError)
       })
     },
     /**

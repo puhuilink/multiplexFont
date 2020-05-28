@@ -254,10 +254,10 @@ export default {
           }
         } = this
         await ModelService.batchDeleteAttr(modelName, attrNameList)
-        this.notifyDeleteSuccess()
+        this.$notifyDeleteSuccess()
         this.$refs['table'].refresh(false)
       } catch (e) {
-        this.notifyError(e)
+        this.$notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false
