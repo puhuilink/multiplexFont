@@ -196,7 +196,7 @@ export default {
       this.$refs['auth'].edit(record)
     },
     /**
-     * 新增工作区
+     * 新增工作组
      * @event
      */
     onAdd () {
