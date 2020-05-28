@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import deleteCheck from '@/components/DeleteCheck'
 import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 import { CiModelSelect, KpiSelect } from '@/components/Common'

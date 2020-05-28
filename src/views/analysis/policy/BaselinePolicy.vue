@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/BSDetail'
 import { queryBaselineList, deleteBaselinePolicies } from '@/api/controller/BaselinePolicy'
 import { Confirm, List } from '@/components/Mixins'

@@ -2,29 +2,28 @@
   <div class="patrol-object">
 
     <CTable
-      ref="table"
-      rowKey="task_ci_id"
       :columns="columns"
       :data="loadData"
-      :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
-      :customRow="customRow"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      ref="table"
+      rowKey="task_ci_id"
+      :rowSelection="rowSelection"
+      :scroll="scroll"
     >
       <template #query>
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="巡更区域"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset:2 }"
-                  style="width: 100%">
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
                   <a-cascader
                     style="width: 100%"
                     placeholder="请选择"
                     :options="screening.ascriptionList"
-                    v-model="queryParam.ascription"
+                    v-model="queryParams.ascription"
                   />
                 </a-form-item>
               </a-col>
@@ -32,69 +31,61 @@
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="检查对象"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 14, offset:2 }"
-                  style="width: 100%">
-                  <a-input v-model="queryParam.ci_name" placeholder=""/>
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
+                  <a-input allowClear v-model.trim="queryParams.ci_name" />
                 </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
-              <!-- 多余筛选框是否展示 -->
-              <template v-if="advanced">
-                <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="是否异常"
-                    :labelCol="{ span: 4 }"
-                    :wrapperCol="{ span: 14, offset:2 }"
-                    style="width: 100%">
-                    <a-select
-                      allowClear
-                      v-model="queryParam.is_enable"
-                      placeholder="请选择"
-                      default-value=""
-                    >
-                      <a-select-option
-                        v-for="item in screening.enableList"
-                        :key="item.code"
-                      >{{ item.name }}</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-                <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="巡更日期范围"
-                    :labelCol="{ span: 4 }"
-                    :wrapperCol="{ span: 14, offset:2 }"
-                    style="width: 100%">
-                    <a-range-picker @change="doDateChange" />
-                  </a-form-item>
-                </a-col>
-              </template>
+            <a-row v-show="advanced">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="是否异常"
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
+                  <a-select
+                    allowClear
+                    v-model="queryParams.is_enable"
+                    default-value=""
+                  >
+                    <a-select-option
+                      v-for="item in screening.enableList"
+                      :key="item.code"
+                    >{{ item.name }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="巡更日期范围"
+                  v-bind="formItemLayout"
+                  style="width: 100%"
+                >
+                  <a-range-picker @change="doDateChange" />
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
-          <!-- TODO: 统一管理布局 -->
-          <!-- TODO: 居中 span -->
-          <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
-            <a-button type="primary" @click="query">查询</a-button>
-            <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? '收起' : '展开' }}
-              <a-icon :type="advanced ? 'up' : 'down'"/>
-            </a>
+
+          <span :class="advanced ? 'expand' : 'collapse'">
+            <QueryBtn @click="query" />
+            <ResetBtn @click="resetQueryParams" />
+            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
           </span>
         </a-form>
       </template>
 
       <template #operation>
         <a-button
-          :disabled="selectedRowKeys.length !== 1"
+          :disabled="hasSelectedOne"
           @click="seeDetail"
         >
           详情查看
         </a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="selectedRowKeys.length == 0">导出</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="hasSelected">导出</a-button>
       </template>
 
       <a slot="action" slot-scope="text, record" @click="seeKpi(record)">查看</a>
@@ -106,19 +97,18 @@
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
-import { STable } from '@/components'
 import { getPatrolObjectExcel } from '@/api/controller/ExcelExport'
 import { getTaskCiList } from '@/api/controller/patrol'
 import detail from '../modules/PODetail'
 import kpi from '../modules/KpiList'
 import screening from '../screening'
+import { Confirm, List } from '@/components/Mixins'
+import { filterAscription } from '../index'
 
 export default {
   name: 'PatrolObject',
+  mixins: [Confirm, List],
   components: {
-    CTable,
-    STable,
     detail,
     kpi
   },
@@ -153,27 +143,17 @@ export default {
           label: '失败'
         }
       ],
-      // 查询参数
-      queryParam: {},
-      // 列表表头
       columns: [
         {
           title: '检查对象名称',
           dataIndex: 'ci_name',
-          width: 100
+          width: 120
         },
         {
           title: '巡更区域',
           dataIndex: 'ascription',
-          width: 120,
-          customRender: (text) => {
-            this.screening.ascriptionList.forEach(element => {
-              if (element.code === text) {
-                text = element.name
-              }
-            })
-            return text
-          }
+          width: 320,
+          customRender: filterAscription
         },
         // TODO: 未知字段名
         {
@@ -226,61 +206,58 @@ export default {
         }
       ],
       innerData: [],
-      // 已选行特性值
-      selectedRowKeys: [],
-      // 已选行数据
       selectedRows: [],
       loadData: parameter => {
         this.selectedRowKeys = []
         const variables = {
           ...parameter,
           where: {
-            ...this.queryParam.ascription ? {
+            ...this.queryParams.ascription ? {
               ascription: {
-                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
+                _eq: this.queryParams.ascription[this.queryParams.ascription.length - 1]
               }
             } : {},
-            ...this.queryParam.is_enable ? {
+            ...this.queryParams.is_enable ? {
               is_enable: {
-                _eq: this.queryParam.is_enable
+                _eq: this.queryParams.is_enable
               }
             } : {},
-            ...this.queryParam.task_status ? {
+            ...this.queryParams.task_status ? {
               task_status: {
-                _eq: this.queryParam.task_status
+                _eq: this.queryParams.task_status
               }
             } : {},
-            ...this.queryParam.task_name ? {
+            ...this.queryParams.task_name ? {
               task_name: {
-                _ilike: `%${this.queryParam.task_name.trim()}%`
+                _ilike: `%${this.queryParams.task_name.trim()}%`
               }
             } : {},
-            ...this.queryParam.is_delay ? {
+            ...this.queryParams.is_delay ? {
               is_delay: {
-                _eq: this.queryParam.is_delay
+                _eq: this.queryParams.is_delay
               }
             } : {},
-            ...this.queryParam.task_type ? {
+            ...this.queryParams.task_type ? {
               task_type: {
-                _eq: this.queryParam.task_type
+                _eq: this.queryParams.task_type
               }
             } : {},
-            ...this.queryParam.transactor_name ? {
+            ...this.queryParams.transactor_name ? {
               transactor_name: {
-                _ilike: `%${this.queryParam.transactor_name.trim()}%`
+                _ilike: `%${this.queryParams.transactor_name.trim()}%`
               }
             } : {},
-            ...this.queryParam.is_df_transactor ? {
+            ...this.queryParams.is_df_transactor ? {
               is_df_transactor: {
-                _eq: this.queryParam.is_df_transactor
+                _eq: this.queryParams.is_df_transactor
               }
             } : {},
-            ...this.queryParam.dateStr ? {
+            ...this.queryParams.dateStr ? {
               plan_start_time: {
-                _gte: this.queryParam.dateStr[0]
+                _gte: this.queryParams.dateStr[0]
               },
               plan_end_time: {
-                _lte: this.queryParam.dateStr[1]
+                _lte: this.queryParams.dateStr[1]
               }
             } : {}
           }
@@ -289,42 +266,12 @@ export default {
       }
     }
   },
-  filters: {},
-  computed: {
-    scrollX: {
-      get () {
-        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
-      }
-    }
-  },
   methods: {
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
     /**
      * 巡更日期范围改变
      */
     doDateChange (date, dateStr) {
-      this.queryParam.dateStr = dateStr
-    },
-    /**
-     * 查询
-     * @param {Boolean} firstPage 是否从第一页开始
-     */
-    query (firstPage = true) {
-      this.$refs['table'].refresh(firstPage)
+      this.queryParams.dateStr = dateStr
     },
     seeDetail () {
       this.$refs['detail'].open(this.selectedRows[0])
@@ -369,14 +316,4 @@ export default {
 </script>
 
 <style scoped lang='less'>
-.opration{
-  margin-bottom: 10px;
-  button{
-    margin-right: 5px;
-  }
-}
-.fold {
-  display: inline-block;
-  width: calc(100% - 216px);
-}
 </style>
