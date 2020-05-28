@@ -3,116 +3,105 @@
  */
 <template>
   <div class="prequel-record">
-    <a-card :bordered="false">
 
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="故障类型">
-                <a-input v-model="queryParam.incident_type" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="advanced ? 12 : 8" :sm="24">
-              <a-form-item label="故障名称">
-                <a-input v-model="queryParam.incident_title" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <!-- 多余筛选框是否展示 -->
-            <template v-if="advanced">
-              <a-col :md="12" :sm="24">
-                <a-form-item label="前转类型">
-                  <a-select
-                    allowClear
-                    v-model="queryParam.forward_type"
-                    placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option
-                      v-for="item in forwardType"
-                      :key="item.value"
-                    >
-                      {{ item.label }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="前转目标">
-                  <a-input v-model="queryParam.forward_destiationn" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="时间范围"
-                  style="width: 100%"
+    <!-- S 搜索 -->
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <a-col :md="advanced ? 12 : 8" :sm="24">
+            <a-form-item label="故障类型">
+              <a-input v-model="queryParam.incident_type" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="advanced ? 12 : 8" :sm="24">
+            <a-form-item label="故障名称">
+              <a-input v-model="queryParam.incident_title" />
+            </a-form-item>
+          </a-col>
+          <!-- 多余筛选框是否展示 -->
+          <template v-if="advanced">
+            <a-col :md="12" :sm="24">
+              <a-form-item label="前转类型">
+                <a-select
+                  allowClear
+                  v-model="queryParam.forward_type"
+                  placeholder="请选择"
+                  default-value=""
                 >
-                  <a-range-picker
-                    allowClear
-                    format="YYYY-MM-DD HH:mm:ss"
-                    :placeholder="['开始时间', '结束时间']"
-                    :showTime="{ format: 'HH:mm:ss' }"
-                    style="width: 100%"
-                    @ok="timeOk"
-                    @cancel="timeCancel"
-                    @change="timeChange"
-                  />
-                </a-form-item>
-              </a-col>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="发送者">
-                  <a-input v-model="queryParam.send_by" placeholder=""/>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="query">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
+                  <a-select-option
+                    v-for="item in forwardType"
+                    :key="item.value"
+                  >
+                    {{ item.label }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
             </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <!-- E 搜索 -->
+            <a-col :md="12" :sm="24">
+              <a-form-item label="前转目标">
+                <a-input v-model="queryParam.forward_destiationn" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="12" :sm="24">
+              <a-form-item
+                label="时间范围"
+                style="width: 100%"
+              >
+                <a-range-picker
+                  allowClear
+                  format="YYYY-MM-DD HH:mm:ss"
+                  :placeholder="['开始时间', '结束时间']"
+                  :showTime="{ format: 'HH:mm:ss' }"
+                  style="width: 100%"
+                  @ok="timeOk"
+                  @cancel="timeCancel"
+                  @change="timeChange"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :md="12" :sm="24">
+              <a-form-item label="发送者">
+                <a-input v-model="queryParam.send_by" />
+              </a-form-item>
+            </a-col>
+          </template>
+          <a-col :md="!advanced && 8 || 24" :sm="24">
+            <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
+              <a-button type="primary" @click="query">查询</a-button>
+              <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? '收起' : '展开' }}
+                <a-icon :type="advanced ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
+    <!-- E 搜索 -->
 
-      <!-- S 列表 -->
-      <CTable
-        ref="table"
-        rowKey="incident_id"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ x: 1500, y:400 }"
-        :customRow="customRow"
-      >
-        <span slot="incidentTitle" slot-scope="text">
-          <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
-        </span>
-        <span slot="message" slot-scope="text">
-          <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
-        </span>
-      </CTable>
-      <!-- E 列表 -->
+    <!-- S 列表 -->
+    <CTable
+      ref="table"
+      rowKey="incident_id"
+      :columns="columns"
+      :data="loadData"
+      :scroll="scroll"
+    >
+    </CTable>
+    <!-- E 列表 -->
 
-      <!-- S model模块 -->
-      <prequel-detail ref="detail"></prequel-detail>
-      <!-- E model模块 -->
-    </a-card>
+    <!-- S model模块 -->
+    <prequel-detail ref="detail"></prequel-detail>
+    <!-- E model模块 -->
   </div>
 </template>
 
 <script>
-import { Ellipsis } from '@/components'
-import CTable from '@/components/Table/CTable'
 import prequelDetail from '../modules/prequelDetail'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import { Confirm, List } from '@/components/Mixins'
 
 const query = gql`query instanceList($where: t_forward_record_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_forward_record_order_by!]) {
     pagination: t_forward_record_aggregate(where: $where) {
@@ -137,9 +126,8 @@ const query = gql`query instanceList($where: t_forward_record_bool_exp = {}, $li
 
 export default {
   name: 'PrequelRecord',
+  mixins: [Confirm, List],
   components: {
-    CTable,
-    Ellipsis,
     prequelDetail
   },
   data () {
@@ -214,7 +202,7 @@ export default {
           dataIndex: 'incident_title',
           width: 300,
           sorter: true,
-          scopedSlots: { customRender: 'incidentTitle' }
+          tooltip: true
         },
         {
           title: '发送者',
@@ -258,23 +246,12 @@ export default {
           title: '描述',
           dataIndex: 'comments',
           align: 'center',
-          // width: 400,
-          scopedSlots: { customRender: 'message' }
+          tooltip: true
         }
       ]
     }
   },
-  filters: {
-  },
-  computed: {
-  },
   methods: {
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
     /**
      * 选中时间但还未确定，或取消时间
      * @param {Array<Moment>} e
@@ -344,9 +321,6 @@ export default {
         }
       }).then(r => r.data)
     },
-    query () {
-      this.$refs['table'].refresh(true)
-    },
     /**
      * 行属性,表格点击事件
      */
@@ -367,10 +341,4 @@ export default {
 </script>
 
 <style scoped lang='less'>
-.opration{
-  margin-bottom: 10px;
-  button{
-    margin-right: 5px;
-  }
-}
 </style>
