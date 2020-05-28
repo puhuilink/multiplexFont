@@ -105,13 +105,13 @@ import AuthScheme from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './GroupAdministratorSchema'
 import GroupUserSchema from './GroupUserSchema'
 import deleteCheck from '@/components/DeleteCheck'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { GroupService } from '@/api-hasura/index'
 
 export default {
   name: 'Group',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
     GroupSchema,
     AuthScheme,
@@ -208,20 +208,15 @@ export default {
      * @event
      */
     async onBatchDelete () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await GroupService.batchDelete(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
-        this.query(false)
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      this.$confirmDelete({
+        onOk: () => GroupService
+          .batchDelete(this.selectedRowKeys)
+          .then(() => {
+            this.notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.notifyError)
+      })
     },
     /**
      * 更改工作组状态

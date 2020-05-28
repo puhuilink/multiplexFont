@@ -109,12 +109,12 @@ import AuthScheme from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './UserGroupSchema'
 import deleteCheck from '@/components/DeleteCheck'
 import { UserService } from '@/api-hasura'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'User',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
     UserSchema,
     AuthScheme,
@@ -235,20 +235,15 @@ export default {
      * @event
      */
     async onBatchDeleteUser () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await UserService.batchDelete(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
-        this.query(false)
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      this.$confirmDelete({
+        onOk: () => UserService
+          .batchDelete(this.selectedRowKeys)
+          .then(() => {
+            this.notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.notifyError)
+      })
     },
     /**
      * 重置用户密码
