@@ -60,10 +60,6 @@
       </template>
     </CTable>
 
-    <!-- S 创建视图 -->
-    <create-view ref="createModel" @ok="query" />
-    <!-- E 创建视图 -->
-
     <ViewTitleScheme
       ref="title"
       @addSuccess="query"
