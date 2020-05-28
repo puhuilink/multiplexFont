@@ -289,7 +289,7 @@ export default {
       this.$refs['detail'].open(this.selectedRows[0], 'Edit')
     },
     async batchDelete () {
-      this.$confirmDelete({
+      this.$promiseConfirmDelete({
         onOk: () => deletePlan({ IDs: this.selectedRowKeys })
           .then(() => {
             this.$notifyDeleteSuccess()

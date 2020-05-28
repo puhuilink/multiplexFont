@@ -155,7 +155,7 @@ export default {
      * 删除选中项
      */
     async onBatchDelete () {
-      this.$confirmDelete({
+      this.$promiseConfirmDelete({
         onOk: () => deleteRoute({ IDs: this.selectedRowKeys })
           .then(() => {
             this.$notifyDeleteSuccess()

@@ -104,7 +104,6 @@ import GroupSchema from './GroupSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './GroupAdministratorSchema'
 import GroupUserSchema from './GroupUserSchema'
-import deleteCheck from '@/components/DeleteCheck'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { GroupService } from '@/api-hasura/index'
@@ -119,7 +118,7 @@ export default {
     GroupUserSchema
   },
   data: () => ({
-    columns: [
+    columns: Object.freeze([
       {
         title: '工作组编号',
         dataIndex: 'group_id',
@@ -145,7 +144,7 @@ export default {
         width: 280,
         tooltip: true
       }
-    ]
+    ])
   }),
   computed: {
     isSelectedValid () {
@@ -208,7 +207,7 @@ export default {
      * @event
      */
     async onBatchDelete () {
-      this.$confirmDelete({
+      this.$promiseConfirmDelete({
         onOk: () => GroupService
           .batchDelete(this.selectedRowKeys)
           .then(() => {
@@ -223,21 +222,18 @@ export default {
      * @event
      */
     async onToggleFlag () {
-      if (!await deleteCheck.confirm({ content: '是否改变工作组状态？' })) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        const [{ group_id, flag }] = this.selectedRows
-        await GroupService.toggleFlag(group_id, Number(!flag))
-        this.$notifyToggleFlagSuccess()
-        this.query(false)
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      const [{ group_id, flag }] = this.selectedRows
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认更改工作组状态？',
+        onOk: () => GroupService
+          .toggleFlag(group_id, Number(!flag))
+          .then(() => {
+            this.$notifyToggleFlagSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     },
     /**
      * 编辑工作组

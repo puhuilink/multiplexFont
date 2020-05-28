@@ -196,7 +196,7 @@ export default {
      * @event
     */
     async onBatchDelete () {
-      this.$confirmDelete({
+      this.$promiseConfirmDelete({
         onOk: () => deleteBaselineDefs(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()

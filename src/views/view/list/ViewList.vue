@@ -195,7 +195,7 @@ export default {
      * 处理删除事件
      */
     async handleDelete () {
-      this.$confirmDelete({
+      this.$promiseConfirmDelete({
         onOk: () => deleteViews(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
