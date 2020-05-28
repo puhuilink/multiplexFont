@@ -73,9 +73,7 @@
 </template>
 
 <script>
-import { PageView } from '@/layouts'
 import { getViewList, copyView, deleteViews } from '@/api/controller/View'
-import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
@@ -84,8 +82,6 @@ export default {
   name: 'ViewList',
   mixins: [Confirm, List],
   components: {
-    PageView,
-    CreateView,
     ViewTitleScheme
   },
   data: () => ({
