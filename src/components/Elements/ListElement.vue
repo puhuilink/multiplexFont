@@ -120,16 +120,16 @@ export default {
     },
     query () {
       this.$refs['table'].refresh(true)
-    },
+    }
     /**
      * 30s自动刷新
      */
-    refresh (e) {
-      const refreshCycle = e * 60000
-      this.timer = setInterval(() => {
-        this.$refs['table'].refresh(true)
-      }, refreshCycle)
-    }
+    // refresh (e) {
+    //   const refreshCycle = e * 60000
+    //   this.timer = setInterval(() => {
+    //     this.$refs['table'].refresh(true)
+    //   }, refreshCycle)
+    // }
   },
   watch: {
     elementProps (props) {
@@ -137,20 +137,24 @@ export default {
         props.isCallInterface = false
         this.$refs['table'].refresh()
       }
-      if (props.params.refreshTime) {
-        this.refresh(props.params.refreshTime)
-      }
+      // if (props.params.refreshTime) {
+      //   this.refresh(props.params.refreshTime)
+      // }
       this.headerRowStyle = props.styleConfig.header
       this.rowStyle = props.styleConfig.rows
       this.columns.forEach(e => {
         e.align = props.styleConfig.align
       })
     }
-  },
-  beforeDestroy () {
-    // 清除定时器
-    clearInterval(this.timer)
   }
+  // beforeDestroy () {
+  //   // 清除定时器
+  //   clearInterval(this.timer)
+  // },
+  // destroyed () {
+  //   // 清除定时器
+  //   // clearInterval(this.timer)
+  // }
 }
 </script>
 

@@ -212,13 +212,10 @@
 
 <script>
 import '@/assets/less/template.less'
-// import _ from 'lodash'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import DegreeRingDataSource from '../dataSource/DegreeRingDataSource'
-// eslint-disable-next-line
-import { ItemStyle } from '../../../../../model/config/proprietaryConfigs'
 
 export default {
   name: 'DegreeRingConfig',
