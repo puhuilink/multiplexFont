@@ -73,12 +73,12 @@
 import deleteCheck from '@/components/DeleteCheck'
 import detail from '../modules/BSDetail'
 import { queryBaselineList, deleteBaselinePolicies } from '@/api/controller/BaselinePolicy'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'BaselinePolicy',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
     detail
   },
@@ -152,20 +152,14 @@ export default {
      * @event
      */
     async onBatchDelete () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await deleteBaselinePolicies(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
-        this.$refs['table'].refresh(false)
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      this.$confirmDelete({
+        onOk: () => deleteBaselinePolicies(this.selectedRowKeys)
+          .then(() => {
+            this.notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.notifyError)
+      })
     }
   }
 }
