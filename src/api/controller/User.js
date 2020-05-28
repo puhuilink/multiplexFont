@@ -1,7 +1,6 @@
 import apollo from '@/utils/apollo'
 import moment from 'moment'
 import { axios } from '@/utils/request'
-import { oldRequest } from '@/utils/oldRequest'
 import {
   mutationInsertUsers,
   mutationUpdateUser
@@ -19,15 +18,6 @@ export const login = function ({ userId, pwd }) {
     userId: user,
     encryptedPwd
   })
-}
-
-/**
- * 旧系统登录接口
- * @param {*} data
- */
-export const loginOld = function () {
-  console.dir(oldRequest)
-  return oldRequest.post('/rest/DoLogin/DoLogin', ['administrator', 'zhongjiao@123'])
 }
 
 export const resetPwd = function ({ userId, encryptedPwd, newEncryptedPwd }) {
