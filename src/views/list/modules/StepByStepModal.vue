@@ -96,7 +96,8 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
+import _ from 'lodash'
+const { pick } = _
 
 const stepForms = [
   ['name', 'desc'],

@@ -72,10 +72,10 @@ export default {
             source: this.source
           })
           this.$emit('addSuccess')
-          this.notifyAddSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.loading = false
@@ -93,10 +93,10 @@ export default {
             source: this.source
           }, { _id: this.record._id })
           this.$emit('editSuccess')
-          this.notifyEditSuccess()
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.loading = false

@@ -503,7 +503,6 @@ export default {
      */
     async insert (values) {
       this.loading = true
-      // FIXME: 数据库 rid 与 did 一致，did 不是外键？
       return apollo.clients.alert.mutate({
         mutation: insert,
         variables: {

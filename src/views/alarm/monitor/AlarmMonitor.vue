@@ -11,18 +11,17 @@
     >
       <!-- S 列表 -->
       <CTable
+        :columns="columns"
+        :customRow="customRow"
+        :data="loadData"
         ref="table"
         rowKey="alert_id"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :scroll="{ x: 1800, y: 350 }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :rowSelection="rowSelection"
+        :scroll="scroll"
       >
 
         <template #query>
-          <a-form layout="inline">
+          <a-form layout="inline" class="form">
             <div :class="{ fold: !advanced }">
               <a-row >
                 <a-col :md="12" :sm="24">
@@ -34,7 +33,7 @@
                   >
                     <a-select
                       allowClear
-                      v-model="queryParam.domains"
+                      v-model="queryParams.domains"
                       placeholder="请选择CI域"
                     >
                       <a-select-option
@@ -54,100 +53,96 @@
                     style="width: 100%"
                   >
                     <CiModelSelect
-                      v-model="queryParam.model"
-                      :value="queryParam.model"
+                      v-model="queryParams.model"
+                      :value="queryParams.model"
                       @input="onModelInput"
                     />
                   </a-form-item>
                 </a-col>
               </a-row>
-              <a-row>
-                <template v-if="advanced">
-                  <a-col :md="12" :sm="24">
-                    <a-form-item
-                      label="CI实例"
-                      :labelCol="{ span: 4 }"
-                      :wrapperCol="{ span: 14, offset:2 }"
-                      style="width: 100%"
+              <a-row v-show="advanced">
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="CI实例"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <CiInstanceSelect
+                      multiple
+                      v-model="queryParams.node_id"
+                      :parentNameS="queryParams.model"
+                      :value="queryParams.node_id"
+                      @input="onInstanceInput"
+                    />
+                  </a-form-item>
+                </a-col>
+                <!-- TODO: 告警类型来源不明 需要二次商议 -->
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="告警类型"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      allowClear
+                      mode="multiple"
+                      :maxTagCount="2"
+                      v-model="queryParams.alert_id"
+                      placeholder="请选择告警类型"
+                      @change="alarmTypeChange"
                     >
-                      <CiInstanceSelect
-                        multiple
-                        v-model="queryParam.node_id"
-                        :parentNameS="queryParam.model"
-                        :value="queryParam.node_id"
-                        @input="onInstanceInput"
-                      />
-                    </a-form-item>
-                  </a-col>
-                  <!-- TODO: 告警类型来源不明 需要二次商议 -->
-                  <a-col :md="12" :sm="24">
-                    <a-form-item
-                      label="告警类型"
-                      :labelCol="{ span: 4 }"
-                      :wrapperCol="{ span: 14, offset:2 }"
-                      style="width: 100%"
-                    >
-                      <a-select
-                        allowClear
-                        mode="multiple"
-                        :maxTagCount="2"
-                        v-model="queryParam.alert_id"
-                        placeholder="请选择告警类型"
-                        @change="alarmTypeChange"
+                      <!-- <a-select-option value="checkall" key="checkall" >全选</a-select-option> -->
+                      <a-select-opt-group
+                        v-for="(group,index) in queryList.alertList"
+                        :key="index"
+                        :label="group[0].parentname_s"
+                        :allowClear="true"
                       >
-                        <!-- <a-select-option value="checkall" key="checkall" >全选</a-select-option> -->
-                        <a-select-opt-group
-                          v-for="(group,index) in queryList.alertList"
-                          :key="index"
-                          :label="group[0].parentname_s"
-                          :allowClear="true"
-                        >
-                          <template v-for="groupitem in group">
-                            <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
-                          </template>
-                        </a-select-opt-group>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="12" :sm="24">
-                    <a-form-item
-                      label="采集系统"
-                      :labelCol="{ span: 4 }"
-                      :wrapperCol="{ span: 14, offset:2 }"
-                      style="width: 100%"
+                        <template v-for="groupitem in group">
+                          <a-select-option :value="groupitem.id_s" :key="groupitem.id_s">{{ groupitem.label_s }}</a-select-option>
+                        </template>
+                      </a-select-opt-group>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="采集系统"
+                    :labelCol="{ span: 4 }"
+                    :wrapperCol="{ span: 14, offset:2 }"
+                    style="width: 100%"
+                  >
+                    <a-select
+                      allowClear
+                      mode="multiple"
+                      :maxTagCount="2"
+                      v-model="queryParams.agent_id"
+                      placeholder="请选择采集系统"
+                      @change="agentChange"
                     >
-                      <a-select
-                        allowClear
-                        mode="multiple"
-                        :maxTagCount="2"
-                        v-model="queryParam.agent_id"
-                        placeholder="请选择采集系统"
-                        @change="agentChange"
+                      <a-select-option value="checkall" key="checkall" >全选</a-select-option>
+                      <a-select-opt-group
+                        v-for="(group,index) in queryList.agentList"
+                        :key="index"
+                        :label="group[0].parentname_s"
+                        :allowClear="true"
                       >
-                        <a-select-option value="checkall" key="checkall" >全选</a-select-option>
-                        <a-select-opt-group
-                          v-for="(group,index) in queryList.agentList"
-                          :key="index"
-                          :label="group[0].parentname_s"
-                          :allowClear="true"
-                        >
-                          <template v-for="(groupitem,indexs) in group">
-                            <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
-                          </template>
-                        </a-select-opt-group>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                </template>
+                        <template v-for="(groupitem,indexs) in group">
+                          <a-select-option :value="groupitem.name_s" :key="indexs">{{ groupitem.label_s }}</a-select-option>
+                        </template>
+                      </a-select-opt-group>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
               </a-row>
             </div>
-            <span :style=" { float: 'right', overflow: 'hidden', transform: `translateY(${!advanced ? '6.5' : '15.5'}px)` } || {} ">
-              <a-button type="primary" @click="query">查询</a-button>
-              <a-button style="margin-left: 8px" @click="queryParam = {}">重置</a-button>
-              <a @click="toggleAdvanced" style="margin-left: 8px">
-                {{ advanced ? '收起' : '展开' }}
-                <a-icon :type="advanced ? 'up' : 'down'"/>
-              </a>
+
+            <span :class="advanced ? 'expand' : 'collapse'">
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
             </span>
           </a-form>
         </template>
@@ -211,35 +206,13 @@
                 <a-badge
                   :count="text | levelFilter"
                   :title="text | levelTitleFilter"
-                  :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
-                    text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
-                      text==0?{backgroundColor:'#00c356'}:{}"
+                  :numberStyle="numberStyle(text)"
                 />
                 <span style="padding-left:7px; ">{{ value }}</span>
               </div>
             </a-col>
           </a-row>
         </template>
-
-        <span slot="level" slot-scope="text">
-          <a-badge
-            :count="text | levelFilter"
-            :title="text | levelTitleFilter"
-            :numberStyle="text==4?{backgroundColor:'#ff0000'}:text==3?{backgroundColor:'#f7870a'}:
-              text==2?{backgroundColor:'#ffdb00'}:text==1?{backgroundColor:'#54b9e4'}:
-                text==0?{backgroundColor:'#00c356'}:{}"
-          />
-        </span>
-        <span slot="state" slot-scope="text">
-          <a-icon
-            type="flag"
-            theme="filled"
-            :title="text | acStateTitleFilter"
-            :style="text=='0'?{color:'#c4c4c4', fontSize:'18px'}:text=='5'?{color:'#00aaf', fontSize:'18px'}:
-              text=='10'?{color:'#f99025', fontSize:'18px'}:text=='20'?{color:'#39cc39', fontSize:'18px'}:
-                text=='30'?{color:'#000000', fontSize:'18px'}:{}"
-          />
-        </span>
       </CTable>
       <!-- E 列表 -->
 
@@ -286,7 +259,6 @@ import screening from '../screening'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import queryList from '@/api/controller/AlarmqQueryList'
-import CTable from '@/components/Table/CTable'
 import MConfirm from '../modules/MConfirm'
 import RollForward from '../modules/RollForward'
 import MSolve from '../modules/MSolve'
@@ -298,6 +270,7 @@ import {
   CiModelSelect,
   CiInstanceSelect
 } from '@/components/Common'
+import { Confirm, List } from '@/components/Mixins'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
@@ -376,10 +349,36 @@ const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $ar
   }
 }`
 
+const levelStyle = (level) => {
+  level = ~~level
+  const levelMapping = new Map([
+    [0, '#00c356'],
+    [1, '#54b9e4'],
+    [2, '#ffdb00'],
+    [3, '#f7870a'],
+    [4, '#ff0000']
+  ])
+  const backgroundColor = levelMapping.get(level) || 'white'
+  return { backgroundColor }
+}
+
+const stateStyle = (state) => {
+  state = ~~state
+  const colorMapping = new Map([
+    [0, '#c4c4c4'],
+    [5, '#00aaf'],
+    [10, '#f99025'],
+    [20, '#39cc39'],
+    [30, '#000000']
+  ])
+  const color = colorMapping.get(state) || 'inherit'
+  return { color, fontSize: '18px' }
+}
+
 export default {
   name: 'AlarmMonitor',
+  mixins: [Confirm, List],
   components: {
-    CTable,
     MConfirm,
     RollForward,
     MSolve,
@@ -416,9 +415,6 @@ export default {
       ],
       tabKey: '0',
       // 搜索： 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParam: {},
       queryList: {},
       // 自动刷新
       autoRefresh: false,
@@ -431,14 +427,27 @@ export default {
           width: 75,
           fixed: 'left',
           sorter: true,
-          scopedSlots: { customRender: 'level' }
+          customRender: level => {
+            const number = this.$options.filters.levelFilter(level)
+            const style = levelStyle(level)
+            const title = this.$options.filters.levelTitleFilter(level)
+            return (
+              <a-badge count={number} number={number} numberStyle={style} title={title} />
+            )
+          }
         },
         {
           title: '状态',
           dataIndex: 'state',
           width: 75,
           sorter: true,
-          scopedSlots: { customRender: 'state' }
+          customRender: state => {
+            const title = this.$options.filters.acStateTitleFilter(state)
+            const style = stateStyle(state)
+            return (
+              <a-icon type="flag" theme="filled" title={title} style={style} />
+            )
+          }
         },
         {
           title: 'CI名称',
@@ -456,8 +465,7 @@ export default {
           title: '消息内容',
           dataIndex: 'message',
           width: 420,
-          tooltip: true,
-          scopedSlots: { customRender: 'message' }
+          tooltip: true
         },
         {
           title: '首次告警时间',
@@ -482,13 +490,10 @@ export default {
           dataIndex: 'agent_id',
           sorter: true
         }
-
       ],
       // 自动刷新的定时器
       timer: null,
       alarmLevelList: {},
-      selectedRowKeys: [],
-      selectedRows: [],
       // 表格右击菜单数据
       menuVisible: false,
       menuStyle: {
@@ -524,11 +529,10 @@ export default {
       }
     }
   },
-  created () {
-    this.getLevelList()
-    this.getqueryList()
-  },
   computed: {
+    scrollY () {
+      return 'max(calc(100vh - 430px), 100px)'
+    }
   },
   methods: {
     /**
@@ -537,8 +541,6 @@ export default {
       * @return {Function: <Promise<Any>>}
       */
     loadData (parameter) {
-      // 清空选中
-      this.selectedRowKeys = []
       return apollo.clients.alert.query({
         query,
         variables: {
@@ -552,47 +554,58 @@ export default {
               _gte: '2018-5-31 00:00:00',
               _lte: '2018-5-31 23:59:59'
             },
-            ...this.queryParam.domains ? {
+            ...this.queryParams.domains ? {
               domains: {
-                _ilike: '/' + `%${this.queryParam.domains}$%` + '/'
+                _ilike: '/' + `%${this.queryParams.domains}$%` + '/'
               }
             } : {},
-            ...this.queryParam.model ? {
+            ...this.queryParams.model ? {
               node_types: {
-                _ilike: this.queryParam.model
+                _ilike: this.queryParams.model
               }
             } : {},
-            ...this.queryParam.node_id ? {
+            ...this.queryParams.node_id ? {
               node_id: {
-                _in: this.queryParam.node_id
+                _in: this.queryParams.node_id
               }
             } : {},
-            ...this.queryParam.alert_id ? {
+            ...this.queryParams.alert_id ? {
               alert_id: {
-                _in: this.queryParam.alert_id
+                _in: this.queryParams.alert_id
               }
             } : {},
-            ...this.queryParam.agent_id ? {
+            ...this.queryParams.agent_id ? {
               agent_id: {
-                _in: this.queryParam.agent_id
+                _in: this.queryParams.agent_id
               }
             } : {}
           }
         }
       }).then(r => r.data)
     },
+    numberStyle (number) {
+      number = ~~number
+      const mapping = new Map([
+        [0, '#00c356'],
+        [1, '#54b9e4'],
+        [2, '#ffdb00'],
+        [3, '#f7870a'],
+        [4, '#ff0000']
+      ])
+      return [0, 1, 2, 3, 4].includes(number) ? { backgroundColor: mapping.get(number) } : {}
+    },
     eventQuery () {
       // return console.log(this.record)
       this.$refs.eventQuery.open(this.record)
     },
     onModelInput (str = '') {
-      this.queryParam.model = str
+      this.queryParams.model = str
       // 重置选中的 Ci 实例
-      this.queryParam.node_id = []
+      this.queryParams.node_id = []
     },
     onInstanceInput (arr = []) {
       // FIXME: 有时候抛出的 arr 是字符串？
-      this.queryParam.node_id = Array.isArray(arr) ? arr : []
+      this.queryParams.node_id = Array.isArray(arr) ? arr : []
       // TODO: 重置 kpi ？
     },
     /**
@@ -631,10 +644,21 @@ export default {
     /**
      * 获取筛选项的下拉列表的值
      */
-    async getqueryList () {
-      this.queryList.domainList = await queryList.domainList()
-      this.queryList.alertList = await queryList.alertList()
-      this.queryList.agentList = await queryList.agentList()
+    async getQueryList () {
+      const [
+        domainList,
+        alertList,
+        agentList
+      ] = await Promise.all([
+        queryList.domainList(),
+        queryList.alertList(),
+        queryList.agentList()
+      ])
+      Object.assign(this.queryList, {
+        domainList,
+        alertList,
+        agentList
+      })
     },
     /**
      * tab切换开关
@@ -645,12 +669,6 @@ export default {
       clearInterval(this.timer)
       this[type] = key
       this.$refs['table'].refresh(true)
-    },
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     },
     async ciTypeChange (value) {
       this.queryList.CIInstance = await queryList.nodeList(value)
@@ -686,15 +704,6 @@ export default {
       }
     },
     /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
      * 点击隐藏表格小菜单
      */
     bodyClick () {
@@ -706,19 +715,19 @@ export default {
      */
     CIInstanceChange (value) {
       console.log(value)
-      this.queryParam.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
+      this.queryParams.CIInstance = screening.checkAll(value, this.queryList.CIInstance)
     },
     /**
      * 告警类型改变
      */
     alarmTypeChange (value) {
-      this.queryParam.alert_id = screening.checkAll(value, this.queryList.alertList)
+      this.queryParams.alert_id = screening.checkAll(value, this.queryList.alertList)
     },
     /**
      * 采集系统下拉改变
      */
     agentChange (value) {
-      this.queryParam.agent_id = screening.checkAll(value, this.queryList.agentList)
+      this.queryParams.agent_id = screening.checkAll(value, this.queryList.agentList)
     },
     onSearch (value) {
       console.log(value)
@@ -732,10 +741,14 @@ export default {
           contextmenu: e => {
             e.preventDefault()
             this.menuData = record
+            const { clientX, clientY } = e
+            this.menuStyle = {
+              ...this.menuStyle,
+              top: clientY - 80 + 'px',
+              left: clientX - 250 + 'px'
+            }
             this.menuVisible = true
-            this.menuStyle.top = e.clientY - 80 + 'px'
-            this.menuStyle.left = e.clientX - 250 + 'px'
-            document.body.addEventListener('click', this.bodyClick)
+            document.body.addEventListener('click', this.bodyClick, true)
           },
           dblclick: () => {
             this.record = record
@@ -744,20 +757,20 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.getLevelList()
+    this.getQueryList()
   }
 }
 </script>
 
 <style scoped lang="less">
-  .table-operator{
-    button{
-      margin-right:5px;
-    }
-  }
 .levelContent{
   display: inline-block;
   line-height: 14px;
   padding:10px;
+
   .levelIcon{
     display: inline-block;
     width: 18px;
@@ -769,18 +782,23 @@ export default {
     font-weight: bold;
     margin-right: 5px;
   }
+
   .l1{
     background: #ff0000;
   }
+
   .l2{
     background: #f7870a;
   }
+
   .l3{
     background: #ffdb00;
   }
+
   .l4{
     background: #54b9e4;
   }
+
   .l5{
     background: #00c356;
   }

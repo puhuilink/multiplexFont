@@ -77,17 +77,16 @@
 </template>
 
 <script>
-import deleteCheck from '@/components/DeleteCheck'
 import { getBaselineDefList, deleteBaselineDefs } from '@/api/controller/BaselineDef'
 import BaselineDefinitionSchema from './BaselineDefinitionSchema'
 import { CiModelSelect, KpiSelect } from '@/components/Common'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 
 export default {
   name: 'BaselineDefinition',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
     CiModelSelect,
     KpiSelect,
@@ -197,17 +196,14 @@ export default {
      * @event
     */
     async onBatchDelete () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        await deleteBaselineDefs(this.selectedRowKeys)
-        this.$refs['table'].refresh()
-        this.notifyDeleteSuccess()
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      }
+      this.$promiseConfirmDelete({
+        onOk: () => deleteBaselineDefs(this.selectedRowKeys)
+          .then(() => {
+            this.$notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     },
     /**
      * 编辑动态基线定义

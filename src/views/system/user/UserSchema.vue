@@ -26,11 +26,12 @@
                 {
                   rules: [
                     {
-                      transform: value => value.trim()
-                    },
-                    {
                       required: true,
                       message: '用户名必填'
+                    },
+                    {
+                      pattern: /[a-zA-Z0-9]/,
+                      message: '仅支持英文与数字'
                     },
                     {
                       max: 16,
@@ -54,11 +55,12 @@
                 {
                   rules: [
                     {
-                      transform: value => value.trim()
-                    },
-                    {
                       required: true,
                       message: '姓名必填'
+                    },
+                    {
+                      pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/,
+                      message: '仅支持中英文与数字'
                     },
                     {
                       max: 16,
@@ -289,10 +291,10 @@ export default {
           this.confirmLoading = true
           await UserService.add(values)
           this.$emit('addSuccess')
-          this.notifyAddSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -310,10 +312,10 @@ export default {
           const { user_id } = this.record
           await UserService.update(values, { user_id })
           this.$emit('editSuccess')
-          this.notifyEditSuccess()
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false

@@ -61,7 +61,7 @@ export default {
       return _.sum(columns.map(e => e.width || 60))
     },
     scrollY () {
-      return 'max(calc(100vh - 310px), 100px)'
+      return 'max(calc(100vh - 320px), 100px)'
     },
     scroll () {
       const { scrollX: x = true, scrollY: y = true } = this

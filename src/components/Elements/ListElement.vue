@@ -24,6 +24,24 @@ import { KpiCurrentService } from '@/api-hasura'
 import { TimeRange } from '@/model/config/dataConfig/dynamicData/index'
 import _ from 'lodash'
 
+const defaultColumns = [
+  {
+    title: '时间',
+    dataIndex: 'arising_time',
+    width: 180,
+    align: 'left',
+    sorter: true
+  },
+  {
+    title: '名称',
+    // 该字段非数据表字段，为接口返回拼接字段
+    dataIndex: 'instanceLabel',
+    align: 'left',
+    width: 260,
+    sorter: false
+  }
+]
+
 export default {
   name: 'ListElement',
   components: {
@@ -38,34 +56,15 @@ export default {
       })
     }
   },
-  data () {
-    return {
-      columns: [
-        {
-          title: '时间',
-          dataIndex: 'arising_time',
-          width: 180,
-          align: 'left',
-          sorter: true
-        },
-        {
-          title: '名称',
-          // 该字段非数据表字段，为接口返回拼接字段
-          dataIndex: 'instanceLabel',
-          align: 'left',
-          width: 260,
-          sorter: true
-        }
-      ],
-      // 自动刷新的定时器
-      timer: null,
-      rowStyle: {},
-      headerRowStyle: {}
-    }
-  },
+  data: () => ({
+    columns: defaultColumns,
+    timer: null,
+    rowStyle: {},
+    headerRowStyle: {}
+  }),
   computed: {
     scrollX () {
-      return this.columns.map(column => column.width || 60).reduce((x1, x2) => x1 + x2)
+      return _.sum(this.columns.map(e => e.width || 60))
     },
     pagination () {
       return {
@@ -101,13 +100,13 @@ export default {
           ...parameter
         }).then(r => {
           const groupByKpi = _.groupBy(r.data, 'kpiLabel')
+          this.columns = _.cloneDeep(defaultColumns)
           Object.keys(groupByKpi).forEach(key => {
             this.columns.push({
               title: key,
-              dataIndex: 'kpiLabel',
               width: 150,
               align: 'left',
-              sorter: true,
+              sorter: false,
               customRender: (text, record) => {
                 if (record.kpiLabel === key) {
                   return record.kpi_value_num
@@ -121,16 +120,16 @@ export default {
     },
     query () {
       this.$refs['table'].refresh(true)
-    },
+    }
     /**
      * 30s自动刷新
      */
-    refresh (e) {
-      const refreshCycle = e * 60000
-      this.timer = setInterval(() => {
-        this.$refs['table'].refresh(true)
-      }, refreshCycle)
-    }
+    // refresh (e) {
+    //   const refreshCycle = e * 60000
+    //   this.timer = setInterval(() => {
+    //     this.$refs['table'].refresh(true)
+    //   }, refreshCycle)
+    // }
   },
   watch: {
     elementProps (props) {
@@ -138,24 +137,24 @@ export default {
         props.isCallInterface = false
         this.$refs['table'].refresh()
       }
-      if (props.params.refreshTime) {
-        this.refresh(props.params.refreshTime)
-      }
+      // if (props.params.refreshTime) {
+      //   this.refresh(props.params.refreshTime)
+      // }
       this.headerRowStyle = props.styleConfig.header
       this.rowStyle = props.styleConfig.rows
       this.columns.forEach(e => {
         e.align = props.styleConfig.align
       })
     }
-  },
-  beforeDestroy () {
-    // 清除定时器
-    clearInterval(this.timer)
-  },
-  destroyed () {
-    // 清除定时器
-    // clearInterval(this.timer)
   }
+  // beforeDestroy () {
+  //   // 清除定时器
+  //   clearInterval(this.timer)
+  // },
+  // destroyed () {
+  //   // 清除定时器
+  //   // clearInterval(this.timer)
+  // }
 }
 </script>
 

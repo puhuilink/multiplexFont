@@ -29,7 +29,7 @@ export default class ListProprietaryConfig {
    * 映射配置
    */
   getOption () {
-    console.log(this.props)
+    // console.log(this.props)
     return { ..._.omit(this, ['props']) }
   }
 }
