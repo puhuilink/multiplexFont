@@ -79,17 +79,19 @@ export default {
       deep: true,
       immediate: true,
       async handler (timeRange) {
-        await this.$nextTick()
-        const { dataConfig = {} } = this.widget.config
-        const { sourceType, dbDataConfig = {} } = dataConfig
-        const { timeRangeConfig = {} } = dbDataConfig
-        if (sourceType === 'real' && timeRange[0] && timeRange[1]) {
-          this.setTimeRange(timeRangeConfig, timeRange)
-        } else {
-          this.rollbackTimeRange(timeRangeConfig)
+        if (this.onlyShow) {
+          await this.$nextTick()
+          const { dataConfig = {} } = this.widget.config
+          const { sourceType, dbDataConfig = {} } = dataConfig
+          const { timeRangeConfig = {} } = dbDataConfig
+          if (sourceType === 'real' && timeRange[0] && timeRange[1]) {
+            this.setTimeRange(timeRangeConfig, timeRange)
+          } else {
+            this.rollbackTimeRange(timeRangeConfig)
+          }
+          // 更新时间配置后刷新配置与数据
+          this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
         }
-        // 更新时间配置后刷新配置与数据
-        this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
       }
     }
   },
