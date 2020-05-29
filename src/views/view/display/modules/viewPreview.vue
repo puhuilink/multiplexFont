@@ -16,7 +16,7 @@
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
         <div class="view-preview__renderer" ref="wrap">
 
-          <Renderer v-if="view" :view="view" ref="renderer" />
+          <Renderer v-if="view" :view="view" :timeRange="timeRange" ref="renderer" />
 
         </div>
       </a-spin>
@@ -105,6 +105,10 @@ export default {
     isDesignMode: {
       type: Boolean,
       default: false
+    },
+    timeRange: {
+      type: Array,
+      default: () => []
     }
   },
   data: () => ({

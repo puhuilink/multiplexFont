@@ -23,7 +23,9 @@
             v-else
             :show-time="{ format: 'HH:mm' }"
             format="YYYY-MM-DD HH:mm"
+            valueFormat="YYYY-MM-DDTHH:mm:ss"
             :placeholder="['开始时间', '结束时间']"
+            v-model="timeRange"
             @change="dateChange"
             @ok="dateSet" />
           <div class="ViewDisplay__view-type">
@@ -107,7 +109,7 @@
         <a-spin :spinning="isLoading" >
           <div class="ViewDisplay__view-tab-content" :class="[isFullscreen && 'fullscreen']" >
             <transition name="renderer">
-              <Renderer v-if="view" :view="view" ref="renderer" />
+              <Renderer v-if="view" :view="view" ref="renderer" :timeRange="timeRange" />
             </transition>
           </div>
         </a-spin>
@@ -129,7 +131,12 @@
       <!-- E 操作按钮 -->
 
       <!-- S 视图预览 -->
-      <ViewPreview :visible.sync="isVisible" :viewList="filterViewList" :currentView="targetView" />
+      <ViewPreview
+        :timeRange="timeRange"
+        :visible.sync="isVisible"
+        :viewList="filterViewList"
+        :currentView="targetView"
+      />
       <!-- E 视图预览 -->
 
       <AuthDesktop
@@ -202,7 +209,8 @@ export default {
       isPolling: false,
       view: null,
       index: 0,
-      timer: null
+      timer: null,
+      timeRange: []
     }
   },
   computed: {
@@ -276,12 +284,8 @@ export default {
       this.isVisible = true
       this.targetView = view
     },
-    dateChange (date) {
-      console.log(date)
-    },
-    dateSet (date) {
-      console.log(date)
-    },
+    dateChange (date) { },
+    dateSet (date) { },
     typeChange () {
       this.isThumbnail = !this.isThumbnail
       if (!this.isThumbnail) {

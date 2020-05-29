@@ -509,7 +509,6 @@ export default {
   destroyed () {
     // 清除定时器
     // clearInterval(this.timer)
-    console.log('destroyed')
   }
 }
 </script>

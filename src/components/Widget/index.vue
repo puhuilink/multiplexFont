@@ -24,9 +24,10 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
-import { ELEMENTS, ELEMENTMAPPING } from '../Elements'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Widget from '@/model/widget'
 import _ from 'lodash'
+import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData'
 
 export default {
   name: 'Widget',
@@ -46,6 +47,10 @@ export default {
     ciId: {
       type: String,
       default: ''
+    },
+    timeRange: {
+      type: Array,
+      default: () => []
     }
   },
   data: () => ({
@@ -62,11 +67,59 @@ export default {
     },
     // 元素组件名
     elementName () {
-      return ELEMENTMAPPING.get(this.widget.config.type)
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     },
     // 元素配置
     elementProps () {
       return this.widget.config.proprietaryConfig.props
+    }
+  },
+  watch: {
+    timeRange: {
+      deep: true,
+      immediate: true,
+      async handler (timeRange) {
+        await this.$nextTick()
+        const { dataConfig = {} } = this.widget.config
+        const { sourceType, dbDataConfig = {} } = dataConfig
+        const { timeRangeConfig = {} } = dbDataConfig
+        if (sourceType === 'real' && timeRange[0] && timeRange[1]) {
+          this.setTimeRange(timeRangeConfig, timeRange)
+        } else {
+          this.rollbackTimeRange(timeRangeConfig)
+        }
+        // 更新时间配置后刷新配置与数据
+        this.render.restartIntervalRefresh()
+        // console.log(this.render)
+        console.log(timeRangeConfig)
+      }
+    }
+  },
+  methods: {
+    ...mapMutations('screen', {
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+    }),
+    setTimeRange (timeRangeConfig, timeRange) {
+      const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
+      if (!_timeRangeType) {
+        // 备份原始配置
+        timeRangeConfig._timeRangeType = timeRangeType
+        timeRangeConfig._customTimeRange = customTimeRange
+        // 覆写新配置
+        timeRangeConfig.timeRangeType = TIME_RANGE_TYPE_CUSTOM
+        timeRangeConfig.customTimeRange = timeRange
+      }
+    },
+    rollbackTimeRange (timeRangeConfig) {
+      const { _timeRangeType, _customTimeRange } = timeRangeConfig
+      // 还原备份配置
+      if (_timeRangeType) {
+        timeRangeConfig.timeRangeType = _timeRangeType
+        timeRangeConfig.customTimeRange = _customTimeRange
+      }
+      // 删除备份配置
+      Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
+      Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
     }
   },
   mounted () {
@@ -103,11 +156,6 @@ export default {
         widget: this.selectWidget
       })
     }
-  },
-  methods: {
-    ...mapMutations('screen', {
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
-    })
   },
   beforeDestroy () {
     this.render.destroy()

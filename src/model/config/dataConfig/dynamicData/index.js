@@ -30,7 +30,7 @@ export const DEFAULT_TIME_RANGE_START = {
 }
 export const DEFAULT_TIME_RANGE_END = _.cloneDeep(DEFAULT_TIME_RANGE_START)
 
-export class TimeRange {
+export class TimeRangeConfig {
   constructor ({
     timeRangeStart = _.cloneDeep(DEFAULT_TIME_RANGE_START),
     timeRangeEnd = _.cloneDeep(DEFAULT_TIME_RANGE_END),
@@ -94,22 +94,21 @@ export class DynamicDataConfig {
     refreshTime = 0,
     // 外部 Ci 是否可用
     externalCi = true,
-    timeRange = new TimeRange({})
+    timeRangeConfig = {}
   }) {
     this.resourceConfig = resourceConfig
     this.externalCi = externalCi
     this.refreshTime = refreshTime
-    this.timeRange = new TimeRange(timeRange)
+    this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
     this.xAxisType = xAxisType
     this.resetData()
   }
 
   fetch (argus = {}) {
-    const { resourceConfig, timeRange } = this
-    console.dir(timeRange)
+    const { resourceConfig, timeRangeConfig } = this
     return KpiCurrentService.getValue({
       ...resourceConfig,
-      timeRange: timeRange.getOption(),
+      timeRange: timeRangeConfig.getOption(),
       orderBy: { arising_time: 'desc' },
       ...argus
     })

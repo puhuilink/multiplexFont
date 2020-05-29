@@ -1,20 +1,11 @@
-import { KpiCurrentService } from '@/api-hasura'
-import { DynamicDataConfig, TimeRange } from './index'
+import { DynamicDataConfig } from './index'
+import _ from 'lodash'
 
 export default class DegreeRingDataConfig extends DynamicDataConfig {
-  /**
-   * 与静态数据保持一致的数据结构
-   * @returns {Promise<any>}
-   */
   async getOption () {
-    try {
-      // 没有记录时返回长度为0的数组
-      // 引入配置时，timeRange 未经实例化，可以直接调用静态方法获取时间段
-      const [data] = await KpiCurrentService.getValue(this.resourceConfig, TimeRange.getOption.apply(this.timeRange))
-      return data ? data.value : '0'
-    } catch (e) {
-      console.log(e)
-      return '0'
-    }
+    return this.fetch({ limit: 1 })
+      .then(({ data }) => _.get(data, '[0].value', 0))
+      .catch(() => 0)
+      .then(value => ({ value }))
   }
 }
