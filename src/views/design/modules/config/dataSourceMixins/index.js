@@ -2,7 +2,6 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
-import { DEFAULT_TIME_RANGE_SELECT_OPTIONS } from '@/model/config/dataConfig/dynamicData'
 
 const formItemLayout = {
   labelCol: {
@@ -18,10 +17,6 @@ const formItemLayout = {
 export default {
   data: () => ({
     formItemLayout,
-    DEFAULT_TIME_RANGE_SELECT_OPTIONS: DEFAULT_TIME_RANGE_SELECT_OPTIONS.map(el => ({
-      ...el,
-      value: JSON.stringify(el.value)
-    })),
     options: {
       // TODO: 拆分为常量
       xAxisType: [
@@ -79,38 +74,6 @@ export default {
         _.get(this.resourceConfig, 'selectedKpi.length') &&
         _.get(this.resourceConfig, 'selectedInstance.length')
       )
-    },
-    // 不是所有的视图组件都需要配置 timeRange
-    timeRange: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange')
-      }
-    },
-    timeRangeStart: {
-      get () {
-        try {
-          return JSON.stringify(this.timeRange.timeRangeStart)
-        } catch (e) {
-          return null
-        }
-      },
-      set (v) {
-        if (this.timeRange) {
-          Object.assign(this.timeRange, {
-            timeRangeStart: JSON.parse(v)
-          })
-          this.change()
-        }
-      }
-    },
-    timeRangeType: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange.timeRangeType', 'default')
-      },
-      set (v) {
-        this.config.dataConfig.dbDataConfig.timeRange.timeRangeType = v
-        this.change()
-      }
     },
     xAxisType: {
       get () {

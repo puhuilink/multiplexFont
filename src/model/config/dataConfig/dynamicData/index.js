@@ -19,7 +19,7 @@ export const TIME_TYPE_MONTHS = 'months'
 export const TIME_TYPE_YEARS = 'years'
 
 // https://itbilu.com/nodejs/npm/EJlmbFhgg.html
-const DEFAULT_TIME_RANGE_START = {
+export const DEFAULT_TIME_RANGE_START = {
   [TIME_TYPE_YEARS]: 0,
   [TIME_TYPE_MONTHS]: 0,
   [TIME_TYPE_WEEKS]: 0,
@@ -28,46 +28,7 @@ const DEFAULT_TIME_RANGE_START = {
   [TIME_TYPE_MINUTES]: 0,
   [TIME_TYPE_SECONDS]: 0
 }
-const DEFAULT_TIME_RANGE_END = _.cloneDeep(DEFAULT_TIME_RANGE_START)
-
-export const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
-  {
-    name: '实时',
-    value: Object.assign(DEFAULT_TIME_RANGE_START, {})
-  },
-  {
-    name: '最近15分钟',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MINUTES]: '-15' })
-  },
-  {
-    name: '最近30分钟',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MINUTES]: '-30' })
-  },
-  {
-    name: '最近1小时',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_HOURS]: '-1' })
-  },
-  {
-    name: '最近1天',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_DAYS]: '-1' })
-  },
-  {
-    name: '最近1周',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_WEEKS]: '-1' })
-  },
-  {
-    name: '最近2周',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_WEEKS]: '-2' })
-  },
-  {
-    name: '最近1月',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MONTHS]: '-1' })
-  },
-  {
-    name: '最近2月',
-    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MONTHS]: '-2' })
-  }
-]
+export const DEFAULT_TIME_RANGE_END = _.cloneDeep(DEFAULT_TIME_RANGE_START)
 
 export class TimeRange {
   constructor ({
@@ -133,7 +94,7 @@ export class DynamicDataConfig {
     refreshTime = 0,
     // 外部 Ci 是否可用
     externalCi = true,
-    timeRange = new TimeRange()
+    timeRange = new TimeRange({})
   }) {
     this.resourceConfig = resourceConfig
     this.externalCi = externalCi
