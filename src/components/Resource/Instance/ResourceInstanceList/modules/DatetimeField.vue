@@ -11,7 +11,6 @@ export default {
   methods: {},
   render (h) {
     const { $props } = this
-    console.log($props)
     return h(DateField, {
       props: {
         ...$props,
