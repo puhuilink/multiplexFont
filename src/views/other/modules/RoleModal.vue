@@ -24,7 +24,8 @@
 <script>
 import { getPermissions } from '@/api/manage'
 import { actionToObject } from '@/utils/permissions'
-import pick from 'lodash.pick'
+import _ from 'lodash'
+const { pick } = _
 
 export default {
   name: 'RoleModal',

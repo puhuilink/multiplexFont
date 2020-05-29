@@ -217,10 +217,10 @@ export default {
       try {
         this.$refs['table'].loading = true
         await InstanceService.batchDelete(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
+        this.$notifyDeleteSuccess()
         await this.query(false)
       } catch (e) {
-        this.notifyError(e)
+        this.$notifyError(e)
         throw e
       } finally {
         this.$refs['table'].loading = false

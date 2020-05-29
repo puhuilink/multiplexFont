@@ -60,10 +60,6 @@
       </template>
     </CTable>
 
-    <!-- S 创建视图 -->
-    <create-view ref="createModel" @ok="query" />
-    <!-- E 创建视图 -->
-
     <ViewTitleScheme
       ref="title"
       @addSuccess="query"
@@ -73,20 +69,15 @@
 </template>
 
 <script>
-import { PageView } from '@/layouts'
 import { getViewList, copyView, deleteViews } from '@/api/controller/View'
-import CreateView from './modules/CreateView'
 import ViewTitleScheme from './ViewTitleScheme'
-import deleteCheck from '@/components/DeleteCheck'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'ViewList',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
-    PageView,
-    CreateView,
     ViewTitleScheme
   },
   data: () => ({
@@ -196,18 +187,14 @@ export default {
      * 处理删除事件
      */
     async handleDelete () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = false
-        await deleteViews(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
-        this.query(false)
-      } catch (e) {
-        this.$refs['table'].loading = false
-        throw e
-      }
+      this.$promiseConfirmDelete({
+        onOk: () => deleteViews(this.selectedRowKeys)
+          .then(() => {
+            this.$notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     }
   }
 }

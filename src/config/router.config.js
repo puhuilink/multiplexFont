@@ -226,50 +226,52 @@ export const asyncRouterMap = [
       },
 
       // config
-      {
-        path: '/config',
-        name: 'config',
-        redirect: '/config/model',
-        component: RouteView,
-        meta: { title: '配置管理', keepAlive: true, icon: 'idcard', permission: [ 'F007' ] },
-        children: [
-          {
-            path: '/config/model',
-            name: 'ResourceModel',
-            component: () => import('@/views/config/model/ResourceModel'),
-            meta: { title: '资源模型', keepAlive: true, permission: [ 'F007001' ] }
-          },
-          {
-            path: '/config/instance',
-            name: 'ResourceInstance',
-            component: () => import('@/views/config/instance/ResourceInstance'),
-            meta: { title: '资源实例', keepAlive: true, permission: [ 'F007002' ] }
-          }
-        ]
-      },
+      // 废弃
+      // {
+      //   path: '/config',
+      //   name: 'config',
+      //   redirect: '/config/model',
+      //   component: RouteView,
+      //   meta: { title: '配置管理', keepAlive: true, icon: 'idcard', permission: [ 'F007' ] },
+      //   children: [
+      //     {
+      //       path: '/config/model',
+      //       name: 'ResourceModel',
+      //       component: () => import('@/views/config/model/ResourceModel'),
+      //       meta: { title: '资源模型', keepAlive: true, permission: [ 'F007001' ] }
+      //     },
+      //     {
+      //       path: '/config/instance',
+      //       name: 'ResourceInstance',
+      //       component: () => import('@/views/config/instance/ResourceInstance'),
+      //       meta: { title: '资源实例', keepAlive: true, permission: [ 'F007002' ] }
+      //     }
+      //   ]
+      // },
 
       // analysis
-      {
-        path: '/analysis',
-        name: 'analysis',
-        redirect: '/analysis/policy',
-        component: RouteView,
-        meta: { title: '数据分析', keepAlive: true, icon: 'deployment-unit', permission: [ 'F008' ] },
-        children: [
-          {
-            path: '/analysis/policy',
-            name: 'BaselineStrategy',
-            component: () => import('@/views/analysis/policy/BaselinePolicy'),
-            meta: { title: '动态基线策略管理', keepAlive: true, permission: [ 'F008001' ] }
-          },
-          {
-            path: '/analysis/definition',
-            name: 'BaselineDefinition',
-            component: () => import('@/views/analysis/definition/BaselineDefinition'),
-            meta: { title: '动态基线定义管理', keepAlive: true, permission: [ 'F008002' ] }
-          }
-        ]
-      },
+      // 废弃
+      // {
+      //   path: '/analysis',
+      //   name: 'analysis',
+      //   redirect: '/analysis/policy',
+      //   component: RouteView,
+      //   meta: { title: '数据分析', keepAlive: true, icon: 'deployment-unit', permission: [ 'F008' ] },
+      //   children: [
+      //     {
+      //       path: '/analysis/policy',
+      //       name: 'BaselineStrategy',
+      //       component: () => import('@/views/analysis/policy/BaselinePolicy'),
+      //       meta: { title: '动态基线策略管理', keepAlive: true, permission: [ 'F008001' ] }
+      //     },
+      //     {
+      //       path: '/analysis/definition',
+      //       name: 'BaselineDefinition',
+      //       component: () => import('@/views/analysis/definition/BaselineDefinition'),
+      //       meta: { title: '动态基线定义管理', keepAlive: true, permission: [ 'F008002' ] }
+      //     }
+      //   ]
+      // },
 
       // system
       {

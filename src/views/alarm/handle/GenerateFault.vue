@@ -6,7 +6,7 @@
     <a-card :bordered="false">
       <!-- S 搜索 -->
       <div class="table-page-search-wrapper">
-        <a-form layout="inline">
+        <a-form layout="inline" class="form">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="故障状态">
@@ -107,35 +107,32 @@
       <!-- E 操作栏 -->
 
       <!-- S 列表 -->
-      <C-table
+      <CTable
         ref="table"
         size="small"
         rowKey="incident_id"
         :columns="columns"
         :data="loadData"
         :alert="false"
-        :scroll="{ x: scrollX, y:`calc(100vh - 300px)` }"
-        :customRow="customRow"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :scroll="scroll"
+        :rowSelection="rowSelection"
         showPagination="auto"
       >
-        <!-- <template #query>
-        </template> -->
+        <template #query>
+        </template>
         <span slot="message" slot-scope="text">
           <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
         </span>
-      </C-table>
+      </CTable>
       <!-- E 列表 -->
     </a-card>
   </div>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
-// import { getGenerateFaultList } from '@/api/generateFault'
-import CTable from '@/components/Table/CTable'
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
+import { Confirm, List } from '@/components/Mixins'
 
 const query = gql`query($where: t_incident_bool_exp! = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_incident_order_by!]) {
   pagination: t_incident_aggregate(where: $where) {
@@ -174,11 +171,7 @@ const query = gql`query($where: t_incident_bool_exp! = {}, $limit: Int! = 0, $of
 }`
 export default {
   name: 'GenerateFault',
-  components: {
-    STable,
-    Ellipsis,
-    CTable
-  },
+  mixins: [Confirm, List],
   data () {
     return {
       // 搜索： 展开/关闭
@@ -307,25 +300,8 @@ export default {
       selectedRows: []
     }
   },
-  filters: {},
-  computed: {
-    scrollX: {
-      get () {
-        return this.columns.map(e => e.width || 0).reduce((x1, x2) => (x1 + x2))
-      }
-    }
-  },
   methods: {
-    /**
-     * 筛选展开开关
-     */
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-
     loadData (parameter) {
-      // 清空选中
-      this.selectedRowKeys = []
       return apollo.clients.alert.query({
         query,
         variables: {
@@ -385,37 +361,10 @@ export default {
     },
     onDataOk (value) {
       console.log('onOk: ', value)
-    },
-    /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    /**
-     * 行属性,表格点击事件
-     */
-    customRow (record, index) {
-      return {
-        on: {
-          click: () => {
-            console.log(record, index)
-          }
-        }
-      }
     }
   }
 }
 </script>
 
 <style scoped lang='less'>
-.opration{
-  margin-bottom: 10px;
-  button{
-    margin-right: 5px;
-  }
-}
 </style>

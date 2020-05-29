@@ -107,22 +107,20 @@
 import UserSchema from './UserSchema'
 import AuthScheme from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './UserGroupSchema'
-import deleteCheck from '@/components/DeleteCheck'
 import { UserService } from '@/api-hasura'
-import List from '@/components/Mixins/Table/List'
+import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 
 export default {
   name: 'User',
-  mixins: [List],
+  mixins: [Confirm, List],
   components: {
     UserSchema,
     AuthScheme,
     UserGroupSchema
   },
   data: () => ({
-    // TODO: Object freeze
-    columns: [
+    columns: Object.freeze([
       {
         title: '用户名',
         dataIndex: 'user_id',
@@ -164,7 +162,7 @@ export default {
         dataIndex: 'flag',
         width: 90,
         sorter: true,
-        customRender: val => val ? '有效' : '无效'
+        customRender: flag => flag ? '有效' : '无效'
       },
       {
         title: '备注',
@@ -172,7 +170,7 @@ export default {
         width: 280,
         tooltip: true
       }
-    ]
+    ])
   }),
   computed: {
     isSelectedValid () {
@@ -235,37 +233,25 @@ export default {
      * @event
      */
     async onBatchDeleteUser () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await UserService.batchDelete(this.selectedRowKeys)
-        this.notifyDeleteSuccess()
-        this.query(false)
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      this.$promiseConfirmDelete({
+        onOk: () => UserService
+          .batchDelete(this.selectedRowKeys)
+          .then(() => {
+            this.$notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     },
     /**
      * 重置用户密码
      * @event
      */
     onResetPwd () {
-      // const [record] = this.selectedRows
-      this.$modal.confirm({
-        title: '提示',
-        content: '是否重置当前用户密码？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        //  TODO
-        onOk () {},
-        // TODO
-        onCancel () {}
+      // TODO: 与需求确认
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '是否重置选中用户密码？'
       })
     },
     /**
@@ -273,21 +259,18 @@ export default {
      * @event
      */
     async onToggleFlag () {
-      if (!await deleteCheck.confirm({ content: '确认更改用户状态？' })) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        const [record] = this.selectedRows
-        await UserService.toggleFlag(record.user_id, Number(!record.flag))
-        this.notifyToggleFlagSuccess()
-        this.query(false)
-      } catch (e) {
-        this.notifyError(e)
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+      const [record] = this.selectedRows
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认更改用户状态？',
+        onOk: () => UserService
+          .toggleFlag(record.user_id, Number(!record.flag))
+          .then(() => {
+            this.$notifyToggleFlagSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     }
   }
 }

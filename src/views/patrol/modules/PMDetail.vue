@@ -193,8 +193,8 @@
     <a-divider>路线选择</a-divider>
     <template>
       <detail-list title="已选择路线">
-        <detail-list-item term="路线名称">{{ selectRoute.route_name }}</detail-list-item>
-        <detail-list-item term="路线编号">{{ selectRoute.route_code }}</detail-list-item>
+        <detail-list-item term="路线名称">{{ selectRoute ? selectRoute.route_name : '' }}</detail-list-item>
+        <detail-list-item term="路线编号">{{ selectRoute ? selectRoute.route_code : '' }}</detail-list-item>
       </detail-list>
     </template>
     <CTable
@@ -310,7 +310,7 @@ export default {
     return {
       screening,
       queryParam: {},
-      record: '',
+      record: {},
       mode: '',
       visible: false,
       loading: false,
@@ -412,34 +412,14 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      loadData: parameter => {
-        this.selectedRowKeys = []
-        const variables = {
-          ...parameter,
-          where: {
-            ...this.queryParam.ascription ? {
-              ascription: {
-                _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
-              }
-            } : {},
-            ...this.queryParam.route_name ? {
-              route_name: {
-                _ilike: `%${this.queryParam.route_name.trim()}%`
-              }
-            } : {},
-            ...this.queryParam.route_code ? {
-              route_code: {
-                _ilike: `%${this.queryParam.route_code.trim()}%`
-              }
-            } : {}
-          }
-        }
-        return getRouteList(variables).then(r => r.data)
-      },
       selectedRowKeys: [],
       selectedRows: [],
-      selectRoute: {},
       userGroupList: [],
+      // TODO: 赋值有点问题 还需调整
+      selectRoute: {
+        route_name: '',
+        route_code: ''
+      },
       userList: [],
       selectUser: [],
       cycleType: '',
@@ -468,7 +448,7 @@ export default {
       this.visible = true
       this.getGroupList()
       this.mode = mode
-      if (record) {
+      if (mode !== 'New') {
         this.cycleType = record.cycle_type
         record.cycleValueList = record.cycle_value.split(',')
         record.taskPerson = record.group_member.split(',')
@@ -476,9 +456,32 @@ export default {
         this.queryParam.route_code = record.route_code
         this.queryRouteDetail(record.route_code)
         this.getCurrentUserListerList(record.group_code)
+        this.record = record
       }
-      this.record = record
-      console.log(record)
+    },
+    loadData (parameter) {
+      this.selectedRowKeys = []
+      const variables = {
+        ...parameter,
+        where: {
+          ...this.queryParam.ascription ? {
+            ascription: {
+              _eq: this.queryParam.ascription[this.queryParam.ascription.length - 1]
+            }
+          } : {},
+          ...this.queryParam.route_name ? {
+            route_name: {
+              _ilike: `%${this.queryParam.route_name.trim()}%`
+            }
+          } : {},
+          ...this.queryParam.route_code ? {
+            route_code: {
+              _ilike: `%${this.queryParam.route_code.trim()}%`
+            }
+          } : {}
+        }
+      }
+      return getRouteList(variables).then(r => r.data)
     },
     cycleTypeChange (e) {
       this.cycleType = e.target.value
@@ -497,7 +500,7 @@ export default {
     query (firstPage = true) {
       this.$refs['table'].refresh(firstPage)
     },
-    queryRouteDetail (code) {
+    async queryRouteDetail (code) {
       const variables = {
         where: {
           route_code: {
@@ -505,7 +508,7 @@ export default {
           }
         }
       }
-      return getRouteDetail(variables).then(r => {
+      await getRouteDetail(variables).then(r => {
         this.selectRoute = r.data.data[0]
       })
     },

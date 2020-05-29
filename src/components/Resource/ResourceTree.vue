@@ -189,11 +189,11 @@ export default {
       try {
         const nameList = flatChildrenNameList(this.selectedNode)
         await ModelService.batchDelete(nameList)
-        this.notifyDeleteSuccess()
+        this.$notifyDeleteSuccess()
         this.selectedNode = null
         await this.fetch()
       } catch (e) {
-        this.notifyError(e)
+        this.$notifyError(e)
         throw e
       } finally {
       }

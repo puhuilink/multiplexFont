@@ -26,11 +26,12 @@
                 {
                   rules: [
                     {
-                      transform: value => value.trim()
-                    },
-                    {
                       required: true,
                       message: '标题必填'
+                    },
+                    {
+                      pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5_-]+$/,
+                      message: '仅支持中英文、数字与短横线'
                     },
                     {
                       max: 30,
@@ -88,10 +89,10 @@ export default {
           this.confirmLoading = true
           await ViewListService.add(values)
           this.$emit('addSuccess')
-          this.notifyAddSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -109,10 +110,10 @@ export default {
           const { view_id } = this.record
           await ViewListService.update(values, { view_id })
           this.$emit('editSuccess')
-          this.notifyEditSuccess()
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.notifyError(e)
+          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
