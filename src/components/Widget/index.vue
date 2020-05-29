@@ -89,9 +89,7 @@ export default {
           this.rollbackTimeRange(timeRangeConfig)
         }
         // 更新时间配置后刷新配置与数据
-        this.render.restartIntervalRefresh()
-        // console.log(this.render)
-        console.log(timeRangeConfig)
+        this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
       }
     }
   },
@@ -147,9 +145,7 @@ export default {
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
-      // 获取当前实例
-      // const { widget: { config }, render } = this
-      this.render.intervalRefresh()
+      this.render.intervalRefresh && this.render.intervalRefresh()
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件
       this.activateWidget({
@@ -158,7 +154,7 @@ export default {
     }
   },
   beforeDestroy () {
-    this.render.destroy()
+    this.render.destroy && this.render.destroy()
   }
 }
 </script>
