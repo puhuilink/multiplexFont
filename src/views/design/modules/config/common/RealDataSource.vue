@@ -26,15 +26,49 @@
       label="时间"
       v-bind="formItemLayout"
     >
-      <a-select style="width: 100%" v-model="timeRangeStart">
-        <a-select-option
-          v-for="(option, idx) in timeRangeSelectOptions"
-          :key="idx"
-          :value="option.value"
-        >
-          {{ option.name }}
-        </a-select-option>
+      <a-select style="width: 100%" v-model="timeRangeType">
+        <a-select-option :value="TIME_RANGE_TYPE_DEFAULT">默认</a-select-option>
+        <a-select-option :value="TIME_RANGE_TYPE_RECENT">最近</a-select-option>
+        <a-select-option :value="TIME_RANGE_TYPE_CUSTOM">自定义</a-select-option>
       </a-select>
+
+      <div v-show="timeRangeType === TIME_RANGE_TYPE_DEFAULT">
+
+        <a-select style="width: 100%" v-model="timeRangeStart">
+          <a-select-option
+            v-for="(option, idx) in DEFAULT_TIME_RANGE_SELECT_OPTIONS"
+            :key="idx"
+            :value="option.value"
+          >
+            {{ option.name }}
+          </a-select-option>
+        </a-select>
+      </div>
+
+      <div v-show="timeRangeType === TIME_RANGE_TYPE_RECENT">
+        <a-input
+          type="number"
+          v-model.number="recentValue"
+          :min="0"
+        >
+          <a-select style="width: 80px" defaultValue="hours" slot="addonAfter" v-model="recentType">
+            <a-select-option v-for="option in options.timeRecent" :key="option.value" :value="option.value">
+              {{ option.name }}
+            </a-select-option>
+          </a-select>
+        </a-input>
+      </div>
+
+      <div v-show="timeRangeType === TIME_RANGE_TYPE_CUSTOM">
+        <a-range-picker
+          v-model="customTimeRange"
+          style="width: 100%"
+          :show-time="{ format: 'HH:mm' }"
+          format="YYYY-MM-DD HH:mm"
+          :valueFormat="TIME_RANGE_FORMAT"
+          :placeholder="['开始时间', '结束时间']"
+        />
+      </div>
     </a-form-item>
 
     <!-- / 数据源 -->
@@ -76,6 +110,13 @@
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import { ComboSelect } from '@/components/Common'
+import _ from 'lodash'
+import {
+  TIME_RANGE_FORMAT,
+  TIME_RANGE_TYPE_DEFAULT,
+  TIME_RANGE_TYPE_RECENT,
+  TIME_RANGE_TYPE_CUSTOM
+} from '@/model/config/dataConfig/dynamicData'
 
 export default {
   name: 'RealDataSource',
@@ -110,16 +151,72 @@ export default {
     }
   },
   data: () => ({
+    TIME_RANGE_FORMAT,
+    TIME_RANGE_TYPE_DEFAULT,
+    TIME_RANGE_TYPE_RECENT,
+    TIME_RANGE_TYPE_CUSTOM,
+    options: {
+      timeRecent: [
+        {
+          name: '分钟',
+          value: 'minutes'
+        },
+        {
+          name: '小时',
+          value: 'hours'
+        },
+        {
+          name: '天',
+          value: 'days'
+        },
+        {
+          name: '周',
+          value: 'weeks'
+        },
+        {
+          name: '月',
+          value: 'months'
+        }
+      ]
+    }
   }),
-  computed: {},
+  computed: {
+    timeRange: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.timeRange
+      }
+    },
+    recentType: {
+      get () {
+        return _.get(this, 'timeRange.recentType', 'minutes')
+      },
+      set (recentType) {
+        Object.assign(this.timeRange, { recentType })
+        this.change()
+      }
+    },
+    recentValue: {
+      get () {
+        return _.get(this, 'timeRange.recentValue', 0)
+      },
+      set (recentValue) {
+        Object.assign(this.timeRange, { recentValue })
+        this.change()
+      }
+    },
+    customTimeRange: {
+      get () {
+        return _.get(this, 'timeRange.customTimeRange')
+      },
+      set (customTimeRange) {
+        Object.assign(this.timeRange, { customTimeRange })
+        this.change()
+      }
+    }
+  },
   methods: {}
 }
 </script>
 
 <style scoped lang="less">
-.data-source {
-  &__select {
-    width: 100%;
-  }
-}
 </style>

@@ -6,75 +6,116 @@ import _ from 'lodash'
 import moment from 'moment'
 import { KpiCurrentService } from '@/api-hasura'
 
+export const TIME_RANGE_FORMAT = 'YYYY-MM-DDTHH:mm:ss'
+export const TIME_RANGE_TYPE_DEFAULT = 'default'
+export const TIME_RANGE_TYPE_RECENT = 'recent'
+export const TIME_RANGE_TYPE_CUSTOM = 'custom'
+export const TIME_TYPE_SECONDS = 'seconds'
+export const TIME_TYPE_MINUTES = 'minutes'
+export const TIME_TYPE_HOURS = 'hours'
+export const TIME_TYPE_DAYS = 'days'
+export const TIME_TYPE_WEEKS = 'weeks'
+export const TIME_TYPE_MONTHS = 'months'
+export const TIME_TYPE_YEARS = 'years'
+
 // https://itbilu.com/nodejs/npm/EJlmbFhgg.html
-const defaultTimeStart = {
-  years: 0,
-  months: 0,
-  weeks: 0,
-  days: 0,
-  hours: 0,
-  minutes: 0,
-  seconds: 0
+const DEFAULT_TIME_RANGE_START = {
+  [TIME_TYPE_YEARS]: 0,
+  [TIME_TYPE_MONTHS]: 0,
+  [TIME_TYPE_WEEKS]: 0,
+  [TIME_TYPE_DAYS]: 0,
+  [TIME_TYPE_HOURS]: 0,
+  [TIME_TYPE_MINUTES]: 0,
+  [TIME_TYPE_SECONDS]: 0
 }
-const defaultTimeEnd = _.cloneDeep(defaultTimeStart)
-export const timeRangeSelectOptions = [
+const DEFAULT_TIME_RANGE_END = _.cloneDeep(DEFAULT_TIME_RANGE_START)
+
+export const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
   {
     name: '实时',
-    value: Object.assign(defaultTimeStart, {})
+    value: Object.assign(DEFAULT_TIME_RANGE_START, {})
   },
   {
     name: '最近15分钟',
-    value: Object.assign({}, defaultTimeStart, { minutes: '-15' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MINUTES]: '-15' })
   },
   {
     name: '最近30分钟',
-    value: Object.assign({}, defaultTimeStart, { minutes: '-30' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MINUTES]: '-30' })
   },
   {
     name: '最近1小时',
-    value: Object.assign({}, defaultTimeStart, { hours: '-1' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_HOURS]: '-1' })
   },
   {
     name: '最近1天',
-    value: Object.assign({}, defaultTimeStart, { days: '-1' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_DAYS]: '-1' })
   },
   {
     name: '最近1周',
-    value: Object.assign({}, defaultTimeStart, { weeks: '-1' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_WEEKS]: '-1' })
   },
   {
     name: '最近2周',
-    value: Object.assign({}, defaultTimeStart, { weeks: '-2' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_WEEKS]: '-2' })
   },
   {
     name: '最近1月',
-    value: Object.assign({}, defaultTimeStart, { months: '-1' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MONTHS]: '-1' })
   },
   {
     name: '最近2月',
-    value: Object.assign({}, defaultTimeStart, { months: '-2' })
+    value: Object.assign({}, DEFAULT_TIME_RANGE_START, { [TIME_TYPE_MONTHS]: '-2' })
   }
 ]
 
 export class TimeRange {
-  static FORMAT = 'YYYY-MM-DDTHH:mm:ss'
-
-  constructor (
-    timeRangeStart = _.cloneDeep(defaultTimeStart),
-    timeRangeEnd = _.cloneDeep(defaultTimeEnd)
+  constructor ({
+    timeRangeStart = _.cloneDeep(DEFAULT_TIME_RANGE_START),
+    timeRangeEnd = _.cloneDeep(DEFAULT_TIME_RANGE_END),
+    timeRangeType = TIME_RANGE_TYPE_DEFAULT,
+    recentType = TIME_TYPE_MINUTES,
+    recentValue = 0,
+    customTimeRange = [
+      moment().format(TIME_RANGE_FORMAT),
+      moment().format(TIME_RANGE_FORMAT)
+    ]
+  }
   ) {
     this.timeRangeStart = timeRangeStart
     this.timeRangeEnd = timeRangeEnd
+    this.timeRangeType = timeRangeType
+    this.recentType = recentType
+    this.recentValue = recentValue
+    this.customTimeRange = customTimeRange
   }
 
-  /**
-   * 获取时间段
-   * @return {{ timeRangeStart: String, timeRangeEnd: String }} // 时间段
-   */
   static getOption () {
-    return {
-      timeRangeStart: moment().add(this.timeRangeStart).format(TimeRange.FORMAT),
-      timeRangeEnd: moment().add(this.timeRangeEnd).format(TimeRange.FORMAT)
+    const { timeRangeType } = this
+    switch (timeRangeType) {
+      case TIME_RANGE_TYPE_DEFAULT: {
+        const { timeRangeStart, timeRangeEnd } = this
+        return {
+          timeRangeStart: moment().add(timeRangeStart).format(TIME_RANGE_FORMAT),
+          timeRangeEnd: moment().add(timeRangeEnd).format(TIME_RANGE_FORMAT)
+        }
+      }
+      case TIME_RANGE_TYPE_RECENT: {
+        const { recentType, recentValue } = this
+        const timeRangeStart = Object.assign(DEFAULT_TIME_RANGE_START, { [recentType]: recentValue })
+        return {
+          timeRangeStart: moment().add(timeRangeStart).format(TIME_RANGE_FORMAT),
+          timeRangeEnd: moment().format(TIME_RANGE_FORMAT)
+        }
+      }
+      case TIME_RANGE_TYPE_CUSTOM: {
+        const { customTimeRange = [] } = this
+        const [timeRangeStart, timeRangeEnd] = customTimeRange
+        return {
+          timeRangeStart,
+          timeRangeEnd
+        }
+      }
     }
   }
 }
@@ -106,7 +147,7 @@ export class DynamicDataConfig {
     const { resourceConfig, timeRange } = this
     return KpiCurrentService.getValue({
       ...resourceConfig,
-      timeRange: TimeRange.getOption.apply(timeRange),
+      timeRange: timeRange.getOption(),
       orderBy: { arising_time: 'desc' },
       ...argus
     })

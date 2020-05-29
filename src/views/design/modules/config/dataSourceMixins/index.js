@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
-import { timeRangeSelectOptions } from '@/model/config/dataConfig/dynamicData'
+import { DEFAULT_TIME_RANGE_SELECT_OPTIONS } from '@/model/config/dataConfig/dynamicData'
 
 const formItemLayout = {
   labelCol: {
@@ -18,7 +18,7 @@ const formItemLayout = {
 export default {
   data: () => ({
     formItemLayout,
-    timeRangeSelectOptions: timeRangeSelectOptions.map(el => ({
+    DEFAULT_TIME_RANGE_SELECT_OPTIONS: DEFAULT_TIME_RANGE_SELECT_OPTIONS.map(el => ({
       ...el,
       value: JSON.stringify(el.value)
     })),
@@ -101,6 +101,15 @@ export default {
           })
           this.change()
         }
+      }
+    },
+    timeRangeType: {
+      get () {
+        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange.timeRangeType', 'default')
+      },
+      set (v) {
+        this.config.dataConfig.dbDataConfig.timeRange.timeRangeType = v
+        this.change()
       }
     },
     xAxisType: {

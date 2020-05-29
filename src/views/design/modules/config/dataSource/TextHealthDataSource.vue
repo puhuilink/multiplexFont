@@ -15,7 +15,7 @@
       >
         <a-select style="width: 100%" v-model="timeRangeStart">
           <a-select-option
-            v-for="(option, idx) in timeRangeSelectOptions"
+            v-for="(option, idx) in DEFAULT_TIME_RANGE_SELECT_OPTIONS"
             :key="idx"
             :value="option.value"
           >
