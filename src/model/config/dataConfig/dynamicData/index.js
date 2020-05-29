@@ -51,7 +51,7 @@ export class TimeRange {
     this.customTimeRange = customTimeRange
   }
 
-  static getOption () {
+  getOption () {
     const { timeRangeType } = this
     switch (timeRangeType) {
       case TIME_RANGE_TYPE_DEFAULT: {
@@ -99,13 +99,14 @@ export class DynamicDataConfig {
     this.resourceConfig = resourceConfig
     this.externalCi = externalCi
     this.refreshTime = refreshTime
-    this.timeRange = timeRange
+    this.timeRange = new TimeRange(timeRange)
     this.xAxisType = xAxisType
     this.resetData()
   }
 
   fetch (argus = {}) {
     const { resourceConfig, timeRange } = this
+    console.dir(timeRange)
     return KpiCurrentService.getValue({
       ...resourceConfig,
       timeRange: timeRange.getOption(),

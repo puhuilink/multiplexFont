@@ -1,21 +1,24 @@
 <template>
   <a-form-item
+    class="TimeRange"
     label="时间"
     v-bind="formItemLayout"
   >
-    <a-select style="width: 100%" v-model="timeRangeType">
+
+    <!-- / 类型选择 -->
+    <a-select v-model="timeRange.timeRangeType" @select="change()">
       <a-select-option :value="TIME_RANGE_TYPE_DEFAULT">默认</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_RECENT">最近</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_CUSTOM">自定义</a-select-option>
     </a-select>
 
-    <div v-show="timeRangeType === TIME_RANGE_TYPE_DEFAULT">
-
+    <!-- / 默认 -->
+    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_DEFAULT">
       <a-select
         :filterOption="filterOption"
         showSearch
-        style="width: 100%"
         v-model="timeRangeStart"
+        @select="change()"
       >
         <a-select-option
           v-for="option in options.defaultTimeRange"
@@ -24,17 +27,20 @@
       </a-select>
     </div>
 
-    <div v-show="timeRangeType === TIME_RANGE_TYPE_RECENT">
+    <!-- / 最近 -->
+    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_RECENT">
       <a-input
         type="number"
-        v-model.number="recentValue"
+        v-model.number="timeRange.recentValue"
         :min="0"
+        @input="change()"
       >
         <a-select
           :defaultValue="TIME_TYPE_HOURS"
           slot="addonAfter"
           style="width: 80px"
-          v-model="recentType"
+          v-model="timeRange.recentType"
+          @select="change()"
         >
           <a-select-option
             v-for="option in options.timeRecent"
@@ -44,14 +50,17 @@
       </a-input>
     </div>
 
-    <div v-show="timeRangeType === TIME_RANGE_TYPE_CUSTOM">
+    <!-- / 自定义 -->
+    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_CUSTOM">
       <a-range-picker
+        :allowClear="false"
+        class="TimeRange__date_picker"
         format="YYYY-MM-DD HH:mm"
         :placeholder="['开始时间', '结束时间']"
-        style="width: 152%; margin-left: -52%;"
         :show-time="{ format: 'HH:mm' }"
         :valueFormat="TIME_RANGE_FORMAT"
-        v-model="customTimeRange"
+        v-model="timeRange.customTimeRange"
+        @ok="change()"
       />
     </div>
   </a-form-item>
@@ -123,8 +132,6 @@ const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
 export default {
   name: 'TimeRange',
   mixins: [DataSourceMixins],
-  components: {},
-  props: {},
   data: () => ({
     TIME_RANGE_FORMAT,
     TIME_RANGE_TYPE_DEFAULT,
@@ -133,39 +140,19 @@ export default {
     TIME_TYPE_HOURS,
     DEFAULT_TIME_RANGE_SELECT_OPTIONS,
     options: {
-      defaultTimeRange: DEFAULT_TIME_RANGE_SELECT_OPTIONS.map(el => ({
-        ...el,
-        value: JSON.stringify(el.value)
-      })),
+      defaultTimeRange: DEFAULT_TIME_RANGE_SELECT_OPTIONS.map(({ name, value }) => ({ name, value: JSON.stringify(value) })),
       timeRecent: [
-        {
-          name: '分钟',
-          value: 'minutes'
-        },
-        {
-          name: '小时',
-          value: 'hours'
-        },
-        {
-          name: '天',
-          value: 'days'
-        },
-        {
-          name: '周',
-          value: 'weeks'
-        },
-        {
-          name: '月',
-          value: 'months'
-        }
+        { name: '分钟', value: TIME_TYPE_MINUTES },
+        { name: '小时', value: TIME_TYPE_HOURS },
+        { name: '天', value: TIME_TYPE_DAYS },
+        { name: '周', value: TIME_TYPE_WEEKS },
+        { name: '月', value: TIME_TYPE_MONTHS }
       ]
     }
   }),
   computed: {
-    timeRange: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange')
-      }
+    timeRange () {
+      return _.get(this, 'config.dataConfig.dbDataConfig.timeRange', {})
     },
     timeRangeStart: {
       get () {
@@ -175,49 +162,8 @@ export default {
           return null
         }
       },
-      set (v) {
-        if (this.timeRange) {
-          Object.assign(this.timeRange, {
-            timeRangeStart: JSON.parse(v)
-          })
-          this.change()
-        }
-      }
-    },
-    timeRangeType: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange.timeRangeType', 'default')
-      },
-      set (v) {
-        this.config.dataConfig.dbDataConfig.timeRange.timeRangeType = v
-        this.change()
-      }
-    },
-    recentType: {
-      get () {
-        return _.get(this, 'timeRange.recentType', 'minutes')
-      },
-      set (recentType) {
-        Object.assign(this.timeRange, { recentType })
-        this.change()
-      }
-    },
-    recentValue: {
-      get () {
-        return _.get(this, 'timeRange.recentValue', 0)
-      },
-      set (recentValue) {
-        Object.assign(this.timeRange, { recentValue })
-        this.change()
-      }
-    },
-    customTimeRange: {
-      get () {
-        return _.get(this, 'timeRange.customTimeRange')
-      },
-      set (customTimeRange) {
-        Object.assign(this.timeRange, { customTimeRange })
-        this.change()
+      set (timeRangeStart) {
+        this.timeRange.timeRangeStart = JSON.parse(timeRangeStart)
       }
     }
   },
@@ -232,5 +178,13 @@ export default {
 </script>
 
 <style lang="less">
-
+.TimeRange {
+  .ant-select {
+    width: 100%;
+  }
+  &__date_picker {
+    margin: -50% !important;
+    width: 150% !important;
+  }
+}
 </style>
