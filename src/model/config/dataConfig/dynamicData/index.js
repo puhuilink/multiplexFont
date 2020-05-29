@@ -56,6 +56,11 @@ export class TimeRangeConfig {
     switch (timeRangeType) {
       case TIME_RANGE_TYPE_DEFAULT: {
         const { timeRangeStart, timeRangeEnd } = this
+        // 实时数据
+        if (Object.values(timeRangeStart).every(v => v === 0) && Object.values(timeRangeEnd).every(v => v === 0)) {
+          return {}
+        }
+        // 历史数据
         return {
           timeRangeStart: moment().add(timeRangeStart).format(TIME_RANGE_FORMAT),
           timeRangeEnd: moment().add(timeRangeEnd).format(TIME_RANGE_FORMAT)

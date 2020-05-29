@@ -6,14 +6,14 @@
   >
 
     <!-- / 类型选择 -->
-    <a-select v-model="timeRange.timeRangeType" @select="change()">
+    <a-select v-model="timeRangeConfig.timeRangeType" @select="change()">
       <a-select-option :value="TIME_RANGE_TYPE_DEFAULT">默认</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_RECENT">最近</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_CUSTOM">自定义</a-select-option>
     </a-select>
 
     <!-- / 默认 -->
-    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_DEFAULT">
+    <div v-show="timeRangeConfig.timeRangeType === TIME_RANGE_TYPE_DEFAULT">
       <a-select
         :filterOption="filterOption"
         showSearch
@@ -28,10 +28,10 @@
     </div>
 
     <!-- / 最近 -->
-    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_RECENT">
+    <div v-show="timeRangeConfig.timeRangeType === TIME_RANGE_TYPE_RECENT">
       <a-input
         type="number"
-        v-model.number="timeRange.recentValue"
+        v-model.number="timeRangeConfig.recentValue"
         :min="0"
         @input="change()"
       >
@@ -39,7 +39,7 @@
           :defaultValue="TIME_TYPE_HOURS"
           slot="addonAfter"
           style="width: 80px"
-          v-model="timeRange.recentType"
+          v-model="timeRangeConfig.recentType"
           @select="change()"
         >
           <a-select-option
@@ -51,7 +51,7 @@
     </div>
 
     <!-- / 自定义 -->
-    <div v-show="timeRange.timeRangeType === TIME_RANGE_TYPE_CUSTOM">
+    <div v-show="timeRangeConfig.timeRangeType === TIME_RANGE_TYPE_CUSTOM">
       <a-range-picker
         :allowClear="false"
         class="TimeRange__date_picker"
@@ -59,7 +59,7 @@
         :placeholder="['开始时间', '结束时间']"
         :show-time="{ format: 'HH:mm' }"
         :valueFormat="TIME_RANGE_FORMAT"
-        v-model="timeRange.customTimeRange"
+        v-model="timeRangeConfig.customTimeRange"
         @ok="change()"
       />
     </div>
@@ -151,19 +151,19 @@ export default {
     }
   }),
   computed: {
-    timeRange () {
-      return _.get(this, 'config.dataConfig.dbDataConfig.timeRange', {})
+    timeRangeConfig () {
+      return _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
     },
     timeRangeStart: {
       get () {
         try {
-          return JSON.stringify(this.timeRange.timeRangeStart)
+          return JSON.stringify(this.timeRangeConfig.timeRangeStart)
         } catch (e) {
           return null
         }
       },
       set (timeRangeStart) {
-        this.timeRange.timeRangeStart = JSON.parse(timeRangeStart)
+        this.timeRangeConfig.timeRangeStart = JSON.parse(timeRangeStart)
       }
     }
   },
