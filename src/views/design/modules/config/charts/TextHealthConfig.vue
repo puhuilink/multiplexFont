@@ -142,19 +142,6 @@
 
             </a-collapse-panel>
             <!-- E 文本样式 -->
-
-            <!-- <a-collapse-panel header="数值设置" key="2">
-              <div class="comment-template__item">
-                <p class="comment-template__leading">小数点:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    v-model="titleUnit"
-                    @change="titleUnitChange"
-                    :min="1"
-                    :max="10" />
-                </div>
-              </div>
-            </a-collapse-panel> -->
           </a-collapse>
         </div>
       </a-tab-pane>

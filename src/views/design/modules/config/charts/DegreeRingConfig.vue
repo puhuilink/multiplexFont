@@ -30,7 +30,7 @@
             </a-collapse-panel>
 
             <!-- S 文字设置 -->
-            <a-collapse-panel header="文字设置" key="2" v-if="chartsType">
+            <a-collapse-panel header="数值设置" key="2" v-if="chartsType">
 
               <div class="comment-template__item">
                 <p class="comment-template__leading">字体大小:</p>
@@ -55,13 +55,13 @@
               <!-- / 字体颜色 -->
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">小数点:</p>
+                <p class="comment-template__leading">小数位数:</p>
                 <div class="comment-template__inner">
                   <a-slider
-                    v-model="titleUnit"
-                    @change="titleUnitChange"
-                    :min="1"
-                    :max="10" />
+                    v-model="decimalPoint"
+                    @change="change()"
+                    :min="0"
+                    :max="4" />
                 </div>
               </div>
               <!-- / 小数点保留 -->
@@ -216,6 +216,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import DegreeRingDataSource from '../dataSource/DegreeRingDataSource'
+import _ from 'lodash'
 
 export default {
   name: 'DegreeRingConfig',
@@ -226,12 +227,17 @@ export default {
     DegreeRingDataSource
   },
   data: () => ({
-    chartsType: 'healthDegree',
-    titleUnit: 0
-    // zone: '40-60;60-80;80-100',
-    // zoneColor: 'rgba(86,198,62,1)-rgba(40,131,38,1);rgba(249,197,87,1)-rgba(207,87,27,1);rgba(227,35,30,1)-rgba(158,24,13,1) '
+    chartsType: 'healthDegree'
   }),
-  created () {
+  computed: {
+    decimalPoint: {
+      get () {
+        return _.get(this, 'config.proprietaryConfig.decimalPoint', 0)
+      },
+      set (decimalPoint) {
+        Object.assign(this.config.proprietaryConfig, { decimalPoint })
+      }
+    }
   },
   methods: {
     chartsTypeChange (value) {
@@ -253,31 +259,6 @@ export default {
         this.config.proprietaryConfig.innerCircle.label.color = '#000'
         this.config.proprietaryConfig.innerCircle.itemStyle.opacity = 0
       }
-      this.change()
-    },
-    /**
-     * 小数点取值操作
-     * 保留n位小数并格式化输出（不足的部分补0）
-     */
-    fomatFloat (value, n) {
-      var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
-      var s = f.toString()
-      var rs = s.indexOf('.')
-      if (rs < 0) {
-        s += '.'
-      }
-      for (var i = s.length - s.indexOf('.'); i <= n; i++) {
-        s += '0'
-      }
-      return s
-    },
-    /**
-     * 小数点位数改变
-     */
-    titleUnitChange (e) {
-      const titleNum = Number(this.config.proprietaryConfig.innerCircle.label.formatter)
-      const textChange = this.fomatFloat(titleNum, e)
-      this.config.proprietaryConfig.innerCircle.label.formatter = textChange + ''
       this.change()
     },
     radiusChange (value) {

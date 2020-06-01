@@ -3,7 +3,19 @@
  */
 
 import Chart from './index'
-// import echartsLiquidfill from 'echarts-liquidfill'
+
+const formatFloat = function (value, n) {
+  var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
+  var s = f.toString()
+  var rs = s.indexOf('.')
+  if (rs < 0 && n > 0) {
+    s += '.'
+  }
+  for (var i = s.length - s.indexOf('.'); i <= n; i++) {
+    s += '0'
+  }
+  return s
+}
 
 export default class DegreeRingChart extends Chart {
   constructor ({ widget }) {
@@ -17,7 +29,7 @@ export default class DegreeRingChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { series } = proprietaryConfig.getOption()
+    const { series, decimalPoint = 0 } = proprietaryConfig.getOption()
     const { sourceType } = dataConfig
 
     // const [data] = series.data
@@ -31,12 +43,17 @@ export default class DegreeRingChart extends Chart {
       case 'real': {
         if (loadingDynamicData) {
           const dynamicData = await dataConfig.dbDataConfig.getOption()
-          // Object.assign(data, dynamicData)
           series.label.formatter = dynamicData + ''
           break
         }
       }
     }
+
+    // 原始值
+    const { label: { formatter } } = series
+    // 处理小数点后的值
+    series.label.formatter = formatFloat(Number(formatter), decimalPoint)
+
     return { grid, series }
   }
 }

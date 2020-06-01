@@ -37,7 +37,8 @@ class InnerCircle {
       formatter: '100',
       fontSize: 20,
       color: '#fff'
-    }
+    },
+    decimalPoint = 0
   }) {
     this.type = type
     this.radius = radius
@@ -50,6 +51,7 @@ class InnerCircle {
     this.itemStyle = itemStyle
     this.outline = outline
     this.label = label
+    this.decimalPoint = decimalPoint
   }
 }
 
