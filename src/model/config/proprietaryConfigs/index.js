@@ -1268,3 +1268,115 @@ export {
   PolarLinearColors,
   PolarMask
 }
+
+export const THRESHOLD_RULE_NAME_EQUAL = '='
+export const THRESHOLD_RULE_NAME_NOT_EQUAL = '!='
+export const THRESHOLD_RULE_NAME_TEST = '匹配正则表达式'
+export const THRESHOLD_RULE_NAME_NOT_TEST = '不匹配正则表达式'
+export const THRESHOLD_RULE_NAME_GT = '>'
+export const THRESHOLD_RULE_NAME_GTE = '>='
+export const THRESHOLD_RULE_NAME_LT = '<'
+export const THRESHOLD_RULE_NAME_LTE = '<='
+
+/**
+ * 阈值变色规则
+ */
+export class ThresholdColorRule {
+  static ruleMapping = new Map([
+    [THRESHOLD_RULE_NAME_EQUAL, ThresholdColorRule.equal],
+    [THRESHOLD_RULE_NAME_NOT_EQUAL, ThresholdColorRule.notEqual],
+    [THRESHOLD_RULE_NAME_TEST, ThresholdColorRule.test],
+    [THRESHOLD_RULE_NAME_NOT_TEST, ThresholdColorRule.notTest],
+    [THRESHOLD_RULE_NAME_GT, ThresholdColorRule.gt],
+    [THRESHOLD_RULE_NAME_GTE, ThresholdColorRule.gte],
+    [THRESHOLD_RULE_NAME_LT, ThresholdColorRule.lt],
+    [THRESHOLD_RULE_NAME_LTE, ThresholdColorRule.lte]
+  ])
+
+  /**
+   * 判断是否相等
+   */
+  static equal ({ value, thresholdValue, thresholdColor }) {
+    // eslint-disable-next-line
+    if (value == thresholdValue) return thresholdColor
+  }
+
+  /**
+   * 判断是否不等
+   */
+  static notEqual ({ value, thresholdValue, thresholdColor }) {
+    // eslint-disable-next-line
+    if (value != thresholdValue) return thresholdColor
+  }
+
+  /**
+   * 判断是否匹配正则表达式
+   */
+  static test ({ value, thresholdValue, thresholdColor }) {
+    try {
+      const regexp = new RegExp(thresholdValue)
+      if (regexp.test(value)) return thresholdColor
+    } catch (e) {
+      throw e
+    }
+  }
+
+  /**
+   * 判断是否不匹配正则表达式
+   */
+  static notTest ({ value, thresholdValue, thresholdColor }) {
+    try {
+      const regexp = new RegExp(thresholdValue)
+      if (!regexp.test(value)) return thresholdColor
+    } catch (e) {
+      throw e
+    }
+  }
+
+  /**
+   * 判断是否大于
+   */
+  static gt ({ value, thresholdValue, thresholdColor }) {
+    if (value > ~~thresholdValue) return thresholdColor
+  }
+
+  /**
+   * 判断是否大于等于
+   */
+  static gte ({ value, thresholdValue, thresholdColor }) {
+    if (value >= ~~thresholdValue) return thresholdColor
+  }
+
+  /**
+   * 判断是否小于
+   */
+  static lt ({ value, thresholdValue, thresholdColor }) {
+    if (value < ~~thresholdValue) return thresholdColor
+  }
+
+  /**
+   * 判断是否小于等于
+   */
+  static lte ({ value, thresholdValue, thresholdColor }) {
+    if (value <= ~~thresholdValue) return thresholdColor
+  }
+
+  constructor ({ rules = [] }) {
+    this.rules = rules
+  }
+
+  calculateColor (value) {
+    const colors = []
+    this.rules.forEach(({ ruleName, thresholdValue, thresholdColor }) => {
+      const filter = ThresholdColorRule.ruleMapping.get(ruleName)
+      filter && colors.push(filter({ value, thresholdValue, thresholdColor }))
+    })
+
+    // 多条规则生效时取最后一条
+    return colors.filter(color => !!color).pop()
+  }
+
+  get hasRules () {
+    return this.rules && this.rules.length
+  }
+}

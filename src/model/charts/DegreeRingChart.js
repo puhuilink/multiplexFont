@@ -3,6 +3,7 @@
  */
 
 import Chart from './index'
+import { DEGREE_TYPE_HEALTH_DEGREE, DEGREE_TYPE_HEALTH_RING } from '../config/proprietaryConfigs/DegreeRingProprietaryConfig'
 
 const formatFloat = function (value, n) {
   var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
@@ -29,30 +30,41 @@ export default class DegreeRingChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { series, decimalPoint = 0 } = proprietaryConfig.getOption()
-    const { sourceType } = dataConfig
+    const { series, decimalPoint = 0, thresholdColorRule, type } = proprietaryConfig.getOption()
+    const { sourceType, staticDataConfig: { staticData } } = dataConfig
+    let formatter
 
-    // const [data] = series.data
     switch (sourceType) {
       case 'static': {
-        const staticData = dataConfig.staticDataConfig.staticData
-        // Object.assign(data, staticData)
-        series.label.formatter = staticData + ''
+        formatter = `${staticData}`
         break
       }
       case 'real': {
-        if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getOption()
-          series.label.formatter = dynamicData + ''
-          break
-        }
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        formatter = `${dynamicData}`
+        break
+      }
+      case 'null': {
+        formatter = '0'
+        break
       }
     }
 
-    // 原始值
-    const { label: { formatter } } = series
     // 处理小数点后的值
     series.label.formatter = formatFloat(Number(formatter), decimalPoint)
+
+    const insideColor = thresholdColorRule.calculateColor(series.label.formatter) || series.label.insideColor
+    Object.assign(series.label, { insideColor })
+
+    switch (type) {
+      case DEGREE_TYPE_HEALTH_RING: {
+        break
+      }
+      case DEGREE_TYPE_HEALTH_DEGREE: {
+        series.backgroundStyle.borderWidth = 0
+        break
+      }
+    }
 
     return { grid, series }
   }

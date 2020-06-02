@@ -1,4 +1,9 @@
 import _ from 'lodash'
+import scrollTo from 'ant-design-vue/lib/_util/scrollTo'
+
+export {
+  scrollTo
+}
 
 export function timeFix () {
   const time = new Date()

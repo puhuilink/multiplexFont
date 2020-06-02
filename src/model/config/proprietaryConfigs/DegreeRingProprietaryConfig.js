@@ -2,6 +2,7 @@
  * 环度专有属性配置项
  */
 import _ from 'lodash'
+import { ThresholdColorRule } from './index'
 // eslint-disable-next-line
 import echartsLiquidfill from 'echarts-liquidfill'
 
@@ -17,13 +18,13 @@ class InnerCircle {
       { value: 1 }
     ],
     itemStyle = {
-      opacity: 1,
+      opacity: 0,
       color: '#195ba6'
     },
     backgroundStyle = {
       borderWidth: 2,
       borderColor: '#1789fb',
-      color: '#fff'
+      color: 'rgba(25, 91, 166, 1)'
     },
     outline = {
       show: false,
@@ -36,7 +37,8 @@ class InnerCircle {
     label = {
       formatter: '100',
       fontSize: 20,
-      color: '#fff'
+      color: '#fff',
+      insideColor: '#dd5862'
     },
     decimalPoint = 0
   }) {
@@ -55,13 +57,19 @@ class InnerCircle {
   }
 }
 
+export const DEGREE_TYPE_HEALTH_DEGREE = 'healthDegree'
+export const DEGREE_TYPE_PROGRESS_RING = 'progressRing'
+export const DEGREE_TYPE_HEALTH_RING = 'healthRing'
+
 export default class DegreeRingProprietaryConfig {
   constructor ({
-    type = '',
-    innerCircle = {}
+    type = DEGREE_TYPE_HEALTH_DEGREE,
+    innerCircle = {},
+    thresholdColorRule = {}
   }) {
     this.type = type
     this.innerCircle = new InnerCircle(innerCircle)
+    this.thresholdColorRule = new ThresholdColorRule(thresholdColorRule)
   }
 
   /**
@@ -69,7 +77,7 @@ export default class DegreeRingProprietaryConfig {
    */
   getOption () {
     return Object.assign(_.cloneDeep(this), {
-      series: this.innerCircle
+      series: _.cloneDeep(this.innerCircle)
     })
   }
 }
