@@ -25,7 +25,7 @@
             <a-collapse-panel header="文本样式" key="1">
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">文本:</p>
+                <p class="comment-template__leading">缺省值:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="text"
@@ -90,7 +90,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('left')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('left')">
                 <p class="comment-template__leading">居左:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -103,7 +103,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('right')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('right')">
                 <p class="comment-template__leading">居右:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -116,7 +116,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('top')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('top')">
                 <p class="comment-template__leading">居上:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -129,7 +129,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('bottom')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('bottom')">
                 <p class="comment-template__leading">居下:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -139,6 +139,8 @@
                 </div>
               </div>
               <!-- / 居下 -->
+
+              <ThresholdColor />
 
             </a-collapse-panel>
             <!-- E 文本样式 -->
@@ -160,6 +162,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import TextHealthDataSource from '../dataSource/TextHealthDataSource'
+import ThresholdColor from '../common/ThresholdColor'
 
 export default {
   name: 'TextHealthConfig',
@@ -167,7 +170,8 @@ export default {
   components: {
     CommonTemplate,
     ColorPicker,
-    TextHealthDataSource
+    TextHealthDataSource,
+    ThresholdColor
   },
   methods: {
     positionChange () {

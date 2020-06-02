@@ -3,7 +3,7 @@
 */
 
 import _ from 'lodash'
-import { Title } from './index'
+import { Title, ThresholdColorRule } from './index'
 
 // 默认轴线配置，不显示轴线
 const defaultAxis = {
@@ -16,11 +16,13 @@ export default class TextsProprietaryConfig {
       text: 'N/A'
     },
     xAxis = defaultAxis,
-    yAxis = defaultAxis
+    yAxis = defaultAxis,
+    thresholdColorRule = {}
   }) {
     this.title = new Title(title)
     this.xAxis = xAxis
     this.yAxis = yAxis
+    this.thresholdColorRule = new ThresholdColorRule(thresholdColorRule)
   }
 
   /**
@@ -28,7 +30,7 @@ export default class TextsProprietaryConfig {
    */
   getOption () {
     return Object.assign(_.cloneDeep(this), {
-      title: this.title.getOption()
+      title: _.cloneDeep(this.title.getOption())
     })
   }
 }
