@@ -21,8 +21,9 @@
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
-        :scroll="scroll"
       ></a-table>
+      <!-- FIXME: 传入 scroll 会导致 ColorPicker 选择时撑开表格高度 -->
+      <!-- :scroll="scroll" -->
 
       <template slot="footer">
         <p class="text-left">注：多条规则同时生效时，以最后一条规则为准；无规则生效时展示默认颜色</p>
