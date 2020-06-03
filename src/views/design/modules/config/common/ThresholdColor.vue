@@ -82,7 +82,7 @@ export default {
       return [
         {
           align: 'center',
-          fixed: 'left',
+          // fixed: 'left',
           title: '匹配顺序',
           width: 95,
           customRender: (text, record, idx) => idx + 1
@@ -116,7 +116,7 @@ export default {
         },
         {
           align: 'center',
-          fixed: 'right',
+          // fixed: 'right',
           width: 90,
           customRender: (text, record, idx) => <a-button type="link" onClick={() => dataSource.splice(idx, 1)}>删除</a-button>
         }
