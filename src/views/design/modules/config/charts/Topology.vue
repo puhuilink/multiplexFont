@@ -137,6 +137,10 @@
 
         </a-tab-pane>
 
+        <!-- TODO: 只有拖拽进入的 Ci 可配置该项 -->
+        <a-tab-pane tab="数据配置" key="3">
+          <CiNodeDataSource />
+        </a-tab-pane>
       </a-tabs>
     </div>
   </div>
@@ -157,6 +161,7 @@ import WrapperService from '@/components/Wrapper/WrapperService'
 import CommonNodeTemplate from '@/views/design/modules/config/nodes'
 import CommonEdgeTemplate from '@/views/design/modules/config/edges'
 import EdgeTemplate from '@/views/design/modules/config/edges/edge'
+import CiNodeDataSource from '../dataSource/CiNodeDataSource'
 
 export default {
   name: 'Topology',
@@ -168,7 +173,8 @@ export default {
     DataSourceTemplate,
     CommonNodeTemplate,
     CommonEdgeTemplate,
-    EdgeTemplate
+    EdgeTemplate,
+    CiNodeDataSource
   },
   data: () => ({
     // 拓扑尺寸编辑
