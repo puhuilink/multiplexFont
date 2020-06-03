@@ -51,3 +51,27 @@ export default class Node {
     this.animateType = animateType
   }
 }
+
+// 钻取视图类型
+// 页签
+export const NODE_CI_DRILL_TYPE_TAB = 'tab'
+// 视图列表
+export const NODE_CI_DRILL_TYPE_VIEW = 'view'
+
+export class NodeDynamicDataConfig {
+  constructor ({
+    resourceConfig = {
+      model: '',
+      selectedInstance: [],
+      selectedKpi: [],
+      selectedAttr: []
+    },
+    drillConfig = {
+      drillType: NODE_CI_DRILL_TYPE_VIEW,
+      viewList: []
+    }
+  }) {
+    this.resourceConfig = resourceConfig
+    this.drillConfig = drillConfig
+  }
+}

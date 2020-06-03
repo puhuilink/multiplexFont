@@ -17,6 +17,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
+import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Ci',
@@ -46,7 +47,7 @@ export default {
           height: 64,
           label: dataRef.title,
           radius: '50%',
-          shape: 'circle',
+          shape: NODE_TYPE_CI_CIRCLE,
           width: 64,
           icon: {
             name: icon.name,
@@ -61,6 +62,15 @@ export default {
             lineWidth: 0,
             radius: 0,
             stroke: 'rgba(145,213,255, 0)'
+          },
+          nodeDynamicDataConfig: {
+            resourceConfig: {
+              // TODO: 写入 model 与 instance
+              model: '',
+              selectedInstance: [],
+              selectedKpi: [],
+              selectedAttr: []
+            }
           }
         }
 

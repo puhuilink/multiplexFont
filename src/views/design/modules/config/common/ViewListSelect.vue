@@ -11,8 +11,9 @@
         mode="multiple"
         :notFoundContent="loading ? '加载中' : '暂无数据'"
         showSearch
+        v-model="drillConfig.viewList"
       >
-        <a-select-option v-for="{ view_id, view_title } in viewList" :key="view_id">
+        <a-select-option v-for="{ view_id, view_title } in viewList" :key="view_id" :value="view_id">
           {{ view_title }}
         </a-select-option>
       </a-select>
@@ -22,7 +23,7 @@
       label="钻取类型"
       v-bind="formItemLayout"
     >
-      <a-select class="fw" :defaultValue="VIEW">
+      <a-select class="fw" :defaultValue="NODE_CI_DRILL_TYPE_VIEW" v-model="drillConfig.drillType">
         <a-select-option v-for="{name, value} in options.click" :key="value">
           {{ name }}
         </a-select-option>
@@ -35,11 +36,9 @@
 import DataSourceMixins from '../dataSourceMixins/index'
 import ProprietaryMixins from '../proprietaryMixins'
 import { ViewListService } from '@/api-hasura'
-// import _ from 'lodash'
 import { filterOption } from '@/utils/util'
-
-const TAB = 'tab'
-const VIEW = 'view'
+import { NODE_CI_DRILL_TYPE_VIEW, NODE_CI_DRILL_TYPE_TAB } from '@/model/nodes'
+import _ from 'lodash'
 
 export default {
   name: 'ViewListSelect',
@@ -47,28 +46,33 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    TAB,
-    VIEW,
+    NODE_CI_DRILL_TYPE_TAB,
+    NODE_CI_DRILL_TYPE_VIEW,
     loading: false,
     options: {
       click: [
         {
           name: '弹出视图',
-          value: VIEW
+          value: NODE_CI_DRILL_TYPE_VIEW
         },
         {
           name: '切换到页签',
-          value: TAB
+          value: NODE_CI_DRILL_TYPE_TAB
         }
       ]
     },
     viewList: []
   }),
   computed: {
-    // jumpViewList: {
-    // get () {      },
-    // set (jumpViewList) {}
-    // }
+    model () {
+      return Object.assign(
+        _.cloneDeep(this.activeNode.getModel()),
+        { radius: this.activeNode.getModel().size[0] / 2 }
+      )
+    },
+    drillConfig () {
+      return _.get(this, 'model.nodeDynamicDataConfig.drillConfig', {})
+    }
   },
   methods: {
     filterOption,

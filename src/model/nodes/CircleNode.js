@@ -5,12 +5,19 @@
 * Time: 11:14 上午
 * Email: dong.xing@outlook.com
 */
-import Node from './index'
+import Node, { NodeDynamicDataConfig } from './index'
 import { TopologyIcon } from '../common'
 
 export default class CircleNode extends Node {
-  constructor ({ icon, ...node }) {
+  constructor ({ nodeDynamicDataConfig = {}, icon, ...node }) {
     super(node)
     this.icon = new TopologyIcon(icon || {})
+  }
+}
+
+export class CiCircleNode extends CircleNode {
+  constructor ({ nodeDynamicDataConfig = {}, ...circleNode }) {
+    super(circleNode)
+    this.nodeDynamicDataConfig = new NodeDynamicDataConfig(nodeDynamicDataConfig)
   }
 }
