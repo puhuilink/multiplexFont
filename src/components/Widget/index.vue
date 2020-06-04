@@ -107,12 +107,14 @@ export default {
      * 跳转新视图或页签
      */
     drill ({ item }) {
-      const model = item.getModel()
+      // const model = item.getModel()
       // if (model.shape === NODE_TYPE_CI_CIRCLE) {}
-      const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
-      const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
+      // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
+      // mock data
+      const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
+      // const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
       // if (!_.isEmpty(viewList)) {}
-      this.$emit('drill', _.cloneDeep({ drillType, viewList }))
+      this.$emit('drill', _.cloneDeep(drillConfig))
     },
     setTimeRange (timeRangeConfig, timeRange) {
       const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
