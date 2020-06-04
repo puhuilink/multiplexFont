@@ -17,7 +17,7 @@ export class NodeFactory {
     switch (node.shape) {
       case 'circle':
         return new CircleNode(node)
-      case 'ciCircleNode':
+      case NODE_TYPE_CI_CIRCLE:
         return new CiCircleNode(node)
       case 'rect':
         return new RectNode(node)
