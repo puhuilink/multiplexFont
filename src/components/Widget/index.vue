@@ -28,6 +28,9 @@ import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Widget from '@/model/widget'
 import _ from 'lodash'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData'
+import TopologyChart from '@/model/charts/TopologyChart'
+import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
+// import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Widget',
@@ -99,6 +102,18 @@ export default {
     ...mapMutations('screen', {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
+    /**
+     * 拓扑图内 Ci 节点钻取事件
+     * 跳转新视图或页签
+     */
+    drill ({ item }) {
+      const model = item.getModel()
+      // if (model.shape === NODE_TYPE_CI_CIRCLE) {}
+      const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
+      const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
+      // if (!_.isEmpty(viewList)) {}
+      this.$emit('drill', _.cloneDeep({ drillType, viewList }))
+    },
     setTimeRange (timeRangeConfig, timeRange) {
       const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
       if (!_timeRangeType) {
@@ -127,10 +142,7 @@ export default {
     const externalCi = _.get(dbDataConfig, 'externalCi')
     // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
     if (externalCi && this.ciId) {
-      // TODO: 数据流向？
-      dbDataConfig.resourceConfig.selectedInstance = [
-        this.ciId
-      ]
+      dbDataConfig.resourceConfig.selectedInstance = [ this.ciId ]
     }
     // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
     if (!(this.widget instanceof Widget)) {
@@ -148,6 +160,9 @@ export default {
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       this.render.intervalRefresh && this.render.intervalRefresh()
+      if (this.render instanceof TopologyChart) {
+        this.render.chart.on('node:click', this.drill)
+      }
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件
       this.activateWidget({

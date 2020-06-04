@@ -128,7 +128,7 @@
             </a-collapse>
 
             <CommonNodeTemplate v-if="topologyEditable && activeNode" ref="commonNodeTemplate">
-              <template #header v-if="activeNodeModel && activeNodeModel.model === NODE_TYPE_CI_CIRCLE">
+              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CI_CIRCLE">
                 <CiNodeDataSource />
               </template>
             </CommonNodeTemplate>

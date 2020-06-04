@@ -12,6 +12,7 @@
         :notFoundContent="loading ? '加载中' : '暂无数据'"
         showSearch
         v-model="drillConfig.viewList"
+        @select="change()"
       >
         <a-select-option v-for="{ view_id, view_title } in viewList" :key="view_id" :value="view_id">
           {{ view_title }}
@@ -34,6 +35,7 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
+import NodesMixins from '../dataSourceMixins/nodes'
 import ProprietaryMixins from '../proprietaryMixins'
 import { ViewListService } from '@/api-hasura'
 import { filterOption } from '@/utils/util'
@@ -42,7 +44,7 @@ import _ from 'lodash'
 
 export default {
   name: 'ViewListSelect',
-  mixins: [DataSourceMixins, ProprietaryMixins],
+  mixins: [DataSourceMixins, NodesMixins, ProprietaryMixins],
   components: {},
   props: {},
   data: () => ({
@@ -64,12 +66,6 @@ export default {
     viewList: []
   }),
   computed: {
-    model () {
-      return Object.assign(
-        _.cloneDeep(this.activeNode.getModel()),
-        { radius: this.activeNode.getModel().size[0] / 2 }
-      )
-    },
     drillConfig () {
       return _.get(this, 'model.nodeDynamicDataConfig.drillConfig', {})
     }

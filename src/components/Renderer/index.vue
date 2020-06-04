@@ -19,6 +19,7 @@
         :ciId="ciId"
         :timeRange="timeRange"
         @select="() => $emit('change', { el: 'widget', widget })"
+        @drill="onDrill"
       />
       <!-- / 部件渲染 -->
     </div>
@@ -37,6 +38,8 @@ export default {
     Widget
   },
   data: () => ({
+    // 页面钻取历史记录维护，用于前进后退
+    drillHistory: [],
     isSubscribed: true,
     scale: [1, 1],
     scaleMode$: new Subject()
@@ -120,6 +123,11 @@ export default {
       })
   },
   methods: {
+    onDrill (drillConfig) {
+      this.drillHistory.push(drillConfig)
+      const { drillType, viewList } = drillConfig
+      console.log({ drillType, viewList })
+    },
     setScaleMode () {
       this.scaleMode$.next()
     }
