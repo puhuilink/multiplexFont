@@ -175,22 +175,23 @@ export default {
   },
   methods: {
     positionChange () {
-      const { position } = this.config.proprietaryConfig.title
-      switch (position.mode) {
+      const { position = {} } = this.config.proprietaryConfig.title
+      const { mode, left = 0, right = 0, top = 0, bottom = 0 } = position
+      switch (mode) {
         case 'center':
           Object.assign(position, { editablePosition: [] })
           break
         case 'center_left':
-          Object.assign(position, { editablePosition: ['left'], left: 0 })
+          Object.assign(position, { editablePosition: ['left'], left })
           break
         case 'center_right':
-          Object.assign(position, { editablePosition: ['right'], right: 0 })
+          Object.assign(position, { editablePosition: ['right'], right })
           break
         case 'top_center':
-          Object.assign(position, { editablePosition: ['top'], top: 0 })
+          Object.assign(position, { editablePosition: ['top'], top })
           break
         case 'bottom_center':
-          Object.assign(position, { editablePosition: ['bottom'], bottom: 0 })
+          Object.assign(position, { editablePosition: ['bottom'], bottom })
           break
         case 'custom':
           Object.assign(position, {
