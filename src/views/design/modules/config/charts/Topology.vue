@@ -31,7 +31,7 @@
           <a-collapse defaultActiveKey="1" :bordered="false">
 
             <!-- S 公共配置模板 -->
-            <CommonTemplate />
+            <CommonTemplate :usePadding="false" />
             <!-- E 公共配置模板 -->
 
           </a-collapse>
