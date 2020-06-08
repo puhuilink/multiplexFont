@@ -1071,7 +1071,9 @@ class CircleGraphic extends Graphic {
     const { top, left, right, bottom } = padding
     const width = chart.getWidth() - this.style.lineWidth - left - right
     const height = chart.getHeight() - this.style.lineWidth - top - bottom
-    const r = Math.min(width, height) / 2
+    let r = Math.min(width, height) / 2
+    // echarts 配置传入半径不允许为负数
+    r = r >= 0 ? r : 0
     const center = { x: width / 2 - r, y: height / 2 - r }
     return Object.assign(_.cloneDeep(this),
       {
