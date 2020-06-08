@@ -169,7 +169,7 @@
 // import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
-import { timeFix } from '@/utils/util'
+// import { timeFix } from '@/utils/util'
 import CryptoJS, { AES } from 'crypto-js'
 import { sendCaptcha } from '@/api/login'
 
