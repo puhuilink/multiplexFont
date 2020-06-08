@@ -163,6 +163,7 @@ export default {
     },
     async drill (drillConfig) {
       // 记录下历史跳转记录，方便前进与后退
+      // FIXME: 组件自身销毁后 drillListHistory 被缓存
       this.currentView.drillListHistory = this.currentView.drillListHistory || []
       // const { viewList = [9401] } = drillConfig
       // TODO: drillType
