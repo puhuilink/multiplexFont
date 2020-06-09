@@ -11,7 +11,12 @@ import _ from 'lodash'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Edge from '../model/edges'
+import { levelColorMapping } from '@/components/Alarm/color.config'
+import { hexToRGB } from '@/utils/util'
 
+export const animateTypeMapping = (alpha = 1) => new Map(
+  [ ...levelColorMapping ].map(([key, color]) => [`${key}级告警`, hexToRGB(color, alpha)])
+)
 //  节点连线控制点
 // eslint-disable-next-line
 let controlPoints = []
@@ -165,13 +170,7 @@ G6.registerNode('circle', {
         const cfg = {
           r: (model.size[0] + 16) / 2
         }
-        const typeMapping = new Map([
-          ['none', `rgba(24,144,255,0)`],
-          ['default', `rgba(24,144,255,${ratio})`],
-          ['warning', `rgba(255,173,18,${ratio})`],
-          ['danger', `rgba(255,77,79,${ratio})`],
-          ['success', `rgba(81,196,26,${ratio})`]
-        ])
+        const typeMapping = animateTypeMapping(ratio)
         const [stroke] = item.getStates().filter(state => typeMapping.has(state))
         cfg.stroke = stroke ? typeMapping.get(stroke) : `rgba(24,144,255,0)`
         return cfg

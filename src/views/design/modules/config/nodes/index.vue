@@ -43,10 +43,11 @@
               v-model="model.animateType"
               @change="animateTypeChange">
               <a-select-option value="none">无</a-select-option>
-              <a-select-option value="default">默认</a-select-option>
-              <a-select-option value="success">成功</a-select-option>
-              <a-select-option value="warning">告警</a-select-option>
-              <a-select-option value="danger">危险</a-select-option>
+              <a-select-option
+                v-for="(animateType, idx) in animateTypeList"
+                :key="idx"
+                :value="animateType"
+              >{{ animateType }}</a-select-option>
             </a-select>
           </div>
         </div>
@@ -243,6 +244,7 @@ import '@/assets/less/template.less'
 import IconPicker from '@/components/IconPicker'
 import ColorPicker from '@/components/ColorPicker'
 import NodesMixins from '../dataSourceMixins/nodes'
+import { animateTypeMapping } from '@/plugins/g6'
 
 export default {
   name: 'CommonNodeTemplate',
@@ -254,7 +256,8 @@ export default {
       ['rect', '矩形'],
       ['ellipse', '椭圆形'],
       ['image', '图片']
-    ])
+    ]),
+    animateTypeList: [...animateTypeMapping()].map(([type]) => type)
   }),
   methods: {
     /**
@@ -271,6 +274,7 @@ export default {
       const { render: { chart } } = this.activeWidget
       const { id, animateType } = this.model
       chart.clearItemStates(id)
+      console.log(animateType)
       chart.setItemState(id, animateType, true)
       // 更新配置
       this.change()
