@@ -48,6 +48,8 @@
                 :key="idx"
                 :value="animateType"
               >{{ animateType }}</a-select-option>
+              <!-- <a-select-option v-if="model.shape === NODE_TYPE_CI_CIRCLE" value="real">实时</a-select-option> -->
+              <a-select-option value="real">实时</a-select-option>
             </a-select>
           </div>
         </div>
@@ -245,12 +247,14 @@ import IconPicker from '@/components/IconPicker'
 import ColorPicker from '@/components/ColorPicker'
 import NodesMixins from '../dataSourceMixins/nodes'
 import { animateTypeMapping } from '@/plugins/g6'
+import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'CommonNodeTemplate',
   mixins: [NodesMixins],
   components: { IconPicker, ColorPicker },
   data: () => ({
+    NODE_TYPE_CI_CIRCLE,
     shape: new Map([
       ['circle', '圆形'],
       ['rect', '矩形'],
@@ -274,7 +278,6 @@ export default {
       const { render: { chart } } = this.activeWidget
       const { id, animateType } = this.model
       chart.clearItemStates(id)
-      console.log(animateType)
       chart.setItemState(id, animateType, true)
       // 更新配置
       this.change()

@@ -6,6 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 import uuid from 'uuid/v4'
+import { KpiCurrentService } from '@/api-hasura'
 
 // 默认样式
 const defaultStyle = {
@@ -73,5 +74,17 @@ export class NodeDynamicDataConfig {
   }) {
     this.resourceConfig = resourceConfig
     this.drillConfig = drillConfig
+  }
+
+  fetch () {
+    const { resourceConfig } = this
+    return KpiCurrentService.getValue({
+      ...resourceConfig,
+      limit: 1
+    })
+  }
+
+  getOption () {
+    return this.fetch()
   }
 }

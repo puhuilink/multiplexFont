@@ -61,6 +61,8 @@ export default class TopologyChart extends Chart {
         ]
       },
       layout: {
+        // TODO: 待确认性能消耗
+        // workerEnabled: true
         // type: 'dagre'
       },
       animate: true,
