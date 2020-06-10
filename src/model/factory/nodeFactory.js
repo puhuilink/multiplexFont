@@ -11,11 +11,12 @@ import EllipseNode from '../nodes/EllipseNode'
 import ImageNode from '../nodes/ImageNode'
 
 export const NODE_TYPE_CI_CIRCLE = 'ciCircleNode'
+export const NODE_TYPE_CIRCLE = 'circle'
 
 export class NodeFactory {
   static create (node) {
     switch (node.shape) {
-      case 'circle':
+      case NODE_TYPE_CIRCLE:
         return new CircleNode(node)
       case NODE_TYPE_CI_CIRCLE:
         return new CiCircleNode(node)

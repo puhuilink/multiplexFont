@@ -12,10 +12,10 @@ import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Edge from '../model/edges'
 import { levelColorMapping } from '@/components/Alarm/color.config'
-import { hexToRGB } from '@/utils/util'
+import { hexToRGBA } from '@/utils/util'
 
 export const animateTypeMapping = (alpha = 1) => new Map(
-  [ ...levelColorMapping ].map(([key, color]) => [`${key + 1}级告警`, hexToRGB(color, alpha)])
+  [ ...levelColorMapping ].map(([key, color]) => [`${key + 1}级告警`, hexToRGBA(color, alpha)])
 )
 //  节点连线控制点
 // eslint-disable-next-line

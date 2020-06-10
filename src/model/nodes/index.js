@@ -51,6 +51,15 @@ export default class Node {
     this.labelCfg = labelCfg
     this.animateType = animateType
   }
+
+  resetTimer () {
+    clearInterval(this.timer)
+    this.timer = null
+  }
+
+  destroy () {
+    this.resetTimer()
+  }
 }
 
 // 钻取视图类型

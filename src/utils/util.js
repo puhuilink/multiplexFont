@@ -219,7 +219,7 @@ export const filterOption = function (input, option) {
   )
 }
 
-export const hexToRGB = function (hex, alpha) {
+export const hexToRGBA = function (hex, alpha) {
   var r = parseInt(hex.slice(1, 3), 16)
   var g = parseInt(hex.slice(3, 5), 16)
   var b = parseInt(hex.slice(5, 7), 16)
@@ -231,4 +231,4 @@ export const hexToRGB = function (hex, alpha) {
   }
 }
 
-hexToRGB('#FF0000', 0.5)
+hexToRGBA('#FF0000', 0.5)

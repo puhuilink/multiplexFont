@@ -15,6 +15,9 @@ import Chart from './index'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
+const events = require('events')
+
+export const emitter = new events.EventEmitter()
 
 export default class TopologyChart extends Chart {
   constructor ({ widget }) {
@@ -35,7 +38,54 @@ export default class TopologyChart extends Chart {
       renderer: 'canvas',
       plugins: [],
       modes: {
-        default: [],
+        default: ['circle', {
+          type: 'tooltip',
+          formatText: (model) => {
+            if (!this.isPreviewMode) {
+              return ''
+            }
+            const MOCK_DATA = {
+              // 显示属性
+              attrList: [
+                {
+                  label: '显示名称',
+                  value: '生产经营服务器'
+                },
+                {
+                  label: 'IP地址',
+                  value: '127.0.0.1'
+                }
+              ],
+              // 显示 KPI
+              kpiList: [
+                {
+                  label: 'CPU使用率',
+                  value: '80%'
+                },
+                {
+                  label: 'PING延时MS',
+                  value: '20'
+                }
+              ]
+            }
+            model.data = MOCK_DATA
+
+            const { data = {} } = model
+            const { attrList = [], kpiList = [] } = data
+            if (_.isEmpty(attrList) && _.isEmpty(kpiList)) {
+              return ''
+            } else {
+              const attrDom = `${attrList.map(({ label, value }) => `<p>${label}：${value}</p>`).join('')}`
+              const kpiDom = `${kpiList.map(({ label, value }) => `<p>${label}：${value}</p>`).join('')}`
+              return `
+                <div>
+                  <div class="g6-tooltip_attr">${attrDom}</div>
+                  <div class="g6-tooltip_kpi">${kpiDom}</div>
+                </div>
+              `
+            }
+          }
+        }],
         edit: [
           'zoom-canvas',
           'drag-canvas',
@@ -192,6 +242,26 @@ export default class TopologyChart extends Chart {
         activeEdge: null
       })
     })
+  }
+
+  onNodeAnimateTypeChange ({ item, animateType }) {
+    const { id } = item
+    // 记录轮询开启的子节点
+    this.timerNodeList = Array.from(
+      new Set(
+        [ ...this.timerNodeList || [], item ]
+      )
+    )
+    setTimeout(() => {
+      this.chart.clearItemStates(id)
+      this.chart.setItemState(id, animateType, true)
+    })
+  }
+
+  enablePreviewMode () {
+    this.isPreviewMode = true
+    // Ci 节点实时告警变色
+    emitter.on('animateType:change', this.onNodeAnimateTypeChange.bind(this))
   }
 
   /**
@@ -415,7 +485,11 @@ export default class TopologyChart extends Chart {
   }
 
   destroy () {
+    // emitter.off('canvas:click', this.onNodeAnimateTypeChange)
     this.chart.off()
     this.chart.destroy()
+    this.timerNodeList.forEach(node => {
+      node.destroy()
+    })
   }
 }

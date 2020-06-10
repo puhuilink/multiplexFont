@@ -30,7 +30,7 @@ import _ from 'lodash'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
-// import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
+import { NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE, NodeFactory } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Widget',
@@ -137,6 +137,19 @@ export default {
       // 删除备份配置
       Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
       Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
+    },
+    initTopologyChart () {
+      const { render } = this
+      const { chart, config } = render
+      const { proprietaryConfig: { nodes } } = config
+      chart.on('node:click', this.drill)
+      // 筛选出需要定时刷新的节点，如果节点只存储了配置，需要将其实例化
+      const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE].includes(shape)).map(node => NodeFactory.create(node))
+      render.enablePreviewMode()
+      // 开启轮询
+      circleNodeList.forEach(node => {
+        node.intervalRefresh && node.intervalRefresh()
+      })
     }
   },
   mounted () {
@@ -163,7 +176,7 @@ export default {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       this.render.intervalRefresh && this.render.intervalRefresh()
       if (this.render instanceof TopologyChart) {
-        this.render.chart.on('node:click', this.drill)
+        this.initTopologyChart()
       }
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件
