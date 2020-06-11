@@ -12,7 +12,7 @@
       allowClear
       mode="multiple"
       :maxTagCount="2"
-      style="min-width: 200px"
+      style="min-width: 175px"
       v-model="form.alarmType"
       placeholder="请选择告警类型"
     >

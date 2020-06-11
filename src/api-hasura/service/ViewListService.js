@@ -2,7 +2,7 @@ import { BaseService } from './BaseService'
 import {
   ViewListDao
 } from '../dao/index'
-import { mutate } from '../utils/hasura-orm/index'
+import { mutate, query } from '../utils/hasura-orm/index'
 
 class ViewListService extends BaseService {
   /**
@@ -20,6 +20,12 @@ class ViewListService extends BaseService {
   static async update (view = {}, where = {}) {
     await mutate(
       ViewListDao.update(view, where)
+    )
+  }
+
+  static async find (argus = {}) {
+    return query(
+      ViewListDao.find(argus)
     )
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="'RealDataSource'">
+  <div class="RealDataSource">
     <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
       <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button>
     </a-tooltip>
@@ -10,7 +10,7 @@
       v-bind="formItemLayout"
       v-if="useXAxisType"
     >
-      <a-select style="width: 100%" v-model="xAxisType">
+      <a-select style="width: 100%" v-model="xAxisType" @select="change">
         <a-select-option
           v-for="(option, idx) in options.xAxisType"
           :key="idx"
@@ -21,21 +21,23 @@
       </a-select>
     </a-form-item>
 
-    <!-- / 查询时间 -->
+    <!-- / 图例内容 -->
     <a-form-item
-      label="时间"
+      label="图例内容"
       v-bind="formItemLayout"
+      v-if="useLegendType"
     >
-      <a-select style="width: 100%" v-model="timeRangeStart">
-        <a-select-option
-          v-for="(option, idx) in timeRangeSelectOptions"
-          :key="idx"
-          :value="option.value"
-        >
-          {{ option.name }}
-        </a-select-option>
+      <a-select
+        style="width: 100%"
+        v-model="legendType"
+        @change="change"
+      >
+        <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.name }}</a-select-option>
       </a-select>
     </a-form-item>
+
+    <!-- / 查询时间 -->
+    <TimeRange v-if="useTimeRange" />
 
     <!-- / 数据源 -->
     <ComboSelect
@@ -76,12 +78,15 @@
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import { ComboSelect } from '@/components/Common'
+import TimeRange from './TimeRange'
+import _ from 'lodash'
 
 export default {
   name: 'RealDataSource',
   mixins: [DataSourceMixins],
   components: {
-    ComboSelect
+    ComboSelect,
+    TimeRange
   },
   props: {
     useComboSelect: {
@@ -95,6 +100,10 @@ export default {
     useExternalCi: {
       type: Boolean,
       default: true
+    },
+    useLegendType: {
+      type: Boolean,
+      default: false
     },
     useRefreshTime: {
       type: Boolean,
@@ -110,16 +119,36 @@ export default {
     }
   },
   data: () => ({
+    legendTypeList: [
+      {
+        name: 'Ci',
+        value: 'ci'
+      },
+      {
+        name: 'Instance',
+        value: 'instance'
+      },
+      {
+        name: 'Kpi',
+        value: 'kpi'
+      }
+    ]
   }),
-  computed: {},
-  methods: {}
+  computed: {
+    legendType: {
+      set (legendType) {
+        // TODO: 此处先按单选实现，后期扩展为多选，始终以数组传递，方便向后兼容
+        legendType = Array.isArray(legendType) ? legendType : [legendType]
+        console.log(legendType)
+        Object.assign(this.config.dataConfig.dbDataConfig, { legendType })
+      },
+      get () {
+        return _.get(this, 'config.dataConfig.dbDataConfig.legendType', ['ci'])
+      }
+    }
+  }
 }
 </script>
 
 <style scoped lang="less">
-.data-source {
-  &__select {
-    width: 100%;
-  }
-}
 </style>

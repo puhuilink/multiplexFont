@@ -5,7 +5,6 @@ import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { welcome, getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
-// import { info } from '@/mock/services/user'
 
 const user = {
   state: {
@@ -62,12 +61,15 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           const originalPermission = []
+          const organizeList = (user.organizeList || []).filter(v => !!v)
+          if (!organizeList.length) {
+            reject(new Error('该用户未分配工作组，请先联系管理员分配工作组！'))
+          }
           const results = await Promise.all(user.organizeList.map(organize => getGroupPermission(organize.groupId)))
           const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
           const permissionList = results.flatMap(item => item.data)
           if (!status) {
-            this.$message.error('用户权限数据获取失败，请稍后尝试！')
-            return
+            reject(new Error('用户权限数据获取失败，请稍后尝试！'))
           }
           permissionList.forEach(permission => {
             if (!originalPermission.some(item => item.code === permission.code)) {
@@ -90,7 +92,7 @@ const user = {
               ...user
             })
           } else {
-            reject(new Error('getInfo: roles must be a non-null array !'))
+            reject(new Error('用户或其工作组未分配可访问的权限！'))
           }
 
           // TODO: 此处为 mock 数据，新系统权限部分还未涉及，目前完成了登录接口
@@ -132,6 +134,7 @@ const user = {
 
     // 登出
     Logout ({ commit, state }) {
+      // TODO: 当前 token 并无过期时间，后端也并未提供 logout 接口
       return new Promise((resolve) => {
         logout(state.token).then(() => {
           resolve()

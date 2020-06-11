@@ -6,6 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 import uuid from 'uuid/v4'
+import { KpiCurrentService } from '@/api-hasura'
 
 // 默认样式
 const defaultStyle = {
@@ -49,5 +50,50 @@ export default class Node {
     this.label = label
     this.labelCfg = labelCfg
     this.animateType = animateType
+  }
+
+  resetTimer () {
+    clearInterval(this.timer)
+    this.timer = null
+  }
+
+  destroy () {
+    this.resetTimer()
+  }
+}
+
+// 钻取视图类型
+// 页签
+export const NODE_CI_DRILL_TYPE_TAB = 'tab'
+// 视图列表
+export const NODE_CI_DRILL_TYPE_VIEW = 'view'
+
+export class NodeDynamicDataConfig {
+  constructor ({
+    resourceConfig = {
+      model: '',
+      selectedInstance: [],
+      selectedKpi: [],
+      selectedAttr: []
+    },
+    drillConfig = {
+      drillType: NODE_CI_DRILL_TYPE_VIEW,
+      viewList: []
+    }
+  }) {
+    this.resourceConfig = resourceConfig
+    this.drillConfig = drillConfig
+  }
+
+  fetch () {
+    const { resourceConfig } = this
+    return KpiCurrentService.getValue({
+      ...resourceConfig,
+      limit: 1
+    })
+  }
+
+  getOption () {
+    return this.fetch()
   }
 }

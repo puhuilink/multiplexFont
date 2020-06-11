@@ -109,18 +109,15 @@ class KpiCurrentService extends BaseService {
     timeRange = {}
   }) {
     const { _getKpiAndCiInfo } = this
-    const { timeRangeStart, timeRangeEnd } = timeRange || {}
+    const dao = _.isEmpty(timeRange) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
-    // 起始时间与结束时间不相同时，认为是按时间范围查找
-    const timeRangeQuery = (timeRangeStart && timeRangeStart !== timeRangeEnd) ? {
+    const { timeRangeStart, timeRangeEnd } = timeRange || {}
+    const timeRangeQuery = (timeRangeStart && timeRangeStart) ? {
       arising_time: {
         _gte: `"${timeRangeStart}"`,
         _lte: `"${timeRangeEnd}"`
       }
     } : {}
-
-    // 存在时间范围从历史值中查找，反之从最新值查找
-    const dao = _.isEmpty(timeRangeQuery) ? KpiCurrentLastestDao : KpiCurrentHistoryDao
 
     const argus = this._composeKpiAndCi(selectedKpi, selectedInstance, detailInstance)
 

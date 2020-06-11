@@ -14,7 +14,7 @@
       <a-tab-pane tab="公共属性" key="1">
 
         <!-- S 公共配置模板 -->
-        <CommonTemplate />
+        <CommonTemplate :usePadding="false" />
         <!-- E 公共配置模板 -->
 
       </a-tab-pane>

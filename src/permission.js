@@ -45,12 +45,13 @@ router.beforeEach((to, from, next) => {
           .catch((err) => {
             notification.error({
               message: '错误',
-              description: '请求用户信息失败，请重试'
+              description: err.message
             })
             store.dispatch('Logout').then(() => {
+              console.log(to.fullPath)
               next({ path: '/user/login', query: { redirect: to.fullPath } })
             })
-            console.log(err)
+            NProgress.done()
           })
       } else {
         next()

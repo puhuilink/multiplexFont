@@ -189,11 +189,7 @@ export default {
       }
     }, [toolTipText, selectWithoutTooltip])
 
-    return (
-      <div className="KpiSelect">
-        { (toolTip && tooltipTitle) ? selectWithTooltip : selectWithoutTooltip }
-      </div>
-    )
+    return (toolTip && tooltipTitle) ? selectWithTooltip : selectWithoutTooltip
   }
 }
 </script>

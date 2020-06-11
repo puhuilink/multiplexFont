@@ -11,14 +11,15 @@
     <div class="renderer__content" ref="renderer">
       <Widget
         only-show
-        v-if="view.widgets.length > 0"
         v-for="widget in view.widgets"
         onlyShow
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"
         :ciId="ciId"
+        :timeRange="timeRange"
         @select="() => $emit('change', { el: 'widget', widget })"
+        @drill="$emit('drill', $event)"
       />
       <!-- / 部件渲染 -->
     </div>
@@ -50,6 +51,10 @@ export default {
     ciId: {
       type: String,
       default: ''
+    },
+    timeRange: {
+      type: Array,
+      default: () => []
     }
   },
   mounted () {

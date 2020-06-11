@@ -10,13 +10,16 @@
   <transition name="preview">
     <div class="view-preview" v-if="visible">
 
-      <p class="view-preview__title">{{ title }}</p>
+      <p class="view-preview__title">
+        <a-icon type="left" v-show="backAvailable" @click="backDrill" />
+        {{ title }}
+      </p>
 
       <a-spin :spinning="isLoading">
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
         <div class="view-preview__renderer" ref="wrap">
 
-          <Renderer v-if="view" :view="view" ref="renderer" />
+          <Renderer v-if="view && !isLoading" :view="view" :timeRange="timeRange" ref="renderer" @drill="drill" />
 
         </div>
       </a-spin>
@@ -105,6 +108,10 @@ export default {
     isDesignMode: {
       type: Boolean,
       default: false
+    },
+    timeRange: {
+      type: Array,
+      default: () => []
     }
   },
   data: () => ({
@@ -116,6 +123,9 @@ export default {
     timer: null
   }),
   computed: {
+    backAvailable () {
+      return !!_.get(this, 'currentView.drillListHistory.length', 0)
+    },
     scaleMode: {
       get: function () {
         return this.view ? _.get(this.view, 'config.proprietaryConfig.scaleMode') : 'auto'
@@ -131,17 +141,39 @@ export default {
         if (this.isDesignMode) {
           return _.get(this.$route.query, 'title')
         } else {
-          return this.viewList[this.index].view_name
+          // TODO: this.view 缺少 view_title 字段
+          return _.get(this, 'view.view_title', this.viewList[this.index].view_title)
         }
       }
     }
   },
   methods: {
+    backDrill () {
+      this.currentView.drillListHistory = this.currentView.drillListHistory || []
+      this.currentView.drillListHistory.pop()
+      console.log(this.currentView.drillListHistory)
+      const view_id = _.last(this.currentView.drillListHistory) || this.currentView.view_id
+      this.getViewConfigFromApi(view_id)
+    },
     /**
      * 关闭弹框
      */
     close () {
       this.$emit('update:visible', false)
+    },
+    async drill (drillConfig) {
+      // 记录下历史跳转记录，方便前进与后退
+      // FIXME: 组件自身销毁后 drillListHistory 被缓存
+      this.currentView.drillListHistory = this.currentView.drillListHistory || []
+      // const { viewList = [9401] } = drillConfig
+      // TODO: drillType
+      // TODO: 多个视图？
+      // this.currentView.drillListHistory.push(drillConfig)
+      this.currentView.drillListHistory.push(9401)
+
+      // 历史记录被清空时，展示自身视图
+      const view_id = _.last(this.currentView.drillListHistory) || this.currentView.view_id
+      this.getViewConfigFromApi(view_id)
     },
     /**
      * 开启全屏
@@ -169,6 +201,7 @@ export default {
         this.view = null
         throw e
       } finally {
+        await Timeout.set(300)
         this.isLoading = false
       }
     },

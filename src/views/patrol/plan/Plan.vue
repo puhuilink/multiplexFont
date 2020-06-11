@@ -126,8 +126,8 @@
 
       <template #operation>
         <a-button @click="add">新增</a-button>
-        <a-button :disabled="hasSelectedOne" @click="edit">编辑</a-button>
-        <a-button :disabled="hasSelected" @click="batchDelete">删除</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="edit">编辑</a-button>
+        <a-button :disabled="!hasSelected" @click="batchDelete">删除</a-button>
       </template>
 
     </CTable>

@@ -147,7 +147,7 @@
       <!-- E 圆角 -->
 
       <!-- S 边距 -->
-      <a-collapse-panel header="边距" key="4" v-show="usePadding">
+      <a-collapse-panel header="边距" key="4" v-if="usePadding">
 
         <div class="comment-template__item">
           <p class="comment-template__leading">上:</p>

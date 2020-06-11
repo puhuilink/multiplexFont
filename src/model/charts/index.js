@@ -118,17 +118,27 @@ export default class Chart {
   intervalRefresh () {
     this.refresh()
     // 存在自动刷新时间设置则开启定时刷新
-    const refreshTime = _.get(this, 'config.dataConfig.dbDataConfig.refreshTime')
+    const refreshTime = _.get(this, 'widget.config.dataConfig.dbDataConfig.refreshTime')
     if (refreshTime > 0) {
-      // console.log(`${this.config.type}组件实例开启轮询`)
-      this.timer = setInterval(() => { this.refresh() }, refreshTime * 1000 * 60)
+      this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60
+      )
     }
+  }
+
+  restartIntervalRefresh () {
+    this.resetTimer()
+    this.intervalRefresh()
+  }
+
+  resetTimer () {
+    clearInterval(this.timer)
+    this.timer = null
   }
 
   /**
    * 销毁事件
    */
   destroy () {
-    clearInterval(this.timer)
+    this.resetTimer()
   }
 }
