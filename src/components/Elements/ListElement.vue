@@ -21,7 +21,6 @@
 <script>
 import CTable from '@/components/Table/CTable'
 import { KpiCurrentService } from '@/api-hasura'
-import { TimeRange } from '@/model/config/dataConfig/dynamicData/index'
 import _ from 'lodash'
 
 const defaultColumns = [
@@ -92,7 +91,7 @@ export default {
           selectedInstance,
           selectedKpi,
           // 此时拿到的可能是未经实例化的 timeRange 对象
-          timeRange: TimeRange.getOption.apply(timeRange),
+          timeRange: timeRange.getOption(),
           fields: [
             'kpi_value_num',
             'arising_time'

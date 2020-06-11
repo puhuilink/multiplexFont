@@ -25,7 +25,7 @@
             <a-collapse-panel header="文本样式" key="1">
 
               <div class="comment-template__item">
-                <p class="comment-template__leading">文本:</p>
+                <p class="comment-template__leading">缺省值:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="text"
@@ -90,7 +90,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('left')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('left')">
                 <p class="comment-template__leading">居左:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -103,7 +103,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('right')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('right')">
                 <p class="comment-template__leading">居右:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -116,7 +116,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('top')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('top')">
                 <p class="comment-template__leading">居上:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -129,7 +129,7 @@
 
               <div
                 class="comment-template__item"
-                v-if="config.proprietaryConfig.title.position.editablePosition.includes('bottom')">
+                v-show="config.proprietaryConfig.title.position.editablePosition.includes('bottom')">
                 <p class="comment-template__leading">居下:</p>
                 <div class="comment-template__inner">
                   <a-input
@@ -140,21 +140,10 @@
               </div>
               <!-- / 居下 -->
 
+              <ThresholdColor />
+
             </a-collapse-panel>
             <!-- E 文本样式 -->
-
-            <!-- <a-collapse-panel header="数值设置" key="2">
-              <div class="comment-template__item">
-                <p class="comment-template__leading">小数点:</p>
-                <div class="comment-template__inner">
-                  <a-slider
-                    v-model="titleUnit"
-                    @change="titleUnitChange"
-                    :min="1"
-                    :max="10" />
-                </div>
-              </div>
-            </a-collapse-panel> -->
           </a-collapse>
         </div>
       </a-tab-pane>
@@ -173,6 +162,7 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import TextHealthDataSource from '../dataSource/TextHealthDataSource'
+import ThresholdColor from '../common/ThresholdColor'
 
 export default {
   name: 'TextHealthConfig',
@@ -180,26 +170,28 @@ export default {
   components: {
     CommonTemplate,
     ColorPicker,
-    TextHealthDataSource
+    TextHealthDataSource,
+    ThresholdColor
   },
   methods: {
     positionChange () {
-      const { position } = this.config.proprietaryConfig.title
-      switch (position.mode) {
+      const { position = {} } = this.config.proprietaryConfig.title
+      const { mode, left = 0, right = 0, top = 0, bottom = 0 } = position
+      switch (mode) {
         case 'center':
           Object.assign(position, { editablePosition: [] })
           break
         case 'center_left':
-          Object.assign(position, { editablePosition: ['left'], left: 0 })
+          Object.assign(position, { editablePosition: ['left'], left })
           break
         case 'center_right':
-          Object.assign(position, { editablePosition: ['right'], right: 0 })
+          Object.assign(position, { editablePosition: ['right'], right })
           break
         case 'top_center':
-          Object.assign(position, { editablePosition: ['top'], top: 0 })
+          Object.assign(position, { editablePosition: ['top'], top })
           break
         case 'bottom_center':
-          Object.assign(position, { editablePosition: ['bottom'], bottom: 0 })
+          Object.assign(position, { editablePosition: ['bottom'], bottom })
           break
         case 'custom':
           Object.assign(position, {

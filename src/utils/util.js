@@ -1,4 +1,9 @@
 import _ from 'lodash'
+import scrollTo from 'ant-design-vue/lib/_util/scrollTo'
+
+export {
+  scrollTo
+}
 
 export function timeFix () {
   const time = new Date()
@@ -205,5 +210,23 @@ export function filterTransferOption (key) {
     return value.toLowerCase().indexOf(
       inputValue.trim().toLowerCase()
     ) > -1
+  }
+}
+
+export const filterOption = function (input, option) {
+  return (
+    option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  )
+}
+
+export const hexToRGBA = function (hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16)
+  var g = parseInt(hex.slice(3, 5), 16)
+  var b = parseInt(hex.slice(5, 7), 16)
+
+  if (alpha) {
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')'
+  } else {
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')'
   }
 }

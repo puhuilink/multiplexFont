@@ -28,7 +28,10 @@ export default {
   methods: {
     ...mapMutations('screen', {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET,
-      removeWidget: ScreenMutations.REMOVE_WIDGET
+      removeWidget: ScreenMutations.REMOVE_WIDGET,
+      updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG,
+      updateNode: ScreenMutations.ACTIVATE_NODE
+
     }),
     change () {
       const activeWidget = _.cloneDeep(this.activeWidget)

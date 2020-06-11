@@ -463,7 +463,6 @@ export default {
       this.selectedRows = selectedRows
     },
     onSearch (value) {
-      console.log(value)
     },
     /**
      * 行属性,表格点击事件
@@ -504,12 +503,10 @@ export default {
   beforeDestroy () {
     // 清除定时器
     clearInterval(this.timer)
-    console.log('beforeDestroy')
   },
   destroyed () {
     // 清除定时器
     // clearInterval(this.timer)
-    console.log('destroyed')
   }
 }
 </script>

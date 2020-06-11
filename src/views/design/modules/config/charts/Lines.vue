@@ -8,7 +8,7 @@
 <template>
   <div class="lines-config">
     <a-tabs
-      defaultActiveKey="3"
+      defaultActiveKey="1"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
@@ -36,8 +36,8 @@
                   <div class="comment-template__inner">
                     <a-select
                       v-model="config.proprietaryConfig.lineStyle.type"
-                      @change="change">
-                      <a-select-option value="solid">直线</a-select-option>
+                      @change="change()">
+                      <a-select-option value="solid">实线</a-select-option>
                       <a-select-option value="dashed">虚线</a-select-option>
                       <a-select-option value="dotted">点线</a-select-option>
                     </a-select>
@@ -52,7 +52,7 @@
                       checkedChildren="平滑"
                       unCheckedChildren="正常"
                       v-model="config.proprietaryConfig.smooth"
-                      @change="change" />
+                      @change="change()" />
                   </div>
                 </div>
                 <!-- / 平滑 -->

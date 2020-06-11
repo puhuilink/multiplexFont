@@ -271,6 +271,7 @@ import {
   CiInstanceSelect
 } from '@/components/Common'
 import { Confirm, List } from '@/components/Mixins'
+import { levelColorMapping } from '@/components/Alarm/color.config'
 
 // 后期取消注释
 // const today = screening.getNowFormatDate()
@@ -351,14 +352,7 @@ const levelQuery = gql`query($state: numeric!,$arising_time_gte: timestamp!, $ar
 
 const levelStyle = (level) => {
   level = ~~level
-  const levelMapping = new Map([
-    [0, '#00c356'],
-    [1, '#54b9e4'],
-    [2, '#ffdb00'],
-    [3, '#f7870a'],
-    [4, '#ff0000']
-  ])
-  const backgroundColor = levelMapping.get(level) || 'white'
+  const backgroundColor = levelColorMapping.get(level) || 'white'
   return { backgroundColor }
 }
 

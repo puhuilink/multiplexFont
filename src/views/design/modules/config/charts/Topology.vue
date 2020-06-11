@@ -31,7 +31,7 @@
           <a-collapse defaultActiveKey="1" :bordered="false">
 
             <!-- S 公共配置模板 -->
-            <CommonTemplate />
+            <CommonTemplate :usePadding="false" />
             <!-- E 公共配置模板 -->
 
           </a-collapse>
@@ -127,7 +127,11 @@
 
             </a-collapse>
 
-            <CommonNodeTemplate v-if="topologyEditable && activeNode" ref="commonNodeTemplate" />
+            <CommonNodeTemplate v-if="topologyEditable && activeNode" ref="commonNodeTemplate">
+              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CI_CIRCLE">
+                <CiNodeDataSource />
+              </template>
+            </CommonNodeTemplate>
             <!-- / 节点通用配置 -->
 
             <CommonEdgeTemplate v-if="topologyEditable && activeEdge" ref="commonEdgeTemplate" />
@@ -136,7 +140,6 @@
           </div>
 
         </a-tab-pane>
-
       </a-tabs>
     </div>
   </div>
@@ -157,6 +160,8 @@ import WrapperService from '@/components/Wrapper/WrapperService'
 import CommonNodeTemplate from '@/views/design/modules/config/nodes'
 import CommonEdgeTemplate from '@/views/design/modules/config/edges'
 import EdgeTemplate from '@/views/design/modules/config/edges/edge'
+import CiNodeDataSource from '../dataSource/CiNodeDataSource'
+import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Topology',
@@ -168,9 +173,11 @@ export default {
     DataSourceTemplate,
     CommonNodeTemplate,
     CommonEdgeTemplate,
-    EdgeTemplate
+    EdgeTemplate,
+    CiNodeDataSource
   },
   data: () => ({
+    NODE_TYPE_CI_CIRCLE,
     // 拓扑尺寸编辑
     topologyResizable: true,
     // 拓扑模式
@@ -191,6 +198,14 @@ export default {
     // 通用边配置
     edge () {
       return _.cloneDeep(this.edgeConfig)
+    },
+    activeNodeModel () {
+      if (this.activeNode) {
+        return Object.assign(
+          _.cloneDeep(this.activeNode.getModel()),
+          { radius: this.activeNode.getModel().size[0] / 2 }
+        )
+      } return null
     }
   },
   created () {

@@ -159,23 +159,19 @@ export default {
      */
     alarmLevelChange (value) {
       // this.queryParam.alarmType = screening.checkAll(value, this.alarmType)
-      console.log(value)
       let list = value
       value.forEach(element => {
         if (element === 'checkall') {
           if (length - 1 === this.levelList && value[length - 1] === 'checkall') {
             list = []
-            console.log('点击')
           } else {
             list = []
             this.levelList.forEach(m => {
               list.push(m)
-              console.log(list)
-              const a = this.form.getFieldsValue()
+              // const a = this.form.getFieldsValue()
               this.form.setFieldsValue({
                 alarmLevel: list
               })
-              console.log(a)
             })
           }
         }

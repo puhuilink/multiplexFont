@@ -2,7 +2,6 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
-import { timeRangeSelectOptions } from '@/model/config/dataConfig/dynamicData'
 
 const formItemLayout = {
   labelCol: {
@@ -18,10 +17,6 @@ const formItemLayout = {
 export default {
   data: () => ({
     formItemLayout,
-    timeRangeSelectOptions: timeRangeSelectOptions.map(el => ({
-      ...el,
-      value: JSON.stringify(el.value)
-    })),
     options: {
       // TODO: 拆分为常量
       xAxisType: [
@@ -80,29 +75,6 @@ export default {
         _.get(this.resourceConfig, 'selectedInstance.length')
       )
     },
-    // 不是所有的视图组件都需要配置 timeRange
-    timeRange: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.timeRange')
-      }
-    },
-    timeRangeStart: {
-      get () {
-        try {
-          return JSON.stringify(this.timeRange.timeRangeStart)
-        } catch (e) {
-          return null
-        }
-      },
-      set (v) {
-        if (this.timeRange) {
-          Object.assign(this.timeRange, {
-            timeRangeStart: JSON.parse(v)
-          })
-          this.change()
-        }
-      }
-    },
     xAxisType: {
       get () {
         return _.get(this.config, 'dataConfig.dbDataConfig.xAxisType', 'RESOURCE')
@@ -119,7 +91,9 @@ export default {
     }),
     async change (loadingDynamicData = false) {
       try {
-        this.btnLoading = true
+        if (loadingDynamicData) {
+          this.btnLoading = true
+        }
         const activeWidget = _.cloneDeep(this.activeWidget)
         const { render } = this.activeWidget
         // 设置当前选中不见

@@ -80,12 +80,12 @@
 
       <template #operation>
         <a-button
-          :disabled="hasSelectedOne"
+          :disabled="!hasSelectedOne"
           @click="seeDetail"
         >
           详情查看
         </a-button>
-        <a-button @click="exportExcel(selectedRowKeys)" :disabled="hasSelected">导出</a-button>
+        <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
       </template>
 
       <a slot="action" slot-scope="text, record" @click="seeKpi(record)">查看</a>

@@ -25,7 +25,7 @@ const linkList = [
 
 // TODO: 此处包装后传递到 service 层
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
-  console.log({ graphQLErrors, networkError })
+  // console.log({ graphQLErrors, networkError })
   if (networkError) {
     notification.error({
       message: '系统提示',
@@ -38,7 +38,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
       message: '系统内部异常',
       description: graphQLErrors.map(({ message, extensions: { path, code } }) => {
         const text = `[GraphQL error]: Message: ${message}, Code: ${code}, Path: ${path}`
-        console.log(text)
+        // console.log(text)
         return text
       }).join('/\r/\n')
     })

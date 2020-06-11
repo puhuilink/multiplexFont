@@ -17,6 +17,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
+import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Ci',
@@ -38,31 +39,41 @@ export default {
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     dragend ({ event, node: { dataRef } }) {
-      const target = this.icons.find(icon => icon.name === dataRef.icon)
-      const other = this.icons.find(icon => icon.name === 'Others')
-      const icon = target || other
-      const data = {
-        height: 64,
-        label: dataRef.title,
-        radius: '50%',
-        shape: 'circle',
-        width: 64,
-        icon: {
-          name: icon.name,
-          height: 64,
-          img: icon.img,
-          position: 'inside',
-          show: true,
-          width: 64
-        },
-        style: {
-          fill: 'rgba(24,144,255,0)',
-          lineWidth: 0,
-          radius: 0,
-          stroke: 'rgba(145,213,255, 0)'
-        }
-      }
       if (this.isWithinTopologyScope(event)) {
+        const target = this.icons.find(icon => icon.name === dataRef.icon)
+        const other = this.icons.find(icon => icon.name === 'Others')
+        const icon = target || other
+        const data = {
+          height: 64,
+          label: dataRef.title,
+          radius: '50%',
+          shape: NODE_TYPE_CI_CIRCLE,
+          width: 64,
+          icon: {
+            name: icon.name,
+            height: 64,
+            img: icon.img,
+            position: 'inside',
+            show: true,
+            width: 64
+          },
+          style: {
+            fill: 'rgba(24,144,255,0)',
+            lineWidth: 0,
+            radius: 0,
+            stroke: 'rgba(145,213,255, 0)'
+          },
+          nodeDynamicDataConfig: {
+            resourceConfig: {
+              // TODO: 写入 model 与 instance
+              model: '',
+              selectedInstance: [],
+              selectedKpi: [],
+              selectedAttr: []
+            }
+          }
+        }
+
         const { render } = this.activeWidget
         const graph = render.chart
         const { pageX, pageY } = event

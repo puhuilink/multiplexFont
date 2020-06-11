@@ -1,29 +1,16 @@
-import { UserService } from './UserService'
-import { ModelService } from './ModelService'
-import { KpiCurrentService } from './KpiCurrentService'
-import { InstanceService } from './InstanceService'
-import { ViewDesignService } from './ViewDesignService'
-import { AuditService } from './AuditService'
-import { OperationLogService } from './OperationLogService'
-import { ModelHistoryService } from './ModelHistoryService'
-import { InstanceHistoryService } from './InstanceHistoryService'
-import { RelationAttributeService } from './RelationAttributeService'
-import { RelationInstanceService } from './RelationInstanceService'
-import { GroupService } from './GroupService'
-import { ViewListService } from './ViewListService'
+const requirePlugins = require.context('./', true, /\.js$/)
 
-export {
-  UserService,
-  ModelService,
-  KpiCurrentService,
-  InstanceService,
-  ViewDesignService,
-  AuditService,
-  OperationLogService,
-  ModelHistoryService,
-  InstanceHistoryService,
-  RelationAttributeService,
-  RelationInstanceService,
-  GroupService,
-  ViewListService
-}
+const excludeList = [
+  './index.js',
+  './BaseService.js'
+]
+
+const exposed = {}
+
+requirePlugins.keys().forEach((fileName) => {
+  if (excludeList.includes(fileName)) return
+  const className = fileName.replace(/(\.)*(\/)*(js)*/g, '')
+  exposed[className] = requirePlugins(fileName)[className]
+})
+
+module.exports = exposed

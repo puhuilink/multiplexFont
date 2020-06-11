@@ -169,9 +169,10 @@
 // import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
-import { timeFix } from '@/utils/util'
+// import { timeFix } from '@/utils/util'
 import CryptoJS, { AES } from 'crypto-js'
 import { sendCaptcha } from '@/api/login'
+import _ from 'lodash'
 
 const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
@@ -378,21 +379,15 @@ export default {
     },
     loginSuccess (res) {
       this.$router.push({ path: '/' })
-      // 延迟 1 秒显示欢迎信息
-      setTimeout(() => {
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      }, 1000)
       this.isLoginError = false
     },
     requestFailed (err) {
       this.isLoginError = true
+      const message = _.get(err, 'response.data.msg', err.message)
+      console.log(message)
       this.$notification['error']({
-        message: '错误',
-        // description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
-        description: err.message,
+        message: '登录失败',
+        description: message || '请求出现错误，请稍后再试',
         duration: 4
       })
       throw err

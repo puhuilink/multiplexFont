@@ -65,7 +65,8 @@ export default {
         onOk: () => {
           return this.Logout({}).then(() => {
             setTimeout(() => {
-              window.location.reload()
+              // window.location.reload()
+              this.$router.push('/user/login')
             }, 16)
           }).catch(err => {
             this.$message.error({

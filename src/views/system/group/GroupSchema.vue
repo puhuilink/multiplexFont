@@ -121,11 +121,17 @@
                 }
               ]"
             >
-              <a-select-option
-                v-for="item in options.domain"
-                :key="item.value"
-                :value="item.value"
-              >{{ item.name }}</a-select-option>
+              <a-select-opt-group
+                v-for="domain in options.domain"
+                :key="domain.name"
+                :label="domain.name"
+              >
+                <a-select-option
+                  v-for="{ name, value } in domain.children"
+                  :key="value"
+                  :value="value"
+                >{{ name }}</a-select-option>
+              </a-select-opt-group>
             </a-select>
           </a-form-item>
         </a-col>
@@ -184,19 +190,25 @@ export default {
       domain: [
         {
           name: 'rootDomain',
-          value: 'rootDomain'
+          children: [
+            {
+              name: '北京运维组',
+              value: 'bjDomain'
+            },
+            {
+              name: '厦门运维组',
+              value: 'xmDomain'
+            }
+          ]
         },
         {
-          name: '北京运维组',
-          value: 'bjDomain'
-        },
-        {
-          name: '厦门运维组',
-          value: 'xmDomain'
-        },
-        {
-          name: '置空',
-          value: null
+          name: 'root',
+          children: [
+            {
+              name: 'rootDomain',
+              value: 'rootDomain'
+            }
+          ]
         }
       ]
     },

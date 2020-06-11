@@ -24,9 +24,13 @@
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
-import { ELEMENTS, ELEMENTMAPPING } from '../Elements'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Widget from '@/model/widget'
 import _ from 'lodash'
+import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData'
+import TopologyChart from '@/model/charts/TopologyChart'
+import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
+import { NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE, NodeFactory } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Widget',
@@ -46,6 +50,10 @@ export default {
     ciId: {
       type: String,
       default: ''
+    },
+    timeRange: {
+      type: Array,
+      default: () => []
     }
   },
   data: () => ({
@@ -62,11 +70,86 @@ export default {
     },
     // 元素组件名
     elementName () {
-      return ELEMENTMAPPING.get(this.widget.config.type)
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     },
     // 元素配置
     elementProps () {
       return this.widget.config.proprietaryConfig.props
+    }
+  },
+  watch: {
+    timeRange: {
+      deep: true,
+      immediate: true,
+      async handler (timeRange) {
+        if (this.onlyShow) {
+          await this.$nextTick()
+          const { dataConfig = {} } = this.widget.config
+          const { sourceType, dbDataConfig = {} } = dataConfig
+          const { timeRangeConfig = {} } = dbDataConfig
+          if (sourceType === 'real' && timeRange[0] && timeRange[1]) {
+            this.setTimeRange(timeRangeConfig, timeRange)
+          } else {
+            this.rollbackTimeRange(timeRangeConfig)
+          }
+          // 更新时间配置后刷新配置与数据
+          this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
+        }
+      }
+    }
+  },
+  methods: {
+    ...mapMutations('screen', {
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+    }),
+    /**
+     * 拓扑图内 Ci 节点钻取事件
+     * 跳转新视图或页签
+     */
+    drill ({ item }) {
+      // const model = item.getModel()
+      // if (model.shape === NODE_TYPE_CI_CIRCLE) {}
+      // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
+      // mock data
+      const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
+      // const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
+      // if (!_.isEmpty(viewList)) {}
+      this.$emit('drill', _.cloneDeep(drillConfig))
+    },
+    setTimeRange (timeRangeConfig, timeRange) {
+      const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
+      if (!_timeRangeType) {
+        // 备份原始配置
+        timeRangeConfig._timeRangeType = timeRangeType
+        timeRangeConfig._customTimeRange = customTimeRange
+        // 覆写新配置
+        timeRangeConfig.timeRangeType = TIME_RANGE_TYPE_CUSTOM
+        timeRangeConfig.customTimeRange = timeRange
+      }
+    },
+    rollbackTimeRange (timeRangeConfig) {
+      const { _timeRangeType, _customTimeRange } = timeRangeConfig
+      // 还原备份配置
+      if (_timeRangeType) {
+        timeRangeConfig.timeRangeType = _timeRangeType
+        timeRangeConfig.customTimeRange = _customTimeRange
+      }
+      // 删除备份配置
+      Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
+      Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
+    },
+    initTopologyChart () {
+      const { render } = this
+      const { chart, config } = render
+      const { proprietaryConfig: { nodes } } = config
+      chart.on('node:click', this.drill)
+      // 筛选出需要定时刷新的节点，如果节点只存储了配置，需要将其实例化
+      const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE].includes(shape)).map(node => NodeFactory.create(node))
+      render.enablePreviewMode()
+      // 开启轮询
+      circleNodeList.forEach(node => {
+        node.intervalRefresh && node.intervalRefresh()
+      })
     }
   },
   mounted () {
@@ -74,10 +157,7 @@ export default {
     const externalCi = _.get(dbDataConfig, 'externalCi')
     // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
     if (externalCi && this.ciId) {
-      // TODO: 数据流向？
-      dbDataConfig.resourceConfig.selectedInstance = [
-        this.ciId
-      ]
+      dbDataConfig.resourceConfig.selectedInstance = [ this.ciId ]
     }
     // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
     if (!(this.widget instanceof Widget)) {
@@ -94,9 +174,10 @@ export default {
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
-      // 获取当前实例
-      // const { widget: { config }, render } = this
-      this.render.intervalRefresh()
+      this.render.intervalRefresh && this.render.intervalRefresh()
+      if (this.render instanceof TopologyChart) {
+        this.initTopologyChart()
+      }
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件
       this.activateWidget({
@@ -104,13 +185,8 @@ export default {
       })
     }
   },
-  methods: {
-    ...mapMutations('screen', {
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
-    })
-  },
   beforeDestroy () {
-    this.render.destroy()
+    this.render.destroy && this.render.destroy()
   }
 }
 </script>
