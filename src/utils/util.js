@@ -230,5 +230,3 @@ export const hexToRGBA = function (hex, alpha) {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')'
   }
 }
-
-hexToRGBA('#FF0000', 0.5)
