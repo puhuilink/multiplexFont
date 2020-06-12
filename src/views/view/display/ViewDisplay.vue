@@ -276,9 +276,12 @@ export default {
           list = this.viewLists.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
         }
         // 加上搜索条件，当 input allowClear 时，title 为 undefined
-        list = list.filter(({ view_title: title, view_id }) => {
+        list = list.filter(({ view_title, view_id }) => {
           const value = (this.queryTitle || '').trim().toLowerCase()
-          return (title.toLocaleLowerCase().includes(value)) || (`${view_id}`.toLocaleLowerCase().includes(value))
+          const id = `${view_id}`.toLowerCase()
+          const title = `${view_title}`.toLowerCase()
+          return `${id}-${title}`.includes(value)
+          // return (title.toLowerCase().includes(value)) || (`${view_id}`.toLowerCase().includes(value))
         })
         list = _.uniqBy(list, e => e.view_id)
 
