@@ -3,6 +3,12 @@ import {
 } from './client'
 
 const VIC_MAIN_LIST = [
+  // alert,
+  't_alert',
+  // system
+  't_audit',
+  't_authorize_object',
+  't_user_group',
   // model
   't_metric',
   't_model_endpoint',
