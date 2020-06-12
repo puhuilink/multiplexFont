@@ -1,16 +1,9 @@
-const requirePlugins = require.context('./', true, /\.js$/)
+const { StaticFactory, DynamicFactory } = require('./Factory')
+const { VIV_MAIN_MAPPING } = require('../config/daoMapping.js')
 
-const excludeList = [
-  './index.js',
-  './BaseDao.js'
-]
-
-const exposed = {}
-
-requirePlugins.keys().forEach((fileName) => {
-  if (excludeList.includes(fileName)) return
-  const className = fileName.replace(/(\.)*(\/)*(js)*/g, '')
-  exposed[className] = requirePlugins(fileName)[className]
-})
+const exposed = {
+  ...DynamicFactory.create(VIV_MAIN_MAPPING),
+  ...StaticFactory.create()
+}
 
 module.exports = exposed
