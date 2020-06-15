@@ -14,6 +14,7 @@
     </template>
 
     <a-tabs defaultActiveKey="1">
+
       <a-tab-pane key="1" tab="基础信息">
         <a-form-model layout="vertical">
           <a-row>
@@ -56,6 +57,7 @@
           :scroll="scroll"
         ></CTable>
       </a-tab-pane>
+
     </a-tabs>
 
     <AlarmSolve
@@ -151,6 +153,7 @@ export default {
       this.$emit('close', _.get(this.record, 'state'))
     },
     async fetch (id) {
+      // todo spinning animation
       try {
         this.loading = true
         this.record = await AlarmService.detail(id)
@@ -178,7 +181,9 @@ export default {
     solve () {
       this.$refs.solve.open(this.record.id)
     },
-    solveSuccess () {}
+    solveSuccess () {
+      this.record.state = 0
+    }
   }
 }
 </script>

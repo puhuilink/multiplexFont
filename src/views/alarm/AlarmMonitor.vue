@@ -10,6 +10,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
+      resizeableTitle
       rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
@@ -158,8 +159,8 @@ export default {
       {
         title: '告警级别',
         dataIndex: 'alarm_level',
-        width: 200,
-        sorter: true
+        width: 200
+        // sorter: true
       },
       // {
       //   title: '数据域',
@@ -170,20 +171,20 @@ export default {
       {
         title: '监控设备',
         dataIndex: 'host_id',
-        width: 200,
-        sorter: true
+        width: 200
+        // sorter: true
       },
       {
         title: '监控实例',
         dataIndex: 'metric_id',
-        width: 200,
-        sorter: true
+        width: 200
+        // sorter: true
       },
       {
         title: '检查项',
         dataIndex: 'endpoint_id',
-        width: 200,
-        sorter: true
+        width: 200
+        // sorter: true
       },
       // {
       //   title: '值',
