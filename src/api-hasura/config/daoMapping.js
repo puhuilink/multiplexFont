@@ -3,7 +3,13 @@ import {
 } from './client'
 
 const VIC_MAIN_LIST = [
-  // alert,
+  // （新）告警
+  't_alarm',
+  't_alarm_rule',
+  't_alarm_sender',
+  't_alarm_sub',
+  't_alarm_temp',
+  // （旧）告警,
   't_alert',
   // system
   't_audit',

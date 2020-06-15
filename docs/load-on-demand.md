@@ -42,18 +42,20 @@
        Select, 
        Card, 
        Form, 
+       FormModel,
        Row, 
        Col, 
        Modal, 
        Table, 
        notification
    } from 'ant-design-vue'
-   
+   import { FormModel } from 'ant-design-vue';
    Vue.use(Input)
    Vue.use(Button)
    Vue.use(Select)
    Vue.use(Card)
    Vue.use(Form)
+   Vue.use(FormModel)
    Vue.use(Row)
    Vue.use(Col)
    Vue.use(Modal)

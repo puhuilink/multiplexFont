@@ -45,7 +45,7 @@ export const asyncRouterMap = [
           {
             path: '/alarm/monitor',
             name: 'AlarmMonitor',
-            component: () => import('@/views/alarm/monitor/AlarmMonitor'),
+            component: () => import('@/views/alarm/AlarmMonitor'),
             meta: { title: '告警监控', keepAlive: true, permission: [ 'F003001' ] }
           },
           {
