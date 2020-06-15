@@ -139,7 +139,7 @@
 
 <script>
 import _ from 'lodash'
-import { Confirm, List } from '@/components/Mixins'
+import { List } from '@/components/Mixins'
 import { AlarmService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import AlarmDetail from './modules/AlarmDetail'
@@ -147,7 +147,7 @@ import AlarmSolve from './modules/AlarmSolve'
 
 export default {
   name: 'AlarmMonitor',
-  mixins: [Confirm, List],
+  mixins: [List],
   components: {
     AlarmDetail,
     AlarmSolve
@@ -159,8 +159,8 @@ export default {
       {
         title: '告警级别',
         dataIndex: 'alarm_level',
-        width: 200
-        // sorter: true
+        width: 200,
+        sorter: true
       },
       // {
       //   title: '数据域',

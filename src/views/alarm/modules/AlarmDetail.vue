@@ -1,7 +1,6 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
     :width="940"
@@ -16,35 +15,37 @@
     <a-tabs defaultActiveKey="1">
 
       <a-tab-pane key="1" tab="基础信息">
-        <a-form-model layout="vertical">
-          <a-row>
-            <a-col
-              :md="12"
-              :sm="24"
-              v-for="({ label, key, children = [] }, idx) in formItemList"
-              :key="idx"
-            >
+        <a-spin :spinning="spinning">
+          <a-form-model layout="vertical">
+            <a-row>
+              <a-col
+                :md="12"
+                :sm="24"
+                v-for="({ label, key, children = [] }, idx) in formItemList"
+                :key="idx"
+              >
 
-              <a-row v-if="children.length">
-                <a-col
-                  :md="24 / children.length"
-                  :sm="24"
-                  v-for="(child, childIdx) in children"
-                  :key="childIdx"
-                >
-                  <a-form-model-item v-bind="formItemLayout" :label="child.label">
-                    <a-input readOnly :value="record[child.key]" />
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
+                <a-row v-if="children.length">
+                  <a-col
+                    :md="24 / children.length"
+                    :sm="24"
+                    v-for="(child, childIdx) in children"
+                    :key="childIdx"
+                  >
+                    <a-form-model-item v-bind="formItemLayout" :label="child.label">
+                      <a-input readOnly :value="record[child.key]" />
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
 
-              <a-form-model-item v-else v-bind="formItemLayout" :label="label" >
-                <a-input readOnly :value="record[key]" />
-              </a-form-model-item>
+                <a-form-model-item v-else v-bind="formItemLayout" :label="label" >
+                  <a-input readOnly :value="record[key]" />
+                </a-form-model-item>
 
-            </a-col>
-          </a-row>
-        </a-form-model>
+              </a-col>
+            </a-row>
+          </a-form-model>
+        </a-spin>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="子告警记录">
@@ -153,15 +154,14 @@ export default {
       this.$emit('close', _.get(this.record, 'state'))
     },
     async fetch (id) {
-      // todo spinning animation
       try {
-        this.loading = true
+        this.spinning = true
         this.record = await AlarmService.detail(id)
       } catch (e) {
         this.record = {}
         throw e
       } finally {
-        this.loading = false
+        this.spinning = false
       }
     },
     loadData (parameter) {
