@@ -136,7 +136,7 @@ export default {
       { label: '采集系统', key: 'agent_id' },
       { label: '消息内容', key: 'detail' }
     ]),
-    loading: false,
+    spinning: false,
     record: {}
   }),
   computed: {

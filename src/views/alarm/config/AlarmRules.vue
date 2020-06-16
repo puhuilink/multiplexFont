@@ -1,415 +1,186 @@
-/*
- * 告警规则
- */
 <template>
   <div class="alarms-rules">
-    <a-card :bordered="false">
+    <CTable
+      :columns="columns"
+      :data="loadData"
+      ref="table"
+      rowKey="id"
+      :rowSelection="rowSelection"
+      :scroll="scroll"
+    >
 
-      <!-- S 搜索 -->
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="规则名称">
-                <a-input v-model="queryParam.title" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="状态">
-                <a-select
-                  defaultValue="checkAll"
-                  style="width: 100%;"
-                  v-model="queryParam.enabled"
-                >
-                  <a-select-option value="true">启用</a-select-option>
-                  <a-select-option value="false">禁用</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-              </span>
-            </a-col>
-          </a-row>
+      <!-- / 查询区域 -->
+      <template #query>
+        <a-form layout="inline" class="form">
+          <div :class="{ fold: !advanced }">
+            <a-row>
+
+              <a-col :md="12" :sm="24">
+                <a-form-item label="规则名称" v-bind="formItemLayout" class="fw">
+                  <a-input allowClear v-model.trim="queryParams.title" />
+                </a-form-item>
+              </a-col>
+
+              <a-col :md="12" :sm="24">
+                <a-form-item label="状态" v-bind="formItemLayout" class="fw">
+                  <a-select allowClear v-model="queryParams.enabled" >
+                    <a-select-option :value="1">启用</a-select-option>
+                    <a-select-option :value="0">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+
+            </a-row>
+          </div>
+
+          <span :class="advanced ? 'expand' : 'collapse'">
+            <QueryBtn @click="query" />
+            <ResetBtn @click="resetQueryParams" />
+          </span>
         </a-form>
-      </div>
-      <!-- E 搜索 -->
+      </template>
 
-      <!-- S 操作栏 -->
-      <div class="opration">
-        <a-select defaultValue="" style="width: 140px; margin-right:10px;" @change="ruleTypeChange">
-          <a-select-option value="">全部规则</a-select-option>
+      <!-- / 操作区域 -->
+      <template #operation>
+        <a-select v-model="queryParams.rule_type" @change="query">
           <a-select-option
-            v-for="item in ruleList"
-            :key="item.value"
-            :value="item.value"
-          >{{ item.label }}</a-select-option>
+            v-for="(label, value) in allRuleType"
+            :key="value"
+            :value="value"
+          >{{ label }}</a-select-option>
         </a-select>
-        <a-button
-          :disabled="!checkRuleType"
-          @click="$refs.detail.open('', 'New', queryParam.rule_type)"
-          v-action:M0301
-        >新增</a-button>
-        <a-button
-          :disabled="selectedRowKeys.length !== 1"
-          @click="$refs.detail.open(selectedRows[0], 'Edit', selectedRows[0].rule_type)"
-          v-action:M0302
-        >
-          编辑
-        </a-button>
-        <a-button
-          :disabled="selectedRowKeys.length == 0"
-          @click="deleteCtrl"
-          v-action:M0303
-        >
-          删除
-        </a-button>
-        <a-button
-          :disabled="!this.selectedRowKeys.length > 0"
-          @click="enableCtrl(true)"
-          v-action:M0304
-        >
-          启用
-        </a-button>
-        <a-button
-          :disabled="!this.selectedRowKeys.length > 0"
-          @click="enableCtrl(false)"
-          v-action:M0304
-        >
-          停用
-        </a-button>
-      </div>
-      <!-- E 操作栏 -->
+        &nbsp;&nbsp;
+        <a-button @click="onAdd" v-action:M0301>新增</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button>
+      </template>
+    </CTable>
 
-      <!-- S 列表 -->
-      <CTable
-        ref="table"
-        rowKey="rule_id"
-        :columns="columns"
-        :data="loadData"
-        :alert="false"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        showPagination="auto"
-      >
-        <span slot="status" slot-scope="text">
-          <a-icon
-            v-if="text"
-            type="check-circle"
-            theme="filled"
-            :title="text | statusTitleFilter"
-            :style="{color:'#00c356'}"
-          />
-          <a-icon
-            v-else
-            type="close-circle"
-            theme="filled"
-            :title="text | statusTitleFilter"
-            :style="{color:'#f97160'}"
-          />
-        </span>
-      </CTable>
-      <!-- E 列表 -->
-
-      <!-- S 模块 -->
-      <detail
-        ref="detail"
-        @addSuccess="$refs['table'].refresh(false)"
-      ></detail>
-      <!-- E 模块 -->
-    </a-card>
+    <AlarmRuleSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
-import detail from './modules/AlarmRuleDetail'
-import deleteCheck from '@/components/DeleteCheck'
-// import AbleCheck from '@/components/AbleCheck'
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
-
-const query = gql`query instanceList($where: t_alert_rule_bool_exp = {}, $limit: Int! = 0, $offset: Int! = 10,  $orderBy: [t_alert_rule_order_by!]) {
-    pagination: t_alert_rule_aggregate(where: $where) {
-      aggregate {
-        count
-      }
-    }
-  data: t_alert_rule(where: $where, offset: $offset, limit: $limit, order_by: $orderBy) {
-    content
-    createdate
-    domain
-    enabled
-    is_exclusive
-    node_type
-    priority
-    rule_id
-    rule_type
-    rulecomments
-    title
-    updatedate
-  }
-}`
-
-const enableUpdate = gql`mutation update_t_alert_rule ($ruleId: [numeric!] = [], $enabled: Boolean!) {
-  update_t_alert_rule(
-    where: {
-      rule_id: {
-        _in: $ruleId
-      }
-    },
-    _set: {
-      enabled: $enabled
-    }
-  ) {
-    affected_rows
-  }
-}`
-
-const deleteAttrs = gql`mutation ($ruleId: [numeric!] = []) {
-  delete_t_alert_rule (where: {
-    rule_id: {
-      _in: $ruleId
-    }
-  }) {
-    affected_rows
-  }
-}`
+import { Confirm, List } from '@/components/Mixins'
+import { AlarmRuleService } from '@/api-hasura/index'
+import { generateQuery } from '@/utils/graphql'
+import _ from 'lodash'
+import { ruleTypeMapping, allRuleTypeMapping } from './typing'
+import AlarmRuleSchema from './modules/AlarmRuleSchema'
 
 export default {
   name: 'AlarmsRules',
+  mixins: [Confirm, List],
   components: {
-    CTable,
-    detail
+    AlarmRuleSchema
   },
-  data () {
-    return {
-      // 高级搜索 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParam: {},
-      checkRuleType: '',
-      ruleList: [
-        {
-          value: 'alert-classify',
-          label: '告警分类规则'
-        },
-        {
-          value: 'alert-filter',
-          label: '告警过滤规则'
-        },
-        {
-          value: 'alert-merge',
-          label: '告警合并规则'
-        },
-        {
-          value: 'alert-relate',
-          label: '告警关联规则'
-        },
-        {
-          value: 'alert-upgrade',
-          label: '告警升级规则'
-        },
-        {
-          value: 'alert-recover',
-          label: '告警恢复规则'
-        }
-      ],
-      columns: [
-        {
-          title: '规则名称',
-          dataIndex: 'title',
-          sorter: true
-        },
-        {
-          title: '规则类型',
-          dataIndex: 'rule_type',
-          sorter: true,
-          customRender: (text) => {
-            switch (text) {
-              case 'alert-classify':
-                return '分类'
-              case 'alert-filter':
-                return '过滤'
-              case 'alert-merge':
-                return '合并'
-              case 'alert-relate':
-                return '关联'
-              case 'alert-upgrade':
-                return '升级'
-              case 'alert-recover':
-                return '恢复'
-              case 'alert-forward':
-                return '故障'
-              default:
-                return text
-            }
-          }
-        },
-        {
-          title: '节点类型',
-          dataIndex: 'node_type',
-          sorter: true
-        },
-        {
-          title: '域',
-          dataIndex: 'domain',
-          sorter: true
-        },
-        {
-          title: '优先级',
-          dataIndex: 'priority',
-          sorter: true,
-          customRender: (text) => {
-            text += ''
-            switch (text) {
-              case '0':
-                return '低'
-              case '10':
-                return '中'
-              case '20':
-                return '高'
-              default:
-                return text
-            }
-          }
-        },
-        {
-          title: '例外',
-          dataIndex: 'rulecomments',
-          sorter: true
-        },
-        {
-          title: '编辑时间',
-          dataIndex: 'updatedate',
-          sorter: true
-        },
-        {
-          title: '状态',
-          dataIndex: 'enabled',
-          scopedSlots: { customRender: 'status' }
-        }
-      ],
-      // 已选行特性值
-      selectedRowKeys: [],
-      // 已选行数据
-      selectedRows: []
-    }
-  },
-  filters: {
-    statusTitleFilter (type) {
-      type += ''
-      switch (type) {
-        case 'true':
-          return '已启用'
-        case 'false':
-          return '已禁用'
-        default:
-          return ''
+  data: () => ({
+    allRuleType: Object.freeze(
+      Object.fromEntries(allRuleTypeMapping)
+    ),
+    columns: Object.freeze([
+      {
+        title: '规则名称',
+        dataIndex: 'title',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '规则类型',
+        dataIndex: 'rule_type',
+        width: 200,
+        sorter: true,
+        customRender: ruleType => ruleTypeMapping.get(ruleType)
+      },
+      // {
+      //   title: '数据域',
+      //   dataIndex: 'rule_type',
+      //   width: 200,
+      //   sorter: true
+      // },
+      {
+        title: '设备名称',
+        dataIndex: 'host_id',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '监控实体',
+        dataIndex: 'metric_id',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '检查项',
+        dataIndex: 'endpoint_id',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'update_time',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '启用状态',
+        dataIndex: 'enabled',
+        width: 200,
+        sorter: true,
+        customRender: enabled => enabled ? '是' : '否'
       }
+    ]),
+    queryParams: {
+      rule_type: ''
     }
-  },
+  }),
   methods: {
-    /**
-     * 表格展示规则类型过滤
-     */
-    ruleTypeChange (value) {
-      this.queryParam.rule_type = value
-      this.checkRuleType = value
-      this.query()
-    },
-    /**
-     * 选中行更改事件
-     * @param selectedRowKeys
-     * @param selectedRows
-     */
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
     loadData (parameter) {
-      return apollo.clients.alert.query({
-        query,
-        variables: {
-          ...parameter,
-          where: {
-            ...this.where,
-            ...this.queryParam.rule_type ? {
-              rule_type: {
-                _eq: this.queryParam.rule_type
-              }
-            } : {},
-            ...this.queryParam.title ? {
-              title: {
-                _ilike: `%${this.queryParam.title.trim()}%`
-              }
-            } : {},
-            ...this.queryParam.enabled ? {
-              enabled: {
-                _eq: this.queryParam.enabled === 'true'
-              }
-            } : {}
-          }
-        }
+      return AlarmRuleService.find({
+        where: {
+          ...generateQuery(this.queryParams)
+        },
+        fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        ...parameter,
+        alias: 'data'
       }).then(r => r.data)
     },
-    query () {
-      this.$refs['table'].refresh(true)
+    onAdd () {
+      this.$refs.schema.add()
     },
-    /**
-     * 删除选中项
-     */
-    async deleteCtrl () {
-      if (!await deleteCheck.sureDelete()) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await apollo.clients.alert.mutate({
-          mutation: deleteAttrs,
-          variables: {
-            ruleId: [
-              ...this.selectedRowKeys
-            ]
-          }
-        })
-        this.$notification.success({
-          message: '系统提示',
-          description: '删除成功'
-        })
-
-        this.$refs['table'].refresh(false)
-      } catch (e) {
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
+    async onBatchDelete () {
+      this.$promiseConfirmDelete({
+        onOk: () => AlarmRuleService
+          .batchDelete(this.selectedRowKeys)
+          .then(() => {
+            this.$notifyDeleteSuccess()
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
     },
-    /**
-     * 启用/停用
-     */
-    async enableCtrl (value) {
-      if (!await deleteCheck.confirm({ content: value ? '确定启用吗？' : '确定停用吗？' })) {
-        return
-      }
-      try {
-        this.$refs['table'].loading = true
-        await apollo.clients.alert.mutate({
-          mutation: enableUpdate,
-          variables: {
-            ruleId: this.selectedRowKeys,
-            enabled: value
-          }
-        })
-        // TODO: toast
-        this.query()
-      } catch (e) {
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-        // this.$message.info(value ? '成功启用' : '成功停用')
-      }
+    async onBatchToggleEnabled (value) {
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: value ? '是否启用选中规则？' : '是否停用选中规则？',
+        onOk: () => AlarmRuleService[value ? 'batchEnabled' : 'batchDisabled'](this.selectedRowKeys)
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: value ? '规则启用成功' : '规则停用成功'
+            })
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
+    },
+    onEdit () {
+      const [record] = this.selectedRows
+      this.$refs.schema.edit(record)
     }
   }
 }

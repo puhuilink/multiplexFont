@@ -65,12 +65,6 @@ export const asyncRouterMap = [
                 name: 'PrequelRecord',
                 component: () => import('@/views/alarm/handle/PrequelRecord'),
                 meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
-              },
-              {
-                path: '/alarm/handle/GenerateFault',
-                name: 'GenerateFault',
-                component: () => import('@/views/alarm/handle/GenerateFault'),
-                meta: { title: '生成故障', keepAlive: true, permission: [ 'F003002003' ] }
               }
             ]
           },
@@ -99,22 +93,10 @@ export const asyncRouterMap = [
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
               {
-                path: '/alarm/config/FaultTypes',
-                name: 'FaultTypes',
-                component: () => import('@/views/alarm/config/FaultTypes'),
-                meta: { title: '故障类型', keepAlive: true, permission: [ 'F003003004' ] }
-              },
-              {
-                path: '/alarm/config/GeneratingFaultRules',
-                name: 'GeneratingFaultRules',
-                component: () => import('@/views/alarm/config/GeneratingFaultRules'),
-                meta: { title: '生成故障规则', keepAlive: true, permission: [ 'F003003005' ] }
-              },
-              {
-                path: '/alarm/config/FaultManagement',
-                name: 'FaultManagement',
-                component: () => import('@/views/alarm/config/FaultManagement'),
-                meta: { title: '故障前转路径管理', keepAlive: true, permission: [ 'F003003006' ] }
+                path: '/alarm/config/ForwardBoilerplate',
+                name: 'ForwardBoilerplate',
+                component: () => import('@/views/alarm/config/ForwardBoilerplate'),
+                meta: { title: '前传模板规则', keepAlive: true, permission: [] }
               }
             ]
           }

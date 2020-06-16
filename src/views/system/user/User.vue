@@ -19,7 +19,7 @@
                 <a-form-item
                   label="用户名"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
@@ -28,7 +28,7 @@
                 <a-form-item
                   label="姓名"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -40,7 +40,7 @@
                 <a-form-item
                   label="邮箱"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.email" />
                 </a-form-item>
@@ -49,7 +49,7 @@
                 <a-form-item
                   label="有效标识"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-select
                     allowClear
