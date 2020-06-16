@@ -155,7 +155,8 @@ export default {
       return _.get(this.record, 'state') === 1
     },
     scroll () {
-      return { x: true, y: 'max(calc(100vh - 320px), 500px)' }
+      // y 与 less height 保持一致
+      return { x: true, y: '500px' }
     }
   },
   methods: {
@@ -192,7 +193,7 @@ export default {
       this.$refs.solve.open(this.record.id)
     },
     solveSuccess () {
-      this.record.state = 0
+      this.record.state = 1
     }
   }
 }
@@ -200,6 +201,7 @@ export default {
 
 <style lang="less">
 .AlarmDetail__modal {
+
   .ant-tabs-tabpane {
     height: 500px;
     overflow-y: auto;

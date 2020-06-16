@@ -59,13 +59,13 @@ export const asyncRouterMap = [
                 name: 'AlarmHistory',
                 component: () => import('@/views/alarm/history/AlarmHistory'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
+              },
+              {
+                path: '/alarm/history/ForwardHistory',
+                name: 'ForwardHistory',
+                component: () => import('@/views/alarm/history/ForwardHistory'),
+                meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
               }
-              // {
-              //   path: '/alarm/handle/PrequelRecord',
-              //   name: 'PrequelRecord',
-              //   component: () => import('@/views/alarm/handle/PrequelRecord'),
-              //   meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
-              // }
             ]
           },
           {
