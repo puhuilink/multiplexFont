@@ -49,23 +49,23 @@ export const asyncRouterMap = [
             meta: { title: '告警监控', keepAlive: true, permission: [ 'F003001' ] }
           },
           {
-            path: '/alarm/handle',
+            path: '/alarm/history',
             component: RouteView,
-            meta: { title: '告警处理', keepAlive: true, permission: [ 'F003002' ] },
-            redirect: '/alarm/handle/HistoricalAlarms',
+            meta: { title: '告警记录', keepAlive: true, permission: [ 'F003002' ] },
+            redirect: '/alarm/history/HistoricalAlarms',
             children: [
               {
-                path: '/alarm/handle/HistoricalAlarms',
-                name: 'HistoricalAlarms',
-                component: () => import('@/views/alarm/handle/HistoricalAlarms'),
+                path: '/alarm/history/AlarmHistory',
+                name: 'AlarmHistory',
+                component: () => import('@/views/alarm/history/AlarmHistory'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
-              },
-              {
-                path: '/alarm/handle/PrequelRecord',
-                name: 'PrequelRecord',
-                component: () => import('@/views/alarm/handle/PrequelRecord'),
-                meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
               }
+              // {
+              //   path: '/alarm/handle/PrequelRecord',
+              //   name: 'PrequelRecord',
+              //   component: () => import('@/views/alarm/handle/PrequelRecord'),
+              //   meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
+              // }
             ]
           },
           {

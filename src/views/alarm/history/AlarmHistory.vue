@@ -1,16 +1,9 @@
 <template>
-  <div class="AlarmMonitor">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange">
-      <a-tab-pane :key="0" tab="未解决"></a-tab-pane>
-      <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
-    </a-tabs>
-
+  <div class="AlarmHistory">
     <CTable
-      :customRow="customRow"
       :columns="columns"
       :data="loadData"
       ref="table"
-      resizeableTitle
       rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
@@ -93,41 +86,30 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button @click="onSolve" :disabled="!hasSelectedOne" v-show="tabIndex !== 1">解决</a-button>
+        <a-button @click="onExport" :disabled="!hasSelected">导出</a-button>
       </template>
     </CTable>
 
-    <AlarmDetail
-      ref="detail"
-      @close="onDetailClose"
-    />
-
-    <AlarmSolve
-      ref="solve"
-      @solveSuccess="onSolveSuccess"
-    />
+    <AlarmHistoryDetail ref="detail" />
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
-import { List } from '@/components/Mixins'
 import { AlarmService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
-import AlarmDetail from './modules/AlarmDetail'
-import AlarmSolve from './modules/AlarmSolve'
+import _ from 'lodash'
+import { List } from '@/components/Mixins'
+import AlarmHistoryDetail from './modules/AlarmHistoryDetail'
 
 export default {
-  name: 'AlarmMonitor',
+  name: 'AlarmHistory',
   mixins: [List],
   components: {
-    AlarmDetail,
-    AlarmSolve
+    AlarmHistoryDetail
   },
   props: {},
   data: () => ({
-    tabIndex: 0,
-    columns: [
+    columns: Object.freeze([
       {
         title: '告警级别',
         dataIndex: 'alarm_level',
@@ -188,24 +170,14 @@ export default {
         width: 200,
         sorter: true
       }
-    ]
+    ])
   }),
   computed: {},
   methods: {
-    customRow ({ id }) {
-      return {
-        on: {
-          dblclick: () => {
-            this.$refs.solve.open(id)
-          }
-        }
-      }
-    },
     loadData (parameter) {
       return AlarmService.find({
         where: {
-          ...generateQuery(this.queryParams),
-          state: this.tabIndex
+          ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', 'state', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
@@ -216,20 +188,7 @@ export default {
       const [id] = this.selectedRowKeys
       this.$refs.detail.open(id)
     },
-    onDetailClose (state) {
-      state === 1 && this.onSolveSuccess()
-    },
-    onSolve (id) {
-      const [defaultId] = this.selectedRowKeys
-      this.$refs.solve.open(id || defaultId)
-    },
-    onSolveSuccess () {
-      this.query(false)
-    },
-    onTabChange (tabIndex) {
-      this.tabIndex = tabIndex
-      this.query()
-    }
+    onExport () {}
   }
 }
 </script>
