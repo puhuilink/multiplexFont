@@ -45,9 +45,9 @@
       <div class="ViewDisplay__view-content" v-if="isThumbnail">
         <a-row>
           <a-col
-            v-for="({ view_title, view_id, creator, createdate, view_img }) in filterViewList"
-            :key="view_id"
-            :id="view_id"
+            v-for="viewConfig in filterViewList"
+            :key="viewConfig.view_id"
+            :id="viewConfig.view_id"
             :xs="24"
             :md="12"
             :lg="8"
@@ -56,12 +56,12 @@
             ref="imgPreview"
           >
             <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
-              <img :src="view_img | img" :alt="view_title">
+              <img :src="viewConfig.view_img | img" :alt="viewConfig.view_title">
               <div class="ViewDisplay__view-item-info">
-                <p class="ViewDisplay__view-item-info_title">{{ `${view_id}-${view_title}` }}</p>
+                <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ creator }}</span>
+                  <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ viewConfig.creator }}</span>
                 </p>
               </div>
             </div>
