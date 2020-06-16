@@ -75,12 +75,6 @@ export const asyncRouterMap = [
             meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
             children: [
               {
-                path: '/alarm/config/AlarmTypes',
-                name: 'AlarmTypes',
-                component: () => import('@/views/alarm/config/AlarmTypes'),
-                meta: { title: '告警类型', keepAlive: true, permission: [ 'F003003001' ] }
-              },
-              {
                 path: '/alarm/config/AlarmRules',
                 name: 'AlarmRules',
                 component: () => import('@/views/alarm/config/AlarmRules'),
@@ -96,7 +90,7 @@ export const asyncRouterMap = [
                 path: '/alarm/config/ForwardBoilerplate',
                 name: 'ForwardBoilerplate',
                 component: () => import('@/views/alarm/config/ForwardBoilerplate'),
-                meta: { title: '前传模板规则', keepAlive: true, permission: [] }
+                meta: { title: '前传模板规则', keepAlive: true, permission: ['F003002003'] }
               }
             ]
           }
