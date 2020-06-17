@@ -1,0 +1,41 @@
+<script>
+import { CONTENT_TYPE_TIME } from './model'
+
+export const formItemLayout = {
+  labelCol: { span: 7 },
+  wrapperCol: { span: 12, offset: 1 }
+}
+
+export default {
+  name: 'Mixin',
+  mixins: [],
+  components: {},
+  props: {
+    formModel: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data: () => ({
+    formItemLayout
+  }),
+  computed: {
+    useTime () {
+      return this.formModel.content.type === CONTENT_TYPE_TIME
+    },
+    _formModel: {
+      get () {
+        return this.formModel
+      },
+      set (v) {
+        this.$emit('update:formModel', v)
+      }
+    }
+  },
+  methods: {}
+}
+</script>
+
+<style lang="less">
+
+</style>

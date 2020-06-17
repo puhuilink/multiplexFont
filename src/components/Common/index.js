@@ -4,6 +4,7 @@ import KpiSelect from './KpiSelect'
 import BaselineStrategySelect from './BaselineStrategySelect'
 import CiAttrSelect from './CiAttrSelect'
 import ComboSelect from './ComboSelect'
+import dataDomain from './dataDomain'
 
 export {
   CiModelSelect,
@@ -11,5 +12,6 @@ export {
   KpiSelect,
   BaselineStrategySelect,
   ComboSelect,
-  CiAttrSelect
+  CiAttrSelect,
+  dataDomain
 }

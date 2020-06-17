@@ -26,7 +26,7 @@
                 <a-form-item
                   label="数据域"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
@@ -35,7 +35,7 @@
                 <a-form-item
                   label="监控设备"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -44,7 +44,7 @@
                 <a-form-item
                   label="监控实例"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -56,7 +56,7 @@
                 <a-form-item
                   label="告警级别"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
@@ -65,7 +65,7 @@
                 <a-form-item
                   label="采集系统"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -74,7 +74,7 @@
                 <a-form-item
                   label="开始结束时间"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -192,11 +192,11 @@ export default {
   }),
   computed: {},
   methods: {
-    customRow ({ id }) {
+    customRow ({ id, state }) {
       return {
         on: {
           dblclick: () => {
-            this.$refs.solve.open(id)
+            state === 0 && this.$refs.solve.open(id)
           }
         }
       }

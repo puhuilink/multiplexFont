@@ -9,6 +9,7 @@ import store from './store/'
 import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
 // import { loginOld } from '@/api/controller/User'
+import Fragment from 'vue-fragment'
 import './plugins'
 
 // mock
@@ -30,6 +31,8 @@ Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
+
+Vue.use(Fragment.Plugin)
 
 // // TODO: 此处为兼容老系统 api，开发时开启
 // loginOld().then()

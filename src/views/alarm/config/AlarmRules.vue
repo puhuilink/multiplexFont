@@ -70,7 +70,7 @@ import { AlarmRuleService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import { ruleTypeMapping, allRuleTypeMapping } from './typing'
-import AlarmRuleSchema from './modules/AlarmRuleSchema'
+import AlarmRuleSchema from './modules/AlarmRuleSchema/index'
 
 export default {
   name: 'AlarmsRules',
@@ -179,8 +179,8 @@ export default {
       })
     },
     onEdit () {
-      const [record] = this.selectedRows
-      this.$refs.schema.edit(record)
+      const [id] = this.selectedRowKeys
+      this.$refs.schema.edit(id)
     }
   }
 }
