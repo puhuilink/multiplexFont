@@ -135,8 +135,9 @@ import Widget from '@/components/Widget/index'
 import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
-import { updateViewDesign, getViewDesign } from '@/api/controller/View'
+import { updateViewDesign } from '@/api/controller/View'
 import ViewPreview from '@/views/view/display/modules/viewPreview'
+import { ViewDesignService } from '@/api-hasura'
 
 export default {
   name: 'Screen',
@@ -455,6 +456,9 @@ export default {
         this.loading = true
         this.viewOptions = this.view.getOption()
         await updateViewDesign(this.$route.query.id, this.viewOptions)
+        // await ViewDesignService.updateDesign({
+        //   content: this.viewOptions
+        // }, { view_id: Number(this.$route.query.id) })
         this.$notification.success({
           message: '系统提示',
           description: '保存成功'
@@ -552,7 +556,7 @@ export default {
     async init () {
       try {
         this.loading = true
-        const options = await getViewDesign(this.$route.query.id)
+        const options = await ViewDesignService.getDesign(this.$route.query.id)
         this.import(options)
       } catch (e) {
         throw e

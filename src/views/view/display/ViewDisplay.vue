@@ -169,7 +169,7 @@ import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 import Renderer from '@/components/Renderer'
-import { getViewDesign } from '@/api/controller/View'
+import { ViewDesignService } from '@/api-hasura'
 
 const ALL_VIEW = '所有视图'
 
@@ -419,7 +419,7 @@ export default {
         this.activeKey = id
         this.view = null
         this.isLoading = true
-        this.view = await getViewDesign(id)
+        this.view = await ViewDesignService.getDesign(id)
       } catch (e) {
         this.view = null
         throw e
