@@ -15,37 +15,7 @@
     <a-tabs defaultActiveKey="1">
 
       <a-tab-pane key="1" tab="基础信息">
-        <a-spin :spinning="spinning">
-          <a-form-model layout="vertical">
-            <a-row>
-              <a-col
-                :md="12"
-                :sm="24"
-                v-for="({ label, key, children = [] }, idx) in formItemList"
-                :key="idx"
-              >
-
-                <a-row v-if="children.length">
-                  <a-col
-                    :md="24 / children.length"
-                    :sm="24"
-                    v-for="(child, childIdx) in children"
-                    :key="childIdx"
-                  >
-                    <a-form-model-item v-bind="formItemLayout" :label="child.label">
-                      <a-input readOnly :value="record[child.key]" />
-                    </a-form-model-item>
-                  </a-col>
-                </a-row>
-
-                <a-form-model-item v-else v-bind="formItemLayout" :label="label" >
-                  <a-input readOnly :value="record[key]" />
-                </a-form-model-item>
-
-              </a-col>
-            </a-row>
-          </a-form-model>
-        </a-spin>
+        <DetailForm :record="record" :formItemList="formItemList" />
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="子告警记录">
@@ -75,6 +45,7 @@ import _ from 'lodash'
 import Schema from '@/components/Mixins/Modal/Schema'
 import CTable from '@/components/Table/CTable'
 import AlarmSolve from './AlarmSolve'
+import DetailForm from './DetailForm'
 
 export default {
   name: 'AlarmDetail',
@@ -117,7 +88,8 @@ export default {
   },
   components: {
     AlarmSolve,
-    CTable
+    CTable,
+    DetailForm
   },
   data: () => ({
     columns: Object.freeze([

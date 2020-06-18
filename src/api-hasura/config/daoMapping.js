@@ -11,7 +11,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_alarm_temp', primaryKey: 'id' },
   // （旧）告警,
   { schema: 't_alert', primaryKey: 'id' },
-  // system
+  // 系统设置
   { schema: 't_audit', primaryKey: 'id' },
   { schema: 't_authorize_object', primaryKey: 'id' },
   { schema: 't_user_group', primaryKey: 'id' },
@@ -24,14 +24,16 @@ const VIC_MAIN_LIST = [
   { schema: 't_model_metric', primaryKey: 'id' },
   { schema: 't_model_metric_oid', primaryKey: 'id' },
   { schema: 't_model_strategy', primaryKey: 'id' },
-  // patrol
+  // 巡更
   { schema: 't_patrol_answer', primaryKey: 'id' },
   { schema: 't_patrol_endpoint', primaryKey: 'id' },
   { schema: 't_patrol_event', primaryKey: 'id' },
   { schema: 't_patrol_host', primaryKey: 'id' },
   { schema: 't_patrol_metric', primaryKey: 'id' },
   { schema: 't_patrol_path', primaryKey: 'id' },
-  { schema: 't_patrol_plan', primaryKey: 'id' }
+  { schema: 't_patrol_plan', primaryKey: 'id' },
+  // 前转记录
+  { schema: 't_send_record', primaryKey: 'id' }
 ]
 
 const VIV_MAIN_MAPPING = new Map([

@@ -44,6 +44,9 @@ export default {
   }),
   computed: {},
   methods: {
+    fetch (id) {
+
+    },
     open (id) {
       this.$refs.detail.open(id)
     }
