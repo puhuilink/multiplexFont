@@ -34,7 +34,7 @@ class Rule {
     return _.toPlainObject(this)
   }
 
-  deSerialization () {
+  deSerialize () {
     return _.toPlainObject(this)
   }
 }
@@ -54,20 +54,12 @@ class MergeRule extends Rule {
   }
 }
 
-class ForwardRule extends Rule {}
+class ForwardRule extends MergeRule {}
 
-class RecoverRule extends Rule {
+class RecoverRule extends MergeRule {
   constructor ({ content = '{}', ...rest }) {
     super(rest)
     this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
-  }
-
-  serialize () {
-    const { content, ...rest } = this
-    return _.toPlainObject({
-      ...rest,
-      content: JSON.stringify(content)
-    })
   }
 }
 
@@ -92,7 +84,7 @@ export class RuleFactory {
     return this.create(model).serialize()
   }
 
-  static deSerialization (model = {}) {
-    return this.create(model).deSerialization()
+  static deSerialize (model = {}) {
+    return this.create(model).deSerialize()
   }
 }

@@ -1,5 +1,6 @@
 <template>
   <fragment>
+    <h3 class="title">告警合并</h3>
     <a-form-model-item label="合并方式" v-bind="formItemLayout" prop="type">
       <a-select v-model="_formModel.content.type">
         <a-select-option value="count">次数</a-select-option>

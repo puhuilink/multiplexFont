@@ -36,6 +36,9 @@ export default {
 }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+}
 </style>

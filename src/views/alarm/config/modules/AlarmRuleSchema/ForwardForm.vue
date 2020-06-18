@@ -1,5 +1,6 @@
 <template>
   <fragment>
+    <h3 class="title">告警通知</h3>
     <a-card>
       <a-icon class="fr" type="close-circle" />
       <a-form-model-item label="通知等级" v-bind="formItemLayout">

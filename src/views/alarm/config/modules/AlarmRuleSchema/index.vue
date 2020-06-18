@@ -93,21 +93,21 @@ export default {
       content: {
         type: CONTENT_TYPE_COUNT
       },
-      rule_type: ALARM_RULE_UPGRADE
+      rule_type: ALARM_RULE_FORWARD
     },
     spinning: false,
     stepIndex: 1,
     submitLoading: false
   }),
   computed: {
-    firstStep () {
-      return this.stepIndex === 1
-    },
     formRules () {
       const { formModel: { rule_type }, firstStep } = this
       return _.cloneDeep(
         firstStep ? basicFormRules : ruleMapping.get(rule_type)
       )
+    },
+    firstStep () {
+      return this.stepIndex === 1
     }
   },
   methods: {
@@ -128,7 +128,7 @@ export default {
       try {
         this.spinning = true
         const model = await AlarmRuleService.detail(id)
-        this.formModel = RuleFactory.deSerialization(model)
+        this.formModel = RuleFactory.deSerialize(model)
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e

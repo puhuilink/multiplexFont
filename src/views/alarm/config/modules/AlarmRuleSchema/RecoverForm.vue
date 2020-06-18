@@ -1,5 +1,6 @@
 <template>
   <fragment>
+    <h3 class="title">告警消除</h3>
     <p class="p">
       告警消除时间范围
       <a-input
