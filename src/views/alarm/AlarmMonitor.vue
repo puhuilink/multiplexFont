@@ -7,7 +7,7 @@
 
     <CTable
       :customRow="customRow"
-      :columns="columns"
+      :columns="visibleColumns"
       :data="loadData"
       ref="table"
       resizeableTitle
@@ -91,10 +91,22 @@
       </template>
 
       <!-- / 操作区域 -->
-      <template #operation>
+      <div class="operation" slot="operation">
         <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
         <a-button @click="onSolve" :disabled="!hasSelectedOne" v-show="tabIndex !== 1">解决</a-button>
-      </template>
+        <a-popover title="表格列设置">
+          <a-list slot="content" item-layout="horizontal" :data-source="columns">
+            <a-list-item slot="renderItem" slot-scope="column">
+              <a-list-item-meta>
+                <a-checkbox slot="title" v-model="column.show">
+                  {{ column.title }}
+                </a-checkbox>
+              </a-list-item-meta>
+            </a-list-item>
+          </a-list>
+          <a-icon type="setting" />
+        </a-popover>
+      </div>
     </CTable>
 
     <AlarmDetail
@@ -132,65 +144,79 @@ export default {
         title: '告警级别',
         dataIndex: 'alarm_level',
         width: 200,
-        sorter: true
+        sorter: true,
+        show: true
       },
       // {
       //   title: '数据域',
       //   dataIndex: 'alarm_level',
       //   width: 200,
-      //   sorter: true
+      //   sorter: true,
+      // show: true
       // },
       {
         title: '监控设备',
         dataIndex: 'host_id',
-        width: 200
+        width: 200,
+        show: true
         // sorter: true
       },
       {
         title: '监控实例',
         dataIndex: 'metric_id',
-        width: 200
+        width: 200,
+        show: true
         // sorter: true
       },
       {
         title: '检查项',
         dataIndex: 'endpoint_id',
-        width: 200
+        width: 200,
+        show: true
         // sorter: true
       },
       // {
       //   title: '值',
       //   dataIndex: 'email',
       //   width: 200,
-      //   sorter: true
+      //   sorter: true,
+      // show: true
       // },
       // {
       //   title: '首次告警时间',
       //   dataIndex: 'email',
       //   width: 200,
-      //   sorter: true
+      //   sorter: true,
+      // show: true
       // },
       // {
       //   title: '最近告警时间',
       //   dataIndex: 'email',
       //   width: 200,
-      //   sorter: true
+      //   sorter: true,
+      // show: true
       // },
       // {
       //   title: '次数',
       //   dataIndex: 'email',
       //   width: 200,
-      //   sorter: true
+      //   sorter: true,
+      // show: true
       // },
       {
         title: '采集系统',
         dataIndex: 'agent_id',
         width: 200,
-        sorter: true
+        sorter: true,
+        show: true
       }
     ]
   }),
-  computed: {},
+  computed: {
+    visibleColumns () {
+      return this.columns.filter(({ show }) => show)
+    }
+  },
   methods: {
     customRow ({ id, state }) {
       return {
@@ -234,6 +260,11 @@ export default {
 }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+.operation {
+  // TODO
+  // display: flex;
+  // width: calc(100% - 216px);
+  // flex-direction: row;
+}
 </style>
