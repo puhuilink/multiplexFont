@@ -25,19 +25,23 @@ export class StaticFactory {
 export class DynamicFactory {
   static create = mapping => {
     const exposed = {};
-    [...mapping].forEach(([SCHEMA, PROVIDER]) => {
+    [...mapping].forEach(([schema, config]) => {
+      const { primaryKey, provider } = config
       const className = _.upperFirst(
         _.camelCase(
-          SCHEMA.replace(/^[t_v_]/g, '')
+          schema.replace(/^[t_v_]/g, '')
         )
       ) + 'Dao'
 
       exposed[className] = class extends BaseDao {
         @readonly
-        static SCHEMA = SCHEMA
+        static SCHEMA = schema
 
         @readonly
-        static PROVIDER = PROVIDER
+        static PROVIDER = provider
+
+        @readonly
+        static PRIMARY_KEY = primaryKey
       }
     })
 

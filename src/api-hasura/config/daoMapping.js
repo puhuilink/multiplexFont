@@ -4,38 +4,41 @@ import {
 
 const VIC_MAIN_LIST = [
   // （新）告警
-  't_alarm',
-  't_alarm_rule',
-  't_alarm_sender',
-  't_alarm_sub',
-  't_alarm_temp',
+  { schema: 't_alarm', primaryKey: 'id' },
+  { schema: 't_alarm_rule', primaryKey: 'id' },
+  { schema: 't_alarm_sender', primaryKey: 'id' },
+  { schema: 't_alarm_sub', primaryKey: 'id' },
+  { schema: 't_alarm_temp', primaryKey: 'id' },
   // （旧）告警,
-  't_alert',
+  { schema: 't_alert', primaryKey: 'id' },
   // system
-  't_audit',
-  't_authorize_object',
-  't_user_group',
+  { schema: 't_audit', primaryKey: 'id' },
+  { schema: 't_authorize_object', primaryKey: 'id' },
+  { schema: 't_user_group', primaryKey: 'id' },
   // model
-  't_metric',
-  't_model_endpoint',
-  't_model_endpoint_metric',
-  't_model_host_endpoint',
-  't_model_host',
-  't_model_metric',
-  't_model_metric_oid',
-  't_model_strategy',
+  { schema: 't_metric', primaryKey: 'id' },
+  { schema: 't_model_endpoint', primaryKey: 'id' },
+  { schema: 't_model_endpoint_metric', primaryKey: 'id' },
+  { schema: 't_model_host_endpoint', primaryKey: 'id' },
+  { schema: 't_model_host', primaryKey: 'id' },
+  { schema: 't_model_metric', primaryKey: 'id' },
+  { schema: 't_model_metric_oid', primaryKey: 'id' },
+  { schema: 't_model_strategy', primaryKey: 'id' },
   // patrol
-  't_patrol_answer',
-  't_patrol_endpoint',
-  't_patrol_event',
-  't_patrol_host',
-  't_patrol_metric',
-  't_patrol_path',
-  't_patrol_plan'
+  { schema: 't_patrol_answer', primaryKey: 'id' },
+  { schema: 't_patrol_endpoint', primaryKey: 'id' },
+  { schema: 't_patrol_event', primaryKey: 'id' },
+  { schema: 't_patrol_host', primaryKey: 'id' },
+  { schema: 't_patrol_metric', primaryKey: 'id' },
+  { schema: 't_patrol_path', primaryKey: 'id' },
+  { schema: 't_patrol_plan', primaryKey: 'id' }
 ]
 
 const VIV_MAIN_MAPPING = new Map([
-  ...VIC_MAIN_LIST.map(table => [table, alert])
+  ...VIC_MAIN_LIST.map(table => {
+    const { schema, primaryKey, provider = alert } = table
+    return [schema, { primaryKey, provider }]
+  })
 ])
 
 export {

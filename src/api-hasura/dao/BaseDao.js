@@ -10,12 +10,14 @@ class BaseDao {
 
   static FIELDS_MAPPING = new Map()
 
+  static PRIMARY_KEY = 'id'
+
   /**
    * 生成一个新的 hasuraORM 实例
    * @return {HasuraORM}
    */
   static _createHasuraORM () {
-    return new HasuraORM(this.SCHEMA, this.PROVIDER, '', [ ...this.FIELDS_MAPPING.keys() ])
+    return new HasuraORM(this.SCHEMA, this.PROVIDER, '', [ ..._.uniq([...this.FIELDS_MAPPING.keys(), this.PRIMARY_KEY]) ])
   }
 
   /**
