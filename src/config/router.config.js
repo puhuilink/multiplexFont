@@ -87,9 +87,9 @@ export const asyncRouterMap = [
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
               {
-                path: '/alarm/config/ForwardBoilerplate',
-                name: 'ForwardBoilerplate',
-                component: () => import('@/views/alarm/config/ForwardBoilerplate'),
+                path: '/alarm/config/ForwardTemp',
+                name: 'ForwardTemp',
+                component: () => import('@/views/alarm/config/ForwardTemp'),
                 meta: { title: '前传模板规则', keepAlive: true, permission: ['F003002003'] }
               }
             ]

@@ -38,7 +38,7 @@
 
 <script>
 import Mixin from './Mixin'
-import { UserService } from '@/api-hasura'
+import { AlarmTempService, UserService } from '@/api-hasura'
 import { filterOption } from '@/utils/util'
 
 export const forwardFormRules = {}
@@ -49,6 +49,8 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    forwardTempList: [],
+    forwardTempListLoading: false,
     userList: [],
     userListLoading: false
   }),
@@ -71,10 +73,26 @@ export default {
         this.userListLoading = false
       }
     },
+    async fetchForwardTempList () {
+      try {
+        this.forwardTempListLoading = true
+        const { data: { forwardTempList } } = await AlarmTempService.find({
+          fields: ['id', 'title', 'message'],
+          alias: 'forwardTempList'
+        })
+        this.forwardTempList = forwardTempList
+      } catch (e) {
+        this.forwardTempLis = []
+        throw e
+      } finally {
+        this.forwardTempListLoading = false
+      }
+    },
     filterOption
   },
   created () {
     this.fetchUserList()
+    this.fetchForwardTempList()
   }
 }
 </script>
