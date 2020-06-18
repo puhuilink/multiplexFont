@@ -8,18 +8,20 @@
     :afterClose="reset"
   >
 
+    <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
-        <a-select v-model="formModel.enabled" style="width: 80px">
+        <a-select v-model="formModel.enabled" class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="back" @disabled="submitLoading" v-show="stepIndex === 2">上一步</a-button>
-      <a-button type="primary" :loading="submitLoading" @click="next">{{ stepIndex === 1 ? '下一步' : '提交' }}</a-button>
+      <a-button @click="back" :disabled="submitLoading" v-show="!firstStep">上一步</a-button>
+      <a-button @click="next" :loading="submitLoading" type="primary">{{ firstStep ? '下一步' : '提交' }}</a-button>
     </template>
 
+    <!-- / 正文 -->
     <a-spin :spinning="spinning">
 
       <a-steps :current="stepIndex">
@@ -28,11 +30,11 @@
       </a-steps>
 
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
-        <div v-show="stepIndex === 1" class="ViewTitleSchema__content">
+        <div v-show="firstStep" class="content">
           <BasicForm :formModel="formModel" />
         </div>
 
-        <div v-show="stepIndex === 2" class="ViewTitleSchema__content">
+        <div v-show="!firstStep" class="content">
           <component
             :formModel.sync="formModel"
             :is="formComponentMapping.get(formModel.rule_type)"
@@ -47,14 +49,16 @@
 </template>
 
 <script>
+import Schema from '@/components/Mixins/Modal/Schema'
+import _ from 'lodash'
 import {
   ALARM_RULE_MERGE,
   ALARM_RULE_UPGRADE,
   ALARM_RULE_FORWARD,
-  ALARM_RULE_RECOVER
-} from '../../typing'
-import Schema from '@/components/Mixins/Modal/Schema'
-import _ from 'lodash'
+  ALARM_RULE_RECOVER,
+  CONTENT_TYPE_COUNT,
+  RuleFactory
+} from './model'
 import { AlarmRuleService } from '@/api-hasura'
 import BasicForm, { basicFormRules } from './BasicForm'
 import RecoverForm, { recoverFormRules } from './RecoverForm'
@@ -62,7 +66,6 @@ import UpgradeForm, { upgradeFormRules } from './UpgradeForm'
 import MergeForm, { mergeFormRules } from './MergeForm'
 import ForwardForm, { forwardFormRules } from './ForwardForm'
 import { formItemLayout } from './Mixin'
-import { CONTENT_TYPE_COUNT, RuleFactory } from './model'
 
 const ruleMapping = new Map([
   [ALARM_RULE_MERGE, mergeFormRules],
@@ -75,11 +78,7 @@ export default {
   name: 'AlarmRuleSchema',
   mixins: [Schema],
   components: {
-    BasicForm,
-    RecoverForm,
-    UpgradeForm,
-    MergeForm,
-    ForwardForm
+    BasicForm
   },
   data: () => ({
     formComponentMapping: new Map([
@@ -97,16 +96,17 @@ export default {
       rule_type: ALARM_RULE_UPGRADE
     },
     spinning: false,
-    submitLoading: false,
-    stepIndex: 1
+    stepIndex: 1,
+    submitLoading: false
   }),
   computed: {
+    firstStep () {
+      return this.stepIndex === 1
+    },
     formRules () {
-      const { formModel: { rule_type }, stepIndex } = this
+      const { formModel: { rule_type }, firstStep } = this
       return _.cloneDeep(
-        stepIndex === 1
-          ? basicFormRules
-          : Object.assign({}, basicFormRules, ruleMapping.get(rule_type) || {})
+        firstStep ? basicFormRules : ruleMapping.get(rule_type)
       )
     }
   },
@@ -116,13 +116,13 @@ export default {
       this.submit = this.insert
     },
     back () {
-      this.stepIndex--
       this.$refs.ruleForm.clearValidate()
+      this.stepIndex--
     },
     edit (id) {
+      this.fetch(id)
       this.show('编辑告警规则')
       this.submit = this.update
-      this.fetch(id)
     },
     async fetch (id) {
       try {
@@ -130,6 +130,7 @@ export default {
         const model = await AlarmRuleService.detail(id)
         this.formModel = RuleFactory.deSerialization(model)
       } catch (e) {
+        this.formModel = this.$options.data.apply(this).formModel
         throw e
       } finally {
         this.spinning = false
@@ -139,7 +140,9 @@ export default {
       try {
         this.submitLoading = true
         await AlarmRuleService.add(RuleFactory.serialize(this.model))
+        this.$emit('addSuccess')
         this.notifyEditSuccess()
+        this.cancel()
       } catch (e) {
         this.$notifyError(e)
         throw e
@@ -148,7 +151,7 @@ export default {
       }
     },
     next () {
-      if (this.stepIndex === 1) {
+      if (this.firstStep) {
         this.$refs.ruleForm.validate(passValidate => passValidate && this.stepIndex++)
       } else {
         this.$refs.ruleForm.validate(passValidate => passValidate && this.submit())
@@ -162,7 +165,9 @@ export default {
       try {
         this.submitLoading = true
         await AlarmRuleService.update(RuleFactory.serialize(this.model))
+        this.$emit('editSuccess')
         this.notifyEditSuccess()
+        this.cancel()
       } catch (e) {
         this.$notifyEditSuccess(e)
         throw e
@@ -175,17 +180,21 @@ export default {
 </script>
 
 <style lang="less">
-.ViewTitleSchema {
-  &__content {
+.ViewTitleSchema__modal {
+  .content {
     margin-top: 24px;
+  }
 
-    .p {
-      text-align: center;
-    }
+  .enabled {
+    width: 80px;
+  }
 
-    .inline_input {
-      width: 90px;
-    }
+  .p {
+    text-align: center;
+  }
+
+  .inline_input {
+    width: 90px;
   }
 }
 </style>

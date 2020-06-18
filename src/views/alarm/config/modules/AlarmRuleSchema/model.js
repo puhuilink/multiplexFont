@@ -8,6 +8,12 @@ import _ from 'lodash'
 
 export const CONTENT_TYPE_COUNT = 'count'
 export const CONTENT_TYPE_TIME = 'time'
+export {
+  ALARM_RULE_MERGE,
+  ALARM_RULE_UPGRADE,
+  ALARM_RULE_FORWARD,
+  ALARM_RULE_RECOVER
+}
 
 class Rule {
   constructor ({
@@ -75,17 +81,18 @@ export class RuleFactory {
     [ALARM_RULE_RECOVER, RecoverRule]
   ])
 
+  static create (model = {}) {
+    return Reflect.construct(
+      this.mapping.get(model.rule_type),
+      [model]
+    )
+  }
+
   static serialize (model = {}) {
-    const { rule_type } = model
-    const { mapping } = this
-    const Class = mapping.get(rule_type)
-    return (new Class(model)).serialize()
+    return this.create(model).serialize()
   }
 
   static deSerialization (model = {}) {
-    const { rule_type } = model
-    const { mapping } = this
-    const Class = mapping.get(rule_type)
-    return (new Class(model)).deSerialization()
+    return this.create(model).deSerialization()
   }
 }

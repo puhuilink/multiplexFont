@@ -23,7 +23,7 @@
 
               <a-col :md="12" :sm="24">
                 <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-                  <a-select allowClear v-model="queryParams.enabled" >
+                  <a-select allowClear v-model.number="queryParams.enabled" >
                     <a-select-option :value="1">启用</a-select-option>
                     <a-select-option :value="0">禁用</a-select-option>
                   </a-select>
@@ -59,6 +59,8 @@
     </CTable>
 
     <AlarmRuleSchema
+      @addSuccess="query"
+      @editSuccess="query(false)"
       ref="schema"
     />
   </div>
@@ -140,9 +142,14 @@ export default {
   }),
   methods: {
     loadData (parameter) {
+      const { enabled, ...restQueryParams } = this.queryParams
       return AlarmRuleService.find({
         where: {
-          ...generateQuery(this.queryParams)
+          ...generateQuery({
+            ...restQueryParams,
+            // https://github.com/vueComponent/ant-design-vue/issues/971
+            ...enabled === undefined ? {} : { enabled: !!enabled }
+          })
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
@@ -181,6 +188,16 @@ export default {
     onEdit () {
       const [id] = this.selectedRowKeys
       this.$refs.schema.edit(id)
+    },
+    resetQueryParams () {
+      const {
+        queryParams: { rule_type },
+        $options: { data }
+      } = this
+      this.queryParams = {
+        ...data.apply(this).queryParams,
+        rule_type
+      }
     }
   }
 }
