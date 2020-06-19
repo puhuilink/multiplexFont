@@ -8,14 +8,8 @@ import router from './router'
 import store from './store/'
 import apolloProvider from './utils/apollo'
 import { VueAxios } from './utils/request'
-// import { loginOld } from '@/api/controller/User'
 import Fragment from 'vue-fragment'
 import './plugins'
-
-// mock
-// WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
-// TODO: judge whether env is development or production
-// import './mock'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'

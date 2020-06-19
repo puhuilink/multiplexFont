@@ -110,16 +110,7 @@ const vueConfig = {
   devServer: {
     // development server port 8000
     port: 8080,
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
-      '/urmp': {
-        target: 'http://10.1.13.19:48080/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '/urmp': ''
-        }
-      },
       // 登录及权限
       '/api': {
         target: 'http://10.1.13.17:31685/',
@@ -154,15 +145,6 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_HASURA_XUNJIAN_URI]: ''
-        }
-      },
-      // hasura ngecc
-      [VUE_APP_HASURA_NGECC_URI]: {
-        target: VUE_APP_HASURA_NGECC_ORIGINAL_URL,
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          [VUE_APP_HASURA_NGECC_URI]: ''
         }
       },
       // 短信验证
