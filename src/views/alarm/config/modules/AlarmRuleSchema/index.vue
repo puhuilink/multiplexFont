@@ -31,7 +31,7 @@
 
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
         <div v-show="firstStep" class="content">
-          <BasicForm :formModel="formModel" />
+          <BasicForm :formModel.sync="formModel" />
         </div>
 
         <div v-show="!firstStep" class="content">

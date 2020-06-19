@@ -15,14 +15,14 @@ export {
   ALARM_RULE_RECOVER
 }
 
-class Rule {
+class BasicRule {
   constructor ({
     title,
     host_id,
     endpoint_id,
     metric_id,
     rule_type
-  }) {
+  } = {}) {
     this.title = title
     this.host_id = host_id
     this.endpoint_id = endpoint_id
@@ -39,7 +39,7 @@ class Rule {
   }
 }
 
-class MergeRule extends Rule {
+class ContentRule extends BasicRule {
   constructor ({ content = '{}', ...rest }) {
     super(rest)
     this.content = _.pick(JSON.parse(content), ['type', 'number'])
@@ -54,16 +54,47 @@ class MergeRule extends Rule {
   }
 }
 
-class ForwardRule extends MergeRule {}
-
-class RecoverRule extends MergeRule {
-  constructor ({ content = '{}', ...rest }) {
-    super(rest)
-    this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
+/**
+ * 合并规则
+ */
+class MergeRule extends ContentRule {
+  constructor (props = {}) {
+    super(props)
+    this.rule_type = ALARM_RULE_MERGE
   }
 }
 
-class UpgradeRule extends MergeRule {}
+/**
+ * 升级规则
+ */
+class UpgradeRule extends ContentRule {
+  constructor (props = {}) {
+    super(props)
+    this.rule_type = ALARM_RULE_UPGRADE
+  }
+}
+
+/**
+ * 发送规则
+ */
+class ForwardRule extends ContentRule {
+  constructor (props = {}) {
+    super(props)
+    this.rule_type = ALARM_RULE_FORWARD
+  }
+}
+
+/**
+ * 消除规则
+ */
+class RecoverRule extends ContentRule {
+  constructor (props = {}) {
+    super(props)
+    const { content = '{}' } = props
+    this.rule_type = ALARM_RULE_RECOVER
+    this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
+  }
+}
 
 export class RuleFactory {
   static mapping = new Map([
@@ -74,9 +105,10 @@ export class RuleFactory {
   ])
 
   static create (model = {}) {
+    const { rule_type, ...rest } = model
     return Reflect.construct(
-      this.mapping.get(model.rule_type),
-      [model]
+      this.mapping.get(rule_type),
+      [rest]
     )
   }
 
