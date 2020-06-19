@@ -128,7 +128,7 @@ export default {
       try {
         this.spinning = true
         const model = await AlarmRuleService.detail(id)
-        this.formModel = RuleFactory.deSerialize(model)
+        this.formModel = RuleFactory.create(model)
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e
@@ -181,7 +181,7 @@ export default {
         this.notifyEditSuccess()
         this.cancel()
       } catch (e) {
-        this.$notifyEditSuccess(e)
+        this.$notifyError(e)
         throw e
       } finally {
         this.btnLoading = false

@@ -35,10 +35,6 @@ class BasicRule {
   serialize () {
     return _.toPlainObject(this)
   }
-
-  deSerialize () {
-    return _.toPlainObject(this)
-  }
 }
 
 class ContentRule extends BasicRule {
@@ -115,10 +111,6 @@ export class RuleFactory {
   }
 
   static serialize (model = {}) {
-    return this.create(model).serialize()
-  }
-
-  static deSerialize (model = {}) {
-    return this.create(model).deSerialize()
+    return model.serialize()
   }
 }
