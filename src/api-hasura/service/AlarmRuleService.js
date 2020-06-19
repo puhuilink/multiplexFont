@@ -11,6 +11,20 @@ class AlarmRuleService extends BaseService {
     )
   }
 
+  static async add (argus = {}) {
+    return mutate(
+      AlarmRuleDao.add(argus)
+      // TODO: 关联数据
+    )
+  }
+
+  static async update (set = {}, where = {}) {
+    return mutate(
+      AlarmRuleDao.update(set, where)
+      // TODO: 关联数据
+    )
+  }
+
   static async detail (id) {
     // 告警规则信息
     const { data: { alarmList } } = await this.find({
@@ -53,6 +67,7 @@ class AlarmRuleService extends BaseService {
   static async batchDelete (idList = []) {
     return mutate(
       AlarmRuleDao.delete({ id: { _in: idList } })
+      // TODO: 关联数据
     )
   }
 

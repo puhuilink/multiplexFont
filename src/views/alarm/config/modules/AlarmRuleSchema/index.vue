@@ -176,8 +176,11 @@ export default {
     async update () {
       try {
         this.btnLoading = true
-        console.dir(AlarmRuleModelFactory.serialize(this.formModel))
-        await AlarmRuleService.update(AlarmRuleModelFactory.serialize(this.formModel))
+        const { id } = this.formModel
+        await AlarmRuleService.update(
+          AlarmRuleModelFactory.serialize(this.formModel),
+          { id }
+        )
         this.$emit('editSuccess')
         this.notifyEditSuccess()
         this.cancel()

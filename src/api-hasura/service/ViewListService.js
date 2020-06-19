@@ -28,6 +28,14 @@ class ViewListService extends BaseService {
       ViewListDao.find(argus)
     )
   }
+
+  static async batchDelete (idList = []) {
+    await mutate(
+      ViewListDao.batchDelete({
+        view_id: { _in: idList }
+      })
+    )
+  }
 }
 
 export {

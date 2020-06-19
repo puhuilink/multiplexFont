@@ -69,10 +69,11 @@
 </template>
 
 <script>
-import { getViewList, copyView, deleteViews } from '@/api/controller/View'
+import { getViewList, copyView } from '@/api/controller/View'
 import ViewTitleScheme from './ViewTitleScheme'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
+import { ViewListService } from '@/api-hasura'
 
 export default {
   name: 'ViewList',
@@ -188,7 +189,7 @@ export default {
      */
     async handleDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => deleteViews(this.selectedRowKeys)
+        onOk: () => ViewListService.batchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)

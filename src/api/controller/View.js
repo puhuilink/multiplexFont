@@ -3,17 +3,9 @@ import moment from 'moment'
 import store from '@/store'
 import {
   mutationUpdateView,
-  queryViewList,
-  mutationDeleteViews,
-  queryMaxDid
+  queryViewList
 } from '../graphql/View'
 import { axios } from '@/utils/request'
-
-export const fetchLastestViewId = function () {
-  return apollo.clients.alert.query({
-    query: queryMaxDid
-  }).then(r => r.data.data.aggregate.max.view_id)
-}
 
 export const getViewList = function (variables = {}) {
   const where = variables.where || {}
@@ -60,15 +52,6 @@ export const updateView = function (viewId, set = {}) {
         throw new Error('更新视图配置失败')
       }
     })
-}
-
-export const deleteViews = function (viewIdList = []) {
-  return apollo.clients.alert.mutate({
-    mutation: mutationDeleteViews,
-    variables: {
-      viewIdList
-    }
-  })
 }
 
 /**

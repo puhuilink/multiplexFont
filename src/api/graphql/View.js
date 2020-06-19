@@ -39,83 +39,8 @@ export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!
   }
 }`
 
-/**
- * 根据传入的 Array<{ kpi_code, ci_id }> 拼接视图组件查询语句
- * @param {Array<Object>} options
- * @param {Object | Undefined} timeRange 要查询的时间段：为 falsy 时直接查询最新数据
- * @return {String}
- */
-export const generateDynamicQueryWithKpiCi = (options = [], timeRange) => {
-  // hasura 每条数据的返回值键名不能重复，此处以索引做区分，后期再合并为数组
-  const _timeRange = timeRange ? `,
-  arising_time: {
-    _gte: "${timeRange.timeRangeStart}",
-    _lte: "${timeRange.timeRangeEnd}"
-  }` : ''
-  /* eslint-disable */
-  return options.map(({ kpi_code, ci_id }, index) => (
-    `data${index}: t_kpi_current(where: {
-      kpi_code: {_eq: "${kpi_code}"},
-      ci_id: {_eq: "${ci_id}"}
-      ${_timeRange}
-    }, order_by: {arising_time: desc_nulls_last}) {
-      value: kpi_value_num
-      kpi_code
-      ci_id
-    }`
-  ))
-}
-
-/**
- * 根据传入的[kpi_code_s]与[_id_s]查询对应kpi和instance的label
- */
-export const queryKpiAndInstanceInfo = gql`query ($instanceIdList: [String!], $kpiCodeList: [String!]) {
-  instanceList: ngecc_instance(where: {_id_s: {_in: $instanceIdList}}) {
-    label_s
-    _id_s
-  }
-  kpiList: ngecc_instance_values(where: {kpicode_s: {
-    _in: $kpiCodeList
-  }}) {
-    label_s
-    kpicode_s
-  }
-}`
-
 export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
   data: t_view(where: {view_id: {_eq: $viewId}}) {
     content
   }
 }`
-
-export const mutationDeleteViews = gql`mutation ($viewIdList: [numeric!]) {
-  delete_t_view (where: {
-    view_id: {
-      _in: $viewIdList
-    }
-  }) {
-    affected_rows
-  }
-}`
-
-export const queryMaxDid = gql`query MyQuery {
-  data: t_view_aggregate {
-    aggregate {
-      max {
-        view_id
-      }
-    }
-  }
-}`
-
-// export const mutationUpdateViewContent = gql`mutation ($viewId: numeric, $content: String) {
-//   update_t_view (where: {
-//     view_id: {
-//       _eq: $viewId
-//     }
-//   }, _set: {
-//     content: $content
-//   }) {
-//     affected_rows
-//   }
-// }`

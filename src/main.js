@@ -34,9 +34,6 @@ Vue.use(VueAxios)
 
 Vue.use(Fragment.Plugin)
 
-// // TODO: 此处为兼容老系统 api，开发时开启
-// loginOld().then()
-
 new Vue({
   router,
   store,
