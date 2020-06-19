@@ -15,14 +15,15 @@ export {
   ALARM_RULE_RECOVER
 }
 
-class BasicRule {
+class BasicRuleModel {
   constructor ({
     id,
     title,
     host_id,
     endpoint_id,
     metric_id,
-    rule_type
+    rule_type,
+    enabled
   } = {}) {
     this.id = id
     this.title = title
@@ -30,23 +31,48 @@ class BasicRule {
     this.endpoint_id = endpoint_id
     this.metric_id = metric_id
     this.rule_type = rule_type
+    // https://github.com/vueComponent/ant-design-vue/issues/971
+    this.enabled = ~~enabled
   }
 
   serialize () {
-    return _.toPlainObject(this)
+    const { enabled, ...rest } = this
+    return _.toPlainObject({
+      ...rest,
+      enabled: !!enabled
+    })
   }
 }
 
-class ContentRule extends BasicRule {
+class ContentRuleModel extends BasicRuleModel {
   constructor ({ content = '{}', ...rest }) {
     super(rest)
     this.content = _.pick(JSON.parse(content), ['type', 'number'])
   }
 
+  // https://github.com/vueComponent/ant-design-vue/blob/master/components/form-model/FormItem.jsx#L143
+  // antd form-model 缺陷，无法访问到深层次的值，此处将深层次值展开到第一层，以便进行修改与校验，下同
+  get number () {
+    return this.content.number
+  }
+
+  set number (number) {
+    this.content.number = number
+  }
+
+  get type () {
+    return this.content.type
+  }
+
+  set type (type) {
+    this.content.type = type
+  }
+
   serialize () {
-    const { content, ...rest } = this
+    const { enabled, content, ...rest } = this
     return _.toPlainObject({
       ...rest,
+      enabled: !!enabled,
       content: JSON.stringify(content)
     })
   }
@@ -55,7 +81,7 @@ class ContentRule extends BasicRule {
 /**
  * 合并规则
  */
-class MergeRule extends ContentRule {
+class MergeRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
     this.rule_type = ALARM_RULE_MERGE
@@ -65,7 +91,7 @@ class MergeRule extends ContentRule {
 /**
  * 升级规则
  */
-class UpgradeRule extends ContentRule {
+class UpgradeRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
     this.rule_type = ALARM_RULE_UPGRADE
@@ -75,7 +101,7 @@ class UpgradeRule extends ContentRule {
 /**
  * 发送规则
  */
-class ForwardRule extends ContentRule {
+class ForwardRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
     this.rule_type = ALARM_RULE_FORWARD
@@ -85,21 +111,29 @@ class ForwardRule extends ContentRule {
 /**
  * 消除规则
  */
-class RecoverRule extends ContentRule {
+class RecoverRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
     const { content = '{}' } = props
     this.rule_type = ALARM_RULE_RECOVER
     this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
   }
+
+  get count () {
+    return this.content.count
+  }
+
+  set count (count) {
+    this.content.count = count
+  }
 }
 
-export class RuleFactory {
+export class AlarmRuleModelFactory {
   static mapping = new Map([
-    [ALARM_RULE_MERGE, MergeRule],
-    [ALARM_RULE_UPGRADE, UpgradeRule],
-    [ALARM_RULE_FORWARD, ForwardRule],
-    [ALARM_RULE_RECOVER, RecoverRule]
+    [ALARM_RULE_MERGE, MergeRuleModel],
+    [ALARM_RULE_UPGRADE, UpgradeRuleModel],
+    [ALARM_RULE_FORWARD, ForwardRuleModel],
+    [ALARM_RULE_RECOVER, RecoverRuleModel]
   ])
 
   static create (model = {}) {

@@ -8,10 +8,12 @@
       </a-select>
     </a-form-model-item>
 
+    <!-- TODO: integer format -->
+    <!-- https://github.com/ant-design/ant-design/issues/14284 -->
     <a-form-model-item :label="useTime ? '合并时间' : '最大合并次数'" v-bind="formItemLayout" prop="number">
       <a-input
         :min="1"
-        :suffix="useTime ? '次' : '分钟'"
+        :suffix="useTime ? '分钟' : '次'"
         type="number"
         v-model.number="formModel.content.number"
       />
@@ -26,7 +28,7 @@ export const mergeFormRules = {
   type: [
     { required: true, message: '请选择合并方式' }
   ],
-  time: [
+  number: [
     { required: true, message: '请输入合并时间' }
   ],
   count: [

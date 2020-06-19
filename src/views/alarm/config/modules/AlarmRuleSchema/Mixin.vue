@@ -1,5 +1,6 @@
 <script>
 import { CONTENT_TYPE_TIME } from './model'
+import { parserInt } from '@/utils/util'
 
 export const formItemLayout = {
   labelCol: { span: 7 },
@@ -32,7 +33,9 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    parserInt
+  }
 }
 </script>
 

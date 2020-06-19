@@ -28,7 +28,7 @@ const forwardRecordList = (options) => {
         '0', '1', '2', '3',
         '4'
       ],
-      'forwardRule|1': [
+      'ForwardRuleModel|1': [
         '厦门软件系统性能告警（4级）',
         '北京软件系统性能告警（4级）'
       ],

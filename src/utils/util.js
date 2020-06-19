@@ -213,11 +213,15 @@ export function filterTransferOption (key) {
   }
 }
 
+// antd select search 匹配规则
 export const filterOption = function (input, option) {
   return (
     option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
   )
 }
+
+// antd input-number 整数格式化
+export const parserInt = num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)
 
 export const hexToRGBA = function (hex, alpha) {
   var r = parseInt(hex.slice(1, 3), 16)

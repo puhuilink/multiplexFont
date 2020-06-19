@@ -57,7 +57,7 @@ import {
   ALARM_RULE_FORWARD,
   ALARM_RULE_RECOVER,
   CONTENT_TYPE_COUNT,
-  RuleFactory
+  AlarmRuleModelFactory
 } from './model'
 import { AlarmRuleService } from '@/api-hasura'
 import BasicForm, { basicFormRules } from './BasicForm'
@@ -128,7 +128,7 @@ export default {
       try {
         this.spinning = true
         const model = await AlarmRuleService.detail(id)
-        this.formModel = RuleFactory.create(model)
+        this.formModel = AlarmRuleModelFactory.create(model)
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e
@@ -139,7 +139,7 @@ export default {
     async insert () {
       try {
         this.btnLoading = true
-        await AlarmRuleService.add(RuleFactory.serialize(this.formModel))
+        await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
         this.$emit('addSuccess')
         this.notifyEditSuccess()
         this.cancel()
@@ -176,7 +176,8 @@ export default {
     async update () {
       try {
         this.btnLoading = true
-        await AlarmRuleService.update(RuleFactory.serialize(this.formModel))
+        console.dir(AlarmRuleModelFactory.serialize(this.formModel))
+        await AlarmRuleService.update(AlarmRuleModelFactory.serialize(this.formModel))
         this.$emit('editSuccess')
         this.notifyEditSuccess()
         this.cancel()
@@ -206,7 +207,8 @@ export default {
   }
 
   .inline_input {
-    width: 90px;
+    display: inline-block;
+    width: 120px;
   }
 }
 </style>

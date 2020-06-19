@@ -19,19 +19,18 @@ class AlarmRuleDao extends BaseDao {
   static FIELDS_MAPPING = new Map([])
 
   @override
-  static async _uniqueValidate (alarmRule = {}, add = true) {
-    const { rule_type, host_id, endpoint_id, metric_id } = alarmRule
+  static async _uniqueValidate ({ id, rule_type, host_id, endpoint_id, metric_id } = {}, add = true) {
     const { data: { alarmRuleList } } = await query(
       AlarmRuleDao.find({
-        where: { rule_type, host_id, endpoint_id, metric_id },
+        where: { rule_type, host_id, endpoint_id, metric_id, mode: 'personal' },
         fields: ['id', 'title'],
         alias: 'alarmRuleList'
       })
     )
 
     const errList = alarmRuleList
-      .filter(({ id }) => add || id !== alarmRule.id)
-      .map(({ title }) => `已存在当前配置的规则搭配：${title}`)
+      .filter(alarmRule => add || id !== alarmRule.id)
+      .map(alarmRule => `已存在当前配置的规则搭配：${alarmRule.title}`)
 
     return _.isEmpty(errList) ? Promise.resolve() : Promise.reject(errList.join('<br />'))
   }

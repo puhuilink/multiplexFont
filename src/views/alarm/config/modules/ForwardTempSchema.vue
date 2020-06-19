@@ -178,9 +178,5 @@ export default {
   .p {
     text-align: center;
   }
-
-  .inline_input {
-    width: 90px;
-  }
 }
 </style>
