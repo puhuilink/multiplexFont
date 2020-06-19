@@ -17,12 +17,14 @@ export {
 
 class BasicRule {
   constructor ({
+    id,
     title,
     host_id,
     endpoint_id,
     metric_id,
     rule_type
   } = {}) {
+    this.id = id
     this.title = title
     this.host_id = host_id
     this.endpoint_id = endpoint_id

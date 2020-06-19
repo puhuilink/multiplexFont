@@ -58,7 +58,7 @@ class BaseDao {
     return _.isEmpty(errList) ? Promise.resolve() : Promise.reject(errList.join('<br />'))
   }
 
-  static async _fetchMaxPrimarykey (primaryKey) {
+  static async _fetchMaxPrimaryKey (primaryKey) {
     primaryKey = primaryKey || this.PRIMARY_KEY
     const hasuraORM = this._createHasuraORM()
     const key = await hasuraORM.max(primaryKey)

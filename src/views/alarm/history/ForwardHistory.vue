@@ -151,7 +151,7 @@ export default {
   computed: {},
   methods: {
     loadData (parameter) {
-      return AlarmForwardService.find({
+      return AlarmForwardService.findHistory({
         where: {
           ...generateQuery(this.queryParams)
         },

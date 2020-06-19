@@ -48,10 +48,15 @@ const defaultUpdateTime = function (withPostfix = false) {
   }
 }
 
+const createTime = () => ({ 'create_time': moment().format('YYYY-MM-DD HH:mm:ss') })
+const updateTime = () => ({ 'create_time': moment().format('YYYY-MM-DD HH:mm:ss') })
+
 export {
   defaultCreateDate,
   defaultUpdateDate,
   defaultCreateTime,
   defaultUpdateTime,
-  defaultInfo
+  defaultInfo,
+  createTime,
+  updateTime
 }

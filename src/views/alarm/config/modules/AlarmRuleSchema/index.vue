@@ -17,8 +17,8 @@
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="back" :disabled="submitLoading" v-show="!firstStep">上一步</a-button>
-      <a-button @click="next" :loading="submitLoading" type="primary">{{ firstStep ? '下一步' : '提交' }}</a-button>
+      <a-button @click="back" :disabled="btnLoading" v-show="!firstStep">上一步</a-button>
+      <a-button @click="next" :loading="btnLoading" type="primary">{{ firstStep ? '下一步' : '提交' }}</a-button>
     </template>
 
     <!-- / 正文 -->
@@ -97,7 +97,7 @@ export default {
     },
     spinning: false,
     stepIndex: 1,
-    submitLoading: false
+    btnLoading: false
   }),
   computed: {
     formRules () {
@@ -138,8 +138,8 @@ export default {
     },
     async insert () {
       try {
-        this.submitLoading = true
-        await AlarmRuleService.add(RuleFactory.serialize(this.model))
+        this.btnLoading = true
+        await AlarmRuleService.add(RuleFactory.serialize(this.formModel))
         this.$emit('addSuccess')
         this.notifyEditSuccess()
         this.cancel()
@@ -147,14 +147,26 @@ export default {
         this.$notifyError(e)
         throw e
       } finally {
-        this.submitLoading = false
+        this.btnLoading = false
       }
     },
     next () {
       if (this.firstStep) {
-        this.$refs.ruleForm.validate(passValidate => passValidate && this.stepIndex++)
+        this.$refs.ruleForm.validate(passValidate => passValidate && this.nextToSecond())
       } else {
         this.$refs.ruleForm.validate(passValidate => passValidate && this.submit())
+      }
+    },
+    async nextToSecond () {
+      try {
+        this.btnLoading = true
+        await AlarmRuleService.isUniqueConfig(this.formModel)
+        this.stepIndex++
+      } catch (e) {
+        this.$notifyError(e)
+        throw e
+      } finally {
+        this.btnLoading = false
       }
     },
     reset () {
@@ -163,8 +175,8 @@ export default {
     },
     async update () {
       try {
-        this.submitLoading = true
-        await AlarmRuleService.update(RuleFactory.serialize(this.model))
+        this.btnLoading = true
+        await AlarmRuleService.update(RuleFactory.serialize(this.formModel))
         this.$emit('editSuccess')
         this.notifyEditSuccess()
         this.cancel()
@@ -172,7 +184,7 @@ export default {
         this.$notifyEditSuccess(e)
         throw e
       } finally {
-        this.submitLoading = false
+        this.btnLoading = false
       }
     }
   }

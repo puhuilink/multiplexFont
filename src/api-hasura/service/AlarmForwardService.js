@@ -1,11 +1,17 @@
 import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
-import { SendRecordDao } from '../dao'
+import { AlarmSenderDao, SendRecordDao } from '../dao'
 import _ from 'lodash'
 
 class AlarmForwardService extends BaseService {
   static async find (argus = {}) {
+    return query(
+      AlarmSenderDao.find(argus)
+    )
+  }
+
+  static async findHistory (argus = {}) {
     return query(
       SendRecordDao.find(argus)
     )
