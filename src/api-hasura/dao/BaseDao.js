@@ -17,7 +17,9 @@ class BaseDao {
    * @return {HasuraORM}
    */
   static _createHasuraORM () {
-    return new HasuraORM(this.SCHEMA, this.PROVIDER, '', [ ..._.uniq([...this.FIELDS_MAPPING.keys(), this.PRIMARY_KEY]) ])
+    // 部分表没有主键，PRIMARY_KEY 为 undefined
+    const fields = [ ..._.uniq([...this.FIELDS_MAPPING.keys(), this.PRIMARY_KEY]) ].filter(Boolean)
+    return new HasuraORM(this.SCHEMA, this.PROVIDER, '', fields)
   }
 
   /**

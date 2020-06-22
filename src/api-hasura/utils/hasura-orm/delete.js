@@ -21,7 +21,8 @@ export default class Delete extends Hasura {
    */
   parsed () {
     return ` ${this._schema} ${'(' + this.schemaArguments + ' )'}{ ${
-      this._fields ? ' returning { ' + this._fields + ' }' : 'affected_rows'
+      // this._fields ? ' returning { ' + this._fields + ' }' : 'affected_rows'
+      'affected_rows'
     } }`
   }
 

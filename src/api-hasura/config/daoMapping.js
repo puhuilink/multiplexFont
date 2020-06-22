@@ -13,7 +13,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_alert', primaryKey: 'id' },
   // 系统设置
   { schema: 't_audit', primaryKey: 'id' },
-  { schema: 't_authorize_object', primaryKey: 'id' },
+  { schema: 't_authorize_object' },
   { schema: 't_user_group', primaryKey: 'id' },
   // model
   { schema: 't_metric', primaryKey: 'id' },
