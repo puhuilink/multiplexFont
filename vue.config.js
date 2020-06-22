@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -10,17 +11,11 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const {
   VUE_APP_HASURA_CACHE_URI,
-  // VUE_APP_HASURA_CACHE_KEY,
   VUE_APP_HASURA_CACHE_ORIGINAL_URL,
   VUE_APP_HASURA_MAIN_URI,
-  // VUE_APP_HASURA_MAIN_KEY,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
   VUE_APP_HASURA_XUNJIAN_URI,
-  // VUE_APP_HASURA_XUNJIAN_KEY,
-  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
-  VUE_APP_HASURA_NGECC_URI,
-  // VUE_APP_HASURA_NGECC_KEY,
-  VUE_APP_HASURA_NGECC_ORIGINAL_URL
+  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL
 } = process.env
 
 const assetsCDN = {
@@ -89,6 +84,10 @@ const vueConfig = {
         return args
       })
     }
+
+    config.plugin('lodashReplace').use(new LodashModuleReplacementPlugin({
+      shorthands: true
+    }))
   },
 
   css: {
