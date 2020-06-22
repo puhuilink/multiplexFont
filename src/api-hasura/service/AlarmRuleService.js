@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao } from '../dao'
+import { AlarmRuleDao, AlarmSenderDao } from '../dao'
 import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
 
@@ -36,7 +36,7 @@ class AlarmRuleService extends BaseService {
 
     // 告警规则类型为前转时，查询其关联的前转配置
     if (_.get(detail, 'rule_type') === 'forward') {
-      detail.forwardConfig = await this.sendList(detail)
+      detail.sendList = await this.sendList(detail)
     }
     return detail
   }
@@ -51,23 +51,29 @@ class AlarmRuleService extends BaseService {
       alias: 'sendList'
     })
 
-    return sendList.map(({ contact = '', send_type = '', ...rest }) => ({
-      // contact 是以 / 分隔的字符串，存放用户 id
-      contact: contact.split('/'),
-      // send_type 可能值 EMAIL;SMS;EMAIL/SMS
-      send_type: send_type.split('/'),
-      ...rest
-    }))
+    return sendList
   }
 
   static async isUniqueConfig (alarmRule = {}) {
     return AlarmRuleDao._uniqueValidate(alarmRule, !alarmRule.id)
   }
 
-  static async batchDelete (idList = []) {
+  static async batchDelete (alarmRuleList = []) {
     return mutate(
-      AlarmRuleDao.delete({ id: { _in: idList } })
-      // TODO: 关联数据
+      // 规则表删除
+      AlarmRuleDao.batchDelete({ id: { _in: alarmRuleList.map(({ id }) => id) } }),
+      // 关联的前转配置删除
+      AlarmSenderDao.batchDelete({
+        _or: [
+          ...alarmRuleList
+            .filter(({ rule_type }) => rule_type === 'forward')
+            .map(({ host_id, endpoint_id, metric_id }) => ({
+              host_id: { _eq: host_id },
+              endpoint_id: { _eq: endpoint_id },
+              metric_id: { _eq: metric_id }
+            }))
+        ]
+      })
     )
   }
 

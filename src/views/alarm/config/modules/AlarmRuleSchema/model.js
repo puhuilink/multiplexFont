@@ -102,9 +102,29 @@ class UpgradeRuleModel extends ContentRuleModel {
  * 发送规则
  */
 class ForwardRuleModel extends ContentRuleModel {
-  constructor (props = {}) {
+  constructor ({ sendList, ...props }) {
     super(props)
     this.rule_type = ALARM_RULE_FORWARD
+    // 前转配置
+    this.sendList = sendList.map(({ contact = '', send_type = '', ...rest }) => ({
+      // contact 是以 / 分隔的字符串，存放用户 id
+      contact: contact.split('/'),
+      // send_type 可能值 EMAIL;SMS;EMAIL/SMS
+      send_type: send_type.split('/'),
+      ...rest
+    }))
+  }
+
+  serialize () {
+    const { sendList = [] } = this
+    return {
+      ...super.serialize(),
+      sendList: sendList.map(({ contact = [], send_type = [], ...rest }) => ({
+        contact: contact.join('/'),
+        send_type: send_type.join('/'),
+        ...rest
+      }))
+    }
   }
 }
 

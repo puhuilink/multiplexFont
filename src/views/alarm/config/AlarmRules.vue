@@ -162,7 +162,7 @@ export default {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => AlarmRuleService
-          .batchDelete(this.selectedRowKeys)
+          .batchDelete(this.selectedRows)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)
@@ -190,14 +190,8 @@ export default {
       this.$refs.schema.edit(id)
     },
     resetQueryParams () {
-      const {
-        queryParams: { rule_type },
-        $options: { data }
-      } = this
-      this.queryParams = {
-        ...data.apply(this).queryParams,
-        rule_type
-      }
+      const { queryParams: { rule_type } } = this
+      this.$data.queryParams = Object.assign({}, this.$options.data.apply(this).queryParams, rule_type)
     }
   }
 }
