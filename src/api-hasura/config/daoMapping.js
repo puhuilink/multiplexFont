@@ -6,7 +6,6 @@ const VIC_MAIN_LIST = [
   // （新）告警
   { schema: 't_alarm', primaryKey: 'id' },
   { schema: 't_alarm_rule', primaryKey: 'id' },
-  { schema: 't_alarm_sender', primaryKey: 'id' },
   { schema: 't_alarm_sub', primaryKey: 'id' },
   { schema: 't_alarm_temp', primaryKey: 'id' },
   // （旧）告警,

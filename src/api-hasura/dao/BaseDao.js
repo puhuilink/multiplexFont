@@ -33,20 +33,20 @@ class BaseDao {
 
     const { PRIMARY_KEY } = self
 
-    const queryList = _.flow(
+    const queryList = _.flow([
       // 挑选出要校验的值
-      () => _.pick(obj, self.UNIQUE_FIELDS),
+      () => _.pick(obj, self.UNIQUE_FIELDS || []),
       // 过滤空值
       val => _.pickBy(val, v => !_.isEmpty(v)),
       // 对象转二维数组
       val => _.entries(val),
       // 拼接查询条件
       val => val.map(([key, value]) => self._createHasuraORM().where({ [key]: value }).alias(key).select(_.uniq([key, PRIMARY_KEY])))
-    )()
+    ])()
 
     const { data } = await query(...queryList)
 
-    const errList = _.flow(
+    const errList = _.flow([
       // 对象转二维数组
       () => _.entries(data),
       // 挑选出已存在的数据
@@ -55,7 +55,7 @@ class BaseDao {
       val => val.filter(([key, value]) => add || value.every(el => el[PRIMARY_KEY] !== obj[PRIMARY_KEY])),
       // 输出报错信息
       val => val.map(([key]) => `已存在的${self.FIELDS_MAPPING.get(key) || key}：${obj[key]}`)
-    )()
+    ])()
 
     return _.isEmpty(errList) ? Promise.resolve() : Promise.reject(errList.join('<br />'))
   }

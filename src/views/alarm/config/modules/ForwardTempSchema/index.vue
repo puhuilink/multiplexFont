@@ -11,7 +11,7 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
-        <a-select :value="~~formModel.enabled" class="enabled" @select="e => formModel.enabled = !!e">
+        <a-select v-model="formModel.enabled" class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
@@ -23,7 +23,7 @@
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
-        <a-form-model-item label="前转名称" v-bind="formItemLayout" prop="title">
+        <a-form-model-item label="模板名称" v-bind="formItemLayout" prop="title">
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
 
@@ -37,9 +37,7 @@
           </a-select>
         </a-form-model-item> -->
 
-        <a-form-model-item label="前转模板" v-bind="formItemLayout" prop="message">
-          <!-- TODO: 富文本编辑器 -->
-          <!-- <a-textarea :autoSize="{ minRows: 2, maxRows: 6 }" v-model.trim="formModel.message" /> -->
+        <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
           <Editor ref="editor" v-model="formModel.message" />
         </a-form-model-item>
 
@@ -62,7 +60,7 @@
 <script>
 import { AlarmTempService } from '@/api-hasura/index'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { modeTypeMapping, FORWARD_MODEL_EMAIL } from '../../typing'
+import { AlarmTempModel, modeTypeMapping } from './model'
 import Editor from './Editor'
 
 export default {
@@ -88,20 +86,18 @@ export default {
   }),
   computed: {
     formRules () {
-      const { mode = FORWARD_MODEL_EMAIL } = this.formModel
-      const messageMax = mode === FORWARD_MODEL_EMAIL ? 255 : 128
       return {
         title: [
           { required: true, message: '请输入前转名称' },
           { max: 50, message: '最多输入50个字符' },
-          { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
+          { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }
         ],
         event_level: [
           { required: true, message: '请选择事件等级' }
         ],
         message: [
           { required: true, message: '请输入模板内容' },
-          { max: messageMax, message: `最多输入${messageMax}个字符` }
+          { max: 255, message: '最多输入255个字符' }
         ],
         mode: [
           { required: true, message: '请选择前转方式' }
@@ -122,7 +118,8 @@ export default {
     async fetch (id) {
       try {
         this.spinning = true
-        this.formModel = await AlarmTempService.detail(id)
+        const formModel = await AlarmTempService.detail(id)
+        this.formModel = AlarmTempModel.deSerialize(formModel)
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e
@@ -136,9 +133,11 @@ export default {
     async insert () {
       try {
         this.submitLoading = true
-        await AlarmTempService.add(this.model)
+        await AlarmTempService.add(
+          AlarmTempModel.serialize(this.formModel)
+        )
         this.$emit('addSuccess')
-        this.notifyEditSuccess()
+        this.$notifyEditSuccess()
         this.cancel()
       } catch (e) {
         this.$notifyError(e)
@@ -155,12 +154,15 @@ export default {
     async update () {
       try {
         this.submitLoading = true
-        await AlarmTempService.update(this.model)
+        await AlarmTempService.update(
+          AlarmTempModel.serialize(this.formModel),
+          { id: this.formModel.id }
+        )
         this.$emit('editSuccess')
-        this.notifyEditSuccess()
+        this.$notifyEditSuccess()
         this.cancel()
       } catch (e) {
-        this.$notifyEditSuccess(e)
+        this.$notifyError(e)
         throw e
       } finally {
         this.submitLoading = false

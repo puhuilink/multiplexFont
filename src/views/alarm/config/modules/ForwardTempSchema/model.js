@@ -1,4 +1,10 @@
-import { tempKeywordMapping } from '../../../config/typing'
+import { tempKeywordMapping, modeTypeMapping } from '../../../config/typing'
+import _ from 'lodash'
+
+export {
+  tempKeywordMapping,
+  modeTypeMapping
+}
 
 class Tiptap {
   static createTextNode (text) {
@@ -15,7 +21,7 @@ class Tiptap {
   }
 }
 
-export class Message {
+export class MessageModel {
   /**
    * tiptap content object => string
    */
@@ -64,5 +70,23 @@ export class Message {
     })
 
     return { type: 'doc', content: rootContent }
+  }
+}
+
+export class AlarmTempModel {
+  static fields = ['id', 'mode', 'message', 'enabled', 'title']
+
+  static serialize ({ enabled, ...alarmTemp }) {
+    return _.pick({
+      enabled: !!enabled,
+      ...alarmTemp
+    }, this.fields)
+  }
+
+  static deSerialize ({ enabled, ...alarmTemp }) {
+    return _.pick({
+      enabled: ~~enabled,
+      ...alarmTemp
+    }, this.fields)
   }
 }

@@ -1,5 +1,4 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import { AlarmTempDao } from '../dao/index'
 import _ from 'lodash'
@@ -18,6 +17,24 @@ class AlarmTempService extends BaseService {
       alias: 'tempList'
     })
     return _.first(tempList)
+  }
+
+  static async add (argus = {}) {
+    return mutate(
+      AlarmTempDao.add(argus)
+    )
+  }
+
+  static async update (set, where) {
+    return mutate(
+      AlarmTempDao.update(set, where)
+    )
+  }
+
+  static async batchDelete (idList) {
+    return mutate(
+      AlarmTempDao.batchDelete({ id: { _in: idList } })
+    )
   }
 }
 

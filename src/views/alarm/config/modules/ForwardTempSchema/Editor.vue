@@ -13,8 +13,7 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Mention } from 'tiptap-extensions'
-import { tempKeywordMapping } from '../../../config/typing'
-import { Message } from './model'
+import { MessageModel, tempKeywordMapping } from './model'
 
 // if error when enter: Looks like multiple versions of prosemirror-model were loaded
 // https://github.com/scrumpy/tiptap/issues/577
@@ -39,9 +38,9 @@ export default {
       ],
       content: '',
       onUpdate: ({ getJSON }) => {
-        // Message.serialize(getJSON())
+        // MessageModel.serialize(getJSON())
         // console.log(getJSON())
-        vm.$emit('input', Message.serialize(getJSON()))
+        vm.$emit('input', MessageModel.serialize(getJSON()))
         // TODO: trigger input event and validator
       }
     }),
@@ -53,7 +52,7 @@ export default {
   watch: {
     value (value) {
       this.setContent(
-        Message.deSerialize(value)
+        MessageModel.deSerialize(value)
       )
     }
   },
@@ -75,6 +74,10 @@ export default {
 @colorBlack: #000000;
 
 .editor {
+  p {
+    margin: 0;
+  }
+
   .input {
     display: none;
   }
