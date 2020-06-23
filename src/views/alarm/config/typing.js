@@ -43,7 +43,7 @@ export const allModeTypeMapping = new Map([
  * 前转模板
  */
 export const TEMP_KEYWORD_TIME = '{time}'
-export const TEMP_KEYWORD_IP = '{ip}'
+export const TEMP_KEYWORD_IP = '{IP}'
 export const TEMP_KEYWORD_DETAIL = '{detail}'
 export const TEMP_KEYWORD_ENDPOINT = '{endpoint}'
 export const TEMP_KEYWORD_LEVEL = '{level}'
@@ -52,7 +52,7 @@ const tempKeywordMappingArr = [
   [TEMP_KEYWORD_TIME, '时间'],
   [TEMP_KEYWORD_IP, 'IP'],
   [TEMP_KEYWORD_DETAIL, '详情'],
-  // [TEMP_KEYWORD_ENDPOINT, ''],
+  [TEMP_KEYWORD_ENDPOINT, 'endpoint'],
   [TEMP_KEYWORD_LEVEL, '级别']
 ]
 

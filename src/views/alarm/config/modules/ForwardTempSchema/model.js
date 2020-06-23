@@ -1,47 +1,68 @@
 import { tempKeywordMapping } from '../../../config/typing'
-import { first } from 'lodash'
 
-export class Message {
-  static serialize (contentObj = {}) {
-    const { content } = first(contentObj.content)
-    return content
-      .map(({ type, text, attrs }) => type === 'text' ? text : attrs.id)
-      .join('')
-  }
-
-  static deSerialize (contentStr = '') {
-    const { makeMention, makeText } = this
-    let snippet = ''
-    const content = []
-    const { length } = contentStr
-    for (let i = 0; i < length; i++) {
-      snippet += contentStr[i]
-      const [keyword] = [...tempKeywordMapping].find(([id]) => snippet.includes(id)) || []
-      const index = snippet.indexOf(keyword)
-      if (index !== -1) {
-        const text = snippet.replace('{time}', '')
-        text && content.push(makeText(text))
-        content.push(makeMention('{time}'))
-        snippet = ''
-      }
-      if (i === length - 1) {
-        snippet && content.push(makeText(snippet))
-      }
-    }
-
-    return {
-      type: 'doc',
-      content: [
-        { type: 'paragraph', content: content.filter(Boolean) }
-      ]
-    }
-  }
-
-  static makeText (text) {
+class Tiptap {
+  static createTextNode (text) {
     return { type: 'text', text }
   }
 
-  static makeMention (id) {
-    return { type: 'mention', attrs: { id, label: tempKeywordMapping.get(id) } }
+  static createMentionNode (id) {
+    const label = tempKeywordMapping.get(id)
+    return { type: 'mention', attrs: { id, label } }
+  }
+
+  static createParagraphNode (content) {
+    return { type: 'paragraph', content }
+  }
+}
+
+export class Message {
+  /**
+   * tiptap content object => string
+   */
+  static serialize (contentObj = {}) {
+    const rootContent = []
+    // 根节点按行遍历
+    for (const { content = [] } of contentObj.content) {
+      // 行内按字符遍历
+      rootContent.push(
+        content.map(({ type, text, attrs }) => type === 'text' ? text : attrs.id).join('')
+      )
+    }
+    return rootContent.join('\r\n')
+  }
+
+  /**
+   * string => tiptap content object
+   */
+  static deSerialize (contentStr = '') {
+    const { createMentionNode, createTextNode, createParagraphNode } = Tiptap
+    const rootContent = []
+
+    // 根节点按行遍历
+    contentStr.split(/\r\n/g).forEach(str => {
+      const content = []
+      let snippet = ''
+      // 行内按字符遍历
+      for (let i = 0; i < str.length; i++) {
+        // 逐字匹配直至匹配成功或遍历结束
+        snippet += str[i]
+        const [keyword] = [...tempKeywordMapping].find(([id]) => snippet.includes(id)) || []
+        // 匹配成功，记录匹配结果并开始新匹配
+        if (snippet.includes(keyword)) {
+          const text = snippet.replace(keyword, '')
+          text && content.push(createTextNode(text))
+          content.push(createMentionNode(keyword))
+          snippet = ''
+        }
+
+        // 遍历结束
+        i === str.length - 1 && snippet && content.push(createTextNode(snippet))
+      }
+
+      // 允许空行
+      rootContent.push(createParagraphNode(content))
+    })
+
+    return { type: 'doc', content: rootContent }
   }
 }

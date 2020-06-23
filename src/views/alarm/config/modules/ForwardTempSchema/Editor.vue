@@ -39,7 +39,10 @@ export default {
       ],
       content: '',
       onUpdate: ({ getJSON }) => {
+        // Message.serialize(getJSON())
+        // console.log(getJSON())
         vm.$emit('input', Message.serialize(getJSON()))
+        // TODO: trigger input event and validator
       }
     }),
     insertMention: () => {},
@@ -58,8 +61,7 @@ export default {
     resetContent () {
       this.setContent('')
     },
-    async setContent (content = '') {
-      await this.$nextTick()
+    setContent (content = '') {
       this.editor.setContent(content)
     }
   },

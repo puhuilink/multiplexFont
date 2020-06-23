@@ -80,8 +80,8 @@ export default {
       enabled: 1
     },
     formItemLayout: {
-      labelCol: { span: 7 },
-      wrapperCol: { span: 12, offset: 1 }
+      labelCol: { span: 5 },
+      wrapperCol: { span: 15, offset: 1 }
     },
     spinning: false,
     submitLoading: false
