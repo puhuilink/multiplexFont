@@ -11,7 +11,7 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
-        <a-select v-model="formModel.enabled" class="enabled">
+        <a-select :value="~~formModel.enabled" class="enabled" @select="e => formModel.enabled = !!e">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
@@ -27,7 +27,7 @@
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
 
-        <a-form-model-item label="事件等级" v-bind="formItemLayout" prop="event_level">
+        <!-- <a-form-model-item label="事件等级" v-bind="formItemLayout" prop="event_level">
           <a-select v-model="formModel.event_level" class="fw">
             <a-select-option
               v-for="level in [1, 2, 3, 4, 5]"
@@ -35,11 +35,12 @@
               :value="level"
             >{{ `${level}级` }}</a-select-option>
           </a-select>
-        </a-form-model-item>
+        </a-form-model-item> -->
 
         <a-form-model-item label="前转模板" v-bind="formItemLayout" prop="message">
           <!-- TODO: 富文本编辑器 -->
-          <a-textarea :autoSize="{ minRows: 2, maxRows: 6 }" v-model.trim="formModel.message" />
+          <!-- <a-textarea :autoSize="{ minRows: 2, maxRows: 6 }" v-model.trim="formModel.message" /> -->
+          <Editor ref="editor" v-model="formModel.message" />
         </a-form-model-item>
 
         <a-form-model-item label="前转方式" v-bind="formItemLayout" prop="mode">
@@ -61,12 +62,15 @@
 <script>
 import { AlarmTempService } from '@/api-hasura/index'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { modeTypeMapping, FORWARD_MODEL_EMAIL } from '../typing'
+import { modeTypeMapping, FORWARD_MODEL_EMAIL } from '../../typing'
+import Editor from './Editor'
 
 export default {
   name: 'ForwardTempSchema',
   mixins: [Schema],
-  components: {},
+  components: {
+    Editor
+  },
   props: {},
   data: () => ({
     allMode: Object.freeze(
@@ -145,6 +149,7 @@ export default {
     },
     reset () {
       this.$refs.ruleForm.resetFields()
+      this.$refs.editor.resetContent()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     async update () {

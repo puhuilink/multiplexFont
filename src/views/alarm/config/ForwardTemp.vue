@@ -69,7 +69,7 @@ import { List } from '@/components/Mixins'
 import { AlarmTempService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
-import ForwardTempSchema from './modules/ForwardTempSchema'
+import ForwardTempSchema from './modules/ForwardTempSchema/index'
 import { modeTypeMapping, allModeTypeMapping } from './typing'
 
 export default {
