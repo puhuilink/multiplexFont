@@ -80,10 +80,16 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alarm/config/AlarmRules'),
                 meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
               },
+              // {
+              //   path: '/alarm/config/ThresholdRules',
+              //   name: 'ThresholdRules',
+              //   component: () => import('@/views/alarm/config/ThresholdRules'),
+              //   meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
+              // },
               {
-                path: '/alarm/config/ThresholdRules',
-                name: 'ThresholdRules',
-                component: () => import('@/views/alarm/config/ThresholdRules'),
+                path: '/alarm/config/AlarmStrategy',
+                name: 'AlarmStrategy',
+                component: () => import('@/views/alarm/config/AlarmStrategy'),
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
               {
