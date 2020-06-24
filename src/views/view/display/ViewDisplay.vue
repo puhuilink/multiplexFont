@@ -723,8 +723,8 @@ export default {
       }
 
       img {
+        display: block;
         width: 100%;
-        // 指定高度，保证各图片对齐，并一定程度减少浏览器回流与重绘
         height: 143px;
         border-radius: 4px;
       }
