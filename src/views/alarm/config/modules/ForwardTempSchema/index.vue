@@ -23,6 +23,7 @@
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
+
         <a-form-model-item label="模板名称" v-bind="formItemLayout" prop="title">
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
@@ -50,8 +51,8 @@
             >{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
-      </a-form-model>
 
+      </a-form-model>
     </a-spin>
 
   </a-modal>

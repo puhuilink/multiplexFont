@@ -33,13 +33,12 @@ export default {
     editor: new Editor({
       extensions: [
         new Mention({
+          // TODO: label @ 符号
           items: () => [...tempKeywordMapping].map(([id, name]) => ({ id, name }))
         })
       ],
       content: '',
       onUpdate: ({ getJSON }) => {
-        // MessageModel.serialize(getJSON())
-        // console.log(getJSON())
         vm.$emit('input', MessageModel.serialize(getJSON()))
         // TODO: trigger input event and validator
       }
