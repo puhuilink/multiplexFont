@@ -96,7 +96,7 @@ export const asyncRouterMap = [
                 path: '/alarm/config/ForwardTemp',
                 name: 'ForwardTemp',
                 component: () => import('@/views/alarm/config/ForwardTemp'),
-                meta: { title: '前传模板规则', keepAlive: true, permission: ['F003002003'] }
+                meta: { title: '通知模板规则', keepAlive: true, permission: ['F003002003'] }
               }
             ]
           }

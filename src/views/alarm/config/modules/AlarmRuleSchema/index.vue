@@ -2,7 +2,7 @@
   <a-modal
     centered
     :title="title"
-    :width="720"
+    :width="670"
     wrapClassName="ViewTitleSchema__modal"
     v-model="visible"
     :afterClose="reset"

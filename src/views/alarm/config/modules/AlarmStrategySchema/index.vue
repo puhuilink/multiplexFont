@@ -28,6 +28,17 @@
           <a-input v-model.trim="formModel.name" />
         </a-form-model-item>
 
+        <a-list :dataSource="formModel.exprs.opts">
+          <a-list-item slot="renderItem" slot-scope="item">
+            <a-icon slot="actions" type="close" />
+            <a-list-item-meta>
+              <p slot="title">
+                {{ item.operator }}{{ item.threshold }}
+              </p>
+            </a-list-item-meta>
+          </a-list-item>
+        </a-list>
+
       </a-form-model>
     </a-spin>
 
@@ -46,7 +57,10 @@ export default {
   props: {},
   data: () => ({
     formModel: {
-      enable: 1
+      enable: 1,
+      exprs: {
+        opts: []
+      }
     },
     formItemLayout: {
       labelCol: { span: 5 },

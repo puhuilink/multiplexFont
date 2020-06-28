@@ -85,13 +85,7 @@ export default {
     ),
     columns: Object.freeze([
       {
-        title: '前转编号',
-        dataIndex: 'id',
-        width: 120,
-        sorter: true
-      },
-      {
-        title: '规则名称',
+        title: '模板名称',
         dataIndex: 'title',
         width: 200,
         sorter: true
@@ -109,13 +103,13 @@ export default {
       //   sorter: true
       // },
       {
-        title: '前转模板',
+        title: '通知模板',
         dataIndex: 'message',
         width: 420,
         tooltip: true
       },
       {
-        title: '前转方式',
+        title: '通知方式',
         dataIndex: 'mode',
         width: 90,
         sorter: true,

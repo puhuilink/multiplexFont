@@ -15,6 +15,37 @@ export {
   ALARM_RULE_RECOVER
 }
 
+export class SendModel {
+  constructor ({
+    id,
+    host_id,
+    endpoint_id,
+    metric_id,
+    event_level,
+    send_type = '',
+    contact = '',
+    temp_id
+  } = {}) {
+    this.id = id
+    this.host_id = host_id
+    this.endpoint_id = endpoint_id
+    this.metric_id = metric_id
+    this.event_level = event_level
+    this.send_type = send_type.split('/').filter(Boolean)
+    this.contact = contact.split('/').filter(Boolean)
+    this.temp_id = temp_id
+  }
+
+  serialize () {
+    const { send_type, contact, ...rest } = this
+    return {
+      send_type: send_type.filter(Boolean).join('/'),
+      contact: contact.filter(Boolean).join('/'),
+      ...rest
+    }
+  }
+}
+
 class BasicRuleModel {
   constructor ({
     id,
@@ -104,26 +135,16 @@ class UpgradeRuleModel extends ContentRuleModel {
 class ForwardRuleModel extends ContentRuleModel {
   constructor ({ sendList, ...props }) {
     super(props)
+    const cmdbConfig = _.pick(props, ['host_id', 'endpoint_id', 'metric_id'])
     this.rule_type = ALARM_RULE_FORWARD
-    // 前转配置
-    this.sendList = sendList.map(({ contact = '', send_type = '', ...rest }) => ({
-      // contact 是以 / 分隔的字符串，存放用户 id
-      contact: contact.split('/'),
-      // send_type 可能值 EMAIL;SMS;EMAIL/SMS
-      send_type: send_type.split('/'),
-      ...rest
-    }))
+    this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
   }
 
   serialize () {
     const { sendList = [] } = this
     return {
       ...super.serialize(),
-      sendList: sendList.map(({ contact = [], send_type = [], ...rest }) => ({
-        contact: contact.join('/'),
-        send_type: send_type.join('/'),
-        ...rest
-      }))
+      sendList: sendList.map(sendModel => sendModel.serialize())
     }
   }
 }

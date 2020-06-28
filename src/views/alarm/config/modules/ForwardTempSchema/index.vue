@@ -24,7 +24,7 @@
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
 
-        <a-form-model-item label="模板名称" v-bind="formItemLayout" prop="title">
+        <a-form-model-item label="通知模板名称" v-bind="formItemLayout" prop="title">
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
 
@@ -38,11 +38,7 @@
           </a-select>
         </a-form-model-item> -->
 
-        <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
-          <Editor ref="editor" v-model="formModel.message" />
-        </a-form-model-item>
-
-        <a-form-model-item label="前转方式" v-bind="formItemLayout" prop="mode">
+        <a-form-model-item label="通知方式" v-bind="formItemLayout" prop="mode">
           <a-select v-model="formModel.mode" class="fw">
             <a-select-option
               v-for="(label, value) in allMode"
@@ -50,6 +46,10 @@
               :value="value"
             >{{ label }}</a-select-option>
           </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
+          <Editor ref="editor" v-model="formModel.message" />
         </a-form-model-item>
 
       </a-form-model>
