@@ -2,9 +2,16 @@ import {
   ALARM_RULE_MERGE,
   ALARM_RULE_UPGRADE,
   ALARM_RULE_FORWARD,
-  ALARM_RULE_RECOVER
+  ALARM_RULE_RECOVER,
+  FORWARD_MODEL_EMAIL,
+  FORWARD_MODEL_SMS
 } from '../../typing'
 import _ from 'lodash'
+
+export {
+  FORWARD_MODEL_EMAIL,
+  FORWARD_MODEL_SMS
+}
 
 export const CONTENT_TYPE_COUNT = 'count'
 export const CONTENT_TYPE_TIME = 'time'
@@ -24,7 +31,8 @@ export class SendModel {
     event_level,
     send_type = '',
     contact = '',
-    temp_id
+    temp_sms_id,
+    temp_email_id
   } = {}) {
     this.id = id
     this.host_id = host_id
@@ -33,14 +41,55 @@ export class SendModel {
     this.event_level = event_level
     this.send_type = send_type.split('/').filter(Boolean)
     this.contact = contact.split('/').filter(Boolean)
-    this.temp_id = temp_id
+    this.temp_sms_id = temp_sms_id
+    this.temp_email_id = temp_email_id
+  }
+
+  toggleEmail () {
+    const index = this.send_type.indexOf(FORWARD_MODEL_EMAIL)
+    if (index === -1) {
+      this.send_type.push(FORWARD_MODEL_EMAIL)
+    } else {
+      this.send_type.splice(index, 1)
+    }
+  }
+
+  toggleSMS () {
+    const index = this.send_type.indexOf(FORWARD_MODEL_SMS)
+    if (index === -1) {
+      this.send_type.push(FORWARD_MODEL_SMS)
+    } else {
+      this.send_type.splice(index, 1)
+    }
+  }
+
+  get hasEnabledEmail () {
+    return this.send_type.includes(FORWARD_MODEL_EMAIL)
+  }
+
+  get hasEnabledSMS () {
+    return this.send_type.includes(FORWARD_MODEL_SMS)
+  }
+
+  // 仅写入数据库时用到
+  get temp_id () {
+    const tempIdList = []
+    const { send_type, temp_sms_id, temp_email_id } = this
+
+    send_type.includes(FORWARD_MODEL_EMAIL) && tempIdList.push(temp_email_id)
+    send_type.includes(FORWARD_MODEL_SMS) && tempIdList.push(temp_sms_id)
+
+    return tempIdList
+      .filter(Boolean)
+      .join('/')
   }
 
   serialize () {
-    const { send_type, contact, ...rest } = this
+    const { contact, send_type, temp_id, ...rest } = this
     return {
-      send_type: send_type.filter(Boolean).join('/'),
       contact: contact.filter(Boolean).join('/'),
+      send_type: send_type.filter(Boolean).join('/'),
+      temp_id,
       ...rest
     }
   }

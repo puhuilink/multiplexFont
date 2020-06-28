@@ -4,11 +4,6 @@
     <div class="ForwardForm__content" ref="content">
       <a-card v-for="(send, index) in formModel.sendList" :key="index">
         <a-icon class="ForwardForm__btn_remove" type="close-circle" @click="removeItem(index)" v-show="!onlyOneSendConfig" />
-        <a-form-model-item label="通知等级" v-bind="formItemLayout">
-          <a-select>
-            <a-select-option v-for="level in [1, 2, 3, 4, 5]" :key="level" :value="level">{{ `${level}级` }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
 
         <a-form-model-item label="通知用户" v-bind="formItemLayout">
           <a-select
@@ -26,12 +21,58 @@
           </a-select>
         </a-form-model-item>
 
-        <a-form-model-item label="启用" v-bind="formItemLayout">
+        <a-row class="ant-form-item">
+          <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
+            <label title="通知方式">通知方式</label>
+          </a-col>
+
+          <a-col v-bind="formItemLayout.wrapperCol">
+            <a-row>
+              <a-col :span="8">
+                <a-form-model-item label="短信" v-bind="nestedFormItemLayout">
+                  <a-checkbox :checked="send.hasEnabledSMS" @change="send.toggleSMS()" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="16">
+                <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
+                  <a-select
+                    allowClear
+                    :disabled="!send.hasEnabledSMS"
+                    v-model="send.temp_sms_id"
+                  >
+                    <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
+                  </a-select>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+
+            <a-row>
+              <a-col :span="8">
+                <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">
+                  <a-checkbox :checked="send.hasEnabledEmail" @change="send.toggleEmail()" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="16">
+                <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
+                  <a-select
+                    allowClear
+                    :disabled="!send.hasEnabledEmail"
+                    v-model="send.temp_email_id"
+                  >
+                    <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
+                  </a-select>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-col>
+        </a-row>
+
+        <!-- <a-form-model-item label="启用" v-bind="formItemLayout">
           <a-select>
             <a-select-option :value="1">是</a-select-option>
             <a-select-option :value="0">否</a-select-option>
           </a-select>
-        </a-form-model-item>
+        </a-form-model-item> -->
       </a-card>
     </div>
 
@@ -43,7 +84,11 @@
 import Mixin from './Mixin'
 import { AlarmTempService, UserService } from '@/api-hasura'
 import { filterOption, scrollTo } from '@/utils/util'
-import { SendModel } from './model'
+import {
+  FORWARD_MODEL_EMAIL,
+  FORWARD_MODEL_SMS,
+  SendModel
+} from './model'
 import _ from 'lodash'
 
 export const forwardFormRules = {}
@@ -54,14 +99,26 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    FORWARD_MODEL_EMAIL,
+    FORWARD_MODEL_SMS,
     forwardTempList: [],
     forwardTempListLoading: false,
+    nestedFormItemLayout: {
+      labelCol: { span: 7 },
+      wrapperCol: { span: 16, offset: 1 }
+    },
     userList: [],
     userListLoading: false
   }),
   computed: {
     cmdbConfig () {
       return _.pick(this.formModel, ['host_id', 'endpoint_id', 'metric_id'])
+    },
+    emailTempList () {
+      return this.forwardTempList.filter(({ mode }) => mode === FORWARD_MODEL_EMAIL)
+    },
+    smsTempList () {
+      return this.forwardTempList.filter(({ mode }) => mode === FORWARD_MODEL_SMS)
     },
     onlyOneSendConfig () {
       const { sendList = [] } = this.formModel
@@ -96,7 +153,7 @@ export default {
       try {
         this.forwardTempListLoading = true
         const { data: { forwardTempList } } = await AlarmTempService.find({
-          fields: ['id', 'title', 'message'],
+          fields: ['id', 'title', 'message', 'mode'],
           alias: 'forwardTempList'
         })
         this.forwardTempList = forwardTempList
@@ -133,15 +190,18 @@ export default {
 
   &__content {
     width: 100%;
-    height: 246px;
+    height: 270px;
     overflow-y: scroll;
 
     .ant-card {
       margin-bottom: 4px;
 
-      .ant-form-item {
-        width: calc(100% - 20px);
+      .ant-card-body {
+        & > .ant-form-item {
+          width: calc(100% - 20px);
+        }
       }
+
     }
   }
 

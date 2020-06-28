@@ -176,14 +176,16 @@ export default {
     async update () {
       try {
         this.btnLoading = true
-        const { id } = this.formModel
-        await AlarmRuleService.update(
-          AlarmRuleModelFactory.serialize(this.formModel),
-          { id }
-        )
+        console.log(AlarmRuleModelFactory.serialize(this.formModel))
+        // TODO: 接口调试
+        // const { id } = this.formModel
+        // await AlarmRuleService.update(
+        //   AlarmRuleModelFactory.serialize(this.formModel),
+        //   { id }
+        // )
         this.$emit('editSuccess')
-        this.notifyEditSuccess()
-        this.cancel()
+        this.$notifyEditSuccess()
+        // this.cancel()
       } catch (e) {
         this.$notifyError(e)
         throw e

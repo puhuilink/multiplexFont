@@ -3,8 +3,8 @@ import { CONTENT_TYPE_TIME } from './model'
 import { parserInt } from '@/utils/util'
 
 export const formItemLayout = {
-  labelCol: { span: 7 },
-  wrapperCol: { span: 12, offset: 1 }
+  labelCol: { span: 5 },
+  wrapperCol: { span: 17, offset: 1 }
 }
 
 export default {
