@@ -2,6 +2,8 @@
 /**
  * 告警规则
  */
+import moment from 'moment'
+
 export const ALARM_RULE_MERGE = 'merge'
 export const ALARM_RULE_UPGRADE = 'upgrade'
 export const ALARM_RULE_FORWARD = 'forward'
@@ -57,3 +59,18 @@ const tempKeywordMappingArr = [
 ]
 
 export const tempKeywordMapping = new Map(tempKeywordMappingArr)
+
+export const templateMock = template => {
+  let str = `${template}`
+  const data = {
+    [TEMP_KEYWORD_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+    [TEMP_KEYWORD_DETAIL]: 'cpu温度过高,温度79度',
+    [TEMP_KEYWORD_LEVEL]: '1'
+  }
+  Object
+    .entries(data)
+    .forEach(([keyword, mockValue]) => {
+      str = str.replace(keyword, mockValue)
+    })
+  return str
+}

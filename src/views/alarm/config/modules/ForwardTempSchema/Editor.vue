@@ -3,7 +3,14 @@
     <a-input :value="value" class="input" ref="input" />
     <editor-menu-bar :editor="editor" v-slot="{ commands }">
       <div class="menubar">
-        <a-button class="menubar__btn" v-for="(label, id) in tempKeywordList" :key="id" @click="commands.mention({ id, label })">{{ label }}</a-button>
+        <a-button class="menubar__btn" @click="togglePreview" type="primary">{{ preview ? '取消预览' : '预览' }}</a-button>
+        <a-button
+          class="menubar__btn"
+          :disabled="preview"
+          v-for="(label, id) in tempKeywordList"
+          :key="id"
+          @click="commands.mention({ id, label })"
+        >{{ label }}</a-button>
       </div>
     </editor-menu-bar>
     <editor-content class="editor__content" :editor="editor" />
@@ -44,11 +51,25 @@ export default {
       }
     }),
     insertMention: () => {},
+    preview: false,
     tempKeywordList: Object.freeze(
       Object.fromEntries(tempKeywordMapping)
     )
   }),
   watch: {
+    preview (preview) {
+      if (preview) {
+        this.editor.setOptions({ editable: false })
+        this.setContent(
+          MessageModel.mockContent(this.value)
+        )
+      } else {
+        this.editor.setOptions({ editable: true })
+        this.setContent(
+          MessageModel.deSerialize(this.value)
+        )
+      }
+    },
     value (value) {
       this.setContent(
         MessageModel.deSerialize(value)
@@ -61,6 +82,9 @@ export default {
     },
     setContent (content = '') {
       this.editor.setContent(content)
+    },
+    togglePreview () {
+      this.preview = !this.preview
     }
   },
   beforeDestroy () {

@@ -1,4 +1,4 @@
-import { tempKeywordMapping, modeTypeMapping } from '../../../config/typing'
+import { tempKeywordMapping, modeTypeMapping, templateMock } from '../../../config/typing'
 import _ from 'lodash'
 
 export {
@@ -22,6 +22,12 @@ class Tiptap {
 }
 
 export class MessageModel {
+  static mockContent (template) {
+    return this.deSerialize(
+      templateMock(template)
+    )
+  }
+
   /**
    * tiptap content object => string
    */

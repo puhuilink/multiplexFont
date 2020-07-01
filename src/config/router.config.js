@@ -64,7 +64,7 @@ export const asyncRouterMap = [
                 path: '/alarm/history/ForwardHistory',
                 name: 'ForwardHistory',
                 component: () => import('@/views/alarm/history/ForwardHistory'),
-                meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
+                meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
               }
             ]
           },
@@ -74,6 +74,12 @@ export const asyncRouterMap = [
             component: RouteView,
             meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
             children: [
+              {
+                path: '/alarm/config/AlarmStrategy',
+                name: 'AlarmStrategy',
+                component: () => import('@/views/alarm/config/AlarmStrategy'),
+                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
+              },
               {
                 path: '/alarm/config/AlarmRules',
                 name: 'AlarmRules',
@@ -86,12 +92,6 @@ export const asyncRouterMap = [
               //   component: () => import('@/views/alarm/config/ThresholdRules'),
               //   meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               // },
-              {
-                path: '/alarm/config/AlarmStrategy',
-                name: 'AlarmStrategy',
-                component: () => import('@/views/alarm/config/AlarmStrategy'),
-                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
-              },
               {
                 path: '/alarm/config/ForwardTemp',
                 name: 'ForwardTemp',
