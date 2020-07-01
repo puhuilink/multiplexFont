@@ -311,6 +311,12 @@ export const asyncRouterMap = [
             meta: { title: '计划管理', keepAlive: true, permission: [ 'F010003' ] }
           },
           {
+            path: '/patrol/change-shift',
+            name: 'ChangeShift',
+            component: () => import('@/views/patrol/ChangeShift'),
+            meta: { title: '交接班查询', keepAlive: true, permission: [ 'F010003' ] }
+          },
+          {
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),

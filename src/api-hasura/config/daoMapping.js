@@ -30,6 +30,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_patrol_metric', primaryKey: 'id' },
   { schema: 't_patrol_path', primaryKey: 'id' },
   { schema: 't_patrol_plan', primaryKey: 'id' },
+  { schema: 't_xj_change_shift', primaryKey: 'id' },
   // 前转记录
   { schema: 't_send_record', primaryKey: 'id' }
 ]
