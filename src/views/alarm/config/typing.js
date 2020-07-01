@@ -3,6 +3,8 @@
  * 告警规则
  */
 import moment from 'moment'
+// polyfill
+import replaceAll from 'string.prototype.replaceall'
 
 export const ALARM_RULE_MERGE = 'merge'
 export const ALARM_RULE_UPGRADE = 'upgrade'
@@ -70,7 +72,7 @@ export const templateMock = template => {
   Object
     .entries(data)
     .forEach(([keyword, mockValue]) => {
-      str = str.replace(keyword, mockValue)
+      str = replaceAll(str, keyword, mockValue)
     })
   return str
 }
