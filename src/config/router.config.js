@@ -322,11 +322,17 @@ export const asyncRouterMap = [
             component: () => import('@/views/patrol/task/PatrolTask'),
             meta: { title: '巡更任务单', keepAlive: true, permission: [ 'F010004' ] }
           },
+          // {
+          //   path: '/patrol/object',
+          //   name: 'PatrolObject',
+          //   component: () => import('@/views/patrol/object/PatrolObject'),
+          //   meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
+          // },
           {
-            path: '/patrol/object',
-            name: 'PatrolObject',
-            component: () => import('@/views/patrol/object/PatrolObject'),
-            meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
+            path: '/patrol/alarm-approve',
+            name: 'AlarmApprove',
+            component: () => import('@/views/patrol/AlarmApprove'),
+            meta: { title: '告警审批', keepAlive: true, permission: [ 'F010005' ] }
           }
         ]
       },

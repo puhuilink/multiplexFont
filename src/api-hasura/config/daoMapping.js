@@ -26,6 +26,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_patrol_answer', primaryKey: 'id' },
   { schema: 't_patrol_endpoint', primaryKey: 'id' },
   { schema: 't_patrol_event', primaryKey: 'id' },
+  { schema: 't_patrol_event_history', primaryKey: 'id' },
   { schema: 't_patrol_host', primaryKey: 'id' },
   { schema: 't_patrol_metric', primaryKey: 'id' },
   { schema: 't_patrol_path', primaryKey: 'id' },
