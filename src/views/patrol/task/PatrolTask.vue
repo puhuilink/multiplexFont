@@ -1,5 +1,5 @@
 <template>
-  <div class="patrol-task">
+  <div class="PatrolTask">
 
     <CTable
       :columns="columns"
@@ -30,6 +30,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
+
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="是否异常"
@@ -90,32 +91,32 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
-        <a-button :loading="exportLoading" @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>
+        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
       </template>
 
     </CTable>
 
-    <detail ref="detail" />
+    <TaskDetailSchema ref="schema" />
   </div>
 </template>
 
 <script>
 import { getPatrolTaskExcel } from '@/api/controller/ExcelExport'
-import { getTaskInfoList, getUserGroupList } from '@/api/controller/patrol'
-import detail from '../modules/PTDetail'
-import { Confirm, List } from '@/components/Mixins'
+import { getTaskInfoList } from '@/api/controller/patrol'
+import TaskDetailSchema from './modules/TaskDetailSchema'
+import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
   ascriptionList, enableList, statusList,
-  ascriptionMapping, stateMapping, statusMapping
+  ascriptionMapping, delayMapping, stateMapping, statusMapping
 } from './typing'
 
 export default {
   name: 'PatrolTask',
-  mixins: [Confirm, List],
+  mixins: [List],
   components: {
-    detail
+    TaskDetailSchema
   },
   data: () => ({
     ascriptionList,
@@ -156,7 +157,7 @@ export default {
       },
       {
         title: '巡更实际结束时间',
-        dataIndex: 'plan_end_time',
+        dataIndex: 'real_end_time',
         width: 180,
         sorter: true
       },
@@ -173,7 +174,7 @@ export default {
         dataIndex: 'task_state',
         width: 80,
         sorter: true,
-        customRender: state => stateMapping.get(stateMapping)
+        customRender: state => stateMapping.get(state)
       },
       {
         title: '巡更人员',
@@ -185,24 +186,18 @@ export default {
         dataIndex: 'is_delay',
         width: 120,
         sorter: true,
-        customRender: isDelay => isDelay ? '是' : '否'
+        customRender: isDelay => delayMapping.get(isDelay)
       }
     ])
   }),
   methods: {
     loadData (parameter) {
-      const variables = {
+      return getTaskInfoList({
         ...parameter,
         where: {
           ...generateQuery(this.queryParams)
         }
-      }
-      return getTaskInfoList(variables).then(r => r.data)
-    },
-    async getGroupList () {
-      await getUserGroupList().then(r => {
-        this.userGroupList = r.data.data
-      })
+      }).then(r => r.data)
     },
     /**
      * 巡更日期范围改变
@@ -211,25 +206,24 @@ export default {
       this.queryParams.dateStr = dateStr
     },
     seeDetail () {
-      this.$refs.detail.open(this.selectedRows[0])
+      // this.$refs.detail.open(this.selectedRows[0])
+      const [id] = this.selectedRowKeys
+      this.$refs['schema'].detail(id)
     },
     /**
      * 导出
      */
-    async exportExcel (e) {
+    async exportExcel () {
       try {
         this.exportLoading = true
-        const file = await getPatrolTaskExcel(e)
-        downloadExcel('巡更任务单列表', file)
+        const content = await getPatrolTaskExcel(this.selectedRowKeys)
+        downloadExcel('巡更记录单', content)
       } catch (e) {
         throw e
       } finally {
         this.exportLoading = false
       }
     }
-  },
-  created () {
-    this.getGroupList()
   }
 }
 </script>

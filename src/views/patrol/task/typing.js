@@ -31,3 +31,10 @@ export const ascriptionList = [
 ]
 
 export const ascriptionMapping = new Map(ascriptionList)
+
+const delayList = [
+  [1, '是'],
+  [0, '否']
+]
+
+export const delayMapping = new Map(delayList)
