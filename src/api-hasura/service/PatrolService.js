@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
-import { XjChangeShiftDao, PatrolEventHistoryDao, XjTaskInfoDao } from '../dao'
+import { PatrolEventHistoryDao, PatrolPlanDao, XjChangeShiftDao, XjTaskInfoDao } from '../dao'
 import _ from 'lodash'
 
 class PatrolService extends BaseService {
@@ -110,6 +110,33 @@ class PatrolService extends BaseService {
     return {
       basicInfo
     }
+  }
+
+  // 计划查询
+  static async planFind (argus = {}) {
+    return query(
+      PatrolPlanDao.find(argus)
+    )
+  }
+
+  // 计划详情
+  // FIXME: 数据库 id 长度溢出无法查询出数据？
+  static async planDetail (id) {
+    const { data: { planList } } = await this.planFind({
+      where: { id },
+      fields: [
+        'alias',
+        'schedule',
+        'interval',
+        // TODO: 巡更组管理
+        'group_id'
+      ],
+      alias: 'planList'
+    })
+
+    console.log(planList)
+
+    return _.first(planList)
   }
 }
 

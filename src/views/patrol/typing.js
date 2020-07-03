@@ -20,6 +20,8 @@ export const enableList = [
   [1, '是']
 ]
 
+export const enableMapping = new Map(enableList)
+
 export const planList = [
   ['A', '例行巡更'],
   ['B', '临时巡更']

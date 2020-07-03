@@ -307,7 +307,7 @@ export const asyncRouterMap = [
           {
             path: '/patrol/plan',
             name: 'Plan',
-            component: () => import('@/views/patrol/plan/Plan'),
+            component: () => import('@/views/patrol/plan/index'),
             meta: { title: '计划管理', keepAlive: true, permission: [ 'F010003' ] }
           },
           {

@@ -110,7 +110,7 @@ import { downloadExcel } from '@/utils/util'
 import {
   ascriptionList, enableList, statusList,
   ascriptionMapping, delayMapping, stateMapping, statusMapping
-} from './typing'
+} from '../typing'
 
 export default {
   name: 'PatrolTask',
