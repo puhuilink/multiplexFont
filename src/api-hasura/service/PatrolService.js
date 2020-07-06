@@ -1,7 +1,10 @@
 import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
-import { PatrolEventHistoryDao, PatrolPlanDao, XjChangeShiftDao, XjTaskInfoDao } from '../dao'
+import {
+  PatrolEventHistoryDao, PatrolPlanDao, PatrolPathDao,
+  XjChangeShiftDao, XjTaskInfoDao
+} from '../dao'
 import _ from 'lodash'
 
 class PatrolService extends BaseService {
@@ -49,6 +52,12 @@ class PatrolService extends BaseService {
   static async eventHistoryFind (argus = {}) {
     return query(
       PatrolEventHistoryDao.find(argus)
+    )
+  }
+
+  static async pathFind (argus = {}) {
+    return query(
+      PatrolPathDao.find(argus)
     )
   }
 

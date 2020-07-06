@@ -13,7 +13,15 @@
     @ok="submit"
   >
     <a-spin :spinning="spinning">
-      <!-- {{ record.alias }} -->
+      <a-form-model layout="inline">
+        <BasicInfo />
+
+        <Cron />
+
+        <TimeRange/>
+
+        <Route />
+      </a-form-model>
     </a-spin>
   </a-modal>
 </template>
@@ -21,11 +29,20 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import { PatrolService } from '@/api-hasura'
+import BasicInfo from './BasicInfo'
+import Cron from './Cron'
+import Route from './Route'
+import TimeRange from './TimeRange'
 
 export default {
   name: 'PlanSchema',
   mixins: [Schema],
-  components: {},
+  components: {
+    BasicInfo,
+    Cron,
+    Route,
+    TimeRange
+  },
   props: {},
   data: () => ({
     record: {},
@@ -55,6 +72,9 @@ export default {
     },
     async insert () {},
     async update () {}
+  },
+  created () {
+    this.add()
   }
 }
 </script>

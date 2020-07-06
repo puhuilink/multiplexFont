@@ -4,7 +4,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
-      rowKey="id"
+      :rowKey="el => el.id + el.alias"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
