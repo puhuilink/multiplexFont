@@ -106,6 +106,11 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
+
+    // 供测试人员调试数据
+    const { container: { id }, chartConfig: { series } } = this
+    window[id] = _.cloneDeep(series)
+    console.log(window[id])
   }
 
   refresh () {
