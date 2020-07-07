@@ -6,7 +6,7 @@
         :data="loadData"
         ref="table"
         rowKey="id"
-        :rowSelection="rowSelection"
+        :rowSelection="null"
         :scroll="scroll"
       >
 
@@ -40,6 +40,11 @@
           <a-button @click="onApprove" :disabled="!hasSelectedOne">审批</a-button>
         </template>
 
+        <!-- / 子表：告警条目 -->
+        <template v-slot:expandedRowRender="{ id }">
+          <EventList :taskId="id" />
+        </template>
+
       </CTable>
 
       <ApproveSchema
@@ -56,13 +61,15 @@ import { generateQuery } from '@/utils/graphql'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import ApproveSchema from './modules/ApproveSchema/index'
+import EventList from './modules/EventList'
 
 export default {
   name: 'AlarmApprove',
   mixins: [Confirm, List],
   props: {},
   components: {
-    ApproveSchema
+    ApproveSchema,
+    EventList
   },
   data: () => ({
     columns: Object.freeze([
@@ -117,11 +124,15 @@ export default {
       }
     ])
   }),
-  computed: {},
+  computed: {
+    subScroll () {
+      return {
+        x: _.sum(this.subColumns.map(e => e.width || 60)),
+        y: 200
+      }
+    }
+  },
   methods: {
-    /**
-     * 加载表格数据回调
-     */
     loadData (parameter) {
       return PatrolService.eventTaskFind({
         where: {

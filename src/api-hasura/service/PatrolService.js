@@ -81,6 +81,12 @@ class PatrolService extends BaseService {
     })
   }
 
+  static async eventFind (argus = {}) {
+    return query(
+      PatrolTaskEventHistoryDao.find(argus)
+    )
+  }
+
   // 任务单详情
   static async taskDetail (task_id) {
     const basicFields = [

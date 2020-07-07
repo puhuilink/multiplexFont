@@ -331,7 +331,7 @@ export const asyncRouterMap = [
           {
             path: '/patrol/alarm-approve',
             name: 'AlarmApprove',
-            component: () => import('@/views/patrol/AlarmApprove'),
+            component: () => import('@/views/patrol/alarm-approve/index'),
             meta: { title: '告警审批', keepAlive: true, permission: [ 'F010005' ] }
           }
         ]
