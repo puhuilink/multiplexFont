@@ -8,6 +8,10 @@
       :rowSelection="rowSelection"
       :subScroll="scroll"
     />
+
+    <a-modal wrapClassName="EventList__modal" v-model="visible" :footer="null">
+      <img class="EventList__modal_img" :src="src" />
+    </a-modal>
   </div>
 </template>
 
@@ -74,26 +78,27 @@ export default {
         {
           title: '备注',
           dataIndex: 'note',
-          sorter: true,
+          tooltip: true,
           width: 180
         },
         {
           title: '图片',
           dataIndex: 'tags',
-          sorter: true,
           width: 180,
           customRender: tags => {
             try {
             // eslint-disable-next-line no-eval
               const { imgs = [] } = eval(tags)
-              // return <img >
-              return imgs.map(src => <img src={src} />)
+              // const imgs = ['https://qn.antdv.com/vue.png']
+              return imgs.map(src => <img class="EventList__tags_img" src={src} onClick={() => this.previewImg(src)} />)
             } catch (e) {
               return []
             }
           }
         }
-      ])
+      ]),
+      src: '',
+      visible: false
     }
   },
   computed: {
@@ -110,11 +115,32 @@ export default {
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
+    },
+    previewImg (src) {
+      this.visible = true
+      this.src = src
     }
   }
 }
 </script>
 
 <style lang="less">
+.EventList {
 
+  &__modal {
+    &_img {
+      width: 360px;
+      height: 360px;
+    }
+  }
+
+  &__tags {
+
+    &_img {
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+    }
+  }
+}
 </style>

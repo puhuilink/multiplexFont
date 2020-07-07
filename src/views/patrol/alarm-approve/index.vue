@@ -8,6 +8,7 @@
         rowKey="id"
         :rowSelection="null"
         :scroll="scroll"
+        @expand="onExpandSubTable"
       >
 
         <!-- / 操作区域 -->
@@ -41,8 +42,8 @@
         </template>
 
         <!-- / 子表：告警条目 -->
-        <template v-slot:expandedRowRender="{ id }">
-          <EventList :taskId="id" />
+        <template v-slot:expandedRowRender="{ id, hasExpanded }">
+          <EventList :taskId="id" v-if="hasExpanded" />
         </template>
 
       </CTable>
@@ -146,6 +147,11 @@ export default {
     onApprove () {
       const [record] = this.selectedRowKeys
       this.$refs['schema'].approve(record)
+    },
+    onExpandSubTable (expand, record) {
+      if (expand) {
+        record.hasExpanded = true
+      }
     }
   }
 }
