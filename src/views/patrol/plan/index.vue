@@ -20,7 +20,7 @@
                 >
                   <a-select allowClear v-model="queryParams.ascription">
                     <a-select-option
-                      v-for="[code, name] in ascriptionList"
+                      v-for="[code, name] in ASCRIPTION_LIST"
                       :key="code"
                     >{{ name }}</a-select-option>
                   </a-select>
@@ -57,9 +57,7 @@ import PlanSchema from './modules/PlanSchema/index'
 import { deletePlan, getUserGroupList } from '@/api/controller/patrol'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import {
-  ascriptionList
-} from '../typing'
+import { ASCRIPTION_LIST } from '../typing'
 import moment from 'moment'
 import { PatrolService } from '@/api-hasura'
 import _ from 'lodash'
@@ -71,7 +69,7 @@ export default {
     PlanSchema
   },
   data: () => ({
-    ascriptionList,
+    ASCRIPTION_LIST,
     columns: [
       {
         title: '计划名称',
@@ -84,7 +82,7 @@ export default {
       //   dataIndex: 'ascription',
       //   width: 150,
       //   sorter: true,
-      //   customRender: ascription => ascriptionMapping.get(ascription)
+      //   customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
       // },
       {
         title: '新建时间',

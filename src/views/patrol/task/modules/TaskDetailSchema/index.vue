@@ -55,7 +55,7 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import { PatrolService } from '@/api-hasura'
-import { delayMapping } from '../../../typing'
+import { DELAY_MAPPING } from '../../../typing'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -108,7 +108,7 @@ export default {
   }),
   filters: {
     delay (delay) {
-      return delayMapping.get(delay)
+      return DELAY_MAPPING.get(delay)
     },
     time (time) {
       return moment(time).format('YYYY-MM-DD HH:mm:ss')

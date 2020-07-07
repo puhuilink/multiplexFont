@@ -24,7 +24,7 @@
                 >
                   <a-select allowClear v-model="queryParams.ascription">
                     <a-select-option
-                      v-for="[code, name] in ascriptionList"
+                      v-for="[code, name] in ASCRIPTION_LIST"
                       :key="code"
                     >{{ name }}</a-select-option>
                   </a-select>
@@ -39,7 +39,7 @@
                 >
                   <a-select allowClear v-model="queryParams.event_occur" >
                     <a-select-option
-                      v-for="[code, name] in enableList"
+                      v-for="[code, name] in ENABLE_LIST"
                       :key="code"
                     >{{ name }}</a-select-option>
                   </a-select>
@@ -61,7 +61,7 @@
                     default-value=""
                   >
                     <a-select-option
-                      v-for="[type, label] in statusList"
+                      v-for="[type, label] in STATUS_LIST"
                       :key="type"
                       :value="type"
                     >{{ label }}</a-select-option>
@@ -108,8 +108,8 @@ import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
-  ascriptionList, enableList, statusList,
-  statusMapping
+  ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
+  STATUS_MAPPING
 } from '../typing'
 import { PatrolService } from '@/api-hasura'
 
@@ -120,9 +120,9 @@ export default {
     TaskDetailSchema
   },
   data: () => ({
-    ascriptionList,
-    enableList,
-    statusList,
+    ASCRIPTION_LIST,
+    ENABLE_LIST,
+    STATUS_LIST,
     exportLoading: false,
     columns: Object.freeze([
       {
@@ -136,7 +136,7 @@ export default {
         title: '巡更区域',
         dataIndex: 'zone_id',
         width: 120
-        // customRender: ascription => ascriptionMapping.get(ascription)
+        // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
       },
       {
         title: '计划名称',
@@ -182,7 +182,7 @@ export default {
         dataIndex: 'status',
         width: 120,
         sorter: true,
-        customRender: status => statusMapping.get(status)
+        customRender: status => STATUS_MAPPING.get(status)
       },
       {
         title: '存在异常',

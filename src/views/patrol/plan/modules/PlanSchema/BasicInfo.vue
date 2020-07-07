@@ -35,7 +35,7 @@
         </span>
         <a-form-model-item>
           <a-select v-model="value.status" style="min-width: 60px">
-            <a-select-option v-for="{ value, label } in statusList" :key="value">{{ label }}</a-select-option>
+            <a-select-option v-for="{ value, label } in STATUS_LIST" :key="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
@@ -60,7 +60,7 @@ export default {
         label: '厦门动环巡更组'
       }
     ],
-    statusList: [
+    STATUS_LIST: [
       {
         value: 'enabled',
         label: '是'

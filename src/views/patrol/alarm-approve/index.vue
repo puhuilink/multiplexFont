@@ -63,6 +63,7 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import ApproveSchema from './modules/ApproveSchema/index'
 import EventList from './modules/EventList'
+import moment from 'moment'
 
 export default {
   name: 'AlarmApprove',
@@ -82,9 +83,10 @@ export default {
       },
       {
         title: '巡更区域',
-        dataIndex: 'zone_id',
+        dataIndex: 'zone { alias }',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: (__, { zone }) => _.get(zone, 'alias')
       },
       {
         title: '计划名称',
@@ -94,15 +96,17 @@ export default {
       },
       {
         title: '巡更组',
-        dataIndex: 'group_id',
+        dataIndex: 'group { group_name }',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: (__, { group }) => _.get(group, 'group_name')
       },
       {
         title: '告警提交时间',
         dataIndex: 'create_time',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: createTime => moment(createTime).format('YYYY-MM-DD HH:mm:ss')
       },
       {
         title: '审批状态',

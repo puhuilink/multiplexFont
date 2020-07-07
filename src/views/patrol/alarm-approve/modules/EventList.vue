@@ -19,6 +19,7 @@
 import { PatrolService } from '@/api-hasura'
 import { List } from '@/components/Mixins'
 import _ from 'lodash'
+import { ANSWER_TYPE_SELECT } from '../../typing'
 
 export default {
   name: 'EventList',
@@ -59,21 +60,32 @@ export default {
         // },
         {
           title: '设备',
-          dataIndex: 'host_id',
+          dataIndex: 'host { alias }',
           sorter: true,
-          width: 180
+          width: 180,
+          customRender: (__, { host }) => _.get(host, 'alias')
         },
         {
           title: '检查项',
-          dataIndex: 'metric_id',
+          dataIndex: 'metric { alias }',
           sorter: true,
-          width: 180
+          width: 180,
+          customRender: (__, { metric }) => _.get(metric, 'alias')
         },
         {
           title: '值',
           dataIndex: 'value',
           sorter: true,
-          width: 180
+          width: 180,
+          customRender: (value, { answer: { alias, format, type } }) => {
+            if (type === ANSWER_TYPE_SELECT) {
+              const aliasList = alias.split('/')
+              const index = format.findIndex(f => f.value === value)
+              return aliasList[index]
+            } else {
+              return value
+            }
+          }
         },
         {
           title: '备注',
@@ -111,7 +123,11 @@ export default {
       const { taskId: task_id } = this
       return PatrolService.eventFind({
         where: { task_id },
-        fields: _.uniq([ 'id', ...this.columns.map(({ dataIndex }) => dataIndex) ]),
+        fields: _.uniq([
+          'id',
+          ...this.columns.map(({ dataIndex }) => dataIndex),
+          'answer { alias format type }'
+        ]),
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
