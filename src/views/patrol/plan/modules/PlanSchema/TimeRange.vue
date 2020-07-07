@@ -7,6 +7,7 @@
       :rowKey="`${Math.random()}`"
       :scroll="scroll"
     ></a-table>
+    <a-button @click="add">新增</a-button>
   </div>
 </template>
 
@@ -44,11 +45,16 @@ export default {
   computed: {
     scroll () {
       return {
-        y: 300
+        y: 230
       }
     }
   },
   methods: {
+    add () {
+      this.dataSource.push({
+        value: ['07:45', '09:45']
+      })
+    },
     remove (idx) {
       this.dataSource.splice(idx, 1)
     }
@@ -57,5 +63,9 @@ export default {
 </script>
 
 <style lang="less">
-
+// .TimeRange {
+  // table {
+    // min-height: 230px;
+  // }
+// }
 </style>

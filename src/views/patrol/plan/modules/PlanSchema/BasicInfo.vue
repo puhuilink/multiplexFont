@@ -11,7 +11,7 @@
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="4">
+      <a-col :span="5">
         <span class="ant-form-item-label">
           <label title="计划创建人">计划创建人</label>
           <span>{{ userInfo.staffName }}</span>
@@ -23,18 +23,18 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item>
-          <a-select v-model="value.group">
+          <a-select v-model="value.group" style="min-width: 140px">
             <a-select-option v-for="{ value, label } in groupList" :key="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="6">
+      <a-col :span="5">
         <span class="ant-form-item-label">
           <label title="是否启用">是否启用</label>
         </span>
         <a-form-model-item>
-          <a-select v-model="value.status">
+          <a-select v-model="value.status" style="min-width: 60px">
             <a-select-option v-for="{ value, label } in statusList" :key="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
@@ -82,9 +82,5 @@ export default {
 
 <style lang="less">
 .BasicInfo {
-  .ant-select {
-    min-width: 120px;
-    // width: 100%;
-  }
 }
 </style>

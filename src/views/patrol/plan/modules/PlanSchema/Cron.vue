@@ -6,15 +6,26 @@
       </a-radio-group>
     </a-row>
 
-    <a-row class="Cron__paragraph">
-      <a-checkbox v-for="{ value, label } in currentSubTypeList" :key="value" :value="value">{{ label }}</a-checkbox>
+    <a-row class="Cron__paragraph" v-show="value.interval === 'w'">
+      <a-checkbox-group @change="onWeekChange">
+        <a-checkbox v-for="{ value, label } in subTypeList.week" :key="value" :value="value">{{ label }}</a-checkbox>
+      </a-checkbox-group>
+    </a-row>
+
+    <a-row class="Cron__paragraph" v-show="value.interval === 'm'">
+      <a-checkbox-group @change="onMonthChange">
+        <a-checkbox v-for="{ value, label } in subTypeList.month" :key="value" :value="value">{{ label }}</a-checkbox>
+      </a-checkbox-group>
     </a-row>
   </div>
 </template>
 
 <script>
 import mixin from './mixin'
+import _ from 'lodash'
 const prefixInteger = (num, n) => (Array(n).join(0) + num).slice(-n)
+
+const monthDays = Array(31).fill(null).map((d, index) => prefixInteger(index + 1, 2))
 
 export default {
   name: 'Cron',
@@ -22,6 +33,10 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    cron: {
+      m: '',
+      w: ''
+    },
     typeList: [
       {
         value: 'd',
@@ -37,33 +52,33 @@ export default {
       }
     ],
     subTypeList: {
-      day: [
+      week: [
         {
-          value: 'd',
+          value: 7,
           label: '周日'
         },
         {
-          value: 'd',
+          value: 1,
           label: '周一'
         },
         {
-          value: 'd',
+          value: 2,
           label: '周二'
         },
         {
-          value: 'd',
+          value: 3,
           label: '周三'
         },
         {
-          value: 'd',
+          value: 4,
           label: '周四'
         },
         {
-          value: 'd',
+          value: 5,
           label: '周五'
         },
         {
-          value: 'd',
+          value: 6,
           label: '周六'
         }
 
@@ -72,19 +87,38 @@ export default {
     }
   }),
   computed: {
-    currentSubTypeList () {
-      const { value: { interval = 'm' }, subTypeList: { day, month } } = this
-      switch (interval) {
-        case 'w':
-          return day
-        case 'm':
-          return month
-        default:
-          return []
+    // TODO: 方向解析
+    currentCron () {
+      // 具体的时间段在 TimeRange 中处理
+      const { value: { interval } } = this
+      const m = this.cron.m || '*'
+      const w = this.cron.w || '*'
+      if (interval === 'w') {
+        return `0 0 * * ${w}`
+      } else if (interval === 'm') {
+        return `0 0 ? ? ${m} ?`
+      } else {
+        return '0 0 ? ? * ?'
       }
     }
   },
   methods: {
+    onWeekChange (e = []) {
+      const days = e.sort()
+      if (_.isEqual([1, 2, 3, 4, 5, 6, 7], days)) {
+        this.cron.w = '*'
+      } else {
+        this.cron.w = days.length ? days.join(',') : '?'
+      }
+    },
+    onMonthChange (e = []) {
+      const days = e.sort()
+      if (_.isEqual(monthDays, days)) {
+        this.cron.m = '*'
+      } else {
+        this.cron.m = days.length ? days.join(',') : '?'
+      }
+    }
   }
 }
 </script>
