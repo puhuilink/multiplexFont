@@ -55,7 +55,7 @@ import { ViewListService } from '@/api-hasura/index'
 import _ from 'lodash'
 
 export default {
-  name: 'ViewTitleScheme',
+  name: 'ViewTitleSchema',
   mixins: [Schema],
   data: () => ({
     record: null
