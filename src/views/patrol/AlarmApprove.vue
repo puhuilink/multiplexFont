@@ -66,53 +66,54 @@ export default {
   },
   data: () => ({
     columns: Object.freeze([
-      // {
-      //   title: '任务单号',
-      //   dataIndex: 'task_id',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '巡更区域',
-      //   dataIndex: 'hand_name',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '计划名称',
-      //   dataIndex: 'hand_name',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '巡更组',
-      //   dataIndex: 'hand_name',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '告警提交时间',
-      //   dataIndex: 'create_time',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '审批状态',
-      //   dataIndex: 'hand_name',
-      //   sorter: true,
-      //   width: 180
-      // },
-      // {
-      //   title: '巡更人员',
-      //   dataIndex: 'hand_name',
-      //   sorter: true,
-      //   width: 180
-      // },
       {
-        title: '异常数量',
-        dataIndex: 'hand_name',
+        title: '任务单号',
+        dataIndex: 'id',
         sorter: true,
         width: 180
+      },
+      {
+        title: '巡更区域',
+        dataIndex: 'zone_id',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '计划名称',
+        dataIndex: 'alias',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '巡更组',
+        dataIndex: 'group_id',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '告警提交时间',
+        dataIndex: 'create_time',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '审批状态',
+        dataIndex: 'review',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '巡更人员',
+        dataIndex: 'executor',
+        sorter: true,
+        width: 180
+      },
+      {
+        title: '异常数量',
+        dataIndex: 'events { id }',
+        sorter: true,
+        width: 180,
+        customRender: (_events, { events }) => events.length
       }
     ])
   }),
@@ -122,12 +123,11 @@ export default {
      * 加载表格数据回调
      */
     loadData (parameter) {
-      // return PatrolService.eventHistoryFind({
-      return PatrolService.changeShiftFind({
+      return PatrolService.eventTaskFind({
         where: {
           ...generateQuery(this.queryParams)
         },
-        fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        fields: _.uniq([ 'id', ...this.columns.map(({ dataIndex }) => dataIndex) ]),
         ...parameter,
         alias: 'data'
       }).then(r => r.data)

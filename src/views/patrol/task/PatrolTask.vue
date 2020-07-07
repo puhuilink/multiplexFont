@@ -5,7 +5,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
-      rowKey="task_id"
+      rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
@@ -37,7 +37,7 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.is_enable" >
+                  <a-select allowClear v-model="queryParams.event_occur" >
                     <a-select-option
                       v-for="[code, name] in enableList"
                       :key="code"
@@ -56,13 +56,14 @@
                 >
                   <a-select
                     allowClear
-                    v-model="queryParams.task_status"
+                    v-model="queryParams.status"
                     placeholder="请选择"
                     default-value=""
                   >
                     <a-select-option
                       v-for="[type, label] in statusList"
                       :key="type"
+                      :value="type"
                     >{{ label }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -74,7 +75,7 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-range-picker class="fw" @change="doDateChange" />
+                  <a-range-picker class="fw" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -91,7 +92,7 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
-        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
+        <!-- <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button> -->
       </template>
 
     </CTable>
@@ -102,15 +103,15 @@
 
 <script>
 import { getPatrolTaskExcel } from '@/api/controller/ExcelExport'
-import { getTaskInfoList } from '@/api/controller/patrol'
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
   ascriptionList, enableList, statusList,
-  ascriptionMapping, delayMapping, stateMapping, statusMapping
+  statusMapping
 } from '../typing'
+import { PatrolService } from '@/api-hasura'
 
 export default {
   name: 'PatrolTask',
@@ -126,84 +127,88 @@ export default {
     columns: Object.freeze([
       {
         title: '任务单号',
-        dataIndex: 'task_id',
+        dataIndex: 'id',
         width: 100,
         fixed: 'left',
         sorter: true
       },
       {
         title: '巡更区域',
-        dataIndex: 'ascription',
-        width: 120,
-        customRender: ascription => ascriptionMapping.get(ascription)
+        dataIndex: 'zone_id',
+        width: 120
+        // customRender: ascription => ascriptionMapping.get(ascription)
       },
       {
         title: '计划名称',
-        dataIndex: 'task_name',
-        width: 150,
+        dataIndex: 'alias',
+        width: 220,
         sorter: true
       },
-      // {
-      //   title: '巡更组',
-      //   dataIndex: 'plan_start_time',
-      //   width: 180,
-      //   sorter: true
-      // },
+      {
+        title: '巡更组',
+        dataIndex: 'group_id',
+        width: 220,
+        sorter: true
+      },
       {
         title: '巡更实际开始时间',
-        dataIndex: 'real_start_time',
+        dataIndex: 'actual_start_time',
         width: 180,
         sorter: true
+      },
+      {
+        title: '延迟开始',
+        dataIndex: 'actual_start_late',
+        width: 120,
+        sorter: true,
+        customRender: actualStartLate => actualStartLate ? '是' : '否'
       },
       {
         title: '巡更实际结束时间',
-        dataIndex: 'real_end_time',
+        dataIndex: 'actual_end_time',
         width: 180,
         sorter: true
       },
       {
+        title: '超时完成',
+        dataIndex: 'actual_start_late',
+        width: 120,
+        sorter: true,
+        // TODO: useMapping
+        customRender: actual_end_late => actual_end_late ? '是' : '否'
+      },
+      {
         title: '任务单状态',
-        dataIndex: 'task_status',
+        dataIndex: 'status',
         width: 120,
         sorter: true,
         customRender: status => statusMapping.get(status)
       },
-      // TODO: 未知字段名
       {
-        title: '异常',
-        dataIndex: 'task_state',
+        title: '存在异常',
+        dataIndex: 'event_occur',
         width: 80,
         sorter: true,
-        customRender: state => stateMapping.get(state)
+        // TODO: useMapping
+        customRender: eventOccur => eventOccur ? '是' : '否'
       },
       {
         title: '巡更人员',
-        dataIndex: 'transactor_name',
+        dataIndex: 'executor',
         width: 150
-      },
-      {
-        title: '延迟开始',
-        dataIndex: 'is_delay',
-        width: 120,
-        sorter: true,
-        customRender: isDelay => delayMapping.get(isDelay)
       }
     ])
   }),
   methods: {
     loadData (parameter) {
-      return getTaskInfoList({
-        ...parameter,
+      return PatrolService.taskFind({
         where: {
           ...generateQuery(this.queryParams)
-        }
+        },
+        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        ...parameter,
+        alias: 'data'
       }).then(r => r.data)
-    },
-    /**
-     * 巡更日期范围改变
-     */
-    doDateChange (date, dateStr) {
-      this.queryParams.dateStr = dateStr
     },
     seeDetail () {
       // this.$refs.detail.open(this.selectedRows[0])

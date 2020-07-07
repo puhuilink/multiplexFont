@@ -1,19 +1,11 @@
 export const statusList = [
-  ['A', '未执行'],
-  ['B', '已下载'],
-  ['D', '已完成'],
-  ['E', '超时完成'],
-  ['F', '失败']
+  ['pending', '待执行'],
+  ['processing', '执行中'],
+  ['accomplished', '已完成'],
+  ['aborted', '未完成']
 ]
 
 export const statusMapping = new Map(statusList)
-
-export const stateList = [
-  ['Y', '无异常'],
-  ['X', '有异常']
-]
-
-export const stateMapping = new Map(stateList)
 
 export const enableList = [
   [0, '否'],

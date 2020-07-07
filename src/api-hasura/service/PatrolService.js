@@ -2,8 +2,8 @@ import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import {
-  PatrolEventHistoryDao, PatrolPlanDao, PatrolPathDao,
-  XjChangeShiftDao, XjTaskInfoDao
+  PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
+  XjChangeShiftDao, PatrolTaskStatusDao
 } from '../dao'
 import _ from 'lodash'
 
@@ -51,7 +51,7 @@ class PatrolService extends BaseService {
   // TODO
   static async eventHistoryFind (argus = {}) {
     return query(
-      PatrolEventHistoryDao.find(argus)
+      PatrolTaskEventHistoryDao.find(argus)
     )
   }
 
@@ -64,8 +64,21 @@ class PatrolService extends BaseService {
   // 任务单查询
   static async taskFind (argus = {}) {
     return query(
-      XjTaskInfoDao.find(argus)
+      PatrolTaskStatusDao.find(argus)
     )
+  }
+
+  // 存在异常的任务单查询
+  static async eventTaskFind ({ where = {}, ...argus }) {
+    return this.taskFind({
+      where: {
+        ...where,
+        // FIXME: event_occur 字段值目前未填写，暂时使用其外键 events.length 判断有无异常
+        events: { id: { _nin: [] } }
+        // event_occur: true
+      },
+      ...argus
+    })
   }
 
   // 任务单详情
