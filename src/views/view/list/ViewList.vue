@@ -25,16 +25,16 @@
                 <a-form-item
                   label="视图ID"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
-                  <a-input-number style="width: 100%" allowClear v-model.number="queryParams.view_id" />
+                  <a-input-number class="fw" allowClear v-model.number="queryParams.view_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="视图标题"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.view_title" />
                 </a-form-item>
@@ -60,7 +60,7 @@
       </template>
     </CTable>
 
-    <ViewTitleScheme
+    <ViewTitleSchema
       ref="title"
       @addSuccess="query"
       @editSuccess="query"
@@ -69,16 +69,17 @@
 </template>
 
 <script>
-import { getViewList, copyView, deleteViews } from '@/api/controller/View'
-import ViewTitleScheme from './ViewTitleScheme'
+import { getViewList, copyView } from '@/api/controller/View'
+import ViewTitleSchema from './ViewTitleSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
+import { ViewListService } from '@/api-hasura'
 
 export default {
   name: 'ViewList',
   mixins: [Confirm, List],
   components: {
-    ViewTitleScheme
+    ViewTitleSchema
   },
   data: () => ({
     // 复制按钮 loading
@@ -188,7 +189,7 @@ export default {
      */
     async handleDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => deleteViews(this.selectedRowKeys)
+        onOk: () => ViewListService.batchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)

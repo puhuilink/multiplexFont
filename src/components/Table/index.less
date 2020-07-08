@@ -13,3 +13,18 @@
     white-space: nowrap;
   }
 }
+
+.resize-table-th {
+  position: relative;
+
+  .table-draggable-handle {
+    position: absolute;
+    height: 100% !important;
+    top: 0;
+    transform: translate(0, 0) !important;
+    bottom: 0;
+    right: 0px;
+    cursor: col-resize;
+    touch-action: none;
+  }
+}

@@ -1,12 +1,7 @@
 import T from 'ant-design-vue/es/table/Table'
-// import get from 'lodash.get'
-import _ from 'lodash'
-const { get } = _
+import { get } from 'lodash'
 
 export default {
-  // FIXME: 如果父组件要操作localDataSource ?
-  // FIXME: td sort before div换行溢出
-  // TODO: 重置排序与分页？
   data () {
     return {
       needTotalList: [],
@@ -270,7 +265,7 @@ export default {
     }
   },
 
-  render () {
+  render (h) {
     const props = {}
     const localKeys = Object.keys(this.$data)
     const showAlert = (typeof this.alert === 'object' && this.alert !== null && this.alert.show) && typeof this.rowSelection.selectedRowKeys !== 'undefined' || this.alert
@@ -304,11 +299,24 @@ export default {
       this[k] && (props[k] = this[k])
       return props[k]
     })
-    const table = (
-      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData}>
-        { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
-      </a-table>
-    )
+
+    const content = Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>))
+    const table = h('a-table', {
+      props,
+      scopedSlots: {
+        ...this.$scopedSlots
+      },
+      on: {
+        ...this.$listeners,
+        change: this.loadData
+      }
+    }, [content])
+
+    // const table = (
+    //   <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData}>
+    //     { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
+    //   </a-table>
+    // )
 
     return (
       <div class="table-wrapper">

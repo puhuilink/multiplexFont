@@ -20,6 +20,7 @@ import {
   Card,
   Calendar,
   Form,
+  FormModel,
   Row,
   Col,
   Modal,
@@ -68,6 +69,7 @@ Vue.use(Select)
 Vue.use(Card)
 Vue.use(Calendar)
 Vue.use(Form)
+Vue.use(FormModel)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)

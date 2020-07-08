@@ -3,13 +3,14 @@ import CTable from '@/components/Table/CTable'
 import _ from 'lodash'
 import { triggerWindowResizeEvent } from '@/utils/util'
 import OperationNotification from '@/components/Mixins/OperationNotification'
+import Confirm from '../Modal/Confirm'
 import QueryBtn from './Button/QueryBtn'
 import ResetBtn from './Button/ResetBtn'
 import ToggleBtn from './Button/ToggleBtn'
 
 export default {
   name: 'List',
-  mixins: [OperationNotification],
+  mixins: [OperationNotification, Confirm],
   components: {
     CTable,
     QueryBtn,

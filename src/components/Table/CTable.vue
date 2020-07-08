@@ -1,6 +1,7 @@
 <script>
 import GraphTable from './GraphTable'
 import _ from 'lodash'
+import { resizeableTitleHOC } from './ResizeableTitle'
 
 const defaultPagination = {
   // TODO: 查询全部
@@ -27,6 +28,10 @@ export default {
       type: String,
       default: 'small',
       validator: size => ['default', 'middle', 'small'].includes(size)
+    },
+    resizeableTitle: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -60,13 +65,21 @@ export default {
 
     // 允许增量入参
     const pagination = Object.assign({}, defaultPagination, this.$props.pagination)
-    const columns = this.$props.columns || this.$attrs.columns
+    const columns = this.$props.columns || []
 
     // 表格区域
     const table = h(GraphTable, {
       ref: 'table',
       props: {
-        ...this.$props,
+        ..._.omit(this.$props, 'resizeableTitle'),
+        ...this.resizeableTitle ? {
+          bordered: true,
+          components: {
+            header: {
+              cell: resizeableTitleHOC(columns)
+            }
+          }
+        } : {},
         ...this.$attrs,
         pagination,
         columns: columns.map(column => ({

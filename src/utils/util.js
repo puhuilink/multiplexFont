@@ -78,14 +78,22 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
  * @param fileName 文件名
  * @param content 文本内容
  */
-export function downloadFile (fileName, content) {
+export function downloadFile (fileName, content, options = {}) {
   const link = document.createElement('a')
-  const blob = new Blob([content])
+  const blob = new Blob([content], Object.assign({}, options))
   link.download = fileName
-  link.href = URL.createObjectURL(blob)
+  const href = URL.createObjectURL(blob)
+  link.href = href
   const event = document.createEvent('MouseEvents')
   event.initMouseEvent('click', false, false)
   link.dispatchEvent(event)
+  window.URL.revokeObjectURL(href)
+}
+
+export function downloadExcel (fileName, content) {
+  return downloadFile(fileName, content, {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+  })
 }
 
 /**
@@ -218,6 +226,9 @@ export const filterOption = function (input, option) {
     option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
   )
 }
+
+// antd input-number 整数格式化
+export const parserInt = num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)
 
 export const hexToRGBA = function (hex, alpha) {
   var r = parseInt(hex.slice(1, 3), 16)

@@ -106,6 +106,11 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
+
+    // 供测试人员调试数据
+    // FIXME: 生产环境关闭
+    const { container: { id }, chartConfig: { series } } = this
+    window[id] = _.cloneDeep(series)
   }
 
   refresh () {
@@ -140,5 +145,9 @@ export default class Chart {
    */
   destroy () {
     this.resetTimer()
+    // 供测试人员调试数据
+    // FIXME: 生产环境关闭
+    const { container: { id } } = this
+    window[id] = undefined
   }
 }

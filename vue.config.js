@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -10,17 +11,11 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const {
   VUE_APP_HASURA_CACHE_URI,
-  // VUE_APP_HASURA_CACHE_KEY,
   VUE_APP_HASURA_CACHE_ORIGINAL_URL,
   VUE_APP_HASURA_MAIN_URI,
-  // VUE_APP_HASURA_MAIN_KEY,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
   VUE_APP_HASURA_XUNJIAN_URI,
-  // VUE_APP_HASURA_XUNJIAN_KEY,
-  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
-  VUE_APP_HASURA_NGECC_URI,
-  // VUE_APP_HASURA_NGECC_KEY,
-  VUE_APP_HASURA_NGECC_ORIGINAL_URL
+  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL
 } = process.env
 
 const assetsCDN = {
@@ -89,6 +84,12 @@ const vueConfig = {
         return args
       })
     }
+
+    config.plugin('lodashReplace').use(new LodashModuleReplacementPlugin({
+      shorthands: true,
+      // https://github.com/ant-design/ant-design/issues/3794
+      paths: true
+    }))
   },
 
   css: {
@@ -110,16 +111,7 @@ const vueConfig = {
   devServer: {
     // development server port 8000
     port: 8080,
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
-      '/urmp': {
-        target: 'http://10.1.13.19:48080/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '/urmp': ''
-        }
-      },
       // 登录及权限
       '/api': {
         target: 'http://10.1.13.17:31685/',
@@ -154,15 +146,6 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_HASURA_XUNJIAN_URI]: ''
-        }
-      },
-      // hasura ngecc
-      [VUE_APP_HASURA_NGECC_URI]: {
-        target: VUE_APP_HASURA_NGECC_ORIGINAL_URL,
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          [VUE_APP_HASURA_NGECC_URI]: ''
         }
       },
       // 短信验证

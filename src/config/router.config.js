@@ -45,32 +45,26 @@ export const asyncRouterMap = [
           {
             path: '/alarm/monitor',
             name: 'AlarmMonitor',
-            component: () => import('@/views/alarm/monitor/AlarmMonitor'),
+            component: () => import('@/views/alarm/AlarmMonitor'),
             meta: { title: '告警监控', keepAlive: true, permission: [ 'F003001' ] }
           },
           {
-            path: '/alarm/handle',
+            path: '/alarm/history',
             component: RouteView,
-            meta: { title: '告警处理', keepAlive: true, permission: [ 'F003002' ] },
-            redirect: '/alarm/handle/HistoricalAlarms',
+            meta: { title: '告警记录', keepAlive: true, permission: [ 'F003002' ] },
+            redirect: '/alarm/history/HistoricalAlarms',
             children: [
               {
-                path: '/alarm/handle/HistoricalAlarms',
-                name: 'HistoricalAlarms',
-                component: () => import('@/views/alarm/handle/HistoricalAlarms'),
+                path: '/alarm/history/AlarmHistory',
+                name: 'AlarmHistory',
+                component: () => import('@/views/alarm/history/AlarmHistory'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
               },
               {
-                path: '/alarm/handle/PrequelRecord',
-                name: 'PrequelRecord',
-                component: () => import('@/views/alarm/handle/PrequelRecord'),
-                meta: { title: '前转记录', keepAlive: true, permission: [ 'F003002002' ] }
-              },
-              {
-                path: '/alarm/handle/GenerateFault',
-                name: 'GenerateFault',
-                component: () => import('@/views/alarm/handle/GenerateFault'),
-                meta: { title: '生成故障', keepAlive: true, permission: [ 'F003002003' ] }
+                path: '/alarm/history/ForwardHistory',
+                name: 'ForwardHistory',
+                component: () => import('@/views/alarm/history/ForwardHistory'),
+                meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
               }
             ]
           },
@@ -81,10 +75,10 @@ export const asyncRouterMap = [
             meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
             children: [
               {
-                path: '/alarm/config/AlarmTypes',
-                name: 'AlarmTypes',
-                component: () => import('@/views/alarm/config/AlarmTypes'),
-                meta: { title: '告警类型', keepAlive: true, permission: [ 'F003003001' ] }
+                path: '/alarm/config/AlarmStrategy',
+                name: 'AlarmStrategy',
+                component: () => import('@/views/alarm/config/AlarmStrategy'),
+                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
               {
                 path: '/alarm/config/AlarmRules',
@@ -92,29 +86,17 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alarm/config/AlarmRules'),
                 meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
               },
+              // {
+              //   path: '/alarm/config/ThresholdRules',
+              //   name: 'ThresholdRules',
+              //   component: () => import('@/views/alarm/config/ThresholdRules'),
+              //   meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
+              // },
               {
-                path: '/alarm/config/ThresholdRules',
-                name: 'ThresholdRules',
-                component: () => import('@/views/alarm/config/ThresholdRules'),
-                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
-              },
-              {
-                path: '/alarm/config/FaultTypes',
-                name: 'FaultTypes',
-                component: () => import('@/views/alarm/config/FaultTypes'),
-                meta: { title: '故障类型', keepAlive: true, permission: [ 'F003003004' ] }
-              },
-              {
-                path: '/alarm/config/GeneratingFaultRules',
-                name: 'GeneratingFaultRules',
-                component: () => import('@/views/alarm/config/GeneratingFaultRules'),
-                meta: { title: '生成故障规则', keepAlive: true, permission: [ 'F003003005' ] }
-              },
-              {
-                path: '/alarm/config/FaultManagement',
-                name: 'FaultManagement',
-                component: () => import('@/views/alarm/config/FaultManagement'),
-                meta: { title: '故障前转路径管理', keepAlive: true, permission: [ 'F003003006' ] }
+                path: '/alarm/config/ForwardTemp',
+                name: 'ForwardTemp',
+                component: () => import('@/views/alarm/config/ForwardTemp'),
+                meta: { title: '通知模板规则', keepAlive: true, permission: ['F003002003'] }
               }
             ]
           }
@@ -325,20 +307,32 @@ export const asyncRouterMap = [
           {
             path: '/patrol/plan',
             name: 'Plan',
-            component: () => import('@/views/patrol/plan/Plan'),
+            component: () => import('@/views/patrol/plan/index'),
             meta: { title: '计划管理', keepAlive: true, permission: [ 'F010003' ] }
+          },
+          {
+            path: '/patrol/change-shift',
+            name: 'ChangeShift',
+            component: () => import('@/views/patrol/ChangeShift'),
+            meta: { title: '交接班查询', keepAlive: true, permission: [ 'F010003' ] }
           },
           {
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡更任务单', keepAlive: true, permission: [ 'F010004' ] }
+            meta: { title: '巡更记录单', keepAlive: true, permission: [ 'F010004' ] }
           },
+          // {
+          //   path: '/patrol/object',
+          //   name: 'PatrolObject',
+          //   component: () => import('@/views/patrol/object/PatrolObject'),
+          //   meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
+          // },
           {
-            path: '/patrol/object',
-            name: 'PatrolObject',
-            component: () => import('@/views/patrol/object/PatrolObject'),
-            meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
+            path: '/patrol/alarm-approve',
+            name: 'AlarmApprove',
+            component: () => import('@/views/patrol/alarm-approve/index'),
+            meta: { title: '告警审批', keepAlive: true, permission: [ 'F010005' ] }
           }
         ]
       },

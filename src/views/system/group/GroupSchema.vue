@@ -169,6 +169,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { GroupService } from '@/api-hasura/index'
 import _ from 'lodash'
+import { dataDomain } from '@/components/Common'
 
 export default {
   name: 'UserSchema',
@@ -187,30 +188,7 @@ export default {
           value: 0
         }
       ],
-      domain: [
-        {
-          name: 'rootDomain',
-          children: [
-            {
-              name: '北京运维组',
-              value: 'bjDomain'
-            },
-            {
-              name: '厦门运维组',
-              value: 'xmDomain'
-            }
-          ]
-        },
-        {
-          name: 'root',
-          children: [
-            {
-              name: 'rootDomain',
-              value: 'rootDomain'
-            }
-          ]
-        }
-      ]
+      domain: dataDomain
     },
     record: null,
     submit: () => {}
