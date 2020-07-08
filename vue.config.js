@@ -86,7 +86,9 @@ const vueConfig = {
     }
 
     config.plugin('lodashReplace').use(new LodashModuleReplacementPlugin({
-      shorthands: true
+      shorthands: true,
+      // https://github.com/ant-design/ant-design/issues/3794
+      paths: true
     }))
   },
 

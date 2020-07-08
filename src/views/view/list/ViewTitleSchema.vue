@@ -83,13 +83,7 @@ export default {
      * 调取新增接口
      */
     insert () {
-      return this.form.validateFields((err, values) => {
-        console.log(err, values)
-      })
-      // eslint-disable-next-line
       this.form.validateFields(async (err, values) => {
-        console.log(22)
-        console.log(values)
         if (err) return
         try {
           this.confirmLoading = true
