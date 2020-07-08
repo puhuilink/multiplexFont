@@ -60,8 +60,8 @@
               <div class="ViewDisplay__view-item-info">
                 <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ viewConfig.creator }}</span>
+                  <span><a-icon type="clock-circle" />{{ (createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ creator }}</span>
                 </p>
               </div>
             </div>
