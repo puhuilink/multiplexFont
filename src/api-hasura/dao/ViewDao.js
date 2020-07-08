@@ -37,7 +37,6 @@ class ViewDao extends BaseDao {
 
   static async update ({ ...view }, { ...where }) {
     return super.update({ ...view, ...defaultUpdateDate() }, where)
-    // return super.update({ ...view, ...defaultUpdateDate() }).where({ view_id })
   }
 }
 

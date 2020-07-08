@@ -82,7 +82,7 @@
 
 <script>
 import _ from 'lodash'
-import { getViewDesign } from '@/api/controller/View'
+import { ViewDesignService } from '@/api-hasura'
 import Renderer from '@/components/Renderer'
 import Timeout from 'await-timeout'
 
@@ -196,7 +196,7 @@ export default {
     async getViewConfigFromApi (id) {
       try {
         this.isLoading = true
-        this.view = await getViewDesign(id)
+        this.view = await ViewDesignService.getDesign(id)
       } catch (e) {
         this.view = null
         throw e

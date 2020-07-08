@@ -11,16 +11,13 @@ const {
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_KEY,
   VUE_APP_HASURA_XUNJIAN_URI,
-  VUE_APP_HASURA_XUNJIAN_KEY,
-  VUE_APP_HASURA_NGECC_URI,
-  VUE_APP_HASURA_NGECC_KEY
+  VUE_APP_HASURA_XUNJIAN_KEY
 } = process.env
 
 const linkList = [
   new HttpLink({ uri: `${VUE_APP_HASURA_CACHE_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_CACHE_KEY } }),
   new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } }),
-  new HttpLink({ uri: `${VUE_APP_HASURA_XUNJIAN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_XUNJIAN_KEY } }),
-  new HttpLink({ uri: `${VUE_APP_HASURA_NGECC_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_NGECC_KEY } })
+  new HttpLink({ uri: `${VUE_APP_HASURA_XUNJIAN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_XUNJIAN_KEY } })
 ]
 
 // TODO: 此处包装后传递到 service 层

@@ -34,7 +34,7 @@
             @click="handlePasswordInputClick"
             autocomplete="false"
             placeholder="至少8位密码，区分大小写"
-            v-decorator="['newEncryptedPwd', {rules: [{ required: true, min: 8, message: '至少8位密码，区分大小写'}, { validator: handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
+            v-decorator="['newEncryptedPwd', {rules: [{ required: true, message: '请输入新密码' }, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}]"
           ></a-input>
         </a-form-item>
       </a-popover>
@@ -45,7 +45,7 @@
           type="password"
           autocomplete="false"
           placeholder="确认密码"
-          v-decorator="['password2', {rules: [{ required: true, message: '至少8位密码，区分大小写' }, { validator: this.handlePasswordCheck }], validateTrigger: ['change', 'blur']}]"
+          v-decorator="['password2', {rules: [{ required: true, message: '请确认密码' }, { validator: this.handlePasswordCheck }], validateTrigger: ['change', 'blur']}]"
         ></a-input>
       </a-form-item>
 
@@ -142,7 +142,7 @@ export default {
           sm: { span: 8 }
         },
         wrapperCol: {
-          xs: { span: 24 },
+          xs: { span: 20 },
           sm: { span: 16 }
         }
       },
@@ -171,7 +171,14 @@ export default {
   },
   methods: {
     ...mapActions(['Logout']),
-    handlePasswordLevel (rule, value, callback) {
+    handlePasswordLevel (rule, value = '', callback) {
+      if (!value) {
+        // 自动触发 required 规则，不进入 customer validator
+        return callback()
+      }
+      if (value && value.level < 8) {
+        return callback(new Error('至少8位密码，区分大小写'))
+      }
       let level = 0
 
       // 判断这个字符串中有没有数字
@@ -195,28 +202,27 @@ export default {
       this.state.passwordLevel = level
       this.state.percent = level * 30
 
-      if (value.length < 8) {
-        callback(new Error('密码长度不够'))
+      if (level >= 3) {
+        this.state.percent = 100
+        // if (level >= 3) {
+        // }
+        callback()
       } else {
-        if (level >= 3) {
-          this.state.percent = 100
-          // if (level >= 3) {
-          // }
-          callback()
-        } else {
-          if (level === 0) {
-            this.state.percent = 10
-          }
-          callback(new Error('密码强度不够'))
+        if (level === 0) {
+          this.state.percent = 10
         }
+        callback(new Error('密码强度不够'))
       }
     },
 
     handlePasswordCheck (rule, value, callback) {
       const password = this.form.getFieldValue('password')
-      console.log('value', value)
-      if (value === undefined) {
-        callback(new Error('请输入密码'))
+      if (!value) {
+        // 自动触发 required 规则，不进入 customer validator
+        return callback()
+      }
+      if (value && value.level < 8) {
+        return callback(new Error('至少8位密码，区分大小写'))
       }
       if (value && password && value.trim() !== password.trim()) {
         callback(new Error('两次密码不一致'))
@@ -225,10 +231,7 @@ export default {
     },
 
     handlePhoneCheck (rule, value, callback) {
-      console.log('handlePhoneCheck, rule:', rule)
-      console.log('handlePhoneCheck, value', value)
-      console.log('handlePhoneCheck, callback', callback)
-
+      // TODO
       callback()
     },
 

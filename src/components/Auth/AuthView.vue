@@ -51,8 +51,8 @@ export default {
       get () {
         // 求交集，去除历史冗余数据
         // TODO: 旧数据可能有用
-        // return _.intersection(this.targetKeys, this.dataSourceKeys)
-        return this.targetKeys
+        return _.intersection(this.targetKeys, this.dataSourceKeys)
+        // return this.targetKeys
       },
       set (v) {
         this.targetKeys = v

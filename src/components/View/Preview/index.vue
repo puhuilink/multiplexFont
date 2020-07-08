@@ -20,7 +20,7 @@
 <script>
 import { mapState } from 'vuex'
 import Renderer from '@/components/Renderer'
-import { getViewDesign } from '@/api/controller/View'
+import { ViewDesignService } from '@/api-hasura'
 import Timeout from 'await-timeout'
 
 export default {
@@ -59,7 +59,7 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        this.preview = this.viewId ? await getViewDesign(this.viewId) : this.view.getOption()
+        this.preview = this.viewId ? await ViewDesignService.getDesign(this.viewId) : this.view.getOption()
       } catch (e) {
         throw e
       } finally {

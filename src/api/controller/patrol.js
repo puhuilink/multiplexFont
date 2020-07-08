@@ -63,10 +63,12 @@ export const getUserGroupList = function (variables = {}) {
 }
 
 export const getTaskInfoList = function (variables = {}) {
+  const { orderBy = { task_id: 'desc' }, ...rest } = variables
   return apollo.clients.alert.query({
     query: queryTaskInfo,
     variables: {
-      ...variables
+      orderBy,
+      ...rest
     }
   })
 }

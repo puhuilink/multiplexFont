@@ -1,5 +1,5 @@
 import apollo from '@/utils/apollo'
-import { groupAuthViewList, userAuthViewList, administratorAuthViewList } from '../graphql/ViewGroup'
+import { groupAuthViewList, userAuthViewList } from '../graphql/ViewGroup'
 
 export const getViewListInGroupAuth = async function (groupId) {
   return apollo.clients.alert.query({
@@ -16,11 +16,5 @@ export const getViewListInUserAuth = async function (userId) {
     variables: {
       userId
     }
-  })
-}
-
-export const getViewListInAdministratorAuth = async function () {
-  return apollo.clients.alert.query({
-    query: administratorAuthViewList
   })
 }

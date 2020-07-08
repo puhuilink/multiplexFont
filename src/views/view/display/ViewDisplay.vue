@@ -45,9 +45,9 @@
       <div class="ViewDisplay__view-content" v-if="isThumbnail">
         <a-row>
           <a-col
-            v-for="({ view_title, view_id, creator, createdate, view_img }) in filterViewList"
-            :key="view_id"
-            :id="view_id"
+            v-for="viewConfig in filterViewList"
+            :key="viewConfig.view_id"
+            :id="viewConfig.view_id"
             :xs="24"
             :md="12"
             :lg="8"
@@ -56,9 +56,9 @@
             ref="imgPreview"
           >
             <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
-              <img :src="view_img | img" :alt="view_title">
+              <img :src="viewConfig.view_img | img" :alt="viewConfig.view_title">
               <div class="ViewDisplay__view-item-info">
-                <p class="ViewDisplay__view-item-info_title">{{ `${view_id}-${view_title}` }}</p>
+                <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
                   <span><a-icon type="clock-circle" />{{ (createdate || '').replace('T', ' ') }}</span>
                   <span><a-icon type="user" />{{ creator }}</span>
@@ -169,7 +169,7 @@ import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'
 import Renderer from '@/components/Renderer'
-import { getViewDesign } from '@/api/controller/View'
+import { ViewDesignService } from '@/api-hasura'
 
 const ALL_VIEW = '所有视图'
 
@@ -276,9 +276,12 @@ export default {
           list = this.viewLists.filter(({ view_id }) => selectedGroup.viewIds.includes(`${view_id}`))
         }
         // 加上搜索条件，当 input allowClear 时，title 为 undefined
-        list = list.filter(({ view_title: title, view_id }) => {
+        list = list.filter(({ view_title, view_id }) => {
           const value = (this.queryTitle || '').trim().toLowerCase()
-          return (title.toLocaleLowerCase().includes(value)) || (`${view_id}`.toLocaleLowerCase().includes(value))
+          const id = `${view_id}`.toLowerCase()
+          const title = `${view_title}`.toLowerCase()
+          return `${id}-${title}`.includes(value)
+          // return (title.toLowerCase().includes(value)) || (`${view_id}`.toLowerCase().includes(value))
         })
         list = _.uniqBy(list, e => e.view_id)
 
@@ -416,7 +419,7 @@ export default {
         this.activeKey = id
         this.view = null
         this.isLoading = true
-        this.view = await getViewDesign(id)
+        this.view = await ViewDesignService.getDesign(id)
       } catch (e) {
         this.view = null
         throw e
@@ -720,8 +723,8 @@ export default {
       }
 
       img {
+        display: block;
         width: 100%;
-        // 指定高度，保证各图片对齐，并一定程度减少浏览器回流与重绘
         height: 143px;
         border-radius: 4px;
       }

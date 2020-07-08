@@ -36,6 +36,13 @@ const generate = function ({ key, value }) {
       }
     }
   }
+  if (typeof value === 'boolean') {
+    return {
+      [key]: {
+        _eq: value
+      }
+    }
+  }
   return {}
 }
 

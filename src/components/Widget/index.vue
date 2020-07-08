@@ -176,7 +176,8 @@ export default {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       this.render.intervalRefresh && this.render.intervalRefresh()
       if (this.render instanceof TopologyChart) {
-        this.initTopologyChart()
+        // TODO: 待调试
+        // this.initTopologyChart()
       }
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件
