@@ -38,7 +38,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import TemporaryApproveRule from './TemporaryApproveRule'
 import { PatrolService, TempService } from '@/api-hasura'
-// import { SEND_TYPE_MAPPING } from '../../../typing'
+// import { MessageModel } from '@/components/Temp/model'
 
 export default {
   name: 'ApproveSchema',
@@ -53,12 +53,12 @@ export default {
         {
           title: '通知等级',
           dataIndex: 'severity',
-          width: 180,
+          width: 90,
           customRender: severity => severity ? `L${severity}` : ''
         },
         {
           title: '通知用户',
-          width: 180,
+          width: 90,
           customRender: severity => this.severityUserMapping.get(severity)
         },
         // {
@@ -83,15 +83,16 @@ export default {
   computed: {
     // 通知等级与通知用户映射关系
     severityUserMapping () {
-      const mapping = new Map()
-      this.senderConfig.forEach(({ event_level, userList }) => {
-        mapping.set(event_level, userList.map(({ staff_name }) => staff_name).join('、'))
-      })
-      return mapping
+      return new Map([
+        ...this.senderConfig.map(({ event_level, userList }) => [
+          event_level, userList.map(({ staff_name }) => staff_name).join('、')
+        ])
+      ])
+      // return mapping
     }
   },
   methods: {
-    approve (events) {
+    approve (events = []) {
       this.show('审批预览')
       this.fetchSenderConfig()
       this.events = events
@@ -134,6 +135,9 @@ export default {
         throw e
       }
     }
+  },
+  created () {
+    this.approve([])
   }
 }
 </script>

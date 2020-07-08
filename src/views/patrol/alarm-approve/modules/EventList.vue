@@ -5,7 +5,7 @@
       :data="loadData"
       :showPagination="false"
       rowKey="id"
-      :rowSelection="rowSelection"
+      :rowSelection="hasReviewed ? false : rowSelection"
       :subScroll="scroll"
     />
 
@@ -29,6 +29,11 @@ export default {
     taskId: {
       type: Number,
       required: true
+    },
+    // 已审批过的任务单无法再次审批
+    hasReviewed: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -114,6 +119,20 @@ export default {
   computed: {
     scrollY () {
       return 200
+    },
+    rowSelection () {
+      const { selectedRows, selectedRowKeys, selectRow: onChange } = this
+      return {
+        onChange,
+        selectedRows,
+        selectedRowKeys,
+        getCheckboxProps: record => ({
+          props: {
+            // TODO: 确定常量值
+            disabled: record.status === '已发送'
+          }
+        })
+      }
     }
   },
   watch: {
@@ -135,7 +154,8 @@ export default {
         fields: _.uniq([
           'id',
           ...this.columns.map(({ dataIndex }) => dataIndex),
-          'answer { alias format type }'
+          'answer { alias format type }',
+          'status'
         ]),
         ...parameter,
         alias: 'data'

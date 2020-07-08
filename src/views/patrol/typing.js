@@ -36,12 +36,8 @@ export const DELAY_MAPPING = new Map(delayList)
 export const ANSWER_TYPE_SELECT = 'select'
 export const ANSWER_TYPE_FILL = 'fill'
 
-export const SEND_TYPE_EMAIL = 'EMAIL'
-export const SEND_TYPE_SMS = 'SMS'
+/**
+ * 告警审批
+ */
 
-const SEND_TYPE_LIST = [
-  [SEND_TYPE_EMAIL, '短信'],
-  [SEND_TYPE_SMS, '邮件']
-]
-
-export const SEND_TYPE_MAPPING = new Map(SEND_TYPE_LIST)
+// export const TASK_REVIEW_

@@ -6,7 +6,7 @@
         :data="loadData"
         ref="table"
         rowKey="id"
-        :rowSelection="null"
+        :rowSelection="rowSelection"
         @expand="onExpandSubTable"
       >
 
@@ -41,8 +41,13 @@
         </template>
 
         <!-- / 子表：告警条目 -->
-        <template v-slot:expandedRowRender="{ id, hasExpanded }">
-          <EventList :taskId="id" v-if="hasExpanded" @selectSubRow="onSelectSubRow" />
+        <template v-slot:expandedRowRender="{ id, hasExpanded, review }">
+          <EventList
+            :taskId="id"
+            v-if="hasExpanded"
+            :hasReviewed="review === '已审批'"
+            @selectSubRow="onSelectSubRow"
+          />
         </template>
 
       </CTable>
@@ -127,17 +132,55 @@ export default {
     selectedEvents: {}
   }),
   computed: {
+    // 一次只允许审批一个任务单下的多条告警
+    hasSelectedOneTask () {
+      return this.selectedTaskList.length === 1
+    },
+    rowSelection () {
+      const { selectedRows, selectedRowKeys, selectRow: onChange } = this
+      return {
+        onChange,
+        selectedRows,
+        selectedRowKeys,
+        getCheckboxProps: record => ({
+          props: {
+            // TODO: 确定常量值
+            disabled: record.review === '已审批'
+          }
+        })
+      }
+    },
     selectedTaskList () {
       return Object
         .entries(this.selectedEvents)
         .filter(([taskId, selectedEvents]) => selectedEvents.length)
-    },
-    // 一次只允许审批一个任务单下的多条告警
-    hasSelectedOneTask () {
-      return this.selectedTaskList.length === 1
     }
   },
   methods: {
+    /**
+     * 批量审批（直接修改状态）
+     */
+    async batchApprove () {
+      PatrolService.eventTaskBatchApprove()
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认审批选中任务？',
+        onOk: () => PatrolService
+          .eventTaskBatchApprove(this.selectedRowKeys)
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: '审批成功'
+            })
+            // this.query(false)
+            // FIXME: 直接修改能否生效？
+            this.selectedRows.forEach(selectedRow => {
+              selectedRow.review = '已审批'
+            })
+          })
+          .catch(this.$notifyError)
+      })
+    },
     loadData (parameter) {
       return PatrolService.eventTaskFind({
         where: {

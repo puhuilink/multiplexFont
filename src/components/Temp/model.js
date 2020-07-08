@@ -32,7 +32,7 @@ export const TEMP_KEYWORD_LIST = [
 
 export const TEMP_KEYWORD_MAPPING = new Map(TEMP_KEYWORD_LIST)
 
-const templateMock = template => {
+export const templateMock = (template = '') => {
   let str = `${template}`
   const data = {
     [TEMP_KEYWORD_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
