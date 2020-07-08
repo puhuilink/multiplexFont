@@ -49,7 +49,7 @@
         </a-form-model-item>
 
         <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
-          <Editor ref="editor" v-model="formModel.message" />
+          <TempEditor ref="editor" v-model="formModel.message" />
         </a-form-model-item>
 
       </a-form-model>
@@ -61,19 +61,19 @@
 <script>
 import { AlarmTempService } from '@/api-hasura/index'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { AlarmTempModel, modeTypeMapping } from './model'
-import Editor from './Editor'
+import { AlarmTempModel, ALL_SEND_TYPE_MAPPING } from './model'
+import TempEditor from '@/components/Temp/TempEditor'
 
 export default {
   name: 'ForwardTempSchema',
   mixins: [Schema],
   components: {
-    Editor
+    TempEditor
   },
   props: {},
   data: () => ({
     allMode: Object.freeze(
-      Object.fromEntries(modeTypeMapping)
+      Object.fromEntries(ALL_SEND_TYPE_MAPPING)
     ),
     formModel: {
       enabled: 1

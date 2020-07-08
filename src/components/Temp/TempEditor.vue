@@ -20,7 +20,7 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Mention } from 'tiptap-extensions'
-import { MessageModel, tempKeywordMapping } from './model'
+import { MessageModel, TEMP_KEYWORD_MAPPING } from './model'
 
 // if error when enter: Looks like multiple versions of prosemirror-model were loaded
 // https://github.com/scrumpy/tiptap/issues/577
@@ -41,7 +41,7 @@ export default {
       extensions: [
         new Mention({
           // TODO: label @ 符号
-          items: () => [...tempKeywordMapping].map(([id, name]) => ({ id, name }))
+          items: () => [...TEMP_KEYWORD_MAPPING].map(([id, name]) => ({ id, name }))
         })
       ],
       content: '',
@@ -53,7 +53,7 @@ export default {
     insertMention: () => {},
     preview: false,
     tempKeywordList: Object.freeze(
-      Object.fromEntries(tempKeywordMapping)
+      Object.fromEntries(TEMP_KEYWORD_MAPPING)
     )
   }),
   watch: {

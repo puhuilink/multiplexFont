@@ -3,14 +3,14 @@ import {
   ALARM_RULE_UPGRADE,
   ALARM_RULE_FORWARD,
   ALARM_RULE_RECOVER,
-  FORWARD_MODEL_EMAIL,
-  FORWARD_MODEL_SMS
+  SEND_TYPE_EMAIL,
+  SEND_TYPE_SMS
 } from '../../typing'
 import _ from 'lodash'
 
 export {
-  FORWARD_MODEL_EMAIL,
-  FORWARD_MODEL_SMS
+  SEND_TYPE_EMAIL,
+  SEND_TYPE_SMS
 }
 
 export const CONTENT_TYPE_COUNT = 'count'
@@ -46,29 +46,29 @@ export class SendModel {
   }
 
   toggleEmail () {
-    const index = this.send_type.indexOf(FORWARD_MODEL_EMAIL)
+    const index = this.send_type.indexOf(SEND_TYPE_EMAIL)
     if (index === -1) {
-      this.send_type.push(FORWARD_MODEL_EMAIL)
+      this.send_type.push(SEND_TYPE_EMAIL)
     } else {
       this.send_type.splice(index, 1)
     }
   }
 
   toggleSMS () {
-    const index = this.send_type.indexOf(FORWARD_MODEL_SMS)
+    const index = this.send_type.indexOf(SEND_TYPE_SMS)
     if (index === -1) {
-      this.send_type.push(FORWARD_MODEL_SMS)
+      this.send_type.push(SEND_TYPE_SMS)
     } else {
       this.send_type.splice(index, 1)
     }
   }
 
   get hasEnabledEmail () {
-    return this.send_type.includes(FORWARD_MODEL_EMAIL)
+    return this.send_type.includes(SEND_TYPE_EMAIL)
   }
 
   get hasEnabledSMS () {
-    return this.send_type.includes(FORWARD_MODEL_SMS)
+    return this.send_type.includes(SEND_TYPE_SMS)
   }
 
   // 仅写入数据库时用到
@@ -76,8 +76,8 @@ export class SendModel {
     const tempIdList = []
     const { send_type, temp_sms_id, temp_email_id } = this
 
-    send_type.includes(FORWARD_MODEL_EMAIL) && tempIdList.push(temp_email_id)
-    send_type.includes(FORWARD_MODEL_SMS) && tempIdList.push(temp_sms_id)
+    send_type.includes(SEND_TYPE_EMAIL) && tempIdList.push(temp_email_id)
+    send_type.includes(SEND_TYPE_SMS) && tempIdList.push(temp_sms_id)
 
     return tempIdList
       .filter(Boolean)
