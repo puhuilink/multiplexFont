@@ -7,7 +7,6 @@
         ref="table"
         rowKey="id"
         :rowSelection="null"
-        :scroll="scroll"
         @expand="onExpandSubTable"
       >
 
@@ -38,12 +37,12 @@
 
         <!-- / 操作区域 -->
         <template #operation>
-          <a-button @click="onApprove" :disabled="!hasSelectedOne">审批</a-button>
+          <a-button @click="onApprove" :disabled="!hasSelectedOneTask">审批</a-button>
         </template>
 
         <!-- / 子表：告警条目 -->
         <template v-slot:expandedRowRender="{ id, hasExpanded }">
-          <EventList :taskId="id" v-if="hasExpanded" />
+          <EventList :taskId="id" v-if="hasExpanded" @selectSubRow="onSelectSubRow" />
         </template>
 
       </CTable>
@@ -85,7 +84,6 @@ export default {
         title: '巡更区域',
         dataIndex: 'zone { alias }',
         sorter: true,
-        width: 180,
         customRender: (__, { zone }) => _.get(zone, 'alias')
       },
       {
@@ -97,7 +95,6 @@ export default {
       {
         title: '巡更组',
         dataIndex: 'group { group_name }',
-        sorter: true,
         width: 180,
         customRender: (__, { group }) => _.get(group, 'group_name')
       },
@@ -123,18 +120,21 @@ export default {
       {
         title: '异常数量',
         dataIndex: 'events { id }',
-        sorter: true,
         width: 180,
         customRender: (_events, { events }) => events.length
       }
-    ])
+    ]),
+    selectedEvents: {}
   }),
   computed: {
-    subScroll () {
-      return {
-        x: _.sum(this.subColumns.map(e => e.width || 60)),
-        y: 200
-      }
+    selectedTaskList () {
+      return Object
+        .entries(this.selectedEvents)
+        .filter(([taskId, selectedEvents]) => selectedEvents.length)
+    },
+    // 一次只允许审批一个任务单下的多条告警
+    hasSelectedOneTask () {
+      return this.selectedTaskList.length === 1
     }
   },
   methods: {
@@ -149,12 +149,20 @@ export default {
       }).then(r => r.data)
     },
     onApprove () {
-      const [record] = this.selectedRowKeys
-      this.$refs['schema'].approve(record)
+      const [selectedTask] = this.selectedTaskList
+      const [, events] = selectedTask
+      this.$refs['schema'].approve(events)
     },
     onExpandSubTable (expand, record) {
       if (expand) {
         record.hasExpanded = true
+      }
+    },
+    onSelectSubRow ({ selectedRows = [], taskId }) {
+      if (_.isEmpty(selectedRows)) {
+        this.$delete(this.selectedEvents, `${taskId}`)
+      } else {
+        this.$set(this.selectedEvents, `${taskId}`, selectedRows)
       }
     }
   }

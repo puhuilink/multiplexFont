@@ -61,14 +61,12 @@ export default {
         {
           title: '设备',
           dataIndex: 'host { alias }',
-          sorter: true,
           width: 180,
           customRender: (__, { host }) => _.get(host, 'alias')
         },
         {
           title: '检查项',
           dataIndex: 'metric { alias }',
-          sorter: true,
           width: 180,
           customRender: (__, { metric }) => _.get(metric, 'alias')
         },
@@ -116,6 +114,17 @@ export default {
   computed: {
     scrollY () {
       return 200
+    }
+  },
+  watch: {
+    selectedRows () {
+      const selectedRows = this.selectedRows.map(
+        selectedRow => _.mapValues(selectedRow, value => _.get(value, 'alias', value))
+      )
+      this.$emit('selectSubRow', {
+        selectedRows: _.cloneDeep(selectedRows),
+        taskId: this.taskId
+      })
     }
   },
   methods: {

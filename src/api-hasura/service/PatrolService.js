@@ -2,6 +2,7 @@ import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import {
+  AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
   XjChangeShiftDao, PatrolTaskStatusDao
 } from '../dao'
@@ -81,10 +82,69 @@ class PatrolService extends BaseService {
     })
   }
 
+  // 任务单下异常条目查询
   static async eventFind (argus = {}) {
     return query(
       PatrolTaskEventHistoryDao.find(argus)
     )
+  }
+
+  // 不同告警等级对应的用户列表
+  static async senderConfig () {
+    // 获取不同通知级别对应的用户 id
+    // TODO: 区分 IT / 动环
+    const { data: { senderList } } = await query(
+      AlarmSenderDao.find({
+        where: {
+          event_level: {
+            _in: [2, 3, 4, 5]
+          },
+          mode: {
+            _like: `%巡更%`
+          }
+        },
+        fields: ['event_level', 'contact', 'mode', 'send_type'],
+        alias: 'senderList'
+      })
+    )
+
+    senderList.forEach(sender => {
+      // 用户 id 是以 / 分隔的字符串
+      sender.userIdList = sender.contact.split('/')
+    })
+
+    // 扁平化一次查询
+    const allUserIdList = senderList.map(({ userIdList }) => userIdList).flat()
+
+    // 获取用户邮箱 / 电话
+    if (allUserIdList.length) {
+      const { data: { allUserList } } = await query(
+        UserDao.find({
+          where: {
+            user_id: {
+              _in: _.uniq(allUserIdList)
+            }
+          },
+          fields: ['user_id', 'staff_name', 'phone', 'mobile_phone', 'email'],
+          alias: 'allUserList'
+        })
+      )
+
+      senderList.forEach(sender => {
+        sender.userList = allUserList.filter(({ user_id }) => sender.userIdList.includes(user_id))
+        sender.send_type = sender.send_type.split('/')
+      })
+
+      // 只返回最终有效内容
+      return senderList.map(({ event_level, mode, userIdList, send_type }) => {
+        return {
+          event_level,
+          mode,
+          send_type,
+          userList: allUserList.filter(({ user_id }) => userIdList.includes(user_id))
+        }
+      })
+    }
   }
 
   // 任务单详情

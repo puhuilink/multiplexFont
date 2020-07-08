@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "preinstall": "cnpm i npx npm-force-resolutions && cnpm run resolutions",
-    "resolutions": "npx npm-force-resolutions",
+    "preinstall": "cnpm i npm-force-resolutions && cnpm run npm-force-resolutions",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
