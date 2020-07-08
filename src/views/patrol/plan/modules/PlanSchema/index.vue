@@ -80,5 +80,12 @@ export default {
 </script>
 
 <style lang="less">
-
+.PlanSchema {
+  &__modal {
+    .ant-modal-body {
+      height: 500px;
+      overflow-y: auto;
+    }
+  }
+}
 </style>

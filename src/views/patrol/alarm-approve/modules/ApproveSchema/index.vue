@@ -30,7 +30,10 @@
 
     </a-modal>
 
-    <TemporaryApproveRule ref="rule" />
+    <TemporaryApproveRule
+      :senderConfig="senderConfig"
+      ref="rule"
+    />
   </fragment>
 </template>
 
@@ -38,6 +41,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import TemporaryApproveRule from './TemporaryApproveRule'
 import { PatrolService, TempService } from '@/api-hasura'
+import _ from 'lodash'
 // import { MessageModel } from '@/components/Temp/model'
 
 export default {
@@ -118,7 +122,8 @@ export default {
      */
     async fetchSenderConfig () {
       try {
-        this.senderConfig = await PatrolService.senderConfig()
+        const senderConfig = await PatrolService.senderConfig()
+        this.senderConfig = _.orderBy(senderConfig, ['event_level'], ['asc'])
       } catch (e) {
         this.senderConfig = []
         throw e
@@ -143,5 +148,12 @@ export default {
 </script>
 
 <style lang="less">
-
+.ApproveSchema {
+  &__modal {
+    .ant-modal-body {
+      height: 500px;
+      overflow-y: auto;
+    }
+  }
+}
 </style>
