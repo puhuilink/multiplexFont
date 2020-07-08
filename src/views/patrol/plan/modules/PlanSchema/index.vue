@@ -74,7 +74,7 @@ export default {
     async update () {}
   },
   created () {
-    this.add()
+    // this.add()
   }
 }
 </script>
