@@ -142,7 +142,7 @@ export default {
     },
     async onBatchDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => PatrolService.planBatchDelete({ IDs: this.selectedRowKeys })
+        onOk: () => PatrolService.planBatchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)

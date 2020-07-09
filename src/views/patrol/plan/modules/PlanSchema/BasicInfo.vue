@@ -6,7 +6,7 @@
         <span class="ant-form-item-label">
           <label title="计划名称">计划名称</label>
         </span>
-        <a-form-model-item>
+        <a-form-model-item prop="alias">
           <a-input v-model="_value.alias" />
         </a-form-model-item>
       </a-col>
@@ -22,7 +22,7 @@
         <span class="ant-form-item-label">
           <label title="巡更组">巡更组</label>
         </span>
-        <a-form-model-item>
+        <a-form-model-item prop="group_id">
           <a-select v-model="_value.group_id" style="min-width: 140px">
             <a-select-option
               v-for="{ group_id, group_name } in patrolGroupList"
@@ -37,7 +37,7 @@
         <span class="ant-form-item-label">
           <label title="是否启用">是否启用</label>
         </span>
-        <a-form-model-item>
+        <a-form-model-item prop="status">
           <a-select v-model="_value.status" style="min-width: 60px">
             <a-select-option v-for="{ value, label } in STATUS_LIST" :key="value">{{ label }}</a-select-option>
           </a-select>
@@ -51,6 +51,15 @@
 <script>
 import mixin from './mixin'
 import commonMixin from '../../commonMixin'
+
+export const basicInfoRule = {
+  alias: [
+    { required: true, message: '请输入计划名称' }
+  ],
+  group_id: [
+    { required: true, message: '请选择巡更组' }
+  ]
+}
 
 export default {
   name: 'BasicInfo',
@@ -82,6 +91,6 @@ export default {
 </script>
 
 <style lang="less">
-.BasicInfo {
-}
+// .BasicInfo {
+// }
 </style>

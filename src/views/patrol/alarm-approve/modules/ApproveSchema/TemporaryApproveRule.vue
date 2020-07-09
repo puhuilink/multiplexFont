@@ -15,20 +15,20 @@
       保存修改
       <!-- <a-button @click="editRule" class="fl">告警审批规则</a-button> -->
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" type="primary">发送</a-button>
+      <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
     </template>
 
     <a-spin :spinning="spinning">
-      <a-form :form="form" layout="vertical">
+      <a-form-model :form="form" ref="ruleForm" layout="vertical">
         <div
           class="TemporaryApproveRule__level"
           v-for="level in [2, 3, 4, 5]"
           :key="level"
         >
-          <a-row class="ant-form-item">
+          <a-row class="ant-form-model-item">
 
             <a-col v-bind="formItemLayout.labelCol">
-              <span class="ant-form-item-label">
+              <span class="ant-form-model-item-label">
                 <label title="告警级别">告警级别</label>{{ `L${level}` }}
               </span>
             </a-col>
@@ -36,13 +36,13 @@
             <a-col v-bind="formItemLayout.wrapperCol">
               <a-row>
                 <a-col :span="4">
-                  <span class="ant-form-item-label">
+                  <span class="ant-form-model-item-label">
                     <label title="通知方式">通知方式</label>
                   </span>
                 </a-col>
 
                 <a-col :span="12">
-                  <a-form-item>
+                  <a-form-model-item>
                     <a-checkbox-group
                       v-decorator="[`${level}send_type`, {
                         rules: [
@@ -62,17 +62,17 @@
                       </a-checkbox>
 
                     </a-checkbox-group>
-                  </a-form-item>
+                  </a-form-model-item>
                 </a-col>
               </a-row>
             </a-col>
 
           </a-row>
 
-          <a-row class="ant-form-item">
+          <a-row class="ant-form-model-item">
 
             <a-col v-bind="formItemLayout.labelCol">
-              <span class="ant-form-item-label">
+              <span class="ant-form-model-item-label">
                 <label title="通知用户">通知用户</label>
               </span>
             </a-col>
@@ -80,7 +80,7 @@
             <a-col v-bind="formItemLayout.wrapperCol">
               <a-row>
                 <a-col :span="16">
-                  <a-form-item class="fw" v-bind="{ labelCol: { span: 1 }, wrapperCol: { offset:1, span: 22 } }">
+                  <a-form-model-item class="fw" v-bind="{ labelCol: { span: 1 }, wrapperCol: { offset:1, span: 22 } }">
                     <a-select
                       allowClear
                       class="fw"
@@ -102,13 +102,13 @@
                         :value="user.user_id"
                       >{{ user.staff_name }}</a-select-option>
                     </a-select>
-                  </a-form-item>
+                  </a-form-model-item>
                 </a-col>
 
                 <a-col :span="8">
-                  <a-form-item label="自动发送" v-bind="{ labelCol: { span: 10 }, wrapperCol: { offset:1, span: 4 } }">
+                  <a-form-model-item label="自动发送" v-bind="{ labelCol: { span: 10 }, wrapperCol: { offset:1, span: 4 } }">
                     <a-checkbox />
-                  </a-form-item>
+                  </a-form-model-item>
                 </a-col>
               </a-row>
             </a-col>
@@ -120,19 +120,22 @@
         </div>
 
         <template v-if="useEmail">
-          <a-form-item label="邮箱主题" v-bind="formItemLayout" prop="message">
+          <a-form-model-item label="邮箱主题" v-bind="formItemLayout" prop="message">
             <TempEditor class="TemporaryApproveRule__email_subject" ref="emailEditor" />
-          </a-form-item>
+          </a-form-model-item>
 
-          <a-form-item label="邮箱通知模板" v-bind="formItemLayout" prop="message">
+          <a-form-model-item label="邮箱通知模板" v-bind="formItemLayout" prop="message">
             <TempEditor ref="emailEditor" />
-          </a-form-item>
+          </a-form-model-item>
         </template>
 
-        <a-form-item label="短信通知模板" v-bind="formItemLayout" prop="message">
-          <TempEditor ref="smsEditor" />
-        </a-form-item>
-      </a-form>
+        <template v-if="useSms">
+          <a-form-model-item label="短信通知模板" v-bind="formItemLayout" prop="">
+            <TempEditor ref="smsEditor" />message
+          </a-form-model-item>
+        </template>
+
+      </a-form-model>
     </a-spin>
 
   </a-modal>
@@ -167,13 +170,35 @@ export default {
       }
     },
     spinning: false,
+    submitLoading: false,
     userList: []
   }),
   computed: {
     ruleForm () {
+      // const { useEmail, useSms } = this
+      // const requiredSnippet = { required: true }
+      // {
+      //   ...requiredSnippet,
+      //   message: '请选择至少一种通知方式'
+      // }
+      // {
+      //   ...requiredSnippet,
+      //   message: '请至少选择一种通知方式'
+      // }
+      // {
+      //   ...requiredSnippet,
+      //   message: '邮箱主题不能为空'
+      // }
+      // {
+      //   ...requiredSnippet,
+      //   message: '模板内容不能为空'
+      // }
       return {}
     },
     useEmail () {
+      return true
+    },
+    useSms () {
       return true
     }
   },
@@ -214,10 +239,24 @@ export default {
       }
     },
     reset () {
-      this.form.resetFields()
+      this.$refs.ruleForm.resetFields()
       this.$refs.emailEditor.resetContent()
       this.$refs.smsEditor.resetContent()
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    save () {
+      this.$refs.ruleForm.validate(async isValid => {
+        if (!isValid) return
+        try {
+          this.submitLoading = true
+          // TODO: senderConfig 出入参都是一样的格式，可以考虑选用 form-modal 而非 form
+          this.$emit('updateSenderConfig', { senderConfig: [] })
+        } catch (e) {
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
     }
   }
 }
@@ -226,8 +265,8 @@ export default {
 <style lang="less">
 .TemporaryApproveRule {
   &__level {
-    // FIXME: 预留 form-item help 空间
-    // .ant-form-item.ant-row {
+    // FIXME: 预留 form-model-item help 空间
+    // .ant-form-model-item.ant-row {
     //   margin: 0;
     // }
 

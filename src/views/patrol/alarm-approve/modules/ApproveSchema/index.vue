@@ -16,7 +16,7 @@
       <template slot="footer">
         <a-button @click="editRule" class="fl">告警审批规则</a-button>
         <a-button @click="cancel">取消</a-button>
-        <a-button @click="submit" type="primary">发送</a-button>
+        <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
       </template>
 
       <a-spin :spinning="spinning">
@@ -32,6 +32,7 @@
 
     <TemporaryApproveRule
       ref="rule"
+      @updateSenderConfig="onUpdateSenderConfig"
     />
   </fragment>
 </template>
@@ -42,6 +43,7 @@ import TemporaryApproveRule from './TemporaryApproveRule'
 import { PatrolService, TempService } from '@/api-hasura'
 import _ from 'lodash'
 // import { MessageModel } from '@/components/Temp/model'
+import { approveSend } from '@/api/controller/patrol'
 
 export default {
   name: 'ApproveSchema',
@@ -80,6 +82,7 @@ export default {
       events: [],
       senderConfig: [],
       spinning: false,
+      submitLoading: false,
       temp: null
     }
   },
@@ -137,6 +140,22 @@ export default {
       } catch (e) {
         this.temp = null
         throw e
+      }
+    },
+    /**
+     * 更新模板规则（可能为临时 / 默认模板）
+     */
+    onUpdateSenderConfig ({ senderConfig = [] }) {
+      this.senderConfig = senderConfig
+    },
+    async send () {
+      try {
+        this.submitLoading = true
+        await approveSend()
+      } catch (e) {
+        throw e
+      } finally {
+        this.submitLoading = false
       }
     }
   },

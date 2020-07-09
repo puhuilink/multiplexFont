@@ -61,9 +61,14 @@ class PatrolService extends BaseService {
     )
   }
 
-  static async planBatchDelete (idList) {
-    // TODO
-    return mutate()
+  static async planBatchDelete (idList = []) {
+    return mutate(
+      PatrolPlanDao.delete({
+        id: {
+          _in: idList
+        }
+      })
+    )
   }
 
   // 任务单查询
@@ -217,6 +222,20 @@ class PatrolService extends BaseService {
   static async planFind (argus = {}) {
     return query(
       PatrolPlanDao.find(argus)
+    )
+  }
+
+  // 新增计划
+  static async planAdd (plan = {}) {
+    return mutate(
+      PatrolPlanDao.add(plan)
+    )
+  }
+
+  // 更新计划
+  static async planEdit (set = {}, where = {}) {
+    return mutate(
+      PatrolPlanDao.update(set, where)
     )
   }
 

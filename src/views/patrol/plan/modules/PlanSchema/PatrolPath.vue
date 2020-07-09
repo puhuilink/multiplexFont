@@ -20,6 +20,15 @@ import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 // import _ from 'lodash'
 
+export const patrolPathRule = {
+  // alias: [
+  //   { required: true, message: '请输入计划名称' }
+  // ],
+  // group_id: [
+  //   { required: true, message: '请选择巡更组' }
+  // ]
+}
+
 export default {
   name: 'PatrolPath',
   mixins: [List, mixin],

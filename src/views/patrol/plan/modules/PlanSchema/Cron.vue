@@ -1,9 +1,11 @@
 <template>
   <div class="Cron">
     <a-row class="Cron__paragraph">
-      <a-radio-group v-model="_value.interval">
-        <a-radio v-for="{ value, label } in typeList" :key="value" :value="value">{{ label }}</a-radio>
-      </a-radio-group>
+      <a-form-model-item prop="interval">
+        <a-radio-group v-model="_value.interval">
+          <a-radio v-for="{ value, label } in typeList" :key="value" :value="value">{{ label }}</a-radio>
+        </a-radio-group>
+      </a-form-model-item>
     </a-row>
 
     <a-row class="Cron__paragraph" v-show="_value.interval === 'w'">
@@ -26,6 +28,12 @@ import _ from 'lodash'
 const prefixInteger = (num, n) => (Array(n).join(0) + num).slice(-n)
 
 const monthDays = Array(31).fill(null).map((d, index) => prefixInteger(index + 1, 2))
+
+export const cronRule = {
+  interval: [
+    { required: true, message: '请选择循环周期' }
+  ]
+}
 
 export default {
   name: 'Cron',
