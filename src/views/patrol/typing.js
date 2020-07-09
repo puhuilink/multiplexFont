@@ -40,4 +40,19 @@ export const ANSWER_TYPE_FILL = 'fill'
  * 告警审批
  */
 
-// export const TASK_REVIEW_
+//  待审批
+export const TASK_REVIEW_PENDING = 'pending'
+// 已审批
+export const TASK_REVIEW_ACCOMPLISHED = 'accomplished'
+
+const TASK_REVIEW_LIST = [
+  [TASK_REVIEW_PENDING, '待审批'],
+  [TASK_REVIEW_ACCOMPLISHED, '已审批']
+]
+
+export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
+
+export const ALL_TASK_REVIEW_MAPPING = new Map([
+  ...TASK_REVIEW_LIST,
+  ['', '全部']
+])

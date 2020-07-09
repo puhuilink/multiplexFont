@@ -85,9 +85,8 @@ class PatrolService extends BaseService {
   // 批量审批
   static async eventTaskBatchApprove (idList = []) {
     return mutate(
-      PatrolTaskStatusDao.set({
-        // TODO: 确定常量值
-        review: '已审批'
+      PatrolTaskStatusDao.update({
+        review: 'accomplished'
       }, { id: { _in: idList } })
     )
   }

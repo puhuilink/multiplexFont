@@ -5,7 +5,7 @@
       :data="loadData"
       :showPagination="false"
       rowKey="id"
-      :rowSelection="hasReviewed ? false : rowSelection"
+      :rowSelection="hasReviewed ? null : rowSelection"
       :subScroll="scroll"
     />
 
@@ -136,6 +136,15 @@ export default {
     }
   },
   watch: {
+    hasReviewed (hasReviewed) {
+      // 任务单已审批，则之前选中的异常项不能进行审批
+      if (hasReviewed) {
+        this.$emit('selectSubRow', {
+          selectedRows: [],
+          taskId: this.taskId
+        })
+      }
+    },
     selectedRows () {
       const selectedRows = this.selectedRows.map(
         selectedRow => _.mapValues(selectedRow, value => _.get(value, 'alias', value))

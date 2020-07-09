@@ -38,6 +38,7 @@
         <!-- / 操作区域 -->
         <template #operation>
           <a-button @click="onApprove" :disabled="!hasSelectedOneTask">审批</a-button>
+          <a-button @click="onBatchApprove" :disabled="!hasSelected">置为已审批</a-button>
         </template>
 
         <!-- / 子表：告警条目 -->
@@ -45,7 +46,7 @@
           <EventList
             :taskId="id"
             v-if="hasExpanded"
-            :hasReviewed="review === '已审批'"
+            :hasReviewed="review === TASK_REVIEW_ACCOMPLISHED"
             @selectSubRow="onSelectSubRow"
           />
         </template>
@@ -68,6 +69,7 @@ import _ from 'lodash'
 import ApproveSchema from './modules/ApproveSchema/index'
 import EventList from './modules/EventList'
 import moment from 'moment'
+import { TASK_REVIEW_ACCOMPLISHED, TASK_REVIEW_MAPPING } from '../typing'
 
 export default {
   name: 'AlarmApprove',
@@ -78,6 +80,7 @@ export default {
     EventList
   },
   data: () => ({
+    TASK_REVIEW_ACCOMPLISHED,
     columns: Object.freeze([
       {
         title: '任务单号',
@@ -114,7 +117,8 @@ export default {
         title: '审批状态',
         dataIndex: 'review',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: review => TASK_REVIEW_MAPPING.get(review)
       },
       {
         title: '巡更人员',
@@ -144,8 +148,7 @@ export default {
         selectedRowKeys,
         getCheckboxProps: record => ({
           props: {
-            // TODO: 确定常量值
-            disabled: record.review === '已审批'
+            disabled: record.review === TASK_REVIEW_ACCOMPLISHED
           }
         })
       }
@@ -157,30 +160,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * 批量审批（直接修改状态）
-     */
-    async batchApprove () {
-      PatrolService.eventTaskBatchApprove()
-      this.$promiseConfirm({
-        title: '系统提示',
-        content: '确认审批选中任务？',
-        onOk: () => PatrolService
-          .eventTaskBatchApprove(this.selectedRowKeys)
-          .then(() => {
-            this.$notification.success({
-              message: '系统提示',
-              description: '审批成功'
-            })
-            // this.query(false)
-            // FIXME: 直接修改能否生效？
-            this.selectedRows.forEach(selectedRow => {
-              selectedRow.review = '已审批'
-            })
-          })
-          .catch(this.$notifyError)
-      })
-    },
     loadData (parameter) {
       return PatrolService.eventTaskFind({
         where: {
@@ -195,6 +174,31 @@ export default {
       const [selectedTask] = this.selectedTaskList
       const [, events] = selectedTask
       this.$refs['schema'].approve(events)
+    },
+    /**
+     * 批量审批（直接修改状态）
+     */
+    async onBatchApprove () {
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认审批选中任务？',
+        onOk: () => PatrolService
+          .eventTaskBatchApprove(this.selectedRowKeys)
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: '审批成功'
+            })
+            // 直接更新状态，不需要再次查询
+            // 再次查询会导致子表展开状态跌势
+            this.selectedRows.forEach(selectedRow => {
+              selectedRow.review = TASK_REVIEW_ACCOMPLISHED
+            })
+            this.selectedRows = []
+            this.selectedRowKeys = []
+          })
+          .catch(this.$notifyError)
+      })
     },
     onExpandSubTable (expand, record) {
       if (expand) {

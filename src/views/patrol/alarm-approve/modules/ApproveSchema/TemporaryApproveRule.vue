@@ -92,18 +92,21 @@
 
       </div>
 
-      <a-form-model-item label="邮箱通知模板" v-bind="formItemLayout" prop="message">
-        <TempEditor ref="emailEditor" />
-      </a-form-model-item>
+      <template v-if="useEmail">
+        <a-form-model-item label="邮箱主题" v-bind="formItemLayout" prop="message">
+          <TempEditor ref="emailEditor" />
+        </a-form-model-item>
+
+        <a-form-model-item label="邮箱通知模板" v-bind="formItemLayout" prop="message">
+          <TempEditor ref="emailEditor" />
+        </a-form-model-item>
+      </template>
 
       <a-form-model-item label="短信通知模板" v-bind="formItemLayout" prop="message">
-        <TempEditor ref="messageEditor" />
+        <TempEditor ref="smsEditor" />
       </a-form-model-item>
     </a-form-model>
 
-    <TempEditor />
-
-    <TempEditor />
   </a-modal>
 </template>
 
@@ -143,6 +146,9 @@ export default {
   computed: {
     ruleForm () {
       return {}
+    },
+    useEmail () {
+      return true
     }
   },
   methods: {
@@ -165,7 +171,7 @@ export default {
     reset () {
       this.$refs.ruleForm.resetFields()
       this.$refs.emailEditor.resetContent()
-      this.$refs.messageEditor.resetContent()
+      this.$refs.smsEditor.resetContent()
       Object.assign(this.$data, this.$options.data.apply(this))
     }
   }

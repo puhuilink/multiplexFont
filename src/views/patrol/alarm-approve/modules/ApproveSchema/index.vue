@@ -142,7 +142,7 @@ export default {
     }
   },
   created () {
-    this.approve([])
+    // this.approve([])
   }
 }
 </script>
