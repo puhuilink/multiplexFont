@@ -19,14 +19,17 @@ export const ALL_SEND_TYPE_MAPPING = new Map([
 export const TEMP_KEYWORD_TIME = '{time}'
 export const TEMP_KEYWORD_IP = '{IP}'
 export const TEMP_KEYWORD_DETAIL = '{detail}'
+// export const TEMP_KEYWORD_HOST = '{host}'
 export const TEMP_KEYWORD_ENDPOINT = '{endpoint}'
+export const TEMP_KEYWORD_METRIC = '{metric}'
 export const TEMP_KEYWORD_LEVEL = '{level}'
 
 export const TEMP_KEYWORD_LIST = [
   [TEMP_KEYWORD_TIME, '时间'],
   [TEMP_KEYWORD_IP, 'IP'],
   [TEMP_KEYWORD_DETAIL, '详情'],
-  [TEMP_KEYWORD_ENDPOINT, 'endpoint'],
+  [TEMP_KEYWORD_ENDPOINT, '监控实体'],
+  [TEMP_KEYWORD_METRIC, '检查项'],
   [TEMP_KEYWORD_LEVEL, '级别']
 ]
 

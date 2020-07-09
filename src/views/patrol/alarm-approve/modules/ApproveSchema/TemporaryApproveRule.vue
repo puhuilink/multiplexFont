@@ -208,6 +208,8 @@ export default {
       } catch (e) {
         throw e
       } finally {
+        // TODO: TempEditor v-decorator / form-model ?
+        // console.log(this.$refs.emailEditor.$refs)
         this.spinning = false
       }
     },

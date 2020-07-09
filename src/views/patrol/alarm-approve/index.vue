@@ -17,11 +17,34 @@
               <a-row>
                 <a-col :md="12" :sm="24">
                   <a-form-item
-                    label="交接人员姓名"
+                    label="审批状态"
                     v-bind="formItemLayout"
                     class="fw"
                   >
-                    <a-input allowClear v-model.trim="queryParams.user_id" />
+                    <a-select allowClear v-model="queryParams.review">
+                      <a-select-option
+                        v-for="[value, label] in ALL_TASK_REVIEW_LIST"
+                        :key="value"
+                        :value="value"
+                      >{{ label }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="日期范围"
+                    v-bind="formItemLayout"
+                    class="fw"
+                  >
+                    <a-range-picker
+                      allowClear
+                      class="fw"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      :placeholder="['开始时间', '结束时间']"
+                      :showTime="{ format: 'HH:mm:ss' }"
+                      v-model="queryParams.create_time"
+                    />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -69,7 +92,7 @@ import _ from 'lodash'
 import ApproveSchema from './modules/ApproveSchema/index'
 import EventList from './modules/EventList'
 import moment from 'moment'
-import { TASK_REVIEW_ACCOMPLISHED, TASK_REVIEW_MAPPING } from '../typing'
+import { TASK_REVIEW_ACCOMPLISHED, TASK_REVIEW_MAPPING, ALL_TASK_REVIEW_LIST } from '../typing'
 
 export default {
   name: 'AlarmApprove',
@@ -80,6 +103,7 @@ export default {
     EventList
   },
   data: () => ({
+    ALL_TASK_REVIEW_LIST,
     TASK_REVIEW_ACCOMPLISHED,
     columns: Object.freeze([
       {
@@ -133,6 +157,10 @@ export default {
         customRender: (_events, { events }) => events.length
       }
     ]),
+    queryParams: {
+      review: '',
+      create_time: []
+    },
     selectedEvents: {}
   }),
   computed: {

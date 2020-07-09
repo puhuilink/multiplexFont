@@ -25,7 +25,7 @@ import { MessageModel, TEMP_KEYWORD_MAPPING } from './model'
 // if error when enter: Looks like multiple versions of prosemirror-model were loaded
 // https://github.com/scrumpy/tiptap/issues/577
 export default {
-  name: 'Editor',
+  name: 'TempEditor',
   components: {
     EditorContent,
     EditorMenuBar
@@ -129,10 +129,12 @@ export default {
   }
 
   .menubar {
-    margin-bottom: 24px;
+    margin-bottom: 4px;
 
     &__btn {
-      margin-right: 8px;
+      margin: 4px;
+      // margin-right: 8px;
+      // margin-bottom: 4px;
     }
   }
 }

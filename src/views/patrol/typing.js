@@ -50,9 +50,11 @@ const TASK_REVIEW_LIST = [
   [TASK_REVIEW_ACCOMPLISHED, '已审批']
 ]
 
-export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
-
-export const ALL_TASK_REVIEW_MAPPING = new Map([
+export const ALL_TASK_REVIEW_LIST = [
   ...TASK_REVIEW_LIST,
   ['', '全部']
-])
+]
+
+export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
+
+export const ALL_TASK_REVIEW_MAPPING = new Map(ALL_TASK_REVIEW_LIST)
