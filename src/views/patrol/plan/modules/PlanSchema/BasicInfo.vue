@@ -7,7 +7,7 @@
           <label title="计划名称">计划名称</label>
         </span>
         <a-form-model-item>
-          <a-input v-model="value.alias" />
+          <a-input v-model="_value.alias" />
         </a-form-model-item>
       </a-col>
 
@@ -23,8 +23,12 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item>
-          <a-select v-model="value.group" style="min-width: 140px">
-            <a-select-option v-for="{ value, label } in groupList" :key="value">{{ label }}</a-select-option>
+          <a-select v-model="_value.group_id" style="min-width: 140px">
+            <a-select-option
+              v-for="{ group_id, group_name } in patrolGroupList"
+              :key="group_id"
+              :value="group_id"
+            >{{ group_name }}</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
@@ -34,7 +38,7 @@
           <label title="是否启用">是否启用</label>
         </span>
         <a-form-model-item>
-          <a-select v-model="value.status" style="min-width: 60px">
+          <a-select v-model="_value.status" style="min-width: 60px">
             <a-select-option v-for="{ value, label } in STATUS_LIST" :key="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
@@ -46,6 +50,7 @@
 
 <script>
 import mixin from './mixin'
+import { GroupService } from '@/api-hasura'
 
 export default {
   name: 'BasicInfo',
@@ -53,13 +58,8 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    // TODO
-    groupList: [
-      {
-        value: 'enabled',
-        label: '厦门动环巡更组'
-      }
-    ],
+    patrolGroupLoading: false,
+    patrolGroupList: [],
     STATUS_LIST: [
       {
         value: 'enabled',
@@ -76,7 +76,28 @@ export default {
       return this.$store.getters.userInfo
     }
   },
-  methods: {}
+  methods: {
+    async fetchPatrolGroupList () {
+      try {
+        this.patrolGroupLoading = true
+        const { data: { patrolGroupList } } = await GroupService.patrolFind({
+          // TODO: flag?
+          where: {},
+          fields: ['group_name', 'group_id'],
+          alias: 'patrolGroupList'
+        })
+        this.patrolGroupList = patrolGroupList
+      } catch (e) {
+        this.patrolGroupList = []
+        throw e
+      } finally {
+        this.patrolGroupLoading = false
+      }
+    }
+  },
+  created () {
+    this.fetchPatrolGroupList()
+  }
 }
 </script>
 

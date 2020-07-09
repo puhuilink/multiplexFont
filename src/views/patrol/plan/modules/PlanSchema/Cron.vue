@@ -1,18 +1,18 @@
 <template>
   <div class="Cron">
     <a-row class="Cron__paragraph">
-      <a-radio-group v-model="value.interval">
+      <a-radio-group v-model="_value.interval">
         <a-radio v-for="{ value, label } in typeList" :key="value" :value="value">{{ label }}</a-radio>
       </a-radio-group>
     </a-row>
 
-    <a-row class="Cron__paragraph" v-show="value.interval === 'w'">
+    <a-row class="Cron__paragraph" v-show="_value.interval === 'w'">
       <a-checkbox-group @change="onWeekChange">
         <a-checkbox v-for="{ value, label } in subTypeList.week" :key="value" :value="value">{{ label }}</a-checkbox>
       </a-checkbox-group>
     </a-row>
 
-    <a-row class="Cron__paragraph" v-show="value.interval === 'm'">
+    <a-row class="Cron__paragraph" v-show="_value.interval === 'm'">
       <a-checkbox-group @change="onMonthChange">
         <a-checkbox v-for="{ value, label } in subTypeList.month" :key="value" :value="value">{{ label }}</a-checkbox>
       </a-checkbox-group>
@@ -90,7 +90,7 @@ export default {
     // TODO: 方向解析
     currentCron () {
       // 具体的时间段在 TimeRange 中处理
-      const { value: { interval } } = this
+      const { _value: { interval } } = this
       const m = this.cron.m || '*'
       const w = this.cron.w || '*'
       if (interval === 'w') {

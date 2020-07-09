@@ -1,5 +1,4 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AlarmSenderDao, UserDao,
@@ -60,6 +59,11 @@ class PatrolService extends BaseService {
     return query(
       PatrolPathDao.find(argus)
     )
+  }
+
+  static async planBatchDelete (idList) {
+    // TODO
+    return mutate()
   }
 
   // 任务单查询

@@ -14,13 +14,13 @@
   >
     <a-spin :spinning="spinning">
       <a-form-model layout="inline">
-        <BasicInfo />
+        <BasicInfo :plan.sync="plan" />
 
         <Cron />
 
         <TimeRange/>
 
-        <Route />
+        <PatrolPath :plan.sync="plan" />
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -31,7 +31,7 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import { PatrolService } from '@/api-hasura'
 import BasicInfo from './BasicInfo'
 import Cron from './Cron'
-import Route from './Route'
+import PatrolPath from './PatrolPath'
 import TimeRange from './TimeRange'
 
 export default {
@@ -40,12 +40,12 @@ export default {
   components: {
     BasicInfo,
     Cron,
-    Route,
+    PatrolPath,
     TimeRange
   },
   props: {},
   data: () => ({
-    record: {},
+    plan: {},
     spinning: false
   }),
   computed: {},
@@ -57,14 +57,14 @@ export default {
     edit (id) {
       this.submit = this.update
       this.show('编辑巡检计划')
-      this.fetch(id)
+      this.fetchPlanDetail(id)
     },
-    async fetch (id) {
+    async fetchPlanDetail (id) {
       try {
         this.spinning = true
-        this.record = await PatrolService.planDetail(id)
+        this.plan = await PatrolService.planDetail(id)
       } catch (e) {
-        this.record = {}
+        this.plan = {}
         throw e
       } finally {
         this.spinning = false

@@ -26,12 +26,12 @@ export const ASCRIPTION_LIST = [
 
 export const ASCRIPTION_MAPPING = new Map(ASCRIPTION_LIST)
 
-const delayList = [
+const DELAY_LIST = [
   [1, '是'],
   [0, '否']
 ]
 
-export const DELAY_MAPPING = new Map(delayList)
+export const DELAY_MAPPING = new Map(DELAY_LIST)
 
 export const ANSWER_TYPE_SELECT = 'select'
 export const ANSWER_TYPE_FILL = 'fill'
@@ -58,3 +58,12 @@ export const ALL_TASK_REVIEW_LIST = [
 export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
 
 export const ALL_TASK_REVIEW_MAPPING = new Map(ALL_TASK_REVIEW_LIST)
+const PLAN_STATUS_ENABLED = 'enabled'
+const PLAN_STATUS_DISABLED = 'disabled'
+
+const PLAN_STATUS_LIST = [
+  [PLAN_STATUS_ENABLED, '是'],
+  [PLAN_STATUS_DISABLED, '否']
+]
+
+export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)

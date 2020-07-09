@@ -43,7 +43,7 @@ export default {
           title: '告警级别',
           dataIndex: 'severity',
           sorter: true,
-          width: 180
+          width: 90
         },
         // {
         //   title: '楼层',
@@ -94,12 +94,12 @@ export default {
           title: '备注',
           dataIndex: 'note',
           tooltip: true,
-          width: 180
+          width: 220
         },
         {
           title: '图片',
           dataIndex: 'tags',
-          width: 180,
+          width: 220,
           customRender: tags => {
             try {
             // eslint-disable-next-line no-eval
