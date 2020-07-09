@@ -4,12 +4,12 @@
       <CTable
         :columns="columns"
         :data="loadData"
+        :expandedRowKeys="expandedRowKeys"
         ref="table"
         rowKey="id"
         :rowSelection="rowSelection"
-        @expand="onExpandSubTable"
+        @expandedRowsChange="expandedRowsChange"
       >
-
         <!-- / 操作区域 -->
         <template #query>
           <a-form layout="inline" class="form">
@@ -45,7 +45,7 @@
         <template v-slot:expandedRowRender="{ id, hasExpanded, review }">
           <EventList
             :taskId="id"
-            v-if="hasExpanded"
+            v-if="expandedRowKeys.includes(id)"
             :hasReviewed="review === TASK_REVIEW_ACCOMPLISHED"
             @selectSubRow="onSelectSubRow"
           />
@@ -146,11 +146,13 @@ export default {
         onChange,
         selectedRows,
         selectedRowKeys,
-        getCheckboxProps: record => ({
-          props: {
-            disabled: record.review === TASK_REVIEW_ACCOMPLISHED
+        getCheckboxProps: record => {
+          return {
+            props: {
+              disabled: record.review === TASK_REVIEW_ACCOMPLISHED
+            }
           }
-        })
+        }
       }
     },
     selectedTaskList () {
@@ -161,6 +163,7 @@ export default {
   },
   methods: {
     loadData (parameter) {
+      // TODO: 重置 expandedRowKeys，可以在 CTable 组件对 dataSource 的 key 进行判断
       return PatrolService.eventTaskFind({
         where: {
           ...generateQuery(this.queryParams)
@@ -189,21 +192,10 @@ export default {
               message: '系统提示',
               description: '审批成功'
             })
-            // 直接更新状态，不需要再次查询
-            // 再次查询会导致子表展开状态跌势
-            this.selectedRows.forEach(selectedRow => {
-              selectedRow.review = TASK_REVIEW_ACCOMPLISHED
-            })
-            this.selectedRows = []
-            this.selectedRowKeys = []
+            this.query(false)
           })
           .catch(this.$notifyError)
       })
-    },
-    onExpandSubTable (expand, record) {
-      if (expand) {
-        record.hasExpanded = true
-      }
     },
     onSelectSubRow ({ selectedRows = [], taskId }) {
       if (_.isEmpty(selectedRows)) {

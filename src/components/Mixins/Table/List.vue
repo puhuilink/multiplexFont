@@ -44,7 +44,9 @@ export default {
     // 选中行
     selectedRows: [],
     // 选中行的 key
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    // 展开行的 key
+    expandedRowKeys: []
   }),
   computed: {
     hasSelected () {
@@ -70,6 +72,9 @@ export default {
     }
   },
   methods: {
+    expandedRowsChange (expandedRowKeys = []) {
+      this.expandedRowKeys = expandedRowKeys
+    },
     /**
      * 查询
      */
