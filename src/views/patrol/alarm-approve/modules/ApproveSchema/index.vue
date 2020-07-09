@@ -31,7 +31,6 @@
     </a-modal>
 
     <TemporaryApproveRule
-      :senderConfig="senderConfig"
       ref="rule"
     />
   </fragment>
@@ -102,7 +101,7 @@ export default {
       this.events = events
     },
     editRule () {
-      this.$refs['rule'].open()
+      this.$refs['rule'].open(this.senderConfig)
     },
     async fetch () {
       try {
@@ -142,7 +141,7 @@ export default {
     }
   },
   created () {
-    // this.approve([])
+    this.approve([])
   }
 }
 </script>

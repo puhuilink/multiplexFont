@@ -5,9 +5,9 @@ import replaceAll from 'string.prototype.replaceall'
 export const SEND_TYPE_EMAIL = 'EMAIL'
 export const SEND_TYPE_SMS = 'SMS'
 
-const SEND_TYPE_LIST = [
+export const SEND_TYPE_LIST = [
   [SEND_TYPE_EMAIL, '短信'],
-  [SEND_TYPE_SMS, '邮件']
+  [SEND_TYPE_SMS, '邮箱']
 ]
 
 export const SEND_TYPE_MAPPING = new Map(SEND_TYPE_LIST)

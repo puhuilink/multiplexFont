@@ -129,6 +129,8 @@ export default {
   }
 
   .menubar {
+    margin-bottom: 24px;
+
     &__btn {
       margin-right: 8px;
     }

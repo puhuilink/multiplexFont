@@ -45,7 +45,7 @@
         <template v-slot:expandedRowRender="{ id, hasExpanded, review }">
           <EventList
             :taskId="id"
-            v-if="expandedRowKeys.includes(id)"
+            v-show="expandedRowKeys.includes(id)"
             :hasReviewed="review === TASK_REVIEW_ACCOMPLISHED"
             @selectSubRow="onSelectSubRow"
           />
@@ -146,13 +146,11 @@ export default {
         onChange,
         selectedRows,
         selectedRowKeys,
-        getCheckboxProps: record => {
-          return {
-            props: {
-              disabled: record.review === TASK_REVIEW_ACCOMPLISHED
-            }
+        getCheckboxProps: ({ review }) => ({
+          props: {
+            disabled: review === TASK_REVIEW_ACCOMPLISHED
           }
-        }
+        })
       }
     },
     selectedTaskList () {
@@ -173,13 +171,16 @@ export default {
         alias: 'data'
       }).then(r => r.data)
     },
+    /**
+     * 详细审批（发送异常数据后修改任务单状态）
+     */
     onApprove () {
       const [selectedTask] = this.selectedTaskList
       const [, events] = selectedTask
       this.$refs['schema'].approve(events)
     },
     /**
-     * 批量审批（直接修改状态）
+     * 快速批量审批（直接修改任务单状态）
      */
     async onBatchApprove () {
       this.$promiseConfirm({
