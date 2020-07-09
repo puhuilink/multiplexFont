@@ -14,15 +14,16 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡更区域"
+                  label="巡更组"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.ascription">
+                  <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="[code, name] in ASCRIPTION_LIST"
-                      :key="code"
-                    >{{ name }}</a-select-option>
+                      v-for="{ group_id, group_name } in patrolGroupList"
+                      :key="group_id"
+                      :value="group_id"
+                    >{{ group_name }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -59,6 +60,7 @@ import { generateQuery } from '@/utils/graphql'
 import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING } from '../typing'
 import moment from 'moment'
 import { PatrolService } from '@/api-hasura'
+import commonMixin from './commonMixin'
 import _ from 'lodash'
 
 const timeColumnSnippet = {
@@ -69,7 +71,7 @@ const timeColumnSnippet = {
 
 export default {
   name: 'Plan',
-  mixins: [Confirm, List],
+  mixins: [Confirm, List, commonMixin],
   components: {
     PlanSchema
   },
@@ -152,6 +154,9 @@ export default {
       const [id] = this.selectedRowKeys
       this.$refs['schema'].edit(id)
     }
+  },
+  created () {
+    this.fetchPatrolGroupList()
   }
 }
 </script>
