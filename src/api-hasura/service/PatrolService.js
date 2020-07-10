@@ -118,7 +118,8 @@ class PatrolService extends BaseService {
             _in: [2, 3, 4, 5]
           },
           mode: {
-            _like: `%巡更%`
+            // _like: `%巡更%`
+            _in: ['XMDH', 'XMID']
           }
         },
         fields: ['event_level', 'contact', 'mode', 'send_type'],

@@ -19,17 +19,17 @@
     </template>
 
     <a-spin :spinning="spinning">
-      <a-form-model :form="form" ref="ruleForm" layout="vertical">
+      <a-form-model :model="formModel" ref="ruleForm" layout="vertical">
         <div
           class="TemporaryApproveRule__level"
-          v-for="level in [2, 3, 4, 5]"
-          :key="level"
+          v-for="(senderConfig, index) in formModel.senderConfig"
+          :key="index"
         >
           <a-row class="ant-form-model-item">
 
             <a-col v-bind="formItemLayout.labelCol">
               <span class="ant-form-model-item-label">
-                <label title="告警级别">告警级别</label>{{ `L${level}` }}
+                <label title="告警级别">告警级别</label>{{ `L${senderConfig.event_level}` }}
               </span>
             </a-col>
 
@@ -42,28 +42,20 @@
                 </a-col>
 
                 <a-col :span="12">
-                  <a-form-model-item>
-                    <a-checkbox-group
-                      v-decorator="[`${level}send_type`, {
-                        rules: [
-                          {
-                            required: true,
-                            message: '请至少选择一种通知方式'
-                          }
-                        ]
-                      }]"
-                    >
+                  <a-form-model-item
+                    :prop="`senderConfig.${index}.send_type`"
+                    :rules="{ required: true, message: '请至少选择一种通知方式' }"
+                  >
+                    <a-checkbox-group v-model="senderConfig.send_type">
                       <a-checkbox
                         v-for="[value, label] in SEND_TYPE_LIST"
                         :key="value"
                         :value="value"
-                      >
-                        {{ label }}
-                      </a-checkbox>
-
+                      >{{ label }}</a-checkbox>
                     </a-checkbox-group>
                   </a-form-model-item>
                 </a-col>
+
               </a-row>
             </a-col>
 
@@ -80,21 +72,18 @@
             <a-col v-bind="formItemLayout.wrapperCol">
               <a-row>
                 <a-col :span="16">
-                  <a-form-model-item class="fw" v-bind="{ labelCol: { span: 1 }, wrapperCol: { offset:1, span: 22 } }">
+                  <a-form-model-item
+                    class="fw"
+                    :prop="`senderConfig.${index}.userList`"
+                    v-bind="{ labelCol: { span: 1 }, wrapperCol: { offset:1, span: 22 } }"
+                  >
                     <a-select
                       allowClear
                       class="fw"
                       :filterOption="filterOption"
                       mode="tags"
                       showSearch
-                      v-decorator="[`${level}contact`, {
-                        rules: [
-                          {
-                            required: true,
-                            message: '请选择用户'
-                          }
-                        ]
-                      }]"
+                      v-model="senderConfig.userList"
                     >
                       <a-select-option
                         v-for="user in userList"
@@ -106,8 +95,12 @@
                 </a-col>
 
                 <a-col :span="8">
-                  <a-form-model-item label="自动发送" v-bind="{ labelCol: { span: 10 }, wrapperCol: { offset:1, span: 4 } }">
-                    <a-checkbox />
+                  <a-form-model-item
+                    label="自动发送"
+                    :prop="`senderConfig.${index}.auto_send`"
+                    v-bind="{ labelCol: { span: 10 }, wrapperCol: { offset:1, span: 4 } }"
+                  >
+                    <a-checkbox v-model="senderConfig.auto_send" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -120,18 +113,37 @@
         </div>
 
         <template v-if="useEmail">
-          <a-form-model-item label="邮箱主题" v-bind="formItemLayout" prop="message">
-            <TempEditor class="TemporaryApproveRule__email_subject" ref="emailEditor" />
+          <a-form-model-item
+            label="邮箱主题"
+            :prop="`emailTemp.subject`"
+            :rules="{ required: true, message: '请填写邮箱主题' }"
+            v-bind="formItemLayout"
+          >
+            <TempEditor
+              class="TemporaryApproveRule__email_subject"
+              ref="emailEditor"
+              v-model="formModel.emailTemp.subject"
+            />
           </a-form-model-item>
 
-          <a-form-model-item label="邮箱通知模板" v-bind="formItemLayout" prop="message">
-            <TempEditor ref="emailEditor" />
+          <a-form-model-item
+            label="邮箱通知模板"
+            :prop="`emailTemp.subject`"
+            :rules="{ required: true, message: '请填写邮箱通知模板' }"
+            v-bind="formItemLayout"
+          >
+            <TempEditor ref="emailEditor" v-model="formModel.emailTemp.message" />
           </a-form-model-item>
         </template>
 
         <template v-if="useSms">
-          <a-form-model-item label="短信通知模板" v-bind="formItemLayout" prop="">
-            <TempEditor ref="smsEditor" />message
+          <a-form-model-item
+            label="短信通知模板"
+            :prop="`smsTemp.message`"
+            :rules="{ required: true, message: '请填写短信通知模板' }"
+            v-bind="formItemLayout"
+          >
+            <TempEditor ref="smsEditor" v-model="formModel.smsTemp.message" />
           </a-form-model-item>
         </template>
 
@@ -149,7 +161,7 @@ import { filterOption } from '@/utils/util'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS, SEND_TYPE_LIST } from '@/components/Temp/model'
 
 export default {
-  name: 'TemporaryApproveRule',
+  name: 'TempRule',
   mixins: [Schema],
   components: {
     TempEditor
@@ -169,43 +181,35 @@ export default {
         span: 17
       }
     },
+    formModel: {},
+    // L2, L3, L4, L5
+    senderConfig: [{}, {}, {}, {}],
+    tempConfig: [],
     spinning: false,
     submitLoading: false,
     userList: []
   }),
   computed: {
-    ruleForm () {
-      // const { useEmail, useSms } = this
-      // const requiredSnippet = { required: true }
-      // {
-      //   ...requiredSnippet,
-      //   message: '请选择至少一种通知方式'
-      // }
-      // {
-      //   ...requiredSnippet,
-      //   message: '请至少选择一种通知方式'
-      // }
-      // {
-      //   ...requiredSnippet,
-      //   message: '邮箱主题不能为空'
-      // }
-      // {
-      //   ...requiredSnippet,
-      //   message: '模板内容不能为空'
-      // }
-      return {}
-    },
     useEmail () {
-      return true
+      const { senderConfig = [] } = this.formModel
+      return senderConfig
+        .map(({ send_type }) => send_type)
+        .flat()
+        .includes(SEND_TYPE_EMAIL)
     },
     useSms () {
-      return true
+      const { senderConfig = [] } = this.formModel
+      return senderConfig
+        .map(({ send_type }) => send_type)
+        .flat()
+        .includes(SEND_TYPE_SMS)
     }
   },
   methods: {
     filterOption,
     async fetchUserList () {
       try {
+        // TODO: 仅查询当前巡更组下的用户
         const { data: { userList } } = await UserService.find({
           fields: ['staff_name', 'user_id'],
           alias: 'userList'
@@ -216,25 +220,25 @@ export default {
         throw e
       }
     },
-    async open (senderConfig = []) {
+    async open ({ senderConfig = [], tempConfig = [] }) {
       this.show('告警审批规则')
       try {
         this.spinning = true
+        this.senderConfig = senderConfig.map(({ userList, ...rest }) => ({
+          userList: userList.map(({ user_id }) => user_id),
+          ...rest
+        }))
+        const emailTemp = tempConfig.find(({ mode }) => mode === SEND_TYPE_EMAIL) || {}
+        const smsTemp = tempConfig.find(({ mode }) => mode === SEND_TYPE_SMS) || {}
+        this.formModel = {
+          senderConfig: this.senderConfig,
+          emailTemp,
+          smsTemp
+        }
         await this.fetchUserList()
-        await this.$nextTick()
-        senderConfig
-          .filter(({ event_level }) => [2, 3, 4, 5].includes(event_level))
-          .forEach(({ event_level, userList, send_type }) => {
-            this.form.setFieldsValue({
-              [`${event_level}contact`]: userList.map(({ user_id }) => user_id),
-              [`${event_level}send_type`]: send_type
-            })
-          })
       } catch (e) {
         throw e
       } finally {
-        // TODO: TempEditor v-decorator / form-model ?
-        // console.log(this.$refs.emailEditor.$refs)
         this.spinning = false
       }
     },

@@ -30,16 +30,16 @@
 
     </a-modal>
 
-    <TemporaryApproveRule
+    <TempRule
       ref="rule"
-      @updateSenderConfig="onUpdateSenderConfig"
+      @updateConfig="onUpdateConfig"
     />
   </fragment>
 </template>
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import TemporaryApproveRule from './TemporaryApproveRule'
+import TempRule from './modules/TempRule'
 import { PatrolService, TempService } from '@/api-hasura'
 import _ from 'lodash'
 // import { MessageModel } from '@/components/Temp/model'
@@ -49,7 +49,7 @@ export default {
   name: 'ApproveSchema',
   mixins: [Schema],
   components: {
-    TemporaryApproveRule
+    TempRule
   },
   props: {},
   data () {
@@ -83,7 +83,7 @@ export default {
       senderConfig: [],
       spinning: false,
       submitLoading: false,
-      temp: null
+      tempConfig: []
     }
   },
   computed: {
@@ -100,11 +100,13 @@ export default {
   methods: {
     approve (events = []) {
       this.show('审批预览')
-      this.fetchSenderConfig()
+      // this.fetchSenderConfig()
+      this.fetch()
       this.events = events
     },
     editRule () {
-      this.$refs['rule'].open(this.senderConfig)
+      const { senderConfig = [], tempConfig = [] } = this
+      this.$refs['rule'].open({ senderConfig, tempConfig })
     },
     async fetch () {
       try {
@@ -136,17 +138,19 @@ export default {
      */
     async fetchTemp () {
       try {
-        this.temp = await TempService.find()
+        // TODO: 根据任务单类型获取模板：IT / 动环
+        this.tempConfig = await TempService.find()
       } catch (e) {
-        this.temp = null
+        this.tempConfig = null
         throw e
       }
     },
     /**
      * 更新模板规则（可能为临时 / 默认模板）
      */
-    onUpdateSenderConfig ({ senderConfig = [] }) {
+    onUpdateConfig ({ senderConfig = [], tempConfig = [] }) {
       this.senderConfig = senderConfig
+      this.tempConfig = tempConfig
     },
     async send () {
       try {

@@ -6,8 +6,8 @@ export const SEND_TYPE_EMAIL = 'EMAIL'
 export const SEND_TYPE_SMS = 'SMS'
 
 export const SEND_TYPE_LIST = [
-  [SEND_TYPE_EMAIL, '短信'],
-  [SEND_TYPE_SMS, '邮箱']
+  [SEND_TYPE_EMAIL, '邮箱'],
+  [SEND_TYPE_SMS, '短信']
 ]
 
 export const SEND_TYPE_MAPPING = new Map(SEND_TYPE_LIST)
