@@ -11,11 +11,24 @@
     @ok="submit"
   >
     <template slot="footer">
-      修改后仅本次生效
-      保存修改
-      <!-- <a-button @click="editRule" class="fl">告警审批规则</a-button> -->
+
+      <span>生效方式：</span>
+      <a-radio-group v-model="enabledType">
+        <a-radio :value="ENABLED_TYPE_TEMPORARY">仅本次生效</a-radio>
+        <a-tooltip>
+          <span slot="title">修改模板规则仅本次生效，下次使用依然使用默认模板</span>
+          <a-icon type="info-circle" class="TemporaryApproveRule__icon_info" />
+        </a-tooltip>
+        <a-radio :value="ENABLED_TYPE_PERSISTENT">永久生效</a-radio>
+        <a-tooltip>
+          <span slot="title">保存本次修改为默认模板永久生效</span>
+          <a-icon type="info-circle" class="TemporaryApproveRule__icon_info" />
+        </a-tooltip>
+      </a-radio-group>
+
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
+      <a-button @click="submit" :loading="submitLoading" type="primary">保存</a-button>
+
     </template>
 
     <a-spin :spinning="spinning">
@@ -29,22 +42,18 @@
 
             <a-col v-bind="formItemLayout.labelCol">
               <span class="ant-form-model-item-label">
-                <label title="告警级别">告警级别</label>{{ `L${senderConfig.event_level}` }}
+                <label title="告警级别">告警级别 </label>{{ `L${senderConfig.event_level}` }}
               </span>
             </a-col>
 
             <a-col v-bind="formItemLayout.wrapperCol">
               <a-row>
-                <a-col :span="4">
-                  <span class="ant-form-model-item-label">
-                    <label title="通知方式">通知方式</label>
-                  </span>
-                </a-col>
-
-                <a-col :span="12">
+                <a-col :span="16">
                   <a-form-model-item
+                    label="通知方式"
                     :prop="`senderConfig.${index}.send_type`"
                     :rules="{ required: true, message: '请至少选择一种通知方式' }"
+                    :labelCol="{ span: 6 }"
                   >
                     <a-checkbox-group v-model="senderConfig.send_type">
                       <a-checkbox
@@ -120,8 +129,8 @@
             v-bind="formItemLayout"
           >
             <TempEditor
-              class="TemporaryApproveRule__email_subject"
               ref="emailEditor"
+              singleLine
               v-model="formModel.emailTemp.subject"
             />
           </a-form-model-item>
@@ -160,6 +169,9 @@ import { UserService } from '@/api-hasura'
 import { filterOption } from '@/utils/util'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS, SEND_TYPE_LIST } from '@/components/Temp/model'
 
+const ENABLED_TYPE_TEMPORARY = 'temporary'
+const ENABLED_TYPE_PERSISTENT = 'persistent'
+
 export default {
   name: 'TempRule',
   mixins: [Schema],
@@ -167,6 +179,8 @@ export default {
     TempEditor
   },
   data: () => ({
+    ENABLED_TYPE_TEMPORARY,
+    ENABLED_TYPE_PERSISTENT,
     SEND_TYPE_EMAIL,
     SEND_TYPE_SMS,
     SEND_TYPE_LIST,
@@ -181,6 +195,7 @@ export default {
         span: 17
       }
     },
+    enabledType: ENABLED_TYPE_TEMPORARY,
     formModel: {},
     // L2, L3, L4, L5
     senderConfig: [{}, {}, {}, {}],
@@ -222,6 +237,7 @@ export default {
     },
     async open ({ senderConfig = [], tempConfig = [] }) {
       this.show('告警审批规则')
+      this.submit = this.save
       try {
         this.spinning = true
         this.senderConfig = senderConfig.map(({ userList, ...rest }) => ({
@@ -251,10 +267,15 @@ export default {
     save () {
       this.$refs.ruleForm.validate(async isValid => {
         if (!isValid) return
+        // TODO: validator and scroll
         try {
           this.submitLoading = true
-          // TODO: senderConfig 出入参都是一样的格式，可以考虑选用 form-modal 而非 form
-          this.$emit('updateSenderConfig', { senderConfig: [] })
+          if (this.enabledType === ENABLED_TYPE_PERSISTENT) {
+            // TODO: service api
+            // this.$emit('update', {})
+          } else {
+            this.$emit('update', { senderConfig: [] })
+          }
         } catch (e) {
           throw e
         } finally {
@@ -268,18 +289,19 @@ export default {
 
 <style lang="less">
 .TemporaryApproveRule {
-  &__level {
-    // FIXME: 预留 form-model-item help 空间
-    // .ant-form-model-item.ant-row {
-    //   margin: 0;
-    // }
+  &__icon {
+    &_info {
+      margin-right: 8px;
+      margin-left: -4px;
+    }
+  }
 
+  &__level {
     & > .ant-row {
       margin-bottom: 0;
     }
 
     .ant-divider {
-      // margin: 4px 0;
       margin-top: 0;
       margin-bottom: 24px;
     }
@@ -287,20 +309,10 @@ export default {
 
   &__modal {
     .ant-modal-body {
-      // padding-top: 0;
-      // padding-bottom: 0;
       height:500px;
       overflow-y: auto;
     }
   }
 
-  &__email {
-    &_subject {
-      .ProseMirror {
-        // TODO: 禁止换行
-        height: 40px;
-      }
-    }
-  }
 }
 </style>

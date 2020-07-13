@@ -39,7 +39,10 @@ export const templateMock = (template = '') => {
   let str = `${template}`
   const data = {
     [TEMP_KEYWORD_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+    [TEMP_KEYWORD_IP]: '127.0.0.1',
     [TEMP_KEYWORD_DETAIL]: 'cpu温度过高,温度79度',
+    [TEMP_KEYWORD_ENDPOINT]: '串口管理器',
+    [TEMP_KEYWORD_METRIC]: '面板告警状态',
     [TEMP_KEYWORD_LEVEL]: '1'
   }
   Object
@@ -75,7 +78,7 @@ export class MessageModel {
   /**
    * tiptap content object => string
    */
-  static serialize (contentObj = {}) {
+  static serialize (contentObj = {}, singleLine = false) {
     const rootContent = []
     // 根节点按行遍历
     for (const { content = [] } of contentObj.content) {
@@ -90,7 +93,7 @@ export class MessageModel {
   /**
    * string => tiptap content object
    */
-  static deSerialize (contentStr = '') {
+  static deSerialize (contentStr = '', singleLine = false) {
     const { createMentionNode, createTextNode, createParagraphNode } = Tiptap
     const rootContent = []
 

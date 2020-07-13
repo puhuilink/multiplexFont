@@ -1,5 +1,5 @@
 <template>
-  <div class="editor">
+  <div class="editor" :class="{ 'editor__single_line': singleLine }">
     <a-input :value="value" class="input" ref="input" />
     <editor-menu-bar :editor="editor" v-slot="{ commands }">
       <div class="menubar">
@@ -31,6 +31,10 @@ export default {
     EditorMenuBar
   },
   props: {
+    singleLine: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: String,
       default: ''
@@ -46,8 +50,9 @@ export default {
       ],
       content: '',
       onUpdate: ({ getJSON }) => {
-        vm.$emit('input', MessageModel.serialize(getJSON()))
+        vm.$emit('input', MessageModel.serialize(getJSON()), vm.singleLine)
         // TODO: trigger input event and validator
+        // TODO: singleLine 禁止换行
       }
     }),
     insertMention: () => {},
@@ -133,9 +138,16 @@ export default {
 
     &__btn {
       margin: 4px;
+      margin-top: 0;
       // margin-right: 8px;
       // margin-bottom: 4px;
     }
+  }
+}
+
+.editor__single_line {
+  .ProseMirror {
+    height: 32px;
   }
 }
 
