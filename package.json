@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "preinstall": "cnpm i npm-force-resolutions && cnpm run npm-force-resolutions",
+    "preinstall": "npm i npx npm-force-resolutions && npx npm-force-resolutions",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "build:preview": "vue-cli-service build --mode preview",
-    "lint:nofix": "vue-cli-service lint --no-fix"
+    "lint:noFix": "vue-cli-service lint --no-fix"
   },
   "dependencies": {
     "@antv/g6": "3.2.8",
@@ -35,7 +35,9 @@
     "md5": "^2.2.1",
     "moment": "^2.24.0",
     "nprogress": "^0.2.0",
+    "npx": "^10.2.2",
     "perfect-scrollbar": "^1.5.0",
+    "prosemirror-model": "^1.9.1",
     "rxjs": "^6.5.3",
     "string.prototype.replaceall": "^1.0.3",
     "tiptap": "^1.27.1",
