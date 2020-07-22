@@ -28,6 +28,12 @@
     </div>
     <!-- require cdn assets js -->
     <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
+    <!-- version info -->
+    <div style="display: none;">
+      <p> build commit: <%= htmlWebpackPlugin.options.version.commit %></p>
+      <p> build date: <%= htmlWebpackPlugin.options.version.date %></p>
+      <p> build branch: <%= htmlWebpackPlugin.options.version.branch %></p>
+    </div>
     <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
     <% } %>
     <script src="https://cdn.bootcdn.net/ajax/libs/ace/1.4.11/ace.js"></script>
