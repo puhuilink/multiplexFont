@@ -293,6 +293,12 @@ export const asyncRouterMap = [
         meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: [ 'F010' ] },
         children: [
           {
+            path: '/patrol/config',
+            name: 'PatrolConfig',
+            component: () => import('@/views/patrol/config/index'),
+            meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010001' ] }
+          },
+          {
             path: '/patrol/calendar',
             name: 'Calendar',
             component: () => import('@/views/patrol/calendar/TaskCalendar'),
