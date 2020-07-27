@@ -137,3 +137,10 @@ export const insertPlan = function (variables = {}) {
     }
   })
 }
+
+// ------------------ 新巡更模块 ----------------------------------
+
+/**
+ * 告警审批发送（异常项）
+ */
+export const approveSend = async function () {}

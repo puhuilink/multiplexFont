@@ -15,6 +15,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_user_group', primaryKey: 'id' },
   // model
   { schema: 't_metric', primaryKey: 'id' },
+  { schema: 't_model_answer', primaryKey: 'id' },
   { schema: 't_model_endpoint', primaryKey: 'id' },
   { schema: 't_model_endpoint_metric', primaryKey: 'id' },
   { schema: 't_model_host_endpoint', primaryKey: 'id' },
@@ -24,6 +25,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_model_strategy', primaryKey: 'id' },
   // 巡更
   { schema: 't_patrol_answer', primaryKey: 'id' },
+  { schema: 't_patrol_checkpoint', primaryKey: 'id' },
   { schema: 't_patrol_endpoint', primaryKey: 'id' },
   { schema: 't_patrol_event', primaryKey: 'id' },
   { schema: 't_patrol_task_event_history', primaryKey: 'id' },

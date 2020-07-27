@@ -5,7 +5,7 @@
       :data="loadData"
       :showPagination="false"
       rowKey="id"
-      :rowSelection="rowSelection"
+      :rowSelection="hasReviewed ? null : rowSelection"
       :subScroll="scroll"
     />
 
@@ -29,6 +29,11 @@ export default {
     taskId: {
       type: Number,
       required: true
+    },
+    // 已审批过的任务单无法再次审批
+    hasReviewed: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -38,7 +43,7 @@ export default {
           title: '告警级别',
           dataIndex: 'severity',
           sorter: true,
-          width: 180
+          width: 90
         },
         // {
         //   title: '楼层',
@@ -61,14 +66,12 @@ export default {
         {
           title: '设备',
           dataIndex: 'host { alias }',
-          sorter: true,
           width: 180,
           customRender: (__, { host }) => _.get(host, 'alias')
         },
         {
           title: '检查项',
           dataIndex: 'metric { alias }',
-          sorter: true,
           width: 180,
           customRender: (__, { metric }) => _.get(metric, 'alias')
         },
@@ -91,12 +94,12 @@ export default {
           title: '备注',
           dataIndex: 'note',
           tooltip: true,
-          width: 180
+          width: 220
         },
         {
           title: '图片',
           dataIndex: 'tags',
-          width: 180,
+          width: 220,
           customRender: tags => {
             try {
             // eslint-disable-next-line no-eval
@@ -116,6 +119,40 @@ export default {
   computed: {
     scrollY () {
       return 200
+    },
+    rowSelection () {
+      const { selectedRows, selectedRowKeys, selectRow: onChange } = this
+      return {
+        onChange,
+        selectedRows,
+        selectedRowKeys,
+        getCheckboxProps: record => ({
+          props: {
+            // TODO: 确定常量值
+            disabled: record.status === '已发送'
+          }
+        })
+      }
+    }
+  },
+  watch: {
+    hasReviewed (hasReviewed) {
+      // 任务单已审批，则之前选中的异常项不能进行审批
+      if (hasReviewed) {
+        this.$emit('selectSubRow', {
+          selectedRows: [],
+          taskId: this.taskId
+        })
+      }
+    },
+    selectedRows () {
+      const selectedRows = this.selectedRows.map(
+        selectedRow => _.mapValues(selectedRow, value => _.get(value, 'alias', value))
+      )
+      this.$emit('selectSubRow', {
+        selectedRows: _.cloneDeep(selectedRows),
+        taskId: this.taskId
+      })
     }
   },
   methods: {
@@ -126,7 +163,8 @@ export default {
         fields: _.uniq([
           'id',
           ...this.columns.map(({ dataIndex }) => dataIndex),
-          'answer { alias format type }'
+          'answer { alias format type }',
+          'status'
         ]),
         ...parameter,
         alias: 'data'

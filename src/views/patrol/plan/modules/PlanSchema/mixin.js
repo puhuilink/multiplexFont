@@ -6,7 +6,7 @@ export default {
     }
   },
   computed: {
-    value: {
+    _value: {
       get () {
         return this.plan
       },

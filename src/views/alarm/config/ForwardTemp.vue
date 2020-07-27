@@ -70,7 +70,7 @@ import { AlarmTempService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import ForwardTempSchema from './modules/ForwardTempSchema/index'
-import { modeTypeMapping, allModeTypeMapping } from './typing'
+import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from './typing'
 
 export default {
   name: 'ForwardTemp',
@@ -81,7 +81,7 @@ export default {
   props: {},
   data: () => ({
     allMode: Object.freeze(
-      Object.fromEntries(allModeTypeMapping)
+      Object.fromEntries(ALL_SEND_TYPE_MAPPING)
     ),
     columns: Object.freeze([
       {
@@ -113,7 +113,7 @@ export default {
         dataIndex: 'mode',
         width: 90,
         sorter: true,
-        customRender: mode => modeTypeMapping.get(mode)
+        customRender: mode => SEND_TYPE_MAPPING.get(mode)
       },
       {
         title: '更新时间',

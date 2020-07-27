@@ -4,13 +4,12 @@
       <CTable
         :columns="columns"
         :data="loadData"
+        :expandedRowKeys="expandedRowKeys"
         ref="table"
         rowKey="id"
-        :rowSelection="null"
-        :scroll="scroll"
-        @expand="onExpandSubTable"
+        :rowSelection="rowSelection"
+        @expandedRowsChange="expandedRowsChange"
       >
-
         <!-- / 操作区域 -->
         <template #query>
           <a-form layout="inline" class="form">
@@ -18,11 +17,34 @@
               <a-row>
                 <a-col :md="12" :sm="24">
                   <a-form-item
-                    label="交接人员姓名"
+                    label="审批状态"
                     v-bind="formItemLayout"
                     class="fw"
                   >
-                    <a-input allowClear v-model.trim="queryParams.user_id" />
+                    <a-select allowClear v-model="queryParams.review">
+                      <a-select-option
+                        v-for="[value, label] in ALL_TASK_REVIEW_LIST"
+                        :key="value"
+                        :value="value"
+                      >{{ label }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="12" :sm="24">
+                  <a-form-item
+                    label="日期范围"
+                    v-bind="formItemLayout"
+                    class="fw"
+                  >
+                    <a-range-picker
+                      allowClear
+                      class="fw"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      :placeholder="['开始时间', '结束时间']"
+                      :showTime="{ format: 'HH:mm:ss' }"
+                      v-model="queryParams.create_time"
+                    />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -38,12 +60,18 @@
 
         <!-- / 操作区域 -->
         <template #operation>
-          <a-button @click="onApprove" :disabled="!hasSelectedOne">审批</a-button>
+          <a-button @click="onApprove" :disabled="!hasSelectedOneTask">审批</a-button>
+          <a-button @click="onBatchApprove" :disabled="!hasSelected">置为已审批</a-button>
         </template>
 
         <!-- / 子表：告警条目 -->
-        <template v-slot:expandedRowRender="{ id, hasExpanded }">
-          <EventList :taskId="id" v-if="hasExpanded" />
+        <template v-slot:expandedRowRender="{ id, hasExpanded, review }">
+          <EventList
+            :taskId="id"
+            v-show="expandedRowKeys.includes(id)"
+            :hasReviewed="review === TASK_REVIEW_ACCOMPLISHED"
+            @selectSubRow="onSelectSubRow"
+          />
         </template>
 
       </CTable>
@@ -64,6 +92,7 @@ import _ from 'lodash'
 import ApproveSchema from './modules/ApproveSchema/index'
 import EventList from './modules/EventList'
 import moment from 'moment'
+import { TASK_REVIEW_ACCOMPLISHED, TASK_REVIEW_MAPPING, ALL_TASK_REVIEW_LIST } from '../typing'
 
 export default {
   name: 'AlarmApprove',
@@ -74,6 +103,8 @@ export default {
     EventList
   },
   data: () => ({
+    ALL_TASK_REVIEW_LIST,
+    TASK_REVIEW_ACCOMPLISHED,
     columns: Object.freeze([
       {
         title: '任务单号',
@@ -85,7 +116,6 @@ export default {
         title: '巡更区域',
         dataIndex: 'zone { alias }',
         sorter: true,
-        width: 180,
         customRender: (__, { zone }) => _.get(zone, 'alias')
       },
       {
@@ -97,7 +127,6 @@ export default {
       {
         title: '巡更组',
         dataIndex: 'group { group_name }',
-        sorter: true,
         width: 180,
         customRender: (__, { group }) => _.get(group, 'group_name')
       },
@@ -112,7 +141,8 @@ export default {
         title: '审批状态',
         dataIndex: 'review',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: review => TASK_REVIEW_MAPPING.get(review)
       },
       {
         title: '巡更人员',
@@ -123,22 +153,43 @@ export default {
       {
         title: '异常数量',
         dataIndex: 'events { id }',
-        sorter: true,
         width: 180,
         customRender: (_events, { events }) => events.length
       }
-    ])
+    ]),
+    queryParams: {
+      review: '',
+      create_time: []
+    },
+    selectedEvents: {}
   }),
   computed: {
-    subScroll () {
+    // 一次只允许审批一个任务单下的多条告警
+    hasSelectedOneTask () {
+      return this.selectedTaskList.length === 1
+    },
+    rowSelection () {
+      const { selectedRows, selectedRowKeys, selectRow: onChange } = this
       return {
-        x: _.sum(this.subColumns.map(e => e.width || 60)),
-        y: 200
+        onChange,
+        selectedRows,
+        selectedRowKeys,
+        getCheckboxProps: ({ review }) => ({
+          props: {
+            disabled: review === TASK_REVIEW_ACCOMPLISHED
+          }
+        })
       }
+    },
+    selectedTaskList () {
+      return Object
+        .entries(this.selectedEvents)
+        .filter(([taskId, selectedEvents]) => selectedEvents.length)
     }
   },
   methods: {
     loadData (parameter) {
+      // TODO: 重置 expandedRowKeys，可以在 CTable 组件对 dataSource 的 key 进行判断
       return PatrolService.eventTaskFind({
         where: {
           ...generateQuery(this.queryParams)
@@ -148,13 +199,38 @@ export default {
         alias: 'data'
       }).then(r => r.data)
     },
+    /**
+     * 详细审批（发送异常数据后修改任务单状态）
+     */
     onApprove () {
-      const [record] = this.selectedRowKeys
-      this.$refs['schema'].approve(record)
+      const [selectedTask] = this.selectedTaskList
+      const [, events] = selectedTask
+      this.$refs['schema'].approve(events)
     },
-    onExpandSubTable (expand, record) {
-      if (expand) {
-        record.hasExpanded = true
+    /**
+     * 快速批量审批（直接修改任务单状态）
+     */
+    async onBatchApprove () {
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认审批选中任务？',
+        onOk: () => PatrolService
+          .eventTaskBatchApprove(this.selectedRowKeys)
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: '审批成功'
+            })
+            this.query(false)
+          })
+          .catch(this.$notifyError)
+      })
+    },
+    onSelectSubRow ({ selectedRows = [], taskId }) {
+      if (_.isEmpty(selectedRows)) {
+        this.$delete(this.selectedEvents, `${taskId}`)
+      } else {
+        this.$set(this.selectedEvents, `${taskId}`, selectedRows)
       }
     }
   }

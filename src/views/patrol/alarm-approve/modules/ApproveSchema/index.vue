@@ -16,62 +16,166 @@
       <template slot="footer">
         <a-button @click="editRule" class="fl">告警审批规则</a-button>
         <a-button @click="cancel">取消</a-button>
-        <a-button @click="submit" type="primary">发送</a-button>
+        <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
       </template>
 
-      <a-form :form="form" layout="vertical">
-        <a-form-item
-          label="审批意见"
-          v-bind="formItemLayout"
-        >
-          <a-textarea
-            :autoSize="{ minRows: 4, maxRows: 4 }"
-            v-decorator="[
-              'note',
-              {
-                initialValue: '',
-                rules: [
-                  {
-                    max: 128,
-                    message: '最多输入128个字符'
-                  }
-                ]
-              }
-            ]"
-          />
-        </a-form-item>
-      </a-form>
+      <a-spin :spinning="spinning">
+        <ATable
+          :columns="columns"
+          :dataSource="events"
+          :pagination="false"
+          rowKey="id"
+        />
+      </a-spin>
+
     </a-modal>
 
-    <TemporaryApproveRule ref="rule" />
+    <TempRule
+      ref="rule"
+      @updateConfig="onUpdateConfig"
+    />
   </fragment>
 </template>
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import TemporaryApproveRule from './TemporaryApproveRule'
+import TempRule from './modules/TempRule'
+import { PatrolService, TempService } from '@/api-hasura'
+import _ from 'lodash'
+// import { MessageModel } from '@/components/Temp/model'
+import { approveSend } from '@/api/controller/patrol'
 
 export default {
   name: 'ApproveSchema',
   mixins: [Schema],
   components: {
-    TemporaryApproveRule
+    TempRule
   },
   props: {},
-  data: () => ({
-  }),
-  computed: {},
+  data () {
+    return {
+      columns: Object.freeze([
+        {
+          title: '通知等级',
+          dataIndex: 'severity',
+          width: 90,
+          customRender: severity => severity ? `L${severity}` : ''
+        },
+        {
+          title: '通知用户',
+          width: 90,
+          customRender: severity => this.severityUserMapping.get(severity)
+        },
+        // {
+        //   title: '通知方式',
+        //   dataIndex: 'send_type',
+        //   width: 180,
+        //   customRender: sendType => sendType.map(type => SEND_TYPE_MAPPING.get(type)).join('、')
+        // },
+        {
+          title: '通知内容',
+          width: 180,
+          customRender: () => '模板内容'
+        }
+      ]),
+      // 告警具体条目
+      events: [],
+      senderConfig: [],
+      spinning: false,
+      submitLoading: false,
+      tempConfig: []
+    }
+  },
+  computed: {
+    // 通知等级与通知用户映射关系
+    severityUserMapping () {
+      return new Map([
+        ...this.senderConfig.map(({ event_level, userList }) => [
+          event_level, userList.map(({ staff_name }) => staff_name).join('、')
+        ])
+      ])
+      // return mapping
+    }
+  },
   methods: {
-    approve () {
-      this.show('告警审批')
+    approve (events = []) {
+      this.show('审批预览')
+      // this.fetchSenderConfig()
+      this.fetch()
+      this.events = events
     },
     editRule () {
-      this.$refs['rule'].open()
+      const { senderConfig = [], tempConfig = [] } = this
+      this.$refs['rule'].open({ senderConfig, tempConfig })
+    },
+    async fetch () {
+      try {
+        this.spinning = true
+        await Promise.all([
+          this.fetchSenderConfig()
+          // this.fetchTemp()
+        ])
+      } catch (e) {
+        throw e
+      } finally {
+        this.spinning = false
+      }
+    },
+    /**
+     * 获取发送配置
+     */
+    async fetchSenderConfig () {
+      try {
+        const senderConfig = await PatrolService.senderConfig()
+        this.senderConfig = _.orderBy(senderConfig, ['event_level'], ['asc'])
+      } catch (e) {
+        this.senderConfig = []
+        throw e
+      }
+    },
+    /**
+     * 获取发送模板
+     */
+    async fetchTemp () {
+      try {
+        // TODO: 根据任务单类型获取模板：IT / 动环
+        this.tempConfig = await TempService.find()
+      } catch (e) {
+        this.tempConfig = null
+        throw e
+      }
+    },
+    /**
+     * 更新模板规则（可能为临时 / 默认模板）
+     */
+    onUpdateConfig ({ senderConfig = [], tempConfig = [] }) {
+      this.senderConfig = senderConfig
+      this.tempConfig = tempConfig
+    },
+    async send () {
+      try {
+        this.submitLoading = true
+        await approveSend()
+      } catch (e) {
+        throw e
+      } finally {
+        this.submitLoading = false
+      }
     }
+  },
+  created () {
+    this.approve([])
   }
 }
 </script>
 
 <style lang="less">
-
+.ApproveSchema {
+  &__modal {
+    .ant-modal-body {
+      height: 500px;
+      overflow-y: auto;
+    }
+  }
+}
 </style>

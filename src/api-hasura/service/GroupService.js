@@ -15,6 +15,21 @@ class GroupService extends BaseService {
     return res
   }
 
+  // FIXME: 目前未确定数据表具体标识字段
+  static async patrolFind ({ where = {}, ...rest } = {}) {
+    return query(
+      GroupDao.find({
+        where: {
+          ...where,
+          ascription: {
+            _in: ['MachineRoom-XM-DH', 'MachineRoom-XM-IT']
+          }
+        },
+        ...rest
+      })
+    )
+  }
+
   static async add (group = {}) {
     const { group_id: view_name } = group
     await mutate(
