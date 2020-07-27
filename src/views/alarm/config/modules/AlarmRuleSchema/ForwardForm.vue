@@ -85,8 +85,8 @@ import Mixin from './Mixin'
 import { AlarmTempService, UserService } from '@/api-hasura'
 import { filterOption, scrollTo } from '@/utils/util'
 import {
-  FORWARD_MODEL_EMAIL,
-  FORWARD_MODEL_SMS,
+  SEND_TYPE_EMAIL,
+  SEND_TYPE_SMS,
   SendModel
 } from './model'
 import _ from 'lodash'
@@ -99,8 +99,8 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    FORWARD_MODEL_EMAIL,
-    FORWARD_MODEL_SMS,
+    SEND_TYPE_EMAIL,
+    SEND_TYPE_SMS,
     forwardTempList: [],
     forwardTempListLoading: false,
     nestedFormItemLayout: {
@@ -115,10 +115,10 @@ export default {
       return _.pick(this.formModel, ['host_id', 'endpoint_id', 'metric_id'])
     },
     emailTempList () {
-      return this.forwardTempList.filter(({ mode }) => mode === FORWARD_MODEL_EMAIL)
+      return this.forwardTempList.filter(({ mode }) => mode === SEND_TYPE_EMAIL)
     },
     smsTempList () {
-      return this.forwardTempList.filter(({ mode }) => mode === FORWARD_MODEL_SMS)
+      return this.forwardTempList.filter(({ mode }) => mode === SEND_TYPE_SMS)
     },
     onlyOneSendConfig () {
       const { sendList = [] } = this.formModel

@@ -14,15 +14,16 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡更区域"
+                  label="巡更组"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.ascription">
+                  <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="[code, name] in ASCRIPTION_LIST"
-                      :key="code"
-                    >{{ name }}</a-select-option>
+                      v-for="{ group_id, group_name } in patrolGroupList"
+                      :key="group_id"
+                      :value="group_id"
+                    >{{ group_name }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -37,9 +38,9 @@
       </template>
 
       <template #operation>
-        <a-button @click="add">新增</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="edit">编辑</a-button>
-        <a-button :disabled="!hasSelected" @click="batchDelete">删除</a-button>
+        <a-button @click="onAdd">新增</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="onEdit">编辑</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchDelete">删除</a-button>
       </template>
 
     </CTable>
@@ -48,23 +49,29 @@
       ref="schema"
       @addSuccess="query"
       @editSuccess="query"
-    ></PlanSchema>
+    />
   </div>
 </template>
 
 <script>
 import PlanSchema from './modules/PlanSchema/index'
-import { deletePlan, getUserGroupList } from '@/api/controller/patrol'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { ASCRIPTION_LIST } from '../typing'
+import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING } from '../typing'
 import moment from 'moment'
 import { PatrolService } from '@/api-hasura'
+import commonMixin from './commonMixin'
 import _ from 'lodash'
+
+const timeColumnSnippet = {
+  width: 130,
+  sorter: true,
+  customRender: time => moment(time).format('YYYY-MM-DD HH:mm:ss')
+}
 
 export default {
   name: 'Plan',
-  mixins: [Confirm, List],
+  mixins: [Confirm, List, commonMixin],
   components: {
     PlanSchema
   },
@@ -74,48 +81,46 @@ export default {
       {
         title: '计划名称',
         dataIndex: 'alias',
-        width: 150,
+        width: 120,
         sorter: true
       },
-      // {
-      //   title: '巡更组',
-      //   dataIndex: 'ascription',
-      //   width: 150,
-      //   sorter: true,
-      //   customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
-      // },
+      {
+        title: '巡更组',
+        dataIndex: 'group { group_name }',
+        sorter: true,
+        width: 160,
+        customRender: (__, { group }) => _.get(group, 'group_name')
+      },
       {
         title: '新建时间',
         dataIndex: 'create_time',
-        width: 150,
-        sorter: true,
-        customRender: createTime => moment(createTime).format('YYYY-MM-DD HH:mm:ss')
+        ...timeColumnSnippet
       },
       {
         title: '循环周期',
         dataIndex: 'schedule',
-        width: 150,
-        sorter: true
+        width: 120
       },
       {
         title: '生效时间',
-        dataIndex: 'interval',
-        width: 150,
-        sorter: true
+        dataIndex: 'effect_time',
+        width: 130,
+        sorter: true,
+        ...timeColumnSnippet
       },
-      // {
-      //   title: '失效时间',
-      //   dataIndex: 'interval',
-      //   width: 150,
-      //   sorter: true
-      // }
+      {
+        title: '失效时间',
+        dataIndex: 'expire_time',
+        width: 130,
+        sorter: true,
+        ...timeColumnSnippet
+      },
       {
         title: '是否启用',
         dataIndex: 'status',
-        width: 150,
+        width: 120,
         sorter: true,
-        // TODO: 禁用的字段？
-        customRender: status => status === 'enabled' ? '启用' : '禁用'
+        customRender: status => PLAN_STATUS_MAPPING.get(status)
       }
     ],
     userGroupList: []
@@ -132,31 +137,26 @@ export default {
         alias: 'data'
       }).then(r => r.data)
     },
-    async getGroupList () {
-      await getUserGroupList().then(r => {
-        this.userGroupList = r.data.data
-      })
-    },
-    add () {
+    onAdd () {
       this.$refs['schema'].add()
     },
-    edit () {
-      const [id] = this.selectedRowKeys
-      this.$refs['schema'].edit(id)
-    },
-    async batchDelete () {
+    async onBatchDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => deletePlan({ IDs: this.selectedRowKeys })
+        onOk: () => PatrolService.planBatchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)
           })
           .catch(this.$notifyError)
       })
+    },
+    onEdit () {
+      const [id] = this.selectedRowKeys
+      this.$refs['schema'].edit(id)
     }
   },
   created () {
-    this.getGroupList()
+    this.fetchPatrolGroupList()
   }
 }
 </script>

@@ -91,7 +91,7 @@
       @editSuccess="query(false)"
     />
 
-    <AuthScheme
+    <AuthSchema
       ref="auth"
       @success="query(false)"
     />
@@ -105,7 +105,7 @@
 
 <script>
 import UserSchema from './UserSchema'
-import AuthScheme from '@/components/Auth/AuthSchema'
+import AuthSchema from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './UserGroupSchema'
 import { UserService } from '@/api-hasura'
 import { Confirm, List } from '@/components/Mixins'
@@ -116,7 +116,7 @@ export default {
   mixins: [Confirm, List],
   components: {
     UserSchema,
-    AuthScheme,
+    AuthSchema,
     UserGroupSchema
   },
   data: () => ({

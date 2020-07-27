@@ -2,11 +2,13 @@ const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const childProcess = require('child_process')
 
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
+// const VERSION = 'test'
 const isProd = process.env.NODE_ENV === 'production'
 
 const {
@@ -81,6 +83,11 @@ const vueConfig = {
     if (isProd) {
       config.plugin('html').tap(args => {
         args[0].cdn = assetsCDN
+        args[0].version = {
+          commit: childProcess.execSync('git rev-parse HEAD', { encoding: 'utf8' }),
+          date: new Date(childProcess.execSync(`git show -s --format=%cd`, { encoding: 'utf8' })),
+          branch: childProcess.execSync('git symbolic-ref --short HEAD', { encoding: 'utf8' })
+        }
         return args
       })
     }

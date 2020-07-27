@@ -67,9 +67,9 @@
               <a-button
                 class="getCaptcha"
                 tabindex="-1"
-                :disabled="state.smsSendBtn"
+                :disabled="state.captchaDisabled"
                 @click.stop.prevent="getCaptcha"
-                v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"
+                v-text="!state.captchaDisabled && '获取验证码' || (state.time+' s')"
               ></a-button>
             </a-col>
           </a-row>
@@ -109,30 +109,30 @@
         </a-input>
       </a-form-item>
 
-      <!--      <a-form-item>-->
-      <!--        <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">-->
-      <!--          <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
-      <!--        </a-input>-->
-      <!--      </a-form-item>-->
+      <a-form-item>
+        <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
+          <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+        </a-input>
+      </a-form-item>
 
-      <!--      <a-row :gutter="16">-->
-      <!--        <a-col class="gutter-row" :span="16">-->
-      <!--          <a-form-item>-->
-      <!--            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">-->
-      <!--              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
-      <!--            </a-input>-->
-      <!--          </a-form-item>-->
-      <!--        </a-col>-->
-      <!--        <a-col class="gutter-row" :span="8">-->
-      <!--          <a-button-->
-      <!--            class="getCaptcha"-->
-      <!--            tabindex="-1"-->
-      <!--            :disabled="state.smsSendBtn"-->
-      <!--            @click.stop.prevent="getCaptcha"-->
-      <!--            v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"-->
-      <!--          ></a-button>-->
-      <!--        </a-col>-->
-      <!--      </a-row>-->
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="16">
+          <a-form-item>
+            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
+              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+            </a-input>
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="8">
+          <a-button
+            class="getCaptcha"
+            tabindex="-1"
+            :loading="state.captchaLoading"
+            :disabled="state.captchaDisabled"
+            @click.stop.prevent="getCaptcha"
+          >{{ captchaText }}</a-button>
+        </a-col>
+      </a-row>
 
       <!-- <a-form-item>
         <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
@@ -196,8 +196,21 @@ export default {
         time: 60,
         loginBtn: false,
         // login type: 0 email, 1 userId, 2 telephone
+        captchaLoading: false,
         loginType: 0,
-        smsSendBtn: false
+        captchaDisabled: false
+      }
+    }
+  },
+  computed: {
+    captchaText () {
+      const { captchaLoading, captchaDisabled, time } = this.state
+      if (captchaLoading) {
+        return ''
+      } else if (captchaDisabled) {
+        return `${time}s`
+      } else {
+        return '获取验证码'
       }
     }
   },
@@ -345,25 +358,29 @@ export default {
             padding: CryptoJS.pad.Pkcs7
           }).toString()
 
-          state.smsSendBtn = true
-          const interval = window.setInterval(() => {
-            if (state.time-- <= 0) {
-              state.time = 60
-              state.smsSendBtn = false
-              window.clearInterval(interval)
-            }
-          }, 1000)
-
+          state.captchaDisabled = true
+          let interval
+          this.state.captchaLoading = true
           sendCaptcha(securityMessage)
             .then(() => {
+              interval = window.setInterval(() => {
+                if (state.time-- <= 0) {
+                  state.time = 60
+                  state.captchaDisabled = false
+                  window.clearInterval(interval)
+                }
+              }, 1000)
               this.$message.success('短信已发送！')
             })
             .catch(e => {
               this.$message.error('短信发送异常，请稍后尝试!')
               state.time = 60
-              state.smsSendBtn = false
+              state.captchaDisabled = false
               window.clearInterval(interval)
               throw e
+            })
+            .finally(() => {
+              this.state.captchaLoading = false
             })
         }
       })

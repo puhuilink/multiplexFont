@@ -60,8 +60,8 @@
               <div class="ViewDisplay__view-item-info">
                 <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                 <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ creator }}</span>
+                  <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
+                  <span><a-icon type="user" />{{ viewConfig.creator }}</span>
                 </p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default {
   },
   filters: {
     img (img) {
-      return img ? `http://10.1.13.19:48080/${img}` : previewImg
+      return img ? `http://vicube.ccccltd.cn:48080//${img}` : previewImg
     }
   },
   data () {
