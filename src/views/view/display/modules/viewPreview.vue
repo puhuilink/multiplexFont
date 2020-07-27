@@ -69,6 +69,11 @@
           <a-icon :type="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" @click="fullscreen" />
         </a-tooltip>
 
+        <!-- TODO: 仅编辑模式下可见 -->
+        <a-tooltip placement="top" title="生成并上传缩略图">
+          <a-icon type="camera" @click="makeThumbnail" />
+        </a-tooltip>
+
         <a-tooltip placement="top" title="关闭">
           <a-icon type="close-circle" @click="close" />
         </a-tooltip>
@@ -85,6 +90,7 @@ import _ from 'lodash'
 import { ViewDesignService } from '@/api-hasura'
 import Renderer from '@/components/Renderer'
 import Timeout from 'await-timeout'
+import html2canvas from 'html2canvas'
 
 export default {
   name: 'ViewPreview',
@@ -120,7 +126,8 @@ export default {
     isPolling: false,
     index: 0,
     view: null,
-    timer: null
+    timer: null,
+    thumbnailLoading: false
   }),
   computed: {
     backAvailable () {
@@ -233,6 +240,35 @@ export default {
     preView () {
       this.index -= 1
       this.getIndexView()
+    },
+    async makeThumbnail () {
+      try {
+        // TODO: loading
+        this.thumbnailLoading = true
+        const canvas = await html2canvas(this.$el)
+        // Object.assign(canvas.style, {
+        //   position: 'fixed',
+        //   top: 0,
+        //   right: 0,
+        //   bottom: 0,
+        //   left: 0,
+        //   'z-index': 999
+        // })
+        // document.body.appendChild(canvas)
+        // console.dir(canvas)
+        // console.log(
+        //   canvas.toDataURL('image/jpeg', 0.1)
+        // )
+        canvas.toBlob(blob => {
+          const form = new FormData()
+          form.append('image', blob)
+          // api upload
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.thumbnailLoading = false
+      }
     },
     /**
      * 下一个视图

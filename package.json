@@ -31,6 +31,7 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.1",
     "graphql.macro": "^1.4.2",
+    "html2canvas": "^1.0.0-rc.5",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
