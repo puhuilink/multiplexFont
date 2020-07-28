@@ -31,6 +31,9 @@ export default {
         this.loading = false
       }
     }
+  },
+  created () {
+    this.fetch()
   }
 }
 </script>

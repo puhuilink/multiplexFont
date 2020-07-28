@@ -1,6 +1,7 @@
 <template>
   <div class="ComboSelect">
     <a-form>
+      <!-- / Host -->
       <a-form-item
         label="Host"
         v-bind="formItemLayout"
@@ -8,43 +9,56 @@
       >
         <CmdbHostSelect
           v-bind="selectProps"
-          :value="formData.selectedInstance"
         />
       </a-form-item>
-      <!-- <a-form-item
+
+      <!-- / Endpoint -->
+      <a-form-item
+        label="Endpoint"
+        v-if="hasKpi"
+        v-bind="formItemLayout"
+        required
+      >
+        <CmdbEndpointSelect
+          v-bind="selectProps"
+        />
+      </a-form-item>
+
+      <!-- / Metric -->
+      <a-form-item
         label="Metric"
         v-if="hasKpi"
         v-bind="formItemLayout"
         required
       >
-        <KpiSelect
-          :toolTip="toolTip"
-          :multiple="multiple"
-          v-model="formData.selectedKpi"
-          :nodeType="formData.model"
-          placeholder
+        <CmdbMetricSelect
+          v-bind="selectProps"
         />
-      </a-form-item> -->
+      </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
 import CmdbHostSelect from './CmdbHostSelect'
+import CmdbEndpointSelect from './CmdbEndpointSelect'
+import CmdbMetricSelect from './CmdbMetricSelect'
 import _ from 'lodash'
 
 // hack field name for old api
 const formData = {
+  model: '',
   selectedInstance: [],
-  selectedKpi: [],
-  alarmType: []
+  selectedKpi: []
 }
 
 export default {
   name: 'ComboSelect',
   mixins: [],
   components: {
-    CmdbHostSelect
+    CmdbHostSelect,
+    CmdbEndpointSelect,
+    CmdbMetricSelect
   },
   props: {
     value: {

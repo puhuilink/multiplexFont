@@ -38,7 +38,6 @@ export default {
     }
   },
   methods: {
-    async fetch () {},
     renderSelect () {
       return (
         <a-select {...this.selectProps}>
@@ -59,9 +58,6 @@ export default {
         slot: 'title'
       })
     }
-  },
-  created () {
-    this.fetch()
   },
   render (h) {
     const { renderSelect, toolTip, tooltipTitle } = this

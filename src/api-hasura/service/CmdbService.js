@@ -2,8 +2,11 @@ import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 // eslint-disable-next-line no-unused-vars
-import { ModelHostDao, CmdbHostDao } from '../dao'
-
+import {
+  ModelHostDao,
+  CmdbHostDao, CmdbEndpointMetricDao, CmdbHostEndpointDao,
+  MetricDao
+} from '../dao'
 class CmdbService extends BaseService {
   // FIXME: host 与 endpoint 并非一定是树形结构
   static async modelTree () {
@@ -72,6 +75,47 @@ class CmdbService extends BaseService {
     return query(
       CmdbHostDao.find(argus)
     )
+  }
+
+  static async endpointFind (argus = {}) {
+    return query(
+      CmdbHostEndpointDao.find(argus)
+    )
+  }
+
+  static async metricFind (argus = {}) {
+    return query(
+      CmdbEndpointMetricDao.find(argus)
+    )
+  }
+
+  static async latestMetric ({ host_id, endpoint_id, metric_id }) {
+    const { data: { metricList } } = await query(
+      MetricDao.find({
+        where: { host_id, endpoint_id, metric_id },
+        fields: [
+          `metric_value
+          metric_value_str
+          upload_time
+          host {
+            alias
+          }
+          endpoint {
+            modelEndpoint {
+              alias
+            }
+          }
+          metric {
+            modelMetric {
+              alias
+            }
+          }`
+        ],
+        limit: 1,
+        alias: 'metricList'
+      })
+    )
+    console.log(metricList)
   }
 }
 
