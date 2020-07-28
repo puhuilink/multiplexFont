@@ -1,6 +1,6 @@
 <template>
   <div class="AlarmMonitor">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange">
+    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolved">
       <a-tab-pane :key="0" tab="未解决"></a-tab-pane>
       <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
     </a-tabs>
@@ -14,6 +14,7 @@
       rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      v-bind="cTableProps"
     >
 
       <!-- / 查询区域 -->
@@ -92,8 +93,8 @@
 
       <!-- / 操作区域 -->
       <div class="operation" slot="operation">
-        <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button @click="onSolve" :disabled="!hasSelectedOne" v-show="tabIndex !== 1">解决</a-button>
+        <a-button v-bind="btnProps" @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
+        <a-button v-bind="btnProps" @click="onSolve" :disabled="!hasSelectedOne" v-show="tabIndex !== 1">解决</a-button>
         <a-popover title="表格列设置">
           <a-list slot="content" item-layout="horizontal" :data-source="columns">
             <a-list-item slot="renderItem" slot-scope="column">
@@ -136,7 +137,24 @@ export default {
     AlarmDetail,
     AlarmSolve
   },
-  props: {},
+  props: {
+    cTableProps: {
+      type: Object,
+      default: () => ({})
+    },
+    columnAlign: {
+      type: String,
+      default: 'left'
+    },
+    btnProps: {
+      type: Object,
+      default: () => ({})
+    },
+    showSolved: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     tabIndex: 0,
     columns: [
@@ -214,7 +232,10 @@ export default {
   }),
   computed: {
     visibleColumns () {
-      return this.columns.filter(({ show }) => show)
+      const { columnAlign: align, columns } = this
+      return columns
+        .filter(({ show }) => show)
+        .map((column) => Object.assign({}, column, { align }))
     }
   },
   methods: {
