@@ -77,7 +77,8 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import { ComboSelect } from '@/components/Common'
+// import { ComboSelect } from '@/components/Common'
+import { ComboSelect } from '@/components/Cmdb'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
 

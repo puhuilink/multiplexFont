@@ -67,6 +67,12 @@ class CmdbService extends BaseService {
     }))
     return treeData
   }
+
+  static async hostFind (argus = {}) {
+    return query(
+      CmdbHostDao.find(argus)
+    )
+  }
 }
 
 export {
