@@ -1,5 +1,6 @@
 import api from './index'
 import { axios } from '@/utils/request'
+import Timeout from 'await-timeout'
 
 /**
  * login func
@@ -46,13 +47,14 @@ export function getCurrentUserNav (token) {
 }
 
 export function logout () {
-  return axios({
-    url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
+  return Timeout.set()
+  // return axios({
+  //   url: '/auth/logout',
+  //   method: 'post',
+  //   headers: {
+  //     'Content-Type': 'application/json;charset=UTF-8'
+  //   }
+  // })
 }
 
 /**

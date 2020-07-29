@@ -109,13 +109,13 @@
         </a-input>
       </a-form-item>
 
-      <!-- <a-form-item>
+      <a-form-item>
         <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
           <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
         </a-input>
-      </a-form-item> -->
+      </a-form-item>
 
-      <!-- <a-row :gutter="16">
+      <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
           <a-form-item>
             <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
@@ -132,7 +132,7 @@
             @click.stop.prevent="getCaptcha"
           >{{ captchaText }}</a-button>
         </a-col>
-      </a-row> -->
+      </a-row>
 
       <!-- <a-form-item>
         <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
@@ -177,6 +177,7 @@ import _ from 'lodash'
 const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
 export default {
+  name: 'Login',
   components: {
     TwoStepCaptcha
   },
@@ -303,8 +304,15 @@ export default {
           // eslint-disable-next-line no-undef
           const loginParams = { ...values }
           // Todo 暂时注释验证码功能以方便开发
-          // if (loginParams.captcha === this.captcha) {
-          delete loginParams.userId
+          if (loginParams.captcha === this.captcha) {
+            Reflect.deleteProperty(values, 'captcha')
+          } else {
+            this.$message.error('验证码错误!')
+            state.loginBtn = false
+            return
+          }
+          Reflect.deleteProperty(loginParams, 'userId')
+          // delete loginParams.userId
           loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
           loginParams.pwd = values.pwd
           Login(loginParams)
