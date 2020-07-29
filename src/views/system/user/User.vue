@@ -73,6 +73,7 @@
       </template>
 
       <!-- / 操作区域 -->
+      <!-- FIXME: 是否允许操作当前账号 -->
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增</a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
@@ -110,6 +111,8 @@ import UserGroupSchema from './UserGroupSchema'
 import { UserService } from '@/api-hasura'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
+import { setInitialPwd } from '@/api/controller/User'
+import _ from 'lodash'
 
 export default {
   name: 'User',
@@ -251,7 +254,15 @@ export default {
       // TODO: 与需求确认
       this.$promiseConfirm({
         title: '系统提示',
-        content: '是否重置选中用户密码？'
+        content: '是否重置选中用户密码？',
+        onOk: () => setInitialPwd(_.first(this.selectedRowKeys))
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: '密码已重置为初始化密码！'
+            })
+          })
+          .catch(this.$notifyError)
       })
     },
     /**

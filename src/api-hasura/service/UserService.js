@@ -7,6 +7,7 @@ import {
   UserGroupDao,
   ViewDesktopDao
 } from '../dao/index'
+import { setInitialPwd } from '@/api/controller/User'
 
 // @moduleName('用户模块')
 class UserService extends BaseService {
@@ -23,6 +24,7 @@ class UserService extends BaseService {
       // 新增用户自定义桌面
       ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
     )
+    await setInitialPwd(user.id)
   }
 
   static async find (argus = {}) {
