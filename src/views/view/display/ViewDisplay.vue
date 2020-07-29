@@ -135,6 +135,7 @@
 
       <!-- S 视图预览 -->
       <ViewPreview
+        :showThumbnail="false"
         :timeRange="timeRange"
         :visible.sync="isVisible"
         :viewList="filterViewList"

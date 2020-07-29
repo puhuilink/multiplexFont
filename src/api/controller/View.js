@@ -24,6 +24,20 @@ export const getViewList = function (variables = {}) {
 }
 
 /**
+ * 上传视图缩略图
+ */
+export const uploadViewThumbnail = function (blob, viewId) {
+  return axios.post('/', {})
+}
+
+/**
+ * 生成视图缩略图
+ */
+export const updateViewThumbnail = function (blob, viewId) {
+  return axios.post()
+}
+
+/**
  * 编辑视图（标题）
  * @param viewId
  * @param set

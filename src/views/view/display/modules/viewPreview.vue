@@ -70,7 +70,7 @@
         </a-tooltip>
 
         <!-- TODO: 仅编辑模式下可见 -->
-        <a-tooltip placement="top" title="生成并上传缩略图">
+        <a-tooltip placement="top" title="生成并上传缩略图" v-if="showThumbnail">
           <a-icon type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
@@ -88,6 +88,7 @@
 <script>
 import _ from 'lodash'
 import { ViewDesignService } from '@/api-hasura'
+// import { updateViewThumbnail, uploadViewThumbnail } from '@/api/controller/View'
 import Renderer from '@/components/Renderer'
 import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
@@ -118,6 +119,10 @@ export default {
     timeRange: {
       type: Array,
       default: () => []
+    },
+    showThumbnail: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
@@ -246,22 +251,11 @@ export default {
         // TODO: loading
         this.thumbnailLoading = true
         const canvas = await html2canvas(this.$el)
-        // Object.assign(canvas.style, {
-        //   position: 'fixed',
-        //   top: 0,
-        //   right: 0,
-        //   bottom: 0,
-        //   left: 0,
-        //   'z-index': 999
-        // })
-        // document.body.appendChild(canvas)
-        // console.dir(canvas)
-        // console.log(
-        //   canvas.toDataURL('image/jpeg', 0.1)
-        // )
         canvas.toBlob(blob => {
-          const form = new FormData()
-          form.append('image', blob)
+          // uploadViewThumbnail(blob, this.currentView.view_id)
+          // updateViewThumbnail(blob, this.currentView.view_id)
+          // const form = new FormData()
+          // form.append('image', blob)
           // api upload
         })
       } catch (e) {
