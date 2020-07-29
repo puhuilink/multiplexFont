@@ -74,7 +74,7 @@ export function get2step (parameter) {
  */
 export function sendCaptcha (data) {
   return axios({
-    baseURL: '/sms/sendMessage',
+    baseURL: '/api/approval/getVerifCode',
     method: 'post',
     data
   })

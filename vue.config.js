@@ -154,15 +154,6 @@ const vueConfig = {
         pathRewrite: {
           [VUE_APP_HASURA_XUNJIAN_URI]: ''
         }
-      },
-      // 短信验证
-      '/sms': {
-        target: 'http://10.1.13.17:32538/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '/sms': ''
-        }
       }
     }
   },
