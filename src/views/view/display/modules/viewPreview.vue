@@ -71,7 +71,8 @@
 
         <!-- TODO: 仅编辑模式下可见 -->
         <a-tooltip placement="top" title="生成并上传缩略图" v-if="showThumbnail">
-          <a-icon type="camera" @click="makeThumbnail" />
+          <a-spin spinning v-if="thumbnailLoading" />
+          <a-icon v-else type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
         <a-tooltip placement="top" title="关闭">
@@ -88,7 +89,7 @@
 <script>
 import _ from 'lodash'
 import { ViewDesignService } from '@/api-hasura'
-// import { updateViewThumbnail, uploadViewThumbnail } from '@/api/controller/View'
+import { updateViewThumbnail } from '@/api/controller/View'
 import Renderer from '@/components/Renderer'
 import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
@@ -247,22 +248,26 @@ export default {
       this.getIndexView()
     },
     async makeThumbnail () {
-      try {
-        // TODO: loading
-        this.thumbnailLoading = true
-        const canvas = await html2canvas(this.$el)
-        canvas.toBlob(blob => {
-          // uploadViewThumbnail(blob, this.currentView.view_id)
-          // updateViewThumbnail(blob, this.currentView.view_id)
-          // const form = new FormData()
-          // form.append('image', blob)
-          // api upload
-        })
-      } catch (e) {
-        throw e
-      } finally {
-        this.thumbnailLoading = false
-      }
+      // TODO: loading
+      this.thumbnailLoading = true
+      const canvas = await html2canvas(this.$el)
+      canvas.toBlob(blob => {
+        // downloadFile('test.png', blob)
+        // this.thumbnailLoading = false
+        // return
+        const now = (new Date()).getTime()
+        const file = new File([blob], `${this.title}.png`, { lastModified: `${now}` })
+        updateViewThumbnail(file, this.currentView.view_id || this.$route.query.id)
+          .then(() => {
+            this.$notification.success({
+              message: '系统提示',
+              description: '上传缩略图成功'
+            })
+          })
+          .finally(() => {
+            this.thumbnailLoading = false
+          })
+      })
     },
     /**
      * 下一个视图
