@@ -24,10 +24,6 @@ export default {
     }
   },
   methods: {
-    select (e) {
-      console.log(e)
-      this.$emit('select', e)
-    },
     async fetch () {
       try {
         this.loading = true
@@ -48,8 +44,9 @@ export default {
           ],
           alias: 'metricList'
         })
-        const uniqMetricList = _.uniqBy(metricList, ({ metric }) => metric.metric_model_id)
-        this.list = uniqMetricList.filter(({ metric }) => metric.modelMetric && metric.enable).map(({ metric }) => ({
+        const validMetricList = metricList.filter(({ metric }) => metric.modelMetric && metric.enable)
+        const uniqMetricList = _.uniqBy(validMetricList, ({ metric }) => metric.metric_model_id)
+        this.list = uniqMetricList.map(({ metric }) => ({
           key: metric.metric_id,
           label: metric.modelMetric.alias
         }))

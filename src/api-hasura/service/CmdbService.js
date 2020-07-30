@@ -4,7 +4,7 @@ import { mutate, query } from '../utils/hasura-orm/index'
 // eslint-disable-next-line no-unused-vars
 import {
   ModelHostDao,
-  CmdbHostDao, CmdbEndpointMetricDao, CmdbHostEndpointDao,
+  CmdbHostDao, CmdbEndpointMetricDao, CmdbHostEndpointDao, CmdbHostGroupByHostTypeDao,
   MetricDao
 } from '../dao'
 class CmdbService extends BaseService {
@@ -69,6 +69,12 @@ class CmdbService extends BaseService {
         }))
     }))
     return treeData
+  }
+
+  static async hostTypeFind (argus = {}) {
+    return query(
+      CmdbHostGroupByHostTypeDao.find(argus)
+    )
   }
 
   static async hostFind (argus = {}) {

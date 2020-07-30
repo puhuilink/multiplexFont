@@ -1,6 +1,19 @@
 <template>
   <div class="ComboSelect">
     <a-form>
+      <!-- / Host Type -->
+      <a-form-item
+        label="设备类型"
+        v-bind="formItemLayout"
+        required
+      >
+        <CmdbHostTypeSelect
+          v-bind="selectProps"
+          :value.sync="model.hostType"
+          @select="selectHostType"
+        />
+      </a-form-item>
+
       <!-- / Host -->
       <a-form-item
         label="监控对象"
@@ -9,6 +22,8 @@
       >
         <CmdbHostSelect
           v-bind="selectProps"
+          :value.sync="model.hostId"
+          :hostType="model.hostType"
           @select="selectHost"
         />
       </a-form-item>
@@ -22,6 +37,7 @@
       >
         <CmdbEndpointSelect
           v-bind="selectProps"
+          :value.sync="model.endpointId"
           :hostId="model.hostId"
           @select="selectEndpoint"
         />
@@ -36,6 +52,7 @@
       >
         <CmdbMetricSelect
           v-bind="selectProps"
+          :value.sync="model.metricId"
           :endpointId="model.endpointId"
           @select="selectMetric"
         />
@@ -45,6 +62,7 @@
 </template>
 
 <script>
+import CmdbHostTypeSelect from './CmdbHostTypeSelect'
 import CmdbHostSelect from './CmdbHostSelect'
 import CmdbEndpointSelect from './CmdbEndpointSelect'
 import CmdbMetricSelect from './CmdbMetricSelect'
@@ -61,6 +79,7 @@ export default {
   name: 'ComboSelect',
   mixins: [],
   components: {
+    CmdbHostTypeSelect,
     CmdbHostSelect,
     CmdbEndpointSelect,
     CmdbMetricSelect
@@ -120,10 +139,14 @@ export default {
     resetModel () {
       this.model = Object.assign({}, this.$options.data.apply(this).model)
     },
-    selectHost (e) {
-      console.log(e)
+    selectHostType (e) {
       this.resetModel()
+      this.model.hostType = e
+    },
+    selectHost (e) {
       this.model.hostId = e
+      this.model.endpointId = null
+      this.model.metricId = null
     },
     selectEndpoint (e) {
       this.model.endpointId = e

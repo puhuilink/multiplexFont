@@ -6,9 +6,22 @@ export default {
   name: 'CmdbHostSelect',
   mixins: [SelectMixin],
   components: {},
-  props: {},
+  props: {
+    hostType: {
+      type: String,
+      default: ''
+    }
+  },
   data: () => ({}),
   computed: {},
+  watch: {
+    hostType: {
+      immediate: true,
+      handler (hostType) {
+        hostType && this.fetch()
+      }
+    }
+  },
   methods: {
     select (e) {
       console.log(e)
@@ -19,6 +32,7 @@ export default {
         this.loading = true
         const { data: { hostList } } = await CmdbService.hostFind({
           where: {
+            host_type: this.hostType,
             enable: true
           },
           fields: [
@@ -35,9 +49,6 @@ export default {
         this.loading = false
       }
     }
-  },
-  created () {
-    this.fetch()
   }
 }
 </script>

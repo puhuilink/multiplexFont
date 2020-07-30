@@ -1,6 +1,7 @@
 <script>
 import { CmdbService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
+import _ from 'lodash'
 
 export default {
   name: 'CmdbEndpointSelect',
@@ -23,10 +24,6 @@ export default {
     }
   },
   methods: {
-    select (e) {
-      console.log(e)
-      this.$emit('select', e)
-    },
     async fetch () {
       try {
         this.loading = true
@@ -39,13 +36,17 @@ export default {
             `endpoint {
                 endpoint_id
                 modelEndpoint {
+                  id
                   alias
                 }
               }`
           ],
           alias: 'endpointList'
         })
-        this.list = endpointList.map(({ endpoint }) => ({
+        const validEndpointList = endpointList.filter(({ endpoint }) => endpoint.endpoint_id && endpoint.modelEndpoint)
+        const uniqEndpointList = _.uniqBy(validEndpointList, ({ endpoint }) => endpoint.modelEndpoint.id)
+        console.log(uniqEndpointList)
+        this.list = uniqEndpointList.map(({ endpoint }) => ({
           key: endpoint.endpoint_id,
           label: endpoint.modelEndpoint.alias
         }))

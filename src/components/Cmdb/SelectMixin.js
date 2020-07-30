@@ -38,10 +38,13 @@ export default {
     }
   },
   methods: {
-    select () {},
+    select (e) {
+      this.$emit('select', e)
+      this.$emit('update:value', e)
+    },
     renderSelect () {
       return (
-        <a-select {...this.selectProps} value={this.value} onSelect={this.select}>
+        <a-select {...{ props: this.selectProps }} value={this.value} onSelect={this.select}>
           { ...this.renderSelectOption() }
         </a-select>
       )
