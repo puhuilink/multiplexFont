@@ -17,18 +17,23 @@ export default {
   watch: {
     hostId: {
       immediate: true,
-      handler (endpointId) {
-        endpointId && this.fetch()
+      handler (hostId) {
+        hostId && this.fetch()
       }
     }
   },
   methods: {
+    select (e) {
+      console.log(e)
+      this.$emit('select', e)
+    },
     async fetch () {
       try {
         this.loading = true
         const { data: { endpointList } } = await CmdbService.endpointFind({
           where: {
-            enable: true
+            // enable: true
+            host_id: this.hostId
           },
           fields: [
             `endpoint {

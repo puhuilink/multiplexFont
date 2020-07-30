@@ -10,6 +10,10 @@ export default {
   data: () => ({}),
   computed: {},
   methods: {
+    select (e) {
+      console.log(e)
+      this.$emit('select', e)
+    },
     async fetch () {
       try {
         this.loading = true

@@ -38,16 +38,17 @@ export default {
     }
   },
   methods: {
+    select () {},
     renderSelect () {
       return (
-        <a-select {...this.selectProps}>
+        <a-select {...this.selectProps} value={this.value} onSelect={this.select}>
           { ...this.renderSelectOption() }
         </a-select>
       )
     },
     renderSelectOption () {
-      return this.list.map(({ value, label }) => (
-        <a-select-option key={value} value={value}>
+      return this.list.map(({ key, label }) => (
+        <a-select-option key={key} value={key}>
           { label }
         </a-select-option>
       ))

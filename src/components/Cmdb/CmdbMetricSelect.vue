@@ -1,6 +1,7 @@
 <script>
 import { CmdbService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
+import _ from 'lodash'
 
 export default {
   name: 'CmdbMetricSelect',
@@ -23,18 +24,23 @@ export default {
     }
   },
   methods: {
+    select (e) {
+      console.log(e)
+      this.$emit('select', e)
+    },
     async fetch () {
       try {
         this.loading = true
-        const { data: { metricList } } = await CmdbService.CmdbEndpointMetricDao({
+        const { data: { metricList } } = await CmdbService.metricFind({
           where: {
-            enable: true,
+            // enable: true,
             endpoint_id: this.endpointId
           },
           fields: [
             `metric {
-              metric_config
+              metric_model_id
               metric_id
+              enable
               modelMetric {
                 alias
               }
@@ -42,7 +48,8 @@ export default {
           ],
           alias: 'metricList'
         })
-        this.list = metricList.map(({ metric }) => ({
+        const uniqMetricList = _.uniqBy(metricList, ({ metric }) => metric.metric_model_id)
+        this.list = uniqMetricList.filter(({ metric }) => metric.modelMetric && metric.enable).map(({ metric }) => ({
           key: metric.metric_id,
           label: metric.modelMetric.alias
         }))
