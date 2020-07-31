@@ -7,12 +7,17 @@ export default {
     toolTip: {
       type: Boolean,
       default: false
+    },
+    parentId: {
+      type: [Number, String],
+      default: ''
     }
   },
   data: () => ({
     list: [],
     loading: false
   }),
+  // TODO: select watch emit empty event
   computed: {
     selectProps () {
       const {
@@ -37,7 +42,25 @@ export default {
       return ''
     }
   },
+  watch: {
+    parentId: {
+      immediate: true,
+      async handler (parentId) {
+        console.log(parentId)
+        if (parentId) {
+          await this.fetch(parentId)
+        } else {
+          this.reset()
+        }
+        // this.$emit('select', [])
+      }
+    }
+  },
   methods: {
+    reset () {
+      Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    fetch (parentId) {},
     select (e) {
       this.$emit('select', e)
       this.$emit('update:value', e)

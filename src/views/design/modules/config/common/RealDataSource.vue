@@ -1,7 +1,8 @@
 <template>
   <div class="RealDataSource">
     <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-      <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button>
+      <!-- <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button> -->
+      <a-button @click="preview">预览</a-button>
     </a-tooltip>
 
     <!-- / 横轴类型 -->
@@ -44,6 +45,7 @@
       v-bind="{ multiple: false, hasDetailInstance: true, ...comboSelectProps }"
       v-model="resourceConfig"
       v-if="useComboSelect"
+      ref="comboSelect"
     />
 
     <!-- / 刷新时间 -->
@@ -81,6 +83,7 @@ import DataSourceMixins from '../dataSourceMixins/index'
 import { ComboSelect } from '@/components/Cmdb'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
+// import { CmdbService } from '@/api-hasura'
 
 export default {
   name: 'RealDataSource',
@@ -146,6 +149,12 @@ export default {
       get () {
         return _.get(this, 'config.dataConfig.dbDataConfig.legendType', ['ci'])
       }
+    }
+  },
+  methods: {
+    preview () {
+      // const { data } = await CmdbService.latestMetric()
+      this.$refs['comboSelect'].preview()
     }
   }
 }
