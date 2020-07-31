@@ -24,8 +24,7 @@ class UserService extends BaseService {
       // 新增用户自定义桌面
       ViewDesktopDao.addUserDesktop({ view_name: user['user_id'] })
     )
-    // FIXME: 接口报错用户不存在？
-    // await setInitialPwd(user.id)
+    await setInitialPwd(user.user_id)
   }
 
   static async find (argus = {}) {

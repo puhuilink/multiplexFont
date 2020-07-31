@@ -251,6 +251,12 @@ export default {
      * @event
      */
     onResetPwd () {
+      const { userId } = this.$store.getters
+      const [selectedUserId] = this.selectedRowKeys
+      if (userId === selectedUserId) {
+        this.$message.warning('当前账号密码请至个人中心重置！')
+        return
+      }
       // TODO: 与需求确认
       this.$promiseConfirm({
         title: '系统提示',
