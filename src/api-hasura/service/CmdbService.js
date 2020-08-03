@@ -151,7 +151,7 @@ class CmdbService extends BaseService {
   }
 
   static async cmdbHostList (modelHostId) {
-    const host_type = this._modelHostTypeById(modelHostId)
+    const host_type = await this._modelHostTypeById(modelHostId)
     const { data: { cmdbHostList } } = await query(
       CmdbHostDao.find({
         where: {
@@ -200,8 +200,6 @@ class CmdbService extends BaseService {
       })
     )
 
-    console.log(modelHostEndpointList)
-
     const validList = modelHostEndpointList
       .filter(({ endpoint }) => endpoint && endpoint.id)
       .map(({ endpoint }) => ({
@@ -209,7 +207,6 @@ class CmdbService extends BaseService {
         label: endpoint.alias
       }))
     const uniqList = _.uniq(validList, ({ key }) => key)
-    console.log(uniqList)
     return uniqList
   }
 

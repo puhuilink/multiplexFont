@@ -46,13 +46,8 @@ export default {
     parentId: {
       immediate: true,
       async handler (parentId) {
-        console.log(parentId)
-        if (parentId) {
-          await this.fetch(parentId)
-        } else {
-          this.reset()
-        }
-        // this.$emit('select', [])
+        this.list = []
+        parentId && await this.fetch(parentId)
       }
     }
   },
@@ -61,13 +56,13 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     fetch (parentId) {},
-    select (e) {
-      this.$emit('select', e)
+    change (e) {
+      this.$emit('change', e)
       this.$emit('update:value', e)
     },
     renderSelect () {
       return (
-        <a-select {...{ props: this.selectProps }} value={this.value} onSelect={this.select}>
+        <a-select {...{ props: this.selectProps }} value={this.value} onChange={this.change}>
           { ...this.renderSelectOption() }
         </a-select>
       )

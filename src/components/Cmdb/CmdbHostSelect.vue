@@ -9,8 +9,8 @@ export default {
     async fetch (modelHostId) {
       try {
         this.loading = true
+        console.log(modelHostId)
         this.list = await CmdbService.cmdbHostList(modelHostId)
-        console.log(this.list)
       } catch (e) {
         this.list = []
         throw e
@@ -19,9 +19,6 @@ export default {
       }
     }
   }
-  // created () {
-  //   this.fetch('ciscoRouter')
-  // }
 }
 </script>
 

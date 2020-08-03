@@ -14,7 +14,7 @@
       </a-form-item>
 
       <!-- / Host -->
-      <!-- <a-form-item
+      <a-form-item
         label="监控对象"
         v-bind="formItemLayout"
         required
@@ -23,12 +23,11 @@
           v-bind="selectProps"
           :value.sync="model.hostId"
           :parentId="model.modelHostId"
-          @select="selectHost"
         />
-      </a-form-item> -->
+      </a-form-item>
 
       <!-- / Endpoint -->
-      <!-- <a-form-item
+      <a-form-item
         label="监控实体"
         v-if="hasKpi"
         v-bind="formItemLayout"
@@ -38,9 +37,8 @@
           v-bind="selectProps"
           :value.sync="model.modelEndpointId"
           :parentId="model.modelHostId"
-          @select="selectEndpoint"
         />
-      </a-form-item> -->
+      </a-form-item>
 
       <!-- / Metric -->
       <a-form-item
@@ -53,7 +51,6 @@
           v-bind="selectProps"
           :value.sync="model.metricId"
           :parentId="model.modelEndpointId"
-          @select="selectMetric"
         />
       </a-form-item>
     </a-form>
@@ -119,15 +116,8 @@ export default {
       hostId: 4329475,
       modelEndpointId: 1988235265,
       metricId: null,
-      // linux
       modelHostId: 1988235264
     }
-    // model: {
-    //   'hostId': 268406231040,
-    //   'modelEndpointId': 279827320832,
-    //   'metricId': 703397498881,
-    //   'modelHostId': 'h3cDevice'
-    // }
   }),
   computed: {
     selectProps () {
@@ -141,31 +131,21 @@ export default {
       handler (v) {
         this.$emit('input', _.cloneDeep(this.formData))
       }
+    },
+    'model.modelHostId' (modelHostId) {
+      this.model.modelHostId = modelHostId
+      this.model.hostId = null
+      this.model.modelEndpointId = null
+    },
+    'model.modelEndpointId' (modelEndpointId) {
+      this.model.modelEndpointId = modelEndpointId
+      this.model.metricId = null
     }
   },
   methods: {
     async preview () {
       const result = await CmdbService.latestMetric(this.model)
       console.log(result)
-    },
-    resetModel () {
-      this.model = Object.assign({}, this.$options.data.apply(this).model)
-    },
-    selectHostType (e) {
-      this.resetModel()
-      // this.model.modelHostId = e
-    },
-    selectHost (e) {
-      this.model.hostId = e
-      this.model.modelEndpointId = null
-      this.model.metricId = null
-    },
-    selectEndpoint (e) {
-      this.model.modelEndpointId = e
-      this.model.metricId = null
-    },
-    selectMetric (e) {
-      this.model.metricId = e
     }
   },
   created () {

@@ -22,9 +22,9 @@
               <Template />
             </a-tab-pane>
             <!--            <a-tab-pane tab="视图" key="2"></a-tab-pane>-->
-            <a-tab-pane tab="CI" key="3" forceRender>
+            <!-- <a-tab-pane tab="CI" key="3" forceRender>
               <Ci />
-            </a-tab-pane>
+            </a-tab-pane> -->
           </a-tabs>
         </div>
       </transition>
