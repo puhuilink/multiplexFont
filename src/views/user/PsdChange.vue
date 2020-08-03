@@ -230,8 +230,9 @@ export default {
       }
     },
 
-    handlePasswordCheck (rule, value, callback) {
-      const password = this.form.getFieldValue('password')
+    handlePasswordCheck (rule, value = '', callback) {
+      const password = this.form.getFieldValue('newEncryptedPwd') || ''
+      // return console.log(password)
       if (!value) {
         // 自动触发 required 规则，不进入 customer validator
         return callback()
