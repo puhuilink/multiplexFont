@@ -5,11 +5,16 @@ import SelectMixin from './SelectMixin'
 export default {
   name: 'CmdbHostSelect',
   mixins: [SelectMixin],
+  props: {
+    multiple: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     async fetch (modelHostId) {
       try {
         this.loading = true
-        console.log(modelHostId)
         this.list = await CmdbService.cmdbHostList(modelHostId)
       } catch (e) {
         this.list = []

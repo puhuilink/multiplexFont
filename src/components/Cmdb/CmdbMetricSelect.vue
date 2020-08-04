@@ -5,6 +5,12 @@ import SelectMixin from './SelectMixin'
 export default {
   name: 'CmdbMetricSelect',
   mixins: [SelectMixin],
+  props: {
+    multiple: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     async fetch (modelEndpointId) {
       try {

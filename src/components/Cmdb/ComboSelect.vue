@@ -21,7 +21,7 @@
       >
         <CmdbHostSelect
           v-bind="selectProps"
-          :value.sync="model.hostId"
+          :value.sync="model.cmdbHostIdList"
           :parentId="model.modelHostId"
         />
       </a-form-item>
@@ -49,7 +49,7 @@
       >
         <CmdbMetricSelect
           v-bind="selectProps"
-          :value.sync="model.metricId"
+          :value.sync="model.modelMetricIdList"
           :parentId="model.modelEndpointId"
         />
       </a-form-item>
@@ -66,10 +66,11 @@ import _ from 'lodash'
 import { CmdbService } from '@/api-hasura'
 
 // hack field name for old api
-const formData = {
-  model: '',
-  selectedInstance: [],
-  selectedKpi: []
+const defaultModel = {
+  cmdbHostIdList: [],
+  modelEndpointId: null,
+  modelMetricIdList: [],
+  modelHostId: null
 }
 
 export default {
@@ -85,7 +86,7 @@ export default {
     value: {
       type: Object,
       required: true,
-      default: () => _.cloneDeep(formData)
+      default: () => _.cloneDeep(defaultModel)
     },
     multiple: {
       type: Boolean,
@@ -112,12 +113,7 @@ export default {
         offset: 2
       }
     },
-    model: {
-      hostId: 4329475,
-      modelEndpointId: 1988235265,
-      metricId: null,
-      modelHostId: 1988235264
-    }
+    model: _.cloneDeep(defaultModel)
   }),
   computed: {
     selectProps () {
@@ -132,14 +128,21 @@ export default {
         this.$emit('input', _.cloneDeep(this.formData))
       }
     },
+    'model': {
+      immediate: false,
+      deep: true,
+      handler (model) {
+        this.$emit('input', _.cloneDeep(model))
+      }
+    },
     'model.modelHostId' (modelHostId) {
       this.model.modelHostId = modelHostId
-      this.model.hostId = null
       this.model.modelEndpointId = null
+      this.model.cmdbHostIdList = []
     },
     'model.modelEndpointId' (modelEndpointId) {
       this.model.modelEndpointId = modelEndpointId
-      this.model.metricId = null
+      this.model.modelMetricIdList = null
     }
   },
   methods: {
@@ -149,7 +152,11 @@ export default {
     }
   },
   created () {
-    this.formData = _.isEmpty(this.value) ? _.cloneDeep(formData) : _.cloneDeep(this.value)
+    // hack
+    const { value = {} } = this
+    if (value.hasOwnProperty('cmdbHostIdList')) {
+      this.model = _.cloneDeep(_.pick(value, Object.keys(defaultModel)))
+    }
   }
 }
 </script>

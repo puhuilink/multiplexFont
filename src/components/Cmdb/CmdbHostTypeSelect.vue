@@ -5,11 +5,6 @@ import SelectMixin from './SelectMixin'
 export default {
   name: 'CmdbHostTypeSelect',
   mixins: [SelectMixin],
-  computed: {
-    multiple () {
-      return false
-    }
-  },
   methods: {
     select (e) {
       this.$emit('select', e)

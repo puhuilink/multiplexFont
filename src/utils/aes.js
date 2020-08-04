@@ -11,6 +11,8 @@ export function encrypt (message) {
   }).toString()
 }
 
+// window.encrypt = encrypt
+
 // 解密信息
 export function decrypt (encryptMessage) {
   return CryptoJS.AES.decrypt(encryptMessage, key, {

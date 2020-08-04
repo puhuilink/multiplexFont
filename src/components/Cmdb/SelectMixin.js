@@ -52,17 +52,27 @@ export default {
     }
   },
   methods: {
+    filterValue (value) {
+      const { multiple } = this
+      if (multiple) {
+        return Array.isArray(value) ? value : [value]
+      } else {
+        return Array.isArray(value) ? value[0] : value
+      }
+    },
     reset () {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     fetch (parentId) {},
-    change (e) {
-      this.$emit('change', e)
-      this.$emit('update:value', e)
+    change (value) {
+      const payload = this.filterValue(value)
+      this.$emit('change', payload)
+      this.$emit('update:value', payload)
     },
     renderSelect () {
+      const { change, filterValue, value } = this
       return (
-        <a-select {...{ props: this.selectProps }} value={this.value} onChange={this.change}>
+        <a-select {...{ props: this.selectProps }} value={filterValue(value)} onChange={change}>
           { ...this.renderSelectOption() }
         </a-select>
       )
