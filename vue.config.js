@@ -155,8 +155,6 @@ const vueConfig = {
         pathRewrite: {
           [VUE_APP_HASURA_XUNJIAN_URI]: ''
         }
-<<<<<<< HEAD
-=======
       },
       // 短信验证
       '/sms': {
@@ -166,7 +164,6 @@ const vueConfig = {
         pathRewrite: {
           '/sms': ''
         }
->>>>>>> master
       }
     }
   },
