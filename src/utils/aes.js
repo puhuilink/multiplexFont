@@ -11,7 +11,7 @@ export function encrypt (message) {
   }).toString()
 }
 
-// window.encrypt = encrypt
+window.encrypt = encrypt
 
 // 解密信息
 export function decrypt (encryptMessage) {

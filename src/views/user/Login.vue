@@ -7,74 +7,6 @@
       :form="form"
       @submit="handleSubmit"
     >
-
-      <!-- 登录失败有 notification 提示 -->
-      <!-- <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误" /> -->
-
-      <!-- <a-tabs
-        :activeKey="customActiveKey"
-        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset', color: '#fff' }"
-        @change="handleTabClick"
-      >
-
-        <a-tab-pane key="tab1" tab="账号密码登录">
-          <a-form-item>
-            <a-input
-              size="large"
-              type="text"
-              placeholder="账户名"
-              v-decorator="[
-                'userId',
-                {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
-              ]"
-            >
-              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-
-          <a-form-item>
-            <a-input
-              size="large"
-              type="password"
-              autocomplete="false"
-              placeholder="密码"
-              v-decorator="[
-                'pwd',
-                {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
-              ]"
-            >
-              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-        </a-tab-pane>
-
-        <a-tab-pane key="tab2" tab="手机号登录">
-          <a-form-item>
-            <a-input size="large" type="text" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
-              <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-
-          <a-row :gutter="16">
-            <a-col class="gutter-row" :span="16">
-              <a-form-item>
-                <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
-                  <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-                </a-input>
-              </a-form-item>
-            </a-col>
-            <a-col class="gutter-row" :span="8">
-              <a-button
-                class="getCaptcha"
-                tabindex="-1"
-                :disabled="state.captchaDisabled"
-                @click.stop.prevent="getCaptcha"
-                v-text="!state.captchaDisabled && '获取验证码' || (state.time+' s')"
-              ></a-button>
-            </a-col>
-          </a-row>
-        </a-tab-pane>
-      </a-tabs> -->
       <a-form-item>
         <a-input
           size="large"
@@ -109,16 +41,16 @@
         </a-input>
       </a-form-item>
 
-      <a-form-item>
+      <!-- <a-form-item>
         <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
           <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
         </a-input>
-      </a-form-item>
+      </a-form-item> -->
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
           <a-form-item>
-            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
+            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['verifCode', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
               <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -156,12 +88,12 @@
 
     </a-form>
 
-    <two-step-captcha
+    <two-step-verifCode
       v-if="requiredTwoStepCaptcha"
       :visible="stepCaptchaVisible"
       @success="stepCaptchaSuccess"
       @cancel="stepCaptchaCancel"
-    ></two-step-captcha>
+    ></two-step-verifCode>
   </div>
 </template>
 
@@ -170,11 +102,8 @@
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 // import { timeFix } from '@/utils/util'
-import CryptoJS, { AES } from 'crypto-js'
-import { sendCaptcha } from '@/api/login'
+import { sendCaptchaByUserId } from '@/api/login'
 import _ from 'lodash'
-
-const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
 export default {
   name: 'Login',
@@ -191,7 +120,8 @@ export default {
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
-      captcha: undefined,
+      hasSendVerifCode: false,
+      verifCode: undefined,
       timer: null,
       state: {
         time: 60,
@@ -295,24 +225,17 @@ export default {
       state.loginBtn = true
       this.isLoginError = false
 
-      // const validateFieldsKey = customActiveKey === 'tab1' ? ['userId', 'pwd'] : ['mobile', 'captcha']
-      const validateFieldsKey = customActiveKey === ['userId', 'pwd', 'mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === ['userId', 'pwd', 'mobile', 'verifCode']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          // console.log('login form', values)
-          // eslint-disable-next-line no-undef
           const loginParams = { ...values }
-          // Todo 暂时注释验证码功能以方便开发
-          if (loginParams.captcha === this.captcha) {
-            Reflect.deleteProperty(values, 'captcha')
-          } else {
-            this.$message.error('验证码错误!')
+          if (!this.hasSendVerifCode) {
+            this.$message.error('请先获取验证码!')
             state.loginBtn = false
             return
           }
           Reflect.deleteProperty(loginParams, 'userId')
-          // delete loginParams.userId
           loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
           loginParams.pwd = values.pwd
           Login(loginParams)
@@ -321,14 +244,6 @@ export default {
             .finally(() => {
               state.loginBtn = false
             })
-          // } else {
-          //   state.loginBtn = false
-          //   if (this.captcha === null) {
-          //     this.$message.warn('验证码已过期，请重新获取验证码！')
-          //   } else {
-          //     this.$message.error('验证码错误，请重新填写！')
-          //   }
-          // }
         } else {
           setTimeout(() => {
             state.loginBtn = false
@@ -348,28 +263,13 @@ export default {
       e.preventDefault()
       const { form: { validateFields }, state } = this
 
-      validateFields(['mobile'], { force: true }, (err, values) => {
+      validateFields(['userId'], { force: true }, (err, values) => {
         if (!err) {
-          this.captcha = this.randomCaptcha()
-          if (this.timer) clearTimeout(this.timer)
-
-          // 开启三分钟定时器，清空验证码
-          this.timer = setTimeout(() => { this.captcha = null }, 3 * 60000)
-
-          const message = {
-            mobile: values.mobile,
-            content: `【中国交建】 验证码 ${this.captcha} 三分钟内有效，您正在登陆中国交建统一监控管理平台，请确认。`
-          }
-
-          const securityMessage = AES.encrypt(JSON.stringify(message), key, {
-            mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7
-          }).toString()
-
           state.captchaDisabled = true
           let interval
           this.state.captchaLoading = true
-          sendCaptcha(securityMessage)
+          this.hasSendVerifCode = false
+          sendCaptchaByUserId(values['userId'])
             .then(() => {
               interval = window.setInterval(() => {
                 if (state.time-- <= 0) {
@@ -379,6 +279,7 @@ export default {
                 }
               }, 1000)
               this.$message.success('短信已发送！')
+              this.hasSendVerifCode = true
             })
             .catch(e => {
               this.$message.error('短信发送异常，请稍后尝试!')

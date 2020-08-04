@@ -1,6 +1,7 @@
 import api from './index'
 import { axios } from '@/utils/request'
 import Timeout from 'await-timeout'
+import { encrypt } from '@/utils/aes'
 
 /**
  * login func
@@ -80,4 +81,8 @@ export function sendCaptcha (data) {
     method: 'post',
     data
   })
+}
+
+export const sendCaptchaByUserId = function (userId) {
+  return axios.post(`/approval/getVerifCode?userId=${encrypt(userId)}`)
 }

@@ -1,13 +1,11 @@
 import { axios } from '@/utils/request'
 import { encrypt } from '@/utils/aes'
 
-export const login = function ({ userId, pwd }) {
-  const encryptedPwd = encrypt(pwd)
-  const user = encrypt(userId)
-
+export const login = function ({ userId, pwd, verifCode }) {
   return axios.post('/user/login', {
-    userId: user,
-    encryptedPwd
+    userId: encrypt(userId),
+    encryptedPwd: encrypt(pwd),
+    verifCode: encrypt(verifCode)
   })
 }
 
