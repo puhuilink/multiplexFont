@@ -24,6 +24,20 @@ export const getViewList = function (variables = {}) {
 }
 
 /**
+ * 生成视图缩略图
+ * @param {File} file
+ * @param {String | Number} id 视图id
+ */
+export const updateViewThumbnail = function (file, id) {
+  // console.log(file)
+  // TODO: 迁移接口到 210
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('id', `${id}`)
+  return axios.post('/view/edit', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+}
+
+/**
  * 编辑视图（标题）
  * @param viewId
  * @param set

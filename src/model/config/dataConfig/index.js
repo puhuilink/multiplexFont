@@ -12,7 +12,7 @@ const CreateDynamicDataFactory = Factory.createDynamicDataFactory()
 
 export default class DataConfig {
   constructor ({
-    sourceType = 'null',
+    sourceType = 'static',
     widgetType,
     staticDataConfig = {},
     dbDataConfig = {}

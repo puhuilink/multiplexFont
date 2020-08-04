@@ -13,16 +13,27 @@ const VIC_MAIN_LIST = [
   { schema: 't_audit', primaryKey: 'id' },
   { schema: 't_authorize_object' },
   { schema: 't_user_group', primaryKey: 'id' },
-  // model
+  // cmdb_instance
+  { schema: 't_cmdb_answer', primaryKey: 'id' },
+  { schema: 't_cmdb_endpoint', primaryKey: 'endpoint_id' },
+  { schema: 't_cmdb_endpoint_metric', primaryKey: 'id' },
+  { schema: 't_cmdb_host_endpoint', primaryKey: 'id' },
+  { schema: 't_cmdb_host', primaryKey: 'id' },
+  { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id' }, // postgre view
+  { schema: 't_cmdb_metric', primaryKey: 'id' },
+  // cmdb_model
   { schema: 't_metric', primaryKey: 'id' },
   { schema: 't_model_answer', primaryKey: 'id' },
   { schema: 't_model_endpoint', primaryKey: 'id' },
   { schema: 't_model_endpoint_metric', primaryKey: 'id' },
   { schema: 't_model_host_endpoint', primaryKey: 'id' },
   { schema: 't_model_host', primaryKey: 'id' },
+  { schema: 't_model_host_group_by_host_type', primaryKey: 'id' }, // postgre view
   { schema: 't_model_metric', primaryKey: 'id' },
   { schema: 't_model_metric_oid', primaryKey: 'id' },
   { schema: 't_model_strategy', primaryKey: 'id' },
+  // 指标
+  { schema: 't_metric', primaryKey: 'id' },
   // 巡更
   { schema: 't_patrol_answer', primaryKey: 'id' },
   { schema: 't_patrol_checkpoint', primaryKey: 'id' },

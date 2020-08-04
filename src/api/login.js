@@ -1,5 +1,7 @@
 import api from './index'
 import { axios } from '@/utils/request'
+import Timeout from 'await-timeout'
+import { encrypt } from '@/utils/aes'
 
 /**
  * login func
@@ -46,13 +48,14 @@ export function getCurrentUserNav (token) {
 }
 
 export function logout () {
-  return axios({
-    url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
+  return Timeout.set()
+  // return axios({
+  //   url: '/auth/logout',
+  //   method: 'post',
+  //   headers: {
+  //     'Content-Type': 'application/json;charset=UTF-8'
+  //   }
+  // })
 }
 
 /**
@@ -74,8 +77,12 @@ export function get2step (parameter) {
  */
 export function sendCaptcha (data) {
   return axios({
-    baseURL: '/sms/sendMessage',
+    baseURL: '/api/approval/getVerifCode',
     method: 'post',
     data
   })
+}
+
+export const sendCaptchaByUserId = function (userId) {
+  return axios.post(`/approval/getVerifCode?userId=${encrypt(userId)}`)
 }

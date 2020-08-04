@@ -30,6 +30,11 @@ class UserDao extends BaseDao {
   ])
 
   @override
+  static async find ({ orderBy = { createdate: 'desc_nulls_last' }, ...rest }) {
+    return super.find({ orderBy, ...rest })
+  }
+
+  @override
   static async add (user) {
     await this._uniqueValidate(user)
     return super.add({

@@ -135,6 +135,7 @@
 
       <!-- S 视图预览 -->
       <ViewPreview
+        :showThumbnail="false"
         :timeRange="timeRange"
         :visible.sync="isVisible"
         :viewList="filterViewList"
@@ -196,8 +197,9 @@ export default {
     Renderer
   },
   filters: {
+    // TODO: nginx
     img (img) {
-      return img ? `http://vicube.ccccltd.cn:48080//${img}` : previewImg
+      return img ? `http://10.1.13.210:28072/${img}` : previewImg
     }
   },
   data () {
