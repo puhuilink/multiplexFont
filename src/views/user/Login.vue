@@ -311,11 +311,12 @@ export default {
       this.isLoginError = true
       const message = _.get(err, 'response.data.msg', err.message)
       console.log(message)
-      this.$notification['error']({
-        message: '登录失败',
-        description: message || '请求出现错误，请稍后再试',
-        duration: 4
-      })
+      // axios 拦截器已处理
+      // this.$notification['error']({
+      //   message: '登录失败',
+      //   description: message || '请求出现错误，请稍后再试',
+      //   duration: 4
+      // })
       throw err
     }
   }
