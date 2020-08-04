@@ -2,9 +2,9 @@ import { alert } from '../config/client'
 import { BaseDao } from './BaseDao'
 import { readonly } from 'core-decorators'
 
-class CmdbEndpointsDao extends BaseDao {
+class CmdbEndpointDao extends BaseDao {
   @readonly
-  static SCHEMA = 't_cmdb_endpoints'
+  static SCHEMA = 't_cmdb_endpoint'
 
   @readonly
   static PROVIDER = alert
@@ -14,5 +14,5 @@ class CmdbEndpointsDao extends BaseDao {
 }
 
 export {
-  CmdbEndpointsDao
+  CmdbEndpointDao
 }

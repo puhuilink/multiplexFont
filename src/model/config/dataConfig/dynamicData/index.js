@@ -92,7 +92,12 @@ export class DynamicDataConfig {
       model: '',
       selectedInstance: [],
       selectedKpi: [],
-      detailInstance: []
+      detailInstance: [],
+      // new cmdb
+      cmdbHostIdList: [],
+      modelEndpointId: null,
+      modelMetricIdList: [],
+      modelHostId: null
     },
     // 横轴类型
     xAxisType = 'RESOURCE',

@@ -78,8 +78,9 @@
             class="getCaptcha"
             size="large"
             :disabled="state.smsSendBtn"
+            :loading="state.captchaLoading"
             @click.stop.prevent="getCaptcha"
-            v-text="!state.smsSendBtn && '获取验证码'||(state.time+' s')"></a-button>
+          >{{ captchaText }} </a-button>
         </a-col>
       </a-row>
 
@@ -105,10 +106,12 @@
 <script>
 import { mixinDevice } from '@/utils/mixin.js'
 // eslint-disable-next-line no-unused-vars
-import { getSmsCaptcha } from '@/api/login'
+import { sendCaptcha } from '@/api/login'
 import { mapActions, mapGetters } from 'vuex'
 import { resetPwd } from '@/api/controller/User'
 // import Timeout from 'await-timeout'
+import CryptoJS, { AES } from 'crypto-js'
+const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
 const levelNames = {
   0: '低',
@@ -149,16 +152,28 @@ export default {
       state: {
         time: 60,
         smsSendBtn: false,
+        captchaLoadin: false,
         passwordLevel: 0,
         passwordLevelChecked: false,
         percent: 10,
         progressColor: '#FF0000'
       },
+      captcha: null,
       loading: false
     }
   },
   computed: {
     ...mapGetters(['userId']),
+    captchaText () {
+      const { captchaLoading, captchaDisabled, time } = this.state
+      if (captchaLoading) {
+        return ''
+      } else if (captchaDisabled) {
+        return `${time}s`
+      } else {
+        return '获取验证码'
+      }
+    },
     passwordLevelClass () {
       return levelClass[this.state.passwordLevel]
     },
@@ -215,8 +230,9 @@ export default {
       }
     },
 
-    handlePasswordCheck (rule, value, callback) {
-      const password = this.form.getFieldValue('password')
+    handlePasswordCheck (rule, value = '', callback) {
+      const password = this.form.getFieldValue('newEncryptedPwd') || ''
+      // return console.log(password)
       if (!value) {
         // 自动触发 required 规则，不进入 customer validator
         return callback()
@@ -246,8 +262,17 @@ export default {
     handleSubmit () {
       // eslint-disable-next-line
       const { form: { validateFields }, state, $router, userId } = this
+      this.loading = true
       validateFields({ force: true }, async (err, values) => {
         if (!err) {
+          console.log(values)
+          if (values.captcha === this.captcha) {
+            Reflect.deleteProperty(values, 'captcha')
+          } else {
+            this.$message.error('验证码错误!')
+            this.loading = false
+            return
+          }
           state.passwordLevelChecked = false
           this.loading = true
           try {
@@ -265,6 +290,14 @@ export default {
       })
     },
 
+    // 随机验证码
+    randomCaptcha () {
+      return new Array(6)
+        .fill('')
+        .map(() => (Math.random() * 9).toFixed())
+        .join('')
+    },
+
     getCaptcha (e) {
       e.preventDefault()
       // eslint-disable-next-line no-unused-vars
@@ -273,15 +306,44 @@ export default {
       validateFields(['mobile'], { force: true },
         (err, values) => {
           if (!err) {
+            this.captcha = this.randomCaptcha()
             state.smsSendBtn = true
 
-            const interval = window.setInterval(() => {
-              if (state.time-- <= 0) {
+            const message = {
+              mobile: values.mobile,
+              content: `【中国交建】 验证码 ${this.captcha} 三分钟内有效，您正在重置中国交建统一监控管理平台账号密码，请确认。`
+            }
+
+            const securityMessage = AES.encrypt(JSON.stringify(message), key, {
+              mode: CryptoJS.mode.ECB,
+              padding: CryptoJS.pad.Pkcs7
+            }).toString()
+
+            state.captchaDisabled = true
+            let interval
+            this.state.captchaLoading = true
+            sendCaptcha(securityMessage)
+              .then(() => {
+                interval = window.setInterval(() => {
+                  if (state.time-- <= 0) {
+                    state.time = 60
+                    state.captchaDisabled = false
+                    window.clearInterval(interval)
+                  }
+                }, 1000)
+                this.$message.success('短信已发送！')
+              })
+              .catch(e => {
+                this.$message.error('短信发送异常，请稍后尝试!')
                 state.time = 60
-                state.smsSendBtn = false
+                state.captchaDisabled = false
                 window.clearInterval(interval)
-              }
-            }, 1000)
+                throw e
+              })
+              .finally(() => {
+                this.state.captchaLoading = false
+                this.state.smsSendBtn = false
+              })
 
             // const hide = $message.loading('验证码发送中..', 0)
 

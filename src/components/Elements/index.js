@@ -6,16 +6,16 @@
 * Email: dong.xing@outlook.com
 */
 
-import AlarmListElement from './AlarmListElement'
 import ListElement from './ListElement.vue'
+import LatestAlarmElement from './LatestAlarmElement'
 
 const ELEMENT_MAPPING = new Map([
-  ['AlarmList', 'AlarmListElement'],
+  ['AlarmList', 'LatestAlarmElement'],
   ['List', 'ListElement']
 ])
 
 const ELEMENTS = {
-  AlarmListElement,
+  LatestAlarmElement,
   ListElement
 }
 

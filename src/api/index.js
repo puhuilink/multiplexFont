@@ -1,3 +1,4 @@
+// FIXME: 部分已废弃，待确认
 const api = {
   Login: '/auth/login',
   Logout: '/auth/logout',
