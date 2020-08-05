@@ -17,7 +17,9 @@ const {
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
   VUE_APP_HASURA_XUNJIAN_URI,
-  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL
+  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
+  VUE_APP_VIEW_THUMBNAIL_URI,
+  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
 } = process.env
 
 const assetsCDN = {
@@ -163,6 +165,15 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           '/sms': ''
+        }
+      },
+      // 视图缩略图
+      [VUE_APP_VIEW_THUMBNAIL_URI]: {
+        target: VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_VIEW_THUMBNAIL_URI]: ''
         }
       }
     }

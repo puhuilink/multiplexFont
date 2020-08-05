@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     handleToHome () {
+      // FIXME: view 可能没分配权限，应该根据分配的权限默认第一个路由页
       this.$router.push({ name: 'view' })
     }
   }

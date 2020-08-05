@@ -199,7 +199,8 @@ export default {
   filters: {
     // TODO: nginx
     img (img) {
-      return img ? `http://10.1.13.210:28072/${img}` : previewImg
+      // return img ? `http://10.1.13.210:28072/${img}` : previewImg
+      return img ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${img}` : previewImg
     }
   },
   data () {
