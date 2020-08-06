@@ -49,14 +49,14 @@
         ></a-input>
       </a-form-item>
 
-      <a-form-item v-bind="formItemLayout" label="手机号">
+      <!-- <a-form-item v-bind="formItemLayout" label="手机号">
         <a-input size="large" placeholder="11 位手机号" v-decorator="['mobile', {rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }]">
           <a-select slot="addonBefore" size="large" defaultValue="+86">
             <a-select-option value="+86">+86</a-select-option>
             <a-select-option value="+87">+87</a-select-option>
           </a-select>
         </a-input>
-      </a-form-item>
+      </a-form-item> -->
       <!--<a-input-group size="large" compact>
             <a-select style="width: 20%" size="large" defaultValue="+86">
               <a-select-option value="+86">+86</a-select-option>
@@ -65,7 +65,7 @@
             <a-input style="width: 80%" size="large" placeholder="11 位手机号"></a-input>
           </a-input-group>-->
 
-      <a-row :gutter="16">
+      <!-- <a-row :gutter="16">
         <a-col class="gutter-row" :span="15" :offset="3">
           <a-form-item v-bind="formItemLayout" label="验证码">
             <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
@@ -82,7 +82,7 @@
             @click.stop.prevent="getCaptcha"
           >{{ captchaText }} </a-button>
         </a-col>
-      </a-row>
+      </a-row> -->
 
       <a-form-item v-bind="formItemLayout">
         <a-col class="gutter-row" :span="24" :offset="12">
@@ -260,19 +260,17 @@ export default {
     },
 
     handleSubmit () {
-      // eslint-disable-next-line
-      const { form: { validateFields }, state, $router, userId } = this
-      this.loading = true
+      const { form: { validateFields }, state, userId } = this
       validateFields({ force: true }, async (err, values) => {
         if (!err) {
-          console.log(values)
-          if (values.captcha === this.captcha) {
-            Reflect.deleteProperty(values, 'captcha')
-          } else {
-            this.$message.error('验证码错误!')
-            this.loading = false
-            return
-          }
+          // console.log(values)
+          // if (values.captcha === this.captcha) {
+          //   Reflect.deleteProperty(values, 'captcha')
+          // } else {
+          //   this.$message.error('验证码错误!')
+          //   this.loading = false
+          //   return
+          // }
           state.passwordLevelChecked = false
           this.loading = true
           try {
@@ -402,11 +400,6 @@ export default {
         duration: 4
       })
       this.loading = false
-    }
-  },
-  watch: {
-    'state.passwordLevel' (val) {
-      console.log(val)
     }
   }
 }
