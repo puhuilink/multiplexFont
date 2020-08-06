@@ -14,7 +14,7 @@ class UserDao extends BaseDao {
 
   // 唯一字段
   @readonly
-  static UNIQUE_FIELDS = ['user_id', 'email', 'phone', 'mobile_phone']
+  static UNIQUE_FIELDS = ['user_id', 'email', 'mobile_phone']
 
   // 主键
   @readonly
@@ -25,7 +25,6 @@ class UserDao extends BaseDao {
   static FIELDS_MAPPING = new Map([
     ['user_id', '用户名'],
     ['email', 'Email'],
-    ['phone', '办公电话'],
     ['mobile_phone', '移动电话']
   ])
 
