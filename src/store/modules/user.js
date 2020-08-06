@@ -5,6 +5,7 @@ import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { welcome, getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
+import router from '@/router'
 
 const user = {
   state: {
@@ -144,6 +145,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           Vue.ls.remove(ACCESS_TOKEN)
+          router.push('/user/login')
         })
       })
     }
