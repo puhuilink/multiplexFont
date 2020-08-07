@@ -1,227 +1,120 @@
 import { BaseService } from './BaseService'
-import {
-  ModelDao,
-  InstanceDao,
-  RelationAttributeDao,
-  RelationInstanceDao
-} from '../dao/index'
+// eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import _ from 'lodash'
-import { MAIN_AXIOS } from '@/utils/hasuraAxios'
-
+import {
+  ModelHostDao,
+  ModelHostEndpointDao,
+  ModelEndpointMetricDao,
+  ModelHostGroupByHostTypeDao
+} from '../dao'
 class ModelService extends BaseService {
-  /**
-   * 新增模型节点
-   * @param {Object} model
-   * @return {Promise<any>}
-   */
-  static async add (model = {}) {
-    try {
-      await mutate(
-        ModelDao.add(model)
-      )
-      // await ModelDao.add(model).mutate()
-    } catch (e) {
-      throw e
-    }
-  }
-
-  static async addAttr (attr = {}, where = {}) {
-    await mutate(
-      ModelDao.addAttr(attr, where)
-    )
-  }
-
-  /**
-   * 获取模型下的属性（模型属性，关系属性分组等信息）
-   * @param {String} name 模型 name
-   */
-  static async attrInfo (name) {
-    const { data } = await query(
-      // 模型自身属性
-      ModelDao.find({
-        where: {
-          name
-        },
-        fields: ['attributes'],
-        alias: 'modelList'
-      }),
-      // 模型关联属性 (base)
-      RelationAttributeDao.find({
-        where: {
-          source: name
-        },
-        // Dao 层已配置全量 field，默认查询出所有字段
-        alias: 'relationAttributes'
-      })
-    )
-    const { modelList: [model], relationAttributes } = data
-    const { attributes } = model
-    return {
-      attributes,
-      relationAttributes
-    }
-  }
-
-  /**
-   * 更新模型节点
-   * @param {Object} model
-   * @return {Promise<any>}
-   */
-  static async update (model, where) {
-    await mutate(
-      ModelDao.update(model, where)
-    )
-  }
-
-  static async updateAttr (modelName, attr = {}) {
-    await ModelDao.updateAttr(modelName, attr)
-  }
-
-  static async find (argus = {}) {
-    const res = await query(
-      ModelDao.find(argus)
-    )
-    return res
-  }
-
-  static async list (argus = {}) {
-    const { values, name } = argus.where
-
-    if (values && !_.isEmpty(values)) {
-      const sql = `
-      SELECT
-        "_id"
-      FROM 
-        t_cmdb_model AS T 
-      WHERE
-        "name" = '${name._eq || name}'
-      AND
-        ${values}
-      `
-
-      console.log(sql)
-
-      const { data: { result } } = await MAIN_AXIOS(sql)
-
-      // 第一个为查询的字段集合？
-      result.shift()
-
-      if (result.length) {
-        const res = await this.find({
-          ...argus,
-          where: {
-            _and: {
-              ..._.omit(argus.where, 'values'),
-              _id: {
-                _in: result.flat()
-              }
+  // FIXME: host 与 endpoint 并非一定是树形结构
+  static async tree () {
+    const { data: { hostList } } = await query(
+      ModelHostDao.find({
+        // where:
+        fields: [
+          'id',
+          'host',
+          `endpointRelation {
+            endpoint {
+              id
+              alias
             }
-          }
-        })
-
-        return res
-      } else {
-        const res = await this.find({
-          ...argus,
-          where: _.omit(argus.where, ['values'])
-        })
-        return res
-      }
-    } else {
-      const res = await this.find({
-        ...argus,
-        where: _.omit(argus.where, ['values'])
-      })
-      return res
-    }
-  }
-
-  static async batchDelete (nameList = []) {
-    // 模型下挂载的实例节点
-    const { data: { instanceList } } = await query(
-      InstanceDao.find({ where: { parentName: { _in: nameList } }, fields: ['name'], alias: 'instanceList' })
-    )
-    const instanceNameList = instanceList.map(({ name }) => name).filter(name => !!name)
-
-    await mutate(
-      // 资源模型删除
-      ModelDao.batchDelete({ name: { _in: nameList } }),
-      // 模型关系属性删除
-      RelationAttributeDao.batchDelete({ source: { _in: nameList } }),
-      // 其挂载的资源实例也删除
-      InstanceDao.batchDelete({ parentName: { _in: nameList } }),
-      // 其挂载的资源实例的（被）关联实例
-      RelationInstanceDao.batchDelete({
-        _or: [
-          { source: { _in: instanceNameList } },
-          { target: { _in: instanceNameList } }
-        ]
+          }`
+        ],
+        alias: 'hostList'
       })
     )
-
-    // TODO: 日志与版本
+    const treeData = hostList.map(host => ({
+      title: host.host,
+      key: host.id,
+      children: host.endpointRelation
+        .filter(({ endpoint }) => !!endpoint)
+        .map(({ endpoint }) => ({
+          title: endpoint.alias,
+          key: endpoint.id
+        }))
+    }))
+    return treeData
   }
 
-  static async batchDeleteAttr (modelName, attrNameList = []) {
-    const sql = `
-      UPDATE
-        t_cmdb_model
-      SET
-        attributes = (
-          SELECT COALESCE(
-            (SELECT
-              jsonb_agg(elements.value) AS attributes
-            FROM
-                t_cmdb_model,
-                jsonb_array_elements(attributes) AS elements
-            WHERE 
-              name = '${modelName}'
-            AND
-              elements.value ->> 'name' NOT IN (${attrNameList.map(attrName => `'${attrName}'`).join(', ')})
-            GROUP BY _id),
-            '[]'
-          )
-        )
-      WHERE
-        name = '${modelName}'
-    `
-
-    await MAIN_AXIOS.sql(sql)
+  /**
+   * 查询所有 host 模型的 host_type
+   */
+  static async modelHostTypeList () {
+    const { data: { modelHostTypeList } } = await query(
+      ModelHostGroupByHostTypeDao.find({
+        fields: [
+          'key: id',
+          'label: host_type'
+        ],
+        alias: 'modelHostTypeList'
+      })
+    )
+    return modelHostTypeList
   }
 
-  static async flatTree (rootKeys = ['Ci'], withInstance = false) {
-    const { data: { flatTreeData } } = await this.find({
-      where: {
-        _or: [
-          ...rootKeys.map(key => ({ name: { _ilike: `%${key}%` } })),
-          ...rootKeys.map(key => ({ parentTree: { _ilike: `%${key}%` } }))
-        ]
-      },
-      fields: [
-        '_id',
-        'name',
-        'icon',
-        'label',
-        'parentName',
-        'parentTree',
-        'order',
-        !withInstance ? `` : `instanceList {
-          _id
-          name
-          icon: values(path: "$.icon")
-          label
-          parentName
-          parentTree
-          order: values(path: "$.order")
-        }`
-      ],
-      orderBy: {
-        order: 'asc_nulls_last'
-      },
-      alias: 'flatTreeData'
-    })
-    return flatTreeData
+  /**
+   * 查询 host 模型下的 endpoint 列表
+   * @param {Number} modelHostId t_model_host.host_id
+   */
+  static async modelEndpointList (modelHostId) {
+    const { data: { modelHostEndpointList } } = await query(
+      ModelHostEndpointDao.find({
+        where: {
+          host_id: modelHostId
+          // enable: true
+        },
+        fields: [
+          `endpoint {
+            id
+            alias
+          }`
+        ],
+        alias: 'modelHostEndpointList'
+      })
+    )
+
+    const validList = modelHostEndpointList
+      .filter(({ endpoint }) => endpoint && endpoint.id)
+      .map(({ endpoint }) => ({
+        key: endpoint.id,
+        label: endpoint.alias
+      }))
+    const uniqList = _.uniq(validList, ({ key }) => key)
+    return uniqList
+  }
+
+  /**
+   * 查询 endpoint 模型下的 metric 列表
+   * @param {Number} modelEndpointId t_model_endpoint.endpoint_id
+   */
+  static async modelMetricList (modelEndpointId) {
+    const { data: { modelEndpointMetricList } } = await query(
+      ModelEndpointMetricDao.find({
+        where: {
+          endpoint_id: modelEndpointId
+          // enable: true
+        },
+        fields: [
+          `metric {
+            id
+            alias
+          }`
+        ],
+        alias: 'modelEndpointMetricList'
+      })
+    )
+    const validList = modelEndpointMetricList
+      .filter(({ metric }) => metric && metric.id)
+      .map(({ metric }) => ({
+        key: metric.id,
+        label: metric.alias
+      }))
+    const uniqList = _.uniq(validList, ({ key }) => key)
+    return uniqList
   }
 }
 

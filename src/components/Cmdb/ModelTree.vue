@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { CmdbService } from '@/api-hasura'
+import { ModelService } from '@/api-hasura'
 
 export default {
   name: 'ModelTree',
@@ -23,7 +23,7 @@ export default {
     async fetch () {
       try {
         this.spinning = true
-        this.treeData = await CmdbService.modelTree()
+        this.treeData = await ModelService.tree()
       } catch (e) {
         this.treeData = []
         throw e

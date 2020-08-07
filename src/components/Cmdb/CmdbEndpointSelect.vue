@@ -1,5 +1,5 @@
 <script>
-import { CmdbService } from '@/api-hasura'
+import { ModelService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
@@ -9,7 +9,7 @@ export default {
     async fetch (modelHostId) {
       try {
         this.loading = true
-        this.list = await CmdbService.modelEndpointList(modelHostId)
+        this.list = await ModelService.modelEndpointList(modelHostId)
       } catch (e) {
         this.list = []
         throw e

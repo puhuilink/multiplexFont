@@ -23,7 +23,7 @@ export default {
     async fetch () {
       try {
         this.spinning = true
-        this.treeData = await CmdbService.cmdbTree()
+        this.treeData = await CmdbService.tree()
       } catch (e) {
         this.treeData = []
         throw e

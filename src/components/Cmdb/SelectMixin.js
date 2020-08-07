@@ -55,7 +55,7 @@ export default {
     filterValue (value) {
       const { multiple } = this
       if (multiple) {
-        return Array.isArray(value) ? value : [value]
+        return Array.isArray(value) ? value : (value ? [value] : [])
       } else {
         return Array.isArray(value) ? value[0] : value
       }
@@ -67,7 +67,9 @@ export default {
     change (value) {
       const payload = this.filterValue(value)
       this.$emit('change', payload)
+      console.log('change')
       this.$emit('update:value', payload)
+      console.log('update:value')
     },
     renderSelect () {
       const { change, filterValue, value } = this

@@ -63,7 +63,7 @@ import CmdbHostSelect from './CmdbHostSelect'
 import CmdbEndpointSelect from './CmdbEndpointSelect'
 import CmdbMetricSelect from './CmdbMetricSelect'
 import _ from 'lodash'
-import { CmdbService } from '@/api-hasura'
+import { MetricService } from '@/api-hasura'
 
 // hack field name for old api
 const defaultModel = {
@@ -129,8 +129,8 @@ export default {
       }
     },
     'model': {
-      immediate: false,
-      deep: true,
+      // immediate: false,
+      // deep: true,
       handler (model) {
         this.$emit('input', _.cloneDeep(model))
       }
@@ -139,22 +139,35 @@ export default {
       this.model.modelHostId = modelHostId
       this.model.modelEndpointId = null
       this.model.cmdbHostIdList = []
+      console.log(1)
     },
     'model.modelEndpointId' (modelEndpointId) {
       this.model.modelEndpointId = modelEndpointId
       this.model.modelMetricIdList = null
+      console.log(2)
     }
   },
   methods: {
     async preview () {
-      const result = await CmdbService.latestMetric(this.model)
+      const result = await MetricService.chartValue({
+        resourceConfig: {
+          cmdbHostIdList: [4329475],
+          modelMetricIdList: [4329474],
+          modelEndpointId: 4329473
+        }
+      })
       console.log(result)
     }
+  },
+  beforeCreate (vm) {
+    console.log(vm)
   },
   created () {
     // hack
     const { value = {} } = this
+    // FIXME: 会触发 watch 重置
     if (value.hasOwnProperty('cmdbHostIdList')) {
+      console.log(_.cloneDeep(_.pick(value, Object.keys(defaultModel))))
       this.model = _.cloneDeep(_.pick(value, Object.keys(defaultModel)))
     }
   }

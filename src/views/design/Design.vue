@@ -79,7 +79,7 @@ export default {
   beforeRouteLeave (to, from, next) {
     this.$confirm({
       title: '确认要离开当前视图？',
-      content: '请确认以保存当前视图，未保存内容则不会生效！',
+      content: '请确认已保存当前视图，未保存内容则不会生效！',
       onOk () {
         next(true)
       },
