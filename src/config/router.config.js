@@ -55,13 +55,13 @@ export const asyncRouterMap = [
             redirect: '/alarm/history/HistoricalAlarms',
             children: [
               {
-                path: '/alarm/history/AlarmHistory',
+                path: '/alarm/history/alarm',
                 name: 'AlarmHistory',
                 component: () => import('@/views/alarm/history/AlarmHistory'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
               },
               {
-                path: '/alarm/history/ForwardHistory',
+                path: '/alarm/history/forward',
                 name: 'ForwardHistory',
                 component: () => import('@/views/alarm/history/ForwardHistory'),
                 meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
