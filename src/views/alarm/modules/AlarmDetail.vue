@@ -15,7 +15,9 @@
     <a-tabs defaultActiveKey="1">
 
       <a-tab-pane key="1" tab="基础信息">
-        <DetailForm :record="record" :formItemList="formItemList" />
+        <a-spin :spinning="spinning">
+          <DetailForm :record="record" :formItemList="formItemList" />
+        </a-spin>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="子告警记录">
@@ -54,31 +56,40 @@ export default {
     formItemList: {
       type: Array,
       default: () => [
-        { label: '告警编号', key: 'id' },
         { label: '告警等级', key: 'alarm_level' },
+        { label: '告警次数', key: '' },
+        { label: '首次告警时间', key: 'collect_time' },
+        { label: '最近告警时间', key: 'receive_time' },
+        { label: '数据域', key: '' },
+        { label: '监控类型', key: 'cmdbHost.host_type' },
         {
           children: [
-            { label: '升级次数', key: '' },
-            { label: '升级时间', key: '' }
+            { label: '设备名称', key: 'cmdbHost.alias' },
+            { label: '监控实体', key: 'cmdbEndpoint.modelEndpoint.alias' }
           ]
         },
-        { label: '告警状态', key: 'state' },
-        { label: '设备名称', key: '' },
         {
           children: [
-            { label: '监控实体', key: '' },
-            { label: '检查项', key: '' },
+            { label: '检查项', key: 'cmdbMetric.modelMetric.alias' },
             { label: '值', key: '' }
           ]
         },
-        { label: '首次告警时间', key: '' },
-        { label: '最近告警时间', key: '' },
-        { label: '前转人', key: 'forward_person' },
-        { label: '前转时间', key: 'forward_time' },
-        { label: '合并时间', key: 'merge_time' },
+        { label: '通知等级', key: 'state' },
+        {
+          label: '告警状态',
+          key: 'state',
+          customRender: text => text === 1 ? '已处理' : '未处理'
+        },
+        { label: '通知人员', key: 'forward_person' },
+        { label: '通知时间', key: 'forward_person' },
+        { label: '解决人员', key: 'close_by' },
+        { label: '解决时间', key: 'close_time' },
         { label: '合并次数', key: 'merge_count' },
+        { label: '合并时间', key: 'merge_time' },
+        { label: '升级次数', key: 'upgrade_count' },
+        { label: '升级时间', key: 'upgrade_time' },
         { label: '采集系统', key: 'agent_id' },
-        { label: '消息内容', key: 'detail' }
+        { label: '告警描述', key: 'detail' }
       ]
     },
     useResolve: {
@@ -101,7 +112,8 @@ export default {
       },
       {
         title: '告警时间',
-        dataIndex: 'receive_time',
+        dataIndex: 'collect_time',
+        // dataIndex: 'receive_time',
         width: 200,
         sorter: true
       },
