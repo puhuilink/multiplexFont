@@ -12,12 +12,8 @@ function resolve (dir) {
 const isProd = process.env.NODE_ENV === 'production'
 
 const {
-  VUE_APP_HASURA_CACHE_URI,
-  VUE_APP_HASURA_CACHE_ORIGINAL_URL,
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
-  VUE_APP_HASURA_XUNJIAN_URI,
-  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
   VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
 } = process.env
@@ -124,20 +120,10 @@ const vueConfig = {
       // 登录及权限
       '/api': {
         target: 'http://10.1.13.210:28081',
-        // target: 'http://10.1.13.17:31685/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
           '/api': ''
-        }
-      },
-      // hasura cache
-      [VUE_APP_HASURA_CACHE_URI]: {
-        target: VUE_APP_HASURA_CACHE_ORIGINAL_URL,
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          [VUE_APP_HASURA_CACHE_URI]: ''
         }
       },
       // hasura main
@@ -147,24 +133,6 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_HASURA_MAIN_URI]: ''
-        }
-      },
-      // hasura xunjian
-      [VUE_APP_HASURA_XUNJIAN_URI]: {
-        target: VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          [VUE_APP_HASURA_XUNJIAN_URI]: ''
-        }
-      },
-      // 短信验证
-      '/sms': {
-        target: 'http://10.1.13.17:32538/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '/sms': ''
         }
       },
       // 视图缩略图

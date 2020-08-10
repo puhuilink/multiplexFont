@@ -93,8 +93,18 @@
 
       <!-- / 操作区域 -->
       <div class="operation" slot="operation">
-        <a-button v-bind="btnProps" @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button v-bind="btnProps" @click="onSolve" :disabled="!hasSelectedOne" v-show="tabIndex !== 1">解决</a-button>
+        <a-button
+          v-bind="btnProps"
+          @click="onDetail"
+          :disabled="!hasSelectedOne"
+        >查看</a-button>
+        <a-button
+          v-bind="btnProps"
+          v-if="showSolved"
+          v-show="tabIndex !== 1"
+          @click="onSolve"
+          :disabled="!hasSelectedOne"
+        >解决</a-button>
         <a-popover title="表格列设置">
           <a-list slot="content" item-layout="horizontal" :data-source="columns">
             <a-list-item slot="renderItem" slot-scope="column">
@@ -116,6 +126,7 @@
     />
 
     <AlarmSolve
+      v-if="showSolved"
       ref="solve"
       @solveSuccess="onSolveSuccess"
     />
@@ -153,6 +164,11 @@ export default {
     showSolved: {
       type: Boolean,
       default: true
+    },
+    // 展示所有记录
+    showAll: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -174,25 +190,35 @@ export default {
       // },
       {
         title: '监控设备',
-        dataIndex: 'host_id',
+        dataIndex: 'host_id cmdbHost { alias }',
         width: 200,
-        show: true
+        show: true,
+        customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
         // sorter: true
       },
       {
         title: '监控实例',
-        dataIndex: 'metric_id',
+        dataIndex: 'metric_id cmdbEndpoint { modelEndpoint { alias } }',
         width: 200,
-        show: true
+        show: true,
+        customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
         // sorter: true
       },
       {
         title: '检查项',
-        dataIndex: 'endpoint_id',
+        dataIndex: 'endpoint_id cmdbMetric { modelMetric { alias } }',
         width: 200,
-        show: true
+        show: true,
+        customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
         // sorter: true
       },
+      {
+        title: '告警描述',
+        dataIndex: 'detail',
+        width: 400,
+        show: true,
+        tooltip: true
+      }
       // {
       //   title: '值',
       //   dataIndex: 'email',
@@ -221,13 +247,13 @@ export default {
       //   sorter: true,
       // show: true
       // },
-      {
-        title: '采集系统',
-        dataIndex: 'agent_id',
-        width: 200,
-        sorter: true,
-        show: true
-      }
+      // {
+      //   title: '采集系统',
+      //   dataIndex: 'agent_id',
+      //   width: 200,
+      //   sorter: true,
+      //   show: true
+      // }
     ]
   }),
   computed: {
@@ -252,7 +278,9 @@ export default {
       return AlarmService.find({
         where: {
           ...generateQuery(this.queryParams),
-          state: this.tabIndex
+          ...this.showAll ? {} : {
+            state: this.tabIndex
+          }
         },
         fields: _.uniq(['id', 'state', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
