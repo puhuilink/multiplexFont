@@ -16,7 +16,7 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        const { data } = await this.fetch()
+        const data = await this.fetch()
         const groupLabel = _.groupBy(data, 'instanceLabel')
         const groupByCi = _.groupBy(data, 'kpi_code')
         const formatData = Object.keys(groupByCi).map(key => {

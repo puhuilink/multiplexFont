@@ -1,7 +1,9 @@
+/**
+ * 动态数据配置公共模块
+ */
 
-import { MetricService } from '@/api-hasura'
 import { TimeRangeConfig } from './TimeRangeConfig'
-import Adaptor from '../Adaptor'
+import { AdaptorDataConfig } from './AdaptorDataConfig'
 import _ from 'lodash'
 
 export class DynamicDataConfig {
@@ -40,18 +42,11 @@ export class DynamicDataConfig {
 
   fetch (argus = {}) {
     const { resourceConfig, timeRangeConfig } = this
-    return MetricService
-      .chartValue({
-        resourceConfig,
-        timeRange: timeRangeConfig.getOption(),
-        orderBy: { collect_time: 'desc' },
-        ...argus
-      })
-      .then(Adaptor.transfer)
-      .catch(err => {
-        console.error(err)
-        return []
-      })
+    return AdaptorDataConfig.fetch({
+      resourceConfig,
+      timeRange: timeRangeConfig.getOption(),
+      ...argus
+    })
   }
 
   getOption () { }

@@ -13,8 +13,7 @@ export default class BarDynamicDataConfig extends AxisDynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        const { data } = await this.fetch()
-        this.originalData = data
+        this.originalData = await this.fetch()
       } catch (e) {
         this.resetData()
         throw e

@@ -10,7 +10,7 @@ export default class PieDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        const { data } = await this.fetch()
+        const data = await this.fetch()
         const seriesData = data.map(item => ({
           name: `${item.instanceLabel}-${item.kpiLabel}-${item.instance_id}`,
           value: item.value

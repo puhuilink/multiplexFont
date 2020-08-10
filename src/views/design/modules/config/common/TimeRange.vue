@@ -80,7 +80,7 @@ import {
   TIME_TYPE_DAYS,
   TIME_TYPE_WEEKS,
   TIME_TYPE_MONTHS
-} from '@/model/config/dataConfig/dynamicData/common'
+} from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
   {

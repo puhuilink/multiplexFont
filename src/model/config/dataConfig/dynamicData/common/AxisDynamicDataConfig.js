@@ -1,7 +1,10 @@
+/**
+ * 饼图、柱形图、线图等可配置图例的图
+ */
+
 import { DynamicDataConfig } from './DynamicDataConfig'
 import _ from 'lodash'
 
-// 饼图、柱形图、线图等可配置图例的图
 export class AxisDynamicDataConfig extends DynamicDataConfig {
   constructor ({ legendType = ['ci'], originalData = [], ...props }) {
     super(props)
