@@ -1,6 +1,6 @@
-import { DynamicDataConfig } from './index'
+import { DynamicDataConfig } from './common/index'
 
-export default class ListDataConfig extends DynamicDataConfig {
+export default class ListDynamicDataConfig extends DynamicDataConfig {
   /**
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}

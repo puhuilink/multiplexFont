@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 
-export default class AlarmListDataConfig {
+export default class AlarmListDynamicDataConfig {
   constructor ({
     resourceConfig = {
       domains: '',

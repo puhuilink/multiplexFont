@@ -1,12 +1,12 @@
 import _ from 'lodash'
-import { DynamicDataConfig } from './index'
+import { DynamicDataConfig } from './common/index'
 
 const initialOption = {
   legend: {},
   series: []
 }
 
-export default class PieDataConfig extends DynamicDataConfig {
+export default class PieDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {

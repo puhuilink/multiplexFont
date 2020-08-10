@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { AxisDynamicDataConfig } from './index'
+import { AxisDynamicDataConfig } from './common/index'
 
 const initialOption = {
   legend: {},
@@ -9,7 +9,7 @@ const initialOption = {
   originalData: null
 }
 
-export default class BarDataConfig extends AxisDynamicDataConfig {
+export default class BarDynamicDataConfig extends AxisDynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {

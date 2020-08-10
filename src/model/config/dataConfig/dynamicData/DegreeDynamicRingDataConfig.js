@@ -1,7 +1,7 @@
-import { DynamicDataConfig } from './index'
+import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 
-export default class GaugeDataConfig extends DynamicDataConfig {
+export default class DegreeRingDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       return this.fetch({ limit: 1 })
@@ -10,9 +10,8 @@ export default class GaugeDataConfig extends DynamicDataConfig {
           console.error(err)
           return 0
         })
-        .then(value => ({ value }))
     } else {
-      return { value: 0 }
+      return 0
     }
   }
 }

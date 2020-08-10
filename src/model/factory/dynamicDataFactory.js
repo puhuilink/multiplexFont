@@ -4,42 +4,35 @@
 
 import _ from 'lodash'
 
-import GaugeDataConfig from '../config/dataConfig/dynamicData/GaugeDataConfig'
-import BarDataConfig from '../config/dataConfig/dynamicData/BarDataConfig'
-import DegreeDataConfig from '../config/dataConfig/dynamicData/DegreeRingDataConfig'
-import AlarmListDataConfig from '../config/dataConfig/dynamicData/AlarmListDataConfig'
-import LinesDataConfig from '../config/dataConfig/dynamicData/LinesDataConfig'
-import TextHealthDataConfig from '../config/dataConfig/dynamicData/TextHealthDataConfig'
-import ListDataConfig from '../config/dataConfig/dynamicData/ListDataConfig'
-import PieDataConfig from '../config/dataConfig/dynamicData/PieDataConfig'
-import PolarDataConfig from '../config/dataConfig/dynamicData/PolarDataConfig'
+import AlarmListDynamicDataConfig from '../config/dataConfig/dynamicData/AlarmListDynamicDataConfig'
+import BarDynamicDataConfig from '../config/dataConfig/dynamicData/BarDynamicDataConfig'
+import DegreeDynamicDataConfig from '../config/dataConfig/dynamicData/DegreeDynamicRingDataConfig'
+import GaugeDynamicDataConfig from '../config/dataConfig/dynamicData/GaugeDynamicDataConfig'
+import LinesDynamicDataConfig from '../config/dataConfig/dynamicData/LinesDynamicDataConfig'
+import ListDynamicDataConfig from '../config/dataConfig/dynamicData/ListDynamicDataConfig.jsDataConfig'
+import PieDynamicDataConfig from '../config/dataConfig/dynamicData/PieDynamicDataConfig'
+import PolarDynamicDataConfig from '../config/dataConfig/dynamicData/PolarDynamicDataConfig'
+import TextHealthDynamicDataConfig from '../config/dataConfig/dynamicData/TextHealthDynamicDataConfig'
 
 export default class DynamicDataFactory {
+  static map = new Map([
+    ['AlarmList', AlarmListDynamicDataConfig],
+    ['Bar', BarDynamicDataConfig],
+    ['DegreeRing', DegreeDynamicDataConfig],
+    ['Gauge', GaugeDynamicDataConfig],
+    ['Lines', LinesDynamicDataConfig],
+    ['List', ListDynamicDataConfig],
+    ['Pie', PieDynamicDataConfig],
+    ['Polar', PolarDynamicDataConfig],
+    ['TextHealth', TextHealthDynamicDataConfig]
+  ])
+
   static create (type, dbDataConfig) {
-    switch (_.upperFirst(type)) {
-      case 'Gauge':
-        return new GaugeDataConfig(dbDataConfig)
-      case 'Bar':
-        return new BarDataConfig(dbDataConfig)
-      case 'AlarmList':
-        return new AlarmListDataConfig(dbDataConfig)
-      case 'Lines':
-        return new LinesDataConfig(dbDataConfig)
-      case 'View':
-        return
-      case 'DegreeRing':
-        return new DegreeDataConfig(dbDataConfig)
-      case 'TextHealth':
-        return new TextHealthDataConfig(dbDataConfig)
-      case 'List':
-        return new ListDataConfig(dbDataConfig)
-      case 'Pie':
-        return new PieDataConfig(dbDataConfig)
-      case 'Polar':
-        return new PolarDataConfig(dbDataConfig)
-      default:
-        // console.log('unknown dbDataConfig type', type)
-        // throw new Error('unknown type')
+    const targetClass = this.map.get(_.upperFirst(type))
+    if (targetClass) {
+      return Reflect.construct(targetClass, [dbDataConfig])
+    } else {
+      console.log(type)
     }
   }
 }

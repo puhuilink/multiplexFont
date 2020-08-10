@@ -1,4 +1,4 @@
-import { DynamicDataConfig } from './index'
+import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 
 const initialOption = {
@@ -8,7 +8,7 @@ const initialOption = {
   series: []
 }
 
-export default class LinesDataConfig extends DynamicDataConfig {
+export default class LinesDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {

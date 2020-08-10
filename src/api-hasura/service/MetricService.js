@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { BaseService } from './BaseService'
 import { CmdbHostEndpointMetricService } from './CmdbHostEndpointMetricService'
 import { query } from '../utils/hasura-orm/index'
@@ -54,43 +55,43 @@ class MetricService extends BaseService {
       }
     ]
     // 组合参数为 graphql 参数形式
-    const list = this._compose(resourceConfig)
-    console.log(resourceConfig, list)
-    if (_.isEmpty(list)) return []
+    // const list = this._compose(resourceConfig)
+    // console.log(resourceConfig, list)
+    // if (_.isEmpty(list)) return []
 
-    // 查询 alias 等基本信息
-    const cmdbHostEndpointMetricList = await CmdbHostEndpointMetricService.find({
-      where: {
-        _or: list.map(el => generateQuery(el))
-      }
-    })
-    if (_.isEmpty(cmdbHostEndpointMetricList)) return []
-    const aliasMapping = new Map(cmdbHostEndpointMetricList.map(el => {
-      const key = this._generateAliasMappingKey(el)
-      const value = _.pick(el, this._valueFieldList)
-      return [key, value]
-    }))
+    // // 查询 alias 等基本信息
+    // const cmdbHostEndpointMetricList = await CmdbHostEndpointMetricService.find({
+    //   where: {
+    //     _or: list.map(el => generateQuery(el))
+    //   }
+    // })
+    // if (_.isEmpty(cmdbHostEndpointMetricList)) return []
+    // const aliasMapping = new Map(cmdbHostEndpointMetricList.map(el => {
+    //   const key = this._generateAliasMappingKey(el)
+    //   const value = _.pick(el, this._valueFieldList)
+    //   return [key, value]
+    // }))
 
-    // 查询指标
-    const metricList = await this.find({
-      where: {
-        _or: cmdbHostEndpointMetricList.map(el => generateQuery(_.pick(el, this._idFieldList)))
-        // generate(timeRange)
-      },
-      // ..argus
-      limit: 1
-    })
-    if (_.isEmpty(metricList)) return []
+    // // 查询指标
+    // const metricList = await this.find({
+    //   where: {
+    //     _or: cmdbHostEndpointMetricList.map(el => generateQuery(_.pick(el, this._idFieldList)))
+    //     // generate(timeRange)
+    //   },
+    //   // ..argus
+    //   limit: 1
+    // })
+    // if (_.isEmpty(metricList)) return []
 
-    // 指标拼接 alias
-    return metricList.map(metric => {
-      const key = this._generateAliasMappingKey(metric)
-      const alias = aliasMapping.get(key) || {}
-      return {
-        ...alias,
-        ...metric
-      }
-    })
+    // // 指标拼接 alias
+    // return metricList.map(metric => {
+    //   const key = this._generateAliasMappingKey(metric)
+    //   const alias = aliasMapping.get(key) || {}
+    //   return {
+    //     ...alias,
+    //     ...metric
+    //   }
+    // })
   }
 
   /**
