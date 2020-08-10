@@ -119,7 +119,8 @@ const vueConfig = {
     proxy: {
       // 登录及权限
       '/api': {
-        target: 'http://10.1.13.210:28081',
+        // target: 'http://10.1.13.210:28081',
+        target: 'http://10.1.13.17:31685/',
         ws: false,
         changeOrigin: true,
         pathRewrite: {

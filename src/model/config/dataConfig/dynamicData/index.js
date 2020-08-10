@@ -4,7 +4,7 @@
 
 import _ from 'lodash'
 import moment from 'moment'
-import { KpiCurrentService } from '@/api-hasura'
+import { MetricService } from '@/api-hasura'
 
 export const TIME_RANGE_FORMAT = 'YYYY-MM-DDTHH:mm:ss'
 export const TIME_RANGE_TYPE_DEFAULT = 'default'
@@ -89,10 +89,10 @@ export class TimeRangeConfig {
 export class DynamicDataConfig {
   constructor ({
     resourceConfig = {
-      model: '',
-      selectedInstance: [],
-      selectedKpi: [],
-      detailInstance: [],
+      // model: '',
+      // selectedInstance: [],
+      // selectedKpi: [],
+      // detailInstance: [],
       // new cmdb
       cmdbHostIdList: [],
       modelEndpointId: null,
@@ -106,7 +106,13 @@ export class DynamicDataConfig {
     externalCi = true,
     timeRangeConfig = {}
   }) {
-    this.resourceConfig = resourceConfig
+    // this.resourceConfig = resourceConfig
+    this.resourceConfig = {
+      cmdbHostIdList: [257882722304],
+      modelEndpointId: 1988235274,
+      modelMetricIdList: [1988235275],
+      modelHostId: 1988235264
+    }
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
@@ -116,10 +122,10 @@ export class DynamicDataConfig {
 
   fetch (argus = {}) {
     const { resourceConfig, timeRangeConfig } = this
-    return KpiCurrentService.getValue({
-      ...resourceConfig,
+    return MetricService.chartValue({
+      resourceConfig,
       timeRange: timeRangeConfig.getOption(),
-      orderBy: { arising_time: 'desc' },
+      orderBy: { collect_time: 'desc' },
       ...argus
     })
   }

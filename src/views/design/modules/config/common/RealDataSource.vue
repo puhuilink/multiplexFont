@@ -1,8 +1,12 @@
 <template>
   <div class="RealDataSource">
     <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-      <!-- <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button> -->
-      <a-button @click="preview">预览</a-button>
+      <!-- :disabled="!available"  -->
+      <a-button
+        :loading="btnLoading"
+        @click="change(true)"
+      >预览</a-button>
+      <!-- <a-button @click="preview">预览</a-button> -->
     </a-tooltip>
 
     <!-- / 横轴类型 -->

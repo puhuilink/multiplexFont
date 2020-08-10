@@ -8,7 +8,7 @@ import { generateQuery } from '@/utils/graphql'
 class MetricService extends BaseService {
   static _idFieldList = ['host_id', 'endpoint_id', 'metric_id']
   static _aliasFieldList = ['host_alias', 'endpoint_alias', 'metric_alias', 'metric_tags']
-  static _valueFieldList = ['metric_value', 'metric_value_str', 'upload_time']
+  static _valueFieldList = ['metric_value', 'metric_value_str', 'collect_time']
 
   static async find (argus = {}) {
     const { data: { metricList } } = await query(
@@ -28,8 +28,34 @@ class MetricService extends BaseService {
    * 视图组件指标查询
    */
   static async chartValue ({ resourceConfig, timeRange, ...argus }) {
+    const mockData = {
+      host_id: 263146573824,
+      endpoint_id: 806724177920,
+      metric_id: 806724177920,
+      host_alias: '丝路驿站服务器',
+      endpoint_alias: 'CPU',
+      metric_alias: 'CPU使用率',
+      metric_tags: 'CPU usage',
+      metric_value: 80,
+      metric_value_str: '',
+      collect_time: '2020-07-29 16:56:50.676'
+    }
+    return [
+      { ...mockData },
+      {
+        ...mockData,
+        metric_value: 70,
+        collect_time: '2020-07-27 16:56:50.676'
+      },
+      {
+        ...mockData,
+        metric_value: 90,
+        collect_time: '2020-07-26 16:56:50.676'
+      }
+    ]
     // 组合参数为 graphql 参数形式
     const list = this._compose(resourceConfig)
+    console.log(resourceConfig, list)
     if (_.isEmpty(list)) return []
 
     // 查询 alias 等基本信息
@@ -40,12 +66,10 @@ class MetricService extends BaseService {
     })
     if (_.isEmpty(cmdbHostEndpointMetricList)) return []
     const aliasMapping = new Map(cmdbHostEndpointMetricList.map(el => {
-      console.log(el)
       const key = this._generateAliasMappingKey(el)
       const value = _.pick(el, this._valueFieldList)
       return [key, value]
     }))
-    console.log(aliasMapping)
 
     // 查询指标
     const metricList = await this.find({

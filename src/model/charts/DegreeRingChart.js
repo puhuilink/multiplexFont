@@ -41,6 +41,7 @@ export default class DegreeRingChart extends Chart {
       }
       case 'real': {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        console.log(dynamicData)
         formatter = `${dynamicData}`
         break
       }

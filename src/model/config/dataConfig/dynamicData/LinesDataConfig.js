@@ -12,26 +12,27 @@ export default class LinesDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       try {
-        const { data } = await this.fetch()
-        const groupByCi = _.groupBy(data, 'instanceLabel')
-        const groupByTime = _.groupBy(data, 'arising_time')
+        const data = await this.fetch()
+        const groupByCollectTime = _.groupBy(data, 'collect_time')
+        const groupByHostAlias = _.groupBy(data, 'host_alias')
+        console.log('groupByHostAlias', groupByHostAlias)
         const valueAxis = {
           type: 'value'
         }
         const categoryAxis = {
           type: 'category',
-          data: Object.keys(groupByTime)
+          data: Object.keys(groupByCollectTime)
         }
 
         this.legend = {
-          data: Object.keys(groupByCi)
+          data: Object.keys(groupByHostAlias)
         }
         this.xAxis = categoryAxis
         this.yAxis = valueAxis
-        this.series = Object.keys(groupByCi).map(key => ({
+        this.series = Object.entries(groupByHostAlias).map(([hostAlias, data]) => ({
           type: 'line',
-          name: key,
-          data: groupByCi[key].map(item => item ? item.value : 0)
+          name: hostAlias,
+          data: data.map(({ metric_value_str, metric_value }) => metric_value_str || metric_value)
         }))
       } catch (e) {
         this.resetData()
