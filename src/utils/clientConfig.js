@@ -6,18 +6,12 @@ import { notification } from 'ant-design-vue'
 import { onError } from 'apollo-link-error'
 
 const {
-  VUE_APP_HASURA_CACHE_URI,
-  VUE_APP_HASURA_CACHE_KEY,
   VUE_APP_HASURA_MAIN_URI,
-  VUE_APP_HASURA_MAIN_KEY,
-  VUE_APP_HASURA_XUNJIAN_URI,
-  VUE_APP_HASURA_XUNJIAN_KEY
+  VUE_APP_HASURA_MAIN_KEY
 } = process.env
 
 const linkList = [
-  new HttpLink({ uri: `${VUE_APP_HASURA_CACHE_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_CACHE_KEY } }),
-  new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } }),
-  new HttpLink({ uri: `${VUE_APP_HASURA_XUNJIAN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_XUNJIAN_KEY } })
+  new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } })
 ]
 
 // TODO: 此处包装后传递到 service 层
@@ -86,15 +80,8 @@ const clientList = linkList.map(link => new ApolloClient({
   defaultOptions: defaultOptions
 }))
 
-// 缓存
-// 告警
-// 巡更
-// 资源
-const [cache, alert, patrol, resource] = clientList
+const [alert] = clientList
 
 export {
-  cache,
-  alert,
-  patrol,
-  resource
+  alert
 }
