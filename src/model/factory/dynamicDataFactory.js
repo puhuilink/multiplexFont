@@ -32,7 +32,7 @@ export default class DynamicDataFactory {
     if (targetClass) {
       return Reflect.construct(targetClass, [dbDataConfig])
     } else {
-      console.log(type)
+      // console.log(type)
     }
   }
 }

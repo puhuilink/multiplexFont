@@ -13,9 +13,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     if (loadingDynamicData) {
       try {
         const data = await this.fetch()
+        console.log(data)
         const groupByCollectTime = _.groupBy(data, 'collect_time')
         const groupByHostAlias = _.groupBy(data, 'host_alias')
-        console.log('groupByHostAlias', groupByHostAlias)
+        // console.log('groupByHostAlias', groupByHostAlias)
         const valueAxis = {
           type: 'value'
         }

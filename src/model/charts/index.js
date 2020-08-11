@@ -46,7 +46,9 @@ export default class Chart {
     } = config.commonConfig
     anime.set(this.container, {
       ...border.getOption(),
-      background: colorMode === 'single' ? backgroundColor : `linear-gradient(${backgroundColor.angle}deg, ${backgroundColor.start}, ${backgroundColor.end})`
+      background: colorMode === 'single'
+        ? backgroundColor
+        : `linear-gradient(${backgroundColor.angle}deg, ${backgroundColor.start}, ${backgroundColor.end})`
     })
     // 在矩形等图形中，设置resize调用矩形类的resize方法，需要传入config配置
     this.resize(config)

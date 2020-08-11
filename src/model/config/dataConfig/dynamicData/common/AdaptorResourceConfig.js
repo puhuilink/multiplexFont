@@ -10,7 +10,14 @@ export class AdaptorResourceConfig {
   static fieldsMapping = new Map([
     ['metric_value', 'valueNum'],
     ['metric_value_str', 'valueStr'],
-    ['collect_time', 'time']
+    ['collect_time', 'time'],
+    ['host_id', 'hostId'],
+    ['endpoint_id', 'endpointId'],
+    ['metric_id', 'metricId'],
+    ['host_alias', 'hostAlias'],
+    ['endpoint_alias', 'endpointAlias'],
+    ['metric_alias', 'metricAlias'],
+    ['metric_tag', 'metricTag']
   ])
 
   constructor ({
@@ -31,6 +38,7 @@ export class AdaptorResourceConfig {
   }
 
   static transfer (dataList = []) {
+    console.log(dataList)
     const { fieldsMapping } = AdaptorResourceConfig
     const result = []
     dataList.forEach(data => {
@@ -41,12 +49,20 @@ export class AdaptorResourceConfig {
       }
 
       // transfer keys
-      const { valueNum, valueStr, ...rest } = _.mapKeys(expectedData, (value, key) => fieldsMapping.get(key))
+      const {
+        hostAlias = '', endpointAlias = '', metricAlias = '', metricTag = '',
+        valueNum = 0, valueStr = '',
+        time
+        // ...rest
+      } = _.mapKeys(expectedData, (value, key) => fieldsMapping.get(key))
 
       // transfer values
       result.push({
-        value: valueStr || valueNum || '',
-        ...rest
+        legend: hostAlias,
+        category: `${endpointAlias}-${metricAlias || metricTag}`,
+        value: valueStr || valueNum,
+        time
+        // ...rest
       })
     })
     return result

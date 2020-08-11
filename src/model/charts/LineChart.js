@@ -54,7 +54,6 @@ export default class LineChart extends Chart {
       }
       case SOURCE_TYPE_REAL: {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
-        console.log(dynamicData)
         series = dynamicData.series.map((item) => ({ ...item, ...line }))
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {

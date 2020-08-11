@@ -8,15 +8,17 @@ import _ from 'lodash'
 
 export class DynamicDataConfig {
   constructor ({
-    resourceConfig = {},
-    refreshTime = 0,
     // 外部 Ci 是否可用
     externalCi = true,
+    // 定时刷新时间(分)
+    refreshTime = 1,
+    resourceConfig = {},
+    // 查询时间范围
     timeRangeConfig = {}
   }) {
-    this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.externalCi = externalCi
     this.refreshTime = refreshTime
+    this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
     this.resetData()
   }
