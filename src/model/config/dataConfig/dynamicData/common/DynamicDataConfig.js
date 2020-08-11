@@ -9,8 +9,6 @@ import _ from 'lodash'
 export class DynamicDataConfig {
   constructor ({
     resourceConfig = {},
-    // 横轴类型
-    xAxisType = 'RESOURCE',
     refreshTime = 0,
     // 外部 Ci 是否可用
     externalCi = true,
@@ -20,7 +18,6 @@ export class DynamicDataConfig {
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
-    this.xAxisType = xAxisType
     this.resetData()
   }
 

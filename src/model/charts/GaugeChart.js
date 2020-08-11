@@ -1,4 +1,9 @@
 import Chart from './index'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 /**
  * 仪表盘组件
@@ -18,14 +23,17 @@ export default class GaugeChart extends Chart {
     const [data] = series.data
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         const staticData = dataConfig.staticDataConfig.staticData
         Object.assign(data, staticData)
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
         Object.assign(data, dynamicData)
+        break
+      }
+      case SOURCE_TYPE_NULL: {
         break
       }
     }

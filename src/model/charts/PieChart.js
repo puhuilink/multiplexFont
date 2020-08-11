@@ -1,4 +1,9 @@
 import Chart from './index'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class PieChart extends Chart {
   constructor ({ widget }) {
@@ -23,7 +28,7 @@ export default class PieChart extends Chart {
     }
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         series = staticData.series.map((item) => {
           Object.assign(item, pie)
           return item
@@ -35,11 +40,11 @@ export default class PieChart extends Chart {
         })
         break
       }
-      case 'null': {
+      case SOURCE_TYPE_NULL: {
         dbDataConfig.resetData()
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         const { legend: dbLegend, series: dbSeries } = await dbDataConfig.getOption(loadingDynamicData)
         series = dbSeries.map((item) => {
           Object.assign(item, pie)

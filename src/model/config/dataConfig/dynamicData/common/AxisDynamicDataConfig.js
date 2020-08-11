@@ -6,8 +6,16 @@ import { DynamicDataConfig } from './DynamicDataConfig'
 import _ from 'lodash'
 
 export class AxisDynamicDataConfig extends DynamicDataConfig {
-  constructor ({ legendType = ['ci'], originalData = [], ...props }) {
+  constructor ({
+    // enum: 资源、时间
+    legendType = ['ci'],
+    originalData = [],
+    // 横轴类型
+    xAxisType = 'RESOURCE',
+    ...props
+  }) {
     super(props)
+    this.xAxisType = xAxisType
     this.legendType = legendType
     this.originalData = originalData
   }
