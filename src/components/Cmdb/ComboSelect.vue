@@ -65,7 +65,7 @@ import CmdbMetricSelect from './CmdbMetricSelect'
 import _ from 'lodash'
 import { MetricService } from '@/api-hasura'
 
-// hack field name for old api
+// TODO: Adaptor
 const defaultModel = {
   cmdbHostIdList: [],
   modelEndpointId: null,
@@ -113,7 +113,7 @@ export default {
         offset: 2
       }
     },
-    model: _.cloneDeep(defaultModel)
+    model: null
   }),
   computed: {
     selectProps () {
@@ -122,6 +122,21 @@ export default {
     }
   },
   watch: {
+    value: {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (!value || _.isEmpty(value) || !value.hasOwnProperty('cmdbHostIdList')) {
+          this.model = _.cloneDeep(defaultModel)
+          return
+        }
+        // 防止 v-model 反复触发
+        if (_.isEqual(value, this.model)) {
+          return
+        }
+        this.model = _.cloneDeep(value)
+      }
+    },
     formData: {
       deep: true,
       handler (v) {
@@ -157,18 +172,6 @@ export default {
         }
       })
       console.log(result)
-    }
-  },
-  beforeCreate (vm) {
-    console.log(vm)
-  },
-  created () {
-    // hack
-    const { value = {} } = this
-    // FIXME: 会触发 watch 重置
-    if (value.hasOwnProperty('cmdbHostIdList')) {
-      console.log(_.cloneDeep(_.pick(value, Object.keys(defaultModel))))
-      this.model = _.cloneDeep(_.pick(value, Object.keys(defaultModel)))
     }
   }
 }

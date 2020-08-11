@@ -67,9 +67,7 @@ export default {
     change (value) {
       const payload = this.filterValue(value)
       this.$emit('change', payload)
-      console.log('change')
       this.$emit('update:value', payload)
-      console.log('update:value')
     },
     renderSelect () {
       const { change, filterValue, value } = this
