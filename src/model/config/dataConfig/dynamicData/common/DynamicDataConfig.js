@@ -25,11 +25,16 @@ export class DynamicDataConfig {
 
   fetch (argus = {}) {
     const { resourceConfig, timeRangeConfig } = this
-    return AdaptorResourceConfig.fetch({
-      resourceConfig,
-      timeRange: timeRangeConfig.getOption(),
-      ...argus
-    })
+    return AdaptorResourceConfig
+      .fetch({
+        resourceConfig,
+        timeRange: timeRangeConfig.getOption(),
+        ...argus
+      })
+      .then(r => {
+        console.log(r)
+        return r
+      })
   }
 
   getOption () { }

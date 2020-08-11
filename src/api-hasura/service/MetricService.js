@@ -41,7 +41,24 @@ class MetricService extends BaseService {
       metric_value_str: '',
       collect_time: '2020-07-29 16:56:50.676'
     }
-    return [
+    const barData = [
+      {
+        ...mockData
+      },
+      { ...mockData,
+        metric_value: 20,
+        host_alias: '厦门机房服务器'
+      },
+      { ...mockData,
+        metric_value: 50,
+        metric_alias: 'CPU健康度'
+      },
+      { ...mockData,
+        host_alias: '厦门机房服务器',
+        metric_alias: 'CPU健康度'
+      }
+    ]
+    const lineData = [
       { ...mockData },
       {
         ...mockData,
@@ -51,9 +68,28 @@ class MetricService extends BaseService {
       {
         ...mockData,
         metric_value: 90,
+        collect_time: '2020-07-25 16:56:50.676'
+      },
+      {
+        ...mockData,
+        metric_value: 20,
+        host_alias: '厦门机房服务器',
+        collect_time: '2020-07-29 16:56:50.676'
+      },
+      {
+        ...mockData,
+        metric_value: 30,
+        host_alias: '厦门机房服务器',
         collect_time: '2020-07-26 16:56:50.676'
+      },
+      {
+        ...mockData,
+        metric_value: 25,
+        host_alias: '厦门机房服务器',
+        collect_time: '2020-07-25 16:56:50.676'
       }
     ]
+    return barData
     // 组合参数为 graphql 参数形式
     // const list = this._compose(resourceConfig)
     // console.log(resourceConfig, list)

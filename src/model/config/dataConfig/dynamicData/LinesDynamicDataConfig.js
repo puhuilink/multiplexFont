@@ -1,4 +1,4 @@
-import { DynamicDataConfig } from './common/index'
+import { AxisDynamicDataConfig } from './common/index'
 import _ from 'lodash'
 
 const initialOption = {
@@ -8,40 +8,14 @@ const initialOption = {
   series: []
 }
 
-export default class LinesDynamicDataConfig extends DynamicDataConfig {
+export default class LinesDynamicDataConfig extends AxisDynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
-      try {
-        const data = await this.fetch()
-        console.log(data)
-        const groupByCollectTime = _.groupBy(data, 'collect_time')
-        const groupByHostAlias = _.groupBy(data, 'host_alias')
-        // console.log('groupByHostAlias', groupByHostAlias)
-        const valueAxis = {
-          type: 'value'
-        }
-        const categoryAxis = {
-          type: 'category',
-          data: Object.keys(groupByCollectTime)
-        }
-
-        this.legend = {
-          data: Object.keys(groupByHostAlias)
-        }
-        this.xAxis = categoryAxis
-        this.yAxis = valueAxis
-        this.series = Object.entries(groupByHostAlias).map(([hostAlias, data]) => ({
-          type: 'line',
-          name: hostAlias,
-          data: data.map(({ metric_value_str, metric_value }) => metric_value_str || metric_value)
-        }))
-      } catch (e) {
-        this.resetData()
-        throw e
-      }
+      const data = await this.fetch()
+      Object.assign(this, data)
     }
     const { legend, xAxis, yAxis, series } = this
-    return _.cloneDeep({ legend, xAxis, yAxis, series })
+    return { legend, xAxis, yAxis, series }
   }
 
   resetData () {

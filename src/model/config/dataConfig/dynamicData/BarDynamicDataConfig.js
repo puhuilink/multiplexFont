@@ -12,19 +12,14 @@ const initialOption = {
 export default class BarDynamicDataConfig extends AxisDynamicDataConfig {
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
-      try {
-        this.originalData = await this.fetch()
-      } catch (e) {
-        this.resetData()
-        throw e
-      }
+      const data = await this.fetch()
+      Object.assign(this, data)
     }
-    const { legend, xAxis, yAxis, series } = this.getComposedData()
-    console.log(_.cloneDeep(this.getComposedData()))
-    return _.cloneDeep({ legend, xAxis, yAxis, series })
+    const { legend, xAxis, yAxis, series } = this
+    return { legend, xAxis, yAxis, series }
   }
 
   resetData () {
-    this.originalData = _.cloneDeep(initialOption)
+    Object.assign(this, _.cloneDeep(initialOption))
   }
 }

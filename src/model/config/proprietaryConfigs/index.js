@@ -130,10 +130,15 @@ class BarItemStyle {
   constructor (argus = {}) {
     // 允许传入部分参数，未指定项赋予默认值
     const { type, color, colorType, colorScheme, barBorderRadius } = Object.assign({}, {
-      type: 'single',
+      type: 'combination',
       colorType: 'default',
       colorScheme: 'default',
-      color: 'rgba(7,171,253,1)',
+      // color: 'rgba(7,171,253,1)',
+      color: [
+        '#c23531', '#2f4554', '#61a0a8', '#d48265',
+        '#91c7ae', '#749f83', '#ca8622', '#bda29a',
+        '#6e7074', '#546570', '#c4ccd3'
+      ],
       barBorderRadius: [0, 0, 0, 0]
     }, argus)
     this.type = type
