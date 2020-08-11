@@ -3,22 +3,12 @@
  */
 
 import { TimeRangeConfig } from './TimeRangeConfig'
-import { AdaptorDataConfig } from './AdaptorDataConfig'
+import { AdaptorResourceConfig } from './AdaptorResourceConfig'
 import _ from 'lodash'
 
 export class DynamicDataConfig {
   constructor ({
-    resourceConfig = {
-      // model: '',
-      // selectedInstance: [],
-      // selectedKpi: [],
-      // detailInstance: [],
-      // new cmdb
-      cmdbHostIdList: [],
-      modelEndpointId: null,
-      modelMetricIdList: [],
-      modelHostId: null
-    },
+    resourceConfig = {},
     // 横轴类型
     xAxisType = 'RESOURCE',
     refreshTime = 0,
@@ -26,13 +16,7 @@ export class DynamicDataConfig {
     externalCi = true,
     timeRangeConfig = {}
   }) {
-    // this.resourceConfig = resourceConfig
-    this.resourceConfig = {
-      cmdbHostIdList: [257882722304],
-      modelEndpointId: 1988235274,
-      modelMetricIdList: [1988235275],
-      modelHostId: 1988235264
-    }
+    this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
@@ -42,7 +26,7 @@ export class DynamicDataConfig {
 
   fetch (argus = {}) {
     const { resourceConfig, timeRangeConfig } = this
-    return AdaptorDataConfig.fetch({
+    return AdaptorResourceConfig.fetch({
       resourceConfig,
       timeRange: timeRangeConfig.getOption(),
       ...argus
