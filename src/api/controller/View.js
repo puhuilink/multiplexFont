@@ -29,8 +29,6 @@ export const getViewList = function (variables = {}) {
  * @param {String | Number} id 视图id
  */
 export const updateViewThumbnail = function (file, id) {
-  // console.log(file)
-  // TODO: 迁移接口到 210
   const formData = new FormData()
   formData.append('file', file)
   formData.append('id', `${id}`)
@@ -91,8 +89,4 @@ export const updateViewDesign = async function (viewId, content) {
         throw new Error('更新视图配置失败')
       }
     })
-}
-
-export const copyView = async (viewId) => {
-  return axios.get(`/view/copy?viewId=${viewId}`)
 }

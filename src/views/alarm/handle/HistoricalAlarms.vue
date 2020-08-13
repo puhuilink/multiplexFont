@@ -215,7 +215,7 @@
       </template>
 
       <template #operation>
-        <div class="opration">
+        <div class="operation">
           <a-button @click="$refs.rollForward.open(selectedRowKeys, selectedRows)" :disabled="!hasSelected" >前转</a-button>
           <a-button @click="$refs.resolve.open(selectedRowKeys)" :disabled="!hasSelected">解决</a-button>
           <a-button @click="exportExcel(selectedRowKeys)" :disabled="!hasSelected">导出</a-button>

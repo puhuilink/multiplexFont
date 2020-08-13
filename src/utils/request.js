@@ -6,10 +6,9 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 150000
+  timeout: 60000
 })
 
-// TODO: 网络异常
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {

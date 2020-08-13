@@ -4,14 +4,14 @@
       label="KPI"
       v-bind="formItemLayout"
     >
-      <KpiSelect class="fw" />
+      <!-- <KpiSelect class="fw" /> -->
     </a-form-item>
 
     <a-form-item
       label="Ci 属性"
       v-bind="formItemLayout"
     >
-      <CiAttrSelect />
+      <!-- <CiAttrSelect /> -->
     </a-form-item>
 
     <ViewListSelect />
@@ -21,15 +21,15 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import { CiAttrSelect, KpiSelect } from '@/components/Common'
+// import { CiAttrSelect, KpiSelect } from '@/components/Common'
 import ViewListSelect from '../common/ViewListSelect'
 
 export default {
   name: 'CiNodeDataSource',
   mixins: [DataSourceMixins],
   components: {
-    CiAttrSelect,
-    KpiSelect,
+    // CiAttrSelect,
+    // KpiSelect,
     ViewListSelect
   },
   props: {},

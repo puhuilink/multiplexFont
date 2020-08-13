@@ -13,23 +13,6 @@ plugins.push(['import', {
   'style': true // `style: true` 会加载 less 文件
 }])
 
-/* module.exports = {
-  presets: [
-    '@vue/cli-plugin-babel/preset',
-    [
-      '@babel/preset-env',
-      {
-        'useBuiltIns': 'entry',
-        'corejs': 3
-      }
-    ]
-  ],
-  plugins: [
-    ...plugins,
-    'transform-class-properties'
-  ]
-} */
-
 module.exports = {
   presets: [
     '@vue/app'

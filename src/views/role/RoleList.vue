@@ -66,8 +66,7 @@
 import { getRoleList, getPermissions } from '@/api/manage'
 import { mixinDevice } from '@/utils/mixin'
 import { actionToObject } from '@/utils/permissions'
-import _ from 'lodash'
-const { pick } = _
+import { pick } from 'lodash'
 
 export default {
   name: 'RoleList',

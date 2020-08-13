@@ -9,7 +9,7 @@ const getters = {
   nickname: state => state.user.name,
   welcome: state => state.user.welcome,
   roles: state => state.user.roles,
-  groupList: state => state.user.info.organizeList.filter(group => !!group.groupId),
+  groupList: state => _.get(state, 'user.info.organizeList', []).filter(group => group && group.groupId),
   userInfo: state => state.user.info,
   userId: state => _.get(state, 'user.info.userId'),
   addRouters: state => state.permission.addRouters,

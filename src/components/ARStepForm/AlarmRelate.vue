@@ -6,7 +6,7 @@
     <a-card :bordered="false">
 
       <!-- S 操作栏 -->
-      <div class="opration">
+      <div class="operation">
         <a-button
           :disabled="!checkRuleType"
         >

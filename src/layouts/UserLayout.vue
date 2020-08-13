@@ -151,7 +151,7 @@ export default {
       width: 100%;
       min-width: 1132px;
       height: 100%;
-      background: #f0f2f5 url(~@/assets/images/bg-login.jpg) no-repeat 50%;
+      background: #f0f2f5 url(~@/assets/images/bg-login-compress.jpg) no-repeat 50%;
       background-size: 100%;
       background-size: cover;
     }

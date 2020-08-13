@@ -84,7 +84,7 @@
       <a-card :bordered="false" hoverable style="width: 90%; margin:auto;">
         <img
           alt="example"
-          src="@/assets/images/MachineRoom-BJ.jpg"
+          src="@/assets/images/MachineRoom-BJ-compress.jpg"
           slot="cover"
         />
       </a-card>

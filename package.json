@@ -1,15 +1,16 @@
 {
-  "name": "itoms",
-  "version": "0.0.0",
+  "name": "unified_monitoring_platform",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
-    "preinstall": "cnpm i npx npm-force-resolutions && npx npm-force-resolutions",
+    "preinstall": "cnpm run fix:tiptap",
+    "fix:tiptap": "cnpm i npx npm-force-resolutions && npx npm-force-resolutions",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint",
     "build:preview": "vue-cli-service build --mode preview",
-    "lint:noFix": "vue-cli-service lint --no-fix"
+    "lint": "vue-cli-service lint",
+    "lint:noFix": "vue-cli-service lint --no-fix",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@antv/g6": "3.2.8",
@@ -30,7 +31,6 @@
     "enquire.js": "^2.1.6",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.1",
-    "graphql.macro": "^1.4.2",
     "html2canvas": "^1.0.0-rc.5",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",

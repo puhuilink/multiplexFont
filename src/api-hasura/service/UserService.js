@@ -50,7 +50,6 @@ class UserService extends BaseService {
       UserGroupDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户的权限
       AuthorizeObjectDao.batchDelete({ user_id: { _in: userIdList } })
-      // 审计日志
     )
   }
 

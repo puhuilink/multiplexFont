@@ -100,7 +100,7 @@
       <!-- E 搜索 -->
 
       <!-- S 操作栏 -->
-      <div class="opration">
+      <div class="operation">
         <a-button>查看告警</a-button>
         <a-button>显示设置</a-button>
       </div>

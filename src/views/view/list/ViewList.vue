@@ -69,11 +69,10 @@
 </template>
 
 <script>
-import { getViewList, copyView } from '@/api/controller/View'
 import ViewTitleSchema from './ViewTitleSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { ViewListService } from '@/api-hasura'
+import { ViewListService } from '@/api-hasura/index'
 
 export default {
   name: 'ViewList',
@@ -133,15 +132,14 @@ export default {
      * 加载表格数据回调
      */
     loadData (parameter) {
-      return getViewList({
-        ...parameter,
+      console.log(ViewListService)
+      return ViewListService.find({
         where: {
-          ...generateQuery(this.queryParams),
-          // 老系统才区分视图类型，新系统只有一种类型
-          view_type: {
-            _eq: 'h5'
-          }
-        }
+          ...generateQuery(this.queryParams)
+        },
+        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        ...parameter,
+        alias: 'data'
       }).then(r => r.data)
     },
     /**
@@ -164,7 +162,7 @@ export default {
       const [viewId] = this.selectedRowKeys
       try {
         this.copyLoading = true
-        await copyView(viewId)
+        await ViewListService.copy(viewId)
         this.$notification.success({
           message: '系统提示',
           description: '复制成功'

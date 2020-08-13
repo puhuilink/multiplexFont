@@ -67,8 +67,7 @@ const middlewareLink = new ApolloLink((operation, forward) => {
 // })
 
 const clientList = linkList.map(link => new ApolloClient({
-  // 顺序很重要？
-  // 原理是中间件？
+  // 中间件需要按顺序设置
   link: ApolloLink.from([
     errorHandler,
     middlewareLink,

@@ -21,16 +21,17 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import Factory from '@/model/factory/factory'
 import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
+import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
-import _ from 'lodash'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE, NodeFactory } from '@/model/factory/nodeFactory'
+import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'Widget',
@@ -87,7 +88,7 @@ export default {
           const { dataConfig = {} } = this.widget.config
           const { sourceType, dbDataConfig = {} } = dataConfig
           const { timeRangeConfig = {} } = dbDataConfig
-          if (sourceType === 'real' && timeRange[0] && timeRange[1]) {
+          if (sourceType === SOURCE_TYPE_REAL && timeRange[0] && timeRange[1]) {
             this.setTimeRange(timeRangeConfig, timeRange)
           } else {
             this.rollbackTimeRange(timeRangeConfig)

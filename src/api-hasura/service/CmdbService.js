@@ -7,8 +7,6 @@ import {
   CmdbHostEndpointDao,
   ModelHostGroupByHostTypeDao
 } from '../dao'
-// TODO: Adaptor Dao
-// TODO: No GraphQL API + Adaptor Dao
 import _ from 'lodash'
 
 // TODO: t_metric 表以外可能可以用 GraphQL 缓存

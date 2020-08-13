@@ -5,7 +5,7 @@
   <div class="task-calendar">
     <a-card :bordered="false">
 
-      <div class="opration">
+      <div class="operation">
         <a-cascader
           :options="screening.ascriptionList"
           placeholder="全部"

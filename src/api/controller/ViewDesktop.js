@@ -11,13 +11,8 @@ import _ from 'lodash'
 
 /**
   * 获取当前用户自定义桌面
-  * @param {Array<any>} groudIds
-  * @return {Promise<any>}
   */
 export const getUserDesktop = function (userId) {
-  // console.log(
-  //   queryUserDesktop(userId)
-  // )
   return apollo.clients.alert.query({
     query: queryUserDesktop(userId)
   }).then(r => r.data.data).then(async r => {
@@ -43,31 +38,9 @@ export const getUserDesktop = function (userId) {
     } else {
       viewList = []
     }
-    // console.log('viewList', viewList)
     return [viewList, data]
   })
 }
-
-/**
- * 新增用户桌面（在新增用户时）
- * @abort
- * 多个 mutation 应合并到一起提交到 hasura，在遇到异常时才能正常回滚
- * @param {*} userId
- */
-// export const addUserDesktop = function (userId) {
-//   const desktop = {
-//     view_name: userId,
-//     view_title: '自定义',
-//     view_type: 'desktop',
-//     creator: userId
-//   }
-//   return apollo.clients.alert.mutate({
-//     mutation: mutationInsertDesktop,
-//     variables: {
-//       objects: [desktop]
-//     }
-//   })
-// }
 
 /**
  * 更新桌面关联的视图
