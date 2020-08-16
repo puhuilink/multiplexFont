@@ -25,7 +25,7 @@
           <a-icon :type="item.icon" />
           <p>{{ item.name }}</p>
         </div>
-        <div class="template__topology" v-if="item.type === 'Topology' && topologyEditable">
+        <div class="template__topology" v-show="item.type === 'Topology' && topologyEditable">
           <div
             class="template__node"
             v-for="(node, i) in nodes"

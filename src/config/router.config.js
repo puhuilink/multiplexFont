@@ -383,6 +383,16 @@ export const constantRouterMap = [
     ]
   },
 
+  // 视图设计
+  {
+    path: '/design',
+    name: 'Design',
+    hidden: true,
+    component: () => import('@/views/design/Design'),
+    meta: { title: '视图设计', permission: ['F002002'] },
+    props: route => route.query
+  },
+
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')

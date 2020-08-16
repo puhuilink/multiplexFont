@@ -180,11 +180,6 @@ export default {
         // TODO: 待调试
         // this.initTopologyChart()
       }
-    } else {
-      // 如果在编辑状态，将渲染的元素更新至部件
-      this.activateWidget({
-        widget: this.selectWidget
-      })
     }
   },
   beforeDestroy () {
