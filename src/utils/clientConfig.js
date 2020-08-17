@@ -2,8 +2,8 @@ import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-link'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import { notification } from 'ant-design-vue'
-import { onError } from 'apollo-link-error'
+// import { notification } from 'ant-design-vue'
+// import { onError } from 'apollo-link-error'
 
 const {
   VUE_APP_HASURA_MAIN_URI,
@@ -15,27 +15,27 @@ const linkList = [
 ]
 
 // TODO: 此处包装后传递到 service 层
-const errorHandler = onError(({ networkError, graphQLErrors }) => {
-  // console.log({ graphQLErrors, networkError })
-  if (networkError) {
-    notification.error({
-      message: '系统提示',
-      description: '请检查网络连接是否正常'
-    })
-  }
-  // 确保只在 dev 环境下提示
-  if (graphQLErrors) {
-    notification.error({
-      message: '系统内部异常',
-      description: graphQLErrors.map(({ message, extensions: { path, code } }) => {
-        const text = `[GraphQL error]: Message: ${message}, Code: ${code}, Path: ${path}`
-        // console.log(text)
-        return text
-      }).join('/\r/\n')
-    })
-    // TODO: throw error
-  }
-})
+// const errorHandler = onError(({ networkError, graphQLErrors }) => {
+//   // console.log({ graphQLErrors, networkError })
+//   if (networkError) {
+//     notification.error({
+//       message: '系统提示',
+//       description: '请检查网络连接是否正常'
+//     })
+//   }
+//   // 确保只在 dev 环境下提示
+//   if (graphQLErrors) {
+//     notification.error({
+//       message: '系统内部异常',
+//       description: graphQLErrors.map(({ message, extensions: { path, code } }) => {
+//         const text = `[GraphQL error]: Message: ${message}, Code: ${code}, Path: ${path}`
+//         // console.log(text)
+//         return text
+//       }).join('/\r/\n')
+//     })
+//     // TODO: throw error
+//   }
+// })
 
 const defaultOptions = {
   // watchQuery: {
@@ -69,7 +69,7 @@ const middlewareLink = new ApolloLink((operation, forward) => {
 const clientList = linkList.map(link => new ApolloClient({
   // 中间件需要按顺序设置
   link: ApolloLink.from([
-    errorHandler,
+    // errorHandler,
     middlewareLink,
     // addDatesLink,
     link

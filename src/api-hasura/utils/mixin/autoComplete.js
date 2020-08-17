@@ -1,11 +1,9 @@
 import store from '@/store'
 import moment from 'moment'
 
-const { getters } = store
-
 const defaultInfo = function (timeKey, userKey) {
   return {
-    [userKey]: getters.userId,
+    [userKey]: store.getters.userId,
     [timeKey]: moment().format('YYYY-MM-DDTHH:mm:ss')
   }
 }
@@ -17,7 +15,7 @@ const defaultInfo = function (timeKey, userKey) {
  */
 const defaultCreateDate = function (withPostfix = false) {
   return {
-    [withPostfix ? 'creator_s' : 'creator']: getters.userId,
+    [withPostfix ? 'creator_s' : 'creator']: store.getters.userId,
     [withPostfix ? 'createdate_t' : 'createdate']: moment().format('YYYY-MM-DDTHH:mm:ss')
   }
 }
@@ -29,7 +27,7 @@ const defaultCreateDate = function (withPostfix = false) {
  */
 const defaultUpdateDate = function (withPostfix = false) {
   return {
-    [withPostfix ? 'updator_s' : 'updator']: getters.userId,
+    [withPostfix ? 'updator_s' : 'updator']: store.getters.userId,
     [withPostfix ? 'updatedate_t' : 'updatedate']: moment().format('YYYY-MM-DDTHH:mm:ss')
   }
 }

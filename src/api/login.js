@@ -47,7 +47,8 @@ export function getCurrentUserNav (token) {
   })
 }
 
-export function logout () {
+// TODO: 当前 token 并无过期时间，后端也并未提供 logout 接口
+export function logout (token) {
   return Timeout.set()
   // return axios({
   //   url: '/auth/logout',

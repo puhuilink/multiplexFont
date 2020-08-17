@@ -1,73 +1,66 @@
 import Vue from 'vue'
 import router from './router'
 import store from './store'
-
-import NProgress from 'nprogress' // progress bar
-import '@/components/NProgress/nprogress.less' // progress bar custom style
+import NProgress from 'nprogress'
+import '@/components/NProgress/nprogress.less'
 import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import _ from 'lodash'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure({ showSpinner: false })
 
-const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
-const defaultRoutePath = '/view/display'
+const allowRouteNameList = ['login', 'Design']
 
 router.beforeEach((to, from, next) => {
-  NProgress.start() // start progress bar
-  to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`))
-  if (Vue.ls.get(ACCESS_TOKEN)) {
-    /* has token */
-    if (to.path === '/user/login') {
-      next({ path: defaultRoutePath })
-      NProgress.done()
-    } else {
-      if (store.getters.roles.length === 0) {
-        store
-          .dispatch('GetInfo')
-          .then(res => {
-            // const roles = res.result && res.result.role
-            const roles = res
-            store.dispatch('GenerateRoutes', { roles }).then(() => {
-              // 根据roles权限生成可访问的路由表
-              // 动态添加可访问路由表
-              router.addRoutes(store.getters.addRouters)
-              const redirect = decodeURIComponent(from.query.redirect || to.path)
-              if (to.path === redirect) {
-                // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-                next({ ...to, replace: true })
-              } else {
-                // 跳转到目的路由
-                next({ path: redirect })
-              }
-            })
-          })
-          .catch((err) => {
-            notification.error({
-              message: '错误',
-              description: err.message
-            })
-            store.dispatch('Logout').then(() => {
-              console.log(to.fullPath)
-              next({ path: '/user/login', query: { redirect: to.fullPath } })
-            })
-            NProgress.done()
-          })
-      } else {
-        next()
-      }
-    }
-  } else {
-    if (whiteList.includes(to.name)) {
-      // 在免登录白名单，直接进入
-      next()
-    } else {
-      next({ path: '/user/login', query: { redirect: to.fullPath } })
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
-    }
+  NProgress.start()
+
+  // 设置页面标题为当前页面
+  _.get(to, 'meta.title') && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
+
+  // 白名单直接进入
+  if (allowRouteNameList.includes(to.name)) {
+    return next()
   }
+
+  // 未登录重定向到登录
+  if (!Vue.ls.get(ACCESS_TOKEN)) {
+    return next({ name: 'login', query: { redirect: to.fullPath } })
+  }
+
+  // 已登录并初始化路由权限
+  if (!_.isEmpty(store.getters.roles)) {
+    return next()
+  }
+
+  // 已登录但未初始化路由权限
+  store
+    .dispatch('GetInfo')
+    .then(roles => store.dispatch('GenerateRoutes', { roles }))
+    .then(() => {
+      // 根据 roles 权限生成并添加可访问的路由表
+      router.addRoutes(store.getters.addRouters)
+      const redirect = decodeURIComponent(from.query.redirect || to.path)
+      console.log(redirect)
+      if (to.path === redirect) {
+        next({ ...to, replace: true })
+      } else {
+        next({ path: redirect })
+      }
+    })
+    .catch((err) => {
+      notification.error({
+        message: '页面跳转异常',
+        description: err.message
+      })
+      store
+        .dispatch('Logout')
+        .finally(() => {
+          next({ name: 'login', query: { redirect: to.fullPath } })
+        })
+    })
 })
 
 router.afterEach(() => {
-  NProgress.done() // finish progress bar
+  NProgress.done()
 })
