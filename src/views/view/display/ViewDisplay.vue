@@ -236,8 +236,7 @@ export default {
   },
   computed: {
     ...mapState({
-      nickname: (state) => state.user.nickname,
-      welcome: (state) => state.user.welcome
+      nickname: (state) => state.user.nickname
     }),
     scaleMode: {
       get: function () {

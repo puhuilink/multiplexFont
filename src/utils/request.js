@@ -6,7 +6,7 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 60000
+  timeout: 50000
 })
 
 service.interceptors.request.use(config => {
