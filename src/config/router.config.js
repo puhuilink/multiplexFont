@@ -108,12 +108,12 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt', permission: [ 'F004' ] },
         children: [
-          // {
-          //   path: '/performance/navigation',
-          //   name: 'TreeNavigation',
-          //   component: () => import('@/views/performance/navigation/TreeNavigation'),
-          //   meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004002' ] }
-          // },
+          {
+            path: '/performance/navigation',
+            name: 'TreeNavigation',
+            component: () => import('@/views/performance/navigation'),
+            meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004002' ] }
+          },
           // {
           //   path: '/performance/quota',
           //   name: 'QuotaList',

@@ -12,17 +12,16 @@ class MetricService extends BaseService {
   static _valueFieldList = ['metric_value', 'metric_value_str', 'collect_time']
 
   static async find (argus = {}) {
-    const { data: { metricList } } = await query(
+    const res = await query(
       MetricDao.find({
         fields: [
           ...this._idFieldList,
           ...this._valueFieldList
         ],
-        ...argus,
-        alias: 'metricList'
+        ...argus
       })
     )
-    return metricList
+    return res
   }
 
   /**
