@@ -1,18 +1,14 @@
 <template>
   <div class="Ci">
-    TODO
-    <!-- <ResourceTree
-      withInstance
-      readOnly
+    <CmdbTree
       draggable
-      :rootKeys="['CommonCi']"
       @dragend="dragend"
-    /> -->
+    />
   </div>
 </template>
 
 <script>
-// import { ResourceTree } from '@/components/Resource'
+import { CmdbTree } from '@/components/Cmdb'
 import Factory from '@/model/factory/factory'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
@@ -23,7 +19,7 @@ import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
 export default {
   name: 'Ci',
   components: {
-    // ResourceTree
+    CmdbTree
   },
   mixins: [IconPicker],
   props: {},
@@ -122,6 +118,7 @@ export default {
 
 <style lang="less">
 .Ci {
+  padding: 0 4px;
   overflow: auto;
 }
 </style>
