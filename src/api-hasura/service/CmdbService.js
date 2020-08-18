@@ -46,7 +46,7 @@ class CmdbService extends BaseService {
 
   static async resourceTree (where = {}) {
     // 一维数组查找
-    const { data: { cmdbHostList } } = await query(
+    let { data: { cmdbHostList } } = await query(
       CmdbHostDao.find({
         where: {
           ...where,
@@ -57,11 +57,18 @@ class CmdbService extends BaseService {
           'alias',
           'location',
           'host',
-          'host_type'
+          'host_type',
+          'modelHost { host }'
         ],
         alias: 'cmdbHostList'
       })
     )
+
+    // host_type 汉化
+    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
+      ...rest,
+      host_type: modelHost.host || host_type
+    }))
 
     // 树形结构构建
     const root = {

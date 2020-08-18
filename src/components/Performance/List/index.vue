@@ -17,6 +17,7 @@ import { List } from '@/components/Mixins'
 import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
   name: 'PerformanceList',
@@ -32,9 +33,10 @@ export default {
     columns: Object.freeze([
       {
         title: '设备',
-        dataIndex: 'host_id',
+        dataIndex: 'host_id host { alias }',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: (__, { host_id, host = {} }) => host.alias || host_id
       },
       {
         title: '节点',
@@ -59,8 +61,8 @@ export default {
         title: '采集时间',
         dataIndex: 'collect_time',
         sorter: true,
-        width: 180
-        // customRender: (collectTime) => collectTime ? this.$options.filters.moment
+        width: 180,
+        customRender: (collectTime) => collectTime ? moment(collectTime).format('YYYY-MM-DD HH:mm:ss') : ''
       }
     ])
   }),
@@ -84,8 +86,10 @@ export default {
       if (_.isEmpty(this.where)) {
         return {}
       }
+      // FIXME: 数据域
       return MetricService.find(({
         where: generateQuery(this.where),
+        fields: this.columns.map(({ dataIndex }) => dataIndex),
         ...parameter,
         alias: 'data'
       })).then(r => r.data)

@@ -11,13 +11,14 @@ class MetricService extends BaseService {
   static _aliasFieldList = ['host_alias', 'endpoint_alias', 'metric_alias', 'metric_tags']
   static _valueFieldList = ['metric_value', 'metric_value_str', 'collect_time']
 
-  static async find (argus = {}) {
+  static async find ({ orderBy = { collect_time: 'desc' }, ...argus }) {
     const res = await query(
       MetricDao.find({
         fields: [
           ...this._idFieldList,
           ...this._valueFieldList
         ],
+        orderBy,
         ...argus
       })
     )

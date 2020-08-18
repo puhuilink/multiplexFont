@@ -38,7 +38,8 @@ export default {
     onSelect (selectedKeys = [], { selected, node: { dataRef } }) {
       this.where = {
         ...selected ? {
-          host_id: dataRef.id
+          host_id: dataRef.id,
+          agent: dataRef.location
         } : {}
       }
     }

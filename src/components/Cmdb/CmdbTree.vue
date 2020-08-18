@@ -73,7 +73,11 @@ export default {
       await this.fetch({
         _or: [
           { location: snippet },
-          { host_type: snippet },
+          {
+            modelHost: {
+              host: snippet
+            }
+          },
           { alias: snippet }
         ]
       })

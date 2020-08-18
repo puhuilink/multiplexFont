@@ -2,7 +2,6 @@ import { ViewDao } from './ViewDao'
 
 class ViewListDao extends ViewDao {
   static async find ({ where = {}, orderBy = { view_id: 'desc' }, ...argus }) {
-    console.log(argus)
     return super.find({
       orderBy,
       ...argus,
