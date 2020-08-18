@@ -7,7 +7,8 @@ import {
   CmdbHostEndpointDao,
   ModelHostGroupByHostTypeDao
 } from '../dao'
-import _ from 'lodash'
+// import _ from 'lodash'
+const _ = require('lodash')
 
 // TODO: t_metric 表以外可能可以用 GraphQL 缓存
 class CmdbService extends BaseService {
@@ -41,6 +42,69 @@ class CmdbService extends BaseService {
         }))
     }))
     return treeData
+  }
+
+  static async resourceTree (where = {}) {
+    // 一维数组查找
+    let { data: { cmdbHostList } } = await query(
+      CmdbHostDao.find({
+        where: {
+          ...where,
+          enable: true
+        },
+        fields: [
+          'id',
+          'alias',
+          'location',
+          'host',
+          'host_type',
+          'modelHost { host }'
+        ],
+        alias: 'cmdbHostList'
+      })
+    )
+
+    // host_type 汉化
+    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
+      ...rest,
+      host_type: modelHost.host || host_type
+    }))
+
+    // 树形结构构建
+    const root = {
+      id: 'root',
+      alias: '根节点',
+      children: [],
+      type: 'root',
+      selectable: false
+    }
+
+    // 按采集系统 / 区域划分第一层
+    const locationList = _.groupBy(cmdbHostList.filter(Boolean), 'location')
+
+    // 按设备类型划分第二层
+    Object
+      .entries(locationList)
+      .forEach(([location, hostList]) => {
+        const children = Object
+          .entries(_.groupBy(hostList, 'host_type'))
+          .map(([hostType, hostList]) => ({
+            id: hostType,
+            alias: hostType,
+            children: hostList,
+            type: 'hostType',
+            selectable: false
+          }))
+        root.children.push({
+          id: location,
+          alias: location,
+          type: 'location',
+          children: children,
+          selectable: false
+        })
+      })
+
+    return [root]
   }
 
   // static async hostTypeFind (argus = {}) {
