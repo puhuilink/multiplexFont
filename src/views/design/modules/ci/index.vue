@@ -37,12 +37,13 @@ export default {
     }),
     dragend ({ event, node: { dataRef } }) {
       if (this.isWithinTopologyScope(event)) {
-        const target = this.icons.find(icon => icon.name === dataRef.icon)
+        // const target = this.icons.find(icon => icon.name === dataRef.icon)
+        // console.log(dataRef)
         const other = this.icons.find(icon => icon.name === 'Others')
-        const icon = target || other
+        const icon = other
         const data = {
           height: 64,
-          label: dataRef.title,
+          label: dataRef.alias,
           radius: '50%',
           shape: NODE_TYPE_CI_CIRCLE,
           width: 64,
