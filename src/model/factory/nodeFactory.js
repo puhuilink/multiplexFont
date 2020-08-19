@@ -5,12 +5,13 @@
 * Time: 11:12 上午
 * Email: dong.xing@outlook.com
 */
-import CircleNode, { CiCircleNode } from '../nodes/CircleNode'
+import CircleNode from '../nodes/CircleNode'
+import CiNode from '../nodes/CiNode'
 import RectNode from '../nodes/RectNode'
 import EllipseNode from '../nodes/EllipseNode'
 import ImageNode from '../nodes/ImageNode'
 
-export const NODE_TYPE_CI_CIRCLE = 'ciCircleNode'
+export const NODE_TYPE_CI = 'ciCircleNode'
 export const NODE_TYPE_CIRCLE = 'circle'
 
 export class NodeFactory {
@@ -18,8 +19,8 @@ export class NodeFactory {
     switch (node.shape) {
       case NODE_TYPE_CIRCLE:
         return new CircleNode(node)
-      case NODE_TYPE_CI_CIRCLE:
-        return new CiCircleNode(node)
+      case NODE_TYPE_CI:
+        return new CiNode(node)
       case 'rect':
         return new RectNode(node)
       case 'ellipse':

@@ -1,5 +1,6 @@
 <template>
   <div class="Ci">
+    <!-- TODO: 只有 host 节点才允许 draggable -->
     <CmdbTree
       draggable
       @dragend="dragend"
@@ -14,7 +15,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
-import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
+import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Ci',
@@ -37,15 +38,14 @@ export default {
     }),
     dragend ({ event, node: { dataRef } }) {
       if (this.isWithinTopologyScope(event)) {
-        // const target = this.icons.find(icon => icon.name === dataRef.icon)
-        // console.log(dataRef)
+        // TODO: Icon mapping
         const other = this.icons.find(icon => icon.name === 'Others')
         const icon = other
         const data = {
           height: 64,
           label: dataRef.alias,
           radius: '50%',
-          shape: NODE_TYPE_CI_CIRCLE,
+          shape: NODE_TYPE_CI,
           width: 64,
           icon: {
             name: icon.name,
@@ -117,7 +117,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .Ci {
   padding: 0 4px;
   overflow: auto;
