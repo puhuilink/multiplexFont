@@ -170,7 +170,7 @@ export function getTree (tree, list, buttonTree) {
   if (childrenList.length > 0) {
     tree.permissions = []
     childrenList.map(item => {
-      const actions = buttonTree.children.find(button => button.name === (item.name || ''))
+      const actions = (buttonTree.children || []).find(button => button.name === (item.name || ''))
       if (actions) {
         // hack
         actions.children = actions.children || []

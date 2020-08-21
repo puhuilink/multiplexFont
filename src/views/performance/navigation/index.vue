@@ -36,10 +36,15 @@ export default {
   computed: {},
   methods: {
     onSelect (selectedKeys = [], { selected, node: { dataRef } }) {
+      console.log(dataRef)
       this.where = {
         ...selected ? {
-          host_id: dataRef.id,
-          agent: dataRef.location
+          host_id: {
+            _eq: dataRef.id
+          },
+          agent: {
+            _eq: dataRef.location
+          }
         } : {}
       }
     }

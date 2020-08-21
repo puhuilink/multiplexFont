@@ -6,6 +6,7 @@ import { ApolloClient } from 'apollo-client'
 // import { onError } from 'apollo-link-error'
 
 const {
+  NODE_ENV,
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_KEY
 } = process.env
@@ -13,6 +14,10 @@ const {
 const linkList = [
   new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } })
 ]
+
+if (NODE_ENV === 'development') {
+  // TODo
+}
 
 // TODO: 此处包装后传递到 service 层
 // const errorHandler = onError(({ networkError, graphQLErrors }) => {
