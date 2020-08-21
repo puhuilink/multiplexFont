@@ -32,73 +32,92 @@
         <!-- / 数据域 -->
 
         <!-- / 监控对象 -->
+        <a-form-model-item label="监控对象" v-bind="formItemLayout">
+          <a-select></a-select>
+        </a-form-model-item>
 
         <!-- / 监控实体 -->
-        <!-- <CmdbEndpointSelect /> -->
+        <a-form-model-item label="监控实体" v-bind="formItemLayout">
+          <CmdbEndpointSelect />
+        </a-form-model-item>
 
         <!-- / 检查项 -->
-        <!-- <CmdbMetricSelect /> -->
+        <a-form-model-item label="检查项" v-bind="formItemLayout">
+          <CmdbMetricSelect />
+        </a-form-model-item>
 
         <!-- / 阈值计算条件 -->
+        <a-form-model-item label="阈值计算条件" v-bind="formItemLayout">
+        </a-form-model-item>
 
         <!-- / 阈值条件 -->
-        <a-row
-          class="ant-form-item"
-          v-for="(opt, index) in formModel.exprs.opts"
-          :key="index"
-        >
-          <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
-            <label title="阈值条件">阈值条件</label>
-          </a-col>
+        <div class="AlarmStrategy__modal-opts" ref="opts">
+          <a-row
+            class="ant-form-item"
+            v-for="(opt, index) in formModel.exprs.opts"
+            :key="index"
+          >
 
-          <a-col v-bind="formItemLayout.wrapperCol">
-            <a-row>
-              <a-col :span="8">
-                <a-form-model-item class="fw" v-bind="nestedFormItemLayout">
-                  <a-select
-                    class="fw"
-                    placeholder="等于（或大于、小于...）"
-                    v-model="opt.operator"
-                  >
-                    <a-select-option
-                      v-for="operator in ['=', '>', '>=', '<', '<=']"
-                      :key="operator"
-                      :value="operator"
-                    >{{ operator }}</a-select-option>
-                  </a-select>
-                </a-form-model-item>
-              </a-col>
+            <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
+              <label title="阈值条件">阈值条件</label>
+            </a-col>
 
-              <a-col :span="5">
-                <a-form-model-item v-bind="nestedFormItemLayout">
-                  <a-input-number v-model="opt.threshold" />
-                </a-form-model-item>
-              </a-col>
+            <a-col v-bind="formItemLayout.wrapperCol">
+              <a-row>
+                <a-col :span="8">
+                  <a-form-model-item class="fw" v-bind="nestedFormItemLayout">
+                    <a-select
+                      class="fw"
+                      placeholder="等于（或大于、小于...）"
+                      v-model="opt.operator"
+                    >
+                      <a-select-option
+                        v-for="operator in ['=', '>', '>=', '<', '<=']"
+                        :key="operator"
+                        :value="operator"
+                      >{{ operator }}</a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
 
-              <a-col :span="9">
-                <a-form-model-item label="告警级别" v-bind="nestedFormItemLayout">
-                  <a-select
-                    class="fw"
-                    v-model="opt.alarm_level"
-                  >
-                    <a-select-option
-                      v-for="level in [1, 2, 3, 4, 5]"
-                      :key="level"
-                      :value="level"
-                    >{{ `L${level}` }}</a-select-option>
-                  </a-select>
-                </a-form-model-item>
-              </a-col>
+                <a-col :span="5">
+                  <a-form-model-item v-bind="nestedFormItemLayout">
+                    <a-input-number v-model="opt.threshold" />
+                  </a-form-model-item>
+                </a-col>
 
-              <a-col :span="2">
-                <a-form-model-item>
-                  <a-button
-                    v-show="formModel.exprs.opts.length > 1"
-                    @click="removeExpressionOpts(index)"
-                  >删除</a-button>
-                </a-form-model-item>
-              </a-col>
-            </a-row>
+                <a-col :span="9">
+                  <a-form-model-item label="告警级别" v-bind="nestedFormItemLayout">
+                    <a-select
+                      class="fw"
+                      v-model="opt.alarm_level"
+                    >
+                      <a-select-option
+                        v-for="level in [1, 2, 3, 4, 5]"
+                        :key="level"
+                        :value="level"
+                      >{{ `L${level}` }}</a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
+
+                <a-col :span="2">
+                  <a-form-model-item>
+                    <a-button
+                      v-show="formModel.exprs.opts.length > 1"
+                      @click="removeExpressionOpt(index)"
+                    >删除</a-button>
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+            </a-col>
+
+          </a-row>
+        </div>
+
+        <a-row justify="center" type="flex">
+          <a-col>
+            <a-button type="primary" @click="addExpressionOpts">添加</a-button>
           </a-col>
         </a-row>
 
@@ -113,6 +132,14 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
 import _ from 'lodash'
 import { CmdbEndpointSelect, CmdbMetricSelect } from '@/components/Cmdb'
+import { scrollTo } from '@/utils/util'
+
+const defaultOpt = {
+  operator: '',
+  threshold: '',
+  frequency: 0,
+  alarm_level: ''
+}
 
 export default {
   name: 'AlarmStrategySchema',
@@ -126,7 +153,11 @@ export default {
     formModel: {
       enable: 1,
       exprs: {
-        opts: []
+        opts: [
+          {
+            ...defaultOpt
+          }
+        ]
       }
     },
     // TODO: responsive
@@ -156,6 +187,11 @@ export default {
     add () {
       this.show('新建阈值规则')
       this.submit = this.insert
+    },
+    async addExpressionOpts () {
+      this.formModel.exprs.opts.push({ ...defaultOpt })
+      await this.$nextTick()
+      scrollTo(this.$refs.opts.scrollHeight, { getContainer: () => this.$refs.opts })
     },
     edit (id) {
       this.fetch(id)
@@ -192,7 +228,7 @@ export default {
         this.submitLoading = false
       }
     },
-    removeExpressionOpts (index) {
+    removeExpressionOpt (index) {
       this.formModel.exprs.opts.splice(index, 1)
     },
     async update () {
@@ -215,8 +251,8 @@ export default {
 
 <style lang="less">
 .AlarmStrategy__modal {
-  .ant-modal-body {
-    height: 500px;
+  &-opts{
+    height: 300px;
     overflow: auto;
   }
 
