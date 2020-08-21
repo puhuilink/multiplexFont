@@ -60,8 +60,10 @@ export default {
     },
     // 从视图部件库中移除该部件
     [ScreenMutations.REMOVE_WIDGET] (state, payload) {
-      const index = state.view.widgets.findIndex(widget => widget.widgetId !== payload.widgetId)
-      state.view.widgets.splice(index, 1)
+      // FIXME: 当画布上有多个组件时，使用 splice 会导致删除的不是当前选中的组件
+      // const index = state.view.widgets.findIndex(widget => widget.widgetId !== payload.widgetId)
+      // state.view.widgets.splice(index, 1)
+      state.view.widgets = state.view.widgets.filter(widget => widget.widgetId !== payload.widgetId)
       // 置空激活部件
       state.activeWidget = null
       // 隐藏选择器
