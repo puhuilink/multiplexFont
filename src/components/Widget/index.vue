@@ -14,7 +14,12 @@
     @click.stop="() => $emit('select', selectWidget)">
 
     <!-- S 元素部件 -->
-    <component v-if="useComponent" :is="elementName" :elementProps="elementProps" ref="element" />
+    <component
+      :elementProps="elementProps"
+      :is="elementName"
+      ref="element"
+      v-if="useComponent"
+    />
     <!-- E 元素部件 -->
 
   </div>
@@ -30,7 +35,7 @@ import Widget from '@/model/widget'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
-import { NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE, NodeFactory } from '@/model/factory/nodeFactory'
+import { NODE_TYPE_CIRCLE, NODE_TYPE_CI, NodeFactory } from '@/model/factory/nodeFactory'
 import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -109,7 +114,7 @@ export default {
      */
     drill ({ item }) {
       // const model = item.getModel()
-      // if (model.shape === NODE_TYPE_CI_CIRCLE) {}
+      // if (model.shape === NODE_TYPE_CI) {}
       // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
       // mock data
       const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
@@ -141,12 +146,16 @@ export default {
     },
     initTopologyChart () {
       const { render } = this
-      const { chart, config } = render
+      const {
+        // chart,
+        config
+      } = render
       const { proprietaryConfig: { nodes } } = config
-      chart.on('node:click', this.drill)
+      // chart.on('node:click', this.drill)
       // 筛选出需要定时刷新的节点，如果节点只存储了配置，需要将其实例化
-      const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI_CIRCLE].includes(shape)).map(node => NodeFactory.create(node))
+      const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI].includes(shape)).map(node => NodeFactory.create(node))
       render.enablePreviewMode()
+      console.log(circleNodeList)
       // 开启轮询
       circleNodeList.forEach(node => {
         node.intervalRefresh && node.intervalRefresh()
@@ -178,7 +187,7 @@ export default {
       this.render.intervalRefresh && this.render.intervalRefresh()
       if (this.render instanceof TopologyChart) {
         // TODO: 待调试
-        // this.initTopologyChart()
+        this.initTopologyChart()
       }
     } else {
       // 如果在编辑状态，将渲染的元素更新至部件

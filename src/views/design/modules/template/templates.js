@@ -24,7 +24,7 @@ const charts = [
     category: 'CHART', type: 'Polar', name: '极坐标图', icon: 'radar-chart', width: 600, height: 600
   },
   {
-    category: 'CHART', type: 'Topology', name: '拓扑图', icon: 'branches', width: 800, height: 600
+    category: 'CHART', type: 'Topology', name: '拓扑图', icon: 'branches', width: 800, height: 600, backgroundColor: 'rgba(230,226,226,1)'
   },
   {
     category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100
