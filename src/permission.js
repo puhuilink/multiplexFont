@@ -58,6 +58,7 @@ router.beforeEach((to, from, next) => {
         .finally(() => {
           next({ name: 'login', query: { redirect: to.fullPath } })
         })
+      throw err
     })
 })
 

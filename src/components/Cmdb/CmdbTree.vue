@@ -19,6 +19,7 @@
         showLine
         :treeData="treeData"
         v-on="$listeners"
+        v-bind="$props"
       />
     </a-spin>
   </div>
@@ -26,12 +27,20 @@
 
 <script>
 import { CmdbService } from '@/api-hasura'
+// import { Tree } from 'ant-design-vue'
+// import _ from 'lodash'
 
 export default {
   name: 'CmdbTree',
   mixins: [],
   components: {},
-  props: {},
+  props: {
+    // ..._.pick(Tree.props, 'draggable')
+    draggable: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     expandedKeys: [],
     spinning: false,

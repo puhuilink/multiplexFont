@@ -1,15 +1,11 @@
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import { logout } from '@/api/login'
-import { getGroupPermission } from '@/api/system'
+import { getGroupPermission, getUserPermission } from '@/api/system'
 import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
-// import { UserService } from '@/api-hasura'
-// import _ from 'lodash'
 import router from '@/router'
-import { userPermission } from './mock'
 
 const user = {
   state: {
@@ -51,45 +47,45 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise(async (resolve, reject) => {
         try {
-          // const user = Vue.ls.get(USER)
-          // const originalPermission = []
-          // const organizeList = (user.organizeList || []).filter(v => !!v)
-          // if (!organizeList.length) {
-          //   reject(new Error('该用户未分配工作组，请先联系管理员分配工作组！'))
-          // }
+          const user = Vue.ls.get(USER)
+          const originalPermission = []
+          const organizeList = (user.organizeList || []).filter(v => !!v)
 
-          // // 获取用户所属工作组的权限 、并合并
-          // // const permissionList = await UserService.getAllPermission()
-          // const results = await Promise.all(user.organizeList.map(organize => getGroupPermission(organize.groupId)))
-          // const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
-          // const permissionList = results.flatMap(item => item.data)
-          // if (!status) {
-          //   reject(new Error('用户权限数据获取失败，请稍后尝试！'))
-          // }
-          // console.log(permissionList)
-          // permissionList.forEach(permission => {
-          //   if (!originalPermission.some(item => item.code === permission.code)) {
-          //     originalPermission.push(permission)
-          //   }
-          // })
-          // // 菜单权限列表
-          // const menuOriginalPermission = []
-          // // const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
-          // // 按钮权限列表
-          // const buttonOriginalPermission = []
-          // // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
+          // 获取用户所属工作组的权限 、并合并
+          // const permissionList = await UserService.getAllPermission()
+          const results = await Promise.all([
+            ...organizeList.map(organize => getGroupPermission(organize.groupId)),
+            getUserPermission(user.userId)
+          ])
+          const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
+          const permissionList = results.flatMap(item => item.data)
+          if (!status) {
+            reject(new Error('用户权限数据获取失败，请稍后尝试！'))
+          }
+          console.log(permissionList)
+          permissionList.forEach(permission => {
+            if (!originalPermission.some(item => item.code === permission.code)) {
+              originalPermission.push(permission)
+            }
+          })
+          // 菜单权限列表
+          const menuOriginalPermission = []
+          // const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
+          // 按钮权限列表
+          const buttonOriginalPermission = []
+          // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
 
-          // originalPermission.forEach(item => {
-          //   if (/^F/.test(item.code)) {
-          //     menuOriginalPermission.push(item)
-          //   } else if (/^M/.test(item.code)) {
-          //     buttonOriginalPermission.push(item)
-          //   }
-          // })
+          originalPermission.forEach(item => {
+            if (/^F/.test(item.code)) {
+              menuOriginalPermission.push(item)
+            } else if (/^M/.test(item.code)) {
+              buttonOriginalPermission.push(item)
+            }
+          })
 
-          // const buttonTree = getButtonTree(null, buttonOriginalPermission)
-          // const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
-          // const userPermission = Object.assign({}, user, permissionTree)
+          const buttonTree = getButtonTree(null, buttonOriginalPermission)
+          const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+          const userPermission = Object.assign({}, user, permissionTree)
 
           // FIXME: 用户应有一些基本权限，比如视图展示（桌面）
           if (userPermission.permissions && userPermission.permissions.length > 0) {

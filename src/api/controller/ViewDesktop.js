@@ -17,11 +17,13 @@ export const getUserDesktop = function (userId) {
     query: queryUserDesktop(userId)
   }).then(r => r.data.data).then(async r => {
     const data = Array.isArray(r) ? r[0] : r
-    // console.log('data.content', data.content)
     // 老系统视图
-    const { content } = data
-    // data.content = data.content.includes('<') ? '' : data.content
-    data.viewIds = (content.includes('<') ? [] : content.split(',')).filter(id => !!id)
+    const { content = '' } = data
+    try {
+      data.viewIds = (content.includes('<') ? [] : content.split(',')).filter(id => !!id)
+    } catch (e) {
+      data.viewIds = []
+    }
     let viewList
     if (data.viewIds.length) {
       viewList = await getViewList({
