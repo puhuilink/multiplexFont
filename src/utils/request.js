@@ -5,8 +5,8 @@ import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 50000
+  baseURL: process.env.VUE_APP_API_BASE_URL
+  // timeout: 500000
 })
 
 service.interceptors.request.use(config => {
