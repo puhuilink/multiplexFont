@@ -4,7 +4,6 @@
  */
 
 import _ from 'lodash'
-import { MetricService } from '@/api-hasura'
 
 export class AdaptorResourceConfig {
   static fieldsMapping = new Map([
@@ -21,20 +20,26 @@ export class AdaptorResourceConfig {
   ])
 
   constructor ({
-    // cmdbHostIdList = [],
-    // modelEndpointId = null,
-    // modelMetricIdList = [],
+    // hostIds = [],
+    // endpointModel = null,
+    // metricModels = [],
     // modelHostId = null
     // mock
-    cmdbHostIdList = [257882722304],
-    modelEndpointId = 1988235274,
-    modelMetricIdList = [1988235275],
-    modelHostId = 1988235264
+    hostIds = [257882722304],
+    endpointModel = 1988235274,
+    metricModels = [1988235275],
+    modelHostId = 1988235264,
+    // enum: day / hour / minute
+    isGroup = '',
+    // enum: total / max / average
+    calculateType = ''
   }) {
-    this.cmdbHostIdList = cmdbHostIdList
-    this.modelEndpointId = modelEndpointId
-    this.modelMetricIdList = modelMetricIdList
+    this.hostIds = hostIds
+    this.endpointModel = endpointModel
+    this.metricModels = metricModels
     this.modelHostId = modelHostId
+    this.isGroup = isGroup
+    this.calculateType = calculateType
   }
 
   static transfer (dataList = []) {
@@ -68,16 +73,9 @@ export class AdaptorResourceConfig {
     return result
   }
 
-  static fetch (config = {}) {
-    return MetricService
-      .chartValue({
-        ...config,
-        orderBy: { collect_time: 'desc' }
-      })
-      .then(AdaptorResourceConfig.transfer)
-      .catch(err => {
-        console.error(err)
-        return []
-      })
+  getOption () {
+    return {
+      ...this
+    }
   }
 }

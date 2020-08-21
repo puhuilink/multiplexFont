@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 
-export const TIME_RANGE_FORMAT = 'YYYY-MM-DDTHH:mm:ss'
+export const TIME_RANGE_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 export const TIME_RANGE_TYPE_DEFAULT = 'default'
 export const TIME_RANGE_TYPE_RECENT = 'recent'
 export const TIME_RANGE_TYPE_CUSTOM = 'custom'
@@ -27,8 +27,8 @@ export const DEFAULT_TIME_RANGE_END = _.cloneDeep(DEFAULT_TIME_RANGE_START)
 
 export class TimeRangeConfig {
   constructor ({
-    timeRangeStart = _.cloneDeep(DEFAULT_TIME_RANGE_START),
-    timeRangeEnd = _.cloneDeep(DEFAULT_TIME_RANGE_END),
+    startTime = _.cloneDeep(DEFAULT_TIME_RANGE_START),
+    endTime = _.cloneDeep(DEFAULT_TIME_RANGE_END),
     timeRangeType = TIME_RANGE_TYPE_DEFAULT,
     recentType = TIME_TYPE_MINUTES,
     recentValue = 0,
@@ -38,8 +38,8 @@ export class TimeRangeConfig {
     ]
   }
   ) {
-    this.timeRangeStart = timeRangeStart
-    this.timeRangeEnd = timeRangeEnd
+    this.startTime = startTime
+    this.endTime = endTime
     this.timeRangeType = timeRangeType
     this.recentType = recentType
     this.recentValue = recentValue
@@ -50,31 +50,31 @@ export class TimeRangeConfig {
     const { timeRangeType } = this
     switch (timeRangeType) {
       case TIME_RANGE_TYPE_DEFAULT: {
-        const { timeRangeStart, timeRangeEnd } = this
+        const { startTime, endTime } = this
         // 实时数据
-        if (Object.values(timeRangeStart).every(v => v === 0) && Object.values(timeRangeEnd).every(v => v === 0)) {
+        if (Object.values(startTime).every(v => v === 0) && Object.values(endTime).every(v => v === 0)) {
           return {}
         }
         // 历史数据
         return {
-          timeRangeStart: moment().add(timeRangeStart).format(TIME_RANGE_FORMAT),
-          timeRangeEnd: moment().add(timeRangeEnd).format(TIME_RANGE_FORMAT)
+          startTime: moment().add(startTime).format(TIME_RANGE_FORMAT),
+          endTime: moment().add(endTime).format(TIME_RANGE_FORMAT)
         }
       }
       case TIME_RANGE_TYPE_RECENT: {
         const { recentType, recentValue } = this
-        const timeRangeStart = Object.assign(DEFAULT_TIME_RANGE_START, { [recentType]: recentValue })
+        const startTime = Object.assign(DEFAULT_TIME_RANGE_START, { [recentType]: recentValue })
         return {
-          timeRangeStart: moment().add(timeRangeStart).format(TIME_RANGE_FORMAT),
-          timeRangeEnd: moment().format(TIME_RANGE_FORMAT)
+          startTime: moment().add(startTime).format(TIME_RANGE_FORMAT),
+          endTime: moment().format(TIME_RANGE_FORMAT)
         }
       }
       case TIME_RANGE_TYPE_CUSTOM: {
         const { customTimeRange = [] } = this
-        const [timeRangeStart, timeRangeEnd] = customTimeRange
+        const [startTime, endTime] = customTimeRange
         return {
-          timeRangeStart,
-          timeRangeEnd
+          startTime,
+          endTime
         }
       }
     }

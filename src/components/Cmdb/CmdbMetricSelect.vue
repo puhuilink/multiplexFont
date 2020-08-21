@@ -12,10 +12,10 @@ export default {
     }
   },
   methods: {
-    async fetch (modelEndpointId) {
+    async fetch (endpointModel) {
       try {
         this.loading = true
-        this.list = await ModelService.modelMetricList(modelEndpointId)
+        this.list = await ModelService.modelMetricList(endpointModel)
       } catch (e) {
         this.list = []
         throw e

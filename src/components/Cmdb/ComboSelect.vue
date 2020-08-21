@@ -21,7 +21,7 @@
       >
         <CmdbHostSelect
           v-bind="selectProps"
-          :value.sync="model.cmdbHostIdList"
+          :value.sync="model.hostIds"
           :parentId="model.modelHostId"
         />
       </a-form-item>
@@ -35,7 +35,7 @@
       >
         <CmdbEndpointSelect
           v-bind="selectProps"
-          :value.sync="model.modelEndpointId"
+          :value.sync="model.endpointModel"
           :parentId="model.modelHostId"
         />
       </a-form-item>
@@ -49,8 +49,8 @@
       >
         <CmdbMetricSelect
           v-bind="selectProps"
-          :value.sync="model.modelMetricIdList"
-          :parentId="model.modelEndpointId"
+          :value.sync="model.metricModels"
+          :parentId="model.endpointModel"
         />
       </a-form-item>
     </a-form>
@@ -67,9 +67,9 @@ import { MetricService } from '@/api-hasura'
 
 // TODO: Adaptor
 const defaultModel = {
-  cmdbHostIdList: [],
-  modelEndpointId: null,
-  modelMetricIdList: [],
+  hostIds: [],
+  endpointModel: null,
+  metricModels: [],
   modelHostId: null
 }
 
@@ -126,7 +126,7 @@ export default {
       immediate: true,
       deep: true,
       handler (value) {
-        if (!value || _.isEmpty(value) || !value.hasOwnProperty('cmdbHostIdList')) {
+        if (!value || _.isEmpty(value) || !value.hasOwnProperty('hostIds')) {
           this.model = _.cloneDeep(defaultModel)
           return
         }
@@ -152,13 +152,13 @@ export default {
     },
     'model.modelHostId' (modelHostId) {
       this.model.modelHostId = modelHostId
-      this.model.modelEndpointId = null
-      this.model.cmdbHostIdList = []
+      this.model.endpointModel = null
+      this.model.hostIds = []
       console.log(1)
     },
-    'model.modelEndpointId' (modelEndpointId) {
-      this.model.modelEndpointId = modelEndpointId
-      this.model.modelMetricIdList = null
+    'model.endpointModel' (endpointModel) {
+      this.model.endpointModel = endpointModel
+      this.model.metricModels = null
       console.log(2)
     }
   },
@@ -166,9 +166,9 @@ export default {
     async preview () {
       const result = await MetricService.chartValue({
         resourceConfig: {
-          cmdbHostIdList: [4329475],
-          modelMetricIdList: [4329474],
-          modelEndpointId: 4329473
+          hostIds: [4329475],
+          metricModels: [4329474],
+          endpointModel: 4329473
         }
       })
       console.log(result)

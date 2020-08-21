@@ -10,7 +10,7 @@ export class AdaptorNodeConfig extends AdaptorResourceConfig {
    */
   latestAlarmLevel () {
     // return 1
-    const [host_id] = this.cmdbHostIdList
+    const [host_id] = this.hostIds
     return AlarmService.find({
       where: {
         host_id,

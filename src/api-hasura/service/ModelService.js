@@ -89,13 +89,13 @@ class ModelService extends BaseService {
 
   /**
    * 查询 endpoint 模型下的 metric 列表
-   * @param {Number} modelEndpointId t_model_endpoint.endpoint_id
+   * @param {Number} endpointModel t_model_endpoint.endpoint_id
    */
-  static async modelMetricList (modelEndpointId) {
+  static async modelMetricList (endpointModel) {
     const { data: { modelEndpointMetricList } } = await query(
       ModelEndpointMetricDao.find({
         where: {
-          endpoint_id: modelEndpointId
+          endpoint_id: endpointModel
           // enable: true
         },
         fields: [

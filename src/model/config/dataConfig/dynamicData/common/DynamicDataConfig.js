@@ -4,6 +4,7 @@
 
 import { TimeRangeConfig } from './TimeRangeConfig'
 import { AdaptorResourceConfig } from './AdaptorResourceConfig'
+import { MetricService } from '@/api-hasura'
 import _ from 'lodash'
 
 export class DynamicDataConfig {
@@ -25,16 +26,16 @@ export class DynamicDataConfig {
 
   fetch (argus = {}) {
     const { resourceConfig, timeRangeConfig } = this
-    return AdaptorResourceConfig
-      .fetch({
-        resourceConfig,
-        timeRange: timeRangeConfig.getOption(),
-        ...argus
+    return MetricService
+      .chartValue({
+        resourceConfig: resourceConfig.getOption(),
+        timeRange: timeRangeConfig.getOption()
       })
-      .then(r => {
-        console.log(r)
-        return r
+      .catch(err => {
+        console.error(err)
+        return []
       })
+      .then(AdaptorResourceConfig.transfer)
   }
 
   getOption () { }

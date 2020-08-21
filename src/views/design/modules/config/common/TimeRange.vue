@@ -17,7 +17,7 @@
       <a-select
         :filterOption="filterOption"
         showSearch
-        v-model="timeRangeStart"
+        v-model="startTime"
         @select="change()"
       >
         <a-select-option
@@ -154,16 +154,16 @@ export default {
     timeRangeConfig () {
       return _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
     },
-    timeRangeStart: {
+    startTime: {
       get () {
         try {
-          return JSON.stringify(this.timeRangeConfig.timeRangeStart)
+          return JSON.stringify(this.timeRangeConfig.startTime)
         } catch (e) {
           return null
         }
       },
-      set (timeRangeStart) {
-        this.timeRangeConfig.timeRangeStart = JSON.parse(timeRangeStart)
+      set (startTime) {
+        this.timeRangeConfig.startTime = JSON.parse(startTime)
       }
     }
   },
