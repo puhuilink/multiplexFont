@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import { logout } from '@/api/login'
 import { getGroupPermission, getUserPermission } from '@/api/system'
@@ -6,10 +5,7 @@ import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
 import { login } from '@/api/controller/User'
-// import { UserService } from '@/api-hasura'
-// import _ from 'lodash'
 import router from '@/router'
-import { userPermission } from './mock'
 
 const user = {
   state: {
@@ -79,17 +75,17 @@ const user = {
           const buttonOriginalPermission = []
           // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
 
-          // originalPermission.forEach(item => {
-          //   if (/^F/.test(item.code)) {
-          //     menuOriginalPermission.push(item)
-          //   } else if (/^M/.test(item.code)) {
-          //     buttonOriginalPermission.push(item)
-          //   }
-          // })
+          originalPermission.forEach(item => {
+            if (/^F/.test(item.code)) {
+              menuOriginalPermission.push(item)
+            } else if (/^M/.test(item.code)) {
+              buttonOriginalPermission.push(item)
+            }
+          })
 
-          // const buttonTree = getButtonTree(null, buttonOriginalPermission)
-          // const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
-          // const userPermission = Object.assign({}, user, permissionTree)
+          const buttonTree = getButtonTree(null, buttonOriginalPermission)
+          const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+          const userPermission = Object.assign({}, user, permissionTree)
 
           // FIXME: 用户应有一些基本权限，比如视图展示（桌面）
           if (userPermission.permissions && userPermission.permissions.length > 0) {
