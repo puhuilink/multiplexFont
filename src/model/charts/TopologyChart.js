@@ -488,7 +488,7 @@ export default class TopologyChart extends Chart {
     emitter.off('canvas:click', this.onNodeAnimateTypeChange)
     this.chart.off()
     this.chart.destroy()
-    this.timerNodeList.forEach(node => {
+    this.timerNodeList && this.timerNodeList.forEach(node => {
       node.destroy()
     })
   }

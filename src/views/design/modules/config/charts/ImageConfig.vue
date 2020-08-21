@@ -22,7 +22,7 @@
 
       <a-tab-pane tab="专有属性" key="2">
         <div class="image-config__template">
-          <a-collapse :defaultActiveKey="[1,2]" :bordered="false">
+          <a-collapse :defaultActiveKey="[1, 2, 3]" :bordered="false">
 
             <!-- S 图片 -->
             <a-collapse-panel header="图片" key="1">
@@ -36,13 +36,29 @@
                     @change="imageChange" />
                 </div>
               </div>
-              <!-- / 地址 -->
 
             </a-collapse-panel>
             <!-- E 图片 -->
 
+            <!-- S 图标 -->
+            <a-collapse-panel header="图标" key="2">
+              <div class="comment-template__item">
+                <div class="comment-template__inner icon-picker__list">
+                  <div
+                    class="icon-picker__icon"
+                    v-for="(item, index) of icons"
+                    :key="index"
+                    @click="iconChoose(index)"
+                  >
+                    <img :src="item.img" alt="">
+                  </div>
+                </div>
+              </div>
+            </a-collapse-panel>
+            <!-- E 图标 -->
+
             <!-- S 预览 -->
-            <a-collapse-panel header="预览" key="2">
+            <a-collapse-panel header="预览" key="3">
               <div class="image-config__screen">
                 <div class="image-config__screenshot">
                   <img ref="img" :src="config.proprietaryConfig.graphic.style.image" alt="" v-if="config.proprietaryConfig.graphic.style.image" />
@@ -64,6 +80,7 @@
 import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
+import IconPicker from '@/components/IconPicker'
 
 export default {
   name: 'ImageConfig',
@@ -71,7 +88,15 @@ export default {
   components: {
     CommonTemplate
   },
+  data: () => ({
+    icons: IconPicker.data()['icons']
+  }),
   methods: {
+    iconChoose (index) {
+      const { img } = this.icons[index]
+      this.config.proprietaryConfig.graphic.style.image = img
+      this.imageChange()
+    },
     async imageChange () {
       try {
         const { width, height } = await this.imageUrlLoader(this.config.proprietaryConfig.graphic.style.image)
@@ -82,6 +107,7 @@ export default {
       } catch (e) {
         this.$message.error('图片载入失败，请确认图片地址正确！')
         this.change()
+        throw e
       }
     },
     /**
@@ -97,6 +123,10 @@ export default {
         image.src = url
       })
     }
+  },
+  mounted () {
+    // FIXME: 当图片类型为图标时，需要先触发 imageChange 才能渲染
+    this.imageChange()
   }
 }
 </script>
@@ -134,6 +164,24 @@ export default {
     p {
       color: #1890ff;
       margin: 0;
+    }
+  }
+
+  .icon-picker__icon {
+    display: inline-block;
+
+    img {
+      flex: none;
+      width: 24px;
+      height: 24px;
+      margin: 0 6px 6px 0;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      cursor: pointer;
+
+      &.active {
+        border-color: #1890ff;
+      }
     }
   }
 }
