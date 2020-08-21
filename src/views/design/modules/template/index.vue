@@ -87,6 +87,74 @@ export default {
     ...mapState('screen', ['view', 'activeWidget', 'topologyEditable']),
     ...mapGetters('screen', ['widgets', 'scale'])
   },
+  watch: {
+    topologyEditable (topologyEditable) {
+      // 打开元素添加列表
+      const [topology] = document.getElementsByClassName('topology')
+      // FLIP动画
+      if (this.topologyEditable) {
+        // 正向动画
+        // 记录初始位置
+        const firstRect = topology.getBoundingClientRect()
+        // 使其布局及样式发生改变
+        anime.set(topology, {
+          position: 'absolute',
+          margin: 0,
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%'
+        })
+        // 记录最终位置
+        const lastRect = topology.getBoundingClientRect()
+        // 翻转动画
+        topology.animate([{
+          transform: `
+            translate(${firstRect.left - lastRect.left}px, ${firstRect.top - lastRect.top}px)
+            scale(${firstRect.width / lastRect.width}, ${firstRect.height / lastRect.height})
+         `
+        }, {
+          transform: 'none'
+        }], {
+          duration: 300,
+          easing: 'cubic-bezier(0.2, 0, 0.2, 1)',
+          fill: 'both'
+        })
+      } else {
+        // 逆向动画
+        const firstRect = topology.getBoundingClientRect()
+        // 使其布局及样式发生改变
+        anime.set(topology, {
+          position: 'relative',
+          margin: '16px 0 0 0',
+          top: 'none',
+          left: 'none',
+          width: '96px',
+          height: '96px'
+        })
+        // 记录最终位置
+        const lastRect = topology.getBoundingClientRect()
+
+        requestAnimationFrame(() => {
+          // 翻转动画
+          topology.animate([{
+            transformOrigin: 'top left',
+            transform: `
+            translate(${firstRect.left - lastRect.left}px, ${firstRect.top - lastRect.top}px)
+            scale(${firstRect.width / lastRect.width}, ${firstRect.height / lastRect.height})
+          `
+          }, {
+            transformOrigin: 'top left',
+            transform: 'none'
+          }], {
+            duration: 300,
+            easing: 'cubic-bezier(0.2, 0, 0.2, 1)',
+            fill: 'both'
+          })
+        })
+      }
+    }
+  },
   mounted () {
     this.viewUp$ = fromEvent(document.getElementsByClassName('view')[0], 'mouseup')
 

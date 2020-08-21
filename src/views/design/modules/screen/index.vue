@@ -333,6 +333,7 @@ export default {
   methods: {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW,
+      resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     /**
@@ -532,6 +533,7 @@ export default {
      * 清空画板
      */
     clear () {
+      this.resetTopologyState()
       // 清空部件列表
       this.setView({
         view: new View({ ..._.pick(this.view, ['id', 'el', 'gauge', 'parent']) })
