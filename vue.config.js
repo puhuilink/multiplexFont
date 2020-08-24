@@ -11,6 +11,7 @@ function resolve (dir) {
 const {
   NODE_ENV,
   VUE_APP_API_BASE_URL,
+  // eslint-disable-next-line no-unused-vars
   VUE_APP_API_BASE_URL_ORIGINAL_URL,
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
@@ -123,7 +124,9 @@ const vueConfig = {
     proxy: {
       // 后台接口
       [VUE_APP_API_BASE_URL]: {
-        target: VUE_APP_API_BASE_URL_ORIGINAL_URL,
+        // FIXME: 后台接口地址外网无法直接访问，需经由外网 Nginx 转发到内网后才能访问？
+        target: 'https://web.cluster.local/api/',
+        // target: VUE_APP_API_BASE_URL_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
