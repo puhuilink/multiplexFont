@@ -4,8 +4,8 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   CmdbHostDao,
   CmdbEndpointMetricDao,
-  CmdbHostEndpointDao,
-  ModelHostGroupByHostTypeDao
+  CmdbHostEndpointDao
+  // ModelHostGroupByHostTypeDao
 } from '../dao'
 // import _ from 'lodash'
 const _ = require('lodash')
