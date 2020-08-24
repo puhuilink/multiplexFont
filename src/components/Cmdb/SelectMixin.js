@@ -64,7 +64,7 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     fetch (parentId) {},
-    change (value) {
+    change (value, option) {
       const payload = this.filterValue(value)
       this.$emit('change', payload)
       this.$emit('update:value', payload)

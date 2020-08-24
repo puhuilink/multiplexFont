@@ -10,6 +10,7 @@
         <CmdbHostTypeSelect
           v-bind="selectProps"
           :value.sync="model.modelHostId"
+          @update:hostType="e => model.hostType = e"
         />
       </a-form-item>
 
@@ -22,7 +23,7 @@
         <CmdbHostSelect
           v-bind="selectProps"
           :value.sync="model.hostIds"
-          :parentId="model.modelHostId"
+          :hostType="model.hostType"
         />
       </a-form-item>
 
@@ -65,8 +66,8 @@ import CmdbMetricSelect from './CmdbMetricSelect'
 import _ from 'lodash'
 import { MetricService } from '@/api-hasura'
 
-// TODO: Adaptor
 const defaultModel = {
+  hostType: '',
   hostIds: [],
   endpointModel: null,
   metricModels: [],
@@ -145,7 +146,7 @@ export default {
     },
     'model': {
       // immediate: false,
-      // deep: true,
+      deep: true,
       handler (model) {
         this.$emit('input', _.cloneDeep(model))
       }
@@ -154,12 +155,10 @@ export default {
       this.model.modelHostId = modelHostId
       this.model.endpointModel = null
       this.model.hostIds = []
-      console.log(1)
     },
     'model.endpointModel' (endpointModel) {
       this.model.endpointModel = endpointModel
       this.model.metricModels = null
-      console.log(2)
     }
   },
   methods: {

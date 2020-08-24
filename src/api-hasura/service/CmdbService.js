@@ -107,27 +107,7 @@ class CmdbService extends BaseService {
     return [root]
   }
 
-  // static async hostTypeFind (argus = {}) {
-  //   return query(
-  //     CmdbHostGroupByHostTypeDao.find(argus)
-  //   )
-  // }
-  static async _modelHostTypeById (modelHostId) {
-    const { data: { hostGroupByHostTypeList } } = await query(
-      ModelHostGroupByHostTypeDao.find({
-        where: {
-          id: modelHostId
-        },
-        fields: ['host_type'],
-        alias: 'hostGroupByHostTypeList'
-      })
-    )
-    const host_type = _.get(hostGroupByHostTypeList, '[0].host_type')
-    return host_type
-  }
-
-  static async cmdbHostList (modelHostId) {
-    const host_type = await this._modelHostTypeById(modelHostId)
+  static async cmdbHostList (host_type) {
     const { data: { cmdbHostList } } = await query(
       CmdbHostDao.find({
         where: {

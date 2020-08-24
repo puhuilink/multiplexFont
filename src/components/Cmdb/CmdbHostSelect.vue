@@ -9,13 +9,26 @@ export default {
     multiple: {
       type: Boolean,
       default: false
+    },
+    hostType: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    hostType: {
+      immediate: true,
+      async handler (hostType) {
+        this.list = []
+        hostType && await this.fetch(hostType)
+      }
     }
   },
   methods: {
-    async fetch (modelHostId) {
+    async fetch (hostType) {
       try {
         this.loading = true
-        this.list = await CmdbService.cmdbHostList(modelHostId)
+        this.list = await CmdbService.cmdbHostList(hostType)
       } catch (e) {
         this.list = []
         throw e

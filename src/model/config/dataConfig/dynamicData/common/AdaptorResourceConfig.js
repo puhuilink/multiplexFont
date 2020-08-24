@@ -25,6 +25,7 @@ export class AdaptorResourceConfig {
     // metricModels = [],
     // modelHostId = null
     // mock
+    hostType = '',
     hostIds = [257882722304],
     endpointModel = 1988235274,
     metricModels = [1988235275],
@@ -34,6 +35,7 @@ export class AdaptorResourceConfig {
     // enum: total / max / average
     calculateType = ''
   }) {
+    this.hostType = hostType
     this.hostIds = hostIds
     this.endpointModel = endpointModel
     this.metricModels = metricModels

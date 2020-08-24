@@ -48,12 +48,16 @@ class ModelService extends BaseService {
       ModelHostGroupByHostTypeDao.find({
         fields: [
           'key: id',
-          'label: host_type'
+          'host',
+          'host_type'
         ],
         alias: 'modelHostTypeList'
       })
     )
-    return modelHostTypeList
+    return modelHostTypeList.map(el => ({
+      ...el,
+      label: el['host'] || el['host_type']
+    }))
   }
 
   /**
