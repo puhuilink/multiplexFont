@@ -112,8 +112,10 @@ export default {
       if (!this.fixSidebar || this.isMobile()) {
         return '0'
       }
+
+      // SideMenu.width
       if (this.sidebarOpened) {
-        return '300px'
+        return '210px'
       }
       return '80px'
     }

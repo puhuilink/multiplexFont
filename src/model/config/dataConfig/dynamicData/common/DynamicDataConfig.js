@@ -32,7 +32,7 @@ export class DynamicDataConfig {
         ...argus
       })
       .then(r => {
-        console.log(r)
+        // console.log(r)
         return r
       })
   }

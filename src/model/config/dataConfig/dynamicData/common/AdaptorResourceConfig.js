@@ -38,7 +38,7 @@ export class AdaptorResourceConfig {
   }
 
   static transfer (dataList = []) {
-    console.log(dataList)
+    // console.log(dataList)
     const { fieldsMapping } = AdaptorResourceConfig
     const result = []
     dataList.forEach(data => {

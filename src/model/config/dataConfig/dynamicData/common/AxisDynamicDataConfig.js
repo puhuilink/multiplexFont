@@ -51,7 +51,7 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
         const legendList = Object.keys(groupByLegend)
         const groupByCategory = _.groupBy(dataList, 'category')
         const categoryList = Object.keys(groupByCategory)
-        console.log(groupByCategory)
+        // console.log(groupByCategory)
         option = {
           legend: {
             data: legendList

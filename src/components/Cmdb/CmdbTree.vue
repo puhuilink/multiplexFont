@@ -2,6 +2,7 @@
   <div class="CmdbTree">
     <a-input-search
       allowClear
+      autoFocus
       class="CmdbTree__search"
       :loading="spinning"
       placeholder="搜索"
