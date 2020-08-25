@@ -15,7 +15,7 @@
           <div :class="{ fold: !advanced }">
 
             <a-row>
-              <a-col :md="12" :sm="24">
+              <a-col :md="24" :sm="24">
                 <a-form-item
                   label="采集时间"
                   v-bind="formItemLayout"
@@ -24,8 +24,14 @@
                   <a-range-picker
                     allowClear
                     class="fw"
-                    format="YYYY-MM-DD HH:mm:ss"
+                    format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
+                    :ranges="{
+                      '最近一天': [moment(), moment()],
+                      '最近一周': [moment().add(-7, 'days'), moment()],
+                      '最近一月': [moment().add(-30, 'days'), moment()]
+                    }"
+                    :showTime="{ format: 'HH:mm' }"
                     v-model="queryParams.collect_time"
                   />
                 </a-form-item>
@@ -59,15 +65,15 @@ export default {
   props: {},
   data: () => ({
     columns: Object.freeze([
+      // {
+      //   title: '监控对象',
+      //   dataIndex: 'host_id',
+      //   sorter: true,
+      //   width: 180,
+      //   customRender: (__, { host_id, cmdb = {} }) => _.get(cmdb, 'host_alias') || host_id
+      // },
       {
-        title: '设备',
-        dataIndex: 'host_id',
-        sorter: true,
-        width: 180,
-        customRender: (__, { host_id, cmdb = {} }) => _.get(cmdb, 'host_alias') || host_id
-      },
-      {
-        title: '节点',
+        title: '监控实体',
         dataIndex: 'endpoint_id',
         sorter: true,
         width: 180,
@@ -103,20 +109,23 @@ export default {
       ]
     }
   }),
-  computed: {},
+  computed: {
+    scrollY () {
+      return 'max(calc(100vh - 380px), 100px)'
+    }
+  },
   watch: {
     where: {
       immediate: true,
       deep: true,
       async handler (where) {
-        if (!_.isEmpty(where)) {
-          await this.$nextTick()
-          this.$refs['table'].refresh(true)
-        }
+        await this.$nextTick()
+        this.$refs['table'].refresh(true)
       }
     }
   },
   methods: {
+    moment,
     loadData (parameter) {
       if (_.isEmpty(this.where)) {
         return {}
@@ -130,7 +139,6 @@ export default {
           ...this.columns.map(({ dataIndex }) => dataIndex),
           'metric_value_str',
           `cmdb {
-            host_alias
             endpoint_alias
             metric_alias
           }`

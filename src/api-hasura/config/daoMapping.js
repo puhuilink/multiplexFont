@@ -20,6 +20,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_cmdb_endpoint_metric', primaryKey: 'id' },
   { schema: 't_cmdb_host_endpoint', primaryKey: 'id' },
   { schema: 't_cmdb_host', primaryKey: 'id' },
+  { schema: 't_cmdb_host_view', primaryKey: 'id' }, // 关联表
   { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id' }, // postgre view
   { schema: 't_cmdb_metric', primaryKey: 'id' },
   // cmdb_model

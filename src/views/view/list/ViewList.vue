@@ -132,7 +132,6 @@ export default {
      * 加载表格数据回调
      */
     loadData (parameter) {
-      console.log(ViewListService)
       return ViewListService.find({
         where: {
           ...generateQuery(this.queryParams)

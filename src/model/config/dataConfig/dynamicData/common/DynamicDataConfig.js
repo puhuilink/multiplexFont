@@ -31,9 +31,9 @@ export class DynamicDataConfig {
         resourceConfig: resourceConfig.getOption(),
         timeRange: timeRangeConfig.getOption()
       })
-      .catch(err => {
-        console.error(err)
-        return []
+      .then(r => {
+        // console.log(r)
+        return r
       })
       .then(AdaptorResourceConfig.transfer)
   }
