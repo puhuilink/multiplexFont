@@ -7,7 +7,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbHostTypeSelect
+        <ModelHostTypeSelect
           v-bind="selectProps"
           :value.sync="model.modelHostId"
         />
@@ -33,7 +33,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbEndpointSelect
+        <ModelEndpointSelect
           v-bind="selectProps"
           :value.sync="model.modelEndpointId"
           :parentId="model.modelHostId"
@@ -47,7 +47,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbMetricSelect
+        <ModelMetricSelect
           v-bind="selectProps"
           :value.sync="model.modelMetricIdList"
           :parentId="model.modelEndpointId"
@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import CmdbHostTypeSelect from './CmdbHostTypeSelect'
+import ModelHostTypeSelect from './ModelHostTypeSelect'
 import CmdbHostSelect from './CmdbHostSelect'
-import CmdbEndpointSelect from './CmdbEndpointSelect'
-import CmdbMetricSelect from './CmdbMetricSelect'
+import ModelEndpointSelect from './ModelEndpointSelect'
+import ModelMetricSelect from './ModelMetricSelect'
 import _ from 'lodash'
 import { MetricService } from '@/api-hasura'
 
@@ -77,10 +77,10 @@ export default {
   name: 'ComboSelect',
   mixins: [],
   components: {
-    CmdbHostTypeSelect,
+    ModelHostTypeSelect,
     CmdbHostSelect,
-    CmdbEndpointSelect,
-    CmdbMetricSelect
+    ModelEndpointSelect,
+    ModelMetricSelect
   },
   props: {
     value: {
@@ -149,17 +149,6 @@ export default {
       handler (model) {
         this.$emit('input', _.cloneDeep(model))
       }
-    },
-    'model.modelHostId' (modelHostId) {
-      this.model.modelHostId = modelHostId
-      this.model.modelEndpointId = null
-      this.model.cmdbHostIdList = []
-      console.log(1)
-    },
-    'model.modelEndpointId' (modelEndpointId) {
-      this.model.modelEndpointId = modelEndpointId
-      this.model.modelMetricIdList = null
-      console.log(2)
     }
   },
   methods: {

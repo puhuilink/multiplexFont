@@ -38,12 +38,12 @@
 
         <!-- / 监控实体 -->
         <a-form-model-item label="监控实体" v-bind="formItemLayout">
-          <CmdbEndpointSelect />
+          <ModelEndpointSelect />
         </a-form-model-item>
 
         <!-- / 检查项 -->
         <a-form-model-item label="检查项" v-bind="formItemLayout">
-          <CmdbMetricSelect />
+          <ModelMetricSelect />
         </a-form-model-item>
 
         <!-- / 阈值计算条件 -->
@@ -131,7 +131,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
 import _ from 'lodash'
-import { CmdbEndpointSelect, CmdbMetricSelect } from '@/components/Cmdb'
+import { ModelEndpointSelect, ModelMetricSelect } from '@/components/Cmdb'
 import { scrollTo } from '@/utils/util'
 
 const defaultOpt = {
@@ -145,8 +145,8 @@ export default {
   name: 'AlarmStrategySchema',
   mixins: [Schema],
   components: {
-    CmdbEndpointSelect,
-    CmdbMetricSelect
+    ModelEndpointSelect,
+    ModelMetricSelect
   },
   props: {},
   data: () => ({

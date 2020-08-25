@@ -1,15 +1,21 @@
 <script>
-import { ModelService } from '@/api-hasura'
+import { CmdbService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
   name: 'CmdbEndpointSelect',
   mixins: [SelectMixin],
+  props: {
+    multiple: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
-    async fetch (modelHostId) {
+    async fetch (cmdbHostId) {
       try {
         this.loading = true
-        this.list = await ModelService.modelEndpointList(modelHostId)
+        this.list = await CmdbService.cmdbEndpointList(cmdbHostId)
       } catch (e) {
         this.list = []
         throw e

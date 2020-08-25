@@ -3,17 +3,13 @@ import { ModelService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
-  name: 'CmdbHostTypeSelect',
+  name: 'ModelEndpointSelect',
   mixins: [SelectMixin],
   methods: {
-    select (e) {
-      this.$emit('select', e)
-      this.$emit('update:value', e)
-    },
-    async fetch () {
+    async fetch (modelHostId) {
       try {
         this.loading = true
-        this.list = await ModelService.modelHostTypeList()
+        this.list = await ModelService.modelEndpointList(modelHostId)
       } catch (e) {
         this.list = []
         throw e
@@ -21,9 +17,6 @@ export default {
         this.loading = false
       }
     }
-  },
-  created () {
-    this.fetch()
   }
 }
 </script>

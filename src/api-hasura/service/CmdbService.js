@@ -163,6 +163,61 @@ class CmdbService extends BaseService {
       CmdbEndpointMetricDao.find(argus)
     )
   }
+
+  static async cmdbEndpointList (id) {
+    if (!id) {
+      return []
+    }
+
+    const { data: { cmdbHostList } } = await query(
+      CmdbHostDao.find({
+        where: { id },
+        fields: [
+          `endpointList: endpointRelation {
+            key: endpoint_id
+            endpoint {
+              label: alias
+            }
+          }`
+        ],
+        alias: 'cmdbHostList'
+      })
+    )
+
+    const endpointList = _.get(cmdbHostList, '[0].endpointList', [])
+
+    return endpointList.map(e => ({
+      key: e.key,
+      label: _.get(e, 'endpoint.alias.label', e.key)
+    }))
+  }
+
+  static async cmdbMetricList (endpoint_id) {
+    if (!endpoint_id) {
+      return []
+    }
+
+    const { data: { cmdbEndpointMetricList } } = await query(
+      CmdbEndpointMetricDao.find({
+        where: { endpoint_id },
+        fields: [
+          `metric {
+            key: metric_id
+            modelMetric {
+              label: alias
+            }
+          }`
+        ],
+        alias: 'cmdbEndpointMetricList'
+      })
+    )
+
+    const metricList = cmdbEndpointMetricList.map(({ metric }) => metric)
+    return metricList.map(e => ({
+      key: e.key,
+      label: _.get(e, 'modelMetric.label', e.key)
+    }))
+  }
 }
 
 export {

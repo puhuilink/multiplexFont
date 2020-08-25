@@ -1,17 +1,21 @@
 import ModelTree from './ModelTree'
 import CmdbTree from './CmdbTree'
 import ComboSelect from './ComboSelect'
-import CmdbHostTypeSelect from './CmdbHostTypeSelect'
+import ModelHostTypeSelect from './ModelHostTypeSelect'
 import CmdbHostSelect from './CmdbHostSelect'
-import CmdbEndpointSelect from './CmdbEndpointSelect'
+import ModelEndpointSelect from './ModelEndpointSelect'
+import ModelMetricSelect from './ModelMetricSelect'
+import CmdbEndpointList from './CmdbEndpointList'
 import CmdbMetricSelect from './CmdbMetricSelect'
 
 export {
   ComboSelect,
   ModelTree,
   CmdbTree,
-  CmdbHostTypeSelect,
+  ModelHostTypeSelect,
   CmdbHostSelect,
-  CmdbEndpointSelect,
+  ModelEndpointSelect,
+  ModelMetricSelect,
+  CmdbEndpointList,
   CmdbMetricSelect
 }

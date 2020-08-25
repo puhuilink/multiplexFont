@@ -1,21 +1,19 @@
 <script>
-import { CmdbService } from '@/api-hasura'
+import { ModelService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
-  name: 'CmdbMetricSelect',
+  name: 'ModelHostTypeSelect',
   mixins: [SelectMixin],
-  props: {
-    multiple: {
-      type: Boolean,
-      default: false
-    }
-  },
   methods: {
-    async fetch (cmdbHostId) {
+    select (e) {
+      this.$emit('select', e)
+      this.$emit('update:value', e)
+    },
+    async fetch () {
       try {
         this.loading = true
-        this.list = await CmdbService.cmdbMetricList(cmdbHostId)
+        this.list = await ModelService.modelHostTypeList()
       } catch (e) {
         this.list = []
         throw e
@@ -23,6 +21,9 @@ export default {
         this.loading = false
       }
     }
+  },
+  created () {
+    this.fetch()
   }
 }
 </script>
