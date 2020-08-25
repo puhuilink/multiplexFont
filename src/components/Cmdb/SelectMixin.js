@@ -47,6 +47,8 @@ export default {
       immediate: true,
       async handler (parentId) {
         this.list = []
+        this.$emit('change', null)
+        this.$emit('update:value', null)
         parentId && await this.fetch(parentId)
       }
     }

@@ -3,7 +3,7 @@ import { ModelService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
-  name: 'CmdbEndpointSelect',
+  name: 'ModelEndpointSelect',
   mixins: [SelectMixin],
   methods: {
     async fetch (modelHostId) {

@@ -15,10 +15,36 @@
           <div :class="{ fold: !advanced }">
 
             <a-row>
-              <a-col :md="24" :sm="24">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="监控实体"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CmdbEndpointList
+                    :parentId="host_id"
+                    :value.sync="queryParams.endpoint_id"
+                  />
+                </a-form-item>
+              </a-col>
+
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="检查项"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CmdbMetricSelect
+                    :parentId="queryParams.endpoint_id"
+                    :value.sync="queryParams.metric_id"
+                  />
+                </a-form-item>
+              </a-col>
+
+              <a-col :span="24">
                 <a-form-item
                   label="采集时间"
-                  v-bind="formItemLayout"
+                  v-bind="fullFormItemLayout"
                   class="fw"
                 >
                   <a-range-picker
@@ -57,11 +83,15 @@ import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'
+import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Cmdb'
 
 export default {
   name: 'PerformanceList',
   mixins: [List],
-  components: {},
+  components: {
+    CmdbEndpointList,
+    CmdbMetricSelect
+  },
   props: {},
   data: () => ({
     columns: Object.freeze([
@@ -88,8 +118,8 @@ export default {
       },
       {
         title: '指标值',
-        dataIndex: 'metric_value',
-        sorter: true,
+        dataIndex: 'metric_value metric_value_str',
+        sorter: false,
         width: 180,
         customRender: (__, { metric_value, metric_value_str }) => metric_value || metric_value_str
       },
@@ -104,14 +134,20 @@ export default {
     queryParams: {
       // 默认查询最近一个月的数据，避免一次性查询所有数据
       'collect_time': [
-        moment().add(-30, 'days'),
-        moment()
+        // moment().add(-30, 'days'),
+        // moment()
+        moment('2020-07-31 22:25'),
+        moment('2020-08-01 22:25')
       ]
     }
   }),
   computed: {
     scrollY () {
-      return 'max(calc(100vh - 380px), 100px)'
+      return 'max(calc(100vh - 420px), 100px)'
+    },
+    // FIXME: host_id 作为 props
+    host_id () {
+      return _.get(this.where, 'host_id._eq') || _.get(this.where, 'host_id')
     }
   },
   watch: {

@@ -3,7 +3,7 @@ import { CmdbService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
-  name: 'CmdbMetricSelect',
+  name: 'CmdbEndpointSelect',
   mixins: [SelectMixin],
   props: {
     multiple: {
@@ -15,7 +15,7 @@ export default {
     async fetch (cmdbHostId) {
       try {
         this.loading = true
-        this.list = await CmdbService.cmdbMetricList(cmdbHostId)
+        this.list = await CmdbService.cmdbEndpointList(cmdbHostId)
       } catch (e) {
         this.list = []
         throw e

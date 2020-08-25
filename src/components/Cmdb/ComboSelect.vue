@@ -7,7 +7,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbHostTypeSelect
+        <ModelHostTypeSelect
           v-bind="selectProps"
           :value.sync="model.modelHostId"
           @update:hostType="e => model.hostType = e"
@@ -34,7 +34,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbEndpointSelect
+        <ModelEndpointSelect
           v-bind="selectProps"
           :value.sync="model.endpointModel"
           :parentId="model.modelHostId"
@@ -48,7 +48,7 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbMetricSelect
+        <ModelMetricSelect
           v-bind="selectProps"
           :value.sync="model.metricModels"
           :parentId="model.endpointModel"
@@ -59,10 +59,10 @@
 </template>
 
 <script>
-import CmdbHostTypeSelect from './CmdbHostTypeSelect'
+import ModelHostTypeSelect from './ModelHostTypeSelect'
 import CmdbHostSelect from './CmdbHostSelect'
-import CmdbEndpointSelect from './CmdbEndpointSelect'
-import CmdbMetricSelect from './CmdbMetricSelect'
+import ModelEndpointSelect from './ModelEndpointSelect'
+import ModelMetricSelect from './ModelMetricSelect'
 import _ from 'lodash'
 import { MetricService } from '@/api-hasura'
 
@@ -78,10 +78,10 @@ export default {
   name: 'ComboSelect',
   mixins: [],
   components: {
-    CmdbHostTypeSelect,
+    ModelHostTypeSelect,
     CmdbHostSelect,
-    CmdbEndpointSelect,
-    CmdbMetricSelect
+    ModelEndpointSelect,
+    ModelMetricSelect
   },
   props: {
     value: {
@@ -145,20 +145,9 @@ export default {
       }
     },
     'model': {
-      // immediate: false,
-      deep: true,
       handler (model) {
         this.$emit('input', _.cloneDeep(model))
       }
-    },
-    'model.modelHostId' (modelHostId) {
-      this.model.modelHostId = modelHostId
-      this.model.endpointModel = null
-      this.model.hostIds = []
-    },
-    'model.endpointModel' (endpointModel) {
-      this.model.endpointModel = endpointModel
-      this.model.metricModels = null
     }
   },
   methods: {

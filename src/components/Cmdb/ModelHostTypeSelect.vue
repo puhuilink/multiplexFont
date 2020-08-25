@@ -3,7 +3,7 @@ import { ModelService } from '@/api-hasura'
 import SelectMixin from './SelectMixin'
 
 export default {
-  name: 'CmdbHostTypeSelect',
+  name: 'ModelHostTypeSelect',
   mixins: [SelectMixin],
   methods: {
     change (value, option) {

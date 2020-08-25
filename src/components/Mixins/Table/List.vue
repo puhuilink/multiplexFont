@@ -39,6 +39,18 @@ export default {
         xl: { span: 14, offset: 2 }
       }
     },
+    fullFormItemLayout: {
+      labelCol: {
+        sm: { span: 4 },
+        md: { span: 4 },
+        xl: { span: 2 }
+      },
+      wrapperCol: {
+        sm: { span: 19, offset: 1 },
+        md: { span: 19, offset: 1 },
+        xl: { span: 21, offset: 1 }
+      }
+    },
     // 查询参数
     queryParams: {},
     // 选中行
