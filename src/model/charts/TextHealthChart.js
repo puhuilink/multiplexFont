@@ -2,6 +2,11 @@
 * 文本健康度chart配置
 */
 import Chart from './index'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class TextsChart extends Chart {
   constructor ({ widget }) {
@@ -17,16 +22,19 @@ export default class TextsChart extends Chart {
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         title.text = `${staticData}`
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         if (loadingDynamicData) {
           const dynamicData = await dataConfig.dbDataConfig.getOption()
           title.text = `${dynamicData}`
-          break
         }
+        break
+      }
+      case SOURCE_TYPE_NULL: {
+        break
       }
     }
 

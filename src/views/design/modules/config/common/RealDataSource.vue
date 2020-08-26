@@ -1,8 +1,12 @@
 <template>
   <div class="RealDataSource">
     <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-      <!-- <a-button :loading="btnLoading" :disabled="!available" @click="change(true)">预览</a-button> -->
-      <a-button @click="preview">预览</a-button>
+      <!-- :disabled="!available"  -->
+      <a-button
+        :loading="btnLoading"
+        @click="change(true)"
+      >预览</a-button>
+      <!-- <a-button @click="preview">预览</a-button> -->
     </a-tooltip>
 
     <!-- / 横轴类型 -->
@@ -17,7 +21,7 @@
           :key="idx"
           :value="option.value"
         >
-          {{ option.name }}
+          {{ option.label }}
         </a-select-option>
       </a-select>
     </a-form-item>
@@ -29,16 +33,54 @@
       v-if="useLegendType"
     >
       <a-select
-        style="width: 100%"
+        class="fw"
         v-model="legendType"
         @change="change"
       >
-        <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.name }}</a-select-option>
+        <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.label }}</a-select-option>
       </a-select>
     </a-form-item>
 
     <!-- / 查询时间 -->
     <TimeRange v-if="useTimeRange" />
+
+    <!-- / 计算类型 -->
+    <a-form-item
+      label="计算类型"
+      v-bind="formItemLayout"
+      v-if="useRefreshTime"
+    >
+      <a-select
+        allowClear
+        class="fw"
+        v-model="resourceConfig.calculateType"
+        @change="change"
+      >
+        <a-select-option
+          v-for="option in calculateTypeList"
+          :key="option.value"
+        >{{ option.label }}</a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <!-- / 分组 -->
+    <a-form-item
+      label="分组"
+      v-bind="formItemLayout"
+      v-if="useRefreshTime"
+    >
+      <a-select
+        allowClear
+        class="fw"
+        v-model="resourceConfig.isGroup"
+        @change="change"
+      >
+        <a-select-option
+          v-for="option in groupList"
+          :key="option.value"
+        >{{ option.label }}</a-select-option>
+      </a-select>
+    </a-form-item>
 
     <!-- / 数据源 -->
     <ComboSelect
@@ -79,11 +121,9 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-// import { ComboSelect } from '@/components/Common'
 import { ComboSelect } from '@/components/Cmdb'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
-// import { CmdbService } from '@/api-hasura'
 
 export default {
   name: 'RealDataSource',
@@ -123,17 +163,45 @@ export default {
     }
   },
   data: () => ({
+    calculateTypeList: [
+      {
+        label: '求和',
+        value: 'total'
+      },
+      {
+        label: '最大值',
+        value: 'max'
+      },
+      {
+        label: '均值',
+        value: 'average'
+      }
+    ],
+    groupList: [
+      {
+        label: '精确到分',
+        value: 'minute'
+      },
+      {
+        label: '精确到小时',
+        value: 'hour'
+      },
+      {
+        label: '精确到天',
+        value: 'day'
+      }
+    ],
     legendTypeList: [
       {
-        name: 'Ci',
+        label: 'Ci',
         value: 'ci'
       },
       {
-        name: 'Instance',
+        label: 'Instance',
         value: 'instance'
       },
       {
-        name: 'Kpi',
+        label: 'Kpi',
         value: 'kpi'
       }
     ]
@@ -143,7 +211,6 @@ export default {
       set (legendType) {
         // TODO: 此处先按单选实现，后期扩展为多选，始终以数组传递，方便向后兼容
         legendType = Array.isArray(legendType) ? legendType : [legendType]
-        console.log(legendType)
         Object.assign(this.config.dataConfig.dbDataConfig, { legendType })
       },
       get () {

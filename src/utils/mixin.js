@@ -22,11 +22,11 @@ const mixin = {
     })
   },
   methods: {
-    isTopMenu () {
+    istopmenu () {
       return this.layoutMode === 'topmenu'
     },
     isSideMenu () {
-      return !this.isTopMenu()
+      return !this.istopmenu()
     }
   }
 }

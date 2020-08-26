@@ -7,6 +7,11 @@
 */
 import Chart from './index'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
   ...option,
@@ -51,7 +56,7 @@ export default class BarChart extends Chart {
     }
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         dbDataConfig.resetData()
         series = staticData[barType === 'single' ? 'singleSeries' : 'multipleSeries'].map((item) => {
           Object.assign(item, bar, { barWidth })
@@ -66,42 +71,39 @@ export default class BarChart extends Chart {
         })
         break
       }
-      case 'null': {
+      case SOURCE_TYPE_NULL: {
         dbDataConfig.resetData()
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         // 根据数据流向，静态数据在进入 mappingOption 前已经完成 reverse
         // 而动态数据需要进入到 mappingOption 内部才能执行 reverse
         const { reverse } = proprietaryConfig
-        let dynamicData = await dbDataConfig.getOption(loadingDynamicData, reverse)
+        let dynamicData = await dbDataConfig.getOption(loadingDynamicData)
         dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
         series = dynamicData.series.map((item) => {
           return {
             ...item,
             ...bar,
             barWidth,
-            stack: barType === 'single' ? '总量' : false
+            stack: barType === 'single'
           }
         })
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
-
         Object.assign(option, {
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
           series
         })
-
         break
       }
     }
+
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',
-        // 坐标轴指示器，坐标轴触发有效
         axisPointer: {
-          // 默认为直线，可选为：'line' | 'shadow'
           type: 'shadow'
         }
       }

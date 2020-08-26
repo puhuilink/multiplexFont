@@ -1,52 +1,20 @@
 import { BaseService } from './BaseService'
 // eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
-// eslint-disable-next-line no-unused-vars
 import {
-  ModelHostDao, ModelHostEndpointDao, ModelEndpointMetricDao, ModelHostGroupByHostTypeDao,
-  CmdbHostDao, CmdbEndpointMetricDao, CmdbHostEndpointDao, CmdbHostGroupByHostTypeDao,
-  MetricDao
+  CmdbHostDao,
+  CmdbEndpointMetricDao,
+  CmdbHostEndpointDao
+  // ModelHostGroupByHostTypeDao
 } from '../dao'
-// TODO: Adaptor Dao
-// TODO: No GraphQL API + Adaptor Dao
-import _ from 'lodash'
+// import _ from 'lodash'
+const _ = require('lodash')
 
 // TODO: t_metric 表以外可能可以用 GraphQL 缓存
 class CmdbService extends BaseService {
   // FIXME: host 与 endpoint 并非一定是树形结构
-  static async modelTree () {
-    const { data: { hostList } } = await query(
-      ModelHostDao.find({
-        // where:
-        fields: [
-          'id',
-          'host',
-          `endpointRelation {
-            endpoint {
-              id
-              alias
-            }
-          }`
-        ],
-        alias: 'hostList'
-      })
-    )
-    const treeData = hostList.map(host => ({
-      title: host.host,
-      key: host.id,
-      children: host.endpointRelation
-        .filter(({ endpoint }) => !!endpoint)
-        .map(({ endpoint }) => ({
-          title: endpoint.alias,
-          key: endpoint.id
-        }))
-    }))
-    return treeData
-  }
-
-  // FIXME: host 与 endpoint 并非一定是树形结构
   // TODO: 字段有待确认
-  static async cmdbTree () {
+  static async tree () {
     const { data: { hostList } } = await query(
       CmdbHostDao.find({
         // where:
@@ -76,10 +44,86 @@ class CmdbService extends BaseService {
     return treeData
   }
 
-  static async hostTypeFind (argus = {}) {
-    return query(
-      CmdbHostGroupByHostTypeDao.find(argus)
+  static async resourceTree (where = {}) {
+    // 一维数组查找
+    let { data: { cmdbHostList } } = await query(
+      CmdbHostDao.find({
+        where: {
+          ...where,
+          enable: true
+        },
+        fields: [
+          'id',
+          'alias',
+          'location',
+          'host',
+          'host_type',
+          'modelHost { host }'
+        ],
+        alias: 'cmdbHostList'
+      })
     )
+
+    // host_type 汉化
+    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
+      ...rest,
+      host_type: modelHost.host || host_type
+    }))
+
+    // 树形结构构建
+    const root = {
+      id: 'root',
+      alias: '数据中心',
+      children: [],
+      type: 'root',
+      selectable: false
+    }
+
+    // 按采集系统 / 区域划分第一层
+    const locationList = _.groupBy(cmdbHostList.filter(Boolean), 'location')
+
+    // 按设备类型划分第二层
+    Object
+      .entries(locationList)
+      .forEach(([location, hostList]) => {
+        const children = Object
+          .entries(_.groupBy(hostList, 'host_type'))
+          .map(([hostType, hostList]) => ({
+            id: hostType,
+            alias: hostType,
+            children: hostList,
+            type: 'hostType',
+            selectable: false
+          }))
+        root.children.push({
+          id: location,
+          alias: location,
+          type: 'location',
+          children: children,
+          selectable: false
+        })
+      })
+
+    return [root]
+  }
+
+  static async cmdbHostList (host_type) {
+    const { data: { cmdbHostList } } = await query(
+      CmdbHostDao.find({
+        where: {
+          host_type
+          // enable: true
+        },
+        fields: [
+          'key: id',
+          'label: alias'
+        ],
+        alias: 'cmdbHostList'
+      })
+    )
+    const validList = cmdbHostList.filter(({ key }) => !!key)
+    const uniqList = _.uniq(validList, ({ key }) => key)
+    return uniqList
   }
 
   static async hostFind (argus = {}) {
@@ -100,140 +144,61 @@ class CmdbService extends BaseService {
     )
   }
 
-  // TODO: pg 视图？
-  static async latestMetric ({ hostId, endpointId, metricId }) {
-    const { data } = await query(
-      MetricDao.find({
-        where: {
-          host_id: hostId,
-          endpoint_id: endpointId,
-          metric_id: metricId
-        },
-        fields: [
-          `metric_value
-          metric_value_str
-          upload_time
-          host {
-            alias
-          }
-          endpoint {
-            modelEndpoint {
-              alias
-            }
-          }
-          metric {
-            modelMetric {
-              alias
-            }
-          }`
-        ],
-        limit: 1,
-        alias: 'data'
-      })
-    )
-    return data
-  }
+  static async cmdbEndpointList (id) {
+    if (!id) {
+      return []
+    }
 
-  // --------------- divided ---------------
-
-  static async _modelHostTypeById (modelHostId) {
-    const { data: { hostGroupByHostTypeList } } = await query(
-      ModelHostGroupByHostTypeDao.find({
-        where: {
-          id: modelHostId
-        },
-        fields: ['host_type'],
-        alias: 'hostGroupByHostTypeList'
-      })
-    )
-    const host_type = _.get(hostGroupByHostTypeList, '[0].host_type')
-    return host_type
-  }
-
-  static async cmdbHostList (modelHostId) {
-    const host_type = await this._modelHostTypeById(modelHostId)
     const { data: { cmdbHostList } } = await query(
       CmdbHostDao.find({
-        where: {
-          host_type
-          // enable: true
-        },
+        where: { id },
         fields: [
-          'key: id',
-          'label: alias'
+          `endpointList: endpointRelation {
+            key: endpoint_id
+            endpoint {
+              modelEndpoint {
+                label: alias
+              }
+            }
+          }`
         ],
         alias: 'cmdbHostList'
       })
     )
-    const validList = cmdbHostList.filter(({ key }) => !!key)
-    const uniqList = _.uniq(validList, ({ key }) => key)
-    return uniqList
+
+    const endpointList = _.get(cmdbHostList, '[0].endpointList', [])
+
+    return endpointList.map(e => ({
+      key: e.key,
+      label: _.get(e, 'endpoint.modelEndpoint.label', e.key)
+    }))
   }
 
-  static async modelHostTypeList () {
-    const { data: { modelHostTypeList } } = await query(
-      ModelHostGroupByHostTypeDao.find({
-        fields: [
-          'key: id',
-          'label: host_type'
-        ],
-        alias: 'modelHostTypeList'
-      })
-    )
-    return modelHostTypeList
-  }
+  static async cmdbMetricList (endpoint_id) {
+    if (!endpoint_id) {
+      return []
+    }
 
-  static async modelEndpointList (modelHostId) {
-    const { data: { modelHostEndpointList } } = await query(
-      ModelHostEndpointDao.find({
-        where: {
-          host_id: modelHostId
-          // enable: true
-        },
-        fields: [
-          `endpoint {
-            id
-            alias
-          }`
-        ],
-        alias: 'modelHostEndpointList'
-      })
-    )
-
-    const validList = modelHostEndpointList
-      .filter(({ endpoint }) => endpoint && endpoint.id)
-      .map(({ endpoint }) => ({
-        key: endpoint.id,
-        label: endpoint.alias
-      }))
-    const uniqList = _.uniq(validList, ({ key }) => key)
-    return uniqList
-  }
-
-  static async modelMetricList (modelEndpointId) {
-    const { data: { modelEndpointMetricList } } = await query(
-      ModelEndpointMetricDao.find({
-        where: {
-          endpoint_id: modelEndpointId
-          // enable: true
-        },
+    const { data: { cmdbEndpointMetricList } } = await query(
+      CmdbEndpointMetricDao.find({
+        where: { endpoint_id },
         fields: [
           `metric {
-            id
-            alias
+            key: metric_id
+            modelMetric {
+              label: alias
+            }
           }`
         ],
-        alias: 'modelEndpointMetricList'
+        alias: 'cmdbEndpointMetricList'
       })
     )
-    const validList = modelEndpointMetricList
-      .filter(({ metric }) => metric && metric.id)
-      .map(({ metric }) => ({
-        key: metric.id,
-        label: metric.alias
-      }))
-    const uniqList = _.uniq(validList, ({ key }) => key)
-    return uniqList
+
+    const metricList = cmdbEndpointMetricList.map(({ metric }) => metric)
+    return metricList.map(e => ({
+      key: e.key,
+      label: _.get(e, 'modelMetric.label', e.key)
+    }))
   }
 }
 

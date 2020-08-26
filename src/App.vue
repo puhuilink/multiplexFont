@@ -27,7 +27,7 @@ export default {
   .ant-drawer-content-wrapper{
     width: 300px !important;
   }
-  .opration{
+  .operation{
     margin-bottom: 10px;
     button{
       margin-right: 5px;
@@ -38,7 +38,7 @@ export default {
 }
 
 // 操作按钮样式
-.opration{
+.operation{
   margin-bottom: 10px;
   button{
     margin-right: 5px;

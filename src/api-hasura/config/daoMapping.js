@@ -12,6 +12,7 @@ const VIC_MAIN_LIST = [
   // 系统设置
   { schema: 't_audit', primaryKey: 'id' },
   { schema: 't_authorize_object' },
+  { schema: 't_function', primaryKey: 'code' },
   { schema: 't_user_group', primaryKey: 'id' },
   // cmdb_instance
   { schema: 't_cmdb_answer', primaryKey: 'id' },
@@ -19,6 +20,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_cmdb_endpoint_metric', primaryKey: 'id' },
   { schema: 't_cmdb_host_endpoint', primaryKey: 'id' },
   { schema: 't_cmdb_host', primaryKey: 'id' },
+  { schema: 't_cmdb_host_view', primaryKey: 'id' }, // 关联表
   { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id' }, // postgre view
   { schema: 't_cmdb_metric', primaryKey: 'id' },
   // cmdb_model
@@ -29,6 +31,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_model_host_endpoint', primaryKey: 'id' },
   { schema: 't_model_host', primaryKey: 'id' },
   { schema: 't_model_host_group_by_host_type', primaryKey: 'id' }, // postgre view
+  { schema: 't_cmdb_host_endpoint_metric', primaryKey: 'id' }, // postgre view
   { schema: 't_model_metric', primaryKey: 'id' },
   { schema: 't_model_metric_oid', primaryKey: 'id' },
   { schema: 't_model_strategy', primaryKey: 'id' },
@@ -46,11 +49,11 @@ const VIC_MAIN_LIST = [
   { schema: 't_patrol_plan', primaryKey: 'id' },
   { schema: 't_patrol_task_result_history', primaryKey: 'id' },
   { schema: 't_patrol_task_status', primaryKey: 'id' },
-  { schema: 't_xj_task_info', primaryKey: 'task_id' },
   { schema: 't_xj_change_shift', primaryKey: 'id' },
-  { schema: 't_xj_task_rf', primaryKey: 'task_rf_id' },
   // 前转记录
-  { schema: 't_send_record', primaryKey: 'id' }
+  { schema: 't_send_record', primaryKey: 'id' },
+  // 主题配置
+  { schema: 't_theme', primaryKey: 'id' }
 ]
 
 const VIV_MAIN_MAPPING = new Map([

@@ -6,13 +6,14 @@
 * Email: dong.xing@outlook.com
 */
 import Factory from '@/model/factory/factory'
+import { SOURCE_TYPE_STATIC } from './dynamicData/types/sourceType'
 
 const StaticDataConfigFactory = Factory.createStaticDataConfigFactory()
 const CreateDynamicDataFactory = Factory.createDynamicDataFactory()
 
 export default class DataConfig {
   constructor ({
-    sourceType = 'static',
+    sourceType = SOURCE_TYPE_STATIC,
     widgetType,
     staticDataConfig = {},
     dbDataConfig = {}

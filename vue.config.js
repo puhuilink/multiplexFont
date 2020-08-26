@@ -8,29 +8,27 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-// const VERSION = 'test'
-const isProd = process.env.NODE_ENV === 'production'
-
 const {
-  VUE_APP_HASURA_CACHE_URI,
-  VUE_APP_HASURA_CACHE_ORIGINAL_URL,
+  NODE_ENV,
+  VUE_APP_API_BASE_URL,
+  // eslint-disable-next-line no-unused-vars
+  VUE_APP_API_BASE_URL_ORIGINAL_URL,
   VUE_APP_HASURA_MAIN_URI,
   VUE_APP_HASURA_MAIN_ORIGINAL_URL,
-  VUE_APP_HASURA_XUNJIAN_URI,
-  VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL
+  VUE_APP_VIEW_THUMBNAIL_URI,
+  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
 } = process.env
 
+const isProd = NODE_ENV === 'production'
+
 const assetsCDN = {
-  // webpack build externals
   externals: {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
-    axios: 'axios',
-    ace: 'ace'
+    axios: 'axios'
   },
   css: [],
-  // https://unpkg.com/browse/vue@2.6.10/
   js: [
     '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
@@ -45,10 +43,13 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      createThemeColorReplacerPlugin()
     ],
-    // if prod, add externals
-    externals: isProd ? assetsCDN.externals : { ace: 'ace' }
+    externals: {
+      ace: 'ace',
+      ...isProd ? assetsCDN.externals : {}
+    }
   },
 
   chainWebpack: (config) => {
@@ -78,9 +79,16 @@ const vueConfig = {
         name: 'assets/[name].[hash:8].[ext]'
       })
 
-    // if prod is on
-    // assets require on cdn
+    // 20 kb 以内图片采用 url-loader (项目中大部分图都在该范围内)
+    config.module
+      .rule('images')
+      .use('url-loader')
+      .loader('url-loader')
+      .tap(options => Object.assign(options, { limit: 20480 }))
+      .end()
+
     if (isProd) {
+      // 在 html 中打上版本号
       config.plugin('html').tap(args => {
         args[0].cdn = assetsCDN
         args[0].version = {
@@ -103,11 +111,7 @@ const vueConfig = {
     loaderOptions: {
       less: {
         modifyVars: {
-          // less vars，customize ant design theme
-
-          // 'primary-color': '#F5222D',
-          // 'link-color': '#F5222D',
-          // 'border-radius-base': '4px'
+          // 'primary-color': '#F5222D'
         },
         // DO NOT REMOVE THIS LINE
         javascriptEnabled: true
@@ -119,23 +123,15 @@ const vueConfig = {
     // development server port 8000
     port: 8080,
     proxy: {
-      // 登录及权限
-      '/api': {
-        target: 'http://10.1.13.210:28081',
-        // target: 'http://10.1.13.17:31685/',
+      // 后台接口
+      [VUE_APP_API_BASE_URL]: {
+        // FIXME: 后台接口地址外网无法直接访问，需经由外网 Nginx 转发到内网后才能访问？
+        target: 'https://web.cluster.local/api/',
+        // target: VUE_APP_API_BASE_URL_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '/api': ''
-        }
-      },
-      // hasura cache
-      [VUE_APP_HASURA_CACHE_URI]: {
-        target: VUE_APP_HASURA_CACHE_ORIGINAL_URL,
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          [VUE_APP_HASURA_CACHE_URI]: ''
+          [VUE_APP_API_BASE_URL]: ''
         }
       },
       // hasura main
@@ -147,22 +143,13 @@ const vueConfig = {
           [VUE_APP_HASURA_MAIN_URI]: ''
         }
       },
-      // hasura xunjian
-      [VUE_APP_HASURA_XUNJIAN_URI]: {
-        target: VUE_APP_HASURA_XUNJIAN_ORIGINAL_URL,
+      // 视图缩略图 nginx 静态资源目录
+      [VUE_APP_VIEW_THUMBNAIL_URI]: {
+        target: VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          [VUE_APP_HASURA_XUNJIAN_URI]: ''
-        }
-      },
-      // 短信验证
-      '/sms': {
-        target: 'http://10.1.13.17:32538/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '/sms': ''
+          [VUE_APP_VIEW_THUMBNAIL_URI]: ''
         }
       }
     }
@@ -173,13 +160,6 @@ const vueConfig = {
   lintOnSave: 'warning',
   // babel-loader no-ignore node_modules/*
   transpileDependencies: []
-}
-
-// preview.pro.loacg.com only do not use in your production;
-if (process.env.VUE_APP_PREVIEW === 'true') {
-  console.log('VUE_APP_PREVIEW', true)
-  // add `ThemeColorReplacer` plugin to webpack plugins
-  vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
 }
 
 module.exports = vueConfig

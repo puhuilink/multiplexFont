@@ -47,6 +47,8 @@ export default {
       immediate: true,
       async handler (parentId) {
         this.list = []
+        this.$emit('change', null)
+        this.$emit('update:value', null)
         parentId && await this.fetch(parentId)
       }
     }
@@ -55,7 +57,7 @@ export default {
     filterValue (value) {
       const { multiple } = this
       if (multiple) {
-        return Array.isArray(value) ? value : [value]
+        return Array.isArray(value) ? value : (value ? [value] : [])
       } else {
         return Array.isArray(value) ? value[0] : value
       }
@@ -64,7 +66,7 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     fetch (parentId) {},
-    change (value) {
+    change (value, option) {
       const payload = this.filterValue(value)
       this.$emit('change', payload)
       this.$emit('update:value', payload)

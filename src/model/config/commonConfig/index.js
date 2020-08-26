@@ -14,12 +14,12 @@ import { Border } from '../../common'
  */
 export default class CommonConfig {
   constructor ({
-    width = 0,
-    height = 0,
-    top = 0,
-    left = 0,
+    width = 300,
+    height = 300,
+    top = 10,
+    left = 10,
     zIndex = 0,
-    padding = [0, 0, 0, 0],
+    padding = [15, 15, 15, 15],
     colorMode = 'single',
     backgroundColor = 'rgba(255,255,255,1)',
     border = {}

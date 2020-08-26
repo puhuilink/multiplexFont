@@ -9,12 +9,11 @@ import { axios } from '@/utils/request'
 colors.enable()
 const { getters } = store
 
-// TODO: handle empty Array.from(arguments)
-
 /**
  * 接口写入审计日志
+ * FIXME: handle empty Array.from(arguments)
  */
-const makeAudit = async function (moduleName, actionname, argus) {
+const makeAudit = async function (moduleName = '', actionname = '', argus = []) {
   const { userId } = getters
 
   const data = {

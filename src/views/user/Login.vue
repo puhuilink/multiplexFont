@@ -7,6 +7,8 @@
       :form="form"
       @submit="handleSubmit"
     >
+
+      <!-- / 账户名 -->
       <a-form-item>
         <a-input
           size="large"
@@ -15,16 +17,21 @@
           placeholder="账户名"
           v-decorator="[
             'userId',
-            {rules: [
-              { required: true, message: '请输入帐户名' },
-              { min: 4, message: '用户名最少4位'},
-              { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
+            {
+              rules: [
+                { required: true, message: '请输入帐户名' },
+                { min: 4, message: '用户名最少4位'},
+                { validator: handleUsernameOrEmail }
+              ],
+              validateTrigger: 'change'
+            }
           ]"
         >
           <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
         </a-input>
       </a-form-item>
 
+      <!-- / 密码 -->
       <a-form-item>
         <a-input
           size="large"
@@ -34,23 +41,52 @@
           v-decorator="[
             'pwd',
             {
-              rules: [{ required: true, message: '请输入密码'}, { validator: handlePasswordLevel }], validateTrigger: ['change', 'blur']}
+              rules: [
+                { required: true, message: '请输入密码'},
+                { validator: handlePasswordLevel }
+              ],
+              validateTrigger: ['change', 'blur']
+            }
           ]"
         >
           <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
         </a-input>
       </a-form-item>
 
+      <!-- / 手机号 -->
       <!-- <a-form-item>
-        <a-input size="large" type="text" autocomplete="off" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
+        <a-input
+          size="large"
+          type="text"
+          autocomplete="off"
+          placeholder="手机号"
+          v-decorator="[
+            'mobile', {
+              rules: [
+                { required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }
+              ],
+              validateTrigger: 'change'
+            }
+          ]">
           <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
         </a-input>
       </a-form-item> -->
 
+      <!-- / 验证码 -->
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
           <a-form-item>
-            <a-input size="large" autocomplete="off" type="text" placeholder="验证码" v-decorator="['verifCode', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
+            <a-input
+              size="large"
+              autocomplete="off"
+              placeholder="验证码"
+              v-decorator="[
+                'verifCode',
+                {
+                  rules: [{ required: true, message: '请输入验证码' }],
+                  validateTrigger: 'blur'
+                }
+              ]">
               <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -66,15 +102,7 @@
         </a-col>
       </a-row>
 
-      <!-- <a-form-item>
-        <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
-        <router-link
-          :to="{ name: 'recover', params: { user: 'aaa'} }"
-          class="forge-pwd"
-          style="float: right;"
-        >忘记密码</router-link>
-      </a-form-item> -->
-
+      <!-- / 提交 -->
       <a-form-item style="margin-top:24px">
         <a-button
           size="large"
@@ -88,31 +116,27 @@
 
     </a-form>
 
-    <two-step-verifCode
+    <!-- <two-step-verifCode
       v-if="requiredTwoStepCaptcha"
       :visible="stepCaptchaVisible"
       @success="stepCaptchaSuccess"
       @cancel="stepCaptchaCancel"
-    ></two-step-verifCode>
+    ></two-step-verifCode> -->
   </div>
 </template>
 
 <script>
-// import md5 from 'md5'
-import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
+// import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
-// import { timeFix } from '@/utils/util'
 import { sendCaptchaByUserId } from '@/api/login'
-import _ from 'lodash'
 
 export default {
   name: 'Login',
   components: {
-    TwoStepCaptcha
+    // TwoStepCaptcha
   },
   data () {
     return {
-      customActiveKey: 'tab1',
       loginBtn: false,
       // login type: 0 email, 1 userId, 2 telephone
       loginType: 0,
@@ -120,7 +144,7 @@ export default {
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
-      hasSendVerifCode: false,
+      hasSentVerifCode: false,
       verifCode: undefined,
       timer: null,
       state: {
@@ -144,17 +168,6 @@ export default {
         return '获取验证码'
       }
     }
-  },
-  created () {
-    // mock
-    // get2step({ })
-    //   .then(res => {
-    //     this.requiredTwoStepCaptcha = res.result.stepCode
-    //   })
-    //   .catch(() => {
-    //     this.requiredTwoStepCaptcha = false
-    //   })
-    // this.requiredTwoStepCaptcha = true
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
@@ -209,10 +222,6 @@ export default {
       }
       callback()
     },
-    handleTabClick (key) {
-      this.customActiveKey = key
-      // this.form.resetFields()
-    },
     handleSubmit (e) {
       e.preventDefault()
       const {
@@ -222,41 +231,33 @@ export default {
         Login
       } = this
 
-      state.loginBtn = true
-      this.isLoginError = false
-
       const validateFieldsKey = customActiveKey === ['userId', 'pwd', 'mobile', 'verifCode']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
-        if (!err) {
-          const loginParams = { ...values }
-          if (!this.hasSendVerifCode) {
-            this.$message.error('请先获取验证码!')
-            state.loginBtn = false
-            return
-          }
-          Reflect.deleteProperty(loginParams, 'userId')
-          loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-          loginParams.pwd = values.pwd
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
-        } else {
-          setTimeout(() => {
-            state.loginBtn = false
-          }, 600)
+        if (err) {
+          return
         }
+        if (!this.hasSentVerifCode) {
+          this.$message.error('请先获取验证码!')
+          state.loginBtn = false
+          return
+        }
+
+        state.loginBtn = true
+        this.isLoginError = false
+
+        const loginParams = { ...values }
+
+        Reflect.deleteProperty(loginParams, 'userId')
+        loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+        loginParams.pwd = values.pwd
+        Login(loginParams)
+          .then((res) => this.loginSuccess(res))
+          .catch(err => this.requestFailed(err))
+          .finally(() => {
+            state.loginBtn = false
+          })
       })
-    },
-    // 随机验证码
-    randomCaptcha () {
-      return new Array(6)
-        .fill('')
-        .map(() => (Math.random() * 9).toFixed())
-        .join('')
     },
     // 获取验证码
     getCaptcha (e) {
@@ -268,7 +269,7 @@ export default {
           state.captchaDisabled = true
           let interval
           this.state.captchaLoading = true
-          this.hasSendVerifCode = false
+          this.hasSentVerifCode = false
           sendCaptchaByUserId(values['userId'])
             .then(() => {
               interval = window.setInterval(() => {
@@ -278,14 +279,15 @@ export default {
                   window.clearInterval(interval)
                 }
               }, 1000)
-              this.$message.success('短信已发送！')
-              this.hasSendVerifCode = true
+              this.$message.success('验证码已通过短信发送到账户手机，请注意查收！')
+              this.hasSentVerifCode = true
             })
             .catch(e => {
-              this.$message.error('短信发送异常，请稍后尝试!')
+              this.$message.error('验证码发送异常，请稍后尝试!')
               state.time = 60
               state.captchaDisabled = false
               window.clearInterval(interval)
+              this.hasSentVerifCode = false
               throw e
             })
             .finally(() => {
@@ -294,29 +296,21 @@ export default {
         }
       })
     },
-    stepCaptchaSuccess () {
-      this.loginSuccess()
-    },
-    stepCaptchaCancel () {
-      this.Logout().then(() => {
-        this.loginBtn = false
-        this.stepCaptchaVisible = false
-      })
-    },
+    // stepCaptchaSuccess () {
+    //   this.loginSuccess()
+    // },
+    // stepCaptchaCancel () {
+    //   this.Logout().then(() => {
+    //     this.loginBtn = false
+    //     this.stepCaptchaVisible = false
+    //   })
+    // },
     loginSuccess (res) {
       this.$router.push({ path: '/' })
       this.isLoginError = false
     },
     requestFailed (err) {
       this.isLoginError = true
-      const message = _.get(err, 'response.data.msg', err.message)
-      console.log(message)
-      // axios 拦截器已处理
-      // this.$notification['error']({
-      //   message: '登录失败',
-      //   description: message || '请求出现错误，请稍后再试',
-      //   duration: 4
-      // })
       throw err
     }
   }

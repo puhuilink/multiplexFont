@@ -5,6 +5,11 @@
 */
 
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 import Chart from './index'
 
 export default class PolarChart extends Chart {
@@ -69,7 +74,7 @@ export default class PolarChart extends Chart {
     }
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         this.chart.clear()
         const {
           legend: staticLegend,
@@ -86,15 +91,18 @@ export default class PolarChart extends Chart {
         })), polarMask.item]
         mask.data = maskData
 
-        const caculateSeries = _.cloneDeep(staticSeries).map(item => {
+        const calculateSeries = _.cloneDeep(staticSeries).map(item => {
           return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
         })
 
         Object.assign(option,
           {
             legend: Object.assign(legend, staticLegend),
-            series: [...caculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
-            angleAxis: Object.assign(angleAxis, staticAngleAxis, { data: polarMask.show ? ['', ...staticAngleAxis.data, ''] : staticAngleAxis.data }),
+            series: [...calculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
+            angleAxis: Object.assign(
+              angleAxis,
+              staticAngleAxis, { data: polarMask.show ? ['', ...staticAngleAxis.data, ''] : staticAngleAxis.data }
+            ),
             radar: Object.assign(radar, {
               indicator: [...angleAxis.data].map(() => ({ text: '' }))
             }),
@@ -104,11 +112,11 @@ export default class PolarChart extends Chart {
         )
         break
       }
-      case 'null': {
+      case SOURCE_TYPE_NULL: {
         break
       }
-      case 'real': {
-        this.chart.resize()
+      case SOURCE_TYPE_REAL: {
+        // this.chart.resize()
         const {
           legend: dynamicLegend,
           series: dynamicSeries,
@@ -125,14 +133,14 @@ export default class PolarChart extends Chart {
           })), polarMask.item]
           mask.data = maskData
 
-          const caculateSeries = _.cloneDeep(dynamicSeries).map(item => {
+          const calculateSeries = _.cloneDeep(dynamicSeries).map(item => {
             return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
           })
 
           Object.assign(option,
             {
               legend: Object.assign(legend, dynamicLegend),
-              series: [...caculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
+              series: [...calculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
               angleAxis: Object.assign(angleAxis, dynamicAngleAxis, { data: polarMask.show ? ['', ...dynamicAngleAxis.data, ''] : dynamicAngleAxis.data }),
               radar: Object.assign(radar, {
                 indicator: [...angleAxis.data].map(() => ({ text: '' }))
@@ -149,8 +157,8 @@ export default class PolarChart extends Chart {
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { // 坐标轴指示器，坐标轴触发有效
-          type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        axisPointer: {
+          type: 'shadow'
         }
       }
     })

@@ -269,7 +269,7 @@
 
 #### （动态）数据查询配置
 
-1. @/model/config/dataConfig/dynamicData 下建立数据配置文件
+1. @/model/config/dataConfig/dynamicData/common 下建立数据配置文件
 2. @/model/factory/dynamicDataFactory 处注册数据配置文件
 3. @/views/design/modules/config/dataSource 下建立数据源组件
 4. 将第3步建立的组件注册到@/views/design/modules/config/charts/xxx.vue下

@@ -102,33 +102,6 @@
 
         <a-col :md="12" :span="24">
           <a-form-item
-            label="办公电话"
-            v-bind="formItemLayout"
-          >
-            <a-input
-              v-decorator="[
-                'phone',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: '办公电话必填'
-                    },
-                    {
-                      pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
-                      message: '请输入正确的办公电话'
-                    }
-                  ]
-                },
-              ]"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
             label="移动电话"
             v-bind="formItemLayout"
           >
@@ -137,6 +110,10 @@
                 'mobile_phone',
                 {
                   rules: [
+                    {
+                      required: true,
+                      message: '办公电话必填'
+                    },
                     {
                       pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',
                       message: '请输入正确的移动电话'
@@ -147,7 +124,9 @@
             />
           </a-form-item>
         </a-col>
+      </a-row>
 
+      <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
             label="Email"
@@ -176,9 +155,7 @@
             />
           </a-form-item>
         </a-col>
-      </a-row>
 
-      <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
             label="备注"
@@ -200,7 +177,9 @@
             />
           </a-form-item>
         </a-col>
+      </a-row>
 
+      <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
             label="有效标志"

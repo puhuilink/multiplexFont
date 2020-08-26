@@ -1,7 +1,4 @@
-// eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-// 引入外部 svg icon
-// import { bxAnalyse } from '@/core/icons'
+import { UserLayout, BasicLayout, RouteView } from '@/layouts'
 
 export const asyncRouterMap = [
   {
@@ -55,13 +52,13 @@ export const asyncRouterMap = [
             redirect: '/alarm/history/HistoricalAlarms',
             children: [
               {
-                path: '/alarm/history/AlarmHistory',
+                path: '/alarm/history/alarm-history',
                 name: 'AlarmHistory',
                 component: () => import('@/views/alarm/history/AlarmHistory'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
               },
               {
-                path: '/alarm/history/ForwardHistory',
+                path: '/alarm/history/forward-history',
                 name: 'ForwardHistory',
                 component: () => import('@/views/alarm/history/ForwardHistory'),
                 meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
@@ -75,13 +72,13 @@ export const asyncRouterMap = [
             meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
             children: [
               {
-                path: '/alarm/config/AlarmStrategy',
+                path: '/alarm/config/alarm-strategy',
                 name: 'AlarmStrategy',
                 component: () => import('@/views/alarm/config/AlarmStrategy'),
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
               {
-                path: '/alarm/config/AlarmRules',
+                path: '/alarm/config/alarm-rules',
                 name: 'AlarmRules',
                 component: () => import('@/views/alarm/config/AlarmRules'),
                 meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
@@ -93,7 +90,7 @@ export const asyncRouterMap = [
               //   meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               // },
               {
-                path: '/alarm/config/ForwardTemp',
+                path: '/alarm/config/forward-temp',
                 name: 'ForwardTemp',
                 component: () => import('@/views/alarm/config/ForwardTemp'),
                 meta: { title: '通知模板规则', keepAlive: true, permission: ['F003002003'] }
@@ -114,15 +111,15 @@ export const asyncRouterMap = [
           {
             path: '/performance/navigation',
             name: 'TreeNavigation',
-            component: () => import('@/views/performance/navigation/TreeNavigation'),
+            component: () => import('@/views/performance/navigation'),
             meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004002' ] }
           },
-          {
-            path: '/performance/quota',
-            name: 'QuotaList',
-            component: () => import('@/views/performance/quota/QuotaList'),
-            meta: { title: '指标列表', keepAlive: true, permission: [ 'F004001' ] }
-          },
+          // {
+          //   path: '/performance/quota',
+          //   name: 'QuotaList',
+          //   component: () => import('@/views/performance/quota/QuotaList'),
+          //   meta: { title: '指标列表', keepAlive: true, permission: [ 'F004001' ] }
+          // },
           {
             path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
             name: 'VideoMonitor',
@@ -231,30 +228,6 @@ export const asyncRouterMap = [
       //   ]
       // },
 
-      // analysis
-      // 废弃
-      // {
-      //   path: '/analysis',
-      //   name: 'analysis',
-      //   redirect: '/analysis/policy',
-      //   component: RouteView,
-      //   meta: { title: '数据分析', keepAlive: true, icon: 'deployment-unit', permission: [ 'F008' ] },
-      //   children: [
-      //     {
-      //       path: '/analysis/policy',
-      //       name: 'BaselineStrategy',
-      //       component: () => import('@/views/analysis/policy/BaselinePolicy'),
-      //       meta: { title: '动态基线策略管理', keepAlive: true, permission: [ 'F008001' ] }
-      //     },
-      //     {
-      //       path: '/analysis/definition',
-      //       name: 'BaselineDefinition',
-      //       component: () => import('@/views/analysis/definition/BaselineDefinition'),
-      //       meta: { title: '动态基线定义管理', keepAlive: true, permission: [ 'F008002' ] }
-      //     }
-      //   ]
-      // },
-
       // system
       {
         path: '/system',
@@ -298,18 +271,18 @@ export const asyncRouterMap = [
             component: () => import('@/views/patrol/config/index'),
             meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010001' ] }
           },
-          {
-            path: '/patrol/calendar',
-            name: 'Calendar',
-            component: () => import('@/views/patrol/calendar/TaskCalendar'),
-            meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
-          },
-          {
-            path: '/patrol/route',
-            name: 'RouteManagement',
-            component: () => import('@/views/patrol/route/RouteManagement'),
-            meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
-          },
+          // {
+          //   path: '/patrol/calendar',
+          //   name: 'Calendar',
+          //   component: () => import('@/views/patrol/calendar/TaskCalendar'),
+          //   meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
+          // },
+          // {
+          //   path: '/patrol/route',
+          //   name: 'RouteManagement',
+          //   component: () => import('@/views/patrol/route/RouteManagement'),
+          //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
+          // },
           {
             path: '/patrol/plan',
             name: 'Plan',
@@ -347,141 +320,18 @@ export const asyncRouterMap = [
       {
         path: '/user',
         name: 'user',
-        redirect: '/user/PsdChange',
+        redirect: '/user/psd-change',
         component: RouteView,
         meta: { title: '个人中心', keepAlive: true, icon: 'user' },
         children: [
           {
-            path: '/PsdChange',
+            path: '/psd-change',
             name: 'PsdChange',
             component: () => import('@/views/user/PsdChange'),
             meta: { title: '重置密码' }
           }
         ]
       }
-
-      // 以下是示例页面路由，待之后进行删除
-      // forms
-      // {
-      //   path: '/form',
-      //   redirect: '/form/base-form',
-      //   component: PageView,
-      //   meta: { title: '表单页', icon: 'form', permission: [ 'form' ] },
-      //   children: [
-      //     {
-      //       path: '/form/base-form',
-      //       name: 'BaseForm',
-      //       component: () => import('@/views/form/BasicForm'),
-      //       meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
-      //     }
-      //   ]
-      // },
-      //
-      // // list
-      // {
-      //   path: '/list',
-      //   name: 'list',
-      //   component: PageView,
-      //   redirect: '/list/table-list',
-      //   meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
-      //   children: [
-      //     {
-      //       path: '/list/table-list/:pageNo([1-9]\\d*)?',
-      //       name: 'TableListWrapper',
-      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-      //       component: () => import('@/views/list/TableList'),
-      //       meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
-      //     }
-      //   ]
-      // },
-      //
-      // // account
-      // {
-      //   path: '/account',
-      //   component: RouteView,
-      //   redirect: '/account/settings',
-      //   name: 'account',
-      //   meta: { title: '个人页', icon: 'user', keepAlive: true, permission: [ 'user' ] },
-      //   children: [
-      //     {
-      //       path: '/account/settings',
-      //       name: 'settings',
-      //       component: () => import('@/views/account/settings/Index'),
-      //       meta: { title: '个人设置', hideHeader: true, permission: [ 'user' ] },
-      //       redirect: '/account/settings/base',
-      //       hideChildrenInMenu: true,
-      //       children: [
-      //         {
-      //           path: '/account/settings/base',
-      //           name: 'BaseSettings',
-      //           component: () => import('@/views/account/settings/BaseSetting'),
-      //           meta: { title: '基本设置', permission: [ 'user' ] }
-      //         },
-      //         {
-      //           path: '/account/settings/custom',
-      //           name: 'CustomSettings',
-      //           component: () => import('@/views/account/settings/Custom'),
-      //           meta: { title: '个性化设置', keepAlive: true, permission: [ 'user' ] }
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
-      //
-      // // other
-      // {
-      //   path: '/other',
-      //   name: 'otherPage',
-      //   component: PageView,
-      //   meta: { title: '其他组件', icon: 'slack', permission: [ 'view' ] },
-      //   redirect: '/other/list',
-      //   children: [
-      //     {
-      //       path: '/other/list',
-      //       component: RouteView,
-      //       meta: { title: '业务布局', icon: 'layout', permission: [ 'support' ] },
-      //       redirect: '/other/list/tree-list',
-      //       children: [
-      //         {
-      //           path: '/other/list/tree-list',
-      //           name: 'TreeList',
-      //           component: () => import('@/views/other/TreeList'),
-      //           meta: { title: '树目录表格', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/edit-table',
-      //           name: 'EditList',
-      //           component: () => import('@/views/other/TableInnerEditList'),
-      //           meta: { title: '内联编辑表格', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/user-list',
-      //           name: 'UserList',
-      //           component: () => import('@/views/other/UserList'),
-      //           meta: { title: '用户列表', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/role-list',
-      //           name: 'RoleList',
-      //           component: () => import('@/views/other/RoleList'),
-      //           meta: { title: '角色列表', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/system-role',
-      //           name: 'SystemRole',
-      //           component: () => import('@/views/role/RoleList'),
-      //           meta: { title: '角色列表2', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/permission-list',
-      //           name: 'PermissionList',
-      //           component: () => import('@/views/other/PermissionList'),
-      //           meta: { title: '权限列表', keepAlive: true }
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // }
     ]
   },
   // 视图设计
@@ -501,6 +351,7 @@ export const asyncRouterMap = [
 /**
  * 基础路由
  * @type { *[] }
+ * FIXME: 因权限分配可能导致 redirect 到的路由不存在，需要通过函数进行判断
  */
 export const constantRouterMap = [
   {
@@ -513,23 +364,18 @@ export const constantRouterMap = [
         path: 'login',
         name: 'login',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
-      },
-      {
-        path: 'register',
-        name: 'register',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register')
-      },
-      {
-        path: 'register-result',
-        name: 'registerResult',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
-      },
-      {
-        path: 'recover',
-        name: 'recover',
-        component: undefined
       }
     ]
+  },
+
+  // 视图设计
+  {
+    path: '/design',
+    name: 'Design',
+    hidden: true,
+    component: () => import('@/views/design/Design'),
+    meta: { title: '视图设计', permission: ['F002002'] },
+    props: route => route.query
   },
 
   {
@@ -538,3 +384,6 @@ export const constantRouterMap = [
   }
 
 ]
+
+export const defaultPathList = constantRouterMap.map(({ path }) => path)
+export const logicPathList = asyncRouterMap[0].children.map(({ path }) => path)

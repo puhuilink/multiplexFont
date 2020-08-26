@@ -7,9 +7,10 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbHostTypeSelect
+        <ModelHostTypeSelect
           v-bind="selectProps"
           :value.sync="model.modelHostId"
+          @update:hostType="e => model.hostType = e"
         />
       </a-form-item>
 
@@ -21,8 +22,8 @@
       >
         <CmdbHostSelect
           v-bind="selectProps"
-          :value.sync="model.cmdbHostIdList"
-          :parentId="model.modelHostId"
+          :value.sync="model.hostIds"
+          :hostType="model.hostType"
         />
       </a-form-item>
 
@@ -33,9 +34,9 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbEndpointSelect
+        <ModelEndpointSelect
           v-bind="selectProps"
-          :value.sync="model.modelEndpointId"
+          :value.sync="model.endpointModel"
           :parentId="model.modelHostId"
         />
       </a-form-item>
@@ -47,10 +48,10 @@
         v-bind="formItemLayout"
         required
       >
-        <CmdbMetricSelect
+        <ModelMetricSelect
           v-bind="selectProps"
-          :value.sync="model.modelMetricIdList"
-          :parentId="model.modelEndpointId"
+          :value.sync="model.metricModels"
+          :parentId="model.endpointModel"
         />
       </a-form-item>
     </a-form>
@@ -58,18 +59,18 @@
 </template>
 
 <script>
-import CmdbHostTypeSelect from './CmdbHostTypeSelect'
+import ModelHostTypeSelect from './ModelHostTypeSelect'
 import CmdbHostSelect from './CmdbHostSelect'
-import CmdbEndpointSelect from './CmdbEndpointSelect'
-import CmdbMetricSelect from './CmdbMetricSelect'
+import ModelEndpointSelect from './ModelEndpointSelect'
+import ModelMetricSelect from './ModelMetricSelect'
 import _ from 'lodash'
-import { CmdbService } from '@/api-hasura'
+import { MetricService } from '@/api-hasura'
 
-// hack field name for old api
 const defaultModel = {
-  cmdbHostIdList: [],
-  modelEndpointId: null,
-  modelMetricIdList: [],
+  hostType: '',
+  hostIds: [],
+  endpointModel: null,
+  metricModels: [],
   modelHostId: null
 }
 
@@ -77,10 +78,10 @@ export default {
   name: 'ComboSelect',
   mixins: [],
   components: {
-    CmdbHostTypeSelect,
+    ModelHostTypeSelect,
     CmdbHostSelect,
-    CmdbEndpointSelect,
-    CmdbMetricSelect
+    ModelEndpointSelect,
+    ModelMetricSelect
   },
   props: {
     value: {
@@ -113,7 +114,7 @@ export default {
         offset: 2
       }
     },
-    model: _.cloneDeep(defaultModel)
+    model: null
   }),
   computed: {
     selectProps () {
@@ -122,6 +123,21 @@ export default {
     }
   },
   watch: {
+    value: {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (!value || _.isEmpty(value) || !value.hasOwnProperty('hostIds')) {
+          this.model = _.cloneDeep(defaultModel)
+          return
+        }
+        // 防止 v-model 反复触发
+        if (_.isEqual(value, this.model)) {
+          return
+        }
+        this.model = _.cloneDeep(value)
+      }
+    },
     formData: {
       deep: true,
       handler (v) {
@@ -129,33 +145,21 @@ export default {
       }
     },
     'model': {
-      immediate: false,
-      deep: true,
       handler (model) {
         this.$emit('input', _.cloneDeep(model))
       }
-    },
-    'model.modelHostId' (modelHostId) {
-      this.model.modelHostId = modelHostId
-      this.model.modelEndpointId = null
-      this.model.cmdbHostIdList = []
-    },
-    'model.modelEndpointId' (modelEndpointId) {
-      this.model.modelEndpointId = modelEndpointId
-      this.model.modelMetricIdList = null
     }
   },
   methods: {
     async preview () {
-      const result = await CmdbService.latestMetric(this.model)
+      const result = await MetricService.chartValue({
+        resourceConfig: {
+          hostIds: [4329475],
+          metricModels: [4329474],
+          endpointModel: 4329473
+        }
+      })
       console.log(result)
-    }
-  },
-  created () {
-    // hack
-    const { value = {} } = this
-    if (value.hasOwnProperty('cmdbHostIdList')) {
-      this.model = _.cloneDeep(_.pick(value, Object.keys(defaultModel)))
     }
   }
 }

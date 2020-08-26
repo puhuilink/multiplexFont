@@ -7,6 +7,11 @@
  */
 
 import Chart from './index'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class LineChart extends Chart {
   constructor ({ widget }) {
@@ -35,7 +40,7 @@ export default class LineChart extends Chart {
     const option = { grid, legend, series, xAxis: [xAxis], yAxis: [yAxis] }
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         dbDataConfig.resetData()
         series = staticData.series.map((item) => ({ ...item, ...line }))
         const { legend: staticLegend, xAxis: staticXAxis, yAxis: staticYAxis } = staticData
@@ -47,7 +52,7 @@ export default class LineChart extends Chart {
         })
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
         series = dynamicData.series.map((item) => ({ ...item, ...line }))
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
@@ -57,6 +62,9 @@ export default class LineChart extends Chart {
           yAxis: Object.assign(yAxis, dynamicYAxis),
           series
         })
+        break
+      }
+      case SOURCE_TYPE_NULL: {
         break
       }
     }

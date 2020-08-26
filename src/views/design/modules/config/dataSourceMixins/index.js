@@ -96,7 +96,7 @@ export default {
         }
         const activeWidget = _.cloneDeep(this.activeWidget)
         const { render } = this.activeWidget
-        // 设置当前选中不见
+        // 设置当前选中部件
         this.activateWidget({
           widget: Object.assign(activeWidget, { config: this.config })
         })

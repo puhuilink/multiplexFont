@@ -12,23 +12,6 @@ const queryAdministratorDesktop = `{
   }
 }`
 
-// // 其他用户的自定义桌面
-// const queryOtherUserDesktop = `query ($userId: String) {
-//   t_view (where: {
-//     view_title: {
-//       _eq: "自定义"
-//     }
-//     view_name: {
-//       _eq: $userId
-//     }
-//   }) {
-//     view_title
-//     view_name
-//     view_id
-//     content
-//   }
-// }`
-
 export const queryUserDesktop = (userId) => {
   if (userId === 'administrator') {
     return parse(queryAdministratorDesktop)
@@ -50,12 +33,6 @@ export const queryUserDesktop = (userId) => {
     }`)
   }
 }
-
-export const mutationInsertDesktop = gql`mutation ($objects: [t_authorize_object_insert_input!]!) {
-  insert_t_authorize_object (objects: $objects) {
-    affected_rows
-  }
-}`
 
 export const mutationUpdateDesktopContent = gql`mutation ($viewId: numeric, $set: t_view_set_input) {
   update_t_view(where: {view_id: {_eq: $viewId}}, _set: $set) {

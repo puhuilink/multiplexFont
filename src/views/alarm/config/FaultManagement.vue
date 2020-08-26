@@ -96,7 +96,7 @@
         </template>
 
         <template #operation>
-          <div class="opration">
+          <div class="operation">
             <a-button
               @click="$refs.detail.open('', 'New')"
             >

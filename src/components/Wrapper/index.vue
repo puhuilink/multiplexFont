@@ -49,6 +49,8 @@ import anime from 'animejs'
 import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
 import WrapperService from '@/components/Wrapper/WrapperService'
+import { ScreenMutations } from '@/store/modules/screen'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Wrapper',
@@ -238,6 +240,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('screen', {
+      resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE
+    }),
     /**
        * 设置
        * @param display
@@ -306,6 +311,10 @@ export default {
        * 删除部件
        */
     deleteWidget () {
+      const { config: { type } } = this.activeWidget
+      if (type === 'Topology') {
+        this.resetTopologyState()
+      }
       this.removeWidget({ widgetId: this.activeWidget.widgetId })
     }
   },

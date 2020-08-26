@@ -22,9 +22,9 @@
               <Template />
             </a-tab-pane>
             <!--            <a-tab-pane tab="视图" key="2"></a-tab-pane>-->
-            <!-- <a-tab-pane tab="CI" key="3" forceRender>
+            <a-tab-pane tab="设备" key="2" forceRender>
               <Ci />
-            </a-tab-pane> -->
+            </a-tab-pane>
           </a-tabs>
         </div>
       </transition>
@@ -79,7 +79,7 @@ export default {
   beforeRouteLeave (to, from, next) {
     this.$confirm({
       title: '确认要离开当前视图？',
-      content: '请确认以保存当前视图，未保存内容则不会生效！',
+      content: '请确认已保存当前视图，未保存内容则不会生效！',
       onOk () {
         next(true)
       },

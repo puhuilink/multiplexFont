@@ -4,7 +4,7 @@
       <a-col
         :md="12"
         :sm="24"
-        v-for="({ label, key, children = [] }, idx) in formItemList"
+        v-for="({ label, children = [], ...config }, idx) in formItemList"
         :key="idx"
       >
 
@@ -16,13 +16,13 @@
             :key="childIdx"
           >
             <a-form-model-item v-bind="formItemLayout" :label="child.label">
-              <a-input readOnly :value="record[child.key]" />
+              <a-input readOnly :value="renderText(record, child)" />
             </a-form-model-item>
           </a-col>
         </a-row>
 
         <a-form-model-item v-else v-bind="formItemLayout" :label="label" >
-          <a-input readOnly :value="record[key]" />
+          <a-input readOnly :value="renderText(record, config)" />
         </a-form-model-item>
 
       </a-col>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'DetailForm',
   props: {
@@ -53,7 +55,14 @@ export default {
         span: 23
       }
     }
-  })
+  }),
+  methods: {
+    renderText (record = {}, config = {}) {
+      const { key, customRender } = config
+      const text = _.get(record, key, '')
+      return customRender ? customRender(text, record) : text
+    }
+  }
 }
 </script>
 

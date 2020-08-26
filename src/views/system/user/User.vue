@@ -143,12 +143,6 @@ export default {
         tooltip: true
       },
       {
-        title: '办公电话',
-        dataIndex: 'phone',
-        width: 120,
-        sorter: true
-      },
-      {
         title: '移动电话',
         dataIndex: 'mobile_phone',
         width: 120,

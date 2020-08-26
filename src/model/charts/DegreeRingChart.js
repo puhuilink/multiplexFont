@@ -4,6 +4,11 @@
 
 import Chart from './index'
 import { DEGREE_TYPE_HEALTH_DEGREE, DEGREE_TYPE_HEALTH_RING } from '../config/proprietaryConfigs/DegreeRingProprietaryConfig'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 const formatFloat = function (value, n) {
   var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
@@ -35,16 +40,17 @@ export default class DegreeRingChart extends Chart {
     let formatter
 
     switch (sourceType) {
-      case 'static': {
+      case SOURCE_TYPE_STATIC: {
         formatter = `${staticData}`
         break
       }
-      case 'real': {
+      case SOURCE_TYPE_REAL: {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        // console.log(dynamicData)
         formatter = `${dynamicData}`
         break
       }
-      case 'null': {
+      case SOURCE_TYPE_NULL: {
         formatter = '0'
         break
       }

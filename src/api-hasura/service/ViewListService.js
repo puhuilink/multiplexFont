@@ -1,7 +1,8 @@
 import { BaseService } from './BaseService'
 import { AuthorizeObjectDao, ViewListDao } from '../dao/index'
 import { mutate, query } from '../utils/hasura-orm/index'
-import { OBJECT_TYPE } from '../dao/typping/AuthorizeObject'
+import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
+import { axios } from '@/utils/request'
 
 class ViewListService extends BaseService {
   /**
@@ -33,6 +34,10 @@ class ViewListService extends BaseService {
       ViewListDao.batchDelete({ view_id: { _in: idList } }),
       AuthorizeObjectDao.batchDelete({ object_id: { _in: idList.map(id => `${id}`) }, object_type: { _eq: OBJECT_TYPE.view } })
     )
+  }
+
+  static async copy (viewId) {
+    return axios.get(`/view/copy?viewId=${viewId}`)
   }
 }
 

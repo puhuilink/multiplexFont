@@ -16,6 +16,8 @@
 
 <script>
 import types from './type'
+import { logicPathList } from '@/config/router.config'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Exception',
@@ -30,9 +32,17 @@ export default {
       config: types
     }
   },
+  computed: {
+    ...mapGetters(['addRouters'])
+  },
   methods: {
     handleToHome () {
-      this.$router.push({ name: 'view' })
+      // 不同用户的路由权限不同，需要找出能访问到的第一个页面作为默认页面
+      // 作为 fallback，每个用户至少都有一个重置密码的页面
+      const { addRouters } = this
+      const currentPathList = addRouters[0].children.map(({ path }) => path)
+      const path = currentPathList.find(path => logicPathList.includes(path))
+      this.$router.push(path)
     }
   }
 }

@@ -12,10 +12,10 @@ export default {
     }
   },
   methods: {
-    async fetch (modelEndpointId) {
+    async fetch (cmdbHostId) {
       try {
         this.loading = true
-        this.list = await CmdbService.modelMetricList(modelEndpointId)
+        this.list = await CmdbService.cmdbMetricList(cmdbHostId)
       } catch (e) {
         this.list = []
         throw e

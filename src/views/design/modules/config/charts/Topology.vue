@@ -128,7 +128,7 @@
             </a-collapse>
 
             <CommonNodeTemplate v-if="topologyEditable && activeNode" ref="commonNodeTemplate">
-              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CI_CIRCLE">
+              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CI">
                 <CiNodeDataSource />
               </template>
             </CommonNodeTemplate>
@@ -147,7 +147,6 @@
 
 <script>
 import _ from 'lodash'
-import anime from 'animejs'
 import Grid from '@antv/g6/build/grid'
 import { mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
@@ -161,7 +160,7 @@ import CommonNodeTemplate from '@/views/design/modules/config/nodes'
 import CommonEdgeTemplate from '@/views/design/modules/config/edges'
 import EdgeTemplate from '@/views/design/modules/config/edges/edge'
 import CiNodeDataSource from '../dataSource/CiNodeDataSource'
-import { NODE_TYPE_CI_CIRCLE } from '@/model/factory/nodeFactory'
+import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
 
 export default {
   name: 'Topology',
@@ -177,7 +176,7 @@ export default {
     CiNodeDataSource
   },
   data: () => ({
-    NODE_TYPE_CI_CIRCLE,
+    NODE_TYPE_CI,
     // 拓扑尺寸编辑
     topologyResizable: true,
     // 拓扑模式
@@ -256,71 +255,6 @@ export default {
         this.topologyResizable = true
         // 重置拓扑对象状态
         this.resetTopologyState()
-      }
-
-      // 打开元素添加列表
-      const [topology] = document.getElementsByClassName('topology')
-      // FLIP动画
-      if (this.topologyEditable) {
-        // 正向动画
-        // 记录初始位置
-        const firstRect = topology.getBoundingClientRect()
-        // 使其布局及样式发生改变
-        anime.set(topology, {
-          position: 'absolute',
-          margin: 0,
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%'
-        })
-        // 记录最终位置
-        const lastRect = topology.getBoundingClientRect()
-        // 翻转动画
-        topology.animate([{
-          transform: `
-            translate(${firstRect.left - lastRect.left}px, ${firstRect.top - lastRect.top}px)
-            scale(${firstRect.width / lastRect.width}, ${firstRect.height / lastRect.height})
-         `
-        }, {
-          transform: 'none'
-        }], {
-          duration: 300,
-          easing: 'cubic-bezier(0.2, 0, 0.2, 1)',
-          fill: 'both'
-        })
-      } else {
-        // 逆向动画
-        const firstRect = topology.getBoundingClientRect()
-        // 使其布局及样式发生改变
-        anime.set(topology, {
-          position: 'relative',
-          margin: '16px 0 0 0',
-          top: 'none',
-          left: 'none',
-          width: '96px',
-          height: '96px'
-        })
-        // 记录最终位置
-        const lastRect = topology.getBoundingClientRect()
-
-        requestAnimationFrame(() => {
-          // 翻转动画
-          topology.animate([{
-            transformOrigin: 'top left',
-            transform: `
-            translate(${firstRect.left - lastRect.left}px, ${firstRect.top - lastRect.top}px)
-            scale(${firstRect.width / lastRect.width}, ${firstRect.height / lastRect.height})
-          `
-          }, {
-            transformOrigin: 'top left',
-            transform: 'none'
-          }], {
-            duration: 300,
-            easing: 'cubic-bezier(0.2, 0, 0.2, 1)',
-            fill: 'both'
-          })
-        })
       }
     },
     /**

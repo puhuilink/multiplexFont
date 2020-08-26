@@ -7,14 +7,14 @@ const getters = {
   token: state => state.user.token,
   avatar: state => state.user.avatar,
   nickname: state => state.user.name,
-  welcome: state => state.user.welcome,
   roles: state => state.user.roles,
-  groupList: state => state.user.info.organizeList.filter(group => !!group.groupId),
+  groupList: state => _.get(state, 'user.info.organizeList', []).filter(group => group && group.groupId),
+  groupIdList: state => _.get(state, 'user.info.organizeList', []).filter(group => group && group.groupId).map(({ groupId }) => groupId),
   userInfo: state => state.user.info,
   userId: state => _.get(state, 'user.info.userId'),
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab,
-  lang: state => state.i18n.lang
+  lang: state => _.get(state, 'i18n.lang')
 }
 
 export default getters

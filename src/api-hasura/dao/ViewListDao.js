@@ -1,8 +1,9 @@
 import { ViewDao } from './ViewDao'
 
 class ViewListDao extends ViewDao {
-  static async find ({ where = {}, ...argus }) {
+  static async find ({ where = {}, orderBy = { view_id: 'desc' }, ...argus }) {
     return super.find({
+      orderBy,
       ...argus,
       where: {
         ...where,

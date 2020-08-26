@@ -171,7 +171,7 @@ G6.registerNode('circle', {
           r: (model.size[0] + 16) / 2
         }
         const typeMapping = animateTypeMapping(ratio)
-        const [stroke] = item.getStates().filter(state => typeMapping.has(state))
+        const stroke = item.getStates().find(state => typeMapping.has(state))
         cfg.stroke = stroke ? typeMapping.get(stroke) : `rgba(24,144,255,0)`
         return cfg
       },
@@ -210,7 +210,7 @@ G6.registerNode('ellipse', {
           ['danger', `rgba(255,77,79,${ratio})`],
           ['success', `rgba(81,196,26,${ratio})`]
         ])
-        const [stroke] = item.getStates().filter(state => typeMapping.has(state))
+        const stroke = item.getStates().find(state => typeMapping.has(state))
         cfg.stroke = stroke ? typeMapping.get(stroke) : `rgba(24,144,255,0)`
         return cfg
       },
@@ -251,7 +251,7 @@ G6.registerNode('rect', {
           ['danger', `rgba(255,77,79,${ratio})`],
           ['success', `rgba(81,196,26,${ratio})`]
         ])
-        const [stroke] = item.getStates().filter(state => typeMapping.has(state))
+        const stroke = item.getStates().find(state => typeMapping.has(state))
         cfg.stroke = stroke ? typeMapping.get(stroke) : `rgba(24,144,255,0)`
         return cfg
       },
@@ -292,7 +292,7 @@ G6.registerNode('image', {
           ['danger', `rgba(255,77,79,${ratio})`],
           ['success', `rgba(81,196,26,${ratio})`]
         ])
-        const [stroke] = item.getStates().filter(state => typeMapping.has(state))
+        const stroke = item.getStates().find(state => typeMapping.has(state))
         cfg.stroke = stroke ? typeMapping.get(stroke) : `rgba(24,144,255,0)`
         return cfg
       },

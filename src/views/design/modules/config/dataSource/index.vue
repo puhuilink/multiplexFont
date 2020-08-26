@@ -33,17 +33,15 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === 'real'">
+      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === SOURCE_TYPE_REAL">
         <!-- 留给组件自己实现 -->
-        <!-- <slot name="null" v-show="sourceType === 'null'"></slot> -->
-        <!-- <slot name="static" v-show="sourceType === 'static'"></slot> -->
         <div class="data-source__wrap">
-          <slot name="real" v-show="sourceType === 'real'"></slot>
+          <slot name="real"></slot>
         </div>
       </a-collapse-panel>
 
       <!-- S 静态数据编辑 -->
-      <a-collapse-panel header="静态数据编辑" key="3" v-show="sourceType === 'static'">
+      <a-collapse-panel header="静态数据编辑" key="3" v-show="sourceType === SOURCE_TYPE_STATIC">
 
         <div class="data-source__wrap">
           <AceEditor
@@ -68,19 +66,29 @@ import _ from 'lodash'
 import AceEditor from 'vue-ace-editor-valid'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
+import {
+  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_STATIC
+} from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'DataSourceTemplate',
   components: {
     AceEditor
   },
+  data: () => ({
+    SOURCE_TYPE_NULL,
+    SOURCE_TYPE_REAL,
+    SOURCE_TYPE_STATIC
+  }),
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
       return _.cloneDeep(this.activeWidget.config)
     },
     sourceType () {
-      return this.config.dataConfig.sourceType || 'null'
+      return this.config.dataConfig.sourceType || SOURCE_TYPE_NULL
     },
     code () {
       // 柱形图根据类型调整样式
