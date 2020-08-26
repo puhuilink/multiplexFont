@@ -11,6 +11,7 @@ import {
   DEFAULT_CONTENT_WIDTH_TYPE,
   DEFAULT_MULTI_TAB
 } from '@/store/mutation-types'
+import { updateTheme } from '@/components/SettingDrawer/settingConfig'
 
 const app = {
   state: {
@@ -109,6 +110,7 @@ const app = {
     },
     ToggleColor ({ commit }, color) {
       commit('TOGGLE_COLOR', color)
+      setTimeout(updateTheme, 0, color)
     },
     ToggleWeak ({ commit }, weakFlag) {
       commit('TOGGLE_WEAK', weakFlag)

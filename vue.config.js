@@ -43,7 +43,8 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      createThemeColorReplacerPlugin()
     ],
     externals: {
       ace: 'ace',
@@ -159,11 +160,6 @@ const vueConfig = {
   lintOnSave: 'warning',
   // babel-loader no-ignore node_modules/*
   transpileDependencies: []
-}
-
-if (process.env.VUE_APP_PREVIEW === 'true') {
-  console.log('VUE_APP_PREVIEW', true)
-  vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
 }
 
 module.exports = vueConfig
