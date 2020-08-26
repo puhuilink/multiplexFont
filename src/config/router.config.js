@@ -271,18 +271,18 @@ export const asyncRouterMap = [
             component: () => import('@/views/patrol/config/index'),
             meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010001' ] }
           },
-          {
-            path: '/patrol/calendar',
-            name: 'Calendar',
-            component: () => import('@/views/patrol/calendar/TaskCalendar'),
-            meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
-          },
-          {
-            path: '/patrol/route',
-            name: 'RouteManagement',
-            component: () => import('@/views/patrol/route/RouteManagement'),
-            meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
-          },
+          // {
+          //   path: '/patrol/calendar',
+          //   name: 'Calendar',
+          //   component: () => import('@/views/patrol/calendar/TaskCalendar'),
+          //   meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
+          // },
+          // {
+          //   path: '/patrol/route',
+          //   name: 'RouteManagement',
+          //   component: () => import('@/views/patrol/route/RouteManagement'),
+          //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
+          // },
           {
             path: '/patrol/plan',
             name: 'Plan',

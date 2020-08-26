@@ -49,9 +49,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_patrol_plan', primaryKey: 'id' },
   { schema: 't_patrol_task_result_history', primaryKey: 'id' },
   { schema: 't_patrol_task_status', primaryKey: 'id' },
-  { schema: 't_xj_task_info', primaryKey: 'task_id' },
   { schema: 't_xj_change_shift', primaryKey: 'id' },
-  { schema: 't_xj_task_rf', primaryKey: 'task_rf_id' },
   // 前转记录
   { schema: 't_send_record', primaryKey: 'id' },
   // 主题配置
