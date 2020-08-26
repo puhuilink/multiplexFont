@@ -136,8 +136,8 @@ export default {
       'collect_time': [
         // moment().add(-30, 'days'),
         // moment()
-        moment('2020-07-31 22:25'),
-        moment('2020-08-01 22:25')
+        moment('2020-08-25 22:25'),
+        moment('2020-08-26 22:25')
       ]
     }
   }),
