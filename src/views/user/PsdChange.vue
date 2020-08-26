@@ -191,7 +191,7 @@ export default {
         // 自动触发 required 规则，不进入 customer validator
         return callback()
       }
-      if (value && value.level < 8) {
+      if (value.length < 8) {
         return callback(new Error('至少8位密码，区分大小写'))
       }
       let level = 0
