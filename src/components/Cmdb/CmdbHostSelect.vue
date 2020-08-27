@@ -20,6 +20,8 @@ export default {
       immediate: true,
       async handler (hostType) {
         this.list = []
+        this.$emit('change', null)
+        this.$emit('update:value', null)
         hostType && await this.fetch(hostType)
       }
     }

@@ -23,7 +23,7 @@
           <div :class="{ fold: !advanced }">
 
             <a-row>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item
                   label="数据域"
                   v-bind="formItemLayout"
@@ -32,37 +32,54 @@
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item
-                  label="监控设备"
+                  label="监控对象"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
+                  <CmdbHostSelect
+                    :value.sync="queryParams.host_id"
+                  />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item
-                  label="监控实例"
+                  label="监控实体"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
+                  <CmdbEndpointList
+                    :parentId="queryParams.host_id"
+                    :value.sync="queryParams.endpoint_id"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item
+                  label="检查项"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CmdbMetricSelect
+                    :parentId="queryParams.endpoint_id"
+                    :value.sync="queryParams.metric_id"
+                  />
                 </a-form-item>
               </a-col>
             </a-row>
 
             <a-row v-show="advanced">
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item
-                  label="告警级别"
+                  label="通知等级"
                   v-bind="formItemLayout"
                   class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item
                   label="采集系统"
                   v-bind="formItemLayout"
@@ -71,13 +88,25 @@
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="开始结束时间"
-                  v-bind="formItemLayout"
+                  label="告警时间"
+                  v-bind="fullFormItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
+                  <a-range-picker
+                    allowClear
+                    class="fw"
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    :ranges="{
+                      '最近1天': [moment(), moment()],
+                      '最近1周': [moment().add(-7, 'days'), moment()],
+                      '最近1月': [moment().add(-30, 'days'), moment()]
+                    }"
+                    :showTime="{ format: 'HH:mm' }"
+                    v-model="queryParams.collect_time"
+                  />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -140,13 +169,22 @@ import { AlarmService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import AlarmDetail from './modules/AlarmDetail'
 import AlarmSolve from './modules/AlarmSolve'
+import {
+  CmdbHostSelect,
+  CmdbEndpointList,
+  CmdbMetricSelect
+} from '@/components/Cmdb'
+import moment from 'moment'
 
 export default {
   name: 'AlarmMonitor',
   mixins: [List],
   components: {
     AlarmDetail,
-    AlarmSolve
+    AlarmSolve,
+    CmdbHostSelect,
+    CmdbEndpointList,
+    CmdbMetricSelect
   },
   props: {
     cTableProps: {
@@ -171,91 +209,93 @@ export default {
       default: false
     }
   },
-  data: () => ({
-    tabIndex: 0,
-    columns: [
-      {
-        title: '告警级别',
-        dataIndex: 'alarm_level',
-        width: 200,
-        sorter: true,
-        show: true
-      },
-      // {
-      //   title: '数据域',
-      //   dataIndex: 'alarm_level',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      {
-        title: '监控设备',
-        dataIndex: 'host_id cmdbHost { alias }',
-        width: 200,
-        show: true,
-        customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
+  data () {
+    return {
+      tabIndex: 0,
+      columns: [
+        {
+          title: '告警级别',
+          dataIndex: 'alarm_level',
+          width: 200,
+          sorter: true,
+          show: true
+        },
+        // {
+        //   title: '数据域',
+        //   dataIndex: 'alarm_level',
+        //   width: 200,
+        //   sorter: true,
+        // show: true
+        // },
+        {
+          title: '监控设备',
+          dataIndex: 'host_id cmdbHost { alias }',
+          width: 200,
+          show: true,
+          customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
         // sorter: true
-      },
-      {
-        title: '监控实例',
-        dataIndex: 'metric_id cmdbEndpoint { modelEndpoint { alias } }',
-        width: 200,
-        show: true,
-        customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
+        },
+        {
+          title: '监控实例',
+          dataIndex: 'metric_id cmdbEndpoint { modelEndpoint { alias } }',
+          width: 200,
+          show: true,
+          customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
         // sorter: true
-      },
-      {
-        title: '检查项',
-        dataIndex: 'endpoint_id cmdbMetric { modelMetric { alias } }',
-        width: 200,
-        show: true,
-        customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
+        },
+        {
+          title: '检查项',
+          dataIndex: 'endpoint_id cmdbMetric { modelMetric { alias } }',
+          width: 200,
+          show: true,
+          customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
         // sorter: true
-      },
-      {
-        title: '告警描述',
-        dataIndex: 'detail',
-        width: 400,
-        show: true,
-        tooltip: true
-      }
-      // {
-      //   title: '值',
-      //   dataIndex: 'email',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      // {
-      //   title: '首次告警时间',
-      //   dataIndex: 'email',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      // {
-      //   title: '最近告警时间',
-      //   dataIndex: 'email',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      // {
-      //   title: '次数',
-      //   dataIndex: 'email',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      // {
-      //   title: '采集系统',
-      //   dataIndex: 'agent_id',
-      //   width: 200,
-      //   sorter: true,
-      //   show: true
-      // }
-    ]
-  }),
+        },
+        {
+          title: '告警描述',
+          dataIndex: 'detail',
+          width: 100,
+          show: true,
+          customRender: (__, record) => <a-button type="link" onClick={() => this.onDetail(record.id)}>查看</a-button>
+        },
+        // {
+        //   title: '值',
+        //   dataIndex: 'email',
+        //   width: 200,
+        //   sorter: true,
+        // show: true
+        // },
+        // {
+        //   title: '首次告警时间',
+        //   dataIndex: 'email',
+        //   width: 200,
+        //   sorter: true,
+        // show: true
+        // },
+        // {
+        //   title: '最近告警时间',
+        //   dataIndex: 'email',
+        //   width: 200,
+        //   sorter: true,
+        // show: true
+        // },
+        // {
+        //   title: '次数',
+        //   dataIndex: 'email',
+        //   width: 200,
+        //   sorter: true,
+        // show: true
+        // },
+        {
+          title: '采集系统',
+          dataIndex: 'agent_id',
+          width: 200,
+          sorter: true,
+          show: true
+        }
+      ]
+    }
+  },
   computed: {
     visibleColumns () {
       const { columnAlign: align, columns } = this
@@ -265,6 +305,7 @@ export default {
     }
   },
   methods: {
+    moment,
     customRow ({ id, state }) {
       return {
         on: {
@@ -282,14 +323,18 @@ export default {
             state: this.tabIndex
           }
         },
-        fields: _.uniq(['id', 'state', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        fields: _.uniq([
+          'id',
+          'state',
+          ...this.columns.map(({ dataIndex }) => dataIndex)
+        ]),
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
     },
-    onDetail () {
-      const [id] = this.selectedRowKeys
-      this.$refs.detail.open(id)
+    onDetail (id) {
+      const [defaultId] = this.selectedRowKeys
+      this.$refs.detail.open(id || defaultId)
     },
     onDetailClose (state) {
       state === 1 && this.onSolveSuccess()
