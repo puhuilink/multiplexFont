@@ -1,7 +1,7 @@
 <template>
   <div class="user-layout-register">
     <h3><span>密码重置</span></h3>
-    <a-form ref="formRegister" :form="form" id="formRegister" class="psdChangein-form">
+    <a-form ref="formRegister" :form="form" id="formRegister" class="psdChange-form">
       <a-form-item v-bind="formItemLayout" label="原始密码">
         <a-input
           size="large"
@@ -49,41 +49,6 @@
         ></a-input>
       </a-form-item>
 
-      <!-- <a-form-item v-bind="formItemLayout" label="手机号">
-        <a-input size="large" placeholder="11 位手机号" v-decorator="['mobile', {rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }]">
-          <a-select slot="addonBefore" size="large" defaultValue="+86">
-            <a-select-option value="+86">+86</a-select-option>
-            <a-select-option value="+87">+87</a-select-option>
-          </a-select>
-        </a-input>
-      </a-form-item> -->
-      <!--<a-input-group size="large" compact>
-            <a-select style="width: 20%" size="large" defaultValue="+86">
-              <a-select-option value="+86">+86</a-select-option>
-              <a-select-option value="+87">+87</a-select-option>
-            </a-select>
-            <a-input style="width: 80%" size="large" placeholder="11 位手机号"></a-input>
-          </a-input-group>-->
-
-      <!-- <a-row :gutter="16">
-        <a-col class="gutter-row" :span="15" :offset="3">
-          <a-form-item v-bind="formItemLayout" label="验证码">
-            <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">
-              <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-        </a-col>
-        <a-col class="gutter-row" :span="6">
-          <a-button
-            class="getCaptcha"
-            size="large"
-            :disabled="state.smsSendBtn"
-            :loading="state.captchaLoading"
-            @click.stop.prevent="getCaptcha"
-          >{{ captchaText }} </a-button>
-        </a-col>
-      </a-row> -->
-
       <a-form-item v-bind="formItemLayout">
         <a-col class="gutter-row" :span="24" :offset="12">
           <a-button
@@ -96,7 +61,6 @@
             :disabled="loading">确定重置
           </a-button>
         </a-col>
-        <!-- <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link> -->
       </a-form-item>
 
     </a-form>
@@ -105,13 +69,8 @@
 
 <script>
 import { mixinDevice } from '@/utils/mixin.js'
-// eslint-disable-next-line no-unused-vars
-import { sendCaptcha } from '@/api/login'
 import { mapActions, mapGetters } from 'vuex'
 import { resetPwd } from '@/api/controller/User'
-// import Timeout from 'await-timeout'
-import CryptoJS, { AES } from 'crypto-js'
-const key = CryptoJS.enc.Latin1.parse('6C2B0613CD90E9E8')
 
 const levelNames = {
   0: '低',
@@ -296,73 +255,6 @@ export default {
         .join('')
     },
 
-    getCaptcha (e) {
-      e.preventDefault()
-      // eslint-disable-next-line no-unused-vars
-      const { form: { validateFields }, state, $message, $notification } = this
-
-      validateFields(['mobile'], { force: true },
-        (err, values) => {
-          if (!err) {
-            this.captcha = this.randomCaptcha()
-            state.smsSendBtn = true
-
-            const message = {
-              mobile: values.mobile,
-              content: `【中国交建】 验证码 ${this.captcha} 三分钟内有效，您正在重置中国交建统一监控管理平台账号密码，请确认。`
-            }
-
-            const securityMessage = AES.encrypt(JSON.stringify(message), key, {
-              mode: CryptoJS.mode.ECB,
-              padding: CryptoJS.pad.Pkcs7
-            }).toString()
-
-            state.captchaDisabled = true
-            let interval
-            this.state.captchaLoading = true
-            sendCaptcha(securityMessage)
-              .then(() => {
-                interval = window.setInterval(() => {
-                  if (state.time-- <= 0) {
-                    state.time = 60
-                    state.captchaDisabled = false
-                    window.clearInterval(interval)
-                  }
-                }, 1000)
-                this.$message.success('短信已发送！')
-              })
-              .catch(e => {
-                this.$message.error('短信发送异常，请稍后尝试!')
-                state.time = 60
-                state.captchaDisabled = false
-                window.clearInterval(interval)
-                throw e
-              })
-              .finally(() => {
-                this.state.captchaLoading = false
-                this.state.smsSendBtn = false
-              })
-
-            // const hide = $message.loading('验证码发送中..', 0)
-
-            // getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            //   setTimeout(hide, 2500)
-            //   $notification['success']({
-            //     message: '提示',
-            //     description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-            //     duration: 8
-            //   })
-            // }).catch(err => {
-            //   setTimeout(hide, 1)
-            //   clearInterval(interval)
-            //   state.time = 60
-            //   state.smsSendBtn = false
-            //   this.requestFailed(err)
-            // })
-          }
-        }
-      )
-    },
     requestSuccess () {
       let secondsToGo = 3
       const modal = this.$success({
@@ -435,12 +327,6 @@ export default {
       margin-bottom: 20px;
     }
 
-    .getCaptcha {
-      display: block;
-      width: 100%;
-      height: 40px;
-    }
-
     .register-button {
       width: 50%;
     }
@@ -450,9 +336,8 @@ export default {
       line-height: 40px;
     }
   }
-.psdChangein-form{
-  padding:30px 40px;
-  // background: rgba(0,0,0, 0.5)
+.psdChange-form{
+  padding: 30px 40px;
   width: 80%;
 }
 </style>
