@@ -20,7 +20,8 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Mention } from 'tiptap-extensions'
-import { MessageModel, TEMP_KEYWORD_MAPPING } from './model'
+import { MessageModel } from './model'
+import { TEMP_KEYWORD_MAPPING } from './types'
 
 // if error when enter: Looks like multiple versions of prosemirror-model were loaded
 // https://github.com/scrumpy/tiptap/issues/577

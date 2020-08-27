@@ -61,7 +61,7 @@
 <script>
 import { AlarmTempService } from '@/api-hasura/index'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { AlarmTempModel, ALL_SEND_TYPE_MAPPING } from './model'
+import { AlarmTempModel, SEND_TYPE_MAPPING } from './model'
 import TempEditor from '@/components/Temp/TempEditor'
 
 export default {
@@ -73,7 +73,7 @@ export default {
   props: {},
   data: () => ({
     allMode: Object.freeze(
-      Object.fromEntries(ALL_SEND_TYPE_MAPPING)
+      Object.fromEntries(SEND_TYPE_MAPPING)
     ),
     formModel: {
       enabled: 1
@@ -108,12 +108,12 @@ export default {
   },
   methods: {
     add () {
-      this.show('新建前转模板')
+      this.show('新建通知规则模板')
       this.submit = this.insert
     },
     edit (id) {
       this.fetch(id)
-      this.show('编辑前转模板')
+      this.show('编辑通知规则模板')
       this.submit = this.update
     },
     async fetch (id) {
