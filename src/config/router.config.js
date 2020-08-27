@@ -49,7 +49,7 @@ export const asyncRouterMap = [
             path: '/alarm/history',
             component: RouteView,
             meta: { title: '告警记录', keepAlive: true, permission: [ 'F003002' ] },
-            redirect: '/alarm/history/HistoricalAlarms',
+            redirect: '/alarm/history/AlarmHistory',
             children: [
               {
                 path: '/alarm/history/alarm-history',
