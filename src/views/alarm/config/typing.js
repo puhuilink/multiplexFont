@@ -5,7 +5,7 @@
 import {
   SEND_TYPE_EMAIL, SEND_TYPE_SMS,
   SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING
-} from '@/components/Temp/model'
+} from '@/components/Temp/types'
 
 export {
   SEND_TYPE_EMAIL,

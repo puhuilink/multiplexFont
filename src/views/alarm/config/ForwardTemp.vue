@@ -71,6 +71,7 @@ import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import ForwardTempSchema from './modules/ForwardTempSchema/index'
 import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from './typing'
+import moment from 'moment'
 
 export default {
   name: 'ForwardTemp',
@@ -90,24 +91,6 @@ export default {
         width: 200,
         sorter: true
       },
-      // {
-      //   title: '关联告警',
-      //   dataIndex: 'alarm_level',
-      //   width: 200,
-      //   sorter: true
-      // },
-      // {
-      //   title: '事件等级',
-      //   dataIndex: 'alarm_level',
-      //   width: 200,
-      //   sorter: true
-      // },
-      {
-        title: '通知模板',
-        dataIndex: 'message',
-        width: 420,
-        tooltip: true
-      },
       {
         title: '通知方式',
         dataIndex: 'mode',
@@ -119,13 +102,15 @@ export default {
         title: '更新时间',
         dataIndex: 'update_time',
         width: 200,
-        sorter: true
+        sorter: true,
+        customRender: time => time ? moment(time).format() : ''
       },
       {
         title: '创建时间',
         dataIndex: 'create_time',
         width: 200,
-        sorter: true
+        sorter: true,
+        customRender: time => time ? moment(time).format() : ''
       },
       {
         title: '启用状态',

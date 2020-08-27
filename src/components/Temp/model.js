@@ -1,57 +1,14 @@
-import _ from 'lodash'
 import moment from 'moment'
 import replaceAll from 'string.prototype.replaceall'
-
-export const SEND_TYPE_EMAIL = 'EMAIL'
-export const SEND_TYPE_SMS = 'SMS'
-
-export const SEND_TYPE_LIST = [
-  [SEND_TYPE_EMAIL, '邮箱'],
-  [SEND_TYPE_SMS, '短信']
-]
-
-export const SEND_TYPE_MAPPING = new Map(SEND_TYPE_LIST)
-export const ALL_SEND_TYPE_MAPPING = new Map([
-  ['', '全部分类'],
-  ...SEND_TYPE_LIST
-])
-
-export const TEMP_KEYWORD_TIME = '{time}'
-export const TEMP_KEYWORD_IP = '{IP}'
-export const TEMP_KEYWORD_DETAIL = '{detail}'
-// export const TEMP_KEYWORD_HOST = '{host}'
-export const TEMP_KEYWORD_ENDPOINT = '{endpoint}'
-export const TEMP_KEYWORD_METRIC = '{metric}'
-export const TEMP_KEYWORD_LEVEL = '{level}'
-
-export const TEMP_KEYWORD_LIST = [
-  [TEMP_KEYWORD_TIME, '时间'],
-  [TEMP_KEYWORD_IP, 'IP'],
-  [TEMP_KEYWORD_DETAIL, '详情'],
-  [TEMP_KEYWORD_ENDPOINT, '监控实体'],
-  [TEMP_KEYWORD_METRIC, '检查项'],
-  [TEMP_KEYWORD_LEVEL, '级别']
-]
-
-export const TEMP_KEYWORD_MAPPING = new Map(TEMP_KEYWORD_LIST)
-
-export const templateMock = (template = '') => {
-  let str = `${template}`
-  const data = {
-    [TEMP_KEYWORD_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
-    [TEMP_KEYWORD_IP]: '127.0.0.1',
-    [TEMP_KEYWORD_DETAIL]: 'cpu温度过高,温度79度',
-    [TEMP_KEYWORD_ENDPOINT]: '串口管理器',
-    [TEMP_KEYWORD_METRIC]: '面板告警状态',
-    [TEMP_KEYWORD_LEVEL]: '1'
-  }
-  Object
-    .entries(data)
-    .forEach(([keyword, mockValue]) => {
-      str = replaceAll(str, keyword, mockValue)
-    })
-  return str
-}
+import {
+  TEMP_KEYWORD_TIME,
+  TEMP_KEYWORD_IP,
+  TEMP_KEYWORD_DETAIL,
+  TEMP_KEYWORD_ENDPOINT,
+  TEMP_KEYWORD_METRIC,
+  TEMP_KEYWORD_LEVEL,
+  TEMP_KEYWORD_MAPPING
+} from './types'
 
 class Tiptap {
   static createTextNode (text) {
@@ -71,8 +28,26 @@ class Tiptap {
 export class MessageModel {
   static mockContent (template) {
     return this.deSerialize(
-      templateMock(template)
+      this.templateMock(template)
     )
+  }
+
+  static templateMock (template = '') {
+    let str = `${template}`
+    const data = {
+      [TEMP_KEYWORD_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+      [TEMP_KEYWORD_IP]: '127.0.0.1',
+      [TEMP_KEYWORD_DETAIL]: 'cpu温度过高,温度79度',
+      [TEMP_KEYWORD_ENDPOINT]: '串口管理器',
+      [TEMP_KEYWORD_METRIC]: '面板告警状态',
+      [TEMP_KEYWORD_LEVEL]: '1'
+    }
+    Object
+      .entries(data)
+      .forEach(([keyword, mockValue]) => {
+        str = replaceAll(str, keyword, mockValue)
+      })
+    return str
   }
 
   /**
@@ -123,23 +98,5 @@ export class MessageModel {
     })
 
     return { type: 'doc', content: rootContent }
-  }
-}
-
-export class AlarmTempModel {
-  static fields = ['id', 'mode', 'message', 'enabled', 'title']
-
-  static serialize ({ enabled, ...alarmTemp }) {
-    return _.pick({
-      enabled: !!enabled,
-      ...alarmTemp
-    }, this.fields)
-  }
-
-  static deSerialize ({ enabled, ...alarmTemp }) {
-    return _.pick({
-      enabled: ~~enabled,
-      ...alarmTemp
-    }, this.fields)
   }
 }
