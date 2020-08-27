@@ -259,6 +259,9 @@ class PatrolService extends BaseService {
 
     return _.first(planList)
   }
+
+  // 告警审批
+  static async approveSend () {}
 }
 
 export {
