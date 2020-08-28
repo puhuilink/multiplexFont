@@ -44,28 +44,45 @@
       <!-- S 视图缩略图 -->
       <div class="ViewDisplay__view-content" v-if="isThumbnail">
         <a-row>
-          <a-col
-            v-for="viewConfig in filterViewList"
-            :key="viewConfig.view_id"
-            :id="viewConfig.view_id"
-            :xs="24"
-            :md="12"
-            :lg="8"
-            :xxl="6"
-            style="padding: 7px; background-color: #fff"
-            ref="imgPreview"
-          >
-            <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
-              <img :src="viewConfig.view_img | img" :alt="viewConfig.view_title">
-              <div class="ViewDisplay__view-item-info">
-                <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
-                <p class="ViewDisplay__view-item-info_creator">
-                  <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
-                  <span><a-icon type="user" />{{ viewConfig.creator }}</span>
-                </p>
+          <transition-group name="flip-list" tag="div">
+            <a-col
+              class="flip-item"
+              v-for="viewConfig in filterViewList"
+              :key="viewConfig.view_id"
+              :id="viewConfig.view_id"
+              :xs="24"
+              :md="12"
+              :lg="8"
+              :xxl="6"
+              style="padding: 7px; background-color: #fff"
+              ref="imgPreview"
+            >
+              <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
+                <img :src="viewConfig.view_img | img" :alt="viewConfig.view_title">
+                <div class="ViewDisplay__view-item-info">
+                  <p class="ViewDisplay__view-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
+                  <p class="ViewDisplay__view-item-info_creator">
+                    <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
+                    <span><a-icon type="user" />{{ viewConfig.creator }}</span>
+                  </p>
+                </div>
               </div>
+            </a-col>
+
+            <div class="ViewDisplay__operation flip-item" key="btn">
+              <a-button
+                shape="circle"
+                size="large"
+                type="primary"
+                icon="plus"
+                class="ViewDisplay__operation__add"
+                v-show="selectedGroupName !== ALL_VIEW"
+                @click="editDesktop"
+                id="editDesktop"
+                ref="editDesktop"
+              ></a-button>
             </div>
-          </a-col>
+          </transition-group>
         </a-row>
       </div>
       <!-- E 视图缩略图 -->
@@ -117,22 +134,6 @@
       </div>
       <!-- E 视图页签 -->
 
-      <!-- S 操作按钮 -->
-      <div class="ViewDisplay__operation">
-        <a-button
-          shape="circle"
-          size="large"
-          type="primary"
-          icon="plus"
-          class="ViewDisplay__operation__add"
-          v-show="selectedGroupName !== ALL_VIEW"
-          @click="editDesktop"
-          id="editDesktop"
-          ref="editDesktop"
-        ></a-button>
-      </div>
-      <!-- E 操作按钮 -->
-
       <!-- S 视图预览 -->
       <ViewPreview
         :showThumbnail="false"
@@ -173,19 +174,6 @@ import Renderer from '@/components/Renderer'
 import { ViewDesignService } from '@/api-hasura'
 
 const ALL_VIEW = '所有视图'
-
-const getDomList = function () {
-  return [
-    ...(this.$refs.imgPreview || []).slice().map(({ $el }) => $el),
-    this.$refs.editDesktop.$el
-  ]
-}
-const mappingRect = domList => new Map([
-  ...domList.slice().map(el => [
-    el.getAttribute('id'),
-    _.pick(el.getBoundingClientRect(), ['top', 'left'])
-  ])
-])
 
 export default {
   name: 'ViewDisplay',
@@ -265,7 +253,7 @@ export default {
     filterViewListOption: {
       immediate: true,
       deep: true,
-      handler: _.debounce(async function () {
+      handler: _.debounce(function () {
         /**
          * 筛选出符合条件的视图列表
          */
@@ -283,15 +271,11 @@ export default {
           const id = `${view_id}`.toLowerCase()
           const title = `${view_title}`.toLowerCase()
           return `${id}-${title}`.includes(value)
-          // return (title.toLowerCase().includes(value)) || (`${view_id}`.toLowerCase().includes(value))
         })
         list = _.uniqBy(list, e => e.view_id)
 
-        /**
-         * 带有动画的更新要渲染的视图列表
-         */
-        this.setFilterViewList(list)
-      }, 60)
+        this.filterViewList = list
+      }, 30)
     }
   },
   methods: {
@@ -321,86 +305,6 @@ export default {
     },
     editDesktop () {
       this.authDesktop.visible = true
-    },
-    /**
-     * 带有 flip 动画地更新 filterViewList
-     */
-    async setFilterViewList (filterViewList) {
-      // 等待 DOM 挂载
-      await this.$nextTick()
-      // 更新前的 DOM 状态
-      const previousDomList = getDomList.apply(this)
-
-      previousDomList.forEach(el => {
-        // !el.classList.contains('pause') && el.classList.add('pause')
-      })
-
-      // 记录初始状态
-      const prevRectMapping = mappingRect(previousDomList)
-
-      this.filterViewList = filterViewList
-      await this.$nextTick()
-
-      // 记录最新状态
-      const currentDomList = getDomList.apply(this)
-      const currentRectMapping = mappingRect(currentDomList)
-
-      currentDomList.forEach(el => {
-        // !el.classList.contains('pause') && el.classList.add('pause')
-      })
-
-      // 筛选进入、离开、一直存在但可能变换位置的元素
-      const equal = (preEl, curEl) => preEl.getAttribute('id') === curEl.getAttribute('id')
-      const persistentDomList = _.intersectionWith(previousDomList, currentDomList, equal)
-      const enterDomList = _.xorWith(currentDomList, persistentDomList, equal)
-      // const leaveDomList = _.xorWith(previousDomList, persistentDomList, equal)
-
-      const animateOptions = {
-        duration: 700,
-        easing: 'ease-out'
-      }
-
-      // 计算前后状态的变化距离
-      const calculateTransformDistance = el => {
-        const key = el.getAttribute('id')
-        const curRect = currentRectMapping.get(key)
-        const prevRect = prevRectMapping.get(key) || { ...curRect }
-        const left = prevRect.left - curRect.left
-        const top = prevRect.top - curRect.top
-        return { left, top }
-      }
-
-      persistentDomList.forEach(el => {
-        // el.classList.remove('pause')
-        const { left, top } = calculateTransformDistance(el)
-        // 保持原位
-        if (left === 0 && top === 0) {
-          return
-        }
-        // TODO: 记录 animation 状态，当频繁触发动画时，pause 当前动画并开启下一次新动画
-        // eslint-disable-next-line
-        const animation = el.animate([
-          { transform: `translate(${left}px, ${top}px)` },
-          { transform: 'translate(0, 0)' }
-        ], animateOptions)
-        // this.animationList.push(animation)
-      })
-
-      enterDomList.forEach(el => {
-        // el.classList.remove('pause')
-        el.animate([
-          { transform: `scale(0)` },
-          { transform: `scale(1)` }
-        ], animateOptions)
-      })
-
-      // TODO: 此时 DOM 已经不存在该元素，动画并不能生效
-      // leaveDomList.forEach(el => {
-      //   el.animate([
-      //     { transform: `scale(1)` },
-      //     { transform: `scale(0)` }
-      //   ], animateOptions)
-      // })
     },
     preview (view) {
       this.isVisible = true
@@ -792,13 +696,24 @@ export default {
     transition: transform 1s;
   }
 
+  .flip-item {
+    transition: all 1s;
+  }
+
+  .flip-list-enter,
+  .flip-list-leave-to {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+
+  .flip-list-leave-active {
+    position: absolute;
+  }
+
 </style>
 
 <style>
 .pause {
-   -webkit-animation-play-state: paused !important;
-   -moz-animation-play-state: paused !important;
-   -o-animation-play-state: paused !important;
   animation-play-state: paused !important;
 }
 </style>
