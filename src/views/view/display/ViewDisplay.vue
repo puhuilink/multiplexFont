@@ -70,17 +70,19 @@
             </a-col>
 
             <div class="ViewDisplay__operation flip-item" key="btn">
-              <a-button
-                shape="circle"
-                size="large"
-                type="primary"
-                icon="plus"
-                class="ViewDisplay__operation__add"
-                v-show="selectedGroupName !== ALL_VIEW"
-                @click="editDesktop"
-                id="editDesktop"
-                ref="editDesktop"
-              ></a-button>
+              <transition name="scale">
+                <a-button
+                  shape="circle"
+                  size="large"
+                  type="primary"
+                  icon="plus"
+                  class="ViewDisplay__operation__add scale-item"
+                  v-show="selectedGroupName !== ALL_VIEW"
+                  @click="editDesktop"
+                  id="editDesktop"
+                  ref="editDesktop"
+                ></a-button>
+              </transition>
             </div>
           </transition-group>
         </a-row>
@@ -708,6 +710,16 @@ export default {
 
   .flip-list-leave-active {
     position: absolute;
+  }
+
+  .scale-item {
+    transition: all 1s;
+  }
+
+  .scale-enter,
+  .scale-leave-to {
+    opacity: 0;
+    transform: scale(0);
   }
 
 </style>
