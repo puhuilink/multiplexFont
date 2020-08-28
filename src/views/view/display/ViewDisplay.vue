@@ -54,8 +54,6 @@
               :md="12"
               :lg="8"
               :xxl="6"
-              style="padding: 7px; background-color: #fff"
-              ref="imgPreview"
             >
               <div class="ViewDisplay__view-item" @click="preview(viewConfig)">
                 <img :src="viewConfig.view_img | img" :alt="viewConfig.view_title">
@@ -80,7 +78,6 @@
                   v-show="selectedGroupName !== ALL_VIEW"
                   @click="editDesktop"
                   id="editDesktop"
-                  ref="editDesktop"
                 ></a-button>
               </transition>
             </div>
@@ -90,7 +87,7 @@
       <!-- E 视图缩略图 -->
 
       <!-- S 视图页签 -->
-      <div class="ViewDisplay__view-tabs" :class="[isFullscreen && 'fullscreen']" v-else>
+      <div class="ViewDisplay__view-tabs" :class="[isFullScreen && 'fullscreen']" v-else>
         <a-tabs
           :active-key="activeKey || filterViewList[0].view_id"
           tab-position="top"
@@ -120,14 +117,14 @@
               <a-icon type="border-outer" :class="{ 'ViewDisplay__view-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
             </a-tooltip>
 
-            <a-tooltip placement="top" :title="isFullscreen ? '退出全屏' : '全屏'">
-              <a-icon :type="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" @click="fullscreen" />
+            <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
+              <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="fullscreen" />
             </a-tooltip>
           </div>
           <a-tab-pane v-for="viewConfig in filterViewList" :key="viewConfig.view_id" :tab="viewConfig.view_title"></a-tab-pane>
         </a-tabs>
         <a-spin :spinning="isLoading" >
-          <div class="ViewDisplay__view-tab-content" :class="[isFullscreen && 'fullscreen']" >
+          <div class="ViewDisplay__view-tab-content" :class="[isFullScreen && 'fullscreen']" >
             <transition name="renderer">
               <Renderer v-if="view" :view="view" ref="renderer" :timeRange="timeRange" />
             </transition>
@@ -163,10 +160,6 @@
 
 <script>
 import _ from 'lodash'
-import { mapState } from 'vuex'
-import { timeFix } from '@/utils/util'
-import { PageView } from '@/layouts'
-import HeadInfo from '@/components/tools/HeadInfo'
 import AuthDesktop from './modules/AuthDesktop'
 import ViewPreview from './modules/viewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
@@ -181,24 +174,16 @@ export default {
   name: 'ViewDisplay',
   components: {
     AuthDesktop,
-    PageView,
-    HeadInfo,
     ViewPreview,
     Renderer
   },
   filters: {
-    // TODO: nginx
     img (img) {
-      // return img ? `http://10.1.13.210:28072/${img}` : previewImg
       return img ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${img}` : previewImg
     }
   },
   data () {
     return {
-      animationMapping: new Map(),
-      timeFix: timeFix(),
-      avatar: '',
-      user: {},
       loading: false,
       groupDesktopList: [],
       viewLists: [],
@@ -216,7 +201,7 @@ export default {
       // 缩略图模式
       isThumbnail: true,
       isLoading: false,
-      isFullscreen: false,
+      isFullScreen: false,
       isPolling: false,
       view: null,
       index: 0,
@@ -225,9 +210,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      nickname: (state) => state.user.nickname
-    }),
     scaleMode: {
       get: function () {
         return this.view ? _.get(this.view, 'config.proprietaryConfig.scaleMode') : 'auto'
@@ -238,13 +220,9 @@ export default {
         })
       }
     },
-    userInfo () {
-      return this.$store.getters.userInfo
-    },
     selectedGroup () {
       const { selectedGroupName, groupDesktopList } = this
-      // eslint-disable-next-line
-      return groupDesktopList.length > 0 ? groupDesktopList.find(({ view_title }) => view_title === selectedGroupName) : []
+      return groupDesktopList.length ? groupDesktopList.find(({ view_title }) => view_title === selectedGroupName) : []
     },
     filterViewListOption () {
       const { selectedGroup, viewLists, queryTitle } = this
@@ -284,8 +262,13 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const [groupDesktopViewList, groupDesktopList] = await getGroupViewDesktopList()
-        const [selfDesktopViewList, selfDesktop] = await getUserDesktop(this.$store.state.user.info.userId)
+        const [
+          [groupDesktopViewList, groupDesktopList],
+          [selfDesktopViewList, selfDesktop]
+        ] = await Promise.all([
+          getGroupViewDesktopList(),
+          getUserDesktop(this.$store.state.user.info.userId)
+        ])
         this.viewLists = [
           ...groupDesktopViewList,
           ...selfDesktopViewList
@@ -339,13 +322,11 @@ export default {
      * 开启全屏
      */
     fullscreen () {
-      this.isFullscreen = !this.isFullscreen
+      this.isFullScreen = !this.isFullScreen
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen()
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen()
-        }
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen()
       }
     },
     /**
@@ -389,124 +370,12 @@ export default {
     }
   },
   created () {
-    this.user = this.userInfo
-    this.avatar = this.userInfo.avatar
     this.fetch()
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .project-list {
-
-    .card-title {
-      font-size: 0;
-
-      a {
-        color: rgba(0, 0, 0, 0.85);
-        margin-left: 12px;
-        line-height: 24px;
-        height: 24px;
-        display: inline-block;
-        vertical-align: top;
-        font-size: 14px;
-
-        &:hover {
-          color: #1890ff;
-        }
-      }
-    }
-    .card-description {
-      color: rgba(0, 0, 0, 0.45);
-      height: 44px;
-      line-height: 22px;
-      overflow: hidden;
-    }
-    .project-item {
-      display: flex;
-      margin-top: 8px;
-      overflow: hidden;
-      font-size: 12px;
-      height: 20px;
-      line-height: 20px;
-      a {
-        color: rgba(0, 0, 0, 0.45);
-        display: inline-block;
-        flex: 1 1 0;
-
-        &:hover {
-          color: #1890ff;
-        }
-      }
-      .datetime {
-        color: rgba(0, 0, 0, 0.25);
-        flex: 0 0 auto;
-        float: right;
-      }
-    }
-    .ant-card-meta-description {
-      color: rgba(0, 0, 0, 0.45);
-      height: 44px;
-      line-height: 22px;
-      overflow: hidden;
-    }
-  }
-
-  .item-group {
-    padding: 20px 0 8px 24px;
-    font-size: 0;
-    a {
-      color: rgba(0, 0, 0, 0.65);
-      display: inline-block;
-      font-size: 14px;
-      margin-bottom: 13px;
-      width: 25%;
-    }
-  }
-
-  .members {
-    a {
-      display: block;
-      margin: 12px 0;
-      line-height: 24px;
-      height: 24px;
-      .member {
-        font-size: 14px;
-        color: rgba(0, 0, 0, .65);
-        line-height: 24px;
-        max-width: 100px;
-        vertical-align: top;
-        margin-left: 12px;
-        transition: all 0.3s;
-        display: inline-block;
-      }
-      &:hover {
-        span {
-          color: #1890ff;
-        }
-      }
-    }
-  }
-
-  .mobile {
-
-    .project-list {
-
-      .project-card-grid {
-        width: 100%;
-      }
-    }
-
-    .more-info {
-      border: 0;
-      padding-top: 16px;
-      margin: 16px 0 16px;
-    }
-
-    .headerContent .title .welcome-text {
-      display: none;
-    }
-  }
 
   .ViewDisplay__view {
     position: relative;
@@ -699,6 +568,8 @@ export default {
   }
 
   .flip-item {
+    padding: 7px;
+    background-color: #fff;
     transition: all 1s;
   }
 
