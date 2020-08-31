@@ -74,14 +74,8 @@ export const asyncRouterMap = [
               {
                 path: '/alarm/config/alarm-strategy',
                 name: 'AlarmStrategy',
-                component: () => import('@/views/alarm/config/AlarmStrategy'),
+                component: () => import('@/views/alarm/config/AlarmStrategy/index'),
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
-              },
-              {
-                path: '/alarm/config/alarm-rules',
-                name: 'AlarmRules',
-                component: () => import('@/views/alarm/config/AlarmRules'),
-                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
               },
               {
                 path: '/alarm/config/describe-temp',
@@ -92,8 +86,20 @@ export const asyncRouterMap = [
               {
                 path: '/alarm/config/forward-temp',
                 name: 'ForwardTemp',
-                component: () => import('@/views/alarm/config/ForwardTemp'),
+                component: () => import('@/views/alarm/config/ForwardTemp/index'),
                 meta: { title: '通知模板规则', keepAlive: true, permission: ['F003002003'] }
+              },
+              {
+                path: '/alarm/config/forward-rules',
+                name: 'ForwardRules',
+                component: () => import('@/views/alarm/config/ForwardRules/index'),
+                meta: { title: '告警通知规则', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/alarm-rules',
+                name: 'AlarmRules',
+                component: () => import('@/views/alarm/config/AlarmRules/index'),
+                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
               }
             ]
           }
