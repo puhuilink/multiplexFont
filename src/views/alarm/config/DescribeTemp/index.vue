@@ -56,16 +56,23 @@
         <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
       </template>
     </CTable>
+
+    <DescribeTempSchema
+      ref="schema"
+    />
   </div>
 </template>
 
 <script>
 import { List } from '@/components/Mixins'
+import DescribeTempSchema from './modules/DescribeTempSchema'
 
 export default {
   name: 'DescribeTemp',
   mixins: [List],
-  components: {},
+  components: {
+    DescribeTempSchema
+  },
   props: {},
   data: () => ({
     tabIndex: 'personal',
@@ -125,7 +132,9 @@ export default {
     loadData () {
       return {}
     },
-    onAdd () {},
+    onAdd () {
+      this.$refs['schema'].add()
+    },
     onBatchDelete () {},
     onEdit () {},
     onTabChange (tabIndex) {
