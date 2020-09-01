@@ -1,5 +1,9 @@
 <template>
   <div class="CombineSelect">
+    <a-form-model-item label="监控对象" v-bind="$props">
+      <a-select></a-select>
+    </a-form-model-item>
+
     <a-form-model-item label="监控实体" v-bind="$props">
       <ModelEndpointSelect />
     </a-form-model-item>

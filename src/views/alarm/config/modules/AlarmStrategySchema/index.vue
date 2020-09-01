@@ -65,18 +65,7 @@
                 </a-col>
 
                 <a-col :span="9">
-                  <a-form-model-item label="告警级别" v-bind="nestedFormItemLayout">
-                    <a-select
-                      class="fw"
-                      v-model="opt.alarm_level"
-                    >
-                      <a-select-option
-                        v-for="level in [1, 2, 3, 4, 5]"
-                        :key="level"
-                        :value="level"
-                      >{{ `L${level}` }}</a-select-option>
-                    </a-select>
-                  </a-form-model-item>
+                  <AlarmLevelSelect v-bind="nestedFormItemLayout" />
                 </a-col>
 
                 <a-col :span="2">
@@ -111,7 +100,11 @@ import { StrategyService } from '@/api-hasura/index'
 import _ from 'lodash'
 import { scrollTo } from '@/utils/util'
 import { CombineSelect } from '@/components/Resource'
-import { ThresholdOperatorSelect, ThresholdConditionSelect } from '@/components/Alarm/Threshold'
+import {
+  ThresholdOperatorSelect,
+  ThresholdConditionSelect,
+  AlarmLevelSelect
+} from '~~~/Alarm'
 
 const defaultOpt = {
   operator: '',
@@ -126,7 +119,8 @@ export default {
   components: {
     CombineSelect,
     ThresholdOperatorSelect,
-    ThresholdConditionSelect
+    ThresholdConditionSelect,
+    AlarmLevelSelect
   },
   props: {},
   data: () => ({
