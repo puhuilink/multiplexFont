@@ -4,33 +4,7 @@
       <a-input v-model.trim="formModel.title" />
     </a-form-model-item>
 
-    <a-form-model-item label="数据域" v-bind="formItemLayout">
-      <a-select>
-        <a-select-opt-group
-          v-for="domain in dataDomain"
-          :key="domain.name"
-          :label="domain.name"
-        >
-          <a-select-option
-            v-for="{ name, value } in domain.children"
-            :key="value"
-            :value="value"
-          >{{ name }}</a-select-option>
-        </a-select-opt-group>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item label="设备名称" v-bind="formItemLayout" prop="host_id">
-      <a-select v-model="_formModel.host_id"></a-select>
-    </a-form-model-item>
-
-    <a-form-model-item label="监控实体" v-bind="formItemLayout" prop="endpoint_id">
-      <a-select v-model="_formModel.endpoint_id"></a-select>
-    </a-form-model-item>
-
-    <a-form-model-item label="检查项" v-bind="formItemLayout" prop="metric_id">
-      <a-select v-model="_formModel.metric_id"></a-select>
-    </a-form-model-item>
+    <CombineSelect v-bind="formItemLayout" v-model="_formModel" />
 
     <a-form-model-item label="规则类型" v-bind="formItemLayout" prop="rule_type">
       <a-select v-model="_formModel.rule_type">
@@ -48,6 +22,7 @@
 import { ruleTypeMapping } from '../../typing'
 import { dataDomain } from '@/components/Common'
 import Mixin from './Mixin'
+import { CombineSelect } from '@/components/Resource'
 
 export const basicFormRules = {
   title: [
@@ -72,7 +47,9 @@ export const basicFormRules = {
 export default {
   name: 'BasicForm',
   mixins: [Mixin],
-  components: {},
+  components: {
+    CombineSelect
+  },
   props: {},
   data: () => ({
     dataDomain,

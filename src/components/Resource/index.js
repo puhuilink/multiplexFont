@@ -1,4 +1,3 @@
-import ComboSelect from './ComboSelect'
 import {
   CmdbHostSelect,
   CmdbEndpointList,
@@ -11,9 +10,12 @@ import {
   ModelMetricSelect,
   ModelTree
 } from './Model'
+import ComboSelect from './ComboSelect'
+import CombineSelect from './CombineSelect'
 
 export {
   ComboSelect,
+  CombineSelect,
   ModelTree,
   CmdbTree,
   ModelHostTypeSelect,

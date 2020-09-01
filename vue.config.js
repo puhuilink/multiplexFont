@@ -55,6 +55,7 @@ const vueConfig = {
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@$', resolve('src'))
+      .set('~~~', resolve('src/components'))
 
     config.module
       .rule('graphql')

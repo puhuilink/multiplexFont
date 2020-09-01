@@ -31,12 +31,10 @@
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
 
-        <a-form-model-item label="监控对象" v-bind="formItemLayout" prop="title">
-          <a-input v-model.trim="formModel.title" />
-        </a-form-model-item>
+        <CombineSelect v-bind="formItemLayout" />
 
         <a-form-model-item label="触发条件" v-bind="formItemLayout" prop="title">
-          <a-input v-model.trim="formModel.title" />
+          <ThresholdConditionSelect />
         </a-form-model-item>
 
         <a-form-model-item label="告警描述模板" v-bind="formItemLayout" prop="message">
@@ -51,12 +49,16 @@
 <script>
 import TempEditor from '@/components/Temp/TempEditor'
 import Schema from '@/components/Mixins/Modal/Schema'
+import { CombineSelect } from '@/components/Resource'
+import { ThresholdConditionSelect } from '~~~/Alarm/Threshold'
 
 export default {
   name: 'DescribeTempSchema',
   mixins: [Schema],
   components: {
-    TempEditor
+    CombineSelect,
+    TempEditor,
+    ThresholdConditionSelect
   },
   props: {},
   data: () => ({

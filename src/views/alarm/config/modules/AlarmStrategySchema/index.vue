@@ -29,25 +29,11 @@
           <a-input v-model.trim="formModel.name" />
         </a-form-model-item>
 
-        <!-- / 数据域 -->
-
-        <!-- / 监控对象 -->
-        <a-form-model-item label="监控对象" v-bind="formItemLayout">
-          <a-select></a-select>
-        </a-form-model-item>
-
-        <!-- / 监控实体 -->
-        <a-form-model-item label="监控实体" v-bind="formItemLayout">
-          <ModelEndpointSelect />
-        </a-form-model-item>
-
-        <!-- / 检查项 -->
-        <a-form-model-item label="检查项" v-bind="formItemLayout">
-          <ModelMetricSelect />
-        </a-form-model-item>
+        <CombineSelect v-bind="formItemLayout" />
 
         <!-- / 阈值计算条件 -->
         <a-form-model-item label="阈值计算条件" v-bind="formItemLayout">
+          <ThresholdConditionSelect v-bind="formItemLayout" />
         </a-form-model-item>
 
         <!-- / 阈值条件 -->
@@ -65,19 +51,11 @@
             <a-col v-bind="formItemLayout.wrapperCol">
               <a-row>
                 <a-col :span="8">
-                  <a-form-model-item class="fw" v-bind="nestedFormItemLayout">
-                    <a-select
-                      class="fw"
-                      placeholder="等于（或大于、小于...）"
-                      v-model="opt.operator"
-                    >
-                      <a-select-option
-                        v-for="operator in ['=', '>', '>=', '<', '<=']"
-                        :key="operator"
-                        :value="operator"
-                      >{{ operator }}</a-select-option>
-                    </a-select>
-                  </a-form-model-item>
+                  <ThresholdOperatorSelect
+                    class="fw"
+                    v-bind="nestedFormItemLayout"
+                    v-model="opt.operator"
+                  />
                 </a-col>
 
                 <a-col :span="5">
@@ -131,8 +109,9 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
 import _ from 'lodash'
-import { ModelEndpointSelect, ModelMetricSelect } from '@/components/Resource'
 import { scrollTo } from '@/utils/util'
+import { CombineSelect } from '@/components/Resource'
+import { ThresholdOperatorSelect, ThresholdConditionSelect } from '@/components/Alarm/Threshold'
 
 const defaultOpt = {
   operator: '',
@@ -145,8 +124,9 @@ export default {
   name: 'AlarmStrategySchema',
   mixins: [Schema],
   components: {
-    ModelEndpointSelect,
-    ModelMetricSelect
+    CombineSelect,
+    ThresholdOperatorSelect,
+    ThresholdConditionSelect
   },
   props: {},
   data: () => ({
