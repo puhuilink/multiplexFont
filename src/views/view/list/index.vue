@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import ViewTitleSchema from './ViewTitleSchema'
+import ViewTitleSchema from './modules/ViewTitleSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { ViewListService } from '@/api-hasura/index'

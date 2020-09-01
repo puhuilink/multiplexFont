@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import AuditSchema from './AuditSchema'
+import AuditSchema from './modules/AuditSchema'
 import { generateQuery } from '@/utils/graphql'
 import List from '@/components/Mixins/Table/List'
 import { AuditService } from '@/api-hasura'
