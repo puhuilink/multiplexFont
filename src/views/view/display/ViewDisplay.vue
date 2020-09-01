@@ -578,10 +578,6 @@ export default {
     z-index: 2;
   }
 
-  .flip-list-leave-to {
-    z-index: -1;
-  }
-
   .flip-list-enter,
   .flip-list-leave-to {
     opacity: 0;
