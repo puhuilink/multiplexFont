@@ -131,7 +131,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
 import _ from 'lodash'
-import { ModelEndpointSelect, ModelMetricSelect } from '@/components/Cmdb'
+import { ModelEndpointSelect, ModelMetricSelect } from '@/components/Resource'
 import { scrollTo } from '@/utils/util'
 
 const defaultOpt = {

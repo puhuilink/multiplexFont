@@ -59,12 +59,14 @@
 </template>
 
 <script>
-import ModelHostTypeSelect from './ModelHostTypeSelect'
-import CmdbHostSelect from './CmdbHostSelect'
-import ModelEndpointSelect from './ModelEndpointSelect'
-import ModelMetricSelect from './ModelMetricSelect'
-import _ from 'lodash'
+import {
+  ModelHostTypeSelect,
+  ModelEndpointSelect,
+  ModelMetricSelect
+} from './Model'
+import { CmdbHostSelect } from './Cmdb'
 import { MetricService } from '@/api-hasura'
+import _ from 'lodash'
 
 const defaultModel = {
   hostType: '',

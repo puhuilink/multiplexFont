@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { CmdbTree } from '@/components/Cmdb'
+import { CmdbTree } from '@/components/Resource'
 import PerformanceList from '@/components/Performance/List'
 import Renderer from '@/components/Renderer'
 import { CmdbHostViewService, ViewDesignService } from '@/api-hasura'

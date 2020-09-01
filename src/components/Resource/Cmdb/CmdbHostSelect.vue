@@ -1,6 +1,6 @@
 <script>
 import { CmdbService } from '@/api-hasura'
-import SelectMixin from './SelectMixin'
+import SelectMixin from '../Common/SelectMixin'
 
 export default {
   name: 'CmdbHostSelect',

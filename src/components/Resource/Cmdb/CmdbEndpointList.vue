@@ -1,9 +1,9 @@
 <script>
-import { ModelService } from '@/api-hasura'
-import SelectMixin from './SelectMixin'
+import { CmdbService } from '@/api-hasura'
+import SelectMixin from '../Common/SelectMixin'
 
 export default {
-  name: 'ModelMetricSelect',
+  name: 'CmdbEndpointSelect',
   mixins: [SelectMixin],
   props: {
     multiple: {
@@ -12,10 +12,10 @@ export default {
     }
   },
   methods: {
-    async fetch (modelEndpointId) {
+    async fetch (cmdbHostId) {
       try {
         this.loading = true
-        this.list = await ModelService.modelMetricList(modelEndpointId)
+        this.list = await CmdbService.cmdbEndpointList(cmdbHostId)
       } catch (e) {
         this.list = []
         throw e

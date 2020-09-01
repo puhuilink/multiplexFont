@@ -121,7 +121,7 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import { ComboSelect } from '@/components/Cmdb'
+import { ComboSelect } from '@/components/Resource'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
 

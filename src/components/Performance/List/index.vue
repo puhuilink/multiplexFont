@@ -83,7 +83,7 @@ import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'
-import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Cmdb'
+import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Resource'
 
 export default {
   name: 'PerformanceList',

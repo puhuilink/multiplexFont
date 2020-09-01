@@ -173,7 +173,7 @@ import {
   CmdbHostSelect,
   CmdbEndpointList,
   CmdbMetricSelect
-} from '@/components/Cmdb'
+} from '@/components/Resource'
 import moment from 'moment'
 
 export default {
