@@ -69,8 +69,8 @@ import { List } from '@/components/Mixins'
 import { AlarmTempService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
-import ForwardTempSchema from './modules/ForwardTempSchema/index'
-import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from './typing'
+import ForwardTempSchema from '../modules/ForwardTempSchema/index'
+import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from '../typing'
 import moment from 'moment'
 
 export default {
