@@ -570,7 +570,16 @@ export default {
   .flip-item {
     padding: 7px;
     background-color: #fff;
+    z-index: 1;
     transition: all 1s;
+  }
+
+  .flip-list-enter {
+    z-index: 2;
+  }
+
+  .flip-list-leave-to {
+    z-index: -1;
   }
 
   .flip-list-enter,
