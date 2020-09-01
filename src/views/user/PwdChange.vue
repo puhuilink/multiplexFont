@@ -1,7 +1,7 @@
 <template>
   <div class="user-layout-register">
     <h3><span>密码重置</span></h3>
-    <a-form ref="formRegister" :form="form" id="formRegister" class="psdChange-form">
+    <a-form ref="formRegister" :form="form" id="formRegister" class="PwdChange-form">
       <a-form-item v-bind="formItemLayout" label="原始密码">
         <a-input
           size="large"
@@ -91,7 +91,7 @@ const levelColor = {
   3: '#52c41a'
 }
 export default {
-  name: 'PsdChange',
+  name: 'PwdChange',
   components: {
   },
   mixins: [mixinDevice],
@@ -336,7 +336,7 @@ export default {
       line-height: 40px;
     }
   }
-.psdChange-form{
+.PwdChange-form{
   padding: 30px 40px;
   width: 80%;
 }

@@ -161,7 +161,7 @@
 <script>
 import _ from 'lodash'
 import AuthDesktop from './modules/AuthDesktop'
-import ViewPreview from './modules/viewPreview'
+import ViewPreview from './modules/ViewPreview'
 import { getGroupViewDesktopList } from '@/api/controller/AuthorizeObject'
 import { getUserDesktop } from '@/api/controller/ViewDesktop'
 import previewImg from '@/assets/images/view__preview_default.jpg'

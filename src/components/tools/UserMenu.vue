@@ -25,7 +25,7 @@
           <!--            <span>测试</span>-->
           <!--          </a-menu-item>-->
           <a-menu-item key="1">
-            <a href="javascript:;" @click="handleChangePsd">
+            <a href="javascript:;" @click="handleChangePwd">
               <a-icon type="setting"/>
               <span>重置密码</span>
             </a>
@@ -74,8 +74,8 @@ export default {
         }
       })
     },
-    handleChangePsd () {
-      this.$router.push({ name: 'PsdChange' })
+    handleChangePwd () {
+      this.$router.push({ name: 'PwdChange' })
     }
   }
 }
