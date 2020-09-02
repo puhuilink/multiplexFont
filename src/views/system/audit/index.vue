@@ -176,7 +176,7 @@ export default {
      */
     onShow () {
       const [record] = this.selectedRows
-      this.$refs['schema'].show(record)
+      this.$refs['schema'].detail(record)
     }
   }
 }

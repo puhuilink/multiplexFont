@@ -123,18 +123,18 @@ export default {
         title: '工作组编号',
         dataIndex: 'group_id',
         sorter: true,
-        width: 280
+        width: 140
       },
       {
         title: '工作组名称',
         dataIndex: 'group_name',
-        width: 280,
+        width: 140,
         sorter: true
       },
       {
         title: '有效标志',
         dataIndex: 'flag',
-        width: 120,
+        width: 50,
         sorter: true,
         customRender: flag => flag ? '有效' : '无效'
       },

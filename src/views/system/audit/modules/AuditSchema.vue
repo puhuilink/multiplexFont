@@ -1,7 +1,7 @@
 <template>
   <a-modal
     centered
-    :confirmLoading="loading"
+    :confirmLoading="confirmLoading"
     :footer="null"
     :title="title"
     v-model="visible"
@@ -16,8 +16,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="操作帐号"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               readOnly
@@ -32,8 +31,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="客户端IP"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               readOnly
@@ -50,8 +48,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="模块名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               readOnly
@@ -66,8 +63,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="功能名称"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               readOnly
@@ -84,8 +80,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="操作时间"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-input
               readOnly
@@ -100,8 +95,7 @@
         <a-col :md="12" :span="24">
           <a-form-item
             label="操作内容"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+            v-bind="formItemLayout"
           >
             <a-textarea
               readOnly
@@ -118,45 +112,22 @@
 </template>
 
 <script>
-const formItemLayout = {
-  labelCol: {
-    // span: 6
-  },
-  wrapperCol: {
-    span: 23
-  }
-}
+import Schema from '@/components/Mixins/Modal/Schema'
+import _ from 'lodash'
 
 export default {
   name: 'AuditSchema',
+  mixins: [Schema],
   components: {},
   props: {},
-  data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
-    record: null,
-    title: '',
-    visible: false
-  }),
+  data: () => ({}),
   computed: {},
   methods: {
-    async show (record) {
-      this.title = '审计详情'
-      this.visible = true
+    async detail (record) {
+      this.show('审计详情')
       await this.$nextTick()
-      this.form.setFieldsValue({
-        ...record
-      })
-      // console.log(record)
-    },
-    cancel () {
-      this.visible = false
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
+      const keys = Object.keys(this.form.getFieldsValue())
+      this.form.setFieldsValue(_.pick(record, keys))
     }
   }
 }
