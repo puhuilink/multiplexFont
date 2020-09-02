@@ -18,7 +18,7 @@
                 <a-form-item
                   label="工作组编号"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.group_id" />
                 </a-form-item>
@@ -27,7 +27,7 @@
                 <a-form-item
                   label="工作组名称"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.group_name" />
                 </a-form-item>
@@ -39,7 +39,7 @@
                 <a-form-item
                   v-bind="formItemLayout"
                   label="有效标识"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-select
                     allowClear

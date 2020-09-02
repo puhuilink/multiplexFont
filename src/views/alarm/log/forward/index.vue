@@ -19,7 +19,7 @@
                 <a-form-item
                   label="前转名称"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
@@ -28,7 +28,7 @@
                 <a-form-item
                   label="前转方式"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
@@ -37,7 +37,7 @@
                 <a-form-item
                   label="时间范围"
                   v-bind="formItemLayout"
-                  style="width: 100%"
+                  class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
