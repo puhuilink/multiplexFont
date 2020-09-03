@@ -8,6 +8,15 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/view/display',
     children: [
+      ...process.NODE_ENV === 'production' ? [] : [
+        {
+          path: '/dev-debug',
+          component: () => import('@/views/dev-debug'),
+          meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
+          name: 'devTest'
+        }
+      ],
+
       // view
       {
         path: '/view',
@@ -77,12 +86,12 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alarm/config/strategy/index'),
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
-              {
-                path: '/alarm/config/describe-temp',
-                name: 'DescribeTemp',
-                component: () => import('@/views/alarm/config/describe-temp/index'),
-                meta: { title: '告警描述模板', keepAlive: true, permission: [ 'F003003003' ] }
-              },
+              // {
+              //   path: '/alarm/config/describe-temp',
+              //   name: 'DescribeTemp',
+              //   component: () => import('@/views/alarm/config/describe-temp/index'),
+              //   meta: { title: '告警描述模板', keepAlive: true, permission: [ 'F003003003' ] }
+              // },
               {
                 path: '/alarm/config/forward-temp',
                 name: 'ForwardTemp',
