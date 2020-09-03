@@ -31,25 +31,35 @@
               </a-col>
 
             </a-row>
+
+            <a-row v-show="advanced">
+              <a-col :md="12" :sm="24">
+                <a-form-item
+                  label="规则类型"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <a-select v-model="queryParams.rule_type">
+                    <a-select-option
+                      v-for="(label, value) in allRuleType"
+                      :key="value"
+                      :value="value"
+                    >{{ label }}</a-select-option>
+                  </a-select>
+                </a-form-item></a-col>
+            </a-row>
           </div>
 
           <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
+            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
           </span>
         </a-form>
       </template>
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-select v-model="queryParams.rule_type" @change="query">
-          <a-select-option
-            v-for="(label, value) in allRuleType"
-            :key="value"
-            :value="value"
-          >{{ label }}</a-select-option>
-        </a-select>
-        &nbsp;&nbsp;
         <a-button @click="onAdd" v-action:M0301>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
@@ -188,10 +198,6 @@ export default {
     onEdit () {
       const [id] = this.selectedRowKeys
       this.$refs.schema.edit(id)
-    },
-    resetQueryParams () {
-      const { queryParams: { rule_type } } = this
-      this.$data.queryParams = Object.assign({}, this.$options.data.apply(this).queryParams, rule_type)
     }
   }
 }
