@@ -28,7 +28,9 @@ export default {
       this.loading = true
       await Timeout.set(800)
       this.dataSource = [
-        { key: 'printer', title: '打印机' }
+        { key: 'printer1', title: '打印机1' },
+        { key: 'printer2', title: '打印机2' },
+        { key: 'printer3', title: '打印机3' }
       ]
       this.loading = false
     }

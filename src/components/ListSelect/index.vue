@@ -32,13 +32,13 @@
         <a-list-item
           class="ListSelect--item"
           :class="{ 'ListSelect--item_checked': isChecked(key) }"
-          @click="onToggleSelected(key)"
+          @click="onToggleChecked(key)"
         >
 
           <a-checkbox
             v-if="multiple"
             :checked="isChecked(key)"
-            @click.stop="onToggleSelected(key)"
+            @click.stop="onToggleChecked(key)"
           >{{ title }}</a-checkbox>
           <span v-else>{{ title }}</span>
 
@@ -46,7 +46,14 @@
       </template>
 
       <!-- / footer -->
-      <!-- <template v-slot:footer></template> -->
+      <template v-slot:footer v-if="multiple && filterDataSource.length">
+        <a-checkbox
+          :checked="checkedAll"
+          :indeterminate="indeterminate"
+          @click.stop="onToggleCheckAll"
+        >全选</a-checkbox>
+        <span>{{ `选中${checkedKeys.length}项` }}</span>
+      </template>
 
     </a-list>
   </div>
@@ -58,7 +65,6 @@ import _ from 'lodash'
 
 export default {
   name: 'ListSelect',
-  extends: List,
   mixins: [],
   components: {},
   props: {
@@ -75,6 +81,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    value: {
+      type: [String, Array],
+      default: () => []
     }
   },
   data: () => ({
@@ -85,24 +95,43 @@ export default {
   computed: {
     filterDataSource () {
       return this.dataSource.filter(({ title }) => title.includes(this.searchTitle))
+    },
+    // 半选中状态
+    indeterminate () {
+      return this.checkedKeys.length !== 0 && !this.checkedAll
+    },
+    // 全选中状态
+    checkedAll () {
+      return this.checkedKeys.length === this.filterDataSource.length
     }
   },
   methods: {
     isChecked (key) {
       return this.checkedKeys.includes(key)
     },
-    onToggleSelected (key) {
+    onToggleChecked (key) {
       const index = this.checkedKeys.indexOf(key)
       if (index === -1) {
-        this.checkedKeys = this.multiple ? [ ...this.checkedKeys, key ] : [key]
+        this.checkedKeys = this.multiple
+          ? [ ...this.checkedKeys, key ]
+          : [key]
       } else {
         this.checkedKeys.splice(index, 1)
       }
     },
+    onToggleCheckAll () {
+      this.checkedKeys = this.checkedAll
+        ? []
+        : [ ...this.filterDataSource.map(({ key }) => key) ]
+    },
     async onToggleShowSearch () {
       this.showSearch = !this.showSearch
-      await this.$nextTick()
-      this.showSearch && this.$refs['inputSearch'].focus()
+      if (this.showSearch) {
+        await this.$nextTick()
+        this.$refs['inputSearch'].focus()
+      } else {
+        this.searchTitle = ''
+      }
     }
   }
 }
