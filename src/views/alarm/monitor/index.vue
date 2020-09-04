@@ -100,7 +100,7 @@
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     :ranges="{
-                      '最近1天': [moment(), moment()],
+                      '最近1天': [moment().add(-1, 'days'), moment(), moment()],
                       '最近1周': [moment().add(-7, 'days'), moment()],
                       '最近1月': [moment().add(-30, 'days'), moment()]
                     }"
