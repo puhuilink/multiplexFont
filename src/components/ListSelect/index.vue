@@ -1,62 +1,72 @@
 <template>
-  <div class="ListSelect">
-    <a-list v-bind="$props" bordered :dataSource="filterDataSource">
+  <a-spin :spinning="loading" wrapperClassName="ListSelect">
 
-      <!-- / header -->
-      <template v-slot:header>
-        <div class="ListSelect--header">
+    <!-- / header -->
+    <div class="ListSelect--header">
 
-          <transition name="transition-scale">
-            <a-input
-              ref="inputSearch"
-              class="transition-scale ListSelect--header-input-search"
-              v-model.trim="searchTitle"
-              v-show="showSearch"
-            />
-          </transition>
+      <transition name="transition-scale">
+        <a-input
+          ref="inputSearch"
+          class="transition-scale ListSelect--header-input-search"
+          v-model.trim="searchLabel"
+          v-show="showSearch"
+        />
+      </transition>
 
-          <span class="ListSelect--header-title">{{ title }}</span>
+      <span class="ListSelect--header-title">{{ title }}</span>
 
-          <a-button
-            :icon="showSearch ? 'close' : 'search'"
-            size="small"
-            shape="circle"
-            @click="onToggleShowSearch"
-          />
+      <a-button
+        :icon="showSearch ? 'close' : 'search'"
+        size="small"
+        shape="circle"
+        @click="onToggleShowSearch"
+      />
 
-        </div>
-      </template>
+    </div>
 
-      <!-- / body -->
-      <template v-slot:renderItem="{ key, title }">
-        <a-list-item
-          class="ListSelect--item"
-          :class="{ 'ListSelect--item_checked': isChecked(key) }"
-          @click="onToggleChecked(key)"
-        >
+    <!-- / body -->
+    <div class="ListSelect--body">
 
-          <a-checkbox
-            v-if="multiple"
-            :checked="isChecked(key)"
-            @click.stop="onToggleChecked(key)"
-          >{{ title }}</a-checkbox>
-          <span v-else>{{ title }}</span>
+      <div
+        v-for="{ key, label } in filterDataSource"
+        :key="key"
+        class="ListSelect--body-item"
+        :class="{ 'ListSelect--body-item_checked': isChecked(key) }"
+        @click="onToggleChecked(key)"
+      >
 
-        </a-list-item>
-      </template>
-
-      <!-- / footer -->
-      <template v-slot:footer v-if="multiple && filterDataSource.length">
         <a-checkbox
-          :checked="checkedAll"
-          :indeterminate="indeterminate"
-          @click.stop="onToggleCheckAll"
-        >全选</a-checkbox>
-        <span>{{ `选中${checkedKeys.length}项` }}</span>
-      </template>
+          v-if="multiple"
+          :checked="isChecked(key)"
+          @click.stop="onToggleChecked(key)"
+        >{{ label }}</a-checkbox>
+        <span v-else>{{ label }}</span>
 
-    </a-list>
-  </div>
+      </div>
+
+      <div class="ListSelect--body-item_empty" v-show="!filterDataSource.length">
+        <a-empty />
+      </div>
+
+    </div>
+
+    <!-- / footer -->
+    <div
+      v-show="filterDataSource.length"
+      class="ListSelect--footer"
+      @click="onToggleCheckAll"
+    >
+
+      <a-checkbox
+        :checked="checkedAll"
+        :indeterminate="indeterminate"
+        @click.stop="onToggleCheckAll"
+      >全选</a-checkbox>
+      <span>{{ `共${filterDataSource.length}项，选中${filterCheckedKeys.length}项` }}</span>
+
+    </div>
+
+  </a-spin>
 </template>
 
 <script>
@@ -68,11 +78,11 @@ export default {
   mixins: [],
   components: {},
   props: {
-    ..._.omit(List.props, ['bordered', 'header', 'footer', 'renderItem']),
+    ..._.pick(List.props, ['loading']),
     dataSource: {
       type: Array,
       default: () => [],
-      validator: dataSource => dataSource.every(el => el && el['key'] && el['title'])
+      validator: dataSource => dataSource.every(el => el && el['key'] && el['label'])
     },
     multiple: {
       type: Boolean,
@@ -89,20 +99,26 @@ export default {
   },
   data: () => ({
     checkedKeys: [],
-    searchTitle: '',
+    searchLabel: '',
     showSearch: false
   }),
   computed: {
     filterDataSource () {
-      return this.dataSource.filter(({ title }) => title.includes(this.searchTitle))
+      return this.dataSource.filter(({ label }) => label.includes(this.searchLabel))
+    },
+    filterDataSourceKeys () {
+      return this.filterDataSource.map(({ key }) => key)
+    },
+    filterCheckedKeys () {
+      return _.intersection(this.checkedKeys, this.filterDataSourceKeys)
     },
     // 半选中状态
     indeterminate () {
-      return this.checkedKeys.length !== 0 && !this.checkedAll
+      return this.filterCheckedKeys.length !== 0 && !this.checkedAll
     },
     // 全选中状态
     checkedAll () {
-      return this.checkedKeys.length === this.filterDataSource.length
+      return this.filterCheckedKeys.length === this.filterDataSource.length
     }
   },
   methods: {
@@ -122,7 +138,7 @@ export default {
     onToggleCheckAll () {
       this.checkedKeys = this.checkedAll
         ? []
-        : [ ...this.filterDataSource.map(({ key }) => key) ]
+        : [ ...this.filterDataSourceKeys ]
     },
     async onToggleShowSearch () {
       this.showSearch = !this.showSearch
@@ -130,7 +146,7 @@ export default {
         await this.$nextTick()
         this.$refs['inputSearch'].focus()
       } else {
-        this.searchTitle = ''
+        this.searchLabel = ''
       }
     }
   }
@@ -139,11 +155,16 @@ export default {
 
 <style lang="less">
 .ListSelect {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
   width: 240px;
+  height: 260px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
 
-  .ant-list-header {
-    padding: 0;
+  .ant-spin-container {
+    &:extend(.ListSelect);
+    border: none;
   }
 
   &--header {
@@ -152,6 +173,7 @@ export default {
     align-items: center;
     padding: 4px 8px;
     height: 32px;
+    border-bottom: 1px solid #e8e8e8;
 
     &-input-search {
       position: absolute;
@@ -167,15 +189,40 @@ export default {
     }
   }
 
-  &--item {
-    background-color: transparent;
-    transition: background-color .3s;
+  &--body {
+    flex: 1;
 
-    &_checked {
-      // TODO: theme less variables
-      background-color: #e6f7ff;
-      transition: background-color .3s;
-    }
+      &-item {
+        &:extend(.ellipsis);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 24px;
+        border-bottom: 1px solid #e8e8e8;
+        background-color: transparent;
+        transition: background-color .3s;
+
+        &_checked {
+          // TODO: theme less variables
+          background-color: #e6f7ff;
+          transition: background-color .3s;
+        }
+
+        &_empty {
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          padding-bottom: 25px;
+        }
+      }
+  }
+
+  &--footer {
+    padding: 12px 24px;
+    border-top: 1px solid #e8e8e8;
   }
 }
 </style>

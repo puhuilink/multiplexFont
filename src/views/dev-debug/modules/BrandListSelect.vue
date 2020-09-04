@@ -27,8 +27,8 @@ export default {
       this.loading = true
       await Timeout.set(800)
       this.dataSource = [
-        { key: '3Com', title: '3Com' },
-        { key: 'Dell', title: '戴尔' }
+        { key: '3Com', label: '3Com' },
+        { key: 'Dell', label: '戴尔' }
       ]
       this.loading = false
     }

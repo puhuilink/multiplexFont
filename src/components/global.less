@@ -586,3 +586,19 @@ body {
     transform: scale(0);
   }
 }
+
+.transition-fade {
+  opacity: 1;
+  transition: opacity .3s;
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
