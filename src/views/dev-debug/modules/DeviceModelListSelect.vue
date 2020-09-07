@@ -3,24 +3,23 @@
     v-bind="$props"
     v-on="$listeners"
     :data="loadData"
-    multiple
     ref="listSelect"
-    title="设备名称"
+    title="品牌设备"
   />
 </template>
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { CmdbService } from '@/api-hasura'
+import { ModelService } from '@/api-hasura'
 
 export default {
-  name: 'HostListSelect',
+  name: 'DeviceModelListSelect',
   mixins: [],
   components: {
     CListSelect
   },
   props: {
-    hostType: {
+    deviceBrand: {
       type: String,
       default: ''
     },
@@ -29,18 +28,18 @@ export default {
   data: () => ({}),
   computed: {},
   watch: {
-    hostType (hostType) {
+    deviceBrand (deviceBrand) {
       this.$refs['listSelect'].reset()
-      hostType && this.$refs['listSelect'].refresh(hostType)
+      deviceBrand && this.$refs['listSelect'].refresh(deviceBrand)
     }
   },
   methods: {
-    loadData (host_type) {
-      return CmdbService.hostFind({
-        where: { host_type },
+    loadData (model) {
+      return ModelService.hostFind({
+        where: { model },
         fields: [
-          'key: id',
-          'label: alias'
+          'key: host_type',
+          'label: host'
         ],
         alias: 'dataSource'
       }).then(r => r.data.dataSource)

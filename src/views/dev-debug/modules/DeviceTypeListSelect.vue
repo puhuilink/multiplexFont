@@ -3,24 +3,22 @@
     v-bind="$props"
     v-on="$listeners"
     :data="loadData"
-    multiple
     ref="listSelect"
-    title="设备名称"
+    title="监控类型"
   />
 </template>
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { CmdbService } from '@/api-hasura'
 
 export default {
-  name: 'HostListSelect',
+  name: 'DeviceModelListSelect',
   mixins: [],
   components: {
     CListSelect
   },
   props: {
-    hostType: {
+    deviceBrand: {
       type: String,
       default: ''
     },
@@ -29,21 +27,15 @@ export default {
   data: () => ({}),
   computed: {},
   watch: {
-    hostType (hostType) {
+    deviceBrand (deviceBrand) {
       this.$refs['listSelect'].reset()
-      hostType && this.$refs['listSelect'].refresh(hostType)
+      deviceBrand && this.$refs['listSelect'].refresh(deviceBrand)
     }
   },
   methods: {
-    loadData (host_type) {
-      return CmdbService.hostFind({
-        where: { host_type },
-        fields: [
-          'key: id',
-          'label: alias'
-        ],
-        alias: 'dataSource'
-      }).then(r => r.data.dataSource)
+    async loadData (model) {
+      // TODO: Api
+      return []
     }
   }
 }

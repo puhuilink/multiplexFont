@@ -2,45 +2,46 @@
   <CListSelect
     v-bind="$props"
     v-on="$listeners"
-    :data="loadData"
-    multiple
+    autoLoad
     ref="listSelect"
-    title="设备名称"
+    title="品牌名称"
+    :data="loadData"
   />
 </template>
 
 <script>
+import { ModelService } from '@/api-hasura'
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { CmdbService } from '@/api-hasura'
 
 export default {
-  name: 'HostListSelect',
+  name: 'DeviceBrandListSelect',
   mixins: [],
   components: {
     CListSelect
   },
   props: {
-    hostType: {
+    ...CListSelect.props,
+    deviceType: {
       type: String,
       default: ''
-    },
-    ...CListSelect.props
+    }
   },
   data: () => ({}),
   computed: {},
   watch: {
-    hostType (hostType) {
+    deviceType (deviceType) {
       this.$refs['listSelect'].reset()
-      hostType && this.$refs['listSelect'].refresh(hostType)
+      deviceType && this.$refs['listSelect'].refresh(deviceType)
     }
   },
   methods: {
-    loadData (host_type) {
-      return CmdbService.hostFind({
-        where: { host_type },
+    async loadData (deviceType) {
+      return ModelService.groupByModelFind({
+        // TODO: Api
+        // where: { deviceType },
         fields: [
-          'key: id',
-          'label: alias'
+          'key: model',
+          'label: model'
         ],
         alias: 'dataSource'
       }).then(r => r.data.dataSource)

@@ -6,6 +6,7 @@ import {
   ModelHostDao,
   ModelHostEndpointDao,
   ModelEndpointMetricDao,
+  ModelHostGroupByModelDao,
   ModelHostGroupByHostTypeDao
 } from '../dao'
 class ModelService extends BaseService {
@@ -119,6 +120,18 @@ class ModelService extends BaseService {
       }))
     const uniqList = _.uniq(validList, ({ key }) => key)
     return uniqList
+  }
+
+  static async hostFind (argus = {}) {
+    return query(
+      ModelHostDao.find(argus)
+    )
+  }
+
+  static async groupByModelFind (argus = {}) {
+    return query(
+      ModelHostGroupByModelDao.find(argus)
+    )
   }
 }
 
