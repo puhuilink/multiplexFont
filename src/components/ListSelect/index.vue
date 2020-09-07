@@ -170,7 +170,7 @@ export default {
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  width: 240px;
+  width: 230px;
   height: 320px;
   border: 1px solid #d9d9d9;
   border-radius: 4px;

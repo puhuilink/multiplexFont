@@ -4,7 +4,7 @@
       <a-input v-model.trim="formModel.title" />
     </a-form-model-item>
 
-    <CombineSelect v-bind="formItemLayout" v-model="_formModel" />
+    <ComplexSnippet v-bind="formItemLayout" v-model="_formModel" />
 
     <a-form-model-item label="规则类型" v-bind="formItemLayout" prop="rule_type">
       <a-select v-model="_formModel.rule_type">
@@ -22,7 +22,7 @@
 import { ruleTypeMapping } from '../../typing'
 import { dataDomain } from '@/components/Common'
 import Mixin from './Mixin'
-import { CombineSelect } from '@/components/Resource'
+import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 
 export const basicFormRules = {
   title: [
@@ -48,7 +48,7 @@ export default {
   name: 'BasicForm',
   mixins: [Mixin],
   components: {
-    CombineSelect
+    ComplexSnippet
   },
   props: {},
   data: () => ({

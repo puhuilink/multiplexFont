@@ -25,9 +25,9 @@ export {
 export class SendModel {
   constructor ({
     id,
-    host_id,
-    endpoint_id,
-    metric_id,
+    hostId,
+    endpointId,
+    metricId,
     event_level,
     send_type = '',
     contact = '',
@@ -35,9 +35,9 @@ export class SendModel {
     temp_email_id
   } = {}) {
     this.id = id
-    this.host_id = host_id
-    this.endpoint_id = endpoint_id
-    this.metric_id = metric_id
+    this.hostId = hostId
+    this.endpointId = endpointId
+    this.metricId = metricId
     this.event_level = event_level
     this.send_type = send_type.split('/').filter(Boolean)
     this.contact = contact.split('/').filter(Boolean)
@@ -97,20 +97,24 @@ export class SendModel {
 
 class BasicRuleModel {
   constructor ({
-    id,
-    title,
-    host_id,
-    endpoint_id,
-    metric_id,
-    rule_type,
-    enabled
+    id = '',
+    title = '',
+    deviceType = '',
+    deviceBrand = '',
+    deviceModel = '',
+    hostId = [],
+    endpointId = '',
+    metricId = '',
+    enabled = true
   } = {}) {
     this.id = id
     this.title = title
-    this.host_id = host_id
-    this.endpoint_id = endpoint_id
-    this.metric_id = metric_id
-    this.rule_type = rule_type
+    this.deviceType = deviceType
+    this.deviceBrand = deviceBrand
+    this.deviceModel = deviceModel
+    this.hostId = hostId
+    this.endpointId = endpointId
+    this.metricId = metricId
     // https://github.com/vueComponent/ant-design-vue/issues/971
     this.enabled = ~~enabled
   }
@@ -164,7 +168,7 @@ class ContentRuleModel extends BasicRuleModel {
 class MergeRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
-    this.rule_type = ALARM_RULE_MERGE
+    this.ruleType = ALARM_RULE_MERGE
   }
 }
 
@@ -174,7 +178,7 @@ class MergeRuleModel extends ContentRuleModel {
 class UpgradeRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
-    this.rule_type = ALARM_RULE_UPGRADE
+    this.ruleType = ALARM_RULE_UPGRADE
   }
 }
 
@@ -184,8 +188,8 @@ class UpgradeRuleModel extends ContentRuleModel {
 class ForwardRuleModel extends ContentRuleModel {
   constructor ({ sendList, ...props }) {
     super(props)
-    const cmdbConfig = _.pick(props, ['host_id', 'endpoint_id', 'metric_id'])
-    this.rule_type = ALARM_RULE_FORWARD
+    const cmdbConfig = _.pick(props, ['hostId', 'endpointId', 'metricId'])
+    this.ruleType = ALARM_RULE_FORWARD
     this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
   }
 
@@ -205,7 +209,7 @@ class RecoverRuleModel extends ContentRuleModel {
   constructor (props = {}) {
     super(props)
     const { content = '{}' } = props
-    this.rule_type = ALARM_RULE_RECOVER
+    this.ruleType = ALARM_RULE_RECOVER
     this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
   }
 
@@ -227,9 +231,9 @@ export class AlarmRuleModelFactory {
   ])
 
   static create (model = {}) {
-    const { rule_type, ...rest } = model
+    const { ruleType, ...rest } = model
     return Reflect.construct(
-      this.mapping.get(rule_type),
+      this.mapping.get(ruleType),
       [rest]
     )
   }

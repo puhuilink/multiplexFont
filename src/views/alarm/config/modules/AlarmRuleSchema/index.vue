@@ -37,8 +37,8 @@
         <div v-show="!firstStep" class="content">
           <component
             :formModel.sync="formModel"
-            :is="formComponentMapping.get(formModel.rule_type)"
-            v-if="formComponentMapping.get(formModel.rule_type)"
+            :is="formComponentMapping.get(formModel.ruleType)"
+            v-if="formComponentMapping.get(formModel.ruleType)"
           />
         </div>
       </a-form-model>
@@ -64,7 +64,7 @@ import BasicForm, { basicFormRules } from './BasicForm'
 import RecoverForm, { recoverFormRules } from './RecoverForm'
 import UpgradeForm, { upgradeFormRules } from './UpgradeForm'
 import MergeForm, { mergeFormRules } from './MergeForm'
-import ForwardForm, { forwardFormRules } from './ForwardForm'
+import { forwardFormRules } from './ForwardForm'
 import { formItemLayout } from './Mixin'
 
 const ruleMapping = new Map([
@@ -84,7 +84,6 @@ export default {
     formComponentMapping: new Map([
       [ALARM_RULE_MERGE, MergeForm],
       [ALARM_RULE_UPGRADE, UpgradeForm],
-      [ALARM_RULE_FORWARD, ForwardForm],
       [ALARM_RULE_RECOVER, RecoverForm]
     ]),
     formItemLayout,
@@ -93,7 +92,13 @@ export default {
       content: {
         type: CONTENT_TYPE_COUNT
       },
-      rule_type: ALARM_RULE_FORWARD
+      deviceType: '',
+      deviceBrand: '',
+      deviceModel: '',
+      hostId: [],
+      endpointId: '',
+      metricId: '',
+      ruleType: ALARM_RULE_MERGE
     },
     spinning: false,
     stepIndex: 1,
@@ -101,9 +106,9 @@ export default {
   }),
   computed: {
     formRules () {
-      const { formModel: { rule_type }, firstStep } = this
+      const { formModel: { ruleType }, firstStep } = this
       return _.cloneDeep(
-        firstStep ? basicFormRules : ruleMapping.get(rule_type)
+        firstStep ? basicFormRules : ruleMapping.get(ruleType)
       )
     },
     firstStep () {
