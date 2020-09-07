@@ -18,11 +18,11 @@ export default {
     CListSelect
   },
   props: {
+    ...CListSelect.props,
     deviceBrand: {
       type: String,
       default: ''
-    },
-    ...CListSelect.props
+    }
   },
   data: () => ({}),
   computed: {},

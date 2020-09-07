@@ -20,11 +20,11 @@ export default {
     CListSelect
   },
   props: {
+    ...CListSelect.props,
     hostType: {
       type: String,
       default: ''
-    },
-    ...CListSelect.props
+    }
   },
   data: () => ({}),
   computed: {},
