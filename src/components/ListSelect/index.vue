@@ -3,7 +3,6 @@
 
     <!-- / header -->
     <div class="ListSelect--header">
-
       <transition name="transition-scale">
         <a-input
           ref="inputSearch"
@@ -21,16 +20,14 @@
         shape="circle"
         @click="onToggleShowSearch"
       />
-
     </div>
 
     <!-- / body -->
     <div class="ListSelect--body">
-
       <div
         v-for="{ key, label } in filterDataSource"
         :key="key"
-        class="ListSelect--body-item"
+        class="ListSelect--body-item transition-flip"
         :class="{ 'ListSelect--body-item_checked': isChecked(key) }"
         @click="onToggleChecked(key)"
       >
@@ -41,29 +38,28 @@
           @click.stop="onToggleChecked(key)"
         >{{ label }}</a-checkbox>
         <span v-else>{{ label }}</span>
-
       </div>
 
-      <div class="ListSelect--body-item_empty" v-show="!filterDataSource.length">
+      <div
+        v-show="!filterDataSource.length"
+        class="ListSelect--body-item_empty transition-flip"
+      >
         <a-empty />
       </div>
-
     </div>
 
     <!-- / footer -->
     <div
       v-show="filterDataSource.length"
       class="ListSelect--footer"
-      @click="onToggleCheckAll"
     >
-
       <a-checkbox
+        v-if="multiple"
         :checked="checkedAll"
         :indeterminate="indeterminate"
         @click.stop="onToggleCheckAll"
       >全选</a-checkbox>
       <span>{{ `共${filterDataSource.length}项，选中${filterCheckedKeys.length}项` }}</span>
-
     </div>
 
   </a-spin>
@@ -128,17 +124,13 @@ export default {
     onToggleChecked (key) {
       const index = this.checkedKeys.indexOf(key)
       if (index === -1) {
-        this.checkedKeys = this.multiple
-          ? [ ...this.checkedKeys, key ]
-          : [key]
+        this.checkedKeys = this.multiple ? [ ...this.checkedKeys, key ] : [key]
       } else {
         this.checkedKeys.splice(index, 1)
       }
     },
     onToggleCheckAll () {
-      this.checkedKeys = this.checkedAll
-        ? []
-        : [ ...this.filterDataSourceKeys ]
+      this.checkedKeys = this.checkedAll ? [] : [ ...this.filterDataSourceKeys ]
     },
     async onToggleShowSearch () {
       this.showSearch = !this.showSearch
@@ -155,6 +147,7 @@ export default {
 
 <style lang="less">
 .ListSelect {
+  position: relative;
   display: inline-flex;
   flex-direction: column;
   width: 240px;
@@ -165,6 +158,14 @@ export default {
   .ant-spin-container {
     &:extend(.ListSelect);
     border: none;
+  }
+
+  &.ant-spin-nested-loading > div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 
   &--header {
@@ -200,12 +201,10 @@ export default {
         padding: 12px 24px;
         border-bottom: 1px solid #e8e8e8;
         background-color: transparent;
-        transition: background-color .3s;
 
         &_checked {
           // TODO: theme less variables
           background-color: #e6f7ff;
-          transition: background-color .3s;
         }
 
         &_empty {
