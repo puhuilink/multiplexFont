@@ -8,6 +8,16 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
+function addStyleResource (rule) {
+  rule.use('style-resource')
+    .loader('style-resources-loader')
+    .options({
+      patterns: [
+        path.resolve(__dirname, './src/components/global.less')
+      ]
+    })
+}
+
 const {
   NODE_ENV,
   VUE_APP_API_BASE_URL,
@@ -53,6 +63,9 @@ const vueConfig = {
   },
 
   chainWebpack: (config) => {
+    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+    types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))
+
     config.resolve.alias
       .set('@$', resolve('src'))
       .set('~~~', resolve('src/components'))

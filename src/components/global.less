@@ -585,6 +585,7 @@ body {
   &-leave-to {
     transform: scale(0);
   }
+  
 }
 
 .transition-fade {
@@ -595,6 +596,10 @@ body {
   &-leave-to {
     opacity: 0;
   }
+
+  &-leave-active {
+    position: absolute;
+  }
 }
 
 .ellipsis {
@@ -602,3 +607,23 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.transition-flip {
+  z-index: 1;
+  transition: all .3s;
+
+  &-enter {
+    z-index: 2;
+  }
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+
+  &-leave-active {
+    position: absolute;
+  }
+}
+
