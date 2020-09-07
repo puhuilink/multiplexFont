@@ -31,18 +31,17 @@
         :class="{ 'ListSelect--body-item_checked': isChecked(key) }"
         @click="onToggleChecked(key)"
       >
-
         <a-checkbox
           v-if="multiple"
           :checked="isChecked(key)"
           @click.stop="onToggleChecked(key)"
-        >{{ label }}</a-checkbox>
-        <span v-else>{{ label }}</span>
+        />
+        <span class="ListSelect--body-item-label">{{ label }}</span>
       </div>
 
       <div
         v-show="!filterDataSource.length"
-        class="ListSelect--body-item_empty transition-flip"
+        class="ListSelect--body_empty transition-flip"
       >
         <a-empty />
       </div>
@@ -100,7 +99,7 @@ export default {
   }),
   computed: {
     filterDataSource () {
-      return this.dataSource.filter(({ label }) => label.includes(this.searchLabel))
+      return this.dataSource.filter(({ label = '' }) => label.toLowerCase().includes(this.searchLabel.toLowerCase()))
     },
     filterDataSourceKeys () {
       return this.filterDataSource.map(({ key }) => key)
@@ -115,6 +114,27 @@ export default {
     // 全选中状态
     checkedAll () {
       return this.filterCheckedKeys.length === this.filterDataSource.length
+    }
+  },
+  watch: {
+    checkedKeys: {
+      deep: true,
+      handler (checkedKeys) {
+        this.$emit(
+          'input',
+          this.multiple ? checkedKeys : checkedKeys[0]
+        )
+      }
+    },
+    value: {
+      deep: true,
+      handler (value) {
+        // 内部存储始终按数组格式
+        const keys = _.castArray(value).filter(Boolean)
+        if (!_.isEqual(keys, this.checkedKeys)) {
+          this.checkedKeys = [ ...keys ]
+        }
+      }
     }
   },
   methods: {
@@ -151,7 +171,7 @@ export default {
   display: inline-flex;
   flex-direction: column;
   width: 240px;
-  height: 260px;
+  height: 320px;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
 
@@ -192,34 +212,44 @@ export default {
 
   &--body {
     flex: 1;
+    overflow: auto;
+
+      &_empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding-bottom: 25px;
+      }
 
       &-item {
-        &:extend(.ellipsis);
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 12px 24px;
         border-bottom: 1px solid #e8e8e8;
         background-color: transparent;
+        transition: background-color .3s;
+
+        &-label {
+          display: inline-block;
+          margin-left: 12px;
+          flex: 1;
+        }
 
         &_checked {
           // TODO: theme less variables
           background-color: #e6f7ff;
-        }
-
-        &_empty {
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-          padding-bottom: 25px;
+          transition: background-color .3s;
         }
       }
   }
 
   &--footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 12px 24px;
     border-top: 1px solid #e8e8e8;
   }
