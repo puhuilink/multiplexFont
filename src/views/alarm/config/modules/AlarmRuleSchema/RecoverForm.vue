@@ -3,21 +3,29 @@
     <h3 class="title">告警消除</h3>
     <p class="RecoverForm__p">
       <span>告警消除时间范围</span>
-      <a-form-model-item class="inline_input" prop="number">
+      <a-form-model-item
+        class="inline_input"
+        prop="number"
+      >
         <a-input-number
           class="inline_input"
           :min="1"
           :parser="parserInt"
-          v-model.number="formModel.content.number"
+          v-model.number="formModel.recover.number"
         />
       </a-form-model-item>
+
       <span>分钟内，依次接收</span>
-      <a-form-model-item class="inline_input" prop="count">
+
+      <a-form-model-item
+        class="inline_input"
+        prop="count"
+      >
         <a-input-number
           class="inline_input"
           :min="1"
           :parser="parserInt"
-          v-model.number="formModel.content.count"
+          v-model.number="formModel.recover.count"
         />
       </a-form-model-item>
       <span>条正常数据</span>
@@ -27,15 +35,6 @@
 
 <script>
 import Mixin from './Mixin'
-
-export const recoverFormRules = {
-  number: [
-    { required: true, message: '请输入时间' }
-  ],
-  count: [
-    { required: true, message: '请输入条数' }
-  ]
-}
 
 export default {
   name: 'RecoverForm',

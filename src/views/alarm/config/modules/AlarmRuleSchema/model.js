@@ -3,6 +3,7 @@ import {
   ALARM_RULE_UPGRADE,
   ALARM_RULE_FORWARD,
   ALARM_RULE_RECOVER,
+  ruleTypeMapping,
   SEND_TYPE_EMAIL,
   SEND_TYPE_SMS
 } from '../../typing'
@@ -10,7 +11,8 @@ import _ from 'lodash'
 
 export {
   SEND_TYPE_EMAIL,
-  SEND_TYPE_SMS
+  SEND_TYPE_SMS,
+  ruleTypeMapping
 }
 
 export const CONTENT_TYPE_COUNT = 'count'
@@ -21,6 +23,67 @@ export {
   ALARM_RULE_FORWARD,
   ALARM_RULE_RECOVER
 }
+
+class ContentModel {
+  constructor (content = '{}') {
+    Object.assign(this, _.pick(JSON.parse(content), ['type', 'number']))
+  }
+
+  serialize () {
+    return _.pick(this, ['type', 'number'])
+  }
+}
+
+/**
+ * 合并规则
+ */
+class MergeContentModel extends ContentModel {}
+
+/**
+ * 升级规则
+ */
+class UpgradeContentModel extends ContentModel {}
+
+/**
+ * 发送规则
+ */
+class ForwardContentModel extends ContentModel {
+  constructor ({ sendList, ...props }) {
+    super(props)
+    const cmdbConfig = _.pick(props, ['hostId', 'endpointId', 'metricId'])
+    this.ruleType = [ALARM_RULE_FORWARD]
+    this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
+  }
+
+  serialize () {
+    const { sendList = [] } = this
+    return {
+      ...super.serialize(),
+      sendList: sendList.map(sendModel => sendModel.serialize())
+    }
+  }
+}
+
+/**
+ * 消除规则
+ */
+class RecoverContentModel extends ContentModel {
+  constructor (content = '{}') {
+    super(content)
+    Object.assign(this, _.pick(JSON.parse(content), ['type', 'count', 'number']))
+  }
+
+  serialize () {
+    return _.pick(this, ['type', 'count', 'number'])
+  }
+}
+
+export const contentModelMapping = new Map([
+  [ALARM_RULE_MERGE, MergeContentModel],
+  [ALARM_RULE_UPGRADE, UpgradeContentModel],
+  [ALARM_RULE_FORWARD, ForwardContentModel],
+  [ALARM_RULE_RECOVER, RecoverContentModel]
+])
 
 export class SendModel {
   constructor ({
@@ -105,7 +168,9 @@ class BasicRuleModel {
     hostId = [],
     endpointId = '',
     metricId = '',
-    enabled = true
+    enabled = true,
+    ruleType = [],
+    content = '{}'
   } = {}) {
     this.id = id
     this.title = title
@@ -117,6 +182,11 @@ class BasicRuleModel {
     this.metricId = metricId
     // https://github.com/vueComponent/ant-design-vue/issues/971
     this.enabled = ~~enabled
+    this.ruleType = ruleType
+    this.content = content
+    this.merge = new MergeContentModel()
+    this.recover = new RecoverContentModel()
+    this.upgrade = new UpgradeContentModel()
   }
 
   serialize () {
@@ -128,114 +198,9 @@ class BasicRuleModel {
   }
 }
 
-class ContentRuleModel extends BasicRuleModel {
-  constructor ({ content = '{}', ...rest }) {
-    super(rest)
-    this.content = _.pick(JSON.parse(content), ['type', 'number'])
-  }
-
-  // https://github.com/vueComponent/ant-design-vue/blob/master/components/form-model/FormItem.jsx#L143
-  // antd form-model 缺陷，无法访问到深层次的值，此处将深层次值展开到第一层，以便进行修改与校验，下同
-  get number () {
-    return this.content.number
-  }
-
-  set number (number) {
-    this.content.number = number
-  }
-
-  get type () {
-    return this.content.type
-  }
-
-  set type (type) {
-    this.content.type = type
-  }
-
-  serialize () {
-    const { enabled, content, ...rest } = this
-    return _.toPlainObject({
-      ...rest,
-      enabled: !!enabled,
-      content: JSON.stringify(content)
-    })
-  }
-}
-
-/**
- * 合并规则
- */
-class MergeRuleModel extends ContentRuleModel {
-  constructor (props = {}) {
-    super(props)
-    this.ruleType = ALARM_RULE_MERGE
-  }
-}
-
-/**
- * 升级规则
- */
-class UpgradeRuleModel extends ContentRuleModel {
-  constructor (props = {}) {
-    super(props)
-    this.ruleType = ALARM_RULE_UPGRADE
-  }
-}
-
-/**
- * 发送规则
- */
-class ForwardRuleModel extends ContentRuleModel {
-  constructor ({ sendList, ...props }) {
-    super(props)
-    const cmdbConfig = _.pick(props, ['hostId', 'endpointId', 'metricId'])
-    this.ruleType = ALARM_RULE_FORWARD
-    this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
-  }
-
-  serialize () {
-    const { sendList = [] } = this
-    return {
-      ...super.serialize(),
-      sendList: sendList.map(sendModel => sendModel.serialize())
-    }
-  }
-}
-
-/**
- * 消除规则
- */
-class RecoverRuleModel extends ContentRuleModel {
-  constructor (props = {}) {
-    super(props)
-    const { content = '{}' } = props
-    this.ruleType = ALARM_RULE_RECOVER
-    this.content = _.pick(JSON.parse(content), ['type', 'count', 'number'])
-  }
-
-  get count () {
-    return this.content.count
-  }
-
-  set count (count) {
-    this.content.count = count
-  }
-}
-
 export class AlarmRuleModelFactory {
-  static mapping = new Map([
-    [ALARM_RULE_MERGE, MergeRuleModel],
-    [ALARM_RULE_UPGRADE, UpgradeRuleModel],
-    [ALARM_RULE_FORWARD, ForwardRuleModel],
-    [ALARM_RULE_RECOVER, RecoverRuleModel]
-  ])
-
   static create (model = {}) {
-    const { ruleType, ...rest } = model
-    return Reflect.construct(
-      this.mapping.get(ruleType),
-      [rest]
-    )
+    return Reflect.construct(BasicRuleModel, [model])
   }
 
   static serialize (model = {}) {
