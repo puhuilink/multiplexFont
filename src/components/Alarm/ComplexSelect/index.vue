@@ -7,7 +7,18 @@
         class="ComplexSelect__mask"
         @click="onShowAdvancedSelect"
       ></div>
-      <a-select class="ComplexSelect__select"></a-select>
+      <a-select
+        class="ComplexSelect__select"
+        mode="multiple"
+        :notFoundContent="fetching ? '加载中' : '暂无数据'"
+        placeholder="请输入IP地址、序列号、资产设备标签精准搜索"
+        @search="onSearch"
+      >
+        <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+        <a-select-option v-for="d in dataList" :key="d.value">
+          {{ d.text }}
+        </a-select-option>
+      </a-select>
       <a-button
         type="link"
         @click="onToggleAdvanced"
@@ -88,13 +99,15 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => new AlarmRuleModel(),
-      required: true
+      default: () => new AlarmRuleModel()
+      // required: true
     }
   },
   data: () => ({
     advanced: false,
     cache: null,
+    dataList: [],
+    fetching: false,
     visible: false
   }),
   computed: {
@@ -117,6 +130,18 @@ export default {
     onOk () {
       this.visible = false
     },
+    onSearch: _.debounce(async function (e) {
+      console.log(e)
+      try {
+        this.fetching = true
+        this.dataList = []
+      } catch (e) {
+        this.dataList = []
+        throw e
+      } finally {
+        this.fetching = false
+      }
+    }, 200),
     onShowAdvancedSelect () {
       this.visible = true
       this.cache = _.cloneDeep(this.model)

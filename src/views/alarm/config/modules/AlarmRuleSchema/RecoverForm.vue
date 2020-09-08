@@ -19,7 +19,10 @@
 
       <a-form-model-item
         class="inline_input"
-        prop="count"
+        prop="recover.count"
+        :rules="[
+          { required: true, message: '请输入' }
+        ]"
       >
         <a-input-number
           class="inline_input"

@@ -10,8 +10,12 @@
 
     <!-- / 底部按钮 -->
     <template slot="footer">
-      <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
-        <a-select v-model="formModel.enable" class="enable">
+      <a-form-model-item
+        v-bind="formItemLayout"
+        label="启用"
+        class="fl"
+      >
+        <a-select class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
@@ -22,64 +26,68 @@
 
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
-      <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
+      <a-form-model ref="ruleForm" :model="formModel">
 
-        <!-- / 阈值名称 -->
-        <a-form-model-item label="阈值名称" v-bind="formItemLayout" prop="name">
+        <a-form-model-item
+          label="阈值名称"
+          v-bind="formItemLayout"
+          prop="name"
+          :rules="[
+            { required: true, message: '请输入规则名称' },
+            { max: 50, message: '最多输入50个字符' },
+            { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
+          ]"
+        >
           <a-input v-model.trim="formModel.name" />
         </a-form-model-item>
 
-        <CombineSelect v-bind="formItemLayout" />
+        <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
 
-        <!-- / 阈值计算条件 -->
-        <a-form-model-item label="阈值计算条件" v-bind="formItemLayout">
-          <ThresholdConditionSelect v-bind="formItemLayout" />
-        </a-form-model-item>
+      </a-form-model>
 
-        <!-- / 阈值条件 -->
-        <div class="AlarmStrategy__modal-opts" ref="opts">
-          <a-row
-            class="ant-form-item"
-            v-for="(opt, index) in formModel.exprs.opts"
-            :key="index"
+      <a-form-model :model="formModel" layout="inline" v-bind="nestedFormItemLayout">
+        <div>
+          <a-form-model-item
+            label="阈值计算条件"
+            :rules="[
+              { required: true, message: '请填写阈值计算条件' }
+            ]"
+            prop="test"
           >
+            <span>单个采集周期为60秒，持续</span>
+            <span>个采集周期，共计120秒内，当满足</span>
+            <ThresholdConditionSelect />
+            <span>时</span>
+          </a-form-model-item>
+        </div>
 
-            <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
-              <label title="阈值条件">阈值条件</label>
-            </a-col>
+        <div
+          v-for="(opt, index) in formModel.exprs.opts"
+          :key="index"
+          ref="opts"
+        >
 
-            <a-col v-bind="formItemLayout.wrapperCol">
-              <a-row>
-                <a-col :span="8">
-                  <ThresholdOperatorSelect
-                    class="fw"
-                    v-bind="nestedFormItemLayout"
-                    v-model="opt.operator"
-                  />
-                </a-col>
+          <ThresholdOperatorSelect
+            label="阈值条件"
+            v-model="opt.operator"
+            :rules="[{ required: true, message: '123' }]"
+          />
 
-                <a-col :span="5">
-                  <a-form-model-item v-bind="nestedFormItemLayout">
-                    <a-input-number v-model="opt.threshold" />
-                  </a-form-model-item>
-                </a-col>
+          <a-form-model-item
+            :prop="`exprs.opts.${index}`.threshold"
+            :rules="[{ required: true, message: '123' }]"
+          >
+            <a-input-number v-model="opt.threshold" />
+          </a-form-model-item>
 
-                <a-col :span="9">
-                  <AlarmLevelSelect v-bind="nestedFormItemLayout" />
-                </a-col>
+          <AlarmLevelSelect />
 
-                <a-col :span="2">
-                  <a-form-model-item>
-                    <a-button
-                      v-show="formModel.exprs.opts.length > 1"
-                      @click="removeExpressionOpt(index)"
-                    >删除</a-button>
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
-            </a-col>
-
-          </a-row>
+          <a-form-model-item>
+            <a-button
+              v-show="formModel.exprs.opts.length > 1"
+              @click="removeExpressionOpt(index)"
+            >删除</a-button>
+          </a-form-model-item>
         </div>
 
         <a-row justify="center" type="flex">
@@ -87,8 +95,8 @@
             <a-button type="primary" @click="addExpressionOpts">添加</a-button>
           </a-col>
         </a-row>
-
       </a-form-model>
+
     </a-spin>
 
   </a-modal>
@@ -105,6 +113,7 @@ import {
   ThresholdConditionSelect,
   AlarmLevelSelect
 } from '~~~/Alarm'
+import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 
 const defaultOpt = {
   operator: '',
@@ -120,7 +129,8 @@ export default {
     CombineSelect,
     ThresholdOperatorSelect,
     ThresholdConditionSelect,
-    AlarmLevelSelect
+    AlarmLevelSelect,
+    ComplexSnippet
   },
   props: {},
   data: () => ({
@@ -140,23 +150,13 @@ export default {
       wrapperCol: { span: 15, offset: 1 }
     },
     nestedFormItemLayout: {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 13, offset: 2 }
+      labelCol: { span: 7 },
+      wrapperCol: { span: 13, offset: 1 }
     },
     spinning: false,
     submitLoading: false
   }),
-  computed: {
-    formRules () {
-      return {
-        title: [
-          { required: true, message: '请输入阈值名称' },
-          { max: 50, message: '最多输入50个字符' },
-          { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
-        ]
-      }
-    }
-  },
+  computed: {},
   methods: {
     add () {
       this.show('新建阈值规则')
@@ -225,9 +225,9 @@ export default {
 
 <style lang="less">
 .AlarmStrategy__modal {
-  &-opts{
-    height: 300px;
-    overflow: auto;
+  &-opts {
+    // height: 300px;
+    // overflow: auto;
   }
 
   .content {
@@ -235,7 +235,7 @@ export default {
   }
 
   .enable {
-    width: 90px;
+    width: 100px;
   }
 
   .p {

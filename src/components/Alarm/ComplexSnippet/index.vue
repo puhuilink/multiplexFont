@@ -1,24 +1,42 @@
 <template>
-  <div class="ComplexSnippet">
-    <a-form-model-item label="监控对象" v-bind="$props">
+  <fragment>
+    <a-form-model-item
+      v-bind="$props"
+      label="监控对象"
+      prop="deviceModel"
+      :rules="[
+        { required: true, message: '请选择监控对象' }
+      ]">
       <ComplexSelect v-model="model" />
     </a-form-model-item>
 
-    <a-form-model-item label="监控实体" v-bind="$props">
+    <a-form-model-item
+      v-bind="$props"
+      label="监控实体"
+      prop="endpointId"
+      :rules="[
+        { required: true, message: '请选择监控实体' }
+      ]">
       <ModelEndpointSelect
         :parentId="model.deviceModel"
         v-model="model.endpointId"
       />
     </a-form-model-item>
 
-    <a-form-model-item label="检查项" v-bind="$props">
+    <a-form-model-item
+      v-bind="$props"
+      label="检查项"
+      prop="metricId"
+      :rules="[
+        { required: true, message: '请选择检查项' }
+      ]">
       <ModelMetricSelect
         :parentId="model.endpointId"
         v-model="model.metricId"
       />
     </a-form-model-item>
 
-  </div>
+  </fragment>
 </template>
 
 <script>

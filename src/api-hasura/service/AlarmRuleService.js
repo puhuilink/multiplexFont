@@ -1,8 +1,9 @@
 import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao, AlarmSenderDao } from '../dao'
+import { AlarmRuleDao } from '../dao'
 import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AlarmRuleService extends BaseService {
   static async find (argus = {}) {
@@ -12,17 +13,11 @@ class AlarmRuleService extends BaseService {
   }
 
   static async add (argus = {}) {
-    return mutate(
-      AlarmRuleDao.add(argus)
-      // TODO: 关联数据
-    )
+    return axios.post('/AlarmAndRule/add', argus)
   }
 
-  static async update (set = {}, where = {}) {
-    return mutate(
-      AlarmRuleDao.update(set, where)
-      // TODO: 关联数据
-    )
+  static async update (argus = {}) {
+    return axios.post('/AlarmAndRule/update', argus)
   }
 
   static async detail (id) {
@@ -54,27 +49,8 @@ class AlarmRuleService extends BaseService {
     return sendList
   }
 
-  static async isUniqueConfig (alarmRule = {}) {
-    return AlarmRuleDao._uniqueValidate(alarmRule, !alarmRule.id)
-  }
-
-  static async batchDelete (alarmRuleList = []) {
-    return mutate(
-      // 规则表删除
-      AlarmRuleDao.batchDelete({ id: { _in: alarmRuleList.map(({ id }) => id) } }),
-      // 关联的前转配置删除
-      AlarmSenderDao.batchDelete({
-        _or: [
-          ...alarmRuleList
-            .filter(({ rule_type }) => rule_type === 'forward')
-            .map(({ host_id, endpoint_id, metric_id }) => ({
-              host_id: { _eq: host_id },
-              endpoint_id: { _eq: endpoint_id },
-              metric_id: { _eq: metric_id }
-            }))
-        ]
-      })
-    )
+  static async batchDelete (ids = []) {
+    return axios.post('/AlarmAndRule/delete', { ids })
   }
 
   static async batchEnabled (idList = []) {

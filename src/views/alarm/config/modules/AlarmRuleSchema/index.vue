@@ -10,7 +10,12 @@
 
     <!-- / 底部按钮 -->
     <template slot="footer">
-      <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
+      <a-form-model-item
+        v-bind="formItemLayout"
+        label="启用"
+        class="fl"
+        prop="enabled"
+      >
         <a-select v-model="formModel.enabled" class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
@@ -177,18 +182,6 @@ export default {
           this.stepIndex++
         }
       })
-    },
-    async nextToSecond () {
-      try {
-        this.btnLoading = true
-        await AlarmRuleService.isUniqueConfig(this.formModel)
-        this.stepIndex++
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
     },
     reset () {
       this.$refs.ruleForm.resetFields()

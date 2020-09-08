@@ -190,7 +190,7 @@ class BasicRuleModel {
   }
 
   serialize () {
-    const { enabled, ...rest } = this
+    const { content, enabled, ...rest } = this
     return _.toPlainObject({
       ...rest,
       enabled: !!enabled
