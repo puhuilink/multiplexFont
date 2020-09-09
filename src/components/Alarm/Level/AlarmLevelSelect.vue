@@ -18,10 +18,11 @@ import { FormModel } from 'ant-design-vue'
 
 export default {
   name: 'AlarmLevelSelect',
-  extends: FormModel,
   mixins: [],
   components: {},
-  props: {},
+  props: {
+    ...FormModel.Item.props
+  },
   data: () => ({
   }),
   computed: {},

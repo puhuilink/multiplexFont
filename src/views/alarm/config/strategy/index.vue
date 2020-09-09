@@ -104,15 +104,30 @@ export default {
         width: 200
       },
       {
-        title: '监控实例',
-        dataIndex: 'metric_id',
+        title: '监控类型',
+        dataIndex: 'device_type',
         width: 200
       },
       {
-        title: '检查项',
-        dataIndex: 'endpoint_id',
+        title: '品牌名称',
+        dataIndex: 'device_brand',
         width: 200
       },
+      {
+        title: '品牌设备',
+        dataIndex: 'device_model',
+        width: 200
+      },
+      // {
+      //   title: '监控实例',
+      //   dataIndex: 'metric_id',
+      //   width: 200
+      // },
+      // {
+      //   title: '检查项',
+      //   dataIndex: 'endpoint_id',
+      //   width: 200
+      // },
       {
         title: '更新时间',
         dataIndex: 'last_update_time',

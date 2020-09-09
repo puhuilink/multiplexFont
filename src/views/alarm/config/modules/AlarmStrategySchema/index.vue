@@ -11,11 +11,18 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item
-        v-bind="formItemLayout"
+        v-bind="{
+          labelCol: { span: 4 },
+          wrapperCol: { span: 1, offset: 1 }
+        }"
         label="启用"
-        class="fl"
+        :style="{
+          float: 'left',
+          width: '300px'
+        }"
+        class="AlarmStrategy__modal-footer-left"
       >
-        <a-select class="enabled">
+        <a-select class="enabled" :style="{ width: '100px' }" v-model="formModel.enable">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
@@ -35,66 +42,110 @@
           :rules="[
             { required: true, message: '请输入规则名称' },
             { max: 50, message: '最多输入50个字符' },
-            { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
           ]"
         >
           <a-input v-model.trim="formModel.name" />
         </a-form-model-item>
 
         <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
+        <a-row :gutter="[4, 8]" type="flex" align="middle">
 
-      </a-form-model>
+          <a-col :span="5">
+            <a-form-model-item
+              label="阈值计算条件"
+              v-bind="{
+                labelCol: { span: 20, offset: 4 },
+                wrapperCol: { span: 0 }
+              }"
+              :rules="[
+                { required: true, message: '请填写阈值计算条件' }
+              ]"
+              prop="test"
+            >
+            </a-form-model-item>
+          </a-col>
 
-      <a-form-model :model="formModel" layout="inline" v-bind="nestedFormItemLayout">
-        <div>
-          <a-form-model-item
-            label="阈值计算条件"
-            :rules="[
-              { required: true, message: '请填写阈值计算条件' }
-            ]"
-            prop="test"
-          >
+          <a-col :span="11" :offset="1">
             <span>单个采集周期为60秒，持续</span>
             <span>个采集周期，共计120秒内，当满足</span>
-            <ThresholdConditionSelect />
+          </a-col>
+
+          <a-col :span="4">
+            <ThresholdConditionSelect
+              v-bind="{
+                labelCol: { span: 4 },
+                wrapperCol: { span: 7 }
+              }"
+            />
+          </a-col>
+
+          <a-col :span="1">
             <span>时</span>
-          </a-form-model-item>
-        </div>
+          </a-col>
 
-        <div
-          v-for="(opt, index) in formModel.exprs.opts"
-          :key="index"
-          ref="opts"
-        >
+        </a-row>
 
-          <ThresholdOperatorSelect
-            label="阈值条件"
-            v-model="opt.operator"
-            :rules="[{ required: true, message: '123' }]"
-          />
-
-          <a-form-model-item
-            :prop="`exprs.opts.${index}`.threshold"
-            :rules="[{ required: true, message: '123' }]"
+        <div class="AlarmStrategy__modal-opts">
+          <a-row
+            :gutter="[4, 8]"
+            v-for="(opt, index) in formModel.exprs.opts"
+            :key="index"
+            ref="opts"
           >
-            <a-input-number v-model="opt.threshold" />
-          </a-form-model-item>
 
-          <AlarmLevelSelect />
+            <a-col :span="9">
+              <ThresholdOperatorSelect
+                v-bind="{
+                  labelCol: { span: 13 },
+                  wrapperCol: { span: 8, offset: 3 }
+                }"
+                label="阈值条件"
+                :rules="[{ required: true, message: '请选择阈值条件' }]"
+                :prop="`exprs.opts.${index}.operator`"
+                v-model="opt.operator"
+              />
+            </a-col>
 
-          <a-form-model-item>
-            <a-button
-              v-show="formModel.exprs.opts.length > 1"
-              @click="removeExpressionOpt(index)"
-            >删除</a-button>
-          </a-form-model-item>
+            <a-col :span="4">
+              <a-form-model-item
+                :prop="`exprs.opts.${index}.threshold`"
+                :rules="[{ required: true, message: '请选择阈值条件值' }]"
+              >
+                <a-input-number v-model="opt.threshold" />
+              </a-form-model-item>
+            </a-col>
+
+            <a-col :span="7">
+              <AlarmLevelSelect
+                label="告警级别"
+                v-bind="{
+                  labelCol: { span: 14 },
+                  wrapperCol: { span: 10 }
+                }"
+                :prop="`exprs.opts.${index}.alarm_level`"
+                :rules="[{ required: true, message: '请选择告警级别' }]"
+                v-model="opt.alarm_level"
+              />
+            </a-col>
+
+            <a-col :span="2" :offset="1">
+              <a-form-model-item>
+                <a-button
+                  v-show="formModel.exprs.opts.length > 1"
+                  @click="removeExpressionOpt(index)"
+                >删除</a-button>
+              </a-form-model-item>
+            </a-col>
+
+          </a-row>
+
         </div>
-
-        <a-row justify="center" type="flex">
-          <a-col>
+        <a-row>
+          <a-col :span="4" :offset="10">
             <a-button type="primary" @click="addExpressionOpts">添加</a-button>
           </a-col>
         </a-row>
+
       </a-form-model>
 
     </a-spin>
@@ -105,7 +156,7 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
-import _ from 'lodash'
+// import _ from 'lodash'
 import { scrollTo } from '@/utils/util'
 import { CombineSelect } from '@/components/Resource'
 import {
@@ -149,10 +200,6 @@ export default {
       labelCol: { span: 5 },
       wrapperCol: { span: 15, offset: 1 }
     },
-    nestedFormItemLayout: {
-      labelCol: { span: 7 },
-      wrapperCol: { span: 13, offset: 1 }
-    },
     spinning: false,
     submitLoading: false
   }),
@@ -175,12 +222,7 @@ export default {
     async fetch (id) {
       try {
         this.spinning = true
-        const { data: { strategyList } } = await StrategyService.find({
-          where: { id },
-          fields: ['name', 'host_id', 'metric_id', 'endpoint_id', 'exprs', 'enable'],
-          alias: 'strategyList'
-        })
-        this.formModel = _.first(strategyList)
+        this.formModel = await StrategyService.detail(id)
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e
@@ -189,35 +231,45 @@ export default {
       }
     },
     async insert () {
-      try {
-        this.submitLoading = true
-        await StrategyService.add(this.formModel)
-        this.$emit('addSuccess')
-        this.$notifyEditSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.submitLoading = false
-      }
+      this.$refs.ruleForm.validate(async valid => {
+        if (!valid) return
+        try {
+          this.submitLoading = true
+          await StrategyService.add(this.formModel)
+          this.$emit('addSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
+    },
+    reset () {
+      this.$refs.ruleForm.resetFields()
+      Object.assign(this.$data, this.$options.data.apply(this))
     },
     removeExpressionOpt (index) {
       this.formModel.exprs.opts.splice(index, 1)
     },
-    async update () {
-      try {
-        this.submitLoading = true
-        await StrategyService.update(this.formModel, { id: this.formModel.id })
-        this.$emit('editSuccess')
-        this.$notifyEditSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.submitLoading = false
-      }
+    update () {
+      this.$refs.ruleForm.validate(async valid => {
+        if (!valid) return
+        try {
+          this.submitLoading = true
+          await StrategyService.update(this.formModel)
+          this.$emit('editSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
     }
   }
 }
@@ -225,9 +277,11 @@ export default {
 
 <style lang="less">
 .AlarmStrategy__modal {
+
   &-opts {
-    // height: 300px;
-    // overflow: auto;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .content {
