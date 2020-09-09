@@ -162,7 +162,7 @@ export default {
         this.btnLoading = true
         await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
         this.$emit('addSuccess')
-        this.notifyEditSuccess()
+        this.$notifyAddSuccess()
         this.cancel()
       } catch (e) {
         this.$notifyError(e)

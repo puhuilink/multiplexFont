@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService'
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import { AlarmRuleDao } from '../dao'
 import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
@@ -23,6 +23,7 @@ class AlarmRuleService extends BaseService {
       'upgrade',
       'recover',
       'forward',
+      'title',
       'enabled'
     ]))
   }
@@ -68,20 +69,15 @@ class AlarmRuleService extends BaseService {
     return sendList
   }
 
-  static async batchDelete (ids = []) {
-    return axios.post('/AlarmAndRule/delete', { ids })
+  static async batchDelete (ruleIds = []) {
+    return axios.post(`/AlarmAndRule/delete?ruleIds=${ruleIds}`)
   }
 
-  static async batchEnabled (idList = []) {
-    return mutate(
-      AlarmRuleDao.update({ enabled: true }, { id: { _in: idList } })
-    )
-  }
-
-  static async batchDisabled (idList = []) {
-    return mutate(
-      AlarmRuleDao.update({ enabled: false }, { id: { _in: idList } })
-    )
+  static async batchToggleEnabled (ruleIds = [], enabled = true) {
+    return axios.post('/AlarmAndRule/batchEnabled', {
+      ruleIds,
+      enabled
+    })
   }
 }
 

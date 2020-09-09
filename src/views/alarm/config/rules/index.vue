@@ -63,8 +63,19 @@
         <a-button @click="onAdd" v-action:M0301>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
-        <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button>
-        <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button>
+        <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button> -->
+        <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button> -->
+      </template>
+
+      <template v-slot:enabled="enabled, { id }">
+        <a-popconfirm
+          v-action:M0304
+          :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
+          @confirm="onToggleEnabled(id, !enabled)"
+          okText="确定"
+          cancelText="取消">
+          <a-button :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button>
+        </a-popconfirm>
       </template>
     </CTable>
 
@@ -83,6 +94,7 @@ import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
 import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
+import moment from 'moment'
 
 export default {
   name: 'AlarmsRules',
@@ -96,6 +108,13 @@ export default {
         Object.fromEntries(allRuleTypeMapping)
       ),
       columns: Object.freeze([
+        {
+          title: '规则名称',
+          dataIndex: 'title',
+          width: 280,
+          sorter: true,
+          fixed: 'left'
+        },
         {
           title: '监控类型',
           dataIndex: 'device_type',
@@ -123,21 +142,15 @@ export default {
         },
         {
           title: '监控实体',
-          dataIndex: 'metric_model_id',
+          dataIndex: 'metric_model_id modelMetric { alias }',
           width: 200,
-          sorter: true
+          customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
         },
         {
           title: '检查项',
-          dataIndex: 'endpoint_model_id',
+          dataIndex: 'endpoint_model_id modelEndpoint { alias }',
           width: 200,
-          sorter: true
-        },
-        {
-          title: '规则名称',
-          dataIndex: 'title',
-          width: 280,
-          sorter: true
+          customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
         },
         {
           title: '规则类型',
@@ -150,14 +163,18 @@ export default {
           title: '更新时间',
           dataIndex: 'update_time',
           width: 200,
-          sorter: true
+          sorter: true,
+          customRender: time => time ? moment(time).format() : ''
         },
         {
           title: '启用状态',
           dataIndex: 'enabled',
           width: 100,
           sorter: true,
-          customRender: enabled => enabled ? '是' : '否'
+          scopedSlots: {
+            customRender: 'enabled'
+          },
+          fixed: 'right'
         }
       ]),
       queryParams: {
@@ -187,7 +204,7 @@ export default {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => AlarmRuleService
-          .batchDelete(this.selectedRows)
+          .batchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)
@@ -195,20 +212,19 @@ export default {
           .catch(this.$notifyError)
       })
     },
-    async onBatchToggleEnabled (value) {
-      this.$promiseConfirm({
-        title: '系统提示',
-        content: value ? '是否启用选中规则？' : '是否停用选中规则？',
-        onOk: () => AlarmRuleService[value ? 'batchEnabled' : 'batchDisabled'](this.selectedRowKeys)
-          .then(() => {
-            this.$notification.success({
-              message: '系统提示',
-              description: value ? '规则启用成功' : '规则停用成功'
-            })
-            this.query(false)
-          })
-          .catch(this.$notifyError)
-      })
+    async onToggleEnabled (id, enabled) {
+      // console.log(
+      //   id, enabled
+      // )
+      try {
+        this.$refs['table'].loading = true
+        //
+        await AlarmRuleService.batchToggleEnabled([id], enabled)
+      } catch (e) {
+        throw e
+      } finally {
+        this.query(false)
+      }
     },
     onEdit () {
       const [id] = this.selectedRowKeys

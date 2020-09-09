@@ -9,7 +9,7 @@
         { max: 50, message: '最多输入50个字符' },
       ]"
     >
-      <a-input v-bind="editAbleProps" v-model.trim="formModel.title" />
+      <a-input v-model.trim="formModel.title" />
     </a-form-model-item>
 
     <ComplexSnippet v-bind="formItemLayout" v-model="_formModel" />

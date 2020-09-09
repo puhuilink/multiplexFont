@@ -37,6 +37,7 @@
 
 <script>
 import Mixin from './Mixin'
+import { CONTENT_TYPE_TIME } from './model'
 
 export default {
   name: 'MergeForm',
@@ -45,7 +46,11 @@ export default {
   props: {},
   data: () => ({
   }),
-  computed: {},
+  computed: {
+    useTime () {
+      return this._formModel.merge.type === CONTENT_TYPE_TIME
+    }
+  },
   methods: {}
 }
 </script>

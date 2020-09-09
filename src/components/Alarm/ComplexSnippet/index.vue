@@ -18,7 +18,7 @@
         { required: true, message: '请选择监控实体' }
       ]">
       <ModelEndpointSelect
-        v-bind="ctx.editAbleProps"
+        v-bind="ctx && ctx.editAbleProps"
         :parentId="model.deviceModel"
         v-model="model.endpointModelId"
       />
@@ -32,7 +32,7 @@
         { required: true, message: '请选择检查项' }
       ]">
       <ModelMetricSelect
-        v-bind="ctx.editAbleProps"
+        v-bind="ctx && ctx.editAbleProps"
         :parentId="model.endpointModelId"
         v-model="model.metricModelId"
       />
@@ -62,8 +62,7 @@ export default {
     }
   },
   inject: {
-    ctx: {},
-    editAbleProps: {
+    ctx: {
       default: () => ({})
     }
   },
