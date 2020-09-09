@@ -70,7 +70,8 @@ class ForwardContentModel extends ContentModel {
 class RecoverContentModel extends ContentModel {
   constructor (content = '{}') {
     super(content)
-    Object.assign(this, _.pick(JSON.parse(content), ['type', 'count', 'number']))
+    Object.assign(this, _.pick(JSON.parse(content), ['count', 'number']))
+    this.type = 'time'
   }
 
   serialize () {
@@ -200,6 +201,7 @@ class BasicRuleModel {
   serialize () {
     const { content, enabled, ...rest } = this
     return _.toPlainObject({
+      // content: content.serialize(),
       ...rest,
       enabled: !!enabled
     })

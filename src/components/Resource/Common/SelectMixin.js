@@ -49,12 +49,14 @@ export default {
   },
   watch: {
     parentId: {
-      immediate: true,
-      async handler (parentId) {
+      immediate: false,
+      async handler (parentId, old) {
         this.list = []
-        this.$emit('change', null)
-        this.$emit('update:value', null)
-        this.$emit('input', null)
+        // 重置留给父元素自主操作，避免数据流紊乱
+        // console.log(parentId, old)
+        // this.$emit('change', null)
+        // this.$emit('update:value', null)
+        // this.$emit('input', null)
         parentId && await this.fetch(parentId)
       }
     }

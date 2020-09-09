@@ -8,7 +8,7 @@
         @click="onShowAdvancedSelect"
       ></div>
       <a-select
-        v-bind="editAbleProps"
+        v-bind="ctx.editAbleProps"
         class="ComplexSelect__select"
         mode="multiple"
         :notFoundContent="fetching ? '加载中' : '暂无数据'"
@@ -22,6 +22,7 @@
       </a-select>
       <a-button
         type="link"
+        :disabled="disabled"
         @click="onToggleAdvanced"
       >{{ advanced ? '快速搜索' : '高级分类' }}</a-button>
     </div>
@@ -36,7 +37,7 @@
       @ok="onOk"
     >
       <DeviceTypeListSelect
-        v-bind="editAbleProps"
+        v-bind="ctx.editAbleProps"
         :value="model.deviceType"
         @input="deviceType => {
           Object.assign(model, {
@@ -49,7 +50,7 @@
       />
 
       <DeviceBrandListSelect
-        v-bind="editAbleProps"
+        v-bind="ctx.editAbleProps"
         :deviceType="model.deviceType"
         :value="model.deviceBrand"
         @input="deviceBrand => {
@@ -62,7 +63,7 @@
       />
 
       <DeviceModelListSelect
-        v-bind="editAbleProps"
+        v-bind="ctx.editAbleProps"
         :deviceBrand="model.deviceBrand"
         :value="model.deviceModel"
         @input="deviceModel => {
@@ -74,7 +75,7 @@
       />
 
       <HostListSelect
-        v-bind="editAbleProps"
+        v-bind="ctx.editAbleProps"
         :hostType="model.deviceModel"
         multiple
         v-model="model.hostId"
@@ -95,7 +96,11 @@ import _ from 'lodash'
 export default {
   name: 'ComplexSelect',
   mixins: [],
-  inject: ['editAbleProps'],
+  inject: {
+    ctx: {
+      default: () => ({})
+    }
+  },
   components: {
     DeviceBrandListSelect,
     DeviceTypeListSelect,
@@ -124,6 +129,9 @@ export default {
       set (model) {
         this.$emit('input', model)
       }
+    },
+    disabled () {
+      return _.get(this, 'ctx.editAbleProps.disabled')
     }
   },
   methods: {

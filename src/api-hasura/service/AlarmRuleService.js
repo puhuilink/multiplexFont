@@ -17,7 +17,14 @@ class AlarmRuleService extends BaseService {
   }
 
   static async update (argus = {}) {
-    return axios.post('/AlarmAndRule/update', argus)
+    return axios.post('/AlarmAndRule/update', _.pick(argus, [
+      'id',
+      'merge',
+      'upgrade',
+      'recover',
+      'forward',
+      'enabled'
+    ]))
   }
 
   static async detail (id) {

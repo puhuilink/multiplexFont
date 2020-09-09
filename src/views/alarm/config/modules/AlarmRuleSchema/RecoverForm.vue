@@ -5,7 +5,7 @@
       <span>告警消除时间范围</span>
       <a-form-model-item
         class="inline_input"
-        prop="number"
+        prop="recover.number"
       >
         <a-input-number
           class="inline_input"

@@ -7,7 +7,6 @@
       :rules="[
         { required: true, message: '请输入规则名称' },
         { max: 50, message: '最多输入50个字符' },
-        { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
       ]"
     >
       <a-input v-bind="editAbleProps" v-model.trim="formModel.title" />
@@ -45,13 +44,24 @@ export default {
   components: {
     ComplexSnippet
   },
+  provide () {
+    return {
+      ctx: this
+    }
+  },
   props: {},
   data: () => ({
     ruleType: Object.freeze(
       Object.fromEntries(ruleTypeMapping)
     )
   }),
-  computed: {},
+  computed: {
+    editAbleProps () {
+      return {
+        disabled: !!this.isEdit
+      }
+    }
+  },
   methods: {}
 }
 </script>

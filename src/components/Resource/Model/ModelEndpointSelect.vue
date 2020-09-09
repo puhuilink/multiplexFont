@@ -6,10 +6,10 @@ export default {
   name: 'ModelEndpointSelect',
   mixins: [SelectMixin],
   methods: {
-    async fetch (modelHostId) {
+    async fetch (parentId) {
       try {
         this.loading = true
-        this.list = await ModelService.modelEndpointList(modelHostId)
+        this.list = await ModelService.modelEndpointList(parentId)
       } catch (e) {
         this.list = []
         throw e
