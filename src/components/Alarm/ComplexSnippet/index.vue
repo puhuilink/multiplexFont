@@ -13,26 +13,28 @@
     <a-form-model-item
       v-bind="$props"
       label="监控实体"
-      prop="endpointId"
+      prop="endpointModelId"
       :rules="[
         { required: true, message: '请选择监控实体' }
       ]">
       <ModelEndpointSelect
+        v-bind="editAbleProps"
         :parentId="model.deviceModel"
-        v-model="model.endpointId"
+        v-model="model.endpointModelId"
       />
     </a-form-model-item>
 
     <a-form-model-item
       v-bind="$props"
       label="检查项"
-      prop="metricId"
+      prop="metricModelId"
       :rules="[
         { required: true, message: '请选择检查项' }
       ]">
       <ModelMetricSelect
-        :parentId="model.endpointId"
-        v-model="model.metricId"
+        v-bind="editAbleProps"
+        :parentId="model.endpointModelId"
+        v-model="model.metricModelId"
       />
     </a-form-model-item>
 
@@ -57,6 +59,11 @@ export default {
     value: {
       type: Object,
       default: () => ({})
+    }
+  },
+  inject: {
+    editAbleProps: {
+      default: {}
     }
   },
   data: () => ({}),

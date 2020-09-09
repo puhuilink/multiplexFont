@@ -50,7 +50,7 @@ class UpgradeContentModel extends ContentModel {}
 class ForwardContentModel extends ContentModel {
   constructor ({ sendList, ...props }) {
     super(props)
-    const cmdbConfig = _.pick(props, ['hostId', 'endpointId', 'metricId'])
+    const cmdbConfig = _.pick(props, ['hostId', 'endpointModelId', 'metricModelId'])
     this.ruleType = [ALARM_RULE_FORWARD]
     this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
   }
@@ -89,8 +89,8 @@ export class SendModel {
   constructor ({
     id,
     hostId,
-    endpointId,
-    metricId,
+    endpointModelId,
+    metricModelId,
     event_level,
     send_type = '',
     contact = '',
@@ -99,8 +99,8 @@ export class SendModel {
   } = {}) {
     this.id = id
     this.hostId = hostId
-    this.endpointId = endpointId
-    this.metricId = metricId
+    this.endpointModelId = endpointModelId
+    this.metricModelId = metricModelId
     this.event_level = event_level
     this.send_type = send_type.split('/').filter(Boolean)
     this.contact = contact.split('/').filter(Boolean)
@@ -166,27 +166,35 @@ class BasicRuleModel {
     deviceBrand = '',
     deviceModel = '',
     hostId = [],
-    endpointId = '',
-    metricId = '',
+    endpointModelId = '',
+    metricModelId = '',
     enabled = true,
     ruleType = [],
     content = '{}'
   } = {}) {
     this.id = id
     this.title = title
-    this.deviceType = deviceType
+    // this.deviceType = deviceType
+    this.deviceType = 'test'
     this.deviceBrand = deviceBrand
     this.deviceModel = deviceModel
     this.hostId = hostId
-    this.endpointId = endpointId
-    this.metricId = metricId
+    this.endpointModelId = endpointModelId
+    this.metricModelId = metricModelId
     // https://github.com/vueComponent/ant-design-vue/issues/971
     this.enabled = ~~enabled
-    this.ruleType = ruleType
+    this.ruleType = _.castArray(ruleType)
     this.content = content
     this.merge = new MergeContentModel()
     this.recover = new RecoverContentModel()
     this.upgrade = new UpgradeContentModel()
+    const [currentRuleType] = this.ruleType
+    if (currentRuleType && contentModelMapping.has(currentRuleType)) {
+      this[currentRuleType] = Reflect.construct(
+        contentModelMapping.get(currentRuleType),
+        [this.content]
+      )
+    }
   }
 
   serialize () {

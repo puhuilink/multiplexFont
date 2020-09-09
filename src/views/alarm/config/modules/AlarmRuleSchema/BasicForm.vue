@@ -10,7 +10,7 @@
         { pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/, message: '仅支持中英文与数字' }
       ]"
     >
-      <a-input v-model.trim="formModel.title" />
+      <a-input v-bind="editAbleProps" v-model.trim="formModel.title" />
     </a-form-model-item>
 
     <ComplexSnippet v-bind="formItemLayout" v-model="_formModel" />
@@ -23,7 +23,7 @@
         { required: true, message: '请选择规则类型' }
       ]"
     >
-      <a-checkbox-group v-model="_formModel.ruleType">
+      <a-checkbox-group v-bind="editAbleProps" v-model="_formModel.ruleType">
         <a-checkbox
           v-for="(label, value) in ruleType"
           :key="value"

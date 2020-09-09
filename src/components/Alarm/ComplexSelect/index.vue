@@ -8,6 +8,7 @@
         @click="onShowAdvancedSelect"
       ></div>
       <a-select
+        v-bind="editAbleProps"
         class="ComplexSelect__select"
         mode="multiple"
         :notFoundContent="fetching ? '加载中' : '暂无数据'"
@@ -35,6 +36,7 @@
       @ok="onOk"
     >
       <DeviceTypeListSelect
+        v-bind="editAbleProps"
         :value="model.deviceType"
         @input="deviceType => {
           Object.assign(model, {
@@ -47,6 +49,7 @@
       />
 
       <DeviceBrandListSelect
+        v-bind="editAbleProps"
         :deviceType="model.deviceType"
         :value="model.deviceBrand"
         @input="deviceBrand => {
@@ -59,6 +62,7 @@
       />
 
       <DeviceModelListSelect
+        v-bind="editAbleProps"
         :deviceBrand="model.deviceBrand"
         :value="model.deviceModel"
         @input="deviceModel => {
@@ -70,6 +74,7 @@
       />
 
       <HostListSelect
+        v-bind="editAbleProps"
         :hostType="model.deviceModel"
         multiple
         v-model="model.hostId"
@@ -90,6 +95,7 @@ import _ from 'lodash'
 export default {
   name: 'ComplexSelect',
   mixins: [],
+  inject: ['editAbleProps'],
   components: {
     DeviceBrandListSelect,
     DeviceTypeListSelect,
@@ -131,7 +137,6 @@ export default {
       this.visible = false
     },
     onSearch: _.debounce(async function (e) {
-      console.log(e)
       try {
         this.fetching = true
         this.dataList = []

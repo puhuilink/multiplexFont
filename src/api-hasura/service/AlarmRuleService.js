@@ -13,7 +13,7 @@ class AlarmRuleService extends BaseService {
   }
 
   static async add (argus = {}) {
-    return axios.post('/AlarmAndRule/add', argus)
+    return axios.post('/AlarmAndRule/add', _.omit(argus, ['id']))
   }
 
   static async update (argus = {}) {
@@ -22,12 +22,24 @@ class AlarmRuleService extends BaseService {
 
   static async detail (id) {
     // 告警规则信息
-    const { data: { alarmList } } = await this.find({
+    const { data: { alarmRuleList } } = await this.find({
       where: { id },
-      fields: ['id', 'title', 'rule_type', 'host_id', 'endpoint_id', 'metric_id', 'content', 'enabled'],
-      alias: 'alarmList'
+      fields: [
+        'id',
+        'title',
+        'deviceType: device_type',
+        'deviceBrand: device_brand',
+        'deviceModel: device_model',
+        'ruleType: rule_type',
+        'hostId: host_id',
+        'endpointModelId: endpoint_model_id',
+        'metricModelId: metric_model_id',
+        'content',
+        'enabled'
+      ],
+      alias: 'alarmRuleList'
     })
-    const detail = _.first(alarmList)
+    const detail = _.first(alarmRuleList)
 
     // 告警规则类型为前转时，查询其关联的前转配置
     if (_.get(detail, 'rule_type') === 'forward') {

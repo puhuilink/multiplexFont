@@ -51,6 +51,7 @@
               v-if="isCurrent(type)"
               :is="component"
               :formModel.sync="formModel"
+              :isEdit="isEdit"
             />
           </div>
         </transition-group>
@@ -84,6 +85,7 @@ export default {
     RecoverForm
   },
   data: () => ({
+    btnLoading: false,
     componentMapping: new Map([
       ['basic', BasicForm],
       ['merge', MergeForm],
@@ -92,10 +94,10 @@ export default {
     ]),
     formItemLayout,
     formModel: AlarmRuleModelFactory.create({}),
+    isEdit: false,
     ruleTypeMapping,
     spinning: false,
-    stepIndex: 0,
-    btnLoading: false
+    stepIndex: 0
   }),
   computed: {
     currentRuleType () {
@@ -141,6 +143,7 @@ export default {
       this.fetch(id)
       this.show('编辑告警规则')
       this.submit = this.update
+      this.isEdit = true
     },
     async fetch (id) {
       try {

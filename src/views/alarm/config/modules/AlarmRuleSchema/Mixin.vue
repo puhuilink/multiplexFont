@@ -12,6 +12,10 @@ export default {
   mixins: [],
   components: {},
   props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    },
     formModel: {
       type: Object,
       default: () => ({})
@@ -20,6 +24,10 @@ export default {
   data: () => ({
     formItemLayout
   }),
+  provide () {
+    const { editAbleProps } = this
+    return { editAbleProps }
+  },
   computed: {
     useTime () {
       return this.formModel.content.type === CONTENT_TYPE_TIME
@@ -31,6 +39,9 @@ export default {
       set (v) {
         this.$emit('update:formModel', v)
       }
+    },
+    editAbleProps () {
+      return this.isEdit ? { disabled: true } : {}
     }
   },
   methods: {

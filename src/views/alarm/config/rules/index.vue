@@ -90,66 +90,81 @@ export default {
   components: {
     AlarmRuleSchema
   },
-  data: () => ({
-    allRuleType: Object.freeze(
-      Object.fromEntries(allRuleTypeMapping)
-    ),
-    columns: Object.freeze([
-      {
-        title: '规则名称',
-        dataIndex: 'title',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '规则类型',
-        dataIndex: 'rule_type',
-        width: 200,
-        sorter: true,
-        customRender: ruleType => ruleTypeMapping.get(ruleType)
-      },
-      // {
-      //   title: '数据域',
-      //   dataIndex: 'rule_type',
-      //   width: 200,
-      //   sorter: true
-      // },
-      {
-        title: '设备名称',
-        dataIndex: 'host_id',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '监控实体',
-        dataIndex: 'metric_id',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '检查项',
-        dataIndex: 'endpoint_id',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'update_time',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '启用状态',
-        dataIndex: 'enabled',
-        width: 200,
-        sorter: true,
-        customRender: enabled => enabled ? '是' : '否'
+  data () {
+    return {
+      allRuleType: Object.freeze(
+        Object.fromEntries(allRuleTypeMapping)
+      ),
+      columns: Object.freeze([
+        {
+          title: '监控类型',
+          dataIndex: 'device_type',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '品牌名称',
+          dataIndex: 'device_brand',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '品牌设备',
+          dataIndex: 'device_model',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '设备名称',
+          dataIndex: 'host_id',
+          width: 200,
+          sorter: true,
+          customRender: hostId => hostId ? hostId.join('/') : ''
+        },
+        {
+          title: '监控实体',
+          dataIndex: 'metric_model_id',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '检查项',
+          dataIndex: 'endpoint_model_id',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '规则名称',
+          dataIndex: 'title',
+          width: 280,
+          sorter: true
+        },
+        {
+          title: '规则类型',
+          dataIndex: 'rule_type',
+          width: 100,
+          sorter: true,
+          customRender: ruleType => ruleTypeMapping.get(ruleType)
+        },
+        {
+          title: '更新时间',
+          dataIndex: 'update_time',
+          width: 200,
+          sorter: true
+        },
+        {
+          title: '启用状态',
+          dataIndex: 'enabled',
+          width: 100,
+          sorter: true,
+          customRender: enabled => enabled ? '是' : '否'
+        }
+      ]),
+      queryParams: {
+        rule_type: ''
       }
-    ]),
-    queryParams: {
-      rule_type: ''
     }
-  }),
+  },
   methods: {
     loadData (parameter) {
       const { enabled, ...restQueryParams } = this.queryParams

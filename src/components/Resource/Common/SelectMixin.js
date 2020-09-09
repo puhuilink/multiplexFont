@@ -1,8 +1,11 @@
 import { filterOption } from '@/utils/util'
+import { Select } from 'ant-design-vue'
+import _ from 'lodash'
 
 export default {
   name: 'SelectMixin',
   props: {
+    ..._.pick(Select.props, ['disabled']),
     value: {},
     toolTip: {
       type: Boolean,
@@ -23,7 +26,8 @@ export default {
       const {
         loading,
         multiple,
-        onChange = () => {}
+        onChange = () => { },
+        disabled
       } = this
       return {
         allowClear: true,
@@ -33,7 +37,8 @@ export default {
         notFoundContent: loading ? '加载中...' : '暂无数据',
         onChange,
         showSearch: true,
-        style: { minWidth: '175px' }
+        style: { minWidth: '175px' },
+        disabled
       }
     },
     tooltipTitle () {
