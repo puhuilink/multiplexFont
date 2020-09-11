@@ -4,6 +4,8 @@
       style="min-width: 100px"
       class="fw"
       placeholder="等于（或大于、小于...）"
+      :value="value"
+      @select="$emit('input', $event)"
     >
       <a-select-option
         v-for="operator in ['=', '>', '>=', '<', '<=']"
@@ -22,7 +24,12 @@ export default {
   extends: FormModel.Item,
   mixins: [],
   components: {},
-  props: {},
+  props: {
+    value: {
+      type: String,
+      default: ''
+    }
+  },
   data: () => ({
   }),
   computed: {},

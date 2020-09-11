@@ -213,9 +213,6 @@ export default {
       })
     },
     async onToggleEnabled (id, enabled) {
-      // console.log(
-      //   id, enabled
-      // )
       try {
         this.$refs['table'].loading = true
         //

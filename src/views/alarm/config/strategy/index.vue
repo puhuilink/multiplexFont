@@ -35,7 +35,7 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select v-model="queryParams.enable" allowClear>
+                  <a-select v-model="queryParams.enabled" allowClear>
                     <a-select-option :value="1">是</a-select-option>
                     <a-select-option :value="0">否</a-select-option>
                   </a-select>
@@ -57,6 +57,17 @@
         <a-button @click="onAdd">新建</a-button>
         <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
+      </template>
+
+      <template v-slot:enabled="enabled, { id }">
+        <a-popconfirm
+          v-action:M0304
+          :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
+          @confirm="onToggleEnabled(id, !enabled)"
+          okText="确定"
+          cancelText="取消">
+          <a-button :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button>
+        </a-popconfirm>
       </template>
     </CTable>
 
@@ -136,10 +147,12 @@ export default {
       },
       {
         title: '启用状态',
-        dataIndex: 'enable',
+        dataIndex: 'enabled',
         width: 200,
         sorter: true,
-        customRender: enable => enable ? '是' : '否'
+        scopedSlots: {
+          customRender: 'enabled'
+        }
       }
     ]
   }),
@@ -169,6 +182,17 @@ export default {
           })
           .catch(this.$notifyError)
       })
+    },
+    async onToggleEnabled (id, enabled) {
+      try {
+        this.$refs['table'].loading = true
+        //
+        await StrategyService.batchToggleEnabled([id], enabled)
+      } catch (e) {
+        throw e
+      } finally {
+        this.query(false)
+      }
     },
     onEdit () {
       const [id] = this.selectedRowKeys

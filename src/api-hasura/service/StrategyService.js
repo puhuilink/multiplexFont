@@ -16,6 +16,7 @@ class StrategyService extends BaseService {
       StrategyDao.find({
         where: { id },
         fields: [
+          'id',
           'deviceType: device_type',
           'deviceBrand: device_brand',
           'deviceModel: device_model',
@@ -47,7 +48,7 @@ class StrategyService extends BaseService {
   }
 
   static async update (argus = {}) {
-    await axios.post('/strategy/add', _.pick(argus, [
+    await axios.post('/strategy/update', _.pick(argus, [
       'id',
       'name',
       'exprs',
@@ -59,6 +60,13 @@ class StrategyService extends BaseService {
     return mutate(
       SendRecordDao.batchDelete({ id: { _in: idList } })
     )
+  }
+
+  static async batchToggleEnabled (ruleIds = [], enabled = true) {
+    return axios.post('/strategy/batchEnabled', {
+      ruleIds,
+      enabled
+    })
   }
 }
 

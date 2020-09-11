@@ -22,7 +22,7 @@
         }"
         class="AlarmStrategy__modal-footer-left"
       >
-        <a-select class="enabled" :style="{ width: '100px' }" v-model="formModel.enable">
+        <a-select class="enabled" :style="{ width: '100px' }" :value="~~formModel.enabled" @select="formModel.enabled = !!$event">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
@@ -60,44 +60,90 @@
               :rules="[
                 { required: true, message: '请填写阈值计算条件' }
               ]"
-              prop="test"
             >
             </a-form-model-item>
           </a-col>
 
-          <a-col :span="11" :offset="1">
-            <span>单个采集周期为60秒，持续</span>
-            <span>个采集周期，共计120秒内，当满足</span>
+          <a-col :span="5" :offset="1">
+            <p class="ant-form-item">单个采集周期为60秒，持续</p>
           </a-col>
 
-          <a-col :span="4">
+          <a-col :span="3">
+            <a-form-model-item
+              v-bind="{
+                labelCol: { span: 24 }
+              }"
+              prop="exprs.cycle"
+              :rules="[
+                { required: true, message: '请输入采集周期' }
+              ]"
+            >
+              <a-input-number v-model.number="formModel.exprs.cycle" />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col :span="6">
+            <p class="ant-form-item">个采集周期，共计{{ (formModel.exprs.cycle || 0) * 60 }}秒内，</p>
+          </a-col>
+
+          <a-col :span="2" :offset="6">
+            <p class="ant-form-item">当满足</p>
+          </a-col>
+
+          <a-col :span="6">
             <ThresholdConditionSelect
               v-bind="{
-                labelCol: { span: 4 },
-                wrapperCol: { span: 7 }
+                labelCol: { span: 0 },
+                wrapperCol: { span: 23 }
               }"
+              prop="exprs.trigger_condition"
+              :rules="[
+                { required: true, message: '请选择触发条件' }
+              ]"
+              v-model="formModel.exprs.trigger_condition"
             />
           </a-col>
 
+          <a-col :span="3">
+            <a-form-model-item
+              v-bind="{
+                labelCol: { span: 24 }
+              }"
+              prop="exprs.trigger_value"
+              :rules="[
+                { required: true, message: '请输入触发值' }
+              ]"
+            >
+              <a-input-number v-model="formModel.exprs.trigger_value" />
+            </a-form-model-item>
+          </a-col>
+
           <a-col :span="1">
-            <span>时</span>
+            <p class="ant-form-item">时</p>
           </a-col>
 
         </a-row>
 
-        <div class="AlarmStrategy__modal-opts">
+        <transition-group
+          name="transition-flip"
+          tag="div"
+          class="AlarmStrategy__modal-opts"
+          id="AlarmStrategy__modal-opts"
+          ref="opts"
+        >
           <a-row
+            ref="opt"
+            class="transition-flip"
             :gutter="[4, 8]"
             v-for="(opt, index) in formModel.exprs.opts"
-            :key="index"
-            ref="opts"
+            :key="opt.uuid"
           >
 
-            <a-col :span="9">
+            <a-col :span="10">
               <ThresholdOperatorSelect
                 v-bind="{
-                  labelCol: { span: 13 },
-                  wrapperCol: { span: 8, offset: 3 }
+                  labelCol: { span: 12 },
+                  wrapperCol: { span: 8, offset: 2 }
                 }"
                 label="阈值条件"
                 :rules="[{ required: true, message: '请选择阈值条件' }]"
@@ -109,18 +155,18 @@
             <a-col :span="4">
               <a-form-model-item
                 :prop="`exprs.opts.${index}.threshold`"
-                :rules="[{ required: true, message: '请选择阈值条件值' }]"
+                :rules="[{ required: true, message: '请输入阈值条件值' }]"
               >
                 <a-input-number v-model="opt.threshold" />
               </a-form-model-item>
             </a-col>
 
-            <a-col :span="7">
+            <a-col :span="5">
               <AlarmLevelSelect
                 label="告警级别"
                 v-bind="{
-                  labelCol: { span: 14 },
-                  wrapperCol: { span: 10 }
+                  labelCol: { span: 9 },
+                  wrapperCol: { span: 14, offset: 1 }
                 }"
                 :prop="`exprs.opts.${index}.alarm_level`"
                 :rules="[{ required: true, message: '请选择告警级别' }]"
@@ -130,18 +176,21 @@
 
             <a-col :span="2" :offset="1">
               <a-form-model-item>
-                <a-button
-                  v-show="formModel.exprs.opts.length > 1"
-                  @click="removeExpressionOpt(index)"
-                >删除</a-button>
+                <transition name="transition-scale">
+                  <a-button
+                    class="transition-scale"
+                    v-show="formModel.exprs.opts.length > 1"
+                    @click="removeExpressionOpt(index)"
+                  >删除</a-button>
+                </transition>
               </a-form-model-item>
             </a-col>
 
           </a-row>
+        </transition-group>
 
-        </div>
         <a-row>
-          <a-col :span="4" :offset="10">
+          <a-col :span="4" :offset="11">
             <a-button type="primary" @click="addExpressionOpts">添加</a-button>
           </a-col>
         </a-row>
@@ -156,8 +205,6 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api-hasura/index'
-// import _ from 'lodash'
-import { scrollTo } from '@/utils/util'
 import { CombineSelect } from '@/components/Resource'
 import {
   ThresholdOperatorSelect,
@@ -165,17 +212,28 @@ import {
   AlarmLevelSelect
 } from '~~~/Alarm'
 import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
+import anime from 'animejs'
+import _ from 'lodash'
+import uuid from 'uuid/v4'
 
-const defaultOpt = {
+const makeOpt = () => ({
+  // 用于为 transition 元素绑定唯一 key
+  // TODO: 数据传输时删除该属性
+  uuid: uuid(),
   operator: '',
   threshold: '',
   frequency: 0,
-  alarm_level: ''
-}
+  alarm_level: undefined
+})
 
 export default {
   name: 'AlarmStrategySchema',
   mixins: [Schema],
+  provide () {
+    return {
+      ctx: this
+    }
+  },
   components: {
     CombineSelect,
     ThresholdOperatorSelect,
@@ -185,12 +243,23 @@ export default {
   },
   props: {},
   data: () => ({
+    addBtnLoading: false,
+    isEdit: false,
     formModel: {
-      enable: 1,
+      deviceType: 'test',
+      deviceBrand: '',
+      deviceModel: '',
+      endpointModelId: '',
+      metricModelId: '',
+      hostId: [],
+      enabled: 1,
       exprs: {
+        cycle: 1,
+        trigger_condition: '',
+        trigger_value: undefined,
         opts: [
           {
-            ...defaultOpt
+            ...makeOpt()
           }
         ]
       }
@@ -203,26 +272,56 @@ export default {
     spinning: false,
     submitLoading: false
   }),
-  computed: {},
+  computed: {
+    editAbleProps () {
+      return {
+        disabled: !!this.isEdit
+      }
+    },
+    model () {
+      const { exprs, ...rest } = _.cloneDeep(this.formModel)
+      exprs.opts = exprs.opts.map(opt => {
+        Reflect.deleteProperty(opt, 'uuid')
+        return opt
+      })
+      return {
+        ...rest,
+        exprs
+      }
+    }
+  },
   methods: {
     add () {
       this.show('新建阈值规则')
       this.submit = this.insert
     },
-    async addExpressionOpts () {
-      this.formModel.exprs.opts.push({ ...defaultOpt })
+    addExpressionOpts: _.throttle(async function () {
+      const container = this.$refs.opts.$el
+      this.formModel.exprs.opts.push({ ...makeOpt() })
       await this.$nextTick()
-      scrollTo(this.$refs.opts.scrollHeight, { getContainer: () => this.$refs.opts })
-    },
+      if (container.scrollHeight <= 300) {
+        return
+      }
+      anime({
+        targets: [container],
+        scrollTop: container.scrollHeight,
+        duration: 150
+      })
+    }, 500),
     edit (id) {
       this.fetch(id)
       this.show('编辑阈值规则')
       this.submit = this.update
+      this.isEdit = true
     },
     async fetch (id) {
       try {
         this.spinning = true
-        this.formModel = await StrategyService.detail(id)
+        const formModel = await StrategyService.detail(id)
+        formModel.exprs.opts.forEach(opt => {
+          opt['uuid'] = uuid()
+        })
+        this.formModel = formModel
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
         throw e
@@ -235,7 +334,7 @@ export default {
         if (!valid) return
         try {
           this.submitLoading = true
-          await StrategyService.add(this.formModel)
+          await StrategyService.add(this.model)
           this.$emit('addSuccess')
           this.$notifyEditSuccess()
           this.cancel()
@@ -251,15 +350,27 @@ export default {
       this.$refs.ruleForm.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
-    removeExpressionOpt (index) {
+    async removeExpressionOpt (index) {
+      const container = this.$refs.opts.$el
+      // if (container.scrollTop >= 76) {
+      //   anime({
+      //     targets: [container],
+      //     scrollTop: container.scrollTop - 76,
+      //     duration: 150
+      //   })
+      // }
       this.formModel.exprs.opts.splice(index, 1)
+      await this.$nextTick()
+      console.log(
+        container.scrollTop
+      )
     },
     update () {
       this.$refs.ruleForm.validate(async valid => {
         if (!valid) return
         try {
           this.submitLoading = true
-          await StrategyService.update(this.formModel)
+          await StrategyService.update(this.model)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
@@ -279,26 +390,36 @@ export default {
 .AlarmStrategy__modal {
 
   &-opts {
+    position: relative;
     height: 300px;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
+
+    .transition-flip {
+      background: #fff
+    }
+
+    .transition-flip-leave {
+    position: absolute;
+      z-index: 0;
+      // TODO: theme less variables
+      background-color: #e6f7ff;
+    }
+
+    .transition-flip-leave-to {
+      background-color: #e6f7ff;
+      width: 100%;
+    }
+
+    .transition-flip-enter-to {
+      z-index: 1;
+      // TODO: theme less variables
+      background-color: #e6f7ff;
+    }
   }
 
-  .content {
-    margin-top: 24px;
-  }
-
-  .enable {
+  .enabled {
     width: 100px;
-  }
-
-  .p {
-    text-align: center;
-  }
-
-  .inline_input {
-    display: inline-block;
-    width: 120px;
   }
 }
 </style>

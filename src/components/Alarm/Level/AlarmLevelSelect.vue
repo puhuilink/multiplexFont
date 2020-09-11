@@ -3,6 +3,8 @@
     <a-select
       style="min-width: 80px"
       class="fw"
+      :value="value"
+      @select="$emit('input', $event)"
     >
       <a-select-option
         v-for="level in [2, 3, 4, 5]"
@@ -21,7 +23,11 @@ export default {
   mixins: [],
   components: {},
   props: {
-    ...FormModel.Item.props
+    ...FormModel.Item.props,
+    value: {
+      type: Number,
+      default: undefined
+    }
   },
   data: () => ({
   }),
