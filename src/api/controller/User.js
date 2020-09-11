@@ -5,7 +5,9 @@ export const login = function ({ userId, pwd, verifCode }) {
   return axios.post('/user/login', {
     userId: encrypt(userId),
     encryptedPwd: encrypt(pwd),
-    verifCode: encrypt(verifCode)
+    ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
+      verifCode: encrypt(verifCode)
+    } : {}
   })
 }
 
