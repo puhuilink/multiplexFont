@@ -85,6 +85,7 @@ import { StrategyService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import AlarmStrategySchema from '../modules/AlarmStrategySchema/index'
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
   name: 'AlarmStrategy',
@@ -99,6 +100,19 @@ export default {
       {
         title: '阈值名称',
         dataIndex: 'name',
+        fixed: 'left',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '监控类型',
+        dataIndex: 'device_type',
+        width: 200,
+        sorter: true
+      },
+      {
+        title: '品牌名称',
+        dataIndex: 'device_brand',
         width: 200,
         sorter: true
       },
@@ -110,45 +124,42 @@ export default {
       // show: true
       // },
       {
-        title: '监控设备',
-        dataIndex: 'host_id',
-        width: 200
-      },
-      {
-        title: '监控类型',
-        dataIndex: 'device_type',
-        width: 200
-      },
-      {
-        title: '品牌名称',
-        dataIndex: 'device_brand',
-        width: 200
-      },
-      {
         title: '品牌设备',
         dataIndex: 'device_model',
-        width: 200
+        width: 200,
+        sorter: true
       },
-      // {
-      //   title: '监控实例',
-      //   dataIndex: 'metric_id',
-      //   width: 200
-      // },
-      // {
-      //   title: '检查项',
-      //   dataIndex: 'endpoint_id',
-      //   width: 200
-      // },
+      {
+        title: '设备名称',
+        dataIndex: 'host_id',
+        width: 200,
+        sorter: true,
+        customRender: hostId => hostId ? hostId.join('/') : ''
+      },
+      {
+        title: '监控实体',
+        dataIndex: 'metric_model_id modelMetric { alias }',
+        width: 200,
+        customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
+      },
+      {
+        title: '检查项',
+        dataIndex: 'endpoint_model_id modelEndpoint { alias }',
+        width: 200,
+        customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
+      },
       {
         title: '更新时间',
         dataIndex: 'last_update_time',
         width: 200,
-        sorter: true
+        sorter: true,
+        customRender: time => time ? moment(time).format() : ''
       },
       {
         title: '启用状态',
         dataIndex: 'enabled',
         width: 200,
+        fixed: 'right',
         sorter: true,
         scopedSlots: {
           customRender: 'enabled'
@@ -187,7 +198,7 @@ export default {
       try {
         this.$refs['table'].loading = true
         //
-        await StrategyService.batchToggleEnabled([id], enabled)
+        await StrategyService.batchToggleEnabled(id, enabled)
       } catch (e) {
         throw e
       } finally {

@@ -70,13 +70,23 @@ class AlarmRuleService extends BaseService {
   }
 
   static async batchDelete (ruleIds = []) {
-    return axios.post(`/AlarmAndRule/delete?ruleIds=${ruleIds}`)
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    return axios.post(`/AlarmAndRule/delete`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 
   static async batchToggleEnabled (ruleIds = [], enabled = true) {
-    return axios.post('/AlarmAndRule/batchEnabled', {
-      ruleIds,
-      enabled
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    formData.append('enabled', enabled)
+    return axios.post('/AlarmAndRule/batchEnabled', formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
     })
   }
 }

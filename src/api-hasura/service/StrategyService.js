@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
-import { mutate, query } from '../utils/hasura-orm/index'
-import { StrategyDao, SendRecordDao } from '../dao'
+import { query } from '../utils/hasura-orm/index'
+import { StrategyDao } from '../dao'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
@@ -56,16 +56,24 @@ class StrategyService extends BaseService {
     ]))
   }
 
-  static async batchDelete (idList = []) {
-    return mutate(
-      SendRecordDao.batchDelete({ id: { _in: idList } })
-    )
+  static async batchDelete (ruleIds = []) {
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    return axios.post(`/strategy/delete`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 
   static async batchToggleEnabled (ruleIds = [], enabled = true) {
-    return axios.post('/strategy/batchEnabled', {
-      ruleIds,
-      enabled
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    formData.append('enabled', enabled)
+    return axios.post('/strategy/batchEnabled', formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
     })
   }
 }
