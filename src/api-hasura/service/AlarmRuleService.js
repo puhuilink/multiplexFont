@@ -1,8 +1,9 @@
 import { BaseService } from './BaseService'
-import { mutate, query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao, AlarmSenderDao } from '../dao'
+import { query } from '../utils/hasura-orm/index'
+import { AlarmRuleDao } from '../dao'
 import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AlarmRuleService extends BaseService {
   static async find (argus = {}) {
@@ -12,27 +13,41 @@ class AlarmRuleService extends BaseService {
   }
 
   static async add (argus = {}) {
-    return mutate(
-      AlarmRuleDao.add(argus)
-      // TODO: 关联数据
-    )
+    return axios.post('/AlarmAndRule/add', _.omit(argus, ['id']))
   }
 
-  static async update (set = {}, where = {}) {
-    return mutate(
-      AlarmRuleDao.update(set, where)
-      // TODO: 关联数据
-    )
+  static async update (argus = {}) {
+    return axios.post('/AlarmAndRule/update', _.pick(argus, [
+      'id',
+      'merge',
+      'upgrade',
+      'recover',
+      'forward',
+      'title',
+      'enabled'
+    ]))
   }
 
   static async detail (id) {
     // 告警规则信息
-    const { data: { alarmList } } = await this.find({
+    const { data: { alarmRuleList } } = await this.find({
       where: { id },
-      fields: ['id', 'title', 'rule_type', 'host_id', 'endpoint_id', 'metric_id', 'content', 'enabled'],
-      alias: 'alarmList'
+      fields: [
+        'id',
+        'title',
+        'deviceType: device_type',
+        'deviceBrand: device_brand',
+        'deviceModel: device_model',
+        'ruleType: rule_type',
+        'hostId: host_id',
+        'endpointModelId: endpoint_model_id',
+        'metricModelId: metric_model_id',
+        'content',
+        'enabled'
+      ],
+      alias: 'alarmRuleList'
     })
-    const detail = _.first(alarmList)
+    const detail = _.first(alarmRuleList)
 
     // 告警规则类型为前转时，查询其关联的前转配置
     if (_.get(detail, 'rule_type') === 'forward') {
@@ -54,39 +69,25 @@ class AlarmRuleService extends BaseService {
     return sendList
   }
 
-  static async isUniqueConfig (alarmRule = {}) {
-    return AlarmRuleDao._uniqueValidate(alarmRule, !alarmRule.id)
+  static async batchDelete (ruleIds = []) {
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    return axios.post(`/AlarmAndRule/delete`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 
-  static async batchDelete (alarmRuleList = []) {
-    return mutate(
-      // 规则表删除
-      AlarmRuleDao.batchDelete({ id: { _in: alarmRuleList.map(({ id }) => id) } }),
-      // 关联的前转配置删除
-      AlarmSenderDao.batchDelete({
-        _or: [
-          ...alarmRuleList
-            .filter(({ rule_type }) => rule_type === 'forward')
-            .map(({ host_id, endpoint_id, metric_id }) => ({
-              host_id: { _eq: host_id },
-              endpoint_id: { _eq: endpoint_id },
-              metric_id: { _eq: metric_id }
-            }))
-        ]
-      })
-    )
-  }
-
-  static async batchEnabled (idList = []) {
-    return mutate(
-      AlarmRuleDao.update({ enabled: true }, { id: { _in: idList } })
-    )
-  }
-
-  static async batchDisabled (idList = []) {
-    return mutate(
-      AlarmRuleDao.update({ enabled: false }, { id: { _in: idList } })
-    )
+  static async batchToggleEnabled (ruleIds = [], enabled = true) {
+    const formData = new FormData()
+    formData.append('ruleIds', ruleIds)
+    formData.append('enabled', enabled)
+    return axios.post('/AlarmAndRule/batchEnabled', formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 }
 

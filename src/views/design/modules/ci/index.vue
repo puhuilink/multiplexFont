@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { CmdbTree } from '@/components/Cmdb'
+import { CmdbTree } from '@/components/Resource'
 import Factory from '@/model/factory/factory'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'

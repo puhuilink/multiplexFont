@@ -3,14 +3,19 @@
     centered
     :title="title"
     :width="670"
-    wrapClassName="ViewTitleSchema__modal"
+    wrapClassName="AlarmRuleSchema__modal"
     v-model="visible"
     :afterClose="reset"
   >
 
     <!-- / 底部按钮 -->
     <template slot="footer">
-      <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
+      <a-form-model-item
+        v-bind="formItemLayout"
+        label="启用"
+        class="fl"
+        prop="enabled"
+      >
         <a-select v-model="formModel.enabled" class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
@@ -18,7 +23,7 @@
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
       <a-button @click="back" :disabled="btnLoading" v-show="!firstStep">上一步</a-button>
-      <a-button @click="next" :loading="btnLoading" type="primary">{{ firstStep ? '下一步' : '提交' }}</a-button>
+      <a-button @click="next" :loading="btnLoading" type="primary">{{ lastStep ? '提交' : '下一步' }}</a-button>
     </template>
 
     <!-- / 正文 -->
@@ -26,91 +31,106 @@
 
       <a-steps :current="stepIndex">
         <a-step title="告警基础设置" />
-        <a-step title="告警条件设置" />
+        <a-step title="告警合并" v-if="formModel.ruleType.includes('merge')" />
+        <a-step title="告警升级" v-if="formModel.ruleType.includes('upgrade')" />
+        <a-step title="告警消除" v-if="formModel.ruleType.includes('recover')" />
       </a-steps>
 
-      <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
-        <div v-show="firstStep" class="content">
-          <BasicForm :formModel.sync="formModel" />
-        </div>
+      <a-form-model
+        ref="ruleForm"
+        :model="formModel"
+      >
 
-        <div v-show="!firstStep" class="content">
-          <component
-            :formModel.sync="formModel"
-            :is="formComponentMapping.get(formModel.rule_type)"
-            v-if="formComponentMapping.get(formModel.rule_type)"
-          />
-        </div>
+        <transition-group>
+          <div
+            v-for="[type, component] in componentMapping"
+            :key="type"
+            class="AlarmRuleSchema__modal-content"
+          >
+            <component
+              v-if="isCurrent(type)"
+              :is="component"
+              :formModel.sync="formModel"
+              :isEdit="isEdit"
+            />
+          </div>
+        </transition-group>
+
       </a-form-model>
 
     </a-spin>
-
   </a-modal>
 </template>
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import _ from 'lodash'
 import {
-  ALARM_RULE_MERGE,
-  ALARM_RULE_UPGRADE,
-  ALARM_RULE_FORWARD,
-  ALARM_RULE_RECOVER,
-  CONTENT_TYPE_COUNT,
-  AlarmRuleModelFactory
+  AlarmRuleModelFactory,
+  ruleTypeMapping
 } from './model'
 import { AlarmRuleService } from '@/api-hasura'
-import BasicForm, { basicFormRules } from './BasicForm'
-import RecoverForm, { recoverFormRules } from './RecoverForm'
-import UpgradeForm, { upgradeFormRules } from './UpgradeForm'
-import MergeForm, { mergeFormRules } from './MergeForm'
-import ForwardForm, { forwardFormRules } from './ForwardForm'
+import BasicForm from './BasicForm'
+import RecoverForm from './RecoverForm'
+import UpgradeForm from './UpgradeForm'
+import MergeForm from './MergeForm'
 import { formItemLayout } from './Mixin'
-
-const ruleMapping = new Map([
-  [ALARM_RULE_MERGE, mergeFormRules],
-  [ALARM_RULE_UPGRADE, upgradeFormRules],
-  [ALARM_RULE_FORWARD, forwardFormRules],
-  [ALARM_RULE_RECOVER, recoverFormRules]
-])
 
 export default {
   name: 'AlarmRuleSchema',
   mixins: [Schema],
   components: {
-    BasicForm
+    BasicForm,
+    MergeForm,
+    UpgradeForm,
+    RecoverForm
   },
   data: () => ({
-    formComponentMapping: new Map([
-      [ALARM_RULE_MERGE, MergeForm],
-      [ALARM_RULE_UPGRADE, UpgradeForm],
-      [ALARM_RULE_FORWARD, ForwardForm],
-      [ALARM_RULE_RECOVER, RecoverForm]
+    btnLoading: false,
+    componentMapping: new Map([
+      ['basic', BasicForm],
+      ['merge', MergeForm],
+      ['upgrade', UpgradeForm],
+      ['recover', RecoverForm]
     ]),
     formItemLayout,
-    formModel: {
-      enabled: 1,
-      content: {
-        type: CONTENT_TYPE_COUNT
-      },
-      rule_type: ALARM_RULE_FORWARD
-    },
+    formModel: AlarmRuleModelFactory.create({}),
+    isEdit: false,
+    ruleTypeMapping,
     spinning: false,
-    stepIndex: 1,
-    btnLoading: false
+    stepIndex: 0
   }),
   computed: {
-    formRules () {
-      const { formModel: { rule_type }, firstStep } = this
-      return _.cloneDeep(
-        firstStep ? basicFormRules : ruleMapping.get(rule_type)
-      )
+    currentRuleType () {
+      if (this.stepIndex === 0) {
+        return ''
+      } else {
+        return this.formModel.ruleType[this.stepIndex - 1]
+      }
     },
     firstStep () {
-      return this.stepIndex === 1
+      return this.stepIndex === 0
+    },
+    lastStep () {
+      const {
+        formModel: { ruleType: { length } },
+        firstStep,
+        stepIndex
+      } = this
+      return !firstStep && stepIndex === length
     }
   },
   methods: {
+    isCurrent (type) {
+      if (type === 'basic') {
+        return this.stepIndex === 0
+      } else {
+        return this.formModel.ruleType[this.stepIndex - 1] === type
+      }
+    },
+    hasType (type) {
+      if (type === 'basic') return true
+      return this.formModel.ruleType.includes(type)
+    },
     add () {
       this.show('新建告警规则')
       this.submit = this.insert
@@ -123,6 +143,7 @@ export default {
       this.fetch(id)
       this.show('编辑告警规则')
       this.submit = this.update
+      this.isEdit = true
     },
     async fetch (id) {
       try {
@@ -141,7 +162,7 @@ export default {
         this.btnLoading = true
         await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
         this.$emit('addSuccess')
-        this.notifyEditSuccess()
+        this.$notifyAddSuccess()
         this.cancel()
       } catch (e) {
         this.$notifyError(e)
@@ -151,23 +172,19 @@ export default {
       }
     },
     next () {
-      if (this.firstStep) {
-        this.$refs.ruleForm.validate(passValidate => passValidate && this.nextToSecond())
-      } else {
-        this.$refs.ruleForm.validate(passValidate => passValidate && this.submit())
-      }
-    },
-    async nextToSecond () {
-      try {
-        this.btnLoading = true
-        await AlarmRuleService.isUniqueConfig(this.formModel)
-        this.stepIndex++
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      const {
+        lastStep,
+        $refs: { ruleForm }
+      } = this
+
+      ruleForm.validate(passValidate => {
+        if (!passValidate) return
+        if (lastStep) {
+          this.submit()
+        } else {
+          this.stepIndex++
+        }
+      })
     },
     reset () {
       this.$refs.ruleForm.resetFields()
@@ -176,16 +193,12 @@ export default {
     async update () {
       try {
         this.btnLoading = true
-        console.log(AlarmRuleModelFactory.serialize(this.formModel))
-        // TODO: 接口调试
-        // const { id } = this.formModel
-        // await AlarmRuleService.update(
-        //   AlarmRuleModelFactory.serialize(this.formModel),
-        //   { id }
-        // )
+        await AlarmRuleService.update(
+          AlarmRuleModelFactory.serialize(this.formModel)
+        )
         this.$emit('editSuccess')
         this.$notifyEditSuccess()
-        // this.cancel()
+        this.cancel()
       } catch (e) {
         this.$notifyError(e)
         throw e
@@ -198,13 +211,13 @@ export default {
 </script>
 
 <style lang="less">
-.ViewTitleSchema__modal {
-  .content {
+.AlarmRuleSchema__modal {
+  &-content {
     margin-top: 24px;
   }
 
   .enabled {
-    width: 80px;
+    width: 100px;
   }
 
   .p {

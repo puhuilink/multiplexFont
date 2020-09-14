@@ -136,7 +136,7 @@ import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import { updateViewDesign } from '@/api/controller/View'
-import ViewPreview from '@/views/view/display/modules/viewPreview'
+import ViewPreview from '@/views/view/display/modules/Preview'
 import { ViewDesignService } from '@/api-hasura'
 
 export default {

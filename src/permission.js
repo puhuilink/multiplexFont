@@ -41,7 +41,6 @@ router.beforeEach((to, from, next) => {
       // 根据 roles 权限生成并添加可访问的路由表
       router.addRoutes(store.getters.addRouters)
       const redirect = decodeURIComponent(from.query.redirect || to.path)
-      console.log(redirect)
       if (to.path === redirect) {
         next({ ...to, replace: true })
       } else {

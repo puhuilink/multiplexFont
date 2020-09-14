@@ -53,9 +53,9 @@
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     :ranges="{
-                      '最近一天': [moment(), moment()],
-                      '最近一周': [moment().add(-7, 'days'), moment()],
-                      '最近一月': [moment().add(-30, 'days'), moment()]
+                      '最近1天': [moment().add(-1, 'days'), moment(), moment()],
+                      '最近1周': [moment().add(-7, 'days'), moment()],
+                      '最近1月': [moment().add(-30, 'days'), moment()]
                     }"
                     :showTime="{ format: 'HH:mm' }"
                     v-model="queryParams.collect_time"
@@ -83,7 +83,7 @@ import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'
-import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Cmdb'
+import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Resource'
 
 export default {
   name: 'PerformanceList',
@@ -134,10 +134,10 @@ export default {
     queryParams: {
       // 默认查询最近一个月的数据，避免一次性查询所有数据
       'collect_time': [
-        // moment().add(-30, 'days'),
-        // moment()
-        moment('2020-08-25 22:25'),
-        moment('2020-08-26 22:25')
+        moment().add(-1, 'days'),
+        moment()
+        // moment('2020-08-25 22:25'),
+        // moment('2020-08-26 22:25')
       ]
     }
   }),

@@ -30,7 +30,8 @@ const VIC_MAIN_LIST = [
   { schema: 't_model_endpoint_metric', primaryKey: 'id' },
   { schema: 't_model_host_endpoint', primaryKey: 'id' },
   { schema: 't_model_host', primaryKey: 'id' },
-  { schema: 't_model_host_group_by_host_type', primaryKey: 'id' }, // postgre view
+  { schema: 't_model_host_group_by_host_type', primaryKey: 'host_type' }, // postgre view
+  { schema: 't_model_host_group_by_model', primaryKey: 'model' }, // postgre view
   { schema: 't_cmdb_host_endpoint_metric', primaryKey: 'id' }, // postgre view
   { schema: 't_model_metric', primaryKey: 'id' },
   { schema: 't_model_metric_oid', primaryKey: 'id' },

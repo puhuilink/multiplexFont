@@ -42,8 +42,6 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import TempRule from './modules/TempRule'
 import { PatrolService, TempService } from '@/api-hasura'
 import _ from 'lodash'
-// import { MessageModel } from '@/components/Temp/model'
-import { approveSend } from '@/api/controller/patrol'
 
 export default {
   name: 'ApproveSchema',
@@ -155,7 +153,7 @@ export default {
     async send () {
       try {
         this.submitLoading = true
-        await approveSend()
+        await PatrolService.approveSend()
       } catch (e) {
         throw e
       } finally {

@@ -62,7 +62,7 @@ const user = {
           if (!status) {
             reject(new Error('用户权限数据获取失败，请稍后尝试！'))
           }
-          console.log(permissionList)
+          // console.log(permissionList)
           permissionList.forEach(permission => {
             if (!originalPermission.some(item => item.code === permission.code)) {
               originalPermission.push(permission)

@@ -11,7 +11,7 @@
 
 <script>
 // TODO: split common components
-import AlarmMonitor from '@/views/alarm/AlarmMonitor'
+import AlarmMonitor from '@/views/alarm/monitor/index'
 
 export default {
   name: 'LatestAlarmElement',

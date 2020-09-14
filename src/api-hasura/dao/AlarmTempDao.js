@@ -22,6 +22,11 @@ class AlarmTempDao extends BaseDao {
   ])
 
   @override
+  static async find ({ orderBy = { create_time: 'desc_nulls_last' }, ...rest }) {
+    return super.find({ orderBy, ...rest })
+  }
+
+  @override
   static async add (argus) {
     await this._uniqueValidate(argus)
     return super.add({

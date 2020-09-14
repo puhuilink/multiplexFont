@@ -182,7 +182,7 @@
                 buttonStyle="solid"
                 v-model="config.proprietaryConfig.xAxis.type"
                 @change="change">
-                <a-radio-button value="category">类别</a-radio-button>
+                <a-radio-button value="category">类目</a-radio-button>
                 <a-radio-button value="value">数值</a-radio-button>
                 <a-radio-button value="time">时间</a-radio-button>
               </a-radio-group>
@@ -190,7 +190,7 @@
           </div>
           <!-- / 数据类型 -->
 
-          <div class="comment-template__item" v-if="config.proprietaryConfig.xAxis.type === 'category'">
+          <div class="comment-template__item" v-show="config.proprietaryConfig.xAxis.type === 'category'">
             <p class="comment-template__leading">数轴留白:</p>
             <div class="comment-template__inner comment-template__end">
               <a-switch

@@ -8,6 +8,15 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/view/display',
     children: [
+      ...process.NODE_ENV === 'production' ? [] : [
+        {
+          path: '/dev-debug',
+          component: () => import('@/views/dev-debug'),
+          meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
+          name: 'devTest'
+        }
+      ],
+
       // view
       {
         path: '/view',
@@ -19,13 +28,13 @@ export const asyncRouterMap = [
           {
             path: '/view/display',
             name: 'ViewDisplay',
-            component: () => import('@/views/view/display/ViewDisplay'),
+            component: () => import('@/views/view/display/index'),
             meta: { title: '视图展示', keepAlive: true, permission: [ 'F002001', 'F002003' ] }
           },
           {
             path: '/view/list',
             name: 'ViewList',
-            component: () => import('@/views/view/list/ViewList'),
+            component: () => import('@/views/view/list/index'),
             meta: { title: '视图定制', keepAlive: true, permission: [ 'F002002' ] }
           }
         ]
@@ -42,25 +51,25 @@ export const asyncRouterMap = [
           {
             path: '/alarm/monitor',
             name: 'AlarmMonitor',
-            component: () => import('@/views/alarm/AlarmMonitor'),
+            component: () => import('@/views/alarm/monitor/index'),
             meta: { title: '告警监控', keepAlive: true, permission: [ 'F003001' ] }
           },
           {
-            path: '/alarm/history',
+            path: '/alarm/log',
             component: RouteView,
             meta: { title: '告警记录', keepAlive: true, permission: [ 'F003002' ] },
-            redirect: '/alarm/history/HistoricalAlarms',
+            redirect: '/alarm/log/alarm',
             children: [
               {
-                path: '/alarm/history/alarm-history',
-                name: 'AlarmHistory',
-                component: () => import('@/views/alarm/history/AlarmHistory'),
+                path: '/alarm/log/history',
+                name: 'AlarmLogHistory',
+                component: () => import('@/views/alarm/log/history/index'),
                 meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
               },
               {
-                path: '/alarm/history/forward-history',
-                name: 'ForwardHistory',
-                component: () => import('@/views/alarm/history/ForwardHistory'),
+                path: '/alarm/log/forward',
+                name: 'AlarmLogForward',
+                component: () => import('@/views/alarm/log/forward/index'),
                 meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
               }
             ]
@@ -72,28 +81,34 @@ export const asyncRouterMap = [
             meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
             children: [
               {
-                path: '/alarm/config/alarm-strategy',
+                path: '/alarm/config/strategy',
                 name: 'AlarmStrategy',
-                component: () => import('@/views/alarm/config/AlarmStrategy'),
+                component: () => import('@/views/alarm/config/strategy/index'),
                 meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
               },
-              {
-                path: '/alarm/config/alarm-rules',
-                name: 'AlarmRules',
-                component: () => import('@/views/alarm/config/AlarmRules'),
-                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
-              },
               // {
-              //   path: '/alarm/config/ThresholdRules',
-              //   name: 'ThresholdRules',
-              //   component: () => import('@/views/alarm/config/ThresholdRules'),
-              //   meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
+              //   path: '/alarm/config/describe-temp',
+              //   name: 'DescribeTemp',
+              //   component: () => import('@/views/alarm/config/describe-temp/index'),
+              //   meta: { title: '告警描述模板', keepAlive: true, permission: [ 'F003003003' ] }
               // },
               {
                 path: '/alarm/config/forward-temp',
                 name: 'ForwardTemp',
-                component: () => import('@/views/alarm/config/ForwardTemp'),
-                meta: { title: '通知模板规则', keepAlive: true, permission: ['F003002003'] }
+                component: () => import('@/views/alarm/config/forward-temp/index'),
+                meta: { title: '告警通知模板', keepAlive: true, permission: ['F003002003'] }
+              },
+              {
+                path: '/alarm/config/forward-rules',
+                name: 'ForwardRules',
+                component: () => import('@/views/alarm/config/forward-rules/index'),
+                meta: { title: '告警通知规则', keepAlive: true }
+              },
+              {
+                path: '/alarm/config/rules',
+                name: 'AlarmRules',
+                component: () => import('@/views/alarm/config/rules/index'),
+                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
               }
             ]
           }
@@ -104,14 +119,14 @@ export const asyncRouterMap = [
       {
         path: '/performance',
         name: 'performance',
-        redirect: '/performance/navigation',
+        redirect: '/performance/tree-navigation',
         component: RouteView,
         meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt', permission: [ 'F004' ] },
         children: [
           {
-            path: '/performance/navigation',
+            path: '/performance/tree-navigation',
             name: 'TreeNavigation',
-            component: () => import('@/views/performance/navigation'),
+            component: () => import('@/views/performance/tree-navigation/index'),
             meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004002' ] }
           },
           // {
@@ -239,19 +254,19 @@ export const asyncRouterMap = [
           {
             path: '/system/user',
             name: 'User',
-            component: () => import('@/views/system/user/User'),
+            component: () => import('@/views/system/user/index'),
             meta: { title: '用户管理', keepAlive: true, permission: [ 'F001001' ] }
           },
           {
             path: '/system/group',
             name: 'Group',
-            component: () => import('@/views/system/group/Group'),
+            component: () => import('@/views/system/group/index'),
             meta: { title: '工作组管理', keepAlive: true, permission: [ 'F001002' ] }
           },
           {
             path: '/system/audit',
             name: 'Audit',
-            component: () => import('@/views/system/audit/Audit'),
+            component: () => import('@/views/system/audit/index'),
             meta: { title: '审计管理', keepAlive: true, permission: [ 'F001003' ] }
           }
         ]
@@ -320,14 +335,14 @@ export const asyncRouterMap = [
       {
         path: '/user',
         name: 'user',
-        redirect: '/user/psd-change',
+        redirect: '/user/pwd-change',
         component: RouteView,
         meta: { title: '个人中心', keepAlive: true, icon: 'user' },
         children: [
           {
-            path: '/psd-change',
-            name: 'PsdChange',
-            component: () => import('@/views/user/PsdChange'),
+            path: '/pwd-change',
+            name: 'PwdChange',
+            component: () => import('@/views/user/PwdChange'),
             meta: { title: '重置密码' }
           }
         ]
@@ -339,7 +354,7 @@ export const asyncRouterMap = [
     path: '/design',
     name: 'Design',
     hidden: true,
-    component: () => import('@/views/design/Design'),
+    component: () => import('@/views/design/index'),
     meta: { title: '视图设计', permission: ['F002002'] },
     props: route => route.query
   },
@@ -366,16 +381,6 @@ export const constantRouterMap = [
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
       }
     ]
-  },
-
-  // 视图设计
-  {
-    path: '/design',
-    name: 'Design',
-    hidden: true,
-    component: () => import('@/views/design/Design'),
-    meta: { title: '视图设计', permission: ['F002002'] },
-    props: route => route.query
   },
 
   {

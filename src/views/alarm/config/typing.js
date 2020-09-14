@@ -5,7 +5,7 @@
 import {
   SEND_TYPE_EMAIL, SEND_TYPE_SMS,
   SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING
-} from '@/components/Temp/model'
+} from '@/components/Temp/types'
 
 export {
   SEND_TYPE_EMAIL,
@@ -22,7 +22,6 @@ export const ALARM_RULE_RECOVER = 'recover'
 const ruleMappingArr = [
   [ALARM_RULE_MERGE, '告警合并'],
   [ALARM_RULE_UPGRADE, '告警升级'],
-  [ALARM_RULE_FORWARD, '告警前转'],
   [ALARM_RULE_RECOVER, '告警消除']
 ]
 

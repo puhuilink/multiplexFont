@@ -73,7 +73,7 @@
       </a-form-item> -->
 
       <!-- / 验证码 -->
-      <a-row :gutter="16">
+      <a-row :gutter="16" v-if="VUE_APP_SMS_ENABLED">
         <a-col class="gutter-row" :span="16">
           <a-form-item>
             <a-input
@@ -129,6 +129,8 @@
 // import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { sendCaptchaByUserId } from '@/api/login'
+// const { VUE_APP_SMS_ENABLED } = process.env
+const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
   name: 'Login',
@@ -137,6 +139,7 @@ export default {
   },
   data () {
     return {
+      VUE_APP_SMS_ENABLED,
       loginBtn: false,
       // login type: 0 email, 1 userId, 2 telephone
       loginType: 0,
@@ -237,7 +240,7 @@ export default {
         if (err) {
           return
         }
-        if (!this.hasSentVerifCode) {
+        if (VUE_APP_SMS_ENABLED && !this.hasSentVerifCode) {
           this.$message.error('请先获取验证码!')
           state.loginBtn = false
           return
@@ -271,7 +274,7 @@ export default {
           this.state.captchaLoading = true
           this.hasSentVerifCode = false
           sendCaptchaByUserId(values['userId'])
-            .then(() => {
+            .then(({ msg = '验证码已通过短信发送到账户手机，请注意查收！' }) => {
               interval = window.setInterval(() => {
                 if (state.time-- <= 0) {
                   state.time = 60
@@ -279,7 +282,7 @@ export default {
                   window.clearInterval(interval)
                 }
               }, 1000)
-              this.$message.success('验证码已通过短信发送到账户手机，请注意查收！')
+              this.$message.success(msg)
               this.hasSentVerifCode = true
             })
             .catch(e => {
@@ -313,6 +316,9 @@ export default {
       this.isLoginError = true
       throw err
     }
+  },
+  created () {
+    console.log(process.env)
   }
 }
 </script>

@@ -6,6 +6,7 @@ import {
   ModelHostDao,
   ModelHostEndpointDao,
   ModelEndpointMetricDao,
+  ModelHostGroupByModelDao,
   ModelHostGroupByHostTypeDao
 } from '../dao'
 class ModelService extends BaseService {
@@ -64,11 +65,21 @@ class ModelService extends BaseService {
    * 查询 host 模型下的 endpoint 列表
    * @param {Number} modelHostId t_model_host.host_id
    */
-  static async modelEndpointList (modelHostId) {
+  static async modelEndpointList (value) {
     const { data: { modelHostEndpointList } } = await query(
+      // FIXME: hack
       ModelHostEndpointDao.find({
         where: {
-          host_id: modelHostId
+          ...typeof value === 'string' ? {
+            host: {
+              host_type: {
+                _eq: value
+              }
+            }
+          } : {
+            host_id: value
+          }
+          // host_id: modelHostId
           // enable: true
         },
         fields: [
@@ -119,6 +130,18 @@ class ModelService extends BaseService {
       }))
     const uniqList = _.uniq(validList, ({ key }) => key)
     return uniqList
+  }
+
+  static async hostFind (argus = {}) {
+    return query(
+      ModelHostDao.find(argus)
+    )
+  }
+
+  static async groupByModelFind (argus = {}) {
+    return query(
+      ModelHostGroupByModelDao.find(argus)
+    )
   }
 }
 

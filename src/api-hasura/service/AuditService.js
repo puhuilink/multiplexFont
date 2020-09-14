@@ -3,8 +3,8 @@ import { query } from '../utils/hasura-orm/index'
 import { AuditDao } from '../dao/index'
 
 class AuditService extends BaseService {
-  static async find (argus = {}) {
-    await query(
+  static find (argus = {}) {
+    return query(
       AuditDao.find(argus)
     )
   }

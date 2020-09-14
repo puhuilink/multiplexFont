@@ -42,7 +42,6 @@ export default async function Initializer () {
 
   // 从数据库读取全局主题配置
   const { settings } = await fetchTheme()
-  console.log(settings)
   // TODO：目前只完成主题色配置
   store.dispatch('ToggleColor', settings.primaryColor || Vue.ls.get(DEFAULT_COLOR))
 }

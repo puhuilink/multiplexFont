@@ -1,5 +1,4 @@
 <script>
-import { CONTENT_TYPE_TIME } from './model'
 import { parserInt } from '@/utils/util'
 
 export const formItemLayout = {
@@ -12,6 +11,10 @@ export default {
   mixins: [],
   components: {},
   props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    },
     formModel: {
       type: Object,
       default: () => ({})
@@ -21,9 +24,6 @@ export default {
     formItemLayout
   }),
   computed: {
-    useTime () {
-      return this.formModel.content.type === CONTENT_TYPE_TIME
-    },
     _formModel: {
       get () {
         return this.formModel

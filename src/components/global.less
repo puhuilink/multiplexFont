@@ -576,3 +576,54 @@ body {
 
   &_kpi {}
 }
+
+.transition-scale {
+  transform: scale(1);
+  transition: transform .3s;
+
+  &-enter,
+  &-leave-to {
+    transform: scale(0);
+  }
+  
+}
+
+.transition-fade {
+  opacity: 1;
+  transition: opacity .3s;
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+
+  &-leave-active {
+    position: absolute;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transition-flip {
+  z-index: 1;
+  transition: all .3s;
+
+  &-enter {
+    z-index: 2;
+  }
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+
+  &-leave-active {
+    position: absolute;
+  }
+}
+

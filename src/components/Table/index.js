@@ -2,6 +2,7 @@ import T from 'ant-design-vue/es/table/Table'
 import { get } from 'lodash'
 
 export default {
+  name: 'STable',
   data () {
     return {
       needTotalList: [],
@@ -148,7 +149,6 @@ export default {
         ...filters
       }
       )
-      console.log('parameter', parameter)
       const result = this.data(parameter)
       // 对接自己的通用数据接口需要修改下方代码中的 r.pageNo, r.totalCount, r.data
       // eslint-disable-next-line

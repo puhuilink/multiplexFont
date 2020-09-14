@@ -15,7 +15,7 @@
       v-bind="formItemLayout"
       v-if="useXAxisType"
     >
-      <a-select style="width: 100%" v-model="xAxisType" @select="change">
+      <a-select class="fw" v-model="xAxisType" @select="change">
         <a-select-option
           v-for="(option, idx) in options.xAxisType"
           :key="idx"
@@ -121,7 +121,7 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import { ComboSelect } from '@/components/Cmdb'
+import { ComboSelect } from '@/components/Resource'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
 
