@@ -8,7 +8,7 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/view/display',
     children: [
-      ...process.NODE_ENV === 'production' ? [] : [
+      ...process.env.NODE_ENV === 'production' ? [] : [
         {
           path: '/dev-debug',
           component: () => import('@/views/dev-debug'),
