@@ -54,6 +54,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
+        <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
         <a-button @click="onAdd">新建</a-button>
         <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
@@ -130,13 +131,6 @@ export default {
         sorter: true
       },
       {
-        title: '设备名称',
-        dataIndex: 'host_id',
-        width: 200,
-        sorter: true,
-        customRender: hostId => hostId ? hostId.join('/') : ''
-      },
-      {
         title: '监控实体',
         dataIndex: 'metric_model_id modelMetric { alias }',
         width: 200,
@@ -182,6 +176,10 @@ export default {
     },
     onAdd () {
       this.$refs.schema.add()
+    },
+    onDetail () {
+      const [id] = this.selectedRowKeys
+      this.$refs.schema.detail(id)
     },
     async onBatchDelete () {
       this.$promiseConfirmDelete({

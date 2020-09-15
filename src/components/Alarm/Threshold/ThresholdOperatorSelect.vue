@@ -4,6 +4,7 @@
       style="min-width: 100px"
       class="fw"
       placeholder="等于（或大于、小于...）"
+      :disabled="disabled"
       :value="value"
       @select="$emit('input', $event)"
     >
@@ -25,6 +26,10 @@ export default {
   mixins: [],
   components: {},
   props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: String,
       default: ''

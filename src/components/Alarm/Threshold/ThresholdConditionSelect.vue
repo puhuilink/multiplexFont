@@ -4,6 +4,7 @@
       class="fw"
       style="min-width: 120px;"
       placeholder="等于（或大于、小于...）"
+      :disabled="disabled"
       :value="value"
       @select="$emit('input', $event)"
     >
@@ -25,6 +26,10 @@ export default {
   components: {},
   props: {
     ...FormModel.Item.props,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: String,
       default: ''

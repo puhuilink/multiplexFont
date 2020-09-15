@@ -22,13 +22,19 @@
         }"
         class="AlarmStrategy__modal-footer-left"
       >
-        <a-select class="enabled" :style="{ width: '100px' }" :value="~~formModel.enabled" @select="formModel.enabled = !!$event">
+        <a-select
+          class="enabled"
+          :style="{ width: '100px' }"
+          :disabled="isDetail"
+          :value="~~formModel.enabled"
+          @select="formModel.enabled = !!$event"
+        >
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="submitLoading" type="primary">提交</a-button>
+      <a-button @click="submit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
     </template>
 
     <!-- / 正文 -->
@@ -44,7 +50,7 @@
             { max: 50, message: '最多输入50个字符' },
           ]"
         >
-          <a-input v-model.trim="formModel.name" />
+          <a-input :disabled="isDetail" v-model.trim="formModel.name" />
         </a-form-model-item>
 
         <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
@@ -78,7 +84,7 @@
                 { required: true, message: '请输入采集周期' }
               ]"
             >
-              <a-input-number v-model.number="formModel.exprs.cycle" />
+              <a-input-number :disabled="isDetail" v-model.number="formModel.exprs.cycle" />
             </a-form-model-item>
           </a-col>
 
@@ -93,6 +99,7 @@
           <a-col :span="6">
             <ThresholdConditionSelect
               v-bind="{
+                disabled: isDetail,
                 labelCol: { span: 0 },
                 wrapperCol: { span: 23 }
               }"
@@ -114,7 +121,7 @@
                 { required: true, message: '请输入触发值' }
               ]"
             >
-              <a-input-number v-model="formModel.exprs.trigger_value" />
+              <a-input-number :disabled="isDetail" v-model="formModel.exprs.trigger_value" />
             </a-form-model-item>
           </a-col>
 
@@ -142,6 +149,7 @@
             <a-col :span="10">
               <ThresholdOperatorSelect
                 v-bind="{
+                  disabled: isDetail,
                   labelCol: { span: 12 },
                   wrapperCol: { span: 8, offset: 2 }
                 }"
@@ -157,7 +165,7 @@
                 :prop="`exprs.opts.${index}.threshold`"
                 :rules="[{ required: true, message: '请输入阈值条件值' }]"
               >
-                <a-input-number v-model="opt.threshold" />
+                <a-input-number :disabled="isDetail" v-model="opt.threshold" />
               </a-form-model-item>
             </a-col>
 
@@ -165,6 +173,7 @@
               <AlarmLevelSelect
                 label="告警级别"
                 v-bind="{
+                  disabled: isDetail,
                   labelCol: { span: 9 },
                   wrapperCol: { span: 14, offset: 1 }
                 }"
@@ -179,6 +188,7 @@
                 <transition name="transition-scale">
                   <a-button
                     class="transition-scale"
+                    v-if="isEdit"
                     v-show="formModel.exprs.opts.length > 1"
                     @click="removeExpressionOpt(index)"
                   >删除</a-button>
@@ -191,7 +201,7 @@
 
         <a-row>
           <a-col :span="4" :offset="11">
-            <a-button type="primary" @click="addExpressionOpts">添加</a-button>
+            <a-button v-show="isEdit" type="primary" @click="addExpressionOpts">添加</a-button>
           </a-col>
         </a-row>
 
@@ -244,7 +254,6 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
-    isEdit: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -269,13 +278,15 @@ export default {
       labelCol: { span: 5 },
       wrapperCol: { span: 15, offset: 1 }
     },
+    isEdit: false,
+    isDetail: false,
     spinning: false,
     submitLoading: false
   }),
   computed: {
     editAbleProps () {
       return {
-        disabled: !!this.isEdit
+        disabled: !!this.isEdit || this.isDetail
       }
     },
     model () {
@@ -308,6 +319,12 @@ export default {
         duration: 150
       })
     }, 500),
+    detail (id) {
+      this.fetch(id)
+      this.show('查看阈值规则')
+      this.submit = this.cancel
+      this.isDetail = true
+    },
     edit (id) {
       this.fetch(id)
       this.show('编辑阈值规则')

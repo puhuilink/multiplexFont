@@ -3,6 +3,7 @@
     <a-select
       style="min-width: 80px"
       class="fw"
+      :disabled="disabled"
       :value="value"
       @select="$emit('input', $event)"
     >
@@ -24,6 +25,10 @@ export default {
   components: {},
   props: {
     ...FormModel.Item.props,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: Number,
       default: undefined
