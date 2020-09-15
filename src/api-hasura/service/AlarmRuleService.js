@@ -89,6 +89,13 @@ class AlarmRuleService extends BaseService {
       }
     })
   }
+
+  static async devices (ruleId) {
+    return axios.get('/AlarmAndRule/devices', {
+      ruleId,
+      type: 'alarm'
+    })
+  }
 }
 
 export {

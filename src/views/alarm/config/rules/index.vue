@@ -60,6 +60,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
+        <a-button :disabled="!hasSelectedOne" @click="onDetail">查看</a-button>
         <a-button @click="onAdd" v-action:M0301>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
@@ -84,6 +85,10 @@
       @editSuccess="query(false)"
       ref="schema"
     />
+
+    <AlarmRuleDetailSchema
+      ref="detail"
+    />
   </div>
 </template>
 
@@ -94,13 +99,15 @@ import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
 import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
+import AlarmRuleDetailSchema from '../modules/AlarmRuleDetailSchema/index'
 import moment from 'moment'
 
 export default {
   name: 'AlarmsRules',
   mixins: [Confirm, List],
   components: {
-    AlarmRuleSchema
+    AlarmRuleSchema,
+    AlarmRuleDetailSchema
   },
   data () {
     return {
@@ -132,13 +139,6 @@ export default {
           dataIndex: 'device_model',
           width: 200,
           sorter: true
-        },
-        {
-          title: '设备名称',
-          dataIndex: 'host_id',
-          width: 200,
-          sorter: true,
-          customRender: hostId => hostId ? hostId.join('/') : ''
         },
         {
           title: '监控实体',
@@ -211,6 +211,10 @@ export default {
           })
           .catch(this.$notifyError)
       })
+    },
+    onDetail () {
+      const [id] = this.selectedRowKeys
+      this.$refs['detail'].detail(id)
     },
     async onToggleEnabled (id, enabled) {
       try {
