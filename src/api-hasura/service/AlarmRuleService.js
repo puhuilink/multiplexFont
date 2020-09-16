@@ -65,6 +65,7 @@ class AlarmRuleService extends BaseService {
         },
         fields: [
           'id',
+          'enabled',
           'title',
           'content',
           'mode',
