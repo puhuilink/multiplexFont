@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { ModelService } from '@/api-hasura'
 import CListSelect from '~~~/ListSelect/CListSelect'
+import { DictValueService } from '@/api-hasura'
 
 export default {
   name: 'DeviceBrandListSelect',
@@ -35,13 +35,12 @@ export default {
     }
   },
   methods: {
-    loadData (deviceType) {
-      return ModelService.groupByModelFind({
-        // TODO: Api
-        // where: { deviceType },
+    loadData (value_parent_code) {
+      return DictValueService.find({
+        where: { value_parent_code },
         fields: [
-          'key: model',
-          'label: model'
+          'key: value_code',
+          'label: value_label'
         ],
         alias: 'dataSource'
       }).then(r => r.data.dataSource)

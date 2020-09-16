@@ -113,7 +113,11 @@ import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
 import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
 import AlarmRuleDetailSchema from '../modules/AlarmRuleDetailSchema/index'
 import AlarmRuleGlobalSchema from '../modules/AlarmRuleGlobalSchema/index'
-import moment from 'moment'
+import {
+  ruleColumnSnippetStart,
+  ruleColumnSnippetMiddle,
+  ruleColumnSnippetEnd
+} from '../../config'
 
 export default {
   name: 'AlarmsRules',
@@ -129,43 +133,8 @@ export default {
         Object.fromEntries(allRuleTypeMapping)
       ),
       columns: Object.freeze([
-        {
-          title: '规则名称',
-          dataIndex: 'title',
-          width: 280,
-          sorter: true,
-          fixed: 'left'
-        },
-        {
-          title: '监控类型',
-          dataIndex: 'device_type',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '品牌名称',
-          dataIndex: 'device_brand',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '品牌设备',
-          dataIndex: 'device_model',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '监控实体',
-          dataIndex: 'metric_model_id modelMetric { alias }',
-          width: 200,
-          customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
-        },
-        {
-          title: '检查项',
-          dataIndex: 'endpoint_model_id modelEndpoint { alias }',
-          width: 200,
-          customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
-        },
+        ...ruleColumnSnippetStart(true),
+        ...ruleColumnSnippetMiddle(),
         {
           title: '规则类型',
           dataIndex: 'rule_type',
@@ -173,23 +142,7 @@ export default {
           sorter: true,
           customRender: ruleType => ruleTypeMapping.get(ruleType)
         },
-        {
-          title: '更新时间',
-          dataIndex: 'update_time',
-          width: 200,
-          sorter: true,
-          customRender: time => time ? moment(time).format() : ''
-        },
-        {
-          title: '启用状态',
-          dataIndex: 'enabled',
-          width: 100,
-          sorter: true,
-          scopedSlots: {
-            customRender: 'enabled'
-          },
-          fixed: 'right'
-        }
+        ...ruleColumnSnippetEnd(true)
       ]),
       queryParams: {
         rule_type: ''
@@ -204,15 +157,18 @@ export default {
           ...generateQuery({
             ...restQueryParams,
             // https://github.com/vueComponent/ant-design-vue/issues/971
-            ...enabled === undefined ? {} : { enabled: !!enabled },
+            ...enabled === undefined ? {} : { enabled: !!enabled }
             // TODO
-            mode: 'personal'
-          })
+          }),
+          mode: 'personal'
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then(r => {
+        console.log(r.data)
+        return r.data
+      })
     },
     onAdd () {
       this.$refs.schema.add()

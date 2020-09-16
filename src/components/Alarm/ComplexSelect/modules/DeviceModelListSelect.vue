@@ -10,7 +10,7 @@
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { ModelService } from '@/api-hasura'
+import { DictValueService } from '@/api-hasura'
 
 export default {
   name: 'DeviceModelListSelect',
@@ -34,12 +34,12 @@ export default {
     }
   },
   methods: {
-    loadData (model) {
-      return ModelService.hostFind({
-        where: { model },
+    loadData (value_parent_code) {
+      return DictValueService.find({
+        where: { value_parent_code },
         fields: [
-          'key: host_type',
-          'label: host'
+          'key: value_code',
+          'label: value_label'
         ],
         alias: 'dataSource'
       }).then(r => r.data.dataSource)

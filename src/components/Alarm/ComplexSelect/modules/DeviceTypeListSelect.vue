@@ -10,9 +10,10 @@
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
+import { DictValueService } from '@/api-hasura'
 
 export default {
-  name: 'DeviceModelListSelect',
+  name: 'DeviceTypeListSelect',
   mixins: [],
   components: {
     CListSelect
@@ -26,17 +27,23 @@ export default {
   },
   data: () => ({}),
   computed: {},
-  watch: {
-    deviceBrand (deviceBrand) {
-      this.$refs['listSelect'].reset()
-      deviceBrand && this.$refs['listSelect'].refresh(deviceBrand)
+  watch: {},
+  methods: {
+    async loadData () {
+      return DictValueService.find({
+        where: {
+          value_param: '1'
+        },
+        fields: [
+          'key: value_code',
+          'label: value_label'
+        ],
+        alias: 'dataSource'
+      }).then(r => r.data.dataSource)
     }
   },
-  methods: {
-    async loadData (model) {
-      // TODO: Api
-      return []
-    }
+  mounted () {
+    this.$refs['listSelect'].refresh()
   }
 }
 </script>
