@@ -64,6 +64,14 @@
         <a-button @click="onAdd" v-action:M0301>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
+        <a-dropdown>
+          <a-menu slot="overlay" @click="onEditGlobalRule">
+            <a-menu-item key="merge">合并规则</a-menu-item>
+            <a-menu-item key="upgrade">升级规则</a-menu-item>
+            <a-menu-item key="recover">消除规则</a-menu-item>
+          </a-menu>
+          <a-button class="fr" type="primary"> 全局告警规则设置 <a-icon type="down" /> </a-button>
+        </a-dropdown>
         <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button> -->
         <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button> -->
       </template>
@@ -89,6 +97,10 @@
     <AlarmRuleDetailSchema
       ref="detail"
     />
+
+    <AlarmRuleGlobalSchema
+      ref="global"
+    />
   </div>
 </template>
 
@@ -100,6 +112,7 @@ import _ from 'lodash'
 import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
 import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
 import AlarmRuleDetailSchema from '../modules/AlarmRuleDetailSchema/index'
+import AlarmRuleGlobalSchema from '../modules/AlarmRuleGlobalSchema/index'
 import moment from 'moment'
 
 export default {
@@ -107,7 +120,8 @@ export default {
   mixins: [Confirm, List],
   components: {
     AlarmRuleSchema,
-    AlarmRuleDetailSchema
+    AlarmRuleDetailSchema,
+    AlarmRuleGlobalSchema
   },
   data () {
     return {
@@ -190,7 +204,9 @@ export default {
           ...generateQuery({
             ...restQueryParams,
             // https://github.com/vueComponent/ant-design-vue/issues/971
-            ...enabled === undefined ? {} : { enabled: !!enabled }
+            ...enabled === undefined ? {} : { enabled: !!enabled },
+            // TODO
+            mode: 'personal'
           })
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
@@ -216,15 +232,20 @@ export default {
       const [id] = this.selectedRowKeys
       this.$refs['detail'].detail(id)
     },
+    onEditGlobalRule ({ key: ruleType }) {
+      // console.log(ruleType)
+      this.$refs['global'].edit(ruleType)
+    },
     async onToggleEnabled (id, enabled) {
       try {
         this.$refs['table'].loading = true
         //
         await AlarmRuleService.batchToggleEnabled([id], enabled)
+        await this.query(false)
       } catch (e) {
         throw e
       } finally {
-        this.query(false)
+        this.$refs['table'].loading = false
       }
     },
     onEdit () {

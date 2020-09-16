@@ -111,7 +111,8 @@ export default {
       try {
         this.spinning = true
         const model = await AlarmRuleService.detail(id)
-        // AlarmRuleService.devices(id)
+        // TODO
+        AlarmRuleService.devices(id)
         this.model = AlarmRuleModelFactory.create(model)
       } catch (e) {
         this.model = {}

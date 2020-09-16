@@ -197,10 +197,11 @@ export default {
         this.$refs['table'].loading = true
         //
         await StrategyService.batchToggleEnabled(id, enabled)
+        await this.query(false)
       } catch (e) {
         throw e
       } finally {
-        this.query(false)
+        this.$refs['table'].loading = false
       }
     },
     onEdit () {

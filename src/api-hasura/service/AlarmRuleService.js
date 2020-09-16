@@ -56,6 +56,27 @@ class AlarmRuleService extends BaseService {
     return detail
   }
 
+  static async global (rule_type) {
+    const { data: { alarmRuleList } } = await query(
+      AlarmRuleDao.find({
+        where: {
+          rule_type,
+          mode: 'global'
+        },
+        fields: [
+          'id',
+          'title',
+          'content',
+          'mode',
+          'ruleType: rule_type'
+        ],
+        alias: 'alarmRuleList'
+      })
+    )
+
+    return _.first(alarmRuleList)
+  }
+
   /**
    * 前转规则的通知内容
    */
@@ -91,9 +112,11 @@ class AlarmRuleService extends BaseService {
   }
 
   static async devices (ruleId) {
-    return axios.get('/AlarmAndRule/devices', {
-      ruleId,
-      type: 'alarm'
+    return axios.get('/AlarmAndRule/ruleDevices', {
+      params: {
+        ruleId,
+        type: 'alarm'
+      }
     })
   }
 }
