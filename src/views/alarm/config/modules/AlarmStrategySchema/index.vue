@@ -353,7 +353,7 @@ export default {
           this.submitLoading = true
           await StrategyService.add(this.model)
           this.$emit('addSuccess')
-          this.$notifyEditSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
           this.$notifyError(e)
@@ -368,19 +368,7 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     async removeExpressionOpt (index) {
-      const container = this.$refs.opts.$el
-      // if (container.scrollTop >= 76) {
-      //   anime({
-      //     targets: [container],
-      //     scrollTop: container.scrollTop - 76,
-      //     duration: 150
-      //   })
-      // }
       this.formModel.exprs.opts.splice(index, 1)
-      await this.$nextTick()
-      console.log(
-        container.scrollTop
-      )
     },
     update () {
       this.$refs.ruleForm.validate(async valid => {

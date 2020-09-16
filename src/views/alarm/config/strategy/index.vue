@@ -133,7 +133,7 @@ export default {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => StrategyService
-          .batchDelete(this.selectedRows)
+          .batchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)
