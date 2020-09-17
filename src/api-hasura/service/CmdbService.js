@@ -67,7 +67,7 @@ class CmdbService extends BaseService {
     // host_type 汉化
     cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
       ...rest,
-      host_type: modelHost.host || host_type
+      host_type: _.get(modelHost, 'host') || host_type
     }))
 
     // 树形结构构建

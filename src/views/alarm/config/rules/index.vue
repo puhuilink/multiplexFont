@@ -60,9 +60,18 @@
 
       <!-- / 操作区域 -->
       <template #operation>
+        <a-button :disabled="!hasSelectedOne" @click="onDetail">查看</a-button>
         <a-button @click="onAdd" v-action:M0301>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
+        <a-dropdown>
+          <a-menu slot="overlay" @click="onEditGlobalRule">
+            <a-menu-item key="merge">合并规则</a-menu-item>
+            <a-menu-item key="upgrade">升级规则</a-menu-item>
+            <a-menu-item key="recover">消除规则</a-menu-item>
+          </a-menu>
+          <a-button class="fr" type="primary"> 全局告警规则设置 <a-icon type="down" /> </a-button>
+        </a-dropdown>
         <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button> -->
         <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button> -->
       </template>
@@ -84,6 +93,14 @@
       @editSuccess="query(false)"
       ref="schema"
     />
+
+    <AlarmRuleDetailSchema
+      ref="detail"
+    />
+
+    <AlarmRuleGlobalSchema
+      ref="global"
+    />
   </div>
 </template>
 
@@ -94,13 +111,21 @@ import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
 import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
-import moment from 'moment'
+import AlarmRuleDetailSchema from '../modules/AlarmRuleDetailSchema/index'
+import AlarmRuleGlobalSchema from '../modules/AlarmRuleGlobalSchema/index'
+import {
+  ruleColumnSnippetStart,
+  ruleColumnSnippetMiddle,
+  ruleColumnSnippetEnd
+} from '../../config'
 
 export default {
   name: 'AlarmsRules',
   mixins: [Confirm, List],
   components: {
-    AlarmRuleSchema
+    AlarmRuleSchema,
+    AlarmRuleDetailSchema,
+    AlarmRuleGlobalSchema
   },
   data () {
     return {
@@ -108,50 +133,8 @@ export default {
         Object.fromEntries(allRuleTypeMapping)
       ),
       columns: Object.freeze([
-        {
-          title: '规则名称',
-          dataIndex: 'title',
-          width: 280,
-          sorter: true,
-          fixed: 'left'
-        },
-        {
-          title: '监控类型',
-          dataIndex: 'device_type',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '品牌名称',
-          dataIndex: 'device_brand',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '品牌设备',
-          dataIndex: 'device_model',
-          width: 200,
-          sorter: true
-        },
-        {
-          title: '设备名称',
-          dataIndex: 'host_id',
-          width: 200,
-          sorter: true,
-          customRender: hostId => hostId ? hostId.join('/') : ''
-        },
-        {
-          title: '监控实体',
-          dataIndex: 'metric_model_id modelMetric { alias }',
-          width: 200,
-          customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
-        },
-        {
-          title: '检查项',
-          dataIndex: 'endpoint_model_id modelEndpoint { alias }',
-          width: 200,
-          customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
-        },
+        ...ruleColumnSnippetStart(true),
+        ...ruleColumnSnippetMiddle(),
         {
           title: '规则类型',
           dataIndex: 'rule_type',
@@ -159,23 +142,7 @@ export default {
           sorter: true,
           customRender: ruleType => ruleTypeMapping.get(ruleType)
         },
-        {
-          title: '更新时间',
-          dataIndex: 'update_time',
-          width: 200,
-          sorter: true,
-          customRender: time => time ? moment(time).format() : ''
-        },
-        {
-          title: '启用状态',
-          dataIndex: 'enabled',
-          width: 100,
-          sorter: true,
-          scopedSlots: {
-            customRender: 'enabled'
-          },
-          fixed: 'right'
-        }
+        ...ruleColumnSnippetEnd(true)
       ]),
       queryParams: {
         rule_type: ''
@@ -191,12 +158,17 @@ export default {
             ...restQueryParams,
             // https://github.com/vueComponent/ant-design-vue/issues/971
             ...enabled === undefined ? {} : { enabled: !!enabled }
-          })
+            // TODO
+          }),
+          mode: 'personal'
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then(r => {
+        console.log(r.data)
+        return r.data
+      })
     },
     onAdd () {
       this.$refs.schema.add()
@@ -212,15 +184,24 @@ export default {
           .catch(this.$notifyError)
       })
     },
+    onDetail () {
+      const [id] = this.selectedRowKeys
+      this.$refs['detail'].detail(id)
+    },
+    onEditGlobalRule ({ key: ruleType }) {
+      // console.log(ruleType)
+      this.$refs['global'].edit(ruleType)
+    },
     async onToggleEnabled (id, enabled) {
       try {
         this.$refs['table'].loading = true
         //
         await AlarmRuleService.batchToggleEnabled([id], enabled)
+        await this.query(false)
       } catch (e) {
         throw e
       } finally {
-        this.query(false)
+        this.$refs['table'].loading = false
       }
     },
     onEdit () {

@@ -17,15 +17,15 @@
 
     <a-form-model-item
       v-bind="formItemLayout"
-      :label="useTime ? '升级时间时间' : '升级周期'"
+      :label="useTime ? '升级时间' : '升级次数'"
       prop="upgrade.number"
       :rules="[
-        { required: true, message: useTime ? '请输入合并时间' : '请输入最大合并时间' }
+        { required: true, message: useTime ? '请输入升级时间' : '请输入升级次数' }
       ]"
     >
       <a-input
         :min="1"
-        :suffix="useTime ? '次' : '分钟'"
+        :suffix="useTime ? '分钟' : '次'"
         type="number"
         v-model.number="_formModel.upgrade.number"
       />

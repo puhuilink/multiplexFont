@@ -22,13 +22,19 @@
         }"
         class="AlarmStrategy__modal-footer-left"
       >
-        <a-select class="enabled" :style="{ width: '100px' }" :value="~~formModel.enabled" @select="formModel.enabled = !!$event">
+        <a-select
+          class="enabled"
+          :style="{ width: '100px' }"
+          :disabled="isDetail"
+          :value="~~formModel.enabled"
+          @select="formModel.enabled = !!$event"
+        >
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="submitLoading" type="primary">提交</a-button>
+      <a-button @click="submit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
     </template>
 
     <!-- / 正文 -->
@@ -44,7 +50,7 @@
             { max: 50, message: '最多输入50个字符' },
           ]"
         >
-          <a-input v-model.trim="formModel.name" />
+          <a-input :disabled="isDetail" v-model.trim="formModel.name" />
         </a-form-model-item>
 
         <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
@@ -73,17 +79,21 @@
               v-bind="{
                 labelCol: { span: 24 }
               }"
-              prop="exprs.cycle"
+              prop="exprs.interval"
               :rules="[
                 { required: true, message: '请输入采集周期' }
               ]"
             >
-              <a-input-number v-model.number="formModel.exprs.cycle" />
+              <a-input-number
+                :min="1"
+                :disabled="isDetail"
+                v-model.number="formModel.exprs.interval"
+              />
             </a-form-model-item>
           </a-col>
 
           <a-col :span="6">
-            <p class="ant-form-item">个采集周期，共计{{ (formModel.exprs.cycle || 0) * 60 }}秒内，</p>
+            <p class="ant-form-item">个采集周期，共计{{ (formModel.exprs.interval || 0) * 60 }}秒内，</p>
           </a-col>
 
           <a-col :span="2" :offset="6">
@@ -93,6 +103,7 @@
           <a-col :span="6">
             <ThresholdConditionSelect
               v-bind="{
+                disabled: isDetail,
                 labelCol: { span: 0 },
                 wrapperCol: { span: 23 }
               }"
@@ -114,7 +125,7 @@
                 { required: true, message: '请输入触发值' }
               ]"
             >
-              <a-input-number v-model="formModel.exprs.trigger_value" />
+              <a-input-number :disabled="isDetail" v-model="formModel.exprs.trigger_value" />
             </a-form-model-item>
           </a-col>
 
@@ -142,6 +153,7 @@
             <a-col :span="10">
               <ThresholdOperatorSelect
                 v-bind="{
+                  disabled: isDetail,
                   labelCol: { span: 12 },
                   wrapperCol: { span: 8, offset: 2 }
                 }"
@@ -157,7 +169,7 @@
                 :prop="`exprs.opts.${index}.threshold`"
                 :rules="[{ required: true, message: '请输入阈值条件值' }]"
               >
-                <a-input-number v-model="opt.threshold" />
+                <a-input-number :disabled="isDetail" v-model="opt.threshold" />
               </a-form-model-item>
             </a-col>
 
@@ -165,6 +177,8 @@
               <AlarmLevelSelect
                 label="告警级别"
                 v-bind="{
+                  disabled: isDetail,
+                  optionDisabled: level => selectedAlarmLevel.includes(level),
                   labelCol: { span: 9 },
                   wrapperCol: { span: 14, offset: 1 }
                 }"
@@ -179,6 +193,7 @@
                 <transition name="transition-scale">
                   <a-button
                     class="transition-scale"
+                    v-if="!isDetail"
                     v-show="formModel.exprs.opts.length > 1"
                     @click="removeExpressionOpt(index)"
                   >删除</a-button>
@@ -191,7 +206,12 @@
 
         <a-row>
           <a-col :span="4" :offset="11">
-            <a-button type="primary" @click="addExpressionOpts">添加</a-button>
+            <a-button
+              v-show="!isDetail"
+              :disabled="formModel.exprs.opts.length === 5"
+              type="primary"
+              @click="addExpressionOpts"
+            >添加</a-button>
           </a-col>
         </a-row>
 
@@ -217,13 +237,13 @@ import _ from 'lodash'
 import uuid from 'uuid/v4'
 
 const makeOpt = () => ({
-  // 用于为 transition 元素绑定唯一 key
-  // TODO: 数据传输时删除该属性
+  // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
   uuid: uuid(),
   operator: '',
   threshold: '',
-  frequency: 0,
-  alarm_level: undefined
+  alarm_level: undefined,
+  frequency: 1,
+  template: ''
 })
 
 export default {
@@ -244,7 +264,6 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
-    isEdit: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -254,7 +273,7 @@ export default {
       hostId: [],
       enabled: 1,
       exprs: {
-        cycle: 1,
+        interval: 1,
         trigger_condition: '',
         trigger_value: undefined,
         opts: [
@@ -269,14 +288,20 @@ export default {
       labelCol: { span: 5 },
       wrapperCol: { span: 15, offset: 1 }
     },
+    isEdit: false,
+    isDetail: false,
     spinning: false,
     submitLoading: false
   }),
   computed: {
     editAbleProps () {
       return {
-        disabled: !!this.isEdit
+        disabled: !!this.isEdit || this.isDetail
       }
+    },
+    selectedAlarmLevel () {
+      const { opts } = this.formModel.exprs
+      return opts.map(({ alarm_level }) => alarm_level).filter(Boolean)
     },
     model () {
       const { exprs, ...rest } = _.cloneDeep(this.formModel)
@@ -284,6 +309,7 @@ export default {
         Reflect.deleteProperty(opt, 'uuid')
         return opt
       })
+      exprs.interval = (exprs.interval || 0) * 60
       return {
         ...rest,
         exprs
@@ -308,6 +334,12 @@ export default {
         duration: 150
       })
     }, 500),
+    detail (id) {
+      this.fetch(id)
+      this.show('查看阈值规则')
+      this.submit = this.cancel
+      this.isDetail = true
+    },
     edit (id) {
       this.fetch(id)
       this.show('编辑阈值规则')
@@ -321,6 +353,7 @@ export default {
         formModel.exprs.opts.forEach(opt => {
           opt['uuid'] = uuid()
         })
+        formModel.exprs.interval = (formModel.exprs.interval || 0) / 60
         this.formModel = formModel
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
@@ -336,7 +369,7 @@ export default {
           this.submitLoading = true
           await StrategyService.add(this.model)
           this.$emit('addSuccess')
-          this.$notifyEditSuccess()
+          this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
           this.$notifyError(e)
@@ -351,19 +384,7 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     async removeExpressionOpt (index) {
-      const container = this.$refs.opts.$el
-      // if (container.scrollTop >= 76) {
-      //   anime({
-      //     targets: [container],
-      //     scrollTop: container.scrollTop - 76,
-      //     duration: 150
-      //   })
-      // }
       this.formModel.exprs.opts.splice(index, 1)
-      await this.$nextTick()
-      console.log(
-        container.scrollTop
-      )
     },
     update () {
       this.$refs.ruleForm.validate(async valid => {

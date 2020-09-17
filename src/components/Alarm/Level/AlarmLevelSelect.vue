@@ -3,13 +3,15 @@
     <a-select
       style="min-width: 80px"
       class="fw"
+      :disabled="disabled"
       :value="value"
       @select="$emit('input', $event)"
     >
       <a-select-option
-        v-for="level in [2, 3, 4, 5]"
+        v-for="level in [1, 2, 3, 4, 5]"
         :key="level"
         :value="level"
+        :disabled="optionDisabled(level)"
       >{{ `L${level}` }}</a-select-option>
     </a-select>
   </a-form-model-item>
@@ -24,6 +26,14 @@ export default {
   components: {},
   props: {
     ...FormModel.Item.props,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    optionDisabled: {
+      type: Function,
+      default: () => false
+    },
     value: {
       type: Number,
       default: undefined

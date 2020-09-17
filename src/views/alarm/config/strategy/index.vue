@@ -54,13 +54,15 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAdd">新建</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
+        <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
+        <a-button @click="onAdd" v-show="tabIndex === 'personal'">新建</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="tabIndex === 'personal'">编辑</a-button>
+        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="tabIndex === 'personal'">删除</a-button>
       </template>
 
       <template v-slot:enabled="enabled, { id }">
         <a-popconfirm
+          v-if="tabIndex === 'personal'"
           v-action:M0304
           :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
           @confirm="onToggleEnabled(id, !enabled)"
@@ -68,6 +70,8 @@
           cancelText="取消">
           <a-button :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button>
         </a-popconfirm>
+        <!-- <a-button v-else :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button> -->
+        <span v-else>{{ enabled ? '启用' : '停用' }}</span>
       </template>
     </CTable>
 
@@ -85,7 +89,11 @@ import { StrategyService } from '@/api-hasura/index'
 import { generateQuery } from '@/utils/graphql'
 import AlarmStrategySchema from '../modules/AlarmStrategySchema/index'
 import _ from 'lodash'
-import moment from 'moment'
+import {
+  ruleColumnSnippetStart,
+  ruleColumnSnippetMiddle,
+  ruleColumnSnippetEnd
+} from '../../config'
 
 export default {
   name: 'AlarmStrategy',
@@ -97,74 +105,9 @@ export default {
   data: () => ({
     tabIndex: 'personal',
     columns: [
-      {
-        title: '阈值名称',
-        dataIndex: 'name',
-        fixed: 'left',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '监控类型',
-        dataIndex: 'device_type',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '品牌名称',
-        dataIndex: 'device_brand',
-        width: 200,
-        sorter: true
-      },
-      // {
-      //   title: '数据域',
-      //   dataIndex: 'alarm_level',
-      //   width: 200,
-      //   sorter: true,
-      // show: true
-      // },
-      {
-        title: '品牌设备',
-        dataIndex: 'device_model',
-        width: 200,
-        sorter: true
-      },
-      {
-        title: '设备名称',
-        dataIndex: 'host_id',
-        width: 200,
-        sorter: true,
-        customRender: hostId => hostId ? hostId.join('/') : ''
-      },
-      {
-        title: '监控实体',
-        dataIndex: 'metric_model_id modelMetric { alias }',
-        width: 200,
-        customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
-      },
-      {
-        title: '检查项',
-        dataIndex: 'endpoint_model_id modelEndpoint { alias }',
-        width: 200,
-        customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'last_update_time',
-        width: 200,
-        sorter: true,
-        customRender: time => time ? moment(time).format() : ''
-      },
-      {
-        title: '启用状态',
-        dataIndex: 'enabled',
-        width: 200,
-        fixed: 'right',
-        sorter: true,
-        scopedSlots: {
-          customRender: 'enabled'
-        }
-      }
+      ...ruleColumnSnippetStart(),
+      ...ruleColumnSnippetMiddle(),
+      ...ruleColumnSnippetEnd()
     ]
   }),
   computed: {},
@@ -183,10 +126,14 @@ export default {
     onAdd () {
       this.$refs.schema.add()
     },
+    onDetail () {
+      const [id] = this.selectedRowKeys
+      this.$refs.schema.detail(id)
+    },
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => StrategyService
-          .batchDelete(this.selectedRows)
+          .batchDelete(this.selectedRowKeys)
           .then(() => {
             this.$notifyDeleteSuccess()
             this.query(false)
@@ -199,10 +146,11 @@ export default {
         this.$refs['table'].loading = true
         //
         await StrategyService.batchToggleEnabled(id, enabled)
+        await this.query(false)
       } catch (e) {
         throw e
       } finally {
-        this.query(false)
+        this.$refs['table'].loading = false
       }
     },
     onEdit () {
