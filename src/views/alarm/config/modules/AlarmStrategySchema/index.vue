@@ -79,17 +79,21 @@
               v-bind="{
                 labelCol: { span: 24 }
               }"
-              prop="exprs.cycle"
+              prop="exprs.interval"
               :rules="[
                 { required: true, message: '请输入采集周期' }
               ]"
             >
-              <a-input-number :disabled="isDetail" v-model.number="formModel.exprs.cycle" />
+              <a-input-number
+                :min="1"
+                :disabled="isDetail"
+                v-model.number="formModel.exprs.interval"
+              />
             </a-form-model-item>
           </a-col>
 
           <a-col :span="6">
-            <p class="ant-form-item">个采集周期，共计{{ (formModel.exprs.cycle || 0) * 60 }}秒内，</p>
+            <p class="ant-form-item">个采集周期，共计{{ (formModel.exprs.interval || 0) * 60 }}秒内，</p>
           </a-col>
 
           <a-col :span="2" :offset="6">
@@ -174,6 +178,7 @@
                 label="告警级别"
                 v-bind="{
                   disabled: isDetail,
+                  optionDisabled: level => selectedAlarmLevel.includes(level),
                   labelCol: { span: 9 },
                   wrapperCol: { span: 14, offset: 1 }
                 }"
@@ -188,7 +193,7 @@
                 <transition name="transition-scale">
                   <a-button
                     class="transition-scale"
-                    v-if="isEdit"
+                    v-if="!isDetail"
                     v-show="formModel.exprs.opts.length > 1"
                     @click="removeExpressionOpt(index)"
                   >删除</a-button>
@@ -201,7 +206,12 @@
 
         <a-row>
           <a-col :span="4" :offset="11">
-            <a-button v-show="isEdit" type="primary" @click="addExpressionOpts">添加</a-button>
+            <a-button
+              v-show="!isDetail"
+              :disabled="formModel.exprs.opts.length === 5"
+              type="primary"
+              @click="addExpressionOpts"
+            >添加</a-button>
           </a-col>
         </a-row>
 
@@ -227,13 +237,13 @@ import _ from 'lodash'
 import uuid from 'uuid/v4'
 
 const makeOpt = () => ({
-  // 用于为 transition 元素绑定唯一 key
-  // TODO: 数据传输时删除该属性
+  // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
   uuid: uuid(),
   operator: '',
   threshold: '',
-  frequency: 0,
-  alarm_level: undefined
+  alarm_level: undefined,
+  frequency: 1,
+  template: ''
 })
 
 export default {
@@ -263,7 +273,7 @@ export default {
       hostId: [],
       enabled: 1,
       exprs: {
-        cycle: 1,
+        interval: 1,
         trigger_condition: '',
         trigger_value: undefined,
         opts: [
@@ -289,12 +299,17 @@ export default {
         disabled: !!this.isEdit || this.isDetail
       }
     },
+    selectedAlarmLevel () {
+      const { opts } = this.formModel.exprs
+      return opts.map(({ alarm_level }) => alarm_level).filter(Boolean)
+    },
     model () {
       const { exprs, ...rest } = _.cloneDeep(this.formModel)
       exprs.opts = exprs.opts.map(opt => {
         Reflect.deleteProperty(opt, 'uuid')
         return opt
       })
+      exprs.interval = (exprs.interval || 0) * 60
       return {
         ...rest,
         exprs
@@ -338,6 +353,7 @@ export default {
         formModel.exprs.opts.forEach(opt => {
           opt['uuid'] = uuid()
         })
+        formModel.exprs.interval = (formModel.exprs.interval || 0) / 60
         this.formModel = formModel
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel
