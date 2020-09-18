@@ -65,7 +65,7 @@ class ModelService extends BaseService {
    * 查询 host 模型下的 endpoint 列表
    * @param {Number} modelHostId t_model_host.host_id
    */
-  static async modelEndpointList (value) {
+  static async endpointList (value) {
     const { data: { modelHostEndpointList } } = await query(
       // FIXME: hack
       ModelHostEndpointDao.find({
@@ -86,6 +86,7 @@ class ModelService extends BaseService {
           `endpoint {
             id
             alias
+            collect_type
           }`
         ],
         alias: 'modelHostEndpointList'
@@ -96,7 +97,7 @@ class ModelService extends BaseService {
       .filter(({ endpoint }) => endpoint && endpoint.id)
       .map(({ endpoint }) => ({
         key: endpoint.id,
-        label: endpoint.alias
+        label: endpoint.alias + ' ' + endpoint.collect_type
       }))
     const uniqList = _.uniq(validList, ({ key }) => key)
     return uniqList
@@ -106,7 +107,7 @@ class ModelService extends BaseService {
    * 查询 endpoint 模型下的 metric 列表
    * @param {Number} endpointModel t_model_endpoint.endpoint_id
    */
-  static async modelMetricList (endpointModel) {
+  static async metricList (endpointModel) {
     const { data: { modelEndpointMetricList } } = await query(
       ModelEndpointMetricDao.find({
         where: {

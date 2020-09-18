@@ -144,7 +144,7 @@ class CmdbService extends BaseService {
     )
   }
 
-  static async cmdbEndpointList (id) {
+  static async endpointList (id) {
     if (!id) {
       return []
     }
@@ -174,7 +174,7 @@ class CmdbService extends BaseService {
     }))
   }
 
-  static async cmdbMetricList (endpoint_id) {
+  static async metricList (endpoint_id) {
     if (!endpoint_id) {
       return []
     }

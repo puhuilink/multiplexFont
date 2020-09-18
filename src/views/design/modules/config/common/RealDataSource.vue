@@ -1,23 +1,13 @@
 <template>
   <div class="RealDataSource">
-    <a-tooltip placement="top" title="加载真实数据" arrowPointAtCenter>
-      <!-- :disabled="!available"  -->
-      <a-button
-        :loading="btnLoading"
-        @click="change(true)"
-      >预览</a-button>
-      <!-- <a-button @click="preview">预览</a-button> -->
-    </a-tooltip>
+    <a-form-item v-bind="formItemLayout">
+      <a-button :loading="btnLoading" @click="preview">预览</a-button>
+    </a-form-item>
 
-    <!-- / 横轴类型 -->
-    <a-form-item
-      label="横轴类型"
-      v-bind="formItemLayout"
-      v-if="useXAxisType"
-    >
+    <a-form-item label="横轴类型" v-bind="formItemLayout" v-if="useXAxisType" >
       <a-select class="fw" v-model="xAxisType" @select="change">
         <a-select-option
-          v-for="(option, idx) in options.xAxisType"
+          v-for="(option, idx) in xAxisTypeList"
           :key="idx"
           :value="option.value"
         >
@@ -26,12 +16,7 @@
       </a-select>
     </a-form-item>
 
-    <!-- / 图例内容 -->
-    <a-form-item
-      label="图例内容"
-      v-bind="formItemLayout"
-      v-if="useLegendType"
-    >
+    <a-form-item label="图例内容" v-bind="formItemLayout" v-if="useLegendType" >
       <a-select
         class="fw"
         v-model="legendType"
@@ -41,15 +26,9 @@
       </a-select>
     </a-form-item>
 
-    <!-- / 查询时间 -->
     <TimeRange v-if="useTimeRange" />
 
-    <!-- / 计算类型 -->
-    <a-form-item
-      label="计算类型"
-      v-bind="formItemLayout"
-      v-if="useRefreshTime"
-    >
+    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-select
         allowClear
         class="fw"
@@ -63,12 +42,7 @@
       </a-select>
     </a-form-item>
 
-    <!-- / 分组 -->
-    <a-form-item
-      label="分组"
-      v-bind="formItemLayout"
-      v-if="useRefreshTime"
-    >
+    <a-form-item label="分组" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-select
         allowClear
         class="fw"
@@ -82,20 +56,88 @@
       </a-select>
     </a-form-item>
 
-    <!-- / 数据源 -->
-    <ComboSelect
-      v-bind="{ multiple: false, hasDetailInstance: true, ...comboSelectProps }"
-      v-model="resourceConfig"
-      v-if="useComboSelect"
-      ref="comboSelect"
-    />
+    <a-form-item label="监控类型" v-bind="formItemLayout" required>
+      <DeviceTypeSelect
+        class="fw"
+        :value="resourceConfig.deviceType"
+        @input="deviceType => {
+          resourceConfig = {
+            ...resourceConfig,
+            ...{
+              deviceType,
+              deviceBrand: null,
+              deviceModel: null,
+              hostId: []
+            }
+          }
+        }"
+      />
+    </a-form-item>
 
-    <!-- / 刷新时间 -->
-    <a-form-item
-      label="刷新时间"
-      v-bind="formItemLayout"
-      v-if="useRefreshTime"
-    >
+    <a-form-item label="品牌名称" v-bind="formItemLayout" required>
+      <DeviceBrandSelect
+        class="fw"
+        :deviceType="resourceConfig.deviceType"
+        :value="resourceConfig.deviceBrand"
+        @input="deviceBrand => {
+          resourceConfig = {
+            ...resourceConfig,
+            ...{
+              deviceBrand,
+              deviceModel: null,
+              hostId: []
+            }
+          }
+        }"
+      />
+    </a-form-item>
+
+    <a-form-item label="品牌设备" v-bind="formItemLayout" required>
+      <DeviceModelSelect
+        class="fw"
+        :deviceBrand="resourceConfig.deviceBrand"
+        :value="resourceConfig.deviceModel"
+        @input="deviceModel => {
+          resourceConfig = {
+            ...resourceConfig,
+            ...{
+              deviceModel,
+              hostId: []
+            }
+          }
+        }"
+      />
+    </a-form-item>
+
+    <a-form-item label="设备名称" v-bind="formItemLayout" required>
+      <HostSelect
+        multiple
+        class="fw"
+        :hostType="resourceConfig.deviceModel"
+        v-model="resourceConfig.hostId"
+      />
+    </a-form-item>
+
+    <a-form-item label="监控实体" v-bind="formItemLayout" required >
+      <EndpointSelect
+        schema="model"
+        v-bind="selectProps"
+        :parentId="resourceConfig.deviceModel"
+        v-model="resourceConfig.endpointModelId"
+      />
+    </a-form-item>
+
+    <a-form-item label="检查项" v-bind="formItemLayout" required >
+      <MetricSelect
+        schema="model"
+        multiple
+        v-bind="selectProps"
+        :parentId="resourceConfig.endpointModel"
+        v-model="resourceConfig.metricModelIds"
+      />
+    </a-form-item>
+
+    <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-input
         :min="0"
         :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
@@ -105,12 +147,7 @@
       />
     </a-form-item>
 
-    <!-- / 外部 Ci 可用 -->
-    <a-form-item
-      label="外部CI可用"
-      v-bind="formItemLayout"
-      v-if="useExternalCi"
-    >
+    <a-form-item label="外部CI可用" v-bind="formItemLayout" v-if="useExternalCi" >
       <a-checkbox
         :checked="!!externalCi"
         @input="externalCi = $event"
@@ -121,25 +158,46 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import { ComboSelect } from '@/components/Resource'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
+import { CmdbHostSelect } from '~~~/Resource/Cmdb/index'
+import { MetricService } from '@/api-hasura'
+import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
+import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
+import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
+import HostFactory from '~~~/Unknown/Host'
+import EndpointSelect from '~~~/Unknown/Endpoint'
+import MetricSelect from '~~~/Unknown/Metric'
 
 export default {
   name: 'RealDataSource',
   mixins: [DataSourceMixins],
   components: {
-    ComboSelect,
-    TimeRange
+    TimeRange,
+    DeviceTypeSelect: DeviceTypeFactory.create('select'),
+    DeviceBrandSelect: DeviceBrandFactory.create('select'),
+    DeviceModelSelect: DeviceModelFactory.create('select'),
+    HostSelect: HostFactory.create('select'),
+    CmdbHostSelect,
+    EndpointSelect,
+    MetricSelect
   },
   props: {
-    useComboSelect: {
-      type: Boolean,
-      default: true
-    },
     comboSelectProps: {
       type: Object,
       default: () => ({})
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    toolTip: {
+      type: Boolean,
+      default: true
+    },
+    useComboSelect: {
+      type: Boolean,
+      default: true
     },
     useExternalCi: {
       type: Boolean,
@@ -164,68 +222,62 @@ export default {
   },
   data: () => ({
     calculateTypeList: [
-      {
-        label: '求和',
-        value: 'total'
-      },
-      {
-        label: '最大值',
-        value: 'max'
-      },
-      {
-        label: '均值',
-        value: 'average'
-      }
+      { label: '求和', value: 'total' },
+      { label: '最大值', value: 'max' },
+      { label: '均值', value: 'average' }
     ],
     groupList: [
-      {
-        label: '精确到分',
-        value: 'minute'
-      },
-      {
-        label: '精确到小时',
-        value: 'hour'
-      },
-      {
-        label: '精确到天',
-        value: 'day'
-      }
+      { label: '精确到分', value: 'minute' },
+      { label: '精确到小时', value: 'hour' },
+      { label: '精确到天', value: 'day' }
     ],
     legendTypeList: [
-      {
-        label: 'Ci',
-        value: 'ci'
-      },
-      {
-        label: 'Instance',
-        value: 'instance'
-      },
-      {
-        label: 'Kpi',
-        value: 'kpi'
-      }
+      { label: 'Ci', value: 'ci' },
+      { label: 'Instance', value: 'instance' },
+      { label: 'Kpi', value: 'kpi' }
+    ],
+    xAxisTypeList: [
+      { name: '资源', value: 'RESOURCE' },
+      { name: '时间', value: 'TIME' }
     ]
   }),
   computed: {
     legendType: {
       set (legendType) {
         // TODO: 此处先按单选实现，后期扩展为多选，始终以数组传递，方便向后兼容
-        legendType = Array.isArray(legendType) ? legendType : [legendType]
-        Object.assign(this.config.dataConfig.dbDataConfig, { legendType })
+        Object.assign(this.config.dataConfig.dbDataConfig, {
+          legendType: _.castArray(legendType)
+        })
       },
       get () {
         return _.get(this, 'config.dataConfig.dbDataConfig.legendType', ['ci'])
       }
+    },
+    selectProps () {
+      const { toolTip, multiple } = this
+      return { toolTip, multiple }
     }
   },
   methods: {
-    preview () {
-      // const { data } = await CmdbService.latestMetric()
-      this.$refs['comboSelect'].preview()
+    async preview () {
+      const result = await MetricService.chartValue({
+        resourceConfig: {
+          hostIds: [4329475],
+          metricModels: [4329474],
+          endpointModel: 4329473
+        }
+      })
+      console.log(result)
+      this.change(true)
     }
   }
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
+.RealDataSource {
+  .ant-select {
+    width: 100%;
+  }
+}
 </style>

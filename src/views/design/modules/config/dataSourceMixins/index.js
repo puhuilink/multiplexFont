@@ -17,19 +17,6 @@ const formItemLayout = {
 export default {
   data: () => ({
     formItemLayout,
-    options: {
-      // TODO: 拆分为常量
-      xAxisType: [
-        {
-          name: '资源',
-          value: 'RESOURCE'
-        },
-        {
-          name: '时间',
-          value: 'TIME'
-        }
-      ]
-    },
     btnLoading: false
   }),
   computed: {

@@ -20,28 +20,30 @@ export class AdaptorResourceConfig {
   ])
 
   constructor ({
-    // hostIds = [],
-    // endpointModel = null,
-    // metricModels = [],
-    // modelHostId = null
     // mock
-    hostType = '',
-    hostIds = [257882722304],
-    endpointModel = 1988235274,
-    metricModels = [1988235275],
+    hostIds = [],
+    endpointModelId = 1149375446,
+    metricModelIds = [],
     modelHostId = 1988235264,
+    deviceType = 'Host',
+    deviceBrand = 'HostLinux',
+    deviceModel = 'HostAIXLinux',
+    hostId = [],
     // enum: day / hour / minute
     isGroup = '',
     // enum: total / max / average
     calculateType = ''
   }) {
-    this.hostType = hostType
     this.hostIds = hostIds
-    this.endpointModel = endpointModel
-    this.metricModels = metricModels
+    this.endpointModelId = endpointModelId
+    this.metricModelIds = metricModelIds
     this.modelHostId = modelHostId
     this.isGroup = isGroup
     this.calculateType = calculateType
+    this.deviceType = deviceType
+    this.deviceModel = deviceModel
+    this.hostId = hostId
+    this.deviceBrand = deviceBrand
   }
 
   static transfer (dataList = []) {
