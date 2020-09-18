@@ -1,8 +1,12 @@
 <template>
-  <a-spin :spinning="baseLoading">
-    <a-form :form="form" layout="vertical">
+  <a-spin :spinning="loading">
+    <a-form
+      :form="form"
+      layout="vertical">
       <a-row>
-        <a-col :md="12" :span="24">
+        <a-col
+          :md="12"
+          :span="24">
           <a-form-item
             label="姓名"
           >
@@ -32,7 +36,9 @@
       </a-row>
 
       <a-row>
-        <a-col :md="12" :span="24">
+        <a-col
+          :md="12"
+          :span="24">
           <a-form-item
             label="岗位职责"
           >
@@ -58,8 +64,9 @@
       </a-row>
 
       <a-row>
-
-        <a-col :md="12" :span="24">
+        <a-col
+          :md="12"
+          :span="24">
           <a-form-item
             label="备注"
           >
@@ -80,7 +87,10 @@
             />
           </a-form-item>
           <a-form-item>
-            <a-button htmlType="submit" type="primary" @click="editUser">更新基本信息</a-button>
+            <a-button
+              htmlType="submit"
+              type="primary"
+              @click="editCurrentUser">更新基本信息</a-button>
           </a-form-item>
         </a-col>
       </a-row>
@@ -92,58 +102,75 @@
 import { UserService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import { pick } from 'lodash'
-// import pick from 'lodash.pick'
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   name: 'BaseSettings',
   data () {
     return {
       form: this.$form.createForm(this),
-      userForm: [],
+      userFormDate: [],
       where: {},
-      baseLoading: false
+      loading: false
     }
   },
+  computed: {
+    ...mapGetters(['userId'])
+  },
   methods: {
-    getUser (parameter) {
+    ...mapMutations(['SET_NAME']),
+    /**
+     * 获取当前用户信息
+     * @event
+     */
+    getCurrentUser () {
+      this.loading = true
       return UserService.find({
         where: {
-          ...generateQuery(parameter)
+          ...generateQuery({ user_id: this.userId })
         },
-        fields: ['user_id', 'staff_name', 'job_title', 'note'],
+        fields: Object.keys(this.form.getFieldsValue()),
         alias: 'data'
-      }).then((r) => r.data.data)
+      })
+        .then((r) => {
+          const [data] = r.data.data
+          this.userFormDate = data
+          const keys = Object.keys(this.form.getFieldsValue())
+          this.form.setFieldsValue(pick(this.userFormDate, keys))
+        })
+        .catch((e) => {
+          this.$message.error('获取数据失败')
+          this.$message.error('失败信息为：' + e)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
-    editUser () {
+    /**
+     * 修改当前用户信息
+     * @event
+     */
+    editCurrentUser () {
       this.form.validateFields((errors, values) => {
-        if (!errors) {
-          this.baseLoading = true
-          UserService.update(values, this.where).then((msg) => {
+        if (errors) return
+        this.loading = true
+        UserService.update(values, { user_id: this.userId })
+          .then((msg) => {
             this.$message.success('修改成功')
-            this.$store.commit('SET_NAME', { name: values.staff_name })
-          }).catch((e) => {
-            this.$message.error('修改失败')
-          }).finally(() => {
-            this.baseLoading = false
+            this.SET_NAME({ name: values.staff_name })
           })
-        }
+          .catch((e) => {
+            this.$message.error('修改失败')
+            this.$message.error('失败信息为：' + e)
+          })
+          .finally(() => {
+            this.loading = false
+          })
       })
     }
   },
-  async mounted () {
-    try {
-      this.baseLoading = true
-      this.where = {
-        user_id: this.$store.getters.roles.userId
-      }
-      const [data] = await this.getUser(this.where)
-      this.userForm = data
-      const keys = Object.keys(this.form.getFieldsValue())
-      this.form.setFieldsValue(pick(this.userForm, keys))
-    } catch (error) {
-      this.$message.error('获取数据失败')
-    } finally {
-      this.baseLoading = false
-    }
+  mounted () {
+    this.getCurrentUser()
   }
 }
 </script>
