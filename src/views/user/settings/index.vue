@@ -1,17 +1,17 @@
 <template>
-  <a-layout id="components-layout-demo-top-side">
-    <a-layout-content style="padding: 0 50px">
-      <a-layout class="setting-index-A-layout">
-        <a-layout-sider width="200" style="background: #fff">
+  <a-layout>
+    <a-layout-content style="setting_content">
+      <a-layout class="setting_content_layout">
+        <a-layout-sider width="200">
           <a-menu
             mode="inline"
             :default-selected-keys="selectedKeys"
-            style="height: 100%"
+            class="setting_content_layout_menu"
           >
-            <a-menu-item key="1">
+            <a-menu-item key="base">
               <router-link to="/settings/base">基本设置</router-link>
             </a-menu-item>
-            <a-menu-item key="2">
+            <a-menu-item key="security">
               <router-link to="/settings/security">安全设置</router-link>
             </a-menu-item>
           </a-menu>
@@ -27,24 +27,34 @@
 <script>
 
 export default {
+  name: 'Settings',
   data () {
     return {
       selectedKeys: []
     }
   },
   created () {
-    if (window.location.href.includes('base')) {
-      this.selectedKeys = ['1']
+    if (this.$route.path.includes('base')) {
+      this.selectedKeys = ['base']
     } else {
-      this.selectedKeys = ['2']
+      this.selectedKeys = ['security']
     }
   }
 }
 </script>
 
-<style>
-.setting-index-A-layout{
-       padding: 24px 0;
-       background: #fff;height: 85vh;
+<style lang="less" >
+.setting{
+  &_content{
+    padding: 0 50px;
+    &_layout{
+      padding: 24px 0;
+      background: #fff;
+      height: 85vh;
+      &_menu{
+        height: 100vh;
+      }
+    }
+  }
 }
 </style>
