@@ -362,7 +362,7 @@ export const asyncRouterMap = [
               {
                 path: '/settings/security',
                 name: 'SecuritySettings',
-                component: () => import('@/views/user/settings/modules/Security'),
+                component: () => import('@/views/user/settings/modules/SecuritySettings'),
                 meta: { title: '安全设置', hidden: true, keepAlive: true }
               }
             ]
