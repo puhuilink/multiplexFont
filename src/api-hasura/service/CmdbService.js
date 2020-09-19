@@ -157,9 +157,7 @@ class CmdbService extends BaseService {
           `endpointList: endpointRelation {
             key: endpoint_id
             endpoint {
-              modelEndpoint {
-                label: alias
-              }
+              label: alias
             }
           }`
         ],
@@ -169,9 +167,10 @@ class CmdbService extends BaseService {
 
     const endpointList = _.get(cmdbHostList, '[0].endpointList', [])
 
+    console.log(endpointList)
     return endpointList.map(e => ({
       key: e.key,
-      label: _.get(e, 'endpoint.modelEndpoint.label', e.key)
+      label: _.get(e, 'endpoint.label', e.key)
     }))
   }
 
