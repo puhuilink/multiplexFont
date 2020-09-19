@@ -72,7 +72,7 @@ class ModelService extends BaseService {
         where: {
           ...typeof value === 'string' ? {
             host: {
-              host_type: {
+              host_type_dict_value_code: {
                 _eq: value
               }
             }

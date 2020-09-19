@@ -76,7 +76,7 @@
 
       <CmdbHostSelect
         v-bind="ctx.editAbleProps"
-        :hostType="model.deviceModel"
+        :hostTypeDictValueCode="model.deviceModel"
         multiple
         v-model="model.hostId"
       />

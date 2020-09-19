@@ -58,9 +58,9 @@
       <a-range-picker
         :allowClear="false"
         class="TimeRange__date_picker"
-        format="YYYY-MM-DD HH:mm"
+        format="YY-MM-DD HH:mm"
         :placeholder="['开始时间', '结束时间']"
-        :show-time="{ format: 'HH:mm' }"
+        :showTime="{ format: 'HH:mm' }"
         :valueFormat="TIME_RANGE_FORMAT"
         v-model="timeRangeConfig.customTimeRange"
         @ok="change()"
@@ -186,8 +186,13 @@ export default {
     width: 100%;
   }
   &__date_picker {
-    margin: -50% !important;
-    width: 150% !important;
+    margin: -52% !important;
+    width: 155% !important;
+  }
+
+  .ant-calendar-picker-input.ant-input {
+    padding: 0;
+    padding-left: 8px;
   }
 }
 </style>

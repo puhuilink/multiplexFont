@@ -119,7 +119,7 @@
       <HostSelect
         multiple
         class="fw"
-        :hostType="resourceConfig.deviceModel"
+        :hostTypeDictValueCode="resourceConfig.deviceModel"
         :value="resourceConfig.hostId"
         @input="hostId => {
           resourceConfig = {

@@ -1,4 +1,4 @@
-import { alert } from '../config/client'
+import { imp } from '../config/client'
 import { BaseDao } from './BaseDao'
 import { readonly } from 'core-decorators'
 
@@ -7,7 +7,7 @@ class ModelEndpointMetricDao extends BaseDao {
   static SCHEMA = 't_model_endpoint_metric'
 
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = imp
 
   @readonly
   static FIELDS_MAPPING = new Map([])

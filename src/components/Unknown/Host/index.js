@@ -1,18 +1,21 @@
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { CmdbService } from '@/api-hasura'
+import { ModelService } from '@/api-hasura'
 import SelectMixin from '../SelectMixin'
 
-const loadData = (host_type) => CmdbService.hostFind({
-  where: { host_type },
+const loadData = (host_type_dict_value_code) => ModelService.hostFind({
+  where: { host_type_dict_value_code },
   fields: [
-    'key: id',
-    'label: alias'
+    `children {
+      label: alias
+      key: id
+    }`
   ],
   alias: 'dataSource'
-}).then(r => r.data.dataSource)
+}).then(r => r.data.dataSource[0] || {})
+  .then(({ children = [] }) => children)
 
 const props = {
-  hostType: {
+  hostTypeDictValueCode: {
     type: String,
     default: ''
   }
@@ -24,6 +27,17 @@ const ListSelect = {
     ...CListSelect.props,
     ...props
   },
+  watch: {
+    hostTypeDictValueCode: {
+      immediate: true,
+      async handler (hostTypeDictValueCode) {
+        await this.$nextTick()
+        this.$refs['listSelect'].reset()
+        hostTypeDictValueCode && this.$refs['listSelect'].refresh(hostTypeDictValueCode)
+      }
+    }
+
+  },
   methods: {
     loadData
   },
@@ -31,8 +45,7 @@ const ListSelect = {
     return h(CListSelect, {
       props: {
         ...this.$props,
-        // autoLoad: true,
-        title: '监控类型',
+        title: '设备名称',
         data: this.loadData
       },
       on: this.$listeners,
@@ -48,20 +61,20 @@ const Select = {
     ...props
   },
   watch: {
-    hostType: {
+    hostTypeDictValueCode: {
       immediate: true,
-      async handler (hostType) {
+      async handler (hostTypeDictValueCode) {
         await this.$nextTick()
         this.list = []
-        hostType && this.fetch(hostType)
+        hostTypeDictValueCode && this.fetch(hostTypeDictValueCode)
       }
     }
   },
   methods: {
-    async fetch (hostType) {
+    async fetch (hostTypeDictValueCode) {
       try {
         this.loading = true
-        this.list = await loadData(hostType)
+        this.list = await loadData(hostTypeDictValueCode)
       } catch (e) {
         this.list = []
         throw e
