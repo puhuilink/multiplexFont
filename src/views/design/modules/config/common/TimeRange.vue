@@ -31,9 +31,12 @@
     <div v-show="timeRangeConfig.timeRangeType === TIME_RANGE_TYPE_RECENT">
       <a-input
         type="number"
-        v-model.number="timeRangeConfig.recentValue"
+        :value="(timeRangeConfig.recentValue || 0) * -1"
+        @change="$event => {
+          timeRangeConfig.recentValue = ($event.target.value || 0) * -1
+          change()
+        }"
         :min="0"
-        @input="change()"
       >
         <a-select
           :defaultValue="TIME_TYPE_HOURS"
