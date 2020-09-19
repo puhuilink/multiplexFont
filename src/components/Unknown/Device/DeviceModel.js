@@ -27,9 +27,13 @@ const ListSelect = {
     ...props
   },
   watch: {
-    deviceBrand (deviceBrand) {
-      this.$refs['listSelect'].reset()
-      deviceBrand && this.$refs['listSelect'].refresh(deviceBrand)
+    deviceBrand: {
+      immediate: true,
+      async handler (deviceBrand) {
+        await this.$nextTick()
+        this.$refs['listSelect'].reset()
+        deviceBrand && this.$refs['listSelect'].refresh(deviceBrand)
+      }
     }
   },
   methods: {
@@ -57,7 +61,8 @@ const Select = {
   watch: {
     deviceBrand: {
       immediate: true,
-      handler (deviceBrand) {
+      async handler (deviceBrand) {
+        await this.$nextTick()
         this.list = []
         deviceBrand && this.fetch(deviceBrand)
       }

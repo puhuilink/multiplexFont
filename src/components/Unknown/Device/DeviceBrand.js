@@ -29,7 +29,8 @@ const ListSelect = {
   watch: {
     deviceType: {
       immediate: true,
-      handler (deviceType) {
+      async handler (deviceType) {
+        await this.$nextTick()
         this.$refs['listSelect'].reset()
         deviceType && this.$refs['listSelect'].refresh(deviceType)
       }
@@ -58,7 +59,8 @@ const Select = {
     ...props
   },
   watch: {
-    deviceType (deviceType) {
+    async deviceType (deviceType) {
+      await this.$nextTick()
       this.list = []
       deviceType && this.fetch(deviceType)
     }

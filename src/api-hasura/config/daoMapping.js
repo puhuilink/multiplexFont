@@ -1,5 +1,6 @@
 import {
-  alert
+  alert,
+  imp
 } from './client'
 
 const VIC_MAIN_LIST = [
@@ -16,22 +17,22 @@ const VIC_MAIN_LIST = [
   { schema: 't_user_group', primaryKey: 'id' },
   // cmdb_instance
   { schema: 't_cmdb_answer', primaryKey: 'id' },
-  { schema: 't_cmdb_endpoint', primaryKey: 'endpoint_id' },
-  { schema: 't_cmdb_endpoint_metric', primaryKey: 'id' },
-  { schema: 't_cmdb_host_endpoint', primaryKey: 'id' },
-  { schema: 't_cmdb_host', primaryKey: 'id' },
-  { schema: 't_cmdb_host_view', primaryKey: 'id' }, // 关联表
-  { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id' }, // postgre view
-  { schema: 't_cmdb_metric', primaryKey: 'id' },
+  { schema: 't_cmdb_endpoint', primaryKey: 'endpoint_id', provider: imp },
+  { schema: 't_cmdb_endpoint_metric', primaryKey: 'id', provider: imp },
+  { schema: 't_cmdb_host_endpoint', primaryKey: 'id', provider: imp },
+  { schema: 't_cmdb_host', primaryKey: 'id', provider: imp },
+  { schema: 't_cmdb_host_view', primaryKey: 'id', provider: imp }, // 关联表
+  { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id', provider: imp }, // postgre view
+  { schema: 't_cmdb_metric', primaryKey: 'id', provider: imp },
   // t_dict
   { schema: 't_dict_value', primaryKey: 'value_code' },
   // cmdb_model
   { schema: 't_metric', primaryKey: 'id' },
   { schema: 't_model_answer', primaryKey: 'id' },
-  { schema: 't_model_endpoint', primaryKey: 'id' },
-  { schema: 't_model_endpoint_metric', primaryKey: 'id' },
-  { schema: 't_model_host_endpoint', primaryKey: 'id' },
-  { schema: 't_model_host', primaryKey: 'id' },
+  { schema: 't_model_endpoint', primaryKey: 'id', provider: imp },
+  { schema: 't_model_endpoint_metric', primaryKey: 'id', provider: imp },
+  { schema: 't_model_host_endpoint', primaryKey: 'id', provider: imp },
+  { schema: 't_model_host', primaryKey: 'id', provider: imp },
   { schema: 't_model_host_group_by_host_type', primaryKey: 'host_type' }, // postgre view
   { schema: 't_model_host_group_by_model', primaryKey: 'model' }, // postgre view
   { schema: 't_cmdb_host_endpoint_metric', primaryKey: 'id' }, // postgre view
