@@ -32,7 +32,7 @@ export class DynamicDataConfig {
         timeRange: timeRangeConfig.getOption()
       })
       .then(r => {
-        // console.log(r)
+        console.log(r)
         return r
       })
       .then(AdaptorResourceConfig.transfer)

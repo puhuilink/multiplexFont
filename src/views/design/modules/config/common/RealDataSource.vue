@@ -161,7 +161,7 @@ import DataSourceMixins from '../dataSourceMixins/index'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
 import { CmdbHostSelect } from '~~~/Resource/Cmdb/index'
-import { MetricService } from '@/api-hasura'
+// import { MetricService } from '@/api-hasura'
 import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
 import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
 import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
@@ -260,15 +260,22 @@ export default {
   },
   methods: {
     async preview () {
-      const result = await MetricService.chartValue({
-        resourceConfig: {
-          hostIds: [4329475],
-          metricModels: [4329474],
-          endpointModel: 4329473
-        }
-      })
-      console.log(result)
-      this.change(true)
+      try {
+        this.btnLoading = true
+        // const result = await MetricService.chartValue({
+        //   resourceConfig: {
+        //     hostIds: [4329475],
+        //     metricModels: [4329474],
+        //     endpointModel: 4329473
+        //   }
+        // })
+        // console.log(result)
+        this.change(true)
+      } catch (e) {
+        throw e
+      } finally {
+        this.btnLoading = false
+      }
     }
   }
 }
