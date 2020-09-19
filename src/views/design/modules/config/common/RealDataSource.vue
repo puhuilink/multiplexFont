@@ -20,6 +20,7 @@
       <a-select
         class="fw"
         v-model="legendType"
+        @select="change()"
       >
         <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.label }}</a-select-option>
       </a-select>
@@ -32,6 +33,7 @@
         allowClear
         class="fw"
         v-model="resourceConfig.calculateType"
+        @select="change()"
       >
         <a-select-option
           v-for="option in calculateTypeList"
@@ -45,6 +47,7 @@
         allowClear
         class="fw"
         v-model="resourceConfig.isGroup"
+        @select="change()"
       >
         <a-select-option
           v-for="option in groupList"
@@ -271,7 +274,7 @@ export default {
         })
       },
       get () {
-        return _.get(this, 'config.dataConfig.dbDataConfig.legendType', ['ci'])
+        return _.get(this.config, 'dataConfig.dbDataConfig.legendType', ['ci'])
       }
     },
     selectProps () {
