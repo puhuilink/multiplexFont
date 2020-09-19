@@ -5,7 +5,7 @@
     </a-form-item>
 
     <a-form-item label="横轴类型" v-bind="formItemLayout" v-if="useXAxisType" >
-      <a-select class="fw" v-model="xAxisType" @select="change">
+      <a-select class="fw" v-model="xAxisType">
         <a-select-option
           v-for="(option, idx) in xAxisTypeList"
           :key="idx"
@@ -20,7 +20,6 @@
       <a-select
         class="fw"
         v-model="legendType"
-        @change="change"
       >
         <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.label }}</a-select-option>
       </a-select>
@@ -33,7 +32,6 @@
         allowClear
         class="fw"
         v-model="resourceConfig.calculateType"
-        @change="change"
       >
         <a-select-option
           v-for="option in calculateTypeList"
@@ -47,7 +45,6 @@
         allowClear
         class="fw"
         v-model="resourceConfig.isGroup"
-        @change="change"
       >
         <a-select-option
           v-for="option in groupList"
@@ -261,8 +258,8 @@ export default {
       { label: 'Kpi', value: 'kpi' }
     ],
     xAxisTypeList: [
-      { name: '资源', value: 'RESOURCE' },
-      { name: '时间', value: 'TIME' }
+      { label: '资源', value: 'RESOURCE' },
+      { label: '时间', value: 'TIME' }
     ]
   }),
   computed: {
