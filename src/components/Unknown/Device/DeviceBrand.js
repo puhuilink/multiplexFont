@@ -59,10 +59,13 @@ const Select = {
     ...props
   },
   watch: {
-    async deviceType (deviceType) {
-      await this.$nextTick()
-      this.list = []
-      deviceType && this.fetch(deviceType)
+    deviceType: {
+      immediate: true,
+      async handler (deviceType) {
+        await this.$nextTick()
+        this.list = []
+        deviceType && this.fetch(deviceType)
+      }
     }
   },
   methods: {

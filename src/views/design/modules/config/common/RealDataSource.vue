@@ -114,7 +114,13 @@
         multiple
         class="fw"
         :hostType="resourceConfig.deviceModel"
-        v-model="resourceConfig.hostId"
+        :value="resourceConfig.hostId"
+        @input="hostId => {
+          resourceConfig = {
+            ...resourceConfig,
+            hostId
+          }
+        }"
       />
     </a-form-item>
 
@@ -161,7 +167,6 @@ import DataSourceMixins from '../dataSourceMixins/index'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
 import { CmdbHostSelect } from '~~~/Resource/Cmdb/index'
-// import { MetricService } from '@/api-hasura'
 import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
 import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
 import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
@@ -262,14 +267,6 @@ export default {
     async preview () {
       try {
         this.btnLoading = true
-        // const result = await MetricService.chartValue({
-        //   resourceConfig: {
-        //     hostIds: [4329475],
-        //     metricModels: [4329474],
-        //     endpointModel: 4329473
-        //   }
-        // })
-        // console.log(result)
         this.change(true)
       } catch (e) {
         throw e
