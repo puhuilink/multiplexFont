@@ -67,7 +67,9 @@
               deviceType,
               deviceBrand: null,
               deviceModel: null,
-              hostId: []
+              hostId: [],
+              endpointModelId: null,
+              metricModelIds: []
             }
           }
         }"
@@ -85,7 +87,9 @@
             ...{
               deviceBrand,
               deviceModel: null,
-              hostId: []
+              hostId: [],
+              endpointModelId: null,
+              metricModelIds: []
             }
           }
         }"
@@ -102,7 +106,9 @@
             ...resourceConfig,
             ...{
               deviceModel,
-              hostId: []
+              hostId: [],
+              endpointModelId: null,
+              metricModelIds: []
             }
           }
         }"
@@ -129,7 +135,14 @@
         schema="model"
         v-bind="selectProps"
         :parentId="resourceConfig.deviceModel"
-        v-model="resourceConfig.endpointModelId"
+        :value="resourceConfig.endpointModelId"
+        @input="endpointModelId => {
+          resourceConfig = {
+            ...resourceConfig,
+            endpointModelId,
+            metricModelIds: []
+          }
+        }"
       />
     </a-form-item>
 
@@ -138,8 +151,14 @@
         schema="model"
         multiple
         v-bind="selectProps"
-        :parentId="resourceConfig.endpointModel"
-        v-model="resourceConfig.metricModelIds"
+        :parentId="resourceConfig.endpointModelId"
+        :value="resourceConfig.metricModelIds"
+        @input="metricModelIds => {
+          resourceConfig = {
+            ...resourceConfig,
+            metricModelIds
+          }
+        }"
       />
     </a-form-item>
 

@@ -58,8 +58,9 @@ export default {
   },
   watch: {
     parentId: {
-      immediate: false,
+      immediate: true,
       async handler (parentId) {
+        await this.$nextTick()
         this.list = []
         parentId && await this.fetch(parentId)
       }
