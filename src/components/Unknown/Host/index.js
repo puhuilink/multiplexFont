@@ -50,7 +50,8 @@ const Select = {
   watch: {
     hostType: {
       immediate: true,
-      handler (hostType) {
+      async handler (hostType) {
+        await this.$nextTick()
         this.list = []
         hostType && this.fetch(hostType)
       }
@@ -68,9 +69,6 @@ const Select = {
         this.loading = false
       }
     }
-  },
-  created () {
-    this.fetch()
   }
 }
 
