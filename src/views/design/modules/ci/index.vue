@@ -16,6 +16,7 @@ import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
 import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
+import { CmdbService } from '@/api-hasura'
 
 export default {
   name: 'Ci',
@@ -36,9 +37,10 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
-    dragend ({ event, node: { dataRef } }) {
+    async dragend ({ event, node: { dataRef } }) {
       if (this.isWithinTopologyScope(event)) {
         // TODO: Icon mapping
+        const { hostId, ...resourceConfig } = await CmdbService.flatInfoByHostId(dataRef.id)
         const other = this.icons.find(icon => icon.name === 'Others')
         const icon = other
         const data = {
@@ -61,14 +63,9 @@ export default {
             radius: 0,
             stroke: 'rgba(145,213,255, 0)'
           },
-          nodeDynamicDataConfig: {
-            resourceConfig: {
-              // TODO: 写入 model 与 instance
-              model: '',
-              selectedInstance: [],
-              selectedKpi: [],
-              selectedAttr: []
-            }
+          resourceConfig: {
+            ...resourceConfig,
+            hostId: [hostId]
           }
         }
 

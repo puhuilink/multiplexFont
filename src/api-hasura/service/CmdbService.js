@@ -4,7 +4,8 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   CmdbHostDao,
   CmdbEndpointMetricDao,
-  CmdbHostEndpointDao
+  CmdbHostEndpointDao,
+  CmdbHostEndpointMetricDao
   // ModelHostGroupByHostTypeDao
 } from '../dao'
 // import _ from 'lodash'
@@ -199,6 +200,24 @@ class CmdbService extends BaseService {
       key: e.key,
       label: _.get(e, 'modelMetric.label', e.key)
     }))
+  }
+
+  static async flatInfoByHostId (host_id) {
+    const { data: { dataSource } } = await query(
+      CmdbHostEndpointMetricDao.find({
+        where: { host_id },
+        fields: [
+          'deviceType: device_type',
+          'deviceModel: device_model_code',
+          'deviceBrand: device_brand_code',
+          'hostId: host_id'
+        ],
+        limit: 1,
+        alias: 'dataSource'
+      })
+    )
+
+    return _.first(dataSource)
   }
 }
 

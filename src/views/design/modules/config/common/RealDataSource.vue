@@ -185,7 +185,6 @@
 import DataSourceMixins from '../dataSourceMixins/index'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
-import { CmdbHostSelect } from '~~~/Resource/Cmdb/index'
 import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
 import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
 import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
@@ -202,7 +201,6 @@ export default {
     DeviceBrandSelect: DeviceBrandFactory.create('select'),
     DeviceModelSelect: DeviceModelFactory.create('select'),
     HostSelect: HostFactory.create('select'),
-    CmdbHostSelect,
     EndpointSelect,
     MetricSelect
   },
@@ -210,6 +208,11 @@ export default {
     comboSelectProps: {
       type: Object,
       default: () => ({})
+    },
+    mode: {
+      type: String,
+      default: 'chart',
+      validator: mode => ['chart', 'node'].includes(mode)
     },
     multiple: {
       type: Boolean,

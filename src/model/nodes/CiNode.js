@@ -9,9 +9,10 @@ import { AdaptorNodeConfig } from './AdaptorNodeConfig'
 import { emitter } from '../charts/TopologyChart'
 
 export default class CiNode extends CircleNode {
-  constructor ({ nodeDynamicDataConfig = {}, ...rest }) {
+  constructor ({ resourceConfig = {}, ...rest }) {
     super(rest)
-    this.adaptorNodeConfig = new AdaptorNodeConfig(nodeDynamicDataConfig)
+    console.log(resourceConfig)
+    this.resourceConfig = new AdaptorNodeConfig(resourceConfig)
   }
 
   async refresh () {
@@ -26,7 +27,7 @@ export default class CiNode extends CircleNode {
 
   // 获取告警信息
   async getAlarm () {
-    const alarmLevel = await this.adaptorNodeConfig.latestAlarmLevel()
+    const alarmLevel = await this.resourceConfig.latestAlarmLevel()
     console.log(alarmLevel, this.animateTypeList[alarmLevel])
     emitter.emit('animateType:change', {
       item: this,

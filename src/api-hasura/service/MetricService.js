@@ -34,6 +34,8 @@ class MetricService extends BaseService {
       'calculateType'
     ])
 
+    // console.log(timeRange)
+
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
