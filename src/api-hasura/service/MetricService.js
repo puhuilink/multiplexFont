@@ -33,6 +33,9 @@ class MetricService extends BaseService {
       'calculateType'
     ])
 
+    data['metricModelIds'] = _.castArray(data['metricModelIds'])
+    data['hostId'] = _.castArray(data['hostId'])
+
     // 分组条件的前提是有计算类型
     if (data['calculateType']) {
       Object.assign(data, _.pick(resourceConfig, ['isGroup']))

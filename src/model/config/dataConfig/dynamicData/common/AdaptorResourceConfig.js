@@ -36,6 +36,7 @@ export class AdaptorResourceConfig {
 
   static _formatTime (time = moment().format(), isGroup) {
     switch (isGroup) {
+      // FIXME: 自动补全
       case 'hour': return moment(time).format('YYYY-MM-DD HH:00:00')
       case 'minute': return moment(time).format('YYYY-MM-DD HH:mm:00')
       case 'month': return moment(time).format('YYYY-MM-DD')
@@ -51,12 +52,14 @@ export class AdaptorResourceConfig {
         metricValue = 0,
         metricValueStr = '',
         // 单位：数据库字段本身错误
-        uint = '',
+        // uint = '',
         metricAlias = ''
       } = data
       return {
-        data: (metricValueStr || metricValue) + uint,
-        time: this._formatTime(collectTime, isGroup),
+        data: (metricValueStr || metricValue),
+        // data: (metricValueStr || metricValue) + uint,
+        // time: this._formatTime(collectTime, isGroup),
+        time: collectTime,
         name: metricAlias,
         legend: endpointAlias
       }
