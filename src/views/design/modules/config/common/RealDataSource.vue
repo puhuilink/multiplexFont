@@ -28,7 +28,7 @@
 
     <TimeRange v-if="useTimeRange" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useRefreshTime">
+    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
       <a-select
         allowClear
         class="fw"
@@ -117,7 +117,7 @@
 
     <a-form-item label="设备名称" v-bind="formItemLayout" required>
       <HostSelect
-        multiple
+        :multiple="!singleHost"
         class="fw"
         :hostTypeDictValueCode="resourceConfig.deviceModel"
         :value="resourceConfig.hostId"
@@ -133,7 +133,6 @@
     <a-form-item label="监控实体" v-bind="formItemLayout" required >
       <EndpointSelect
         schema="model"
-        v-bind="selectProps"
         :parentId="resourceConfig.deviceModel"
         :value="resourceConfig.endpointModelId"
         @input="endpointModelId => {
@@ -149,8 +148,7 @@
     <a-form-item label="检查项" v-bind="formItemLayout" required >
       <MetricSelect
         schema="model"
-        multiple
-        v-bind="selectProps"
+        :multiple="!singleMetric"
         :parentId="resourceConfig.endpointModelId"
         :value="resourceConfig.metricModelIds"
         @input="metricModelIds => {
@@ -205,16 +203,16 @@ export default {
     MetricSelect
   },
   props: {
-    comboSelectProps: {
-      type: Object,
-      default: () => ({})
-    },
     mode: {
       type: String,
       default: 'chart',
       validator: mode => ['chart', 'node'].includes(mode)
     },
-    multiple: {
+    singleHost: {
+      type: Boolean,
+      default: false
+    },
+    singleMetric: {
       type: Boolean,
       default: false
     },
@@ -222,7 +220,7 @@ export default {
       type: Boolean,
       default: true
     },
-    useComboSelect: {
+    useCalculateType: {
       type: Boolean,
       default: true
     },
@@ -279,10 +277,6 @@ export default {
       get () {
         return _.get(this.config, 'dataConfig.dbDataConfig.legendType', ['ci'])
       }
-    },
-    selectProps () {
-      const { toolTip, multiple } = this
-      return { toolTip, multiple }
     }
   },
   methods: {
