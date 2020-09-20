@@ -3,22 +3,10 @@
  * 用于字段映射与调整，解耦功能代码与业务代码
  */
 
-import _ from 'lodash'
+// import _ from 'lodash'
+import moment from 'moment'
 
 export class AdaptorResourceConfig {
-  static fieldsMapping = new Map([
-    ['metric_value', 'valueNum'],
-    ['metric_value_str', 'valueStr'],
-    ['collect_time', 'time'],
-    ['host_id', 'hostId'],
-    ['endpoint_id', 'endpointId'],
-    ['metric_id', 'metricId'],
-    ['host_alias', 'hostAlias'],
-    ['endpoint_alias', 'endpointAlias'],
-    ['metric_alias', 'metricAlias'],
-    ['metric_tag', 'metricTag']
-  ])
-
   constructor ({
     deviceType = 'Host',
     deviceBrand = 'HostLinux',
@@ -26,9 +14,9 @@ export class AdaptorResourceConfig {
     hostId = [],
     endpointModelId = 1149375446,
     metricModelIds = [],
-    // enum: day / hour / minute
+    // enum:  hour / minute / month
     isGroup = '',
-    // enum: total / max / average
+    // enum: sum / max / avg
     calculateType = ''
   }) {
     this.deviceType = deviceType
@@ -41,35 +29,38 @@ export class AdaptorResourceConfig {
     this.calculateType = calculateType
   }
 
-  static transfer (dataList = []) {
-    // console.log(dataList)
-    const { fieldsMapping } = AdaptorResourceConfig
-    const result = []
-    dataList.forEach(data => {
-      // pick keys
-      const expectedData = _.pick(data, [...fieldsMapping.keys()])
-      if (_.isEmpty(expectedData)) {
-        return
-      }
+  get useGroup () {
+    const { isGroup, calculateType } = this
+    return calculateType ? isGroup : ''
+  }
 
-      // transfer keys
+  static _formatTime (time = moment().format(), isGroup) {
+    switch (isGroup) {
+      case 'hour': return moment(time).format('YYYY-MM-DD HH:00:00')
+      case 'minute': return moment(time).format('YYYY-MM-DD HH:mm:00')
+      case 'month': return moment(time).format('YYYY-MM-DD')
+      default: return moment(time).format()
+    }
+  }
+
+  static transfer (dataList = [], isGroup) {
+    return dataList.map(data => {
       const {
-        hostAlias = '', endpointAlias = '', metricAlias = '', metricTag = '',
-        valueNum = 0, valueStr = '',
-        time
-        // ...rest
-      } = _.mapKeys(expectedData, (value, key) => fieldsMapping.get(key))
-
-      // transfer values
-      result.push({
-        legend: hostAlias,
-        category: `${endpointAlias}-${metricAlias || metricTag}`,
-        value: valueStr || valueNum,
-        time
-        // ...rest
-      })
+        collectTime = moment().format(),
+        endpointAlias = '',
+        metricValue = 0,
+        metricValueStr = '',
+        // 单位：数据库字段本身错误
+        uint = '',
+        metricAlias = ''
+      } = data
+      return {
+        data: (metricValueStr || metricValue) + uint,
+        time: this._formatTime(collectTime, isGroup),
+        name: metricAlias,
+        legend: endpointAlias
+      }
     })
-    return result
   }
 
   getOption () {

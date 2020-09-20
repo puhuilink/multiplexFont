@@ -19,6 +19,31 @@ const events = require('events')
 
 export const emitter = new events.EventEmitter()
 
+// const tooltip = new G6.Tooltip({
+//   itemTypes: ['node'],
+//   // 是否允许 tooltip 出现
+//   shouldBegin (e) {
+//     console.log('是否允许 tooltip 出现')
+//     console.log(e)
+//     console.log(e.item.getModel())
+//     return true
+//   },
+//   getContent (e) {
+//     console.log('tooltip renderer')
+//     console.log(e)
+//     console.log(e.item.getModel())
+//     return `<div style='width: 180px;'>
+//       <ul id='menu'>
+//         <li title='1'>测试02</li>
+//         <li title='2'>测试02</li>
+//         <li>测试02</li>
+//         <li>测试02</li>
+//         <li>测试02</li>
+//       </ul>
+//     </div>`
+//   }
+// })
+
 export default class TopologyChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
@@ -36,7 +61,7 @@ export default class TopologyChart extends Chart {
       width,
       height,
       renderer: 'canvas',
-      plugins: [],
+      // plugins: [tooltip],
       modes: {
         default: ['circle', {
           type: 'tooltip',

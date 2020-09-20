@@ -4,6 +4,8 @@ import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
 moment.defaultFormat = 'YYYY-MM-DD HH:mm:ss'
 
+window.moment = moment
+
 Vue.filter('NumberFormat', function (value) {
   if (!value) {
     return '0'

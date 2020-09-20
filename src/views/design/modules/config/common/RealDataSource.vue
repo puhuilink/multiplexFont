@@ -28,12 +28,12 @@
 
     <TimeRange v-if="useTimeRange" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useRefreshTime" >
+    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useRefreshTime">
       <a-select
         allowClear
         class="fw"
         v-model="resourceConfig.calculateType"
-        @select="change()"
+        @change="change()"
       >
         <a-select-option
           v-for="option in calculateTypeList"
@@ -42,12 +42,12 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="分组" v-bind="formItemLayout" v-if="useRefreshTime" >
+    <a-form-item label="分组条件" v-bind="formItemLayout" required v-if="useRefreshTime" v-show="resourceConfig.calculateType">
       <a-select
         allowClear
         class="fw"
         v-model="resourceConfig.isGroup"
-        @select="change()"
+        @change="change()"
       >
         <a-select-option
           v-for="option in groupList"
@@ -249,14 +249,14 @@ export default {
   },
   data: () => ({
     calculateTypeList: [
-      { label: '求和', value: 'total' },
+      { label: '求和', value: 'sum' },
       { label: '最大值', value: 'max' },
-      { label: '均值', value: 'average' }
+      { label: '均值', value: 'avg' }
     ],
     groupList: [
-      { label: '精确到分', value: 'minute' },
       { label: '精确到小时', value: 'hour' },
-      { label: '精确到天', value: 'day' }
+      { label: '精确到天', value: 'day' },
+      { label: '精确到月', value: 'month' }
     ],
     legendTypeList: [
       { label: 'Ci', value: 'ci' },
@@ -289,6 +289,18 @@ export default {
     async preview () {
       try {
         this.btnLoading = true
+        const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
+        const { calculateType, isGroup } = this.resourceConfig
+        if (calculateType) {
+          if (_.isEmpty(timeRange.getOption())) {
+            this.$message.error('选择计算类型时必须指定查询时间段')
+            return
+          }
+          if (!isGroup) {
+            this.$message.error('选择计算类型时必须指定分组条件')
+            return
+          }
+        }
         this.change(true)
       } catch (e) {
         throw e

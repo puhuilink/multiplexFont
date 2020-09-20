@@ -31,11 +31,11 @@ export class DynamicDataConfig {
         resourceConfig: resourceConfig.getOption(),
         timeRange: timeRangeConfig.getOption()
       })
-      .then(r => {
-        console.log(r)
-        return r
+      .then(({ data }) => {
+        const result = AdaptorResourceConfig.transfer(data, resourceConfig.useGroup)
+        console.log(result)
+        return result
       })
-      .then(AdaptorResourceConfig.transfer)
   }
 
   getOption () { }

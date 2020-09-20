@@ -20,6 +20,7 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
 
   async fetch () {
     const dataList = await super.fetch()
+    console.log(dataList)
     // const { xAxisType = 'category' } = this
     const xAxisType = 'category'
     let option

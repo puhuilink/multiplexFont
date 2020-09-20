@@ -30,17 +30,19 @@ class MetricService extends BaseService {
       'hostId',
       'endpointModelId',
       'metricModelIds',
-      'isGroup',
       'calculateType'
     ])
 
-    // console.log(timeRange)
+    // 分组条件的前提是有计算类型
+    if (data['calculateType']) {
+      Object.assign(data, _.pick(resourceConfig, ['isGroup']))
+    }
 
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
     }
-    console.log(data)
+    // console.log(data)
     return axios.post('/view/data', data)
   }
 }
