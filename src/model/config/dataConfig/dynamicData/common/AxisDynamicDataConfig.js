@@ -20,12 +20,11 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
 
   async fetch () {
     const dataList = await super.fetch()
-    console.log(dataList)
-    // const { xAxisType = 'category' } = this
-    const xAxisType = 'category'
+    const { xAxisType = 'TIME' } = this
     let option
+    console.log(xAxisType)
     switch (xAxisType) {
-      case 'time': {
+      case 'TIME': {
         const groupByLegend = _.groupBy(dataList, 'legend')
         const legendList = Object.keys(groupByLegend)
         option = {
@@ -42,17 +41,19 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
           },
           series: legendList.map(legend => ({
             name: legend,
-            data: groupByLegend[legend].map(({ value }) => value)
+            data: groupByLegend[legend].map(({ data }) => data)
           }))
         }
         break
       }
-      case 'category': {
+      case 'RESOURCE': {
         const groupByLegend = _.groupBy(dataList, 'legend')
         const legendList = Object.keys(groupByLegend)
-        const groupByCategory = _.groupBy(dataList, 'category')
-        const categoryList = Object.keys(groupByCategory)
-        // console.log(groupByCategory)
+        const groupByName = _.groupBy(dataList, 'name')
+        const categoryList = Object.keys(groupByName)
+        // console.log(legendList)
+        // console.log(groupByLegend)
+        // console.log(groupByName)
         option = {
           legend: {
             data: legendList
@@ -66,13 +67,14 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
           },
           series: legendList.map(legend => ({
             name: legend,
-            data: groupByLegend[legend].map(({ value }) => value)
+            data: groupByLegend[legend].map(({ data }) => data)
           }))
 
         }
         break
       }
     }
+    console.log(option)
     return option
   }
 

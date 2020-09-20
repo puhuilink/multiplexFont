@@ -53,15 +53,17 @@ export class AdaptorResourceConfig {
         metricValueStr = '',
         // 单位：数据库字段本身错误
         // uint = '',
-        metricAlias = ''
+        // metricAlias = '',
+        hostAlias = ''
       } = data
       return {
         data: (metricValueStr || metricValue),
         // data: (metricValueStr || metricValue) + uint,
         // time: this._formatTime(collectTime, isGroup),
         time: collectTime,
-        name: metricAlias,
-        legend: endpointAlias
+        // name: metricAlias,
+        legend: endpointAlias,
+        name: hostAlias
       }
     })
   }
