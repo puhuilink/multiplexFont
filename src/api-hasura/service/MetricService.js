@@ -5,7 +5,7 @@ import { query } from '../utils/hasura-orm/index'
 import { MetricDao } from '../dao'
 import _ from 'lodash'
 import { generateQuery } from '@/utils/graphql'
-import { axios } from '@/utils/request'
+import { axios, imp } from '@/utils/request'
 
 class MetricService extends BaseService {
   static async find ({ orderBy = { collect_time: 'desc' }, ...argus }) {
@@ -43,7 +43,7 @@ class MetricService extends BaseService {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
     }
     // console.log(data)
-    return axios.post('/view/data', data)
+    return imp.post('/view/data', data)
   }
 }
 

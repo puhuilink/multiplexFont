@@ -26,7 +26,6 @@ const VIC_MAIN_LIST = [
   // t_dict
   { schema: 't_dict_value', primaryKey: 'value_code', provider: imp },
   // cmdb_model
-  { schema: 't_metric', primaryKey: 'id' },
   { schema: 't_model_answer', primaryKey: 'id' },
   { schema: 't_model_endpoint', primaryKey: 'id', provider: imp },
   { schema: 't_model_endpoint_metric', primaryKey: 'id', provider: imp },
@@ -39,7 +38,7 @@ const VIC_MAIN_LIST = [
   { schema: 't_model_metric_oid', primaryKey: 'id' },
   { schema: 't_model_strategy', primaryKey: 'id' },
   // 指标
-  { schema: 't_metric', primaryKey: 'id' },
+  { schema: 't_metric', primaryKey: 'id', provider: imp },
   // 巡更
   { schema: 't_patrol_answer', primaryKey: 'id' },
   { schema: 't_patrol_checkpoint', primaryKey: 'id' },

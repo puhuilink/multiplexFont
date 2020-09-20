@@ -44,7 +44,7 @@ export class AdaptorResourceConfig {
   }
 
   static transfer (dataList = [], isGroup) {
-    return dataList.map(data => {
+    return (dataList || []).map(data => {
       const {
         collectTime = moment().format(),
         endpointAlias = '',
