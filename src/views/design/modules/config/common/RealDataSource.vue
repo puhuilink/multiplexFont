@@ -212,9 +212,10 @@ export default {
       type: Boolean,
       default: false
     },
+    // TODO: 多 metric 与多 host 增加了视图多绘制逻辑复杂度
     singleMetric: {
       type: Boolean,
-      default: false
+      default: true
     },
     toolTip: {
       type: Boolean,

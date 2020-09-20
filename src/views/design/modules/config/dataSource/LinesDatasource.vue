@@ -2,8 +2,6 @@
   <DataSourceTemplate>
     <template #real>
       <RealDataSource
-        useComboSelect
-        :comboSelectProps="{ multiple: true }"
         useRefreshTime
         useTimeRange
       />

@@ -10,7 +10,7 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
     // enum: 资源、时间
     legendType = ['ci'],
     // 横轴类型
-    xAxisType = 'RESOURCE',
+    xAxisType = 'TIME',
     ...props
   }) {
     super(props)
@@ -24,28 +24,38 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
     let option
     console.log(xAxisType)
     switch (xAxisType) {
+      // 折线图
       case 'TIME': {
-        const groupByLegend = _.groupBy(dataList, 'legend')
-        const legendList = Object.keys(groupByLegend)
+        // const groupByLegend = _.groupBy(dataList, 'legend')
+        // const legendList = Object.keys(groupByLegend)
+        const groupByName = _.groupBy(dataList, 'name')
+        const categoryList = Object.keys(groupByName)
         option = {
           legend: {
-            data: legendList
+            data: categoryList
           },
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: dataList.map(({ time }) => time)
+            data: _.uniq(
+              dataList.map(({ time }) => time)
+            )
           },
           yAxis: {
             type: 'value'
           },
-          series: legendList.map(legend => ({
-            name: legend,
-            data: groupByLegend[legend].map(({ data }) => data)
+          series: categoryList.map(category => ({
+            name: category,
+            data: groupByName[category].map(({ data }) => data)
           }))
+          // series: legendList.map(legend => ({
+          //   name: legend,
+          //   data: groupByLegend[legend].map(({ data }) => data)
+          // }))
         }
         break
       }
+      // 柱形图
       case 'RESOURCE': {
         const groupByLegend = _.groupBy(dataList, 'legend')
         const legendList = Object.keys(groupByLegend)
