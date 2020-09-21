@@ -118,6 +118,7 @@ import {
   fromEvent, merge, Subject, zip
 } from 'rxjs'
 import {
+  // eslint-disable-next-line no-unused-vars
   startWith, mapTo, takeWhile,
   pluck, map, filter
 } from 'rxjs/operators'
@@ -191,7 +192,7 @@ export default {
 
     // 视图change事件处理
     merge(
-      fromEvent(window, 'resize').pipe(mapTo({ type: 'resize' })),
+      // fromEvent(window, 'resize').pipe(mapTo({ type: 'resize' })),
       this.change$,
       this.viewChange$
     )

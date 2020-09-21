@@ -74,7 +74,7 @@
         }"
       />
 
-      <CmdbHostSelect
+      <HostSelect
         v-bind="ctx.editAbleProps"
         :hostTypeDictValueCode="model.deviceModel"
         multiple
@@ -86,11 +86,11 @@
 </template>
 
 <script>
-import DeviceBrandSelect from './modules/DeviceBrandSelect'
-import DeviceTypeSelect from './modules/DeviceTypeSelect'
-import DeviceModelSelect from './modules/DeviceModelSelect'
-import CmdbHostSelect from './modules/CmdbHostSelect'
-import AlarmRuleModel from '../AlarmRuleModel'
+import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
+import DeviceTypeFactory from './DeviceType'
+import DeviceModelFactory from './DeviceModel'
+import HostFactory from '../Host'
+// import AlarmRuleModel from '../AlarmRuleModel'
 import _ from 'lodash'
 
 export default {
@@ -102,15 +102,16 @@ export default {
     }
   },
   components: {
-    DeviceBrandSelect,
-    DeviceTypeSelect,
-    DeviceModelSelect,
-    CmdbHostSelect
+    DeviceBrandSelect: DeviceBrandFactory.create('listSelect'),
+    DeviceTypeSelect: DeviceTypeFactory.create('listSelect'),
+    DeviceModelSelect: DeviceModelFactory.create('listSelect'),
+    HostSelect: HostFactory.create('listSelect')
   },
   props: {
     value: {
       type: Object,
-      default: () => new AlarmRuleModel()
+      // default: () => new AlarmRuleModel()
+      default: () => ({})
       // required: true
     }
   },

@@ -17,7 +17,8 @@
       :rules="[
         { required: true, message: '请选择监控实体' }
       ]">
-      <ModelEndpointSelect
+      <EndpointSelect
+        schema="model"
         v-bind="ctx && ctx.editAbleProps"
         :parentId="model.deviceModel"
         v-model="model.endpointModelId"
@@ -31,7 +32,8 @@
       :rules="[
         { required: true, message: '请选择检查项' }
       ]">
-      <ModelMetricSelect
+      <MetricSelect
+        schema="model"
         v-bind="ctx && ctx.editAbleProps"
         :parentId="model.endpointModelId"
         v-model="model.metricModelId"
@@ -42,17 +44,18 @@
 </template>
 
 <script>
-import ComplexSelect from '../ComplexSelect'
-import { ModelEndpointSelect, ModelMetricSelect } from '~~~/Resource'
+import ComplexSelect from '~~~/Unknown/Device/index'
 import { FormModel } from 'ant-design-vue'
+import EndpointSelect from '~~~/Unknown/Endpoint'
+import MetricSelect from '~~~/Unknown/Metric'
 
 export default {
   name: 'ComplexSnippet',
   mixins: [],
   components: {
     ComplexSelect,
-    ModelEndpointSelect,
-    ModelMetricSelect
+    EndpointSelect,
+    MetricSelect
   },
   props: {
     ...FormModel.Item.props,

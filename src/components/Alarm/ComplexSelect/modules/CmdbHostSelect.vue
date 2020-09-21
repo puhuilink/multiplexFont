@@ -3,47 +3,48 @@
     v-bind="$props"
     v-on="$listeners"
     :data="loadData"
+    multiple
     ref="listSelect"
-    title="监控类型"
+    title="设备名称"
   />
 </template>
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { DictValueService } from '@/api-hasura'
+import { CmdbService } from '@/api-hasura'
 
 export default {
-  name: 'DeviceTypeListSelect',
+  name: 'CmdbHostSelect',
   mixins: [],
   components: {
     CListSelect
   },
   props: {
     ...CListSelect.props,
-    deviceBrand: {
+    hostType: {
       type: String,
       default: ''
     }
   },
   data: () => ({}),
   computed: {},
-  watch: {},
+  watch: {
+    hostType (hostType) {
+      this.$refs['listSelect'].reset()
+      hostType && this.$refs['listSelect'].refresh(hostType)
+    }
+  },
   methods: {
-    async loadData () {
-      return DictValueService.find({
-        where: {
-          value_param: '1'
-        },
+    loadData (host_type) {
+      return CmdbService.hostFind({
+        where: { host_type },
         fields: [
-          'key: value_code',
-          'label: value_label'
+          'key: id',
+          'label: alias'
         ],
         alias: 'dataSource'
       }).then(r => r.data.dataSource)
     }
-  },
-  mounted () {
-    this.$refs['listSelect'].refresh()
   }
 }
 </script>

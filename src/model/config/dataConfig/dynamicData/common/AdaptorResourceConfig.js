@@ -3,76 +3,69 @@
  * 用于字段映射与调整，解耦功能代码与业务代码
  */
 
-import _ from 'lodash'
+// import _ from 'lodash'
+import moment from 'moment'
 
 export class AdaptorResourceConfig {
-  static fieldsMapping = new Map([
-    ['metric_value', 'valueNum'],
-    ['metric_value_str', 'valueStr'],
-    ['collect_time', 'time'],
-    ['host_id', 'hostId'],
-    ['endpoint_id', 'endpointId'],
-    ['metric_id', 'metricId'],
-    ['host_alias', 'hostAlias'],
-    ['endpoint_alias', 'endpointAlias'],
-    ['metric_alias', 'metricAlias'],
-    ['metric_tag', 'metricTag']
-  ])
-
   constructor ({
-    // hostIds = [],
-    // endpointModel = null,
-    // metricModels = [],
-    // modelHostId = null
-    // mock
-    hostType = '',
-    hostIds = [257882722304],
-    endpointModel = 1988235274,
-    metricModels = [1988235275],
-    modelHostId = 1988235264,
-    // enum: day / hour / minute
+    deviceType = 'Host',
+    deviceBrand = 'HostLinux',
+    deviceModel = 'HostAIXLinux',
+    hostId = [],
+    endpointModelId = 1149375446,
+    metricModelIds = [],
+    // enum:  hour / minute / month
     isGroup = '',
-    // enum: total / max / average
+    // enum: sum / max / avg
     calculateType = ''
   }) {
-    this.hostType = hostType
-    this.hostIds = hostIds
-    this.endpointModel = endpointModel
-    this.metricModels = metricModels
-    this.modelHostId = modelHostId
+    this.deviceType = deviceType
+    this.deviceBrand = deviceBrand
+    this.deviceModel = deviceModel
+    this.hostId = hostId
+    this.endpointModelId = endpointModelId
+    this.metricModelIds = metricModelIds
     this.isGroup = isGroup
     this.calculateType = calculateType
   }
 
-  static transfer (dataList = []) {
-    // console.log(dataList)
-    const { fieldsMapping } = AdaptorResourceConfig
-    const result = []
-    dataList.forEach(data => {
-      // pick keys
-      const expectedData = _.pick(data, [...fieldsMapping.keys()])
-      if (_.isEmpty(expectedData)) {
-        return
-      }
+  get useGroup () {
+    const { isGroup, calculateType } = this
+    return calculateType ? isGroup : ''
+  }
 
-      // transfer keys
+  static _formatTime (time = moment().format(), isGroup) {
+    switch (isGroup) {
+      // FIXME: 自动补全
+      case 'hour': return moment(time).format('YYYY-MM-DD HH:00:00')
+      case 'minute': return moment(time).format('YYYY-MM-DD HH:mm:00')
+      case 'month': return moment(time).format('YYYY-MM-DD')
+      default: return moment(time).format()
+    }
+  }
+
+  static transfer (dataList = [], isGroup) {
+    return (dataList || []).map(data => {
       const {
-        hostAlias = '', endpointAlias = '', metricAlias = '', metricTag = '',
-        valueNum = 0, valueStr = '',
-        time
-        // ...rest
-      } = _.mapKeys(expectedData, (value, key) => fieldsMapping.get(key))
-
-      // transfer values
-      result.push({
-        legend: hostAlias,
-        category: `${endpointAlias}-${metricAlias || metricTag}`,
-        value: valueStr || valueNum,
-        time
-        // ...rest
-      })
+        collectTime = moment().format(),
+        endpointAlias = '',
+        metricValue = 0,
+        metricValueStr = '',
+        // 单位：数据库字段本身错误
+        // uint = '',
+        // metricAlias = '',
+        hostAlias = ''
+      } = data
+      return {
+        data: (metricValueStr || metricValue),
+        // data: (metricValueStr || metricValue) + uint,
+        // time: this._formatTime(collectTime, isGroup),
+        time: collectTime,
+        // name: metricAlias,
+        legend: endpointAlias,
+        name: hostAlias
+      }
     })
-    return result
   }
 
   getOption () {

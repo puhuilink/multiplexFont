@@ -2,10 +2,9 @@
   <DataSourceTemplate>
     <template #real>
       <RealDataSource
-        useComboSelect
-        :comboSelectProps="{ multiple: false }"
-        useRefreshTime
-        useTimeRange
+        singleHost
+        singleMetric
+        :useCalculateType="false"
       />
     </template>
   </DataSourceTemplate>

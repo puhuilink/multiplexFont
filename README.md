@@ -1,5 +1,5 @@
-# ITOMS
-中交智能运维监控系统
+# Unified_Monitoring_Platform
+统一监控平台
 
 ## 基础
 本项目基于 [ant-design-pro-vue](https://github.com/sendya/ant-design-pro-vue) 改造，如遇问题请查看[文档](https://pro.loacg.com/docs/getting-started)
@@ -13,9 +13,11 @@
 * 路由库：vue-router - 3.x
 * 状态管理库：vuex - 3.x
 * http请求库：axios - 0.19.x
+* Graphql 中间件：[hasura](https://hasura.io/docs/1.0/graphql/core/schema/basics.html)
 * 响应式编程库：rxjs - 6.x
 * 层叠样式表：less
-* 工具库：lodash、moment
+* 工具库：lodash、moment、html2canvas
+* 富文本编辑器：tiptap、tiptap-extensions
 * 图表库：echarts、G6
 * UI框架：[vue ant design](https://www.antdv.com/docs/vue/introduce-cn/)
 
@@ -37,9 +39,15 @@
 - [x] 柱形图
 - [x] 拓扑图
 - [x] 文本
+- [x] 文本健康度
+- [x] 环度
 - [x] 时间
 - [x] 图片
 - [x] 饼图
+- [x] 极坐标图
+- [ ] 列表
+- [ ] 告警列表
+- [ ] 视图间跳转
 - [ ] 地图
 
 #### 项目结构
@@ -49,6 +57,11 @@
     ├─assets
     │  ├─icons  拓扑默认图标
     │  └─less  公共样式表
+    ├─api (已废弃的)接口层，后续逐步迁移到 api-hasura
+    ├─api-hasura 接口层
+    │  ├─config
+    │  ├─dao  hasura的ORM封装，用于动态生成hasura语句
+    │  ├─service  接口暴露层，由页面直接调用；本身是dao层的直接调用者
     ├─components  公共组件
     │  ├─colorPicker  颜色选择组件
     │  ├─iconPicker  图标选择组件
@@ -259,9 +272,9 @@
     
 #### 事件流程
 1. 拖动目标部件模板至画板
-2. 根据模板类型，创建该类型实例并挂在配置对象
+2. 根据模板类型，工厂函数创建该类型实例并挂在配置对象
 3. 渲染该对象并渲染至画板
-4. 将当前部件对象作为激活部件（activeWidget），并将其添加至视图对象widgets中
+4. 将当前部件对象作为激活部件（activeWidget）（vuex），并将其添加至视图对象widgets中
 5. 渲染激活部件配置面板
 6. 配置面板属性更新，更新当前部件配置
 7. 重新映射部件配置为部件实例对象规则的属性，更新该部件对象
@@ -269,25 +282,24 @@
 
 #### （动态）数据查询配置
 
-1. @/model/config/dataConfig/dynamicData/common 下建立数据配置文件
+1. @/model/config/dataConfig/dynamicData 下建立数据配置文件
 2. @/model/factory/dynamicDataFactory 处注册数据配置文件
 3. @/views/design/modules/config/dataSource 下建立数据源组件
 4. 将第3步建立的组件注册到@/views/design/modules/config/charts/xxx.vue下
 
-#### (动态)数据流向
+#### （动态）数据流向
 
-1. 实例化 Chart 的同时也实例化其 DataConfig
+1. 实例化 Chart 的同时也实例化其 DataConfig （StaticDataConfig + DynamicDataConig）
 2. 数据源组件的表单信息与 DataConfig.dbDataConfig 进行双向绑定
 3. 显式调用 widget.render.mergeOption() 会强制刷新组件配置
 4. Chart.mappingOption 方法里显式调用 dataConfig.getOption() 加载动态数据，此时需返回 promise
 5. dataConfig.getOption 方法负责调取接口与数据处理（调用失败或记录不存在时返回0）
 6. 第4步的promise被reslove，合并 option 并刷新 echarts
 
-#### (动态)数据接口
+#### （动态）数据接口
 
-1. 传入要查询指标的 KpiCode 数组与 Ci 的 Ciid数组
-2. 根据 KpiCode 查询出 Kpi 的 label（文字）；根据 Ciid 查询出 Ci 的 label（文字）
-3. 组合 KpiCode 与 Ciid。假设传入2条KpiCode，2条Ciid，则生成四条查询请求
-4. 合并查询请求到一个请求体中，查询指标
-5. 拿到查询出的指标，此时指标里没有 label，将第2步拿到的 label 进行组合（指标为空时按值为 0 处理）
-6. 将组合后的结果（Array<{ instanceLabel, kpiLabel, value }>）返回
+1. 配置监控对象（监控类型 / 品牌类型 / 品牌设备 / 设备名称 / 监控实体 / 检查项）
+2. 配置可选内容（查询时间、刷新时间、外部 CI 可用）
+3. 调用后端接口
+4. 取到数据后根据每个图自身情况实现绘制逻辑
+5. 刷新 echart

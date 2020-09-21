@@ -2,12 +2,8 @@
   <DataSourceTemplate>
     <template #real>
       <RealDataSource
-        useComboSelect
-        :comboSelectProps="{ multiple: true }"
-        useLegendType
         useRefreshTime
-        useTimeRange
-        useXAxisType
+        :useCalculateType="false"
       />
     </template>
   </DataSourceTemplate>
