@@ -39,13 +39,11 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
 
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
-      const data = await this.fetch()
-      console.log(data)
       const {
         angleAxis,
         legend,
         series
-      } = data
+      } = await this.fetch()
       Object.assign(this, { angleAxis, legend, series })
     }
     const { angleAxis, legend, series } = this

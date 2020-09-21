@@ -270,7 +270,6 @@ export default {
   methods: {
     async preview () {
       this.validate(async passValidate => {
-        console.log(passValidate)
         if (!passValidate) return
         try {
           this.btnLoading = true
