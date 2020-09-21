@@ -109,6 +109,10 @@ export default class Chart {
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
 
+    console.log(
+      _.cloneDeep(this.chartConfig)
+    )
+
     // 供测试人员调试数据
     // FIXME: 生产环境关闭
     const { container: { id }, chartConfig: { series } } = this
