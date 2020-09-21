@@ -5,19 +5,19 @@ import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL
+  baseURL: process.env.VUE_APP_API_MAIN_BASE_URL
   // timeout: 500000
 })
 
-service.interceptors.request.use(config => {
+const requestInterceptor = config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
     config.headers[ACCESS_TOKEN] = 'Bearer ' + token
   }
   return config
-})
+}
 
-service.interceptors.response.use((response) => {
+const responseInterceptor = (response) => {
   const { data: { code, msg } } = response
   if (code && code !== 200) {
     switch (code) {
@@ -38,7 +38,18 @@ service.interceptors.response.use((response) => {
     return Promise.reject(new Error(msg))
   }
   return response.data
+}
+
+export const imp = axios.create({
+  baseURL: process.env.VUE_APP_API_IMP_BASE_URL
+  // timeout: 500000
 })
+
+service.interceptors.request.use(requestInterceptor)
+imp.interceptors.request.use(requestInterceptor)
+
+service.interceptors.response.use(responseInterceptor)
+imp.interceptors.response.use(responseInterceptor)
 
 const installer = {
   vm: {},

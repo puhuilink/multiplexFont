@@ -10,6 +10,12 @@ const initialOption = {
 }
 
 export default class BarDynamicDataConfig extends AxisDynamicDataConfig {
+  constructor (props) {
+    super({
+      ...props,
+      xAxisType: 'RESOURCE'
+    })
+  }
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       const data = await this.fetch()

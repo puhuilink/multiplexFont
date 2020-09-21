@@ -137,6 +137,8 @@ export default class PolarChart extends Chart {
             return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
           })
 
+          // console.log(dynamicAngleAxis)
+
           Object.assign(option,
             {
               legend: Object.assign(legend, dynamicLegend),

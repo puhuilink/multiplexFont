@@ -7,7 +7,7 @@
 <template>
   <div class="polar-config">
     <a-tabs
-      defaultActiveKey="1"
+      defaultActiveKey="3"
       tabPosition="top"
       :style="{ height: '100%'}"
     >

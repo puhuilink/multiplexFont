@@ -1,5 +1,6 @@
-import { alert } from '@/utils/clientConfig'
+import { alert, imp } from '@/utils/clientConfig'
 
 export {
-  alert
+  alert,
+  imp
 }

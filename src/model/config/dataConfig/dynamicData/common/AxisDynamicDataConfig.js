@@ -10,7 +10,7 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
     // enum: 资源、时间
     legendType = ['ci'],
     // 横轴类型
-    xAxisType = 'RESOURCE',
+    xAxisType = 'TIME',
     ...props
   }) {
     super(props)
@@ -20,38 +20,44 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
 
   async fetch () {
     const dataList = await super.fetch()
-    // const { xAxisType = 'category' } = this
-    const xAxisType = 'category'
+    const { xAxisType = 'TIME' } = this
     let option
+    // console.log(xAxisType)
     switch (xAxisType) {
-      case 'time': {
-        const groupByLegend = _.groupBy(dataList, 'legend')
-        const legendList = Object.keys(groupByLegend)
+      // 折线图
+      case 'TIME': {
+        // const groupByLegend = _.groupBy(dataList, 'legend')
+        // const legendList = Object.keys(groupByLegend)
+        const groupByName = _.groupBy(dataList, 'name')
+        const categoryList = Object.keys(groupByName)
         option = {
           legend: {
-            data: legendList
+            data: categoryList
           },
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: dataList.map(({ time }) => time)
+            data: _.uniq(
+              dataList.map(({ time }) => time)
+            )
           },
           yAxis: {
             type: 'value'
           },
-          series: legendList.map(legend => ({
-            name: legend,
-            data: groupByLegend[legend].map(({ value }) => value)
+          series: categoryList.map(category => ({
+            name: category,
+            data: groupByName[category].map(({ data }) => data)
           }))
         }
         break
       }
-      case 'category': {
+      // 柱形图、极坐标图
+      // TODO：枚举常量 chartType
+      case 'RESOURCE': {
         const groupByLegend = _.groupBy(dataList, 'legend')
         const legendList = Object.keys(groupByLegend)
-        const groupByCategory = _.groupBy(dataList, 'category')
-        const categoryList = Object.keys(groupByCategory)
-        // console.log(groupByCategory)
+        const groupByName = _.groupBy(dataList, 'name')
+        const categoryList = Object.keys(groupByName)
         option = {
           legend: {
             data: legendList
@@ -65,13 +71,14 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
           },
           series: legendList.map(legend => ({
             name: legend,
-            data: groupByLegend[legend].map(({ value }) => value)
+            data: groupByLegend[legend].map(({ data }) => data)
           }))
 
         }
         break
       }
     }
+    console.log(option)
     return option
   }
 

@@ -14,7 +14,7 @@ import CListSelect from '~~~/ListSelect/CListSelect'
 import { DictValueService } from '@/api-hasura'
 
 export default {
-  name: 'DeviceBrandListSelect',
+  name: 'DeviceBrandSelect',
   mixins: [],
   components: {
     CListSelect

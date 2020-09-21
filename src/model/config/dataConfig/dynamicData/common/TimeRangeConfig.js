@@ -52,6 +52,7 @@ export class TimeRangeConfig {
       case TIME_RANGE_TYPE_DEFAULT: {
         const { startTime, endTime } = this
         // 实时数据
+        // console.log(startTime, endTime)
         if (Object.values(startTime).every(v => v === 0) && Object.values(endTime).every(v => v === 0)) {
           return {}
         }

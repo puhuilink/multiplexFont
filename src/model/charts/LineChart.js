@@ -28,12 +28,15 @@ export default class LineChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { legend, xAxis, yAxis, ...options } = proprietaryConfig.getOption()
+    const { legend, xAxis, yAxis, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
-    const line = {
+    const line = (index) => ({
       type: 'line',
+      itemStyle: {
+        color: Array.isArray(color) ? color[index] : color
+      },
       ...options
-    }
+    })
     let series = []
 
     // 总体配置
@@ -42,7 +45,7 @@ export default class LineChart extends Chart {
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
         dbDataConfig.resetData()
-        series = staticData.series.map((item) => ({ ...item, ...line }))
+        series = staticData.series.map((item, index) => ({ ...item, ...line(index) }))
         const { legend: staticLegend, xAxis: staticXAxis, yAxis: staticYAxis } = staticData
         Object.assign(option, {
           legend: Object.assign(legend, staticLegend),
@@ -54,7 +57,7 @@ export default class LineChart extends Chart {
       }
       case SOURCE_TYPE_REAL: {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
-        series = dynamicData.series.map((item) => ({ ...item, ...line }))
+        series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {
           legend: Object.assign(legend, dynamicLegend),

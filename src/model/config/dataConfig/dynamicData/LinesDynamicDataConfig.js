@@ -9,6 +9,13 @@ const initialOption = {
 }
 
 export default class LinesDynamicDataConfig extends AxisDynamicDataConfig {
+  constructor (props) {
+    super({
+      ...props,
+      xAxisType: 'TIME'
+    })
+  }
+
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       const data = await this.fetch()
