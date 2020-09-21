@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { AxisDynamicDataConfig } from './common/index'
+import { DynamicDataConfig } from './common/index'
 
 const initialOption = {
   legend: {},
@@ -9,13 +9,33 @@ const initialOption = {
   originalData: null
 }
 
-export default class BarDynamicDataConfig extends AxisDynamicDataConfig {
-  constructor (props) {
-    super({
-      ...props,
-      xAxisType: 'RESOURCE'
-    })
+export default class BarDynamicDataConfig extends DynamicDataConfig {
+  async fetch () {
+    const dataList = await super.fetch()
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const categoryList = Object.keys(groupByLegend)
+    const groupByName = _.groupBy(dataList, 'name')
+    const legendList = Object.keys(groupByName)
+    const option = {
+      legend: {
+        data: legendList
+      },
+      xAxis: {
+        type: 'category',
+        data: categoryList
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: legendList.map(name => ({
+        name: name,
+        data: groupByName[name].map(({ data }) => data)
+      }))
+
+    }
+    return option
   }
+
   async getOption (loadingDynamicData) {
     if (loadingDynamicData) {
       const data = await this.fetch()

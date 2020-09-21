@@ -5,14 +5,14 @@ import CircleNode from './CircleNode'
 //   // NODE_CI_DRILL_TYPE_VIEW
 // } from './index'
 // import _ from 'lodash'
-import { AdaptorNodeConfig } from './AdaptorNodeConfig'
 import { emitter } from '../charts/TopologyChart'
+import { AdaptorResourceConfig } from '../config/dataConfig/dynamicData/common/AdaptorResourceConfig'
 
 export default class CiNode extends CircleNode {
   constructor ({ resourceConfig = {}, ...rest }) {
     super(rest)
-    console.log(resourceConfig)
-    this.resourceConfig = new AdaptorNodeConfig(resourceConfig)
+    // console.log(resourceConfig)
+    this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
   }
 
   async refresh () {

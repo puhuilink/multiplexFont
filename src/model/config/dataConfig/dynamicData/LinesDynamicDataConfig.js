@@ -1,4 +1,4 @@
-import { AxisDynamicDataConfig } from './common/index'
+import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 
 const initialOption = {
@@ -8,12 +8,31 @@ const initialOption = {
   series: []
 }
 
-export default class LinesDynamicDataConfig extends AxisDynamicDataConfig {
-  constructor (props) {
-    super({
-      ...props,
-      xAxisType: 'TIME'
-    })
+export default class LinesDynamicDataConfig extends DynamicDataConfig {
+  async fetch () {
+    const dataList = await super.fetch()
+    const groupByName = _.groupBy(dataList, 'name')
+    const categoryList = Object.keys(groupByName)
+    const option = {
+      legend: {
+        data: categoryList
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          dataList.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: categoryList.map(category => ({
+        name: category,
+        data: groupByName[category].map(({ data }) => data)
+      }))
+    }
+    return option
   }
 
   async getOption (loadingDynamicData) {
