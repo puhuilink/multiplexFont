@@ -16,16 +16,6 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="图例内容" v-bind="formItemLayout" v-if="useLegendType" >
-      <a-select
-        class="fw"
-        v-model="legendType"
-        @select="change()"
-      >
-        <a-select-option v-for="option in legendTypeList" :key="option.value">{{ option.label }}</a-select-option>
-      </a-select>
-    </a-form-item>
-
     <TimeRange v-if="useTimeRange" />
 
     <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
@@ -180,6 +170,7 @@
 </template>
 
 <script>
+/* eslint-disable standard/no-callback-literal */
 import DataSourceMixins from '../dataSourceMixins/index'
 import TimeRange from './TimeRange'
 import _ from 'lodash'
@@ -228,10 +219,6 @@ export default {
     useExternalCi: {
       type: Boolean,
       default: true
-    },
-    useLegendType: {
-      type: Boolean,
-      default: false
     },
     useRefreshTime: {
       type: Boolean,
@@ -282,26 +269,68 @@ export default {
   },
   methods: {
     async preview () {
-      try {
-        this.btnLoading = true
-        const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
-        const { calculateType, isGroup } = this.resourceConfig
-        if (calculateType) {
-          if (_.isEmpty(timeRange.getOption())) {
-            this.$message.error('选择计算类型时必须指定查询时间段')
-            return
+      this.validate(async passValidate => {
+        console.log(passValidate)
+        if (!passValidate) return
+        try {
+          this.btnLoading = true
+          const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
+          const { calculateType, isGroup } = this.resourceConfig
+          if (calculateType) {
+            if (_.isEmpty(timeRange.getOption())) {
+              this.$message.error('选择计算类型时必须指定查询时间段')
+              return
+            }
+            if (!isGroup) {
+              this.$message.error('选择计算类型时必须指定分组条件')
+              return
+            }
           }
-          if (!isGroup) {
-            this.$message.error('选择计算类型时必须指定分组条件')
-            return
-          }
+          await this.change(true)
+        } catch (e) {
+          throw e
+        } finally {
+          this.btnLoading = false
         }
-        this.change(true)
-      } catch (e) {
-        throw e
-      } finally {
-        this.btnLoading = false
+      })
+    },
+    validate (cb = () => {}) {
+      const { resourceConfig } = this
+
+      const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
+      const { calculateType, isGroup } = resourceConfig
+      if (calculateType) {
+        if (_.isEmpty(timeRange.getOption())) {
+          this.$message.error('选择计算类型时必须指定查询时间段')
+          cb(false)
+          return
+        }
+        if (!isGroup) {
+          this.$message.error('选择计算类型时必须指定分组条件')
+          cb(false)
+        }
       }
+      const fieldsMapping = new Map([
+        ['deviceType', '监控类型'],
+        ['deviceBrand', '品牌名称'],
+        ['deviceModel', '品牌设备'],
+        ['deviceModel', '设备名称'],
+        ['endpointModelId', '监控实体'],
+        ['endpointModelId', '监控实体'],
+        ['metricModelIds', '检查项']
+      ])
+
+      let passValidate = true
+
+      for (const field of [...fieldsMapping.keys()]) {
+        if (!resourceConfig[field]) {
+          this.$message.error(`请选择${fieldsMapping.get(field)}`)
+          passValidate = false
+          break
+        }
+      }
+
+      cb(passValidate)
     }
   }
 }
