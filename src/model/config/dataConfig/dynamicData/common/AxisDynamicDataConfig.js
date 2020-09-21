@@ -22,7 +22,7 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
     const dataList = await super.fetch()
     const { xAxisType = 'TIME' } = this
     let option
-    console.log(xAxisType)
+    // console.log(xAxisType)
     switch (xAxisType) {
       // 折线图
       case 'TIME': {
@@ -48,22 +48,16 @@ export class AxisDynamicDataConfig extends DynamicDataConfig {
             name: category,
             data: groupByName[category].map(({ data }) => data)
           }))
-          // series: legendList.map(legend => ({
-          //   name: legend,
-          //   data: groupByLegend[legend].map(({ data }) => data)
-          // }))
         }
         break
       }
-      // 柱形图
+      // 柱形图、极坐标图
+      // TODO：枚举常量 chartType
       case 'RESOURCE': {
         const groupByLegend = _.groupBy(dataList, 'legend')
         const legendList = Object.keys(groupByLegend)
         const groupByName = _.groupBy(dataList, 'name')
         const categoryList = Object.keys(groupByName)
-        // console.log(legendList)
-        // console.log(groupByLegend)
-        // console.log(groupByName)
         option = {
           legend: {
             data: legendList
