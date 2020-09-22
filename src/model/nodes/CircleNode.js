@@ -7,7 +7,7 @@
 */
 import Node from './index'
 import { TopologyIcon } from '../common'
-import { emitter } from '../charts/TopologyChart'
+// import { emitter } from '../charts/TopologyChart'
 
 export default class CircleNode extends Node {
   constructor ({ nodeDynamicDataConfig = {}, icon, ...node }) {
@@ -17,13 +17,13 @@ export default class CircleNode extends Node {
   }
 
   refresh () {
-    console.log('定时刷新动画')
-    // MOCK
-    const level = Math.floor(Math.random() * this.animateTypeList.length)
-    emitter.emit('animateType:change', {
-      item: this,
-      animateType: this.animateTypeList[level]
-    })
+    // console.log('定时刷新动画')
+    // // MOCK
+    // const level = Math.floor(Math.random() * this.animateTypeList.length)
+    // emitter.emit('animateType:change', {
+    //   item: this,
+    //   animateType: this.animateTypeList[level]
+    // })
   }
 
   intervalRefresh () {

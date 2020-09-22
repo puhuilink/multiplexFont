@@ -155,7 +155,7 @@ export default {
       // 筛选出需要定时刷新的节点，如果节点只存储了配置，需要将其实例化
       const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI].includes(shape)).map(node => NodeFactory.create(node))
       render.enablePreviewMode()
-      console.log(circleNodeList)
+      // console.log(circleNodeList)
       // 开启轮询
       circleNodeList.forEach(node => {
         node.intervalRefresh && node.intervalRefresh()

@@ -11,7 +11,7 @@ import { AdaptorResourceConfig } from '../config/dataConfig/dynamicData/common/A
 export default class CiNode extends CircleNode {
   constructor ({ resourceConfig = {}, ...rest }) {
     super(rest)
-    // console.log(resourceConfig)
+    console.log(resourceConfig)
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
   }
 

@@ -57,7 +57,7 @@ export default class Config {
           return edge
         }) : []
       })
-      console.log('topology: ', config)
+      // console.log('topology: ', config)
     }
     return config
   }

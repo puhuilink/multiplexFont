@@ -33,7 +33,7 @@ export class DynamicDataConfig {
       })
       .then(({ data }) => {
         const result = AdaptorResourceConfig.transfer(data, resourceConfig.useGroup)
-        console.log(result)
+        // console.log(result)
         return result
       })
   }
