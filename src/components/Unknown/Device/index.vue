@@ -102,10 +102,10 @@ export default {
     }
   },
   components: {
-    DeviceBrandSelect: DeviceBrandFactory.create('listSelect'),
-    DeviceTypeSelect: DeviceTypeFactory.create('listSelect'),
-    DeviceModelSelect: DeviceModelFactory.create('listSelect'),
-    HostSelect: HostFactory.create('listSelect')
+    DeviceBrandSelect: DeviceBrandFactory.ListSelect,
+    DeviceTypeSelect: DeviceTypeFactory.ListSelect,
+    DeviceModelSelect: DeviceModelFactory.ListSelect,
+    HostSelect: HostFactory.ListSelect
   },
   props: {
     value: {

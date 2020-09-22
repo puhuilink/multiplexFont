@@ -5,7 +5,8 @@ import Chart from './index'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class TextsChart extends Chart {
@@ -34,6 +35,10 @@ export default class TextsChart extends Chart {
         break
       }
       case SOURCE_TYPE_NULL: {
+        break
+      }
+
+      case SOURCE_TYPE_ALARM: {
         break
       }
     }

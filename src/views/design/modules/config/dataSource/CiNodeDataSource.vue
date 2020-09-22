@@ -140,10 +140,10 @@ export default {
   mixins: [NodeMixin],
   components: {
     ViewListSelect,
-    DeviceTypeSelect: DeviceTypeFactory.create('select'),
-    DeviceBrandSelect: DeviceBrandFactory.create('select'),
-    DeviceModelSelect: DeviceModelFactory.create('select'),
-    HostSelect: HostFactory.create('select'),
+    DeviceTypeSelect: DeviceTypeFactory.Select,
+    DeviceBrandSelect: DeviceBrandFactory.Select,
+    DeviceModelSelect: DeviceModelFactory.Select,
+    HostSelect: HostFactory.Select,
     EndpointSelect,
     MetricSelect
   },

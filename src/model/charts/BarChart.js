@@ -10,7 +10,8 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
@@ -97,6 +98,9 @@ export default class BarChart extends Chart {
           series
         })
         break
+      }
+      case SOURCE_TYPE_ALARM: {
+
       }
     }
 

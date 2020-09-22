@@ -8,7 +8,8 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import Chart from './index'
 
@@ -152,6 +153,10 @@ export default class PolarChart extends Chart {
             }
           )
         }
+        break
+      }
+
+      case SOURCE_TYPE_ALARM: {
         break
       }
     }

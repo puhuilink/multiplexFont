@@ -84,6 +84,10 @@ import {
   TIME_TYPE_WEEKS,
   TIME_TYPE_MONTHS
 } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
+import {
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_ALARM
+} from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
   {
@@ -135,6 +139,13 @@ const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
 export default {
   name: 'TimeRange',
   mixins: [DataSourceMixins],
+  props: {
+    type: {
+      type: String,
+      default: SOURCE_TYPE_REAL,
+      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM].includes(type)
+    }
+  },
   data: () => ({
     TIME_RANGE_FORMAT,
     TIME_RANGE_TYPE_DEFAULT,
@@ -155,7 +166,11 @@ export default {
   }),
   computed: {
     timeRangeConfig () {
-      return _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
+      if (this.type === SOURCE_TYPE_ALARM) {
+        return _.get(this, 'config.dataConfig.dbDataConfig.alarmConfig.timeRangeConfig', {})
+      } else {
+        return _.get(this, 'config.dataConfig.dbDataConfig.resourceConfig.timeRangeConfig', {})
+      }
     },
     startTime: {
       get () {

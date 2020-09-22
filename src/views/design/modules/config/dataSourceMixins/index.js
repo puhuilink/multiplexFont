@@ -45,6 +45,15 @@ export default {
         this.change()
       }
     },
+    alarmConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.alarmConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.alarmConfig, v)
+        this.change()
+      }
+    },
     refreshTime: {
       get () {
         return this.config.dataConfig.dbDataConfig.refreshTime

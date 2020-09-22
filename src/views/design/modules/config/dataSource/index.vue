@@ -21,9 +21,10 @@
               class="data-source__select"
               v-model="config.dataConfig.sourceType"
               @change="change">
-              <a-select-option value="null">空数据</a-select-option>
-              <a-select-option value="static">静态数据</a-select-option>
-              <a-select-option value="real">实时数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_NULL">空数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_STATIC">静态数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_REAL">性能数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_ALARM">告警数据</a-select-option>
             </a-select>
           </div>
 
@@ -33,10 +34,12 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === SOURCE_TYPE_REAL">
-        <!-- 留给组件自己实现 -->
-        <div class="data-source__wrap">
+      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === SOURCE_TYPE_REAL || sourceType === SOURCE_TYPE_ALARM">
+        <div class="data-source__wrap" v-show="sourceType === SOURCE_TYPE_REAL">
           <slot name="real"></slot>
+        </div>
+        <div class="data-source__wrap" v-show="sourceType === SOURCE_TYPE_ALARM">
+          <slot name="alarm"></slot>
         </div>
       </a-collapse-panel>
 
@@ -69,7 +72,8 @@ import { ScreenMutations } from '@/store/modules/screen'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -80,7 +84,8 @@ export default {
   data: () => ({
     SOURCE_TYPE_NULL,
     SOURCE_TYPE_REAL,
-    SOURCE_TYPE_STATIC
+    SOURCE_TYPE_STATIC,
+    SOURCE_TYPE_ALARM
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),

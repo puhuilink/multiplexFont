@@ -21,9 +21,9 @@ class MetricService extends BaseService {
   /**
    * 视图组件指标查询
    */
-  static async chartValue ({ resourceConfig, timeRange = {}, ...argus }) {
+  static async chartValue ({ timeRange = {}, ...argus }) {
     // 监控设备
-    const data = _.pick(resourceConfig, [
+    const data = _.pick(argus, [
       'deviceType',
       'deviceBrand',
       'deviceModel',
@@ -38,7 +38,7 @@ class MetricService extends BaseService {
 
     // 分组条件的前提是有计算类型
     if (data['calculateType']) {
-      Object.assign(data, _.pick(resourceConfig, ['isGroup']))
+      Object.assign(data, _.pick(argus, ['isGroup']))
     }
 
     // 时间范围
