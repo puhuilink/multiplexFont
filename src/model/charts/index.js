@@ -109,9 +109,9 @@ export default class Chart {
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
 
-    console.log(
-      _.cloneDeep(this.chartConfig)
-    )
+    // console.log(
+    //   _.cloneDeep(this.chartConfig)
+    // )
 
     // 供测试人员调试数据
     // FIXME: 生产环境关闭
@@ -129,8 +129,9 @@ export default class Chart {
   intervalRefresh () {
     this.refresh()
     // 存在自动刷新时间设置则开启定时刷新
-    const refreshTime = _.get(this, 'widget.config.dataConfig.dbDataConfig.refreshTime')
+    const refreshTime = _.get(this, 'config.dataConfig.dbDataConfig.refreshTime')
     if (refreshTime > 0) {
+      // console.log('timer启动')
       this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60
       )
     }
