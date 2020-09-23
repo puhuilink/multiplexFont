@@ -25,6 +25,7 @@
               <a-select-option :value="SOURCE_TYPE_STATIC">静态数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_REAL">性能数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_ALARM">告警数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_OVERVIEW">总览数据</a-select-option>
             </a-select>
           </div>
 
@@ -34,12 +35,14 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === SOURCE_TYPE_REAL || sourceType === SOURCE_TYPE_ALARM">
-        <div class="data-source__wrap" v-show="sourceType === SOURCE_TYPE_REAL">
-          <slot name="real"></slot>
-        </div>
-        <div class="data-source__wrap" v-show="sourceType === SOURCE_TYPE_ALARM">
-          <slot name="alarm"></slot>
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW].includes(sourceType)">
+        <div
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW]"
+          :key="type"
+          class="data-source__wrap"
+          v-show="sourceType === type"
+        >
+          <slot :name="type">{{ type }}</slot>
         </div>
       </a-collapse-panel>
 
@@ -73,7 +76,8 @@ import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -85,7 +89,8 @@ export default {
     SOURCE_TYPE_NULL,
     SOURCE_TYPE_REAL,
     SOURCE_TYPE_STATIC,
-    SOURCE_TYPE_ALARM
+    SOURCE_TYPE_ALARM,
+    SOURCE_TYPE_OVERVIEW
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
