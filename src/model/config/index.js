@@ -50,11 +50,17 @@ export default class Config {
     const config = _.cloneDeep(this)
     if (this.type === 'Topology') {
       const edges = _.get(this.proprietaryConfig, 'edges')
+      const nodes = _.get(this.proprietaryConfig, 'nodes')
+      // TODO: edge.getOption、node.getOption
       Object.assign(config.proprietaryConfig, {
         edges: edges ? edges.map(edge => {
           Reflect.deleteProperty(edge, 'sourceNode')
           Reflect.deleteProperty(edge, 'targetNode')
           return edge
+        }) : [],
+        nodes: nodes ? nodes.map(node => {
+          Reflect.deleteProperty(node, 'tooltipContent')
+          return node
         }) : []
       })
       // console.log('topology: ', config)

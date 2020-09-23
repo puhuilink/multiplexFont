@@ -304,7 +304,8 @@ export default {
       let passValidate = true
 
       for (const field of [...fieldsMapping.keys()]) {
-        if (!resourceConfig[field]) {
+        const value = resourceConfig[field]
+        if (!value || _.isEmpty(value)) {
           this.$message.error(`请选择${fieldsMapping.get(field)}`)
           passValidate = false
           break

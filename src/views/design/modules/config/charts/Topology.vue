@@ -128,7 +128,7 @@
             </a-collapse>
 
             <CommonNodeTemplate v-if="topologyEditable && activeNode" ref="commonNodeTemplate">
-              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CI">
+              <template #header v-if="activeNodeModel && activeNodeModel.shape === NODE_TYPE_CIRCLE">
                 <CiNodeDataSource />
               </template>
             </CommonNodeTemplate>
@@ -160,7 +160,9 @@ import CommonNodeTemplate from '@/views/design/modules/config/nodes'
 import CommonEdgeTemplate from '@/views/design/modules/config/edges'
 import EdgeTemplate from '@/views/design/modules/config/edges/edge'
 import CiNodeDataSource from '../dataSource/CiNodeDataSource'
-import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
+import {
+  NODE_TYPE_CIRCLE
+} from '@/plugins/g6-types'
 
 export default {
   name: 'Topology',
@@ -176,7 +178,7 @@ export default {
     CiNodeDataSource
   },
   data: () => ({
-    NODE_TYPE_CI,
+    NODE_TYPE_CIRCLE,
     // 拓扑尺寸编辑
     topologyResizable: true,
     // 拓扑模式

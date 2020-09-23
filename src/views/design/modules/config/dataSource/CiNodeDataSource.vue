@@ -149,6 +149,7 @@ export default {
   },
   props: {},
   data: () => ({
+    btnLoading: false,
     formItemLayout: {
       labelCol: {
         span: 6,
@@ -172,8 +173,7 @@ export default {
         this.change()
       }
     }
-  },
-  methods: {}
+  }
 }
 </script>
 

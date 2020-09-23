@@ -13,6 +13,12 @@ import { ScreenMutations } from '@/store/modules/screen'
 import Edge from '../model/edges'
 import { levelColorMapping } from '@/components/Alarm/color.config'
 import { hexToRGBA } from '@/utils/util'
+import {
+  NODE_TYPE_CIRCLE,
+  NODE_TYPE_ELLIPSE,
+  NODE_TYPE_RECT,
+  NODE_TYPE_IMAGE
+} from './g6-types'
 
 export const animateTypeMapping = (alpha = 1) => new Map(
   [ ...levelColorMapping ].map(([key, color]) => [`${key + 1}级告警`, hexToRGBA(color, alpha)])
@@ -150,7 +156,7 @@ G6.registerBehavior('add-edge', {
 })
 
 // 覆写圆形节点
-G6.registerNode('circle', {
+G6.registerNode(NODE_TYPE_CIRCLE, {
   afterDraw (cfg, group) {
     const item = group.get('item')
     const model = item.getModel()
@@ -181,7 +187,7 @@ G6.registerNode('circle', {
 }, 'circle')
 
 // 覆写椭圆形节点
-G6.registerNode('ellipse', {
+G6.registerNode(NODE_TYPE_ELLIPSE, {
   afterDraw (cfg, group) {
     const item = group.get('item')
     const model = item.getModel()
@@ -220,7 +226,7 @@ G6.registerNode('ellipse', {
 }, 'ellipse')
 
 // 覆写椭圆形节点
-G6.registerNode('rect', {
+G6.registerNode(NODE_TYPE_RECT, {
   afterDraw (cfg, group) {
     const item = group.get('item')
     const model = item.getModel()
@@ -261,7 +267,7 @@ G6.registerNode('rect', {
 }, 'rect')
 
 // 覆写椭圆形节点
-G6.registerNode('image', {
+G6.registerNode(NODE_TYPE_IMAGE, {
   afterDraw (cfg, group) {
     const item = group.get('item')
     const model = item.getModel()
