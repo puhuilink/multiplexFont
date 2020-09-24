@@ -46,7 +46,7 @@ export default class LinesProprietaryConfig {
     this.symbolRotate = symbolRotate
     this.lineStyle = new LineStyle(lineStyle)
     this.itemStyle = new ItemStyle(itemStyle)
-    this.areaStyle = new AreaStyle(areaStyle)
+    this.areaStyle = new AreaStyle(areaStyle || {})
     this.legend = new Legend(legend)
     this.xAxis = new XAxis(xAxis)
     this.yAxis = new YAxis(yAxis)
@@ -58,7 +58,7 @@ export default class LinesProprietaryConfig {
    * 获取折线图专有配置
    */
   getOption () {
-    const result = Object.assign(_.cloneDeep(this), {
+    const result = Object.assign({}, _.cloneDeep(this), {
       areaStyle: this.areaStyle.getOption(),
       xAxis: this.xAxis.getOption(),
       yAxis: this.yAxis.getOption(),

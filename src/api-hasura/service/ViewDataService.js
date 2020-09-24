@@ -8,9 +8,9 @@ import _ from 'lodash'
 
 export class ViewDataService extends BaseService {
   /**
-   * 视图组件指标查询
+   * 性能数据查询
    */
-  static async chartValue ({ timeRange = {}, ...argus }) {
+  static async realData ({ timeRange = {}, ...argus }) {
     // 监控设备
     const data = _.pick(argus, [
       'deviceType',
@@ -62,6 +62,61 @@ export class ViewDataService extends BaseService {
     // }
 
     // console.log(data)
-    return imp.post('/view/data', data)
+    return imp.post('/view/data', data).catch(() => ({ data: [] }))
+  }
+
+  /**
+   * 告警数据查询
+   */
+  static async alarmData ({ timeRange = {}, ...argus }) {
+    const data = _.pick(argus, [
+      'deviceType',
+      'level',
+      'origin',
+      'isGroup',
+      'calculateType',
+      'type'
+    ])
+
+    data['type'] = 'sum'
+
+    console.log(argus)
+
+    // 时间范围
+    if (!_.isEmpty(timeRange)) {
+      Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    }
+
+    for (const key in data) {
+      const value = data[key]
+      if (Array.isArray(value) && value.length === 0) {
+        Reflect.deleteProperty(data, key)
+      }
+    }
+
+    // console.log(data)
+
+    return imp.post('/view/alarm', data).catch(() => ({ data: [] }))
+  }
+
+  /**
+   * (性能)汇总数据查询
+   */
+  static async overviewData ({ timeRange = {}, ...argus }) {
+    const data = _.pick(argus, [
+      'alias',
+      'origin',
+      'isGroup',
+      'calculateType'
+    ])
+
+    // 时间范围
+    if (!_.isEmpty(timeRange)) {
+      Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    }
+
+    // console.log(data)
+
+    return imp.post('/view/map', data).catch(() => ({ data: [] }))
   }
 }

@@ -15,7 +15,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
   }
 
   async fetch () {
-    const { data = [] } = await ViewDataService.chartValue(this.getOption())
+    const { data = [] } = await ViewDataService.realData(this.getOption())
     return this.transfer(data || [])
   }
 

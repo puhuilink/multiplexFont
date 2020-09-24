@@ -6,6 +6,7 @@
 
     <a-form-item label="数据域" v-bind="formItemLayout">
       <OriginSelect
+        mode="multiple"
         v-model="alarmConfig.origin"
         @change="change()"
       />
@@ -33,6 +34,7 @@
     </a-form-item>
 
     <AlarmLevelSelect
+      mode="multiple"
       v-bind="formItemLayout"
       v-model="alarmConfig.level"
       @change="event => {
@@ -57,6 +59,17 @@
     </a-form-item>
 
     <TimeRange :type="SOURCE_TYPE_ALARM" />
+
+    <a-form-item label="刷新时间" v-bind="formItemLayout">
+      <a-input
+        :min="0"
+        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
+        suffix="分钟"
+        type="number"
+        v-model.number="alarmConfig.refreshTime"
+        @input="change()"
+      />
+    </a-form-item>
   </div>
 </template>
 

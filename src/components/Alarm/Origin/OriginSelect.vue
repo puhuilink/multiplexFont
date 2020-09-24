@@ -22,8 +22,8 @@ export default {
   props: {},
   data: () => ({
     list: [
-      { label: '北京数据中心', value: 'BJ-1' },
-      { label: '厦门数据中心', value: 'XM-1' }
+      { label: '北京数据中心', value: 'BJ1' },
+      { label: '厦门数据中心', value: 'XM1' }
     ]
   }),
   computed: {},

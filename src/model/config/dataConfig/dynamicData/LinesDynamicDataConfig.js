@@ -44,6 +44,33 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     return { legend, xAxis, yAxis, series }
   }
 
+  // TODO: 统一出口入口
+  async getOverviewOption () {
+    const dataList = await this.overviewConfig.fetch()
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const legendList = Object.keys(groupByLegend)
+    const option = {
+      legend: {
+        data: legendList
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          dataList.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: legendList.map(legend => ({
+        name: legend,
+        data: groupByLegend[legend].map(({ data }) => data)
+      }))
+    }
+    return option
+  }
+
   resetData () {
     Object.assign(this, _.cloneDeep(initialOption))
   }

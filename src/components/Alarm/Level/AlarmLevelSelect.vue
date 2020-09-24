@@ -5,9 +5,12 @@
       style="min-width: 80px"
       class="fw"
       :disabled="disabled"
+      :mode="mode"
       :value="value"
-      @select="$emit('input', $event)"
-      @change="$emit('change', $event)"
+      @change="e => {
+        $emit('input', e)
+        $emit('change', e)
+      }"
     >
       <a-select-option
         v-for="level in [1, 2, 3, 4, 5]"
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-import { FormModel } from 'ant-design-vue'
+import { FormModel, Select } from 'ant-design-vue'
 
 export default {
   name: 'AlarmLevelSelect',
@@ -28,6 +31,8 @@ export default {
   components: {},
   props: {
     ...FormModel.Item.props,
+    // eslint-disable-next-line vue/require-default-prop
+    mode: Select.props.mode,
     disabled: {
       type: Boolean,
       default: false
@@ -37,7 +42,7 @@ export default {
       default: () => false
     },
     value: {
-      type: Number,
+      type: [Number, Array],
       default: undefined
     }
   },

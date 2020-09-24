@@ -39,6 +39,10 @@ export default class TextsChart extends Chart {
       }
 
       case SOURCE_TYPE_ALARM: {
+        if (loadingDynamicData) {
+          const dynamicData = await dataConfig.dbDataConfig.getAlarmOption()
+          title.text = `${dynamicData}`
+        }
         break
       }
     }
