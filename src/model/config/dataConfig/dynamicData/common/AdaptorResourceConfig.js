@@ -6,7 +6,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { AdaptorConfig } from './AdaptorConfig'
-import { MetricService } from '@/api-hasura'
+import { ViewDataService } from '@/api-hasura'
 
 export class AdaptorResourceConfig extends AdaptorConfig {
   get useGroup () {
@@ -15,8 +15,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
   }
 
   async fetch () {
-    const { data = [] } = await MetricService.chartValue(this.getOption())
-    return this.transfer(data)
+    const { data = [] } = await ViewDataService.chartValue(this.getOption())
+    return this.transfer(data || [])
   }
 
   static _formatTime (time = moment().format(), isGroup) {

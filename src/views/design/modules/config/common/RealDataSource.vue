@@ -291,26 +291,28 @@ export default {
           cb(false)
         }
       }
-      const fieldsMapping = new Map([
-        ['deviceType', '监控类型'],
-        ['deviceBrand', '品牌名称'],
-        ['deviceModel', '品牌设备'],
-        ['deviceModel', '设备名称'],
-        ['endpointModelId', '监控实体'],
-        ['endpointModelId', '监控实体'],
-        ['metricModelIds', '检查项']
-      ])
 
-      let passValidate = true
+      // FIXME: 校验不准确
+      // const fieldsMapping = new Map([
+      //   ['deviceType', '监控类型'],
+      //   ['deviceBrand', '品牌名称'],
+      //   ['deviceModel', '品牌设备'],
+      //   ['deviceModel', '设备名称'],
+      //   ['endpointModelId', '监控实体'],
+      //   ['endpointModelId', '监控实体'],
+      //   ['metricModelIds', '检查项']
+      // ])
 
-      for (const field of [...fieldsMapping.keys()]) {
-        const value = resourceConfig[field]
-        if (!value || _.isEmpty(value)) {
-          this.$message.error(`请选择${fieldsMapping.get(field)}`)
-          passValidate = false
-          break
-        }
-      }
+      const passValidate = true
+
+      // for (const field of [...fieldsMapping.keys()]) {
+      //   const value = resourceConfig[field]
+      //   if (!value || _.isEmpty(value)) {
+      //     this.$message.error(`请选择${fieldsMapping.get(field)}`)
+      //     passValidate = false
+      //     break
+      //   }
+      // }
 
       cb(passValidate)
     }
