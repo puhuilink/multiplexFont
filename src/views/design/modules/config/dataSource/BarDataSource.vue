@@ -1,13 +1,16 @@
 <template>
   <DataSourceTemplate>
-    <template v-slot:SOURCE_TYPE_REAL>
+    <template v-slot:[SOURCE_TYPE_REAL]>
       <RealDataSource
+        :key="SOURCE_TYPE_REAL"
         useRefreshTime
         :useCalculateType="false"
       />
     </template>
-    <template v-slot:SOURCE_TYPE_ALARM>
-      <AlarmDataSource />
+    <template v-slot:[SOURCE_TYPE_ALARM]>
+      <AlarmDataSource
+        :key="SOURCE_TYPE_ALARM"
+      />
     </template>
   </DataSourceTemplate>
 </template>

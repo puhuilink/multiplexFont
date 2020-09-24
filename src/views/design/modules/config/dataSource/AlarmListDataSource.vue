@@ -9,8 +9,9 @@
 <template>
   <div class="alarm-list-data-source">
     <DataSourceTemplate>
-      <template v-slot:SOURCE_TYPE_REAL>
+      <template v-slot:[SOURCE_TYPE_REAL]>
         <RealDataSource
+          :key="SOURCE_TYPE_REAL"
           useComboSelect
           :useExternalCi="false"
           :comboSelectProps="{ multiple: true, hasDomain: true, hasAlarmType: true, hasKpi: false }"

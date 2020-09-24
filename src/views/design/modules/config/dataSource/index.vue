@@ -42,7 +42,7 @@
           class="data-source__wrap"
           v-show="sourceType === type"
         >
-          <slot :name="type">{{ type }}</slot>
+          <slot :name="type"></slot>
         </div>
       </a-collapse-panel>
 

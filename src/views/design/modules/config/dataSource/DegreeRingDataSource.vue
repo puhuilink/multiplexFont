@@ -1,7 +1,8 @@
 <template>
   <DataSourceTemplate>
-    <template v-slot:SOURCE_TYPE_REAL>
+    <template v-slot:[SOURCE_TYPE_REAL]>
       <RealDataSource
+        :key="SOURCE_TYPE_REAL"
         singleHost
         singleMetric
         :useCalculateType="false"
