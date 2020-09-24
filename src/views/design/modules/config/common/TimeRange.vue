@@ -86,7 +86,8 @@ import {
 } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 import {
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
@@ -143,7 +144,7 @@ export default {
     type: {
       type: String,
       default: SOURCE_TYPE_REAL,
-      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM].includes(type)
+      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW].includes(type)
     }
   },
   data: () => ({
@@ -168,6 +169,8 @@ export default {
     timeRangeConfig () {
       if (this.type === SOURCE_TYPE_ALARM) {
         return _.get(this, 'config.dataConfig.dbDataConfig.alarmConfig.timeRangeConfig', {})
+      } else if (this.type === SOURCE_TYPE_OVERVIEW) {
+        return _.get(this, 'config.dataConfig.dbDataConfig.overviewConfig.timeRangeConfig', {})
       } else {
         return _.get(this, 'config.dataConfig.dbDataConfig.resourceConfig.timeRangeConfig', {})
       }

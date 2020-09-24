@@ -4,6 +4,7 @@
 
 import { AdaptorResourceConfig } from './AdaptorResourceConfig'
 import { AdaptorAlarmConfig } from './AdaptorAlarmConfig'
+import { AdaptorOverviewConfig } from './AdaptorOverviewConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -15,13 +16,17 @@ export class DynamicDataConfig {
       timeRangeConfig: {}
     },
     alarmConfig = {
-      timeRangeConfig: []
+      timeRangeConfig: {}
+    },
+    overviewConfig = {
+      timeRangeConfig: {}
     }
   }) {
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
+    this.overviewConfig = new AdaptorOverviewConfig(overviewConfig)
     this.resetData()
   }
 

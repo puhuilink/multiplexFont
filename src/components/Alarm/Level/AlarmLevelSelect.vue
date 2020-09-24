@@ -1,11 +1,13 @@
 <template>
   <a-form-model-item label="告警级别" v-bind="$props">
     <a-select
+      allowClear
       style="min-width: 80px"
       class="fw"
       :disabled="disabled"
       :value="value"
       @select="$emit('input', $event)"
+      @change="$emit('change', $event)"
     >
       <a-select-option
         v-for="level in [1, 2, 3, 4, 5]"

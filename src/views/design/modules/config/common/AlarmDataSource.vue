@@ -32,6 +32,15 @@
       />
     </a-form-item>
 
+    <AlarmLevelSelect
+      v-bind="formItemLayout"
+      v-model="alarmConfig.level"
+      @change="event => {
+        alarmConfig.level = event
+        this.change()
+      }"
+    />
+
     <a-form-item label="计算类型" v-bind="formItemLayout">
       <CalculateTypeSelect
         v-model="alarmConfig.calculateType"
@@ -55,10 +64,11 @@
 import { OriginSelect } from '@/components/Alarm'
 import DataSourceMixins from '../dataSourceMixins/index'
 import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
-import TimeRange from './TimeRange'
 import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
+import { AlarmLevelSelect } from '~~~/Alarm'
 
 export default {
   name: 'AlarmDataSource',
@@ -68,7 +78,8 @@ export default {
     DeviceTypeSelect: DeviceTypeFactory.Select,
     TimeRange,
     CalculateTypeSelect,
-    GroupSelect
+    GroupSelect,
+    AlarmLevelSelect
   },
   props: {},
   data: () => ({

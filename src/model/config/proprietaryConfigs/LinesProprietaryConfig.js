@@ -46,9 +46,6 @@ export default class LinesProprietaryConfig {
     this.symbolRotate = symbolRotate
     this.lineStyle = new LineStyle(lineStyle)
     this.itemStyle = new ItemStyle(itemStyle)
-    console.log(
-      areaStyle
-    )
     this.areaStyle = new AreaStyle(areaStyle)
     this.legend = new Legend(legend)
     this.xAxis = new XAxis(xAxis)

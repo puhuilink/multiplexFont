@@ -10,7 +10,8 @@ import Chart from './index'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_OVERVIEW
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class LineChart extends Chart {
@@ -68,6 +69,9 @@ export default class LineChart extends Chart {
         break
       }
       case SOURCE_TYPE_NULL: {
+        break
+      }
+      case SOURCE_TYPE_OVERVIEW: {
         break
       }
     }
