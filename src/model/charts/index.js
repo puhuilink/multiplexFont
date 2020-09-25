@@ -126,7 +126,6 @@ export default class Chart {
     this.refresh()
     // 存在自动刷新时间设置则开启定时刷新
     const refreshTime = _.get(this, 'config.dataConfig.dbDataConfig.refreshTime') || _.get(this, 'config.dataConfig.dbDataConfig.alarmConfig.refreshTime') || _.get(this, 'config.dataConfig.dbDataConfig.overviewConfig.refreshTime')
-    console.log(refreshTime)
     if (refreshTime > 0) {
       // console.log('timer启动')
       this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60

@@ -50,8 +50,7 @@ export default {
     },
     // 视图中所有拓扑图内的节点
     nodes (state, getters) {
-      const nodes = getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
-      return nodes
+      return getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
     },
     // 画板缩放比例
     scale (state) {
