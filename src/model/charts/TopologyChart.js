@@ -15,34 +15,10 @@ import Chart from './index'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
+import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 const events = require('events')
 
 export const emitter = new events.EventEmitter()
-
-// const tooltip = new G6.Tooltip({
-//   itemTypes: ['node'],
-//   // 是否允许 tooltip 出现
-//   shouldBegin (e) {
-//     console.log('是否允许 tooltip 出现')
-//     console.log(e)
-//     console.log(e.item.getModel())
-//     return true
-//   },
-//   getContent (e) {
-//     console.log('tooltip renderer')
-//     console.log(e)
-//     console.log(e.item.getModel())
-//     return `<div style='width: 180px;'>
-//       <ul id='menu'>
-//         <li title='1'>测试02</li>
-//         <li title='2'>测试02</li>
-//         <li>测试02</li>
-//         <li>测试02</li>
-//         <li>测试02</li>
-//       </ul>
-//     </div>`
-//   }
-// })
 
 export default class TopologyChart extends Chart {
   constructor ({ widget }) {
@@ -61,54 +37,18 @@ export default class TopologyChart extends Chart {
       width,
       height,
       renderer: 'canvas',
-      // plugins: [tooltip],
+      plugins: [],
       modes: {
-        default: ['circle', {
+        default: [NODE_TYPE_CIRCLE, {
           type: 'tooltip',
+          // 是否展示 tooltip，鼠标移入时触发
+          shouldBegin: (e) => {
+            const model = e.item.getModel()
+            return !!model.tooltipContent
+          },
+          // tooltip 展示内容，鼠标移入时触发
           formatText: (model) => {
-            if (!this.isPreviewMode) {
-              return ''
-            }
-            const MOCK_DATA = {
-              // 显示属性
-              attrList: [
-                {
-                  label: '显示名称',
-                  value: '生产经营服务器'
-                },
-                {
-                  label: 'IP地址',
-                  value: '127.0.0.1'
-                }
-              ],
-              // 显示 KPI
-              kpiList: [
-                {
-                  label: 'CPU使用率',
-                  value: '80%'
-                },
-                {
-                  label: 'PING延时MS',
-                  value: '20'
-                }
-              ]
-            }
-            model.data = MOCK_DATA
-
-            const { data = {} } = model
-            const { attrList = [], kpiList = [] } = data
-            if (_.isEmpty(attrList) && _.isEmpty(kpiList)) {
-              return ''
-            } else {
-              const attrDom = `${attrList.map(({ label, value }) => `<p>${label}：${value}</p>`).join('')}`
-              const kpiDom = `${kpiList.map(({ label, value }) => `<p>${label}：${value}</p>`).join('')}`
-              return `
-                <div>
-                  <div class="g6-tooltip_attr">${attrDom}</div>
-                  <div class="g6-tooltip_kpi">${kpiDom}</div>
-                </div>
-              `
-            }
+            return model.tooltipContent
           }
         }],
         edit: [
@@ -184,7 +124,7 @@ export default class TopologyChart extends Chart {
 
     // 对于缩放事件的监听
     this.chart.on('wheelzoom', () => {
-      console.log(this.chart.getZoom())
+      // console.log(this.chart.getZoom())
     })
 
     // 对于节点右键触发上下文菜单
@@ -477,6 +417,11 @@ export default class TopologyChart extends Chart {
     if (!_.isEmpty(nodes)) {
       nodes.forEach(node => {
         const model = node.getModel()
+        const targetModel = store.getters['screen/nodes'].find(node => node.id === model.id)
+        // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
+        if (targetModel) {
+          Object.assign(model, targetModel)
+        }
         this.chart.setItemState(node, model.animateType, true)
       })
     }
@@ -511,6 +456,11 @@ export default class TopologyChart extends Chart {
 
   destroy () {
     emitter.off('canvas:click', this.onNodeAnimateTypeChange)
+    const nodes = this.chart.getNodes()
+    nodes.forEach(node => {
+      const model = node.getModel()
+      model.destroy && model.destroy()
+    })
     this.chart.off()
     this.chart.destroy()
     this.timerNodeList && this.timerNodeList.forEach(node => {

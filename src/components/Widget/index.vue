@@ -35,8 +35,10 @@ import Widget from '@/model/widget'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
-import { NODE_TYPE_CIRCLE, NODE_TYPE_CI, NodeFactory } from '@/model/factory/nodeFactory'
 import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+
+const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
@@ -114,7 +116,7 @@ export default {
      */
     drill ({ item }) {
       // const model = item.getModel()
-      // if (model.shape === NODE_TYPE_CI) {}
+      // if (model.shape === NODE_TYPE_CIRCLE) {}
       // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
       // mock data
       const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
@@ -147,15 +149,18 @@ export default {
     initTopologyChart () {
       const { render } = this
       const {
-        // chart,
-        config
+        config: { proprietaryConfig }
       } = render
-      const { proprietaryConfig: { nodes } } = config
       // chart.on('node:click', this.drill)
-      // 筛选出需要定时刷新的节点，如果节点只存储了配置，需要将其实例化
-      const circleNodeList = nodes.filter(({ shape }) => [NODE_TYPE_CIRCLE, NODE_TYPE_CI].includes(shape)).map(node => NodeFactory.create(node))
+      proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
+        // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
+        if (node.shape === NODE_TYPE_CIRCLE) {
+          return nodeFactory.create(node)
+        }
+        return node
+      })
+      const circleNodeList = proprietaryConfig.nodes
       render.enablePreviewMode()
-      console.log(circleNodeList)
       // 开启轮询
       circleNodeList.forEach(node => {
         node.intervalRefresh && node.intervalRefresh()

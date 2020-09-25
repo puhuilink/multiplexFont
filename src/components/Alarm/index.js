@@ -3,11 +3,11 @@ import {
   ThresholdConditionSelect
 } from './Threshold/index'
 import { AlarmLevelSelect } from './Level/index'
-import DataDomainSelect from './DataDomain/DataDomainSelect'
+import OriginSelect from './Origin/OriginSelect'
 
 export {
   ThresholdOperatorSelect,
   ThresholdConditionSelect,
   AlarmLevelSelect,
-  DataDomainSelect
+  OriginSelect
 }

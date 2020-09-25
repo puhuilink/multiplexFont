@@ -15,8 +15,10 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
-import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
 import { CmdbService } from '@/api-hasura'
+import {
+  NODE_TYPE_CIRCLE
+} from '@/plugins/g6-types'
 
 export default {
   name: 'Ci',
@@ -47,7 +49,7 @@ export default {
           height: 64,
           label: dataRef.alias,
           radius: '50%',
-          shape: NODE_TYPE_CI,
+          shape: NODE_TYPE_CIRCLE,
           width: 64,
           icon: {
             name: icon.name,

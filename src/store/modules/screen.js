@@ -44,6 +44,14 @@ export default {
     widgets (state) {
       return state.view.widgets
     },
+    // 视图中所有拓扑图节点
+    topologyWidgets (state, getters) {
+      return getters.widgets.filter(({ config }) => config.type === 'Topology')
+    },
+    // 视图中所有拓扑图内的节点
+    nodes (state, getters) {
+      return getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
+    },
     // 画板缩放比例
     scale (state) {
       return state.view.scale || 1

@@ -2,10 +2,9 @@
  * 动态数据配置公共模块
  */
 
-import { TimeRangeConfig } from './TimeRangeConfig'
 import { AdaptorResourceConfig } from './AdaptorResourceConfig'
-import { MetricService } from '@/api-hasura'
-import _ from 'lodash'
+import { AdaptorAlarmConfig } from './AdaptorAlarmConfig'
+import { AdaptorOverviewConfig } from './AdaptorOverviewConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -13,48 +12,29 @@ export class DynamicDataConfig {
     externalCi = true,
     // 定时刷新时间(分)
     refreshTime = 1,
-    resourceConfig = {},
-    // 查询时间范围
-    timeRangeConfig = {}
+    resourceConfig = {
+      timeRangeConfig: {}
+    },
+    alarmConfig = {
+      timeRangeConfig: {}
+    },
+    overviewConfig = {
+      timeRangeConfig: {}
+    }
   }) {
     this.externalCi = externalCi
     this.refreshTime = refreshTime
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
-    this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
+    this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
+    this.overviewConfig = new AdaptorOverviewConfig(overviewConfig)
     this.resetData()
   }
 
-  fetch (argus = {}) {
-    const { resourceConfig, timeRangeConfig } = this
-    return MetricService
-      .chartValue({
-        resourceConfig: resourceConfig.getOption(),
-        timeRange: timeRangeConfig.getOption()
-      })
-      .then(({ data }) => {
-        const result = AdaptorResourceConfig.transfer(data, resourceConfig.useGroup)
-        console.log(result)
-        return result
-      })
+  fetch () {
+    return this.resourceConfig.fetch()
   }
 
-  getOption () { }
-
-  groupByInstance (data) {
-    return _.groupBy(data, 'instance_id')
-  }
-
-  groupByCi (data) {
-    return _.groupBy(data, 'instanceLabel')
-  }
-
-  groupByKpi (data) {
-    return _.groupBy(data, 'kpiLabel')
-  }
-
-  groupByArisingTime (data) {
-    return _.groupBy(data, 'arising_time')
-  }
+  getOption () {}
 
   resetData () {}
 }

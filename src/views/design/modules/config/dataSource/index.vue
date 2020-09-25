@@ -21,9 +21,11 @@
               class="data-source__select"
               v-model="config.dataConfig.sourceType"
               @change="change">
-              <a-select-option value="null">空数据</a-select-option>
-              <a-select-option value="static">静态数据</a-select-option>
-              <a-select-option value="real">实时数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_NULL">空数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_STATIC">静态数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_REAL">性能数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_ALARM">告警数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_OVERVIEW">总览数据</a-select-option>
             </a-select>
           </div>
 
@@ -33,10 +35,14 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="sourceType === SOURCE_TYPE_REAL">
-        <!-- 留给组件自己实现 -->
-        <div class="data-source__wrap">
-          <slot name="real"></slot>
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW].includes(sourceType)">
+        <div
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW]"
+          :key="type"
+          class="data-source__wrap"
+          v-show="sourceType === type"
+        >
+          <slot :name="type"></slot>
         </div>
       </a-collapse-panel>
 
@@ -69,7 +75,9 @@ import { ScreenMutations } from '@/store/modules/screen'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -80,7 +88,9 @@ export default {
   data: () => ({
     SOURCE_TYPE_NULL,
     SOURCE_TYPE_REAL,
-    SOURCE_TYPE_STATIC
+    SOURCE_TYPE_STATIC,
+    SOURCE_TYPE_ALARM,
+    SOURCE_TYPE_OVERVIEW
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),

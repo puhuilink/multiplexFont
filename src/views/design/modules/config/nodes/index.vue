@@ -48,7 +48,7 @@
                 :key="idx"
                 :value="animateType"
               >{{ animateType }}</a-select-option>
-              <!-- <a-select-option v-if="model.shape === NODE_TYPE_CI" value="real">实时</a-select-option> -->
+              <!-- <a-select-option v-if="model.shape === NODE_TYPE_CIRCLE" value="real">实时</a-select-option> -->
               <a-select-option value="real">实时</a-select-option>
             </a-select>
           </div>
@@ -247,19 +247,24 @@ import IconPicker from '@/components/IconPicker'
 import ColorPicker from '@/components/ColorPicker'
 import NodesMixins from '../dataSourceMixins/nodes'
 import { animateTypeMapping } from '@/plugins/g6'
-import { NODE_TYPE_CI } from '@/model/factory/nodeFactory'
+import {
+  NODE_TYPE_CIRCLE,
+  NODE_TYPE_ELLIPSE,
+  NODE_TYPE_RECT,
+  NODE_TYPE_IMAGE
+} from '@/plugins/g6-types'
 
 export default {
   name: 'CommonNodeTemplate',
   mixins: [NodesMixins],
   components: { IconPicker, ColorPicker },
   data: () => ({
-    NODE_TYPE_CI,
+    NODE_TYPE_CIRCLE,
     shape: new Map([
-      ['circle', '圆形'],
-      ['rect', '矩形'],
-      ['ellipse', '椭圆形'],
-      ['image', '图片']
+      [NODE_TYPE_CIRCLE, '圆形'],
+      [NODE_TYPE_RECT, '矩形'],
+      [NODE_TYPE_ELLIPSE, '椭圆形'],
+      [NODE_TYPE_IMAGE, '图片']
     ]),
     animateTypeList: [...animateTypeMapping()].map(([type]) => type)
   }),

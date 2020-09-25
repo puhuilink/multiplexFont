@@ -38,7 +38,7 @@ export default class PolarProprietaryConfig {
    * 获取柱形图专有配置
    */
   getOption () {
-    return Object.assign(_.cloneDeep(this), {
+    return Object.assign({}, _.cloneDeep(this), {
       itemStyle: this.barItemStyle.getOption(),
       polar: this.polar.getOption(),
       radar: this.radar.getOption(),

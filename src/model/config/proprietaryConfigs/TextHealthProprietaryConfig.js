@@ -29,7 +29,7 @@ export default class TextsProprietaryConfig {
    * 获取文本专有配置
    */
   getOption () {
-    return Object.assign(_.cloneDeep(this), {
+    return Object.assign({}, _.cloneDeep(this), {
       title: _.cloneDeep(this.title.getOption())
     })
   }
