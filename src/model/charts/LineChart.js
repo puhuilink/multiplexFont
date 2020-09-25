@@ -72,17 +72,15 @@ export default class LineChart extends Chart {
         break
       }
       case SOURCE_TYPE_OVERVIEW: {
-        if (loadingDynamicData) {
-          const dynamicData = await dbDataConfig.getOverviewOption()
-          series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
-          const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
-          Object.assign(option, {
-            legend: Object.assign(legend, dynamicLegend),
-            xAxis: Object.assign(xAxis, dynamicXAxis),
-            yAxis: Object.assign(yAxis, dynamicYAxis),
-            series
-          })
-        }
+        const dynamicData = await dbDataConfig.getOverviewOption(loadingDynamicData)
+        series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        Object.assign(option, {
+          legend: Object.assign(legend, dynamicLegend),
+          xAxis: Object.assign(xAxis, dynamicXAxis),
+          yAxis: Object.assign(yAxis, dynamicYAxis),
+          series
+        })
         break
       }
     }

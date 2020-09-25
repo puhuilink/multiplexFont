@@ -101,25 +101,23 @@ export default class BarChart extends Chart {
         break
       }
       case SOURCE_TYPE_ALARM: {
-        if (loadingDynamicData) {
-          let dynamicData = await dbDataConfig.getAlarmOption()
-          dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
-          series = dynamicData.series.map((item) => {
-            return {
-              ...item,
-              ...bar,
-              barWidth,
-              stack: barType === 'single'
-            }
-          })
-          const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
-          Object.assign(option, {
-            legend: Object.assign(legend, dynamicLegend),
-            xAxis: Object.assign(xAxis, dynamicXAxis),
-            yAxis: Object.assign(yAxis, dynamicYAxis),
-            series
-          })
-        }
+        let dynamicData = await dbDataConfig.getAlarmOption(loadingDynamicData)
+        dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
+        series = dynamicData.series.map((item) => {
+          return {
+            ...item,
+            ...bar,
+            barWidth,
+            stack: barType === 'single'
+          }
+        })
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        Object.assign(option, {
+          legend: Object.assign(legend, dynamicLegend),
+          xAxis: Object.assign(xAxis, dynamicXAxis),
+          yAxis: Object.assign(yAxis, dynamicYAxis),
+          series
+        })
         break
       }
     }

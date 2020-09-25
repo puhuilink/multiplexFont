@@ -80,7 +80,7 @@ export class ViewDataService extends BaseService {
 
     data['type'] = 'sum'
 
-    console.log(argus)
+    // console.log(argus)
 
     // 时间范围
     if (!_.isEmpty(timeRange)) {

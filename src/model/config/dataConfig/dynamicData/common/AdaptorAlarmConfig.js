@@ -50,7 +50,6 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
   }
 
   getOption () {
-    console.log(this)
     return {
       ..._.omit(this, 'timeRangeConfig'),
       timeRange: this.timeRangeConfig.getOption()
