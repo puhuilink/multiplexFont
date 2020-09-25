@@ -6,6 +6,7 @@ import { MetricDao } from '../dao'
 import _ from 'lodash'
 import { generateQuery } from '@/utils/graphql'
 import { axios, imp } from '@/utils/request'
+import message from 'ant-design-vue/es/message'
 
 class MetricService extends BaseService {
   static async find ({ orderBy = { collect_time: 'desc' }, ...argus }) {
@@ -16,37 +17,6 @@ class MetricService extends BaseService {
       })
     )
     return res
-  }
-
-  /**
-   * 视图组件指标查询
-   */
-  static async chartValue ({ resourceConfig, timeRange = {}, ...argus }) {
-    // 监控设备
-    const data = _.pick(resourceConfig, [
-      'deviceType',
-      'deviceBrand',
-      'deviceModel',
-      'hostId',
-      'endpointModelId',
-      'metricModelIds',
-      'calculateType'
-    ])
-
-    data['metricModelIds'] = _.castArray(data['metricModelIds'])
-    data['hostId'] = _.castArray(data['hostId'])
-
-    // 分组条件的前提是有计算类型
-    if (data['calculateType']) {
-      Object.assign(data, _.pick(resourceConfig, ['isGroup']))
-    }
-
-    // 时间范围
-    if (!_.isEmpty(timeRange)) {
-      Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
-    }
-    // console.log(data)
-    return imp.post('/view/data', data)
   }
 }
 

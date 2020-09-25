@@ -323,7 +323,7 @@ export default {
         })
         // 在非移动情况触发时，调整图表尺寸
         if (eventType !== 'MOVE') {
-          this.activeWidget.render.resize(config)
+          this.resizeWidget(config)
         }
       })
   },
@@ -337,6 +337,9 @@ export default {
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
+    resizeWidget: _.debounce(function (config) {
+      this.activeWidget.render.resize(config)
+    }, 100),
     /**
      * 左右panel展开与否
      * @param type 左右panel

@@ -85,9 +85,8 @@ const Select = {
 }
 
 const Factory = {
-  create (type = 'listSelect') {
-    return type === 'listSelect' ? ListSelect : Select
-  }
+  Select,
+  ListSelect
 }
 
 export default Factory

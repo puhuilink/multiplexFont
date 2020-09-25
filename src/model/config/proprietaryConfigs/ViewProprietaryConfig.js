@@ -39,7 +39,7 @@ export default class ViewProprietaryConfig {
     backgroundImage = '',
     backgroundRepeat = 'no-repeat',
     backgroundSize = '',
-    scaleMode = 'auto'
+    scaleMode = 'fullscreen'
   }) {
     this.mode = mode
     this.backgroundColor = backgroundColor

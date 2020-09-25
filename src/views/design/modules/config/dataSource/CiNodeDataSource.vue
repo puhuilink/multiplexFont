@@ -140,15 +140,16 @@ export default {
   mixins: [NodeMixin],
   components: {
     ViewListSelect,
-    DeviceTypeSelect: DeviceTypeFactory.create('select'),
-    DeviceBrandSelect: DeviceBrandFactory.create('select'),
-    DeviceModelSelect: DeviceModelFactory.create('select'),
-    HostSelect: HostFactory.create('select'),
+    DeviceTypeSelect: DeviceTypeFactory.Select,
+    DeviceBrandSelect: DeviceBrandFactory.Select,
+    DeviceModelSelect: DeviceModelFactory.Select,
+    HostSelect: HostFactory.Select,
     EndpointSelect,
     MetricSelect
   },
   props: {},
   data: () => ({
+    btnLoading: false,
     formItemLayout: {
       labelCol: {
         span: 6,
@@ -172,8 +173,7 @@ export default {
         this.change()
       }
     }
-  },
-  methods: {}
+  }
 }
 </script>
 

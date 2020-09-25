@@ -76,7 +76,7 @@ export default class DegreeRingProprietaryConfig {
    * 获取健康度专有配置
    */
   getOption () {
-    return Object.assign(_.cloneDeep(this), {
+    return Object.assign({}, _.cloneDeep(this), {
       series: _.cloneDeep(this.innerCircle)
     })
   }

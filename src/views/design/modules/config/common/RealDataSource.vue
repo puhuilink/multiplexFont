@@ -19,31 +19,19 @@
     <TimeRange v-if="useTimeRange" />
 
     <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
-      <a-select
-        allowClear
+      <CalculateTypeSelect
         class="fw"
         v-model="resourceConfig.calculateType"
         @change="change()"
-      >
-        <a-select-option
-          v-for="option in calculateTypeList"
-          :key="option.value"
-        >{{ option.label }}</a-select-option>
-      </a-select>
+      />
     </a-form-item>
 
     <a-form-item label="分组条件" v-bind="formItemLayout" required v-if="useRefreshTime" v-show="resourceConfig.calculateType">
-      <a-select
-        allowClear
+      <GroupSelect
         class="fw"
-        v-model="resourceConfig.isGroup"
+        v-model="resourceConfig.calculateType"
         @change="change()"
-      >
-        <a-select-option
-          v-for="option in groupList"
-          :key="option.value"
-        >{{ option.label }}</a-select-option>
-      </a-select>
+      />
     </a-form-item>
 
     <a-form-item label="监控类型" v-bind="formItemLayout" required>
@@ -180,18 +168,22 @@ import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
 import HostFactory from '~~~/Unknown/Host'
 import EndpointSelect from '~~~/Unknown/Endpoint'
 import MetricSelect from '~~~/Unknown/Metric'
+import CalculateTypeSelect from './CalculateTypeSelect'
+import GroupSelect from './GroupSelect'
 
 export default {
   name: 'RealDataSource',
   mixins: [DataSourceMixins],
   components: {
     TimeRange,
-    DeviceTypeSelect: DeviceTypeFactory.create('select'),
-    DeviceBrandSelect: DeviceBrandFactory.create('select'),
-    DeviceModelSelect: DeviceModelFactory.create('select'),
-    HostSelect: HostFactory.create('select'),
+    DeviceTypeSelect: DeviceTypeFactory.Select,
+    DeviceBrandSelect: DeviceBrandFactory.Select,
+    DeviceModelSelect: DeviceModelFactory.Select,
+    HostSelect: HostFactory.Select,
     EndpointSelect,
-    MetricSelect
+    MetricSelect,
+    CalculateTypeSelect,
+    GroupSelect
   },
   props: {
     mode: {
@@ -234,16 +226,6 @@ export default {
     }
   },
   data: () => ({
-    calculateTypeList: [
-      { label: '求和', value: 'sum' },
-      { label: '最大值', value: 'max' },
-      { label: '均值', value: 'avg' }
-    ],
-    groupList: [
-      { label: '精确到小时', value: 'hour' },
-      { label: '精确到天', value: 'day' },
-      { label: '精确到月', value: 'month' }
-    ],
     legendTypeList: [
       { label: 'Ci', value: 'ci' },
       { label: 'Instance', value: 'instance' },
@@ -309,25 +291,28 @@ export default {
           cb(false)
         }
       }
-      const fieldsMapping = new Map([
-        ['deviceType', '监控类型'],
-        ['deviceBrand', '品牌名称'],
-        ['deviceModel', '品牌设备'],
-        ['deviceModel', '设备名称'],
-        ['endpointModelId', '监控实体'],
-        ['endpointModelId', '监控实体'],
-        ['metricModelIds', '检查项']
-      ])
 
-      let passValidate = true
+      // FIXME: 校验不准确
+      // const fieldsMapping = new Map([
+      //   ['deviceType', '监控类型'],
+      //   ['deviceBrand', '品牌名称'],
+      //   ['deviceModel', '品牌设备'],
+      //   ['deviceModel', '设备名称'],
+      //   ['endpointModelId', '监控实体'],
+      //   ['endpointModelId', '监控实体'],
+      //   ['metricModelIds', '检查项']
+      // ])
 
-      for (const field of [...fieldsMapping.keys()]) {
-        if (!resourceConfig[field]) {
-          this.$message.error(`请选择${fieldsMapping.get(field)}`)
-          passValidate = false
-          break
-        }
-      }
+      const passValidate = true
+
+      // for (const field of [...fieldsMapping.keys()]) {
+      //   const value = resourceConfig[field]
+      //   if (!value || _.isEmpty(value)) {
+      //     this.$message.error(`请选择${fieldsMapping.get(field)}`)
+      //     passValidate = false
+      //     break
+      //   }
+      // }
 
       cb(passValidate)
     }

@@ -5,7 +5,7 @@
 <template>
   <div class="texts-config">
     <a-tabs
-      defaultActiveKey="2"
+      defaultActiveKey="3"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
