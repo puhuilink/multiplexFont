@@ -4,30 +4,29 @@
 
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
-import _ from 'lodash'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {
   constructor ({
     // 数据域
     origin = [],
+    // 分组方式:  hour / minute / month
+    isGroup = '',
     // 监控类型
     deviceType = [],
     // 告警等级
     level = [],
-    // 定时刷新时间(分钟)
-    refreshTime = 0,
     ...props
   }) {
     super(props)
     this.origin = origin
+    this.isGroup = isGroup
     this.deviceType = deviceType
     this.level = level
-    this.refreshTime = refreshTime
   }
 
   fetch () {
     return ViewDataService
-      .alarmData(this.getOption())
+      .alarmData(this.getOption(), this.getTimeoutOption())
       .then(({ data = [] }) => data)
       .catch(() => [])
       .then(this.transfer)
@@ -48,12 +47,5 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
         level4,
         level5
       }))
-  }
-
-  getOption () {
-    return {
-      ..._.omit(this, 'timeRangeConfig'),
-      timeRange: this.timeRangeConfig.getOption()
-    }
   }
 }

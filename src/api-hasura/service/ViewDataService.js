@@ -10,7 +10,7 @@ export class ViewDataService extends BaseService {
   /**
    * 性能数据查询
    */
-  static async realData ({ timeRange = {}, ...argus }) {
+  static async realData ({ timeRange = {}, ...argus }, config = {}) {
     // 监控设备
     const data = _.pick(argus, [
       'deviceType',
@@ -62,13 +62,13 @@ export class ViewDataService extends BaseService {
     // }
 
     // console.log(data)
-    return imp.post('/view/data', data).catch(() => ({ data: [] }))
+    return imp.post('/view/data', data, config).catch(() => ({ data: [] }))
   }
 
   /**
    * 告警数据查询
    */
-  static async alarmData ({ timeRange = {}, ...argus }) {
+  static async alarmData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
       'deviceType',
       'level',
@@ -96,13 +96,13 @@ export class ViewDataService extends BaseService {
 
     // console.log(data)
 
-    return imp.post('/view/alarm', data).catch(() => ({ data: [] }))
+    return imp.post('/view/alarm', data, config).catch(() => ({ data: [] }))
   }
 
   /**
    * (性能)汇总数据查询
    */
-  static async overviewData ({ timeRange = {}, ...argus }) {
+  static async overviewData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
       'alias',
       'origin',
@@ -117,6 +117,6 @@ export class ViewDataService extends BaseService {
 
     // console.log(data)
 
-    return imp.post('/view/map', data).catch(() => ({ data: [] }))
+    return imp.post('/view/map', data, config).catch(() => ({ data: [] }))
   }
 }

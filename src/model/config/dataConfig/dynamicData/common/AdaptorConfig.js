@@ -4,33 +4,35 @@
  */
 
 import { TimeRangeConfig } from './TimeRangeConfig'
+import _ from 'lodash'
 
 export class AdaptorConfig {
   constructor ({
-    deviceType = 'Host',
-    deviceBrand = 'HostLinux',
-    deviceModel = 'HostAIXLinux',
-    hostId = [],
-    endpointModelId = 1149375446,
-    metricModelIds = [],
-    // enum:  hour / minute / month
-    isGroup = '',
-    // enum: sum / max / avg
-    calculateType = '',
-    timeRangeConfig = {}
+    refreshTime = 0,
+    timeRangeConfig = {},
+    // 计算类型: sum / max / avg
+    calculateType = ''
   }) {
-    this.deviceType = deviceType
-    this.deviceBrand = deviceBrand
-    this.deviceModel = deviceModel
-    this.hostId = hostId
-    this.endpointModelId = endpointModelId
-    this.metricModelIds = metricModelIds
-    this.isGroup = isGroup
-    this.calculateType = calculateType
+    this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
+    this.calculateType = calculateType
   }
 
   fetch () {}
 
-  getOption () {}
+  getOption () {
+    return {
+      ..._.omit(this, 'timeRangeConfig'),
+      timeRange: this.timeRangeConfig.getOption()
+    }
+  }
+
+  getTimeoutOption () {
+    const { refreshTime } = this
+    return {
+      ...refreshTime ? {
+        timeout: refreshTime * 1000 * 60
+      } : {}
+    }
+  }
 }

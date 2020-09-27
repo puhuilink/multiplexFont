@@ -8,6 +8,30 @@ import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
 
 export class AdaptorResourceConfig extends AdaptorConfig {
+  constructor ({
+    deviceType = 'Host',
+    deviceBrand = 'HostLinux',
+    deviceModel = 'HostAIXLinux',
+    hostId = [],
+    endpointModelId = 1149375446,
+    metricModelIds = [],
+    // enum:  hour / minute / month
+    isGroup = '',
+    // enum: sum / max / avg
+    calculateType = '',
+    ...props
+  }) {
+    super(props)
+    this.deviceType = deviceType
+    this.deviceBrand = deviceBrand
+    this.deviceModel = deviceModel
+    this.hostId = hostId
+    this.endpointModelId = endpointModelId
+    this.metricModelIds = metricModelIds
+    this.isGroup = isGroup
+    this.calculateType = calculateType
+  }
+
   get useGroup () {
     const { isGroup, calculateType } = this
     return calculateType ? isGroup : ''
@@ -15,7 +39,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
 
   fetch () {
     return ViewDataService
-      .realData(this.getOption())
+      .realData(this.getOption(), this.getTimeoutOption())
       .then(({ data = [] }) => data)
       .catch(() => [])
       .then(this.transfer)
