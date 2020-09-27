@@ -56,23 +56,13 @@ export default class LineChart extends Chart {
         })
         break
       }
-      case SOURCE_TYPE_REAL: {
-        const dynamicData = await dbDataConfig.getOption(loadingDynamicData)
-        series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
-        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
-        Object.assign(option, {
-          legend: Object.assign(legend, dynamicLegend),
-          xAxis: Object.assign(xAxis, dynamicXAxis),
-          yAxis: Object.assign(yAxis, dynamicYAxis),
-          series
-        })
-        break
-      }
       case SOURCE_TYPE_NULL: {
         break
       }
+      case SOURCE_TYPE_REAL:
       case SOURCE_TYPE_OVERVIEW: {
-        const dynamicData = await dbDataConfig.getOverviewOption(loadingDynamicData)
+        const dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        console.log(sourceType)
         series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {
@@ -87,16 +77,8 @@ export default class LineChart extends Chart {
 
     return Object.assign({}, option, {
       tooltip: {
-        trigger: 'axis'
-        // formatter: function (params) {
-        //   // params = params[0];
-        //   // var date = new Date(params.name);
-        //   // return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
-        //   return 'test'
-        // },
-        // axisPointer: { // 坐标轴指示器，坐标轴触发有效
-        //   type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-        // }
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
       }
     })
   }

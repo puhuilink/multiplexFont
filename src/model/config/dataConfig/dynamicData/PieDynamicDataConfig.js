@@ -1,3 +1,7 @@
+/**
+ * 饼图动态数据配置
+ */
+
 import _ from 'lodash'
 import { DynamicDataConfig } from './common/index'
 

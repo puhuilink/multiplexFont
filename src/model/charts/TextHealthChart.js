@@ -27,20 +27,13 @@ export default class TextsChart extends Chart {
         title.text = `${staticData}`
         break
       }
-      case SOURCE_TYPE_REAL: {
-        if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getOption()
-          title.text = `${dynamicData}`
-        }
-        break
-      }
       case SOURCE_TYPE_NULL: {
         break
       }
-
-      case SOURCE_TYPE_ALARM: {
+      case SOURCE_TYPE_ALARM:
+      case SOURCE_TYPE_REAL: {
         if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getAlarmOption()
+          const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
           title.text = `${dynamicData}`
         }
         break

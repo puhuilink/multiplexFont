@@ -1,12 +1,20 @@
+/**
+ * 告警数据接口适配层
+ */
+
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
 import _ from 'lodash'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {
   constructor ({
+    // 数据域
     origin = [],
+    // 监控类型
     deviceType = [],
+    // 告警等级
     level = [],
+    // 定时刷新时间(分钟)
     refreshTime = 0,
     ...props
   }) {
@@ -17,25 +25,20 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.refreshTime = refreshTime
   }
 
-  async fetch () {
-    const { data = [] } = await ViewDataService.alarmData(this.getOption())
-    // console.log(data)
-    return this.transfer(data || [])
+  fetch () {
+    return ViewDataService
+      .alarmData(this.getOption())
+      .then(({ data = [] }) => data)
+      .catch(() => [])
+      .then(this.transfer)
   }
 
   transfer (dataList = []) {
-    return dataList.map(data => {
-      const {
-        alias = '',
-        collect = '',
-        origin,
-        level1 = 0,
-        level2 = 0,
-        level3 = 0,
-        level4 = 0,
-        level5 = 0
-      } = data
-      return {
+    return dataList
+      .map(({
+        alias = '', collect = '', origin = '',
+        level1 = 0, level2 = 0, level3 = 0, level4 = 0, level5 = 0
+      }) => ({
         legend: alias,
         time: collect,
         name: origin,
@@ -44,9 +47,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
         level3,
         level4,
         level5
-        // data: [level1, level2, level3, level4, level5]
-      }
-    })
+      }))
   }
 
   getOption () {

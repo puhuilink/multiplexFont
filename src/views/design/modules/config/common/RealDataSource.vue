@@ -144,7 +144,8 @@
         :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
         suffix="分钟"
         type="number"
-        v-model.number="refreshTime"
+        v-model.number="resourceConfig.refreshTime"
+        @input="change()"
       />
     </a-form-item>
 

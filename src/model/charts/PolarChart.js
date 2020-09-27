@@ -116,12 +116,13 @@ export default class PolarChart extends Chart {
       case SOURCE_TYPE_NULL: {
         break
       }
+      case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {
         const {
           legend: dynamicLegend,
           series: dynamicSeries,
           angleAxis: dynamicAngleAxis
-        } = await dbDataConfig.getOption(loadingDynamicData)
+        } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
 
         if (dynamicSeries && dynamicSeries[0] && dynamicSeries[0].data && dynamicSeries[0].data.length > 0) {
           const maskData = [polarMask.item, ...dynamicSeries[0].data.map(item => ({
@@ -134,47 +135,11 @@ export default class PolarChart extends Chart {
           mask.data = maskData
 
           const calculateSeries = _.cloneDeep(dynamicSeries).map(item => {
+            console.log(item)
             return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
           })
 
           // console.log(dynamicAngleAxis)
-
-          Object.assign(option,
-            {
-              legend: Object.assign(legend, dynamicLegend),
-              series: [...calculateSeries, Object.assign(pie, polar), Object.assign(mask, polar)],
-              angleAxis: Object.assign(angleAxis, dynamicAngleAxis, { data: polarMask.show ? ['', ...dynamicAngleAxis.data, ''] : dynamicAngleAxis.data }),
-              radar: Object.assign(radar, {
-                indicator: [...angleAxis.data].map(() => ({ text: '' }))
-              }),
-              radiusAxis,
-              polar
-            }
-          )
-        }
-        break
-      }
-
-      case SOURCE_TYPE_ALARM: {
-        const {
-          legend: dynamicLegend,
-          series: dynamicSeries,
-          angleAxis: dynamicAngleAxis
-        } = await dbDataConfig.getAlarmOption(loadingDynamicData)
-
-        if (dynamicSeries && dynamicSeries[0] && dynamicSeries[0].data && dynamicSeries[0].data.length > 0) {
-          const maskData = [polarMask.item, ...dynamicSeries[0].data.map(item => ({
-            value: 1,
-            name: 'mask',
-            itemStyle: {
-              color: 'rgba(0, 0, 0, 0)'
-            }
-          })), polarMask.item]
-          mask.data = maskData
-
-          const calculateSeries = _.cloneDeep(dynamicSeries).map(item => {
-            return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
-          })
 
           Object.assign(option,
             {

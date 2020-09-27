@@ -61,17 +61,6 @@ export default {
         this.change()
       }
     },
-    refreshTime: {
-      get () {
-        return this.config.dataConfig.dbDataConfig.refreshTime
-      },
-      set (v) {
-        Object.assign(this.config.dataConfig.dbDataConfig, {
-          refreshTime: v
-        })
-        this.change()
-      }
-    },
     available () {
       return Boolean(
         _.get(this.resourceConfig, 'selectedKpi.length') &&
