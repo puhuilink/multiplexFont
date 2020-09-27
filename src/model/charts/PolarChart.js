@@ -76,7 +76,7 @@ export default class PolarChart extends Chart {
 
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
-        this.chart.clear()
+        dbDataConfig.resetData()
         const {
           legend: staticLegend,
           series: staticSeries,
@@ -114,6 +114,7 @@ export default class PolarChart extends Chart {
         break
       }
       case SOURCE_TYPE_NULL: {
+        dbDataConfig.resetData()
         break
       }
       case SOURCE_TYPE_ALARM:
@@ -135,11 +136,8 @@ export default class PolarChart extends Chart {
           mask.data = maskData
 
           const calculateSeries = _.cloneDeep(dynamicSeries).map(item => {
-            console.log(item)
             return Object.assign(item, bar, polarMask.show ? { data: [0, ...item.data, 0] } : {})
           })
-
-          // console.log(dynamicAngleAxis)
 
           Object.assign(option,
             {
