@@ -8,6 +8,11 @@
 import anime from 'animejs'
 import echarts from 'echarts'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class Chart {
   constructor ({ widget }) {
@@ -108,11 +113,8 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
-
-    // 供测试人员调试数据
-    // FIXME: 生产环境关闭
-    const { container: { id }, chartConfig: { series } } = this
-    window[id] = _.cloneDeep(series)
+    // 暴露当前series配置供测试
+    window[this.container.id] = _.cloneDeep(this.chartConfig.series)
   }
 
   refresh () {
@@ -120,15 +122,39 @@ export default class Chart {
   }
 
   /**
-   * 轮询
+   * 定时刷新动态数据
    */
   intervalRefresh () {
     this.refresh()
-    // 存在自动刷新时间设置则开启定时刷新
-    const refreshTime = _.get(this, 'config.dataConfig.dbDataConfig.refreshTime') || _.get(this, 'config.dataConfig.dbDataConfig.alarmConfig.refreshTime') || _.get(this, 'config.dataConfig.dbDataConfig.overviewConfig.refreshTime')
-    if (refreshTime > 0) {
-      // console.log('timer启动')
-      this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60
+    const { dataConfig = {} } = this.config
+    const {
+      sourceType = '',
+      dbDataConfig: {
+        alarmConfig = {},
+        overviewConfig = {},
+        resourceConfig = {}
+      } = {}
+    } = dataConfig
+
+    let refreshTime
+    switch (sourceType) {
+      case SOURCE_TYPE_ALARM:
+        refreshTime = alarmConfig.refreshTime
+        break
+      case SOURCE_TYPE_OVERVIEW:
+        refreshTime = overviewConfig.refreshTime
+        break
+      case SOURCE_TYPE_REAL:
+        refreshTime = resourceConfig.refreshTime
+        break
+      default:
+        break
+    }
+
+    if (refreshTime) {
+      this.timer = setInterval(
+        this.refresh.bind(this),
+        Number(refreshTime) * 1000 * 60
       )
     }
   }
@@ -148,9 +174,7 @@ export default class Chart {
    */
   destroy () {
     this.resetTimer()
-    // 供测试人员调试数据
-    // FIXME: 生产环境关闭
-    const { container: { id } } = this
-    window[id] = undefined
+    // 移除暴露测试数据
+    Reflect.deleteProperty(window, this.container.id)
   }
 }
