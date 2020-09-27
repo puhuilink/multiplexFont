@@ -48,11 +48,11 @@ const elements = {
 }
 
 // 模板配置组件
-const CONFIGCOMPONENTS = {
+const CONFIG_COMPONENTS = {
   // 视图模板配置
   ViewConfig,
   ...charts,
   ...elements
 }
 
-export default CONFIGCOMPONENTS
+export default CONFIG_COMPONENTS

@@ -38,13 +38,13 @@
 import '@/assets/less/template.less'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import CONFIGCOMPONENTS from './configComponents'
+import CONFIG_COMPONENTS from './configComponents'
 import TEMPLATES from '../template/templates'
 
 export default {
   name: 'Config',
   components: {
-    ...CONFIGCOMPONENTS
+    ...CONFIG_COMPONENTS
   },
   data: () => ({
     // todo 之后更改命名，使其更加语义化: ['line', 'LineConfig']
