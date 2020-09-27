@@ -76,7 +76,7 @@
 <script>
 import { OriginSelect } from '@/components/Alarm'
 import DataSourceMixins from '../dataSourceMixins/index'
-import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
+import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
 import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'

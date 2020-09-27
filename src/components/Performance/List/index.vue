@@ -85,8 +85,8 @@ import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'
-import EndpointSelect from '~~~/Unknown/Endpoint'
-import MetricSelect from '~~~/Unknown/Metric'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 
 export default {
   name: 'PerformanceList',

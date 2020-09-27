@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
+import DeviceBrandFactory from '~~~/ResourceConfig/Device/DeviceBrand'
 import DeviceTypeFactory from './DeviceType'
 import DeviceModelFactory from './DeviceModel'
 import HostFactory from '../Host'
