@@ -115,10 +115,12 @@ export default class PolarChart extends Chart {
       }
       case SOURCE_TYPE_NULL: {
         dbDataConfig.resetData()
+        this.chart.clear()
         break
       }
       case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {
+        this.chart.clear()
         const {
           legend: dynamicLegend,
           series: dynamicSeries,
