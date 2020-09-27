@@ -4,6 +4,7 @@
 
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
+import { ALARM_TYPE_ALL } from '../types/alarmType'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {
   constructor ({
@@ -15,6 +16,8 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     deviceType = [],
     // 告警等级
     level = [],
+    // 告警状态: all / unclose
+    type = ALARM_TYPE_ALL,
     ...props
   }) {
     super(props)
@@ -22,6 +25,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.isGroup = isGroup
     this.deviceType = deviceType
     this.level = level
+    this.type = type
   }
 
   fetch () {

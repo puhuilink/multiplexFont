@@ -78,13 +78,12 @@ export class ViewDataService extends BaseService {
       'type'
     ])
 
-    data['type'] = 'sum'
-
-    // console.log(argus)
-
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      // 不选时间段时只能为 type
+      Reflect.deleteProperty(data, 'isGroup')
     }
 
     for (const key in data) {
