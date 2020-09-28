@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import anime from 'animejs'
 import _ from 'lodash'
 import Edge from '@/model/edges'
+import View from '@/model/view/index'
 
 Vue.use(Vuex)
 
@@ -60,7 +61,10 @@ export default {
   mutations: {
     // 设置视图对象
     [ScreenMutations.SET_VIEW] (state, payload) {
-      state.view = payload.view
+      state.view = Object.assign(
+        Object.create(View.prototype),
+        payload.view
+      )
     },
     // 向视图部件库中添加部件
     [ScreenMutations.ADD_WIDGET] (state, payload) {
