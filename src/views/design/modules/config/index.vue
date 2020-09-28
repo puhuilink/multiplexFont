@@ -24,7 +24,9 @@
             <a-button shape="circle" type="danger" icon="delete" />
           </a-popconfirm>
         </div>
-        <component :is="templateComponentName" :key="templateComponentKey" />
+        <keep-alive :include="cacheTemplateComponentNameList">
+          <component :is="templateComponentName" :key="templateComponentKey" />
+        </keep-alive>
       </div>
       <div class="config__none" v-else>
         <a-icon type="disconnect" />
@@ -36,7 +38,7 @@
 
 <script>
 import '@/assets/less/template.less'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import CONFIG_COMPONENTS from './configComponents'
 import TEMPLATES from '../template/templates'
@@ -70,9 +72,17 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
+    ...mapGetters('screen', ['widgets']),
     templateName () {
       const template = TEMPLATES.find(template => template.type === this.activeWidget.config.type)
       return template ? template.name : '画板'
+    },
+    cacheTemplateComponentNameList () {
+      return [
+        // TODO: 其他组件配置使用到 activeWidget，无法支持多实例并存
+        // ...this.widgets.map(({ config }) => this.templateMapping.get(config.type)),
+        'ViewConfig'
+      ]
     },
     hasCommonTitle () {
       return this.activeWidget.config.type !== 'Topology'
