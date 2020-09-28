@@ -7,6 +7,21 @@ import { imp } from '@/utils/request'
 import _ from 'lodash'
 
 export class ViewDataService extends BaseService {
+  static _validate (argus = {}) {
+    let isPass = true
+    for (const value of Object.values(argus)) {
+      if (
+        value === undefined ||
+        value === null ||
+        (Array.isArray(value) && _.isEmpty(value))
+      ) {
+        isPass = false
+        break
+      }
+    }
+    return isPass
+  }
+
   /**
    * 性能数据查询
    */
@@ -33,36 +48,16 @@ export class ViewDataService extends BaseService {
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'isGroup')
+      Reflect.deleteProperty(data, 'calculateType')
     }
 
-    // FIXME: 校验不准确
-    // const fieldsMapping = new Map([
-    //   ['deviceType', '监控类型'],
-    //   ['deviceBrand', '品牌名称'],
-    //   ['deviceModel', '品牌设备'],
-    //   ['deviceModel', '设备名称'],
-    //   ['endpointModelId', '监控实体'],
-    //   ['endpointModelId', '监控实体'],
-    //   ['metricModelIds', '检查项']
-    // ])
-
-    // let passValidate = true
-
-    // for (const field of [...fieldsMapping.keys()]) {
-    //   const value = data[field]
-    //   if (!value || _.isEmpty(value)) {
-    //     // message.error(`请选择${fieldsMapping.get(field)}`)
-    //     passValidate = false
-    //     break
-    //   }
-    // }
-
-    // if (!passValidate) {
-    //   return []
-    // }
-
-    // console.log(data)
-    return imp.post('/view/data', data, config).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/data', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 
   /**
@@ -93,9 +88,11 @@ export class ViewDataService extends BaseService {
       }
     }
 
-    // console.log(data)
-
-    return imp.post('/view/alarm', data, config).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/alarm', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 
   /**
@@ -112,10 +109,15 @@ export class ViewDataService extends BaseService {
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'calculateType')
+      Reflect.deleteProperty(data, 'isGroup')
     }
 
-    // console.log(data)
-
-    return imp.post('/view/map', data, config).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/map', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 }
