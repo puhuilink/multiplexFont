@@ -2,7 +2,7 @@
  * 性能数据接口中间层
  */
 
-import _ from 'lodash'
+// import _ from 'lodash'
 import moment from 'moment'
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
@@ -15,10 +15,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     hostId = [],
     endpointModelId = 1149375446,
     metricModelIds = [],
-    // enum:  hour / minute / month
+    // 分组方式:  hour / minute / month
     isGroup = '',
-    // enum: sum / max / avg
-    calculateType = '',
     ...props
   }) {
     super(props)
@@ -29,12 +27,6 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.endpointModelId = endpointModelId
     this.metricModelIds = metricModelIds
     this.isGroup = isGroup
-    this.calculateType = calculateType
-  }
-
-  get useGroup () {
-    const { isGroup, calculateType } = this
-    return calculateType ? isGroup : ''
   }
 
   fetch () {
@@ -45,7 +37,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       .then(this.transfer)
   }
 
-  static _formatTime (time = moment().format(), isGroup) {
+  formatTime (time = moment().format(), isGroup) {
     switch (isGroup) {
       // FIXME: 自动补全
       case 'hour': return moment(time).format('HH:00:00')
@@ -56,26 +48,22 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     }
   }
 
-  transfer (dataList = [], isGroup) {
+  transfer (dataList = []) {
     return dataList
       .map(({
         collectTime = moment().format(),
         endpointAlias = '',
         metricValue = 0,
         metricValueStr = '',
-        hostAlias = ''
+        metricAlias = '',
+        hostAlias = '',
+        uint = ''
       }) => ({
         data: metricValueStr || metricValue,
         time: collectTime,
-        legend: endpointAlias,
-        name: hostAlias
+        legend: endpointAlias + metricAlias,
+        name: hostAlias,
+        unit: uint
       }))
-  }
-
-  getOption () {
-    return {
-      ..._.omit(this, 'timeRangeConfig'),
-      timeRange: this.timeRangeConfig.getOption()
-    }
   }
 }
