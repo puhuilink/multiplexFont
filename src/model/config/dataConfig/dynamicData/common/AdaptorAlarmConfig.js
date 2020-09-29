@@ -1,58 +1,55 @@
+/**
+ * 告警数据接口适配层
+ */
+
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api-hasura'
-import _ from 'lodash'
+import { ALARM_TYPE_ALL } from '../types/alarmType'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {
   constructor ({
+    // 数据域
     origin = [],
+    // 分组方式:  hour / minute / month
+    isGroup = '',
+    // 监控类型
     deviceType = [],
+    // 告警等级
     level = [],
-    refreshTime = 0,
+    // 告警状态: all / unclose
+    type = ALARM_TYPE_ALL,
     ...props
   }) {
     super(props)
     this.origin = origin
+    this.isGroup = isGroup
     this.deviceType = deviceType
     this.level = level
-    this.refreshTime = refreshTime
+    this.type = type
   }
 
-  async fetch () {
-    const { data = [] } = await ViewDataService.alarmData(this.getOption())
-    // console.log(data)
-    return this.transfer(data || [])
+  fetch () {
+    return ViewDataService
+      .alarmData(this.getOption(), this.getTimeoutOption())
+      .then(({ data = [] }) => data)
+      .catch(() => [])
+      .then(this.transfer.bind(this))
   }
 
   transfer (dataList = []) {
-    return dataList.map(data => {
-      const {
-        alias = '',
-        collect = '',
-        origin,
-        level1 = 0,
-        level2 = 0,
-        level3 = 0,
-        level4 = 0,
-        level5 = 0
-      } = data
-      return {
+    return dataList
+      .map(({
+        alias = '', collect = '', origin = '',
+        level1 = 0, level2 = 0, level3 = 0, level4 = 0, level5 = 0
+      }) => ({
         legend: alias,
-        time: collect,
+        time: this.formatTime(collect, this.isGroup),
         name: origin,
         level1,
         level2,
         level3,
         level4,
         level5
-        // data: [level1, level2, level3, level4, level5]
-      }
-    })
-  }
-
-  getOption () {
-    return {
-      ..._.omit(this, 'timeRangeConfig'),
-      timeRange: this.timeRangeConfig.getOption()
-    }
+      }))
   }
 }

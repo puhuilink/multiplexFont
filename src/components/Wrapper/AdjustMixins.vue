@@ -47,7 +47,8 @@ export default {
         case 'MOVE':
           anime.set(target, {
             top: top + position.top / scale,
-            left: left + position.left / scale
+            left: left + position.left / scale,
+            zIndex: position.zIndex
           })
           break
         case 'SINGLE':

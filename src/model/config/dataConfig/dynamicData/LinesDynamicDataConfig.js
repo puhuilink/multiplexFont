@@ -1,5 +1,13 @@
+/**
+ * 折线图动态数据配置
+ */
+
 import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_OVERVIEW
+} from './types/sourceType'
 
 const initialOption = {
   legend: {},
@@ -9,8 +17,25 @@ const initialOption = {
 }
 
 export default class LinesDynamicDataConfig extends DynamicDataConfig {
-  async fetch () {
-    const dataList = await super.fetch()
+  async getOption (loadingDynamicData, sourceType) {
+    if (loadingDynamicData) {
+      switch (sourceType) {
+        case SOURCE_TYPE_REAL: {
+          await this.getRealDataOption()
+          break
+        }
+        case SOURCE_TYPE_OVERVIEW: {
+          await this.getOverviewDataOption()
+          break
+        }
+      }
+    }
+    const { legend, xAxis, yAxis, series } = this
+    return { legend, xAxis, yAxis, series }
+  }
+
+  async getRealDataOption () {
+    const dataList = await this.resourceConfig.fetch()
     const groupByName = _.groupBy(dataList, 'name')
     const categoryList = Object.keys(groupByName)
     const option = {
@@ -32,47 +57,33 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         data: groupByName[category].map(({ data }) => data)
       }))
     }
-    return option
+    Object.assign(this, option)
   }
 
-  async getOption (loadingDynamicData) {
-    if (loadingDynamicData) {
-      const data = await this.fetch()
-      Object.assign(this, data)
+  async getOverviewDataOption () {
+    const dataList = await this.overviewConfig.fetch()
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const legendList = Object.keys(groupByLegend)
+    const option = {
+      legend: {
+        data: legendList
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          dataList.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: legendList.map(legend => ({
+        name: legend,
+        data: groupByLegend[legend].map(({ data }) => data)
+      }))
     }
-    const { legend, xAxis, yAxis, series } = this
-    return { legend, xAxis, yAxis, series }
-  }
-
-  // TODO: 统一出口入口
-  async getOverviewOption (loadingDynamicData) {
-    if (loadingDynamicData) {
-      const dataList = await this.overviewConfig.fetch()
-      const groupByLegend = _.groupBy(dataList, 'legend')
-      const legendList = Object.keys(groupByLegend)
-      const option = {
-        legend: {
-          data: legendList
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: _.uniq(
-            dataList.map(({ time }) => time)
-          )
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: legendList.map(legend => ({
-          name: legend,
-          data: groupByLegend[legend].map(({ data }) => data)
-        }))
-      }
-      Object.assign(this, option)
-    }
-    const { legend, xAxis, yAxis, series } = this
-    return { legend, xAxis, yAxis, series }
+    Object.assign(this, option)
   }
 
   resetData () {

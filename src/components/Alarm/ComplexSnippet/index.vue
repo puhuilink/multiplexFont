@@ -44,10 +44,10 @@
 </template>
 
 <script>
-import ComplexSelect from '~~~/Unknown/Device/index'
+import ComplexSelect from '~~~/ResourceConfig/Device/index'
 import { FormModel } from 'ant-design-vue'
-import EndpointSelect from '~~~/Unknown/Endpoint'
-import MetricSelect from '~~~/Unknown/Metric'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 
 export default {
   name: 'ComplexSnippet',

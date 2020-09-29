@@ -1,3 +1,7 @@
+/**
+ * 环度动态数据配置
+ */
+
 import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 

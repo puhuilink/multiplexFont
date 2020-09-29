@@ -192,7 +192,7 @@ export default {
 
     // 视图change事件处理
     merge(
-      // fromEvent(window, 'resize').pipe(mapTo({ type: 'resize' })),
+      fromEvent(window, 'resize').pipe(mapTo({ type: 'resize' })),
       this.change$,
       this.viewChange$
     )
@@ -206,15 +206,13 @@ export default {
 
         // 设置屏幕对象
         this.setView({
-          view: new View(Object.assign(
-            _.cloneDeep(this.view),
-            {
-              el: this.$refs.view,
-              gauge: this.$refs.gauge,
-              parent: this.$refs.page,
-              scale: this.scale
-            }
-          ))
+          view: {
+            ...this.view,
+            el: this.$refs.view,
+            gauge: this.$refs.gauge,
+            parent: this.$refs.page,
+            scale: this.scale
+          }
         })
 
         // 初始化场景进行样式设置
@@ -379,10 +377,10 @@ export default {
 
       // 更新视图缩放
       this.setView({
-        view: Object.assign(new View({
+        view: {
           ...this.view,
           scale: this.scale
-        }))
+        }
       })
     },
     /**
@@ -424,10 +422,10 @@ export default {
 
       // 更新视图缩放
       this.setView({
-        view: Object.assign(new View({
+        view: {
           ...this.view,
           scale: this.scale
-        }))
+        }
       })
 
       anime.set(this.$refs.view, {
@@ -538,7 +536,7 @@ export default {
      */
     clear () {
       this.resetTopologyState()
-      // 清空部件列表
+      // 重新实例化回到默认设置
       this.setView({
         view: new View({ ..._.pick(this.view, ['id', 'el', 'gauge', 'parent']) })
       })

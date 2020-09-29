@@ -10,7 +10,11 @@ import { ImageGraphic } from './index'
 
 export default class ImageProprietaryConfig {
   constructor ({
-    graphic = {}
+    graphic = {
+      style: {
+        image: './view__preview_default.jpg'
+      }
+    }
   }) {
     this.graphic = new ImageGraphic(graphic)
   }

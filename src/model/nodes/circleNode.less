@@ -1,0 +1,37 @@
+.g6-tooltip {
+  padding: 12px;
+  border: 0px solid;
+  border-radius: 0;
+  font-size: 1.1rem;
+  color: #bfbfc4;
+  box-shadow: none;
+  background-color: rgba(55, 55, 60, 1);
+
+  &:empty {
+    display: none
+  }
+}
+
+.CircleNode__tooltipContent {
+  width: 160px;
+  
+  &-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    &:empty {
+      display: none
+    }
+    
+    &_label {
+      width: 120px;
+      text-align: right;
+    }
+
+    &-value {
+      flex: 1
+    }
+  }
+}

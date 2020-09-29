@@ -4,33 +4,52 @@
  */
 
 import { TimeRangeConfig } from './TimeRangeConfig'
+import _ from 'lodash'
+import moment from 'moment'
+import {
+  GROUP_TYPE_MONTH,
+  GROUP_TYPE_DAY,
+  GROUP_TYPE_HOUR,
+  GROUP_TYPE_MINUTE
+} from '../types/isGroup'
 
 export class AdaptorConfig {
   constructor ({
-    deviceType = 'Host',
-    deviceBrand = 'HostLinux',
-    deviceModel = 'HostAIXLinux',
-    hostId = [],
-    endpointModelId = 1149375446,
-    metricModelIds = [],
-    // enum:  hour / minute / month
-    isGroup = '',
-    // enum: sum / max / avg
-    calculateType = '',
-    timeRangeConfig = {}
+    refreshTime = 0,
+    timeRangeConfig = {},
+    // 计算类型: sum / max / avg
+    calculateType = ''
   }) {
-    this.deviceType = deviceType
-    this.deviceBrand = deviceBrand
-    this.deviceModel = deviceModel
-    this.hostId = hostId
-    this.endpointModelId = endpointModelId
-    this.metricModelIds = metricModelIds
-    this.isGroup = isGroup
-    this.calculateType = calculateType
+    this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
+    this.calculateType = calculateType
   }
 
-  fetch () {}
+  fetch () { }
 
-  getOption () {}
+  formatTime (time = moment().format(), groupBy = '') {
+    switch (groupBy) {
+      case GROUP_TYPE_MINUTE: return moment(time).format('HH:mm:00')
+      case GROUP_TYPE_HOUR: return moment(time).format('HH:00:00')
+      case GROUP_TYPE_DAY: return moment(time).format('MM-DD')
+      case GROUP_TYPE_MONTH: return moment(time).format('YYYY-MM')
+      default: return time
+    }
+  }
+
+  getOption () {
+    return {
+      ..._.omit(this, 'timeRangeConfig'),
+      timeRange: this.timeRangeConfig.getOption()
+    }
+  }
+
+  getTimeoutOption () {
+    const { refreshTime } = this
+    return {
+      ...refreshTime ? {
+        timeout: refreshTime * 1000 * 60
+      } : {}
+    }
+  }
 }

@@ -32,7 +32,7 @@ function domainList () {
  */
 function faultList () {
   return new Promise((resolve, reject) => {
-    apollo.clients.alert.query({
+    apollo.clients.imp.query({
       query: gql`query instanceList($where: t_incident_type_bool_exp = {}) {
         data: t_incident_type(where: $where) {
           parent_type_id
@@ -56,7 +56,7 @@ function faultList () {
  */
 function userList () {
   return new Promise((resolve, reject) => {
-    apollo.clients.alert.query({
+    apollo.clients.imp.query({
       query: gql`query instanceList($where: t_user_bool_exp = {}) {
         data: t_user(where: $where) {
           auth_method

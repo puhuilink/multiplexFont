@@ -14,7 +14,7 @@ import store from '@/store'
 import _ from 'lodash'
 
 export const getDesktopItemList = function (desktopId) {
-  return apollo.clients.alert.query({
+  return apollo.clients.imp.query({
     query: queryDesktopItemList,
     variables: {
       desktopId: Number(desktopId)
@@ -30,7 +30,7 @@ export const getDesktopItemList = function (desktopId) {
   */
 export const getGroupViewDesktopList = async function (groupIds) {
   groupIds = groupIds || store.getters.groupList.filter(el => !!el).map(({ groupId }) => groupId)
-  const groupViewDesktopList = await apollo.clients.alert.query({
+  const groupViewDesktopList = await apollo.clients.imp.query({
     query: queryGroupViewDesktopList,
     variables: {
       groupIds
@@ -72,7 +72,7 @@ export const allocateGroupViewAuth = function (groupId, viewIds = []) {
     object_id: `${viewId}`,
     object_type: '4'
   }))
-  return apollo.clients.alert.mutate({
+  return apollo.clients.imp.mutate({
     mutation: mutationUpdateGroupViewAuth,
     variables: {
       groupId,
@@ -92,7 +92,7 @@ export const allocateUserViewAuth = function (userId, viewIds = []) {
     object_id: `${viewId}`,
     object_type: '4'
   }))
-  return apollo.clients.alert.mutate({
+  return apollo.clients.imp.mutate({
     mutation: mutationUpdateUserViewAuth,
     variables: {
       userId,

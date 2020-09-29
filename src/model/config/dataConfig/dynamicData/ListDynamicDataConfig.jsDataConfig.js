@@ -1,3 +1,7 @@
+/**
+ * 列表动态数据配置
+ */
+
 import { DynamicDataConfig } from './common/index'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {

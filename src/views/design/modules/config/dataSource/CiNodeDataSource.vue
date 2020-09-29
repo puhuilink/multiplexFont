@@ -126,12 +126,12 @@
 <script>
 // TODO: 与 dataSourceMixin 抽离公共部分
 import ViewListSelect from '../common/ViewListSelect'
-import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
-import DeviceBrandFactory from '~~~/Unknown/Device/DeviceBrand'
-import DeviceModelFactory from '~~~/Unknown/Device/DeviceModel'
-import HostFactory from '~~~/Unknown/Host'
-import EndpointSelect from '~~~/Unknown/Endpoint'
-import MetricSelect from '~~~/Unknown/Metric'
+import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
+import DeviceBrandFactory from '~~~/ResourceConfig/Device/DeviceBrand'
+import DeviceModelFactory from '~~~/ResourceConfig/Device/DeviceModel'
+import HostFactory from '~~~/ResourceConfig/Host'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 import NodeMixin from '../dataSourceMixins/nodes'
 import _ from 'lodash'
 

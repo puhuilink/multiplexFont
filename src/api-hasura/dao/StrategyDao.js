@@ -1,4 +1,4 @@
-import { alert } from '../config/client'
+import { imp } from '../config/client'
 import { BaseDao } from './BaseDao'
 import { override, readonly } from 'core-decorators'
 import { createTime, updateTime } from '../utils/mixin/autoComplete'
@@ -8,7 +8,7 @@ class StrategyDao extends BaseDao {
   static SCHEMA = 't_strategy'
 
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = imp
 
   @readonly
   static FIELDS_MAPPING = new Map([])

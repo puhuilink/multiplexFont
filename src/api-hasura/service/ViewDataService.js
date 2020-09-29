@@ -7,10 +7,25 @@ import { imp } from '@/utils/request'
 import _ from 'lodash'
 
 export class ViewDataService extends BaseService {
+  static _validate (argus = {}) {
+    let isPass = true
+    for (const value of Object.values(argus)) {
+      if (
+        value === undefined ||
+        value === null ||
+        (Array.isArray(value) && _.isEmpty(value))
+      ) {
+        isPass = false
+        break
+      }
+    }
+    return isPass
+  }
+
   /**
    * 性能数据查询
    */
-  static async realData ({ timeRange = {}, ...argus }) {
+  static async realData ({ timeRange = {}, ...argus }, config = {}) {
     // 监控设备
     const data = _.pick(argus, [
       'deviceType',
@@ -33,42 +48,22 @@ export class ViewDataService extends BaseService {
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'isGroup')
+      Reflect.deleteProperty(data, 'calculateType')
     }
 
-    // FIXME: 校验不准确
-    // const fieldsMapping = new Map([
-    //   ['deviceType', '监控类型'],
-    //   ['deviceBrand', '品牌名称'],
-    //   ['deviceModel', '品牌设备'],
-    //   ['deviceModel', '设备名称'],
-    //   ['endpointModelId', '监控实体'],
-    //   ['endpointModelId', '监控实体'],
-    //   ['metricModelIds', '检查项']
-    // ])
-
-    // let passValidate = true
-
-    // for (const field of [...fieldsMapping.keys()]) {
-    //   const value = data[field]
-    //   if (!value || _.isEmpty(value)) {
-    //     // message.error(`请选择${fieldsMapping.get(field)}`)
-    //     passValidate = false
-    //     break
-    //   }
-    // }
-
-    // if (!passValidate) {
-    //   return []
-    // }
-
-    // console.log(data)
-    return imp.post('/view/data', data).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/data', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 
   /**
    * 告警数据查询
    */
-  static async alarmData ({ timeRange = {}, ...argus }) {
+  static async alarmData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
       'deviceType',
       'level',
@@ -78,13 +73,12 @@ export class ViewDataService extends BaseService {
       'type'
     ])
 
-    data['type'] = 'sum'
-
-    // console.log(argus)
-
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      // 不选时间段时只能为 type
+      Reflect.deleteProperty(data, 'isGroup')
     }
 
     for (const key in data) {
@@ -94,15 +88,17 @@ export class ViewDataService extends BaseService {
       }
     }
 
-    // console.log(data)
-
-    return imp.post('/view/alarm', data).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/alarm', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 
   /**
    * (性能)汇总数据查询
    */
-  static async overviewData ({ timeRange = {}, ...argus }) {
+  static async overviewData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
       'alias',
       'origin',
@@ -113,10 +109,15 @@ export class ViewDataService extends BaseService {
     // 时间范围
     if (!_.isEmpty(timeRange)) {
       Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'calculateType')
+      Reflect.deleteProperty(data, 'isGroup')
     }
 
-    // console.log(data)
-
-    return imp.post('/view/map', data).catch(() => ({ data: [] }))
+    if (this._validate(data)) {
+      return imp.post('/view/map', data, config).catch(() => ({ data: [] }))
+    } else {
+      return []
+    }
   }
 }

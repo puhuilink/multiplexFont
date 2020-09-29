@@ -43,6 +43,16 @@
       }"
     />
 
+    <a-form-item label="告警状态" v-bind="formItemLayout">
+      <a-select
+        v-model="alarmConfig.type"
+        @change="change()"
+      >
+        <a-select-option :value="ALARM_TYPE_ALL">全部告警</a-select-option>
+        <a-select-option :value="ALARM_TYPE_UNCLOSE">未关闭告警</a-select-option>
+      </a-select>
+    </a-form-item>
+
     <a-form-item label="计算类型" v-bind="formItemLayout">
       <CalculateTypeSelect
         v-model="alarmConfig.calculateType"
@@ -50,6 +60,7 @@
       />
     </a-form-item>
 
+    <!-- TODO: 只有当时间段不为实时时，才可按时间分组 -->
     <a-form-item label="分组条件" v-bind="formItemLayout" required>
       <GroupSelect
         :type="SOURCE_TYPE_ALARM"
@@ -76,8 +87,9 @@
 <script>
 import { OriginSelect } from '@/components/Alarm'
 import DataSourceMixins from '../dataSourceMixins/index'
-import DeviceTypeFactory from '~~~/Unknown/Device/DeviceType'
+import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
 import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { ALARM_TYPE_ALL, ALARM_TYPE_UNCLOSE } from '@/model/config/dataConfig/dynamicData/types/alarmType'
 import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
@@ -96,7 +108,9 @@ export default {
   },
   props: {},
   data: () => ({
-    SOURCE_TYPE_ALARM
+    SOURCE_TYPE_ALARM,
+    ALARM_TYPE_ALL,
+    ALARM_TYPE_UNCLOSE
   }),
   computed: {},
   methods: {
