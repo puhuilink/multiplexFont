@@ -27,7 +27,7 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
       .overviewData(this.getOption(), this.getTimeoutOption())
       .then(({ data = [] }) => data)
       .catch(() => [])
-      .then(this.transfer)
+      .then(this.transfer.bind(this))
   }
 
   transfer (dataList = []) {
@@ -40,7 +40,7 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
       }) => ({
         data: value,
         legend: alias,
-        time: collect,
+        time: this.formatTime(collect, this.isGroup),
         name: origin
       }))
   }

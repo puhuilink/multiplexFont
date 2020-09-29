@@ -34,18 +34,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       .realData(this.getOption(), this.getTimeoutOption())
       .then(({ data = [] }) => data)
       .catch(() => [])
-      .then(this.transfer)
-  }
-
-  formatTime (time = moment().format(), isGroup) {
-    switch (isGroup) {
-      // FIXME: 自动补全
-      case 'hour': return moment(time).format('HH:00:00')
-      case 'minute': return moment(time).format('HH:mm:00')
-      case 'day': return moment(time).format('YYYYY-MM-DD')
-      case 'month': return moment(time).format('YYYY-MM')
-      default: return moment(time).format()
-    }
+      .then(this.transfer.bind(this))
   }
 
   transfer (dataList = []) {
@@ -60,7 +49,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         uint = ''
       }) => ({
         data: metricValueStr || metricValue,
-        time: collectTime,
+        time: this.formatTime(collectTime, this.isGroup),
         legend: endpointAlias + metricAlias,
         name: hostAlias,
         unit: uint

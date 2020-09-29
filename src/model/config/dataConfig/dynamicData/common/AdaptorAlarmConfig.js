@@ -33,7 +33,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
       .alarmData(this.getOption(), this.getTimeoutOption())
       .then(({ data = [] }) => data)
       .catch(() => [])
-      .then(this.transfer)
+      .then(this.transfer.bind(this))
   }
 
   transfer (dataList = []) {
@@ -43,7 +43,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
         level1 = 0, level2 = 0, level3 = 0, level4 = 0, level5 = 0
       }) => ({
         legend: alias,
-        time: collect,
+        time: this.formatTime(collect, this.isGroup),
         name: origin,
         level1,
         level2,
