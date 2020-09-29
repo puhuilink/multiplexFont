@@ -1,12 +1,12 @@
 import HasuraORM, { query } from '../utils/hasura-orm/index'
 import { readonly } from 'core-decorators'
 import _ from 'lodash'
-import { alert } from '../config/client'
+import { imp } from '../config/client'
 
 class BaseDao {
   // 对应 vue-apollo
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = imp
 
   static FIELDS_MAPPING = new Map()
 

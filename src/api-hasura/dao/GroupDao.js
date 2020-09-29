@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { BaseDao } from './BaseDao'
-import { alert } from '../config/client'
+import { imp } from '../config/client'
 import { defaultCreateDate, defaultUpdateDate } from '../utils/mixin/autoComplete'
 import { override, readonly } from 'core-decorators'
 
@@ -11,7 +11,7 @@ class GroupDao extends BaseDao {
 
   // 对应 vue-apollo
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = imp
 
   // 唯一字段
   @readonly

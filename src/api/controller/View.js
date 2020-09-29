@@ -9,7 +9,7 @@ import { axios } from '@/utils/request'
 
 export const getViewList = function (variables = {}) {
   const where = variables.where || {}
-  return apollo.clients.alert.query({
+  return apollo.clients.imp.query({
     query: queryViewList,
     variables: {
       ...variables,
@@ -46,7 +46,7 @@ export const updateView = function (viewId, set = {}) {
   if (!viewId) {
     throw new Error('view_id 缺失')
   }
-  return apollo.clients.alert.mutate({
+  return apollo.clients.imp.mutate({
     mutation: mutationUpdateView,
     variables: {
       viewId,
@@ -71,7 +71,7 @@ export const updateView = function (viewId, set = {}) {
  * @return {Promise<any>}
  */
 export const updateViewDesign = async function (viewId, content) {
-  return apollo.clients.alert.mutate({
+  return apollo.clients.imp.mutate({
     mutation: mutationUpdateView,
     variables: {
       viewId: Number(viewId),

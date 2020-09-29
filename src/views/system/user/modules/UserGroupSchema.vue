@@ -82,7 +82,7 @@ export default {
      */
     async getAllGroupList () {
       try {
-        const { data } = await apollo.clients.alert.query({ query: groupList }).then(r => r.data)
+        const { data } = await apollo.clients.imp.query({ query: groupList }).then(r => r.data)
         this.groupList = data
       } catch (e) {
         this.groupList = []
@@ -91,7 +91,7 @@ export default {
     },
     async getCurrentGroupList (userId) {
       try {
-        const { data } = await apollo.clients.alert.query({ query: userGroupList, variables: { userId } }).then(r => r.data)
+        const { data } = await apollo.clients.imp.query({ query: userGroupList, variables: { userId } }).then(r => r.data)
         this.targetKeys = data.map(e => e.group_id)
       } catch (e) {
         this.targetKeys = []
@@ -139,7 +139,7 @@ export default {
           // 1为非管理员，2为管理员
           user_role: '1'
         }))
-        await apollo.clients.alert.mutate({
+        await apollo.clients.imp.mutate({
           mutation: allocateUserGroup,
           variables: {
             userId,

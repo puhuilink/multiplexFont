@@ -76,7 +76,7 @@ export default {
   methods: {
     async getCurrentUserListerList (groupId) {
       try {
-        const { data } = await apollo.clients.alert.query({
+        const { data } = await apollo.clients.imp.query({
           query: currentUserList,
           variables: {
             groupId
@@ -90,7 +90,7 @@ export default {
     },
     async getCurrentAdminList (groupId) {
       try {
-        const { data } = await apollo.clients.alert.query({
+        const { data } = await apollo.clients.imp.query({
           query: currentAdmin,
           variables: {
             groupId
@@ -138,7 +138,7 @@ export default {
         // TODO: 直接传一个 userId 与 groupIds, 字段拼接处理到 api / controller 层完成
         const groupId = this.record.group_id
         const userIds = this.targetKeys
-        await apollo.clients.alert.mutate({
+        await apollo.clients.imp.mutate({
           mutation: allocateAdmin,
           variables: {
             groupId,
