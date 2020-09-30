@@ -31,7 +31,7 @@
           <div class="comment-template__inner">
             <ColorPicker
               v-model="config.commonConfig.backgroundColor"
-              @change="singleColorChange(config)" />
+              @change="singleColorChange(config)"/>
           </div>
         </div>
         <!-- / 背景颜色 -->
@@ -41,7 +41,7 @@
             <LinearColorPicker
               show-angle
               v-model="config.commonConfig.backgroundColor"
-              @change="linearColorChange(config)" />
+              @change="linearColorChange(config)"/>
           </div>
         </div>
         <!-- / 背景颜色 -->
@@ -74,7 +74,7 @@
               :min="0"
               :max="48"
               @change="change('native')"
-              v-model.number="config.commonConfig.border.borderWidth" />
+              v-model.number="config.commonConfig.border.borderWidth"/>
           </div>
         </div>
         <!-- / 宽度 -->
@@ -84,7 +84,7 @@
           <div class="comment-template__inner">
             <ColorPicker
               v-model="config.commonConfig.border.borderColor"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 颜色 -->
@@ -102,7 +102,7 @@
               type="number"
               min="0"
               v-model.number="config.commonConfig.border.borderRadius.borderTopLeftRadius"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 左上圆角 -->
@@ -114,7 +114,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderTopRightRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 右上圆角 -->
@@ -126,7 +126,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderBottomRightRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 右下圆角 -->
@@ -138,7 +138,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderBottomLeftRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 左下圆角 -->
@@ -156,7 +156,7 @@
               type="number"
               min="0"
               v-model.number="config.commonConfig.padding[0]"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 上边距 -->
@@ -168,7 +168,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[1]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 右边距 -->
@@ -180,7 +180,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[2]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 下边距 -->
@@ -192,7 +192,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[3]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 左边距 -->
@@ -210,7 +210,7 @@
               type="number"
               v-model.number="config.commonConfig.width"
               min="0"
-              @change="change('size', 'width')" />
+              @change="change('size', 'width')"/>
           </div>
         </div>
         <!-- / 宽 -->
@@ -222,7 +222,7 @@
               type="number"
               v-model.number="config.commonConfig.height"
               min="0"
-              @change="change('size', 'height')" />
+              @change="change('size', 'height')"/>
           </div>
         </div>
         <!-- / 高 -->
@@ -240,7 +240,7 @@
               type="number"
               v-model.number="config.commonConfig.left"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / x坐标位置 -->
@@ -252,7 +252,7 @@
               type="number"
               v-model.number="config.commonConfig.top"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / y坐标位置 -->
@@ -264,7 +264,7 @@
               type="number"
               v-model.number="config.commonConfig.zIndex"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / zIndex -->
@@ -278,160 +278,160 @@
 </template>
 
 <script>
-import '@/assets/less/template.less'
-import _ from 'lodash'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import { ScreenMutations } from '@/store/modules/screen'
-import ColorPicker from '@/components/ColorPicker'
-import LinearColorPicker from '@/components/LinearColorPicker'
-import AdjustMixins from '@/components/Wrapper/AdjustMixins'
+  import '@/assets/less/template.less'
+  import _ from 'lodash'
+  import { mapState, mapGetters, mapMutations } from 'vuex'
+  import { ScreenMutations } from '@/store/modules/screen'
+  import ColorPicker from '@/components/ColorPicker'
+  import LinearColorPicker from '@/components/LinearColorPicker'
+  import AdjustMixins from '@/components/Wrapper/AdjustMixins'
 
-export default {
-  name: 'CommonTemplate',
-  mixins: [AdjustMixins],
-  components: {
-    ColorPicker,
-    LinearColorPicker
-  },
-  props: {
-    usePadding: {
-      type: Boolean,
-      default: true
-    }
-  },
-  data: () => ({
-    singleColor: 'rgba(255, 255, 255, 1)',
-    linearColor: {
-      start: 'rgba(255, 255, 255, 1)',
-      end: 'rgba(0, 0, 0, 1)',
-      angle: 180
-    }
-  }),
-  computed: {
-    ...mapState('screen', [
-      'activeWidget'
-    ]),
-    ...mapGetters('screen', ['scale']),
-    // 为不修改 state.activeWidget，在此深复制激活部件的配置项，并将其设置为该组件内变量，修改部件后提交再行修改state.activeWidget
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    }
-  },
-  methods: {
-    ...mapMutations('screen', {
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET,
-      removeWidget: ScreenMutations.REMOVE_WIDGET
+  export default {
+    name: 'CommonTemplate',
+    mixins: [AdjustMixins],
+    components: {
+      ColorPicker,
+      LinearColorPicker
+    },
+    props: {
+      usePadding: {
+        type: Boolean,
+        default: true
+      }
+    },
+    data: () => ({
+      singleColor: 'rgba(255, 255, 255, 1)',
+      linearColor: {
+        start: 'rgba(255, 255, 255, 1)',
+        end: 'rgba(0, 0, 0, 1)',
+        angle: 180
+      }
     }),
-    /**
+    computed: {
+      ...mapState('screen', [
+        'activeWidget'
+      ]),
+      ...mapGetters('screen', ['scale']),
+      // 为不修改 state.activeWidget，在此深复制激活部件的配置项，并将其设置为该组件内变量，修改部件后提交再行修改state.activeWidget
+      config () {
+        return _.cloneDeep(this.activeWidget.config)
+      }
+    },
+    methods: {
+      ...mapMutations('screen', {
+        activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+        removeWidget: ScreenMutations.REMOVE_WIDGET
+      }),
+      /**
        * 单一颜色更改
        * @param config 配置
        */
-    singleColorChange ({ commonConfig: { backgroundColor } }) {
-      this.singleColor = backgroundColor
-      this.change('native')
-    },
-    /**
+      singleColorChange ({ commonConfig: { backgroundColor } }) {
+        this.singleColor = backgroundColor
+        this.change('native')
+      },
+      /**
        * 渐变颜色更改
        * @param config 配置
        */
-    linearColorChange ({ commonConfig: { backgroundColor } }) {
-      this.linearColor = backgroundColor
-      this.change('native')
-    },
-    /**
+      linearColorChange ({ commonConfig: { backgroundColor } }) {
+        this.linearColor = backgroundColor
+        this.change('native')
+      },
+      /**
        * 颜色模式更改
        */
-    colorModeChange (config) {
-      const backgroundColor = config.commonConfig.colorMode === 'single'
-        ? this.singleColor
-        : this.linearColor
-      Object.assign(this.config.commonConfig, { backgroundColor })
-      this.change('native')
-    },
-    // Todo 为实现移动、更改激活部件，设置wrapper选择器事件，有待于重构该部分
-    change (type, trigger = null) {
-      switch (type) {
-        case 'native':
-          const { render } = this.activeWidget
-          render.setConfig(this.config)
-          break
-        case 'padding':
-          // 图表Padding样式更改，只需更新数据即可
-          this.activeWidget.render.mergeOption(this.config)
-          break
-        case 'size':
-          // 图表尺寸更改，wrapper选择器标准事件流
-          const sizePreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
-          const sizeMutation = {
-            event: {
-              distance: trigger === 'width'
-                ? (this.config.commonConfig.width - sizePreConfig.width) * this.scale
-                : (this.config.commonConfig.height - sizePreConfig.height) * this.scale,
-              eventType: 'SINGLE',
-              mouseType: 'mousemove',
-              type: trigger === 'width' ? 'cr' : 'bc'
-            },
-            originalState: { ...sizePreConfig }
-          }
-          this.adjust({
-            target: document.getElementById(this.activeWidget.widgetId),
-            mutation: sizeMutation
-          })
-          this.adjust({
-            target: document.getElementById('wrapper'),
-            mutation: sizeMutation
-          })
-          break
-        case 'position':
-          // 图表位置更改，wrapper选择器标准事件流
-          const positionPreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
-          const positionMutation = {
-            event: {
-              direction: 'ANY',
-              distance: 0,
-              eventType: 'MOVE',
-              mouseType: 'mousemove',
-              position: {
-                top: (this.config.commonConfig.top - positionPreConfig.top) * this.scale,
-                left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale,
-                zIndex: this.config.commonConfig.zIndex
+      colorModeChange (config) {
+        const backgroundColor = config.commonConfig.colorMode === 'single'
+          ? this.singleColor
+          : this.linearColor
+        Object.assign(this.config.commonConfig, { backgroundColor })
+        this.change('native')
+      },
+      // Todo 为实现移动、更改激活部件，设置wrapper选择器事件，有待于重构该部分
+      change (type, trigger = null) {
+        switch (type) {
+          case 'native':
+            const { render } = this.activeWidget
+            render.setConfig(this.config)
+            break
+          case 'padding':
+            // 图表Padding样式更改，只需更新数据即可
+            this.activeWidget.render.mergeOption(this.config)
+            break
+          case 'size':
+            // 图表尺寸更改，wrapper选择器标准事件流
+            const sizePreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
+            const sizeMutation = {
+              event: {
+                distance: trigger === 'width'
+                  ? (this.config.commonConfig.width - sizePreConfig.width) * this.scale
+                  : (this.config.commonConfig.height - sizePreConfig.height) * this.scale,
+                eventType: 'SINGLE',
+                mouseType: 'mousemove',
+                type: trigger === 'width' ? 'cr' : 'bc'
               },
-              type: 'move'
-            },
-            originalState: { ...positionPreConfig }
-          }
-          this.adjust({
-            target: document.getElementById(this.activeWidget.widgetId),
-            mutation: positionMutation
-          })
-          this.adjust({
-            target: document.getElementById('wrapper'),
-            mutation: positionMutation
-          })
-          break
-        default:
-          break
-      }
+              originalState: { ...sizePreConfig }
+            }
+            this.adjust({
+              target: document.getElementById(this.activeWidget.widgetId),
+              mutation: sizeMutation
+            })
+            this.adjust({
+              target: document.getElementById('wrapper'),
+              mutation: sizeMutation
+            })
+            break
+          case 'position':
+            // 图表位置更改，wrapper选择器标准事件流
+            const positionPreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
+            const positionMutation = {
+              event: {
+                direction: 'ANY',
+                distance: 0,
+                eventType: 'MOVE',
+                mouseType: 'mousemove',
+                position: {
+                  top: (this.config.commonConfig.top - positionPreConfig.top) * this.scale,
+                  left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale,
+                  zIndex: this.config.commonConfig.zIndex
+                },
+                type: 'move'
+              },
+              originalState: { ...positionPreConfig }
+            }
+            this.adjust({
+              target: document.getElementById(this.activeWidget.widgetId),
+              mutation: positionMutation
+            })
+            this.adjust({
+              target: document.getElementById('wrapper'),
+              mutation: positionMutation
+            })
+            break
+          default:
+            break
+        }
 
-      // 更新部件配置
-      this.updateActiveWidget()
+        // 更新部件配置
+        this.updateActiveWidget()
 
-      // 更新部件后，如果进行尺寸的修改则重新resize图表
-      if (type === 'size') {
-        this.activeWidget.render.resize(this.activeWidget.config)
-      }
-    },
-    /**
+        // 更新部件后，如果进行尺寸的修改则重新resize图表
+        if (type === 'size') {
+          this.activeWidget.render.resize(this.activeWidget.config)
+        }
+      },
+      /**
        * 更新部件配置
        */
-    updateActiveWidget () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
-      })
+      updateActiveWidget () {
+        const activeWidget = _.cloneDeep(this.activeWidget)
+        this.activateWidget({
+          widget: Object.assign(activeWidget, { config: this.config })
+        })
+      }
     }
   }
-}
 </script>
 
 <style scoped lang="less">

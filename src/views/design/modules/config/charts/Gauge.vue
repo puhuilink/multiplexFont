@@ -7,6 +7,7 @@
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
+
       <a-tab-pane tab="专有属性" key="2">
         <div class="texts-config__template">
           <a-collapse defaultActiveKey="1" :bordered="false">
