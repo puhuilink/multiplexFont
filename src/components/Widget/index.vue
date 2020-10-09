@@ -8,7 +8,10 @@
 <template>
   <div
     class="widget"
-    :class="[onlyShow ? 'widget' : 'widget widget--hover']"
+    :class="{
+      ' widget--hover': !onlyShow,
+      ' widget--highlight': !onlyShow && isHighLightForAutoAlign
+    }"
     :id="widget.widgetId"
     :ref="widget.widgetId"
     @click.stop="() => $emit('select', selectWidget)">
@@ -27,7 +30,7 @@
 
 <script>
 import _ from 'lodash'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Factory from '@/model/factory/factory'
@@ -37,6 +40,8 @@ import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import AutoAlignService from '../Wrapper/AutoAlignService'
+import { filter, takeWhile } from 'rxjs/operators'
 
 const nodeFactory = Factory.createNodeFactory()
 
@@ -65,9 +70,13 @@ export default {
     }
   },
   data: () => ({
-    render: null
+    render: null,
+    isSubscribed: true,
+    isHighLightForAutoAlign: false,
+    autoAlignService: new AutoAlignService()
   }),
   computed: {
+    ...mapState('screen', ['activeWidget']),
     // 选择的部件
     selectWidget () {
       return Object.assign(this.widget, { render: this.render })
@@ -200,9 +209,29 @@ export default {
         widget: this.selectWidget
       })
     }
+
+    // 编辑模式下，其他 Widget 移动过程中
+    // 如果 x、y 方向与当前 Widget 对齐，则高亮当前 Widget
+    this.autoAlignService.change$
+      .pipe(
+        takeWhile(() => this.isSubscribed && !this.onlyShow),
+        filter(() => this.activeWidget),
+        filter(() => this.widget.widgetId !== this.activeWidget.widgetId),
+        filter(({ type }) => type === 'MOVE')
+      )
+      .subscribe(({ event }) => {
+        const { x, y } = event
+        const {
+          commonConfig: {
+            top, left, width, height
+          }
+        } = this.widget.config
+        this.isHighLightForAutoAlign = [top, top + height].includes(y) || [left, left + width].includes(x)
+      })
   },
   beforeDestroy () {
     this.render.destroy && this.render.destroy()
+    this.isSubscribed = false
   }
 }
 </script>
@@ -213,8 +242,15 @@ export default {
     overflow: visible;
     transform: translate3d(0);
 
+    // FIXME: 当 widget 本身置于较低层级时，hover 与 highlight 时会造成层级混乱
     &--hover:hover {
       box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+      z-index: 999 !important;
+    }
+
+    &--highlight {
+      box-shadow: 0 0 2px 2px rgba(24, 144, 255, .8) !important;
+      z-index: 999 !important;
     }
   }
 

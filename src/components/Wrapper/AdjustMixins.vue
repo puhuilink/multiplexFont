@@ -9,6 +9,7 @@
 import anime from 'animejs'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
+import _ from 'lodash'
 
 export default {
   name: 'AdjustMixins',
@@ -46,8 +47,10 @@ export default {
       switch (eventType) {
         case 'MOVE':
           anime.set(target, {
-            top: top + position.top / scale,
-            left: left + position.left / scale,
+            // 如果元素是通过自动对齐移动过来
+            // 直接使用对齐后的位置，即 closest*，不用 scale 计算以避免精度丢失
+            top: _.get(position, ['closestTop'], top + position.top / scale),
+            left: _.get(position, ['closestLeft'], left + position.left / scale),
             zIndex: position.zIndex
           })
           break

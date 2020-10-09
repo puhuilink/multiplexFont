@@ -205,15 +205,32 @@ export default {
         this.perfectScrollBar && this.perfectScrollBar.update()
 
         // 设置屏幕对象
-        this.setView({
-          view: {
-            ...this.view,
-            el: this.$refs.view,
-            gauge: this.$refs.gauge,
-            parent: this.$refs.page,
-            scale: this.scale
-          }
-        })
+        if (event.type === 'init') {
+          // 初次进入时this.view还未实例化
+          this.setView({
+            view: new View(Object.assign(
+              {},
+              _.cloneDeep(this.view),
+              {
+                el: this.$refs.view,
+                gauge: this.$refs.gauge,
+                parent: this.$refs.page,
+                scale: this.scale
+              }
+            ))
+          })
+        } else {
+          // 更新this.view的部分配置但不需要重新实例化
+          this.setView({
+            view: Object.assign(Object.create(View.prototype), {
+              ...this.view,
+              el: this.$refs.view,
+              gauge: this.$refs.gauge,
+              parent: this.$refs.page,
+              scale: this.scale
+            })
+          })
+        }
 
         // 初始化场景进行样式设置
         if (event.type === 'init' && !this.view.config) {
@@ -296,15 +313,15 @@ export default {
       .subscribe((mutation) => {
         const { widgetId, config } = this.activeWidget
         const [targetComponent] = this.$refs[widgetId]
-        const { event: { mouseType, eventType } } = mutation
+        const { event: { mouseType, eventType, position = {} } } = mutation
         // 当鼠标抬起时更新部件位置状态
         if (mouseType === 'mouseup') {
           const {
             top, left, width, height
           } = window.getComputedStyle(targetComponent.$el, null)
           const widgetPositionState = {
-            top: Number(top.split('px')[0]) || 0,
-            left: Number(left.split('px')[0]) || 0,
+            top: _.get(position, ['closestTop'], Number(top.split('px')[0]) || 0),
+            left: _.get(position, ['closestLeft'], Number(left.split('px')[0]) || 0),
             width: Number(width.split('px')[0]) || 0,
             height: Number(height.split('px')[0]) || 0
           }
@@ -312,7 +329,6 @@ export default {
           const widget = _.cloneDeep(this.activeWidget)
           Object.assign(widget.config.commonConfig, widgetPositionState)
           this.activateWidget({ widget })
-          return
         }
         // 调整部件大小
         this.adjust({
@@ -376,11 +392,12 @@ export default {
       })
 
       // 更新视图缩放
+      // 更新this.view的部分配置但不需要重新实例化
       this.setView({
-        view: {
+        view: Object.assign(Object.create(View.prototype), {
           ...this.view,
           scale: this.scale
-        }
+        })
       })
     },
     /**
