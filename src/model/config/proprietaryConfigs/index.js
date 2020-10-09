@@ -838,6 +838,7 @@ class SeriesPie {
     })
   }
 }
+
 /*
  * 形状样式
  */
@@ -1001,13 +1002,15 @@ class SeriesGauge {
       this[key] = options[key]
     })
   }
+
   /**
-  * 获取仪表盘配置
-  */
+   * 获取仪表盘配置
+   */
   getOption () {
     return Object.assign({}, _.cloneDeep(this))
   }
 }
+
 /**
  * 矩形
  */
@@ -1184,6 +1187,7 @@ class ImageGraphic extends Graphic {
     super(graphicOption)
     this.type = 'image'
     this.style = new ImageStyle(style)
+
   }
 
   /**

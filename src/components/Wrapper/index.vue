@@ -8,6 +8,10 @@
 <template>
   <div id="wrapper" class="wrapper" ref="wrapper">
     <div class="wrapper__mask" ref="mask"></div>
+    <!--<div v-if="activeWidget.config.type==='Texts'" class="icon-title">
+      <a-icon :style="json" class="img" type="android" />
+      <span :style="json">{{activeWidget.config.proprietaryConfig.title.icon_title}}</span>
+    </div>-->
     <div class="wrapper__handler wrapper__handler--tl" ref="tl"></div>
     <div class="wrapper__handler wrapper__handler--tc" ref="tc"></div>
     <div class="wrapper__handler wrapper__handler--tr" ref="tr"></div>
@@ -83,7 +87,8 @@
       isSubscribed: true,
       originalState: null,
       config: null,
-      wrapperService: new WrapperService()
+      wrapperService: new WrapperService(),
+
     }),
     mixins: [AdjustMixins],
     mounted () {
@@ -259,6 +264,12 @@
       return {}
     },
     computed: {
+      json () {
+        return {
+          fontSize: this.activeWidget.config.proprietaryConfig.title.title_size.fontSize + 'px',
+          color: this.activeWidget.config.proprietaryConfig.title.textStyle.title_color
+        }
+      },
       // 是否允许同步配置
       isAllowAsync () {
         return this.config && this.activeWidget && this.config.type === this.activeWidget.config.type
@@ -392,7 +403,7 @@
         let min = minArr.sort((a, b) => {
           return a - b
         })[0]
-        copyConfig.commonConfig.zIndex = min - 1
+        copyConfig.commonConfig.zIndex = 0
         Object.assign(this.activeWidget, { config: copyConfig })
         const copyMutation = {
           event: {
@@ -535,5 +546,31 @@
         color: #1a1dc4;
       }
     }
+  }
+
+  .icon-title {
+    width: 100%;
+    height: 15%;
+    /*background-color: #9b67db;*/
+    cursor: pointer;
+  }
+
+  .icon-title .img, .icon-title span {
+    float: left;
+  }
+
+  .icon-title .img {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+  }
+
+  .icon-title span {
+    display: flex;
+    height: 100%;
+    padding-left: 10%;
+    align-items: center;
   }
 </style>
