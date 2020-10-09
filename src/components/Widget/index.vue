@@ -242,15 +242,12 @@ export default {
     overflow: visible;
     transform: translate3d(0);
 
-    // FIXME: 当 widget 本身置于较低层级时，hover 与 highlight 时会造成层级混乱
     &--hover:hover {
       box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
-      z-index: 999 !important;
     }
 
     &--highlight {
-      box-shadow: 0 0 2px 2px rgba(24, 144, 255, .8) !important;
-      z-index: 999 !important;
+      box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
     }
   }
 

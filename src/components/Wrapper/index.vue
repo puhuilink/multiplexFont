@@ -676,7 +676,7 @@ export default {
     position: absolute;
     z-index: 1000;
     opacity: 0;
-    background-color:  rgba(24, 144, 255, .8);
+    background-color: rgba(11,241,255,1);
 
     &_show {
       opacity: 1;
