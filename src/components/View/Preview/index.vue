@@ -64,7 +64,7 @@ export default {
         throw e
       } finally {
         // 触发 v-if 强制更新
-        await Timeout.set(150)
+        await Timeout.set(100)
         await this.$nextTick()
         this.loading = false
       }

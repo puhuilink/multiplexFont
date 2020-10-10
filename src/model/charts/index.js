@@ -113,11 +113,17 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
-    // 暴露必要配置配置供测试
+    // 暴露配置配置供测试
+    // 此处 cloneDeep 有极高性能消耗，控制只暴露必要的配置
     {
-      const { chartConfig, config, container } = _.cloneDeep(this)
+      const { chartConfig, config, container } = this
       window[container.id] = {
-        chartConfig: _.omit(chartConfig, ['color', 'tooltip']),
+        chartConfig: {
+          title: {
+            text: _.get(chartConfig, ['title', 'text'], '')
+          },
+          series: _.get(chartConfig, ['series'], []).map(el => _.cloneDeep(_.omit(el, ['itemStyle', 'barWidth', 'color'])))
+        },
         config: _.pick(config, ['category', 'type']),
         container
       }
