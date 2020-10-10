@@ -439,10 +439,10 @@ export default {
 
       // 更新视图缩放
       this.setView({
-        view: {
+        view: Object.assign(Object.create(View.prototype), {
           ...this.view,
           scale: this.scale
-        }
+        })
       })
 
       anime.set(this.$refs.view, {
@@ -460,6 +460,7 @@ export default {
         duration: 150,
         easing: 'linear'
       })
+
       anime({
         targets: this.$refs.gauge,
         width: width * this.scale + 32,
