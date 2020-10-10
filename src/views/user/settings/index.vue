@@ -1,12 +1,12 @@
 <template>
   <a-layout>
     <a-layout-content style="setting_content">
-      <a-layout class="setting_content_layout">
+      <a-layout class="Setting__content-layout">
         <a-layout-sider width="200">
           <a-menu
             mode="inline"
             :default-selected-keys="selectedKeys"
-            class="setting_content_layout_menu"
+            class="Setting__content-layout-menu"
           >
             <a-menu-item key="base">
               <router-link to="/settings/base">基本设置</router-link>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Settings',
   data () {
@@ -44,14 +43,14 @@ export default {
 </script>
 
 <style lang="less" >
-.setting{
-  &_content{
+.Setting{
+  &__content{
     padding: 0 50px;
-    &_layout{
+    &-layout{
       padding: 24px 0;
       background: #fff;
       height: 85vh;
-      &_menu{
+      &-menu{
         height: 100vh;
       }
     }
