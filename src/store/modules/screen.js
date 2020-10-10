@@ -16,7 +16,8 @@ export const ScreenMutations = {
   ACTIVATE_EDGE: 'ACTIVATE_EDGE[设置激活的边]',
   RESET_TOPOLOGY_STATE: 'RESET_TOPOLOGY_STATE[重置拓扑状态]',
   SET_EDGE_CONFIG: 'SET_EDGE_CONFIG[设置边配置]',
-  UPDATE_TOPOLOGY_CONFIG: 'UPDATE_TOPOLOGY_CONFIG[更新拓扑节点配置]'
+  UPDATE_TOPOLOGY_CONFIG: 'UPDATE_TOPOLOGY_CONFIG[更新拓扑节点配置]',
+  SET_IMPORTING_STATE: 'SET_IMPORTING_STATE[设置导入配置状态]'
 }
 
 export default {
@@ -37,7 +38,9 @@ export default {
     // 激活的拓扑边
     activeEdge: null,
     // 边配置
-    edgeConfig: new Edge({})
+    edgeConfig: new Edge({}),
+    // 当前是否正在导入配置
+    isImporting: false
   },
   getters: {
     // 视图中所有部件对象
@@ -138,6 +141,10 @@ export default {
     // 设置边配置
     [ScreenMutations.SET_EDGE_CONFIG] (state, payload) {
       state.edgeConfig = payload.edgeConfig
+    },
+    // 设置导入状态
+    [ScreenMutations.SET_IMPORTING_STATE] (state, payload) {
+      state.isImporting = payload.isImporting
     }
   },
   actions: {

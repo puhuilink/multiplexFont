@@ -349,7 +349,8 @@ export default {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW,
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+      setImportingState: ScreenMutations.SET_IMPORTING_STATE
     }),
     resizeWidget: _.debounce(function (config) {
       this.activeWidget.render.resize(config)
@@ -512,7 +513,8 @@ export default {
     /**
      * 导入视图配置
      */
-    import (options) {
+    async import (options) {
+      this.setImportingState({ isImporting: true })
       this.viewOptions = _.omit(options, ['id', 'name'])
       // 实例化部件对象
       const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
@@ -526,6 +528,11 @@ export default {
       })
       // 设置视图样式
       this.setStyle({ type: 'input' })
+      // 设置激活元素为当前画板
+      this.activateWidget({ widget: this.view })
+      // 等待视图及 widgets 初始化
+      await this.$nextTick()
+      this.setImportingState({ isImporting: false })
     },
     /**
      * 导出视图配置至json文件

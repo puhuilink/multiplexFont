@@ -78,7 +78,7 @@ export default {
     autoAlignService: new AutoAlignService()
   }),
   computed: {
-    ...mapState('screen', ['activeWidget']),
+    ...mapState('screen', ['activeWidget', 'isImporting']),
     // 选择的部件
     selectWidget () {
       return Object.assign(this.widget, { render: this.render })
@@ -206,7 +206,10 @@ export default {
         this.initTopologyChart()
       }
     } else {
-      // 如果在编辑状态，将渲染的元素更新至部件
+      // 如果 widget 是通过导入配置生成，不设置为 activeWidget
+      // 因导入配置可能生成多个 widget，会频繁的变更 activeWidget
+      if (this.isImporting) return
+      // 如果 widget 是通过拖拽生成，设置为 activeWidget
       this.activateWidget({
         widget: this.selectWidget
       })
@@ -217,8 +220,7 @@ export default {
     this.autoAlignService.change$
       .pipe(
         takeWhile(() => this.isSubscribed && !this.onlyShow),
-        filter(() => this.activeWidget),
-        filter(() => this.widget.widgetId !== this.activeWidget.widgetId),
+        filter(() => _.get(this, ['widget', 'widgetId']) !== _.get(this, ['activeWidget', 'widgetId'])),
         filter(({ type }) => type === 'MOVE')
       )
       .subscribe(({ event }) => {
