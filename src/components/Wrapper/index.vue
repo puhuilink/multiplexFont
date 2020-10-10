@@ -372,22 +372,23 @@ export default {
 
               // 自动对齐计算与处理
               // Shift 按下时关闭自动对齐
-              if (!this.isShiftPressed) {
-                const { closestTop, closestLeft, x, y } = this.calcClosestPosition()
-                if (mouseType === 'mouseup') {
-                  this.isMousedown = false
-                  Object.assign(position, { closestTop, closestLeft })
-                  this.autoAlignService.next({
-                    type: 'MOVE',
-                    event: { x: null, y: null }
-                  })
-                } else {
-                  this.autoAlignService.next({
-                    type: 'MOVE',
-                    event: { x, y }
-                  })
-                }
-              }
+              // 因不稳定暂时关闭自动对齐
+              // if (!this.isShiftPressed) {
+              //   const { closestTop, closestLeft, x, y } = this.calcClosestPosition()
+              //   if (mouseType === 'mouseup') {
+              //     this.isMousedown = false
+              //     Object.assign(position, { closestTop, closestLeft })
+              //     this.autoAlignService.next({
+              //       type: 'MOVE',
+              //       event: { x: null, y: null }
+              //     })
+              //   } else {
+              //     this.autoAlignService.next({
+              //       type: 'MOVE',
+              //       event: { x, y }
+              //     })
+              //   }
+              // }
             }
             return {
               type,
