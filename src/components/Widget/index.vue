@@ -9,10 +9,12 @@
   <div
     class="widget"
     :class="{
-      ' widget--hover': !onlyShow,
-      ' widget--highlight': !onlyShow && isHighLightForAutoAlign
+      'widget--hover': !onlyShow,
+      'widget--highlight': !onlyShow && isHighLightForAutoAlign
     }"
     :id="widget.widgetId"
+    :data-category="widget.config.category"
+    :data-type="widget.config.type"
     :ref="widget.widgetId"
     @click.stop="() => $emit('select', selectWidget)">
 

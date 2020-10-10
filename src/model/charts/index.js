@@ -113,8 +113,15 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
-    // 暴露当前series配置供测试
-    window[this.container.id] = _.cloneDeep(this.chartConfig.series)
+    // 暴露必要配置配置供测试
+    {
+      const { chartConfig, config, container } = _.cloneDeep(this)
+      window[container.id] = {
+        chartConfig: _.omit(chartConfig, ['color', 'tooltip']),
+        config: _.pick(config, ['category', 'type']),
+        container
+      }
+    }
   }
 
   refresh () {
