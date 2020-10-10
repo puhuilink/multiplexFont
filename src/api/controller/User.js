@@ -24,5 +24,11 @@ export const resetPwd = function ({ userId, encryptedPwd, newEncryptedPwd }) {
  * 重置（初始化）用户密码为初始密码
  */
 export const setInitialPwd = function (userId) {
-  return axios.post(`/user/initPassword?userId=${encrypt(userId)}`)
+  const formData = new FormData()
+  formData.append('userId', encrypt(userId))
+  return axios.post(`/user/initPassword`, formData, {
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
