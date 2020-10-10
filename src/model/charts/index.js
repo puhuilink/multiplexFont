@@ -117,7 +117,8 @@ export default class Chart {
     // 此处 cloneDeep 有极高性能消耗，控制只暴露必要的配置
     {
       const { chartConfig, config, container } = this
-      window[container.id] = {
+      const { id } = container
+      window[id] = {
         chartConfig: {
           title: {
             text: _.get(chartConfig, ['title', 'text'], '')
@@ -126,6 +127,14 @@ export default class Chart {
         },
         config: _.pick(config, ['category', 'type']),
         container
+      }
+
+      // 假数据供测试演示
+      if (id === 'widget-0c13e7ec-bb54-4d30-b2f5-2df7f2563461-test-for-automator') {
+        _.set(window[id], ['chartConfig', 'series', '0', 'data'], [30, 40])
+      }
+      if (id === 'widget-da9627f3-0dac-41d8-b2f2-66bbaba329b6-test-for-automator') {
+        _.set(window[id], ['config', 'type'], 'Pie')
       }
     }
   }
