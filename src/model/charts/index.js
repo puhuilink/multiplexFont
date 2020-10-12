@@ -113,6 +113,7 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
+
     // 暴露当前series配置供测试
     window[this.container.id] = _.cloneDeep(this.chartConfig.series)
   }

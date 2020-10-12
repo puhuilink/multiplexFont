@@ -127,7 +127,6 @@ export default {
   mounted () {
     // FIXME: 当图片类型为图标时，需要先触发 imageChange 才能渲染
     this.imageChange()
-    console.log(this)
   }
 }
 </script>

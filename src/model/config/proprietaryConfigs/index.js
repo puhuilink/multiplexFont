@@ -386,7 +386,9 @@ class Title {
     link = '',
     target = 'blank',
     textStyle = {
-      fontSize: 24
+      fontSize: 24,
+      marginLeft: 10,
+      marginRight: 10
     },
     position = {}
   }) {
@@ -903,13 +905,15 @@ class Graphic {
     left = 0,
     right = 0,
     bottom = 0,
-    style = {}
+    style = {},
+    position = {}
   }) {
     this.top = top
     this.left = left
     this.right = right
     this.bottom = bottom
     this.style = new Style(style)
+    this.position = new Position(position)
   }
 }
 
@@ -1164,14 +1168,10 @@ class ImageStyle {
   constructor ({
     x = 0,
     y = 0,
-    width = 0,
-    height = 0,
     image = ''
   }) {
     this.x = x
     this.y = y
-    this.width = width
-    this.height = height
     this.image = image
   }
 }
@@ -1187,7 +1187,6 @@ class ImageGraphic extends Graphic {
     super(graphicOption)
     this.type = 'image'
     this.style = new ImageStyle(style)
-
   }
 
   /**

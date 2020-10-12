@@ -179,23 +179,8 @@
               <!-- / 居下 -->
             </a-collapse-panel>
             <!-- E 文本样式 -->
-            <!-- S 图片 -->
-            <a-collapse-panel header="图片" key="2">
-
-              <div class="comment-template__item">
-                <p class="comment-template__leading">地址:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="text"
-                    v-model.trim="config.proprietaryConfig.graphic.style.image"
-                    @change="imageChange" />
-                </div>
-              </div>
-
-            </a-collapse-panel>
-            <!-- E 图片 -->
             <!-- S 图标 -->
-            <a-collapse-panel header="图标" key="3">
+            <a-collapse-panel header="图标" key="2">
               <div class="comment-template__item">
                 <div class="comment-template__inner icon-picker__list">
                   <div
@@ -210,16 +195,6 @@
               </div>
             </a-collapse-panel>
             <!-- E 图标 -->
-            <!-- S 预览 -->
-            <a-collapse-panel header="预览" key="4">
-              <div class="image-config__screen">
-                <div class="image-config__screenshot">
-                  <img ref="img" :src="config.proprietaryConfig.graphic.style.image" alt="" v-if="config.proprietaryConfig.graphic.style.image" />
-                  <p v-else>图片预览</p>
-                </div>
-              </div>
-            </a-collapse-panel>
-            <!-- E 预览 -->
           </a-collapse>
         </div>
       </a-tab-pane>
@@ -229,94 +204,94 @@
 </template>
 
 <script>
-  import '@/assets/less/template.less'
-  import CommonTemplate from '../common'
-  import ProprietaryMixins from '../proprietaryMixins'
-  import ColorPicker from '@/components/ColorPicker'
-  import IconPicker from '~~~/IconPicker/index'
+import '@/assets/less/template.less'
+import CommonTemplate from '../common'
+import ProprietaryMixins from '../proprietaryMixins'
+import ColorPicker from '@/components/ColorPicker'
+import IconPicker from '~~~/IconPicker/index'
 
-  export default {
-    name: 'Texts',
-    mixins: [ProprietaryMixins],
-    components: {
-      CommonTemplate,
-      ColorPicker,
-      IconPicker
-    },
-    data: () => ({
-      icons: IconPicker.data()['icons']
-    }),
-    methods: {
-      positionChange () {
-        const { position } = this.config.proprietaryConfig.title
-        switch (position.mode) {
-          case 'center':
-            Object.assign(position, { editablePosition: [] })
-            break
-          case 'center_left':
-            Object.assign(position, { editablePosition: ['left'], left: 0 })
-            break
-          case 'center_right':
-            Object.assign(position, { editablePosition: ['right'], right: 0 })
-            break
-          case 'top_center':
-            Object.assign(position, { editablePosition: ['top'], top: 0 })
-            break
-          case 'bottom_center':
-            Object.assign(position, { editablePosition: ['bottom'], bottom: 0 })
-            break
-          case 'custom':
-            Object.assign(position, {
-              editablePosition: ['top', 'bottom', 'left', 'right'],
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0
-            })
-            break
-          default:
-            Object.assign(position, { editablePosition: [] })
-            break
-        }
-        this.change()
-      },
-      iconChoose (index) {
-        const { img } = this.icons[index]
-        this.config.proprietaryConfig.graphic.style.image = img
-        this.imageChange()
-      },
-      async imageChange () {
-        try {
-          const { width, height } = await this.imageUrlLoader(this.config.proprietaryConfig.graphic.style.image)
-          Object.assign(this.config.proprietaryConfig.graphic.style, {
-            width, height
+export default {
+  name: 'Texts',
+  mixins: [ProprietaryMixins],
+  components: {
+    CommonTemplate,
+    ColorPicker,
+    IconPicker
+  },
+  data: () => ({
+    icons: IconPicker.data()['icons']
+  }),
+  methods: {
+    positionChange () {
+      const { position } = this.config.proprietaryConfig.title
+      switch (position.mode) {
+        case 'center':
+          Object.assign(position, { editablePosition: [] })
+          break
+        case 'center_left':
+          Object.assign(position, { editablePosition: ['left'], left: 0 })
+          break
+        case 'center_right':
+          Object.assign(position, { editablePosition: ['right'], right: 0 })
+          break
+        case 'top_center':
+          Object.assign(position, { editablePosition: ['top'], top: 0 })
+          break
+        case 'bottom_center':
+          Object.assign(position, { editablePosition: ['bottom'], bottom: 0 })
+          break
+        case 'custom':
+          Object.assign(position, {
+            editablePosition: ['top', 'bottom', 'left', 'right'],
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0
           })
-          this.change()
-        } catch (e) {
-          this.$message.error('图片载入失败，请确认图片地址正确！')
-          this.change()
-          throw e
-        }
-      },
-      /**
+          break
+        default:
+          Object.assign(position, { editablePosition: [] })
+          break
+      }
+      this.change()
+    },
+    iconChoose (index) {
+      const { img } = this.icons[index]
+      this.config.proprietaryConfig.graphic.style.image = img
+      this.imageChange()
+    },
+    async imageChange () {
+      try {
+        const { width, height } = await this.imageUrlLoader(this.config.proprietaryConfig.graphic.style.image)
+        Object.assign(this.config.proprietaryConfig.graphic.style, {
+          width, height
+        })
+        this.change()
+      } catch (e) {
+        this.$message.error('图片载入失败，请确认图片地址正确！')
+        this.change()
+        throw e
+      }
+    },
+    /**
        * url 图片地址载入
        * @param url 图片地址
        * @returns {Promise<unknown>}
        */
-      imageUrlLoader (url) {
-        return new Promise((resolve, reject) => {
-          const image = new Image()
-          image.onload = () => resolve(image)
-          image.onerror = reject
-          image.src = url
-        })
-      }
-    },
-    mounted () {
-      // FIXME: 当图片类型为图标时，需要先触发 imageChange 才能渲染
-      this.imageChange()
+    imageUrlLoader (url) {
+      return new Promise((resolve, reject) => {
+        const image = new Image()
+        image.onload = () => resolve(image)
+        image.onerror = reject
+        image.src = url
+      })
     }
+  },
+  mounted () {
+    // FIXME: 当图片类型为图标时，需要先触发 imageChange 才能渲染
+    this.imageChange()
   }
+}
 </script>
 
 <style scoped lang="less">
@@ -331,7 +306,8 @@
         width: 100%;
       }
     }
-    &__template{
+
+    &__template {
 
     }
 

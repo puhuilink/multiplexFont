@@ -35,8 +35,18 @@ export default class TextsProprietaryConfig {
    * 获取文本专有配置
    */
   getOption () {
+    this.graphic.style.width = this.title.textStyle.fontSize + 30
+    this.graphic.style.height = this.title.textStyle.fontSize + 30
     return Object.assign({}, _.cloneDeep(this), {
-      title: this.title.getOption()
+      title: this.title.getOption(),
+      'graphic': {
+        style: this.graphic.style,
+        top: this.title.position.top,
+        right: this.title.position.right,
+        bottom: this.title.position.bottom,
+        left: this.title.position.left,
+        type: 'image'
+      }
     })
   }
 }
