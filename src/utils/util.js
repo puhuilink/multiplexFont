@@ -241,3 +241,19 @@ export const hexToRGBA = function (hex, alpha) {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')'
   }
 }
+
+/**
+ * 查找数组中距离给定值最接近给定范围的值
+ * @param {Array} arr 要计算的数组
+ * @param {Number} targetNum 给定值
+ * @param {Number} offset 给定值误差范围
+ * @returns {Number}
+ */
+export const findClosestNumInArr = (arr = [], targetNum, offset = 0) => {
+  const availableList = arr.filter(num => Math.abs(num - targetNum) <= offset)
+
+  const index = availableList.indexOf(
+    Math.min(...availableList)
+  )
+  return availableList[index]
+}
