@@ -97,7 +97,8 @@ export default class Chart {
    * 映射成 echarts 配置项
    */
   // eslint-disable-next-line class-methods-use-this
-  mappingOption () {}
+  mappingOption () {
+  }
 
   /**
    * 设置新的配置项渲染图表
@@ -113,11 +114,8 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
-<<<<<<< HEAD
-
     // 暴露当前series配置供测试
     window[this.container.id] = _.cloneDeep(this.chartConfig.series)
-=======
     // 暴露配置配置供测试
     // 此处 cloneDeep 有极高性能消耗，控制只暴露必要的配置
     {
@@ -142,7 +140,6 @@ export default class Chart {
         _.set(window[id], ['config', 'type'], 'Pie')
       }
     }
->>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
   }
 
   refresh () {

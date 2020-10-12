@@ -7,6 +7,7 @@
 */
 <template>
 <<<<<<< HEAD
+<<<<<<< HEAD
   <div id="wrapper" class="wrapper" ref="wrapper">
     <div class="wrapper__mask" ref="mask"></div>
     <div class="wrapper__handler wrapper__handler--tl" ref="tl"></div>
@@ -64,6 +65,8 @@
     </div>
   </div>
 =======
+=======
+>>>>>>> dgg
   <fragment>
 
     <!-- / 拖拽缩放与右键菜单 -->
@@ -87,12 +90,48 @@
         <a-dropdown :trigger="['contextmenu']">
           <div :style="{ height: '100%' }"></div>
           <a-menu slot="overlay" class="wrapper__menu">
+<<<<<<< HEAD
             <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
             <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
             <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary': '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
             <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
             <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+=======
+            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget">
+              <a-icon type="copy"/>
+              复制部件
+            </a-menu-item>
+            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig">
+              <a-icon type="snippets"/>
+              复制配置
+            </a-menu-item>
+            <a-menu-item
+              key="3"
+              :disabled="!isAllowAsync"
+              :class="[isAllowAsync ? 'wrapper__menu--primary': '']"
+              @click="syncConfig">
+              <a-icon type="sync"/>
+              同步配置
+            </a-menu-item>
+            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget">
+              <a-icon type="delete"/>
+              删除
+            </a-menu-item>
+            <a-menu-divider/>
+            <a-menu-item key="5">
+              <a-icon type="close"/>
+              取消
+            </a-menu-item>
+            <a-menu-item key="6" class="wrapper__menu--up" @click="upzIndexWidget">
+              <a-icon type="arrow-up"/>
+              置于顶层
+            </a-menu-item>
+            <a-menu-item key="7" class="wrapper__menu--down" @click="downzIndexWidget">
+              <a-icon type="arrow-down"/>
+              置于底层
+            </a-menu-item>
+>>>>>>> dgg
           </a-menu>
         </a-dropdown>
       </div>
@@ -111,16 +150,23 @@
     />
 
   </fragment>
+<<<<<<< HEAD
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
 </template>
 
 <script>
 import _ from 'lodash'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Subject, fromEvent, merge } from 'rxjs'
 =======
 import { fromEvent, merge, Subject } from 'rxjs'
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+import { fromEvent, merge, Subject } from 'rxjs'
+>>>>>>> dgg
 import {
   takeWhile, takeUntil, switchMap,
   tap, map, withLatestFrom, filter,
@@ -131,22 +177,29 @@ import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
 import WrapperService from '@/components/Wrapper/WrapperService'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import CommonConfig from '@/model/config/commonConfig'
 =======
+=======
+>>>>>>> dgg
 import AutoAlignService from '@/components/Wrapper/AutoAlignService'
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapMutations, mapGetters } from 'vuex'
 import { findClosestNumInArr } from '@/utils/util'
 
 const CLOSEST_PIXEL = 20
+<<<<<<< HEAD
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
 
 export default {
   name: 'Wrapper',
   data: () => ({
     isSubscribed: true,
+<<<<<<< HEAD
 <<<<<<< HEAD
     originalState: null,
     config: null,
@@ -344,6 +397,8 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
 =======
+=======
+>>>>>>> dgg
     isMousedown: false,
     isShiftPressed: false,
     originalState: null,
@@ -386,8 +441,8 @@ export default {
       this.initScaleAndMoveEvent()
     },
     /**
-     * 初始化自动对齐事件
-     */
+       * 初始化自动对齐事件
+       */
     initAutoAlignEvent () {
       this.autoAlignService.change$
         .pipe(
@@ -403,8 +458,8 @@ export default {
         })
     },
     /**
-     * 初始化键盘热键事件
-     */
+       * 初始化键盘热键事件
+       */
     initKeyboardEvent () {
       this.keydown$ = fromEvent(this.$refs.wrapper, 'keydown').pipe(
         takeWhile(() => this.isSubscribed),
@@ -499,8 +554,8 @@ export default {
         })
     },
     /**
-     * 初始化鼠标拖拽与缩放事件
-     */
+       * 初始化鼠标拖拽与缩放事件
+       */
     initScaleAndMoveEvent () {
       this.initAutoAlignEvent()
       this.documentMove$ = fromEvent(document, 'mousemove')
@@ -676,8 +731,8 @@ export default {
         })
     },
     /**
-     * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
-     */
+       * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
+       */
     calcClosestPosition () {
       const {
         top, left, width, height
@@ -705,7 +760,7 @@ export default {
 
       if (
         (typeof yTop === 'number' && typeof yBottom === 'number' && Math.abs(yTop - top) <= Math.abs(yBottom - (top + height))) ||
-        (typeof yTop === 'number' && typeof yBottom !== 'number')
+          (typeof yTop === 'number' && typeof yBottom !== 'number')
       ) {
         // 上侧吸附与高亮
         y = yTop
@@ -718,7 +773,7 @@ export default {
 
       if (
         (typeof xLeft === 'number' && typeof xRight === 'number' && Math.abs(xLeft - left) <= Math.abs(xRight - (left + width))) ||
-        (typeof xLeft === 'number' && typeof xRight !== 'number')
+          (typeof xLeft === 'number' && typeof xRight !== 'number')
       ) {
         // 左侧吸附与高亮
         x = xLeft
@@ -750,7 +805,10 @@ export default {
     focus () {
       this.$refs.wrapper.focus()
     },
+<<<<<<< HEAD
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
     /**
        * 设置
        * @param display
@@ -768,9 +826,12 @@ export default {
         left,
         width,
 <<<<<<< HEAD
+<<<<<<< HEAD
         height
       })
 =======
+=======
+>>>>>>> dgg
         height,
         // FIXME: zIndex 某时会被重置为0
         zIndex: 1000
@@ -778,7 +839,10 @@ export default {
       if (display !== 'none') {
         this.focus()
       }
+<<<<<<< HEAD
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
     },
     /**
        * 复制部件
@@ -835,10 +899,11 @@ export default {
       }
       this.removeWidget({ widgetId: this.activeWidget.widgetId })
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dgg
     },
-    /*
-      * Widget置于顶层
-      * */
+    // Widget置于顶层
     upzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
       // 生成一个数组,用来记录widgets的每一个index
@@ -874,8 +939,8 @@ export default {
       })
     },
     /*
-          * Widget置于底层,同理于置于顶层
-          * */
+              * Widget置于底层,同理于置于顶层
+              * */
     downzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
       const minArr = []
@@ -901,8 +966,11 @@ export default {
         target: document.getElementById(this.activeWidget.widgetId),
         mutation: copyMutation
       })
+<<<<<<< HEAD
 =======
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
     }
   },
   beforeDestroy () {
@@ -953,6 +1021,7 @@ export default {
       z-index: 1000;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       &--ti {
         top: -5px;
         left: -5px;
@@ -962,6 +1031,8 @@ export default {
 
 =======
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
       &--tl {
         top: -5px;
         left: -5px;
@@ -1022,6 +1093,9 @@ export default {
         color: #ff4d4f;
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dgg
 
       &--up {
         color: #52c41a;
@@ -1030,8 +1104,11 @@ export default {
       &--down {
         color: #1a1dc4;
       }
+<<<<<<< HEAD
     }
 =======
+=======
+>>>>>>> dgg
     }
   }
 
@@ -1039,7 +1116,7 @@ export default {
     position: absolute;
     z-index: 1000;
     opacity: 0;
-    background-color: rgba(11,241,255,1);
+    background-color: rgba(11, 241, 255, 1);
 
     &_show {
       opacity: 1;
@@ -1055,6 +1132,9 @@ export default {
       height: 100%;
     }
 
+<<<<<<< HEAD
 >>>>>>> 9fce4120dca6847378eedc68cba3c4d644af6e72
+=======
+>>>>>>> dgg
   }
 </style>
