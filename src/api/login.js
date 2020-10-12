@@ -20,14 +20,13 @@ export function logout (token) {
  * @param data
  * @returns {AxiosPromise}
  */
-// export function sendCaptcha (data) {
-//   return axios({
-//     baseURL: '/api/approval/getVerifCode',
-//     method: 'post',
-//     data
-//   })
-// }
 
 export const sendCaptchaByUserId = function (userId) {
-  return axios.post(`/approval/getVerifCode?userId=${encrypt(userId)}`)
+  const formData = new FormData()
+  formData.append('userId', encrypt(userId))
+  return axios.post(`/approval/getVerifCode`, formData, {
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
