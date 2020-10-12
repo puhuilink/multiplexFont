@@ -8,8 +8,13 @@
 <template>
   <div
     class="widget"
-    :class="[onlyShow ? 'widget' : 'widget widget--hover']"
+    :class="{
+      'widget--hover': !onlyShow,
+      'widget--highlight': !onlyShow && isHighLightForAutoAlign
+    }"
     :id="widget.widgetId"
+    :data-category="widget.config.category"
+    :data-type="widget.config.type"
     :ref="widget.widgetId"
     @click.stop="() => $emit('select', selectWidget)">
     <!-- S 元素部件 -->
@@ -24,17 +29,19 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import { mapMutations } from 'vuex'
-  import { ScreenMutations } from '@/store/modules/screen'
-  import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
-  import Factory from '@/model/factory/factory'
-  import Widget from '@/model/widget'
-  import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
-  import TopologyChart from '@/model/charts/TopologyChart'
-  import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
-  import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
-  import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import _ from 'lodash'
+import { mapMutations, mapState } from 'vuex'
+import { ScreenMutations } from '@/store/modules/screen'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
+import Factory from '@/model/factory/factory'
+import Widget from '@/model/widget'
+import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
+import TopologyChart from '@/model/charts/TopologyChart'
+import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
+import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import AutoAlignService from '../Wrapper/AutoAlignService'
+import { filter, takeWhile } from 'rxjs/operators'
 
   const nodeFactory = Factory.createNodeFactory()
 
@@ -43,24 +50,26 @@
     components: {
       ...ELEMENTS
     },
-    props: {
-      widget: {
-        type: Object,
-        default: () => ({})
-      },
-      onlyShow: {
-        type: Boolean,
-        default: false
-      },
-      // 外部 Ci
-      ciId: {
-        type: String,
-        default: ''
-      },
-      timeRange: {
-        type: Array,
-        default: () => []
-      }
+    timeRange: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data: () => ({
+    render: null,
+    isSubscribed: true,
+    isHighLightForAutoAlign: false,
+    autoAlignService: new AutoAlignService()
+  }),
+  computed: {
+    ...mapState('screen', ['activeWidget', 'isImporting']),
+    // 选择的部件
+    selectWidget () {
+      return Object.assign(this.widget, { render: this.render })
+    },
+    // 在类型为元素时使用组件进行渲染
+    useComponent () {
+      return this.widget.config.category === 'ELEMENT'
     },
     data: () => ({
       render: null
@@ -176,14 +185,13 @@
       if (!(this.widget instanceof Widget)) {
         Object.assign(this.widget, new Widget(this.widget))
       }
-      const { category, type } = this.widget.config
-      const widgetFactory = category === 'CHART'
-        ? Factory.createChartFactory()
-        : Factory.createElementFactory()
-      // 根据类型创建图表
-      this.render = widgetFactory.create(type, {
-        widget: this.widget,
-        element: this.$refs.element && this.$refs.element.$el
+    } else {
+      // 如果 widget 是通过导入配置生成，不设置为 activeWidget
+      // 因导入配置可能生成多个 widget，会频繁的变更 activeWidget
+      if (this.isImporting) return
+      // 如果 widget 是通过拖拽生成，设置为 activeWidget
+      this.activateWidget({
+        widget: this.selectWidget
       })
       if (this.onlyShow) {
         // 如果在视图展示状态下，组件（轮询）动态加载数据
@@ -202,6 +210,28 @@
     beforeDestroy () {
       this.render.destroy && this.render.destroy()
     }
+
+    // 编辑模式下，其他 Widget 移动过程中
+    // 如果 x、y 方向与当前 Widget 对齐，则高亮当前 Widget
+    this.autoAlignService.change$
+      .pipe(
+        takeWhile(() => this.isSubscribed && !this.onlyShow),
+        filter(() => _.get(this, ['widget', 'widgetId']) !== _.get(this, ['activeWidget', 'widgetId'])),
+        filter(({ type }) => type === 'MOVE')
+      )
+      .subscribe(({ event }) => {
+        const { x, y } = event
+        const {
+          commonConfig: {
+            top, left, width, height
+          }
+        } = this.widget.config
+        this.isHighLightForAutoAlign = [top, top + height].includes(y) || [left, left + width].includes(x)
+      })
+  },
+  beforeDestroy () {
+    this.render.destroy && this.render.destroy()
+    this.isSubscribed = false
   }
 </script>
 
@@ -213,6 +243,10 @@
 
     &--hover:hover {
       box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+    }
+
+    &--highlight {
+      box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
     }
   }
 

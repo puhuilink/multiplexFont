@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import anime from 'animejs'
 import _ from 'lodash'
 import Edge from '@/model/edges'
-import View from '@/model/view/index'
 
 Vue.use(Vuex)
 
@@ -17,7 +16,8 @@ export const ScreenMutations = {
   ACTIVATE_EDGE: 'ACTIVATE_EDGE[设置激活的边]',
   RESET_TOPOLOGY_STATE: 'RESET_TOPOLOGY_STATE[重置拓扑状态]',
   SET_EDGE_CONFIG: 'SET_EDGE_CONFIG[设置边配置]',
-  UPDATE_TOPOLOGY_CONFIG: 'UPDATE_TOPOLOGY_CONFIG[更新拓扑节点配置]'
+  UPDATE_TOPOLOGY_CONFIG: 'UPDATE_TOPOLOGY_CONFIG[更新拓扑节点配置]',
+  SET_IMPORTING_STATE: 'SET_IMPORTING_STATE[设置导入配置状态]'
 }
 
 export default {
@@ -38,7 +38,9 @@ export default {
     // 激活的拓扑边
     activeEdge: null,
     // 边配置
-    edgeConfig: new Edge({})
+    edgeConfig: new Edge({}),
+    // 当前是否正在导入配置
+    isImporting: false
   },
   getters: {
     // 视图中所有部件对象
@@ -56,15 +58,24 @@ export default {
     // 画板缩放比例
     scale (state) {
       return state.view.scale || 1
+    },
+    // 所有部件对象的位置，用于对齐吸附计算
+    positions (state, getters) {
+      return getters.widgets
+        .filter(({ widgetId }) => widgetId !== _.get(state, ['activeWidget', 'widgetId'], widgetId))
+        .map(({ config: { commonConfig } }) => _.pick(commonConfig, ['top', 'left', 'width', 'height']))
+    },
+    positionYs (state, getters) {
+      return _.uniq(getters.positions.map(({ top, height }) => [top, top + height]).flat())
+    },
+    positionXs (state, getters) {
+      return _.uniq(getters.positions.map(({ left, width }) => [left, left + width]).flat())
     }
   },
   mutations: {
     // 设置视图对象
     [ScreenMutations.SET_VIEW] (state, payload) {
-      state.view = Object.assign(
-        Object.create(View.prototype),
-        payload.view
-      )
+      state.view = payload.view
     },
     // 向视图部件库中添加部件
     [ScreenMutations.ADD_WIDGET] (state, payload) {
@@ -130,6 +141,10 @@ export default {
     // 设置边配置
     [ScreenMutations.SET_EDGE_CONFIG] (state, payload) {
       state.edgeConfig = payload.edgeConfig
+    },
+    // 设置导入状态
+    [ScreenMutations.SET_IMPORTING_STATE] (state, payload) {
+      state.isImporting = payload.isImporting
     }
   },
   actions: {
