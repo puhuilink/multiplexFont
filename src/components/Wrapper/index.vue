@@ -6,64 +6,6 @@
 * Email: dong.xing@outlook.com
 */
 <template>
-<<<<<<< HEAD
-  <div id="wrapper" class="wrapper" ref="wrapper">
-    <div class="wrapper__mask" ref="mask"></div>
-    <div class="wrapper__handler wrapper__handler--tl" ref="tl"></div>
-    <div class="wrapper__handler wrapper__handler--tc" ref="tc"></div>
-    <div class="wrapper__handler wrapper__handler--tr" ref="tr"></div>
-    <div class="wrapper__handler wrapper__handler--cr" ref="cr"></div>
-    <div class="wrapper__handler wrapper__handler--br" ref="br"></div>
-    <div class="wrapper__handler wrapper__handler--bc" ref="bc"></div>
-    <div class="wrapper__handler wrapper__handler--bl" ref="bl"></div>
-    <div class="wrapper__handler wrapper__handler--cl" ref="cl"></div>
-    <div class="wrapper__move" ref="move">
-      <a-dropdown :trigger="['contextmenu']">
-        <div
-          :style="{
-            height: '100%'
-          }"
-        >
-        </div>
-        <a-menu slot="overlay" class="wrapper__menu">
-          <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget">
-            <a-icon type="copy"/>
-            复制部件
-          </a-menu-item>
-          <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig">
-            <a-icon type="snippets"/>
-            复制配置
-          </a-menu-item>
-          <a-menu-item
-            key="3"
-            :disabled="!isAllowAsync"
-            :class="[isAllowAsync ? 'wrapper__menu--primary': '']"
-            @click="syncConfig">
-            <a-icon type="sync"/>
-            同步配置
-          </a-menu-item>
-          <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget">
-            <a-icon type="delete"/>
-            删除
-          </a-menu-item>
-          <a-menu-divider/>
-          <a-menu-item key="5">
-            <a-icon type="close"/>
-            取消
-          </a-menu-item>
-          <a-menu-item key="6" class="wrapper__menu--up" @click="upzIndexWidget">
-            <a-icon type="arrow-up"/>
-            置于顶层
-          </a-menu-item>
-          <a-menu-item key="7" class="wrapper__menu--down" @click="downzIndexWidget">
-            <a-icon type="arrow-down"/>
-            置于底层
-          </a-menu-item>
-        </a-menu>
-      </a-dropdown>
-    </div>
-  </div>
-=======
   <fragment>
 
     <!-- / 拖拽缩放与右键菜单 -->
@@ -87,12 +29,39 @@
         <a-dropdown :trigger="['contextmenu']">
           <div :style="{ height: '100%' }"></div>
           <a-menu slot="overlay" class="wrapper__menu">
-            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
-            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
-            <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary': '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
-            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
-            <a-menu-divider />
-            <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget">
+              <a-icon type="copy"/>
+              复制部件
+            </a-menu-item>
+            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig">
+              <a-icon type="snippets"/>
+              复制配置
+            </a-menu-item>
+            <a-menu-item
+              key="3"
+              :disabled="!isAllowAsync"
+              :class="[isAllowAsync ? 'wrapper__menu--primary': '']"
+              @click="syncConfig">
+              <a-icon type="sync"/>
+              同步配置
+            </a-menu-item>
+            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget">
+              <a-icon type="delete"/>
+              删除
+            </a-menu-item>
+            <a-menu-divider/>
+            <a-menu-item key="5">
+              <a-icon type="close"/>
+              取消
+            </a-menu-item>
+            <a-menu-item key="6" class="wrapper__menu--up" @click="upzIndexWidget">
+              <a-icon type="arrow-up"/>
+              置于顶层
+            </a-menu-item>
+            <a-menu-item key="7" class="wrapper__menu--down" @click="downzIndexWidget">
+              <a-icon type="arrow-down"/>
+              置于底层
+            </a-menu-item>
           </a-menu>
         </a-dropdown>
       </div>
@@ -111,16 +80,11 @@
     />
 
   </fragment>
->>>>>>> dev
 </template>
 
 <script>
 import _ from 'lodash'
-<<<<<<< HEAD
-import { Subject, fromEvent, merge } from 'rxjs'
-=======
 import { fromEvent, merge, Subject } from 'rxjs'
->>>>>>> dev
 import {
   takeWhile, takeUntil, switchMap,
   tap, map, withLatestFrom, filter,
@@ -130,220 +94,17 @@ import anime from 'animejs'
 import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
 import WrapperService from '@/components/Wrapper/WrapperService'
-<<<<<<< HEAD
-import { ScreenMutations } from '@/store/modules/screen'
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import CommonConfig from '@/model/config/commonConfig'
-=======
 import AutoAlignService from '@/components/Wrapper/AutoAlignService'
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapMutations, mapGetters } from 'vuex'
 import { findClosestNumInArr } from '@/utils/util'
 
 const CLOSEST_PIXEL = 20
->>>>>>> dev
 
 export default {
   name: 'Wrapper',
   data: () => ({
     isSubscribed: true,
-<<<<<<< HEAD
-    originalState: null,
-    config: null,
-    wrapperService: new WrapperService()
-
-  }),
-  mixins: [AdjustMixins],
-  mounted () {
-    this.change$ = new Subject()
-    this.documentMove$ = fromEvent(document, 'mousemove')
-    this.documentUp$ = fromEvent(document, 'mouseup')
-    this.tl$ = fromEvent(this.$refs.tl, 'mousedown').pipe(
-      map(event => ({ type: 'tl', event }))
-    )
-    this.tc$ = fromEvent(this.$refs.tc, 'mousedown').pipe(
-      map(event => ({ type: 'tc', event }))
-    )
-    this.tr$ = fromEvent(this.$refs.tr, 'mousedown').pipe(
-      map(event => ({ type: 'tr', event }))
-    )
-    this.cr$ = fromEvent(this.$refs.cr, 'mousedown').pipe(
-      map(event => ({ type: 'cr', event }))
-    )
-    this.br$ = fromEvent(this.$refs.br, 'mousedown').pipe(
-      map(event => ({ type: 'br', event }))
-    )
-    this.bc$ = fromEvent(this.$refs.bc, 'mousedown').pipe(
-      map(event => ({ type: 'bc', event }))
-    )
-    this.bl$ = fromEvent(this.$refs.bl, 'mousedown').pipe(
-      map(event => ({ type: 'bl', event }))
-    )
-    this.cl$ = fromEvent(this.$refs.cl, 'mousedown').pipe(
-      map(event => ({ type: 'cl', event }))
-    )
-    this.move$ = fromEvent(this.$refs.move, 'mousedown').pipe(
-      map(event => ({ type: 'move', event }))
-    )
-    this.all$ = merge(
-      this.tl$, this.tc$, this.tr$, this.cr$,
-      this.br$, this.bc$, this.bl$, this.cl$, this.move$
-    )
-
-    this.all$
-      .pipe(
-        takeWhile(() => this.isSubscribed),
-        tap(({ event }) => {
-          event.preventDefault()
-          event.stopPropagation()
-          // 鼠标按下后所处位置的相对位置
-          const {
-            top, left, width, height
-          } = window.getComputedStyle(this.$refs.wrapper, null)
-          this.originalState = {
-            top: Number(top.split('px')[0]) || 0,
-            left: Number(left.split('px')[0]) || 0,
-            width: Number(width.split('px')[0]) || 0,
-            height: Number(height.split('px')[0]) || 0
-          }
-        }),
-        map(() => this.documentMove$.pipe(takeUntil(this.documentUp$))),
-        switchMap(move$ => merge(this.documentUp$.pipe(first()), move$)),
-        withLatestFrom(this.all$, (events, { type, event }) => {
-          const { pageX, pageY } = events
-          // 鼠标事件类型
-          const mouseType = events.type
-          // 缩放类型
-          let eventType
-          // 缩放方向
-          let direction = null
-          // 缩放距离
-          let distance = 0
-          // 移动的相对位置
-          let position = null
-          // 横坐标方向移动距离
-          const xDistance = pageX - event.pageX
-          // 纵坐标方向移动距离
-          const yDistance = pageY - event.pageY
-          if (['tl', 'tr', 'br', 'bl'].includes(type)) {
-            // 等比例缩放
-            eventType = 'SCALE'
-            // 对于等比例缩放，选择移动最小距离
-            distance = Math.abs(xDistance) < Math.abs(yDistance) ? xDistance : yDistance
-            switch (type) {
-              case 'tl':
-                if (xDistance >= 0 && yDistance >= 0) {
-                  direction = 'REDUCE'
-                } else if (xDistance < 0 && yDistance < 0) {
-                  direction = 'EXPAND'
-                }
-                break
-
-              case 'tr':
-                if (xDistance >= 0 && yDistance <= 0) {
-                  direction = 'EXPAND'
-                } else if (xDistance < 0 && yDistance > 0) {
-                  direction = 'REDUCE'
-                }
-                break
-
-              case 'br':
-                if (xDistance >= 0 && yDistance >= 0) {
-                  direction = 'EXPAND'
-                } else if (xDistance < 0 && yDistance < 0) {
-                  direction = 'REDUCE'
-                }
-                break
-
-              case 'bl':
-                if (xDistance >= 0 && yDistance <= 0) {
-                  direction = 'REDUCE'
-                } else if (xDistance < 0 && yDistance > 0) {
-                  direction = 'EXPAND'
-                }
-                break
-
-              default:
-                break
-            }
-          } else if (['tc', 'cr', 'bc', 'cl'].includes(type)) {
-            // 单向缩放
-            eventType = 'SINGLE'
-            switch (type) {
-              case 'tc':
-                direction = yDistance >= 0 ? 'REDUCE' : 'EXPAND'
-                distance = -yDistance
-                break
-
-              case 'cr':
-                direction = xDistance >= 0 ? 'EXPAND' : 'REDUCE'
-                distance = xDistance
-                break
-
-              case 'bc':
-                direction = yDistance >= 0 ? 'EXPAND' : 'REDUCE'
-                distance = yDistance
-                break
-
-              case 'cl':
-                direction = xDistance >= 0 ? 'EXPAND' : 'REDUCE'
-                distance = -xDistance
-                break
-
-              default:
-                break
-            }
-          } else {
-            // 移动
-            eventType = 'MOVE'
-            direction = 'ANY'
-            position = {
-              top: yDistance,
-              left: xDistance
-            }
-          }
-          return {
-            type,
-            eventType,
-            direction,
-            distance,
-            position,
-            mouseType
-          }
-        }),
-        filter(({ direction }) => direction)
-      )
-      .subscribe((event) => {
-        const mutation = {
-          event,
-          originalState: this.originalState
-        }
-        this.$emit('adjust', mutation)
-        this.adjust({
-          target: this.$refs.wrapper,
-          mutation
-        })
-      })
-    return {}
-  },
-  computed: {
-    json () {
-      return {
-        fontSize: this.activeWidget.config.proprietaryConfig.title.title_size.fontSize + 'px',
-        color: this.activeWidget.config.proprietaryConfig.title.textStyle.title_color
-      }
-    },
-    // 是否允许同步配置
-    isAllowAsync () {
-      return this.config && this.activeWidget && this.config.type === this.activeWidget.config.type
-    }
-  },
-  methods: {
-    ...mapMutations('screen', {
-      resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
-    }),
-=======
     isMousedown: false,
     isShiftPressed: false,
     originalState: null,
@@ -386,8 +147,8 @@ export default {
       this.initScaleAndMoveEvent()
     },
     /**
-     * 初始化自动对齐事件
-     */
+       * 初始化自动对齐事件
+       */
     initAutoAlignEvent () {
       this.autoAlignService.change$
         .pipe(
@@ -403,8 +164,8 @@ export default {
         })
     },
     /**
-     * 初始化键盘热键事件
-     */
+       * 初始化键盘热键事件
+       */
     initKeyboardEvent () {
       this.keydown$ = fromEvent(this.$refs.wrapper, 'keydown').pipe(
         takeWhile(() => this.isSubscribed),
@@ -499,8 +260,8 @@ export default {
         })
     },
     /**
-     * 初始化鼠标拖拽与缩放事件
-     */
+       * 初始化鼠标拖拽与缩放事件
+       */
     initScaleAndMoveEvent () {
       this.initAutoAlignEvent()
       this.documentMove$ = fromEvent(document, 'mousemove')
@@ -676,8 +437,8 @@ export default {
         })
     },
     /**
-     * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
-     */
+       * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
+       */
     calcClosestPosition () {
       const {
         top, left, width, height
@@ -705,7 +466,7 @@ export default {
 
       if (
         (typeof yTop === 'number' && typeof yBottom === 'number' && Math.abs(yTop - top) <= Math.abs(yBottom - (top + height))) ||
-        (typeof yTop === 'number' && typeof yBottom !== 'number')
+          (typeof yTop === 'number' && typeof yBottom !== 'number')
       ) {
         // 上侧吸附与高亮
         y = yTop
@@ -718,7 +479,7 @@ export default {
 
       if (
         (typeof xLeft === 'number' && typeof xRight === 'number' && Math.abs(xLeft - left) <= Math.abs(xRight - (left + width))) ||
-        (typeof xLeft === 'number' && typeof xRight !== 'number')
+          (typeof xLeft === 'number' && typeof xRight !== 'number')
       ) {
         // 左侧吸附与高亮
         x = xLeft
@@ -750,7 +511,6 @@ export default {
     focus () {
       this.$refs.wrapper.focus()
     },
->>>>>>> dev
     /**
        * 设置
        * @param display
@@ -767,10 +527,6 @@ export default {
         top,
         left,
         width,
-<<<<<<< HEAD
-        height
-      })
-=======
         height,
         // FIXME: zIndex 某时会被重置为0
         zIndex: 1000
@@ -778,7 +534,6 @@ export default {
       if (display !== 'none') {
         this.focus()
       }
->>>>>>> dev
     },
     /**
        * 复制部件
@@ -834,11 +589,8 @@ export default {
         this.resetTopologyState()
       }
       this.removeWidget({ widgetId: this.activeWidget.widgetId })
-<<<<<<< HEAD
     },
-    /*
-      * Widget置于顶层
-      * */
+    // Widget置于顶层
     upzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
       // 生成一个数组,用来记录widgets的每一个index
@@ -874,8 +626,8 @@ export default {
       })
     },
     /*
-          * Widget置于底层,同理于置于顶层
-          * */
+              * Widget置于底层,同理于置于顶层
+              * */
     downzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
       const minArr = []
@@ -901,8 +653,6 @@ export default {
         target: document.getElementById(this.activeWidget.widgetId),
         mutation: copyMutation
       })
-=======
->>>>>>> dev
     }
   },
   beforeDestroy () {
@@ -952,16 +702,6 @@ export default {
       background: #0098f7;
       z-index: 1000;
 
-<<<<<<< HEAD
-      &--ti {
-        top: -5px;
-        left: -5px;
-        font-size: 40px;
-        cursor: nwse-resize;
-      }
-
-=======
->>>>>>> dev
       &--tl {
         top: -5px;
         left: -5px;
@@ -1021,7 +761,6 @@ export default {
       &--danger {
         color: #ff4d4f;
       }
-<<<<<<< HEAD
 
       &--up {
         color: #52c41a;
@@ -1031,15 +770,13 @@ export default {
         color: #1a1dc4;
       }
     }
-=======
-    }
   }
 
   .autoAlign__line {
     position: absolute;
     z-index: 1000;
     opacity: 0;
-    background-color: rgba(11,241,255,1);
+    background-color: rgba(11, 241, 255, 1);
 
     &_show {
       opacity: 1;
@@ -1055,6 +792,5 @@ export default {
       height: 100%;
     }
 
->>>>>>> dev
   }
 </style>

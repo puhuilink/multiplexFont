@@ -43,17 +43,16 @@ import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 import AutoAlignService from '../Wrapper/AutoAlignService'
 import { filter, takeWhile } from 'rxjs/operators'
 
-  const nodeFactory = Factory.createNodeFactory()
+const nodeFactory = Factory.createNodeFactory()
 
-  export default {
-    name: 'Widget',
-    components: {
-      ...ELEMENTS
-    },
-    timeRange: {
-      type: Array,
-      default: () => []
-    }
+export default {
+  name: 'Widget',
+  components: {
+    ...ELEMENTS
+  },
+  timeRange: {
+    type: Array,
+    default: () => []
   },
   data: () => ({
     render: null,
@@ -62,7 +61,6 @@ import { filter, takeWhile } from 'rxjs/operators'
     autoAlignService: new AutoAlignService()
   }),
   computed: {
-    ...mapState('screen', ['activeWidget', 'isImporting']),
     // 选择的部件
     selectWidget () {
       return Object.assign(this.widget, { render: this.render })
@@ -71,124 +69,114 @@ import { filter, takeWhile } from 'rxjs/operators'
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
     },
-    data: () => ({
-      render: null
-    }),
-    computed: {
-      // 选择的部件
-      selectWidget () {
-        return Object.assign(this.widget, { render: this.render })
-      },
-      // 在类型为元素时使用组件进行渲染
-      useComponent () {
-        return this.widget.config.category === 'ELEMENT'
-      },
-      // 元素组件名
-      elementName () {
-        return ELEMENT_MAPPING.get(this.widget.config.type)
-      },
-      // 元素配置
-      elementProps () {
-        return this.widget.config.proprietaryConfig.props
-      }
+    // 元素组件名
+    elementName () {
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     },
-    watch: {
-      timeRange: {
-        deep: true,
-        immediate: true,
-        async handler (timeRange) {
-          if (this.onlyShow) {
-            await this.$nextTick()
-            const { dataConfig = {} } = this.widget.config
-            const { sourceType, dbDataConfig = {} } = dataConfig
-            const { timeRangeConfig = {} } = dbDataConfig
-            if (sourceType === SOURCE_TYPE_REAL && timeRange[0] && timeRange[1]) {
-              this.setTimeRange(timeRangeConfig, timeRange)
-            } else {
-              this.rollbackTimeRange(timeRangeConfig)
-            }
-            // 更新时间配置后刷新配置与数据
-            this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
+    // 元素配置
+    elementProps () {
+      return this.widget.config.proprietaryConfig.props
+    }
+  },
+  watch: {
+    timeRange: {
+      deep: true,
+      immediate: true,
+      async handler (timeRange) {
+        if (this.onlyShow) {
+          await this.$nextTick()
+          const { dataConfig = {} } = this.widget.config
+          const { sourceType, dbDataConfig = {} } = dataConfig
+          const { timeRangeConfig = {} } = dbDataConfig
+          if (sourceType === SOURCE_TYPE_REAL && timeRange[0] && timeRange[1]) {
+            this.setTimeRange(timeRangeConfig, timeRange)
+          } else {
+            this.rollbackTimeRange(timeRangeConfig)
           }
+          // 更新时间配置后刷新配置与数据
+          this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
         }
       }
-    },
-    methods: {
-      ...mapMutations('screen', {
-        activateWidget: ScreenMutations.ACTIVATE_WIDGET
-      }),
-      /**
+    }
+  },
+  methods: {
+    ...mapMutations('screen', {
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+    }),
+    /**
        * 拓扑图内 Ci 节点钻取事件
        * 跳转新视图或页签
        */
-      drill ({ item }) {
-        // const model = item.getModel()
-        // if (model.shape === NODE_TYPE_CIRCLE) {}
-        // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
-        // mock data
-        const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
-        // const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
-        // if (!_.isEmpty(viewList)) {}
-        this.$emit('drill', _.cloneDeep(drillConfig))
-      },
-      setTimeRange (timeRangeConfig, timeRange) {
-        const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
-        if (!_timeRangeType) {
-          // 备份原始配置
-          timeRangeConfig._timeRangeType = timeRangeType
-          timeRangeConfig._customTimeRange = customTimeRange
-          // 覆写新配置
-          timeRangeConfig.timeRangeType = TIME_RANGE_TYPE_CUSTOM
-          timeRangeConfig.customTimeRange = timeRange
-        }
-      },
-      rollbackTimeRange (timeRangeConfig) {
-        const { _timeRangeType, _customTimeRange } = timeRangeConfig
-        // 还原备份配置
-        if (_timeRangeType) {
-          timeRangeConfig.timeRangeType = _timeRangeType
-          timeRangeConfig.customTimeRange = _customTimeRange
-        }
-        // 删除备份配置
-        Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
-        Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
-      },
-      initTopologyChart () {
-        const { render } = this
-        const {
-          config: { proprietaryConfig }
-        } = render
-        // chart.on('node:click', this.drill)
-        proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
-          // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
-          if (node.shape === NODE_TYPE_CIRCLE) {
-            return nodeFactory.create(node)
-          }
-          return node
-        })
-        const circleNodeList = proprietaryConfig.nodes
-        render.enablePreviewMode()
-        // 开启轮询
-        circleNodeList.forEach(node => {
-          node.intervalRefresh && node.intervalRefresh()
-        })
+    drill ({ item }) {
+      // const model = item.getModel()
+      // if (model.shape === NODE_TYPE_CIRCLE) {}
+      // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
+      // mock data
+      const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
+      // const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
+      // if (!_.isEmpty(viewList)) {}
+      this.$emit('drill', _.cloneDeep(drillConfig))
+    },
+    setTimeRange (timeRangeConfig, timeRange) {
+      const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
+      if (!_timeRangeType) {
+        // 备份原始配置
+        timeRangeConfig._timeRangeType = timeRangeType
+        timeRangeConfig._customTimeRange = customTimeRange
+        // 覆写新配置
+        timeRangeConfig.timeRangeType = TIME_RANGE_TYPE_CUSTOM
+        timeRangeConfig.customTimeRange = timeRange
       }
     },
-    mounted () {
-      const dbDataConfig = _.get(this, 'widget.config.dataConfig.dbDataConfig')
-      const externalCi = _.get(dbDataConfig, 'externalCi')
-      // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
-      if (externalCi && this.ciId) {
-        dbDataConfig.resourceConfig.selectedInstance = [this.ciId]
+    rollbackTimeRange (timeRangeConfig) {
+      const { _timeRangeType, _customTimeRange } = timeRangeConfig
+      // 还原备份配置
+      if (_timeRangeType) {
+        timeRangeConfig.timeRangeType = _timeRangeType
+        timeRangeConfig.customTimeRange = _customTimeRange
       }
-      // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
-      if (!(this.widget instanceof Widget)) {
-        Object.assign(this.widget, new Widget(this.widget))
-      }
+      // 删除备份配置
+      Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
+      Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
+    },
+    initTopologyChart () {
+      const { render } = this
+      const {
+        config: { proprietaryConfig }
+      } = render
+      // chart.on('node:click', this.drill)
+      proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
+        // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
+        if (node.shape === NODE_TYPE_CIRCLE) {
+          return nodeFactory.create(node)
+        }
+        return node
+      })
+      const circleNodeList = proprietaryConfig.nodes
+      render.enablePreviewMode()
+      // 开启轮询
+      circleNodeList.forEach(node => {
+        node.intervalRefresh && node.intervalRefresh()
+      })
+    }
+  },
+  mounted () {
+    const dbDataConfig = _.get(this, 'widget.config.dataConfig.dbDataConfig')
+    const externalCi = _.get(dbDataConfig, 'externalCi')
+    // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
+    if (externalCi && this.ciId) {
+      dbDataConfig.resourceConfig.selectedInstance = [this.ciId]
+    }
+    // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
+    if (!(this.widget instanceof Widget)) {
+      Object.assign(this.widget, new Widget(this.widget))
     } else {
       // 如果 widget 是通过导入配置生成，不设置为 activeWidget
       // 因导入配置可能生成多个 widget，会频繁的变更 activeWidget
-      if (this.isImporting) return
+      if (this.isImporting
+      ) {
+        return
+      }
       // 如果 widget 是通过拖拽生成，设置为 activeWidget
       this.activateWidget({
         widget: this.selectWidget
@@ -206,10 +194,11 @@ import { filter, takeWhile } from 'rxjs/operators'
           widget: this.selectWidget
         })
       }
-    },
-    beforeDestroy () {
-      this.render.destroy && this.render.destroy()
     }
+  },
+  beforeDestroy () {
+    this.render.destroy && this.render.destroy()
+    this.isSubscribed = false
 
     // 编辑模式下，其他 Widget 移动过程中
     // 如果 x、y 方向与当前 Widget 对齐，则高亮当前 Widget
@@ -228,11 +217,8 @@ import { filter, takeWhile } from 'rxjs/operators'
         } = this.widget.config
         this.isHighLightForAutoAlign = [top, top + height].includes(y) || [left, left + width].includes(x)
       })
-  },
-  beforeDestroy () {
-    this.render.destroy && this.render.destroy()
-    this.isSubscribed = false
   }
+}
 </script>
 
 <style scoped lang="less">
@@ -246,9 +232,8 @@ import { filter, takeWhile } from 'rxjs/operators'
     }
 
     &--highlight {
-      box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
+      box-shadow: 0 0 2px 2px rgba(255, 5, 5, 1) !important;
     }
   }
-
 
 </style>
