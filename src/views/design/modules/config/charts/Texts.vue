@@ -16,7 +16,7 @@
       <a-tab-pane tab="公共属性" key="1">
 
         <!-- S 公共配置模板 -->
-        <CommonTemplate :usePadding="false"/>
+        <CommonTemplate :usePadding="false" />
         <!-- E 公共配置模板 -->
 
       </a-tab-pane>
@@ -34,17 +34,18 @@
                   <a-input
                     type="text"
                     v-model.trim="config.proprietaryConfig.title.text"
-                    @change="change"/>
+                    @change="change" />
                 </div>
               </div>
               <!-- / 文本 -->
+
               <div class="comment-template__item">
                 <p class="comment-template__leading">链接:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="text"
                     v-model.trim="config.proprietaryConfig.title.link"
-                    @change="change"/>
+                    @change="change" />
                 </div>
               </div>
               <!-- / 链接 -->
@@ -67,20 +68,22 @@
                 <div class="comment-template__inner">
                   <ColorPicker
                     v-model="config.proprietaryConfig.title.textStyle.color"
-                    @change="change()"/>
+                    @change="change()" />
                 </div>
               </div>
               <!-- / 颜色 -->
+
               <div class="comment-template__item">
                 <p class="comment-template__leading">大小:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="number"
                     @change="change"
-                    v-model.number="config.proprietaryConfig.title.textStyle.fontSize"/>
+                    v-model.number="config.proprietaryConfig.title.textStyle.fontSize" />
                 </div>
               </div>
               <!-- / 大小 -->
+
               <div class="comment-template__item">
                 <p class="comment-template__leading">粗细:</p>
                 <div class="comment-template__inner comment-template__end">
@@ -134,7 +137,7 @@
                   <a-input
                     type="number"
                     @change="change"
-                    v-model.number="config.proprietaryConfig.title.position.left"/>
+                    v-model.number="config.proprietaryConfig.title.position.left" />
                 </div>
               </div>
               <!-- / 居左 -->
@@ -147,7 +150,7 @@
                   <a-input
                     type="number"
                     @change="change"
-                    v-model.number="config.proprietaryConfig.title.position.right"/>
+                    v-model.number="config.proprietaryConfig.title.position.right" />
                 </div>
               </div>
               <!-- / 居右 -->
@@ -160,7 +163,7 @@
                   <a-input
                     type="number"
                     @change="change"
-                    v-model.number="config.proprietaryConfig.title.position.top"/>
+                    v-model.number="config.proprietaryConfig.title.position.top" />
                 </div>
               </div>
               <!-- / 居上 -->
@@ -173,28 +176,14 @@
                   <a-input
                     type="number"
                     @change="change"
-                    v-model.number="config.proprietaryConfig.title.position.bottom"/>
+                    v-model.number="config.proprietaryConfig.title.position.bottom" />
                 </div>
               </div>
               <!-- / 居下 -->
+
             </a-collapse-panel>
             <!-- E 文本样式 -->
-            <!-- S 图标 -->
-            <a-collapse-panel header="图标" key="2">
-              <div class="comment-template__item">
-                <div class="comment-template__inner icon-picker__list">
-                  <div
-                    class="icon-picker__icon"
-                    v-for="(item, index) of icons"
-                    :key="index"
-                    @click="iconChoose(index)"
-                  >
-                    <img :src="item.img" alt="">
-                  </div>
-                </div>
-              </div>
-            </a-collapse-panel>
-            <!-- E 图标 -->
+
           </a-collapse>
         </div>
       </a-tab-pane>
@@ -208,19 +197,14 @@ import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
-import IconPicker from '~~~/IconPicker/index'
 
 export default {
   name: 'Texts',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate,
-    ColorPicker,
-    IconPicker
+    ColorPicker
   },
-  data: () => ({
-    icons: IconPicker.data()['icons']
-  }),
   methods: {
     positionChange () {
       const { position } = this.config.proprietaryConfig.title
@@ -254,102 +238,10 @@ export default {
           break
       }
       this.change()
-    },
-    iconChoose (index) {
-      const { img } = this.icons[index]
-      this.config.proprietaryConfig.graphic.style.image = img
-      this.imageChange()
-    },
-    async imageChange () {
-      try {
-        const { width, height } = await this.imageUrlLoader(this.config.proprietaryConfig.graphic.style.image)
-        Object.assign(this.config.proprietaryConfig.graphic.style, {
-          width, height
-        })
-        this.change()
-      } catch (e) {
-        this.$message.error('图片载入失败，请确认图片地址正确！')
-        this.change()
-        throw e
-      }
-    },
-    /**
-       * url 图片地址载入
-       * @param url 图片地址
-       * @returns {Promise<unknown>}
-       */
-    imageUrlLoader (url) {
-      return new Promise((resolve, reject) => {
-        const image = new Image()
-        image.onload = () => resolve(image)
-        image.onerror = reject
-        image.src = url
-      })
     }
-  },
-  mounted () {
-    // FIXME: 当图片类型为图标时，需要先触发 imageChange 才能渲染
-    this.imageChange()
   }
 }
 </script>
 
 <style scoped lang="less">
-  .texts-config {
-    &__screen {
-      display: flex;
-      flex-flow: column nowrap;
-      justify-content: flex-start;
-      align-items: center;
-
-      & button {
-        width: 100%;
-      }
-    }
-
-    &__template {
-
-    }
-
-    &__screenshot {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 140px;
-      margin: 0 12px 12px;
-      background: #e4e4e4;
-      padding: 6px;
-      border-radius: 4px;
-
-      img {
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      p {
-        color: #1890ff;
-        margin: 0;
-      }
-    }
-
-    .icon-picker__icon {
-      display: inline-block;
-
-      img {
-        flex: none;
-        width: 24px;
-        height: 24px;
-        margin: 0 6px 6px 0;
-        border-radius: 4px;
-        border: 1px solid transparent;
-        cursor: pointer;
-
-        &.active {
-          border-color: #1890ff;
-        }
-      }
-    }
-  }
 </style>

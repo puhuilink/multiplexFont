@@ -386,9 +386,7 @@ class Title {
     link = '',
     target = 'blank',
     textStyle = {
-      fontSize: 24,
-      marginLeft: 10,
-      marginRight: 10
+      fontSize: 24
     },
     position = {}
   }) {
@@ -840,7 +838,6 @@ class SeriesPie {
     })
   }
 }
-
 /*
  * 形状样式
  */
@@ -905,15 +902,13 @@ class Graphic {
     left = 0,
     right = 0,
     bottom = 0,
-    style = {},
-    position = {}
+    style = {}
   }) {
     this.top = top
     this.left = left
     this.right = right
     this.bottom = bottom
     this.style = new Style(style)
-    this.position = new Position(position)
   }
 }
 
@@ -1006,7 +1001,6 @@ class SeriesGauge {
       this[key] = options[key]
     })
   }
-
   /**
    * 获取仪表盘配置
    */
@@ -1014,7 +1008,6 @@ class SeriesGauge {
     return Object.assign({}, _.cloneDeep(this))
   }
 }
-
 /**
  * 矩形
  */
@@ -1168,10 +1161,14 @@ class ImageStyle {
   constructor ({
     x = 0,
     y = 0,
+    width = 0,
+    height = 0,
     image = ''
   }) {
     this.x = x
     this.y = y
+    this.width = width
+    this.height = height
     this.image = image
   }
 }
