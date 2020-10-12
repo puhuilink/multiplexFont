@@ -123,7 +123,7 @@ export default class Chart {
           title: {
             text: _.get(chartConfig, ['title', 'text'], '')
           },
-          series: _.get(chartConfig, ['series'], []).map(el => _.cloneDeep(_.omit(el, ['itemStyle', 'barWidth', 'color'])))
+          series: _.castArray(_.get(chartConfig, ['series'], [])).map(el => _.cloneDeep(_.omit(el, ['itemStyle', 'barWidth', 'color'])))
         },
         config: _.pick(config, ['category', 'type']),
         container
