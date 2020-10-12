@@ -8,9 +8,9 @@ import _ from 'lodash'
 export default class GaugeDynamicDataConfig extends DynamicDataConfig {
   getOption (loadingDynamicData) {
     if (loadingDynamicData) {
-      return this
+      return this.resourceConfig
         .fetch()
-        .then((data) => _.get(data, '[0].data', ''))
+        .then(data => _.get(data, '[0].data', 0))
         .then(value => ({ value }))
     } else {
       return { value: 0 }

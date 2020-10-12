@@ -92,8 +92,9 @@ export default class BarChart extends Chart {
             stack: barType === 'single'
           }
         })
-        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
         Object.assign(option, {
+          dataset,
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
@@ -104,12 +105,7 @@ export default class BarChart extends Chart {
     }
 
     return Object.assign({}, option, {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      }
+      tooltip: {}
     })
   }
 }
