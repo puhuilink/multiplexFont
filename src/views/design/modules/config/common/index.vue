@@ -31,7 +31,7 @@
           <div class="comment-template__inner">
             <ColorPicker
               v-model="config.commonConfig.backgroundColor"
-              @change="singleColorChange(config)" />
+              @change="singleColorChange(config)"/>
           </div>
         </div>
         <!-- / 背景颜色 -->
@@ -41,7 +41,7 @@
             <LinearColorPicker
               show-angle
               v-model="config.commonConfig.backgroundColor"
-              @change="linearColorChange(config)" />
+              @change="linearColorChange(config)"/>
           </div>
         </div>
         <!-- / 背景颜色 -->
@@ -74,7 +74,7 @@
               :min="0"
               :max="48"
               @change="change('native')"
-              v-model.number="config.commonConfig.border.borderWidth" />
+              v-model.number="config.commonConfig.border.borderWidth"/>
           </div>
         </div>
         <!-- / 宽度 -->
@@ -84,7 +84,7 @@
           <div class="comment-template__inner">
             <ColorPicker
               v-model="config.commonConfig.border.borderColor"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 颜色 -->
@@ -102,7 +102,7 @@
               type="number"
               min="0"
               v-model.number="config.commonConfig.border.borderRadius.borderTopLeftRadius"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 左上圆角 -->
@@ -114,7 +114,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderTopRightRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 右上圆角 -->
@@ -126,7 +126,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderBottomRightRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 右下圆角 -->
@@ -138,7 +138,7 @@
               type="number"
               v-model.number="config.commonConfig.border.borderRadius.borderBottomLeftRadius"
               min="0"
-              @change="change('native')" />
+              @change="change('native')"/>
           </div>
         </div>
         <!-- / 左下圆角 -->
@@ -156,7 +156,7 @@
               type="number"
               min="0"
               v-model.number="config.commonConfig.padding[0]"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 上边距 -->
@@ -168,7 +168,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[1]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 右边距 -->
@@ -180,7 +180,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[2]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 下边距 -->
@@ -192,7 +192,7 @@
               type="number"
               v-model.number="config.commonConfig.padding[3]"
               min="0"
-              @change="change('padding')" />
+              @change="change('padding')"/>
           </div>
         </div>
         <!-- / 左边距 -->
@@ -210,7 +210,7 @@
               type="number"
               v-model.number="config.commonConfig.width"
               min="0"
-              @change="change('size', 'width')" />
+              @change="change('size', 'width')"/>
           </div>
         </div>
         <!-- / 宽 -->
@@ -222,7 +222,7 @@
               type="number"
               v-model.number="config.commonConfig.height"
               min="0"
-              @change="change('size', 'height')" />
+              @change="change('size', 'height')"/>
           </div>
         </div>
         <!-- / 高 -->
@@ -240,7 +240,7 @@
               type="number"
               v-model.number="config.commonConfig.left"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / x坐标位置 -->
@@ -252,7 +252,7 @@
               type="number"
               v-model.number="config.commonConfig.top"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / y坐标位置 -->
@@ -264,7 +264,7 @@
               type="number"
               v-model.number="config.commonConfig.zIndex"
               min="0"
-              @change="change('position')" />
+              @change="change('position')"/>
           </div>
         </div>
         <!-- / zIndex -->

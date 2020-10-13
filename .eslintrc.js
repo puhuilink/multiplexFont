@@ -8,7 +8,7 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
-    "camelcase": "off",
+    'camelcase': 'off',
     'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
@@ -61,15 +61,13 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint'
   },
-  overrides: [
-    {
-      files: [
-        '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)'
-      ],
-      env: {
-        jest: true
-      }
+  overrides: [{
+    files: [
+      '**/__tests__/*.{j,t}s?(x)',
+      '**/tests/unit/**/*.spec.{j,t}s?(x)'
+    ],
+    env: {
+      jest: true
     }
-  ]
+  }]
 }
