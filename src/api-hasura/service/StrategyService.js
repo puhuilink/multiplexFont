@@ -1,19 +1,19 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { StrategyDao } from '../dao'
+import { CmdbStrategyDao } from '../dao'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
 class StrategyService extends BaseService {
   static async find (argus = {}) {
     return query(
-      StrategyDao.find(argus)
+      CmdbStrategyDao.find(argus)
     )
   }
 
   static async detail (id) {
     const { data: { strategyList } } = await query(
-      StrategyDao.find({
+      CmdbStrategyDao.find({
         where: { id },
         fields: [
           'id',
