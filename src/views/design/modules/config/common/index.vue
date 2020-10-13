@@ -278,160 +278,160 @@
 </template>
 
 <script>
-  import '@/assets/less/template.less'
-  import _ from 'lodash'
-  import { mapState, mapGetters, mapMutations } from 'vuex'
-  import { ScreenMutations } from '@/store/modules/screen'
-  import ColorPicker from '@/components/ColorPicker'
-  import LinearColorPicker from '@/components/LinearColorPicker'
-  import AdjustMixins from '@/components/Wrapper/AdjustMixins'
+import '@/assets/less/template.less'
+import _ from 'lodash'
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import { ScreenMutations } from '@/store/modules/screen'
+import ColorPicker from '@/components/ColorPicker'
+import LinearColorPicker from '@/components/LinearColorPicker'
+import AdjustMixins from '@/components/Wrapper/AdjustMixins'
 
-  export default {
-    name: 'CommonTemplate',
-    mixins: [AdjustMixins],
-    components: {
-      ColorPicker,
-      LinearColorPicker
-    },
-    props: {
-      usePadding: {
-        type: Boolean,
-        default: true
-      }
-    },
-    data: () => ({
-      singleColor: 'rgba(255, 255, 255, 1)',
-      linearColor: {
-        start: 'rgba(255, 255, 255, 1)',
-        end: 'rgba(0, 0, 0, 1)',
-        angle: 180
-      }
+export default {
+  name: 'CommonTemplate',
+  mixins: [AdjustMixins],
+  components: {
+    ColorPicker,
+    LinearColorPicker
+  },
+  props: {
+    usePadding: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data: () => ({
+    singleColor: 'rgba(255, 255, 255, 1)',
+    linearColor: {
+      start: 'rgba(255, 255, 255, 1)',
+      end: 'rgba(0, 0, 0, 1)',
+      angle: 180
+    }
+  }),
+  computed: {
+    ...mapState('screen', [
+      'activeWidget'
+    ]),
+    ...mapGetters('screen', ['scale']),
+    // 为不修改 state.activeWidget，在此深复制激活部件的配置项，并将其设置为该组件内变量，修改部件后提交再行修改state.activeWidget
+    config () {
+      return _.cloneDeep(this.activeWidget.config)
+    }
+  },
+  methods: {
+    ...mapMutations('screen', {
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+      removeWidget: ScreenMutations.REMOVE_WIDGET
     }),
-    computed: {
-      ...mapState('screen', [
-        'activeWidget'
-      ]),
-      ...mapGetters('screen', ['scale']),
-      // 为不修改 state.activeWidget，在此深复制激活部件的配置项，并将其设置为该组件内变量，修改部件后提交再行修改state.activeWidget
-      config () {
-        return _.cloneDeep(this.activeWidget.config)
-      }
-    },
-    methods: {
-      ...mapMutations('screen', {
-        activateWidget: ScreenMutations.ACTIVATE_WIDGET,
-        removeWidget: ScreenMutations.REMOVE_WIDGET
-      }),
-      /**
+    /**
        * 单一颜色更改
        * @param config 配置
        */
-      singleColorChange ({ commonConfig: { backgroundColor } }) {
-        this.singleColor = backgroundColor
-        this.change('native')
-      },
-      /**
+    singleColorChange ({ commonConfig: { backgroundColor } }) {
+      this.singleColor = backgroundColor
+      this.change('native')
+    },
+    /**
        * 渐变颜色更改
        * @param config 配置
        */
-      linearColorChange ({ commonConfig: { backgroundColor } }) {
-        this.linearColor = backgroundColor
-        this.change('native')
-      },
-      /**
+    linearColorChange ({ commonConfig: { backgroundColor } }) {
+      this.linearColor = backgroundColor
+      this.change('native')
+    },
+    /**
        * 颜色模式更改
        */
-      colorModeChange (config) {
-        const backgroundColor = config.commonConfig.colorMode === 'single'
-          ? this.singleColor
-          : this.linearColor
-        Object.assign(this.config.commonConfig, { backgroundColor })
-        this.change('native')
-      },
-      // Todo 为实现移动、更改激活部件，设置wrapper选择器事件，有待于重构该部分
-      change (type, trigger = null) {
-        switch (type) {
-          case 'native':
-            const { render } = this.activeWidget
-            render.setConfig(this.config)
-            break
-          case 'padding':
-            // 图表Padding样式更改，只需更新数据即可
-            this.activeWidget.render.mergeOption(this.config)
-            break
-          case 'size':
-            // 图表尺寸更改，wrapper选择器标准事件流
-            const sizePreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
-            const sizeMutation = {
-              event: {
-                distance: trigger === 'width'
-                  ? (this.config.commonConfig.width - sizePreConfig.width) * this.scale
-                  : (this.config.commonConfig.height - sizePreConfig.height) * this.scale,
-                eventType: 'SINGLE',
-                mouseType: 'mousemove',
-                type: trigger === 'width' ? 'cr' : 'bc'
+    colorModeChange (config) {
+      const backgroundColor = config.commonConfig.colorMode === 'single'
+        ? this.singleColor
+        : this.linearColor
+      Object.assign(this.config.commonConfig, { backgroundColor })
+      this.change('native')
+    },
+    // Todo 为实现移动、更改激活部件，设置wrapper选择器事件，有待于重构该部分
+    change (type, trigger = null) {
+      switch (type) {
+        case 'native':
+          const { render } = this.activeWidget
+          render.setConfig(this.config)
+          break
+        case 'padding':
+          // 图表Padding样式更改，只需更新数据即可
+          this.activeWidget.render.mergeOption(this.config)
+          break
+        case 'size':
+          // 图表尺寸更改，wrapper选择器标准事件流
+          const sizePreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
+          const sizeMutation = {
+            event: {
+              distance: trigger === 'width'
+                ? (this.config.commonConfig.width - sizePreConfig.width) * this.scale
+                : (this.config.commonConfig.height - sizePreConfig.height) * this.scale,
+              eventType: 'SINGLE',
+              mouseType: 'mousemove',
+              type: trigger === 'width' ? 'cr' : 'bc'
+            },
+            originalState: { ...sizePreConfig }
+          }
+          this.adjust({
+            target: document.getElementById(this.activeWidget.widgetId),
+            mutation: sizeMutation
+          })
+          this.adjust({
+            target: document.getElementById('wrapper'),
+            mutation: sizeMutation
+          })
+          break
+        case 'position':
+          // 图表位置更改，wrapper选择器标准事件流
+          const positionPreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
+          const positionMutation = {
+            event: {
+              direction: 'ANY',
+              distance: 0,
+              eventType: 'MOVE',
+              mouseType: 'mousemove',
+              position: {
+                top: (this.config.commonConfig.top - positionPreConfig.top) * this.scale,
+                left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale,
+                zIndex: this.config.commonConfig.zIndex
               },
-              originalState: { ...sizePreConfig }
-            }
-            this.adjust({
-              target: document.getElementById(this.activeWidget.widgetId),
-              mutation: sizeMutation
-            })
-            this.adjust({
-              target: document.getElementById('wrapper'),
-              mutation: sizeMutation
-            })
-            break
-          case 'position':
-            // 图表位置更改，wrapper选择器标准事件流
-            const positionPreConfig = _.cloneDeep(this.activeWidget.config.commonConfig)
-            const positionMutation = {
-              event: {
-                direction: 'ANY',
-                distance: 0,
-                eventType: 'MOVE',
-                mouseType: 'mousemove',
-                position: {
-                  top: (this.config.commonConfig.top - positionPreConfig.top) * this.scale,
-                  left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale,
-                  zIndex: this.config.commonConfig.zIndex
-                },
-                type: 'move'
-              },
-              originalState: { ...positionPreConfig }
-            }
-            this.adjust({
-              target: document.getElementById(this.activeWidget.widgetId),
-              mutation: positionMutation
-            })
-            this.adjust({
-              target: document.getElementById('wrapper'),
-              mutation: positionMutation
-            })
-            break
-          default:
-            break
-        }
+              type: 'move'
+            },
+            originalState: { ...positionPreConfig }
+          }
+          this.adjust({
+            target: document.getElementById(this.activeWidget.widgetId),
+            mutation: positionMutation
+          })
+          this.adjust({
+            target: document.getElementById('wrapper'),
+            mutation: positionMutation
+          })
+          break
+        default:
+          break
+      }
 
-        // 更新部件配置
-        this.updateActiveWidget()
+      // 更新部件配置
+      this.updateActiveWidget()
 
-        // 更新部件后，如果进行尺寸的修改则重新resize图表
-        if (type === 'size') {
-          this.activeWidget.render.resize(this.activeWidget.config)
-        }
-      },
-      /**
+      // 更新部件后，如果进行尺寸的修改则重新resize图表
+      if (type === 'size') {
+        this.activeWidget.render.resize(this.activeWidget.config)
+      }
+    },
+    /**
        * 更新部件配置
        */
-      updateActiveWidget () {
-        const activeWidget = _.cloneDeep(this.activeWidget)
-        this.activateWidget({
-          widget: Object.assign(activeWidget, { config: this.config })
-        })
-      }
+    updateActiveWidget () {
+      const activeWidget = _.cloneDeep(this.activeWidget)
+      this.activateWidget({
+        widget: Object.assign(activeWidget, { config: this.config })
+      })
     }
   }
+}
 </script>
 
 <style scoped lang="less">

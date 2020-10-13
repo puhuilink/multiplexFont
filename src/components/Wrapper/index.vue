@@ -1,4 +1,10 @@
-/** * 部件选择器 * Author: dong xing * Date: 2019/11/13 * Time: 5:27 下午 * Email: dong.xing@outlook.com */
+/**
+* 部件选择器
+* Author: dong xing
+* Date: 2019/11/13
+* Time: 5:27 下午
+* Email: dong.xing@outlook.com
+*/
 <template>
   <fragment>
     <!-- / 拖拽缩放与右键菜单 -->
