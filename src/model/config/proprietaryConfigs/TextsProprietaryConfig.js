@@ -7,7 +7,7 @@
  */
 
 import _ from 'lodash'
-import { ImageGraphic, Title } from './index'
+import { Title } from './index'
 
 // 默认轴线配置，不显示轴线
 const defaultAxis = {
@@ -18,25 +18,17 @@ export default class TextsProprietaryConfig {
   constructor ({
     title = {},
     xAxis = defaultAxis,
-    yAxis = defaultAxis,
-    graphic = {
-      style: {
-        image: './view__preview_default.jpg'
-      }
-    }
+    yAxis = defaultAxis
   }) {
     this.title = new Title(title)
     this.xAxis = xAxis
     this.yAxis = yAxis
-    this.graphic = new ImageGraphic(graphic)
   }
 
   /**
    * 获取文本专有配置
    */
   getOption () {
-    this.graphic.style.width = this.title.textStyle.fontSize + 30
-    this.graphic.style.height = this.title.textStyle.fontSize + 30
     return Object.assign({}, _.cloneDeep(this), {
       title: this.title.getOption()
     })
