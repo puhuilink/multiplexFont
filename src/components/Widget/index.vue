@@ -10,17 +10,23 @@
     class="widget"
     :class="{
       'widget--hover': !onlyShow,
-      'widget--highlight': !onlyShow && isHighLightForAutoAlign,
+      'widget--highlight': !onlyShow && isHighLightForAutoAlign
     }"
     :id="widget.widgetId"
     :data-category="widget.config.category"
     :data-type="widget.config.type"
     :ref="widget.widgetId"
-    @click.stop="() => $emit('select', selectWidget)"
-  >
+    @click.stop="() => $emit('select', selectWidget)">
+
     <!-- S 元素部件 -->
-    <component :elementProps="elementProps" :is="elementName" ref="element" v-if="useComponent" />
+    <component
+      :elementProps="elementProps"
+      :is="elementName"
+      ref="element"
+      v-if="useComponent"
+    />
     <!-- E 元素部件 -->
+
   </div>
 </template>
 
@@ -157,7 +163,7 @@ export default {
         config: { proprietaryConfig }
       } = render
       // chart.on('node:click', this.drill)
-      proprietaryConfig.nodes = proprietaryConfig.nodes.map((node) => {
+      proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
         // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
         if (node.shape === NODE_TYPE_CIRCLE) {
           return nodeFactory.create(node)
@@ -167,7 +173,7 @@ export default {
       const circleNodeList = proprietaryConfig.nodes
       render.enablePreviewMode()
       // 开启轮询
-      circleNodeList.forEach((node) => {
+      circleNodeList.forEach(node => {
         node.intervalRefresh && node.intervalRefresh()
       })
     }
@@ -177,14 +183,16 @@ export default {
     const externalCi = _.get(dbDataConfig, 'externalCi')
     // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
     if (externalCi && this.ciId) {
-      dbDataConfig.resourceConfig.selectedInstance = [this.ciId]
+      dbDataConfig.resourceConfig.selectedInstance = [ this.ciId ]
     }
     // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
     if (!(this.widget instanceof Widget)) {
       Object.assign(this.widget, new Widget(this.widget))
     }
     const { category, type } = this.widget.config
-    const widgetFactory = category === 'CHART' ? Factory.createChartFactory() : Factory.createElementFactory()
+    const widgetFactory = category === 'CHART'
+      ? Factory.createChartFactory()
+      : Factory.createElementFactory()
     // 根据类型创建图表
     this.render = widgetFactory.create(type, {
       widget: this.widget,
@@ -218,7 +226,9 @@ export default {
       .subscribe(({ event }) => {
         const { x, y } = event
         const {
-          commonConfig: { top, left, width, height }
+          commonConfig: {
+            top, left, width, height
+          }
         } = this.widget.config
         this.isHighLightForAutoAlign = [top, top + height].includes(y) || [left, left + width].includes(x)
       })
@@ -231,17 +241,18 @@ export default {
 </script>
 
 <style scoped lang="less">
-.widget {
-  position: absolute !important;
-  overflow: visible;
-  transform: translate3d(0);
+  .widget {
+    position: absolute !important;
+    overflow: visible;
+    transform: translate3d(0);
 
-  &--hover:hover {
-    box-shadow: 0 0 4px 2px rgba(24, 144, 255, 0.8) !important;
+    &--hover:hover {
+      box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+    }
+
+    &--highlight {
+      box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
+    }
   }
 
-  &--highlight {
-    box-shadow: 0 0 2px 2px rgba(255, 5, 5, 1) !important;
-  }
-}
 </style>

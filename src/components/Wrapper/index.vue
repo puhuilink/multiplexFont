@@ -8,7 +8,14 @@
 <template>
   <fragment>
     <!-- / 拖拽缩放与右键菜单 -->
-    <div id="wrapper" class="wrapper" ref="wrapper" tabindex="1" @click="focus">
+
+    <div
+      id="wrapper"
+      class="wrapper"
+      ref="wrapper"
+      tabindex="1"
+      @click="focus"
+    >
       <div class="wrapper__mask" ref="mask"></div>
       <div class="wrapper__handler wrapper__handler--tl" ref="tl"></div>
       <div class="wrapper__handler wrapper__handler--tc" ref="tc"></div>
@@ -22,40 +29,14 @@
         <a-dropdown :trigger="['contextmenu']">
           <div :style="{ height: '100%' }"></div>
           <a-menu slot="overlay" class="wrapper__menu">
-            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget">
-              <a-icon type="copy" />
-              复制部件
-            </a-menu-item>
-            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig">
-              <a-icon type="snippets" />
-              复制配置
-            </a-menu-item>
-            <a-menu-item
-              key="3"
-              :disabled="!isAllowAsync"
-              :class="[isAllowAsync ? 'wrapper__menu--primary' : '']"
-              @click="syncConfig"
-            >
-              <a-icon type="sync" />
-              同步配置
-            </a-menu-item>
-            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget">
-              <a-icon type="delete" />
-              删除
-            </a-menu-item>
+            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
+            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
+            <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary' : '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
+            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="5">
-              <a-icon type="close" />
-              取消
-            </a-menu-item>
-            <a-menu-item key="6" class="wrapper__menu--up" @click="upzIndexWidget">
-              <a-icon type="arrow-up" />
-              置于顶层
-            </a-menu-item>
-            <a-menu-item key="7" class="wrapper__menu--down" @click="downzIndexWidget">
-              <a-icon type="arrow-down" />
-              置于底层
-            </a-menu-item>
+            <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+            <a-menu-item key="6" class="wrapper__menu--up" @click="upzIndexWidget"><a-icon type="arrow-up" />置于顶层</a-menu-item>
+            <a-menu-item key="7" class="wrapper__menu--down" @click="downzIndexWidget"><a-icon type="arrow-down" />置于底层</a-menu-item>
           </a-menu>
         </a-dropdown>
       </div>
@@ -72,13 +53,18 @@
       :class="{ autoAlign__line_show: typeof autoAlignState.left === 'number' }"
       :style="{ left: `${autoAlignState.left}px` }"
     />
+
   </fragment>
 </template>
 
 <script>
 import _ from 'lodash'
 import { fromEvent, merge, Subject } from 'rxjs'
-import { takeWhile, takeUntil, switchMap, tap, map, withLatestFrom, filter, first } from 'rxjs/operators'
+import {
+  takeWhile, takeUntil, switchMap,
+  tap, map, withLatestFrom, filter,
+  first
+} from 'rxjs/operators'
 import anime from 'animejs'
 import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
@@ -121,13 +107,17 @@ export default {
     }),
     initEvent () {
       this.adjust$ = new Subject()
-      this.adjust$.pipe(takeWhile(() => this.isSubscribed)).subscribe((mutation) => {
-        this.$emit('adjust', mutation)
-        this.adjust({
-          target: this.$refs.wrapper,
-          mutation
+      this.adjust$
+        .pipe(
+          takeWhile(() => this.isSubscribed)
+        )
+        .subscribe((mutation) => {
+          this.$emit('adjust', mutation)
+          this.adjust({
+            target: this.$refs.wrapper,
+            mutation
+          })
         })
-      })
       this.initKeyboardEvent()
       this.initScaleAndMoveEvent()
     },
@@ -141,7 +131,10 @@ export default {
           filter(({ type }) => type === 'MOVE')
         )
         .subscribe(({ event }) => {
-          const { x: left, y: top } = event
+          const {
+            x: left,
+            y: top
+          } = event
           Object.assign(this.autoAlignState, { top, left })
         })
     },
@@ -203,7 +196,9 @@ export default {
 
       // 鼠标按下时按住 Shift 关闭自动对齐
       this.shift$ = this.keypress$
-        .pipe(filter(({ event }) => ['ShiftLeft', 'ShiftRight'].includes(event.code)))
+        .pipe(
+          filter(({ event }) => ['ShiftLeft', 'ShiftRight'].includes(event.code))
+        )
         .subscribe(({ type, event }) => {
           this.isShiftPressed = type === 'keydown'
           if (this.isShiftPressed) {
@@ -246,16 +241,37 @@ export default {
       this.initAutoAlignEvent()
       this.documentMove$ = fromEvent(document, 'mousemove')
       this.documentUp$ = fromEvent(document, 'mouseup')
-      this.tl$ = fromEvent(this.$refs.tl, 'mousedown').pipe(map((event) => ({ type: 'tl', event })))
-      this.tc$ = fromEvent(this.$refs.tc, 'mousedown').pipe(map((event) => ({ type: 'tc', event })))
-      this.tr$ = fromEvent(this.$refs.tr, 'mousedown').pipe(map((event) => ({ type: 'tr', event })))
-      this.cr$ = fromEvent(this.$refs.cr, 'mousedown').pipe(map((event) => ({ type: 'cr', event })))
-      this.br$ = fromEvent(this.$refs.br, 'mousedown').pipe(map((event) => ({ type: 'br', event })))
-      this.bc$ = fromEvent(this.$refs.bc, 'mousedown').pipe(map((event) => ({ type: 'bc', event })))
-      this.bl$ = fromEvent(this.$refs.bl, 'mousedown').pipe(map((event) => ({ type: 'bl', event })))
-      this.cl$ = fromEvent(this.$refs.cl, 'mousedown').pipe(map((event) => ({ type: 'cl', event })))
-      this.move$ = fromEvent(this.$refs.move, 'mousedown').pipe(map((event) => ({ type: 'move', event })))
-      this.all$ = merge(this.tl$, this.tc$, this.tr$, this.cr$, this.br$, this.bc$, this.bl$, this.cl$, this.move$)
+      this.tl$ = fromEvent(this.$refs.tl, 'mousedown').pipe(
+        map((event) => ({ type: 'tl', event }))
+      )
+      this.tc$ = fromEvent(this.$refs.tc, 'mousedown').pipe(
+        map((event) => ({ type: 'tc', event }))
+      )
+      this.tr$ = fromEvent(this.$refs.tr, 'mousedown').pipe(
+        map((event) => ({ type: 'tr', event }))
+      )
+      this.cr$ = fromEvent(this.$refs.cr, 'mousedown').pipe(
+        map((event) => ({ type: 'cr', event }))
+      )
+      this.br$ = fromEvent(this.$refs.br, 'mousedown').pipe(
+        map((event) => ({ type: 'br', event }))
+      )
+      this.bc$ = fromEvent(this.$refs.bc, 'mousedown').pipe(
+        map((event) => ({ type: 'bc', event }))
+      )
+      this.bl$ = fromEvent(this.$refs.bl, 'mousedown').pipe(
+        map((event) => ({ type: 'bl', event }))
+      )
+      this.cl$ = fromEvent(this.$refs.cl, 'mousedown').pipe(
+        map((event) => ({ type: 'cl', event }))
+      )
+      this.move$ = fromEvent(this.$refs.move, 'mousedown').pipe(
+        map((event) => ({ type: 'move', event }))
+      )
+      this.all$ = merge(
+        this.tl$, this.tc$, this.tr$, this.cr$,
+        this.br$, this.bc$, this.bl$, this.cl$, this.move$
+      )
 
       this.all$
         .pipe(
@@ -524,12 +540,7 @@ export default {
      */
     syncConfig () {
       const activeWidget = _.cloneDeep(this.activeWidget)
-      const {
-        render,
-        config: {
-          commonConfig: { width, height, top, left }
-        }
-      } = this.activeWidget
+      const { render, config: { commonConfig: { width, height, top, left } } } = this.activeWidget
       // 保留当前部件基础配置不变
       Object.assign(this.config.commonConfig, {
         width,
@@ -556,13 +567,12 @@ export default {
       }
       this.removeWidget({ widgetId: this.activeWidget.widgetId })
     },
-    /*
+    /**
      * Widget置于顶层
-     * */
+     */
     upzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
-      copyConfig.commonConfig.zIndex =
-        Math.max(...this.view.widgets.map(({ config }) => config.commonConfig.zIndex)) + 1
+      copyConfig.commonConfig.zIndex = Math.max(...this.view.widgets.map(({ config }) => config.commonConfig.zIndex)) + 1
       //  更新vueX里的数据 同步至 页面公共属性的位置>zIndex
       Object.assign(this.activeWidget, { config: copyConfig })
       const copyMutation = {
@@ -590,7 +600,10 @@ export default {
     downzIndexWidget () {
       const copyConfig = _.cloneDeep(this.activeWidget.config)
       copyConfig.commonConfig.zIndex = 0
-      Object.assign(this.activeWidget, { config: copyConfig })
+      Object.assign(this.activeWidget, {
+        config: copyConfig
+      }
+      )
       const copyMutation = {
         event: {
           direction: 'ANY',
