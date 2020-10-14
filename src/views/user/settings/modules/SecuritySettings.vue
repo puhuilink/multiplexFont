@@ -29,8 +29,8 @@ export default {
     return {
       data: [
         { title: '账户密码', description: '', value: '', actions: { title: '修改', callback: () => { this.$router.push('/pwd-change') } } },
-        { title: '移动电话', description: '已绑定移动电话', value: '', actions: { title: '修改', callback: () => { this.$message.success('This is a message of success') } } },
-        { title: '备用邮箱', description: '已绑定邮箱', value: '', actions: { title: '修改', callback: () => { this.$message.warning('This is message of warning') } } }
+        { title: '移动电话', description: '已绑定移动电话', value: '', actions: { title: '修改', callback: () => { this.$message.info('功能正在开发中请等待') } } },
+        { title: '备用邮箱', description: '已绑定邮箱', value: '', actions: { title: '修改', callback: () => { this.$message.info('功能正在开发中请等待') } } }
       ]
     }
   },
