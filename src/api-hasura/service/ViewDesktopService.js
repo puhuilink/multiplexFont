@@ -22,6 +22,7 @@ class ViewDesktopService extends BaseService {
           view_id
           view_title
           view_img
+          createdate
         }
       }`
     ]
