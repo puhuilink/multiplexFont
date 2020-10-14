@@ -78,6 +78,16 @@ class BaseDao {
   }
 
   /**
+   * 新增多条数据
+   * @param {Array<Object>} argus
+   * @return {Promise<HasuraORM>}
+   */
+  static async batchAdd (argus) {
+    const hasuraORM = this._createHasuraORM()
+    return hasuraORM.insert(argus, true)
+  }
+
+  /**
    * 更新一条或多条数据
    * @param {Object} set 更新的内容
    * @param {Object} where 匹配条件
