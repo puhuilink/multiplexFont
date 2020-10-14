@@ -10,10 +10,15 @@ class UserGroupService extends BaseService {
     )
   }
 
-  static async groupIdListByUserId (user_id) {
+  static async availableGroupIdListByUserId (user_id) {
     return this
       .find({
-        where: { user_id },
+        where: {
+          user_id,
+          group: {
+            flag: { _eq: 1 }
+          }
+        },
         fields: ['group_id'],
         alias: 'groupList'
       })

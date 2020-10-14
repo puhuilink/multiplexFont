@@ -15,7 +15,7 @@ class ViewDesktopService extends BaseService {
    * @param {String} user_id
    */
   static async availableDesktop (user_id) {
-    const groupIdList = await UserGroupService.groupIdListByUserId(user_id)
+    const groupIdList = await UserGroupService.availableGroupIdListByUserId(user_id)
     const snippet = [
       `viewDesktops {
         view {

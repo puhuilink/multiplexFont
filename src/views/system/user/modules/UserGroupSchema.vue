@@ -30,15 +30,7 @@
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import { filterTransferOption } from '@/utils/util'
-
-const groupList = gql`query groupList {
-  data: t_group {
-    key: group_id
-    title: group_name
-    group_id
-    group_name
-  }
-}`
+import { GroupService } from '@/api-hasura'
 
 const userGroupList = gql`query groupList($userId: String) {
   data: t_user_group(where: {user_id: {_eq: $userId}}) {
@@ -82,8 +74,20 @@ export default {
      */
     async getAllGroupList () {
       try {
-        const { data } = await apollo.clients.imp.query({ query: groupList }).then(r => r.data)
-        this.groupList = data
+        const { data: { groupList } } = await GroupService.find({
+          fields: [
+            'key: group_id',
+            'title: group_name',
+            'group_id',
+            'group_name',
+            'flag'
+          ],
+          alias: 'groupList'
+        })
+        this.groupList = groupList.map(el => ({
+          ...el,
+          disabled: el.flag !== 1
+        }))
       } catch (e) {
         this.groupList = []
         throw e
