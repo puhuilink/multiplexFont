@@ -110,7 +110,6 @@ export default {
     return {
       form: this.$form.createForm(this),
       userFormDate: [],
-      where: {},
       loading: false
     }
   },
