@@ -118,6 +118,7 @@ import {
   fromEvent, merge, Subject, zip
 } from 'rxjs'
 import {
+  // eslint-disable-next-line no-unused-vars
   startWith, mapTo, takeWhile,
   pluck, map, filter
 } from 'rxjs/operators'
@@ -204,17 +205,32 @@ export default {
         this.perfectScrollBar && this.perfectScrollBar.update()
 
         // 设置屏幕对象
-        this.setView({
-          view: new View(Object.assign(
-            _.cloneDeep(this.view),
-            {
+        if (event.type === 'init') {
+          // 初次进入时this.view还未实例化
+          this.setView({
+            view: new View(Object.assign(
+              {},
+              _.cloneDeep(this.view),
+              {
+                el: this.$refs.view,
+                gauge: this.$refs.gauge,
+                parent: this.$refs.page,
+                scale: this.scale
+              }
+            ))
+          })
+        } else {
+          // 更新this.view的部分配置但不需要重新实例化
+          this.setView({
+            view: Object.assign(Object.create(View.prototype), {
+              ...this.view,
               el: this.$refs.view,
               gauge: this.$refs.gauge,
               parent: this.$refs.page,
               scale: this.scale
-            }
-          ))
-        })
+            })
+          })
+        }
 
         // 初始化场景进行样式设置
         if (event.type === 'init' && !this.view.config) {
@@ -297,15 +313,15 @@ export default {
       .subscribe((mutation) => {
         const { widgetId, config } = this.activeWidget
         const [targetComponent] = this.$refs[widgetId]
-        const { event: { mouseType, eventType } } = mutation
+        const { event: { mouseType, eventType, position = {} } } = mutation
         // 当鼠标抬起时更新部件位置状态
         if (mouseType === 'mouseup') {
           const {
             top, left, width, height
           } = window.getComputedStyle(targetComponent.$el, null)
           const widgetPositionState = {
-            top: Number(top.split('px')[0]) || 0,
-            left: Number(left.split('px')[0]) || 0,
+            top: _.get(position, ['closestTop'], Number(top.split('px')[0]) || 0),
+            left: _.get(position, ['closestLeft'], Number(left.split('px')[0]) || 0),
             width: Number(width.split('px')[0]) || 0,
             height: Number(height.split('px')[0]) || 0
           }
@@ -313,7 +329,6 @@ export default {
           const widget = _.cloneDeep(this.activeWidget)
           Object.assign(widget.config.commonConfig, widgetPositionState)
           this.activateWidget({ widget })
-          return
         }
         // 调整部件大小
         this.adjust({
@@ -322,7 +337,7 @@ export default {
         })
         // 在非移动情况触发时，调整图表尺寸
         if (eventType !== 'MOVE') {
-          this.activeWidget.render.resize(config)
+          this.resizeWidget(config)
         }
       })
   },
@@ -334,8 +349,12 @@ export default {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW,
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
-      activateWidget: ScreenMutations.ACTIVATE_WIDGET
+      activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+      setImportingState: ScreenMutations.SET_IMPORTING_STATE
     }),
+    resizeWidget: _.debounce(function (config) {
+      this.activeWidget.render.resize(config)
+    }, 100),
     /**
      * 左右panel展开与否
      * @param type 左右panel
@@ -374,11 +393,12 @@ export default {
       })
 
       // 更新视图缩放
+      // 更新this.view的部分配置但不需要重新实例化
       this.setView({
-        view: Object.assign(new View({
+        view: Object.assign(Object.create(View.prototype), {
           ...this.view,
           scale: this.scale
-        }))
+        })
       })
     },
     /**
@@ -420,10 +440,10 @@ export default {
 
       // 更新视图缩放
       this.setView({
-        view: Object.assign(new View({
+        view: Object.assign(Object.create(View.prototype), {
           ...this.view,
           scale: this.scale
-        }))
+        })
       })
 
       anime.set(this.$refs.view, {
@@ -441,6 +461,7 @@ export default {
         duration: 150,
         easing: 'linear'
       })
+
       anime({
         targets: this.$refs.gauge,
         width: width * this.scale + 32,
@@ -492,7 +513,8 @@ export default {
     /**
      * 导入视图配置
      */
-    import (options) {
+    async import (options) {
+      this.setImportingState({ isImporting: true })
       this.viewOptions = _.omit(options, ['id', 'name'])
       // 实例化部件对象
       const widgets = this.viewOptions.widgets.map(config => new WidgetModel(config))
@@ -506,6 +528,11 @@ export default {
       })
       // 设置视图样式
       this.setStyle({ type: 'input' })
+      // 设置激活元素为当前画板
+      this.activateWidget({ widget: this.view })
+      // 等待视图及 widgets 初始化
+      await this.$nextTick()
+      this.setImportingState({ isImporting: false })
     },
     /**
      * 导出视图配置至json文件
@@ -534,7 +561,7 @@ export default {
      */
     clear () {
       this.resetTopologyState()
-      // 清空部件列表
+      // 重新实例化回到默认设置
       this.setView({
         view: new View({ ..._.pick(this.view, ['id', 'el', 'gauge', 'parent']) })
       })

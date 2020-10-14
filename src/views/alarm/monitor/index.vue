@@ -49,7 +49,8 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <CmdbEndpointList
+                  <EndpointSelect
+                    schema="cmdb"
                     :parentId="queryParams.host_id"
                     :value.sync="queryParams.endpoint_id"
                   />
@@ -61,7 +62,8 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <CmdbMetricSelect
+                  <MetricSelect
+                    schema="cmdb"
                     :parentId="queryParams.endpoint_id"
                     :value.sync="queryParams.metric_id"
                   />
@@ -170,11 +172,11 @@ import { generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import {
-  CmdbHostSelect,
-  CmdbEndpointList,
-  CmdbMetricSelect
+  CmdbHostSelect
 } from '@/components/Resource'
 import moment from 'moment'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 
 export default {
   name: 'AlarmMonitor',
@@ -183,8 +185,8 @@ export default {
     AlarmDetail,
     AlarmSolve,
     CmdbHostSelect,
-    CmdbEndpointList,
-    CmdbMetricSelect
+    EndpointSelect,
+    MetricSelect
   },
   props: {
     cTableProps: {

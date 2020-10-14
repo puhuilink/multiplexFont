@@ -3,32 +3,17 @@ import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
 
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-    offset: 0
-  },
-  wrapperCol: {
-    span: 15,
-    offset: 2
-  }
-}
-
 export default {
   data: () => ({
-    formItemLayout,
-    options: {
-      // TODO: 拆分为常量
-      xAxisType: [
-        {
-          name: '资源',
-          value: 'RESOURCE'
-        },
-        {
-          name: '时间',
-          value: 'TIME'
-        }
-      ]
+    formItemLayout: {
+      labelCol: {
+        span: 6,
+        offset: 0
+      },
+      wrapperCol: {
+        span: 15,
+        offset: 2
+      }
     },
     btnLoading: false
   }),
@@ -58,14 +43,21 @@ export default {
         this.change()
       }
     },
-    refreshTime: {
+    alarmConfig: {
       get () {
-        return this.config.dataConfig.dbDataConfig.refreshTime
+        return this.config.dataConfig.dbDataConfig.alarmConfig
       },
       set (v) {
-        Object.assign(this.config.dataConfig.dbDataConfig, {
-          refreshTime: v
-        })
+        Object.assign(this.config.dataConfig.dbDataConfig.alarmConfig, v)
+        this.change()
+      }
+    },
+    overviewConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.overviewConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.overviewConfig, v)
         this.change()
       }
     },

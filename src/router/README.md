@@ -43,7 +43,7 @@ const routerObject = {
 | target              | 菜单链接跳转目标（参考 html a 标记）                          | string | -  |
 | hidden              | 配合`hideChildrenInMenu`使用，用于隐藏菜单时，提供递归到父菜单显示 选中菜单项_（可参考 个人页 配置方式）_ | boolean | false  |
 | hiddenHeaderContent | *特殊 隐藏 [PageHeader](https://github.com/sendya/ant-design-pro-vue/blob/master/src/components/PageHeader/PageHeader.vue#L6) 组件中的页面带的 面包屑和页面标题栏 | boolean | false  |
-| permission          | 与项目提供的权限拦截匹配的权限，如果不匹配，则会被禁止访问该路由页面 | array   | []     |
+| permission          | 与项目提供的权限拦截匹配的权限，如果不匹配，则会被禁止访问该路由页面；不需要权限控制的路由不需传入该配置项 | array   | []     |
 
 > 路由自定义 `Icon` 请引入自定义 `svg` Icon 文件，然后传递给路由的 `meta.icon` 参数即可
 

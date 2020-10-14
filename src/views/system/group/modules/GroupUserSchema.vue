@@ -76,7 +76,7 @@ export default {
      */
     async getAllUserList () {
       try {
-        const { data } = await apollo.clients.alert.query({ query: userList }).then(r => r.data)
+        const { data } = await apollo.clients.imp.query({ query: userList }).then(r => r.data)
         this.userList = data
       } catch (e) {
         this.userList = []
@@ -85,7 +85,7 @@ export default {
     },
     async getCurrentUserList (groupId) {
       try {
-        const { data } = await apollo.clients.alert.query({ query: groupUserList, variables: { groupId } }).then(r => r.data)
+        const { data } = await apollo.clients.imp.query({ query: groupUserList, variables: { groupId } }).then(r => r.data)
         this.targetKeys = data.map(e => e.user_id)
       } catch (e) {
         this.targetKeys = []
@@ -129,7 +129,7 @@ export default {
           user_role: '1'
         }))
         // console.log(ob)
-        await apollo.clients.alert.mutate({
+        await apollo.clients.imp.mutate({
           mutation: allocateGroupUser,
           variables: {
             groupId,

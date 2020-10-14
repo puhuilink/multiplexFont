@@ -21,9 +21,9 @@ function addStyleResource (rule) {
 const {
   NODE_ENV,
   VUE_APP_API_BASE_URL,
-  VUE_APP_API_BASE_URL_ORIGINAL_URL,
-  VUE_APP_HASURA_MAIN_URI,
-  VUE_APP_HASURA_MAIN_ORIGINAL_URL,
+  VUE_APP_API_ORIGINAL_URL,
+  VUE_APP_HASURA_IMP_URI,
+  VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
   VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
 } = process.env
@@ -39,10 +39,10 @@ const assetsCDN = {
   },
   css: [],
   js: [
-    '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
-    '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
-    '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-    '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
+    '//unpkg.com/vue@2.6.10/dist/vue.min.js',
+    '//unpkg.com/vue-router@3.1.3/dist/vue-router.min.js',
+    '//unpkg.com/vuex@3.1.1/dist/vuex.min.js',
+    '//unpkg.com/axios@0.19.0/dist/axios.min.js'
   ]
 }
 
@@ -138,20 +138,20 @@ const vueConfig = {
     proxy: {
       // 后台接口
       [VUE_APP_API_BASE_URL]: {
-        target: VUE_APP_API_BASE_URL_ORIGINAL_URL,
+        target: VUE_APP_API_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_API_BASE_URL]: ''
         }
       },
-      // hasura main
-      [VUE_APP_HASURA_MAIN_URI]: {
-        target: VUE_APP_HASURA_MAIN_ORIGINAL_URL,
+      // hasura
+      [VUE_APP_HASURA_IMP_URI]: {
+        target: VUE_APP_HASURA_IMP_ORIGINAL_URL,
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          [VUE_APP_HASURA_MAIN_URI]: ''
+          [VUE_APP_HASURA_IMP_URI]: ''
         }
       },
       // 视图缩略图 nginx 静态资源目录

@@ -5,7 +5,8 @@ import Chart from './index'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class TextsChart extends Chart {
@@ -26,14 +27,13 @@ export default class TextsChart extends Chart {
         title.text = `${staticData}`
         break
       }
-      case SOURCE_TYPE_REAL: {
-        if (loadingDynamicData) {
-          const dynamicData = await dataConfig.dbDataConfig.getOption()
-          title.text = `${dynamicData}`
-        }
+      case SOURCE_TYPE_NULL: {
         break
       }
-      case SOURCE_TYPE_NULL: {
+      case SOURCE_TYPE_ALARM:
+      case SOURCE_TYPE_REAL: {
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
+        title.text = dynamicData === undefined ? 0 : `${dynamicData}`
         break
       }
     }

@@ -7,9 +7,27 @@ Table 重封装组件说明
 
 >  基础的使用方式与 API 与 [官方版(Table)](https://vuecomponent.github.io/ant-design-vue/components/table-cn/) 本一致，在其基础上，封装了加载数据的方法。
 >
-> 你无需在你是用表格的页面进行分页逻辑处理，仅需向 Table 组件传递绑定 `:data="Promise"` 对象即可
-
-该 `table` 由 [@Saraka](https://github.com/saraka-tsukai) 完成封装
+>  你无需在你是用表格的页面进行分页逻辑处理，仅需向 Table 组件传递绑定 `:data="Promise"` 对象即可
+>
+>  经与 hasura对接，Promise 返回的对象需为以下数据结构
+>
+>  ```javascript
+>  {
+>    // data为与columns对应的dataSource
+>    data: [
+>      { xxx },
+>      { xxx }
+>    ],
+>    // pagination输出总条数
+>    pagination: {
+>      aggregate: {
+>        count: xxx
+>      }
+>    }
+>  }
+>  ```
+>
+>  
 
 
 例子1
@@ -19,7 +37,7 @@ Table 重封装组件说明
 ```vue
 
 <template>
-  <s-table
+  <CTable
     ref="table"
     size="default"
     :rowKey="(record) => record.data.id"
@@ -27,15 +45,15 @@ Table 重封装组件说明
     :data="loadData"
     :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
   >
-  </s-table>
+  </CTable>
 </template>
 
 <script>
-  import STable from '@/components'
+  import CTable from '@/components/Table/CTable'
 
   export default {
     components: {
-      STable
+      CTable
     },
     data() {
       return {
@@ -100,7 +118,7 @@ Table 重封装组件说明
 
 ```vue
 <template>
-  <s-table
+  <CTable
     ref="table"
     size="default"
     :columns="columns"
@@ -126,11 +144,11 @@ Table 重封装组件说明
         </a-menu>
       </a-dropdown>
     </span>
-  </s-table>
+  </CTable>
 </template>
 
 <script>
-  import STable from '@/components/table/'
+  import CTable from '@/components/table/CTable'
 
   export default {
     components: {
@@ -141,7 +159,9 @@ Table 重封装组件说明
         columns: [
           {
             title: '规则编号',
-            dataIndex: 'no'
+            dataIndex: 'no',
+            // 传入tooltip为true时，该列会渲染为ATooltip包裹的内容
+            tooltip: true
           },
           {
             title: '描述',
@@ -227,109 +247,32 @@ alert: {
 }
 ```
 
-注意事项
-----
-
-> 你可能需要为了与后端提供的接口返回结果一致而去修改以下代码：
-> (需要注意的是，这里的修改是全局性的，意味着整个项目所有使用该 table 组件都需要遵守这个返回结果定义的字段。)
->
-> 文档中的结构有可能由于组件 bug 进行修正而改动。实际修改请以当时最新版本为准
-
-修改 `@/components/table/index.js`  第 156 行起
 
 
-
-```javascript
-result.then(r => {
-          this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
-            current: r.pageNo, // 返回结果中的当前分页数
-            total: r.totalCount, // 返回结果中的总记录数
-            showSizeChanger: this.showSizeChanger,
-            pageSize: (pagination && pagination.pageSize) ||
-              this.localPagination.pageSize
-          }) || false
-          // 为防止删除数据后导致页面当前页面数据长度为 0 ,自动翻页到上一页
-          if (r.data.length === 0 && this.showPagination && this.localPagination.current > 1) {
-            this.localPagination.current--
-            this.loadData()
-            return
-          }
-
-          // 这里用于判断接口是否有返回 r.totalCount 且 this.showPagination = true 且 pageNo 和 pageSize 存在 且 totalCount 小于等于 pageNo * pageSize 的大小
-          // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
-          try {
-            if ((['auto', true].includes(this.showPagination) && r.totalCount <= (r.pageNo * this.localPagination.pageSize))) {
-              this.localPagination.hideOnSinglePage = true
-            }
-          } catch (e) {
-            this.localPagination = false
-          }
-          console.log('loadData -> this.localPagination', this.localPagination)
-          this.localDataSource = r.data // 返回结果中的数组数据
-          this.localLoading = false
-        })
-```
 返回 JSON 例子：
 ```json
 {
-  "message": "",
-  "result": {
-    "data": [{
-        id: 1,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-        title: 'Alipay',
-        description: '那是一种内在的东西， 他们到达不了，也无法触及的',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      },
-      {
-        id: 2,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png',
-        title: 'Angular',
-        description: '希望是一个好东西，也许是最好的，好东西是不会消亡的',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      },
-      {
-        id: 3,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/dURIMkkrRFpPgTuzkwnB.png',
-        title: 'Ant Design',
-        description: '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      },
-      {
-        id: 4,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png',
-        title: 'Ant Design Pro',
-        description: '那时候我只会想自己想要什么，从不想自己拥有什么',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      },
-      {
-        id: 5,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/siCrBXXhmvTQGWPNLBow.png',
-        title: 'Bootstrap',
-        description: '凛冬将至',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      },
-      {
-        id: 6,
-        cover: 'https://gw.alipayobjects.com/zos/rmsportal/ComBAopevLwENQdKWiIn.png',
-        title: 'Vue',
-        description: '生命就像一盒巧克力，结果往往出人意料',
-        status: 1,
-        updatedAt: '2018-07-26 00:00:00'
-      }
-    ],
-    "pageSize": 10,
-    "pageNo": 0,
-    "totalPage": 6,
-    "totalCount": 57
-  },
-  "status": 200,
-  "timestamp": 1534955098193
+    "data":{
+        "pagination":{
+            "aggregate":{
+                "count":28
+            }
+        },
+        "data":[
+            {
+                "view_id":9778,
+                "view_title":"litest",
+                "creator":"LiTest",
+                "view_img":null
+            },
+            {
+                "view_id":9743,
+                "view_title":"ln-view_test",
+                "creator":"administrator",
+                "view_img":"/view/20200825/136eca52c7f842999fca3845fcb963f3.png"
+            }
+        ]
+    }
 }
 ```
 
@@ -338,4 +281,4 @@ result.then(r => {
 更新时间
 ----
 
-该文档最后更新于： 2019-06-23 PM 17:19
+该文档最后更新于： 2020-09-21 PM 17:46

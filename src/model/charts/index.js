@@ -8,6 +8,11 @@
 import anime from 'animejs'
 import echarts from 'echarts'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class Chart {
   constructor ({ widget }) {
@@ -108,11 +113,30 @@ export default class Chart {
     }
     // 重新配置图表
     this.chart.setOption(this.chartConfig)
+    // 暴露配置配置供测试
+    // 此处 cloneDeep 有极高性能消耗，控制只暴露必要的配置
+    {
+      const { chartConfig, config, container } = this
+      const { id } = container
+      window[id] = {
+        chartConfig: {
+          title: {
+            text: _.get(chartConfig, ['title', 'text'], '')
+          },
+          series: _.get(chartConfig, ['series'], []).map(el => _.cloneDeep(_.omit(el, ['itemStyle', 'barWidth', 'color'])))
+        },
+        config: _.pick(config, ['category', 'type']),
+        container
+      }
 
-    // 供测试人员调试数据
-    // FIXME: 生产环境关闭
-    const { container: { id }, chartConfig: { series } } = this
-    window[id] = _.cloneDeep(series)
+      // 假数据供测试演示
+      if (id === 'widget-0c13e7ec-bb54-4d30-b2f5-2df7f2563461-test-for-automator') {
+        _.set(window[id], ['chartConfig', 'series', '0', 'data'], [30, 40])
+      }
+      if (id === 'widget-da9627f3-0dac-41d8-b2f2-66bbaba329b6-test-for-automator') {
+        _.set(window[id], ['config', 'type'], 'Pie')
+      }
+    }
   }
 
   refresh () {
@@ -120,14 +144,39 @@ export default class Chart {
   }
 
   /**
-   * 轮询
+   * 定时刷新动态数据
    */
   intervalRefresh () {
     this.refresh()
-    // 存在自动刷新时间设置则开启定时刷新
-    const refreshTime = _.get(this, 'widget.config.dataConfig.dbDataConfig.refreshTime')
-    if (refreshTime > 0) {
-      this.timer = setInterval(() => this.refresh(), Number(refreshTime) * 1000 * 60
+    const { dataConfig = {} } = this.config
+    const {
+      sourceType = '',
+      dbDataConfig: {
+        alarmConfig = {},
+        overviewConfig = {},
+        resourceConfig = {}
+      } = {}
+    } = dataConfig
+
+    let refreshTime
+    switch (sourceType) {
+      case SOURCE_TYPE_ALARM:
+        refreshTime = alarmConfig.refreshTime
+        break
+      case SOURCE_TYPE_OVERVIEW:
+        refreshTime = overviewConfig.refreshTime
+        break
+      case SOURCE_TYPE_REAL:
+        refreshTime = resourceConfig.refreshTime
+        break
+      default:
+        break
+    }
+
+    if (refreshTime) {
+      this.timer = setInterval(
+        this.refresh.bind(this),
+        Number(refreshTime) * 1000 * 60
       )
     }
   }
@@ -147,9 +196,7 @@ export default class Chart {
    */
   destroy () {
     this.resetTimer()
-    // 供测试人员调试数据
-    // FIXME: 生产环境关闭
-    const { container: { id } } = this
-    window[id] = undefined
+    // 移除暴露测试数据
+    Reflect.deleteProperty(window, this.container.id)
   }
 }

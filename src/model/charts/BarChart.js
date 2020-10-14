@@ -10,7 +10,8 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
@@ -55,6 +56,8 @@ export default class BarChart extends Chart {
       itemStyle: otherItemStyle
     }
 
+    const { reverse } = proprietaryConfig
+
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
         dbDataConfig.resetData()
@@ -75,11 +78,11 @@ export default class BarChart extends Chart {
         dbDataConfig.resetData()
         break
       }
+      case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {
         // 根据数据流向，静态数据在进入 mappingOption 前已经完成 reverse
         // 而动态数据需要进入到 mappingOption 内部才能执行 reverse
-        const { reverse } = proprietaryConfig
-        let dynamicData = await dbDataConfig.getOption(loadingDynamicData)
+        let dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
         series = dynamicData.series.map((item) => {
           return {

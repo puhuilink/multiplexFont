@@ -58,6 +58,7 @@ export default class Node {
   }
 
   destroy () {
+    // console.log('node 定时器关闭')
     this.resetTimer()
   }
 }

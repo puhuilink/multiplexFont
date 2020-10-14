@@ -316,9 +316,6 @@ export default {
       this.isLoginError = true
       throw err
     }
-  },
-  created () {
-    console.log(process.env)
   }
 }
 </script>

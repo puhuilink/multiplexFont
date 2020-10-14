@@ -2,10 +2,13 @@
   <DataSourceTemplate>
     <template #real>
       <RealDataSource
-        useComboSelect
-        useTimeRange
-        :comboSelectProps="{ multiple: false }"
+        singleHost
+        singleMetric
+        :useCalculateType="false"
       />
+    </template>
+    <template #alarm>
+      <AlarmDataSource />
     </template>
   </DataSourceTemplate>
 </template>
@@ -14,13 +17,15 @@
 import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
+import AlarmDataSource from '../common/AlarmDataSource.vue'
 
 export default {
   name: 'TextHealthDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
-    RealDataSource
+    RealDataSource,
+    AlarmDataSource
   }
 }
 </script>

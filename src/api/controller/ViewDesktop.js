@@ -13,7 +13,7 @@ import _ from 'lodash'
   * 获取当前用户自定义桌面
   */
 export const getUserDesktop = function (userId) {
-  return apollo.clients.alert.query({
+  return apollo.clients.imp.query({
     query: queryUserDesktop(userId)
   }).then(r => r.data.data).then(async r => {
     const data = Array.isArray(r) ? r[0] : r
@@ -50,7 +50,7 @@ export const getUserDesktop = function (userId) {
  * @param {Array<any>} viewIds 要关联的视图 id
  */
 export const editDesktopContent = function (desktopId, viewIds = []) {
-  return apollo.clients.alert.mutate({
+  return apollo.clients.imp.mutate({
     mutation: mutationUpdateDesktopContent,
     variables: {
       viewId: desktopId,

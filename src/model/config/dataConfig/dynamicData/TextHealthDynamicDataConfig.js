@@ -1,10 +1,44 @@
+/**
+ * 文本健康度动态数据配置
+ */
+
 import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_ALARM
+} from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
-  getOption () {
-    return this
-      .fetch({ limit: 1 })
-      .then(data => _.get(data, '[0].value', 'N/A'))
+  async getOption (loadingDynamicData, sourceType) {
+    if (loadingDynamicData) {
+      switch (sourceType) {
+        case SOURCE_TYPE_REAL: {
+          await this.getRealDataOption()
+          break
+        }
+        case SOURCE_TYPE_ALARM: {
+          await this.getAlarmOption()
+          break
+        }
+      }
+    }
+    return this.text
+  }
+
+  async getRealDataOption () {
+    this.text = await this.resourceConfig.fetch().then(data => _.get(data, '0.data', ''))
+  }
+
+  async getAlarmOption () {
+    const [alarm = {}] = await this.alarmConfig.fetch()
+    const {
+      level1 = 0,
+      level2 = 0,
+      level3 = 0,
+      level4 = 0,
+      level5 = 0
+    } = alarm
+    this.text = level1 + level2 + level3 + level4 + level5
   }
 }

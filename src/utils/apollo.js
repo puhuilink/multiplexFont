@@ -7,7 +7,7 @@ import * as clients from './clientConfig'
 Vue.use(VueApollo)
 
 const apolloProvider = new VueApollo({
-  defaultClient: clients.alert,
+  defaultClient: clients.imp,
   clients: {
     ...clients
   }

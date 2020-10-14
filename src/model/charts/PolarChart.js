@@ -8,7 +8,8 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_STATIC
+  SOURCE_TYPE_STATIC,
+  SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import Chart from './index'
 
@@ -75,7 +76,7 @@ export default class PolarChart extends Chart {
 
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
-        this.chart.clear()
+        dbDataConfig.resetData()
         const {
           legend: staticLegend,
           series: staticSeries,
@@ -113,15 +114,17 @@ export default class PolarChart extends Chart {
         break
       }
       case SOURCE_TYPE_NULL: {
+        dbDataConfig.resetData()
+        this.chart.clear()
         break
       }
+      case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {
-        // this.chart.resize()
         const {
           legend: dynamicLegend,
           series: dynamicSeries,
           angleAxis: dynamicAngleAxis
-        } = await dbDataConfig.getOption(loadingDynamicData)
+        } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
 
         if (dynamicSeries && dynamicSeries[0] && dynamicSeries[0].data && dynamicSeries[0].data.length > 0) {
           const maskData = [polarMask.item, ...dynamicSeries[0].data.map(item => ({

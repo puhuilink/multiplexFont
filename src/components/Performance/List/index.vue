@@ -21,7 +21,8 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <CmdbEndpointList
+                  <EndpointSelect
+                    schema="cmdb"
                     :parentId="host_id"
                     :value.sync="queryParams.endpoint_id"
                   />
@@ -34,7 +35,8 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <CmdbMetricSelect
+                  <MetricSelect
+                    schema="cmdb"
                     :parentId="queryParams.endpoint_id"
                     :value.sync="queryParams.metric_id"
                   />
@@ -83,14 +85,15 @@ import { MetricService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'
-import { CmdbEndpointList, CmdbMetricSelect } from '@/components/Resource'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 
 export default {
   name: 'PerformanceList',
   mixins: [List],
   components: {
-    CmdbEndpointList,
-    CmdbMetricSelect
+    EndpointSelect,
+    MetricSelect
   },
   props: {},
   data: () => ({

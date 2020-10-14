@@ -1,5 +1,5 @@
 import {
-  alert
+  imp
 } from './client'
 
 const VIC_MAIN_LIST = [
@@ -21,14 +21,13 @@ const VIC_MAIN_LIST = [
   { schema: 't_cmdb_host_endpoint', primaryKey: 'id' },
   { schema: 't_cmdb_host', primaryKey: 'id' },
   { schema: 't_cmdb_host_view', primaryKey: 'id' }, // 关联表
-  { schema: 't_cmdb_host_group_by_host_type', primaryKey: 'id' }, // postgre view
   { schema: 't_cmdb_metric', primaryKey: 'id' },
   // t_dict
   { schema: 't_dict_value', primaryKey: 'value_code' },
   // cmdb_model
-  { schema: 't_metric', primaryKey: 'id' },
   { schema: 't_model_answer', primaryKey: 'id' },
   { schema: 't_model_endpoint', primaryKey: 'id' },
+  { schema: 't_model_endpoint_host', primaryKey: 'id' },
   { schema: 't_model_endpoint_metric', primaryKey: 'id' },
   { schema: 't_model_host_endpoint', primaryKey: 'id' },
   { schema: 't_model_host', primaryKey: 'id' },
@@ -61,7 +60,7 @@ const VIC_MAIN_LIST = [
 
 const VIV_MAIN_MAPPING = new Map([
   ...VIC_MAIN_LIST.map(table => {
-    const { schema, primaryKey, provider = alert } = table
+    const { schema, primaryKey, provider = imp } = table
     return [schema, { primaryKey, provider }]
   })
 ])

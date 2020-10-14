@@ -7,12 +7,12 @@ import { ApolloClient } from 'apollo-client'
 
 const {
   NODE_ENV,
-  VUE_APP_HASURA_MAIN_URI,
-  VUE_APP_HASURA_MAIN_KEY
+  VUE_APP_HASURA_IMP_URI,
+  VUE_APP_HASURA_IMP_KEY
 } = process.env
 
 const linkList = [
-  new HttpLink({ uri: `${VUE_APP_HASURA_MAIN_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_MAIN_KEY } })
+  new HttpLink({ uri: `${VUE_APP_HASURA_IMP_URI}/v1/graphql`, headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_IMP_KEY } })
 ]
 
 if (NODE_ENV === 'development') {
@@ -84,8 +84,8 @@ const clientList = linkList.map(link => new ApolloClient({
   defaultOptions: defaultOptions
 }))
 
-const [alert] = clientList
+const [imp] = clientList
 
 export {
-  alert
+  imp
 }

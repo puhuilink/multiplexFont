@@ -36,7 +36,7 @@
       @cancel="onCancel"
       @ok="onOk"
     >
-      <DeviceTypeListSelect
+      <DeviceTypeSelect
         v-bind="ctx.editAbleProps"
         :value="model.deviceType"
         @input="deviceType => {
@@ -49,7 +49,7 @@
         }"
       />
 
-      <DeviceBrandListSelect
+      <DeviceBrandSelect
         v-bind="ctx.editAbleProps"
         :deviceType="model.deviceType"
         :value="model.deviceBrand"
@@ -62,7 +62,7 @@
         }"
       />
 
-      <DeviceModelListSelect
+      <DeviceModelSelect
         v-bind="ctx.editAbleProps"
         :deviceBrand="model.deviceBrand"
         :value="model.deviceModel"
@@ -74,9 +74,9 @@
         }"
       />
 
-      <HostListSelect
+      <CmdbHostSelect
         v-bind="ctx.editAbleProps"
-        :hostType="model.deviceModel"
+        :hostTypeDictValueCode="model.deviceModel"
         multiple
         v-model="model.hostId"
       />
@@ -86,10 +86,10 @@
 </template>
 
 <script>
-import DeviceBrandListSelect from './modules/DeviceBrandListSelect'
-import DeviceTypeListSelect from './modules/DeviceTypeListSelect'
-import DeviceModelListSelect from './modules/DeviceModelListSelect'
-import HostListSelect from './modules/HostListSelect'
+import DeviceBrandSelect from './modules/DeviceBrandSelect'
+import DeviceTypeSelect from './modules/DeviceTypeSelect'
+import DeviceModelSelect from './modules/DeviceModelSelect'
+import CmdbHostSelect from './modules/CmdbHostSelect'
 import AlarmRuleModel from '../AlarmRuleModel'
 import _ from 'lodash'
 
@@ -102,10 +102,10 @@ export default {
     }
   },
   components: {
-    DeviceBrandListSelect,
-    DeviceTypeListSelect,
-    DeviceModelListSelect,
-    HostListSelect
+    DeviceBrandSelect,
+    DeviceTypeSelect,
+    DeviceModelSelect,
+    CmdbHostSelect
   },
   props: {
     value: {

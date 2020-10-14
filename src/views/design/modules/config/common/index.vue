@@ -257,6 +257,18 @@
         </div>
         <!-- / y坐标位置 -->
 
+        <div class="comment-template__item">
+          <p class="comment-template__leading">层级:</p>
+          <div class="comment-template__inner">
+            <a-input
+              type="number"
+              v-model.number="config.commonConfig.zIndex"
+              min="0"
+              @change="change('position')" />
+          </div>
+        </div>
+        <!-- / zIndex -->
+
       </a-collapse-panel>
       <!-- E 位置 -->
 
@@ -381,7 +393,8 @@ export default {
               mouseType: 'mousemove',
               position: {
                 top: (this.config.commonConfig.top - positionPreConfig.top) * this.scale,
-                left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale
+                left: (this.config.commonConfig.left - positionPreConfig.left) * this.scale,
+                zIndex: this.config.commonConfig.zIndex
               },
               type: 'move'
             },

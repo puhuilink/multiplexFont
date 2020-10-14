@@ -1,83 +1,58 @@
 /**
- * 动态数据配置中间层
- * 用于字段映射与调整，解耦功能代码与业务代码
+ * 性能数据接口中间层
  */
 
-import _ from 'lodash'
+// import _ from 'lodash'
+import moment from 'moment'
+import { AdaptorConfig } from './AdaptorConfig'
+import { ViewDataService } from '@/api-hasura'
 
-export class AdaptorResourceConfig {
-  static fieldsMapping = new Map([
-    ['metric_value', 'valueNum'],
-    ['metric_value_str', 'valueStr'],
-    ['collect_time', 'time'],
-    ['host_id', 'hostId'],
-    ['endpoint_id', 'endpointId'],
-    ['metric_id', 'metricId'],
-    ['host_alias', 'hostAlias'],
-    ['endpoint_alias', 'endpointAlias'],
-    ['metric_alias', 'metricAlias'],
-    ['metric_tag', 'metricTag']
-  ])
-
+export class AdaptorResourceConfig extends AdaptorConfig {
   constructor ({
-    // hostIds = [],
-    // endpointModel = null,
-    // metricModels = [],
-    // modelHostId = null
-    // mock
-    hostType = '',
-    hostIds = [257882722304],
-    endpointModel = 1988235274,
-    metricModels = [1988235275],
-    modelHostId = 1988235264,
-    // enum: day / hour / minute
+    deviceType = 'Host',
+    deviceBrand = 'HostLinux',
+    deviceModel = 'HostAIXLinux',
+    hostId = [],
+    endpointModelId = 1149375446,
+    metricModelIds = [],
+    // 分组方式:  hour / minute / month
     isGroup = '',
-    // enum: total / max / average
-    calculateType = ''
+    ...props
   }) {
-    this.hostType = hostType
-    this.hostIds = hostIds
-    this.endpointModel = endpointModel
-    this.metricModels = metricModels
-    this.modelHostId = modelHostId
+    super(props)
+    this.deviceType = deviceType
+    this.deviceBrand = deviceBrand
+    this.deviceModel = deviceModel
+    this.hostId = hostId
+    this.endpointModelId = endpointModelId
+    this.metricModelIds = metricModelIds
     this.isGroup = isGroup
-    this.calculateType = calculateType
   }
 
-  static transfer (dataList = []) {
-    // console.log(dataList)
-    const { fieldsMapping } = AdaptorResourceConfig
-    const result = []
-    dataList.forEach(data => {
-      // pick keys
-      const expectedData = _.pick(data, [...fieldsMapping.keys()])
-      if (_.isEmpty(expectedData)) {
-        return
-      }
-
-      // transfer keys
-      const {
-        hostAlias = '', endpointAlias = '', metricAlias = '', metricTag = '',
-        valueNum = 0, valueStr = '',
-        time
-        // ...rest
-      } = _.mapKeys(expectedData, (value, key) => fieldsMapping.get(key))
-
-      // transfer values
-      result.push({
-        legend: hostAlias,
-        category: `${endpointAlias}-${metricAlias || metricTag}`,
-        value: valueStr || valueNum,
-        time
-        // ...rest
-      })
-    })
-    return result
+  fetch () {
+    return ViewDataService
+      .realData(this.getOption(), this.getTimeoutOption())
+      .then(({ data = [] }) => data)
+      .catch(() => [])
+      .then(this.transfer.bind(this))
   }
 
-  getOption () {
-    return {
-      ...this
-    }
+  transfer (dataList = []) {
+    return dataList
+      .map(({
+        collectTime = moment().format(),
+        endpointAlias = '',
+        metricValue = 0,
+        metricValueStr = '',
+        metricAlias = '',
+        hostAlias = '',
+        uint = ''
+      }) => ({
+        data: metricValueStr || metricValue,
+        time: this.formatTime(collectTime, this.isGroup),
+        legend: endpointAlias + metricAlias,
+        name: hostAlias,
+        unit: uint
+      }))
   }
 }

@@ -1,4 +1,4 @@
-import { alert } from '../config/client'
+import { imp } from '../config/client'
 import { BaseDao } from './BaseDao'
 import { readonly } from 'core-decorators'
 
@@ -7,7 +7,7 @@ class AlarmRuleDao extends BaseDao {
   static SCHEMA = 't_alarm_rule'
 
   @readonly
-  static PROVIDER = alert
+  static PROVIDER = imp
 
   @readonly
   static PRIMARY_KEY = 'id'
