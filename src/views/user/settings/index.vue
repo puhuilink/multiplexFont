@@ -1,6 +1,6 @@
 <template>
   <a-layout>
-    <a-layout-content style="setting_content">
+    <a-layout-content>
       <a-layout class="Setting__content-layout">
         <a-layout-sider width="200">
           <a-menu
