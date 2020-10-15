@@ -1,10 +1,10 @@
 /**
- * 文本专有属性配置
- * Author: dong xing
- * Date: 2020/3/12
- * Time: 17:39
- * Email: dong.xing@outlook.com
- */
+* 文本专有属性配置
+* Author: dong xing
+* Date: 2020/3/12
+* Time: 17:39
+* Email: dong.xing@outlook.com
+*/
 
 import _ from 'lodash'
 import { Title } from './index'

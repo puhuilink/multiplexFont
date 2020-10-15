@@ -1002,8 +1002,8 @@ class SeriesGauge {
     })
   }
   /**
-   * 获取仪表盘配置
-   */
+  * 获取仪表盘配置
+  */
   getOption () {
     return Object.assign({}, _.cloneDeep(this))
   }
