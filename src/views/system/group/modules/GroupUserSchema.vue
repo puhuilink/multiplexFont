@@ -29,13 +29,7 @@
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import { filterTransferOption } from '@/utils/util'
-
-const userList = gql`query {
-  data: t_user {
-    key: user_id
-    title: staff_name
-  }
-}`
+import { UserService } from '@/api-hasura'
 
 const groupUserList = gql`query groupList($groupId: String) {
   data: t_user_group(where: {group_id: {_eq: $groupId}}) {
@@ -76,8 +70,18 @@ export default {
      */
     async getAllUserList () {
       try {
-        const { data } = await apollo.clients.imp.query({ query: userList }).then(r => r.data)
-        this.userList = data
+        const { data: { userList } } = await UserService.find({
+          fields: [
+            'key: user_id',
+            'title: staff_name',
+            'flag'
+          ],
+          alias: 'userList'
+        })
+        this.userList = userList.map(el => ({
+          ...el,
+          disabled: el.flag !== 1
+        }))
       } catch (e) {
         this.userList = []
         throw e

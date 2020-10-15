@@ -1,0 +1,47 @@
+.renderer-enter-active,
+.renderer-leave-active {
+  transition: opacity 300ms ease-in-out;
+}
+.renderer-enter, 
+.renderer-leave-to {
+  opacity: 0;
+}
+
+.move {
+  transition: transform 1s;
+}
+
+.flip-item {
+  padding: 7px;
+  background-color: #fff;
+  z-index: 1;
+  transition: all 1s;
+}
+
+.flip-list-enter {
+  z-index: 2;
+}
+
+.flip-list-enter,
+.flip-list-leave-to {
+  opacity: 0;
+  transform: translateY(100%)
+}
+
+.flip-list-leave-active {
+  position: absolute;
+}
+
+.scale-item {
+  transition: all 1s;
+}
+
+.scale-enter,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.pause {
+  animation-play-state: paused !important;
+}

@@ -30,7 +30,7 @@
                       message: '用户名必填'
                     },
                     {
-                      pattern: /[a-zA-Z0-9]/,
+                      pattern: /^[\\Sa-zA-Z0-9]+$/,
                       message: '仅支持英文与数字'
                     },
                     {
@@ -87,7 +87,7 @@
                   rules: [
                     {
                       required: true,
-                      message: '名称必填'
+                      message: '岗位职责必填'
                     },
                     {
                       max: 64,
