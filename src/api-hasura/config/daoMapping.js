@@ -7,11 +7,12 @@ const VIC_MAIN_LIST = [
   { schema: 't_alarm', primaryKey: 'id' },
   { schema: 't_alarm_sub', primaryKey: 'id' },
   { schema: 't_alarm_sender', primaryKey: 'id' },
+  { schema: 't_cmdb_strategy', primaryKey: 'id' },
   // （旧）告警,
   { schema: 't_alert', primaryKey: 'id' },
   // 系统设置
   { schema: 't_audit', primaryKey: 'id' },
-  { schema: 't_authorize_object' },
+  { schema: 't_authorize_object', primaryKey: 'id' },
   { schema: 't_function', primaryKey: 'code' },
   { schema: 't_user_group', primaryKey: 'id' },
   // cmdb_instance

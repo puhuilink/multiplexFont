@@ -29,7 +29,8 @@
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
 import { modifyUserPermission, modifyGroupPermission } from '@/api/system'
-import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
+// import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
+import { AuthorizeObjectService } from '@/api-hasura'
 
 const formItemLayout = {
   labelCol: {
@@ -69,7 +70,6 @@ export default {
       this.userId = record.user_id
       this.record = { ...record }
       this.authView.record = { ...record }
-      console.log(record)
     },
     cancel () {
       this.visible = false
@@ -84,10 +84,10 @@ export default {
         const menu = this.$refs.menu.getCheckedMenu()
         const { authView: { viewIds }, record: { user_id, group_id } } = this
         if (user_id) {
-          await allocateUserViewAuth(user_id, viewIds)
+          await AuthorizeObjectService.allocateUserView(user_id, viewIds)
           await modifyUserPermission(user_id, menu)
         } else if (group_id) {
-          await allocateGroupViewAuth(group_id, viewIds)
+          await AuthorizeObjectService.allocateGroupView(group_id, viewIds)
           await modifyGroupPermission(group_id, menu)
         }
         this.visible = false

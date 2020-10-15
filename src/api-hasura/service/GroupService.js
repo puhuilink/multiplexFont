@@ -31,12 +31,9 @@ class GroupService extends BaseService {
   }
 
   static async add (group = {}) {
-    const { group_id: view_name } = group
     await mutate(
       // 新建工作组
-      GroupDao.add(group),
-      // 新建工作组视图桌面
-      ViewDesktopDao.addGroupDesktop({ view_name })
+      GroupDao.add(group)
     )
   }
 
@@ -47,7 +44,6 @@ class GroupService extends BaseService {
   }
 
   static async batchDelete (groupIdList = []) {
-    const desktopList = groupIdList.map(id => `${id}桌面`)
     await mutate(
       // 工作组删除
       GroupDao.batchDelete({ group_id: { _in: groupIdList } }),
@@ -56,7 +52,7 @@ class GroupService extends BaseService {
       // 工作组分配的权限解除关联
       AuthorizeObjectDao.batchDelete({ group_id: { _in: groupIdList } }),
       // 工作组的桌面删除
-      ViewDesktopDao.batchDelete({ view_name: { _in: groupIdList }, view_title: { _in: desktopList } })
+      ViewDesktopDao.batchDeleteGroupDesktop({ group_id: { _in: groupIdList } })
     )
   }
 

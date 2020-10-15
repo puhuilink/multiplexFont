@@ -95,14 +95,14 @@
 
     <a-form-item label="设备名称" v-bind="formItemLayout" required>
       <HostSelect
-        :multiple="!singleHost"
+        :multiple="!singleHost && resourceConfig.metricModelIds.length <= 1"
         class="fw"
         :hostTypeDictValueCode="resourceConfig.deviceModel"
         :value="resourceConfig.hostId"
         @input="hostId => {
           resourceConfig = {
             ...resourceConfig,
-            hostId
+            hostId: castArray(hostId)
           }
         }"
       />
@@ -126,13 +126,13 @@
     <a-form-item label="检查项" v-bind="formItemLayout" required >
       <MetricSelect
         schema="model"
-        :multiple="!singleMetric"
+        :multiple="!singleMetric && resourceConfig.hostId.length <= 1"
         :parentId="resourceConfig.endpointModelId"
         :value="resourceConfig.metricModelIds"
         @input="metricModelIds => {
           resourceConfig = {
             ...resourceConfig,
-            metricModelIds
+            metricModelIds: castArray(metricModelIds)
           }
         }"
       />
@@ -196,10 +196,9 @@ export default {
       type: Boolean,
       default: false
     },
-    // TODO: 多 metric 与多 host 增加了视图多绘制逻辑复杂度
     singleMetric: {
       type: Boolean,
-      default: true
+      default: false
     },
     toolTip: {
       type: Boolean,
@@ -251,6 +250,7 @@ export default {
     }
   },
   methods: {
+    castArray: _.castArray,
     async preview () {
       this.validate(async passValidate => {
         if (!passValidate) return
