@@ -110,7 +110,7 @@
         >
           <div class="ViewDisplay-bar" slot="tabBarExtraContent">
             <a-tooltip placement="top" :title="isAutoPlay ? '暂停' : '播放'">
-              <a-icon :type="isAutoPlay ? 'pause-circle' : 'play-circle'" @click="startAutoPlay" />
+              <a-icon :type="isAutoPlay ? 'pause-circle' : 'play-circle'" @click="toggleAutoPlay" />
             </a-tooltip>
             <a-tooltip placement="top" title="等宽">
               <a-icon type="column-width" :class="{ 'ViewDisplay-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
@@ -149,8 +149,7 @@
       <!-- E 视图页签 -->
 
       <!-- S 视图预览 -->
-      <ViewPreview
-        :showThumbnail="false"
+      <Preview
         :timeRange="timeRange"
         :visible.sync="isVisible"
         :viewList="filterViewList"
@@ -174,17 +173,17 @@
 
 <script>
 import AuthDesktop from './modules/AuthDesktop'
-import ViewPreview from './modules/Preview'
 import Renderer from '@/components/Renderer'
 import DesktopMixin from './DesktopMixin.vue'
 import PreviewMixin from './PreviewMixin'
+import Preview from '@/components/Preview'
 
 export default {
   name: 'ViewDisplay',
   mixins: [DesktopMixin, PreviewMixin],
   components: {
     AuthDesktop,
-    ViewPreview,
+    Preview,
     Renderer
   },
   data: () => ({

@@ -71,4 +71,19 @@ export default class View {
       widgets: widgets.map(widget => widget.getOption())
     }
   }
+
+  /**
+   * 获取视图配置副本
+   * @returns {{widgets: *[], config: Config}}
+   */
+  getEctypalOption () {
+    const { id, name, config, views, widgets } = this
+    return {
+      id: `${id}-ectypal`,
+      name,
+      config,
+      views,
+      widgets: widgets.map(widget => widget.getEctypalOption())
+    }
+  }
 }

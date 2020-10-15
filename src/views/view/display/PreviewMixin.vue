@@ -1,27 +1,19 @@
 <script>
-import _ from 'lodash'
 import defaultPreviewImg from '@/assets/images/view__preview_default.jpg'
 import { ViewDesignService } from '@/api-hasura'
+import PreviewMixin from '~~~/PreviewMixin'
 
 export default {
-  mixins: [],
+  mixins: [PreviewMixin],
   components: {},
   props: {},
   data: () => ({
     // 页签模式下当前正在预览的视图id
     activeKey: null,
-    // 当前正在预览的视图
-    view: null,
-    // 是否全屏展示
-    isFullScreen: false,
-    // 是否自动切换视图
-    isAutoPlay: false,
     // 是否正在加载视图配置
     isLoadingViewConfig: false,
     // 是否启用缩略图模式 | 页签模式
     isThumbnailMode: true,
-    // 页签模式下当前正在播放的视图下标
-    index: 0,
     // TODO: 视图数据要查询的时间范围
     timeRange: []
   }),
@@ -31,56 +23,10 @@ export default {
       return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
     }
   },
-  computed: {
-    // 预览页面缩放模式
-    scaleMode: {
-      get: function () {
-        return _.get(this.view, ['config', 'proprietaryConfig', 'scaleMode'], 'auto')
-      },
-      set: function (scaleMode) {
-        _.set(this.view, ['config', 'proprietaryConfig', 'scaleMode'], scaleMode)
-      }
-    }
-  },
+  computed: {},
   methods: {
     dateChange () {},
     dateSet () {},
-    /**
-     * 设置缩放模式
-     * @param scaleMode
-     */
-    setScaleMode (scaleMode) {
-      this.scaleMode = scaleMode
-      this.$refs.renderer.setScaleMode()
-    },
-    /**
-     * 开启轮训
-     */
-    startAutoPlay () {
-      this.isAutoPlay = !this.isAutoPlay
-      clearInterval(this.timer)
-      // 开启定时器。每分钟切换视图
-      if (this.isAutoPlay) {
-        this.timer = setInterval(() => {
-          // 运行时
-          if (this.isAutoPlay) {
-            this.index += 1
-            this.getViewByIndex()
-          }
-        }, 1000 * 6)
-      }
-    },
-    /**
-     * 切换全屏
-     */
-    toggleFullscreen () {
-      this.isFullScreen = !this.isFullScreen
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen()
-      } else if (document.exitFullscreen) {
-        document.exitFullscreen()
-      }
-    },
     /**
      * 切换查看模式
      * 缩略图 | 页签
@@ -126,9 +72,6 @@ export default {
       const view = this.filterViewList[this.index]
       this.tabsChange(view.view_id)
     }
-  },
-  beforeDestroy () {
-    clearInterval(this.timer)
   }
 }
 </script>

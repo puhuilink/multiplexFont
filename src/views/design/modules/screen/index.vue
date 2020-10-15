@@ -109,7 +109,7 @@
       <!-- E 比例条 -->
     </div>
 
-    <ViewPreview :visible.sync="visible" isDesignMode />
+    <Preview :visible.sync="visible" isDesignMode />
   </a-spin>
 </template>
 
@@ -137,7 +137,7 @@ import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import { updateViewDesign } from '@/api/controller/View'
-import ViewPreview from '@/views/view/display/modules/Preview'
+import Preview from '@/components/Preview'
 import { ViewDesignService } from '@/api-hasura'
 
 export default {
@@ -145,7 +145,7 @@ export default {
   components: {
     Wrapper,
     Widget,
-    ViewPreview
+    Preview
   },
   mixins: [AdjustMixins],
   // 选择器调整事件流
