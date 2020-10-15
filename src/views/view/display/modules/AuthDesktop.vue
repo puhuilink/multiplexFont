@@ -21,7 +21,6 @@
           :render="item => item.title"
           showSearch
           :targetKeys="_targetKeys"
-          @search="handleSearch"
           @change="handleChange"
         />
       </a-tab-pane>

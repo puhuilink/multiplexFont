@@ -10,7 +10,7 @@ import _ from 'lodash'
 
 NProgress.configure({ showSpinner: false })
 
-const allowRouteNameList = ['login', 'Design']
+const allowRouteNameList = ['login', 'Design', 'Preview']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()

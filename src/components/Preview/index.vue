@@ -11,7 +11,7 @@
     <div class="Preview" v-if="visible">
 
       <p class="Preview__title">
-        <a-icon type="left" />
+        <!-- <a-icon type="left" /> -->
         {{ title }}
       </p>
 
@@ -28,15 +28,15 @@
       <div class="Preview__control">
 
         <template v-if="!isDesignMode">
-          <a-tooltip placement="top" title="上一个">
+          <a-tooltip placement="top" title="上一个" v-show="viewList && viewList.length">
             <a-icon type="left" @click="preView" />
           </a-tooltip>
 
-          <a-tooltip placement="top" :title="isAutoPlay ? '暂停' : '播放'">
+          <a-tooltip placement="top" :title="isAutoPlay ? '暂停' : '播放'" v-show="viewList && viewList.length">
             <a-icon :type="isAutoPlay ? 'pause-circle' : 'play-circle'" @click="toggleAutoPlay" />
           </a-tooltip>
 
-          <a-tooltip placement="top" title="下一个">
+          <a-tooltip placement="top" title="下一个" v-show="viewList && viewList.length">
             <a-icon type="right" @click="nextView" />
           </a-tooltip>
         </template>
@@ -65,17 +65,17 @@
           <a-icon type="border-outer" :class="{ 'Preview__control--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
         </a-tooltip>
 
-        <a-tooltip placement="top" :title="isFullscreen ? '退出全屏' : '全屏'">
-          <a-icon :type="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />
+        <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
+          <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />
         </a-tooltip>
 
         <a-tooltip placement="top" title="生成并上传缩略图" v-if="isDesignMode">
-          <a-spin spinning v-show="isThumbnailUploadLoading" />
-          <a-icon v-show="!isThumbnailUploadLoading" type="camera" @click="makeThumbnail" />
+          <a-spin spinning v-if="isThumbnailUploadLoading" />
+          <a-icon v-else type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
-        <a-tooltip placement="top" title="关闭">
-          <a-icon type="close-circle" @click="close" />
+        <a-tooltip placement="top" title="关闭" v-if="!disableClose">
+          <a-icon type="close-circle" @click="$emit('update:visible', false)" />
         </a-tooltip>
 
       </div>
@@ -101,6 +101,15 @@ export default {
     Renderer
   },
   props: {
+    // 打开时自动全屏
+    autoFullScreen: {
+      type: Boolean,
+      default: false
+    },
+    disableClose: {
+      type: Boolean,
+      default: false
+    },
     visible: {
       type: Boolean,
       default: false
@@ -133,33 +142,35 @@ export default {
     title () {
       if (this.isDesignMode) {
         return _.get(this.$route.query, 'title')
-      } else {
-        return _.get(this, ['view', 'view_title'], this.viewList[this.index].view_title)
       }
+
+      if (_.isEmpty(this.viewList)) {
+        return _.get(this, ['currentView', 'view_title'])
+      }
+
+      return _.get(this, ['view', 'view_title'], this.viewList[this.index].view_title)
     }
   },
   watch: {
-    visible (v) {
-      if (v) {
-        this.view = null
-        if (this.isDesignMode) {
-          this.getViewConfigFromStore()
-        } else {
-          const idList = this.viewList.map(view => view.view_id)
-          this.index = idList.indexOf(this.currentView.view_id)
-          this.getViewConfigFromApi(this.currentView.view_id)
-        }
-      } else {
-        clearInterval(this.timer)
-      }
+    visible (visible) {
+      visible ? this.show() : this.close()
     }
   },
   methods: {
-    /**
-     * 关闭弹框
-     */
+    show () {
+      this.autoFullScreen && !this.isFullScreen && this.toggleFullscreen()
+      this.view = null
+      if (this.isDesignMode) {
+        this.getViewConfigFromStore()
+      } else {
+        const idList = this.viewList.map(view => view.view_id)
+        this.index = idList.indexOf(this.currentView.view_id)
+        this.getViewConfigFromApi(this.currentView.view_id)
+      }
+    },
     close () {
-      this.$emit('update:visible', false)
+      this.autoFullScreen && this.isFullScreen && this.toggleFullscreen()
+      clearInterval(this.timer)
     },
     /**
      * 获取视图配置

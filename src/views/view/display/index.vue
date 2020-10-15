@@ -150,6 +150,7 @@
 
       <!-- S 视图预览 -->
       <Preview
+        :autoFullScreen="isThumbnailMode"
         :timeRange="timeRange"
         :visible.sync="isVisible"
         :viewList="filterViewList"

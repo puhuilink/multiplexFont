@@ -97,18 +97,6 @@ export function downloadExcel (fileName, content) {
 }
 
 /**
- * 生成number格式的uuid，主要用于数据表新增项的id
- * @param {*} length
- */
-export function numbericUuid (length) {
-  return new Date().valueOf() * 1000 + parseInt(Math.random() * 1000)
-}
-
-export function varcharUuid (length) {
-  return `${numbericUuid()}`
-}
-
-/**
  * 由原始权限列表，构建菜单级别权限树
  */
 export function getMenuTree (tree, list) {
@@ -256,4 +244,13 @@ export const findClosestNumInArr = (arr = [], targetNum, offset = 0) => {
     Math.min(...availableList)
   )
   return availableList[index]
+}
+
+export function toggleFullscreen () {
+  // TODO: 浏览器兼容性
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen()
+  }
 }

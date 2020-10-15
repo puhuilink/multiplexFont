@@ -1,5 +1,8 @@
 <script>
 import _ from 'lodash'
+import { fromEvent } from 'rxjs'
+import { takeWhile } from 'rxjs/operators'
+import { toggleFullscreen } from '@/utils/util'
 
 export default {
   mixins: [],
@@ -8,8 +11,8 @@ export default {
   data: () => ({
     // 是否自动切换视图
     isAutoPlay: false,
-    // 是否全屏展示
     isFullScreen: false,
+    isSubscribed: true,
     // 当前正在播放的视图下标
     index: 0,
     // 当前正在预览的视图
@@ -40,11 +43,7 @@ export default {
      */
     toggleFullscreen () {
       this.isFullScreen = !this.isFullScreen
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen()
-      } else if (document.exitFullscreen) {
-        document.exitFullscreen()
-      }
+      toggleFullscreen()
     },
     /**
      * 切换自动播放
@@ -64,7 +63,18 @@ export default {
       }
     }
   },
+  mounted () {
+    this.isFullScreen = !!document.fullscreenElement
+    fromEvent(document, 'fullscreenchange')
+      .pipe(
+        takeWhile(() => this.isSubscribed)
+      )
+      .subscribe(event => {
+        this.isFullScreen = !!document.fullscreenElement
+      })
+  },
   beforeDestroy () {
+    this.isSubscribed = false
     clearInterval(this.timer)
   }
 }

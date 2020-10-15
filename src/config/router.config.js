@@ -393,6 +393,16 @@ export const constantRouterMap = [
     props: route => route.query
   },
 
+  // 视图直接访问(大屏)
+  {
+    path: '/preview',
+    name: 'Preview',
+    hidden: true,
+    component: () => import('@/views/preview/index'),
+    meta: { title: '大屏' },
+    props: route => route.query
+  },
+
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
