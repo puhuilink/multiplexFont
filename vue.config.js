@@ -25,25 +25,26 @@ const {
   VUE_APP_HASURA_IMP_URI,
   VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
-  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
+  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
+  VUE_APP_ENABLED_CDN
 } = process.env
 
 const isProd = NODE_ENV === 'production'
 
 const assetsCDN = {
-  externals: {
+  externals: VUE_APP_ENABLED_CDN ? {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
     axios: 'axios'
-  },
+  } : {},
   css: [],
-  js: [
+  js: VUE_APP_ENABLED_CDN ? [
     '//unpkg.com/vue@2.6.10/dist/vue.min.js',
     '//unpkg.com/vue-router@3.1.3/dist/vue-router.min.js',
     '//unpkg.com/vuex@3.1.1/dist/vuex.min.js',
     '//unpkg.com/axios@0.19.0/dist/axios.min.js'
-  ]
+  ] : []
 }
 
 // vue.config.js
