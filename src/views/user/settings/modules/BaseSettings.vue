@@ -1,15 +1,9 @@
 <template>
   <a-spin :spinning="loading">
-    <a-form
-      :form="form"
-      layout="vertical">
+    <a-form :form="form" layout="vertical">
       <a-row>
-        <a-col
-          :md="12"
-          :span="24">
-          <a-form-item
-            label="姓名"
-          >
+        <a-col :md="12" :span="24">
+          <a-form-item label="姓名">
             <a-input
               v-decorator="[
                 'staff_name',
@@ -36,12 +30,8 @@
       </a-row>
 
       <a-row>
-        <a-col
-          :md="12"
-          :span="24">
-          <a-form-item
-            label="岗位职责"
-          >
+        <a-col :md="12" :span="24">
+          <a-form-item label="岗位职责">
             <a-input
               v-decorator="[
                 'job_title',
@@ -64,12 +54,8 @@
       </a-row>
 
       <a-row>
-        <a-col
-          :md="12"
-          :span="24">
-          <a-form-item
-            label="备注"
-          >
+        <a-col :md="12" :span="24">
+          <a-form-item label="备注">
             <a-textarea
               rows="4"
               v-decorator="[
@@ -86,11 +72,11 @@
               ]"
             />
           </a-form-item>
+
           <a-form-item>
-            <a-button
-              htmlType="submit"
-              type="primary"
-              @click="editCurrentUser">更新基本信息</a-button>
+            <a-button htmlType="submit" type="primary" @click="editCurrentUser">
+              更新基本信息
+            </a-button>
           </a-form-item>
         </a-col>
       </a-row>
@@ -109,7 +95,6 @@ export default {
   data () {
     return {
       form: this.$form.createForm(this),
-      userFormDate: [],
       loading: false
     }
   },
@@ -129,17 +114,16 @@ export default {
           ...generateQuery({ user_id: this.userId })
         },
         fields: Object.keys(this.form.getFieldsValue()),
-        alias: 'data'
+        alias: 'userList'
       })
         .then((r) => {
-          const [data] = r.data.data
-          this.userFormDate = data
+          const [userInfo] = r.data.userList
           const keys = Object.keys(this.form.getFieldsValue())
-          this.form.setFieldsValue(pick(this.userFormDate, keys))
+          this.form.setFieldsValue(pick(userInfo, keys))
         })
         .catch((e) => {
-          this.$message.error('获取数据失败')
-          this.$message.error('失败信息为：' + e)
+          this.$message.error('获取数据失败,失败信息为：' + e)
+          throw e
         })
         .finally(() => {
           this.loading = false
@@ -159,8 +143,8 @@ export default {
             this.SET_NAME({ name: values.staff_name })
           })
           .catch((e) => {
-            this.$message.error('修改失败')
-            this.$message.error('失败信息为：' + e)
+            this.$message.error('修改失败,失败信息为' + e)
+            throw e
           })
           .finally(() => {
             this.loading = false
