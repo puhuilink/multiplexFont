@@ -1,32 +1,28 @@
 <template>
-  <a-list
-    itemLayout="horizontal"
-    :dataSource="data"
-  >
-    <a-list-item
-      slot="renderItem"
-      slot-scope="item, index"
-      :key="index"
-    >
-      <a-list-item-meta>
-        <h3 slot="title">{{ item.title }}</h3>
-        <span slot="description">
-          <span>{{ item.description }}</span>
-          <span v-show="item.value"> : </span>
-          <span>{{ item.value }}</span>
-        </span>
-      </a-list-item-meta>
+  <a-list itemLayout="horizontal" :dataSource="currentUserData">
+    <template #renderItem="item, index">
+      <a-list-item :key="index">
+        <a-list-item-meta>
+          <template #title>
+            <h3>{{ item.title }}</h3>
+          </template>
 
-      <template v-show="item.actions">
-        <a-button
-          type="link"
-          slot="actions"
-          @click="item.actions.callback"
-        >
-          {{ item.actions.title }}
-        </a-button>
-      </template>
-    </a-list-item>
+          <template #description>
+            <span>
+              <span>{{ item.description }}</span>
+              <span v-show="item.value"> : </span>
+              <span>{{ item.value }}</span>
+            </span>
+          </template>
+        </a-list-item-meta>
+
+        <template #actions v-show="item.actions">
+          <a-button type="link" @click="item.actions.callback">
+            {{ item.actions.title }}
+          </a-button>
+        </template>
+      </a-list-item>
+    </template>
   </a-list>
 </template>
 
@@ -38,8 +34,9 @@ export default {
   name: 'SecuritySettings',
   data () {
     return {
-      data: [
-        { title: '账户密码',
+      currentUserData: [
+        {
+          title: '账户密码',
           description: '',
           value: '',
           actions: {
@@ -47,7 +44,8 @@ export default {
             callback: () => { this.$router.push('/pwd-change') }
           }
         },
-        { title: '移动电话',
+        {
+          title: '移动电话',
           description: '已绑定移动电话',
           value: '',
           actions: {
@@ -55,7 +53,8 @@ export default {
             callback: () => { this.$message.info('功能正在开发中请等待') }
           }
         },
-        { title: '备用邮箱',
+        {
+          title: '备用邮箱',
           description: '已绑定邮箱',
           value: '',
           actions: {
@@ -80,14 +79,16 @@ export default {
           ...generateQuery({ user_id: this.userId })
         },
         fields: ['mobile_phone', 'email'],
-        alias: 'data'
+        alias: 'userList'
       }).then((r) => {
-        const [data] = r.data.data
-        this.data[1].value = data.mobile_phone
-        this.data[2].value = data.email
-      }).catch((error) => {
-        this.$message.error('获取数据失败')
-        this.$message.error('失败信息为：' + error)
+        const [userInfo] = r.data.userList
+        this.currentUserData[1].value = userInfo.mobile_phone
+        this.currentUserData[2].value = userInfo.email
+      }).catch((e) => {
+        this.currentUserData[1].value = ''
+        this.currentUserData[2].value = ''
+        this.$message.error('获取数据失败,失败信息为：' + e)
+        throw e
       })
     }
   },
