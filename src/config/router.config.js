@@ -349,23 +349,7 @@ export const asyncRouterMap = [
             path: '/settings',
             name: 'settings',
             component: () => import('@/views/user/settings/index'),
-            meta: { title: '个人设置', hideHeader: true },
-            redirect: '/settings/base',
-            hideChildrenInMenu: true,
-            children: [
-              {
-                path: '/settings/base',
-                name: 'BaseSettings',
-                component: () => import('@/views/user/settings/modules/BaseSettings'),
-                meta: { title: '基本设置', hidden: true }
-              },
-              {
-                path: '/settings/security',
-                name: 'SecuritySettings',
-                component: () => import('@/views/user/settings/modules/SecuritySettings'),
-                meta: { title: '安全设置', hidden: true, keepAlive: true }
-              }
-            ]
+            meta: { title: '个人设置', hideHeader: true }
           }
         ]
       }
