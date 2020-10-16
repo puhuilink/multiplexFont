@@ -19,30 +19,43 @@ function addStyleResource (rule) {
 }
 
 const {
-  NODE_ENV,
+  // NODE_ENV,
   VUE_APP_API_BASE_URL,
   VUE_APP_API_ORIGINAL_URL,
   VUE_APP_HASURA_IMP_URI,
   VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
-  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL
+  VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
+  VUE_APP_ENABLED_CDN
 } = process.env
 
-const isProd = NODE_ENV === 'production'
+// const isProd = NODE_ENV === 'production'
+const useCDN = VUE_APP_ENABLED_CDN === 'true'
 
 const assetsCDN = {
-  externals: {
+  externals: useCDN ? {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
     axios: 'axios'
-  },
+  } : {},
   css: [],
-  js: [
+  prefetch: useCDN ? [
+    '//unpkg.com',
+    '//cdnjs.cloudflare.com'
+  ] : [],
+  js: useCDN ? [
     '//unpkg.com/vue@2.6.10/dist/vue.min.js',
     '//unpkg.com/vue-router@3.1.3/dist/vue-router.min.js',
     '//unpkg.com/vuex@3.1.1/dist/vuex.min.js',
-    '//unpkg.com/axios@0.19.0/dist/axios.min.js'
+    '//unpkg.com/axios@0.19.0/dist/axios.min.js',
+    '//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js',
+    '//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-json.js'
+  ] : [
+    // ace 无 npm 版本
+    '/libs/ace/1.4.1/worker-json.js',
+    '/libs/ace/1.4.1/ace.js',
+    '/libs/ace/1.4.1/mode-json.js'
   ]
 }
 
@@ -57,7 +70,7 @@ const vueConfig = {
     ],
     externals: {
       ace: 'ace',
-      ...isProd ? assetsCDN.externals : {}
+      ...assetsCDN
     }
   },
 
@@ -100,18 +113,17 @@ const vueConfig = {
       .tap(options => Object.assign(options, { limit: 20480 }))
       .end()
 
-    if (isProd) {
-      // 在 html 中打上版本号
-      config.plugin('html').tap(args => {
-        args[0].cdn = assetsCDN
-        args[0].version = {
-          commit: childProcess.execSync('git rev-parse HEAD', { encoding: 'utf8' }),
-          date: new Date(childProcess.execSync(`git show -s --format=%cd`, { encoding: 'utf8' })),
-          branch: childProcess.execSync('git symbolic-ref --short HEAD', { encoding: 'utf8' })
-        }
-        return args
-      })
-    }
+    config.plugin('html').tap(args => {
+      // CDN 配置
+      args[0].cdn = assetsCDN
+      // Git 版本信息
+      args[0].version = {
+        commit: childProcess.execSync('git rev-parse HEAD', { encoding: 'utf8' }),
+        date: new Date(childProcess.execSync(`git show -s --format=%cd`, { encoding: 'utf8' })),
+        branch: childProcess.execSync('git symbolic-ref --short HEAD', { encoding: 'utf8' })
+      }
+      return args
+    })
 
     config.plugin('lodashReplace').use(new LodashModuleReplacementPlugin({
       shorthands: true,

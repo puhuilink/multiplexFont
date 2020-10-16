@@ -15,8 +15,8 @@ export default class Insert extends Hasura {
    * @param  {Object} args 的内容
    * @return {HasuraORM} this
    */
-  insert (args) {
-    if (!args.on_conflict || !args.objects) {
+  insert (args, batch = false) {
+    if (!args.on_conflict || !args.objects || batch) {
       this._batch = true
     }
     this._object += stringify(
@@ -45,7 +45,8 @@ export default class Insert extends Hasura {
     if (this._batch) {
       schemaArgs = args[0] === '[' ? '(objects:' + args + ')' : '(objects:[' + args + '])'
     }
-    return ` ${this._schema} ${schemaArgs} {  ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
+    // return ` ${this._schema} ${schemaArgs} {  ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
+    return ` ${this._schema} ${schemaArgs} { affected_rows }`
   }
 
   /**

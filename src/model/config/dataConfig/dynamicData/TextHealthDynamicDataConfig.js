@@ -31,14 +31,14 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getAlarmOption () {
-    const [alarm = {}] = await this.alarmConfig.fetch()
-    const {
+    const alarmList = await this.alarmConfig.fetch()
+    const totalList = alarmList.map(({
       level1 = 0,
       level2 = 0,
       level3 = 0,
       level4 = 0,
       level5 = 0
-    } = alarm
-    this.text = level1 + level2 + level3 + level4 + level5
+    }) => level1 + level2 + level3 + level4 + level5)
+    this.text = _.sum(totalList)
   }
 }

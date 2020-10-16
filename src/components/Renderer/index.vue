@@ -131,7 +131,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .renderer {
   width: 100%;
   height: 100%;
@@ -140,6 +140,10 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+  }
+
+  /deep/ canvas {
+    cursor: default;
   }
 }
 </style>

@@ -80,11 +80,11 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
       series: [
         {
           name: '严重告警',
-          data: dataList.map(({ level5 }) => level5)
+          data: dataList.map(({ level1 }) => level1)
         },
         {
           name: '重大告警',
-          data: dataList.map(({ level4 }) => level4)
+          data: dataList.map(({ level2 }) => level2)
         },
         {
           name: '次要告警',
@@ -92,11 +92,11 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         },
         {
           name: '一般告警',
-          data: dataList.map(({ level2 }) => level2)
+          data: dataList.map(({ level4 }) => level4)
         },
         {
           name: '最新通知',
-          data: dataList.map(({ level1 }) => level1)
+          data: dataList.map(({ level5 }) => level5)
         }
       ]
 

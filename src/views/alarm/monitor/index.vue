@@ -5,6 +5,7 @@
       <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
     </a-tabs>
 
+    <!-- / FIXME: resizeableTitle props -->
     <CTable
       :customRow="customRow"
       :columns="visibleColumns"
@@ -218,7 +219,7 @@ export default {
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 200,
+          width: 150,
           sorter: true,
           show: true
         },
@@ -299,6 +300,9 @@ export default {
     }
   },
   computed: {
+    scrollY () {
+      return 'max(calc(100vh - 370px), 100px)'
+    },
     visibleColumns () {
       const { columnAlign: align, columns } = this
       return columns
