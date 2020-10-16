@@ -31,4 +31,16 @@ export default class Widget {
       config: config.getOption()
     }
   }
+
+  /**
+   * 获取部件配置副本
+   * @returns {*}
+   */
+  getEctypalOption () {
+    const { widgetId, config } = this
+    return {
+      widgetId: `${widgetId}-ectypal`,
+      config: config.getOption()
+    }
+  }
 }
