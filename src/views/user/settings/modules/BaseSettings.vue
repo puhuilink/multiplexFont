@@ -89,9 +89,11 @@ import { UserService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import { pick } from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
+import { List } from '@/components/Mixins'
 
 export default {
   name: 'BaseSettings',
+  mixins: [List],
   data () {
     return {
       form: this.$form.createForm(this),
@@ -122,7 +124,7 @@ export default {
           this.form.setFieldsValue(pick(userInfo, keys))
         })
         .catch((e) => {
-          this.$message.error('获取数据失败,失败信息为：' + e)
+          this.$notifyError(e)
           throw e
         })
         .finally(() => {
@@ -139,11 +141,11 @@ export default {
         this.loading = true
         UserService.update(values, { user_id: this.userId })
           .then((msg) => {
-            this.$message.success('修改成功')
+            this.$notifyEditSuccess()
             this.SET_NAME({ name: values.staff_name })
           })
           .catch((e) => {
-            this.$message.error('修改失败,失败信息为' + e)
+            this.$notifyError(e)
             throw e
           })
           .finally(() => {

@@ -1,37 +1,41 @@
 <template>
-  <a-list itemLayout="horizontal" :dataSource="currentUserData">
-    <template #renderItem="item, index">
-      <a-list-item :key="index">
-        <a-list-item-meta>
-          <template #title>
-            <h3>{{ item.title }}</h3>
-          </template>
+  <a-spin :spinning="loading">
+    <a-list itemLayout="horizontal" :dataSource="currentUserData">
+      <template #renderItem="item, index">
+        <a-list-item :key="index">
+          <a-list-item-meta>
+            <template #title>
+              <h3>{{ item.title }}</h3>
+            </template>
 
-          <template #description>
-            <span>
-              <span>{{ item.description }}</span>
-              <span v-show="item.value"> : </span>
-              <span>{{ item.value }}</span>
-            </span>
-          </template>
-        </a-list-item-meta>
+            <template #description>
+              <span>
+                <span>{{ item.description }}</span>
+                <span v-show="item.value"> : </span>
+                <span>{{ item.value }}</span>
+              </span>
+            </template>
+          </a-list-item-meta>
 
-        <template #actions v-show="item.actions">
-          <a-button type="link" @click="item.actions.callback">
-            {{ item.actions.title }}
-          </a-button>
-        </template>
-      </a-list-item>
-    </template>
-  </a-list>
+          <template #actions>
+            <a-button type="link" @click="item.actions.callback">
+              {{ item.actions.title }}
+            </a-button>
+          </template>
+        </a-list-item>
+      </template>
+    </a-list>
+  </a-spin>
 </template>
 
 <script>
 import { UserService } from '@/api-hasura'
 import { generateQuery } from '@/utils/graphql'
 import { mapGetters } from 'vuex'
+import { List } from '@/components/Mixins'
 export default {
   name: 'SecuritySettings',
+  mixins: [List],
   data () {
     return {
       currentUserData: [
@@ -41,7 +45,7 @@ export default {
           value: '',
           actions: {
             title: '修改',
-            callback: () => { this.$router.push('/pwd-change') }
+            callback: () => { this.$router.push({ name: 'PwdChange' }) }
           }
         },
         {
@@ -50,7 +54,7 @@ export default {
           value: '',
           actions: {
             title: '修改',
-            callback: () => { this.$message.info('功能正在开发中请等待') }
+            callback: () => { this.$message.info('功能正在开发中请等待...') }
           }
         },
         {
@@ -59,10 +63,11 @@ export default {
           value: '',
           actions: {
             title: '修改',
-            callback: () => { this.$message.info('功能正在开发中请等待') }
+            callback: () => { this.$message.info('功能正在开发中请等待...') }
           }
         }
-      ]
+      ],
+      loading: false
     }
   },
   computed: {
@@ -74,6 +79,7 @@ export default {
      * @event
      */
     getCurrentUser () {
+      this.loading = true
       return UserService.find({
         where: {
           ...generateQuery({ user_id: this.userId })
@@ -87,8 +93,10 @@ export default {
       }).catch((e) => {
         this.currentUserData[1].value = ''
         this.currentUserData[2].value = ''
-        this.$message.error('获取数据失败,失败信息为：' + e)
+        this.$notifyError(e)
         throw e
+      }).finally(() => {
+        this.loading = false
       })
     }
   },

@@ -5,7 +5,7 @@
         <a-layout-sider width="200">
           <a-menu
             mode="inline"
-            :default-selected-keys="selectedKeys"
+            :default-selected-keys="$route.path.includes('base')?['base']:['security']"
             class="Setting__menu"
           >
             <a-menu-item key="base">
@@ -26,32 +26,13 @@
   </a-layout>
 </template>
 
-<script>
-export default {
-  name: 'Settings',
-  data () {
-    return {
-      selectedKeys: []
-    }
-  },
-  // 根据地址指向当前菜单
-  created () {
-    if (this.$route.path.includes('base')) {
-      this.selectedKeys = ['base']
-    } else {
-      this.selectedKeys = ['security']
-    }
-  }
-}
-</script>
-
 <style lang="less">
 .Setting {
   padding: 24px 0;
   background: #fff;
-  height: 85vh;
+  height: 80vh;
   &__menu {
-    height: 100vh;
+    height: 80vh;
   }
   &__content{
     padding: 0 24px;
