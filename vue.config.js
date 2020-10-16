@@ -53,8 +53,8 @@ const assetsCDN = {
     '//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-json.js'
   ] : [
     // ace 无 npm 版本
-    '/libs/ace/1.4.1/worker-json.js',
     '/libs/ace/1.4.1/ace.js',
+    '/libs/ace/1.4.1/worker-json.js',
     '/libs/ace/1.4.1/mode-json.js'
   ]
 }
