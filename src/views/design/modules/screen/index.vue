@@ -109,12 +109,13 @@
       <!-- E 比例条 -->
     </div>
 
-    <Preview :visible.sync="visible" isDesignMode />
+    <Preview autoFullScreen :visible.sync="visible" isDesignMode />
   </a-spin>
 </template>
 
 <script>
 import {
+
   fromEvent, merge, Subject, zip
 } from 'rxjs'
 import {
