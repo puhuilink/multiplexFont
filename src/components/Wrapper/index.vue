@@ -29,12 +29,19 @@
         <a-dropdown :trigger="['contextmenu']">
           <div :style="{ height: '100%' }"></div>
           <a-menu slot="overlay" class="wrapper__menu">
-            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
-            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
-            <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary': '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
-            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
+            <a-menu-item key="copyWidget" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
+            <a-menu-item key="copyConfig" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
+            <a-sub-menu key="syncConfig" :disabled="!isAllowAsync">
+              <span slot="title" :class="[isAllowAsync ? 'wrapper__menu--primary': '']"><a-icon type="sync" />同步配置</span>
+              <a-menu-item key="all" @click="syncConfig(['commonConfig', 'proprietaryConfig', 'dataConfig'])">全部配置</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">公共属性</a-menu-item>
+              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">专有属性</a-menu-item>
+              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据配置</a-menu-item>
+            </a-sub-menu>
+            <a-menu-item key="deleteWidget" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+            <a-menu-item key="close"><a-icon type="close" />取消</a-menu-item>
           </a-menu>
         </a-dropdown>
       </div>
@@ -103,6 +110,9 @@ export default {
     ...mapMutations('screen', {
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE
     }),
+    test ({ key, domEvent }) {
+      console.log(key, domEvent)
+    },
     initEvent () {
       this.adjust$ = new Subject()
       this.adjust$
@@ -535,22 +545,27 @@ export default {
     },
     /**
        * 粘贴配置
+       * @param {Array} configTypes 要合并的配置名
        */
-    syncConfig () {
+    syncConfig (configTypes) {
       const activeWidget = _.cloneDeep(this.activeWidget)
       const { render, config: { commonConfig: { width, height, top, left } } } = this.activeWidget
-      // 保留当前部件基础配置不变
+
+      // 不合并尺寸位置信息
       Object.assign(this.config.commonConfig, {
         width,
         height,
         top,
         left
       })
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
-      })
+
+      // 按需合并配置
+      Object.assign(activeWidget.config, _.pick(this.config, configTypes))
+
+      // 提交与刷新
+      this.activateWidget({ widget: activeWidget })
       this.$nextTick(() => {
-        render.setConfig(this.config)
+        render.setConfig(activeWidget.config)
       })
     },
     /**
