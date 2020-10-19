@@ -39,7 +39,7 @@
                   rules: [
                     {
                       required: true,
-                      message: '名称必填'
+                      message: '岗位职责必填'
                     },
                     {
                       max: 64,
