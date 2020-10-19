@@ -28,6 +28,7 @@ const user = {
     },
     SET_NAME: (state, { name }) => {
       state.name = name
+      state.info.staffName = name
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar

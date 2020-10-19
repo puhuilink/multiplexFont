@@ -344,6 +344,12 @@ export const asyncRouterMap = [
             name: 'PwdChange',
             component: () => import('@/views/user/PwdChange'),
             meta: { title: '重置密码' }
+          },
+          {
+            path: '/settings',
+            name: 'settings',
+            component: () => import('@/views/user/settings/index'),
+            meta: { title: '个人设置', hideHeader: true }
           }
         ]
       }
