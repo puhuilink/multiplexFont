@@ -26,7 +26,7 @@
         tabPosition="top"
         :style="{ height: '100%'}"
       >
-        <a-tab-pane tab="公共属性" key="1">
+        <a-tab-pane tab="样式" key="1">
 
           <a-collapse defaultActiveKey="1" :bordered="false">
 
@@ -38,7 +38,7 @@
 
         </a-tab-pane>
 
-        <a-tab-pane tab="专有属性" key="2">
+        <a-tab-pane tab="属性" key="2">
 
           <div class="topology-config__template">
 

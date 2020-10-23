@@ -8,7 +8,7 @@
 <template>
   <div class="common-template">
 
-    <a-collapse defaultActiveKey="1" :bordered="false">
+    <a-collapse v-model="activeKey" :bordered="false">
 
       <!-- S 背景颜色 -->
       <a-collapse-panel header="背景" key="1">
@@ -300,6 +300,7 @@ export default {
     }
   },
   data: () => ({
+    activeKey: ['1', '4', '5', '6'],
     singleColor: 'rgba(255, 255, 255, 1)',
     linearColor: {
       start: 'rgba(255, 255, 255, 1)',

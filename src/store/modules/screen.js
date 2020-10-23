@@ -87,8 +87,8 @@ export default {
       // const index = state.view.widgets.findIndex(widget => widget.widgetId !== payload.widgetId)
       // state.view.widgets.splice(index, 1)
       state.view.widgets = state.view.widgets.filter(widget => widget.widgetId !== payload.widgetId)
-      // 置空激活部件
-      state.activeWidget = null
+      // 重置激活部件
+      state.activeWidget = state.view
       // 隐藏选择器
       anime.set(document.getElementById('wrapper'), {
         display: 'none'

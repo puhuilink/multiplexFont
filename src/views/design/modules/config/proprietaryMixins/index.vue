@@ -10,9 +10,11 @@
 import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
+import CacheMixin from '../cache'
 
 export default {
   name: 'ProprietaryMixins',
+  mixins: [CacheMixin],
   computed: {
     ...mapState('screen', [
       'activeWidget',
@@ -20,10 +22,7 @@ export default {
       'activeNode',
       'activeEdge',
       'edgeConfig'
-    ]),
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    }
+    ])
   },
   methods: {
     ...mapMutations('screen', {

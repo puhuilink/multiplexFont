@@ -2,8 +2,10 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
+import CacheMixin from '../cache'
 
 export default {
+  mixins: [CacheMixin],
   data: () => ({
     formItemLayout: {
       labelCol: {
@@ -19,9 +21,6 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    },
     // 外部 Ci 可用
     externalCi: {
       get () {

@@ -25,7 +25,9 @@
           </a-popconfirm>
         </div>
         <keep-alive :include="cacheTemplateComponentNameList">
-          <component :is="templateComponentName" :key="templateComponentKey" />
+          <keep-alive :include="includeTemplateNameList">
+            <component :is="templateComponentName" />
+          </keep-alive>
         </keep-alive>
       </div>
       <div class="config__none" v-else>
@@ -42,6 +44,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import CONFIG_COMPONENTS from './configComponents'
 import TEMPLATES from '../template/templates'
+import _ from 'lodash'
 
 export default {
   name: 'Config',
@@ -71,7 +74,7 @@ export default {
     ])
   }),
   computed: {
-    ...mapState('screen', ['activeWidget']),
+    ...mapState('screen', ['activeWidget', 'view']),
     ...mapGetters('screen', ['widgets']),
     templateName () {
       const template = TEMPLATES.find(template => template.type === this.activeWidget.config.type)
@@ -92,6 +95,13 @@ export default {
     },
     templateComponentKey () {
       return this.activeWidget.widgetId
+    },
+    // 缓存的配置组件
+    includeTemplateNameList () {
+      return _.uniq([
+        ...this.view.widgets.map(({ config }) => this.templateMapping.get(config.type)),
+        'ViewConfig'
+      ])
     }
   },
   methods: {
