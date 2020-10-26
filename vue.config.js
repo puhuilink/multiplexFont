@@ -130,6 +130,41 @@ const vueConfig = {
       // https://github.com/ant-design/ant-design/issues/3794
       paths: true
     }))
+
+    // https://www.cnblogs.com/leiting/p/11542608.html
+    config.optimization.splitChunks({
+      chunks: 'all',
+      cacheGroups: {
+        libs: {
+          name: 'chunk-libs',
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10,
+          chunks: 'initial' // only package third parties that are initially dependent
+        },
+        antd: {
+          name: 'chunk-antd', // split antd into a single package
+          priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+          test: /[\\/]node_modules[\\/]_?ant-design-vue(.*)/ // in order to adapt to cnpm
+        },
+        echarts: {
+          name: 'chunk-echarts',
+          priority: 20,
+          test: /[\\/]node_modules[\\/]_?echarts(.*)/
+        },
+        axios: {
+          name: 'chunk-axios',
+          priority: 20,
+          test: /[\\/]node_modules[\\/]_?axios(.*)/
+        },
+        commons: {
+          name: 'chunk-common-components',
+          test: resolve('src/components'), // can customize your rules
+          minChunks: 2, //  minimum common number
+          priority: 5,
+          reuseExistingChunk: true
+        }
+      }
+    })
   },
 
   css: {
