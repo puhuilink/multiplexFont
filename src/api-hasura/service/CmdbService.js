@@ -205,9 +205,9 @@ class CmdbService extends BaseService {
       CmdbHostEndpointMetricDao.find({
         where: { host_id },
         fields: [
-          'deviceType: device_type',
-          'deviceModel: device_model_code',
-          'deviceBrand: device_brand_code',
+          'deviceType: type_model_value_code',
+          'deviceModel: device_model_value_code',
+          'deviceBrand: brand_value_code',
           'hostId: host_id'
         ],
         limit: 1,
