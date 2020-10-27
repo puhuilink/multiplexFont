@@ -10,20 +10,25 @@ import {
 import _ from 'lodash'
 
 export default class ListElement extends Element {
-  async mergeOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
-    const { sourceType, staticDataConfig: { staticData } } = dataConfig
+  async mergeOption ({ proprietaryConfig, dataConfig }, loadingDynamicData = false) {
+    const { sourceType, staticDataConfig = {}, dbDataConfig } = dataConfig
+    const { staticData } = staticDataConfig || {}
     const props = {
-      ..._.pick(commonConfig, ['height', 'width']),
       dataSource: [],
       columns: []
     }
 
     switch (sourceType) {
       case SOURCE_TYPE_REAL: {
+        await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        // const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        // Object.assign(props, { dataSource, columns })
         break
       }
       case SOURCE_TYPE_STATIC: {
-        Object.assign(props, staticData)
+        if (staticData) {
+          Object.assign(props, staticData)
+        }
         break
       }
       case SOURCE_TYPE_NULL: {

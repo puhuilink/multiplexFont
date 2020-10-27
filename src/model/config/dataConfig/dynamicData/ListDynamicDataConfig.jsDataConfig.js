@@ -3,25 +3,26 @@
  */
 
 import { DynamicDataConfig } from './common/index'
+import { SOURCE_TYPE_REAL } from './types/sourceType'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {
   /**
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}
    */
-  async getOption () {
-    try {
-      const [data] = await this.fetch()
-      return data ? data.value : {
-        columns: [],
-        ListData: []
-      }
-    } catch (e) {
-      console.log(e)
-      return {
-        columns: [],
-        ListData: []
+  async getOption (loadingDynamicData, sourceType) {
+    if (loadingDynamicData) {
+      switch (sourceType) {
+        case SOURCE_TYPE_REAL: {
+          await this.getRealDataOption()
+          break
+        }
       }
     }
+  }
+
+  async getRealDataOption () {
+    const dataList = await this.resourceConfig.fetch()
+    console.log(dataList)
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="AlarmMonitor">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolved">
+    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolve">
       <a-tab-pane :key="0" tab="未解决"></a-tab-pane>
       <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
     </a-tabs>
@@ -21,7 +21,7 @@
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
-          <div :class="{ fold: !advanced }">
+          <div :class="{ fold: !advanced }" v-if="showQuery">
 
             <a-row>
               <a-col :md="6" :sm="24">
@@ -115,7 +115,7 @@
             </a-row>
           </div>
 
-          <span :class="advanced ? 'expand' : 'collapse'">
+          <span :class="advanced ? 'expand' : 'collapse'" v-if="showQuery">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
             <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
@@ -132,7 +132,7 @@
         >查看</a-button>
         <a-button
           v-bind="btnProps"
-          v-if="showSolved"
+          v-if="showSolve"
           v-show="tabIndex !== 1"
           @click="onSolve"
           :disabled="!hasSelectedOne"
@@ -158,7 +158,7 @@
     />
 
     <AlarmSolve
-      v-if="showSolved"
+      v-if="showSolve"
       ref="solve"
       @solveSuccess="onSolveSuccess"
     />
@@ -202,7 +202,11 @@ export default {
       type: Object,
       default: () => ({})
     },
-    showSolved: {
+    showQuery: {
+      type: Boolean,
+      default: true
+    },
+    showSolve: {
       type: Boolean,
       default: true
     },

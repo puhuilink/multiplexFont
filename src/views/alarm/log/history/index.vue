@@ -2,7 +2,7 @@
   <div class="AlarmLogHistory">
     <AlarmMonitor
       showAll
-      :showSolved="false"
+      :showSolve="false"
     />
   </div>
 </template>
