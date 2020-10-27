@@ -12,6 +12,7 @@ import GaugeStaticDataConfig from '../config/dataConfig/staticDataConfig/GaugeSt
 import DegreeRingStaticDataConfig from '../config/dataConfig/staticDataConfig/DegreeRingStaticDataConfig'
 import TextHealthStaticDataConfig from '../config/dataConfig/staticDataConfig/TextHealthStaticDataConfig'
 import PolarStaticDataConfig from '../config/dataConfig/staticDataConfig/PolarStaticDataConfig'
+import ListElementStaticDataConfig from '../config/dataConfig/staticDataConfig/ListElementStaticDataConfig'
 
 export default class StaticDataConfigFactory {
   static create (type, staticDataConfig = {}) {
@@ -30,6 +31,8 @@ export default class StaticDataConfigFactory {
         return new TextHealthStaticDataConfig(staticDataConfig)
       case 'Polar':
         return new PolarStaticDataConfig(staticDataConfig)
+      case 'List':
+        return new ListElementStaticDataConfig(staticDataConfig || {})
       default:
         // console.log('unknown staticDataConfig type: ' + type)
         return null

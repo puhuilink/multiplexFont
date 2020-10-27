@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 const defaultTextHealthStaticData = '100'
 
-export default class DegreeRingStaticDataConfig {
+export default class TextHealthStaticDataConfig {
   constructor ({
     staticData = defaultTextHealthStaticData
   }) {

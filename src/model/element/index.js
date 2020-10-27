@@ -18,6 +18,8 @@ export default class Element {
     this.setContainer(widget)
     this.setStyle(widget.config)
     this.widget = widget
+    // 初始化配置
+    this.mergeOption(widget.config)
   }
 
   /**
@@ -63,7 +65,7 @@ export default class Element {
   updateProps (props) {
     if (this.widget) {
       const widget = Object.assign(_.cloneDeep(this.widget), { render: this.widget.render })
-      Object.assign(widget.config.proprietaryConfig.props, props)
+      widget.config.elementProps = props
       store.commit(`screen/${ScreenMutations.ACTIVATE_WIDGET}`, { widget })
     }
   }

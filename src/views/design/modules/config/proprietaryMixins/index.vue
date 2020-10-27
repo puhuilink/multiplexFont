@@ -30,7 +30,6 @@ export default {
       removeWidget: ScreenMutations.REMOVE_WIDGET,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG,
       updateNode: ScreenMutations.ACTIVATE_NODE
-
     }),
     change () {
       const activeWidget = _.cloneDeep(this.activeWidget)

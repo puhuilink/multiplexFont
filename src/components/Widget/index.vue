@@ -93,7 +93,7 @@ export default {
     },
     // 元素配置
     elementProps () {
-      return this.widget.config.proprietaryConfig.props
+      return _.get(this, ['widget', 'config', 'elementProps'], {})
     }
   },
   watch: {

@@ -2,164 +2,91 @@
   <div class="alarm-list-element">
 
     <!-- S 列表 -->
-    <CTable
-      :rowKey="el => `${el.arising_time}-${el.kpi_value_num}-${Math.random()}`"
+    <a-table
+      rowKey="uuid"
       ref="table"
       :columns="columns"
-      :data="loadData"
-      :alert="false"
-      :scroll="{ x: scrollX, y: 'calc(80vh)' }"
-      :pagination="pagination"
+      :dataSource="dataSource"
+      :scroll="scroll"
+      :pagination="false"
       :customHeaderRow="() => ({style: headerRowStyle})"
       :customRow="() => ({style: rowStyle })"
     >
-    </CTable>
+    </a-table>
     <!-- E 列表 -->
   </div>
 </template>
 
 <script>
-import CTable from '@/components/Table/CTable'
-import { KpiCurrentService } from '@/api-hasura'
 import _ from 'lodash'
-
-const defaultColumns = [
-  {
-    title: '时间',
-    dataIndex: 'arising_time',
-    width: 180,
-    align: 'left',
-    sorter: true
-  },
-  {
-    title: '名称',
-    // 该字段非数据表字段，为接口返回拼接字段
-    dataIndex: 'instanceLabel',
-    align: 'left',
-    width: 260,
-    sorter: false
-  }
-]
+import uuid from 'uuid/v4'
 
 export default {
   name: 'ListElement',
-  components: {
-    CTable
-  },
+  components: {},
   props: {
     elementProps: {
       type: Object,
       default: () => ({
-        data: [],
+        columns: [],
+        dataSource: [],
         loading: false
       })
     }
   },
   data: () => ({
-    columns: defaultColumns,
-    timer: null,
-    rowStyle: {},
-    headerRowStyle: {}
+    scroll: {
+      x: true,
+      y: true
+    },
+    $thead: null,
+    $observer: null
   }),
   computed: {
-    scrollX () {
-      return _.sum(this.columns.map(e => e.width || 60))
+    align () {
+      return _.get(this, ['elementProps', 'styleConfig', 'align'], 'left')
     },
-    pagination () {
-      return {
-        // 受限于组件的尺寸，提供相对符合展示效果的分页
-        // FIXME: 选择框定位溢出
-        pageSizeOptions: ['3', '10', '20', '50', '100'],
-        pageSize: 10,
-        defaultPageSize: 10
-      }
+    columns () {
+      const { align } = this
+      return _.get(this, ['elementProps', 'columns'], []).map(column => Object.assign({}, column, { align }))
+    },
+    dataSource () {
+      return _.get(this, ['elementProps', 'dataSource'], []).map(data => Object.assign({}, data, { uuid: uuid() }))
+    },
+    headerRowStyle () {
+      return _.get(this, ['elementProps', 'styleConfig', 'header'], {})
+    },
+    rowStyle () {
+      return _.get(this, ['elementProps', 'styleConfig', 'rows'], {})
     }
   },
   methods: {
-    /**
-     * 加载表格数据
-     * @param {Object} parameter CTable 回传的分页与排序条件
-     */
-    loadData (parameter) {
-      const { resourceConfig, timeRange } = this.elementProps.params
-      if (resourceConfig) {
-        const {
-          selectedInstance,
-          selectedKpi
-        } = resourceConfig
-        return KpiCurrentService.getValue({
-          selectedInstance,
-          selectedKpi,
-          // 此时拿到的可能是未经实例化的 timeRange 对象
-          timeRange: timeRange.getOption(),
-          fields: [
-            'kpi_value_num',
-            'arising_time'
-          ],
-          ...parameter
-        }).then(r => {
-          const groupByKpi = _.groupBy(r.data, 'kpiLabel')
-          this.columns = _.cloneDeep(defaultColumns)
-          Object.keys(groupByKpi).forEach(key => {
-            this.columns.push({
-              title: key,
-              width: 150,
-              align: 'left',
-              sorter: false,
-              customRender: (text, record) => {
-                if (record.kpiLabel === key) {
-                  return record.kpi_value_num
-                }
-              }
-            })
-          })
-          return r
-        })
-      }
-    },
-    query () {
-      this.$refs['table'].refresh(true)
-    }
-    /**
-     * 30s自动刷新
-     */
-    // refresh (e) {
-    //   const refreshCycle = e * 60000
-    //   this.timer = setInterval(() => {
-    //     this.$refs['table'].refresh(true)
-    //   }, refreshCycle)
-    // }
-  },
-  watch: {
-    elementProps (props) {
-      if (props.isCallInterface) {
-        props.isCallInterface = false
-        this.$refs['table'].refresh()
-      }
-      // if (props.params.refreshTime) {
-      //   this.refresh(props.params.refreshTime)
-      // }
-      this.headerRowStyle = props.styleConfig.header
-      this.rowStyle = props.styleConfig.rows
-      this.columns.forEach(e => {
-        e.align = props.styleConfig.align
+    // 实时计算 scroll
+    calScroll () {
+      const { height: elHeight } = window.getComputedStyle(this.$el)
+      const { height: thHeight } = window.getComputedStyle(this.$thead)
+      Object.assign(this.scroll, {
+        x: true,
+        y: Number(elHeight.split('px')[0]) - Number(thHeight.split('px')[0])
       })
     }
+  },
+  mounted () {
+    this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
+    this.calScroll()
+    this.$observer = new MutationObserver(_.debounce(this.calScroll, 60))
+    this.$observer.observe(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
+  },
+  beforeDestroy () {
+    this.$observer.disconnect()
   }
-  // beforeDestroy () {
-  //   // 清除定时器
-  //   clearInterval(this.timer)
-  // },
-  // destroyed () {
-  //   // 清除定时器
-  //   // clearInterval(this.timer)
-  // }
 }
 </script>
 
 <style lang="less">
 .alarm-list-element {
-  padding: 24px;
+  height: 100%;
+
   .ant-table-thead > tr > th {
     color:inherit !important;
     font-weight: inherit !important;

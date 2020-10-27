@@ -23,9 +23,9 @@
               @change="change">
               <a-select-option :value="SOURCE_TYPE_NULL">空数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_STATIC">静态数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_REAL">性能数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_ALARM">告警数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_OVERVIEW">总览数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_REAL" v-if="getSlot(SOURCE_TYPE_REAL)">性能数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_ALARM" v-if="getSlot(SOURCE_TYPE_ALARM)">告警数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_OVERVIEW" v-if="getSlot(SOURCE_TYPE_OVERVIEW)">总览数据</a-select-option>
             </a-select>
           </div>
 
@@ -189,6 +189,9 @@ export default {
         widget: Object.assign(activeWidget, { config: this.config })
       })
       render.mergeOption(this.config)
+    },
+    getSlot (slot) {
+      return this.$slots[slot] && !_.isEmpty(this.$slots[slot])
     }
   }
 }
