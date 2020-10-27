@@ -78,7 +78,4 @@ tr > th {
   color:inherit !important;
   font-weight: inherit !important;
 }
-.rowClass{
-  background: red;
-}
 </style>

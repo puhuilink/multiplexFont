@@ -313,9 +313,8 @@ export default {
       'activeWidget'
     ]),
     ...mapGetters('screen', ['scale']),
-    // 为不修改 state.activeWidget，在此深复制激活部件的配置项，并将其设置为该组件内变量，修改部件后提交再行修改state.activeWidget
     config () {
-      return _.cloneDeep(this.activeWidget.config)
+      return this.activeWidget.config
     }
   },
   methods: {
