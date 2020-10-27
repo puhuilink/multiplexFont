@@ -53,22 +53,23 @@ export default class Element {
     })
   }
 
-  /**
-   * 设置专有属性样式，与图表对象使用同一方法m名
-   */
-  mergeOption (config, loadingDynamicData = false) {}
-
-  /**
-   * 更新元素组件的props
-   * @param props
-   */
-  updateProps (props) {
+  async mergeOption (config, loadingDynamicData = false) {
+    const props = await this.mappingOption(config, loadingDynamicData)
     if (this.widget) {
-      const widget = Object.assign(_.cloneDeep(this.widget), { render: this.widget.render })
-      widget.config.elementProps = props
+      const { render, ...rest } = this.widget
+      const widget = Object.assign({}, _.cloneDeep(rest), { render })
+      Object.assign(widget.config, {
+        ...config,
+        elementProps: props
+      })
       store.commit(`screen/${ScreenMutations.ACTIVATE_WIDGET}`, { widget })
     }
   }
+
+  /**
+   * 设置专有属性样式，与图表对象使用同一方法m名
+   */
+  mappingOption (config, loadingDynamicData = false) {}
 
   refresh () {
     this.mergeOption(this.widget.config, true)

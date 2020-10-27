@@ -85,8 +85,8 @@ export default {
         if (loadingDynamicData) {
           this.btnLoading = true
         }
-        const activeWidget = _.cloneDeep(this.activeWidget)
-        const { render } = this.activeWidget
+        const { render, ...rest } = this.activeWidget
+        const activeWidget = Object.assign({}, _.cloneDeep(rest), { render })
         // 设置当前选中部件
         this.activateWidget({
           widget: Object.assign(activeWidget, { config: this.config })
