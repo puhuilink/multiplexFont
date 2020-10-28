@@ -115,7 +115,6 @@
 
 <script>
 import {
-
   fromEvent, merge, Subject, zip
 } from 'rxjs'
 import {
@@ -327,7 +326,8 @@ export default {
             height: Number(height.split('px')[0]) || 0
           }
           // 更新部件位置信息
-          const widget = _.cloneDeep(this.activeWidget)
+          const { render, ...rest } = this.activeWidget
+          const widget = { ..._.cloneDeep(rest), render }
           Object.assign(widget.config.commonConfig, widgetPositionState)
           this.activateWidget({ widget })
         }

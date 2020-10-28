@@ -101,6 +101,9 @@ export default {
         const activeWidget = state.view.widgets.find(
           widget => widget.widgetId === payload.widget.widgetId
         )
+        // TODO: element 组件在非正常情况下触发该 mutation，会导致此时 activeWidget 为空
+        // hack
+        if (!activeWidget) return
         Object.assign(activeWidget, _.omit(payload.widget, ['render']))
         state.activeWidget = activeWidget
       } else {

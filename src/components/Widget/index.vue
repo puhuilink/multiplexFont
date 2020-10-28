@@ -18,14 +18,10 @@
     :ref="widget.widgetId"
     @click.stop="() => $emit('select', selectWidget)">
 
-    <!-- S 元素部件 -->
-    <component
-      :elementProps="elementProps"
-      :is="elementName"
-      ref="element"
-      v-if="useComponent"
-    />
-    <!-- E 元素部件 -->
+    <!-- / 元素部件 -->
+    <!-- 可以是vue组件，需要其持有者手动挂载到该div -->
+    <!-- FIXME: 这种方式可能导致vue-devtools无法正常调试 -->
+    <div ref="element" v-if="useComponent"></div>
 
   </div>
 </template>
@@ -34,7 +30,6 @@
 import _ from 'lodash'
 import { mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
@@ -49,9 +44,7 @@ const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
-  components: {
-    ...ELEMENTS
-  },
+  components: {},
   props: {
     widget: {
       type: Object,
@@ -86,14 +79,6 @@ export default {
     // 在类型为元素时使用组件进行渲染
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
-    },
-    // 元素组件名
-    elementName () {
-      return ELEMENT_MAPPING.get(this.widget.config.type)
-    },
-    // 元素配置
-    elementProps () {
-      return _.get(this, ['widget', 'config', 'elementProps'], {})
     }
   },
   watch: {
@@ -196,7 +181,7 @@ export default {
     // 根据类型创建图表
     this.render = widgetFactory.create(type, {
       widget: this.widget,
-      element: this.$refs.element && this.$refs.element.$el
+      element: this.$refs.element
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据

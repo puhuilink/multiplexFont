@@ -1,21 +1,16 @@
 <script>
 import _ from 'lodash'
 import uuid from 'uuid/v4'
+import { fromEvent } from 'rxjs'
+import { takeWhile } from 'rxjs/operators'
 
 export default {
   name: 'ListMixin',
   components: {},
-  props: {
-    elementProps: {
-      type: Object,
-      default: () => ({
-        columns: [],
-        dataSource: [],
-        loading: false
-      })
-    }
-  },
+  props: {},
   data: () => ({
+    elementProps: {},
+    isSubscribed: true,
     scroll: {
       x: true,
       y: true
@@ -47,15 +42,17 @@ export default {
     calScroll () {
       const { height: elHeight } = window.getComputedStyle(this.$el)
       const { height: thHeight } = window.getComputedStyle(this.$thead)
-      const { height: tableHeight } = window.getComputedStyle(this.$table)
+      // const { height: tableHeight } = window.getComputedStyle(this.$table)
 
       const elH = Number(elHeight.split('px')[0])
       const thH = Number(thHeight.split('px')[0])
-      const tableH = Number(tableHeight.split('px')[0])
+      // const tableH = Number(tableHeight.split('px')[0])
 
       Object.assign(this.scroll, {
         x: false,
-        y: tableH > elH ? Math.abs(elH - thH - 48) : false
+        // TODO: DOM更新延迟导致的计算错误
+        // y: tableH > elH ? Math.abs(elH - thH - 48) : false
+        y: elH - thH
       })
     },
     customRow (record, index) {
@@ -69,13 +66,22 @@ export default {
     }
   },
   mounted () {
+    // TODO: use fromEvent 或 watch + cb
     this.$table = this.$el.getElementsByClassName('ant-table')[0]
     this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
     this.calScroll()
     this.$observer = new MutationObserver(_.debounce(this.calScroll, 60))
     this.$observer.observe(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
+    fromEvent(window, 'resize')
+      .pipe(
+        takeWhile(() => this.isSubscribed)
+      )
+      .subscribe(() => {
+        this.calScroll()
+      })
   },
   beforeDestroy () {
+    this.isSubscribed = false
     this.$observer.disconnect()
   }
 

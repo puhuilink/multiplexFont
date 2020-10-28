@@ -426,7 +426,8 @@ export default {
        * 更新部件配置
        */
     updateActiveWidget () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
+      const { render, ...rest } = this.activeWidget
+      const activeWidget = { ..._.cloneDeep(rest), render }
       this.activateWidget({
         widget: Object.assign(activeWidget, { config: this.config })
       })

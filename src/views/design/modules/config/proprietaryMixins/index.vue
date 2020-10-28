@@ -32,8 +32,8 @@ export default {
       updateNode: ScreenMutations.ACTIVATE_NODE
     }),
     change () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
+      const { render, ...rest } = this.activeWidget
+      const activeWidget = { ..._.cloneDeep(rest), render }
       this.activateWidget({
         widget: Object.assign(activeWidget, { config: this.config })
       })

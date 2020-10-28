@@ -548,8 +548,9 @@ export default {
        * @param {Array} configTypes 要合并的配置名
        */
     syncConfig (configTypes) {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render, config: { commonConfig: { width, height, top, left } } } = this.activeWidget
+      const { render, ...rest } = this.activeWidget
+      const activeWidget = { ..._.cloneDeep(rest), render }
+      const { config: { commonConfig: { width, height, top, left } } } = this.activeWidget
 
       // 不合并尺寸位置信息
       Object.assign(this.config.commonConfig, {

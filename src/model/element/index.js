@@ -6,10 +6,16 @@
 * Email: dong.xing@outlook.com
 */
 
-import _ from 'lodash'
 import anime from 'animejs'
+import ListElementComponent from '~~~/Elements/ListElement'
+import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
+import _ from 'lodash'
+
+const ELEMENT_MAPPING = new Map([
+  ['List', ListElementComponent]
+])
 
 export default class Element {
   constructor ({ widget, element }) {
@@ -20,6 +26,8 @@ export default class Element {
     this.widget = widget
     // 初始化配置
     this.mergeOption(widget.config)
+    const componentOption = ELEMENT_MAPPING.get(this.widget.config.type)
+    this.$component = new Vue(componentOption).$mount(this.element)
   }
 
   /**
@@ -54,13 +62,12 @@ export default class Element {
   }
 
   async mergeOption (config, loadingDynamicData = false) {
-    const props = await this.mappingOption(config, loadingDynamicData)
+    this.$component.elementProps = await this.mappingOption(config, loadingDynamicData)
     if (this.widget) {
       const { render, ...rest } = this.widget
       const widget = Object.assign({}, _.cloneDeep(rest), { render })
       Object.assign(widget.config, {
-        ...config,
-        elementProps: props
+        ...config
       })
       store.commit(`screen/${ScreenMutations.ACTIVATE_WIDGET}`, { widget })
     }
@@ -84,5 +91,11 @@ export default class Element {
     this.mergeOption(config)
   }
 
-  resize () {}
+  resize () { }
+
+  destroy () {
+    const { $component } = this
+    $component && $component.$destroy()
+    this.$component = null
+  }
 }

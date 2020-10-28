@@ -188,8 +188,8 @@ export default {
       }
     },
     change () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
+      const { render, ...rest } = this.activeWidget
+      const activeWidget = { ..._.cloneDeep(rest), render }
       Object.assign(activeWidget.config, this.config)
       this.activateWidget({
         widget: Object.assign(activeWidget, { config: this.config })
