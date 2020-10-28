@@ -20,6 +20,7 @@ export default {
       x: true,
       y: true
     },
+    $table: null,
     $thead: null,
     $observer: null
   }),
@@ -46,13 +47,29 @@ export default {
     calScroll () {
       const { height: elHeight } = window.getComputedStyle(this.$el)
       const { height: thHeight } = window.getComputedStyle(this.$thead)
+      const { height: tableHeight } = window.getComputedStyle(this.$table)
+
+      const elH = Number(elHeight.split('px')[0])
+      const thH = Number(thHeight.split('px')[0])
+      const tableH = Number(tableHeight.split('px')[0])
+
       Object.assign(this.scroll, {
-        x: true,
-        y: Number(elHeight.split('px')[0]) - Number(thHeight.split('px')[0])
+        x: false,
+        y: tableH > elH ? Math.abs(elH - thH - 48) : false
       })
+    },
+    customRow (record, index) {
+      const { backgroundColor = {}, ...rest } = this.rowStyle
+      return {
+        style: {
+          backgroundColor: index % 2 === 0 ? backgroundColor.odd : backgroundColor.even,
+          ...rest
+        }
+      }
     }
   },
   mounted () {
+    this.$table = this.$el.getElementsByClassName('ant-table')[0]
     this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
     this.calScroll()
     this.$observer = new MutationObserver(_.debounce(this.calScroll, 60))

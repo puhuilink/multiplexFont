@@ -34,10 +34,18 @@
 
       <a-collapse-panel header="表行设置" key="2">
         <div class="comment-template__item">
-          <p class="comment-template__leading">背景颜色:</p>
+          <p class="comment-template__leading">奇行背景:</p>
           <div class="comment-template__inner">
             <ColorPicker
-              v-model="config.proprietaryConfig.props.styleConfig.rows.backgroundColor"
+              v-model="config.proprietaryConfig.props.styleConfig.rows.backgroundColor.odd"
+              @change="change()" />
+          </div>
+        </div>
+        <div class="comment-template__item">
+          <p class="comment-template__leading">偶行背景:</p>
+          <div class="comment-template__inner">
+            <ColorPicker
+              v-model="config.proprietaryConfig.props.styleConfig.rows.backgroundColor.even"
               @change="change()" />
           </div>
         </div>

@@ -6,13 +6,16 @@ export default class ListProprietaryConfig {
     props = {
       styleConfig: {
         header: {
-          backgroundColor: 'rgba(240,240,240,1)',
+          backgroundColor: 'rgba(230,230,230,1)',
           color: 'rgba(80,80,80,1)',
           fontSize: '12px',
           fontWeight: 'normal'
         },
         rows: {
-          backgroundColor: 'rgba(240,240,240,1)',
+          backgroundColor: {
+            odd: 'rgba(230,230,230,1)',
+            even: 'rgba(220,220,220,1)'
+          },
           color: 'rgba(112,116,120,1)',
           fontSize: '12px',
           fontWeight: 'normal'

@@ -61,7 +61,7 @@ const elements = [
     category: 'ELEMENT', type: 'AlarmList', name: '告警列表', icon: 'bell', width: 1200, height: 560
   },
   {
-    category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560
+    category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560, backgroundColor: 'rgba(230, 230, 230, 1)'
   }
 ]
 

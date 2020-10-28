@@ -10,7 +10,7 @@
       :scroll="scroll"
       :pagination="false"
       :customHeaderRow="() => ({ style: headerRowStyle })"
-      :customRow="() => ({style: rowStyle })"
+      :customRow="customRow"
     >
     </a-table>
     <!-- E 列表 -->
