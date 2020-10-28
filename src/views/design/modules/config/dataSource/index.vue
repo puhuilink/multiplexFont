@@ -175,6 +175,12 @@ export default {
               { staticData: JSON.parse(code) }
             )
             break
+          case 'List':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
           default:
             break
         }
