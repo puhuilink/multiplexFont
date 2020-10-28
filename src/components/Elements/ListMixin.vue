@@ -69,7 +69,7 @@ export default {
     // TODO: use fromEvent 或 watch + cb
     this.$table = this.$el.getElementsByClassName('ant-table')[0]
     this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
-    this.calScroll()
+    setTimeout(this.calScroll.bind(this))
     this.$observer = new MutationObserver(_.debounce(this.calScroll, 60))
     this.$observer.observe(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
     fromEvent(window, 'resize')
@@ -95,6 +95,13 @@ export default {
   .ant-table-thead > tr > th {
     color:inherit !important;
     font-weight: inherit !important;
+  }
+
+  .ant-table-scroll {
+    .ant-table-body {
+      // 隐藏右侧滚动条
+      width: calc(100% + 10px);
+    }
   }
 }
 tr > th {
