@@ -36,7 +36,7 @@ export default class PieProprietaryConfig {
    * 获取柱形图专有配置
    */
   getOption () {
-    return Object.assign(_.omit(_.cloneDeep(this), ['pieItemStyle', 'pieLabel']), {
+    return Object.assign(_.omit(this, ['pieItemStyle', 'pieLabel']), {
       roseType: this.roseType === 'none' ? undefined : this.roseType,
       radius: [this.radius.outside, this.radius.inside],
       itemStyle: this.pieItemStyle.getOption(),

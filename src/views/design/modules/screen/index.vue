@@ -210,7 +210,7 @@ export default {
           this.setView({
             view: new View(Object.assign(
               {},
-              _.cloneDeep(this.view),
+              this.view,
               {
                 el: this.$refs.view,
                 gauge: this.$refs.gauge,

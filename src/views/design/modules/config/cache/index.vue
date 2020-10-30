@@ -14,7 +14,7 @@ export default {
     ...mapState('screen', ['activeWidget']),
     config () {
       // 保证 keep-alive deactivated 期间组件数据依旧正常绑定
-      return this.isFrozen ? this.cloneConfig : _.cloneDeep(this.activeWidget.config)
+      return this.isFrozen ? this.cloneConfig : this.activeWidget.config
     },
     isFrozen () {
       return _.get(this, ['activeWidget', 'config', 'type']) !== _.get(this, ['cloneConfig', 'type'])
@@ -22,7 +22,9 @@ export default {
   },
   methods: {},
   created () {
-    this.cloneConfig = _.cloneDeep(this.activeWidget.config)
+    // 保持引用
+    // TODO: 使用最小化默认配置
+    this.cloneConfig = this.activeWidget.config
   }
 }
 </script>

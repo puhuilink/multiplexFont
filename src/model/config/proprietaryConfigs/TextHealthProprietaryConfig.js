@@ -2,7 +2,6 @@
 * 文本健康度专有属性配置
 */
 
-import _ from 'lodash'
 import { Title, ThresholdColorRule } from './index'
 
 // 默认轴线配置，不显示轴线
@@ -29,8 +28,8 @@ export default class TextsProprietaryConfig {
    * 获取文本专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
-      title: _.cloneDeep(this.title.getOption())
+    return Object.assign({}, this, {
+      title: this.title.getOption()
     })
   }
 }

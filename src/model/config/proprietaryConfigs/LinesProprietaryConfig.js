@@ -58,7 +58,7 @@ export default class LinesProprietaryConfig {
    * 获取折线图专有配置
    */
   getOption () {
-    const result = Object.assign({}, _.cloneDeep(this), {
+    const result = Object.assign({}, this, {
       areaStyle: this.areaStyle.getOption(),
       xAxis: this.xAxis.getOption(),
       yAxis: this.yAxis.getOption(),

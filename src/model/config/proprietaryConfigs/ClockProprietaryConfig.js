@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { Title } from './index'
 import moment from 'moment'
 
@@ -29,7 +28,7 @@ export default class ClockProprietaryConfig {
    * 获取文本专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       title: this.title.getOption(),
       format: this.format
     })

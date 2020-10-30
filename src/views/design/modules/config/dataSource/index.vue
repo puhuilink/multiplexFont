@@ -95,7 +95,7 @@ export default {
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
-      return _.cloneDeep(this.activeWidget.config)
+      return this.activeWidget.config
     },
     sourceType () {
       return this.config.dataConfig.sourceType || SOURCE_TYPE_NULL
@@ -188,11 +188,13 @@ export default {
       }
     },
     change () {
-      const { render, ...rest } = this.activeWidget
-      const activeWidget = { ..._.cloneDeep(rest), render }
-      Object.assign(activeWidget.config, this.config)
+      const { render, widgetId } = this.activeWidget
       this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
+        widget: {
+          widgetId,
+          config: this.config,
+          render
+        }
       })
       render.mergeOption(this.config)
     },

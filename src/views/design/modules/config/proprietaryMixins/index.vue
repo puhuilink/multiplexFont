@@ -7,7 +7,6 @@
 */
 
 <script>
-import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import CacheMixin from '../cache'
@@ -32,10 +31,13 @@ export default {
       updateNode: ScreenMutations.ACTIVATE_NODE
     }),
     change () {
-      const { render, ...rest } = this.activeWidget
-      const activeWidget = { ..._.cloneDeep(rest), render }
+      const { render, widgetId } = this.activeWidget
       this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
+        widget: {
+          widgetId,
+          config: this.config,
+          render
+        }
       })
       this.$nextTick(() => {
         render.mergeOption(this.config)

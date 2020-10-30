@@ -541,7 +541,7 @@ export default {
        * 复制配置
        */
     copyConfig () {
-      this.config = _.cloneDeep(this.activeWidget.config)
+      this.config = this.activeWidget.config
     },
     /**
        * 粘贴配置
