@@ -67,10 +67,10 @@ export default {
     reset () {
       const initialData = this.$options.data.apply(this)
       Object.assign(this.$data, initialData)
-      this.localPagination = Object.assign({}, this.localPagination, {
+      this.localPagination = this.showPagination ? Object.assign({}, this.localPagination, {
         current: 1,
         total: 0
-      })
+      }) : false
     }
   }
 }

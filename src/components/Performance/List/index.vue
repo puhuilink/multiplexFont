@@ -135,12 +135,10 @@ export default {
       }
     ]),
     queryParams: {
-      // 默认查询最近一个月的数据，避免一次性查询所有数据
+      // 数据量过大，默认查询最近一天的数据
       'collect_time': [
         moment().add(-1, 'days'),
         moment()
-        // moment('2020-08-25 22:25'),
-        // moment('2020-08-26 22:25')
       ]
     }
   }),

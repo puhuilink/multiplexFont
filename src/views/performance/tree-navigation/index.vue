@@ -17,7 +17,7 @@
 
           <!-- / 指标列表 -->
           <a-tab-pane key="1" tab="指标列表" class="TreeNavigation__content">
-            <PerformanceList :where="where" v-show="dataRef" />
+            <PerformanceAggregate :where="where" v-show="dataRef" />
             <a-empty v-show="!dataRef" description="请在左侧资源树选择具体设备" />
           </a-tab-pane>
 
@@ -40,7 +40,7 @@
 
 <script>
 import { CmdbTree } from '@/components/Resource'
-import PerformanceList from '@/components/Performance/List'
+import PerformanceAggregate from '@/components/Performance/Aggregate'
 import Renderer from '@/components/Renderer'
 import { CmdbHostViewService, ViewDesignService } from '@/api-hasura'
 import Timeout from 'await-timeout'
@@ -51,7 +51,7 @@ export default {
   mixins: [],
   components: {
     CmdbTree,
-    PerformanceList,
+    PerformanceAggregate,
     Renderer
   },
   props: {},
