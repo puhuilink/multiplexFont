@@ -10,7 +10,7 @@
     class="widget"
     :class="{
       'widget--hover': !onlyShow,
-      'widget--highlight': !onlyShow && isHighLightForAutoAlign
+      'widget--sub-active': !onlyShow && isSubActive
     }"
     :id="widget.widgetId"
     :data-category="widget.config.category"
@@ -71,7 +71,21 @@ export default {
     autoAlignService: new AutoAlignService()
   }),
   computed: {
-    ...mapState('screen', ['activeWidget', 'isImporting']),
+    ...mapState('screen', ['isImporting', 'activeWidget', 'subActiveWidgets']),
+    // 部件是否被批量选中
+    isSubActive () {
+      const {
+        widget: { widgetId },
+        activeWidget,
+        subActiveWidgets
+      } = this
+
+      return (
+        activeWidget &&
+        widgetId !== activeWidget.widgetId &&
+        !!subActiveWidgets.find(widget => widget.widgetId === widgetId)
+      )
+    },
     // 选择的部件
     selectWidget () {
       return Object.assign(this.widget, { render: this.render })
@@ -238,6 +252,11 @@ export default {
     &--highlight {
       box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
     }
+
+    &--sub-active {
+    opacity: .6;
+    box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+  }
   }
 
 </style>

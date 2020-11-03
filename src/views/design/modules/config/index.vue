@@ -127,7 +127,7 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    height: 48px;
+    height: 42px;
     box-sizing: border-box;
     padding: 0 16px;
     box-shadow: 0 2px 8px #f0f1f2;

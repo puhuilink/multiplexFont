@@ -30,7 +30,7 @@ const charts = [
     category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100
   },
   {
-    category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300
+    category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300, padding: 0
   },
   {
     category: 'CHART', type: 'Circle', name: '圆形', icon: 'loading-3-quarters', width: 300, height: 300

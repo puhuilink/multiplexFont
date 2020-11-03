@@ -10,49 +10,113 @@
     <div class="screen">
       <div class="screen__header">
         <div class="screen__control" @click="panelControl('left')">
-          <span v-if="leftPanelExpand">
-            <a-icon type="menu-fold" />
-          </span>
-          <a-button v-else type="link" icon="appstore">组件库</a-button>
+          <a-button type="link" :icon="leftPanelExpand ? 'menu-fold' : 'menu-unfold'"></a-button>
         </div>
         <div class="screen__center">
           <div class="screen__bar">
-            <a-button-group>
-              <a-tooltip placement="top" title="保存">
-                <a-button type="primary" @click="save"><a-icon type="save" /></a-button>
-              </a-tooltip>
-              <a-tooltip placement="top" title="导出">
-                <a-button type="primary" @click="exportFile"><a-icon type="upload" /></a-button>
-              </a-tooltip>
-              <a-upload
-                name="file"
-                :before-upload="beforeImport"
-                :show-upload-list="false"
-                :multiple="false"
-              >
-                <a-tooltip placement="top" title="导入">
-                  <a-button type="primary"><a-icon type="download" /></a-button>
+
+            <div class="screen__front">
+              <a-button-group>
+                <a-popconfirm
+                  title="确定删除选中部件"
+                  @confirm="deleteWidgets"
+                  okText="确定"
+                  cancelText="取消">
+
+                  <a-tooltip>
+                    <template slot="title">
+                      删除
+                    </template>
+                    <a-button
+                      type="link"
+                      :disabled="!isWidgetEditable"
+                      :class="{
+                        'screen__danger': isWidgetEditable
+                      }"
+                      icon="delete"/>
+                  </a-tooltip>
+                </a-popconfirm>
+
+                <!-- TODO: 批量复制 -->
+                <!-- <a-tooltip>
+              <template slot="title">
+                复制
+              </template>
+              <a-button type="link" icon="copy" :disabled="!isWidgetEditable" @click="copyWidget" />
+            </a-tooltip> -->
+
+                <transition-group name="transition-fade" mode="out-in">
+                  <a-tooltip
+                    v-for="[direction, label] in [
+                      ['arrow-up', '向上对齐'],
+                      ['arrow-left', '向左对齐'],
+                      ['arrow-down', '向下对齐'],
+                      ['arrow-right', '向右对齐'],
+                      ['arrows-alt', '等宽高'],
+                      ['column-width', '等宽'],
+                      ['column-height', '等高']
+                    ]"
+                    :key="direction"
+                    v-show="(isWidgetEditable && subActiveWidgets.length)"
+                  >
+                    <template slot="title">
+                      {{ label }}
+                    </template>
+                    <a-button
+                      type="link"
+                      :icon="direction"
+                      @click="alignMultipleWidgets(direction)" />
+                  </a-tooltip>
+                </transition-group>
+
+              </a-button-group>
+
+            </div>
+
+            <div class="screen__end">
+              <a-button-group>
+                <a-tooltip placement="top" title="保存">
+                  <a-button type="link" @click="save"><a-icon type="save" /></a-button>
                 </a-tooltip>
-              </a-upload>
-              <a-popconfirm
-                title="确定清空画板？"
-                @confirm="clear"
-                okText="确定"
-                cancelText="取消">
-                <a-button type="danger" icon="delete">清空</a-button>
-              </a-popconfirm>
-            </a-button-group>
+                <a-tooltip placement="top" title="导出">
+                  <a-button type="link" @click="exportFile"><a-icon type="upload" /></a-button>
+                </a-tooltip>
+                <a-upload
+                  name="file"
+                  :before-upload="beforeImport"
+                  :show-upload-list="false"
+                  :multiple="false"
+                >
+                  <a-tooltip placement="top" title="导入">
+                    <a-button type="link"><a-icon type="download" /></a-button>
+                  </a-tooltip>
+                </a-upload>
+                <a-popconfirm
+                  title="确定清空画板？"
+                  @confirm="clear"
+                  okText="确定"
+                  cancelText="取消">
+
+                  <a-tooltip>
+                    <template slot="title">
+                      清空
+                    </template>
+                    <a-button type="link" class="screen__danger" icon="close-square" />
+                  </a-tooltip>
+
+                </a-popconfirm>
+                <a-tooltip placement="top" title="预览">
+                  <a-button type="link" @click="preview"><a-icon type="eye" /></a-button>
+                </a-tooltip>
+              </a-button-group>
+
+            </div>
+
           </div>
 
-          <a-tooltip placement="top" title="预览">
-            <a-button type="primary" @click="preview"><a-icon type="eye" /></a-button>
-          </a-tooltip>
         </div>
         <div class="screen__control" @click="panelControl('right')">
-          <span v-if="rightPanelExpand">
-            <a-icon type="menu-unfold" />
-          </span>
-          <a-button v-else type="link" icon="setting">配置</a-button>
+          <a-button type="link" :icon="rightPanelExpand ? 'menu-unfold' : 'menu-fold'"></a-button>
         </div>
       </div>
 
@@ -167,6 +231,7 @@ export default {
     scale: 1,
     loading: false,
     isAutoResize: true,
+    isShiftKeyDown: false,
     isSubscribed: true,
     isResize: false,
     wrapperChange$: new WrapperService().change$,
@@ -189,6 +254,20 @@ export default {
         minScrollbarLength: 20
       })
     }
+
+    // shift键盘事件处理
+    merge(
+      fromEvent(document, 'keydown'),
+      fromEvent(document, 'keyup')
+    )
+      .pipe(
+        takeWhile(() => this.isSubscribed),
+        filter(({ key }) => key === 'Shift'),
+        map(({ type }) => type === 'keydown')
+      )
+      .subscribe(isShiftKeyDown => {
+        this.isShiftKeyDown = isShiftKeyDown
+      })
 
     // 视图change事件处理
     merge(
@@ -239,6 +318,8 @@ export default {
           // 其他场景中，设置画板样式
           this.setStyle(event)
         }
+
+        this.activateWidget({ widget: this.view })
       })
 
     // 选择激活的部件
@@ -260,16 +341,11 @@ export default {
         filter(({ el }) => !this.topologyEditable || el === 'topology')
       )
       .subscribe(({ el, widget, value }) => {
-        let activeWidget
+        let targetWidget
         let styles = {}
         switch (el) {
-          case 'view':
-            activeWidget = this.view
-            styles = { display: 'none' }
-            break
           case 'widget':
-            activeWidget = widget
-            // eslint-disable-next-line no-case-declarations
+            targetWidget = widget
             const {
               config: {
                 commonConfig: { width, height, top, left }
@@ -285,22 +361,30 @@ export default {
             break
           case 'topology':
             // 拓扑视图尺寸开关开闭时触发
-            activeWidget = widget
+            targetWidget = widget
             styles = {
               display: value ? 'block' : 'none'
             }
             break
+          case 'view':
           default:
-            activeWidget = null
+            targetWidget = this.view
+            styles = { display: 'none' }
             break
         }
-        if (el !== 'adjust') {
-          // 设置激活的部件
-          this.activateWidget({
-            widget: activeWidget
+
+        if (el === 'adjust') return
+
+        if (this.isShiftKeyDown) {
+          this.activateMultipleWidgets({
+            widget: targetWidget,
+            styles
           })
-          // 设置选择器样式
-          this.$refs.wrapper.setSize(styles)
+        } else {
+          this.activateSingleWidget({
+            widget: targetWidget,
+            styles
+          })
         }
       })
 
@@ -343,14 +427,19 @@ export default {
       })
   },
   computed: {
-    ...mapState('screen', ['view', 'activeWidget', 'topologyEditable']),
-    ...mapGetters('screen', ['widgets'])
+    ...mapState('screen', ['view', 'activeWidget', 'subActiveWidgets', 'topologyEditable']),
+    ...mapGetters('screen', ['widgets']),
+    isWidgetEditable () {
+      return this.activeWidget && this.activeWidget.config.type !== 'View'
+    }
   },
   methods: {
     ...mapMutations('screen', {
       setView: ScreenMutations.SET_VIEW,
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE,
       activateWidget: ScreenMutations.ACTIVATE_WIDGET,
+      activateSubWidgets: ScreenMutations.ACTIVATE_SUB_WIDGETS,
+      removeWidgets: ScreenMutations.REMOVE_WIDGETS,
       setImportingState: ScreenMutations.SET_IMPORTING_STATE
     }),
     resizeWidget: _.debounce(function (config) {
@@ -385,6 +474,7 @@ export default {
         duration: 150,
         easing: 'linear'
       })
+
       anime({
         targets: this.$refs.gauge,
         width: this.width * this.scale + 32,
@@ -542,8 +632,6 @@ export default {
       try {
         const option = this.view.getOption()
         const title = this.$route.query.title
-        // console.log(_.cloneDeep(option))
-        // console.log(JSON.stringify(_.cloneDeep(option)))
         downloadFile(`${title}.json`, JSON.stringify(option))
         this.$notification.success({
           message: '系统提示',
@@ -593,6 +681,112 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    /**
+     * 复制部件
+     */
+    copyWidget () {
+      this.$refs.wrapper.copyWidget()
+    },
+    /**
+     * 删除部件
+     */
+    deleteWidgets () {
+      const widgets = this.subActiveWidgets.slice()
+      if (this.isWidgetEditable) {
+        widgets.push(this.activeWidget)
+      }
+      this.removeWidgets({
+        widgetIds: widgets.map(({ widgetId }) => widgetId)
+      })
+    },
+    /**
+     * 选中单个部件
+     * @param {{ widget, styles }}
+     */
+    activateSingleWidget ({ widget, styles }) {
+      // 设置激活的部件
+      this.activateWidget({ widget })
+      // 设置选择器样式
+      this.$refs.wrapper.setSize(styles)
+    },
+    /**
+     * 批量选中部件
+     * @param {{ widget, styles }} widget shift按下时鼠标选中的部件
+     */
+    activateMultipleWidgets ({ widget, styles }) {
+      // 无主激活部件设置为主激活部件
+      if (!this.activeWidget || this.activeWidget.config.type === 'View') {
+        this.activateSingleWidget({ widget, styles })
+        return
+      }
+
+      // 已作为主激活部件不操作
+      if (this.activeWidget.widgetId === widget.widgetId) return
+
+      const subActiveWidgets = this.subActiveWidgets.slice()
+      const index = subActiveWidgets.findIndex(({ widgetId }) => widgetId === widget.widgetId)
+
+      if (index !== -1) {
+        // 取消批量选中
+        subActiveWidgets.splice(index, 1)
+      } else {
+        // 批量选中
+        subActiveWidgets.push(widget)
+      }
+      this.activateSubWidgets({ widgets: subActiveWidgets })
+    },
+    /**
+     * 批量对齐
+     */
+    alignMultipleWidgets (direction = 'left') {
+      const {
+        commonConfig: { width, height, top, left }
+      } = this.activeWidget.config
+
+      this.activateSubWidgets({
+        widgets: this.subActiveWidgets.map(widget => {
+          const {
+            commonConfig: { width: widgetWidth, height: widgetHeight }
+          } = widget.config
+
+          let layoutConfig = {}
+          switch (direction) {
+            case 'arrow-up':
+              layoutConfig = { top }
+              break
+            case 'arrow-left':
+              layoutConfig = { left }
+              break
+            case 'arrow-down':
+              layoutConfig = { top: top + height - widgetHeight }
+              break
+            case 'arrow-right':
+              layoutConfig = { left: left + width - widgetWidth }
+              break
+            case 'arrows-alt':
+              layoutConfig = { width, height }
+              break
+            case 'column-width':
+              layoutConfig = { width }
+              break
+            case 'column-height':
+              layoutConfig = { height }
+              break
+            default:
+              break
+          }
+
+          Object.assign(widget.config.commonConfig, layoutConfig)
+          anime.set(
+            document.getElementById(widget.widgetId),
+            layoutConfig
+          )
+          widget.render && widget.render.resize(widget.config)
+
+          return widget
+        })
+      })
     }
   },
   created () {
@@ -624,13 +818,33 @@ export default {
       flex-flow: row nowrap;
       justify-content: space-between;
       align-items: center;
-      height: 48px;
+      height: 42px;
       background: white;
       box-shadow: 0 2px 8px #f0f1f2;
       z-index: 4;
 
       p {
         margin: 0;
+      }
+    }
+
+    &__bar {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      .ant-btn {
+        padding: 1px 6px;
+      }
+    }
+
+    &__danger {
+      color: #ff4d4f;
+
+      &:hover {
+        color: #ff4d4f;
       }
     }
 
@@ -738,5 +952,21 @@ export default {
     0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
     transform-origin: 0 0;
     overflow: hidden;
+  }
+
+  .transition-fade {
+
+    &-enter-active,
+    &-leave-active {
+      transition: opacity .3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    }
+
+    &-enter,
+    &-leave-to
+    {
+      opacity: 0;
+      transition: opacity .3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    }
+
   }
 </style>
