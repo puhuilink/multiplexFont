@@ -2,10 +2,35 @@
   <div class="ForwardForm">
     <h3 class="title">告警通知</h3>
     <div class="ForwardForm__content" ref="content">
-      <a-card v-for="(send, index) in formModel.sendList" :key="index">
+      <a-card v-for="(send, index) in formModel.forward.sendList" :key="index">
         <a-icon class="ForwardForm__btn_remove" type="close-circle" @click="removeItem(index)" v-show="!onlyOneSendConfig" />
 
-        <a-form-model-item label="通知用户" v-bind="formItemLayout">
+        <a-form-model-item
+          label="通知等级"
+          v-bind="formItemLayout"
+          :rules="[
+            { required: true, message: '请选择通知等级' },
+          ]">
+          <a-select
+            v-model="send.level"
+          >
+            <a-select-option
+              v-for="[value, label] in levelList"
+              :key="value"
+              :value="value"
+              :disabled="!!formModel.forward.sendList.find(({ level }) => level === value)"
+            >
+              {{ label }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item
+          label="通知用户"
+          v-bind="formItemLayout"
+          :rules="[
+            { required: true, message: '请选择通知用户' },
+          ]">
           <a-select
             allowClear
             :filterOption="filterOption"
@@ -76,7 +101,11 @@
       </a-card>
     </div>
 
-    <a-button class="ForwardForm__btn_add" type="primary" @click="addItem">添加+</a-button>
+    <a-button
+      class="ForwardForm__btn_add"
+      :disabled="formModel.forward.sendList.length >= 5"
+      type="primary"
+      @click="addItem">添加+</a-button>
   </div>
 </template>
 
@@ -101,6 +130,13 @@ export default {
   data: () => ({
     SEND_TYPE_EMAIL,
     SEND_TYPE_SMS,
+    levelList: [
+      [1, '一级（紧急通知）'],
+      [2, '二级（主要通知）'],
+      [3, '三级（次要通知）'],
+      [4, '四级（一般通知）'],
+      [5, '五级（警告通知）']
+    ],
     forwardTempList: [],
     forwardTempListLoading: false,
     nestedFormItemLayout: {
@@ -121,13 +157,12 @@ export default {
       return this.forwardTempList.filter(({ mode }) => mode === SEND_TYPE_SMS)
     },
     onlyOneSendConfig () {
-      const { sendList = [] } = this.formModel
-      return sendList.length <= 1
+      return this.formModel.forward.sendList.length <= 1
     }
   },
   methods: {
     async addItem () {
-      this.formModel.sendList.push(
+      this.formModel.forward.sendList.push(
         new SendModel(this.cmdbConfig)
       )
       await this.$nextTick()
@@ -166,14 +201,14 @@ export default {
     },
     filterOption,
     removeItem (index) {
-      this.formModel.sendList.splice(index, 1)
+      this.formModel.forward.sendList.splice(index, 1)
     }
   },
   created () {
     this.fetchUserList()
     this.fetchForwardTempList()
 
-    // if (_.isEmpty(this.formModel.sendList)) {
+    // if (_.isEmpty(this.formModel.forward.sendList)) {
     //   this.addItem()
     // }
   }
@@ -190,7 +225,7 @@ export default {
 
   &__content {
     width: 100%;
-    height: 270px;
+    height: 340px;
     overflow-y: scroll;
 
     .ant-card {

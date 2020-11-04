@@ -8,10 +8,12 @@ import {
   UserGroupDao,
   ViewDesktopDao
 } from '../dao/index'
-import { setInitialPwd } from '@/api/controller/User'
 import store from '@/store'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
+import { encrypt } from '@/utils/aes'
 import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
+import Timeout from 'await-timeout'
 
 // @moduleName('用户模块')
 class UserService extends BaseService {
@@ -26,7 +28,7 @@ class UserService extends BaseService {
       // 新增用户
       UserDao.add(user)
     )
-    await setInitialPwd(user.user_id)
+    await UserService.setInitialPwd(user.user_id)
   }
 
   static async find (argus = {}) {
@@ -127,6 +129,50 @@ class UserService extends BaseService {
     )
 
     return allPermissionList
+  }
+
+  static async login ({ userId, pwd, verifCode }) {
+    return axios.post('/user/login', {
+      userId: encrypt(userId),
+      encryptedPwd: encrypt(pwd),
+      ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
+        verifCode: encrypt(verifCode)
+      } : {}
+    })
+  }
+
+  static async resetPwd ({ userId, encryptedPwd, newEncryptedPwd }) {
+    const data = {
+      userId: encrypt(userId),
+      encryptedPwd: encrypt(encryptedPwd),
+      newEncryptedPwd: encrypt(newEncryptedPwd)
+    }
+    return axios.post('/user/changePassword', data)
+  }
+
+  static async setInitialPwd (userId) {
+    const formData = new FormData()
+    formData.append('userId', encrypt(userId))
+    return axios.post(`/user/initPassword`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+  }
+
+  static async logout (token) {
+  // TODO: 当前 token 并无过期时间，后端也并未提供 logout 接口
+    return Timeout.set()
+  }
+
+  static async sendCaptchaByUserId (userId) {
+    const formData = new FormData()
+    formData.append('userId', encrypt(userId))
+    return axios.post(`/approval/getVerifCode`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 }
 

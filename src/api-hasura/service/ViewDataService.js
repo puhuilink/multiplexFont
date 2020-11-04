@@ -3,7 +3,7 @@
  * 对接后端接口
  */
 import { BaseService } from './BaseService'
-import { imp } from '@/utils/request'
+import { axios } from '@/utils/request'
 import _ from 'lodash'
 
 export class ViewDataService extends BaseService {
@@ -54,7 +54,7 @@ export class ViewDataService extends BaseService {
     }
 
     if (this._validate(data)) {
-      return imp.post('/view/data', data, config).catch(() => ({ data: [] }))
+      return axios.post('/view/data', data, config).catch(() => ({ data: [] }))
     } else {
       return []
     }
@@ -89,7 +89,7 @@ export class ViewDataService extends BaseService {
     }
 
     if (this._validate(data)) {
-      return imp.post('/view/alarm', data, config).catch(() => ({ data: [] }))
+      return axios.post('/view/alarm', data, config).catch(() => ({ data: [] }))
     } else {
       return []
     }
@@ -115,7 +115,7 @@ export class ViewDataService extends BaseService {
     }
 
     if (this._validate(data)) {
-      return imp.post('/view/map', data, config).catch(() => ({ data: [] }))
+      return axios.post('/view/map', data, config).catch(() => ({ data: [] }))
     } else {
       return []
     }

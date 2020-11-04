@@ -19,7 +19,6 @@ function addStyleResource (rule) {
 }
 
 const {
-  // NODE_ENV,
   VUE_APP_API_BASE_URL,
   VUE_APP_API_ORIGINAL_URL,
   VUE_APP_HASURA_IMP_URI,
@@ -29,7 +28,7 @@ const {
   VUE_APP_ENABLED_CDN
 } = process.env
 
-// const isProd = NODE_ENV === 'production'
+// FIXME: useCDN 为 true 时打包后运行有报错
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
 
 const assetsCDN = {
@@ -54,18 +53,12 @@ const assetsCDN = {
   ] : [
     // ace 无 npm 版本
     '/libs/ace/1.4.1/ace-bundle.js'
-    // '/libs/ace/1.4.1/ace.js',
-    // '/libs/ace/1.4.1/worker-json.js',
-    // '/libs/ace/1.4.1/mode-json.js'
   ]
 }
 
-// vue.config.js
 const vueConfig = {
   configureWebpack: {
-    // webpack plugins
     plugins: [
-      // Ignore all locale files of moment.js
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       createThemeColorReplacerPlugin()
     ],
@@ -106,7 +99,6 @@ const vueConfig = {
         name: 'assets/[name].[hash:8].[ext]'
       })
 
-    // 20 kb 以内图片采用 url-loader (项目中大部分图都在该范围内)
     config.module
       .rule('images')
       .use('url-loader')
@@ -117,7 +109,7 @@ const vueConfig = {
     config.plugin('html').tap(args => {
       // CDN 配置
       args[0].cdn = assetsCDN
-      // Git 版本信息
+      // Git log 用于打版本号与回滚调试
       args[0].version = {
         commit: childProcess.execSync('git rev-parse HEAD', { encoding: 'utf8' }),
         date: new Date(childProcess.execSync(`git show -s --format=%cd`, { encoding: 'utf8' })),
@@ -136,21 +128,20 @@ const vueConfig = {
     config.optimization.splitChunks({
       chunks: 'all',
       cacheGroups: {
-        libs: {
-          name: 'chunk-libs',
-          test: /[\\/]node_modules[\\/]/,
-          priority: 10,
-          chunks: 'initial' // only package third parties that are initially dependent
-        },
-        antd: {
-          name: 'chunk-antd', // split antd into a single package
-          priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-          test: /[\\/]node_modules[\\/]_?ant-design-vue(.*)/ // in order to adapt to cnpm
-        },
-        echarts: {
-          name: 'chunk-echarts',
+        vue: {
+          name: 'chunk-vue',
           priority: 20,
-          test: /[\\/]node_modules[\\/]_?echarts(.*)/
+          test: /[\\/]node_modules[\\/]_?vue(.*)/
+        },
+        vueRouter: {
+          name: 'chunk-vue-router',
+          priority: 20,
+          test: /[\\/]node_modules[\\/]_?vue-router(.*)/
+        },
+        vuex: {
+          name: 'chunk-vuex',
+          priority: 20,
+          test: /[\\/]node_modules[\\/]_?vuex(.*)/
         },
         axios: {
           name: 'chunk-axios',
@@ -159,8 +150,8 @@ const vueConfig = {
         },
         commons: {
           name: 'chunk-common-components',
-          test: resolve('src/components'), // can customize your rules
-          minChunks: 2, //  minimum common number
+          test: resolve('src/components'),
+          minChunks: 2,
           priority: 5,
           reuseExistingChunk: true
         }
@@ -171,10 +162,7 @@ const vueConfig = {
   css: {
     loaderOptions: {
       less: {
-        modifyVars: {
-          // 'primary-color': '#F5222D'
-        },
-        // DO NOT REMOVE THIS LINE
+        modifyVars: {},
         javascriptEnabled: true
       }
     },
@@ -182,10 +170,9 @@ const vueConfig = {
   },
 
   devServer: {
-    // development server port 8000
     port: 8080,
     proxy: {
-      // 后台接口
+      // 后端接口
       [VUE_APP_API_BASE_URL]: {
         target: VUE_APP_API_ORIGINAL_URL,
         ws: false,
@@ -197,13 +184,13 @@ const vueConfig = {
       // hasura
       [VUE_APP_HASURA_IMP_URI]: {
         target: VUE_APP_HASURA_IMP_ORIGINAL_URL,
-        ws: false,
+        ws: true,
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_HASURA_IMP_URI]: ''
         }
       },
-      // 视图缩略图 nginx 静态资源目录
+      // 视图缩略图静态资源目录
       [VUE_APP_VIEW_THUMBNAIL_URI]: {
         target: VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
         ws: false,
@@ -215,10 +202,8 @@ const vueConfig = {
     }
   },
 
-  // disable source map in production
   productionSourceMap: false,
   lintOnSave: 'warning',
-  // babel-loader no-ignore node_modules/*
   transpileDependencies: []
 }
 

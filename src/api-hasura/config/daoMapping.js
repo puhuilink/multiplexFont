@@ -1,8 +1,6 @@
-import {
-  imp
-} from './client'
+import { imp } from './client'
 
-const VIC_MAIN_LIST = [
+const IMP_TABLE_LIST = [
   // （新）告警
   { schema: 't_alarm', primaryKey: 'id' },
   { schema: 't_alarm_sub', primaryKey: 'id' },
@@ -59,13 +57,13 @@ const VIC_MAIN_LIST = [
   { schema: 't_theme', primaryKey: 'id' }
 ]
 
-const VIV_MAIN_MAPPING = new Map([
-  ...VIC_MAIN_LIST.map(table => {
+const IMP_DAP_MAPPING = new Map([
+  ...IMP_TABLE_LIST.map(table => {
     const { schema, primaryKey, provider = imp } = table
     return [schema, { primaryKey, provider }]
   })
 ])
 
 export {
-  VIV_MAIN_MAPPING
+  IMP_DAP_MAPPING
 }

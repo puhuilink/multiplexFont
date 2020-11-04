@@ -82,17 +82,20 @@
       @editSuccess="query(false)"
     />
 
-    <AuthScheme
+    <AuthSchema
+      v-action:M0110
       ref="auth"
       @success="query(false)"
     />
 
     <GroupAdministratorSchema
+      v-action:M0101
       ref="groupAdmin"
       @editSuccess="query(false)"
     />
 
     <GroupUserSchema
+      v-action:M0101
       ref="groupUser"
       @editSuccess="query(false)"
     />
@@ -101,7 +104,7 @@
 
 <script>
 import GroupSchema from './modules/GroupSchema'
-import AuthScheme from '@/components/Auth/AuthSchema'
+import AuthSchema from '@/components/Auth/AuthSchema'
 import GroupAdministratorSchema from './modules/GroupAdministratorSchema'
 import GroupUserSchema from './modules/GroupUserSchema'
 import { Confirm, List } from '@/components/Mixins'
@@ -113,7 +116,7 @@ export default {
   mixins: [Confirm, List],
   components: {
     GroupSchema,
-    AuthScheme,
+    AuthSchema,
     GroupAdministratorSchema,
     GroupUserSchema
   },

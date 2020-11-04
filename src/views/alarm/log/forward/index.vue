@@ -80,10 +80,9 @@ export default {
   data: () => ({
     columns: Object.freeze([
       {
-        title: '前转编号',
-        dataIndex: 'id',
+        title: '告警级别',
         width: 200,
-        sorter: true
+        customRender: (__, record) => _.get(record, ['alarm', 'alarm_level'], '')
       },
       // {
       //   title: '前转名称',
@@ -100,8 +99,8 @@ export default {
       {
         title: '数据域',
         dataIndex: 'domain',
-        width: 200,
-        sorter: true
+        width: 200
+        // sorter: true
       },
       {
         title: '设备名称',
@@ -134,17 +133,17 @@ export default {
       //   sorter: true
       // },
       {
-        title: '前转时间',
+        title: '通知时间',
         dataIndex: 'send_time',
         width: 200,
         sorter: true
       },
       {
-        title: '前转状态',
+        title: '通知状态',
         dataIndex: 'status',
         width: 90,
         sorter: true,
-        customRender: status => status ? '成功' : '失败'
+        customRender: status => status ? '已通知' : '通知失败'
       }
     ])
   }),

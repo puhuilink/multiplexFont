@@ -116,27 +116,17 @@
 
     </a-form>
 
-    <!-- <two-step-verifCode
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-    ></two-step-verifCode> -->
   </div>
 </template>
 
 <script>
-// import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
-import { sendCaptchaByUserId } from '@/api/login'
-// const { VUE_APP_SMS_ENABLED } = process.env
+import { UserService } from '@/api-hasura'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
   name: 'Login',
-  components: {
-    // TwoStepCaptcha
-  },
+  components: {},
   data () {
     return {
       VUE_APP_SMS_ENABLED,
@@ -273,7 +263,7 @@ export default {
           let interval
           this.state.captchaLoading = true
           this.hasSentVerifCode = false
-          sendCaptchaByUserId(values['userId'])
+          UserService.sendCaptchaByUserId(values['userId'])
             .then(({ msg = '验证码已通过短信发送到账户手机，请注意查收！' }) => {
               interval = window.setInterval(() => {
                 if (state.time-- <= 0) {

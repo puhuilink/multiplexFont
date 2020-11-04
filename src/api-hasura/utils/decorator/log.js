@@ -16,6 +16,8 @@ const { getters } = store
 const makeAudit = async function (moduleName = '', actionname = '', argus = []) {
   const { userId } = getters
 
+  if (!userId) return
+
   const data = {
     userId,
     moduleName,
@@ -65,28 +67,7 @@ const actionname = function (_actionname = '') {
   }
 }
 
-/**
- * 对未采用 class 方式的函数进行装饰器修饰
- */
-const wrapperLogFunc = function (func, moduleName, actionname) {
-  return function () {
-    const result = func.apply(this, arguments)
-
-    if (isPromise(result)) {
-      return result
-        .then(r => {
-          makeAudit(moduleName, actionname, Array.from(arguments))
-          return r
-        })
-    } else {
-      makeAudit(moduleName, actionname, Array.from(arguments))
-      return result
-    }
-  }
-}
-
 export {
   actionname,
-  moduleName,
-  wrapperLogFunc
+  moduleName
 }

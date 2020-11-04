@@ -29,7 +29,6 @@
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
 import { modifyUserPermission, modifyGroupPermission } from '@/api/system'
-// import { allocateGroupViewAuth, allocateUserViewAuth } from '@/api/controller/AuthorizeObject'
 import { AuthorizeObjectService } from '@/api-hasura'
 
 const formItemLayout = {

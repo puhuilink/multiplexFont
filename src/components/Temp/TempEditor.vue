@@ -21,7 +21,7 @@
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Mention } from 'tiptap-extensions'
 import { MessageModel } from './model'
-import { TEMP_KEYWORD_MAPPING } from './types'
+import { TEMP_KEYWORD_MAPPING } from '@/composables/alarm-temp/types'
 
 // if error when enter: Looks like multiple versions of prosemirror-model were loaded
 // https://github.com/scrumpy/tiptap/issues/577

@@ -13,7 +13,11 @@ class AlarmRuleService extends BaseService {
   }
 
   static async add (argus = {}) {
-    return axios.post('/AlarmAndRule/add', _.omit(argus, ['id']))
+    const data = _.omit(argus, ['id'])
+    if (_.isElement(data['hostId'])) {
+      data['hostId'] = null
+    }
+    return axios.post('/AlarmAndRule/add', data)
   }
 
   static async update (argus = {}) {

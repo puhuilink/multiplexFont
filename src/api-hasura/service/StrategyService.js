@@ -34,7 +34,7 @@ class StrategyService extends BaseService {
   }
 
   static async add (argus = {}) {
-    await axios.post('/strategy/add', _.pick(argus, [
+    const data = _.pick(argus, [
       'deviceType',
       'deviceBrand',
       'deviceModel',
@@ -44,7 +44,12 @@ class StrategyService extends BaseService {
       'name',
       'exprs',
       'enabled'
-    ]))
+    ])
+
+    if (_.isEmpty(data['hostId'])) {
+      data['hostId'] = null
+    }
+    await axios.post('/strategy/add', data)
   }
 
   static async update (argus = {}) {

@@ -77,9 +77,6 @@ import WrapperService from '@/components/Wrapper/WrapperService'
 import AutoAlignService from '@/components/Wrapper/AutoAlignService'
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapMutations, mapGetters } from 'vuex'
-import { findClosestNumInArr } from '@/utils/util'
-
-const CLOSEST_PIXEL = 20
 
 export default {
   name: 'Wrapper',
@@ -379,26 +376,6 @@ export default {
                 top: yDistance,
                 left: xDistance
               }
-
-              // 自动对齐计算与处理
-              // Shift 按下时关闭自动对齐
-              // 因不稳定暂时关闭自动对齐
-              // if (!this.isShiftPressed) {
-              //   const { closestTop, closestLeft, x, y } = this.calcClosestPosition()
-              //   if (mouseType === 'mouseup') {
-              //     this.isMousedown = false
-              //     Object.assign(position, { closestTop, closestLeft })
-              //     this.autoAlignService.next({
-              //       type: 'MOVE',
-              //       event: { x: null, y: null }
-              //     })
-              //   } else {
-              //     this.autoAlignService.next({
-              //       type: 'MOVE',
-              //       event: { x, y }
-              //     })
-              //   }
-              // }
             }
             return {
               type,
@@ -418,62 +395,6 @@ export default {
           }
           this.adjust$.next(mutation)
         })
-    },
-    /**
-     * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
-     */
-    calcClosestPosition () {
-      const {
-        top, left, width, height
-      } = this.getCurrentState()
-
-      const OFFSET = CLOSEST_PIXEL / this.scale
-
-      // 上侧最近位置
-      const yTop = findClosestNumInArr(this.positionYs, top, OFFSET)
-      // 下侧最近位置
-      const yBottom = findClosestNumInArr(this.positionYs, top + height, OFFSET)
-      // 左侧最近位置
-      const xLeft = findClosestNumInArr(this.positionXs, left, OFFSET)
-      // 右侧最近位置
-      const xRight = findClosestNumInArr(this.positionXs, left + width, OFFSET)
-
-      // 要吸附到的 top
-      let closestTop
-      // 要吸附到的 left
-      let closestLeft
-      // 自动对齐线条高亮的 top
-      let y
-      // 自动对齐线条高亮的 left
-      let x
-
-      if (
-        (typeof yTop === 'number' && typeof yBottom === 'number' && Math.abs(yTop - top) <= Math.abs(yBottom - (top + height))) ||
-        (typeof yTop === 'number' && typeof yBottom !== 'number')
-      ) {
-        // 上侧吸附与高亮
-        y = yTop
-        closestTop = yTop
-      } else if (typeof yBottom === 'number') {
-        // 下侧吸附与高亮
-        y = yBottom
-        closestTop = yBottom - height
-      }
-
-      if (
-        (typeof xLeft === 'number' && typeof xRight === 'number' && Math.abs(xLeft - left) <= Math.abs(xRight - (left + width))) ||
-        (typeof xLeft === 'number' && typeof xRight !== 'number')
-      ) {
-        // 左侧吸附与高亮
-        x = xLeft
-        closestLeft = xLeft
-      } else if (typeof xRight === 'number') {
-        // 右侧吸附与高亮
-        x = xRight
-        closestLeft = xRight - width
-      }
-
-      return { closestTop, closestLeft, x, y }
     },
     getCurrentState () {
       const {

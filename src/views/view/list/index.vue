@@ -30,6 +30,7 @@
                   <a-input-number class="fw" allowClear v-model.number="queryParams.view_id" />
                 </a-form-item>
               </a-col>
+
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="视图标题"
@@ -45,23 +46,23 @@
           <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
-            <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
           </span>
         </a-form>
       </template>
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="handleAdd" v-action:M0201>新增</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="handleEdit" v-action:M0202>编辑</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="handleCopy" :loading="copyLoading" v-action:M0202>复制</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="handleDesign" v-action:M0203>设计</a-button>
-        <a-button @click="handleDelete" :disabled="!hasSelected" v-action:M0204>删除</a-button>
+        <a-button v-action:M0201 @click="handleAdd">新增</a-button>
+        <a-button :disabled="!hasSelectedOne" v-action:M0202 @click="handleEdit">编辑</a-button>
+        <a-button :disabled="!hasSelectedOne" :loading="copyLoading" v-action:M0202 @click="handleCopy">复制</a-button>
+        <a-button :disabled="!hasSelectedOne" v-action:M0203 @click="handleDesign">设计</a-button>
+        <a-button :disabled="!hasSelected" v-action:M0204 @click="handleDelete">删除</a-button>
       </template>
     </CTable>
 
     <ViewTitleSchema
       ref="title"
+      v-action:M0202
       @addSuccess="query"
       @editSuccess="query"
     />
@@ -81,24 +82,7 @@ export default {
     ViewTitleSchema
   },
   data: () => ({
-    // 复制按钮 loading
     copyLoading: false,
-    // 视图类型
-    viewTypes: [
-      // 此处为老系统分类列表，已 deprecated
-      { label: '综合视图', value: 'comprehensive' },
-      { label: '性能配置视图', value: 'performanceConfig' },
-      { label: '拓扑视图', value: 'topology' },
-      { label: '告警视图', value: 'alarm' },
-      { label: '告警配置视图', value: 'alarmConfig' },
-      { label: '性能监控视图', value: 'performanceMonitor' },
-      { label: '三层架构视图', value: 'threeTierArchitecture' },
-      { label: '第三方视图', value: 'thirdParty' },
-      { label: '导航视图', value: 'navigation' },
-      { label: '特殊视图', value: 'special' },
-      { label: '报表视图', value: 'report' },
-      { label: '插件视图', value: 'plugin' }
-    ],
     columns: [
       {
         title: '视图ID',
@@ -167,8 +151,6 @@ export default {
           description: '复制成功'
         })
         this.$refs['table'].refresh()
-      } catch (e) {
-        throw e
       } finally {
         this.copyLoading = false
       }

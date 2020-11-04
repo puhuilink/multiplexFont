@@ -17,9 +17,12 @@ import { ALLPERMISSION } from '@/utils/menu'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
-    const actionName = binding.arg
+    const actionName = binding.arg || binding.value
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
+    if (!elVal || !elVal.length) {
+      return
+    }
     const [permissionId] = elVal instanceof String && [elVal] || elVal
     const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
     const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)

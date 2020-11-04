@@ -372,7 +372,6 @@ export const asyncRouterMap = [
 /**
  * 基础路由
  * @type { *[] }
- * FIXME: 因权限分配可能导致 redirect 到的路由不存在，需要通过函数进行判断
  */
 export const constantRouterMap = [
   {

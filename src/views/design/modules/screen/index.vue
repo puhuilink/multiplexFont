@@ -19,6 +19,7 @@
               <a-button-group>
                 <a-popconfirm
                   title="确定删除选中部件"
+                  :disabled="!isWidgetEditable"
                   @confirm="deleteWidgets"
                   okText="确定"
                   cancelText="取消">
