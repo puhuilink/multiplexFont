@@ -147,6 +147,7 @@ export default {
     }
   },
   data: () => ({
+    defaultIcon: { name: 'Others', img: Others },
     icons: [
       { name: 'icona1', img: icona1 },
       { name: 'icona2', img: icona2 },
@@ -157,7 +158,7 @@ export default {
       { name: 'ApplicationModule', img: ApplicationModule },
       { name: 'ApplicationSystem', img: ApplicationSystem },
       { name: 'AppServicePort', img: AppServicePort },
-      { name: 'DBOracle', img: DBOracle },
+      { name: 'DBOracle', img: DBOracle, alias: ['Oracle'] },
       { name: 'Firewall', img: Firewall },
       { name: 'IPS', img: IPS },
       { name: 'LB', img: LB },
@@ -171,7 +172,7 @@ export default {
       { name: 'Switch', img: Switch },
       { name: 'VPN', img: VPN },
       { name: 'WAN', img: WAN },
-      { name: 'Windows', img: Windows },
+      { name: 'Windows', img: Windows, alias: ['WindowsServer'] },
       { name: 'ApplicationSystem1', img: ApplicationSystem1 },
       { name: 'nwRouter1', img: nwRouter1 },
       { name: 'nwRouter2', img: nwRouter2 },
