@@ -125,6 +125,7 @@ const vueConfig = {
     }))
 
     // https://www.cnblogs.com/leiting/p/11542608.html
+    // TODO: 配合 useCDN
     config.optimization.splitChunks({
       chunks: 'all',
       cacheGroups: {

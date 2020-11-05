@@ -1,9 +1,7 @@
 import _ from 'lodash'
 import { BaseDao } from './BaseDao'
+import { IMP_DAO_MAPPING } from '../config/daoMapping'
 
-/**
- * 静态类工厂
- */
 export class StaticFactory {
   static create = () => {
     const requirePlugins = require.context('./', true, /Dao.js$/)
@@ -18,9 +16,6 @@ export class StaticFactory {
   }
 }
 
-/**
- * 动态类工厂
- */
 export class DynamicFactory {
   static create = mapping => {
     const exposed = {};
@@ -32,7 +27,6 @@ export class DynamicFactory {
       ) + 'Dao'
 
       // 已通过静态类创建则跳过
-      if (exposed[className]) return
       const { primaryKey, provider } = config
 
       exposed[className] = class extends BaseDao {
@@ -48,11 +42,7 @@ export class DynamicFactory {
   }
 }
 
-const { IMP_DAP_MAPPING } = require('../config/daoMapping.js')
-
-const exposed = {
-  ...StaticFactory.create(),
-  ...DynamicFactory.create(IMP_DAP_MAPPING)
+module.exports = {
+  ...DynamicFactory.create(IMP_DAO_MAPPING),
+  ...StaticFactory.create()
 }
-
-module.exports = exposed

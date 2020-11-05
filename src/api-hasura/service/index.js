@@ -2,7 +2,6 @@ import { AlarmForwardService } from './AlarmForwardService.js'
 import { AlarmRuleService } from './AlarmRuleService.js'
 import { AlarmService } from './AlarmService.js'
 import { AlarmTempService } from './AlarmTempService.js'
-import { AlertService } from './AlertService.js'
 import { AuditService } from './AuditService.js'
 import { AuthorizeObjectService } from './AuthorizeObjectService.js'
 import { CmdbHostEndpointMetricService } from './CmdbHostEndpointMetricService.js'
@@ -10,11 +9,9 @@ import { CmdbHostViewService } from './CmdbHostViewService.js'
 import { CmdbService } from './CmdbService.js'
 import { DictValueService } from './DictValueService.js'
 import { GroupService } from './GroupService.js'
-import { InstanceHistoryService } from './InstanceHistoryService.js'
 import { MetricService } from './MetricService.js'
 import { ModelHistoryService } from './ModelHistoryService.js'
 import { ModelService } from './ModelService.js'
-import { OperationLogService } from './OperationLogService.js'
 import { PatrolConfigService } from './PatrolConfigService.js'
 import { PatrolService } from './PatrolService.js'
 import { StrategyService } from './StrategyService.js'
@@ -32,7 +29,6 @@ export {
   AlarmRuleService,
   AlarmService,
   AlarmTempService,
-  AlertService,
   AuditService,
   AuthorizeObjectService,
   CmdbHostEndpointMetricService,
@@ -40,11 +36,9 @@ export {
   CmdbService,
   DictValueService,
   GroupService,
-  InstanceHistoryService,
   MetricService,
   ModelHistoryService,
   ModelService,
-  OperationLogService,
   PatrolConfigService,
   PatrolService,
   StrategyService,

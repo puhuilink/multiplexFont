@@ -411,10 +411,10 @@ export default {
             height: Number(height.split('px')[0]) || 0
           }
           // 更新部件位置信息
-          const { render, ...rest } = this.activeWidget
-          const widget = { ..._.cloneDeep(rest), render }
-          Object.assign(widget.config.commonConfig, widgetPositionState)
-          this.activateWidget({ widget })
+          Object.assign(this.activeWidget.config.commonConfig, widgetPositionState)
+          this.activateWidget({
+            widget: this.activateWidget
+          })
         }
         // 调整部件大小
         this.adjust({

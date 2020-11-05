@@ -98,7 +98,7 @@ export default {
     this.initEvent()
   },
   computed: {
-    ...mapGetters('screen', ['positionYs', 'positionXs', 'scale']),
+    ...mapGetters('screen', ['scale']),
     isAllowAsync () {
       return this.config && this.activeWidget && this.config.type === this.activeWidget.config.type
     }

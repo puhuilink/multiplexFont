@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "@vue/cli-plugin-babel": "^4.0.4",
     "@vue/cli-plugin-eslint": "^4.0.4",
     "@vue/cli-plugin-router": "^4.0.4",

@@ -6,6 +6,7 @@ module.exports = {
   ],
   plugins: [
     ...IS_PROD ? ['transform-remove-console'] : [],
+    '@babel/plugin-transform-modules-commonjs',
     [
       'import', {
         'libraryName': 'ant-design-vue',

@@ -1,19 +1,17 @@
 import { imp } from './client'
 
 const IMP_TABLE_LIST = [
-  // （新）告警
+  // 告警
   { schema: 't_alarm', primaryKey: 'id' },
   { schema: 't_alarm_sub', primaryKey: 'id' },
   { schema: 't_alarm_sender', primaryKey: 'id' },
   { schema: 't_cmdb_strategy', primaryKey: 'id' },
-  // （旧）告警,
-  { schema: 't_alert', primaryKey: 'id' },
   // 系统设置
   { schema: 't_audit', primaryKey: 'id' },
   { schema: 't_authorize_object', primaryKey: 'id' },
   { schema: 't_function', primaryKey: 'code' },
   { schema: 't_user_group', primaryKey: 'id' },
-  // cmdb_instance
+  // cmdb
   { schema: 't_cmdb_answer', primaryKey: 'id' },
   { schema: 't_cmdb_endpoint', primaryKey: 'endpoint_id' },
   { schema: 't_cmdb_endpoint_metric', primaryKey: 'id' },
@@ -57,7 +55,7 @@ const IMP_TABLE_LIST = [
   { schema: 't_theme', primaryKey: 'id' }
 ]
 
-const IMP_DAP_MAPPING = new Map([
+const IMP_DAO_MAPPING = new Map([
   ...IMP_TABLE_LIST.map(table => {
     const { schema, primaryKey, provider = imp } = table
     return [schema, { primaryKey, provider }]
@@ -65,5 +63,5 @@ const IMP_DAP_MAPPING = new Map([
 ])
 
 export {
-  IMP_DAP_MAPPING
+  IMP_DAO_MAPPING
 }
