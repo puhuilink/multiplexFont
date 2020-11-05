@@ -1,6 +1,5 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import { AlarmTempDao } from '../dao'
 
 class TempService extends BaseService {

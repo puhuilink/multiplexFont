@@ -3,8 +3,7 @@
  */
 
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import {
   PatrolPathDao,
   PatrolEndpointDao, PatrolMetricDao, PatrolHostDao, PatrolAnswerDao, PatrolCheckpointDao

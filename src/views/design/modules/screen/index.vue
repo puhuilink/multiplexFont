@@ -183,7 +183,6 @@ import {
   fromEvent, merge, Subject, zip
 } from 'rxjs'
 import {
-  // eslint-disable-next-line no-unused-vars
   startWith, mapTo, takeWhile,
   pluck, map, filter
 } from 'rxjs/operators'

@@ -1,5 +1,4 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
 import { mutate, query } from '../utils/hasura-orm/index'
 import { AuthorizeObjectDao, ViewDao, ViewDesktopDao } from '../dao'
 import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'

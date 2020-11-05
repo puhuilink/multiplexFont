@@ -1,6 +1,5 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import { ThemeDao } from '../dao'
 import _ from 'lodash'
 
@@ -11,14 +10,11 @@ class ThemeService extends BaseService {
     )
   }
 
-  static async fetchTheme (argus = {}) {
+  static async fetchTheme () {
     const { data: { themeList } } = await query(
       ThemeDao.find({
-        // TODO: 增加规则指定生效条目
-        where: { id: 1 },
-        limit: 1,
+        where: { is_activated: 1 },
         fields: ['settings', 'bg_image'],
-        ...argus,
         alias: 'themeList'
       })
     )

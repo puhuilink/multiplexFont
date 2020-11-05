@@ -14,7 +14,7 @@
         :filterTreeNode="filterTreeNode"
         :replaceFields="{
           children: 'children',
-          title:'alias',
+          title: 'alias',
           key:'id'
         }"
         showLine

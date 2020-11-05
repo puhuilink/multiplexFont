@@ -1,24 +1,17 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import {
   CmdbHostDao,
   CmdbEndpointMetricDao,
   CmdbHostEndpointDao,
   CmdbHostEndpointMetricDao
-  // ModelHostGroupByHostTypeDao
 } from '../dao'
-// import _ from 'lodash'
-const _ = require('lodash')
+import _ from 'lodash'
 
-// TODO: t_metric 表以外可能可以用 GraphQL 缓存
 class CmdbService extends BaseService {
-  // FIXME: host 与 endpoint 并非一定是树形结构
-  // TODO: 字段有待确认
   static async tree () {
     const { data: { hostList } } = await query(
       CmdbHostDao.find({
-        // where:
         fields: [
           'id',
           'alias',
@@ -46,7 +39,7 @@ class CmdbService extends BaseService {
   }
 
   static async resourceTree (where = {}) {
-    // 一维数组查找
+    // 扁平一层查找
     let { data: { cmdbHostList } } = await query(
       CmdbHostDao.find({
         where: {
@@ -89,10 +82,10 @@ class CmdbService extends BaseService {
       .forEach(([location, hostList]) => {
         const children = Object
           .entries(_.groupBy(hostList, 'host_type'))
-          .map(([hostType, hostList]) => ({
+          .map(([hostType, list]) => ({
             id: hostType,
             alias: hostType,
-            children: hostList,
+            children: list,
             type: 'hostType',
             selectable: false
           }))

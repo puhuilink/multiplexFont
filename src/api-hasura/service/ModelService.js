@@ -1,6 +1,5 @@
 import { BaseService } from './BaseService'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 import _ from 'lodash'
 import {
   ModelHostDao,
@@ -10,7 +9,6 @@ import {
   ModelHostGroupByHostTypeDao
 } from '../dao'
 class ModelService extends BaseService {
-  // FIXME: host 与 endpoint 并非一定是树形结构
   static async tree () {
     const { data: { hostList } } = await query(
       ModelHostDao.find({

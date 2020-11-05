@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import { AlarmDao, AlarmSubDao } from '../dao'
-// eslint-disable-next-line no-unused-vars
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query } from '../utils/hasura-orm/index'
 
 class AlarmService extends BaseService {
   static async find (argus = {}) {
