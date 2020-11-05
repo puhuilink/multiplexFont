@@ -412,7 +412,7 @@ export default {
           // 更新部件位置信息
           Object.assign(this.activeWidget.config.commonConfig, widgetPositionState)
           this.activateWidget({
-            widget: this.activateWidget
+            widget: this.activeWidget
           })
         }
         // 调整部件大小
