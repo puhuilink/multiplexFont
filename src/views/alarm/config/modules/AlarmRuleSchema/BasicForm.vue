@@ -27,7 +27,7 @@
         <a-checkbox
           v-for="item in ruleType"
           :key="item"
-          :value="ruleType"
+          :value="item"
         >{{ ruleTypeMapping.get(item) }}</a-checkbox>
       </a-checkbox-group>
     </a-form-model-item>

@@ -28,15 +28,12 @@
 
 <script>
 import { CmdbService } from '@/api-hasura'
-// import { Tree } from 'ant-design-vue'
-// import _ from 'lodash'
 
 export default {
   name: 'CmdbTree',
   mixins: [],
   components: {},
   props: {
-    // ..._.pick(Tree.props, 'draggable')
     draggable: {
       type: Boolean,
       default: false
