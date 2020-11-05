@@ -74,7 +74,6 @@ import anime from 'animejs'
 import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
 import WrapperService from '@/components/Wrapper/WrapperService'
-import AutoAlignService from '@/components/Wrapper/AutoAlignService'
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapMutations, mapGetters } from 'vuex'
 
@@ -87,7 +86,6 @@ export default {
     originalState: null,
     config: null,
     wrapperService: new WrapperService(),
-    autoAlignService: new AutoAlignService(),
     autoAlignState: {
       top: null,
       left: null
@@ -125,23 +123,6 @@ export default {
         })
       this.initKeyboardEvent()
       this.initScaleAndMoveEvent()
-    },
-    /**
-     * 初始化自动对齐事件
-     */
-    initAutoAlignEvent () {
-      this.autoAlignService.change$
-        .pipe(
-          takeWhile(() => this.isSubscribed),
-          filter(({ type }) => type === 'MOVE')
-        )
-        .subscribe(({ event }) => {
-          const {
-            x: left,
-            y: top
-          } = event
-          Object.assign(this.autoAlignState, { top, left })
-        })
     },
     /**
      * 初始化键盘热键事件
@@ -199,21 +180,6 @@ export default {
           this.adjust$.next(mutation)
         })
 
-      // 鼠标按下时按住 Shift 关闭自动对齐
-      this.shift$ = this.keypress$
-        .pipe(
-          filter(({ event }) => ['ShiftLeft', 'ShiftRight'].includes(event.code))
-        )
-        .subscribe(({ type, event }) => {
-          this.isShiftPressed = type === 'keydown'
-          if (this.isShiftPressed) {
-            this.autoAlignService.next({
-              type: 'MOVE',
-              event: { x: null, y: null }
-            })
-          }
-        })
-
       // 鼠标按下时按下并抬起 Esc 恢复到之前状态
       this.esc$ = this.keyup$
         .pipe(
@@ -243,7 +209,6 @@ export default {
      * 初始化鼠标拖拽与缩放事件
      */
     initScaleAndMoveEvent () {
-      this.initAutoAlignEvent()
       this.documentMove$ = fromEvent(document, 'mousemove')
       this.documentUp$ = fromEvent(document, 'mouseup')
       this.tl$ = fromEvent(this.$refs.tl, 'mousedown').pipe(

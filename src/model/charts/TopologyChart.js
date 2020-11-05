@@ -117,11 +117,13 @@ export default class TopologyChart extends Chart {
       }
     })
 
+    this.onlyShow = onlyShow
+
     // 读取配置
     this.read(proprietaryConfig)
 
     // 展示模式下不添加事件处理
-    if (onlyShow) return
+    if (this.onlyShow) return
 
     // 初始化右键菜单
     this.initContentMenu()
@@ -436,8 +438,10 @@ export default class TopologyChart extends Chart {
         this.chart.setItemState(edge, 'active', model.animate)
       })
     }
+
+    if (!this.onlyShow) return
     // 读取配置后更新配置属性
-    // store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
+    store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
   }
 
   /**

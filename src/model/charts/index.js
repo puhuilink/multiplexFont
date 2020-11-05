@@ -22,6 +22,7 @@ export default class Chart {
     this.init(widget, onlyShow)
     this.setStyle(widget.config)
     this.config = widget.config
+    this.onlyShow = onlyShow
   }
 
   /**
