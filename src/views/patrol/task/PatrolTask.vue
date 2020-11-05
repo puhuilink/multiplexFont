@@ -161,7 +161,7 @@ export default {
         dataIndex: 'actual_start_late',
         width: 120,
         sorter: true,
-        customRender: actualStartLate => actualStartLate ? '是' : '否'
+        customRender: actual_start_late => actual_start_late ? '是' : '否'
       },
       {
         title: '巡更实际结束时间',
@@ -171,7 +171,7 @@ export default {
       },
       {
         title: '超时完成',
-        dataIndex: 'actual_start_late',
+        dataIndex: 'actual_end_late',
         width: 120,
         sorter: true,
         // TODO: useMapping
