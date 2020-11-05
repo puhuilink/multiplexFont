@@ -16,13 +16,14 @@ import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+
 const events = require('events')
 
 export const emitter = new events.EventEmitter()
 
 export default class TopologyChart extends Chart {
-  constructor ({ widget }) {
-    super({ widget })
+  constructor (props) {
+    super(props)
     this.selectedItem = null
   }
 
@@ -30,7 +31,7 @@ export default class TopologyChart extends Chart {
    * 初始化图表
    * @param widget
    */
-  init ({ config }) {
+  init ({ config, widgetId }, onlyShow) {
     const { commonConfig: { width, height }, proprietaryConfig } = config
     this.chart = new G6.Graph({
       container: this.container,
@@ -116,11 +117,14 @@ export default class TopologyChart extends Chart {
       }
     })
 
-    // 初始化右键菜单
-    this.initContentMenu()
-
     // 读取配置
     this.read(proprietaryConfig)
+
+    // 展示模式下不添加事件处理
+    if (onlyShow) return
+
+    // 初始化右键菜单
+    this.initContentMenu()
 
     // 对于缩放事件的监听
     this.chart.on('wheelzoom', () => {

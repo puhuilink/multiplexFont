@@ -21,7 +21,7 @@ import TextHealthChart from '../charts/TextHealthChart'
 import PolarChart from '../charts/PolarChart'
 
 export default class ChartFactory {
-  static create (type, { widget }) {
+  static create (type, { widget, onlyShow = false }) {
     switch (type) {
       case 'Lines':
         return new LineChart({ widget })
@@ -34,7 +34,7 @@ export default class ChartFactory {
       case 'Texts':
         return new TextsChart({ widget })
       case 'Topology':
-        return new TopologyChart({ widget })
+        return new TopologyChart({ widget, onlyShow })
       case 'Rect':
         return new RectChart({ widget })
       case 'Clock':

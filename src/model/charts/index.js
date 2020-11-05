@@ -15,11 +15,11 @@ import {
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class Chart {
-  constructor ({ widget }) {
+  constructor ({ widget, onlyShow }) {
     this.container = document.getElementById(widget.widgetId)
     this.chartConfig = {}
     this.setContainer(widget)
-    this.init(widget)
+    this.init(widget, onlyShow)
     this.setStyle(widget.config)
     this.config = widget.config
   }

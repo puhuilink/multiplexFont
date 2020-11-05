@@ -195,7 +195,8 @@ export default {
     // 根据类型创建图表
     this.render = widgetFactory.create(type, {
       widget: this.widget,
-      element: this.$refs.element
+      element: this.$refs.element,
+      onlyShow: this.onlyShow
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
