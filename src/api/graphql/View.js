@@ -20,9 +20,3 @@ export const mutationInsertViews = gql`mutation ($objects: [t_view_insert_input!
     affected_rows
   }
 }`
-
-export const queryViewContent = gql`query MyQuery ($viewId: numeric) {
-  data: t_view(where: {view_id: {_eq: $viewId}}) {
-    content
-  }
-}`
