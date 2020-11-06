@@ -90,6 +90,5 @@ class UserService extends BaseService {
 
 ## 注意事项
 
-- Service 层采用 export * from 以简化导入导出复杂度，但这种方式不支持编辑器文件间跳转，文件跳转需手动
-- Dao 层同上
+- Dao 层部分 class 通过配置项在运行时动态生成，因此无法在编译器间跳转
 
