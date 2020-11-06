@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService'
 import { AuthorizeObjectDao, ViewListDao, ViewDesktopDao } from '../dao/index'
 import { mutate, query } from '../utils/hasura-orm/index'
-import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
+import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import { axios } from '@/utils/request'
 
 class ViewListService extends BaseService {

@@ -6,7 +6,6 @@
       :filterOption="filterOption"
       :targetKeys="_targetKeys"
       @change="handleChange"
-      @search="handleSearch"
       :render="item => item.view_title"
     >
     </a-transfer>

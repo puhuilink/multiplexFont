@@ -95,7 +95,7 @@
 import { AlarmRuleService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
-import { allRuleTypeMapping } from '@/composables/alarm-rule/types'
+import { allRuleTypeMapping } from '@/tables/alarm_rule/types'
 import RuleMixin from '../ruleMixin'
 import {
   titleColumn,
@@ -107,7 +107,7 @@ import {
   updateColumn,
   ruleTypeColumn,
   enabledColumn
-} from '@/composables/alarm-rule/columns'
+} from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'AlarmsRules',

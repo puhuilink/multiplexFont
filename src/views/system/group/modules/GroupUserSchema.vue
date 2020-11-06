@@ -86,16 +86,16 @@ export default {
     edit (record) {
       this.show('设置用户')
       this.record = Object.assign({}, record)
-      this.submit = this.allocateGroupUser
+      this.submit = this.allocateGroupUsers
       this.getAllUserList()
       this.getCurrentUserList(record.group_id)
     },
-    async allocateGroupUser () {
+    async allocateGroupUsers () {
       try {
         this.loading = true
         const groupId = this.record.group_id
         const userIds = this.targetKeys
-        await UserGroupService.allocateGroupUser(groupId, userIds)
+        await UserGroupService.allocateGroupUsers(groupId, userIds)
         this.$notification.success({
           message: '系统提示',
           description: '分配用户成功'

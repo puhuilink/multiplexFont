@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
 import { UserGroupDao } from '../dao/index'
-import { USER_ROLE } from '@/composables/user-group/enum'
+import { USER_ROLE } from '@/tables/user_group/enum'
 
 class UserGroupService extends BaseService {
   static async find (argus) {
@@ -28,7 +28,7 @@ class UserGroupService extends BaseService {
    * @param {*} group_id
    * @param {*} userIds
    */
-  static async allocateGroupUser (group_id, userIds) {
+  static async allocateGroupUsers (group_id, userIds) {
     await mutate(
       // 全量删除旧用户
       UserGroupDao.batchDelete({ group_id }),

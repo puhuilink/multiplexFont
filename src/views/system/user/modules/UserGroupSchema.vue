@@ -29,7 +29,7 @@
 <script>
 import { filterTransferOption } from '@/utils/util'
 import { GroupService, UserGroupService } from '@/api'
-import { GROUP_FLAG } from '@/composables/group/enum'
+import { GROUP_FLAG } from '@/tables/group/enum'
 import Schema from '@/components/Mixins/Modal/Schema'
 
 export default {
@@ -91,17 +91,17 @@ export default {
        */
     filterOption: filterTransferOption('group_name'),
     handleChange (targetKeys, direction, moveKeys) {
-      // console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys
     },
     handleSearch (dir, value) {},
     edit (record) {
       this.show('分配工作组')
       this.record = Object.assign({}, record)
+      this.submit = this.allocateUserGroups
       this.getAllGroupList()
       this.getCurrentGroupList(record.user_id)
     },
-    async submit () {
+    async allocateUserGroups () {
       try {
         this.loading = true
         const userId = this.record.user_id

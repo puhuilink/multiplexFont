@@ -12,7 +12,7 @@ import store from '@/store'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 import { encrypt } from '@/utils/aes'
-import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
+import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import Timeout from 'await-timeout'
 
 // @moduleName('用户模块')

@@ -6,7 +6,7 @@ import {
   ruleTypeMapping,
   SEND_TYPE_EMAIL,
   SEND_TYPE_SMS
-} from '@/composables/alarm-rule/types'
+} from '@/tables/alarm_rule/types'
 import _ from 'lodash'
 
 export {

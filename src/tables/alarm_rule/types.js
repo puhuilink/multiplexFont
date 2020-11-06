@@ -1,7 +1,7 @@
 import {
   SEND_TYPE_EMAIL, SEND_TYPE_SMS,
   SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING
-} from '@/composables/alarm-temp/types'
+} from '@/tables/alarm_temp/types'
 
 export const ALARM_RULE_MERGE = 'merge'
 export const ALARM_RULE_UPGRADE = 'upgrade'

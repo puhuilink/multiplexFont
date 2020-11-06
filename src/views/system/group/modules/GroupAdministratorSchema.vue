@@ -28,7 +28,7 @@
 import { filterTransferOption } from '@/utils/util'
 import { UserGroupService } from '@/api'
 import { Schema } from '@/components/Mixins'
-import { USER_ROLE } from '@/composables/user-group/enum'
+import { USER_ROLE } from '@/tables/user_group/enum'
 
 export default {
   name: 'GroupAdministratorSchema',

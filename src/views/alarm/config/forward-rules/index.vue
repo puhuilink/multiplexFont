@@ -84,7 +84,7 @@ import {
   metricModelIdColumn,
   updateColumn,
   enabledColumn
-} from '@/composables/alarm-rule/columns'
+} from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'ForwardRules',

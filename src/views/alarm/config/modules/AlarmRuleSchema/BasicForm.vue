@@ -37,7 +37,7 @@
 <script>
 import Mixin from './Mixin'
 import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
-import { ruleTypeMapping } from '@/composables/alarm-rule/columns'
+import { ruleTypeMapping } from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'BasicForm',

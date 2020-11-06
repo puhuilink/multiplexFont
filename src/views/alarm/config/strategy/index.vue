@@ -95,11 +95,11 @@ import {
   deviceModelColumn,
   endpointModelIdColumn,
   metricModelIdColumn
-} from '@/composables/alarm-rule/columns'
+} from '@/tables/alarm_rule/columns'
 import {
   nameColumn,
   lastUpdateTime
-} from '@/composables/cmdb-strategy/columns'
+} from '@/tables/cmdb_strategy/columns'
 
 export default {
   name: 'AlarmStrategy',

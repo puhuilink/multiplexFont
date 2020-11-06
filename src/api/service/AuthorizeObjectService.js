@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
 import { AuthorizeObjectDao, ViewDao, ViewDesktopDao } from '../dao'
-import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
+import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
