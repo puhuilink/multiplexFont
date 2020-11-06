@@ -44,7 +44,8 @@ export default class Update extends Hasura {
       throw new Error('where condition need')
     }
     const args = this.schemaArguments + '_set: {' + this._set + '} '
-    return ` ${this._schema} ${'(' + args + ' )'}{ ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
+    // return ` ${this._schema} ${'(' + args + ' )'}{ ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
+    return ` ${this._schema} ${'(' + args + ' )'} { affected_rows }`
   }
 
   /**

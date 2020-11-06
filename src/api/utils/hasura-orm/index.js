@@ -10,12 +10,9 @@ import { parse } from 'graphql'
  * @return {Promise<any>}
  */
 const mutate = async function () {
-  // TODO: provider检测
   const hasuraORMList = await Promise.all(Array.from(arguments))
-  // console.log(hasuraORMList)
   const [{ provider }] = hasuraORMList
   const query = `mutation { ${hasuraORMList.map(hasuraORM => hasuraORM.parsed())} }`
-  // console.log(query)pH
   return provider.mutate({ mutation: parse(query) })
 }
 
@@ -25,14 +22,9 @@ const mutate = async function () {
  * @return {Promise<any>}
  */
 const query = async function () {
-  // TODO: provider检测
   const hasuraInstanceList = await Promise.all(Array.from(arguments))
   const [{ provider }] = hasuraInstanceList
-  const query = `query{ ${hasuraInstanceList.map(hasuraInstance => {
-    // console.log(hasuraInstance.parsed())
-    return hasuraInstance.parsed()
-  })} }`
-  // console.log(query)
+  const query = `query{ ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())} }`
   return provider.query({ query: parse(query) })
 }
 

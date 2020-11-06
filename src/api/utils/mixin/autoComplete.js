@@ -1,13 +1,6 @@
 import store from '@/store'
 import moment from 'moment'
 
-const defaultInfo = function (timeKey, userKey) {
-  return {
-    [userKey]: store.getters.userId,
-    [timeKey]: moment().format('YYYY-MM-DDTHH:mm:ss')
-  }
-}
-
 /**
  * 默认创建人与时间戳
  * @param {Boolean} withPostfix 字段是否带下标
@@ -38,7 +31,6 @@ const updateTime = () => ({ 'update_time': moment().format('YYYY-MM-DD HH:mm:ss'
 export {
   defaultCreateDate,
   defaultUpdateDate,
-  defaultInfo,
   createTime,
   updateTime
 }

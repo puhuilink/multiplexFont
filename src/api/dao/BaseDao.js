@@ -118,16 +118,6 @@ class BaseDao {
     return chain
   }
 
-  // FIXME: findOne 异常
-  /**
-   * 查询一条数据
-   * @param {Object} argus
-   * @return {Promise<HasuraORM>}
-   */
-  static async findOne (argus = {}) {
-    await this.find({ ...argus, limit: 1 })
-  }
-
   /**
    * 删除一条或多条数据
    * @param {Object} where 匹配条件

@@ -27,46 +27,23 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import apollo from '@/utils/apollo'
 import { filterTransferOption } from '@/utils/util'
-import { GroupService } from '@/api'
-
-const userGroupList = gql`query groupList($userId: String) {
-  data: t_user_group(where: {user_id: {_eq: $userId}}) {
-    group_id
-  }
-}
-`
-
-const allocateUserGroup = gql`mutation allocateUserGroup ($userId: String!, $objects: [t_user_group_insert_input!]! = []) {
-  # 批量删除旧分组
-  delete_t_user_group (where: {user_id: {_eq: $userId}}) {
-    affected_rows
-  }
-  # 批量插入新分组
-  insert_t_user_group (objects:$objects) {
-    affected_rows
-  }
-}`
+import { GroupService, UserGroupService } from '@/api'
+import { GROUP_FLAG } from '@/composables/group/enum'
+import Schema from '@/components/Mixins/Modal/Schema'
 
 export default {
   name: 'UserGroupSchema',
+  mixins: [Schema],
   data: (vm) => ({
     activeTabKey: '1',
-    form: vm.$form.createForm(vm),
     loading: false,
     record: null,
-    title: '',
-    visible: false,
     // 所有数据
     groupList: [],
     // 选中数据
     targetKeys: []
   }),
-  mounted () {
-    // this.getMock()
-  },
   methods: {
     /**
      * 获取所有用户组
@@ -86,17 +63,21 @@ export default {
         })
         this.groupList = groupList.map(el => ({
           ...el,
-          disabled: el.flag !== 1
+          disabled: el.flag !== GROUP_FLAG.enabled
         }))
       } catch (e) {
         this.groupList = []
         throw e
       }
     },
-    async getCurrentGroupList (userId) {
+    async getCurrentGroupList (user_id) {
       try {
-        const { data } = await apollo.clients.imp.query({ query: userGroupList, variables: { userId } }).then(r => r.data)
-        this.targetKeys = data.map(e => e.group_id)
+        const { data: { userGroupList } } = await UserGroupService.find({
+          where: { user_id },
+          fields: ['group_id'],
+          alias: 'userGroupList'
+        })
+        this.targetKeys = userGroupList.map(e => e.group_id)
       } catch (e) {
         this.targetKeys = []
         throw e
@@ -113,51 +94,25 @@ export default {
       // console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys
     },
-    handleSearch (dir, value) {
-      // console.log('search:', dir, value)
-    },
+    handleSearch (dir, value) {},
     edit (record) {
+      this.show('分配工作组')
+      this.record = Object.assign({}, record)
       this.getAllGroupList()
       this.getCurrentGroupList(record.user_id)
-      this.title = '分配工作组'
-      this.record = {
-        ...record
-      }
-      this.visible = true
-    },
-    cancel () {
-      this.visible = false
-    },
-    reset () {
-      this.form.resetFields()
-      Object.assign(this.$data, this.$options.data.apply(this))
     },
     async submit () {
       try {
         this.loading = true
-        // TODO: 直接传一个 userId 与 groupIds, 字段拼接处理到 api / controller 层完成
         const userId = this.record.user_id
-        const objects = this.targetKeys.map(groupId => ({
-          user_id: userId,
-          group_id: groupId,
-          // 1为非管理员，2为管理员
-          user_role: '1'
-        }))
-        await apollo.clients.imp.mutate({
-          mutation: allocateUserGroup,
-          variables: {
-            userId,
-            objects
-          }
-        })
+        const groupIds = this.targetKeys
+        await UserGroupService.allocateUserGroups(userId, groupIds)
         this.$notification.success({
           message: '系统提示',
           description: '分配工作组成功'
         })
         this.$emit('editSuccess')
         this.cancel()
-      } catch (e) {
-        throw e
       } finally {
         this.loading = false
       }
@@ -167,24 +122,26 @@ export default {
 </script>
 
 <style lang="less">
-  .UserGroupSchema__modal {
-    .ant-modal-body {
-      /*padding-top: 0;*/
-      height: 508px;
-    }
-    .ant-transfer {
-      display: flex;
-      align-content: center;
-      justify-content: center;
-    }
-    .ant-transfer-operation {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .ant-transfer-list {
-      height: 400px;
-      flex: 1;
-    }
+.UserGroupSchema__modal {
+  .ant-modal-body {
+    height: 508px;
   }
+
+  .ant-transfer {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .ant-transfer-operation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .ant-transfer-list {
+    height: 400px;
+    flex: 1;
+  }
+}
 </style>

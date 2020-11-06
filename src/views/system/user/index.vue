@@ -73,7 +73,6 @@
       </template>
 
       <!-- / 操作区域 -->
-      <!-- FIXME: 是否允许操作当前账号 -->
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增</a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
