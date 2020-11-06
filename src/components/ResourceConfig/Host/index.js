@@ -1,5 +1,5 @@
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { ModelService } from '@/api-hasura'
+import { ModelService } from '@/api'
 import SelectMixin from '../SelectMixin'
 
 const loadData = (host_type_dict_value_code) => ModelService.hostFind({

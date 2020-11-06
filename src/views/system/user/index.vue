@@ -110,7 +110,7 @@
 import UserSchema from './modules/UserSchema'
 import AuthSchema from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './modules/UserGroupSchema'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'

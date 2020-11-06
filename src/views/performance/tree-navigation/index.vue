@@ -42,7 +42,7 @@
 import { CmdbTree } from '@/components/Resource'
 import PerformanceAggregate from '@/components/Performance/Aggregate'
 import Renderer from '@/components/Renderer'
-import { CmdbHostViewService, ViewDesignService } from '@/api-hasura'
+import { CmdbHostViewService, ViewDesignService } from '@/api'
 import Timeout from 'await-timeout'
 import _ from 'lodash'
 

@@ -46,7 +46,7 @@ import RecoverForm from '../AlarmRuleSchema/RecoverForm'
 import UpgradeForm from '../AlarmRuleSchema/UpgradeForm'
 import MergeForm from '../AlarmRuleSchema/MergeForm'
 import ForwardForm from '../AlarmRuleSchema/ForwardForm'
-import { AlarmRuleService } from '@/api-hasura'
+import { AlarmRuleService } from '@/api'
 import { AlarmRuleModelFactory } from '../AlarmRuleSchema/model'
 
 export default {

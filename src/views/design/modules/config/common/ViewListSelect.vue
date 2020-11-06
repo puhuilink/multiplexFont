@@ -37,7 +37,7 @@
 import DataSourceMixins from '../dataSourceMixins/index'
 import NodesMixins from '../dataSourceMixins/nodes'
 import ProprietaryMixins from '../proprietaryMixins'
-import { ViewListService } from '@/api-hasura'
+import { ViewListService } from '@/api'
 import { filterOption } from '@/utils/util'
 import { NODE_CI_DRILL_TYPE_VIEW, NODE_CI_DRILL_TYPE_TAB } from '@/model/nodes'
 import _ from 'lodash'

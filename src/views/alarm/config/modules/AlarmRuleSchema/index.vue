@@ -70,7 +70,7 @@ import {
   AlarmRuleModelFactory,
   ruleTypeMapping
 } from './model'
-import { AlarmRuleService } from '@/api-hasura'
+import { AlarmRuleService } from '@/api'
 import BasicForm from './BasicForm'
 import RecoverForm from './RecoverForm'
 import UpgradeForm from './UpgradeForm'

@@ -1,6 +1,6 @@
 import { ALL_SEND_TYPE_MAPPING, SEND_TYPE_MAPPING } from '@/composables/alarm-temp/types'
 import _ from 'lodash'
-import { TEMP_TYPE } from '@/api-hasura/dao/types/AlarmTemp'
+import { TEMP_TYPE } from '@/api/dao/types/AlarmTemp'
 
 export {
   ALL_SEND_TYPE_MAPPING,

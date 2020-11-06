@@ -15,7 +15,7 @@
 
 <script>
 import _ from 'lodash'
-import { AuthorizeObjectService, ViewListService } from '@/api-hasura'
+import { AuthorizeObjectService, ViewListService } from '@/api'
 
 export default {
   name: 'AuthView',

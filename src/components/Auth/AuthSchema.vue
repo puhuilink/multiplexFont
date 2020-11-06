@@ -25,11 +25,9 @@
 </template>
 
 <script>
-/* eslint-disable camelcase */
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
-import { modifyUserPermission, modifyGroupPermission } from '@/api/system'
-import { AuthorizeObjectService } from '@/api-hasura'
+import { AuthorizeObjectService } from '@/api'
 
 const formItemLayout = {
   labelCol: {
@@ -84,10 +82,10 @@ export default {
         const { authView: { viewIds }, record: { user_id, group_id } } = this
         if (user_id) {
           await AuthorizeObjectService.allocateUserView(user_id, viewIds)
-          await modifyUserPermission(user_id, menu)
+          await AuthorizeObjectService.modifyUserPermission(user_id, menu)
         } else if (group_id) {
           await AuthorizeObjectService.allocateGroupView(group_id, viewIds)
-          await modifyGroupPermission(group_id, menu)
+          await AuthorizeObjectService.modifyGroupPermission(group_id, menu)
         }
         this.visible = false
         this.$notification.success({

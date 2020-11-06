@@ -3,7 +3,7 @@ import AlarmRuleSchema from './modules/AlarmRuleSchema/index'
 import AlarmRuleDetailSchema from './modules/AlarmRuleDetailSchema/index'
 import AlarmRuleGlobalSchema from './modules/AlarmRuleGlobalSchema/index'
 import { Confirm, List } from '@/components/Mixins'
-import { AlarmRuleService } from '@/api-hasura/index'
+import { AlarmRuleService } from '@/api'
 
 export default {
   name: 'RuleMixin',

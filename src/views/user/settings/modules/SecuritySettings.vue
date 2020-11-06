@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import { mapGetters } from 'vuex'
 import { List } from '@/components/Mixins'

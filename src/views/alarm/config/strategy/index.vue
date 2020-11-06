@@ -85,7 +85,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { StrategyService } from '@/api-hasura/index'
+import { StrategyService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import AlarmStrategySchema from '../modules/AlarmStrategySchema/index'
 import _ from 'lodash'

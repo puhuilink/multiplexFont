@@ -66,7 +66,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { AlarmTempService } from '@/api-hasura/index'
+import { AlarmTempService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import ForwardTempSchema from '../modules/ForwardTempSchema/index'

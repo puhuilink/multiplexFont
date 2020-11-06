@@ -1,5 +1,5 @@
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { DictValueService } from '@/api-hasura'
+import { DictValueService } from '@/api'
 import SelectMixin from '../SelectMixin'
 
 const loadData = (value_parent_code) => DictValueService.find({

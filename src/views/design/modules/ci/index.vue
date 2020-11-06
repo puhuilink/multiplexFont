@@ -15,7 +15,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
-import { CmdbService } from '@/api-hasura'
+import { CmdbService } from '@/api'
 import {
   NODE_TYPE_CIRCLE
 } from '@/plugins/g6-types'

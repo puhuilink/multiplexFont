@@ -200,9 +200,8 @@ import Widget from '@/components/Widget/index'
 import AdjustMixins from '@/components/Wrapper/AdjustMixins.vue'
 import WrapperService from '@/components/Wrapper/WrapperService'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
-import { updateViewDesign } from '@/api/controller/View'
 import Preview from '@/components/Preview'
-import { ViewDesignService } from '@/api-hasura'
+import { ViewDesignService } from '@/api'
 
 export default {
   name: 'Screen',
@@ -568,10 +567,7 @@ export default {
       try {
         this.loading = true
         this.viewOptions = this.view.getOption()
-        await updateViewDesign(this.$route.query.id, this.viewOptions)
-        // await ViewDesignService.updateDesign({
-        //   content: this.viewOptions
-        // }, { view_id: Number(this.$route.query.id) })
+        await ViewDesignService.updateViewDesign(this.$route.query.id, this.viewOptions)
         this.$notification.success({
           message: '系统提示',
           description: '保存成功'

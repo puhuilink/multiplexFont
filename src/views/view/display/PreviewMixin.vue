@@ -1,6 +1,6 @@
 <script>
 import defaultPreviewImg from '@/assets/images/view__preview_default.jpg'
-import { ViewDesignService } from '@/api-hasura'
+import { ViewDesignService } from '@/api'
 import PreviewMixin from '~~~/PreviewMixin'
 
 export default {

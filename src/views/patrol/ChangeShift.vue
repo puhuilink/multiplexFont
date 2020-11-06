@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'

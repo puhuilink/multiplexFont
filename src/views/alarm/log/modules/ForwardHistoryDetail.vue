@@ -20,7 +20,7 @@
 <script>
 import DetailForm from '../../modules/DetailForm'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { AlarmForwardService } from '@/api-hasura'
+import { AlarmForwardService } from '@/api'
 import moment from 'moment'
 
 export default {

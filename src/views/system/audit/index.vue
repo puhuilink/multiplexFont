@@ -106,7 +106,7 @@
 import AuditSchema from './modules/AuditSchema'
 import { generateQuery } from '@/utils/graphql'
 import List from '@/components/Mixins/Table/List'
-import { AuditService } from '@/api-hasura'
+import { AuditService } from '@/api'
 import moment from 'moment'
 
 export default {

@@ -81,7 +81,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { MetricService } from '@/api-hasura'
+import { MetricService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import moment from 'moment'

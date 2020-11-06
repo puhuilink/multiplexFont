@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { CmdbService } from '@/api-hasura'
+import { CmdbService } from '@/api'
 
 export default {
   name: 'CmdbTree',

@@ -65,7 +65,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { AlarmForwardService } from '@/api-hasura'
+import { AlarmForwardService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import ForwardHistoryDetail from '../modules/ForwardHistoryDetail'

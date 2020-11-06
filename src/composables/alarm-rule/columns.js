@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { AlarmRuleService } from '@/api-hasura'
+import { AlarmRuleService } from '@/api'
 import moment from 'moment'
 import _ from 'lodash'
 

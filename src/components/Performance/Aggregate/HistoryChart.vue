@@ -43,7 +43,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import moment from 'moment'
 import { generateQuery } from '@/utils/graphql'
-import { MetricService } from '@/api-hasura'
+import { MetricService } from '@/api'
 import _ from 'lodash'
 import echarts from 'echarts'
 

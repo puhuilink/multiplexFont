@@ -7,7 +7,7 @@
 ## 目录结构
 
 ```
-├─api-hasura
+├─api
     ├─config
     │  ├─client
     │  └─daoMapping

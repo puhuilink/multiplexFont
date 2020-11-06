@@ -43,6 +43,18 @@ class ViewListService extends BaseService {
   static async copy (viewId) {
     return axios.get(`/view/copy?viewId=${viewId}`)
   }
+
+  /**
+   * 生成视图缩略图
+   * @param {File} file
+   * @param {String | Number} id 视图id
+   */
+  static async updateViewThumbnail (file, id) {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('id', `${id}`)
+    return axios.post('/view/edit', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+  }
 }
 
 export {

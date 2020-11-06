@@ -109,7 +109,7 @@ import GroupAdministratorSchema from './modules/GroupAdministratorSchema'
 import GroupUserSchema from './modules/GroupUserSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { GroupService } from '@/api-hasura/index'
+import { GroupService } from '@/api'
 
 export default {
   name: 'Group',

@@ -111,7 +111,7 @@
 
 <script>
 import Mixin from './Mixin'
-import { AlarmTempService, UserService } from '@/api-hasura'
+import { AlarmTempService, UserService } from '@/api'
 import { filterOption, scrollTo } from '@/utils/util'
 import {
   SEND_TYPE_EMAIL,

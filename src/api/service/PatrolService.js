@@ -6,6 +6,7 @@ import {
   XjChangeShiftDao, PatrolTaskStatusDao
 } from '../dao'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -261,7 +262,34 @@ class PatrolService extends BaseService {
   }
 
   // 告警审批
-  static async approveSend () {}
+  static async approveSend () { }
+
+  static async getHistoryExcel (data) {
+    return axios({
+      url: '/alert/exportAlert',
+      method: 'post',
+      data,
+      responseType: 'arraybuffer'
+    })
+  }
+
+  static async getPatrolTaskExcel (data) {
+    return axios({
+      url: '/taskInfo/exportTask',
+      method: 'post',
+      data,
+      responseType: 'arraybuffer'
+    })
+  }
+
+  static async getPatrolObjectExcel (data) {
+    return axios({
+      url: '/taskCi/exportTaskCi',
+      method: 'post',
+      data,
+      responseType: 'arraybuffer'
+    })
+  }
 }
 
 export {

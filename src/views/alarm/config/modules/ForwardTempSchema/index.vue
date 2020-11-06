@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { AlarmTempService } from '@/api-hasura/index'
+import { AlarmTempService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { AlarmTempModel, SEND_TYPE_MAPPING } from './model'
 import TempEditor from '@/components/Temp/TempEditor'

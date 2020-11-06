@@ -29,7 +29,7 @@
 import gql from 'graphql-tag'
 import apollo from '@/utils/apollo'
 import { filterTransferOption } from '@/utils/util'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 
 const groupUserList = gql`query groupList($groupId: String) {
   data: t_user_group(where: {group_id: {_eq: $groupId}}) {

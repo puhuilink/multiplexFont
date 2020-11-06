@@ -3,6 +3,7 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import { AuthorizeObjectDao, ViewDao, ViewDesktopDao } from '../dao'
 import { OBJECT_TYPE } from '../dao/types/AuthorizeObject'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AuthorizeObjectService extends BaseService {
   static async find (argus = {}) {
@@ -100,6 +101,70 @@ class AuthorizeObjectService extends BaseService {
       // 删除曾经已分配到视图桌面上但现在无权限的视图
       ViewDesktopDao.batchDelete({ user_id, view_id: { _in: abandonViewIdList } })
     )
+  }
+
+  /**
+   * 获取用户权限
+   * @param userId
+   * @returns {AxiosPromise}
+   */
+  static async getUserPermission (userId) {
+    return axios({
+      url: '/function/getUserFunction',
+      method: 'get',
+      params: {
+        userId
+      }
+    })
+  }
+
+  /**
+   * 获取用户组权限
+   * @param groupId
+   * @returns {AxiosPromise}
+   */
+  static async getGroupPermission (groupId) {
+    return axios({
+      url: '/function/getGroupFunction',
+      method: 'get',
+      params: {
+        groupId
+      }
+    })
+  }
+
+  /**
+   * 修改用户权限
+   * @param id
+   * @param authorizeObjectList
+   * @returns {AxiosPromise}
+  */
+  static async modifyUserPermission (id, authorizeObjectList) {
+    return axios({
+      url: '/function/changeUserFunction',
+      method: 'post',
+      data: {
+        id,
+        authorizeObjectList
+      }
+    })
+  }
+
+  /**
+   * 修改用户权限
+   * @param id
+   * @param authorizeObjectList
+   * @returns {AxiosPromise}
+   */
+  static async modifyGroupPermission (id, authorizeObjectList) {
+    return axios({
+      url: '/function/changeGroupFunction',
+      method: 'post',
+      data: {
+        id,
+        authorizeObjectList
+      }
+    })
   }
 }
 

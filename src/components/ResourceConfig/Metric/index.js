@@ -1,4 +1,4 @@
-import { CmdbService, ModelService } from '@/api-hasura'
+import { CmdbService, ModelService } from '@/api'
 import SelectMixin from '../SelectMixin'
 
 export default {

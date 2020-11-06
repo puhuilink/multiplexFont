@@ -102,7 +102,6 @@
 </template>
 
 <script>
-import { getPatrolTaskExcel } from '@/api/controller/ExcelExport'
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
@@ -111,7 +110,7 @@ import {
   ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING
 } from '../typing'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 
 export default {
   name: 'PatrolTask',
@@ -211,7 +210,6 @@ export default {
       }).then(r => r.data)
     },
     seeDetail () {
-      // this.$refs.detail.open(this.selectedRows[0])
       const [id] = this.selectedRowKeys
       this.$refs['schema'].detail(id)
     },
@@ -221,7 +219,7 @@ export default {
     async exportExcel () {
       try {
         this.exportLoading = true
-        const content = await getPatrolTaskExcel(this.selectedRowKeys)
+        const content = await PatrolService.getPatrolTaskExcel(this.selectedRowKeys)
         downloadExcel('巡更记录单', content)
       } catch (e) {
         throw e

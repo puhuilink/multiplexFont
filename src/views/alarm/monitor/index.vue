@@ -168,7 +168,7 @@
 <script>
 import _ from 'lodash'
 import { List } from '@/components/Mixins'
-import { AlarmService } from '@/api-hasura/index'
+import { AlarmService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'

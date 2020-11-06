@@ -121,7 +121,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {

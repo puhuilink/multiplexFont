@@ -70,7 +70,7 @@
 <script>
 import { mixinDevice } from '@/utils/mixin.js'
 import { mapActions, mapGetters } from 'vuex'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 
 const levelNames = {
   0: '低',

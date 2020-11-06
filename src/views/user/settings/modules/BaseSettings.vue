@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import { pick } from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'

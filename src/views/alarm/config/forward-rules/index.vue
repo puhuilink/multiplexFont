@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { AlarmRuleService } from '@/api-hasura/index'
+import { AlarmRuleService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import RuleMixin from '../ruleMixin'

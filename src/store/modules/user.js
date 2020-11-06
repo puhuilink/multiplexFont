@@ -1,6 +1,5 @@
 import Vue from 'vue'
-import { UserService } from '@/api-hasura'
-import { getGroupPermission, getUserPermission } from '@/api/system'
+import { UserService, AuthorizeObjectService } from '@/api'
 import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
@@ -54,8 +53,8 @@ const user = {
           // 获取用户所属工作组的权限 、并合并
           // const permissionList = await UserService.getAllPermission()
           const results = await Promise.all([
-            ...organizeList.map(organize => getGroupPermission(organize.groupId)),
-            getUserPermission(user.userId)
+            ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
+            AuthorizeObjectService.getUserPermission(user.userId)
           ])
           const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
           const permissionList = results.flatMap(item => item.data)

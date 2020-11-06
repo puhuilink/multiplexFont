@@ -1,5 +1,5 @@
 <script>
-import { CmdbService } from '@/api-hasura'
+import { CmdbService } from '@/api'
 import SelectMixin from '../Common/SelectMixin'
 
 export default {

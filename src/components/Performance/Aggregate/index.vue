@@ -36,7 +36,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { MetricService } from '@/api-hasura'
+import { MetricService } from '@/api'
 import _ from 'lodash'
 import moment from 'moment'
 import HistoryChart from './HistoryChart'

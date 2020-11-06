@@ -73,7 +73,7 @@
 import ViewTitleSchema from './modules/ViewTitleSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { ViewListService } from '@/api-hasura/index'
+import { ViewListService } from '@/api'
 
 export default {
   name: 'ViewList',
