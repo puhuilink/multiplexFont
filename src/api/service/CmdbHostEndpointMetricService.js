@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { CmdbHostEndpointMetricDao } from '../dao'
+import { CmdbHostEndpointMetricDao } from '../dao/index'
 
 class CmdbHostEndpointMetricService extends BaseService {
   static async find (argus = {}) {

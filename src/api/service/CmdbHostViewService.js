@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { CmdbHostViewDao } from '../dao'
+import { CmdbHostViewDao } from '../dao/index'
 import _ from 'lodash'
 
 class CmdbHostViewService extends BaseService {

@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { ThemeDao } from '../dao'
+import { ThemeDao } from '../dao/index'
 import _ from 'lodash'
 
 class ThemeService extends BaseService {

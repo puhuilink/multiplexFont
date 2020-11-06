@@ -7,7 +7,7 @@ import {
   ModelEndpointMetricDao,
   ModelHostGroupByModelDao,
   ModelHostGroupByHostTypeDao
-} from '../dao'
+} from '../dao/index'
 class ModelService extends BaseService {
   static async tree () {
     const { data: { hostList } } = await query(

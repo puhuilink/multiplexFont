@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { AlarmTempDao } from '../dao'
+import { AlarmTempDao } from '../dao/index'
 
 class TempService extends BaseService {
   static async find (argus = {}) {

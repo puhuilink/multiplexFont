@@ -7,7 +7,7 @@ import { query } from '../utils/hasura-orm/index'
 import {
   PatrolPathDao,
   PatrolEndpointDao, PatrolMetricDao, PatrolHostDao, PatrolAnswerDao, PatrolCheckpointDao
-} from '../dao'
+} from '../dao/index'
 import _ from 'lodash'
 
 class PatrolConfigService extends BaseService {

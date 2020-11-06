@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao } from '../dao'
+import { AlarmRuleDao } from '../dao/index'
 import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
 import { axios } from '@/utils/request'

@@ -4,7 +4,7 @@ import {
   AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
   XjChangeShiftDao, PatrolTaskStatusDao
-} from '../dao'
+} from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 

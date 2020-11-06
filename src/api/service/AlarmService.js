@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService'
-import { AlarmDao, AlarmSubDao } from '../dao'
+import { AlarmDao, AlarmSubDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
 
 class AlarmService extends BaseService {

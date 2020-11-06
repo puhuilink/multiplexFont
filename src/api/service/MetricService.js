@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService'
 import { CmdbHostEndpointMetricService } from './CmdbHostEndpointMetricService'
 import { query } from '../utils/hasura-orm/index'
-import { MetricDao } from '../dao'
+import { MetricDao } from '../dao/index'
 import _ from 'lodash'
 
 class MetricService extends BaseService {

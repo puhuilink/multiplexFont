@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { AlarmSenderDao, SendRecordDao } from '../dao'
+import { AlarmSenderDao, SendRecordDao } from '../dao/index'
 import _ from 'lodash'
 
 class AlarmForwardService extends BaseService {

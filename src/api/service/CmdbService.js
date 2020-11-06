@@ -5,7 +5,7 @@ import {
   CmdbEndpointMetricDao,
   CmdbHostEndpointDao,
   CmdbHostEndpointMetricDao
-} from '../dao'
+} from '../dao/index'
 import _ from 'lodash'
 
 class CmdbService extends BaseService {

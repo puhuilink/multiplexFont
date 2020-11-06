@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { CmdbStrategyDao } from '../dao'
+import { CmdbStrategyDao } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
