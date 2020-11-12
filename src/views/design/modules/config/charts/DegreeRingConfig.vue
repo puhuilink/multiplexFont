@@ -18,7 +18,7 @@
                 <p class="comment-template__leading">类型:</p>
                 <div class="comment-template__inner">
                   <a-select
-                    v-model="type"
+                    v-model="config.proprietaryConfig.type"
                     @change="typeChange">
                     <a-select-option :value="DEGREE_TYPE_HEALTH_DEGREE">健康度</a-select-option>
                     <a-select-option :value="DEGREE_TYPE_HEALTH_RING">健康环</a-select-option>
@@ -57,7 +57,7 @@
                 <p class="comment-template__leading">小数位数:</p>
                 <div class="comment-template__inner">
                   <a-slider
-                    v-model="decimalPoint"
+                    v-model="config.proprietaryConfig.innerCircle.decimalPoint"
                     @change="change()"
                     :min="0"
                     :max="4" />
@@ -68,7 +68,7 @@
               <ThresholdColor />
             </a-collapse-panel>
 
-            <a-collapse-panel header="底色设置" key="3" v-show="type === DEGREE_TYPE_HEALTH_RING">
+            <a-collapse-panel header="底色设置" key="3" v-show="config.proprietaryConfig.type === DEGREE_TYPE_HEALTH_RING">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -92,7 +92,7 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="圆设置" key="4" v-show="type === DEGREE_TYPE_HEALTH_DEGREE">
+            <a-collapse-panel header="圆设置" key="4" v-show="config.proprietaryConfig.type === DEGREE_TYPE_HEALTH_DEGREE">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -116,7 +116,7 @@
               </div>
             </a-collapse-panel>
 
-            <a-collapse-panel header="环设置" key="5" v-show="type === DEGREE_TYPE_HEALTH_RING">
+            <a-collapse-panel header="环设置" key="5" v-show="config.proprietaryConfig.type === DEGREE_TYPE_HEALTH_RING">
               <div class="comment-template__item">
                 <p class="comment-template__leading">颜色:</p>
                 <div class="comment-template__inner">
@@ -207,7 +207,6 @@ import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
 import ColorPicker from '@/components/ColorPicker'
 import DegreeRingDataSource from '../dataSource/DegreeRingDataSource'
-import _ from 'lodash'
 import ThresholdColor from '../common/ThresholdColor'
 import {
   DEGREE_TYPE_HEALTH_DEGREE,
@@ -227,24 +226,7 @@ export default {
     DEGREE_TYPE_HEALTH_DEGREE,
     DEGREE_TYPE_HEALTH_RING
   }),
-  computed: {
-    decimalPoint: {
-      get () {
-        return _.get(this, 'config.proprietaryConfig.decimalPoint', 0)
-      },
-      set (decimalPoint) {
-        Object.assign(this.config.proprietaryConfig, { decimalPoint })
-      }
-    },
-    type: {
-      get () {
-        return _.get(this, 'config.proprietaryConfig.type', DEGREE_TYPE_HEALTH_DEGREE)
-      },
-      set (type) {
-        Object.assign(this.config.proprietaryConfig, { type })
-      }
-    }
-  },
+  computed: {},
   methods: {
     typeChange (value) {
       switch (value) {

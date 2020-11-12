@@ -35,9 +35,9 @@
               <span slot="title" :class="[isAllowAsync ? 'wrapper__menu--primary': '']"><a-icon type="sync" />同步配置</span>
               <a-menu-item key="all" @click="syncConfig(['commonConfig', 'proprietaryConfig', 'dataConfig'])">全部配置</a-menu-item>
               <a-menu-divider />
-              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">公共属性</a-menu-item>
-              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">专有属性</a-menu-item>
-              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据配置</a-menu-item>
+              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">样式</a-menu-item>
+              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">属性</a-menu-item>
+              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="deleteWidget" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
