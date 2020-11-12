@@ -115,6 +115,12 @@ export default {
         state.activeWidget = widget
       }
       state.subActiveWidgets = []
+      if (state.activeWidget.config.type === 'View') {
+        // 隐藏选择器
+        anime.set(document.getElementById('wrapper'), {
+          display: 'none'
+        })
+      }
     },
     // 设置批量选中的部分
     [ScreenMutations.ACTIVATE_SUB_WIDGETS] (state, payload) {
