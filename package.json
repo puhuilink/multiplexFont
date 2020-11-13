@@ -13,7 +13,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@antv/g6": "3.2.8",
+    "@antv/g6": "3.2.9",
     "animejs": "^3.1.0",
     "ant-design-vue": "^1.6.3",
     "apollo-cache-inmemory": "^1.6.5",
