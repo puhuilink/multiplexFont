@@ -1,9 +1,12 @@
 const CryptoJS = require('crypto-js')
-// 从环境读入而非硬编码到 JS 文件里
-const key = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_KEY)
-const iv = CryptoJS.enc.Latin1.parse(process.env.VUE_APP_ENCRYPT_IV)
+const {
+  VUE_APP_ENCRYPT_KEY,
+  VUE_APP_ENCRYPT_IV
+} = process.env
 
-// 加密信息
+const key = CryptoJS.enc.Latin1.parse(VUE_APP_ENCRYPT_KEY)
+const iv = CryptoJS.enc.Latin1.parse(VUE_APP_ENCRYPT_IV)
+
 export function encrypt (message) {
   return CryptoJS.AES.encrypt(message, key, {
     iv: iv,
@@ -11,7 +14,6 @@ export function encrypt (message) {
   }).toString()
 }
 
-// 解密信息
 export function decrypt (encryptMessage) {
   return CryptoJS.AES.decrypt(encryptMessage, key, {
     iv: iv,

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { ModelService } from '@/api-hasura'
+import { ModelService } from '@/api'
 
 export default {
   name: 'ModelTree',

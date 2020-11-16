@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 

@@ -80,7 +80,7 @@ class Border {
    * 获取边框配置
    */
   getOption () {
-    return Object.assign(_.omit(_.cloneDeep(this), 'borderRadius'), {
+    return Object.assign(_.omit(this, 'borderRadius'), {
       ...this.borderRadius
     })
   }

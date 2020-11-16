@@ -73,7 +73,6 @@
       </template>
 
       <!-- / 操作区域 -->
-      <!-- FIXME: 是否允许操作当前账号 -->
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增</a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
@@ -93,11 +92,13 @@
     />
 
     <AuthSchema
+      v-action:M0110
       ref="auth"
       @success="query(false)"
     />
 
     <UserGroupSchema
+      v-action:M0104
       ref="group"
       @editSuccess="query(false)"
     />
@@ -108,10 +109,9 @@
 import UserSchema from './modules/UserSchema'
 import AuthSchema from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './modules/UserGroupSchema'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { setInitialPwd } from '@/api/controller/User'
 import _ from 'lodash'
 
 export default {
@@ -255,7 +255,7 @@ export default {
       this.$promiseConfirm({
         title: '系统提示',
         content: '是否重置选中用户密码？',
-        onOk: () => setInitialPwd(_.first(this.selectedRowKeys))
+        onOk: () => UserService.setInitialPwd(_.first(this.selectedRowKeys))
           .then(() => {
             this.$notification.success({
               message: '系统提示',

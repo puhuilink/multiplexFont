@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import { ViewDesktopService } from '@/api-hasura'
+import { ViewDesktopService } from '@/api'
 import _ from 'lodash'
 
 const ALL_VIEW = '所有视图'

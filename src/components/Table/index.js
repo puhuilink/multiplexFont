@@ -121,9 +121,11 @@ export default {
      * @param Boolean bool
      */
     refresh (bool = false) {
-      bool && (this.localPagination = Object.assign({}, {
-        current: 1, pageSize: this.pageSize
-      }))
+      if (bool) {
+        this.localPagination = ['auto', true].includes(this.showPagination) ? Object.assign({}, {
+          current: 1, pageSize: this.pageSize
+        }) : false
+      }
       this.loadData()
     },
     /**
@@ -306,6 +308,7 @@ export default {
       scopedSlots: {
         ...this.$scopedSlots
       },
+      ref: 'table',
       on: {
         ...this.$listeners,
         change: this.loadData

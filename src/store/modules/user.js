@@ -1,10 +1,8 @@
 import Vue from 'vue'
-import { logout } from '@/api/login'
-import { getGroupPermission, getUserPermission } from '@/api/system'
+import { UserService, AuthorizeObjectService } from '@/api'
 import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
-import { login } from '@/api/controller/User'
 import router from '@/router'
 
 const user = {
@@ -28,6 +26,7 @@ const user = {
     },
     SET_NAME: (state, { name }) => {
       state.name = name
+      state.info.staffName = name
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -54,8 +53,8 @@ const user = {
           // 获取用户所属工作组的权限 、并合并
           // const permissionList = await UserService.getAllPermission()
           const results = await Promise.all([
-            ...organizeList.map(organize => getGroupPermission(organize.groupId)),
-            getUserPermission(user.userId)
+            ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
+            AuthorizeObjectService.getUserPermission(user.userId)
           ])
           const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
           const permissionList = results.flatMap(item => item.data)
@@ -111,7 +110,7 @@ const user = {
 
     // 登录
     Login ({ commit }, userInfo) {
-      return login(userInfo)
+      return UserService.login(userInfo)
         .then(({ data }) => data)
         .then(decrypt)
         .then(JSON.parse)
@@ -129,7 +128,7 @@ const user = {
 
     // 登出
     Logout ({ commit, state }) {
-      return logout(state.token)
+      return UserService.logout(state.token)
         .finally(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])

@@ -7,12 +7,13 @@
 */
 
 <script>
-import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
+import CacheMixin from '../cache'
 
 export default {
   name: 'ProprietaryMixins',
+  mixins: [CacheMixin],
   computed: {
     ...mapState('screen', [
       'activeWidget',
@@ -20,10 +21,7 @@ export default {
       'activeNode',
       'activeEdge',
       'edgeConfig'
-    ]),
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    }
+    ])
   },
   methods: {
     ...mapMutations('screen', {
@@ -31,13 +29,15 @@ export default {
       removeWidget: ScreenMutations.REMOVE_WIDGET,
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG,
       updateNode: ScreenMutations.ACTIVATE_NODE
-
     }),
     change () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
+      const { render, widgetId } = this.activeWidget
       this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
+        widget: {
+          widgetId,
+          config: this.config,
+          render
+        }
       })
       this.$nextTick(() => {
         render.mergeOption(this.config)

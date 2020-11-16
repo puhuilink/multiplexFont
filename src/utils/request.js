@@ -40,16 +40,9 @@ const responseInterceptor = (response) => {
   return response.data
 }
 
-export const imp = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL
-  // timeout: 500000
-})
-
 service.interceptors.request.use(requestInterceptor)
-imp.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
-imp.interceptors.response.use(responseInterceptor)
 
 const installer = {
   vm: {},

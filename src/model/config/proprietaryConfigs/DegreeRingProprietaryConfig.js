@@ -1,7 +1,6 @@
 /*
  * 环度专有属性配置项
  */
-import _ from 'lodash'
 import { ThresholdColorRule } from './index'
 // eslint-disable-next-line
 import echartsLiquidfill from 'echarts-liquidfill'
@@ -76,8 +75,8 @@ export default class DegreeRingProprietaryConfig {
    * 获取健康度专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
-      series: _.cloneDeep(this.innerCircle)
+    return Object.assign({}, this, {
+      series: this.innerCircle
     })
   }
 }

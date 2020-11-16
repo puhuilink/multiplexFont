@@ -59,7 +59,7 @@ import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING } from '../typing'
 import moment from 'moment'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
 import _ from 'lodash'
 

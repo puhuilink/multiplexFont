@@ -72,19 +72,6 @@
           </a-menu>
           <a-button class="fr" type="primary"> 全局告警规则设置 <a-icon type="down" /> </a-button>
         </a-dropdown>
-        <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(true)" v-action:M0304>启用</a-button> -->
-        <!-- <a-button :disabled="!hasSelected" @click="onBatchToggleEnabled(false)" v-action:M0304>停用</a-button> -->
-      </template>
-
-      <template v-slot:enabled="enabled, { id }">
-        <a-popconfirm
-          v-action:M0304
-          :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
-          @confirm="onToggleEnabled(id, !enabled)"
-          okText="确定"
-          cancelText="取消">
-          <a-button :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button>
-        </a-popconfirm>
       </template>
     </CTable>
 
@@ -105,45 +92,45 @@
 </template>
 
 <script>
-import { Confirm, List } from '@/components/Mixins'
-import { AlarmRuleService } from '@/api-hasura/index'
+import { AlarmRuleService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
-import { ruleTypeMapping, allRuleTypeMapping } from '../typing'
-import AlarmRuleSchema from '../modules/AlarmRuleSchema/index'
-import AlarmRuleDetailSchema from '../modules/AlarmRuleDetailSchema/index'
-import AlarmRuleGlobalSchema from '../modules/AlarmRuleGlobalSchema/index'
+import { allRuleTypeMapping } from '@/tables/alarm_rule/types'
+import RuleMixin from '../ruleMixin'
 import {
-  ruleColumnSnippetStart,
-  ruleColumnSnippetMiddle,
-  ruleColumnSnippetEnd
-} from '../../config'
+  titleColumn,
+  deviceTypeColumn,
+  deviceBrandColumn,
+  deviceModelColumn,
+  endpointModelIdColumn,
+  metricModelIdColumn,
+  updateColumn,
+  ruleTypeColumn,
+  enabledColumn
+} from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'AlarmsRules',
-  mixins: [Confirm, List],
-  components: {
-    AlarmRuleSchema,
-    AlarmRuleDetailSchema,
-    AlarmRuleGlobalSchema
-  },
+  mixins: [RuleMixin],
+  components: {},
   data () {
     return {
       allRuleType: Object.freeze(
         Object.fromEntries(allRuleTypeMapping)
       ),
-      columns: Object.freeze([
-        ...ruleColumnSnippetStart(true),
-        ...ruleColumnSnippetMiddle(),
-        {
-          title: '规则类型',
-          dataIndex: 'rule_type',
-          width: 100,
-          sorter: true,
-          customRender: ruleType => ruleTypeMapping.get(ruleType)
-        },
-        ...ruleColumnSnippetEnd(true)
-      ]),
+      columns: [
+        ...[
+          titleColumn,
+          deviceTypeColumn,
+          deviceBrandColumn,
+          deviceModelColumn,
+          endpointModelIdColumn,
+          metricModelIdColumn,
+          updateColumn,
+          ruleTypeColumn,
+          enabledColumn
+        ].map(fn => fn.call(this))
+      ],
       queryParams: {
         rule_type: ''
       }
@@ -165,53 +152,11 @@ export default {
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
-      }).then(r => {
-        console.log(r.data)
-        return r.data
-      })
-    },
-    onAdd () {
-      this.$refs.schema.add()
-    },
-    async onBatchDelete () {
-      this.$promiseConfirmDelete({
-        onOk: () => AlarmRuleService
-          .batchDelete(this.selectedRowKeys)
-          .then(() => {
-            this.$notifyDeleteSuccess()
-            this.query(false)
-          })
-          .catch(this.$notifyError)
-      })
-    },
-    onDetail () {
-      const [id] = this.selectedRowKeys
-      this.$refs['detail'].detail(id)
-    },
-    onEditGlobalRule ({ key: ruleType }) {
-      // console.log(ruleType)
-      this.$refs['global'].edit(ruleType)
-    },
-    async onToggleEnabled (id, enabled) {
-      try {
-        this.$refs['table'].loading = true
-        //
-        await AlarmRuleService.batchToggleEnabled([id], enabled)
-        await this.query(false)
-      } catch (e) {
-        throw e
-      } finally {
-        this.$refs['table'].loading = false
-      }
-    },
-    onEdit () {
-      const [id] = this.selectedRowKeys
-      this.$refs.schema.edit(id)
+      }).then(r => r.data)
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

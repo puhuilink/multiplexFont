@@ -404,9 +404,14 @@ export default {
     background: white;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    box-shadow: 0 2px 0px -1px rgba(0, 0, 0, 0.2), 0 1px 0px 0 rgba(0, 0, 0, 0.14),
       0 1px 3px 0 rgba(0, 0, 0, 0.12);
     /*transition: transform, width, height 1350ms cubic-bezier(0, 1, 0.85, 1);*/
+
+    &:nth-child(1),
+    &:nth-child(2) {
+      margin-top: 0
+    }
 
     i {
       font-size: 32px;

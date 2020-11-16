@@ -20,6 +20,10 @@ export default {
   name: 'CTable',
   props: {
     ..._.omit(GraphTable.props, ['loading']),
+    showPagination: {
+      type: Boolean,
+      default: true
+    },
     pagination: {
       type: Object,
       default: () => Object.assign({}, defaultPagination)
@@ -82,6 +86,7 @@ export default {
         } : {},
         ...this.$attrs,
         pagination,
+        showPagination: this.showPagination,
         columns: columns.map(column => ({
           ellipsis: true,
           ...column.tooltip ? {

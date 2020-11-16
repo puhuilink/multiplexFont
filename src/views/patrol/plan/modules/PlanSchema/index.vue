@@ -28,7 +28,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import BasicInfo, { basicInfoRule } from './BasicInfo'
 import Cron, { cronRule } from './Cron'
 import PatrolPath, { patrolPathRule } from './PatrolPath'

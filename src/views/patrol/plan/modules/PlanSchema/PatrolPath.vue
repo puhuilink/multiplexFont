@@ -15,7 +15,7 @@
 
 <script>
 import mixin from './mixin'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 // import _ from 'lodash'

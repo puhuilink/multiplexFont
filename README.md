@@ -57,8 +57,7 @@
     ├─assets
     │  ├─icons  拓扑默认图标
     │  └─less  公共样式表
-    ├─api (已废弃的)接口层，后续逐步迁移到 api-hasura
-    ├─api-hasura 接口层
+    ├─api 接口层
     │  ├─config
     │  ├─dao  hasura的ORM封装，用于动态生成hasura语句
     │  ├─service  接口暴露层，由页面直接调用；本身是dao层的直接调用者

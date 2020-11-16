@@ -6,7 +6,6 @@
  * Email: dong.xing@outlook.com
  */
 
-import _ from 'lodash'
 import { BarItemStyle, Legend, XAxis, YAxis } from './index'
 
 /**
@@ -40,7 +39,7 @@ export default class BarProprietaryConfig {
    * 获取柱形图专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       itemStyle: this.barItemStyle.getOption()
     })
   }

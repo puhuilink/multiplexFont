@@ -70,7 +70,7 @@
 <script>
 import { mixinDevice } from '@/utils/mixin.js'
 import { mapActions, mapGetters } from 'vuex'
-import { resetPwd } from '@/api/controller/User'
+import { UserService } from '@/api'
 
 const levelNames = {
   0: '低',
@@ -233,7 +233,7 @@ export default {
           state.passwordLevelChecked = false
           this.loading = true
           try {
-            await resetPwd({
+            await UserService.resetPwd({
               ...values,
               userId
             })

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { GroupService, PatrolConfigService, PatrolService } from '@/api-hasura'
+import { GroupService, PatrolConfigService, PatrolService } from '@/api'
 import _ from 'lodash'
 
 export default {

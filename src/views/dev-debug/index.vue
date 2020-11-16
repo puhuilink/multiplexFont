@@ -1,6 +1,5 @@
 <template>
-  <div class="DevDebug">
-  </div>
+  <div class="DevDebug"></div>
 </template>
 
 <script>
@@ -8,8 +7,7 @@
 export default {
   name: 'DevDebug',
   mixins: [],
-  components: {
-  },
+  components: {},
   props: {},
   data: () => ({
   }),

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { AlarmService } from '@/api-hasura/index'
+import { AlarmService } from '@/api'
 import _ from 'lodash'
 import Schema from '@/components/Mixins/Modal/Schema'
 import CTable from '@/components/Table/CTable'

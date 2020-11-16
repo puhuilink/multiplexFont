@@ -51,7 +51,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { ViewListService } from '@/api-hasura/index'
+import { ViewListService } from '@/api'
 import _ from 'lodash'
 
 export default {

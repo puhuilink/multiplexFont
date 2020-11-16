@@ -35,8 +35,7 @@ export default class ClockChart extends Chart {
   }
 
   /**
-   * @override
-   * 设置新的配置项渲染图表
+   *  * 设置新的配置项渲染图表
    * @param config widget 配置项
    */
   mergeOption (config) {

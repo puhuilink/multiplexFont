@@ -6,7 +6,7 @@ import {
   ruleTypeMapping,
   SEND_TYPE_EMAIL,
   SEND_TYPE_SMS
-} from '../../typing'
+} from '@/tables/alarm_rule/types'
 import _ from 'lodash'
 
 export {
@@ -48,8 +48,8 @@ class UpgradeContentModel extends ContentModel {}
  * 发送规则
  */
 class ForwardContentModel extends ContentModel {
-  constructor ({ sendList, ...props }) {
-    super(props)
+  constructor ({ content, sendList = [], ...props }) {
+    super(content)
     const cmdbConfig = _.pick(props, ['hostId', 'endpointModelId', 'metricModelId'])
     this.ruleType = [ALARM_RULE_FORWARD]
     this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))

@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { ListProps } from './index'
 
 export default class ListProprietaryConfig {
@@ -7,13 +6,16 @@ export default class ListProprietaryConfig {
     props = {
       styleConfig: {
         header: {
-          backgroundColor: 'rgba(240,240,240,1)',
+          backgroundColor: 'rgba(230,230,230,1)',
           color: 'rgba(80,80,80,1)',
           fontSize: '12px',
           fontWeight: 'normal'
         },
         rows: {
-          backgroundColor: 'rgba(240,240,240,1)',
+          backgroundColor: {
+            odd: 'rgba(230,230,230,1)',
+            even: 'rgba(220,220,220,1)'
+          },
           color: 'rgba(112,116,120,1)',
           fontSize: '12px',
           fontWeight: 'normal'
@@ -29,7 +31,6 @@ export default class ListProprietaryConfig {
    * 映射配置
    */
   getOption () {
-    // console.log(this.props)
-    return { ..._.omit(this, ['props']) }
+    return { ...this.props }
   }
 }

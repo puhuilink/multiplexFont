@@ -167,7 +167,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { GroupService } from '@/api-hasura/index'
+import { GroupService } from '@/api'
 import _ from 'lodash'
 import { dataDomain } from '@/components/Common'
 

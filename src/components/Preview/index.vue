@@ -87,8 +87,7 @@
 
 <script>
 import _ from 'lodash'
-import { ViewDesignService } from '@/api-hasura'
-import { updateViewThumbnail } from '@/api/controller/View'
+import { ViewDesignService, ViewListService } from '@/api'
 import Renderer from '@/components/Renderer'
 import PreviewMixin from '@/components/PreviewMixin'
 import Timeout from 'await-timeout'
@@ -233,7 +232,7 @@ export default {
       const canvas = await html2canvas(this.$el)
       canvas.toBlob(blob => {
         const file = new File([blob], `${this.title}.png`, { lastModified: `${Date.now()}` })
-        updateViewThumbnail(file, this.currentView.view_id || this.$route.query.id)
+        ViewListService.updateViewThumbnail(file, this.currentView.view_id || this.$route.query.id)
           .then(() => {
             this.$notification.success({
               message: '系统提示',

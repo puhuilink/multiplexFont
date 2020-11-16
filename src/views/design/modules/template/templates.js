@@ -30,7 +30,7 @@ const charts = [
     category: 'CHART', type: 'Texts', name: '文本', icon: 'font-colors', width: 200, height: 100
   },
   {
-    category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300
+    category: 'CHART', type: 'Rect', name: '矩形', icon: 'border', width: 300, height: 300, padding: 0
   },
   {
     category: 'CHART', type: 'Circle', name: '圆形', icon: 'loading-3-quarters', width: 300, height: 300
@@ -61,7 +61,7 @@ const elements = [
     category: 'ELEMENT', type: 'AlarmList', name: '告警列表', icon: 'bell', width: 1200, height: 560
   },
   {
-    category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560
+    category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560, backgroundColor: 'rgba(230, 230, 230, 1)'
   }
 ]
 

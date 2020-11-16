@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { AuthorizeObjectService, ViewDesktopService } from '@/api-hasura'
+import { AuthorizeObjectService, ViewDesktopService } from '@/api'
 import _ from 'lodash'
 
 export default {

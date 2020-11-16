@@ -1,31 +1,33 @@
 /**
 * 列表
 */
-import anime from 'animejs'
 import Element from './index'
 import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import _ from 'lodash'
 
 export default class ListElement extends Element {
-  async mergeOption ({ proprietaryConfig, dataConfig }, loadingDynamicData = false) {
-    const { sourceType } = dataConfig
+  async mappingOption ({ proprietaryConfig, dataConfig }, loadingDynamicData = false) {
+    const { sourceType, staticDataConfig = {}, dbDataConfig } = dataConfig
+    const { staticData } = staticDataConfig || {}
+    const props = {
+      dataSource: [],
+      columns: []
+    }
 
     switch (sourceType) {
       case SOURCE_TYPE_REAL: {
-        if (loadingDynamicData) {
-          try {
-            // 返回接口参数
-            this.updateProps({ params: dataConfig.dbDataConfig, isCallInterface: true })
-          } catch (e) {
-          } finally {
-          }
-        }
+        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns })
         break
       }
       case SOURCE_TYPE_STATIC: {
+        if (staticData) {
+          Object.assign(props, staticData)
+        }
         break
       }
       case SOURCE_TYPE_NULL: {
@@ -33,7 +35,8 @@ export default class ListElement extends Element {
       }
     }
 
-    anime.set(this.element, {
+    return _.cloneDeep({
+      ...props,
       ...proprietaryConfig.getOption()
     })
   }

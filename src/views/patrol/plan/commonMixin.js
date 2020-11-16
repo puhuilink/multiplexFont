@@ -1,4 +1,4 @@
-import { GroupService } from '@/api-hasura'
+import { GroupService } from '@/api'
 
 export default {
   data: () => ({

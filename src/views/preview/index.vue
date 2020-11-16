@@ -17,7 +17,7 @@
 
 <script>
 import ViewPreview from '~~~/Preview'
-import { ViewListService } from '@/api-hasura'
+import { ViewListService } from '@/api'
 import _ from 'lodash'
 import { ExceptionPage } from '@/components'
 

@@ -20,7 +20,7 @@
 <script>
 import { mapState } from 'vuex'
 import Renderer from '@/components/Renderer'
-import { ViewDesignService } from '@/api-hasura'
+import { ViewDesignService } from '@/api'
 import Timeout from 'await-timeout'
 
 export default {

@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { AdaptorConfig } from './AdaptorConfig'
-import { ViewDataService } from '@/api-hasura'
+import { ViewDataService } from '@/api'
 
 export class AdaptorResourceConfig extends AdaptorConfig {
   constructor ({

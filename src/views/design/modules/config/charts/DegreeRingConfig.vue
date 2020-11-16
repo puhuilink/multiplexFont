@@ -3,16 +3,16 @@
  */
 <template>
   <div class="texts-config">
-    <a-tabs defaultActiveKey="3" tabPosition="top" :style="{ height: '100%'}">
-      <a-tab-pane tab="公共属性" key="1">
+    <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%'}">
+      <a-tab-pane tab="样式" key="1">
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2">
+      <a-tab-pane tab="属性" key="2">
         <div class="texts-config__template">
-          <a-collapse defaultActiveKey="2" :bordered="false">
+          <a-collapse :activeKey="['1', '2', '3']" :bordered="false">
             <a-collapse-panel header="类型设置" key="1">
               <div class="comment-template__item">
                 <p class="comment-template__leading">类型:</p>
@@ -193,7 +193,7 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane tab="数据配置" key="3" forceRender>
+      <a-tab-pane tab="数据" key="3" forceRender>
         <DegreeRingDataSource />
       </a-tab-pane>
 

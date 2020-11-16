@@ -129,7 +129,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 
 export default {
   name: 'ChangeShiftSchema',
