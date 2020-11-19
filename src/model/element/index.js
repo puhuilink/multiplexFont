@@ -8,13 +8,15 @@
 
 import anime from 'animejs'
 import ListElementComponent from '~~~/Elements/ListElement'
+import LatestAlarmElement from '~~~/Elements/LatestAlarmElement'
 import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import _ from 'lodash'
 
 const ELEMENT_MAPPING = new Map([
-  ['List', ListElementComponent]
+  ['List', ListElementComponent],
+  ['AlarmList', LatestAlarmElement]
 ])
 
 export default class Element {

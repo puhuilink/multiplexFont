@@ -19,9 +19,9 @@
     >
 
       <!-- / 查询区域 -->
-      <template #query>
+      <template #query v-if="showQuery">
         <a-form layout="inline" class="form">
-          <div :class="{ fold: !advanced }" v-if="showQuery">
+          <div :class="{ fold: !advanced }">
 
             <a-row>
               <a-col :md="6" :sm="24">
@@ -115,7 +115,7 @@
             </a-row>
           </div>
 
-          <span :class="advanced ? 'expand' : 'collapse'" v-if="showQuery">
+          <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
             <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
@@ -326,6 +326,7 @@ export default {
       }
     },
     loadData (parameter) {
+      console.log(parameter)
       return AlarmService.find({
         where: {
           ...generateQuery(this.queryParams),
@@ -364,11 +365,5 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.operation {
-  // TODO
-  // display: flex;
-  // width: calc(100% - 216px);
-  // flex-direction: row;
-}
+<style lang="less">
 </style>

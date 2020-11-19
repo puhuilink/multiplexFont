@@ -104,7 +104,7 @@ export default {
     }
   },
   created () {
-    const { pageNo } = this.$route.params
+    const pageNo = get(this, ['$route', 'params', 'pageNo'])
     const localPageNum = this.pageURI && (pageNo && parseInt(pageNo)) || this.pageNum
     this.localPagination = ['auto', true].includes(this.showPagination) && Object.assign({}, this.localPagination, {
       current: localPageNum,
