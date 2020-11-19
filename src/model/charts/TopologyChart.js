@@ -453,7 +453,7 @@ export default class TopologyChart extends Chart {
     if (!_.isEmpty(nodes)) {
       nodes.forEach(node => {
         const model = node.getModel()
-        const targetModel = store.getters['screen/nodes'].find(node => node.id === model.id)
+        const targetModel = store.getters['screen/nodesMapping'].get(model.id)
         // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
         if (targetModel) {
           Object.assign(model, targetModel)

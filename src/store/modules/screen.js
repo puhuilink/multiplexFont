@@ -65,6 +65,11 @@ export default {
     nodes (state, getters) {
       return getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
     },
+    nodesMapping (state, getters) {
+      return new Map(
+        getters.nodes.map(node => [node.id, node])
+      )
+    },
     // 画板缩放比例
     scale (state) {
       return state.view.scale || 1
