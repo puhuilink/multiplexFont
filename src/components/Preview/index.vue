@@ -74,6 +74,10 @@
           <a-icon v-else type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
+        <a-tooltip placement="top" title="生成大屏地址" v-if="isDesignMode">
+          <a-icon type="link" @click="makePreviewLink" />
+        </a-tooltip>
+
         <a-tooltip placement="top" title="关闭" v-if="!disableClose">
           <a-icon type="close-circle" @click="$emit('update:visible', false)" />
         </a-tooltip>
@@ -92,6 +96,8 @@ import Renderer from '@/components/Renderer'
 import PreviewMixin from '@/components/PreviewMixin'
 import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
+import { encrypt } from '@/utils/aes'
+import { copyText } from '@/utils/domUtil'
 
 export default {
   name: 'ViewPreview',
@@ -243,6 +249,12 @@ export default {
             this.isThumbnailUploadLoading = false
           })
       })
+    },
+    makePreviewLink () {
+      const { id } = this.$route.query
+      const link = `${location.origin}/preview/${encrypt(id)}`
+      copyText(link)
+      this.$message.success('大屏地址已复制到剪切板！')
     }
   },
   beforeDestroy () {
@@ -330,4 +342,8 @@ export default {
 
 <style scoped lang="less">
 @import url('./transition.less');
+
+.ant-message {
+  z-index: 9999 !important;
+}
 </style>
