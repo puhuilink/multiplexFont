@@ -202,14 +202,25 @@ class CmdbService extends BaseService {
           'deviceModel: device_model_value_code',
           'deviceModelName: device_model_name',
           'deviceBrand: brand_value_code',
-          'hostId: host_id'
+          'hostType: host_type',
+          'hostId: host_id',
+          'hostAlias: host_alias'
         ],
         limit: 1,
         alias: 'dataSource'
       })
     )
 
-    return _.first(dataSource)
+    const [{ hostType, hostAlias, ...host }] = dataSource
+    // hack
+    if (['h3cSwitch', 'h3cDevice', 'huaweiSwitch'].includes(hostType)) {
+      host['deviceModelName'] = 'Switch'
+    } else if (['ciscoRouter', 'h3cRouter'].includes(hostType)) {
+      host['deviceModelName'] = 'Router'
+    } else if (hostAlias.includes('防火墙')) {
+      host['deviceModelName'] = 'Firewall'
+    }
+    return host
   }
 }
 
