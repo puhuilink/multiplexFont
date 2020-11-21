@@ -441,9 +441,9 @@ export default {
       removeWidgets: ScreenMutations.REMOVE_WIDGETS,
       setImportingState: ScreenMutations.SET_IMPORTING_STATE
     }),
-    resizeWidget: _.debounce(function (config) {
+    resizeWidget: _.throttle(function (config) {
       this.activeWidget.render.resize(config)
-    }, 100),
+    }, 10),
     /**
      * 左右panel展开与否
      * @param type 左右panel
