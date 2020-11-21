@@ -285,9 +285,10 @@ export default {
 
   &-item {
     box-sizing: border-box;
-    // 给定宽高，避免图片加载等过程中导致重绘
-    // width: 363px;
-    // height: 259px;
+    // 固定宽高比
+    width: 100%;
+    height: 0;
+    padding-bottom: calc(100% / 16 * 9 + 63px);
     border: 1px solid #f0f0f0;
     border-radius: 4px;
     box-shadow: 0 0 32px #f0f0f0;
@@ -301,15 +302,24 @@ export default {
     }
 
     img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 63px;
       display: block;
       width: 100%;
-      height: 143px;
+      height: calc(100% - 63px);
       border-radius: 4px;
     }
 
     &-info {
-      padding: 12px;
-      padding-bottom: 0;
+      position: absolute;
+      right: 0;
+      bottom: 0px;
+      left: 0;
+      padding: 7px;
+      height: 63px;
 
       &_title {
         font-family: 微软雅黑;
