@@ -1,8 +1,9 @@
 <script>
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-import { fromEvent } from 'rxjs'
+import { fromEvent, merge } from 'rxjs'
 import { takeWhile } from 'rxjs/operators'
+import { observeOnMutation } from '@/utils/domUtil'
 
 export default {
   name: 'ListMixin',
@@ -65,24 +66,26 @@ export default {
       }
     }
   },
-  mounted () {
-    // TODO: use fromEvent 或 watch + cb
+  async mounted () {
     this.$table = this.$el.getElementsByClassName('ant-table')[0]
     this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
-    setTimeout(this.calScroll.bind(this))
-    this.$observer = new MutationObserver(_.debounce(this.calScroll, 60))
-    this.$observer.observe(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
-    fromEvent(window, 'resize')
+    merge(
+      fromEvent(window, 'resize'),
+      observeOnMutation(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
+    )
       .pipe(
         takeWhile(() => this.isSubscribed)
       )
       .subscribe(() => {
         this.calScroll()
       })
+    // 初始化时触发
+    setTimeout(() => {
+      this.calScroll()
+    })
   },
   beforeDestroy () {
     this.isSubscribed = false
-    this.$observer.disconnect()
   }
 
 }

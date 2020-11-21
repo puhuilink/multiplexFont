@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs'
+
 export const setDocumentTitle = function (title) {
   document.title = title
   const ua = navigator.userAgent
@@ -29,4 +31,17 @@ export function copyText (value = '') {
   }
   transfer.blur()
   document.body.removeChild(transfer)
+}
+
+export function observeOnMutation (target, config) {
+  return new Observable((observer) => {
+    const mutation = new MutationObserver((mutations, instance) => {
+      observer.next(mutations)
+    })
+    mutation.observe(target, config)
+    const unsubscribe = () => {
+      mutation.disconnect()
+    }
+    return unsubscribe
+  })
 }
