@@ -13,12 +13,9 @@ export default {
     elementProps: {},
     isSubscribed: true,
     scroll: {
-      x: true,
-      y: true
-    },
-    $table: null,
-    $thead: null,
-    $observer: null
+      x: false,
+      y: '100%'
+    }
   }),
   computed: {
     align () {
@@ -41,20 +38,15 @@ export default {
   methods: {
     // 实时计算 scroll
     calScroll () {
+      this.$table = this.$table || this.$el.getElementsByClassName('ant-table')[0]
+      this.$thead = this.$thead || this.$el.getElementsByClassName('ant-table-thead')[0]
       const { height: elHeight } = window.getComputedStyle(this.$el)
       const { height: thHeight } = window.getComputedStyle(this.$thead)
-      // const { height: tableHeight } = window.getComputedStyle(this.$table)
 
       const elH = Number(elHeight.split('px')[0])
       const thH = Number(thHeight.split('px')[0])
-      // const tableH = Number(tableHeight.split('px')[0])
 
-      Object.assign(this.scroll, {
-        x: false,
-        // TODO: DOM更新延迟导致的计算错误
-        // y: tableH > elH ? Math.abs(elH - thH - 48) : false
-        y: elH - thH
-      })
+      Object.assign(this.scroll, { y: elH - thH })
     },
     customRow (record, index) {
       const { backgroundColor = {}, ...rest } = this.rowStyle
@@ -66,12 +58,11 @@ export default {
       }
     }
   },
-  async mounted () {
-    this.$table = this.$el.getElementsByClassName('ant-table')[0]
-    this.$thead = this.$el.getElementsByClassName('ant-table-thead')[0]
+  mounted () {
     merge(
       fromEvent(window, 'resize'),
-      observeOnMutation(this.$el.parentElement, { attributes: true, childList: false, subtree: false })
+      // subtree必须为tree，当table组件渲染、更新时也能触发
+      observeOnMutation(this.$el.parentElement, { attributes: true, childList: false, subtree: true })
     )
       .pipe(
         takeWhile(() => this.isSubscribed)
@@ -79,10 +70,6 @@ export default {
       .subscribe(() => {
         this.calScroll()
       })
-    // 初始化时触发
-    setTimeout(() => {
-      this.calScroll()
-    })
   },
   beforeDestroy () {
     this.isSubscribed = false
@@ -94,6 +81,9 @@ export default {
 <style lang="less">
 .list-element {
   height: 100%;
+  overflow: hidden;
+
+  .ant-table td { white-space: nowrap; }
 
   .ant-table-thead > tr > th {
     color:inherit !important;
