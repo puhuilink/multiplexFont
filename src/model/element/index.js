@@ -20,12 +20,13 @@ const ELEMENT_MAPPING = new Map([
 ])
 
 export default class Element {
-  constructor ({ widget, element }) {
+  constructor ({ widget, element, onlyShow }) {
     this.container = document.getElementById(widget.widgetId)
     this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
     this.widget = widget
+    this.onlyShow = onlyShow
     // 初始化配置
     this.mergeOption(widget.config)
     const componentOption = ELEMENT_MAPPING.get(this.widget.config.type)
@@ -65,7 +66,7 @@ export default class Element {
 
   async mergeOption (config, loadingDynamicData = false) {
     this.$component.elementProps = await this.mappingOption(config, loadingDynamicData)
-    if (this.widget) {
+    if (this.widget && !this.onlyShow) {
       const { render, ...rest } = this.widget
       const widget = Object.assign({}, _.cloneDeep(rest), { render })
       Object.assign(widget.config, {
