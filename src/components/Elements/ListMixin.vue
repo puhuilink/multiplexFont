@@ -4,13 +4,18 @@ import uuid from 'uuid/v4'
 import { fromEvent, merge } from 'rxjs'
 import { takeWhile } from 'rxjs/operators'
 import { observeOnMutation } from '@/utils/domUtil'
+import { defaultListProprietaryConfig } from '@/model/config/proprietaryConfigs/ListProprietaryConfig'
 
 export default {
   name: 'ListMixin',
   components: {},
   props: {},
   data: () => ({
-    elementProps: {},
+    elementProps: {
+      styleConfig: _.cloneDeep(defaultListProprietaryConfig),
+      columns: [],
+      dataSource: []
+    },
     isSubscribed: true,
     scroll: {
       x: false,
@@ -19,20 +24,24 @@ export default {
   }),
   computed: {
     align () {
-      return _.get(this, ['elementProps', 'styleConfig', 'align'], 'left')
+      const { elementProps } = this
+      return elementProps.styleConfig.align
     },
     columns () {
-      const { align } = this
-      return _.get(this, ['elementProps', 'columns'], []).map(column => Object.assign({}, column, { align }))
+      const { align, elementProps } = this
+      return elementProps.columns.map(column => Object.assign({}, column, { align }))
     },
     dataSource () {
-      return _.get(this, ['elementProps', 'dataSource'], []).map(data => Object.assign({}, data, { uuid: uuid() }))
+      const { elementProps } = this
+      return elementProps.dataSource.map(data => Object.assign({}, data, { uuid: uuid() }))
     },
     headerRowStyle () {
-      return _.get(this, ['elementProps', 'styleConfig', 'header'], {})
+      const { elementProps } = this
+      return elementProps.styleConfig.header
     },
     rowStyle () {
-      return _.get(this, ['elementProps', 'styleConfig', 'rows'], {})
+      const { elementProps } = this
+      return elementProps.styleConfig.rows
     }
   },
   methods: {
@@ -88,6 +97,12 @@ export default {
   .ant-table-thead > tr > th {
     color:inherit !important;
     font-weight: inherit !important;
+    background-color: inherit !important;
+  }
+
+  .ant-table-header {
+    background-color: transparent;
+    overflow: hidden !important;
   }
 
   .ant-table-scroll {
