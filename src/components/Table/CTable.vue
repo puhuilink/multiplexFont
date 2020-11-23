@@ -5,10 +5,10 @@ import { resizeableTitleHOC } from './ResizeableTitle'
 
 const defaultPagination = {
   // TODO: 查询全部
-  pageSizeOptions: ['50', '100'],
+  pageSizeOptions: ['30', '50', '100'],
   defaultCurrent: 1,
-  pageSize: 50,
-  defaultPageSize: 50,
+  pageSize: 30,
+  defaultPageSize: 30,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,
