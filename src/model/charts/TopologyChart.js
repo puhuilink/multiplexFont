@@ -191,7 +191,7 @@ export default class TopologyChart extends Chart {
     // 节点鼠标按下事件，设置当前节点为激活节点
     this.chart.on('node:mousedown', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-        activeNode: _.cloneDeep(item)
+        activeNode: item
       })
     })
 
@@ -200,7 +200,7 @@ export default class TopologyChart extends Chart {
       const activeNode = store.state.screen.activeNode
       if (activeNode) {
         store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-          activeNode: _.cloneDeep(item)
+          activeNode: item
         })
         store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
       }
@@ -214,7 +214,7 @@ export default class TopologyChart extends Chart {
     // 边点击事件
     this.chart.on('edge:click', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_EDGE, {
-        activeEdge: _.cloneDeep(item)
+        activeEdge: item
       })
     })
 
