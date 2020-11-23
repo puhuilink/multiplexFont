@@ -23,6 +23,8 @@ class ViewDesktopService extends BaseService {
           view_title
           view_img
           createdate
+          creator
+          user { staff_name }
         }
       }`
     ]
