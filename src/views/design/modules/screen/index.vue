@@ -310,15 +310,15 @@ export default {
           })
         }
 
-        // 初始化场景进行样式设置
-        if (event.type === 'init' && !this.view.config) {
+        // 初始化配置
+        if (event.type === 'init' || !this.view.config) {
           this.setInitStyle()
+          this.activateWidget({ widget: this.view })
         } else {
-          // 其他场景中，设置画板样式
+          // 更新画板样式
           this.setStyle(event)
+          this.setView({ view: this.view })
         }
-
-        this.activateWidget({ widget: this.view })
       })
 
     // 选择激活的部件
