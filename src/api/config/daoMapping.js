@@ -4,6 +4,7 @@ const IMP_TABLE_LIST = [
   // 告警
   { schema: 't_alarm' },
   { schema: 't_alarm_sub' },
+  { schema: 't_alarm_latest' },
   { schema: 't_alarm_sender' },
   { schema: 't_cmdb_strategy' },
   // 系统设置

@@ -17,19 +17,18 @@ import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import { AlarmService } from '@/api/index'
+import { animateTypeMapping } from '@/plugins/g6'
 
 const pluginsMap = new Map([
   ['Grid', Grid]
 ])
-const events = require('events')
-
-export const emitter = new events.EventEmitter()
+const animateTypeList = [...animateTypeMapping()].map(([type]) => type)
 
 export default class TopologyChart extends Chart {
   constructor (props) {
     super(props)
     this.selectedItem = null
-    window.chart = this.chart
   }
 
   /**
@@ -242,24 +241,46 @@ export default class TopologyChart extends Chart {
     })
   }
 
-  onNodeAnimateTypeChange ({ item, animateType }) {
-    const { id } = item
-    // 记录轮询开启的子节点
-    this.timerNodeList = Array.from(
-      new Set(
-        [ ...this.timerNodeList || [], item ]
-      )
-    )
-    setTimeout(() => {
-      this.chart.clearItemStates(id)
-      this.chart.setItemState(id, animateType, true)
-    })
-  }
-
   enablePreviewMode () {
     this.isPreviewMode = true
-    // Ci 节点实时告警变色
-    emitter.on('animateType:change', this.onNodeAnimateTypeChange.bind(this))
+    this.fetchNodesAlarm()
+    this.alarmTimer = setInterval(() => {
+      this.fetchNodesAlarm()
+    }, 1000 * 60)
+  }
+
+  /**
+   * 设置节点告警状态
+   * @param {String} id 节点id
+   * @param {Number} eventLevel 告警等级
+   */
+  setNodeAlarmState (id, eventLevel) {
+    this.chart.clearItemStates(id)
+    if (typeof eventLevel === 'number') {
+      this.chart.setItemState(id, animateTypeList[eventLevel], true)
+    }
+  }
+
+  /**
+   * 获取拓扑图内节点告警数据
+   */
+  async fetchNodesAlarm () {
+    const { nodes: totalNodes } = this.config.proprietaryConfig
+    const nodes = totalNodes.filter(node => node.hostIds.length)
+    const hostIds = nodes.map(node => node.hostIds[0])
+
+    if (_.isEmpty(hostIds)) return
+
+    const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
+    const hostIdEventLevelMapping = new Map(
+      alarmList.map((alarm) => [alarm.host_id, alarm.event_level])
+    )
+    nodes.forEach((node) => {
+      this.setNodeAlarmState(
+        node.id,
+        hostIdEventLevelMapping.get(node.hostIds[0])
+      )
+    })
   }
 
   /**
@@ -453,9 +474,9 @@ export default class TopologyChart extends Chart {
     if (!_.isEmpty(nodes)) {
       nodes.forEach(node => {
         const model = node.getModel()
-        const targetModel = store.getters['screen/nodesMapping'].get(model.id)
-        // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
-        if (targetModel) {
+        if (!this.onlyShow) {
+          // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
+          const targetModel = store.getters['screen/nodesMapping'].get(model.id)
           Object.assign(model, targetModel)
         }
         this.chart.setItemState(node, model.animateType, true)
@@ -493,7 +514,7 @@ export default class TopologyChart extends Chart {
   }
 
   destroy () {
-    emitter.off('canvas:click', this.onNodeAnimateTypeChange)
+    clearTimeout(this.alarmTimer)
     const nodes = this.chart.getNodes()
     nodes.forEach(node => {
       const model = node.getModel()
@@ -501,8 +522,5 @@ export default class TopologyChart extends Chart {
     })
     this.chart.off()
     this.chart.destroy()
-    this.timerNodeList && this.timerNodeList.forEach(node => {
-      node.destroy()
-    })
   }
 }
