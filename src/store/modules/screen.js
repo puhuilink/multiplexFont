@@ -148,6 +148,7 @@ export default {
     // 设置激活的拓扑节点
     [ScreenMutations.ACTIVATE_NODE] (state, payload) {
       state.activeNode = payload.activeNode
+      state.activeEdge = null
     },
     // 更新拓扑节点配置
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
@@ -162,6 +163,7 @@ export default {
     // 设置激活的拓扑边
     [ScreenMutations.ACTIVATE_EDGE] (state, payload) {
       state.activeEdge = payload.activeEdge
+      state.activeNode = null
     },
     // 重置拓扑状态
     [ScreenMutations.RESET_TOPOLOGY_STATE] (state) {
