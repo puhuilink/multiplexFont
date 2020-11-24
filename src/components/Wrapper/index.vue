@@ -430,7 +430,7 @@ export default {
       this.config = this.activeWidget.config
     },
     /**
-       * 粘贴配置
+       * 同步配置
        * @param {Array} configTypes 要合并的配置名
        */
     syncConfig (configTypes) {
@@ -472,7 +472,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
   .wrapper {
     top: 0;
     left: 0;
@@ -489,7 +489,9 @@ export default {
       display: none;
       position: fixed;
       background: transparent;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
       height: 100%;
       top: 0;
       left: 0;
@@ -498,8 +500,10 @@ export default {
 
     &__move {
       position: relative;
-      height: 100%;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
+      height: 100%;
       cursor: move;
       z-index: 1000;
       pointer-events: auto;
