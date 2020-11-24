@@ -16,7 +16,10 @@
     :data-category="widget.config.category"
     :data-type="widget.config.type"
     :ref="widget.widgetId"
-    @click.stop="() => $emit('select', selectWidget)">
+    @click.stop="() => $emit('select', selectWidget)"
+  >
+    <!-- 视图钻取：双击跳转到新视图，跳转配置与细节待与产品沟通 -->
+    <!-- @dblclick.stop="() => $emit('drill', { viewId: 8947 })" -->
 
     <!-- / 元素部件 -->
     <!-- 可以是vue组件，需要其持有者手动挂载到该div -->

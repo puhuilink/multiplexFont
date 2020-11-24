@@ -19,7 +19,12 @@
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
         <div class="Preview__renderer" ref="wrap">
 
-          <Renderer v-if="view && !isViewConfigLoading" :view="view" :timeRange="timeRange" ref="renderer" />
+          <Renderer
+            v-if="view && !isViewConfigLoading"
+            :view="view"
+            :timeRange="timeRange"
+            ref="renderer"
+            @drill="onDrill" />
 
         </div>
       </a-spin>
@@ -79,7 +84,7 @@
         </a-tooltip>
 
         <a-tooltip placement="top" title="关闭" v-if="!disableClose">
-          <a-icon type="close-circle" @click="$emit('update:visible', false)" />
+          <a-icon type="close-circle" @click="goBack" />
         </a-tooltip>
 
       </div>
@@ -98,10 +103,11 @@ import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
 import { encrypt } from '@/utils/aes'
 import { copyText } from '@/utils/domUtil'
+import DrillMixin from './Drill'
 
 export default {
   name: 'ViewPreview',
-  mixins: [PreviewMixin],
+  mixins: [PreviewMixin, DrillMixin],
   components: {
     Renderer
   },
@@ -145,15 +151,15 @@ export default {
   }),
   computed: {
     title () {
-      if (this.isDesignMode) {
-        return _.get(this.$route.query, 'title')
-      }
-
       if (_.isEmpty(this.viewList)) {
-        return _.get(this, ['currentView', 'view_title'])
+        return (
+          _.get(this, ['currentView', 'view_title']) ||
+          _.get(this, ['view', 'view_title']) ||
+          this.$router.query.title
+        )
       }
 
-      return _.get(this, ['view', 'view_title'], this.viewList[this.index].view_title)
+      return this.viewList[this.index].view_title
     }
   },
   watch: {

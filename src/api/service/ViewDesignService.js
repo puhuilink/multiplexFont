@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import { InstanceDao, ViewDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
-import _ from 'lodash'
 import { imp } from '../config/client'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -11,15 +10,19 @@ class ViewDesignService extends BaseService {
     return query(
       ViewDao.find({
         where: { view_id },
-        fields: ['content'],
+        fields: ['content', 'view_title'],
         alias: 'viewList'
       })
     )
-      .then(({ data: { viewList: [view] } }) => _.get(view, 'content'))
-      .then(content => JSON.parse(content))
-      .then(design => {
-        if (design && design.id) {
-          return design
+      .then(({ data: { viewList: [view] } }) => view)
+      .then(({ content, ...rest }) => ({
+        content: JSON.parse(content),
+        ...rest
+      }))
+      .then(({ content, view_title }) => {
+        if (content && content.id) {
+          Object.assign(content, { view_title })
+          return content
         } else {
           throw new Error('老系统视图，将返回空画布')
         }
