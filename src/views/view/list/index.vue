@@ -100,8 +100,9 @@ export default {
       {
         title: '视图创建者',
         dataIndex: 'creator',
-        sorter: true,
-        width: 200
+        // sorter: true,
+        width: 200,
+        customRender: (creator, { user }) => user ? user.staff_name : creator
       },
       {
         title: '缩略图',
@@ -120,7 +121,10 @@ export default {
         where: {
           ...generateQuery(this.queryParams)
         },
-        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        fields: [
+          ...this.columns.map(({ dataIndex }) => dataIndex),
+          'user { staff_name }'
+        ],
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
