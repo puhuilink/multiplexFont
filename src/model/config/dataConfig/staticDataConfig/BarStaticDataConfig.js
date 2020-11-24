@@ -99,7 +99,14 @@ export default class BarStaticDataConfig {
       series: barType === 'single' ? singleSeries : multipleSeries,
       ...rest
     }
-    return reverse ? reverseOption(data) : data
+
+    // hack
+    // 当配置了reverse为true时，导出配置再导入，此时xAxis与yAxis已经对调过，需作判断
+    if (reverse && rest.xAxis.type === 'category') {
+      return reverseOption(data)
+    } else {
+      return data
+    }
   }
 
   /**
