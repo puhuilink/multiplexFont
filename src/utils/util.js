@@ -231,10 +231,17 @@ export const hexToRGBA = function (hex, alpha) {
 }
 
 export function toggleFullscreen () {
-  // TODO: 浏览器兼容性
+  const requestMethod = document.documentElement.requestFullScreen || // W3C
+    document.documentElement.webkitRequestFullscreen || // FireFox、safari
+    document.documentElement.mozRequestFullScreen || // Chrome等
+    document.documentElement.msRequestFullScreen // IE11
+  const exitMethod = document.exitFullscreen || // W3C
+  document.webkitExitFullscreen || // Chrome等
+  document.mozCancelFullScreen || // FireFox
+  document.msExitFullscreen // IE11
   if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen()
+    requestMethod && requestMethod.call(document.documentElement)
   } else if (document.exitFullscreen) {
-    document.exitFullscreen()
+    exitMethod && exitMethod.call(document)
   }
 }
