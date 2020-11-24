@@ -40,7 +40,7 @@
                         checkedChildren="横向"
                         unCheckedChildren="纵向"
                         v-model="config.proprietaryConfig.reverse"
-                        @change="changeReverse" />
+                        @change="change()" />
                     </div>
                   </div>
                 </div>
@@ -189,7 +189,6 @@ import ChartProprietaryTemplate from '../chartProprietary'
 import ProprietaryMixins from '../proprietaryMixins'
 import BarDataSource from '../dataSource/BarDataSource'
 import Color from '../common/Color'
-import { reverseOption } from '@/model/charts/BarChart'
 
 export default {
   name: 'Bar',
@@ -213,13 +212,6 @@ export default {
           : 'auto'
       })
       this.change(config)
-    },
-    changeReverse () {
-      const { staticData } = this.config.dataConfig.staticDataConfig
-      const { proprietaryConfig } = this.config
-      Object.assign(staticData, reverseOption(staticData))
-      Object.assign(proprietaryConfig, reverseOption(proprietaryConfig))
-      this.change()
     }
   }
 }

@@ -7,6 +7,8 @@
  */
 
 import _ from 'lodash'
+import { reverseOption } from '../../../charts/BarChart'
+
 const defaultBarStaticData = {
   legend: {},
   xAxis: {
@@ -89,6 +91,15 @@ export default class BarStaticDataConfig {
     const series = _.cloneDeep(barType === 'single' ? singleSeries : multipleSeries).map(el => _.omit(el, ['stack', 'itemStyle', 'barWidth']))
     Object.assign(originalSource, { series })
     return JSON.stringify(originalSource, null, '\t')
+  }
+
+  getData (barType = 'single', reverse = false) {
+    const { singleSeries, multipleSeries, ...rest } = this.staticData
+    const data = {
+      series: barType === 'single' ? singleSeries : multipleSeries,
+      ...rest
+    }
+    return reverse ? reverseOption(data) : data
   }
 
   /**

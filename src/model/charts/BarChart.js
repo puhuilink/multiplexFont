@@ -15,7 +15,7 @@ import {
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
-  ...option,
+  ..._.cloneDeep(option),
   xAxis: _.cloneDeep({
     ...xAxis,
     type: yAxis.type,
@@ -44,7 +44,7 @@ export default class BarChart extends Chart {
       barType, legend, barWidth, xAxis, yAxis,
       itemStyle: { color, ...otherItemStyle }
     } = proprietaryConfig.getOption()
-    const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
+    const { sourceType, staticDataConfig, dbDataConfig } = dataConfig
 
     let series = []
     // 总体配置
@@ -61,16 +61,13 @@ export default class BarChart extends Chart {
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
         dbDataConfig.resetData()
-        series = staticData[barType === 'single' ? 'singleSeries' : 'multipleSeries'].map((item) => {
-          Object.assign(item, bar, { barWidth })
-          return item
-        })
-        const { legend: staticLegend, xAxis: staticXAxis, yAxis: staticYAxis } = staticData
+        const { series, ...rest } = staticDataConfig.getData(barType, reverse)
+        const { legend: staticLegend, xAxis: staticXAxis, yAxis: staticYAxis } = rest
         Object.assign(option, {
           legend: Object.assign(legend, staticLegend),
           xAxis: Object.assign(xAxis, staticXAxis),
           yAxis: Object.assign(yAxis, staticYAxis),
-          series
+          series: series.map((item) => Object.assign({}, item, bar, { barWidth }))
         })
         break
       }
