@@ -70,7 +70,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { AlarmRuleService } from '@/api-hasura'
+import { AlarmRuleService } from '@/api'
 import MergeForm from '../AlarmRuleSchema/MergeForm'
 import RecoverForm from '../AlarmRuleSchema/RecoverForm'
 import UpgradeForm from '../AlarmRuleSchema/UpgradeForm'

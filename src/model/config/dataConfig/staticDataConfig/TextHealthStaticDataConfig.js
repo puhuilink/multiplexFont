@@ -2,11 +2,9 @@
  * 仪表盘静态数据
  */
 
-import _ from 'lodash'
-
 const defaultTextHealthStaticData = '100'
 
-export default class DegreeRingStaticDataConfig {
+export default class TextHealthStaticDataConfig {
   constructor ({
     staticData = defaultTextHealthStaticData
   }) {
@@ -17,7 +15,6 @@ export default class DegreeRingStaticDataConfig {
    * @returns {string}
    */
   getCode (barType) {
-    const staticData = _.cloneDeep(this.staticData)
-    return JSON.stringify(staticData, null, '\t')
+    return JSON.stringify(this.staticData, null, '\t')
   }
 }

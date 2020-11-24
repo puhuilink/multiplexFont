@@ -14,7 +14,7 @@
         :filterTreeNode="filterTreeNode"
         :replaceFields="{
           children: 'children',
-          title:'alias',
+          title: 'alias',
           key:'id'
         }"
         showLine
@@ -27,16 +27,13 @@
 </template>
 
 <script>
-import { CmdbService } from '@/api-hasura'
-// import { Tree } from 'ant-design-vue'
-// import _ from 'lodash'
+import { CmdbService } from '@/api'
 
 export default {
   name: 'CmdbTree',
   mixins: [],
   components: {},
   props: {
-    // ..._.pick(Tree.props, 'draggable')
     draggable: {
       type: Boolean,
       default: false

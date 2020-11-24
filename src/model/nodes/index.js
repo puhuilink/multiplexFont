@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 import uuid from 'uuid/v4'
-// import { KpiCurrentService } from '@/api-hasura'
+// import { KpiCurrentService } from '@/api'
 
 // 默认样式
 const defaultStyle = {

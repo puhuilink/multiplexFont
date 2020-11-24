@@ -16,13 +16,23 @@
             :key="childIdx"
           >
             <a-form-model-item v-bind="formItemLayout" :label="child.label">
-              <a-input readOnly :value="renderText(record, child)" />
+              <component
+                :is="child.textarea ? 'a-textarea' : 'a-input' "
+                readOnly
+                :value="renderText(record, child)"
+                :autoSize="{ minRows: 3, maxRows: 6 }"
+              />
             </a-form-model-item>
           </a-col>
         </a-row>
 
         <a-form-model-item v-else v-bind="formItemLayout" :label="label" >
-          <a-input readOnly :value="renderText(record, config)" />
+          <component
+            :is="config.textarea ? 'a-textarea' : 'a-input' "
+            readOnly
+            :value="renderText(record, config)"
+            :autoSize="{ minRows: 2, maxRows: 6 }"
+          />
         </a-form-model-item>
 
       </a-col>

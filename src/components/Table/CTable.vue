@@ -5,10 +5,10 @@ import { resizeableTitleHOC } from './ResizeableTitle'
 
 const defaultPagination = {
   // TODO: 查询全部
-  pageSizeOptions: ['50', '100'],
+  pageSizeOptions: ['30', '50', '100'],
   defaultCurrent: 1,
-  pageSize: 50,
-  defaultPageSize: 50,
+  pageSize: 30,
+  defaultPageSize: 30,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,
@@ -20,6 +20,10 @@ export default {
   name: 'CTable',
   props: {
     ..._.omit(GraphTable.props, ['loading']),
+    showPagination: {
+      type: Boolean,
+      default: true
+    },
     pagination: {
       type: Object,
       default: () => Object.assign({}, defaultPagination)
@@ -82,6 +86,7 @@ export default {
         } : {},
         ...this.$attrs,
         pagination,
+        showPagination: this.showPagination,
         columns: columns.map(column => ({
           ellipsis: true,
           ...column.tooltip ? {

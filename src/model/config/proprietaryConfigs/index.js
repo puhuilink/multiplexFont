@@ -252,7 +252,7 @@ class PieItemStyle extends ItemStyle {
         break
     }
     return {
-      ..._.omit(_.cloneDeep(this), ['color', 'type', 'colorType', 'colorScheme']),
+      ..._.omit(this, ['color', 'type', 'colorType', 'colorScheme']),
       color
     }
   }
@@ -401,7 +401,7 @@ class Title {
    * 获取标题配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), this.position.getOption())
+    return Object.assign({}, this, this.position.getOption())
   }
 }
 
@@ -672,7 +672,7 @@ class Radar {
    */
   getOption () {
     const { inside, outside } = this.radius
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       radius: [inside, outside]
     })
   }
@@ -731,7 +731,7 @@ class Axis {
    * @returns {any}
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       name: this.showName ? this.name : ''
     })
   }
@@ -833,7 +833,7 @@ class SeriesPie {
     } else {
       color = this.color
     }
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       color
     })
   }
@@ -1005,7 +1005,7 @@ class SeriesGauge {
   * 获取仪表盘配置
   */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this))
+    return Object.assign({}, this)
   }
 }
 /**
@@ -1028,7 +1028,7 @@ class RectGraphic extends Graphic {
    * @returns {any}
    */
   getOption (chart, padding) {
-    return Object.assign({}, _.cloneDeep(this),
+    return Object.assign({}, this,
       {
         shape: this.shape.getOption(chart, this.style.lineWidth, padding),
         style: this.style.getOption()
@@ -1080,7 +1080,7 @@ class CircleGraphic extends Graphic {
     // echarts 配置传入半径不允许为负数
     r = r >= 0 ? r : 0
     const center = { x: width / 2 - r, y: height / 2 - r }
-    return Object.assign({}, _.cloneDeep(this),
+    return Object.assign({}, this,
       {
         shape: new CircleShape({ r }),
         style: this.style.getOption(),
@@ -1144,7 +1144,7 @@ class TriangleGraphic extends Graphic {
    * @returns {any}
    */
   getOption (chart, padding) {
-    return Object.assign({}, _.cloneDeep(this),
+    return Object.assign({}, this,
       {
         shape: this.shape.getOption(chart, this.style.lineWidth, padding),
         style: this.style.getOption()
@@ -1203,7 +1203,7 @@ class ImageGraphic extends Graphic {
       : { height, width: height * imageRatio }
     const center = { x: (width - limit.width) / 2, y: (height - limit.height) / 2 }
 
-    return Object.assign({}, _.cloneDeep(this),
+    return Object.assign({}, this,
       {
         style: { image: this.style.image, ...limit },
         top: center.y + top,

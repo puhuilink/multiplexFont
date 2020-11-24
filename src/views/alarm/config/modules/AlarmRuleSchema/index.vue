@@ -34,6 +34,7 @@
         <a-step title="告警合并" v-if="formModel.ruleType.includes('merge')" />
         <a-step title="告警升级" v-if="formModel.ruleType.includes('upgrade')" />
         <a-step title="告警消除" v-if="formModel.ruleType.includes('recover')" />
+        <a-step title="告警通知" v-if="formModel.ruleType.includes('forward')" />
       </a-steps>
 
       <a-form-model
@@ -48,6 +49,7 @@
             class="AlarmRuleSchema__modal-content"
           >
             <component
+              :ruleType="ruleType"
               v-if="isCurrent(type)"
               :is="component"
               :formModel.sync="formModel"
@@ -68,11 +70,12 @@ import {
   AlarmRuleModelFactory,
   ruleTypeMapping
 } from './model'
-import { AlarmRuleService } from '@/api-hasura'
+import { AlarmRuleService } from '@/api'
 import BasicForm from './BasicForm'
 import RecoverForm from './RecoverForm'
 import UpgradeForm from './UpgradeForm'
 import MergeForm from './MergeForm'
+import ForwardForm from './ForwardForm'
 import { formItemLayout } from './Mixin'
 
 export default {
@@ -82,7 +85,14 @@ export default {
     BasicForm,
     MergeForm,
     UpgradeForm,
-    RecoverForm
+    RecoverForm,
+    ForwardForm
+  },
+  props: {
+    ruleType: {
+      type: Array,
+      default: () => ['merge', 'upgrade', 'recover']
+    }
   },
   data: () => ({
     btnLoading: false,
@@ -90,7 +100,8 @@ export default {
       ['basic', BasicForm],
       ['merge', MergeForm],
       ['upgrade', UpgradeForm],
-      ['recover', RecoverForm]
+      ['recover', RecoverForm],
+      ['forward', ForwardForm]
     ]),
     formItemLayout,
     formModel: AlarmRuleModelFactory.create({}),

@@ -5,7 +5,6 @@
 * Time: 10:38
 * Email: dong.xing@outlook.com
 */
-import _ from 'lodash'
 import { AlarmListProps } from './index'
 
 export default class AlarmListProprietaryConfig {
@@ -39,6 +38,6 @@ export default class AlarmListProprietaryConfig {
    * 映射配置
    */
   getOption () {
-    return { ..._.omit(this, ['props']) }
+    return { ...this.props }
   }
 }

@@ -29,12 +29,19 @@
         <a-dropdown :trigger="['contextmenu']">
           <div :style="{ height: '100%' }"></div>
           <a-menu slot="overlay" class="wrapper__menu">
-            <a-menu-item key="1" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
-            <a-menu-item key="2" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
-            <a-menu-item key="3" :disabled="!isAllowAsync" :class="[isAllowAsync ? 'wrapper__menu--primary': '']" @click="syncConfig"><a-icon type="sync" />同步配置</a-menu-item>
-            <a-menu-item key="4" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
+            <a-menu-item key="copyWidget" class="wrapper__menu--primary" @click="copyWidget"><a-icon type="copy" />复制部件</a-menu-item>
+            <a-menu-item key="copyConfig" class="wrapper__menu--primary" @click="copyConfig"><a-icon type="snippets" />复制配置</a-menu-item>
+            <a-sub-menu key="syncConfig" :disabled="!isAllowAsync">
+              <span slot="title" :class="[isAllowAsync ? 'wrapper__menu--primary': '']"><a-icon type="sync" />同步配置</span>
+              <a-menu-item key="all" @click="syncConfig(['commonConfig', 'proprietaryConfig', 'dataConfig'])">全部配置</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">样式</a-menu-item>
+              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">属性</a-menu-item>
+              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据</a-menu-item>
+            </a-sub-menu>
+            <a-menu-item key="deleteWidget" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="5"><a-icon type="close" />取消</a-menu-item>
+            <a-menu-item key="close"><a-icon type="close" />取消</a-menu-item>
           </a-menu>
         </a-dropdown>
       </div>
@@ -67,12 +74,8 @@ import anime from 'animejs'
 import AdjustMixins from './AdjustMixins'
 import Widget from '@/model/widget'
 import WrapperService from '@/components/Wrapper/WrapperService'
-import AutoAlignService from '@/components/Wrapper/AutoAlignService'
 import { ScreenMutations } from '@/store/modules/screen'
 import { mapMutations, mapGetters } from 'vuex'
-import { findClosestNumInArr } from '@/utils/util'
-
-const CLOSEST_PIXEL = 20
 
 export default {
   name: 'Wrapper',
@@ -83,7 +86,6 @@ export default {
     originalState: null,
     config: null,
     wrapperService: new WrapperService(),
-    autoAlignService: new AutoAlignService(),
     autoAlignState: {
       top: null,
       left: null
@@ -94,7 +96,7 @@ export default {
     this.initEvent()
   },
   computed: {
-    ...mapGetters('screen', ['positionYs', 'positionXs', 'scale']),
+    ...mapGetters('screen', ['scale']),
     isAllowAsync () {
       return this.config && this.activeWidget && this.config.type === this.activeWidget.config.type
     }
@@ -103,6 +105,9 @@ export default {
     ...mapMutations('screen', {
       resetTopologyState: ScreenMutations.RESET_TOPOLOGY_STATE
     }),
+    test ({ key, domEvent }) {
+      console.log(key, domEvent)
+    },
     initEvent () {
       this.adjust$ = new Subject()
       this.adjust$
@@ -118,23 +123,6 @@ export default {
         })
       this.initKeyboardEvent()
       this.initScaleAndMoveEvent()
-    },
-    /**
-     * 初始化自动对齐事件
-     */
-    initAutoAlignEvent () {
-      this.autoAlignService.change$
-        .pipe(
-          takeWhile(() => this.isSubscribed),
-          filter(({ type }) => type === 'MOVE')
-        )
-        .subscribe(({ event }) => {
-          const {
-            x: left,
-            y: top
-          } = event
-          Object.assign(this.autoAlignState, { top, left })
-        })
     },
     /**
      * 初始化键盘热键事件
@@ -192,21 +180,6 @@ export default {
           this.adjust$.next(mutation)
         })
 
-      // 鼠标按下时按住 Shift 关闭自动对齐
-      this.shift$ = this.keypress$
-        .pipe(
-          filter(({ event }) => ['ShiftLeft', 'ShiftRight'].includes(event.code))
-        )
-        .subscribe(({ type, event }) => {
-          this.isShiftPressed = type === 'keydown'
-          if (this.isShiftPressed) {
-            this.autoAlignService.next({
-              type: 'MOVE',
-              event: { x: null, y: null }
-            })
-          }
-        })
-
       // 鼠标按下时按下并抬起 Esc 恢复到之前状态
       this.esc$ = this.keyup$
         .pipe(
@@ -236,7 +209,6 @@ export default {
      * 初始化鼠标拖拽与缩放事件
      */
     initScaleAndMoveEvent () {
-      this.initAutoAlignEvent()
       this.documentMove$ = fromEvent(document, 'mousemove')
       this.documentUp$ = fromEvent(document, 'mouseup')
       this.tl$ = fromEvent(this.$refs.tl, 'mousedown').pipe(
@@ -369,26 +341,6 @@ export default {
                 top: yDistance,
                 left: xDistance
               }
-
-              // 自动对齐计算与处理
-              // Shift 按下时关闭自动对齐
-              // 因不稳定暂时关闭自动对齐
-              // if (!this.isShiftPressed) {
-              //   const { closestTop, closestLeft, x, y } = this.calcClosestPosition()
-              //   if (mouseType === 'mouseup') {
-              //     this.isMousedown = false
-              //     Object.assign(position, { closestTop, closestLeft })
-              //     this.autoAlignService.next({
-              //       type: 'MOVE',
-              //       event: { x: null, y: null }
-              //     })
-              //   } else {
-              //     this.autoAlignService.next({
-              //       type: 'MOVE',
-              //       event: { x, y }
-              //     })
-              //   }
-              // }
             }
             return {
               type,
@@ -408,62 +360,6 @@ export default {
           }
           this.adjust$.next(mutation)
         })
-    },
-    /**
-     * 计算距离当前位置最近的可自动对齐的位置和高亮线条位置
-     */
-    calcClosestPosition () {
-      const {
-        top, left, width, height
-      } = this.getCurrentState()
-
-      const OFFSET = CLOSEST_PIXEL / this.scale
-
-      // 上侧最近位置
-      const yTop = findClosestNumInArr(this.positionYs, top, OFFSET)
-      // 下侧最近位置
-      const yBottom = findClosestNumInArr(this.positionYs, top + height, OFFSET)
-      // 左侧最近位置
-      const xLeft = findClosestNumInArr(this.positionXs, left, OFFSET)
-      // 右侧最近位置
-      const xRight = findClosestNumInArr(this.positionXs, left + width, OFFSET)
-
-      // 要吸附到的 top
-      let closestTop
-      // 要吸附到的 left
-      let closestLeft
-      // 自动对齐线条高亮的 top
-      let y
-      // 自动对齐线条高亮的 left
-      let x
-
-      if (
-        (typeof yTop === 'number' && typeof yBottom === 'number' && Math.abs(yTop - top) <= Math.abs(yBottom - (top + height))) ||
-        (typeof yTop === 'number' && typeof yBottom !== 'number')
-      ) {
-        // 上侧吸附与高亮
-        y = yTop
-        closestTop = yTop
-      } else if (typeof yBottom === 'number') {
-        // 下侧吸附与高亮
-        y = yBottom
-        closestTop = yBottom - height
-      }
-
-      if (
-        (typeof xLeft === 'number' && typeof xRight === 'number' && Math.abs(xLeft - left) <= Math.abs(xRight - (left + width))) ||
-        (typeof xLeft === 'number' && typeof xRight !== 'number')
-      ) {
-        // 左侧吸附与高亮
-        x = xLeft
-        closestLeft = xLeft
-      } else if (typeof xRight === 'number') {
-        // 右侧吸附与高亮
-        x = xRight
-        closestLeft = xRight - width
-      }
-
-      return { closestTop, closestLeft, x, y }
     },
     getCurrentState () {
       const {
@@ -531,26 +427,32 @@ export default {
        * 复制配置
        */
     copyConfig () {
-      this.config = _.cloneDeep(this.activeWidget.config)
+      this.config = this.activeWidget.config
     },
     /**
-       * 粘贴配置
+       * 同步配置
+       * @param {Array} configTypes 要合并的配置名
        */
-    syncConfig () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render, config: { commonConfig: { width, height, top, left } } } = this.activeWidget
-      // 保留当前部件基础配置不变
+    syncConfig (configTypes) {
+      const { render, ...rest } = this.activeWidget
+      const activeWidget = { ..._.cloneDeep(rest), render }
+      const { config: { commonConfig: { width, height, top, left } } } = this.activeWidget
+
+      // 不合并尺寸位置信息
       Object.assign(this.config.commonConfig, {
         width,
         height,
         top,
         left
       })
-      this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
-      })
+
+      // 按需合并配置
+      Object.assign(activeWidget.config, _.pick(this.config, configTypes))
+
+      // 提交与刷新
+      this.activateWidget({ widget: activeWidget })
       this.$nextTick(() => {
-        render.setConfig(this.config)
+        render.setConfig(activeWidget.config)
       })
     },
     /**
@@ -570,7 +472,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
   .wrapper {
     top: 0;
     left: 0;
@@ -587,7 +489,9 @@ export default {
       display: none;
       position: fixed;
       background: transparent;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
       height: 100%;
       top: 0;
       left: 0;
@@ -596,8 +500,10 @@ export default {
 
     &__move {
       position: relative;
-      height: 100%;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
+      height: 100%;
       cursor: move;
       z-index: 1000;
       pointer-events: auto;

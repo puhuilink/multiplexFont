@@ -54,7 +54,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import { DELAY_MAPPING } from '../../../typing'
 import moment from 'moment'
 import _ from 'lodash'

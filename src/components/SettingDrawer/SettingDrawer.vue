@@ -107,22 +107,6 @@
                   <div slot="title">固定 Header</div>
                 </a-list-item-meta>
               </a-list-item>
-              <!-- 当前设置为固定 header 时 header 位于 sidemenu 上方，导致下方部分功能无法使用，因此禁用掉 -->
-              <!-- <a-list-item>
-                <a-switch slot="actions" size="small" :disabled="!fixedHeader" :defaultChecked="autoHideHeader" @change="handleFixedHeaderHidden" />
-                <a-list-item-meta>
-                  <a-tooltip slot="title" placement="left">
-                    <template slot="title">固定 Header 时可配置</template>
-                    <div :style="{ opacity: !fixedHeader ? '0.5' : '1' }">下滑时隐藏 Header</div>
-                  </a-tooltip>
-                </a-list-item-meta>
-              </a-list-item> -->
-              <!-- <a-list-item >
-                <a-switch slot="actions" size="small" :disabled="(layoutMode === 'topmenu')" :defaultChecked="fixSiderbar" @change="handleFixSiderbar" />
-                <a-list-item-meta>
-                  <div slot="title" :style="{ textDecoration: layoutMode === 'topmenu' ? 'line-through' : 'unset' }">固定侧边菜单</div>
-                </a-list-item-meta>
-              </a-list-item> -->
             </a-list>
           </div>
         </div>
@@ -171,15 +155,12 @@
 </template>
 
 <script>
-import { DetailList } from '@/components'
 import SettingItem from './SettingItem'
-// import config from '@/config/defaultSettings'
 import { updateTheme, updateColorWeak, colorList } from './settingConfig'
 import { mixin, mixinDevice } from '@/utils/mixin'
 
 export default {
   components: {
-    DetailList,
     SettingItem
   },
   mixins: [mixin, mixinDevice],
@@ -190,15 +171,8 @@ export default {
       handle: <div/>
     }
   },
-  watch: {
-
-  },
-  mounted () {
-    // updateTheme(this.primaryColor)
-    // if (this.colorWeak !== config.colorWeak) {
-    //   updateColorWeak(this.colorWeak)
-    // }
-  },
+  watch: {},
+  mounted () {},
   methods: {
     showDrawer () {
       this.visible = true
@@ -231,7 +205,7 @@ export default {
   autoHideHeader: ${this.autoHideHeader}, //  auto hide header
   colorWeak: ${this.colorWeak},
   multiTab: ${this.multiTab},
-  production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true',
+  production: process.env.NODE_ENV === 'production'
   // vue-ls options
   storageOptions: {
     namespace: 'pro__',

@@ -23,9 +23,9 @@
               @change="change">
               <a-select-option :value="SOURCE_TYPE_NULL">空数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_STATIC">静态数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_REAL">性能数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_ALARM">告警数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_OVERVIEW">总览数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_REAL" v-if="getSlot(SOURCE_TYPE_REAL)">性能数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_ALARM" v-if="getSlot(SOURCE_TYPE_ALARM)">告警数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_OVERVIEW" v-if="getSlot(SOURCE_TYPE_OVERVIEW)">总览数据</a-select-option>
             </a-select>
           </div>
 
@@ -95,7 +95,7 @@ export default {
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
-      return _.cloneDeep(this.activeWidget.config)
+      return this.activeWidget.config
     },
     sourceType () {
       return this.config.dataConfig.sourceType || SOURCE_TYPE_NULL
@@ -175,6 +175,12 @@ export default {
               { staticData: JSON.parse(code) }
             )
             break
+          case 'List':
+            Object.assign(
+              this.config.dataConfig.staticDataConfig,
+              { staticData: JSON.parse(code) }
+            )
+            break
           default:
             break
         }
@@ -182,13 +188,18 @@ export default {
       }
     },
     change () {
-      const activeWidget = _.cloneDeep(this.activeWidget)
-      const { render } = this.activeWidget
-      Object.assign(activeWidget.config, this.config)
+      const { render, widgetId } = this.activeWidget
       this.activateWidget({
-        widget: Object.assign(activeWidget, { config: this.config })
+        widget: {
+          widgetId,
+          config: this.config,
+          render
+        }
       })
       render.mergeOption(this.config)
+    },
+    getSlot (slot) {
+      return this.$slots[slot] && !_.isEmpty(this.$slots[slot])
     }
   }
 }

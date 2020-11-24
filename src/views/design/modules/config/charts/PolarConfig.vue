@@ -7,11 +7,11 @@
 <template>
   <div class="polar-config">
     <a-tabs
-      defaultActiveKey="3"
+      defaultActiveKey="1"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
-      <a-tab-pane tab="公共属性" key="1">
+      <a-tab-pane tab="样式" key="1">
 
         <!-- S 公共配置模板 -->
         <CommonTemplate :usePadding="false" />
@@ -19,7 +19,7 @@
 
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2">
+      <a-tab-pane tab="属性" key="2">
 
         <!-- S 专有配置模板 -->
         <ChartProprietaryTemplate>
@@ -325,7 +325,7 @@
 
       </a-tab-pane>
 
-      <a-tab-pane tab="数据配置" key="3">
+      <a-tab-pane tab="数据" key="3">
 
         <!-- S 数据配置模板 -->
         <PolarDataSource />

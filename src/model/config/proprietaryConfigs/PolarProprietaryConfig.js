@@ -4,7 +4,6 @@
 * Time: 5:27 下午
 */
 
-import _ from 'lodash'
 import { AngleAxis, BarItemStyle, Legend, Polar, PolarLinearColors, PolarMask, Radar, RadiusAxis } from './index'
 
 /**
@@ -38,7 +37,7 @@ export default class PolarProprietaryConfig {
    * 获取柱形图专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       itemStyle: this.barItemStyle.getOption(),
       polar: this.polar.getOption(),
       radar: this.radar.getOption(),

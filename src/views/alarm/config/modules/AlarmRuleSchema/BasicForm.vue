@@ -15,6 +15,7 @@
     <ComplexSnippet v-bind="formItemLayout" v-model="_formModel" />
 
     <a-form-model-item
+      v-if="!ruleType.includes('forward')"
       v-bind="formItemLayout"
       label="规则类型"
       prop="ruleType"
@@ -24,19 +25,19 @@
     >
       <a-checkbox-group v-bind="editAbleProps" v-model="_formModel.ruleType">
         <a-checkbox
-          v-for="(label, value) in ruleType"
-          :key="value"
-          :value="value"
-        >{{ label }}</a-checkbox>
+          v-for="item in ruleType"
+          :key="item"
+          :value="item"
+        >{{ ruleTypeMapping.get(item) }}</a-checkbox>
       </a-checkbox-group>
     </a-form-model-item>
   </fragment>
 </template>
 
 <script>
-import { ruleTypeMapping } from '../../typing'
 import Mixin from './Mixin'
 import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
+import { ruleTypeMapping } from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'BasicForm',
@@ -49,11 +50,14 @@ export default {
       ctx: this
     }
   },
-  props: {},
+  props: {
+    ruleType: {
+      type: Array,
+      default: () => ['merge', 'upgrade', 'recover']
+    }
+  },
   data: () => ({
-    ruleType: Object.freeze(
-      Object.fromEntries(ruleTypeMapping)
-    )
+    ruleTypeMapping
   }),
   computed: {
     editAbleProps () {

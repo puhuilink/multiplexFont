@@ -11,7 +11,7 @@
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { CmdbService } from '@/api-hasura'
+import { CmdbService } from '@/api'
 
 export default {
   name: 'CmdbHostSelect',

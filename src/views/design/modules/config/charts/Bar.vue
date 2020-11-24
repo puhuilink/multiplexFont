@@ -9,11 +9,11 @@
 <template>
   <div class="bar-config">
     <a-tabs
-      defaultActiveKey="3"
+      defaultActiveKey="1"
       tabPosition="top"
       :style="{ height: '100%'}"
     >
-      <a-tab-pane tab="公共属性" key="1">
+      <a-tab-pane tab="样式" key="1">
 
         <!-- S 公共配置模板 -->
         <CommonTemplate />
@@ -21,14 +21,14 @@
 
       </a-tab-pane>
 
-      <a-tab-pane tab="专有属性" key="2">
+      <a-tab-pane tab="属性" key="2">
 
         <!-- S 专有配置模板 -->
         <ChartProprietaryTemplate show-x-axis show-y-axis>
 
           <template v-slot:header>
 
-            <a-collapse defaultActiveKey="1" :bordered="false">
+            <a-collapse :activeKey="[1, 2]" :bordered="false">
 
               <a-collapse-panel header="图形" key="1">
 
@@ -40,7 +40,7 @@
                         checkedChildren="横向"
                         unCheckedChildren="纵向"
                         v-model="config.proprietaryConfig.reverse"
-                        @change="changeReverse" />
+                        @change="change()" />
                     </div>
                   </div>
                 </div>
@@ -171,7 +171,7 @@
 
       </a-tab-pane>
 
-      <a-tab-pane tab="数据配置" key="3">
+      <a-tab-pane tab="数据" key="3">
 
         <!-- S 数据配置模板 -->
         <BarDataSource />
@@ -189,7 +189,6 @@ import ChartProprietaryTemplate from '../chartProprietary'
 import ProprietaryMixins from '../proprietaryMixins'
 import BarDataSource from '../dataSource/BarDataSource'
 import Color from '../common/Color'
-import { reverseOption } from '@/model/charts/BarChart'
 
 export default {
   name: 'Bar',
@@ -213,13 +212,6 @@ export default {
           : 'auto'
       })
       this.change(config)
-    },
-    changeReverse () {
-      const { staticData } = this.config.dataConfig.staticDataConfig
-      const { proprietaryConfig } = this.config
-      Object.assign(staticData, reverseOption(staticData))
-      Object.assign(proprietaryConfig, reverseOption(proprietaryConfig))
-      this.change()
     }
   }
 }

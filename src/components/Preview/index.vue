@@ -19,7 +19,12 @@
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
         <div class="Preview__renderer" ref="wrap">
 
-          <Renderer v-if="view && !isViewConfigLoading" :view="view" :timeRange="timeRange" ref="renderer" />
+          <Renderer
+            v-if="view && !isViewConfigLoading"
+            :view="view"
+            :timeRange="timeRange"
+            ref="renderer"
+            @drill="onDrill" />
 
         </div>
       </a-spin>
@@ -74,8 +79,12 @@
           <a-icon v-else type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
+        <a-tooltip placement="top" title="生成大屏地址" v-if="isDesignMode">
+          <a-icon type="link" @click="makePreviewLink" />
+        </a-tooltip>
+
         <a-tooltip placement="top" title="关闭" v-if="!disableClose">
-          <a-icon type="close-circle" @click="$emit('update:visible', false)" />
+          <a-icon type="close-circle" @click="goBack" />
         </a-tooltip>
 
       </div>
@@ -87,16 +96,18 @@
 
 <script>
 import _ from 'lodash'
-import { ViewDesignService } from '@/api-hasura'
-import { updateViewThumbnail } from '@/api/controller/View'
+import { ViewDesignService, ViewListService } from '@/api'
 import Renderer from '@/components/Renderer'
 import PreviewMixin from '@/components/PreviewMixin'
 import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
+import { encrypt } from '@/utils/aes'
+import { copyText } from '@/utils/domUtil'
+import DrillMixin from './Drill'
 
 export default {
   name: 'ViewPreview',
-  mixins: [PreviewMixin],
+  mixins: [PreviewMixin, DrillMixin],
   components: {
     Renderer
   },
@@ -140,15 +151,15 @@ export default {
   }),
   computed: {
     title () {
-      if (this.isDesignMode) {
-        return _.get(this.$route.query, 'title')
-      }
-
       if (_.isEmpty(this.viewList)) {
-        return _.get(this, ['currentView', 'view_title'])
+        return (
+          _.get(this, ['currentView', 'view_title']) ||
+          _.get(this, ['view', 'view_title']) ||
+          this.$router.query.title
+        )
       }
 
-      return _.get(this, ['view', 'view_title'], this.viewList[this.index].view_title)
+      return this.viewList[this.index].view_title
     }
   },
   watch: {
@@ -185,14 +196,14 @@ export default {
         this.view = null
         throw e
       } finally {
-        await Timeout.set(300)
+        await Timeout.set(200)
         this.isViewConfigLoading = false
       }
     },
     async getViewConfigFromStore () {
       this.view = null
       this.isViewConfigLoading = true
-      await Timeout.set(300)
+      await Timeout.set(200)
       this.view = this.$store.state.screen.view.getEctypalOption()
       this.isViewConfigLoading = false
     },
@@ -233,7 +244,7 @@ export default {
       const canvas = await html2canvas(this.$el)
       canvas.toBlob(blob => {
         const file = new File([blob], `${this.title}.png`, { lastModified: `${Date.now()}` })
-        updateViewThumbnail(file, this.currentView.view_id || this.$route.query.id)
+        ViewListService.updateViewThumbnail(file, this.currentView.view_id || this.$route.query.id)
           .then(() => {
             this.$notification.success({
               message: '系统提示',
@@ -244,6 +255,12 @@ export default {
             this.isThumbnailUploadLoading = false
           })
       })
+    },
+    makePreviewLink () {
+      const { id } = this.$route.query
+      const link = `${location.origin}/preview/${encrypt(id)}`
+      copyText(link)
+      this.$message.success('大屏地址已复制到剪切板！')
     }
   },
   beforeDestroy () {
@@ -331,4 +348,8 @@ export default {
 
 <style scoped lang="less">
 @import url('./transition.less');
+
+.ant-message {
+  z-index: 9999 !important;
+}
 </style>

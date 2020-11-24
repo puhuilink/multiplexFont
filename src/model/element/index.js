@@ -6,18 +6,31 @@
 * Email: dong.xing@outlook.com
 */
 
-import _ from 'lodash'
 import anime from 'animejs'
+import ListElementComponent from '~~~/Elements/ListElement'
+import LatestAlarmElement from '~~~/Elements/LatestAlarmElement'
+import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
+import _ from 'lodash'
+
+const ELEMENT_MAPPING = new Map([
+  ['List', ListElementComponent],
+  ['AlarmList', LatestAlarmElement]
+])
 
 export default class Element {
-  constructor ({ widget, element }) {
+  constructor ({ widget, element, onlyShow }) {
     this.container = document.getElementById(widget.widgetId)
     this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
     this.widget = widget
+    this.onlyShow = onlyShow
+    // 初始化配置
+    this.mergeOption(widget.config)
+    const componentOption = ELEMENT_MAPPING.get(this.widget.config.type)
+    this.$component = new Vue(componentOption).$mount(this.element)
   }
 
   /**
@@ -51,22 +64,22 @@ export default class Element {
     })
   }
 
-  /**
-   * 设置专有属性样式，与图表对象使用同一方法m名
-   */
-  mergeOption (config, loadingDynamicData = false) {}
-
-  /**
-   * 更新元素组件的props
-   * @param props
-   */
-  updateProps (props) {
-    if (this.widget) {
-      const widget = Object.assign(_.cloneDeep(this.widget), { render: this.widget.render })
-      Object.assign(widget.config.proprietaryConfig.props, props)
+  async mergeOption (config, loadingDynamicData = false) {
+    this.$component.elementProps = await this.mappingOption(config, loadingDynamicData)
+    if (this.widget && !this.onlyShow) {
+      const { render, ...rest } = this.widget
+      const widget = Object.assign({}, _.cloneDeep(rest), { render })
+      Object.assign(widget.config, {
+        ...config
+      })
       store.commit(`screen/${ScreenMutations.ACTIVATE_WIDGET}`, { widget })
     }
   }
+
+  /**
+   * 设置专有属性样式，与图表对象使用同一方法m名
+   */
+  mappingOption (config, loadingDynamicData = false) {}
 
   refresh () {
     this.mergeOption(this.widget.config, true)
@@ -81,5 +94,11 @@ export default class Element {
     this.mergeOption(config)
   }
 
-  resize () {}
+  resize () { }
+
+  destroy () {
+    const { $component } = this
+    $component && $component.$destroy()
+    this.$component = null
+  }
 }

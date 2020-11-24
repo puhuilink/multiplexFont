@@ -3,7 +3,7 @@
  */
 
 import { AdaptorConfig } from './AdaptorConfig'
-import { ViewDataService } from '@/api-hasura'
+import { ViewDataService } from '@/api'
 import { ALARM_TYPE_ALL } from '../types/alarmType'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {

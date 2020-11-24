@@ -39,6 +39,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
+import { AlarmService } from '@/api'
 
 export default {
   name: 'AlarmSolve',
@@ -51,6 +52,17 @@ export default {
   methods: {
     open () {
       this.show('告警解决')
+    },
+    async submit () {
+      try {
+        this.confirmLoading = true
+        await AlarmService.close()
+        this.cancel()
+      } catch (e) {
+        throw e
+      } finally {
+        this.confirmLoading = false
+      }
     }
   }
 }

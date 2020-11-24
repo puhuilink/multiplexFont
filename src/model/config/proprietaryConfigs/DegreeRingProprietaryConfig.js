@@ -1,7 +1,6 @@
 /*
  * 环度专有属性配置项
  */
-import _ from 'lodash'
 import { ThresholdColorRule } from './index'
 // eslint-disable-next-line
 import echartsLiquidfill from 'echarts-liquidfill'
@@ -38,9 +37,9 @@ class InnerCircle {
       formatter: '100',
       fontSize: 20,
       color: '#fff',
-      insideColor: '#dd5862'
+      insideColor: 'rgba(255,255,255,1)'
     },
-    decimalPoint = 0
+    decimalPoint = 1
   }) {
     this.type = type
     this.radius = radius
@@ -76,8 +75,11 @@ export default class DegreeRingProprietaryConfig {
    * 获取健康度专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
-      series: _.cloneDeep(this.innerCircle)
+    const { innerCircle, ...rest } = this
+    const { decimalPoint = 0 } = innerCircle
+    return Object.assign({}, rest, {
+      series: this.innerCircle,
+      decimalPoint
     })
   }
 }

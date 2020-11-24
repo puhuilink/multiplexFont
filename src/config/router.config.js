@@ -1,4 +1,5 @@
 import { UserLayout, BasicLayout, RouteView } from '@/layouts'
+import { decrypt } from '@/utils/aes'
 
 export const asyncRouterMap = [
   {
@@ -344,6 +345,12 @@ export const asyncRouterMap = [
             name: 'PwdChange',
             component: () => import('@/views/user/PwdChange'),
             meta: { title: '重置密码' }
+          },
+          {
+            path: '/settings',
+            name: 'settings',
+            component: () => import('@/views/user/settings/index'),
+            meta: { title: '个人设置', hideHeader: true }
           }
         ]
       }
@@ -366,7 +373,6 @@ export const asyncRouterMap = [
 /**
  * 基础路由
  * @type { *[] }
- * FIXME: 因权限分配可能导致 redirect 到的路由不存在，需要通过函数进行判断
  */
 export const constantRouterMap = [
   {
@@ -395,12 +401,14 @@ export const constantRouterMap = [
 
   // 视图直接访问(大屏)
   {
-    path: '/preview',
+    path: '/preview/:id',
     name: 'Preview',
     hidden: true,
     component: () => import('@/views/preview/index'),
     meta: { title: '大屏' },
-    props: route => route.query
+    props: route => ({
+      id: decrypt(route.params.id)
+    })
   },
 
   {

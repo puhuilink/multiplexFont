@@ -8,7 +8,7 @@ import {
   TEMP_KEYWORD_METRIC,
   TEMP_KEYWORD_LEVEL,
   TEMP_KEYWORD_MAPPING
-} from './types'
+} from '@/tables/alarm_temp/types'
 
 class Tiptap {
   static createTextNode (text) {

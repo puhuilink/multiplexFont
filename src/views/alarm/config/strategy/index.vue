@@ -85,15 +85,21 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { StrategyService } from '@/api-hasura/index'
+import { StrategyService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import AlarmStrategySchema from '../modules/AlarmStrategySchema/index'
 import _ from 'lodash'
 import {
-  ruleColumnSnippetStart,
-  ruleColumnSnippetMiddle,
-  ruleColumnSnippetEnd
-} from '../../config'
+  deviceTypeColumn,
+  deviceBrandColumn,
+  deviceModelColumn,
+  endpointModelIdColumn,
+  metricModelIdColumn
+} from '@/tables/alarm_rule/columns'
+import {
+  nameColumn,
+  lastUpdateTime
+} from '@/tables/cmdb_strategy/columns'
 
 export default {
   name: 'AlarmStrategy',
@@ -105,9 +111,15 @@ export default {
   data: () => ({
     tabIndex: 'personal',
     columns: [
-      ...ruleColumnSnippetStart(),
-      ...ruleColumnSnippetMiddle(),
-      ...ruleColumnSnippetEnd()
+      ...[
+        nameColumn,
+        deviceTypeColumn,
+        deviceBrandColumn,
+        deviceModelColumn,
+        endpointModelIdColumn,
+        metricModelIdColumn,
+        lastUpdateTime
+      ].map(fn => fn.call(this))
     ]
   }),
   computed: {},

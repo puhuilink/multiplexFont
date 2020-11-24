@@ -45,10 +45,11 @@ export default class Edge {
     this.source = source
     this.target = target
     this.shape = shape
-    this.controlPoints = controlPoints
     this.style = style
     this.label = label
     this.labelCfg = labelCfg
     this.animate = animate
+    // shape为polyline时controlPoints会自动生成与计算
+    if (shape !== 'polyline') this.controlPoints = controlPoints
   }
 }

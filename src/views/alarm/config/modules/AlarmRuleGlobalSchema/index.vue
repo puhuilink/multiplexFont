@@ -45,30 +45,28 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import RecoverForm from '../AlarmRuleSchema/RecoverForm'
 import UpgradeForm from '../AlarmRuleSchema/UpgradeForm'
 import MergeForm from '../AlarmRuleSchema/MergeForm'
-import { AlarmRuleService } from '@/api-hasura'
+import ForwardForm from '../AlarmRuleSchema/ForwardForm'
+import { AlarmRuleService } from '@/api'
 import { AlarmRuleModelFactory } from '../AlarmRuleSchema/model'
 
 export default {
   name: 'AlarmRuleGlobalSchema',
   mixins: [Schema],
-  components: {
-    RecoverForm,
-    UpgradeForm,
-    MergeForm
-  },
+  components: {},
   props: {},
   data: () => ({
     btnLoading: false,
     formModel: {},
+    ruleType: '',
     spinning: false
   }),
   computed: {
     component () {
-      const { ruleType = [] } = this.formModel
-      switch (ruleType[0]) {
+      switch (this.ruleType) {
         case 'merge': return MergeForm
         case 'recover': return RecoverForm
         case 'upgrade': return UpgradeForm
+        case 'forward': return ForwardForm
         default: return null
       }
     }
@@ -77,6 +75,7 @@ export default {
     edit (ruleType) {
       this.show('编辑全局告警规则')
       this.fetch(ruleType)
+      this.ruleType = ruleType
     },
     async fetch (ruleType) {
       try {

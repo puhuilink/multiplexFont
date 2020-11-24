@@ -7,3 +7,6 @@
 */
 
 import './g6'
+import './vue-axios'
+import './fragment'
+import './vue-rx'

@@ -26,7 +26,7 @@
         tabPosition="top"
         :style="{ height: '100%'}"
       >
-        <a-tab-pane tab="公共属性" key="1">
+        <a-tab-pane tab="样式" key="1">
 
           <a-collapse defaultActiveKey="1" :bordered="false">
 
@@ -38,7 +38,7 @@
 
         </a-tab-pane>
 
-        <a-tab-pane tab="专有属性" key="2">
+        <a-tab-pane tab="属性" key="2">
 
           <div class="topology-config__template">
 
@@ -59,7 +59,7 @@
                 </div>
                 <!-- / 编辑 -->
 
-                <div v-if="topologyEditable">
+                <div v-show="topologyEditable">
 
                   <div class="comment-template__item">
                     <p class="comment-template__leading">尺寸:</p>
@@ -79,11 +79,12 @@
                       <a-switch
                         checkedChildren="开启"
                         unCheckedChildren="关闭"
-                        v-model="isDisplayGrid"
+                        :checked="isDisplayGrid"
                         @change="gridChange" />
                     </div>
                   </div>
                   <!-- / 网格 -->
+                  <!-- / TODO: 持久化到配置 -->
 
                   <div class="comment-template__item">
                     <p class="comment-template__leading">模式:</p>
@@ -99,7 +100,7 @@
                   </div>
                   <!-- / 模式 -->
 
-                  <div class="comment-template__item" v-if="mode === 'addEdge'">
+                  <div class="comment-template__item" v-show="mode === 'addEdge'">
                     <p class="comment-template__leading">连线形状:</p>
                     <div class="comment-template__inner topology-config__editable">
                       <a-radio-group
@@ -116,7 +117,7 @@
 
                   <EdgeTemplate
                     :model="edge"
-                    v-if="edge && mode === 'addEdge'"
+                    v-show="edge && mode === 'addEdge'"
                     @change="edgeConfigChange" />
                   <!-- / 通用边编辑模板 -->
 
@@ -183,8 +184,6 @@ export default {
     topologyResizable: true,
     // 拓扑模式
     mode: 'edit',
-    // 是否显示拓扑网格
-    isDisplayGrid: false,
     // 选择器服务
     wrapperService: new WrapperService()
   }),
@@ -207,6 +206,10 @@ export default {
           { radius: this.activeNode.getModel().size[0] / 2 }
         )
       } return null
+    },
+    // 是否显示拓扑网格
+    isDisplayGrid () {
+      return this.config.proprietaryConfig.plugins.includes('Grid')
     }
   },
   created () {
@@ -243,10 +246,7 @@ export default {
       container.className = this.topologyEditable ? 'widget topology-widget' : 'widget'
 
       // 开启编辑时
-      if (this.topologyEditable) {
-        // 检查网格开启状态
-        this.checkGridStatus()
-      } else {
+      if (!this.topologyEditable) {
         // 取消编辑时选中该拓扑部件, 重置状态
         // 选中拓扑部件
         this.wrapperService.next({
@@ -285,22 +285,21 @@ export default {
       })
     },
     /**
-       * 检查是否开启网格
-       */
-    checkGridStatus () {
-      const { render: { chart } } = this.activeWidget
-      // eslint-disable-next-line no-unused-vars
-      const [_, hasGridPlugin] = chart.get('plugins')
-      this.isDisplayGrid = !!hasGridPlugin
-    },
-    /**
        * 拓扑网格显示更改事件
        */
-    gridChange () {
+    gridChange (isDisplayGrid) {
+      const { plugins = [] } = this.config.proprietaryConfig
       const { render: { chart } } = this.activeWidget
-      // eslint-disable-next-line no-unused-vars
-      const [_, grid] = chart.get('plugins')
-      this.isDisplayGrid ? chart.addPlugin(new Grid()) : chart.removePlugin(grid)
+      if (isDisplayGrid) {
+        plugins.push('Grid')
+        chart.addPlugin(new Grid())
+      } else {
+        const index = plugins.indexOf('Grid')
+        plugins.splice(index, 1)
+        const grid = chart.get('plugins').find(plugin => plugin instanceof Grid)
+        chart.removePlugin(grid)
+      }
+      // TODO: Vuex mutation
     }
   }
 }

@@ -40,7 +40,7 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import TempRule from './modules/TempRule'
-import { PatrolService, TempService } from '@/api-hasura'
+import { PatrolService, TempService } from '@/api'
 import _ from 'lodash'
 
 export default {

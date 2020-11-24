@@ -2,7 +2,7 @@
  * 总览数据接口适配层
  */
 
-import { ViewDataService } from '@/api-hasura'
+import { ViewDataService } from '@/api'
 import { AdaptorConfig } from './AdaptorConfig'
 import moment from 'moment'
 

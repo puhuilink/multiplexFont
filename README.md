@@ -6,7 +6,7 @@
 
 ## 代码规范
 * Git: [Git提交规范](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-* Git: [Git emoj 规范](https://gitmoji.carloscuesta.me/)
+* Git: [Git emoji 规范](https://gitmoji.carloscuesta.me/)
 
 ## 组件选型
 * 前端框架： vue - 2.6.x
@@ -21,6 +21,8 @@
 * 图表库：echarts、G6
 * UI框架：[vue ant design](https://www.antdv.com/docs/vue/introduce-cn/)
 
+## 注意
+* lodash 于 [vue.config.js](./vue.config.js) 中配置了 tree-shaking，若部分函数异常请参阅 [lodash-webpack-plugin](https://github.com/lodash/lodash-webpack-plugin#readme) 做相应调整
 ## 视图设计器说明
 
 #### 依赖
@@ -57,8 +59,7 @@
     ├─assets
     │  ├─icons  拓扑默认图标
     │  └─less  公共样式表
-    ├─api (已废弃的)接口层，后续逐步迁移到 api-hasura
-    ├─api-hasura 接口层
+    ├─api 接口层
     │  ├─config
     │  ├─dao  hasura的ORM封装，用于动态生成hasura语句
     │  ├─service  接口暴露层，由页面直接调用；本身是dao层的直接调用者

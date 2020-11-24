@@ -1,21 +1,22 @@
 <template>
-  <div class="auth-menu">
-    <a-tree
-      checkable
-      checkStrictly
-      defaultExpandAll
-      :autoExpandParent="true"
-      v-model="checkedKeys"
-      :treeData="menu">
-    </a-tree>
-
-  </div>
+  <a-spin :spinning="loading">
+    <div class="auth-menu">
+      <a-tree
+        checkable
+        checkStrictly
+        defaultExpandAll
+        :autoExpandParent="true"
+        v-model="checkedKeys"
+        :treeData="menu">
+      </a-tree>
+    </div>
+  </a-spin>
 </template>
 
 <script>
 import { MENU, MODULE, ALLPERMISSION } from '@/utils/menu'
-import { getUserPermission, getGroupPermission } from '@/api/system'
 import { getMenuTree, getButtonTree } from '@/utils/util'
+import { AuthorizeObjectService } from '@/api'
 
 export default {
   name: 'AuthMenu',
@@ -43,10 +44,10 @@ export default {
         this.loading = true
         const { user_id: userId, group_id: groupId } = this.record
         if (userId) {
-          this.menuPermission = await getUserPermission(userId)
+          this.menuPermission = await AuthorizeObjectService.getUserPermission(userId)
         }
         if (groupId) {
-          this.menuPermission = await getGroupPermission(groupId)
+          this.menuPermission = await AuthorizeObjectService.getGroupPermission(groupId)
         }
         const menuOriginalPermission = this.menuPermission.data.filter(item => /^F/.test(item.code))
         const buttonOriginalPermission = this.menuPermission.data.filter(item => !/^F/.test(item.code))

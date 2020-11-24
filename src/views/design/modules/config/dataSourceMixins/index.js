@@ -2,8 +2,10 @@ import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
+import CacheMixin from '../cache'
 
 export default {
+  mixins: [CacheMixin],
   data: () => ({
     formItemLayout: {
       labelCol: {
@@ -19,9 +21,6 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
-    config () {
-      return _.cloneDeep(this.activeWidget.config)
-    },
     // 外部 Ci 可用
     externalCi: {
       get () {
@@ -86,8 +85,8 @@ export default {
         if (loadingDynamicData) {
           this.btnLoading = true
         }
-        const activeWidget = _.cloneDeep(this.activeWidget)
-        const { render } = this.activeWidget
+        const { render, ...rest } = this.activeWidget
+        const activeWidget = Object.assign({}, _.cloneDeep(rest), { render })
         // 设置当前选中部件
         this.activateWidget({
           widget: Object.assign(activeWidget, { config: this.config })

@@ -11,7 +11,7 @@
 
 <script>
 import CListSelect from '~~~/ListSelect/CListSelect'
-import { DictValueService } from '@/api-hasura'
+import { DictValueService } from '@/api'
 
 export default {
   name: 'DeviceBrandSelect',

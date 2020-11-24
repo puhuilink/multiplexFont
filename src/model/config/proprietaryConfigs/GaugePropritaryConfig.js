@@ -132,7 +132,7 @@ export default class GaugeProprietaryConfig {
    * 获取文本专有配置
    */
   getOption () {
-    return Object.assign({}, _.cloneDeep(this), {
+    return Object.assign({}, this, {
       series: this.series
     })
   }

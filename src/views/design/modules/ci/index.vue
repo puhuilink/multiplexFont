@@ -15,7 +15,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import { Range } from '@/model/common'
 import IconPicker from '@/components/IconPicker'
-import { CmdbService } from '@/api-hasura'
+import { CmdbService } from '@/api'
 import {
   NODE_TYPE_CIRCLE
 } from '@/plugins/g6-types'
@@ -27,8 +27,7 @@ export default {
   },
   mixins: [IconPicker],
   props: {},
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {
     ...mapState('screen', ['view', 'activeWidget', 'topologyEditable']),
     ...mapGetters('screen', ['widgets', 'scale'])
@@ -42,9 +41,12 @@ export default {
     async dragend ({ event, node: { dataRef } }) {
       if (this.isWithinTopologyScope(event)) {
         // TODO: Icon mapping
-        const { hostId, ...resourceConfig } = await CmdbService.flatInfoByHostId(dataRef.id)
-        const other = this.icons.find(icon => icon.name === 'Others')
-        const icon = other
+        const {
+          hostId,
+          deviceModelName = 'Others',
+          ...resourceConfig
+        } = await CmdbService.flatInfoByHostId(dataRef.id)
+        const icon = this.icons.find(({ name = '', alias = [] }) => name === deviceModelName || alias.includes(deviceModelName)) || this.defaultIcon
         const data = {
           height: 64,
           label: dataRef.alias,

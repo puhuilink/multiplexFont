@@ -10,7 +10,9 @@ export const ScreenMutations = {
   SET_VIEW: 'SET_VIEW[设置视图对象]',
   ADD_WIDGET: 'ADD_WIDGET[添加部件]',
   REMOVE_WIDGET: 'REMOVE_WIDGET[移除部件]',
+  REMOVE_WIDGETS: 'REMOVE_WIDGET[批量移除部件]',
   ACTIVATE_WIDGET: 'ACTIVATE_WIDGET[设置激活的部件]',
+  ACTIVATE_SUB_WIDGETS: 'ACTIVATE_WIDGET[设置批量选中的部件]',
   MODIFY_TOPOLOGY_EDITABLE_STATUS: 'MODIFY_TOPOLOGY_EDITABLE_STATUS[修改拓扑图可编辑状态]',
   ACTIVATE_NODE: 'ACTIVATE_NODE[设置激活的节点]',
   ACTIVATE_EDGE: 'ACTIVATE_EDGE[设置激活的边]',
@@ -29,6 +31,8 @@ export default {
     },
     // 激活的部件对象，作为可读属性使用，不可通过非mutation方式进行修改
     activeWidget: null,
+    // 批量选中的部件对象，用以批量和activeWidget对齐等
+    subActiveWidgets: [],
     // 拓扑图是否可编辑
     topologyEditable: false,
     // 拓扑图是否可更改尺寸
@@ -47,6 +51,12 @@ export default {
     widgets (state) {
       return state.view.widgets
     },
+    // 视图中所有部件对象映射
+    widgetsMapping (state, getters) {
+      return new Map(
+        getters.widgets.map(widget => [widget.widgetId, widget])
+      )
+    },
     // 视图中所有拓扑图节点
     topologyWidgets (state, getters) {
       return getters.widgets.filter(({ config }) => config.type === 'Topology')
@@ -55,21 +65,14 @@ export default {
     nodes (state, getters) {
       return getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
     },
+    nodesMapping (state, getters) {
+      return new Map(
+        getters.nodes.map(node => [node.id, node])
+      )
+    },
     // 画板缩放比例
     scale (state) {
       return state.view.scale || 1
-    },
-    // 所有部件对象的位置，用于对齐吸附计算
-    positions (state, getters) {
-      return getters.widgets
-        .filter(({ widgetId }) => widgetId !== _.get(state, ['activeWidget', 'widgetId'], widgetId))
-        .map(({ config: { commonConfig } }) => _.pick(commonConfig, ['top', 'left', 'width', 'height']))
-    },
-    positionYs (state, getters) {
-      return _.uniq(getters.positions.map(({ top, height }) => [top, top + height]).flat())
-    },
-    positionXs (state, getters) {
-      return _.uniq(getters.positions.map(({ left, width }) => [left, left + width]).flat())
     }
   },
   mutations: {
@@ -83,12 +86,22 @@ export default {
     },
     // 从视图部件库中移除该部件
     [ScreenMutations.REMOVE_WIDGET] (state, payload) {
-      // FIXME: 当画布上有多个组件时，使用 splice 会导致删除的不是当前选中的组件
-      // const index = state.view.widgets.findIndex(widget => widget.widgetId !== payload.widgetId)
-      // state.view.widgets.splice(index, 1)
-      state.view.widgets = state.view.widgets.filter(widget => widget.widgetId !== payload.widgetId)
-      // 置空激活部件
-      state.activeWidget = null
+      // hack
+      // TODO: 迁移与升级到 REMOVE_WIDGETS
+      this.commit('screen/' + ScreenMutations.REMOVE_WIDGETS, {
+        widgetIds: [payload.widgetId]
+      })
+    },
+    // 从视图部件库中移除多个部件
+    [ScreenMutations.REMOVE_WIDGETS] (state, payload) {
+      const { widgets } = state.view
+      const { widgetIds = [] } = payload
+
+      const filterWidgets = widgets.filter(({ widgetId }) => !widgetIds.includes(widgetId))
+      // 重置激活部件
+      state.activeWidget = state.view
+      state.view.widgets = filterWidgets
+      state.subActiveWidgets = []
       // 隐藏选择器
       anime.set(document.getElementById('wrapper'), {
         display: 'none'
@@ -97,15 +110,36 @@ export default {
     // 设置激活的部件，并修改widgets中的部件
     [ScreenMutations.ACTIVATE_WIDGET] (state, payload) {
       // 如果选择的是部件，深度复制激活部件，保留render对象，则更新部件的配置
-      if (payload.widget && payload.widget.widgetId) {
-        const activeWidget = state.view.widgets.find(
-          widget => widget.widgetId === payload.widget.widgetId
-        )
-        Object.assign(activeWidget, _.omit(payload.widget, ['render']))
+      const { widget } = payload
+      const widgetsMapping = this.getters['screen/widgetsMapping']
+      if (widget && widget.widgetId) {
+        const activeWidget = widgetsMapping.get(widget.widgetId)
+        Object.assign(activeWidget, _.omit(widget, ['render']))
         state.activeWidget = activeWidget
       } else {
-        state.activeWidget = payload.widget
+        state.activeWidget = widget
       }
+      state.subActiveWidgets = []
+      if (state.activeWidget.config.type === 'View') {
+        // 隐藏选择器
+        anime.set(document.getElementById('wrapper'), {
+          display: 'none'
+        })
+      }
+    },
+    // 设置批量选中的部分
+    [ScreenMutations.ACTIVATE_SUB_WIDGETS] (state, payload) {
+      const widgetsMapping = this.getters['screen/widgetsMapping']
+      const subActiveWidgets = payload.widgets.filter(widget => {
+        const targetWidget = widgetsMapping.get(widget.widgetId)
+        if (targetWidget && targetWidget.config.type !== 'View') {
+          Object.assign(targetWidget, _.omit(widget, ['render']))
+          return true
+        } else {
+          return false
+        }
+      })
+      state.subActiveWidgets = subActiveWidgets
     },
     // 修改拓扑图可编辑状态
     [ScreenMutations.MODIFY_TOPOLOGY_EDITABLE_STATUS] (state, payload) {
@@ -114,6 +148,7 @@ export default {
     // 设置激活的拓扑节点
     [ScreenMutations.ACTIVATE_NODE] (state, payload) {
       state.activeNode = payload.activeNode
+      state.activeEdge = null
     },
     // 更新拓扑节点配置
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
@@ -128,6 +163,7 @@ export default {
     // 设置激活的拓扑边
     [ScreenMutations.ACTIVATE_EDGE] (state, payload) {
       state.activeEdge = payload.activeEdge
+      state.activeNode = null
     },
     // 重置拓扑状态
     [ScreenMutations.RESET_TOPOLOGY_STATE] (state) {

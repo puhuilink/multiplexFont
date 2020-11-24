@@ -66,11 +66,11 @@
 
 <script>
 import { List } from '@/components/Mixins'
-import { AlarmTempService } from '@/api-hasura/index'
+import { AlarmTempService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
 import ForwardTempSchema from '../modules/ForwardTempSchema/index'
-import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from '../typing'
+import { SEND_TYPE_MAPPING, ALL_SEND_TYPE_MAPPING } from '@/tables/alarm_rule/types'
 import moment from 'moment'
 
 export default {

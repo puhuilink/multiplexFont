@@ -1,21 +1,20 @@
 <template>
-  <a-transfer
-    :dataSource="viewList"
-    showSearch
-    :filterOption="filterOption"
-    :targetKeys="_targetKeys"
-    @change="handleChange"
-    @search="handleSearch"
-    :render="item => item.view_title"
-  >
-  </a-transfer>
+  <a-spin :spinning="loading">
+    <a-transfer
+      :dataSource="viewList"
+      showSearch
+      :filterOption="filterOption"
+      :targetKeys="_targetKeys"
+      @change="handleChange"
+      :render="item => item.view_title"
+    >
+    </a-transfer>
+  </a-spin>
 </template>
 
 <script>
-import { getViewList } from '@/api/controller/View'
-import { getViewListInGroupAuth, getViewListInUserAuth } from '@/api/controller/ViewGroup'
-// eslint-disable-next-line
 import _ from 'lodash'
+import { AuthorizeObjectService, ViewListService } from '@/api'
 
 export default {
   name: 'AuthView',
@@ -50,9 +49,7 @@ export default {
     _targetKeys: {
       get () {
         // 求交集，去除历史冗余数据
-        // TODO: 旧数据可能有用
         return _.intersection(this.targetKeys, this.dataSourceKeys)
-        // return this.targetKeys
       },
       set (v) {
         this.targetKeys = v
@@ -85,23 +82,22 @@ export default {
     async fetchAllViewList () {
       try {
         this.loading = true
-        // {key: string.isRequired,title: string.isRequired,description: string,disabled: bool}
-        const viewList = await getViewList({ limit: 9999 }).then(r => r.data.data)
+        const { data: { viewList } } = await ViewListService.find({ alias: 'viewList' })
         this.viewList = viewList
-          .filter(r => !!r.view_id)
-          .map(el => {
-            // console.log(el.view_id, el.view_title)
-            return ({
-              ...el,
-              title: el['view_title'],
-              key: el['view_id'].toString(),
-              description: '',
-              chosen: false
-            })
+          .filter(el => {
+            if (el.view_id) {
+              Object.assign(el, {
+                title: el['view_title'],
+                key: el['view_id'].toString(),
+                description: '',
+                chosen: false
+              })
+            }
+            return el
           })
-        // debugger
       } catch (e) {
         this.viewList = []
+        throw e
       } finally {
         this.loading = false
       }
@@ -109,10 +105,9 @@ export default {
     /**
      * 用户组当前授予的视图
      */
-    async fetchGroupViewList (groupId) {
+    async fetchGroupViewList (group_id) {
       try {
-        const groupViewList = (await getViewListInGroupAuth(groupId).then(r => r.data.data)).map(el => `${el.view_id}`)
-        this._targetKeys = groupViewList
+        this._targetKeys = await AuthorizeObjectService.viewIdList({ group_id })
       } catch (e) {
         this._targetKeys = []
         throw e
@@ -121,10 +116,9 @@ export default {
     /**
      * 用户当前授予的视图
      */
-    async fetchUserViewList (userId) {
+    async fetchUserViewList (user_id) {
       try {
-        const groupViewList = (await getViewListInUserAuth(userId).then(r => r.data.data)).map(el => `${el.view_id}`)
-        this._targetKeys = groupViewList
+        this._targetKeys = await AuthorizeObjectService.viewIdList({ user_id })
       } catch (e) {
         this._targetKeys = []
         throw e
@@ -143,11 +137,7 @@ export default {
       )
     },
     handleChange (targetKeys, direction, moveKeys) {
-      // console.log(targetKeys, direction, moveKeys)
       this._targetKeys = targetKeys
-    },
-    handleSearch (dir, value) {
-      // console.log('search:', dir, value)
     }
   },
   created () {

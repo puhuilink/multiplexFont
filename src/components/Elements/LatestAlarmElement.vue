@@ -1,10 +1,11 @@
 <template>
-  <div class="LatestAlarmElement">
+  <div class="list-element">
     <AlarmMonitor
-      :columnAlign="columnAlign"
       :btnProps="btnProps"
+      :columnAlign="align"
       :cTableProps="cTableProps"
-      :showSolved="false"
+      :showSolve="false"
+      :showQuery="false"
     />
   </div>
 </template>
@@ -12,56 +13,33 @@
 <script>
 // TODO: split common components
 import AlarmMonitor from '@/views/alarm/monitor/index'
+import ListMixin from '@/components/Elements/ListMixin'
 
 export default {
   name: 'LatestAlarmElement',
-  mixins: [],
+  mixins: [ListMixin],
   components: {
     AlarmMonitor
   },
-  props: {
-    elementProps: {
-      type: Object,
-      default: () => ({
-        data: [],
-        loading: false
-      })
-    }
-  },
-  data: () => ({}),
   computed: {
-    btnProps () {
-      const { styleConfig = {} } = this.elementProps
-      const { button: style } = styleConfig
-      return { style }
-    },
-    columnAlign () {
-      const { styleConfig = {} } = this.elementProps
-      const { align = 'left' } = styleConfig
-      return align
-    },
-    headerRowStyle () {
-      const { styleConfig = {} } = this.elementProps
-      const { header = {} } = styleConfig
-      return header
-    },
-    rowStyle () {
-      const { styleConfig = {} } = this.elementProps
-      const { rows = {} } = styleConfig
-      return rows
-    },
     cTableProps () {
-      const { customRow, headerRowStyle } = this
+      const {
+        headerRowStyle,
+        rowStyle,
+        scroll
+      } = this
       return {
-        customRow,
-        customHeaderRow: () => ({ style: headerRowStyle })
+        customHeaderRow: () => ({ style: headerRowStyle }),
+        customRow: () => ({ style: rowStyle }),
+        scroll
       }
-    }
-  },
-  methods: {
-    customRow (record, index) {
+    },
+    btnProps () {
+      const {
+        styleConfig = {}
+      } = this.elementProps
       return {
-        style: this.rowStyle
+        style: styleConfig.button || {}
       }
     }
   }

@@ -224,7 +224,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { StrategyService } from '@/api-hasura/index'
+import { StrategyService } from '@/api'
 import { CombineSelect } from '@/components/Resource'
 import {
   ThresholdOperatorSelect,

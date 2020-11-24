@@ -46,14 +46,14 @@ import {
   Tree,
   Upload,
   Progress,
-  Skeleton,
+  // Skeleton,
   Slider,
   Collapse,
   Popconfirm,
   message,
   notification,
   Transfer,
-  Cascader,
+  // Cascader,
   Empty
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
@@ -95,7 +95,7 @@ Vue.use(DatePicker)
 Vue.use(TimePicker)
 Vue.use(Upload)
 Vue.use(Progress)
-Vue.use(Skeleton)
+// Vue.use(Skeleton)
 Vue.use(Popconfirm)
 Vue.use(Slider)
 Vue.use(Collapse)
@@ -103,7 +103,7 @@ Vue.use(Tree)
 // Vue.use(VueCropper)
 Vue.use(notification)
 Vue.use(Transfer)
-Vue.use(Cascader)
+// Vue.use(Cascader)
 Vue.use(Empty)
 
 Vue.prototype.$confirm = Modal.confirm

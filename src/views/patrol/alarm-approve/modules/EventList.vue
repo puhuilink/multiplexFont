@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { PatrolService } from '@/api-hasura'
+import { PatrolService } from '@/api'
 import { List } from '@/components/Mixins'
 import _ from 'lodash'
 import { ANSWER_TYPE_SELECT } from '../../typing'

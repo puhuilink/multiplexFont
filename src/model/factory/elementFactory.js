@@ -9,12 +9,12 @@ import AlarmListElement from '../element/AlarmListElement'
 import ListElement from '../element/ListElement'
 
 export default class ElementFactory {
-  static create (type, widget) {
+  static create (type, { widget, element, onlyShow = false }) {
     switch (type) {
       case 'AlarmList':
-        return new AlarmListElement(widget)
+        return new AlarmListElement({ widget, element, onlyShow })
       case 'List':
-        return new ListElement(widget)
+        return new ListElement({ widget, element, onlyShow })
       default:
         return null
     }

@@ -20,7 +20,8 @@
 <script>
 import DetailForm from '../../modules/DetailForm'
 import Schema from '@/components/Mixins/Modal/Schema'
-import { AlarmForwardService } from '@/api-hasura'
+import { AlarmForwardService } from '@/api'
+import moment from 'moment'
 
 export default {
   name: 'AlarmLogForwardDetail',
@@ -31,7 +32,21 @@ export default {
   props: {},
   data: () => ({
     formItemList: Object.freeze([
-      { label: '前转时间', key: 'send_time' }
+      {
+        label: '通知时间',
+        key: 'send_time',
+        customRender: send_time => send_time ? moment(send_time).format() : ''
+      },
+      {
+        label: '通知状态',
+        key: 'status',
+        customRender: status => status ? '已通知' : '通知失败'
+      },
+      {
+        label: '通知内容',
+        textarea: true,
+        key: 'send_content'
+      }
     ]),
     record: {},
     spinning: false
@@ -49,9 +64,9 @@ export default {
         this.spinning = false
       }
     },
-    open (id) {
+    open (record) {
       this.show('前转详情')
-      this.fetch(id)
+      this.record = record
     }
   }
 }

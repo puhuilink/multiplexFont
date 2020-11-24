@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import { ViewDesktopService } from '@/api-hasura'
+import { ViewDesktopService } from '@/api'
 import _ from 'lodash'
 
 const ALL_VIEW = '所有视图'
@@ -50,7 +50,8 @@ export default {
 
       // 符合搜索条件的视图
       const queryString = (queryParams.view_title || '').toLowerCase()
-      return views.filter(({ view_title, view_id }) => `${view_id}${view_title}`.toLowerCase().includes(queryString))
+      const filterViewList = views.filter(({ view_title, view_id }) => `${view_id}${view_title}`.toLowerCase().includes(queryString))
+      return _.uniqBy(filterViewList, e => e.view_id)
     },
     // 当前选中的桌面
     selectedDesktop () {

@@ -1,57 +1,55 @@
-// import _ from 'lodash'
 import moment from 'moment'
 
-const isAvailable = function (v) {
-  if (Array.isArray(v)) {
-    return !!v.length
-  }
-  if (typeof v === 'string') {
-    return !!v.trim()
-  }
-  return v !== undefined && v !== null
+const isValueAvailable = function (val) {
+  if (Array.isArray(val)) return !!val.length
+  if (typeof val === 'string') return !!val.trim()
+  return val !== undefined && val !== null
 }
 
-const generate = function ({ key, value }) {
-  if (Array.isArray(value)) {
-    if (value.length === 2 && value[1] instanceof moment) {
-      return {
-        [key]: {
-          _gt: value[0].format('YYYY-MM-DDTHH:mm:ss'),
-          _lt: value[1].format('YYYY-MM-DDTHH:mm:ss')
+/**
+ * 生成 GraphQL where 某一项的表达式
+ * @param {*} param0
+ */
+const generateItemExpression = function ({ key, value }) {
+  let expression = {}
+  switch (Object.prototype.toString.call(value)) {
+    case '[object Array]':
+      const [start, end] = value
+      if (start instanceof moment && end instanceof moment) {
+        expression = {
+          [key]: {
+            _gt: start.format('YYYY-MM-DDTHH:mm:ss'),
+            _lt: end.format('YYYY-MM-DDTHH:mm:ss')
+          }
         }
       }
-    }
+      break
+    case '[object String]':
+      expression = { [key]: { _ilike: `%${value.trim()}%` } }
+      break
+    case '[object Number]':
+      expression = { [key]: { _eq: value } }
+      break
+    case '[object Boolean]':
+      expression = { [key]: { _eq: value } }
+      break
+
+    default: break
   }
-  if (typeof value === 'string') {
-    return {
-      [key]: {
-        _ilike: `%${value.trim()}%`
-      }
-    }
-  }
-  if (typeof value === 'number') {
-    return {
-      [key]: {
-        _eq: value
-      }
-    }
-  }
-  if (typeof value === 'boolean') {
-    return {
-      [key]: {
-        _eq: value
-      }
-    }
-  }
-  return {}
+
+  return expression
 }
 
+/**
+ * 生成 GraphQL where 查询语句
+ * @param {*} params
+ */
 export const generateQuery = function (params = {}) {
-  let obj = {}
+  const where = {}
   Object
     .entries(params)
-    .filter(([key, value]) => isAvailable(value))
-    .map(([key, value]) => generate({ key, value }))
-    .forEach((v) => { obj = { ...obj, ...v } })
-  return obj
+    .filter(([key, value]) => isValueAvailable(value))
+    .map(([key, value]) => generateItemExpression({ key, value }))
+    .forEach((expression) => { Object.assign(where, expression) })
+  return where
 }

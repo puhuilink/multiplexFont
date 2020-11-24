@@ -1,6 +1,6 @@
 <template>
   <div class="AlarmMonitor">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolved">
+    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolve">
       <a-tab-pane :key="0" tab="未解决"></a-tab-pane>
       <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
     </a-tabs>
@@ -19,7 +19,7 @@
     >
 
       <!-- / 查询区域 -->
-      <template #query>
+      <template #query v-if="showQuery">
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
 
@@ -132,7 +132,7 @@
         >查看</a-button>
         <a-button
           v-bind="btnProps"
-          v-if="showSolved"
+          v-if="showSolve"
           v-show="tabIndex !== 1"
           @click="onSolve"
           :disabled="!hasSelectedOne"
@@ -158,7 +158,7 @@
     />
 
     <AlarmSolve
-      v-if="showSolved"
+      v-if="showSolve"
       ref="solve"
       @solveSuccess="onSolveSuccess"
     />
@@ -168,7 +168,7 @@
 <script>
 import _ from 'lodash'
 import { List } from '@/components/Mixins'
-import { AlarmService } from '@/api-hasura/index'
+import { AlarmService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
@@ -202,7 +202,11 @@ export default {
       type: Object,
       default: () => ({})
     },
-    showSolved: {
+    showQuery: {
+      type: Boolean,
+      default: true
+    },
+    showSolve: {
       type: Boolean,
       default: true
     },
@@ -322,6 +326,7 @@ export default {
       }
     },
     loadData (parameter) {
+      console.log(parameter)
       return AlarmService.find({
         where: {
           ...generateQuery(this.queryParams),
@@ -360,11 +365,5 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.operation {
-  // TODO
-  // display: flex;
-  // width: calc(100% - 216px);
-  // flex-direction: row;
-}
+<style lang="less">
 </style>

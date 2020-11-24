@@ -165,9 +165,9 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import TempEditor from '@/components/Temp/TempEditor'
-import { UserService } from '@/api-hasura'
+import { UserService } from '@/api'
 import { filterOption } from '@/utils/util'
-import { SEND_TYPE_EMAIL, SEND_TYPE_SMS, SEND_TYPE_LIST } from '@/components/Temp/types'
+import { SEND_TYPE_EMAIL, SEND_TYPE_SMS, SEND_TYPE_LIST } from '@/tables/alarm_temp/types'
 
 const ENABLED_TYPE_TEMPORARY = 'temporary'
 const ENABLED_TYPE_PERSISTENT = 'persistent'

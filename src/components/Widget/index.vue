@@ -10,22 +10,21 @@
     class="widget"
     :class="{
       'widget--hover': !onlyShow,
-      'widget--highlight': !onlyShow && isHighLightForAutoAlign
+      'widget--sub-active': !onlyShow && isSubActive
     }"
     :id="widget.widgetId"
     :data-category="widget.config.category"
     :data-type="widget.config.type"
     :ref="widget.widgetId"
-    @click.stop="() => $emit('select', selectWidget)">
+    @click.stop="() => $emit('select', selectWidget)"
+  >
+    <!-- 视图钻取：双击跳转到新视图，跳转配置与细节待与产品沟通 -->
+    <!-- @dblclick.stop="() => $emit('drill', { viewId: 8947 })" -->
 
-    <!-- S 元素部件 -->
-    <component
-      :elementProps="elementProps"
-      :is="elementName"
-      ref="element"
-      v-if="useComponent"
-    />
-    <!-- E 元素部件 -->
+    <!-- / 元素部件 -->
+    <!-- 可以是vue组件，需要其持有者手动挂载到该div -->
+    <!-- FIXME: 这种方式可能导致vue-devtools无法正常调试 -->
+    <div ref="element" v-if="useComponent"></div>
 
   </div>
 </template>
@@ -34,7 +33,6 @@
 import _ from 'lodash'
 import { mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
-import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
 import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
@@ -42,16 +40,12 @@ import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
-import AutoAlignService from '../Wrapper/AutoAlignService'
-import { filter, takeWhile } from 'rxjs/operators'
 
 const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
-  components: {
-    ...ELEMENTS
-  },
+  components: {},
   props: {
     widget: {
       type: Object,
@@ -74,11 +68,24 @@ export default {
   data: () => ({
     render: null,
     isSubscribed: true,
-    isHighLightForAutoAlign: false,
-    autoAlignService: new AutoAlignService()
+    isHighLightForAutoAlign: false
   }),
   computed: {
-    ...mapState('screen', ['activeWidget', 'isImporting']),
+    ...mapState('screen', ['isImporting', 'activeWidget', 'subActiveWidgets']),
+    // 部件是否被批量选中
+    isSubActive () {
+      const {
+        widget: { widgetId },
+        activeWidget,
+        subActiveWidgets
+      } = this
+
+      return (
+        activeWidget &&
+        widgetId !== activeWidget.widgetId &&
+        !!subActiveWidgets.find(widget => widget.widgetId === widgetId)
+      )
+    },
     // 选择的部件
     selectWidget () {
       return Object.assign(this.widget, { render: this.render })
@@ -86,14 +93,6 @@ export default {
     // 在类型为元素时使用组件进行渲染
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
-    },
-    // 元素组件名
-    elementName () {
-      return ELEMENT_MAPPING.get(this.widget.config.type)
-    },
-    // 元素配置
-    elementProps () {
-      return this.widget.config.proprietaryConfig.props
     }
   },
   watch: {
@@ -196,7 +195,8 @@ export default {
     // 根据类型创建图表
     this.render = widgetFactory.create(type, {
       widget: this.widget,
-      element: this.$refs.element && this.$refs.element.$el
+      element: this.$refs.element,
+      onlyShow: this.onlyShow
     })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
@@ -205,33 +205,11 @@ export default {
         // TODO: 待调试
         this.initTopologyChart()
       }
-    } else {
-      // 如果 widget 是通过导入配置生成，不设置为 activeWidget
-      // 因导入配置可能生成多个 widget，会频繁的变更 activeWidget
-      if (this.isImporting) return
-      // 如果 widget 是通过拖拽生成，设置为 activeWidget
+    } else if (!this.isImporting) {
       this.activateWidget({
         widget: this.selectWidget
       })
     }
-
-    // 编辑模式下，其他 Widget 移动过程中
-    // 如果 x、y 方向与当前 Widget 对齐，则高亮当前 Widget
-    this.autoAlignService.change$
-      .pipe(
-        takeWhile(() => this.isSubscribed && !this.onlyShow),
-        filter(() => _.get(this, ['widget', 'widgetId']) !== _.get(this, ['activeWidget', 'widgetId'])),
-        filter(({ type }) => type === 'MOVE')
-      )
-      .subscribe(({ event }) => {
-        const { x, y } = event
-        const {
-          commonConfig: {
-            top, left, width, height
-          }
-        } = this.widget.config
-        this.isHighLightForAutoAlign = [top, top + height].includes(y) || [left, left + width].includes(x)
-      })
   },
   beforeDestroy () {
     this.render.destroy && this.render.destroy()
@@ -253,6 +231,11 @@ export default {
     &--highlight {
       box-shadow: 0 0 2px 2px rgba(255 ,5, 5, 1) !important;
     }
+
+    &--sub-active {
+    opacity: .6;
+    box-shadow: 0 0 4px 2px rgba(24, 144, 255, .8) !important;
+  }
   }
 
 </style>
