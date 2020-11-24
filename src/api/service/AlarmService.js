@@ -2,6 +2,7 @@ import { BaseService } from './BaseService'
 import { AlarmDao, AlarmSubDao, AlarmLatestDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AlarmService extends BaseService {
   static async find (argus = {}) {
@@ -65,6 +66,10 @@ class AlarmService extends BaseService {
     )
 
     return alarmInfo[0]
+  }
+
+  static async close ({ hostId, endpointId, metricId }) {
+    return axios.post('/redisData/closeAlarm', { hostId, endpointId, metricId })
   }
 }
 
