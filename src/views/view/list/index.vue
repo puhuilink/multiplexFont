@@ -81,37 +81,40 @@ export default {
   components: {
     ViewTitleSchema
   },
-  data: () => ({
-    copyLoading: false,
-    columns: [
-      {
-        title: '视图ID',
-        dataIndex: 'view_id',
-        sorter: true,
-        width: 100
-      },
-      {
-        title: '视图标题',
-        dataIndex: 'view_title',
-        sorter: true,
-        width: 300,
-        tooltip: true
-      },
-      {
-        title: '视图创建者',
-        dataIndex: 'creator',
-        // sorter: true,
-        width: 200,
-        customRender: (creator, { user }) => user ? user.staff_name : creator
-      },
-      {
-        title: '缩略图',
-        dataIndex: 'view_img',
-        width: 400,
-        tooltip: true
-      }
-    ]
-  }),
+  data () {
+    return {
+      copyLoading: false,
+      columns: [
+        {
+          title: '视图ID',
+          dataIndex: 'view_id',
+          sorter: true,
+          width: 100
+        },
+        {
+          title: '视图标题',
+          dataIndex: 'view_title',
+          sorter: true,
+          width: 300,
+          tooltip: true
+        },
+        {
+          title: '视图创建者',
+          dataIndex: 'creator',
+          // sorter: true,
+          width: 200,
+          customRender: (creator, { user }) => user ? user.staff_name : creator
+        },
+        {
+          title: '缩略图',
+          dataIndex: 'view_img',
+          width: 400,
+          tooltip: true,
+          customRender: (src) => src ? <a href={`${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}`} target="_blank">{ src }</a> : ''
+        }
+      ]
+    }
+  },
   methods: {
     /**
      * 加载表格数据回调
