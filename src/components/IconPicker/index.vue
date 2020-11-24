@@ -137,6 +137,7 @@ import WaterChillers from '@/assets/network-icons/WaterChillers.png'
 import WaterLeakage from '@/assets/network-icons/WaterLeakage.png'
 import WirelessAP from '@/assets/network-icons/WirelessAP.png'
 import cloud from '@/assets/network-icons/cloud.png'
+import DeletedNodeIcon from '@/assets/network-icons/DeletedNodeIcon.png'
 
 export default {
   name: 'IconPicker',
@@ -204,7 +205,8 @@ export default {
       { name: 'WaterChillers', img: WaterChillers },
       { name: 'WaterLeakage', img: WaterLeakage },
       { name: 'WirelessAP', img: WirelessAP },
-      { name: 'cloud', img: cloud }
+      { name: 'cloud', img: cloud },
+      { name: 'DeletedNodeIcon', img: DeletedNodeIcon }
     ]
   }),
   methods: {
