@@ -75,12 +75,12 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增</a-button>
-        <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
+        <a-button @click="onEditUser" :disabled="!isSelectedValid" v-action:M0103>编辑</a-button>
         <a-button @click="onBatchDeleteUser" :disabled="!isSelectedValid" v-action:M0103>删除</a-button>
-        <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
-        <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
+        <a-button @click="onResetPwd" :disabled="!isSelectedValid" v-action:M0105>重置密码</a-button>
+        <a-button @click="onAllocateUserGroup" :disabled="!isSelectedValid" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
-        <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAllocateUserAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
       </template>
 
     </CTable>
@@ -113,6 +113,7 @@ import { UserService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
+import { USER_FLAG } from '@/tables/user/enum'
 
 export default {
   name: 'User',
@@ -159,7 +160,7 @@ export default {
         dataIndex: 'flag',
         width: 90,
         sorter: true,
-        customRender: flag => flag ? '有效' : '无效'
+        customRender: flag => flag === USER_FLAG.enabled ? '有效' : '无效'
       },
       {
         title: '备注',
@@ -173,7 +174,7 @@ export default {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
       if (hasSelected) {
-        return !selectedRows.find(({ flag }) => flag)
+        return !!selectedRows.find(({ flag }) => flag === USER_FLAG.enabled)
       } else {
         return false
       }
@@ -270,12 +271,12 @@ export default {
      * @event
      */
     async onToggleFlag () {
-      const [record] = this.selectedRows
+      const [{ user_id, flag }] = this.selectedRows
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认更改用户状态？',
         onOk: () => UserService
-          .toggleFlag(record.user_id, Number(!record.flag))
+          .toggleFlag(user_id, flag === USER_FLAG.enabled ? USER_FLAG.disabled : USER_FLAG.enabled)
           .then(() => {
             this.$notifyToggleFlagSuccess()
             this.query(false)
