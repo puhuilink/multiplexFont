@@ -24,10 +24,8 @@
             <a-button shape="circle" type="danger" icon="delete" />
           </a-popconfirm>
         </div>
-        <keep-alive :include="cacheTemplateComponentNameList">
-          <keep-alive :include="includeTemplateNameList">
-            <component :is="templateComponentName" />
-          </keep-alive>
+        <keep-alive :include="includeTemplateNameList">
+          <component :is="templateComponentName" />
         </keep-alive>
       </div>
       <div class="config__none" v-else>
@@ -79,13 +77,6 @@ export default {
     templateName () {
       const template = TEMPLATES.find(template => template.type === this.activeWidget.config.type)
       return template ? template.name : '画板'
-    },
-    cacheTemplateComponentNameList () {
-      return [
-        // TODO: 其他组件配置使用到 activeWidget，无法支持多实例并存
-        // ...this.widgets.map(({ config }) => this.templateMapping.get(config.type)),
-        'ViewConfig'
-      ]
     },
     hasCommonTitle () {
       return this.activeWidget.config.type !== 'Topology'

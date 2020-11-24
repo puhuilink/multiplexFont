@@ -65,7 +65,7 @@ class ModelService extends BaseService {
    */
   static async endpointList (value) {
     const { data: { modelHostEndpointList } } = await query(
-      // FIXME: hack
+      // TODO: hack
       ModelHostEndpointDao.find({
         where: {
           ...typeof value === 'string' ? {

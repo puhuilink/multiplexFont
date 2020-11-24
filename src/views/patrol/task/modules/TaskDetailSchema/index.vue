@@ -122,7 +122,6 @@ export default {
       return this.record.rfInfo || {}
     },
     scroll () {
-      // TODO: lazy load / local pagination
       return {
         x: _.sum(this.columns.map(e => e.width || 60)),
         y: 300

@@ -63,12 +63,10 @@
       </a-layout-content>
 
       <!-- layout footer -->
-      <!-- TODO: 目前 footer 暂无展示内容 -->
       <!-- <a-layout-footer>
         <global-footer />
       </a-layout-footer> -->
 
-      <!-- Setting Drawer (show in development mode) -->
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
   </a-layout>

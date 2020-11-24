@@ -131,7 +131,6 @@ export default {
         where: {
           ...generateQuery(this.queryParams)
         },
-        // FIXME: 数据库存在两条相同 id 数据
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
