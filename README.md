@@ -6,7 +6,7 @@
 
 ## 代码规范
 * Git: [Git提交规范](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-* Git: [Git emoj 规范](https://gitmoji.carloscuesta.me/)
+* Git: [Git emoji 规范](https://gitmoji.carloscuesta.me/)
 
 ## 组件选型
 * 前端框架： vue - 2.6.x
@@ -21,6 +21,8 @@
 * 图表库：echarts、G6
 * UI框架：[vue ant design](https://www.antdv.com/docs/vue/introduce-cn/)
 
+## 注意
+* lodash 于 [vue.config.js](./vue.config.js) 中配置了 tree-shaking，若部分函数异常请参阅 [lodash-webpack-plugin](https://github.com/lodash/lodash-webpack-plugin#readme) 做相应调整
 ## 视图设计器说明
 
 #### 依赖
