@@ -190,14 +190,14 @@ export default {
         this.view = null
         throw e
       } finally {
-        await Timeout.set(300)
+        await Timeout.set(200)
         this.isViewConfigLoading = false
       }
     },
     async getViewConfigFromStore () {
       this.view = null
       this.isViewConfigLoading = true
-      await Timeout.set(300)
+      await Timeout.set(200)
       this.view = this.$store.state.screen.view.getEctypalOption()
       this.isViewConfigLoading = false
     },

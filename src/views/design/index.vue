@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     back () {
-      this.$router.push({ name: 'ViewList' })
+      this.$router.go(-1)
     },
     leftPanelControl (control) {
       this.leftPanelExpand = control
