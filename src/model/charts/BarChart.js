@@ -67,7 +67,12 @@ export default class BarChart extends Chart {
           legend: Object.assign(legend, staticLegend),
           xAxis: Object.assign(xAxis, staticXAxis),
           yAxis: Object.assign(yAxis, staticYAxis),
-          series: series.map((item) => Object.assign({}, item, bar, { barWidth }))
+          series: series.map((item) => {
+            return Object.assign(
+              {}, item, bar,
+              { barWidth, stack: barType === 'single' }
+            )
+          })
         })
         break
       }
