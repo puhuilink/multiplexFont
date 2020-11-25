@@ -155,6 +155,8 @@
         @input="externalCi = $event"
       />
     </a-form-item>
+
+    <HostSearch />
   </div>
 </template>
 
@@ -171,6 +173,7 @@ import EndpointSelect from '~~~/ResourceConfig/Endpoint'
 import MetricSelect from '~~~/ResourceConfig/Metric'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
+import HostSearch from '~~~/HostSearch'
 
 export default {
   name: 'RealDataSource',
@@ -184,7 +187,8 @@ export default {
     EndpointSelect,
     MetricSelect,
     CalculateTypeSelect,
-    GroupSelect
+    GroupSelect,
+    HostSearch
   },
   props: {
     mode: {
