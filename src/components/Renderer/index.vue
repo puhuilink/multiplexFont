@@ -16,7 +16,7 @@
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"
-        :ciId="ciId"
+        :externalCiId="externalCiId"
         :timeRange="timeRange"
         @select="() => $emit('change', { el: 'widget', widget })"
         @drill="$emit('drill', $event)"
@@ -48,7 +48,7 @@ export default {
       default: () => {}
     },
     // 外部 Ci id
-    ciId: {
+    externalCiId: {
       type: String,
       default: ''
     },

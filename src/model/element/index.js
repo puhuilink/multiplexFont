@@ -13,6 +13,11 @@ import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import _ from 'lodash'
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 const ELEMENT_MAPPING = new Map([
   ['List', ListElementComponent],
@@ -25,6 +30,7 @@ export default class Element {
     this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
+    this.config = widget.config
     this.widget = widget
     this.onlyShow = onlyShow
     // 初始化配置
@@ -83,6 +89,44 @@ export default class Element {
 
   refresh () {
     this.mergeOption(this.widget.config, true)
+  }
+
+  /**
+   * 定时刷新动态数据
+   */
+  intervalRefresh () {
+    this.refresh()
+    const { dataConfig = {} } = this.config
+    const {
+      sourceType = '',
+      dbDataConfig: {
+        alarmConfig = {},
+        overviewConfig = {},
+        resourceConfig = {}
+      } = {}
+    } = dataConfig
+
+    let refreshTime
+    switch (sourceType) {
+      case SOURCE_TYPE_ALARM:
+        refreshTime = alarmConfig.refreshTime
+        break
+      case SOURCE_TYPE_OVERVIEW:
+        refreshTime = overviewConfig.refreshTime
+        break
+      case SOURCE_TYPE_REAL:
+        refreshTime = resourceConfig.refreshTime
+        break
+      default:
+        break
+    }
+
+    if (refreshTime) {
+      this.timer = setInterval(
+        this.refresh.bind(this),
+        Number(refreshTime) * 1000 * 60
+      )
+    }
   }
 
   /**
