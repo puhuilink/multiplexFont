@@ -125,25 +125,25 @@
 
 <script>
 // TODO: 与 dataSourceMixin 抽离公共部分
-import ViewListSelect from '../common/ViewListSelect'
-import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
-import DeviceBrandFactory from '~~~/ResourceConfig/Device/DeviceBrand'
-import DeviceModelFactory from '~~~/ResourceConfig/Device/DeviceModel'
-import HostFactory from '~~~/ResourceConfig/Host'
+import _ from 'lodash'
+
+import NodeMixin from '../dataSourceMixins/nodes'
+
+import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
+import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
+import { Select as DeviceModelSelect } from '~~~/ResourceConfig/Device/DeviceModel'
+import { Select as HostSelect } from '~~~/ResourceConfig/Host'
 import EndpointSelect from '~~~/ResourceConfig/Endpoint'
 import MetricSelect from '~~~/ResourceConfig/Metric'
-import NodeMixin from '../dataSourceMixins/nodes'
-import _ from 'lodash'
 
 export default {
   name: 'CiNodeDataSource',
   mixins: [NodeMixin],
   components: {
-    ViewListSelect,
-    DeviceTypeSelect: DeviceTypeFactory.Select,
-    DeviceBrandSelect: DeviceBrandFactory.Select,
-    DeviceModelSelect: DeviceModelFactory.Select,
-    HostSelect: HostFactory.Select,
+    DeviceTypeSelect,
+    DeviceBrandSelect,
+    DeviceModelSelect,
+    HostSelect,
     EndpointSelect,
     MetricSelect
   },

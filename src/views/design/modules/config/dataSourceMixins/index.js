@@ -21,18 +21,6 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
-    // 外部 Ci 可用
-    externalCi: {
-      get () {
-        return this.config.dataConfig.dbDataConfig.externalCi
-      },
-      set (v) {
-        Object.assign(this.config.dataConfig.dbDataConfig, {
-          externalCi: v
-        })
-        this.change()
-      }
-    },
     resourceConfig: {
       get () {
         return this.config.dataConfig.dbDataConfig.resourceConfig
