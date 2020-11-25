@@ -77,7 +77,7 @@ class ViewDesktopService extends BaseService {
       // 删除之前桌面配置
       ViewDesktopDao.batchDeleteGroupDesktop({ group_id }),
       // 全量写入新配置
-      ViewDesktopDao.batchAddUserDesktop(
+      ViewDesktopDao.batchAddGroupDesktop(
         viewIdList.map(view_id => ({ group_id, view_id }))
       )
     )
@@ -86,9 +86,9 @@ class ViewDesktopService extends BaseService {
   static async updateUserDesktop (user_id, viewIdList) {
     await mutate(
       // 删除之前桌面配置
-      ViewDesktopDao.batchDeleteGroupDesktop({ user_id }),
+      ViewDesktopDao.batchDeleteUserDesktop({ user_id }),
       // 全量写入新配置
-      ViewDesktopDao.batchAddGroupDesktop(
+      ViewDesktopDao.batchAddUserDesktop(
         viewIdList.map(view_id => ({ user_id, view_id }))
       )
     )
