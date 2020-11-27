@@ -95,7 +95,7 @@ class ModelService extends BaseService {
       .filter(({ endpoint }) => endpoint && endpoint.id)
       .map(({ endpoint }) => ({
         key: endpoint.id,
-        label: endpoint.alias + ' ' + endpoint.collect_type
+        label: endpoint.alias + (endpoint.collect_type ? endpoint.collect_type : '')
       }))
     const uniqList = _.uniq(validList, ({ key }) => key)
     return uniqList
