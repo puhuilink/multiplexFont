@@ -133,7 +133,11 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           Vue.ls.remove(ACCESS_TOKEN)
-          router.push('/user/login')
+          Vue.ls.remove(USER)
+          router.push('/user/login').then(() => {
+            // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+            location.reload()
+          })
         })
     }
 
