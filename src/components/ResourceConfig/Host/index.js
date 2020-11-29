@@ -79,7 +79,6 @@ const Select = {
       try {
         this.loading = true
         this.list = await loadData(hostTypeDictValueCode)
-        console.log(this.list)
       } catch (e) {
         this.list = []
         throw e

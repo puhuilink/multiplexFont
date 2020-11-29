@@ -8,6 +8,7 @@ import { AdaptorResourceConfig } from '../config/dataConfig/dynamicData/common/A
 import _ from 'lodash'
 import './circleNode.less'
 
+export const runTimeNodeData = {}
 export default class CircleNode extends Node {
   constructor ({
     icon = {},
@@ -42,6 +43,7 @@ export default class CircleNode extends Node {
           `).join('')}
         </div>
       `
+      runTimeNodeData[this.id] = this.tooltipContent
     }
   }
 
@@ -55,5 +57,10 @@ export default class CircleNode extends Node {
   restartIntervalRefresh () {
     this.resetTimer()
     this.intervalRefresh()
+  }
+
+  destroy () {
+    super.destroy()
+    Reflect.deleteProperty(runTimeNodeData, this.id)
   }
 }
