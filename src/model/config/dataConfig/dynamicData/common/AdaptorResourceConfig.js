@@ -13,7 +13,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     deviceBrand = 'HostLinux',
     deviceModel = 'HostAIXLinux',
     hostId = [],
-    endpointModelId = 1149375446,
+    endpointModelId = null,
     metricModelIds = [],
     // 分组方式:  hour / minute / month
     isGroup = '',
