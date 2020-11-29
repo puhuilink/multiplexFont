@@ -58,11 +58,12 @@
 
       <!-- S 视图缩略图 -->
       <div class="ViewDisplay-content" v-if="isThumbnailMode">
-        <a-row>
+        <a-row :style="{ overflow: 'hidden' }">
           <transition-group name="flip-list" tag="div">
             <a-col
               class="flip-item"
-              v-for="viewConfig in filterViewList"
+              v-for="viewConfig in allViewList"
+              v-show="filterViewIdList.includes(viewConfig.view_id)"
               :key="viewConfig.view_id"
               :id="viewConfig.view_id"
               :xs="24"
