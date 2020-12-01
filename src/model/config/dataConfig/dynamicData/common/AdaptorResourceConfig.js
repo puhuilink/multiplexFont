@@ -45,7 +45,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
 
     // hack: 端口组
     if (dataList.length && ['Input Rate', 'Output Rate'].includes(dataList[0]['metricAlias'])) {
-      const aggregatedDataList = _.groupBy(dataList, el => `${el.year}-${el.month}-${el.day}`)
+      const aggregatedDataList = _.groupBy(dataList, el => `${el.year}-${el.month}-${el.day}-${el.metricAlias}`)
       finalDataList = Object
         .entries(aggregatedDataList)
         .map(([key, [value, ...restValueList]]) => {
