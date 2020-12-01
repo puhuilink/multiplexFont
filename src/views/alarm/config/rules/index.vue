@@ -145,7 +145,6 @@ export default {
             ...restQueryParams,
             // https://github.com/vueComponent/ant-design-vue/issues/971
             ...enabled === undefined ? {} : { enabled: !!enabled }
-            // TODO
           }),
           mode: 'personal'
         },

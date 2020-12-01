@@ -252,7 +252,6 @@ export default {
         this.$message.warning('当前账号密码请至个人中心重置！')
         return
       }
-      // TODO: 与需求确认
       this.$promiseConfirm({
         title: '系统提示',
         content: '是否重置选中用户密码？',

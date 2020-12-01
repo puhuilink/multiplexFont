@@ -83,8 +83,6 @@ export default {
       const payload = this.filterValue(value)
       this.$emit('change', payload)
       this.$emit('update:value', payload)
-      // TODO: 统一从 update 迁移到 input
-      // 避免在不同组件间使用 v-model 与 .sync 的碎片化情况
       this.$emit('input', payload)
     },
     renderSelect () {

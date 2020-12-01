@@ -19,6 +19,7 @@ import Factory from '@/model/factory/factory'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 import { AlarmService } from '@/api/index'
 import { animateTypeMapping } from '@/plugins/g6'
+import { runTimeNodes } from '../nodes/CircleNode'
 
 const pluginsMap = new Map([
   ['Grid', Grid]
@@ -57,6 +58,9 @@ export default class TopologyChart extends Chart {
           // 是否展示 tooltip，鼠标移入时触发
           shouldBegin: (e) => {
             const model = e.item.getModel()
+            // TODO: 此处应直接更新到 model
+            const { tooltipContent = '' } = runTimeNodes[model.id] || {}
+            Object.assign(model, { tooltipContent })
             return !!model.tooltipContent
           },
           // tooltip 展示内容，鼠标移入时触发
@@ -266,7 +270,7 @@ export default class TopologyChart extends Chart {
    */
   async fetchNodesAlarm () {
     const { nodes: totalNodes } = this.config.proprietaryConfig
-    const nodes = totalNodes.filter(node => node.hostIds.length)
+    const nodes = totalNodes.filter(node => node.hostIds && node.hostIds.length)
     const hostIds = nodes.map(node => node.hostIds[0])
 
     if (_.isEmpty(hostIds)) return
@@ -518,6 +522,8 @@ export default class TopologyChart extends Chart {
     const nodes = this.chart.getNodes()
     nodes.forEach(node => {
       const model = node.getModel()
+      const hackModel = runTimeNodes[model.id]
+      hackModel && hackModel.destroy && hackModel.destroy()
       model.destroy && model.destroy()
     })
     this.chart.off()

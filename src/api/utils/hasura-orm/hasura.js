@@ -16,7 +16,6 @@ export default class Hasura {
     this._with = _with
     this._fields = _fields
     this._schemaArguments = _schemaArguments
-    // TODO: alias 放置于构造函数
     this._alias = ''
   }
 

@@ -4,18 +4,6 @@
       <a-button :loading="btnLoading" @click="preview">预览</a-button>
     </a-form-item>
 
-    <a-form-item label="横轴类型" v-bind="formItemLayout" v-if="useXAxisType" >
-      <a-select class="fw" v-model="xAxisType">
-        <a-select-option
-          v-for="(option, idx) in xAxisTypeList"
-          :key="idx"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </a-select-option>
-      </a-select>
-    </a-form-item>
-
     <TimeRange v-if="useTimeRange" />
 
     <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
@@ -29,7 +17,7 @@
     <a-form-item label="分组条件" v-bind="formItemLayout" required v-if="useRefreshTime" v-show="resourceConfig.calculateType">
       <GroupSelect
         class="fw"
-        v-model="resourceConfig.calculateType"
+        v-model="resourceConfig.isGroup"
         @change="change()"
       />
     </a-form-item>
@@ -39,17 +27,8 @@
         class="fw"
         :value="resourceConfig.deviceType"
         @input="deviceType => {
-          resourceConfig = {
-            ...resourceConfig,
-            ...{
-              deviceType,
-              deviceBrand: null,
-              deviceModel: null,
-              hostId: [],
-              endpointModelId: null,
-              metricModelIds: []
-            }
-          }
+          changeDeviceType(deviceType)
+          change()
         }"
       />
     </a-form-item>
@@ -60,16 +39,8 @@
         :deviceType="resourceConfig.deviceType"
         :value="resourceConfig.deviceBrand"
         @input="deviceBrand => {
-          resourceConfig = {
-            ...resourceConfig,
-            ...{
-              deviceBrand,
-              deviceModel: null,
-              hostId: [],
-              endpointModelId: null,
-              metricModelIds: []
-            }
-          }
+          changeDeviceBrand(deviceBrand)
+          change()
         }"
       />
     </a-form-item>
@@ -80,60 +51,46 @@
         :deviceBrand="resourceConfig.deviceBrand"
         :value="resourceConfig.deviceModel"
         @input="deviceModel => {
-          resourceConfig = {
-            ...resourceConfig,
-            ...{
-              deviceModel,
-              hostId: [],
-              endpointModelId: null,
-              metricModelIds: []
-            }
-          }
+          changeDeviceModel(deviceModel)
+          change()
         }"
       />
     </a-form-item>
 
     <a-form-item label="设备名称" v-bind="formItemLayout" required>
       <HostSelect
-        :multiple="!singleHost && resourceConfig.metricModelIds.length <= 1"
         class="fw"
+        :multiple="!singleHost && resourceConfig.metricModelIds.length <= 1"
         :hostTypeDictValueCode="resourceConfig.deviceModel"
         :value="resourceConfig.hostId"
         @input="hostId => {
-          resourceConfig = {
-            ...resourceConfig,
-            hostId: castArray(hostId)
-          }
+          changeHost(hostId)
+          change()
         }"
       />
     </a-form-item>
 
     <a-form-item label="监控实体" v-bind="formItemLayout" required >
       <EndpointSelect
-        schema="model"
         :parentId="resourceConfig.deviceModel"
+        schema="model"
         :value="resourceConfig.endpointModelId"
         @input="endpointModelId => {
-          resourceConfig = {
-            ...resourceConfig,
-            endpointModelId,
-            metricModelIds: []
-          }
+          changeEndpoint(endpointModelId)
+          change()
         }"
       />
     </a-form-item>
 
     <a-form-item label="检查项" v-bind="formItemLayout" required >
       <MetricSelect
-        schema="model"
         :multiple="!singleMetric && resourceConfig.hostId.length <= 1"
+        schema="model"
         :parentId="resourceConfig.endpointModelId"
         :value="resourceConfig.metricModelIds"
         @input="metricModelIds => {
-          resourceConfig = {
-            ...resourceConfig,
-            metricModelIds: castArray(metricModelIds)
-          }
+          changeMetric(metricModelIds)
+          change()
         }"
       />
     </a-form-item>
@@ -151,8 +108,8 @@
 
     <a-form-item label="外部CI可用" v-bind="formItemLayout" v-if="useExternalCi" >
       <a-checkbox
-        :checked="!!externalCi"
-        @input="externalCi = $event"
+        :checked="!!dbDataConfig.externalCi"
+        @input="changeExternalCi"
       />
     </a-form-item>
   </div>
@@ -160,38 +117,35 @@
 
 <script>
 /* eslint-disable standard/no-callback-literal */
-import DataSourceMixins from '../dataSourceMixins/index'
-import TimeRange from './TimeRange'
 import _ from 'lodash'
-import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
-import DeviceBrandFactory from '~~~/ResourceConfig/Device/DeviceBrand'
-import DeviceModelFactory from '~~~/ResourceConfig/Device/DeviceModel'
-import HostFactory from '~~~/ResourceConfig/Host'
-import EndpointSelect from '~~~/ResourceConfig/Endpoint'
-import MetricSelect from '~~~/ResourceConfig/Metric'
+import DataSourceMixins from '../dataSourceMixins/index'
+
+import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
+
+import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
+import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
+import { Select as DeviceModelSelect } from '~~~/ResourceConfig/Device/DeviceModel'
+import { Select as HostSelect } from '~~~/ResourceConfig/Host'
+import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import MetricSelect from '~~~/ResourceConfig/Metric'
 
 export default {
   name: 'RealDataSource',
   mixins: [DataSourceMixins],
   components: {
     TimeRange,
-    DeviceTypeSelect: DeviceTypeFactory.Select,
-    DeviceBrandSelect: DeviceBrandFactory.Select,
-    DeviceModelSelect: DeviceModelFactory.Select,
-    HostSelect: HostFactory.Select,
+    DeviceTypeSelect,
+    DeviceBrandSelect,
+    DeviceModelSelect,
+    HostSelect,
     EndpointSelect,
     MetricSelect,
     CalculateTypeSelect,
     GroupSelect
   },
   props: {
-    mode: {
-      type: String,
-      default: 'chart',
-      validator: mode => ['chart', 'node'].includes(mode)
-    },
     singleHost: {
       type: Boolean,
       default: false
@@ -199,10 +153,6 @@ export default {
     singleMetric: {
       type: Boolean,
       default: false
-    },
-    toolTip: {
-      type: Boolean,
-      default: true
     },
     useCalculateType: {
       type: Boolean,
@@ -219,103 +169,116 @@ export default {
     useTimeRange: {
       type: Boolean,
       default: false
-    },
-    useXAxisType: {
-      type: Boolean,
-      default: false
     }
   },
-  data: () => ({
-    legendTypeList: [
-      { label: 'Ci', value: 'ci' },
-      { label: 'Instance', value: 'instance' },
-      { label: 'Kpi', value: 'kpi' }
-    ],
-    xAxisTypeList: [
-      { label: '资源', value: 'RESOURCE' },
-      { label: '时间', value: 'TIME' }
-    ]
-  }),
+  data: () => ({}),
   computed: {
-    legendType: {
-      set (legendType) {
-        // TODO: 此处先按单选实现，后期扩展为多选，始终以数组传递，方便向后兼容
-        Object.assign(this.config.dataConfig.dbDataConfig, {
-          legendType: _.castArray(legendType)
-        })
-      },
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.legendType', ['ci'])
-      }
+    dbDataConfig () {
+      return this.config.dataConfig.dbDataConfig
+    },
+    resourceConfig () {
+      return this.config.dataConfig.dbDataConfig.resourceConfig
     }
   },
   methods: {
-    castArray: _.castArray,
+    /**
+     * 预览数据
+     */
     async preview () {
       this.validate(async passValidate => {
         if (!passValidate) return
         try {
           this.btnLoading = true
-          const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
-          const { calculateType, isGroup } = this.resourceConfig
-          if (calculateType) {
-            if (_.isEmpty(timeRange.getOption())) {
-              this.$message.error('选择计算类型时必须指定查询时间段')
-              return
-            }
-            if (!isGroup) {
-              this.$message.error('选择计算类型时必须指定分组条件')
-              return
-            }
-          }
           await this.change(true)
-        } catch (e) {
-          throw e
         } finally {
           this.btnLoading = false
         }
       })
     },
-    validate (cb = () => {}) {
-      const { resourceConfig } = this
+    /**
+     * 校验数据配置
+     */
+    validate (cb = (passValidate) => {}) {
+      const {
+        calculateType, isGroup, timeRangeConfig
+      } = this.resourceConfig
 
-      const timeRange = _.get(this, 'config.dataConfig.dbDataConfig.timeRangeConfig', {})
-      const { calculateType, isGroup } = resourceConfig
-      if (calculateType) {
-        if (_.isEmpty(timeRange.getOption())) {
-          this.$message.error('选择计算类型时必须指定查询时间段')
-          cb(false)
-          return
-        }
-        if (!isGroup) {
-          this.$message.error('选择计算类型时必须指定分组条件')
-          cb(false)
-        }
+      if (
+        calculateType && (_.isEmpty(timeRangeConfig.getOption()) || !isGroup)
+      ) {
+        this.$message.error('选择计算类型时必须指定查询时间段与分组条件')
+        return cb(false)
       }
 
-      // FIXME: 校验不准确
-      // const fieldsMapping = new Map([
-      //   ['deviceType', '监控类型'],
-      //   ['deviceBrand', '品牌名称'],
-      //   ['deviceModel', '品牌设备'],
-      //   ['deviceModel', '设备名称'],
-      //   ['endpointModelId', '监控实体'],
-      //   ['endpointModelId', '监控实体'],
-      //   ['metricModelIds', '检查项']
-      // ])
-
-      const passValidate = true
-
-      // for (const field of [...fieldsMapping.keys()]) {
-      //   const value = resourceConfig[field]
-      //   if (!value || _.isEmpty(value)) {
-      //     this.$message.error(`请选择${fieldsMapping.get(field)}`)
-      //     passValidate = false
-      //     break
-      //   }
-      // }
-
-      cb(passValidate)
+      return cb(true)
+    },
+    /**
+     * 设置监控类型
+     */
+    changeDeviceType (deviceType) {
+      Object.assign(
+        this.resourceConfig,
+        { deviceType }
+      )
+      this.changeDeviceBrand(null)
+    },
+    /**
+     * 设置品牌名称
+     */
+    changeDeviceBrand (deviceBrand) {
+      Object.assign(
+        this.resourceConfig,
+        { deviceBrand }
+      )
+      this.changeDeviceModel(null)
+    },
+    /**
+     * 设置品牌设备
+     */
+    changeDeviceModel (deviceModel) {
+      Object.assign(
+        this.resourceConfig,
+        { deviceModel }
+      )
+      this.changeHost([])
+      this.changeEndpoint(null)
+    },
+    /**
+     * 设置设备名称
+     */
+    changeHost (hostId) {
+      Object.assign(
+        this.resourceConfig,
+        { hostId: _.castArray(hostId) }
+      )
+    },
+    /**
+     * 设置监控实体
+     */
+    changeEndpoint (endpointModelId) {
+      Object.assign(
+        this.resourceConfig,
+        { endpointModelId }
+      )
+      this.changeMetric([])
+    },
+    /**
+     * 设置检查项
+     */
+    changeMetric (metricModelIds) {
+      Object.assign(
+        this.resourceConfig,
+        { metricModelIds: _.castArray(metricModelIds) }
+      )
+    },
+    /**
+     * 设置外部CI可用
+     */
+    changeExternalCi (externalCi) {
+      Object.assign(
+        this.dbDataConfig,
+        { externalCi }
+      )
     }
   }
 }

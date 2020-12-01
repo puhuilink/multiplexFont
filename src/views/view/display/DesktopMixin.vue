@@ -53,6 +53,9 @@ export default {
       const filterViewList = views.filter(({ view_title, view_id }) => `${view_id}${view_title}`.toLowerCase().includes(queryString))
       return _.uniqBy(filterViewList, e => e.view_id)
     },
+    filterViewIdList () {
+      return this.filterViewList.map(({ view_id }) => view_id)
+    },
     // 当前选中的桌面
     selectedDesktop () {
       return this.allDesktopList.find(({ desktopName }) => desktopName === this.selectedDesktopName)

@@ -200,7 +200,7 @@ class CmdbService extends BaseService {
         fields: [
           'deviceType: type_model_value_code',
           'deviceModel: device_model_value_code',
-          'deviceModelName: device_model_name',
+          'deviceModelName: devce_model_name',
           'deviceBrand: brand_value_code',
           'hostType: host_type',
           'hostId: host_id',

@@ -1203,9 +1203,17 @@ class ImageGraphic extends Graphic {
       : { height, width: height * imageRatio }
     const center = { x: (width - limit.width) / 2, y: (height - limit.height) / 2 }
 
+    let { image = '' } = this.style
+    if (
+      (!image.includes('http')) &&
+      (!image.includes('base64'))
+    ) {
+      image = `${location.origin}/${image}`
+    }
+
     return Object.assign({}, this,
       {
-        style: { image: this.style.image, ...limit },
+        style: { image, ...limit },
         top: center.y + top,
         left: center.x + left
       }

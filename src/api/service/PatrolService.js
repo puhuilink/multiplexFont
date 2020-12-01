@@ -242,7 +242,6 @@ class PatrolService extends BaseService {
   }
 
   // 计划详情
-  // FIXME: 数据库 id 长度溢出无法查询出数据？
   static async planDetail (id) {
     const { data: { planList } } = await this.planFind({
       where: { id },

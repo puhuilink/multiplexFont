@@ -86,12 +86,11 @@
 </template>
 
 <script>
-import DeviceBrandFactory from '~~~/ResourceConfig/Device/DeviceBrand'
-import DeviceTypeFactory from './DeviceType'
-import DeviceModelFactory from './DeviceModel'
-import HostFactory from '../Host'
-// import AlarmRuleModel from '../AlarmRuleModel'
 import _ from 'lodash'
+import { ListSelect as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
+import { ListSelect as DeviceTypeSelect } from './DeviceType'
+import { ListSelect as DeviceModelSelect } from './DeviceModel'
+import { ListSelect as HostSelect } from '../Host'
 
 export default {
   name: 'ComplexSelect',
@@ -102,10 +101,10 @@ export default {
     }
   },
   components: {
-    DeviceBrandSelect: DeviceBrandFactory.ListSelect,
-    DeviceTypeSelect: DeviceTypeFactory.ListSelect,
-    DeviceModelSelect: DeviceModelFactory.ListSelect,
-    HostSelect: HostFactory.ListSelect
+    DeviceBrandSelect,
+    DeviceTypeSelect,
+    DeviceModelSelect,
+    HostSelect
   },
   props: {
     value: {

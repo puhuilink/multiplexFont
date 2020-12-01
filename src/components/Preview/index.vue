@@ -155,7 +155,7 @@ export default {
         return (
           _.get(this, ['currentView', 'view_title']) ||
           _.get(this, ['view', 'view_title']) ||
-          this.$router.query.title
+          _.get(this.$route, ['query', 'title'])
         )
       }
 

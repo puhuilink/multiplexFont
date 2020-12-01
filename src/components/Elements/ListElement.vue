@@ -3,14 +3,14 @@
 
     <!-- S 列表 -->
     <a-table
-      rowKey="uuid"
-      ref="table"
-      :columns="columns"
-      :dataSource="dataSource"
-      :scroll="scroll"
-      :pagination="false"
       :customHeaderRow="() => ({ style: headerRowStyle })"
       :customRow="customRow"
+      :columns="columns"
+      :dataSource="dataSource"
+      :pagination="false"
+      rowKey="uuid"
+      ref="table"
+      :scroll="scroll"
     >
     </a-table>
     <!-- E 列表 -->
@@ -27,4 +27,9 @@ export default {
 </script>
 
 <style lang="less">
+.list-element {
+  .ant-table-placeholder {
+    display: none;
+  }
+}
 </style>

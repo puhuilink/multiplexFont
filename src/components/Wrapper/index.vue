@@ -427,7 +427,7 @@ export default {
        * 复制配置
        */
     copyConfig () {
-      this.config = this.activeWidget.config
+      this.config = _.cloneDeep(this.activeWidget.config)
     },
     /**
        * 同步配置
@@ -436,10 +436,11 @@ export default {
     syncConfig (configTypes) {
       const { render, ...rest } = this.activeWidget
       const activeWidget = { ..._.cloneDeep(rest), render }
+      const copyConfig = _.cloneDeep(this.config)
       const { config: { commonConfig: { width, height, top, left } } } = this.activeWidget
 
       // 不合并尺寸位置信息
-      Object.assign(this.config.commonConfig, {
+      Object.assign(copyConfig.commonConfig, {
         width,
         height,
         top,
@@ -447,7 +448,7 @@ export default {
       })
 
       // 按需合并配置
-      Object.assign(activeWidget.config, _.pick(this.config, configTypes))
+      Object.assign(activeWidget.config, _.pick(copyConfig, configTypes))
 
       // 提交与刷新
       this.activateWidget({ widget: activeWidget })

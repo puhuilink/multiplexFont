@@ -56,9 +56,7 @@ const Select = {
   }
 }
 
-const Factory = {
+export {
   Select,
   ListSelect
 }
-
-export default Factory

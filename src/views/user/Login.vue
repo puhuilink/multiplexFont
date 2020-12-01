@@ -20,7 +20,7 @@
             {
               rules: [
                 { required: true, message: '请输入帐户名' },
-                { min: 4, message: '用户名最少4位'},
+                { min: 3, message: '用户名最少3位'},
                 { validator: handleUsernameOrEmail }
               ],
               validateTrigger: 'change'

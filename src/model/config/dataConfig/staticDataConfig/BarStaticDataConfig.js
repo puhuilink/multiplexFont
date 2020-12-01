@@ -93,6 +93,11 @@ export default class BarStaticDataConfig {
     return JSON.stringify(originalSource, null, '\t')
   }
 
+  /**
+   * 获取柱形图静态数据配置
+   * @param {String} barType 数据类型：[single | multiple]
+   * @param {Boolean} reverse 柱条方向：[true横向 | false纵向]
+   */
   getData (barType = 'single', reverse = false) {
     const { singleSeries, multipleSeries, ...rest } = this.staticData
     const data = {
@@ -100,12 +105,14 @@ export default class BarStaticDataConfig {
       ...rest
     }
 
-    // hack
-    // 当配置了reverse为true时，导出配置再导入，此时xAxis与yAxis已经对调过，需作判断
-    if (reverse && rest.xAxis.type === 'category') {
-      return reverseOption(data)
-    } else {
-      return data
+    switch (data.xAxis.type) {
+      case 'value':
+        // 若初始化柱条方向已为横向则无需调整
+        return reverse ? data : reverseOption(data)
+      case 'category':
+        return reverse ? reverseOption(data) : data
+      default:
+        break
     }
   }
 

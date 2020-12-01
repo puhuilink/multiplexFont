@@ -132,7 +132,7 @@ export default {
      */
     filterOption (inputValue, option) {
       const title = option['view_title'] || ''
-      return title.includes(
+      return title.toLowerCase().includes(
         inputValue.trim().toLowerCase()
       )
     },

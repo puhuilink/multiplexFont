@@ -13,7 +13,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     deviceBrand = 'HostLinux',
     deviceModel = 'HostAIXLinux',
     hostId = [],
-    endpointModelId = 1149375446,
+    endpointModelId = null,
     metricModelIds = [],
     // 分组方式:  hour / minute / month
     isGroup = '',
@@ -41,7 +41,23 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     // 可以查看一台设备的多个 metric 或多台设备的一个 metric
     // 具体以哪种方式组织根据选择项的长度来判断
     const groupByHost = this.hostId.length > 1
-    return dataList
+    let finalDataList = dataList
+
+    // hack: 端口组
+    if (dataList.length && ['Input Rate', 'Output Rate'].includes(dataList[0]['metricAlias'])) {
+      const aggregatedDataList = _.groupBy(dataList, el => `${el.year}-${el.month}-${el.day}-${el.metricAlias}`)
+      finalDataList = Object
+        .entries(aggregatedDataList)
+        .map(([key, [value, ...restValueList]]) => {
+          // 端口组的流量为所有端口流量之和
+          value['metricValue'] += _.sum(
+            restValueList.map(({ metricValue }) => metricValue)
+          )
+          return value
+        })
+    }
+
+    return finalDataList
       .map(({
         collectTime = moment().format(),
         endpointAlias = '',

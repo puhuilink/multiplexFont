@@ -54,9 +54,6 @@ router.beforeEach((to, from, next) => {
       })
       store
         .dispatch('Logout')
-        .finally(() => {
-          next({ name: 'login', query: { redirect: to.fullPath } })
-        })
       throw err
     })
 })

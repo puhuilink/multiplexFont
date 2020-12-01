@@ -53,6 +53,11 @@ export class ViewDataService extends BaseService {
       Reflect.deleteProperty(data, 'calculateType')
     }
 
+    if (!data['calculateType']) {
+      Reflect.deleteProperty(data, 'isGroup')
+      Reflect.deleteProperty(data, 'calculateType')
+    }
+
     if (this._validate(data)) {
       return axios.post('/view/data', data, config).catch(() => ({ data: [] }))
     } else {
