@@ -54,6 +54,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
           value['metricValue'] += _.sum(
             restValueList.map(({ metricValue }) => metricValue)
           )
+          // hack: 可能存在精度问题
+          value['metricValue'] = Number(value['metricValue'].toFixed(2))
           return value
         })
     }
@@ -74,5 +76,10 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         name: !groupByHost ? hostAlias : endpointAlias + metricAlias,
         unit: uint
       }))
+      .sort((a, b) => {
+        if (moment(a.time).isBefore(b.time)) return -1
+        if (moment(a.time).isAfter(b.time)) return 1
+        return 0
+      })
   }
 }
