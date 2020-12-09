@@ -6,7 +6,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api'
-
 export class AdaptorResourceConfig extends AdaptorConfig {
   constructor ({
     deviceType = 'Host',
@@ -45,7 +44,9 @@ export class AdaptorResourceConfig extends AdaptorConfig {
 
     // hack: 端口组
     if (dataList.length && ['Input Rate', 'Output Rate'].includes(dataList[0]['metricAlias'])) {
-      const aggregatedDataList = _.groupBy(dataList, el => `${el.year}-${el.month}-${el.day}-${el.metricAlias}`)
+      const aggregatedDataList = _.groupBy(dataList, el => {
+        return el.year ? `${el.year}-${el.month}-${el.day}-${el.metricAlias}` : `${el.collectTime}-${el.metricAlias}`
+      })
       finalDataList = Object
         .entries(aggregatedDataList)
         .map(([key, [value, ...restValueList]]) => {
@@ -68,7 +69,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         uint = ''
       }) => ({
         data: metricValueStr || metricValue,
-        time: this.formatTime(collectTime, this.isGroup),
+        time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
         legend: groupByHost ? hostAlias : endpointAlias + metricAlias,
         name: !groupByHost ? hostAlias : endpointAlias + metricAlias,
         unit: uint
