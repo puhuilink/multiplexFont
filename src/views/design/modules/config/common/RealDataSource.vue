@@ -106,6 +106,17 @@
       />
     </a-form-item>
 
+    <a-form-item label="延迟时间" v-bind="formItemLayout" v-if="useRefreshTime" >
+      <a-input
+        :min="0"
+        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
+        suffix="毫秒"
+        type="number"
+        v-model.number="resourceConfig.delayTime"
+        @input="change()"
+      />
+    </a-form-item>
+
     <a-form-item label="外部CI可用" v-bind="formItemLayout" v-if="useExternalCi" >
       <a-checkbox
         :checked="!!dbDataConfig.externalCi"
