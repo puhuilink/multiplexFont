@@ -43,8 +43,8 @@ export default class CircleNode extends Node {
           `).join('')}
         </div>
       `
-      runTimeNodes[this.id] = this
     }
+    runTimeNodes[this.id] = this
   }
 
   intervalRefresh () {

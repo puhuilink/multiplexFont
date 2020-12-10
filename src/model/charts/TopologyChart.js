@@ -526,6 +526,7 @@ export default class TopologyChart extends Chart {
       hackModel && hackModel.destroy && hackModel.destroy()
       model.destroy && model.destroy()
     })
+    nodes.length = 0
     this.chart.off()
     this.chart.destroy()
   }
