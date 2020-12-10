@@ -72,8 +72,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       }) => ({
         data: metricValueStr || metricValue,
         time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
-        legend: groupByHost ? hostAlias : endpointAlias + metricAlias,
-        name: !groupByHost ? hostAlias : endpointAlias + metricAlias,
+        legend: groupByHost ? hostAlias : endpointAlias + metricAlias.replace(endpointAlias, ''),
+        name: !groupByHost ? hostAlias : endpointAlias + metricAlias.replace(endpointAlias, ''),
         unit: uint
       }))
       .sort((a, b) => {
