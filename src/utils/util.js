@@ -245,3 +245,21 @@ export function toggleFullscreen () {
     exitMethod && exitMethod.call(document)
   }
 }
+
+/**
+ * 截取小数位数
+ * @param {*} value 要截取的值
+ * @param {*} 保留小时的长度
+ */
+export const formatFloat = function (value, n) {
+  var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
+  var s = f.toString()
+  var rs = s.indexOf('.')
+  if (rs < 0 && n > 0) {
+    s += '.'
+  }
+  for (var i = s.length - s.indexOf('.'); i <= n; i++) {
+    s += '0'
+  }
+  return s
+}

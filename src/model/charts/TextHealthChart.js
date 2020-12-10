@@ -8,6 +8,7 @@ import {
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import { formatFloat } from '@/utils/util'
 
 export default class TextsChart extends Chart {
   constructor ({ widget }) {
@@ -19,7 +20,7 @@ export default class TextsChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { title, thresholdColorRule } = proprietaryConfig.getOption()
+    const { title, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
 
     switch (sourceType) {
@@ -39,6 +40,10 @@ export default class TextsChart extends Chart {
         }
         break
       }
+    }
+
+    if (!isNaN(Number(title.text))) {
+      title.text = formatFloat(title.text, decimalPoint)
     }
 
     title.textStyle.color = thresholdColorRule.calculateColor(title.text) || title.textStyle.color
