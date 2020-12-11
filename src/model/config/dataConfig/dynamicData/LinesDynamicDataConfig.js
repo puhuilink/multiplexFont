@@ -36,8 +36,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     const dataList = await this.resourceConfig.fetch()
+    const groupByLegend = _.groupBy(dataList, 'legend')
     const groupByName = _.groupBy(dataList, 'name')
-    const categoryList = Object.keys(groupByName)
+    const aggregate = Object.keys(groupByLegend).length > 1 ? groupByLegend : groupByName
+    const categoryList = Object.keys(aggregate)
     const option = {
       legend: {
         data: categoryList
@@ -54,7 +56,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       },
       series: categoryList.map(category => ({
         name: category,
-        data: groupByName[category].map(({ data }) => data)
+        data: aggregate[category].map(({ data }) => data)
       }))
     }
     Object.assign(this, option)
