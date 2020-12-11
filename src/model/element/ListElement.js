@@ -4,6 +4,7 @@
 import Element from './index'
 import {
   SOURCE_TYPE_NULL,
+  SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
@@ -19,6 +20,7 @@ export default class ListElement extends Element {
     }
 
     switch (sourceType) {
+      case SOURCE_TYPE_OVERVIEW:
       case SOURCE_TYPE_REAL: {
         const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(props, { dataSource, columns })
