@@ -6,7 +6,8 @@ import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { formatFloat } from '@/utils/util'
 
@@ -32,6 +33,7 @@ export default class TextsChart extends Chart {
         break
       }
       case SOURCE_TYPE_ALARM:
+      case SOURCE_TYPE_OVERVIEW:
       case SOURCE_TYPE_REAL: {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
         // 无数据时使用缺省值
