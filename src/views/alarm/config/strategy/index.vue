@@ -1,8 +1,8 @@
 <template>
   <div class="AlarmStrategy">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange">
-      <a-tab-pane key="personal" tab="自定义阈值"></a-tab-pane>
-      <a-tab-pane key="common" tab="默认阈值"></a-tab-pane>
+    <a-tabs :activeKey="mode" @change="onToggleMode">
+      <a-tab-pane :key="STRATEGY_MODE.personal" tab="自定义阈值"></a-tab-pane>
+      <a-tab-pane :key="STRATEGY_MODE.common" tab="默认阈值"></a-tab-pane>
     </a-tabs>
 
     <CTable
@@ -55,14 +55,14 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button @click="onAdd" v-show="tabIndex === 'personal'">新建</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="tabIndex === 'personal'">编辑</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="tabIndex === 'personal'">删除</a-button>
+        <a-button @click="onAdd" v-show="mode === STRATEGY_MODE.personal">新建</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="mode === STRATEGY_MODE.personal">编辑</a-button>
+        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="mode === STRATEGY_MODE.personal">删除</a-button>
       </template>
 
       <template v-slot:enabled="enabled, { id }">
         <a-popconfirm
-          v-if="tabIndex === 'personal'"
+          v-if="mode === STRATEGY_MODE.personal"
           v-action:M0304
           :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
           @confirm="onToggleEnabled(id, !enabled)"
@@ -100,6 +100,7 @@ import {
   nameColumn,
   lastUpdateTime
 } from '@/tables/cmdb_strategy/columns'
+import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
 
 export default {
   name: 'AlarmStrategy',
@@ -108,20 +109,23 @@ export default {
     AlarmStrategySchema
   },
   props: {},
-  data: () => ({
-    tabIndex: 'personal',
-    columns: [
-      ...[
-        nameColumn,
-        deviceTypeColumn,
-        deviceBrandColumn,
-        deviceModelColumn,
-        endpointModelIdColumn,
-        metricModelIdColumn,
-        lastUpdateTime
-      ].map(fn => fn.call(this))
-    ]
-  }),
+  data () {
+    return {
+      STRATEGY_MODE,
+      mode: STRATEGY_MODE.personal,
+      columns: [
+        ...[
+          nameColumn,
+          deviceTypeColumn,
+          deviceBrandColumn,
+          deviceModelColumn,
+          endpointModelIdColumn,
+          metricModelIdColumn,
+          lastUpdateTime
+        ].map(fn => fn.call(this))
+      ]
+    }
+  },
   computed: {
     scrollY () {
       return 'max(calc(100vh - 370px), 100px)'
@@ -132,20 +136,29 @@ export default {
       return StrategyService.find({
         where: {
           ...generateQuery(this.queryParams),
-          mode: this.tabIndex
+          mode: this.mode
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
     },
+    /**
+     * 新增阈值规则
+     */
     onAdd () {
       this.$refs.schema.add()
     },
+    /**
+     * 阈值规则详情
+     */
     onDetail () {
       const [id] = this.selectedRowKeys
       this.$refs.schema.detail(id)
     },
+    /**
+     * (批量删除)阈值规则
+     */
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => StrategyService
@@ -157,22 +170,30 @@ export default {
           .catch(this.$notifyError)
       })
     },
+    /**
+     * 编辑（自定义）阈值规则
+     */
+    onEdit () {
+      const [id] = this.selectedRowKeys
+      this.$refs.schema.edit(id)
+    },
+    /**
+     * (批量)开启/关闭阈值规则
+     */
     async onToggleEnabled (id, enabled) {
       try {
         this.$refs['table'].loading = true
-        //
         await StrategyService.batchToggleEnabled(id, enabled)
         await this.query(false)
       } finally {
         this.$refs['table'].loading = false
       }
     },
-    onEdit () {
-      const [id] = this.selectedRowKeys
-      this.$refs.schema.edit(id)
-    },
-    onTabChange (tabIndex) {
-      this.tabIndex = tabIndex
+    /**
+     * 切换阈值规则类型
+     */
+    onToggleMode (mode) {
+      this.mode = mode
       this.query()
     }
   }
