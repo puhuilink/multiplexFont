@@ -151,22 +151,22 @@ export default {
      * 校验数据配置
      */
     validate (cb = (passValidate) => {}) {
-      // const {
-      //   calculateType, isGroup, timeRangeConfig
-      // } = this.overviewConfig
+      const {
+        calculateType, isGroup, timeRangeConfig
+      } = this.overviewConfig
 
-      // const timeRange = timeRangeConfig.getOption()
+      const timeRange = timeRangeConfig.getOption()
 
-      // if (
-      //   [1, 2].includes(
-      //     Number(!!calculateType) +
-      //     Number(!!isGroup) +
-      //     Number(!_.isEmpty(timeRange))
-      //   )
-      // ) {
-      //   this.$message.error('计算类型、分组条件、查询时间必须全选或全不选')
-      //   return cb(false)
-      // }
+      if (
+        [1, 2].includes(
+          Number(!!calculateType) +
+          Number(!!isGroup) +
+          Number(!_.isEmpty(timeRange))
+        )
+      ) {
+        this.$message.error('计算类型、分组条件、查询时间必须全选或全不选')
+        return cb(false)
+      }
 
       return cb(true)
     }
