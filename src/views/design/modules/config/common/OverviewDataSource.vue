@@ -14,6 +14,7 @@
 
     <a-form-item label="设备" v-bind="formItemLayout">
       <a-select
+        allowClear
         class="fw"
         mode="single"
         v-model="overviewConfig.hostAlias"
@@ -29,6 +30,7 @@
 
     <a-form-item label="监控实体" v-bind="formItemLayout">
       <a-select
+        allowClear
         class="fw"
         mode="single"
         v-model="overviewConfig.endpointAlias"
@@ -44,6 +46,7 @@
 
     <a-form-item label="检查项" v-bind="formItemLayout">
       <a-select
+        allowClear
         class="fw"
         mode="multiple"
         v-model="overviewConfig.alias"
@@ -109,11 +112,17 @@ export default {
   data: () => ({
     SOURCE_TYPE_OVERVIEW,
     hostAliasList: [
-      { label: '广域网路由器', value: '广域网路由器' }
+      { label: '广域网路由器', value: '广域网路由器' },
+      { label: '深信服设备AD', value: '深信服设备AD' },
+      { label: '互联网负载均衡设备-1(10.1.1.31)', value: '互联网负载均衡设备-1(10.1.1.31)' },
+      { label: '互联网负载均衡设备-2(10.1.1.32)', value: '互联网负载均衡设备-2(10.1.1.32)' }
     ],
     endpointAliasList: [
       { label: 'Gi2/2/0/1(link to HongKongZhongXin-CTE)', value: 'Gi2/2/0/1(link to HongKongZhongXin-CTE)' },
-      { label: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)', value: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)' }
+      { label: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)', value: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)' },
+      { label: 'eth1', value: 'eth1' },
+      { label: 'Vlan-4', value: 'Vlan-4' },
+      { label: 'Gi2/2/0/1', value: 'Gi2/2/0/1' }
     ],
     metricAliasList: [
       { label: 'CPU总使用率', value: 'CPU总使用率' },
@@ -142,22 +151,22 @@ export default {
      * 校验数据配置
      */
     validate (cb = (passValidate) => {}) {
-      const {
-        calculateType, isGroup, timeRangeConfig
-      } = this.overviewConfig
+      // const {
+      //   calculateType, isGroup, timeRangeConfig
+      // } = this.overviewConfig
 
-      const timeRange = timeRangeConfig.getOption()
+      // const timeRange = timeRangeConfig.getOption()
 
-      if (
-        [1, 2].includes(
-          Number(!!calculateType) +
-          Number(!!isGroup) +
-          Number(!_.isEmpty(timeRange))
-        )
-      ) {
-        this.$message.error('计算类型、分组条件、查询时间必须全选或全不选')
-        return cb(false)
-      }
+      // if (
+      //   [1, 2].includes(
+      //     Number(!!calculateType) +
+      //     Number(!!isGroup) +
+      //     Number(!_.isEmpty(timeRange))
+      //   )
+      // ) {
+      //   this.$message.error('计算类型、分组条件、查询时间必须全选或全不选')
+      //   return cb(false)
+      // }
 
       return cb(true)
     }

@@ -95,6 +95,16 @@
       />
     </a-form-item>
 
+    <a-form-item label="聚合方式" v-bind="formItemLayout" required>
+      <a-select
+        v-model="resourceConfig.endpointAggregateMode"
+        @change="change()"
+      >
+        <a-select-option value="model">模型</a-select-option>
+        <a-select-option value="cmdb">实体</a-select-option>
+      </a-select>
+    </a-form-item>
+
     <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-input
         :min="0"
