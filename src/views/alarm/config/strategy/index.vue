@@ -47,7 +47,7 @@
           <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
-            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+            <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
           </span>
         </a-form>
       </template>
@@ -122,7 +122,11 @@ export default {
       ].map(fn => fn.call(this))
     ]
   }),
-  computed: {},
+  computed: {
+    scrollY () {
+      return 'max(calc(100vh - 370px), 100px)'
+    }
+  },
   methods: {
     loadData (parameter) {
       return StrategyService.find({
@@ -159,8 +163,6 @@ export default {
         //
         await StrategyService.batchToggleEnabled(id, enabled)
         await this.query(false)
-      } catch (e) {
-        throw e
       } finally {
         this.$refs['table'].loading = false
       }
