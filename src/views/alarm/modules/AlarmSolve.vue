@@ -52,8 +52,9 @@ export default {
   methods: {
     open () {
       this.show('告警解决')
+      this.submit = this.close
     },
-    async submit () {
+    async close () {
       try {
         this.confirmLoading = true
         await AlarmService.close()
