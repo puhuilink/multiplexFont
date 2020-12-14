@@ -1,18 +1,18 @@
 <template>
   <div class="AlarmMonitor">
-    <a-tabs :activeKey="tabIndex" @change="onTabChange" v-if="showSolve">
-      <a-tab-pane :key="0" tab="未解决"></a-tab-pane>
-      <a-tab-pane :key="1" tab="已解决"></a-tab-pane>
+    <a-tabs :activeKey="state" @change="onToggleState" v-if="showSolve">
+      <a-tab-pane :key="ALARM_STATE.unSolved" tab="未解决"></a-tab-pane>
+      <a-tab-pane :key="ALARM_STATE.solved" tab="已解决"></a-tab-pane>
     </a-tabs>
 
-    <!-- / FIXME: resizeableTitle props -->
+    <!-- / FIXME: resizeableTitle 失效 -->
     <CTable
       :customRow="customRow"
       :columns="visibleColumns"
       :data="loadData"
       ref="table"
-      resizeableTitle
       rowKey="id"
+      resizeableTitle
       :rowSelection="rowSelection"
       :scroll="scroll"
       v-bind="cTableProps"
@@ -26,15 +26,6 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item
-                  label="数据域"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-input allowClear v-model.trim="queryParams.user_id" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item
                   label="监控对象"
                   v-bind="formItemLayout"
                   class="fw"
@@ -44,6 +35,7 @@
                   />
                 </a-form-item>
               </a-col>
+
               <a-col :md="6" :sm="24">
                 <a-form-item
                   label="监控实体"
@@ -57,6 +49,7 @@
                   />
                 </a-form-item>
               </a-col>
+
               <a-col :md="6" :sm="24">
                 <a-form-item
                   label="检查项"
@@ -70,27 +63,35 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
 
-            <a-row v-show="advanced">
               <a-col :md="6" :sm="24">
                 <a-form-item
-                  label="通知等级"
+                  label="告警级别"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.user_id" />
+                  <a-select allowClear v-model.number="queryParams.alarm_level">
+                    <a-select-option
+                      v-for="level in [1, 2, 3, 4, 5]"
+                      :key="level"
+                      :value="level"
+                    >{{ level }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
+            </a-row>
+
+            <a-row v-show="advanced">
               <a-col :md="6" :sm="24">
                 <a-form-item
                   label="采集系统"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
+                  <a-input allowClear v-model.trim="queryParams.agent_id" />
                 </a-form-item>
               </a-col>
+
               <a-col :md="12" :sm="24">
                 <a-form-item
                   label="告警时间"
@@ -108,10 +109,11 @@
                       '最近1月': [moment().add(-30, 'days'), moment()]
                     }"
                     :showTime="{ format: 'HH:mm' }"
-                    v-model="queryParams.collect_time"
+                    v-model="queryParams.receive_time"
                   />
                 </a-form-item>
               </a-col>
+
             </a-row>
           </div>
 
@@ -127,16 +129,18 @@
       <div class="operation" slot="operation">
         <a-button
           v-bind="btnProps"
-          @click="onDetail"
+          @click="onDetail()"
           :disabled="!hasSelectedOne"
         >查看</a-button>
+
         <a-button
           v-bind="btnProps"
           v-if="showSolve"
-          v-show="tabIndex !== 1"
-          @click="onSolve"
+          v-show="state !== ALARM_STATE.solved"
+          @click="onSolve()"
           :disabled="!hasSelectedOne"
         >解决</a-button>
+
         <a-popover title="表格列设置">
           <a-list slot="content" item-layout="horizontal" :data-source="columns">
             <a-list-item slot="renderItem" slot-scope="column">
@@ -147,8 +151,9 @@
               </a-list-item-meta>
             </a-list-item>
           </a-list>
-          <a-icon type="setting" />
+          <a-button icon="setting">显示设置</a-button>
         </a-popover>
+
       </div>
     </CTable>
 
@@ -169,7 +174,7 @@
 import _ from 'lodash'
 import { List } from '@/components/Mixins'
 import { AlarmService } from '@/api'
-import { generateQuery } from '@/utils/graphql'
+import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import {
@@ -178,6 +183,7 @@ import {
 import moment from 'moment'
 import EndpointSelect from '~~~/ResourceConfig/Endpoint'
 import MetricSelect from '~~~/ResourceConfig/Metric'
+import { ALARM_STATE } from '@/tables/alarm/enum'
 
 export default {
   name: 'AlarmMonitor',
@@ -218,7 +224,8 @@ export default {
   },
   data () {
     return {
-      tabIndex: 0,
+      ALARM_STATE,
+      state: ALARM_STATE.unSolved,
       columns: [
         {
           title: '告警级别',
@@ -227,20 +234,12 @@ export default {
           sorter: true,
           show: true
         },
-        // {
-        //   title: '数据域',
-        //   dataIndex: 'alarm_level',
-        //   width: 200,
-        //   sorter: true,
-        // show: true
-        // },
         {
           title: '监控设备',
           dataIndex: 'host_id cmdbHost { alias }',
           width: 200,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
-        // sorter: true
         },
         {
           title: '监控实例',
@@ -248,7 +247,6 @@ export default {
           width: 200,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
-        // sorter: true
         },
         {
           title: '检查项',
@@ -256,7 +254,14 @@ export default {
           width: 200,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
-        // sorter: true
+        },
+        {
+          title: '告警时间',
+          dataIndex: 'receive_time',
+          width: 200,
+          show: true,
+          sorter: true,
+          customRender: formatTime
         },
         {
           title: '告警描述',
@@ -265,34 +270,6 @@ export default {
           show: true,
           customRender: (__, record) => <a-button type="link" onClick={() => this.onDetail(record.id)}>查看</a-button>
         },
-        // {
-        //   title: '值',
-        //   dataIndex: 'email',
-        //   width: 200,
-        //   sorter: true,
-        // show: true
-        // },
-        // {
-        //   title: '首次告警时间',
-        //   dataIndex: 'email',
-        //   width: 200,
-        //   sorter: true,
-        // show: true
-        // },
-        // {
-        //   title: '最近告警时间',
-        //   dataIndex: 'email',
-        //   width: 200,
-        //   sorter: true,
-        // show: true
-        // },
-        // {
-        //   title: '次数',
-        //   dataIndex: 'email',
-        //   width: 200,
-        //   sorter: true,
-        // show: true
-        // },
         {
           title: '采集系统',
           dataIndex: 'agent_id',
@@ -305,7 +282,7 @@ export default {
   },
   computed: {
     scrollY () {
-      return 'max(calc(100vh - 370px), 100px)'
+      return 'max(calc(100vh - 385px), 100px)'
     },
     visibleColumns () {
       const { columnAlign: align, columns } = this
@@ -320,18 +297,17 @@ export default {
       return {
         on: {
           dblclick: () => {
-            state === 0 && this.$refs.solve.open(id)
+            state === ALARM_STATE.unSolved && this.$refs.solve.open(id)
           }
         }
       }
     },
     loadData (parameter) {
-      console.log(parameter)
       return AlarmService.find({
         where: {
           ...generateQuery(this.queryParams),
           ...this.showAll ? {} : {
-            state: this.tabIndex
+            state: this.state
           }
         },
         fields: _.uniq([
@@ -343,22 +319,37 @@ export default {
         alias: 'data'
       }).then(r => r.data)
     },
+    /**
+     * 查看告警详情
+     */
     onDetail (id) {
       const [defaultId] = this.selectedRowKeys
       this.$refs.detail.open(id || defaultId)
     },
+    /**
+     * 告警管理
+     */
     onDetailClose (state) {
-      state === 1 && this.onSolveSuccess()
+      state === ALARM_STATE.solved && this.onSolveSuccess()
     },
-    onSolve (id) {
-      const [defaultId] = this.selectedRowKeys
-      this.$refs.solve.open(id || defaultId)
+    /**
+     * 关闭告警
+     */
+    onSolve () {
+      const [record] = this.selectedRows
+      this.$refs.solve.open(record)
     },
+    /**
+     * 关闭告警成功
+     */
     onSolveSuccess () {
       this.query(false)
     },
-    onTabChange (tabIndex) {
-      this.tabIndex = tabIndex
+    /**
+     * 切换未解决/已解决
+     */
+    onToggleState (state) {
+      this.state = state
       this.query()
     }
   }
