@@ -154,7 +154,10 @@ export default {
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
       const { render } = state.activeWidget || { render: null }
       // 如果是拓扑图的实例对象
-      if (render && render.chart && Object.getPrototypeOf(render.chart).constructor.name === 'e') {
+      // hack for g6
+      // development 下 constructor.name 为 e;
+      // production  下 constructor.name 为 n;
+      if (render && render.chart && ['e', 'n'].includes(Object.getPrototypeOf(render.chart).constructor.name)) {
         const options = _.cloneDeep(render.chart.save())
         options.edges = options.edges.map(edge => _.omit(edge, ['sourceNode', 'targetNode']))
         Object.assign(state.activeWidget.config.proprietaryConfig, options)
