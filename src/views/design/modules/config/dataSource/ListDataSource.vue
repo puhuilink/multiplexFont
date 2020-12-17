@@ -4,7 +4,10 @@
       <RealDataSource
         :key="SOURCE_TYPE_REAL"
         useComboSelect
+        useLegendType
         useTimeRange
+        multipleHost
+        multipleMetric
         :comboSelectProps="{ multiple: false }"
       />
     </template>

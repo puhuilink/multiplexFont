@@ -18,6 +18,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     isGroup = '',
     // 监控实体聚合方式：model / cmdb
     endpointAggregateMode = 'model',
+    legendType = 'host',
     ...props
   }) {
     super(props)
@@ -29,12 +30,13 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.metricModelIds = _.castArray(metricModelIds)
     this.isGroup = isGroup
     this.endpointAggregateMode = endpointAggregateMode
+    this.legendType = legendType
   }
 
   getOption () {
     return _.omit(
       super.getOption(),
-      ['endpointAggregateMode']
+      ['endpointAggregateMode', 'legendType']
     )
   }
 
