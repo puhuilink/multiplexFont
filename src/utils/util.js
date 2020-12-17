@@ -230,19 +230,33 @@ export const hexToRGBA = function (hex, alpha) {
   }
 }
 
-export function toggleFullscreen () {
+export function enterFullscreen () {
   const requestMethod = document.documentElement.requestFullScreen || // W3C
     document.documentElement.webkitRequestFullscreen || // FireFox、safari
     document.documentElement.mozRequestFullScreen || // Chrome等
     document.documentElement.msRequestFullScreen // IE11
+  if (!document.fullscreenElement) {
+    requestMethod && requestMethod.call(document.documentElement)
+  }
+}
+
+export function exitFullscreen () {
+  if (!document.fullscreenElement) return
   const exitMethod = document.exitFullscreen || // W3C
   document.webkitExitFullscreen || // Chrome等
   document.mozCancelFullScreen || // FireFox
-  document.msExitFullscreen // IE11
-  if (!document.fullscreenElement) {
-    requestMethod && requestMethod.call(document.documentElement)
-  } else if (document.exitFullscreen) {
+    document.msExitFullscreen // IE11
+
+  if (document.exitFullscreen) {
     exitMethod && exitMethod.call(document)
+  }
+}
+
+export function toggleFullscreen () {
+  if (!document.fullscreenElement) {
+    enterFullscreen()
+  } else if (document.exitFullscreen) {
+    exitFullscreen()
   }
 }
 

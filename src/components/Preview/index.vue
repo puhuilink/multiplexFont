@@ -104,6 +104,7 @@ import html2canvas from 'html2canvas'
 import { encrypt } from '@/utils/aes'
 import { copyText } from '@/utils/domUtil'
 import DrillMixin from './Drill'
+import { enterFullscreen, exitFullscreen } from '@/utils/util'
 
 export default {
   name: 'ViewPreview',
@@ -169,7 +170,10 @@ export default {
   },
   methods: {
     show () {
-      this.autoFullScreen && !this.isFullScreen && this.toggleFullscreen()
+      if (this.autoFullScreen && !this.isFullScreen) {
+        this.isFullScreen = !this.isFullScreen
+        enterFullscreen()
+      }
       this.view = null
       if (this.isDesignMode) {
         this.getViewConfigFromStore()
@@ -180,8 +184,10 @@ export default {
       }
     },
     close () {
-      this.autoFullScreen && this.isFullScreen && this.toggleFullscreen()
-      clearInterval(this.timer)
+      if (this.autoFullScreen && this.isFullScreen) {
+        this.isFullScreen = !this.isFullScreen
+        exitFullscreen()
+      }
     },
     /**
      * 获取视图配置
