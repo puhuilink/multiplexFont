@@ -77,14 +77,14 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       .map(({
         collectTime = moment().format(),
         endpointAlias = '',
-        endpointName = '',
+        endpointModelAlias = '',
         metricValue = 0,
         metricValueStr = '',
         metricAlias = '',
         hostAlias = '',
         uint = ''
       }) => {
-        const endpoint = endpointAggregateMode === 'cmdb' ? endpointAlias : endpointName
+        const endpoint = endpointAggregateMode === 'cmdb' ? endpointAlias : endpointModelAlias
         return {
           data: metricValueStr || metricValue,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
