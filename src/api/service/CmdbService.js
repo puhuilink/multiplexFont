@@ -58,6 +58,9 @@ class CmdbService extends BaseService {
       })
     )
 
+    // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
+    cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
+
     // host_type 汉化
     cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
       ...rest,
