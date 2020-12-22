@@ -146,6 +146,16 @@ export default {
     scrollY () {
       // y 与 less height 保持一致
       return '500px'
+    },
+    scrollX () {
+      const { columns = [] } = this
+      return _.sum(columns.map(e => e.width || 60))
+    },
+    scroll () {
+      const { scrollY: y, scrollX: x } = this
+      return {
+        x, y
+      }
     }
   },
   methods: {
