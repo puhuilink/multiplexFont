@@ -7,9 +7,6 @@
 */
 
 import anime from 'animejs'
-import ListElementComponent from '~~~/Elements/ListElement'
-import LatestAlarmElement from '~~~/Elements/LatestAlarmElement'
-import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import _ from 'lodash'
@@ -19,15 +16,9 @@ import {
   SOURCE_TYPE_REAL
 } from '../config/dataConfig/dynamicData/types/sourceType'
 
-const ELEMENT_MAPPING = new Map([
-  ['List', ListElementComponent],
-  ['AlarmList', LatestAlarmElement]
-])
-
 export default class Element {
   constructor ({ widget, element, onlyShow }) {
     this.container = document.getElementById(widget.widgetId)
-    this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
     this.config = widget.config
@@ -35,8 +26,7 @@ export default class Element {
     this.onlyShow = onlyShow
     // 初始化配置
     this.mergeOption(widget.config)
-    const componentOption = ELEMENT_MAPPING.get(this.widget.config.type)
-    this.$component = new Vue(componentOption).$mount(this.element)
+    this.$component = element
   }
 
   /**

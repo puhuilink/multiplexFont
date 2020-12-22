@@ -22,8 +22,11 @@
     <!-- @dblclick.stop="() => $emit('drill', { viewId: 8947 })" -->
 
     <!-- / 元素部件 -->
-    <!-- 可以是vue组件，需要其持有者手动挂载到该div -->
-    <div ref="element" v-if="useComponent"></div>
+    <Component
+      ref="element"
+      :is="elementName"
+      v-if="useComponent"
+    />
 
   </div>
 </template>
@@ -37,12 +40,15 @@ import Widget from '@/model/widget'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 
 const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
-  components: {},
+  components: {
+    ...ELEMENTS
+  },
   props: {
     widget: {
       type: Object,
@@ -84,6 +90,10 @@ export default {
     // 在类型为元素时使用组件进行渲染
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
+    },
+    // 元素组件名
+    elementName () {
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     }
   },
   methods: {

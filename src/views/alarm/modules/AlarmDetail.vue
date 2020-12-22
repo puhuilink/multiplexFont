@@ -140,7 +140,6 @@ export default {
   },
   computed: {
     disabled () {
-      // 1 代表已解决
       return _.get(this.record, 'state') === ALARM_STATE.solved
     },
     scrollY () {
