@@ -105,6 +105,8 @@ export class ViewDataService extends BaseService {
    */
   static async overviewData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
+      'hostAlias',
+      'endpointAlias',
       'alias',
       'origin',
       'isGroup',

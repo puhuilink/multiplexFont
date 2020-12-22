@@ -43,12 +43,12 @@ export default class CircleNode extends Node {
           `).join('')}
         </div>
       `
-      runTimeNodes[this.id] = this
     }
   }
 
   intervalRefresh () {
     this.getRealDataOption()
+    runTimeNodes[this.id] = this
     this.timer = setInterval(() => {
       this.getRealDataOption()
     }, 1000 * 60)

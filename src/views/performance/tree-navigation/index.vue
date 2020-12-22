@@ -25,7 +25,7 @@
           <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content">
             <div class="TreeNavigation__renderer">
               <a-spin size="large" :spinning="spinning">
-                <Renderer :view="view" v-if="view" />
+                <Renderer :externalCiId="hostId" :view="view" v-if="view" />
                 <a-empty v-show="description" :description="description" />
               </a-spin>
             </div>
@@ -57,6 +57,7 @@ export default {
   props: {},
   data: () => ({
     dataRef: null,
+    hostId: null,
     tabIndex: '1',
     spinning: false,
     view: null,
@@ -110,12 +111,14 @@ export default {
         if (!this.viewId) {
           throw new Error('当前设备未关联视图')
         }
+        this.hostId = t_cmdb_host_id
         this.view = await ViewDesignService.getDesign(this.viewId)
         this.viewError = false
       } catch (e) {
         this.viewId = null
         this.view = null
         this.viewError = true
+        this.hostId = null
         throw e
       } finally {
         // 预留时间给动画与视图动态数据加载

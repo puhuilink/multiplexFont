@@ -4,10 +4,19 @@
       <RealDataSource
         :key="SOURCE_TYPE_REAL"
         useComboSelect
+        useLegendType
         useTimeRange
+        multipleHost
+        multipleMetric
         :comboSelectProps="{ multiple: false }"
       />
     </template>
+
+    <!-- <template v-slot:[SOURCE_TYPE_OVERVIEW]>
+      <OverviewDataSource
+        :key="SOURCE_TYPE_OVERVIEW"
+      />
+    </template> -->
   </DataSourceTemplate>
 </template>
 
@@ -15,17 +24,20 @@
 import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
-import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import OverviewDataSource from '../common/OverviewDataSource'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'ListDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
-    RealDataSource
+    RealDataSource,
+    OverviewDataSource
   },
   data: () => ({
-    SOURCE_TYPE_REAL
+    SOURCE_TYPE_REAL,
+    SOURCE_TYPE_OVERVIEW
   })
 }
 </script>

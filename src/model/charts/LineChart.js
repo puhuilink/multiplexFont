@@ -13,6 +13,7 @@ import {
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_OVERVIEW
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import { autoTooltipPosition } from '@/utils/echarts'
 
 export default class LineChart extends Chart {
   constructor ({ widget }) {
@@ -78,7 +79,8 @@ export default class LineChart extends Chart {
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'shadow' }
+        axisPointer: { type: 'shadow' },
+        position: autoTooltipPosition
       }
     })
   }

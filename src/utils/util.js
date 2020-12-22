@@ -230,18 +230,50 @@ export const hexToRGBA = function (hex, alpha) {
   }
 }
 
-export function toggleFullscreen () {
+export function enterFullscreen () {
   const requestMethod = document.documentElement.requestFullScreen || // W3C
     document.documentElement.webkitRequestFullscreen || // FireFox、safari
     document.documentElement.mozRequestFullScreen || // Chrome等
     document.documentElement.msRequestFullScreen // IE11
+  if (!document.fullscreenElement) {
+    requestMethod && requestMethod.call(document.documentElement)
+  }
+}
+
+export function exitFullscreen () {
+  if (!document.fullscreenElement) return
   const exitMethod = document.exitFullscreen || // W3C
   document.webkitExitFullscreen || // Chrome等
   document.mozCancelFullScreen || // FireFox
-  document.msExitFullscreen // IE11
-  if (!document.fullscreenElement) {
-    requestMethod && requestMethod.call(document.documentElement)
-  } else if (document.exitFullscreen) {
+    document.msExitFullscreen // IE11
+
+  if (document.exitFullscreen) {
     exitMethod && exitMethod.call(document)
   }
+}
+
+export function toggleFullscreen () {
+  if (!document.fullscreenElement) {
+    enterFullscreen()
+  } else if (document.exitFullscreen) {
+    exitFullscreen()
+  }
+}
+
+/**
+ * 截取小数位数
+ * @param {*} value 要截取的值
+ * @param {*} 保留小时的长度
+ */
+export const formatFloat = function (value, n) {
+  var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
+  var s = f.toString()
+  var rs = s.indexOf('.')
+  if (rs < 0 && n > 0) {
+    s += '.'
+  }
+  for (var i = s.length - s.indexOf('.'); i <= n; i++) {
+    s += '0'
+  }
+  return s
 }

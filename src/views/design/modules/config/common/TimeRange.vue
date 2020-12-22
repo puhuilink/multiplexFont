@@ -71,7 +71,6 @@
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import _ from 'lodash'
 import {
   DEFAULT_TIME_RANGE_START,
   TIME_RANGE_FORMAT,
@@ -167,12 +166,17 @@ export default {
   }),
   computed: {
     timeRangeConfig () {
-      if (this.type === SOURCE_TYPE_ALARM) {
-        return _.get(this, 'config.dataConfig.dbDataConfig.alarmConfig.timeRangeConfig', {})
-      } else if (this.type === SOURCE_TYPE_OVERVIEW) {
-        return _.get(this, 'config.dataConfig.dbDataConfig.overviewConfig.timeRangeConfig', {})
-      } else {
-        return _.get(this, 'config.dataConfig.dbDataConfig.resourceConfig.timeRangeConfig', {})
+      const { dbDataConfig } = this.config.dataConfig
+
+      switch (this.type) {
+        case SOURCE_TYPE_ALARM:
+          return dbDataConfig.alarmConfig.timeRangeConfig || {}
+        case SOURCE_TYPE_OVERVIEW:
+          return dbDataConfig.overviewConfig.timeRangeConfig || {}
+        case SOURCE_TYPE_REAL:
+          return dbDataConfig.resourceConfig.timeRangeConfig || {}
+        default:
+          return {}
       }
     },
     startTime: {

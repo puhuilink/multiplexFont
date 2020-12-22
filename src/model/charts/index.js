@@ -13,6 +13,7 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_REAL
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import Timeout from 'await-timeout'
 
 export default class Chart {
   constructor ({ widget, onlyShow }) {
@@ -123,8 +124,7 @@ export default class Chart {
   /**
    * 定时刷新动态数据
    */
-  intervalRefresh () {
-    this.refresh()
+  async intervalRefresh () {
     const { dataConfig = {} } = this.config
     const {
       sourceType = '',
@@ -135,6 +135,10 @@ export default class Chart {
       } = {}
     } = dataConfig
 
+    if (resourceConfig.delayTime) {
+      await Timeout.set(resourceConfig.delayTime)
+    }
+    this.refresh()
     let refreshTime
     switch (sourceType) {
       case SOURCE_TYPE_ALARM:

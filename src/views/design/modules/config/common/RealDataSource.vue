@@ -60,7 +60,7 @@
     <a-form-item label="设备名称" v-bind="formItemLayout" required>
       <HostSelect
         class="fw"
-        :multiple="!singleHost && resourceConfig.metricModelIds.length <= 1"
+        :multiple="multipleHost || (!singleHost && resourceConfig.metricModelIds.length <= 1)"
         :hostTypeDictValueCode="resourceConfig.deviceModel"
         :value="resourceConfig.hostId"
         @input="hostId => {
@@ -84,7 +84,7 @@
 
     <a-form-item label="检查项" v-bind="formItemLayout" required >
       <MetricSelect
-        :multiple="!singleMetric && resourceConfig.hostId.length <= 1"
+        :multiple="multipleMetric || (!singleMetric && resourceConfig.hostId.length <= 1)"
         schema="model"
         :parentId="resourceConfig.endpointModelId"
         :value="resourceConfig.metricModelIds"
@@ -95,6 +95,26 @@
       />
     </a-form-item>
 
+    <a-form-item label="图例类型" v-show="useLegendType" v-bind="formItemLayout" required>
+      <a-select
+        v-model="resourceConfig.legendType"
+        @change="change()"
+      >
+        <a-select-option value="host">设备</a-select-option>
+        <a-select-option value="metric">指标</a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item label="聚合方式" v-bind="formItemLayout" required>
+      <a-select
+        v-model="resourceConfig.endpointAggregateMode"
+        @change="change()"
+      >
+        <a-select-option value="model">模型</a-select-option>
+        <a-select-option value="cmdb">实体</a-select-option>
+      </a-select>
+    </a-form-item>
+
     <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-input
         :min="0"
@@ -102,6 +122,17 @@
         suffix="分钟"
         type="number"
         v-model.number="resourceConfig.refreshTime"
+        @input="change()"
+      />
+    </a-form-item>
+
+    <a-form-item label="延迟时间" v-bind="formItemLayout" v-if="useRefreshTime" >
+      <a-input
+        :min="0"
+        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
+        suffix="毫秒"
+        type="number"
+        v-model.number="resourceConfig.delayTime"
         @input="change()"
       />
     </a-form-item>
@@ -154,6 +185,16 @@ export default {
       type: Boolean,
       default: false
     },
+    // TODO: 此处为 hack
+    multipleMetric: {
+      type: Boolean,
+      default: false
+    },
+    // TODO: 此处为 hack
+    multipleHost: {
+      type: Boolean,
+      default: false
+    },
     useCalculateType: {
       type: Boolean,
       default: true
@@ -161,6 +202,10 @@ export default {
     useExternalCi: {
       type: Boolean,
       default: true
+    },
+    useLegendType: {
+      type: Boolean,
+      default: false
     },
     useRefreshTime: {
       type: Boolean,

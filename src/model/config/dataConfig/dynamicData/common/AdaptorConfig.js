@@ -15,7 +15,10 @@ import {
 
 export class AdaptorConfig {
   constructor ({
+    // 刷新时间：分钟
     refreshTime = 0,
+    // （第一次刷新）延迟时间：毫秒
+    delayTime = 0,
     timeRangeConfig = {},
     // 计算类型: sum / max / avg
     calculateType = ''
@@ -23,6 +26,7 @@ export class AdaptorConfig {
     this.refreshTime = refreshTime
     this.timeRangeConfig = new TimeRangeConfig(timeRangeConfig)
     this.calculateType = calculateType
+    this.delayTime = delayTime
   }
 
   fetch () { }

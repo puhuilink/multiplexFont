@@ -6,7 +6,8 @@ import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 import {
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -20,6 +21,9 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
         case SOURCE_TYPE_ALARM: {
           await this.getAlarmOption()
           break
+        }
+        case SOURCE_TYPE_OVERVIEW: {
+          await this.getOverviewDataOption()
         }
       }
     }
@@ -40,5 +44,9 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
       level5 = 0
     }) => level1 + level2 + level3 + level4 + level5)
     this.text = _.sum(totalList)
+  }
+
+  async getOverviewDataOption () {
+    this.text = await this.overviewConfig.fetch().then(data => _.get(data, '0.data', ''))
   }
 }

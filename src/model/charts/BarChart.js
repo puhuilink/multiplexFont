@@ -13,6 +13,7 @@ import {
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_ALARM
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import { autoTooltipPosition } from '@/utils/echarts'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
   ..._.cloneDeep(option),
@@ -107,7 +108,9 @@ export default class BarChart extends Chart {
     }
 
     return Object.assign({}, option, {
-      tooltip: {}
+      tooltip: {
+        position: autoTooltipPosition
+      }
     })
   }
 }

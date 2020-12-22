@@ -47,17 +47,30 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    record: null
   }),
   computed: {},
   methods: {
-    open () {
+    open (record) {
       this.show('告警解决')
+      this.record = {
+        hostId: record.host_id,
+        endpointId: record.endpoint_id,
+        metricId: record.metric_id
+      }
+      this.submit = this.close
     },
-    async submit () {
+    async close () {
       try {
         this.confirmLoading = true
-        await AlarmService.close()
+        // FIXME：解决后未更新记录state值？
+        await AlarmService.close(this.record)
         this.cancel()
+        this.$notification.success({
+          message: '系统提示',
+          description: '告警解决成功'
+        })
+        this.$emit('solveSuccess')
       } catch (e) {
         throw e
       } finally {

@@ -68,6 +68,9 @@ class AlarmService extends BaseService {
     return alarmInfo[0]
   }
 
+  /**
+   * 手动管理告警
+   */
   static async close ({ hostId, endpointId, metricId }) {
     return axios.post('/redisData/closeAlarm', { hostId, endpointId, metricId })
   }

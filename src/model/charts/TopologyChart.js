@@ -494,7 +494,7 @@ export default class TopologyChart extends Chart {
       })
     }
 
-    if (!this.onlyShow) return
+    if (this.onlyShow) return
     // 读取配置后更新配置属性
     store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
   }
@@ -526,6 +526,7 @@ export default class TopologyChart extends Chart {
       hackModel && hackModel.destroy && hackModel.destroy()
       model.destroy && model.destroy()
     })
+    nodes.length = 0
     this.chart.off()
     this.chart.destroy()
   }

@@ -16,12 +16,14 @@ export default class TextsProprietaryConfig {
     },
     xAxis = defaultAxis,
     yAxis = defaultAxis,
-    thresholdColorRule = {}
+    thresholdColorRule = {},
+    decimalPoint = 0
   }) {
     this.title = new Title(title)
     this.xAxis = xAxis
     this.yAxis = yAxis
     this.thresholdColorRule = new ThresholdColorRule(thresholdColorRule)
+    this.decimalPoint = decimalPoint
   }
 
   /**
