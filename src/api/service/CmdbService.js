@@ -61,12 +61,6 @@ class CmdbService extends BaseService {
     // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
     cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
 
-    // host_type 汉化
-    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
-      ...rest,
-      host_type: _.get(modelHost, 'host') || host_type
-    }))
-
     // 树形结构构建
     const root = {
       id: 'root',
@@ -85,9 +79,9 @@ class CmdbService extends BaseService {
       .forEach(([location, hostList]) => {
         const children = Object
           .entries(_.groupBy(hostList, 'host_type'))
-          .map(([hostType, list]) => ({
-            id: hostType,
-            alias: hostType,
+          .map(([host_type, list]) => ({
+            id: host_type,
+            alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
             children: list,
             type: 'hostType',
             selectable: false
@@ -203,7 +197,7 @@ class CmdbService extends BaseService {
         fields: [
           'deviceType: type_model_value_code',
           'deviceModel: device_model_value_code',
-          'deviceModelName: devce_model_name',
+          'deviceModelName: device_model_name',
           'deviceBrand: brand_value_code',
           'hostType: host_type',
           'hostId: host_id',
