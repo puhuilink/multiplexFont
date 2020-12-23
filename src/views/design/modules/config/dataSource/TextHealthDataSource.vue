@@ -5,6 +5,7 @@
         :key="SOURCE_TYPE_REAL"
         singleHost
         singleMetric
+        useTimeRange
         :useCalculateType="false"
       />
     </template>
