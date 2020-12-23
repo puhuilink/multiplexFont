@@ -15,6 +15,7 @@
 <script>
 import _ from 'lodash'
 import { AuthorizeObjectService, ViewListService } from '@/api'
+import { VIEW_TYPE } from '@/tables/view/enum'
 
 export default {
   name: 'AuthView',
@@ -82,7 +83,12 @@ export default {
     async fetchAllViewList () {
       try {
         this.loading = true
-        const { data: { viewList } } = await ViewListService.find({ alias: 'viewList' })
+        const { data: { viewList } } = await ViewListService.find({
+          where: {
+            view_type: VIEW_TYPE.instance
+          },
+          alias: 'viewList'
+        })
         this.viewList = viewList
           .filter(el => {
             if (el.view_id) {
