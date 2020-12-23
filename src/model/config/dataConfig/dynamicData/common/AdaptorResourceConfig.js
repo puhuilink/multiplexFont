@@ -8,9 +8,9 @@ import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api'
 export class AdaptorResourceConfig extends AdaptorConfig {
   constructor ({
-    deviceType = 'Host',
-    deviceBrand = 'HostLinux',
-    deviceModel = 'HostAIXLinux',
+    deviceType = '',
+    deviceBrand = '',
+    deviceModel = '',
     hostId = [],
     endpointModelId = null,
     metricModelIds = [],
