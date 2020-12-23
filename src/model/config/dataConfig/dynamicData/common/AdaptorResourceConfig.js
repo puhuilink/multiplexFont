@@ -33,6 +33,17 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.legendType = legendType
   }
 
+  isAvailable () {
+    return Boolean(
+      this.deviceType &&
+      this.deviceBrand &&
+      this.deviceModel &&
+      this.hostId && this.hostId.length &&
+      this.endpointModelId &&
+      this.metricModelIds && this.metricModelIds.length
+    )
+  }
+
   getOption () {
     return _.omit(
       super.getOption(),

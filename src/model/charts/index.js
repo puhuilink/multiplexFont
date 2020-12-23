@@ -139,22 +139,27 @@ export default class Chart {
       await Timeout.set(resourceConfig.delayTime)
     }
     this.refresh()
+
     let refreshTime
+    let isAvailable
     switch (sourceType) {
       case SOURCE_TYPE_ALARM:
         refreshTime = alarmConfig.refreshTime
+        isAvailable = alarmConfig.isAvailable()
         break
       case SOURCE_TYPE_OVERVIEW:
         refreshTime = overviewConfig.refreshTime
+        isAvailable = overviewConfig.isAvailable()
         break
       case SOURCE_TYPE_REAL:
         refreshTime = resourceConfig.refreshTime
+        isAvailable = resourceConfig.isAvailable()
         break
       default:
         break
     }
 
-    if (refreshTime) {
+    if (refreshTime && isAvailable) {
       this.timer = setInterval(
         this.refresh.bind(this),
         Number(refreshTime) * 1000 * 60

@@ -29,6 +29,12 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
     this.isGroup = isGroup
   }
 
+  isAvailable () {
+    return Boolean(
+      this.alias && this.alias.length
+    )
+  }
+
   getOption () {
     const { timeRangeConfig, ...rest } = this;
 

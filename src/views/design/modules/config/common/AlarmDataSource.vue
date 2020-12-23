@@ -43,7 +43,7 @@
       }"
     />
 
-    <a-form-item label="告警状态" v-bind="formItemLayout">
+    <a-form-item label="告警状态" v-bind="formItemLayout" required>
       <a-select
         v-model="alarmConfig.type"
         @change="change()"

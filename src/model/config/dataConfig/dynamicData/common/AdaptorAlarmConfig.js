@@ -29,6 +29,12 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.type = type
   }
 
+  isAvailable () {
+    return Boolean(
+      this.type
+    )
+  }
+
   fetch () {
     return ViewDataService
       .alarmData(this.getOption(), this.getTimeoutOption())
