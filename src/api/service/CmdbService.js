@@ -80,7 +80,9 @@ class CmdbService extends BaseService {
         const children = Object
           .entries(_.groupBy(hostList, 'host_type'))
           .map(([host_type, list]) => ({
-            id: host_type,
+            // 统一个 model_host 会在不同 location 中多次用到
+            // 此处 id 仅用作树形结构唯一标识，并无实际作用
+            id: `${location}-${host_type}`,
             alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
             children: list,
             type: 'hostType',
