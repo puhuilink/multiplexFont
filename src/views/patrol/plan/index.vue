@@ -19,7 +19,7 @@
                       v-for="{ group_id, group_name } in patrolGroupList"
                       :key="group_id"
                       :value="group_id"
-                      >{{ group_name }}</a-select-option
+                    >{{ group_name }}</a-select-option
                     >
                   </a-select>
                 </a-form-item>
@@ -59,17 +59,17 @@ import { Row } from 'ant-design-vue'
 const timeColumnSnippet = {
   width: 130,
   sorter: true,
-  customRender: (time) => moment(time).format('YYYY-MM-DD HH:mm:ss'),
+  customRender: (time) => moment(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
 export default {
   name: 'Plan',
   mixins: [Confirm, List, commonMixin],
   components: {
-    PlanSchema,
+    PlanSchema
   },
   computed: {},
-  data() {
+  data () {
     return {
       ASCRIPTION_LIST,
       columns: [
@@ -77,38 +77,38 @@ export default {
           title: '计划名称',
           dataIndex: 'alias',
           width: 120,
-          sorter: true,
+          sorter: true
         },
         {
           title: '巡更组',
           dataIndex: 'group { group_name }',
           sorter: true,
           width: 160,
-          customRender: (__, { group }) => _.get(group, 'group_name'),
+          customRender: (__, { group }) => _.get(group, 'group_name')
         },
         {
           title: '新建时间',
           dataIndex: 'create_time',
-          ...timeColumnSnippet,
+          ...timeColumnSnippet
         },
         {
           title: '循环周期',
           dataIndex: 'schedule',
-          width: 120,
+          width: 120
         },
         {
           title: '生效时间',
           dataIndex: 'effect_time',
           width: 130,
           sorter: true,
-          ...timeColumnSnippet,
+          ...timeColumnSnippet
         },
         {
           title: '失效时间',
           dataIndex: 'expire_time',
           width: 130,
           sorter: true,
-          ...timeColumnSnippet,
+          ...timeColumnSnippet
         },
         {
           title: '是否启用',
@@ -117,27 +117,27 @@ export default {
           sorter: true,
           customRender: (status, record) => (
             <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
-          ),
-        },
+          )
+        }
       ],
-      userGroupList: [],
+      userGroupList: []
     }
   },
   methods: {
-    loadData(parameter) {
+    loadData (parameter) {
       return PatrolService.planFind({
         where: {
-          ...generateQuery(this.queryParams),
+          ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
-        alias: 'data',
+        alias: 'data'
       }).then((r) => r.data)
     },
-    onAdd() {
+    onAdd () {
       this.$refs['schema'].add()
     },
-    async onBatchDelete() {
+    async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () =>
           PatrolService.planBatchDelete(this.selectedRowKeys)
@@ -145,47 +145,49 @@ export default {
               this.$notifyDeleteSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError),
+            .catch(this.$notifyError)
       })
     },
-    onEdit() {
+    onEdit () {
       const [id] = this.selectedRowKeys
       this.$refs['schema'].edit(id)
     },
 
     // 启用状态
-    async showModal(val) {
-      let ztgl = val.status == 'enabled' ? '启用' : '停用'
+    showModal (val) {
+      const ztgl = val.status === 'enabled' ? '启用' : '停用'
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认更改' + ztgl + '状态？',
         onOk: () => {
-          try {
-            if (val.status == 'enabled') {
-              val.status = 'disabled'
-              let countStarOrEnd = PatrolService.getEndType(val.id)
-            } else if (val.status == 'disabled') {
-              val.status = 'enabled'
-              let countStarOrEnd = PatrolService.getStartType(val.id)
-            }
-            countStarOrEnd
+          if (val.status === 'enabled') {
+            val.status = 'disabled'
+            PatrolService.getEndType(val.id)
               .then(() => {
                 this.$notification.success({
                   message: '系统提示',
-                  description: '更改失败或者成功',
+                  description: '更改失败或者成功'
                 })
               })
-              .catch(() => {
-                this.$notifyError
+              .catch(this.$notifyError)
+          } else if (val.status === 'disabled') {
+            val.status = 'enabled'
+            PatrolService.getStartType(val.id)
+              .then(() => {
+                this.$notification.success({
+                  message: '系统提示',
+                  description: '更改失败或者成功'
+                })
               })
-          } catch (error) {}
-        },
+              .catch(this.$notifyError)
+          }
+        }
       })
-    },
+    }
   },
-  created() {
+  created () {
     this.fetchPatrolGroupList()
-  },
+  }
 }
 </script>
 
