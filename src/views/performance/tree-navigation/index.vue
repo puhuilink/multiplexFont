@@ -25,7 +25,28 @@
           <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content">
             <div class="TreeNavigation__renderer">
               <a-spin size="large" :spinning="spinning">
-                <Renderer :externalCiId="hostId" :view="view" v-if="view" />
+                <div class="PreviewMixin-bar">
+                  <a-tooltip placement="top" title="等宽">
+                    <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
+                  </a-tooltip>
+
+                  <a-tooltip placement="top" title="等高">
+                    <a-icon type="column-height" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
+                  </a-tooltip>
+
+                  <a-tooltip placement="top" title="拉伸">
+                    <a-icon type="swap" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
+                  </a-tooltip>
+
+                  <a-tooltip placement="top" title="原始">
+                    <a-icon type="pic-center" :class="{ 'PreviewMixin-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
+                  </a-tooltip>
+
+                  <a-tooltip placement="top" title="自适应">
+                    <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
+                  </a-tooltip>
+                </div>
+                <Renderer ref="renderer" :externalCiId="hostId" :view="view" v-if="view" />
                 <a-empty v-show="description" :description="description" />
               </a-spin>
             </div>
@@ -45,10 +66,11 @@ import Renderer from '@/components/Renderer'
 import { CmdbHostViewService, ViewDesignService } from '@/api'
 import Timeout from 'await-timeout'
 import _ from 'lodash'
+import Preview from '@/components/Preview'
 
 export default {
   name: 'TreeNavigation',
-  mixins: [],
+  mixins: [Preview],
   components: {
     CmdbTree,
     PerformanceAggregate,
@@ -158,7 +180,7 @@ export default {
   &__content {
     // FIXME: max 不生效
     // height: max(calc(100vh - 190px), 100px) !important;
-    height: calc(100vh - 190px);
+    height: calc(100vh - 160px);
     overflow: auto;
   }
 

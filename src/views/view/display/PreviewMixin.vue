@@ -79,23 +79,6 @@ export default {
 <style lang="less">
 .ViewDisplay {
 
-  &-bar {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    align-items: center;
-    height: 45px;
-    width: 240px;
-
-    & i {
-      font-size: 18px;
-    }
-
-    &--active {
-      color: #1890ff !important;
-    }
-  }
-
   &-tabs.fullscreen {
     position: fixed;
     height: 100vh;
