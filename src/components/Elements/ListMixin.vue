@@ -70,7 +70,7 @@ export default {
   mounted () {
     merge(
       fromEvent(window, 'resize'),
-      // subtree必须为tree，当table组件渲染、更新时也能触发
+      // subtree必须为true，当table组件渲染、更新时也能触发
       observeOnMutation(this.$el.parentElement, { attributes: true, childList: false, subtree: true })
     )
       .pipe(
