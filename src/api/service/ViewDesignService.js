@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService'
-import { InstanceDao, ViewDao } from '../dao/index'
+import { ViewDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
 import { imp } from '../config/client'
 import gql from 'graphql-tag'
@@ -57,23 +57,6 @@ class ViewDesignService extends BaseService {
         }
       }
     })
-  }
-
-  static async nodeByCiName (name) {
-    const { data: { nodes: [node] } } = await query(
-      InstanceDao.find({
-        where: { name },
-        alias: 'nodes',
-        fields: [
-          'label',
-          'name',
-          '_id',
-          'parentName',
-          `icon: values(path: "$.icon")`
-        ]
-      })
-    )
-    return node
   }
 }
 
