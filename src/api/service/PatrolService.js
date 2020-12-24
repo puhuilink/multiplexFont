@@ -7,12 +7,13 @@ import {
 } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
+import { encrypt } from '@/utils/aes'
 
 class PatrolService extends BaseService {
   // 交接班查询
   static async changeShiftFind (argus = {}) {
     return query(
-      XjChangeShiftDao.find(argus)
+      XjChangeShiftDao.find(argus) 
     )
   }
 
@@ -221,7 +222,7 @@ class PatrolService extends BaseService {
   }
 
   // 计划查询
-  static async planFind (argus = {}) {
+  static async planFind (argus = {}) { 
     return query(
       PatrolPlanDao.find(argus)
     )
@@ -250,7 +251,7 @@ class PatrolService extends BaseService {
         'schedule',
         'interval',
         // TODO: 巡更组管理
-        'group_id'
+        'group_id' 
       ],
       alias: 'planList'
     })
@@ -259,6 +260,29 @@ class PatrolService extends BaseService {
 
     return _.first(planList)
   }
+
+  // 计划管理 启用
+  static async getStartType (planId) {
+   const formData  =  new FormData()
+   formData.append('planId',planId)
+   return axios.post(`plan/resumeJob`,formData,{
+     headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+   })    
+  }
+
+  // 计划管理 停用
+static async getEndType(planId) {
+  const formData = new FormData()
+  formData.append('planId',planId)
+  return axios.post(`plan/pauseJob`,formData, {
+    headers :{
+       'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
+}
+
 
   // 告警审批
   static async approveSend () { }

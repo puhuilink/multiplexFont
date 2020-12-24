@@ -62,8 +62,8 @@ const PLAN_STATUS_ENABLED = 'enabled'
 const PLAN_STATUS_DISABLED = 'disabled'
 
 const PLAN_STATUS_LIST = [
-  [PLAN_STATUS_ENABLED, '是'],
-  [PLAN_STATUS_DISABLED, '否']
+  [PLAN_STATUS_ENABLED, '启用'],
+  [PLAN_STATUS_DISABLED, '停用']
 ]
 
 export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)
