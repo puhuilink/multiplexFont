@@ -114,7 +114,8 @@ export default class Chart {
       this.chart.clear()
     }
     // 重新配置图表
-    this.chart.setOption(this.chartConfig)
+    // https://github.com/apache/incubator-echarts/issues/3976
+    this.chart.setOption(this.chartConfig, true)
   }
 
   refresh () {
@@ -182,7 +183,6 @@ export default class Chart {
    */
   destroy () {
     this.resetTimer()
-    // 移除暴露测试数据
-    Reflect.deleteProperty(window, this.container.id)
+    this.chart.dispose()
   }
 }
