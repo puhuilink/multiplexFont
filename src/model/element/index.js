@@ -138,5 +138,7 @@ export default class Element {
     const { $component } = this
     $component && $component.$destroy()
     this.$component = null
+    clearInterval(this.timer)
+    this.timer = null
   }
 }
