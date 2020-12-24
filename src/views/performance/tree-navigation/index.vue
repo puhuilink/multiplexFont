@@ -25,7 +25,7 @@
           <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content">
             <div class="TreeNavigation__renderer">
               <a-spin size="large" :spinning="spinning">
-                <div class="PreviewMixin-bar">
+                <div class="PreviewMixin-bar" v-show="view">
                   <a-tooltip placement="top" title="等宽">
                     <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
                   </a-tooltip>
@@ -144,7 +144,7 @@ export default {
         throw e
       } finally {
         // 预留时间给动画与视图动态数据加载
-        await Timeout.set(300)
+        await Timeout.set(150)
         this.spinning = false
       }
     },
