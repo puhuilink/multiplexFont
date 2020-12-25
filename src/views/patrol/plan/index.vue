@@ -49,12 +49,11 @@
 import PlanSchema from './modules/PlanSchema/index'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
-import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING } from '../typing'
+import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING, PLAN_STATUS_ENABLED, PLAN_STATUS_DISABLED } from '../typing'
 import moment from 'moment'
 import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
 import _ from 'lodash'
-import { Row } from 'ant-design-vue'
 
 const timeColumnSnippet = {
   width: 130,
@@ -155,31 +154,37 @@ export default {
 
     // 启用状态
     showModal (val) {
-      const ztgl = val.status === 'enabled' ? '启用' : '停用'
+      const tempVal = PLAN_STATUS_MAPPING.get(val.status)
       this.$promiseConfirm({
         title: '系统提示',
-        content: '确认更改' + ztgl + '状态？',
+        content: '确认更改' + tempVal + '状态？',
         onOk: () => {
-          if (val.status === 'enabled') {
-            val.status = 'disabled'
-            PatrolService.getEndType(val.id)
-              .then(() => {
+          if (val.status === PLAN_STATUS_ENABLED) {
+            PatrolService.pauseJob(val.id)
+              .then((res) => {
                 this.$notification.success({
                   message: '系统提示',
-                  description: '更改失败或者成功'
+                  description: res.msg
                 })
+                val.status = PLAN_STATUS_DISABLED
               })
-              .catch(this.$notifyError)
-          } else if (val.status === 'disabled') {
-            val.status = 'enabled'
-            PatrolService.getStartType(val.id)
-              .then(() => {
+              .catch((err) => {
+                this.$notifyError(err)
+                throw err
+              })
+          } else if (val.status === PLAN_STATUS_DISABLED) {
+            PatrolService.resumeJob(val.id)
+              .then((res) => {
                 this.$notification.success({
                   message: '系统提示',
-                  description: '更改失败或者成功'
+                  description: res.msg
                 })
+                val.status = PLAN_STATUS_ENABLED
               })
-              .catch(this.$notifyError)
+              .catch((err) => {
+                this.$notifyError(err)
+                throw err
+              })
           }
         }
       })

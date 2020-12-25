@@ -7,7 +7,6 @@ import {
 } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
-import { encrypt } from '@/utils/aes'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -262,7 +261,7 @@ class PatrolService extends BaseService {
   }
 
   // 计划管理 启用
-  static async getStartType (planId) {
+  static async resumeJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
     return axios.post(`plan/resumeJob`, formData, {
@@ -273,7 +272,7 @@ class PatrolService extends BaseService {
   }
 
   // 计划管理 停用
-  static async getEndType (planId) {
+  static async pauseJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
     return axios.post(`plan/pauseJob`, formData, {
