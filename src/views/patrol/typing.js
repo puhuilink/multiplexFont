@@ -58,12 +58,12 @@ export const ALL_TASK_REVIEW_LIST = [
 export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
 
 export const ALL_TASK_REVIEW_MAPPING = new Map(ALL_TASK_REVIEW_LIST)
-const PLAN_STATUS_ENABLED = 'enabled'
-const PLAN_STATUS_DISABLED = 'disabled'
+export const PLAN_STATUS_ENABLED = 'enabled'
+export const PLAN_STATUS_DISABLED = 'disabled'
 
 const PLAN_STATUS_LIST = [
-  [PLAN_STATUS_ENABLED, '是'],
-  [PLAN_STATUS_DISABLED, '否']
+  [PLAN_STATUS_ENABLED, '启用'],
+  [PLAN_STATUS_DISABLED, '停用']
 ]
 
 export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)
