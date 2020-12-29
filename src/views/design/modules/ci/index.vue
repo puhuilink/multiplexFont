@@ -1,6 +1,5 @@
 <template>
   <div class="Ci">
-    <!-- TODO: 只有 host 节点才允许 draggable -->
     <CmdbTree
       draggable
       @dragend="dragend"
@@ -39,6 +38,7 @@ export default {
       updateTopologyConfig: ScreenMutations.UPDATE_TOPOLOGY_CONFIG
     }),
     async dragend ({ event, node: { dataRef } }) {
+      if (!dataRef.selectable) return
       if (this.isWithinTopologyScope(event)) {
         // TODO: Icon mapping
         const {
