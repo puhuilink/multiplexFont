@@ -17,14 +17,11 @@ export default {
     // TODO: 视图数据要查询的时间范围
     timeRange: []
   }),
-  filters: {
-    // 缩略图静态资源地址
-    thumbnail (src) {
-      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
-    }
-  },
   computed: {},
   methods: {
+    thumbnail (src) {
+      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
+    },
     dateChange () {},
     dateSet () {},
     /**

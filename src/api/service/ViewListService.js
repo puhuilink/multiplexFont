@@ -3,6 +3,7 @@ import { AuthorizeObjectDao, ViewListDao, ViewDesktopDao } from '../dao/index'
 import { mutate, query } from '../utils/hasura-orm/index'
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import { axios } from '@/utils/request'
+import { VIEW_TYPE } from '@/tables/view/enum'
 
 class ViewListService extends BaseService {
   /**
@@ -19,7 +20,14 @@ class ViewListService extends BaseService {
    */
   static async update (view = {}, where = {}) {
     await mutate(
-      ViewListDao.update(view, where)
+      ViewListDao.update(view, where),
+      // 实例视图转模板视图时，删除之前分配出的权限
+      ...view.view_type === VIEW_TYPE.template && where.view_id ? [
+      // 删除视图分配到的权限
+        AuthorizeObjectDao.batchDelete({ object_id: { _eq: where.view_id } }),
+        // 删除视图分配到的桌面
+        ViewDesktopDao.batchDelete(({ view_id: { _eq: where.view_id } }))
+      ] : []
     )
   }
 
