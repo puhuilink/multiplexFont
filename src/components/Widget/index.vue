@@ -57,10 +57,6 @@ export default {
     onlyShow: {
       type: Boolean,
       default: false
-    },
-    externalCiId: {
-      type: String,
-      default: ''
     }
   },
   data: () => ({
@@ -128,22 +124,6 @@ export default {
       })
     },
     /**
-     * 注入外部CI
-     */
-    injectExternalCi () {
-      const { widget, externalCiId } = this
-      const dbDataConfig = _.get(widget.config, ['dataConfig', 'dbDataConfig'])
-      if (dbDataConfig) {
-        const { externalCi, resourceConfig } = dbDataConfig
-        if (externalCi && externalCiId) {
-          Object.assign(
-            resourceConfig,
-            { hostId: [externalCiId] }
-          )
-        }
-      }
-    },
-    /**
      * 通过配置初始化Widget
      */
     initWidgetFromConfig () {
@@ -153,7 +133,6 @@ export default {
     }
   },
   mounted () {
-    this.injectExternalCi()
     this.initWidgetFromConfig()
     const { category, type } = this.widget.config
     const widgetFactory = category === 'CHART'

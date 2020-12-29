@@ -5,12 +5,19 @@ import { imp } from '../config/client'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import store from '@/store'
+import { VIEW_TYPE } from '@/tables/view/enum'
+import _ from 'lodash'
 class ViewDesignService extends BaseService {
-  static async getDesign (view_id) {
+  /**
+   * 获取视图设计详情
+   * @param {Number} view_id 视图id
+   * @param {String} host_id 当视图类型为模板时，需要指定当前具体host的id
+   */
+  static async getDesign (view_id, host_id) {
     return query(
       ViewDao.find({
         where: { view_id },
-        fields: ['content', 'view_title'],
+        fields: ['content', 'view_title', 'view_type'],
         alias: 'viewList'
       })
     )
@@ -19,13 +26,21 @@ class ViewDesignService extends BaseService {
         content: JSON.parse(content),
         ...rest
       }))
-      .then(({ content, view_title }) => {
+      .then(({ content, view_title, view_type }) => {
         if (content && content.id) {
           Object.assign(content, { view_title })
+          if (view_type === VIEW_TYPE.template && host_id) {
+            // 替换为当前具体host的id
+            content.widgets.forEach(({ config }) => {
+              const resourceConfig = _.get(config, ['dataConfig', 'dbDataConfig', 'resourceConfig'])
+              if (resourceConfig) {
+                resourceConfig.hostId = [host_id]
+              }
+            })
+          }
           return content
-        } else {
-          throw new Error('老系统视图，将返回空画布')
         }
+        throw new Error('老系统视图，将返回空画布')
       })
       .catch(err => Promise.reject(err))
   }

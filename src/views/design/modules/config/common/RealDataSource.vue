@@ -136,13 +136,6 @@
         @input="change()"
       />
     </a-form-item>
-
-    <a-form-item label="外部CI可用" v-bind="formItemLayout" v-if="useExternalCi" >
-      <a-checkbox
-        :checked="!!dbDataConfig.externalCi"
-        @input="changeExternalCi"
-      />
-    </a-form-item>
   </div>
 </template>
 

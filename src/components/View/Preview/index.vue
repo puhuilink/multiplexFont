@@ -9,7 +9,6 @@
       <Renderer
         class="preview__renderer"
         v-if="preview"
-        :externalCiId="externalCiId"
         :view="preview"
       />
     </template>
@@ -34,10 +33,6 @@ export default {
     styles: {
       type: Object,
       default: () => ({})
-    },
-    externalCiId: {
-      type: String,
-      default: ''
     }
   },
   components: {
@@ -49,11 +44,6 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['view'])
-  },
-  watch: {
-    externalCiId () {
-      this.fetch()
-    }
   },
   methods: {
     async fetch () {
