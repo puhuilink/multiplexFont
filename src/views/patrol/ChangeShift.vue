@@ -124,10 +124,7 @@ export default {
       //   sorter: true,
       //   width: 180
       // }
-    ]),
-    queryParams: {
-      receive_time: [moment().add(-1, 'hours').add(-2, 'days'), moment().add(-2, 'days')]
-    }
+    ])
   }),
   computed: {},
   methods: {
