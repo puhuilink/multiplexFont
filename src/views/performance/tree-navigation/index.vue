@@ -178,9 +178,8 @@ export default {
   }
 
   &__content {
-    // FIXME: max 不生效
-    // height: max(calc(100vh - 190px), 100px) !important;
-    height: calc(100vh - 160px);
+    min-height: 250px !important;
+    height: calc(100vh - 190px) !important;
     overflow: auto;
   }
 
