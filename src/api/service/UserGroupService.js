@@ -15,11 +15,12 @@ class UserGroupService extends BaseService {
       // 全量删除之前的分配关系
       UserGroupDao.update({
         user_role: USER_ROLE.user
-      }, { user_id: { _in: userIds } }),
+      }, { group_id: { _eq: group_id } }),
       // 全量写入现在的分配关系
-      UserGroupDao.batchAdd(
-        ...userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.administrator }))
-      )
+      UserGroupDao.update({ user_role: USER_ROLE.administrator }, {
+        user_id: { _in: userIds },
+        group_id: { _eq: group_id }
+      })
     )
   }
 

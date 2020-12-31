@@ -18,7 +18,7 @@
       :targetKeys="targetKeys"
       @change="handleChange"
       @search="handleSearch"
-      :render="item => item.user.staff_name"
+      :render="(item) => item.user.staff_name"
     >
     </a-transfer>
   </a-modal>
@@ -29,6 +29,7 @@ import { filterTransferOption } from '@/utils/util'
 import { UserGroupService } from '@/api'
 import { Schema } from '@/components/Mixins'
 import { USER_ROLE } from '@/tables/user_group/enum'
+import _ from 'lodash'
 
 export default {
   name: 'GroupAdministratorSchema',
@@ -42,16 +43,16 @@ export default {
   methods: {
     async getCurrentUserListerList (group_id) {
       try {
-        const { data: { userGroupList } } = await UserGroupService.find({
+        const {
+          data: { userGroupList }
+        } = await UserGroupService.find({
           where: { group_id },
-          fields: [
-            'key: user_id',
-            'title: user_id',
-            'user { staff_name }'
-          ],
+          fields: ['key: user_id', 'title: user_id', 'user { staff_name }'],
           alias: 'userGroupList'
         })
-        this.userList = userGroupList.filter(({ user }) => !!user)
+
+        const userListNum = userGroupList.filter(({ user }) => !!user)
+        this.userList = _.uniqBy(userListNum, (e) => e.key)
       } catch (e) {
         this.userList = []
         throw e
@@ -59,7 +60,9 @@ export default {
     },
     async getCurrentAdminList (group_id) {
       try {
-        const { data: { userGroupList } } = await UserGroupService.find({
+        const {
+          data: { userGroupList }
+        } = await UserGroupService.find({
           where: {
             group_id,
             user_role: USER_ROLE.administrator
@@ -67,7 +70,8 @@ export default {
           fields: ['user_id'],
           alias: 'userGroupList'
         })
-        this.targetKeys = userGroupList.map(e => e.user_id)
+        const targetList = userGroupList.map((e) => e.user_id)
+        this.targetKeys = [...new Set(targetList)]
       } catch (e) {
         this.targetKeys = []
         throw e
@@ -81,6 +85,7 @@ export default {
      */
     filterOption: filterTransferOption('staff_name'),
     handleChange (targetKeys, direction, moveKeys) {
+      console.log('targetKeys', targetKeys)
       this.targetKeys = targetKeys
     },
     handleSearch (dir, value) {},
@@ -92,6 +97,7 @@ export default {
       this.submit = this.allocateAdmin
     },
     async allocateAdmin () {
+      console.log('targetKeys111', this.targetKeys)
       try {
         this.loading = true
         const groupId = this.record.group_id
@@ -113,7 +119,6 @@ export default {
 
 <style lang="less">
 .GroupAdministratorSchema__modal {
-
   .ant-modal-body {
     height: 508px;
   }
