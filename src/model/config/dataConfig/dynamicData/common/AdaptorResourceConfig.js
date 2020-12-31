@@ -66,24 +66,6 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     const groupByHost = hostId.length > 1
     const finalDataList = dataList
 
-    // hack: 端口组
-    // if (dataList.length && ['Input Rate', 'Output Rate'].includes(dataList[0]['metricAlias'])) {
-    //   const aggregatedDataList = _.groupBy(dataList, el => {
-    //     return el.year ? `${el.year}-${el.month}-${el.day}-${el.metricAlias}` : `${el.collectTime}-${el.metricAlias}`
-    //   })
-    //   finalDataList = Object
-    //     .entries(aggregatedDataList)
-    //     .map(([key, [value, ...restValueList]]) => {
-    //       // 端口组的流量为所有端口流量之和
-    //       value['metricValue'] += _.sum(
-    //         restValueList.map(({ metricValue }) => metricValue)
-    //       )
-    //       // hack: 可能存在精度问题
-    //       value['metricValue'] = Number(value['metricValue'].toFixed(2))
-    //       return value
-    //     })
-    // }
-
     return finalDataList
       .map(({
         collectTime = moment().format(),

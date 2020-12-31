@@ -86,8 +86,6 @@ export default {
     },
     // 从视图部件库中移除该部件
     [ScreenMutations.REMOVE_WIDGET] (state, payload) {
-      // hack
-      // TODO: 迁移与升级到 REMOVE_WIDGETS
       this.commit('screen/' + ScreenMutations.REMOVE_WIDGETS, {
         widgetIds: [payload.widgetId]
       })

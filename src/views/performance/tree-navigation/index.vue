@@ -46,7 +46,7 @@
                     <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
                   </a-tooltip>
                 </div>
-                <Renderer ref="renderer" :externalCiId="hostId" :view="view" v-if="view" />
+                <Renderer ref="renderer" :view="view" v-if="view" />
                 <a-empty v-show="description" :description="description" />
               </a-spin>
             </div>
@@ -134,7 +134,7 @@ export default {
           throw new Error('当前设备未关联视图')
         }
         this.hostId = t_cmdb_host_id
-        this.view = await ViewDesignService.getDesign(this.viewId)
+        this.view = await ViewDesignService.getDesign(this.viewId, t_cmdb_host_id)
         this.viewError = false
       } catch (e) {
         this.viewId = null
@@ -178,9 +178,8 @@ export default {
   }
 
   &__content {
-    // FIXME: max 不生效
-    // height: max(calc(100vh - 190px), 100px) !important;
-    height: calc(100vh - 160px);
+    min-height: 250px !important;
+    height: calc(100vh - 190px) !important;
     overflow: auto;
   }
 

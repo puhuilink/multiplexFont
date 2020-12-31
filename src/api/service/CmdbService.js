@@ -84,7 +84,7 @@ class CmdbService extends BaseService {
             // 此处 id 仅用作树形结构唯一标识，并无实际作用
             id: `${location}-${host_type}`,
             alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
-            children: list,
+            children: list.map(e => ({ ...e, selectable: true })),
             type: 'hostType',
             selectable: false
           }))

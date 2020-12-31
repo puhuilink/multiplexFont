@@ -30,7 +30,6 @@ export default class Hasura {
    */
   select (fields = []) {
     const _fields = fields.length ? fields : this._fields
-    // TODO: 去重并在控制台发出 warning
     this._fields = _fields.filter(v => !!v).join(',').replace(/,/g, ' ')
     return this
   }

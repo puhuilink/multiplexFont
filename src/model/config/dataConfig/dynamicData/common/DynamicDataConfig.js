@@ -8,8 +8,6 @@ import { AdaptorOverviewConfig } from './AdaptorOverviewConfig'
 
 export class DynamicDataConfig {
   constructor ({
-    // 外部CI可用
-    externalCi = true,
     // 性能数据配置
     resourceConfig = {},
     // 告警数据配置
@@ -17,7 +15,6 @@ export class DynamicDataConfig {
     // 总览数据配置
     overviewConfig = {}
   }) {
-    this.externalCi = externalCi
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
     this.overviewConfig = new AdaptorOverviewConfig(overviewConfig)

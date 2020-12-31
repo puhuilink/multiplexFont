@@ -27,7 +27,6 @@ export default {
 <style scoped lang="less">
 .logo {
   line-height: 1;
-  // FIXME: 居中
   transform: translateY(-2px);
 
   img {

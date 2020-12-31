@@ -72,7 +72,7 @@
               :xxl="6"
             >
               <div class="ViewDisplay-item" @click="preview(viewConfig)">
-                <img :src="viewConfig.view_img | thumbnail" :alt="viewConfig.view_title">
+                <img v-lazy="thumbnail(viewConfig.view_img)" :alt="viewConfig.view_title">
                 <div class="ViewDisplay-item-info">
                   <p class="ViewDisplay-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                   <p class="ViewDisplay-item-info_creator">
