@@ -8,28 +8,18 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
-
             <a-row>
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="用户名"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="用户名" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="姓名"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="姓名" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
               </a-col>
@@ -37,25 +27,13 @@
 
             <a-row v-show="advanced">
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="邮箱"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="邮箱" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.email" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="有效标识"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-select
-                    allowClear
-                    v-model="queryParams.flag"
-                    placeholder="请选择"
-                  >
+                <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
+                  <a-select allowClear v-model="queryParams.flag" placeholder="请选择">
                     <a-select-option :value="1">有效</a-select-option>
                     <a-select-option :value="0">无效</a-select-option>
                   </a-select>
@@ -74,34 +52,21 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAddUser" v-action:M0101>新增</a-button>
-        <a-button @click="onEditUser" :disabled="!isSelectedValid" v-action:M0103>编辑</a-button>
+        <a-button @click="onAddUser" v-action:M0101>新增 </a-button>
+        <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
         <a-button @click="onBatchDeleteUser" :disabled="!isSelectedValid" v-action:M0103>删除</a-button>
         <a-button @click="onResetPwd" :disabled="!isSelectedValid" v-action:M0105>重置密码</a-button>
         <a-button @click="onAllocateUserGroup" :disabled="!isSelectedValid" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
         <a-button @click="onAllocateUserAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
       </template>
-
     </CTable>
 
-    <UserSchema
-      ref="schema"
-      @addSuccess="query"
-      @editSuccess="query(false)"
-    />
+    <UserSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <AuthSchema
-      v-action:M0110
-      ref="auth"
-      @success="query(false)"
-    />
+    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />
 
-    <UserGroupSchema
-      v-action:M0104
-      ref="group"
-      @editSuccess="query(false)"
-    />
+    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -160,7 +125,7 @@ export default {
         dataIndex: 'flag',
         width: 90,
         sorter: true,
-        customRender: flag => flag === USER_FLAG.enabled ? '有效' : '无效'
+        customRender: (flag) => (flag === USER_FLAG.enabled ? '有效' : '无效')
       },
       {
         title: '备注',
@@ -173,6 +138,10 @@ export default {
   computed: {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
+      console.log('1', selectedRows)
+      console.log('2', hasSelected)
+      console.log('3', this)
+
       if (hasSelected) {
         return !!selectedRows.find(({ flag }) => flag === USER_FLAG.enabled)
       } else {
@@ -193,7 +162,7 @@ export default {
         fields: this.columns.map(({ dataIndex }) => dataIndex),
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then((r) => r.data)
     },
     /**
      * 新增用户
@@ -232,13 +201,13 @@ export default {
      */
     async onBatchDeleteUser () {
       this.$promiseConfirmDelete({
-        onOk: () => UserService
-          .batchDelete(this.selectedRowKeys)
-          .then(() => {
-            this.$notifyDeleteSuccess()
-            this.query(false)
-          })
-          .catch(this.$notifyError)
+        onOk: () =>
+          UserService.batchDelete(this.selectedRowKeys)
+            .then(() => {
+              this.$notifyDeleteSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
       })
     },
     /**
@@ -255,14 +224,15 @@ export default {
       this.$promiseConfirm({
         title: '系统提示',
         content: '是否重置选中用户密码？',
-        onOk: () => UserService.setInitialPwd(_.first(this.selectedRowKeys))
-          .then(() => {
-            this.$notification.success({
-              message: '系统提示',
-              description: '密码已重置为初始化密码！'
+        onOk: () =>
+          UserService.setInitialPwd(_.first(this.selectedRowKeys))
+            .then(() => {
+              this.$notification.success({
+                message: '系统提示',
+                description: '密码已重置为初始化密码！'
+              })
             })
-          })
-          .catch(this.$notifyError)
+            .catch(this.$notifyError)
       })
     },
     /**
@@ -274,13 +244,13 @@ export default {
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认更改用户状态？',
-        onOk: () => UserService
-          .toggleFlag(user_id, flag === USER_FLAG.enabled ? USER_FLAG.disabled : USER_FLAG.enabled)
-          .then(() => {
-            this.$notifyToggleFlagSuccess()
-            this.query(false)
-          })
-          .catch(this.$notifyError)
+        onOk: () =>
+          UserService.toggleFlag(user_id, flag === USER_FLAG.enabled ? USER_FLAG.disabled : USER_FLAG.enabled)
+            .then(() => {
+              this.$notifyToggleFlagSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
       })
     }
   }
