@@ -15,7 +15,6 @@ class PatrolService extends BaseService {
       XjChangeShiftDao.find(argus)
     )
   }
-
   // 交接班详情
   static async changeShiftDetail (id) {
     const { data: { changeShiftList } } = await this.changeShiftFind({

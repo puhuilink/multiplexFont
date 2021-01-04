@@ -97,7 +97,6 @@ export default {
       this.submit = this.allocateAdmin
     },
     async allocateAdmin () {
-      console.log('targetKeys111', this.targetKeys)
       try {
         this.loading = true
         const groupId = this.record.group_id

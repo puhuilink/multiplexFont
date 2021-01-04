@@ -138,10 +138,6 @@ export default {
   computed: {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
-      console.log('1', selectedRows)
-      console.log('2', hasSelected)
-      console.log('3', this)
-
       if (hasSelected) {
         return !!selectedRows.find(({ flag }) => flag === USER_FLAG.enabled)
       } else {

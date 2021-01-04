@@ -32,10 +32,11 @@ class UserGroupService extends BaseService {
   static async allocateGroupUsers (group_id, userIds) {
     await mutate(
       // 全量删除旧用户
-      UserGroupDao.batchDelete({ group_id }),
-      // 全量删除新用户
+      UserGroupDao.batchDelete({ group_id: { _eq: group_id } }),
+
+      // // 全量删除新用户
       UserGroupDao.batchAdd(
-        ...userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
+        userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
   }
