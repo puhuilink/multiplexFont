@@ -13,7 +13,7 @@ const loadData = (host_type_dict_value_code) => ModelService.hostFind({
   alias: 'dataSource'
 }).then(r => r.data.dataSource || [])
   .then((dataSource = []) => {
-    const data = dataSource.find(el => el.children && el.children.length) || {}
+    const data = dataSource.filter(el => el.children && el.children.length).map(el => el.children).flat()
     return data
   })
   .then(({ children = [] }) => children)
