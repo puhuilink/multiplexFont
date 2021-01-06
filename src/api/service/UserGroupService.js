@@ -52,7 +52,7 @@ class UserGroupService extends BaseService {
       UserGroupDao.batchDelete({ user_id }),
       // 全量删除新用户
       UserGroupDao.batchAdd(
-        ...groupIds.map(group_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
+        groupIds.map(group_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
   }
