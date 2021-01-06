@@ -21,7 +21,7 @@ import {
 } from './g6-types'
 
 export const animateTypeMapping = (alpha = 1) => new Map(
-  [ ...levelColorMapping ].map(([level, color]) => [`${level}级告警`, hexToRGBA(color, alpha)])
+  [ ...levelColorMapping ].map(([key, color]) => [`${key + 1}级告警`, hexToRGBA(color, alpha)])
 )
 //  节点连线控制点
 // eslint-disable-next-line

@@ -15,11 +15,12 @@ class UserGroupService extends BaseService {
       // 全量删除之前的分配关系
       UserGroupDao.update({
         user_role: USER_ROLE.user
-      }, { user_id: { _in: userIds } }),
+      }, { group_id: { _eq: group_id } }),
       // 全量写入现在的分配关系
-      UserGroupDao.batchAdd(
-        ...userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.administrator }))
-      )
+      UserGroupDao.update({ user_role: USER_ROLE.administrator }, {
+        user_id: { _in: userIds },
+        group_id: { _eq: group_id }
+      })
     )
   }
 
@@ -31,10 +32,11 @@ class UserGroupService extends BaseService {
   static async allocateGroupUsers (group_id, userIds) {
     await mutate(
       // 全量删除旧用户
-      UserGroupDao.batchDelete({ group_id }),
-      // 全量删除新用户
+      UserGroupDao.batchDelete({ group_id: { _eq: group_id } }),
+
+      // // 全量删除新用户
       UserGroupDao.batchAdd(
-        ...userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
+        userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
   }
@@ -50,7 +52,7 @@ class UserGroupService extends BaseService {
       UserGroupDao.batchDelete({ user_id }),
       // 全量删除新用户
       UserGroupDao.batchAdd(
-        ...groupIds.map(group_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
+        groupIds.map(group_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
   }

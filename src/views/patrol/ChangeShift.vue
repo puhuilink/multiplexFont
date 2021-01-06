@@ -116,7 +116,8 @@ export default {
         title: '交接时间',
         dataIndex: 'receive_time',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: time => time ? moment(time).format() : ''
       }
       // {
       //   title: '交接状态',

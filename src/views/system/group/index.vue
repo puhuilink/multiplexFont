@@ -66,7 +66,7 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="onAdd" v-action:M0106>新增</a-button>
-        <a-button @click="onEdit" :disabled="!isSelectedValid" v-action:M0101>编辑</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-action:M0101>编辑</a-button>
         <a-button @click="onBatchDelete" :disabled="!isSelectedValid" v-action:M0108>删除</a-button>
         <a-button @click="onAllocateUser" :disabled="!isSelectedValid" v-action:M0101>分配用户</a-button>
         <a-button @click="onAllocateAdmin" :disabled="!isSelectedValid" v-action:M0101>分配管理员</a-button>
