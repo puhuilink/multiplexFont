@@ -16,7 +16,6 @@ const loadData = (host_type_dict_value_code) => ModelService.hostFind({
     const data = dataSource.filter(el => el.children && el.children.length).map(el => el.children).flat()
     return data
   })
-  .then(({ children = [] }) => children)
 
 const props = {
   hostTypeDictValueCode: {
