@@ -34,7 +34,8 @@ export class ViewDataService extends BaseService {
       'hostId',
       'endpointModelId',
       'metricModelIds',
-      'calculateType'
+      'calculateType',
+      'metricIds'
     ])
 
     data['metricModelIds'] = _.castArray(data['metricModelIds'])
@@ -56,6 +57,10 @@ export class ViewDataService extends BaseService {
     if (!data['calculateType']) {
       Reflect.deleteProperty(data, 'isGroup')
       Reflect.deleteProperty(data, 'calculateType')
+    }
+
+    if (!data['metricIds'] || _.isEmpty(data['metricIds'])) {
+      Reflect.deleteProperty(data, 'metricIds')
     }
 
     if (this._validate(data)) {

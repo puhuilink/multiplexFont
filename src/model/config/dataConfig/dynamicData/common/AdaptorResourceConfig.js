@@ -14,6 +14,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     hostId = [],
     endpointModelId = null,
     metricModelIds = [],
+    metricIds = [],
     // 分组方式:  hour / minute / month
     isGroup = '',
     // 监控实体聚合方式：model / cmdb
@@ -31,6 +32,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.isGroup = isGroup
     this.endpointAggregateMode = endpointAggregateMode
     this.legendType = legendType
+    this.metricIds = metricIds
   }
 
   isAvailable () {
