@@ -159,7 +159,7 @@ export default {
 
       if (
         (isGroup || calculateType) &&
-        !_.isEmpty(timeRange)
+        _.isEmpty(timeRange)
       ) {
         this.$message.error('选中计算类型或分组时，必须选择查询时间')
         return cb(false)
