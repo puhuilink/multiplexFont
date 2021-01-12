@@ -34,7 +34,8 @@ export class ViewDataService extends BaseService {
       'hostId',
       'endpointModelId',
       'metricModelIds',
-      'calculateType'
+      'calculateType',
+      'metricIds'
     ])
 
     data['metricModelIds'] = _.castArray(data['metricModelIds'])
@@ -51,6 +52,15 @@ export class ViewDataService extends BaseService {
     } else {
       Reflect.deleteProperty(data, 'isGroup')
       Reflect.deleteProperty(data, 'calculateType')
+    }
+
+    if (!data['calculateType']) {
+      Reflect.deleteProperty(data, 'isGroup')
+      Reflect.deleteProperty(data, 'calculateType')
+    }
+
+    if (!data['metricIds'] || _.isEmpty(data['metricIds'])) {
+      Reflect.deleteProperty(data, 'metricIds')
     }
 
     if (this._validate(data)) {
@@ -100,6 +110,8 @@ export class ViewDataService extends BaseService {
    */
   static async overviewData ({ timeRange = {}, ...argus }, config = {}) {
     const data = _.pick(argus, [
+      'hostAlias',
+      'endpointAlias',
       'alias',
       'origin',
       'isGroup',

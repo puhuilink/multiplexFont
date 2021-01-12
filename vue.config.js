@@ -118,10 +118,12 @@ const vueConfig = {
       return args
     })
 
+    // https://github.com/lodash/lodash-webpack-plugin#readme
     config.plugin('lodashReplace').use(new LodashModuleReplacementPlugin({
       shorthands: true,
       // https://github.com/ant-design/ant-design/issues/3794
-      paths: true
+      paths: true,
+      caching: true
     }))
 
     // https://www.cnblogs.com/leiting/p/11542608.html

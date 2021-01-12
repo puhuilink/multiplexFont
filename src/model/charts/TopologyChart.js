@@ -8,6 +8,7 @@
 
 import _ from 'lodash'
 import G6 from '@antv/g6'
+import Grid from '@antv/g6/build/grid'
 import anime from 'animejs'
 import uuid from 'uuid/v4'
 import ContentMenu from '@antv/g6/build/menu'
@@ -16,10 +17,14 @@ import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import { AlarmService } from '@/api/index'
+import { animateTypeMapping } from '@/plugins/g6'
+import { runTimeNodes } from '../nodes/CircleNode'
 
-const events = require('events')
-
-export const emitter = new events.EventEmitter()
+const pluginsMap = new Map([
+  ['Grid', Grid]
+])
+const animateTypeList = [...animateTypeMapping()].map(([type]) => type)
 
 export default class TopologyChart extends Chart {
   constructor (props) {
@@ -33,18 +38,29 @@ export default class TopologyChart extends Chart {
    */
   init ({ config, widgetId }, onlyShow) {
     const { commonConfig: { width, height }, proprietaryConfig } = config
+    const { plugins = [] } = proprietaryConfig
     this.chart = new G6.Graph({
       container: this.container,
       width,
       height,
+      minZoom: 1,
+      maxZoom: 2,
       renderer: 'canvas',
-      plugins: [],
+      plugins: plugins.map(plugin => {
+        if (pluginsMap.has(plugin)) {
+          const target = pluginsMap.get(plugin)
+          return Reflect.construct(target, [])
+        }
+      }).filter(Boolean),
       modes: {
         default: [NODE_TYPE_CIRCLE, {
           type: 'tooltip',
           // 是否展示 tooltip，鼠标移入时触发
           shouldBegin: (e) => {
             const model = e.item.getModel()
+            // TODO: 此处应直接更新到 model
+            const { tooltipContent = '' } = runTimeNodes[model.id] || {}
+            Object.assign(model, { tooltipContent })
             return !!model.tooltipContent
           },
           // tooltip 展示内容，鼠标移入时触发
@@ -86,18 +102,22 @@ export default class TopologyChart extends Chart {
       nodeStateStyles: {
         // 鼠标点击节点，即 click 状态为 true 时的样式
         active: {
-          // lineWidth: 1
-          // fill: '#eeeeee',
-          // stroke: '#eeeeee'
+          cursor: 'auto'
         },
+        hover: {
+          cursor: 'pointer'
+        },
+        enter: {},
         inactive: {
           fill: '#dbdbdb',
-          stroke: '#f2f2f2'
+          stroke: '#f2f2f2',
+          cursor: 'pointer'
         },
         selected: {
           fill: 'rgba(241, 79, 13, .3)',
           lineWidth: 8,
-          stroke: '#f14f0d'
+          stroke: '#f14f0d',
+          cursor: 'pointer'
         }
       },
       // 边不同状态下的样式集合
@@ -106,9 +126,11 @@ export default class TopologyChart extends Chart {
         click: {
           stroke: '#1890ff'
         },
-        enter: {
-          stroke: '#1890ff'
+        hover: {
+          cursor: 'pointer',
+          lineWidth: 10
         },
+        enter: {},
         selected: {
           lineWidth: 4,
           stroke: '#f14f0d',
@@ -121,6 +143,7 @@ export default class TopologyChart extends Chart {
 
     // 读取配置
     this.read(proprietaryConfig)
+    this.chart.zoomTo(config.proprietaryConfig.zoom)
 
     // 展示模式下不添加事件处理
     if (this.onlyShow) return
@@ -130,7 +153,9 @@ export default class TopologyChart extends Chart {
 
     // 对于缩放事件的监听
     this.chart.on('wheelzoom', () => {
-      // console.log(this.chart.getZoom())
+      // TODO: Vuex mutation
+      // 缩放可能只用于精确绘制但不希望被记录保存
+      // this.config.proprietaryConfig.zoom = this.chart.getZoom()
     })
 
     // 对于节点右键触发上下文菜单
@@ -170,7 +195,7 @@ export default class TopologyChart extends Chart {
     // 节点鼠标按下事件，设置当前节点为激活节点
     this.chart.on('node:mousedown', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-        activeNode: _.cloneDeep(item)
+        activeNode: item
       })
     })
 
@@ -179,7 +204,7 @@ export default class TopologyChart extends Chart {
       const activeNode = store.state.screen.activeNode
       if (activeNode) {
         store.commit('screen/' + ScreenMutations.ACTIVATE_NODE, {
-          activeNode: _.cloneDeep(item)
+          activeNode: item
         })
         store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
       }
@@ -193,7 +218,7 @@ export default class TopologyChart extends Chart {
     // 边点击事件
     this.chart.on('edge:click', ({ item }) => {
       store.commit('screen/' + ScreenMutations.ACTIVATE_EDGE, {
-        activeEdge: _.cloneDeep(item)
+        activeEdge: item
       })
     })
 
@@ -213,26 +238,64 @@ export default class TopologyChart extends Chart {
         activeEdge: null
       })
     })
-  }
 
-  onNodeAnimateTypeChange ({ item, animateType }) {
-    const { id } = item
-    // 记录轮询开启的子节点
-    this.timerNodeList = Array.from(
-      new Set(
-        [ ...this.timerNodeList || [], item ]
-      )
-    )
-    setTimeout(() => {
-      this.chart.clearItemStates(id)
-      this.chart.setItemState(id, animateType, true)
+    // 画布拖拽
+    this.chart.on('canvas:dragend', (e) => {
+      // store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
     })
   }
 
   enablePreviewMode () {
     this.isPreviewMode = true
-    // Ci 节点实时告警变色
-    emitter.on('animateType:change', this.onNodeAnimateTypeChange.bind(this))
+    this.fetchNodesAlarm()
+    this.alarmTimer = setInterval(() => {
+      this.fetchNodesAlarm()
+    }, 1000 * 60)
+  }
+
+  /**
+   * 设置节点告警状态
+   * @param {String} id 节点id
+   * @param {Number} eventLevel 告警等级
+   */
+  setNodeAlarmState (id, eventLevel) {
+    this.chart.clearItemStates(id)
+    this.chart.setItemState(id, animateTypeList[eventLevel - 1], true)
+  }
+
+  /**
+   * 获取拓扑图内节点告警数据
+   */
+  async fetchNodesAlarm () {
+    const models = []
+    let hostIds = []
+    this.chart.getNodes().forEach((node) => {
+      // const model = node.getModel()
+      // hack
+      const model = runTimeNodes[node.getModel().id]
+      const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
+
+      if (hostId.length) {
+        models.push(model)
+        hostIds.push(...hostId)
+      }
+    })
+
+    hostIds = _.uniq(hostIds).filter(Boolean)
+
+    if (_.isEmpty(hostIds)) return
+
+    const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
+    const hostIdEventLevelMapping = new Map(
+      alarmList.map((alarm) => [alarm.host_id, alarm.event_level])
+    )
+    models.forEach((model) => {
+      const eventLevel = hostIdEventLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
+      eventLevel && this.setNodeAlarmState(
+        model.id,
+        Number(eventLevel)
+      )
+    })
   }
 
   /**
@@ -346,11 +409,14 @@ export default class TopologyChart extends Chart {
         })
         // 边遍历添加入拓扑图
         cloneEdgeModels.forEach(edge => {
-          edge.controlPoints = edge.controlPoints.map(point => {
-            point.x += 48
-            point.y += 48
-            return point
-          })
+          if (edge.shape !== 'polyline') {
+            // shape为polyline时controlPoints会自动生成与计算
+            edge.controlPoints = edge.controlPoints.map(point => {
+              point.x += 48
+              point.y += 48
+              return point
+            })
+          }
           Object.assign(edge, {
             id: `edge-${uuid()}`
           })
@@ -423,9 +489,9 @@ export default class TopologyChart extends Chart {
     if (!_.isEmpty(nodes)) {
       nodes.forEach(node => {
         const model = node.getModel()
-        const targetModel = store.getters['screen/nodes'].find(node => node.id === model.id)
-        // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
-        if (targetModel) {
+        if (!this.onlyShow) {
+          // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
+          const targetModel = store.getters['screen/nodesMapping'].get(model.id)
           Object.assign(model, targetModel)
         }
         this.chart.setItemState(node, model.animateType, true)
@@ -439,7 +505,7 @@ export default class TopologyChart extends Chart {
       })
     }
 
-    if (!this.onlyShow) return
+    if (this.onlyShow) return
     // 读取配置后更新配置属性
     store.commit('screen/' + ScreenMutations.UPDATE_TOPOLOGY_CONFIG)
   }
@@ -463,16 +529,16 @@ export default class TopologyChart extends Chart {
   }
 
   destroy () {
-    emitter.off('canvas:click', this.onNodeAnimateTypeChange)
+    clearTimeout(this.alarmTimer)
     const nodes = this.chart.getNodes()
     nodes.forEach(node => {
       const model = node.getModel()
+      const hackModel = runTimeNodes[model.id]
+      hackModel && hackModel.destroy && hackModel.destroy()
       model.destroy && model.destroy()
     })
+    nodes.length = 0
     this.chart.off()
     this.chart.destroy()
-    this.timerNodeList && this.timerNodeList.forEach(node => {
-      node.destroy()
-    })
   }
 }

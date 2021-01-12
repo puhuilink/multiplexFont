@@ -16,12 +16,17 @@
     :data-category="widget.config.category"
     :data-type="widget.config.type"
     :ref="widget.widgetId"
-    @click.stop="() => $emit('select', selectWidget)">
+    @click.stop="() => $emit('select', selectWidget)"
+  >
+    <!-- 视图钻取：双击跳转到新视图，跳转配置与细节待与产品沟通 -->
+    <!-- @dblclick.stop="() => $emit('drill', { viewId: 8947 })" -->
 
     <!-- / 元素部件 -->
-    <!-- 可以是vue组件，需要其持有者手动挂载到该div -->
-    <!-- FIXME: 这种方式可能导致vue-devtools无法正常调试 -->
-    <div ref="element" v-if="useComponent"></div>
+    <Component
+      ref="element"
+      :is="elementName"
+      v-if="useComponent"
+    />
 
   </div>
 </template>
@@ -32,17 +37,18 @@ import { mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
-import { TIME_RANGE_TYPE_CUSTOM } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
-import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 
 const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
-  components: {},
+  components: {
+    ...ELEMENTS
+  },
   props: {
     widget: {
       type: Object,
@@ -51,21 +57,11 @@ export default {
     onlyShow: {
       type: Boolean,
       default: false
-    },
-    // 外部 Ci
-    ciId: {
-      type: String,
-      default: ''
-    },
-    timeRange: {
-      type: Array,
-      default: () => []
     }
   },
   data: () => ({
     render: null,
-    isSubscribed: true,
-    isHighLightForAutoAlign: false
+    isSubscribed: true
   }),
   computed: {
     ...mapState('screen', ['isImporting', 'activeWidget', 'subActiveWidgets']),
@@ -90,27 +86,10 @@ export default {
     // 在类型为元素时使用组件进行渲染
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
-    }
-  },
-  watch: {
-    timeRange: {
-      deep: true,
-      immediate: true,
-      async handler (timeRange) {
-        if (this.onlyShow) {
-          await this.$nextTick()
-          const { dataConfig = {} } = this.widget.config
-          const { sourceType, dbDataConfig = {} } = dataConfig
-          const { timeRangeConfig = {} } = dbDataConfig
-          if (sourceType === SOURCE_TYPE_REAL && timeRange[0] && timeRange[1]) {
-            this.setTimeRange(timeRangeConfig, timeRange)
-          } else {
-            this.rollbackTimeRange(timeRangeConfig)
-          }
-          // 更新时间配置后刷新配置与数据
-          this.render.restartIntervalRefresh && this.render.restartIntervalRefresh()
-        }
-      }
+    },
+    // 元素组件名
+    elementName () {
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     }
   },
   methods: {
@@ -118,47 +97,18 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     /**
-     * 拓扑图内 Ci 节点钻取事件
-     * 跳转新视图或页签
+     * 拓扑节点钻取事件
      */
-    drill ({ item }) {
-      // const model = item.getModel()
-      // if (model.shape === NODE_TYPE_CIRCLE) {}
-      // const drillConfig = _.get(model, 'nodeDynamicDataConfig.drillConfig', {})
-      // mock data
+    drillFromNode ({ item }) {
       const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
-      // const { drillType = NODE_CI_DRILL_TYPE_VIEW, viewList = [] } = drillConfig
-      // if (!_.isEmpty(viewList)) {}
       this.$emit('drill', _.cloneDeep(drillConfig))
-    },
-    setTimeRange (timeRangeConfig, timeRange) {
-      const { timeRangeType, _timeRangeType, customTimeRange } = timeRangeConfig
-      if (!_timeRangeType) {
-        // 备份原始配置
-        timeRangeConfig._timeRangeType = timeRangeType
-        timeRangeConfig._customTimeRange = customTimeRange
-        // 覆写新配置
-        timeRangeConfig.timeRangeType = TIME_RANGE_TYPE_CUSTOM
-        timeRangeConfig.customTimeRange = timeRange
-      }
-    },
-    rollbackTimeRange (timeRangeConfig) {
-      const { _timeRangeType, _customTimeRange } = timeRangeConfig
-      // 还原备份配置
-      if (_timeRangeType) {
-        timeRangeConfig.timeRangeType = _timeRangeType
-        timeRangeConfig.customTimeRange = _customTimeRange
-      }
-      // 删除备份配置
-      Reflect.deleteProperty(timeRangeConfig, '_timeRangeType')
-      Reflect.deleteProperty(timeRangeConfig, '_customTimeRange')
     },
     initTopologyChart () {
       const { render } = this
       const {
         config: { proprietaryConfig }
       } = render
-      // chart.on('node:click', this.drill)
+      // chart.on('node:click', this.drillFromNode)
       proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
         // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
         if (node.shape === NODE_TYPE_CIRCLE) {
@@ -172,19 +122,18 @@ export default {
       circleNodeList.forEach(node => {
         node.intervalRefresh && node.intervalRefresh()
       })
+    },
+    /**
+     * 通过配置初始化Widget
+     */
+    initWidgetFromConfig () {
+      if (!(this.widget instanceof Widget)) {
+        Object.assign(this.widget, new Widget(this.widget))
+      }
     }
   },
   mounted () {
-    const dbDataConfig = _.get(this, 'widget.config.dataConfig.dbDataConfig')
-    const externalCi = _.get(dbDataConfig, 'externalCi')
-    // 外部 Ci 可用时，传递进来的 Ci 将会替代此组件中选择的 Ci
-    if (externalCi && this.ciId) {
-      dbDataConfig.resourceConfig.selectedInstance = [ this.ciId ]
-    }
-    // 在直接使用配置渲染情况中，此时 widget prop 并不是 Widget 的实例，需要将其实例化
-    if (!(this.widget instanceof Widget)) {
-      Object.assign(this.widget, new Widget(this.widget))
-    }
+    this.initWidgetFromConfig()
     const { category, type } = this.widget.config
     const widgetFactory = category === 'CHART'
       ? Factory.createChartFactory()

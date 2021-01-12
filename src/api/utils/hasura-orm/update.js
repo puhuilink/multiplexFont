@@ -3,6 +3,8 @@ import Insert from './insert'
 import { stringify } from './helper'
 import { parse } from 'graphql'
 
+let index = 0
+
 export default class Update extends Hasura {
   constructor (_schema, provider = {}, _with, _fields, _schemaArguments) {
     super('update_' + _schema, provider, _with, _fields, _schemaArguments)
@@ -45,7 +47,10 @@ export default class Update extends Hasura {
     }
     const args = this.schemaArguments + '_set: {' + this._set + '} '
     // return ` ${this._schema} ${'(' + args + ' )'}{ ${this._fields ? ' returning { ' + this.getFields() + ' }' : 'affected_rows'} }`
-    return ` ${this._schema} ${'(' + args + ' )'} { affected_rows }`
+    // 若一条 mutation 中出现相同 schema, 根据 alias 可避免冲突
+    // mutation 不关注返回值，因此 alias 无需人工指定
+    const alias = `${this._schema}${index++}`
+    return `${alias}: ${this._schema} ${'(' + args + ' )'} { affected_rows }`
   }
 
   /**

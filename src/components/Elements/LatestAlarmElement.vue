@@ -14,7 +14,6 @@
 // TODO: split common components
 import AlarmMonitor from '@/views/alarm/monitor/index'
 import ListMixin from '@/components/Elements/ListMixin'
-import _ from 'lodash'
 
 export default {
   name: 'LatestAlarmElement',
@@ -36,8 +35,11 @@ export default {
       }
     },
     btnProps () {
+      const {
+        styleConfig = {}
+      } = this.elementProps
       return {
-        style: _.get(this, ['elementProps', 'styleConfig', 'button'], {})
+        style: styleConfig.button || {}
       }
     }
   }

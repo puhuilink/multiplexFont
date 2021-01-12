@@ -1,12 +1,33 @@
 import { BaseService } from './BaseService'
-import { AlarmDao, AlarmSubDao } from '../dao/index'
+import { AlarmDao, AlarmSubDao, AlarmLatestDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
+import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AlarmService extends BaseService {
   static async find (argus = {}) {
     return query(
       AlarmDao.find(argus)
     )
+  }
+
+  /**
+   * 批量查询指定host的最新告警等级
+   * @param {*} hostIds
+   */
+  static async latestAlarm (hostIds) {
+    if (_.isEmpty(hostIds)) return []
+
+    const { data: { alarmList } } = await query(
+      AlarmLatestDao.find({
+        where: {
+          host_id: { _in: hostIds }
+        },
+        fields: ['host_id', 'event_level'],
+        alias: 'alarmList'
+      })
+    )
+    return alarmList
   }
 
   static async findSub (argus = {}) {
@@ -45,6 +66,13 @@ class AlarmService extends BaseService {
     )
 
     return alarmInfo[0]
+  }
+
+  /**
+   * 手动管理告警
+   */
+  static async close ({ hostId, endpointId, metricId }) {
+    return axios.post('/redisData/closeAlarm', { hostId, endpointId, metricId })
   }
 }
 

@@ -21,7 +21,7 @@
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="12" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="视图ID"
                   v-bind="formItemLayout"
@@ -31,13 +31,26 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="12" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="视图标题"
                   v-bind="formItemLayout"
                   class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.view_title" />
+                </a-form-item>
+              </a-col>
+
+              <a-col :md="8" :sm="24">
+                <a-form-item
+                  label="视图类型"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <a-select allowClear v-model="queryParams.view_type">
+                    <a-select-option :value="VIEW_TYPE.template">{{ VIEW_TYPE_MAPPING.get(VIEW_TYPE.template) }}</a-select-option>
+                    <a-select-option :value="VIEW_TYPE.instance">{{ VIEW_TYPE_MAPPING.get(VIEW_TYPE.instance) }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -60,7 +73,7 @@
       </template>
     </CTable>
 
-    <ViewTitleSchema
+    <ViewSchema
       ref="title"
       v-action:M0202
       @addSuccess="query"
@@ -70,47 +83,61 @@
 </template>
 
 <script>
-import ViewTitleSchema from './modules/ViewTitleSchema'
+import ViewSchema from './modules/ViewSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { ViewListService } from '@/api'
+import { VIEW_TYPE } from '@/tables/view/enum'
+import { VIEW_TYPE_MAPPING } from '@/tables/view/types'
 
 export default {
   name: 'ViewList',
   mixins: [Confirm, List],
   components: {
-    ViewTitleSchema
+    ViewSchema
   },
-  data: () => ({
-    copyLoading: false,
-    columns: [
-      {
-        title: '视图ID',
-        dataIndex: 'view_id',
-        sorter: true,
-        width: 100
-      },
-      {
-        title: '视图标题',
-        dataIndex: 'view_title',
-        sorter: true,
-        width: 300,
-        tooltip: true
-      },
-      {
-        title: '视图创建者',
-        dataIndex: 'creator',
-        sorter: true,
-        width: 200
-      },
-      {
-        title: '缩略图',
-        dataIndex: 'view_img',
-        width: 400,
-        tooltip: true
-      }
-    ]
-  }),
+  data () {
+    return {
+      copyLoading: false,
+      columns: [
+        {
+          title: '视图ID',
+          dataIndex: 'view_id',
+          sorter: true,
+          width: 100
+        },
+        {
+          title: '视图标题',
+          dataIndex: 'view_title',
+          sorter: true,
+          width: 300,
+          tooltip: true
+        },
+        {
+          title: '视图类型',
+          dataIndex: 'view_type',
+          sorter: true,
+          width: 300,
+          customRender: (view_type) => VIEW_TYPE_MAPPING.get(view_type)
+        },
+        {
+          title: '视图创建者',
+          dataIndex: 'creator',
+          width: 200,
+          customRender: (creator, { user }) => user ? user.staff_name : creator
+        },
+        {
+          title: '缩略图',
+          dataIndex: 'view_img',
+          width: 400,
+          tooltip: true,
+          customRender: (src) => src ? <a href={`${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}`} target="_blank">{ src }</a> : ''
+        }
+      ],
+      VIEW_TYPE,
+      VIEW_TYPE_MAPPING
+    }
+  },
   methods: {
     /**
      * 加载表格数据回调
@@ -120,7 +147,10 @@ export default {
         where: {
           ...generateQuery(this.queryParams)
         },
-        fields: this.columns.map(({ dataIndex }) => dataIndex),
+        fields: [
+          ...this.columns.map(({ dataIndex }) => dataIndex),
+          'user { staff_name }'
+        ],
         ...parameter,
         alias: 'data'
       }).then(r => r.data)

@@ -4,6 +4,7 @@ const IMP_TABLE_LIST = [
   // 告警
   { schema: 't_alarm' },
   { schema: 't_alarm_sub' },
+  { schema: 't_alarm_latest' },
   { schema: 't_alarm_sender' },
   { schema: 't_cmdb_strategy' },
   // 系统设置
@@ -30,6 +31,7 @@ const IMP_TABLE_LIST = [
   { schema: 't_model_host_group_by_model', primaryKey: 'model' }, // postgre view
   { schema: 't_cmdb_host_endpoint_metric' }, // postgre view
   { schema: 't_model_metric' },
+  { schema: 't_cmdb_host_model_brand' },
   // 指标
   { schema: 't_metric' },
   // 巡更

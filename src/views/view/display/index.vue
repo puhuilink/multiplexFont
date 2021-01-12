@@ -58,11 +58,12 @@
 
       <!-- S 视图缩略图 -->
       <div class="ViewDisplay-content" v-if="isThumbnailMode">
-        <a-row>
+        <a-row :style="{ overflow: 'hidden' }">
           <transition-group name="flip-list" tag="div">
             <a-col
               class="flip-item"
-              v-for="viewConfig in filterViewList"
+              v-for="viewConfig in allViewList"
+              v-show="filterViewIdList.includes(viewConfig.view_id)"
               :key="viewConfig.view_id"
               :id="viewConfig.view_id"
               :xs="24"
@@ -71,12 +72,12 @@
               :xxl="6"
             >
               <div class="ViewDisplay-item" @click="preview(viewConfig)">
-                <img :src="viewConfig.view_img | thumbnail" :alt="viewConfig.view_title">
+                <img v-lazy="thumbnail(viewConfig.view_img)" :alt="viewConfig.view_title">
                 <div class="ViewDisplay-item-info">
                   <p class="ViewDisplay-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                   <p class="ViewDisplay-item-info_creator">
                     <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
-                    <span><a-icon type="user" />{{ viewConfig.creator }}</span>
+                    <span><a-icon type="user" />{{ viewConfig.user ? viewConfig.user.staff_name : viewConfig.creator }}</span>
                   </p>
                 </div>
               </div>
@@ -108,28 +109,28 @@
           tab-position="top"
           @change="tabsChange"
         >
-          <div class="ViewDisplay-bar" slot="tabBarExtraContent">
+          <div class="PreviewMixin-bar" slot="tabBarExtraContent">
             <a-tooltip placement="top" :title="isAutoPlay ? '暂停' : '播放'">
               <a-icon :type="isAutoPlay ? 'pause-circle' : 'play-circle'" @click="toggleAutoPlay" />
             </a-tooltip>
             <a-tooltip placement="top" title="等宽">
-              <a-icon type="column-width" :class="{ 'ViewDisplay-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
+              <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
             </a-tooltip>
 
             <a-tooltip placement="top" title="等高">
-              <a-icon type="column-height" :class="{ 'ViewDisplay-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
+              <a-icon type="column-height" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
             </a-tooltip>
 
             <a-tooltip placement="top" title="拉伸">
-              <a-icon type="swap" :class="{ 'ViewDisplay-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
+              <a-icon type="swap" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
             </a-tooltip>
 
             <a-tooltip placement="top" title="原始">
-              <a-icon type="pic-center" :class="{ 'ViewDisplay-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
+              <a-icon type="pic-center" :class="{ 'PreviewMixin-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
             </a-tooltip>
 
             <a-tooltip placement="top" title="自适应">
-              <a-icon type="border-outer" :class="{ 'ViewDisplay-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
+              <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
             </a-tooltip>
 
             <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
@@ -285,9 +286,10 @@ export default {
 
   &-item {
     box-sizing: border-box;
-    // 给定宽高，避免图片加载等过程中导致重绘
-    // width: 363px;
-    // height: 259px;
+    // 固定宽高比
+    width: 100%;
+    height: 0;
+    padding-bottom: calc(100% / 16 * 9 + 63px);
     border: 1px solid #f0f0f0;
     border-radius: 4px;
     box-shadow: 0 0 32px #f0f0f0;
@@ -301,15 +303,24 @@ export default {
     }
 
     img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 63px;
       display: block;
       width: 100%;
-      height: 143px;
+      height: calc(100% - 63px);
       border-radius: 4px;
     }
 
     &-info {
-      padding: 12px;
-      padding-bottom: 0;
+      position: absolute;
+      right: 0;
+      bottom: 0px;
+      left: 0;
+      padding: 7px;
+      height: 63px;
 
       &_title {
         font-family: 微软雅黑;

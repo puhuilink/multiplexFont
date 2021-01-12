@@ -3,10 +3,101 @@
  */
 
 import { DynamicDataConfig } from './common/index'
-import { SOURCE_TYPE_REAL } from './types/sourceType'
+import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL } from './types/sourceType'
 import _ from 'lodash'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {
+  /**
+   * 生成表格行与列
+   * @param {Array} dataList 原始数据
+   */
+  generate (dataList = [], reverse = false) {
+    const columns = []
+    const dataSource = []
+    if (_.isEmpty(dataList)) {
+      return { columns, dataSource }
+    }
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const groupByName = _.groupBy(dataList, 'name')
+
+    // 切换行与列（默认列为指标，行为设备）
+    if (this.resourceConfig.legendType === 'metric') {
+      columns.push(
+        {
+          title: '指标',
+          dataIndex: 'name',
+          width: 300,
+          ellipsis: true
+        },
+        ...Object.keys(groupByLegend).map((legend) => ({
+          title: legend,
+          dataIndex: legend
+        }))
+      )
+
+      dataSource.push(
+        ...Object.entries(groupByName).map(([name, list]) => {
+          const result = { name }
+          columns.forEach(({ dataIndex }) => {
+            const target = list.find(({ legend }) => legend === dataIndex)
+            if (target) {
+              result[dataIndex] = target['data']
+            }
+          })
+          return result
+        })
+      )
+    } else {
+      columns.push(
+        { title: '设备', dataIndex: 'legend', width: 300, ellipsis: true },
+        ...Object.keys(_.groupBy(dataList, 'name')).map((name) => ({
+          title: name,
+          dataIndex: name
+        }))
+      )
+
+      dataSource.push(
+        ...Object.entries(groupByLegend).map(([legend, list]) => {
+          const result = { legend }
+          columns.forEach(({ dataIndex }) => {
+            const target = list.find(({ name }) => name === dataIndex)
+            if (target) {
+              result[dataIndex] = target['data']
+            }
+          })
+          return result
+        })
+      )
+      // columns.push(
+      //   {
+      //     title: '设备',
+      //     dataIndex: 'legend',
+      //     width: 300,
+      //     ellipsis: true
+      //   },
+      //   ...Object.keys(groupByName).map((name) => ({
+      //     title: name,
+      //     dataIndex: name
+      //   }))
+      // )
+
+      // dataSource.push(
+      //   ...Object.entries(reverse ? groupByName : groupByLegend).map(([legend, list]) => {
+      //     const result = { legend }
+      //     columns.forEach(({ dataIndex }) => {
+      //       const target = list.find(({ name }) => name === dataIndex)
+      //       if (target) {
+      //         result[dataIndex] = target['data']
+      //       }
+      //     })
+      //     return result
+      //   })
+      // )
+    }
+
+    return { columns, dataSource }
+  }
+
   /**
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}
@@ -18,40 +109,31 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
           await this.getRealDataOption()
           break
         }
+        case SOURCE_TYPE_OVERVIEW: {
+          await this.getOverviewDataOption()
+          break
+        }
       }
     }
     const { dataSource = [], columns = [] } = this
     return { dataSource, columns }
   }
 
+  async getOverviewDataOption () {
+    const dataList = await this.overviewConfig.fetch()
+
+    const { columns, dataSource } = this.generate(dataList)
+
+    Object.assign(this, {
+      columns,
+      dataSource
+    })
+  }
+
   async getRealDataOption () {
-    const columns = []
-    const dataSource = []
     const dataList = await this.resourceConfig.fetch()
-    const groupByLegend = _.groupBy(dataList, 'legend')
 
-    if (!_.isEmpty(dataList)) {
-      columns.push(
-        { title: '设备', dataIndex: 'legend', width: 300, ellipsis: true },
-        ...Object.keys(_.groupBy(dataList, 'name')).map((name) => ({
-          title: name,
-          dataIndex: name
-        }))
-      )
-    }
-
-    dataSource.push(
-      ...Object.entries(groupByLegend).map(([legend, list]) => {
-        const result = { legend }
-        columns.forEach(({ dataIndex }) => {
-          const target = list.find(({ name }) => name === dataIndex)
-          if (target) {
-            result[dataIndex] = target['data']
-          }
-        })
-        return result
-      })
-    )
+    const { columns, dataSource } = this.generate(dataList, true)
 
     Object.assign(this, {
       columns,

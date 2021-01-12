@@ -18,8 +18,26 @@
           <template v-slot:header="{ model }">
 
             <div class="comment-template__item">
+              <p class="comment-template__leading">连线形状:</p>
+              <div class="comment-template__inner topology-config__editable">
+                <a-radio-group
+                  buttonStyle="solid"
+                  v-model="model.shape"
+                  @change="change()">
+                  <a-radio-button value="line">直线</a-radio-button>
+                  <a-radio-button value="polyline">折线</a-radio-button>
+                  <a-radio-button value="cubic">弧线</a-radio-button>
+                </a-radio-group>
+              </div>
+            </div>
+            <!-- / 连线形状 -->
+
+            <div class="comment-template__item">
               <p class="comment-template__leading">默认动画:</p>
               <div class="comment-template__inner comment-template__end">
+                <a-tooltip title="切换动画方向" v-show="model.animate">
+                  <a-button type="link" icon="swap" @click="animationDirectionChange"></a-button>
+                </a-tooltip>
                 <a-switch
                   checkedChildren="启用"
                   unCheckedChildren="不启用"
@@ -121,7 +139,11 @@ export default {
     change () {
       const { render } = this.activeWidget
       // 根据配置更新视图
-      render.chart.updateItem(this.model.id, this.model)
+      render.chart.updateItem(
+        this.model.id,
+        // shape为polyline时controlPoints会自动生成与计算
+        _.omit(this.model, this.model.shape === 'polyline' ? ['controlPoints'] : [])
+      )
       // 更新边配置
       this.updateEdge({
         activeEdge: render.chart.find('edge', edge => edge.getModel().id === this.model.id)
@@ -135,6 +157,18 @@ export default {
     animateChange () {
       const { render: { chart } } = this.activeWidget
       chart.setItemState(this.model.id, 'active', this.model.animate)
+      this.change()
+    },
+    /**
+     * 切换动画方向
+     */
+    animationDirectionChange () {
+      const { source, target } = this.model
+      // FIXME: shape 为 polyline 时更改动画方向连线形状也跟着改变
+      Object.assign(this.model, {
+        source: target,
+        target: source
+      })
       this.change()
     }
   }

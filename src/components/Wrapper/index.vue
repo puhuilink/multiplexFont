@@ -35,9 +35,9 @@
               <span slot="title" :class="[isAllowAsync ? 'wrapper__menu--primary': '']"><a-icon type="sync" />同步配置</span>
               <a-menu-item key="all" @click="syncConfig(['commonConfig', 'proprietaryConfig', 'dataConfig'])">全部配置</a-menu-item>
               <a-menu-divider />
-              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">公共属性</a-menu-item>
-              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">专有属性</a-menu-item>
-              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据配置</a-menu-item>
+              <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">样式</a-menu-item>
+              <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">属性</a-menu-item>
+              <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="deleteWidget" class="wrapper__menu--danger" @click="deleteWidget"><a-icon type="delete" />删除</a-menu-item>
             <a-menu-divider />
@@ -427,19 +427,20 @@ export default {
        * 复制配置
        */
     copyConfig () {
-      this.config = this.activeWidget.config
+      this.config = _.cloneDeep(this.activeWidget.config)
     },
     /**
-       * 粘贴配置
+       * 同步配置
        * @param {Array} configTypes 要合并的配置名
        */
     syncConfig (configTypes) {
       const { render, ...rest } = this.activeWidget
       const activeWidget = { ..._.cloneDeep(rest), render }
+      const copyConfig = _.cloneDeep(this.config)
       const { config: { commonConfig: { width, height, top, left } } } = this.activeWidget
 
       // 不合并尺寸位置信息
-      Object.assign(this.config.commonConfig, {
+      Object.assign(copyConfig.commonConfig, {
         width,
         height,
         top,
@@ -447,7 +448,7 @@ export default {
       })
 
       // 按需合并配置
-      Object.assign(activeWidget.config, _.pick(this.config, configTypes))
+      Object.assign(activeWidget.config, _.pick(copyConfig, configTypes))
 
       // 提交与刷新
       this.activateWidget({ widget: activeWidget })
@@ -472,7 +473,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
   .wrapper {
     top: 0;
     left: 0;
@@ -489,7 +490,9 @@ export default {
       display: none;
       position: fixed;
       background: transparent;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
       height: 100%;
       top: 0;
       left: 0;
@@ -498,8 +501,10 @@ export default {
 
     &__move {
       position: relative;
-      height: 100%;
+      min-width: 10px;
       width: 100%;
+      min-height: 10px;
+      height: 100%;
       cursor: move;
       z-index: 1000;
       pointer-events: auto;

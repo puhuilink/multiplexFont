@@ -3,6 +3,8 @@
     <template v-slot:[SOURCE_TYPE_REAL]>
       <RealDataSource
         :key="SOURCE_TYPE_REAL"
+        multipleHost
+        multipleMetric
         useRefreshTime
         useTimeRange
       />

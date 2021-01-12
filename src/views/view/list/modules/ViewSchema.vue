@@ -16,7 +16,7 @@
       <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
-            label="标题"
+            label="视图标题"
             v-bind="formItemLayout"
           >
             <a-input
@@ -27,7 +27,7 @@
                   rules: [
                     {
                       required: true,
-                      message: '标题必填'
+                      message: '视图标题必填'
                     },
                     {
                       pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5_-]+$/,
@@ -43,6 +43,30 @@
             />
           </a-form-item>
         </a-col>
+
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="视图类型"
+            v-bind="formItemLayout"
+          >
+            <a-select
+              v-decorator="[
+                'view_type',
+                {
+                  rules: [
+                    {
+                      required: true,
+                      message: '视图类型必选'
+                    },
+                  ]
+                }
+              ]"
+            >
+              <a-select-option :value="VIEW_TYPE.template">{{ VIEW_TYPE_MAPPING.get(VIEW_TYPE.template) }}</a-select-option>
+              <a-select-option :value="VIEW_TYPE.instance">{{ VIEW_TYPE_MAPPING.get(VIEW_TYPE.instance) }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
       </a-row>
     </a-form>
 
@@ -53,12 +77,16 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { ViewListService } from '@/api'
 import _ from 'lodash'
+import { VIEW_TYPE } from '@/tables/view/enum'
+import { VIEW_TYPE_MAPPING } from '@/tables/view/types'
 
 export default {
-  name: 'ViewTitleSchema',
+  name: 'ViewSchema',
   mixins: [Schema],
   data: () => ({
-    record: null
+    record: null,
+    VIEW_TYPE,
+    VIEW_TYPE_MAPPING
   }),
   methods: {
     /**

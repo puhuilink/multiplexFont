@@ -16,7 +16,6 @@
         :widget="widget"
         :key="widget.widgetId"
         :ref="widget.widgetId"
-        :ciId="ciId"
         :timeRange="timeRange"
         @select="() => $emit('change', { el: 'widget', widget })"
         @drill="$emit('drill', $event)"
@@ -46,11 +45,6 @@ export default {
     view: {
       type: Object,
       default: () => {}
-    },
-    // 外部 Ci id
-    ciId: {
-      type: String,
-      default: ''
     },
     timeRange: {
       type: Array,

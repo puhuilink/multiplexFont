@@ -1,34 +1,24 @@
 /**
 * 拓扑圆形节点
 */
+
 import Node from './index'
 import { TopologyIcon } from '../common/index'
-// import { emitter } from '../charts/TopologyChart'
 import { AdaptorResourceConfig } from '../config/dataConfig/dynamicData/common/AdaptorResourceConfig'
-import { AdaptorAlarmConfig } from '../config/dataConfig/dynamicData/common/AdaptorAlarmConfig'
 import _ from 'lodash'
 import './circleNode.less'
 
+export const runTimeNodes = {}
 export default class CircleNode extends Node {
   constructor ({
     icon = {},
     resourceConfig = {},
-    alarmConfig = {},
     ...node
   }) {
     super(node)
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
-    this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
     this.icon = new TopologyIcon(icon || {})
-    this.animateTypeList = ['none', '1级告警', '2级告警', '3级告警', '4级告警']
-  }
-
-  async getAlarmOption () {
-    // const level = Math.floor(Math.random() * this.animateTypeList.length)
-    // emitter.emit('animateType:change', {
-    //   item: this,
-    //   animateType: this.animateTypeList[level]
-    // })
+    runTimeNodes[this.id] = this
   }
 
   async getRealDataOption () {
@@ -53,20 +43,23 @@ export default class CircleNode extends Node {
     }
   }
 
-  async refresh () {
-    await Promise.all([
-      this.getAlarmOption(),
-      this.getRealDataOption()
-    ])
-  }
-
   intervalRefresh () {
-    this.refresh()
-    this.timer = setInterval(this.refresh.bind(this), 1000 * 60)
+    const isAvailable = this.resourceConfig.isAvailable()
+    if (!isAvailable) return
+
+    this.getRealDataOption()
+    this.timer = setInterval(() => {
+      this.getRealDataOption()
+    }, 1000 * 60)
   }
 
   restartIntervalRefresh () {
     this.resetTimer()
     this.intervalRefresh()
+  }
+
+  destroy () {
+    super.destroy()
+    Reflect.deleteProperty(runTimeNodes, this.id)
   }
 }

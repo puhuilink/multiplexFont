@@ -33,14 +33,16 @@
               <a-collapse-panel header="图形" key="1">
 
                 <div class="comment-template__item">
-                  <p class="comment-template__leading">图形方向:</p>
+                  <p class="comment-template__leading">柱条方向:</p>
                   <div class="comment-template__inner">
                     <div class="comment-template__inner comment-template__end">
-                      <a-switch
-                        checkedChildren="横向"
-                        unCheckedChildren="纵向"
+                      <a-radio-group
+                        buttonStyle="solid"
                         v-model="config.proprietaryConfig.reverse"
-                        @change="changeReverse" />
+                        @change="change">
+                        <a-radio-button :value="true">横向</a-radio-button>
+                        <a-radio-button :value="false">纵向</a-radio-button>
+                      </a-radio-group>
                     </div>
                   </div>
                 </div>
@@ -189,7 +191,6 @@ import ChartProprietaryTemplate from '../chartProprietary'
 import ProprietaryMixins from '../proprietaryMixins'
 import BarDataSource from '../dataSource/BarDataSource'
 import Color from '../common/Color'
-import { reverseOption } from '@/model/charts/BarChart'
 
 export default {
   name: 'Bar',
@@ -213,13 +214,6 @@ export default {
           : 'auto'
       })
       this.change(config)
-    },
-    changeReverse () {
-      const { staticData } = this.config.dataConfig.staticDataConfig
-      const { proprietaryConfig } = this.config
-      Object.assign(staticData, reverseOption(staticData))
-      Object.assign(proprietaryConfig, reverseOption(proprietaryConfig))
-      this.change()
     }
   }
 }

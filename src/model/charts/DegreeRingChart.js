@@ -9,20 +9,7 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
-
-const formatFloat = function (value, n) {
-  var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
-  var s = f.toString()
-  var rs = s.indexOf('.')
-  if (rs < 0 && n > 0) {
-    s += '.'
-  }
-  for (var i = s.length - s.indexOf('.'); i <= n; i++) {
-    s += '0'
-  }
-  return s
-}
-
+import { formatFloat } from '@/utils/util'
 export default class DegreeRingChart extends Chart {
   constructor ({ widget }) {
     super({ widget })

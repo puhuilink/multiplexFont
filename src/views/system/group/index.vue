@@ -68,10 +68,10 @@
         <a-button @click="onAdd" v-action:M0106>新增</a-button>
         <a-button @click="onEdit" :disabled="!hasSelectedOne" v-action:M0101>编辑</a-button>
         <a-button @click="onBatchDelete" :disabled="!isSelectedValid" v-action:M0108>删除</a-button>
-        <a-button @click="onAllocateUser" :disabled="!hasSelectedOne" v-action:M0101>分配用户</a-button>
-        <a-button @click="onAllocateAdmin" :disabled="!hasSelectedOne" v-action:M0101>分配管理员</a-button>
+        <a-button @click="onAllocateUser" :disabled="!isSelectedValid" v-action:M0101>分配用户</a-button>
+        <a-button @click="onAllocateAdmin" :disabled="!isSelectedValid" v-action:M0101>分配管理员</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0101>更改状态</a-button>
-        <a-button @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAllocateAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
       </template>
 
     </CTable>
@@ -110,6 +110,7 @@ import GroupUserSchema from './modules/GroupUserSchema'
 import { Confirm, List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { GroupService } from '@/api'
+import { GROUP_FLAG } from '@/tables/group/enum'
 
 export default {
   name: 'Group',
@@ -139,7 +140,7 @@ export default {
         dataIndex: 'flag',
         width: 50,
         sorter: true,
-        customRender: flag => flag ? '有效' : '无效'
+        customRender: flag => flag === GROUP_FLAG.enabled ? '有效' : '无效'
       },
       {
         title: '备注',
@@ -153,7 +154,7 @@ export default {
     isSelectedValid () {
       const { selectedRows, hasSelected } = this
       if (hasSelected) {
-        return !selectedRows.find(({ flag }) => flag)
+        return !!selectedRows.find(({ flag }) => flag === GROUP_FLAG.enabled)
       } else {
         return false
       }
@@ -230,7 +231,7 @@ export default {
         title: '系统提示',
         content: '确认更改工作组状态？',
         onOk: () => GroupService
-          .toggleFlag(group_id, Number(!flag))
+          .toggleFlag(group_id, flag === GROUP_FLAG.enabled ? GROUP_FLAG.disabled : GROUP_FLAG.enabled)
           .then(() => {
             this.$notifyToggleFlagSuccess()
             this.query(false)

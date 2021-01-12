@@ -75,7 +75,7 @@ export default {
             case 'cl':
               anime.set(target, {
                 left: left - distance / scale,
-                width: height + distance / scale
+                width: width + distance / scale
               })
               break
             default:

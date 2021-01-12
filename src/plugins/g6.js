@@ -49,11 +49,16 @@ G6.G.Canvas.prototype.getPointByClient = function (clientX, clientY) {
   }
 }
 
+// https://g6.antv.vision/zh/docs/api/Event/#node-交互事件
 // 注册节点选中行为
 G6.registerBehavior('select-node', {
   getEvents () {
     return {
       'node:mousedown': 'onNodeMousedown',
+      'node:mouseenter': 'onNodeMouseEnter',
+      'node:mouseout': 'onNodeMouseOut',
+      'edge:mouseenter': 'onEdgeMouseEnter',
+      'edge:mouseout': 'onEdgeMouseOut',
       'canvas:click': 'onCanvasClick'
     }
   },
@@ -72,6 +77,17 @@ G6.registerBehavior('select-node', {
       graph.setItemState(item, 'active', true)
     }
   },
+  onNodeMouseEnter (e) {
+    const graph = this.graph
+    const item = e.item
+    // FIXME: 部分图形配置了afterDraw导致hover样式未生效
+    graph.setItemState(item, 'hover', true)
+  },
+  onNodeMouseOut (e) {
+    const graph = this.graph
+    const item = e.item
+    graph.setItemState(item, 'hover', false)
+  },
   onCanvasClick (e) {
     // shouldUpdate 返回 true 时取消所有节点的 'active' 状态，即将 'active' 状态置为 false
     if (this.shouldUpdate(e)) {
@@ -80,8 +96,19 @@ G6.registerBehavior('select-node', {
       nodes.forEach(node => {
         graph.setItemState(node, 'active', false)
         graph.setItemState(node, 'inactive', false)
+        graph.setItemState(node, 'hover', false)
       })
     }
+  },
+  onEdgeMouseEnter (e) {
+    const graph = this.graph
+    const item = e.item
+    graph.setItemState(item, 'hover', true)
+  },
+  onEdgeMouseOut (e) {
+    const graph = this.graph
+    const item = e.item
+    graph.setItemState(item, 'hover', false)
   }
 })
 
@@ -90,7 +117,7 @@ G6.registerBehavior('add-edge', {
   getEvents () {
     return {
       'node:click': 'onNodeClick',
-      mousemove: 'onMousemove',
+      'mousemove': 'onMousemove',
       'edge:click': 'onEdgeClick'
     }
   },
@@ -266,7 +293,7 @@ G6.registerNode(NODE_TYPE_RECT, {
   }
 }, 'rect')
 
-// 覆写椭圆形节点
+// 覆写图片节点
 G6.registerNode(NODE_TYPE_IMAGE, {
   afterDraw (cfg, group) {
     const item = group.get('item')
@@ -322,13 +349,10 @@ const dashArray = [
 
 const interval = 9 // lineDash 的总长度。
 
-// 覆写直线
-G6.registerEdge('line', {
-  // 复写setState方法
-  setState (name, value, item) {
-    const shape = item.get('keyShape')
-    // 监听 running 状态
-    if (name === 'active') {
+const lineSetState = function (name, value, item) {
+  const shape = item.get('keyShape')
+  switch (name) {
+    case 'active':
       // running 状态为 true 时
       if (value) {
         const length = shape.getTotalLength()
@@ -340,7 +364,7 @@ G6.registerEdge('line', {
         }
         let index = 0
         shape.animate({
-          // 动画重复
+        // 动画重复
           repeat: true,
           // 每一帧的操作，入参 ratio：这一帧的比例值（Number）。返回值：这一帧需要变化的参数集（Object）。
           onFrame (ratio) {
@@ -357,84 +381,27 @@ G6.registerEdge('line', {
         // 重置 lineDash
         shape.attr('lineDash', store.state.screen.activeEdge.getModel().style.lineDash)
       }
-    }
+      break
+
+    default:
+      const originalStyle = item.getOriginStyle()
+      const currentStyle = item.getStateStyle(name)
+      shape.attr(value ? currentStyle : originalStyle)
+      break
   }
+}
+
+// 覆写直线
+G6.registerEdge('line', {
+  setState: lineSetState
 }, 'line')
 
 // 覆写弧线
 G6.registerEdge('cubic', {
-  // 复写setState方法
-  setState (name, value, item) {
-    const shape = item.get('keyShape')
-    // 监听 running 状态
-    if (name === 'active') {
-      // running 状态为 true 时
-      if (value) {
-        const length = shape.getTotalLength()
-        let totalArray = []
-        for (let i = 0; i < length; i += interval) {
-          totalArray = totalArray.concat(
-            store.state.screen.activeEdge ? (store.state.screen.activeEdge.getModel().style.lineDash[0] < 4 ? [4] : store.state.screen.activeEdge.getModel().style.lineDash) : [4]
-          )
-        }
-        let index = 0
-        shape.animate({
-          // 动画重复
-          repeat: true,
-          // 每一帧的操作，入参 ratio：这一帧的比例值（Number）。返回值：这一帧需要变化的参数集（Object）。
-          onFrame (ratio) {
-            const cfg = {
-              lineDash: dashArray[index].concat(totalArray)
-            }
-            index = (index + 1) % interval
-            return cfg
-          }
-        }, 3000) // 一次动画的时长为 3000
-      } else {
-        // 结束动画
-        shape.stopAnimate()
-        // 重置 lineDash
-        shape.attr('lineDash', store.state.screen.activeEdge.getModel().style.lineDash)
-      }
-    }
-  }
+  setState: lineSetState
 }, 'cubic')
 
 // 覆写折线
 G6.registerEdge('polyline', {
-  // 复写setState方法
-  setState (name, value, item) {
-    const shape = item.get('keyShape')
-    // 监听 running 状态
-    if (name === 'active') {
-      // running 状态为 true 时
-      if (value) {
-        const length = shape.getTotalLength()
-        let totalArray = []
-        for (let i = 0; i < length; i += interval) {
-          totalArray = totalArray.concat(
-            store.state.screen.activeEdge ? (store.state.screen.activeEdge.getModel().style.lineDash[0] < 4 ? [4] : store.state.screen.activeEdge.getModel().style.lineDash) : [4]
-          )
-        }
-        let index = 0
-        shape.animate({
-          // 动画重复
-          repeat: true,
-          // 每一帧的操作，入参 ratio：这一帧的比例值（Number）。返回值：这一帧需要变化的参数集（Object）。
-          onFrame (ratio) {
-            const cfg = {
-              lineDash: dashArray[index].concat(totalArray)
-            }
-            index = (index + 1) % interval
-            return cfg
-          }
-        }, 3000) // 一次动画的时长为 3000
-      } else {
-        // 结束动画
-        shape.stopAnimate()
-        // 重置 lineDash
-        shape.attr('lineDash', store.state.screen.activeEdge.getModel().style.lineDash)
-      }
-    }
-  }
+  setState: lineSetState
 }, 'polyline')

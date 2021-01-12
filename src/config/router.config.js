@@ -1,4 +1,5 @@
 import { UserLayout, BasicLayout, RouteView } from '@/layouts'
+import { decrypt } from '@/utils/aes'
 
 export const asyncRouterMap = [
   {
@@ -400,12 +401,14 @@ export const constantRouterMap = [
 
   // 视图直接访问(大屏)
   {
-    path: '/preview',
+    path: '/preview/:id',
     name: 'Preview',
     hidden: true,
     component: () => import('@/views/preview/index'),
     meta: { title: '大屏' },
-    props: route => route.query
+    props: route => ({
+      id: decrypt(route.params.id)
+    })
   },
 
   {

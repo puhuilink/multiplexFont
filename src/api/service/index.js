@@ -5,6 +5,7 @@ import { AlarmTempService } from './AlarmTempService.js'
 import { AuditService } from './AuditService.js'
 import { AuthorizeObjectService } from './AuthorizeObjectService.js'
 import { CmdbHostEndpointMetricService } from './CmdbHostEndpointMetricService.js'
+import { CmdbHostModelBrandService } from './CmdbHostModelBrandService.js'
 import { CmdbHostViewService } from './CmdbHostViewService.js'
 import { CmdbService } from './CmdbService.js'
 import { DictValueService } from './DictValueService.js'
@@ -32,6 +33,7 @@ export {
   AuditService,
   AuthorizeObjectService,
   CmdbHostEndpointMetricService,
+  CmdbHostModelBrandService,
   CmdbHostViewService,
   CmdbService,
   DictValueService,

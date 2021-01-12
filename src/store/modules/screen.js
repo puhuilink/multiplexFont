@@ -65,6 +65,11 @@ export default {
     nodes (state, getters) {
       return getters.topologyWidgets.map(({ config }) => config.proprietaryConfig.nodes).flat()
     },
+    nodesMapping (state, getters) {
+      return new Map(
+        getters.nodes.map(node => [node.id, node])
+      )
+    },
     // 画板缩放比例
     scale (state) {
       return state.view.scale || 1
@@ -81,8 +86,6 @@ export default {
     },
     // 从视图部件库中移除该部件
     [ScreenMutations.REMOVE_WIDGET] (state, payload) {
-      // hack
-      // TODO: 迁移与升级到 REMOVE_WIDGETS
       this.commit('screen/' + ScreenMutations.REMOVE_WIDGETS, {
         widgetIds: [payload.widgetId]
       })
@@ -115,6 +118,12 @@ export default {
         state.activeWidget = widget
       }
       state.subActiveWidgets = []
+      if (state.activeWidget.config.type === 'View') {
+        // 隐藏选择器
+        anime.set(document.getElementById('wrapper'), {
+          display: 'none'
+        })
+      }
     },
     // 设置批量选中的部分
     [ScreenMutations.ACTIVATE_SUB_WIDGETS] (state, payload) {
@@ -137,12 +146,16 @@ export default {
     // 设置激活的拓扑节点
     [ScreenMutations.ACTIVATE_NODE] (state, payload) {
       state.activeNode = payload.activeNode
+      state.activeEdge = null
     },
     // 更新拓扑节点配置
     [ScreenMutations.UPDATE_TOPOLOGY_CONFIG] (state) {
       const { render } = state.activeWidget || { render: null }
       // 如果是拓扑图的实例对象
-      if (render && render.chart && Object.getPrototypeOf(render.chart).constructor.name === 'e') {
+      // hack for g6
+      // development 下 constructor.name 为 e;
+      // production  下 constructor.name 为 n;
+      if (render && render.chart && ['e', 'n'].includes(Object.getPrototypeOf(render.chart).constructor.name)) {
         const options = _.cloneDeep(render.chart.save())
         options.edges = options.edges.map(edge => _.omit(edge, ['sourceNode', 'targetNode']))
         Object.assign(state.activeWidget.config.proprietaryConfig, options)
@@ -151,6 +164,7 @@ export default {
     // 设置激活的拓扑边
     [ScreenMutations.ACTIVATE_EDGE] (state, payload) {
       state.activeEdge = payload.activeEdge
+      state.activeNode = null
     },
     // 重置拓扑状态
     [ScreenMutations.RESET_TOPOLOGY_STATE] (state) {

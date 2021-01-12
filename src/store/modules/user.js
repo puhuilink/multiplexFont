@@ -1,9 +1,53 @@
 import Vue from 'vue'
 import { UserService, AuthorizeObjectService } from '@/api'
 import { decrypt } from '@/utils/aes'
-import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
+import { ACCESS_TOKEN, USER, ROLES } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
 import router from '@/router'
+
+function generatePermission (user) {
+  return new Promise(async (resolve, reject) => {
+    const originalPermission = []
+    const organizeList = (user.organizeList || []).filter(v => !!v)
+
+    // 获取用户所属工作组的权限 、并合并
+    // const permissionList = await UserService.getAllPermission()
+    const results = await Promise.all([
+      ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
+      AuthorizeObjectService.getUserPermission(user.userId)
+    ])
+    const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
+    const permissionList = results.flatMap(item => item.data)
+    if (!status) {
+      reject(new Error('用户权限数据获取失败，请稍后尝试！'))
+    }
+    // console.log(permissionList)
+    permissionList.forEach(permission => {
+      if (!originalPermission.some(item => item.code === permission.code)) {
+        originalPermission.push(permission)
+      }
+    })
+    // 菜单权限列表
+    const menuOriginalPermission = []
+    // const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
+    // 按钮权限列表
+    const buttonOriginalPermission = []
+    // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
+
+    originalPermission.forEach(item => {
+      if (/^F/.test(item.code)) {
+        menuOriginalPermission.push(item)
+      } else if (/^M/.test(item.code)) {
+        buttonOriginalPermission.push(item)
+      }
+    })
+
+    const buttonTree = getButtonTree(null, buttonOriginalPermission)
+    const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+    const userPermission = Object.assign({}, user, permissionTree)
+    resolve(userPermission)
+  })
+}
 
 const user = {
   state: {
@@ -47,52 +91,21 @@ const user = {
       return new Promise(async (resolve, reject) => {
         try {
           const user = Vue.ls.get(USER)
-          const originalPermission = []
-          const organizeList = (user.organizeList || []).filter(v => !!v)
-
-          // 获取用户所属工作组的权限 、并合并
-          // const permissionList = await UserService.getAllPermission()
-          const results = await Promise.all([
-            ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
-            AuthorizeObjectService.getUserPermission(user.userId)
-          ])
-          const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
-          const permissionList = results.flatMap(item => item.data)
-          if (!status) {
-            reject(new Error('用户权限数据获取失败，请稍后尝试！'))
+          const roles = Vue.ls.get(ROLES) || {}
+          let userPermission
+          // 同一用户可直接使用上次配置
+          if (user.userId === roles.userId && user.token === roles.token) {
+            userPermission = roles
+          } else {
+            userPermission = await generatePermission(user)
           }
-          // console.log(permissionList)
-          permissionList.forEach(permission => {
-            if (!originalPermission.some(item => item.code === permission.code)) {
-              originalPermission.push(permission)
-            }
-          })
-          // 菜单权限列表
-          const menuOriginalPermission = []
-          // const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
-          // 按钮权限列表
-          const buttonOriginalPermission = []
-          // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
-
-          originalPermission.forEach(item => {
-            if (/^F/.test(item.code)) {
-              menuOriginalPermission.push(item)
-            } else if (/^M/.test(item.code)) {
-              buttonOriginalPermission.push(item)
-            }
-          })
-
-          const buttonTree = getButtonTree(null, buttonOriginalPermission)
-          const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
-          const userPermission = Object.assign({}, user, permissionTree)
-
-          // FIXME: 用户应有一些基本权限，比如视图展示（桌面）
           if (userPermission.permissions && userPermission.permissions.length > 0) {
             commit('SET_ROLES', userPermission)
             commit('SET_INFO', {
               ...userPermission,
               ...user
             })
+            Vue.ls.set(ROLES, userPermission)
           } else {
             reject(new Error('用户或其工作组未分配可访问的权限！'))
           }
@@ -133,7 +146,11 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           Vue.ls.remove(ACCESS_TOKEN)
-          router.push('/user/login')
+          Vue.ls.remove(USER)
+          router.push('/user/login').then(() => {
+            // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+            location.reload()
+          })
         })
     }
 

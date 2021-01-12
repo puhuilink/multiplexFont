@@ -40,7 +40,7 @@
       <!-- / 高 -->
 
       <div class="comment-template__item">
-        <p class="comment-template__leading">位置:</p>
+        <p class="comment-template__leading">图标:</p>
         <div class="comment-template__inner comment-template__end">
           <a-select
             v-model="icon.position"
@@ -137,6 +137,8 @@ import WaterChillers from '@/assets/network-icons/WaterChillers.png'
 import WaterLeakage from '@/assets/network-icons/WaterLeakage.png'
 import WirelessAP from '@/assets/network-icons/WirelessAP.png'
 import cloud from '@/assets/network-icons/cloud.png'
+import DeletedNodeIcon from '@/assets/network-icons/DeletedNodeIcon.png'
+import IDS from '@/assets/network-icons/IDS.png'
 
 export default {
   name: 'IconPicker',
@@ -204,7 +206,9 @@ export default {
       { name: 'WaterChillers', img: WaterChillers },
       { name: 'WaterLeakage', img: WaterLeakage },
       { name: 'WirelessAP', img: WirelessAP },
-      { name: 'cloud', img: cloud }
+      { name: 'cloud', img: cloud },
+      { name: 'DeletedNodeIcon', img: DeletedNodeIcon },
+      { name: 'IDS', img: IDS }
     ]
   }),
   methods: {

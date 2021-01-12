@@ -64,7 +64,7 @@ export class TimeRangeConfig {
       }
       case TIME_RANGE_TYPE_RECENT: {
         const { recentType, recentValue } = this
-        const startTime = Object.assign(DEFAULT_TIME_RANGE_START, { [recentType]: recentValue })
+        const startTime = Object.assign({}, DEFAULT_TIME_RANGE_START, { [recentType]: recentValue })
         return {
           startTime: moment().add(startTime).format(TIME_RANGE_FORMAT),
           endTime: moment().format(TIME_RANGE_FORMAT)

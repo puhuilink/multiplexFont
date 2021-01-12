@@ -16,7 +16,6 @@ export default class Hasura {
     this._with = _with
     this._fields = _fields
     this._schemaArguments = _schemaArguments
-    // TODO: alias 放置于构造函数
     this._alias = ''
   }
 
@@ -31,7 +30,6 @@ export default class Hasura {
    */
   select (fields = []) {
     const _fields = fields.length ? fields : this._fields
-    // TODO: 去重并在控制台发出 warning
     this._fields = _fields.filter(v => !!v).join(',').replace(/,/g, ' ')
     return this
   }

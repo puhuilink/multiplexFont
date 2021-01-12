@@ -15,7 +15,6 @@ class PatrolService extends BaseService {
       XjChangeShiftDao.find(argus)
     )
   }
-
   // 交接班详情
   static async changeShiftDetail (id) {
     const { data: { changeShiftList } } = await this.changeShiftFind({
@@ -242,7 +241,6 @@ class PatrolService extends BaseService {
   }
 
   // 计划详情
-  // FIXME: 数据库 id 长度溢出无法查询出数据？
   static async planDetail (id) {
     const { data: { planList } } = await this.planFind({
       where: { id },
@@ -259,6 +257,28 @@ class PatrolService extends BaseService {
     console.log(planList)
 
     return _.first(planList)
+  }
+
+  // 计划管理 启用
+  static async resumeJob (planId) {
+    const formData = new FormData()
+    formData.append('planId', planId)
+    return axios.post(`plan/resumeJob`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+  }
+
+  // 计划管理 停用
+  static async pauseJob (planId) {
+    const formData = new FormData()
+    formData.append('planId', planId)
+    return axios.post(`plan/pauseJob`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 
   // 告警审批

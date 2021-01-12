@@ -423,7 +423,6 @@ export default {
     .transition-flip-leave {
     position: absolute;
       z-index: 0;
-      // TODO: theme less variables
       background-color: #e6f7ff;
     }
 
@@ -434,7 +433,6 @@ export default {
 
     .transition-flip-enter-to {
       z-index: 1;
-      // TODO: theme less variables
       background-color: #e6f7ff;
     }
   }

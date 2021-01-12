@@ -1,5 +1,9 @@
 import moment from 'moment'
 
+export const formatTime = function (time) {
+  return time ? moment(time).format() : ''
+}
+
 const isValueAvailable = function (val) {
   if (Array.isArray(val)) return !!val.length
   if (typeof val === 'string') return !!val.trim()

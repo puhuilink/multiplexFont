@@ -43,7 +43,7 @@
       }"
     />
 
-    <a-form-item label="告警状态" v-bind="formItemLayout">
+    <a-form-item label="告警状态" v-bind="formItemLayout" required>
       <a-select
         v-model="alarmConfig.type"
         @change="change()"
@@ -85,22 +85,23 @@
 </template>
 
 <script>
-import { OriginSelect } from '@/components/Alarm'
-import DataSourceMixins from '../dataSourceMixins/index'
-import DeviceTypeFactory from '~~~/ResourceConfig/Device/DeviceType'
-import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
-import { ALARM_TYPE_ALL, ALARM_TYPE_UNCLOSE } from '@/model/config/dataConfig/dynamicData/types/alarmType'
 import TimeRange from './TimeRange'
+import DataSourceMixins from '../dataSourceMixins/index'
+
+import { OriginSelect } from '@/components/Alarm'
+import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
 import { AlarmLevelSelect } from '~~~/Alarm'
+import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { ALARM_TYPE_ALL, ALARM_TYPE_UNCLOSE } from '@/model/config/dataConfig/dynamicData/types/alarmType'
 
 export default {
   name: 'AlarmDataSource',
   mixins: [DataSourceMixins],
   components: {
     OriginSelect,
-    DeviceTypeSelect: DeviceTypeFactory.Select,
+    DeviceTypeSelect,
     TimeRange,
     CalculateTypeSelect,
     GroupSelect,

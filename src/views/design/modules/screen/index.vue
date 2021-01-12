@@ -38,14 +38,6 @@
                   </a-tooltip>
                 </a-popconfirm>
 
-                <!-- TODO: 批量复制 -->
-                <!-- <a-tooltip>
-              <template slot="title">
-                复制
-              </template>
-              <a-button type="link" icon="copy" :disabled="!isWidgetEditable" @click="copyWidget" />
-            </a-tooltip> -->
-
                 <transition-group name="transition-fade" mode="out-in">
                   <a-tooltip
                     v-for="[direction, label] in [
@@ -58,16 +50,34 @@
                       ['column-height', '等高']
                     ]"
                     :key="direction"
-                    v-show="(isWidgetEditable && subActiveWidgets.length)"
+                    :title="label"
+                    v-show="multipleWidgetsEditable"
                   >
-                    <template slot="title">
-                      {{ label }}
-                    </template>
                     <a-button
                       type="link"
                       :icon="direction"
                       @click="alignMultipleWidgets(direction)" />
                   </a-tooltip>
+
+                  <!-- TODO -->
+                  <!-- <a-tooltip key="copy" title="复制部件" v-show="isWidgetEditable && !multipleWidgetsEditable" >
+                    <a-button type="link" icon="copy" @click="copyWidget" />
+                  </a-tooltip>
+                  <a-tooltip key="snippets" title="复制配置" v-show="isWidgetEditable && !multipleWidgetsEditable" >
+                    <a-button type="link" icon="snippets" @click="copyConfig" />
+                  </a-tooltip>
+                  <a-menu key="sync" mode="horizontal" v-show="isWidgetEditable && !multipleWidgetsEditable" :style="{ display: 'inline-block' }">
+                    <a-tooltip title="同步配置" slot="title">
+                      <a-button type="link" icon="sync" />
+                    </a-tooltip>
+                    <a-sub-menu>
+                      <a-menu-item key="all" @click="syncConfig(['commonConfig', 'proprietaryConfig', 'dataConfig'])">全部配置</a-menu-item>
+                      <a-menu-divider />
+                      <a-menu-item key="commonConfig" @click="syncConfig(['commonConfig'])">样式</a-menu-item>
+                      <a-menu-item key="proprietaryConfig" @click="syncConfig(['proprietaryConfig'])">属性</a-menu-item>
+                      <a-menu-item key="dataConfig" @click="syncConfig(['dataConfig'])">数据</a-menu-item>
+                    </a-sub-menu>
+                  </a-menu> -->
                 </transition-group>
 
               </a-button-group>
@@ -310,15 +320,15 @@ export default {
           })
         }
 
-        // 初始化场景进行样式设置
-        if (event.type === 'init' && !this.view.config) {
+        // 初始化配置
+        if (event.type === 'init' || !this.view.config) {
           this.setInitStyle()
+          this.activateWidget({ widget: this.view })
         } else {
-          // 其他场景中，设置画板样式
+          // 更新画板样式
           this.setStyle(event)
+          this.setView({ view: this.view })
         }
-
-        this.activateWidget({ widget: this.view })
       })
 
     // 选择激活的部件
@@ -430,6 +440,9 @@ export default {
     ...mapGetters('screen', ['widgets']),
     isWidgetEditable () {
       return this.activeWidget && this.activeWidget.config.type !== 'View'
+    },
+    multipleWidgetsEditable () {
+      return !!(this.isWidgetEditable && this.subActiveWidgets.length)
     }
   },
   methods: {
@@ -441,9 +454,9 @@ export default {
       removeWidgets: ScreenMutations.REMOVE_WIDGETS,
       setImportingState: ScreenMutations.SET_IMPORTING_STATE
     }),
-    resizeWidget: _.debounce(function (config) {
+    resizeWidget: _.throttle(function (config) {
       this.activeWidget.render.resize(config)
-    }, 100),
+    }, 10),
     /**
      * 左右panel展开与否
      * @param type 左右panel
@@ -683,6 +696,19 @@ export default {
      */
     copyWidget () {
       this.$refs.wrapper.copyWidget()
+    },
+    /**
+     * 复制配置
+     */
+    copyConfig () {
+      this.$refs.wrapper.copyConfig()
+    },
+    /**
+     * 同步配置
+     * @param {Array} configTypes 要合并的配置名
+     */
+    syncConfig (configTypes) {
+      this.$refs.wrapper.syncConfig(configTypes)
     },
     /**
      * 删除部件

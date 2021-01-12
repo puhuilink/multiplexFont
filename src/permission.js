@@ -16,7 +16,7 @@ router.beforeEach((to, from, next) => {
   NProgress.start()
 
   // 设置页面标题为当前页面
-  _.get(to, 'meta.title') && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
+  _.get(to, ['meta', 'title']) && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
 
   // 白名单直接进入
   if (allowRouteNameList.includes(to.name)) {
@@ -54,9 +54,6 @@ router.beforeEach((to, from, next) => {
       })
       store
         .dispatch('Logout')
-        .finally(() => {
-          next({ name: 'login', query: { redirect: to.fullPath } })
-        })
       throw err
     })
 })

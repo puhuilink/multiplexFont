@@ -8,14 +8,16 @@
 }
 
 .move {
-  transition: transform 1s;
+  transition-duration: 1s;
+  transition-property: transform opacity;
 }
 
 .flip-item {
   padding: 7px;
   background-color: #fff;
   z-index: 1;
-  transition: all 1s;
+  transition-duration: 1s;
+  transition-property: transform opacity;
 }
 
 .flip-list-enter {
@@ -25,7 +27,7 @@
 .flip-list-enter,
 .flip-list-leave-to {
   opacity: 0;
-  transform: translateY(100%)
+  transform: translateY(100%);
 }
 
 .flip-list-leave-active {

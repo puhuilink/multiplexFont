@@ -19,7 +19,12 @@
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
         <div class="Preview__renderer" ref="wrap">
 
-          <Renderer v-if="view && !isViewConfigLoading" :view="view" :timeRange="timeRange" ref="renderer" />
+          <Renderer
+            v-if="view && !isViewConfigLoading"
+            :view="view"
+            :timeRange="timeRange"
+            ref="renderer"
+            @drill="onDrill" />
 
         </div>
       </a-spin>
@@ -74,8 +79,12 @@
           <a-icon v-else type="camera" @click="makeThumbnail" />
         </a-tooltip>
 
+        <a-tooltip placement="top" title="生成大屏地址" v-if="isDesignMode">
+          <a-icon type="link" @click="makePreviewLink" />
+        </a-tooltip>
+
         <a-tooltip placement="top" title="关闭" v-if="!disableClose">
-          <a-icon type="close-circle" @click="$emit('update:visible', false)" />
+          <a-icon type="close-circle" @click="goBack" />
         </a-tooltip>
 
       </div>
@@ -92,10 +101,14 @@ import Renderer from '@/components/Renderer'
 import PreviewMixin from '@/components/PreviewMixin'
 import Timeout from 'await-timeout'
 import html2canvas from 'html2canvas'
+import { encrypt } from '@/utils/aes'
+import { copyText } from '@/utils/domUtil'
+import DrillMixin from './Drill'
+import { enterFullscreen, exitFullscreen } from '@/utils/util'
 
 export default {
   name: 'ViewPreview',
-  mixins: [PreviewMixin],
+  mixins: [PreviewMixin, DrillMixin],
   components: {
     Renderer
   },
@@ -139,15 +152,15 @@ export default {
   }),
   computed: {
     title () {
-      if (this.isDesignMode) {
-        return _.get(this.$route.query, 'title')
-      }
-
       if (_.isEmpty(this.viewList)) {
-        return _.get(this, ['currentView', 'view_title'])
+        return (
+          _.get(this, ['currentView', 'view_title']) ||
+          _.get(this, ['view', 'view_title']) ||
+          _.get(this.$route, ['query', 'title'])
+        )
       }
 
-      return _.get(this, ['view', 'view_title'], this.viewList[this.index].view_title)
+      return this.viewList[this.index].view_title
     }
   },
   watch: {
@@ -157,7 +170,10 @@ export default {
   },
   methods: {
     show () {
-      this.autoFullScreen && !this.isFullScreen && this.toggleFullscreen()
+      if (this.autoFullScreen && !this.isFullScreen) {
+        this.isFullScreen = !this.isFullScreen
+        enterFullscreen()
+      }
       this.view = null
       if (this.isDesignMode) {
         this.getViewConfigFromStore()
@@ -168,8 +184,10 @@ export default {
       }
     },
     close () {
-      this.autoFullScreen && this.isFullScreen && this.toggleFullscreen()
-      clearInterval(this.timer)
+      if (this.autoFullScreen && this.isFullScreen) {
+        this.isFullScreen = !this.isFullScreen
+        exitFullscreen()
+      }
     },
     /**
      * 获取视图配置
@@ -184,14 +202,14 @@ export default {
         this.view = null
         throw e
       } finally {
-        await Timeout.set(300)
+        await Timeout.set(200)
         this.isViewConfigLoading = false
       }
     },
     async getViewConfigFromStore () {
       this.view = null
       this.isViewConfigLoading = true
-      await Timeout.set(300)
+      await Timeout.set(200)
       this.view = this.$store.state.screen.view.getEctypalOption()
       this.isViewConfigLoading = false
     },
@@ -243,6 +261,12 @@ export default {
             this.isThumbnailUploadLoading = false
           })
       })
+    },
+    makePreviewLink () {
+      const { id } = this.$route.query
+      const link = `${location.origin}/preview/${encrypt(id)}`
+      copyText(link)
+      this.$message.success('大屏地址已复制到剪切板！')
     }
   },
   beforeDestroy () {
@@ -330,4 +354,8 @@ export default {
 
 <style scoped lang="less">
 @import url('./transition.less');
+
+.ant-message {
+  z-index: 9999 !important;
+}
 </style>

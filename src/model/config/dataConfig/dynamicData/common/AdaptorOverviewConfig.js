@@ -5,9 +5,14 @@
 import { ViewDataService } from '@/api'
 import { AdaptorConfig } from './AdaptorConfig'
 import moment from 'moment'
+import _ from 'lodash'
 
 export class AdaptorOverviewConfig extends AdaptorConfig {
   constructor ({
+    // 设备
+    hostAlias = '',
+    // 监控实体
+    endpointAlias = '',
     // 检查项
     alias = [],
     // 数据域
@@ -17,9 +22,32 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
     ...props
   }) {
     super(props)
+    this.hostAlias = hostAlias
+    this.endpointAlias = endpointAlias
     this.alias = alias
     this.origin = origin
     this.isGroup = isGroup
+  }
+
+  isAvailable () {
+    return Boolean(
+      this.alias && this.alias.length
+    )
+  }
+
+  getOption () {
+    const { timeRangeConfig, ...rest } = this;
+
+    ['hostAlias', 'endpointAlias', 'origin', 'isGroup'].forEach((key) => {
+      if (!rest[key] || _.isEmpty(rest[key])) {
+        Reflect.deleteProperty(rest, key)
+      }
+    })
+
+    return {
+      ...rest,
+      timeRange: this.timeRangeConfig.getOption()
+    }
   }
 
   fetch () {

@@ -7,27 +7,26 @@
 */
 
 import anime from 'animejs'
-import ListElementComponent from '~~~/Elements/ListElement'
-import Vue from 'vue'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import _ from 'lodash'
-
-const ELEMENT_MAPPING = new Map([
-  ['List', ListElementComponent]
-])
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL
+} from '../config/dataConfig/dynamicData/types/sourceType'
 
 export default class Element {
-  constructor ({ widget, element }) {
+  constructor ({ widget, element, onlyShow }) {
     this.container = document.getElementById(widget.widgetId)
-    this.element = element
     this.setContainer(widget)
     this.setStyle(widget.config)
+    this.config = widget.config
     this.widget = widget
+    this.onlyShow = onlyShow
     // 初始化配置
     this.mergeOption(widget.config)
-    const componentOption = ELEMENT_MAPPING.get(this.widget.config.type)
-    this.$component = new Vue(componentOption).$mount(this.element)
+    this.$component = element
   }
 
   /**
@@ -63,7 +62,7 @@ export default class Element {
 
   async mergeOption (config, loadingDynamicData = false) {
     this.$component.elementProps = await this.mappingOption(config, loadingDynamicData)
-    if (this.widget) {
+    if (this.widget && !this.onlyShow) {
       const { render, ...rest } = this.widget
       const widget = Object.assign({}, _.cloneDeep(rest), { render })
       Object.assign(widget.config, {
@@ -83,6 +82,48 @@ export default class Element {
   }
 
   /**
+   * 定时刷新动态数据
+   */
+  intervalRefresh () {
+    this.refresh()
+    const { dataConfig = {} } = this.config
+    const {
+      sourceType = '',
+      dbDataConfig: {
+        alarmConfig = {},
+        overviewConfig = {},
+        resourceConfig = {}
+      } = {}
+    } = dataConfig
+
+    let refreshTime
+    let isAvailable
+    switch (sourceType) {
+      case SOURCE_TYPE_ALARM:
+        refreshTime = alarmConfig.refreshTime
+        isAvailable = alarmConfig.isAvailable()
+        break
+      case SOURCE_TYPE_OVERVIEW:
+        refreshTime = overviewConfig.refreshTime
+        isAvailable = overviewConfig.isAvailable()
+        break
+      case SOURCE_TYPE_REAL:
+        refreshTime = resourceConfig.refreshTime
+        isAvailable = resourceConfig.isAvailable()
+        break
+      default:
+        break
+    }
+
+    if (refreshTime && isAvailable) {
+      this.timer = setInterval(
+        this.refresh.bind(this),
+        Number(refreshTime) * 1000 * 60
+      )
+    }
+  }
+
+  /**
    * 完整配置设置
    * @param config
    */
@@ -97,5 +138,7 @@ export default class Element {
     const { $component } = this
     $component && $component.$destroy()
     this.$component = null
+    clearInterval(this.timer)
+    this.timer = null
   }
 }

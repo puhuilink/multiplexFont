@@ -58,11 +58,8 @@ class CmdbService extends BaseService {
       })
     )
 
-    // host_type 汉化
-    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
-      ...rest,
-      host_type: _.get(modelHost, 'host') || host_type
-    }))
+    // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
+    cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
 
     // 树形结构构建
     const root = {
@@ -82,10 +79,12 @@ class CmdbService extends BaseService {
       .forEach(([location, hostList]) => {
         const children = Object
           .entries(_.groupBy(hostList, 'host_type'))
-          .map(([hostType, list]) => ({
-            id: hostType,
-            alias: hostType,
-            children: list,
+          .map(([host_type, list]) => ({
+            // 统一个 model_host 会在不同 location 中多次用到
+            // 此处 id 仅用作树形结构唯一标识，并无实际作用
+            id: `${location}-${host_type}`,
+            alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
+            children: list.map(e => ({ ...e, selectable: true })),
             type: 'hostType',
             selectable: false
           }))
@@ -202,14 +201,25 @@ class CmdbService extends BaseService {
           'deviceModel: device_model_value_code',
           'deviceModelName: device_model_name',
           'deviceBrand: brand_value_code',
-          'hostId: host_id'
+          'hostType: host_type',
+          'hostId: host_id',
+          'hostAlias: host_alias'
         ],
         limit: 1,
         alias: 'dataSource'
       })
     )
 
-    return _.first(dataSource)
+    const [{ hostType, hostAlias, ...host }] = dataSource
+    // hack
+    if (['h3cSwitch', 'h3cDevice', 'huaweiSwitch'].includes(hostType)) {
+      host['deviceModelName'] = 'Switch'
+    } else if (['ciscoRouter', 'h3cRouter'].includes(hostType)) {
+      host['deviceModelName'] = 'Router'
+    } else if (hostAlias.includes('防火墙')) {
+      host['deviceModelName'] = 'Firewall'
+    }
+    return host
   }
 }
 

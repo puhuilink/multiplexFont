@@ -6,7 +6,7 @@
 
 ## 代码规范
 * Git: [Git提交规范](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-* Git: [Git emoj 规范](https://gitmoji.carloscuesta.me/)
+* Git: [Git emoji 规范](https://gitmoji.carloscuesta.me/)
 
 ## 组件选型
 * 前端框架： vue - 2.6.x
@@ -21,6 +21,8 @@
 * 图表库：echarts、G6
 * UI框架：[vue ant design](https://www.antdv.com/docs/vue/introduce-cn/)
 
+## 注意
+* lodash 于 [vue.config.js](./vue.config.js) 中配置了 tree-shaking，若部分函数异常请参阅 [lodash-webpack-plugin](https://github.com/lodash/lodash-webpack-plugin#readme) 做相应调整
 ## 视图设计器说明
 
 #### 依赖
@@ -45,10 +47,9 @@
 - [x] 图片
 - [x] 饼图
 - [x] 极坐标图
-- [ ] 列表
-- [ ] 告警列表
-- [ ] 视图间跳转
-- [ ] 地图
+- [x] 列表
+- [x] 告警列表
+- [] 视图间跳转
 
 #### 项目结构
 ```
@@ -298,7 +299,7 @@
 #### （动态）数据接口
 
 1. 配置监控对象（监控类型 / 品牌类型 / 品牌设备 / 设备名称 / 监控实体 / 检查项）
-2. 配置可选内容（查询时间、刷新时间、外部 CI 可用）
+2. 配置可选内容（查询时间、刷新时间）
 3. 调用后端接口
 4. 取到数据后根据每个图自身情况实现绘制逻辑
 5. 刷新 echart
