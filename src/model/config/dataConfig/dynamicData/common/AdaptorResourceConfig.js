@@ -6,6 +6,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api'
+import { compare } from '@/utils/moment'
 export class AdaptorResourceConfig extends AdaptorConfig {
   constructor ({
     deviceType = '',
@@ -105,9 +106,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         return result
       })
       .sort((a, b) => {
-        if (moment(a.time).isBefore(b.time)) return -1
-        if (moment(a.time).isAfter(b.time)) return 1
-        return 0
+        return compare(a.time, b.time)
       })
   }
 }
