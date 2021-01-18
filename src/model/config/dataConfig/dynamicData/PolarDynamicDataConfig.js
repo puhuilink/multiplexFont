@@ -74,14 +74,27 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
             .replace('BJ2', '北京数据中心')
             .replace('XM1', '厦门数据中心')
             .replace('XM2', '厦门数据中心')
-          legendData.push(`${origin}-${value.legend}`)
-          level1Collection.push(value.level1)
-          level2Collection.push(value.level2)
-          level3Collection.push(value.level3)
-          level4Collection.push(value.level4)
-          level5Collection.push(value.level5)
+
+          // 如BJ1-网络设备与BJ2网络设备，统一归类为北京数据中心-网络设备
+          const v = `${origin}-${value.legend}`
+          const index = legendData.indexOf(v)
+          if (index === -1) {
+            legendData.push(v)
+            level1Collection.push(value.level1)
+            level2Collection.push(value.level2)
+            level3Collection.push(value.level3)
+            level4Collection.push(value.level4)
+            level5Collection.push(value.level5)
+          } else {
+            level1Collection[index] += value.level1
+            level2Collection[index] += value.level2
+            level3Collection[index] += value.level3
+            level4Collection[index] += value.level4
+            level5Collection[index] += value.level5
+          }
         })
       })
+
     const option = {
       angleAxis: {
         type: 'category',
@@ -100,6 +113,7 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
         { data: level5Collection, stack: '最新通知', name: '最新通知' }
       ]
     }
+    console.log(_.cloneDeep(option))
     Object.assign(this, option)
   }
 
