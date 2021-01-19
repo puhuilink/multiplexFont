@@ -8,15 +8,18 @@
 
 import ListElement from './ListElement.vue'
 import LatestAlarmElement from './LatestAlarmElement'
+import VideosElement from './VideosElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
-  ['List', 'ListElement']
+  ['List', 'ListElement'],
+  ['Videos', 'VideosElement']
 ])
 
 const ELEMENTS = {
   LatestAlarmElement,
-  ListElement
+  ListElement,
+  VideosElement
 }
 
 export {

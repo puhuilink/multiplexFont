@@ -62,6 +62,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560, backgroundColor: 'rgba(230, 230, 230, 1)'
+  },
+  {
+    category: 'CHART', type: 'Videos', name: '视频', icon: 'play-circle', width: 300, height: 300
   }
 ]
 

@@ -22,7 +22,7 @@ import TextHealthConfig from './charts/TextHealthConfig'
 import ListConfig from './elements/ListConfig'
 import PieConfig from './charts/PieConfig'
 import PolarConfig from './charts/PolarConfig'
-
+import VideosConfig from './elements/VideosConfig.vue'
 // 图表模板配置
 const charts = {
   Bar,
@@ -44,7 +44,8 @@ const charts = {
 // 元素模板配置
 const elements = {
   AlarmListConfig,
-  ListConfig
+  ListConfig,
+  VideosConfig
 }
 
 // 模板配置组件

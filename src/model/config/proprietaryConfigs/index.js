@@ -1178,12 +1178,16 @@ class ImageStyle {
  */
 class ImageGraphic extends Graphic {
   constructor ({
+    link = '',
+    target = 'blank',
     style = {},
     ...graphicOption
   }) {
     super(graphicOption)
     this.type = 'image'
     this.style = new ImageStyle(style)
+    this.link = link
+    this.target = target
   }
 
   /**

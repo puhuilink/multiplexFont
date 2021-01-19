@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 <template>
-  <div class="image-config">
+  <div class="videos-config">
     <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%' }">
       <a-tab-pane tab="样式" key="1">
         <!-- S 公共配置模板 -->
@@ -15,43 +15,29 @@
       </a-tab-pane>
 
       <a-tab-pane tab="属性" key="2">
-        <div class="image-config__template">
+        <div class="videos-config__template">
           <a-collapse :defaultActiveKey="[1, 2, 3]" :bordered="false">
+            <!-- 链接 -->
             <!-- 超链接 -->
-            <a-collapse-panel header="超链接" key="4">
+            <a-collapse-panel header="视频链接" key="1">
               <div class="comment-template__item">
                 <p class="comment-template__leading">链接:</p>
                 <div class="comment-template__inner">
-                  <a-input type="text" v-model.trim="config.proprietaryConfig.graphic.link" @change="change" />
+                  <a-input type="text" v-model.trim="config.proprietaryConfig.graphic.link" @change="change()" />
                 </div>
               </div>
 
-              <div class="comment-template__item">
+              <!-- <div class="comment-template__item">
                 <p class="comment-template__leading">打开方式:</p>
                 <div class="comment-template__inner">
-                  <a-select v-model="config.proprietaryConfig.graphic.target" @change="change">
+                  <a-select v-model="config.proprietaryConfig.graphic.target" @change="change()">
                     <a-select-option value="blank">新窗口打开</a-select-option>
                     <a-select-option value="self">当前窗口打开</a-select-option>
                   </a-select>
                 </div>
-              </div>
+              </div> -->
               <!-- / 打开方式 -->
             </a-collapse-panel>
-
-            <!-- S 图片 -->
-            <a-collapse-panel header="图片" key="1">
-              <div class="comment-template__item">
-                <p class="comment-template__leading">地址:</p>
-                <div class="comment-template__inner">
-                  <a-input
-                    type="text"
-                    v-model.trim="config.proprietaryConfig.graphic.style.image"
-                    @change="imageChange"
-                  />
-                </div>
-              </div>
-            </a-collapse-panel>
-            <!-- E 图片 -->
 
             <!-- S 图标 -->
             <a-collapse-panel header="图标" key="2">
@@ -64,22 +50,6 @@
               </div>
             </a-collapse-panel>
             <!-- E 图标 -->
-
-            <!-- S 预览 -->
-            <a-collapse-panel header="预览" key="3">
-              <div class="image-config__screen">
-                <div class="image-config__screenshot">
-                  <img
-                    ref="img"
-                    :src="config.proprietaryConfig.graphic.style.image"
-                    alt=""
-                    v-if="config.proprietaryConfig.graphic.style.image"
-                  />
-                  <p v-else>图片预览</p>
-                </div>
-              </div>
-            </a-collapse-panel>
-            <!-- E 预览 -->
           </a-collapse>
         </div>
       </a-tab-pane>
@@ -91,20 +61,25 @@
 import '@/assets/less/template.less'
 import CommonTemplate from '../common'
 import ProprietaryMixins from '../proprietaryMixins'
-import IconPicker from '@/components/IconPicker'
 
 export default {
-  name: 'ImageConfig',
+  name: 'VideosConfig',
   mixins: [ProprietaryMixins],
   components: {
     CommonTemplate
   },
   data: () => ({
-    icons: IconPicker.data()['icons']
+    VideoShow: ''
   }),
+  created () {
+    this.getVideosShow()
+  },
   methods: {
+    getVideosShow () {
+      const tmpLink = this.config.proprietaryConfig.graphic.link
+      this.VideoShow = tmpLink
+    },
     iconChoose (index) {
-      const { img } = this.icons[index]
       this.config.proprietaryConfig.graphic.style.image = img
       this.imageChange()
     },
@@ -144,7 +119,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.image-config {
+.videos-config {
   &__screen {
     display: flex;
     flex-flow: column nowrap;
@@ -154,6 +129,13 @@ export default {
     & button {
       width: 100%;
     }
+  }
+  &__btnClick {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: left;
+    align-items: left;
+    margin-bottom: 15px;
   }
 
   &__screenshot {

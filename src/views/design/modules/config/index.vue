@@ -68,14 +68,15 @@ export default {
       ['TextHealth', 'TextHealthConfig'],
       ['List', 'ListConfig'],
       ['Pie', 'PieConfig'],
-      ['Polar', 'PolarConfig']
+      ['Polar', 'PolarConfig'],
+      ['Videos', 'VideosConfig']
     ])
   }),
   computed: {
     ...mapState('screen', ['activeWidget', 'view']),
     ...mapGetters('screen', ['widgets']),
     templateName () {
-      const template = TEMPLATES.find(template => template.type === this.activeWidget.config.type)
+      const template = TEMPLATES.find((template) => template.type === this.activeWidget.config.type)
       return template ? template.name : '画板'
     },
     hasCommonTitle () {
@@ -89,10 +90,7 @@ export default {
     },
     // 缓存的配置组件
     includeTemplateNameList () {
-      return _.uniq([
-        ...this.view.widgets.map(({ config }) => this.templateMapping.get(config.type)),
-        'ViewConfig'
-      ])
+      return _.uniq([...this.view.widgets.map(({ config }) => this.templateMapping.get(config.type)), 'ViewConfig'])
     }
   },
   methods: {
