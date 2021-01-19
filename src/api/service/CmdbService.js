@@ -221,6 +221,43 @@ class CmdbService extends BaseService {
     }
     return host
   }
+
+  static async endpointsByHostIdAndEndpointModelId (host_id, endpoint_model_id) {
+    const { data: { list } } = await query(
+      CmdbHostEndpointMetricDao.find({
+        where: {
+          host_id: { _eq: host_id },
+          endpoint_model_id: { _eq: endpoint_model_id }
+        },
+        alias: 'list',
+        fields: [
+          'key: endpoint_id',
+          'label: endpoint_alias'
+        ]
+      })
+    )
+
+    return _.uniqBy(list, el => el.key)
+  }
+
+  static async metrics (host_id, endpoint_model_id, metric_model_id) {
+    const { data: { list } } = await query(
+      CmdbHostEndpointMetricDao.find({
+        where: {
+          host_id: { _eq: host_id },
+          endpoint_model_id: { _eq: endpoint_model_id },
+          metric_model_id: { _eq: metric_model_id }
+        },
+        alias: 'list',
+        fields: [
+          'key: endpoint_id',
+          'label: endpoint_alias'
+        ]
+      })
+    )
+
+    return list
+  }
 }
 
 export {

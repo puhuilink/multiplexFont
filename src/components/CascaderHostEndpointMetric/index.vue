@@ -1,6 +1,7 @@
 <script>
 import CascaderDictValue from '~~~/CascaderDictValue'
-import { ModelService } from '@/api/index'
+import { CmdbService, ModelService } from '@/api/index'
+import { filterOption } from '@/utils/util'
 
 export default {
   name: 'CascaderHostEndpointMetric',
@@ -11,14 +12,15 @@ export default {
   props: {},
   data () {
     return {
-      config: {
-        dictValue: [],
-        hostId: null,
-        endpointModelId: null,
-        endpointId: null,
-        metricModelId: null,
-        metricId: null
-      },
+      config: { 'dictValue': ['Host', 'HostLinux', 'HostAIXLinux'], 'hostId': '21755076410478592', 'endpointModelId': '1233261630', 'endpointId': '32910293105512448', 'metricModelId': '1233261631', 'metricId': '32910293105512448' },
+      // config: {
+      //   dictValue: [],
+      //   hostId: null,
+      //   endpointModelId: null,
+      //   endpointId: null,
+      //   metricModelId: null,
+      //   metricId: null
+      // },
       options: {
         hosts: [],
         endpointModels: [],
@@ -40,8 +42,58 @@ export default {
       return this.config.dictValue[2]
     }
   },
+  watch: {
+    'config.dictValue': {
+      immediate: true,
+      handler () {
+        if (this.hostTypeDictValueCode) {
+          this.fetchHosts()
+          this.fetchEndpointModels()
+        }
+      }
+    },
+    'config.hostId': {
+      immediate: true,
+      handler () {
+        if (this.config.hostId && this.config.endpointModelId) {
+          this.fetchEndpoints()
+        }
+      }
+    },
+    'config.endpointModelId': {
+      immediate: true,
+      handler () {
+        if (this.config.endpointModelId) {
+          this.fetchMetricModels()
+          if (this.config.hostId) {
+            this.fetchEndpoints()
+          }
+        }
+      }
+    },
+    'config.endpointId': {
+      immediate: true,
+      handler () {
+        if (
+          this.config.hostId &&
+          this.config.endpointModelId &&
+          this.config.metricModelId
+        ) {
+          this.fetchMetrics()
+        }
+      }
+    },
+    'config.metricModelId': {
+      immediate: true,
+      handler () {
+        if (this.config.hostId && this.config.endpointModelId && this.config.metricModelId) {
+          this.fetchMetrics()
+        }
+      }
+    }
+  },
   methods: {
-    async fetchHostIds () {
+    async fetchHosts () {
       try {
         this.loading.hosts = true
         this.options.hosts = await ModelService.hostsByHostTypeDictValueCode(this.hostTypeDictValueCode)
@@ -63,6 +115,17 @@ export default {
         this.loading.endpointModels = false
       }
     },
+    async fetchEndpoints () {
+      try {
+        this.loading.endpoints = true
+        this.options.endpoints = await CmdbService.endpointsByHostIdAndEndpointModelId(this.config.hostId, this.config.endpointModelId)
+      } catch (e) {
+        this.options.endpoints = []
+        throw e
+      } finally {
+        this.loading.endpoints = false
+      }
+    },
     async fetchMetricModels () {
       try {
         this.loading.metricModels = true
@@ -74,14 +137,25 @@ export default {
         this.loading.metricModels = false
       }
     },
-    setDictValue (e) {
-      this.config.dictValue = e
+    async fetchMetrics () {
+      try {
+        this.loading.metrics = true
+        this.options.metrics = await CmdbService.metrics(
+          this.config.hostId,
+          this.config.endpointModelId,
+          this.config.metricModelId
+        )
+      } catch (e) {
+        this.options.metrics = []
+        throw e
+      } finally {
+        this.loading.metrics = false
+      }
+    },
+    setDictValue (dictValue) {
+      this.config.dictValue = dictValue
       this.setHostId(null)
       this.setEndpointModelId(null)
-      if (this.hostTypeDictValueCode) {
-        this.fetchHostIds()
-        this.fetchEndpointModels()
-      }
     },
     setHostId (hostId) {
       this.config.hostId = hostId
@@ -91,10 +165,6 @@ export default {
       this.config.endpointModelId = endpointModelId
       this.setEndpointId(null)
       this.setMetricModelId(null)
-
-      if (this.config.endpointModelId) {
-        this.fetchMetricModels()
-      }
     },
     setEndpointId (endpointId) {
       this.config.endpointId = endpointId
@@ -107,12 +177,15 @@ export default {
     setMetricId (metricId) {
       this.config.metricId = metricId
     },
-    renderSelect ({ options, loading, value, onChange }) {
+    renderSelect ({ options, placeholder = '', loading, value, onChange }) {
       return (
         <a-select
           allowClear
           class="CascaderHostEndpointMetric__select"
+          filterOption={filterOption}
           notFoundContent={loading ? '加载中' : '暂无数据'}
+          placeholder={placeholder}
+          showSearch
           value={value}
           onChange={onChange}
         >
@@ -139,28 +212,51 @@ export default {
 
         {
           this.renderSelect({
-            value: config.hostId,
-            options: options.hosts,
             loading: loading.hosts,
+            options: options.hosts,
+            placeholder: '请选择具体设备',
+            value: config.hostId,
             onChange: this.setHostId
           })
         }
 
         {
           this.renderSelect({
-            value: config.endpointModelId,
-            options: options.endpointModels,
             loading: loading.endpointModels,
+            options: options.endpointModels,
+            placeholder: '请选择监控实体（模型）',
+            value: config.endpointModelId,
             onChange: this.setEndpointModelId
           })
         }
 
         {
           this.renderSelect({
-            value: config.metricModelId,
-            options: options.metricModels,
+            loading: loading.endpoints,
+            options: options.endpoints,
+            placeholder: '请选择监控实体（实例）',
+            value: config.endpointId,
+            onChange: this.setEndpointId
+          })
+        }
+
+        {
+          this.renderSelect({
             loading: loading.metricModels,
+            options: options.metricModels,
+            placeholder: '请选择指标（模型）',
+            value: config.metricModelId,
             onChange: this.setMetricModelId
+          })
+        }
+
+        {
+          this.renderSelect({
+            loading: loading.metricId,
+            options: options.metrics,
+            placeholder: '请选择指标（实例）',
+            value: config.metricId,
+            onChange: this.setMetricId
           })
         }
 
@@ -174,7 +270,7 @@ export default {
 .CascaderHostEndpointMetric {
 
   &__select {
-    width: 150px !important;
+    width: 220px !important;
   }
 }
 </style>

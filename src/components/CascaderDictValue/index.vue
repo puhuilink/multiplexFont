@@ -3,7 +3,9 @@
     class="CascaderDictValue"
     :notFoundContent="loading ? '加载中' : '暂无数据'"
     :options="options"
+    placeholder="请选择分类"
     :showSearch="{ filter }"
+    :value="value"
     @change="onChange"
   />
 </template>
@@ -38,13 +40,15 @@ export default {
           where: { value_param: { _eq: '1' } },
           alias: 'options',
           fields: [
-            `${itemOnDictValue},
-              children {
-              ${itemOnDictValue}
+            `
+            ${itemOnDictValue},
               children {
                 ${itemOnDictValue}
+                children {
+                  ${itemOnDictValue}
+                }
               }
-            }`
+            `
           ]
         })
         this.options = options
