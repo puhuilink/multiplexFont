@@ -14,26 +14,17 @@
       @ok="submit"
     >
       <template slot="footer">
-        <a-button @click="editRule" class="fl">告警审批规则</a-button>
+        <a-button @click="editRule" class="fl">审批模板</a-button>
         <a-button @click="cancel">取消</a-button>
         <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
       </template>
 
       <a-spin :spinning="spinning">
-        <ATable
-          :columns="columns"
-          :dataSource="events"
-          :pagination="false"
-          rowKey="id"
-        />
+        <ATable :columns="columns" :dataSource="events" :pagination="false" rowKey="id" />
       </a-spin>
-
     </a-modal>
 
-    <TempRule
-      ref="rule"
-      @updateConfig="onUpdateConfig"
-    />
+    <TempRule ref="rule" @updateConfig="onUpdateConfig" />
   </fragment>
 </template>
 
@@ -57,12 +48,12 @@ export default {
           title: '通知等级',
           dataIndex: 'severity',
           width: 90,
-          customRender: severity => severity ? `L${severity}` : ''
+          customRender: (severity) => (severity ? `L${severity}` : '')
         },
         {
           title: '通知用户',
           width: 90,
-          customRender: severity => this.severityUserMapping.get(severity)
+          customRender: (severity) => this.severityUserMapping.get(severity)
         },
         // {
         //   title: '通知方式',
@@ -89,7 +80,8 @@ export default {
     severityUserMapping () {
       return new Map([
         ...this.senderConfig.map(({ event_level, userList }) => [
-          event_level, userList.map(({ staff_name }) => staff_name).join('、')
+          event_level,
+          userList.map(({ staff_name }) => staff_name).join('、')
         ])
       ])
       // return mapping
@@ -99,18 +91,19 @@ export default {
     approve (events = []) {
       this.show('审批预览')
       // this.fetchSenderConfig()
-      this.fetch()
+      this.fetch(events)
       this.events = events
     },
     editRule () {
       const { senderConfig = [], tempConfig = [] } = this
       this.$refs['rule'].open({ senderConfig, tempConfig })
     },
-    async fetch () {
+
+    async fetch (res) {
       try {
         this.spinning = true
         await Promise.all([
-          this.fetchSenderConfig()
+          this.fetchSenderConfig(res)
           // this.fetchTemp()
         ])
       } catch (e) {
@@ -122,9 +115,9 @@ export default {
     /**
      * 获取发送配置
      */
-    async fetchSenderConfig () {
+    async fetchSenderConfig (res) {
       try {
-        const senderConfig = await PatrolService.senderConfig()
+        const senderConfig = await PatrolService.senderConfig(res)
         this.senderConfig = _.orderBy(senderConfig, ['event_level'], ['asc'])
       } catch (e) {
         this.senderConfig = []
@@ -160,9 +153,6 @@ export default {
         this.submitLoading = false
       }
     }
-  },
-  created () {
-    // this.approve([])
   }
 }
 </script>
