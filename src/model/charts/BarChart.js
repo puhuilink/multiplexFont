@@ -11,7 +11,8 @@ import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_COMBO
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
 
@@ -81,6 +82,7 @@ export default class BarChart extends Chart {
         dbDataConfig.resetData()
         break
       }
+      case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {
         // 根据数据流向，静态数据在进入 mappingOption 前已经完成 reverse

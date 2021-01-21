@@ -68,16 +68,33 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
       .entries(groupByOrigin)
       .forEach(([origin, values]) => {
         values.forEach((value) => {
-          // 在数据域设计开发完成前暂定BJ1与XM1的部分
-          origin = origin.replace('BJ1', '北京数据中心').replace('XM1', '厦门数据中心')
-          legendData.push(`${origin}-${value.legend}`)
-          level1Collection.push(value.level1)
-          level2Collection.push(value.level2)
-          level3Collection.push(value.level3)
-          level4Collection.push(value.level4)
-          level5Collection.push(value.level5)
+          // FIXME: 在数据域设计开发完成前，硬编码处理北京数据中心与厦门数据中心数据
+          origin = origin
+            .replace('BJ1', '北京数据中心')
+            .replace('BJ2', '北京数据中心')
+            .replace('XM1', '厦门数据中心')
+            .replace('XM2', '厦门数据中心')
+
+          // 如BJ1-网络设备与BJ2网络设备，统一归类为北京数据中心-网络设备
+          const v = `${origin}-${value.legend}`
+          const index = legendData.indexOf(v)
+          if (index === -1) {
+            legendData.push(v)
+            level1Collection.push(value.level1)
+            level2Collection.push(value.level2)
+            level3Collection.push(value.level3)
+            level4Collection.push(value.level4)
+            level5Collection.push(value.level5)
+          } else {
+            level1Collection[index] += value.level1
+            level2Collection[index] += value.level2
+            level3Collection[index] += value.level3
+            level4Collection[index] += value.level4
+            level5Collection[index] += value.level5
+          }
         })
       })
+
     const option = {
       angleAxis: {
         type: 'category',
@@ -96,6 +113,7 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
         { data: level5Collection, stack: '最新通知', name: '最新通知' }
       ]
     }
+    console.log(_.cloneDeep(option))
     Object.assign(this, option)
   }
 

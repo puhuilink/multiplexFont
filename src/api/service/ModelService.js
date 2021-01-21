@@ -101,6 +101,10 @@ class ModelService extends BaseService {
     return uniqList
   }
 
+  static async endpointModelsByHostTypeDictValueCode (host_type_dict_value_code) {
+    return this.endpointList(host_type_dict_value_code)
+  }
+
   /**
    * 查询 endpoint 模型下的 metric 列表
    * @param {Number} endpointModel t_model_endpoint.endpoint_id
@@ -131,10 +135,31 @@ class ModelService extends BaseService {
     return uniqList
   }
 
+  static async metricModelsByEndpointModelId (endpointModelId) {
+    return this.metricList(endpointModelId)
+  }
+
   static async hostFind (argus = {}) {
     return query(
       ModelHostDao.find(argus)
     )
+  }
+
+  static async hostsByHostTypeDictValueCode (host_type_dict_value_code) {
+    return ModelService.hostFind({
+      where: { host_type_dict_value_code },
+      fields: [
+        `children {
+          label: alias
+          key: id
+        }`
+      ],
+      alias: 'dataSource'
+    }).then(r => r.data.dataSource || [])
+      .then((dataSource = []) => {
+        const data = dataSource.filter(el => el.children && el.children.length).map(el => el.children).flat()
+        return data
+      })
   }
 
   static async groupByModelFind (argus = {}) {

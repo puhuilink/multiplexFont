@@ -132,4 +132,21 @@ export class ViewDataService extends BaseService {
       return []
     }
   }
+
+  static async comboData ({ timeRange = {}, top = 0, ...argus }) {
+    const data = { ...argus }
+    // 时间范围
+    if (!_.isEmpty(timeRange)) {
+      Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'calculateType')
+      Reflect.deleteProperty(data, 'isGroup')
+    }
+
+    if (top) {
+      Object.assign(data, { top })
+    }
+
+    return axios.post('/data/view', data)
+  }
 }
