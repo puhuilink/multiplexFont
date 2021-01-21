@@ -6,7 +6,8 @@ import _ from 'lodash'
 import { DynamicDataConfig } from './common/index'
 import {
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_ALARM
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_COMBO
 } from './types/sourceType'
 
 const initialOption = {
@@ -27,6 +28,10 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_ALARM: {
           await this.getAlarmOption()
+          break
+        }
+        case SOURCE_TYPE_COMBO: {
+          await this.getComboOption()
           break
         }
       }
@@ -100,6 +105,36 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         }
       ]
 
+    }
+    Object.assign(this, option)
+  }
+
+  async getComboOption () {
+    const dataList = await this.comboConfig.fetch()
+
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const legendList = Object.keys(groupByLegend)
+    const groupByName = _.groupBy(dataList, 'name')
+    const nameList = Object.keys(groupByName)
+    const option = {
+      legend: {},
+      xAxis: { type: 'category' },
+      yAxis: { type: 'value' },
+      dataset: {
+        dimensions: ['name', ...legendList],
+        source: [
+          ...nameList.map(name => {
+            const result = { name }
+            groupByName[name].forEach(({ legend, data }) => {
+              result[legend] = data
+            })
+            return result
+          })
+        ]
+      },
+      series: legendList.map(() => ({
+        type: 'bar'
+      }))
     }
     Object.assign(this, option)
   }

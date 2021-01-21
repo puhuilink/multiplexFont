@@ -9,18 +9,21 @@ export default {
   components: {
     CascaderDictValue
   },
-  props: {},
+  props: {
+    config: {
+      type: Object,
+      default: () => ({
+        dictValue: [],
+        hostId: null,
+        endpointModelId: null,
+        endpointId: null,
+        metricModelId: null,
+        metricId: null
+      })
+    }
+  },
   data () {
     return {
-      config: { 'dictValue': ['Host', 'HostLinux', 'HostAIXLinux'], 'hostId': '21755076410478592', 'endpointModelId': '1233261630', 'endpointId': '32910293105512448', 'metricModelId': '1233261631', 'metricId': '32910293105512448' },
-      // config: {
-      //   dictValue: [],
-      //   hostId: null,
-      //   endpointModelId: null,
-      //   endpointId: null,
-      //   metricModelId: null,
-      //   metricId: null
-      // },
       options: {
         hosts: [],
         endpointModels: [],
@@ -178,6 +181,7 @@ export default {
       this.config.metricId = metricId
     },
     renderSelect ({ options, placeholder = '', loading, value, onChange }) {
+      // hack: ASelect传入null时不展示placeholder
       return (
         <a-select
           allowClear
@@ -186,7 +190,7 @@ export default {
           notFoundContent={loading ? '加载中' : '暂无数据'}
           placeholder={placeholder}
           showSearch
-          value={value}
+          value={value === null ? undefined : value}
           onChange={onChange}
         >
           {
@@ -270,7 +274,7 @@ export default {
 .CascaderHostEndpointMetric {
 
   &__select {
-    width: 220px !important;
+    width: 170px !important;
   }
 }
 </style>

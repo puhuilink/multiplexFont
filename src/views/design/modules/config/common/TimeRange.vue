@@ -86,7 +86,8 @@ import {
 import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_OVERVIEW
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
@@ -175,6 +176,8 @@ export default {
           return dbDataConfig.overviewConfig.timeRangeConfig || {}
         case SOURCE_TYPE_REAL:
           return dbDataConfig.resourceConfig.timeRangeConfig || {}
+        case SOURCE_TYPE_COMBO:
+          return dbDataConfig.comboConfig.timeRangeConfig || {}
         default:
           return {}
       }
