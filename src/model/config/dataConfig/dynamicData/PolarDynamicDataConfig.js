@@ -68,8 +68,12 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
       .entries(groupByOrigin)
       .forEach(([origin, values]) => {
         values.forEach((value) => {
-          // 在数据域设计开发完成前暂定BJ1与XM1的部分
-          origin = origin.replace('BJ1', '北京数据中心').replace('XM1', '厦门数据中心')
+          // FIXME: 在数据域设计开发完成前，硬编码处理北京数据中心与厦门数据中心数据
+          origin = origin
+            .replace('BJ1', '北京数据中心')
+            .replace('BJ2', '北京数据中心')
+            .replace('XM1', '厦门数据中心')
+            .replace('XM2', '厦门数据中心')
           legendData.push(`${origin}-${value.legend}`)
           level1Collection.push(value.level1)
           level2Collection.push(value.level2)
