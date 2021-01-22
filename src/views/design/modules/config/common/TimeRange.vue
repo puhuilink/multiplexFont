@@ -144,7 +144,7 @@ export default {
     type: {
       type: String,
       default: SOURCE_TYPE_REAL,
-      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW].includes(type)
+      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO].includes(type)
     }
   },
   data: () => ({

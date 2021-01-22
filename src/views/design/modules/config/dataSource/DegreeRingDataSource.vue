@@ -8,6 +8,11 @@
         :useCalculateType="false"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_COMBO]>
+      <ComboDataSource
+        :key="SOURCE_TYPE_COMBO"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -15,17 +20,20 @@
 import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
-import { SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import ComboDataSource from '../common/ComboDataSource'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'DegreeRingDataSource',
   mixins: [DataSourceMixins],
   components: {
     DataSourceTemplate,
-    RealDataSource
+    RealDataSource,
+    ComboDataSource
   },
   data: () => ({
-    SOURCE_TYPE_REAL
+    SOURCE_TYPE_REAL,
+    SOURCE_TYPE_COMBO
   })
 }
 </script>

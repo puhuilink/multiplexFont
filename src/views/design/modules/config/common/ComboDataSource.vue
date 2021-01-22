@@ -6,10 +6,10 @@
 
     <a-form-item label="指标配置" v-bind="formItemLayout">
       {{ comboConfig.content.length }}条
-      <a-button :loading="btnLoading" @click="detail">详情</a-button>
+      <a-button @click="detail">详情</a-button>
     </a-form-item>
 
-    <TimeRange />
+    <TimeRange :type="SOURCE_TYPE_COMBO" />
 
     <a-form-item label="计算类型" v-bind="formItemLayout">
       <CalculateTypeSelect
@@ -55,6 +55,7 @@ import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
 import { parserInt } from '@/utils/util'
+import { SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'ComboDataSource',
@@ -68,7 +69,8 @@ export default {
   props: {},
   data () {
     return {
-      visible: false
+      visible: false,
+      SOURCE_TYPE_COMBO
     }
   },
   computed: {
