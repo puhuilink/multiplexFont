@@ -124,6 +124,7 @@ export default {
       Promise.all([
         new Promise((resolve, reject) => {
           return PatrolConfigService.dataSource().then((data) => {
+            console.log('啊这', data)
             const zone = _.first(data)
             const tempList = this.setForLoop(zone)
             resolve(tempList)
@@ -153,41 +154,6 @@ export default {
       })
       return checkpointsList
     }
-
-    // getColSpanByKeys (dataSource) {
-    //   const colSpanMap = new Map()
-    //   if (dataSource.lenght > 0) {
-    //     Object.keys(dataSource[0]).forEach((key) => {
-    //       colSpanMap.set(key, this.getColSpan(dataSource, key))
-    //     })
-    //   }
-    //   return colSpanMap
-    // },
-
-    // getColSpan (data, key) {
-    //   const colSpan = [1]
-    //   for (let i = 1, j = 2; i < data.length; i++, j++) {
-    //     const prev = data[i - 1][key]
-    //     const curr = data[i][key]
-    //     if (prev == curr) {
-    //       colSpan[i - 1] = 0
-    //     } else {
-    //       j = 1
-    //     }
-    //     colSpan.push(j)
-    //   }
-
-    //   for (let i = colSpan.length - 1, j = colSpan.length - 1; i >= 0; i--) {
-    //     if (colSpan[i - 1] != 0) {
-    //       ;[colSpan[j], colSpan[i]] = [colSpan[i], colSpan[j]]
-    //       if (i != 0) {
-    //         j = i - 1
-    //       }
-    //     }
-    //   }
-
-    //   return colSpan
-    // }
   },
   async created () {
     await this.loadGroupList()
@@ -204,14 +170,6 @@ export default {
         title: '点位',
         dataIndex: 'checkpointId',
         width: 200
-        // customRender: (text, record, index) => {
-        //   const colSpanList = this.colSpanMap.get('checkpointId')
-        //   console.log('xz111', colSpanList)
-        //   return {
-        //     children: text,
-        //     attrs: { rowSpan: colSpanList[index] },
-        //   }
-        // },
       },
       {
         title: '二维码',
@@ -223,41 +181,19 @@ export default {
         title: '监控对象',
         dataIndex: 'hostId',
         width: 150
-        // customRender: (text, record, index) => {
-        //   const colSpanList = this.colSpanMap.get('hostId')
-        //   return {
-        //     children: text,
-        //     attrs: { rowSpan: colSpanList[index] },
-        //   }
-        // },
       },
       {
         title: '监控实体',
         dataIndex: 'endpointId',
         width: 150
-        // customRender: (text, record, index) => {
-        //   const colSpanList = this.colSpanMap.get('endpointId')
-        //   return {
-        //     children: text,
-        //     attrs: { rowSpan: colSpanList[index] },
-        //   }
-        // },
       },
       {
         title: '检查项',
         dataIndex: 'metricId',
         width: 150
-        // customRender: (text, record, index) => {
-        //   const colSpanList = this.colSpanMap.get('metricId')
-        //   return {
-        //     children: text,
-        //     attrs: { rowSpan: colSpanList[index] },
-        //   }
-        // },
       }
     ]
-  },
-  mounted () {}
+  }
 }
 </script>
 

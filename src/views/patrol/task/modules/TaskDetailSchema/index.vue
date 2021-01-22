@@ -66,73 +66,73 @@ export default {
       {
         title: '点位',
         dataIndex: 'zoneId',
-        width: 180,
+        width: 180
       },
       {
         title: '柜位',
         dataIndex: 'hostId',
-        width: 180,
+        width: 180
       },
       {
         title: '设备',
         dataIndex: 'endpointId',
-        width: 180,
+        width: 180
       },
       {
         title: '检查项',
         dataIndex: 'metricId',
-        width: 180,
+        width: 180
       },
       {
         title: '值',
         dataIndex: 'value',
-        width: 180,
+        width: 180
       },
       {
         title: '备注',
         dataIndex: 'note',
-        width: 180,
+        width: 180
       },
       {
         title: '图片',
         dataIndex: 'imagePathList',
-        width: 180,
-      },
+        width: 180
+      }
     ]),
     dataSource: [],
     record: {},
     spinning: false,
     switchCardList: [],
-    taskDetail: [],
+    taskDetail: []
   }),
   filters: {
-    delay(delay) {
+    delay (delay) {
       return DELAY_MAPPING.get(delay)
     },
-    time(time) {
+    time (time) {
       return moment(time).format('YYYY-MM-DD HH:mm:ss')
-    },
+    }
   },
   computed: {
-    basicInfo() {
+    basicInfo () {
       return this.record.basicInfo || {}
     },
-    pointsInfo() {
+    pointsInfo () {
       return this.record.rfInfo || {}
     },
-    scroll() {
+    scroll () {
       return {
         x: _.sum(this.columns.map((e) => e.width || 60)),
-        y: 300,
+        y: 300
       }
-    },
+    }
   },
   methods: {
-    async fetch(task_id) {
+    async fetch (task_id) {
       try {
         this.spinning = true
         const {
-          basicInfo: { content },
+          basicInfo: { content }
         } = await PatrolService.taskDetail(task_id)
         this.taskDetail = content
         this.switchCardName(this.taskDetail)
@@ -144,16 +144,16 @@ export default {
         this.spinning = false
       }
     },
-    detail(task_id) {
+    detail (task_id) {
       this.show('巡更记录单')
       this.fetch(task_id)
     },
 
-    switchCardName(el) {
+    switchCardName (el) {
       const cardNames = el.map((item) => {
         return {
           alias: item.zoneAlias,
-          id: item.zoneId,
+          id: item.zoneId
         }
       })
 
@@ -161,7 +161,7 @@ export default {
       this.dataSource = this.setShowList(el[0])
     },
 
-    setShowList(el) {
+    setShowList (el) {
       const checkpointsList = []
       el.checkpoints.forEach((checkpointAlias) => {
         checkpointAlias.hosts.forEach((hostAlias) => {
@@ -171,7 +171,7 @@ export default {
                 zoneId: checkpointAlias.checkpointAlias,
                 hostId: hostAlias.hostAlias,
                 endpointId: metricAliasList.endpointAlias,
-                metricId: metricAlias.metricAlias,
+                metricId: metricAlias.metricAlias
               })
             })
           })
@@ -180,11 +180,11 @@ export default {
 
       return checkpointsList
     },
-    changeTitle(key) {
+    changeTitle (key) {
       const index = this.switchCardList.findIndex((itemId) => itemId.id === key)
       this.dataSource = this.setShowList(this.taskDetail[index])
-    },
-  },
+    }
+  }
 }
 </script>
 
