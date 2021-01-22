@@ -18,7 +18,7 @@
 
         <Cron />
 
-        <TimeRange/>
+        <!-- <TimeRange/> -->
 
         <PatrolPath :plan.sync="plan" />
       </a-form-model>
@@ -41,34 +41,34 @@ export default {
     BasicInfo,
     Cron,
     PatrolPath,
-    TimeRange
+    TimeRange,
   },
   props: {},
   data: () => ({
     plan: {},
-    spinning: false
+    spinning: false,
   }),
   computed: {
-    rules () {
+    rules() {
       return {
         ...basicInfoRule,
         ...patrolPathRule,
         ...timeRangeRule,
-        ...cronRule
+        ...cronRule,
       }
-    }
+    },
   },
   methods: {
-    add () {
+    add() {
       this.submit = this.insert
       this.show('新增巡检计划')
     },
-    edit (id) {
+    edit(id) {
       this.submit = this.update
       this.show('编辑巡检计划')
       this.fetchPlanDetail(id)
     },
-    async fetchPlanDetail (id) {
+    async fetchPlanDetail(id) {
       try {
         this.spinning = true
         this.plan = await PatrolService.planDetail(id)
@@ -82,8 +82,8 @@ export default {
     /**
      * 调取新增接口
      */
-    async insert () {
-      this.$refs.ruleForm.validate(async valid => {
+    async insert() {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.confirmLoading = true
@@ -102,8 +102,8 @@ export default {
     /**
      * 调取编辑接口
      */
-    async update () {
-      this.$refs.ruleForm.validate(async valid => {
+    async update() {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.confirmLoading = true
@@ -119,11 +119,11 @@ export default {
           this.confirmLoading = false
         }
       })
-    }
+    },
   },
-  created () {
+  created() {
     // this.add()
-  }
+  },
 }
 </script>
 
