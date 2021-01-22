@@ -30,7 +30,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
           break
         }
         case SOURCE_TYPE_COMBO: {
-          await this.getComboOption()
+          await this.getComboDataOption()
           break
         }
       }
@@ -93,7 +93,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     Object.assign(this, option)
   }
 
-  async getComboOption () {
+  async getComboDataOption () {
     const dataList = await this.comboConfig.fetch()
     console.log(dataList)
     const groupByLegend = _.groupBy(dataList, 'legend')

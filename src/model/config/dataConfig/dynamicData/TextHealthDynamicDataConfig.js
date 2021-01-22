@@ -7,7 +7,8 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_OVERVIEW
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -24,6 +25,11 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_OVERVIEW: {
           await this.getOverviewDataOption()
+          break
+        }
+        case SOURCE_TYPE_COMBO: {
+          await this.getComboDataOption()
+          break
         }
       }
     }
@@ -32,6 +38,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     this.text = await this.resourceConfig.fetch().then(data => _.get(data, '0.data', ''))
+  }
+
+  async getComboDataOption () {
+    this.text = await this.comboConfig.fetch().then(data => _.get(data, '0.data', ''))
   }
 
   async getAlarmOption () {
