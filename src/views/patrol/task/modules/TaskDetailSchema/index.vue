@@ -10,7 +10,6 @@
     :afterClose="reset"
   >
     <a-spin :spinning="spinning">
-
       <!-- 基本信息 -->
       <div class="TaskDetailSchema__basicInfo">
         <a-row>
@@ -40,14 +39,12 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
-        <a-table
-          bordered
-          :columns="columns"
-          :dataSource="dataSource"
-          :scroll="scroll"
-        ></a-table>
+        <a-tabs default-active-key="id" @change="callback">
+          <a-tab-pane v-for="{ alias, id } in siteInspection" :key="id" :tab="alias">
+            <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll"></a-table>
+          </a-tab-pane>
+        </a-tabs>
       </div>
-
     </a-spin>
   </a-modal>
 </template>
@@ -104,7 +101,9 @@ export default {
     ]),
     dataSource: [],
     record: {},
-    spinning: false
+    spinning: false,
+    siteInspection: [],
+    tmpArrList: []
   }),
   filters: {
     delay (delay) {
@@ -123,7 +122,7 @@ export default {
     },
     scroll () {
       return {
-        x: _.sum(this.columns.map(e => e.width || 60)),
+        x: _.sum(this.columns.map((e) => e.width || 60)),
         y: 300
       }
     }
@@ -132,7 +131,10 @@ export default {
     async fetch (task_id) {
       try {
         this.spinning = true
-        this.record = await PatrolService.taskDetail(task_id)
+        const tmp = await PatrolService.taskDetail(task_id)
+        const arrList = tmp.basicInfo.content
+        this.tmpArrList = arrList
+        this.tabPaneTitle(arrList)
       } catch (e) {
         this.record = {}
         throw e
@@ -143,11 +145,48 @@ export default {
     detail (task_id) {
       this.show('巡更记录单')
       this.fetch(task_id)
+    },
+
+    tabPaneTitle (el) {
+      const listTitle = []
+      el.forEach((item) => {
+        listTitle.push({
+          alias: item.zoneAlias,
+          id: item.zoneId
+        })
+      })
+      this.siteInspection = listTitle
+      this.dataSource = this.setShowList(el[0])
+    },
+
+    setShowList (el) {
+      const checkpointsList = []
+      el.checkpoints.forEach((checkpointAlias) => {
+        checkpointAlias.hosts.forEach((hostAlias) => {
+          hostAlias.endpoints.forEach((metricAliasList) => {
+            metricAliasList.metrics.forEach((metricAlias) => {
+              checkpointsList.push({
+                zoneId: checkpointAlias.checkpointAlias,
+                hostId: hostAlias.hostAlias,
+                endpointId: metricAliasList.endpointAlias,
+                metricId: metricAlias.metricAlias
+              })
+            })
+          })
+        })
+      })
+
+      return checkpointsList
+    },
+    callback (key) {
+      const tmp = this.siteInspection
+      const index = tmp.findIndex((tmpId) => tmpId.id === key)
+      const el = this.tmpArrList
+      this.dataSource = this.setShowList(el[index])
     }
   }
 }
 </script>
 
 <style lang="less">
-
 </style>

@@ -149,7 +149,8 @@ export default {
     },
     onEdit () {
       const [id] = this.selectedRowKeys
-      this.$refs['schema'].edit(id)
+      const tmpid = id.replace(/[^0-9]/gi, '')
+      this.$refs['schema'].edit(tmpid)
     },
 
     // 启用状态
