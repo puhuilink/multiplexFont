@@ -7,6 +7,7 @@ import moment from 'moment'
 import store from '@/store'
 import { VIEW_TYPE } from '@/tables/view/enum'
 import _ from 'lodash'
+import { SOURCE_TYPE_COMBO, SOURCE_TYPE_REAL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 class ViewDesignService extends BaseService {
   /**
    * 获取视图设计详情
@@ -32,9 +33,16 @@ class ViewDesignService extends BaseService {
           if (view_type === VIEW_TYPE.template && host_id) {
             // 替换为当前具体host的id
             content.widgets.forEach(({ config }) => {
+              const sourceType = _.get(config, ['dataConfig', 'sourceType'])
               const resourceConfig = _.get(config, ['dataConfig', 'dbDataConfig', 'resourceConfig'])
-              if (resourceConfig) {
+              if (resourceConfig && sourceType === SOURCE_TYPE_REAL) {
                 resourceConfig.hostId = [host_id]
+              }
+              const comboConfig = _.get(config, ['dataConfig', 'dbDataConfig', 'comboConfig'])
+              if (comboConfig && sourceType === SOURCE_TYPE_COMBO) {
+                comboConfig.content.forEach(c => {
+                  Object.assign(c, { hostId: host_id })
+                })
               }
             })
           }

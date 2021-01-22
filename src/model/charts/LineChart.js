@@ -11,7 +11,8 @@ import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
-  SOURCE_TYPE_OVERVIEW
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
 
@@ -62,6 +63,7 @@ export default class LineChart extends Chart {
         break
       }
       case SOURCE_TYPE_REAL:
+      case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_OVERVIEW: {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
