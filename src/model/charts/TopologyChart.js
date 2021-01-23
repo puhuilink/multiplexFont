@@ -260,7 +260,10 @@ export default class TopologyChart extends Chart {
    */
   setNodeAlarmState (id, eventLevel) {
     this.chart.clearItemStates(id)
-    this.chart.setItemState(id, animateTypeList[eventLevel - 1], true)
+    // 不展示5级告警
+    if (eventLevel !== 5) {
+      this.chart.setItemState(id, animateTypeList[eventLevel - 1], true)
+    }
   }
 
   /**

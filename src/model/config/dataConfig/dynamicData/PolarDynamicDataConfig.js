@@ -103,14 +103,13 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
       legend: {
         data: [ '严重告警', '重大告警', '次要告警', '一般告警', '最新通知' ]
       },
-      // series: Object.values(groupByOrigin)[0].map(({ level2 }) => level2)
       series: [
-        // { data: [10, 20, 30, 50], stack: '严重告警', name: '严重告警' },
         { data: level1Collection, stack: '严重告警', name: '严重告警' },
         { data: level2Collection, stack: '重大告警', name: '重大告警' },
         { data: level3Collection, stack: '次要告警', name: '次要告警' },
-        { data: level4Collection, stack: '一般告警', name: '一般告警' },
-        { data: level5Collection, stack: '最新通知', name: '最新通知' }
+        { data: level4Collection, stack: '一般告警', name: '一般告警' }
+        // 暂不展示5级告警
+        // { data: level5Collection, stack: '最新通知', name: '最新通知' }
       ]
     }
     console.log(_.cloneDeep(option))
