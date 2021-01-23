@@ -4,7 +4,9 @@
  */
 import { BaseService } from './BaseService'
 import { axios } from '@/utils/request'
+import { XmPaessMetricDao } from '../dao/index'
 import _ from 'lodash'
+import { query } from '../utils/hasura-orm/index'
 
 export class ViewDataService extends BaseService {
   static _validate (argus = {}) {
@@ -148,5 +150,26 @@ export class ViewDataService extends BaseService {
     }
 
     return axios.post('/data/view', data)
+  }
+
+  /**
+   * 厦门动环指标
+   */
+  static async xmDHMetric ({ code = '' }) {
+    const { data: { list } } = await query(
+      XmPaessMetricDao.find({
+        where: {
+          code: { _eq: code }
+        },
+        fields: ['value: metric_value'],
+        limit: 1,
+        orderBy: {
+          upload_time: 'desc_nulls_last'
+        },
+        alias: 'list'
+      })
+    )
+
+    return _.get(list, ['0', 'value'], '')
   }
 }

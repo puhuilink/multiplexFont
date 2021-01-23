@@ -6,6 +6,7 @@ import { AdaptorResourceConfig } from './AdaptorResourceConfig'
 import { AdaptorAlarmConfig } from './AdaptorAlarmConfig'
 import { AdaptorOverviewConfig } from './AdaptorOverviewConfig'
 import { AdaptorComboConfig } from './AdaptorComboConfig'
+import { AdaptorDHConfig } from './AdaptorDHConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -16,12 +17,15 @@ export class DynamicDataConfig {
     // 总览数据配置
     overviewConfig = {},
     // 新接口统一数据配置
-    comboConfig = {}
+    comboConfig = {},
+    // 动环数据配置
+    dhConfig = {}
   }) {
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
     this.overviewConfig = new AdaptorOverviewConfig(overviewConfig)
     this.comboConfig = new AdaptorComboConfig(comboConfig)
+    this.dhConfig = new AdaptorDHConfig(dhConfig)
     this.resetData()
   }
 

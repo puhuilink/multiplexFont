@@ -10,6 +10,7 @@ import echarts from 'echarts'
 import _ from 'lodash'
 import {
   SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_DH,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_REAL
 } from '../config/dataConfig/dynamicData/types/sourceType'
@@ -132,7 +133,8 @@ export default class Chart {
       dbDataConfig: {
         alarmConfig = {},
         overviewConfig = {},
-        resourceConfig = {}
+        resourceConfig = {},
+        dhConfig = {}
       } = {}
     } = dataConfig
 
@@ -155,6 +157,10 @@ export default class Chart {
       case SOURCE_TYPE_REAL:
         refreshTime = resourceConfig.refreshTime
         isAvailable = resourceConfig.isAvailable()
+        break
+      case SOURCE_TYPE_DH:
+        refreshTime = dhConfig.refreshTime
+        isAvailable = dhConfig.isAvailable()
         break
       default:
         break
