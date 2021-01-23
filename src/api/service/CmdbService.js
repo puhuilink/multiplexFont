@@ -67,7 +67,8 @@ class CmdbService extends BaseService {
       alias: '数据中心',
       children: [],
       type: 'root',
-      selectable: false
+      selectable: false,
+      scopedSlots: { title: 'title' }
     }
 
     // 按采集系统 / 区域划分第一层
@@ -86,14 +87,16 @@ class CmdbService extends BaseService {
             alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
             children: list.map(e => ({ ...e, selectable: true })),
             type: 'hostType',
-            selectable: false
+            selectable: false,
+            scopedSlots: { title: 'title' }
           }))
         root.children.push({
           id: location,
           alias: location,
           type: 'location',
           children: children,
-          selectable: false
+          selectable: false,
+          scopedSlots: { title: 'title' }
         })
       })
 
