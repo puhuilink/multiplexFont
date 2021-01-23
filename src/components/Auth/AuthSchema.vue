@@ -60,6 +60,7 @@ export default {
     },
     userId: ''
   }),
+
   methods: {
     edit (record) {
       this.title = '授权'
@@ -79,7 +80,10 @@ export default {
       try {
         this.loading = true
         const menu = this.$refs.menu.getCheckedMenu()
-        const { authView: { viewIds }, record: { user_id, group_id } } = this
+        const {
+          authView: { viewIds },
+          record: { user_id, group_id }
+        } = this
         if (user_id) {
           await AuthorizeObjectService.allocateUserView(user_id, viewIds)
           await AuthorizeObjectService.modifyUserPermission(user_id, menu)

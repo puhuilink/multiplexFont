@@ -22,8 +22,11 @@
     <!-- @dblclick.stop="() => $emit('drill', { viewId: 8947 })" -->
 
     <!-- / 元素部件 -->
-    <!-- 可以是vue组件，需要其持有者手动挂载到该div -->
-    <div ref="element" v-if="useComponent"></div>
+    <Component
+      ref="element"
+      :is="elementName"
+      v-if="useComponent"
+    />
 
   </div>
 </template>
@@ -37,12 +40,15 @@ import Widget from '@/model/widget'
 import TopologyChart from '@/model/charts/TopologyChart'
 import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
+import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
 
 const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
-  components: {},
+  components: {
+    ...ELEMENTS
+  },
   props: {
     widget: {
       type: Object,
@@ -51,10 +57,6 @@ export default {
     onlyShow: {
       type: Boolean,
       default: false
-    },
-    externalCiId: {
-      type: String,
-      default: ''
     }
   },
   data: () => ({
@@ -84,6 +86,10 @@ export default {
     // 在类型为元素时使用组件进行渲染
     useComponent () {
       return this.widget.config.category === 'ELEMENT'
+    },
+    // 元素组件名
+    elementName () {
+      return ELEMENT_MAPPING.get(this.widget.config.type)
     }
   },
   methods: {
@@ -118,22 +124,6 @@ export default {
       })
     },
     /**
-     * 注入外部CI
-     */
-    injectExternalCi () {
-      const { widget, externalCiId } = this
-      const dbDataConfig = _.get(widget.config, ['dataConfig', 'dbDataConfig'])
-      if (dbDataConfig) {
-        const { externalCi, resourceConfig } = dbDataConfig
-        if (externalCi && externalCiId) {
-          Object.assign(
-            resourceConfig,
-            { hostId: [externalCiId] }
-          )
-        }
-      }
-    },
-    /**
      * 通过配置初始化Widget
      */
     initWidgetFromConfig () {
@@ -143,7 +133,6 @@ export default {
     }
   },
   mounted () {
-    this.injectExternalCi()
     this.initWidgetFromConfig()
     const { category, type } = this.widget.config
     const widgetFactory = category === 'CHART'

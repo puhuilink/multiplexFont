@@ -6,8 +6,7 @@ class ViewListDao extends ViewDao {
       orderBy,
       ...argus,
       where: {
-        ...where,
-        'view_type': 'h5'
+        ...where
       }
     })
   }
@@ -19,7 +18,6 @@ class ViewListDao extends ViewDao {
       ...argus,
       'view_title': view_title,
       'view_name': view_name || view_title,
-      'view_type': 'h5',
       'protect_level': '1'
     })
   }

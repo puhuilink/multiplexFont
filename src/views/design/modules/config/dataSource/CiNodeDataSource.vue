@@ -108,6 +108,23 @@
           />
         </a-form-item>
 
+        <a-form-item label="检查项(DH)" v-bind="formItemLayout">
+          <AceEditor
+            class="CiNodeDataSource__editor"
+            :code="JSON.stringify(resourceConfig.metricIds, null, '\t')"
+            language="json"
+            :style="{ height: '100px !important' }"
+            @change="metricIds => {
+              if (metricIds) {
+                resourceConfig = {
+                  ...resourceConfig,
+                  metricIds: JSON.parse(metricIds)
+                }
+              }
+            }"
+          />
+        </a-form-item>
+
         <!-- <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
           <a-input
             :min="0"
@@ -126,6 +143,7 @@
 <script>
 // TODO: 与 dataSourceMixin 抽离公共部分
 import _ from 'lodash'
+import AceEditor from 'vue-ace-editor-valid'
 
 import NodeMixin from '../dataSourceMixins/nodes'
 
@@ -140,6 +158,7 @@ export default {
   name: 'CiNodeDataSource',
   mixins: [NodeMixin],
   components: {
+    AceEditor,
     DeviceTypeSelect,
     DeviceBrandSelect,
     DeviceModelSelect,
@@ -181,6 +200,13 @@ export default {
 .CiNodeDataSource {
   .ant-select {
     width: 100%;
+  }
+
+  &__editor {
+    height: 100px !important;
+    border-radius: 4px;
+    background: #f1f1f1;
+    font-size: 14px;
   }
 }
 </style>

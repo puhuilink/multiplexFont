@@ -260,8 +260,9 @@ export default class TopologyChart extends Chart {
    */
   setNodeAlarmState (id, eventLevel) {
     this.chart.clearItemStates(id)
-    if (typeof eventLevel === 'number') {
-      this.chart.setItemState(id, animateTypeList[eventLevel], true)
+    // 不展示5级告警
+    if (eventLevel !== 5) {
+      this.chart.setItemState(id, animateTypeList[eventLevel - 1], true)
     }
   }
 
@@ -269,9 +270,21 @@ export default class TopologyChart extends Chart {
    * 获取拓扑图内节点告警数据
    */
   async fetchNodesAlarm () {
-    const { nodes: totalNodes } = this.config.proprietaryConfig
-    const nodes = totalNodes.filter(node => node.hostIds && node.hostIds.length)
-    const hostIds = nodes.map(node => node.hostIds[0])
+    const models = []
+    let hostIds = []
+    this.chart.getNodes().forEach((node) => {
+      // const model = node.getModel()
+      // hack
+      const model = runTimeNodes[node.getModel().id]
+      const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
+
+      if (hostId.length) {
+        models.push(model)
+        hostIds.push(...hostId)
+      }
+    })
+
+    hostIds = _.uniq(hostIds).filter(Boolean)
 
     if (_.isEmpty(hostIds)) return
 
@@ -279,10 +292,11 @@ export default class TopologyChart extends Chart {
     const hostIdEventLevelMapping = new Map(
       alarmList.map((alarm) => [alarm.host_id, alarm.event_level])
     )
-    nodes.forEach((node) => {
-      this.setNodeAlarmState(
-        node.id,
-        hostIdEventLevelMapping.get(node.hostIds[0])
+    models.forEach((model) => {
+      const eventLevel = hostIdEventLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
+      eventLevel && this.setNodeAlarmState(
+        model.id,
+        Number(eventLevel)
       )
     })
   }

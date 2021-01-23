@@ -40,7 +40,7 @@
       <!-- / 高 -->
 
       <div class="comment-template__item">
-        <p class="comment-template__leading">位置:</p>
+        <p class="comment-template__leading">图标:</p>
         <div class="comment-template__inner comment-template__end">
           <a-select
             v-model="icon.position"

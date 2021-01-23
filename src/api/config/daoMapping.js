@@ -50,7 +50,9 @@ const IMP_TABLE_LIST = [
   // 告警发送记录
   { schema: 't_send_record' },
   // 主题
-  { schema: 't_theme' }
+  { schema: 't_theme' },
+  // 动环
+  { schema: 't_xm_paess_metric' }
 ]
 
 const IMP_DAO_MAPPING = new Map([

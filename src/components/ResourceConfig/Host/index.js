@@ -2,21 +2,7 @@ import CListSelect from '~~~/ListSelect/CListSelect'
 import { ModelService } from '@/api'
 import SelectMixin from '../SelectMixin'
 
-const loadData = (host_type_dict_value_code) => ModelService.hostFind({
-  where: { host_type_dict_value_code },
-  fields: [
-    `children {
-      label: alias
-      key: id
-    }`
-  ],
-  alias: 'dataSource'
-}).then(r => r.data.dataSource || [])
-  .then((dataSource = []) => {
-    const data = dataSource.find(el => el.children && el.children.length) || {}
-    return data
-  })
-  .then(({ children = [] }) => children)
+const loadData = (host_type_dict_value_code) => ModelService.hostsByHostTypeDictValueCode(host_type_dict_value_code)
 
 const props = {
   hostTypeDictValueCode: {

@@ -6,6 +6,7 @@ import { ViewDataService } from '@/api'
 import { AdaptorConfig } from './AdaptorConfig'
 import moment from 'moment'
 import _ from 'lodash'
+import { compare } from '@/utils/moment'
 
 export class AdaptorOverviewConfig extends AdaptorConfig {
   constructor ({
@@ -27,6 +28,12 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
     this.alias = alias
     this.origin = origin
     this.isGroup = isGroup
+  }
+
+  isAvailable () {
+    return Boolean(
+      this.alias && this.alias.length
+    )
   }
 
   getOption () {
@@ -65,5 +72,8 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
         time: this.formatTime(collect, this.isGroup),
         name: origin
       }))
+      .sort((a, b) => {
+        return compare(a.time, b.time)
+      })
   }
 }

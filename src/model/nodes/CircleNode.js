@@ -18,10 +18,7 @@ export default class CircleNode extends Node {
     super(node)
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.icon = new TopologyIcon(icon || {})
-  }
-
-  get hostIds () {
-    return this.resourceConfig.hostId
+    runTimeNodes[this.id] = this
   }
 
   async getRealDataOption () {
@@ -47,8 +44,10 @@ export default class CircleNode extends Node {
   }
 
   intervalRefresh () {
+    const isAvailable = this.resourceConfig.isAvailable()
+    if (!isAvailable) return
+
     this.getRealDataOption()
-    runTimeNodes[this.id] = this
     this.timer = setInterval(() => {
       this.getRealDataOption()
     }, 1000 * 60)

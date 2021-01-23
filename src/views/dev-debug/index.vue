@@ -1,13 +1,18 @@
 <template>
-  <div class="DevDebug"></div>
+  <div class="DevDebug">
+    <CascaderHostEndpointMetricList />
+  </div>
 </template>
 
 <script>
+import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
 
 export default {
   name: 'DevDebug',
   mixins: [],
-  components: {},
+  components: {
+    CascaderHostEndpointMetricList
+  },
   props: {},
   data: () => ({
   }),

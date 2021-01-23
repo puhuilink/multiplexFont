@@ -5,7 +5,7 @@
 import { AdaptorConfig } from './AdaptorConfig'
 import { ViewDataService } from '@/api'
 import { ALARM_TYPE_ALL } from '../types/alarmType'
-import moment from 'moment'
+import { compare } from '@/utils/moment'
 
 export class AdaptorAlarmConfig extends AdaptorConfig {
   constructor ({
@@ -27,6 +27,12 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.deviceType = deviceType
     this.level = level
     this.type = type
+  }
+
+  isAvailable () {
+    return Boolean(
+      this.type
+    )
   }
 
   fetch () {
@@ -53,9 +59,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
         level5
       }))
       .sort((a, b) => {
-        if (moment(a.time).isBefore(b.time)) return -1
-        if (moment(a.time).isAfter(b.time)) return 1
-        return 0
+        return compare(a.time, b.time)
       })
   }
 }

@@ -95,6 +95,16 @@
       />
     </a-form-item>
 
+    <a-form-item label="检查项(DH)" v-bind="formItemLayout">
+      <AceEditor
+        class="RealDataSource__editor"
+        :code="JSON.stringify(resourceConfig.metricIds, null, '\t')"
+        language="json"
+        :style="{ height: '100px !important' }"
+        @change="changeCmdbMetricIds"
+      />
+    </a-form-item>
+
     <a-form-item label="图例类型" v-show="useLegendType" v-bind="formItemLayout" required>
       <a-select
         v-model="resourceConfig.legendType"
@@ -136,19 +146,13 @@
         @input="change()"
       />
     </a-form-item>
-
-    <a-form-item label="外部CI可用" v-bind="formItemLayout" v-if="useExternalCi" >
-      <a-checkbox
-        :checked="!!dbDataConfig.externalCi"
-        @input="changeExternalCi"
-      />
-    </a-form-item>
   </div>
 </template>
 
 <script>
 /* eslint-disable standard/no-callback-literal */
 import _ from 'lodash'
+import AceEditor from 'vue-ace-editor-valid'
 import DataSourceMixins from '../dataSourceMixins/index'
 
 import TimeRange from './TimeRange'
@@ -166,6 +170,7 @@ export default {
   name: 'RealDataSource',
   mixins: [DataSourceMixins],
   components: {
+    AceEditor,
     TimeRange,
     DeviceTypeSelect,
     DeviceBrandSelect,
@@ -315,15 +320,15 @@ export default {
         this.resourceConfig,
         { metricModelIds: _.castArray(metricModelIds) }
       )
+      this.changeCmdbMetricIds('[]')
     },
-    /**
-     * 设置外部CI可用
-     */
-    changeExternalCi (externalCi) {
-      Object.assign(
-        this.dbDataConfig,
-        { externalCi }
-      )
+    changeCmdbMetricIds (code) {
+      if (code) {
+        Object.assign(
+          this.resourceConfig,
+          { metricIds: JSON.parse(code) }
+        )
+      }
     }
   }
 }
@@ -333,6 +338,13 @@ export default {
 .RealDataSource {
   .ant-select {
     width: 100%;
+  }
+
+  &__editor {
+    height: 100px !important;
+    border-radius: 4px;
+    background: #f1f1f1;
+    font-size: 14px;
   }
 }
 </style>

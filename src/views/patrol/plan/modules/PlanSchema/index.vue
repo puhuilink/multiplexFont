@@ -18,7 +18,7 @@
 
         <Cron />
 
-        <TimeRange/>
+        <!-- <TimeRange/> -->
 
         <PatrolPath :plan.sync="plan" />
       </a-form-model>
@@ -83,7 +83,7 @@ export default {
      * 调取新增接口
      */
     async insert () {
-      this.$refs.ruleForm.validate(async valid => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.confirmLoading = true
@@ -103,7 +103,7 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      this.$refs.ruleForm.validate(async valid => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.confirmLoading = true

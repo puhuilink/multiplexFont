@@ -4,7 +4,9 @@
  */
 import { BaseService } from './BaseService'
 import { axios } from '@/utils/request'
+import { XmPaessMetricDao } from '../dao/index'
 import _ from 'lodash'
+import { query } from '../utils/hasura-orm/index'
 
 export class ViewDataService extends BaseService {
   static _validate (argus = {}) {
@@ -34,7 +36,8 @@ export class ViewDataService extends BaseService {
       'hostId',
       'endpointModelId',
       'metricModelIds',
-      'calculateType'
+      'calculateType',
+      'metricIds'
     ])
 
     data['metricModelIds'] = _.castArray(data['metricModelIds'])
@@ -56,6 +59,10 @@ export class ViewDataService extends BaseService {
     if (!data['calculateType']) {
       Reflect.deleteProperty(data, 'isGroup')
       Reflect.deleteProperty(data, 'calculateType')
+    }
+
+    if (!data['metricIds'] || _.isEmpty(data['metricIds'])) {
+      Reflect.deleteProperty(data, 'metricIds')
     }
 
     if (this._validate(data)) {
@@ -126,5 +133,43 @@ export class ViewDataService extends BaseService {
     } else {
       return []
     }
+  }
+
+  static async comboData ({ timeRange = {}, top = 0, ...argus }) {
+    const data = { ...argus }
+    // 时间范围
+    if (!_.isEmpty(timeRange)) {
+      Object.assign(data, _.pick(timeRange, ['startTime', 'endTime']))
+    } else {
+      Reflect.deleteProperty(data, 'calculateType')
+      Reflect.deleteProperty(data, 'isGroup')
+    }
+
+    if (top) {
+      Object.assign(data, { top })
+    }
+
+    return axios.post('/data/view', data)
+  }
+
+  /**
+   * 厦门动环指标
+   */
+  static async xmDHMetric ({ code = '' }) {
+    const { data: { list } } = await query(
+      XmPaessMetricDao.find({
+        where: {
+          code: { _eq: code }
+        },
+        fields: ['value: metric_value'],
+        limit: 1,
+        orderBy: {
+          upload_time: 'desc_nulls_last'
+        },
+        alias: 'list'
+      })
+    )
+
+    return _.get(list, ['0', 'value'], '')
   }
 }

@@ -61,11 +61,9 @@ class CmdbService extends BaseService {
     // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
     cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
 
-    // host_type 汉化
-    cmdbHostList = cmdbHostList.map(({ modelHost = {}, host_type = '', ...rest }) => ({
-      ...rest,
-      host_type: _.get(modelHost, 'host') || host_type
-    }))
+    // https://github.com/vueComponent/ant-design-vue/issues/634
+    // https://www.antdv.com/components/tree-cn/#components-tree-demo-searchable
+    const treeNodeTitleSlots = { scopedSlots: { title: 'title' } }
 
     // 树形结构构建
     const root = {
@@ -73,7 +71,8 @@ class CmdbService extends BaseService {
       alias: '数据中心',
       children: [],
       type: 'root',
-      selectable: false
+      selectable: false,
+      ...treeNodeTitleSlots
     }
 
     // 按采集系统 / 区域划分第一层
@@ -85,19 +84,27 @@ class CmdbService extends BaseService {
       .forEach(([location, hostList]) => {
         const children = Object
           .entries(_.groupBy(hostList, 'host_type'))
-          .map(([hostType, list]) => ({
-            id: hostType,
-            alias: hostType,
-            children: list,
+          .map(([host_type, list]) => ({
+            // 统一个 model_host 会在不同 location 中多次用到
+            // 此处 id 仅用作树形结构唯一标识，并无实际作用
+            id: `${location}-${host_type}`,
+            alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
+            children: list.map(e => ({
+              ...e,
+              selectable: true,
+              ...treeNodeTitleSlots
+            })),
             type: 'hostType',
-            selectable: false
+            selectable: false,
+            ...treeNodeTitleSlots
           }))
         root.children.push({
           id: location,
           alias: location,
           type: 'location',
           children: children,
-          selectable: false
+          selectable: false,
+          ...treeNodeTitleSlots
         })
       })
 
@@ -203,7 +210,7 @@ class CmdbService extends BaseService {
         fields: [
           'deviceType: type_model_value_code',
           'deviceModel: device_model_value_code',
-          'deviceModelName: devce_model_name',
+          'deviceModelName: device_model_name',
           'deviceBrand: brand_value_code',
           'hostType: host_type',
           'hostId: host_id',
@@ -224,6 +231,43 @@ class CmdbService extends BaseService {
       host['deviceModelName'] = 'Firewall'
     }
     return host
+  }
+
+  static async endpointsByHostIdAndEndpointModelId (host_id, endpoint_model_id) {
+    const { data: { list } } = await query(
+      CmdbHostEndpointMetricDao.find({
+        where: {
+          host_id: { _eq: host_id },
+          endpoint_model_id: { _eq: endpoint_model_id }
+        },
+        alias: 'list',
+        fields: [
+          'key: endpoint_id',
+          'label: endpoint_alias'
+        ]
+      })
+    )
+
+    return _.uniqBy(list, el => el.key)
+  }
+
+  static async metrics (host_id, endpoint_model_id, metric_model_id) {
+    const { data: { list } } = await query(
+      CmdbHostEndpointMetricDao.find({
+        where: {
+          host_id: { _eq: host_id },
+          endpoint_model_id: { _eq: endpoint_model_id },
+          metric_model_id: { _eq: metric_model_id }
+        },
+        alias: 'list',
+        fields: [
+          'key: endpoint_id',
+          'label: endpoint_alias'
+        ]
+      })
+    )
+
+    return list
   }
 }
 

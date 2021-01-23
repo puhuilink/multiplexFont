@@ -49,6 +49,7 @@ import CTable from '@/components/Table/CTable'
 import AlarmSolve from './AlarmSolve'
 import DetailForm from './DetailForm'
 import { formatTime } from '@/utils/graphql'
+import { ALARM_STATE } from '@/tables/alarm/enum'
 
 export default {
   name: 'AlarmDetail',
@@ -79,7 +80,7 @@ export default {
         {
           label: '告警状态',
           key: 'state',
-          customRender: text => text === 1 ? '已处理' : '未处理'
+          customRender: text => text === ALARM_STATE.solved ? '已处理' : '未处理'
         },
         { label: '通知人员', key: 'forward_person' },
         { label: '通知时间', key: 'forward_person', customRender: formatTime },
@@ -109,13 +110,13 @@ export default {
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 200,
+          width: 60,
           sorter: true
         },
         {
           title: '告警时间',
           dataIndex: 'collect_time',
-          width: 200,
+          width: 120,
           sorter: true,
           customRender: formatTime
         },
@@ -123,12 +124,13 @@ export default {
           title: '告警描述',
           dataIndex: 'detail',
           width: 200,
-          sorter: true
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '采集系统',
           dataIndex: 'agent_id',
-          width: 200,
+          width: 100,
           sorter: true
         }
       ]),
@@ -138,12 +140,21 @@ export default {
   },
   computed: {
     disabled () {
-      // 1 代表已解决
-      return _.get(this.record, 'state') === 1
+      return _.get(this.record, 'state') === ALARM_STATE.solved
+    },
+    scrollY () {
+      // y 与 less height 保持一致
+      return '500px'
+    },
+    scrollX () {
+      const { columns = [] } = this
+      return _.sum(columns.map(e => e.width || 60))
     },
     scroll () {
-      // y 与 less height 保持一致
-      return { x: true, y: '500px' }
+      const { scrollY: y, scrollX: x } = this
+      return {
+        x, y
+      }
     }
   },
   methods: {
@@ -180,7 +191,7 @@ export default {
       this.$refs.solve.open(this.record.id)
     },
     solveSuccess () {
-      this.record.state = 1
+      this.record.state = ALARM_STATE.solved
     }
   }
 }

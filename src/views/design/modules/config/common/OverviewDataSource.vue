@@ -158,13 +158,15 @@ export default {
       const timeRange = timeRangeConfig.getOption()
 
       if (
-        [1, 2].includes(
-          Number(!!calculateType) +
-          Number(!!isGroup) +
-          Number(!_.isEmpty(timeRange))
-        )
+        (isGroup || calculateType) &&
+        _.isEmpty(timeRange)
       ) {
-        this.$message.error('计算类型、分组条件、查询时间必须全选或全不选')
+        this.$message.error('选中计算类型或分组时，必须选择查询时间')
+        return cb(false)
+      }
+
+      if (isGroup && !calculateType) {
+        this.$message.error('选中分组时，必须选择计算类型')
         return cb(false)
       }
 

@@ -17,14 +17,11 @@ export default {
     // TODO: 视图数据要查询的时间范围
     timeRange: []
   }),
-  filters: {
-    // 缩略图静态资源地址
-    thumbnail (src) {
-      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
-    }
-  },
   computed: {},
   methods: {
+    thumbnail (src) {
+      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
+    },
     dateChange () {},
     dateSet () {},
     /**
@@ -78,23 +75,6 @@ export default {
 
 <style lang="less">
 .ViewDisplay {
-
-  &-bar {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    align-items: center;
-    height: 45px;
-    width: 240px;
-
-    & i {
-      font-size: 18px;
-    }
-
-    &--active {
-      color: #1890ff !important;
-    }
-  }
 
   &-tabs.fullscreen {
     position: fixed;

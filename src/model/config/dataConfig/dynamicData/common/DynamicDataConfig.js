@@ -5,22 +5,27 @@
 import { AdaptorResourceConfig } from './AdaptorResourceConfig'
 import { AdaptorAlarmConfig } from './AdaptorAlarmConfig'
 import { AdaptorOverviewConfig } from './AdaptorOverviewConfig'
+import { AdaptorComboConfig } from './AdaptorComboConfig'
+import { AdaptorDHConfig } from './AdaptorDHConfig'
 
 export class DynamicDataConfig {
   constructor ({
-    // 外部CI可用
-    externalCi = true,
     // 性能数据配置
     resourceConfig = {},
     // 告警数据配置
     alarmConfig = {},
     // 总览数据配置
-    overviewConfig = {}
+    overviewConfig = {},
+    // 新接口统一数据配置
+    comboConfig = {},
+    // 动环数据配置
+    dhConfig = {}
   }) {
-    this.externalCi = externalCi
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
     this.overviewConfig = new AdaptorOverviewConfig(overviewConfig)
+    this.comboConfig = new AdaptorComboConfig(comboConfig)
+    this.dhConfig = new AdaptorDHConfig(dhConfig)
     this.resetData()
   }
 

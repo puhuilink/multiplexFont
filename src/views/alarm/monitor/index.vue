@@ -230,35 +230,35 @@ export default {
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 150,
+          width: 120,
           sorter: true,
           show: true
         },
         {
           title: '监控设备',
           dataIndex: 'host_id cmdbHost { alias }',
-          width: 200,
+          width: 220,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
         },
         {
-          title: '监控实例',
+          title: '监控实体',
           dataIndex: 'metric_id cmdbEndpoint { modelEndpoint { alias } }',
-          width: 200,
+          width: 220,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
         },
         {
           title: '检查项',
           dataIndex: 'endpoint_id cmdbMetric { modelMetric { alias } }',
-          width: 200,
+          width: 220,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
         },
         {
           title: '告警时间',
           dataIndex: 'receive_time',
-          width: 200,
+          width: 180,
           show: true,
           sorter: true,
           customRender: formatTime
@@ -273,7 +273,7 @@ export default {
         {
           title: '采集系统',
           dataIndex: 'agent_id',
-          width: 200,
+          width: 100,
           sorter: true,
           show: true
         }
