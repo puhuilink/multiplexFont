@@ -24,7 +24,7 @@
         <template v-slot:title="{ alias: title }">
           <span v-if="filterTreeNode({ title })">
             <span>{{ title.substring(0, title.toLowerCase().indexOf(searchValue.toLowerCase())) }}</span>
-            <span style="color: #b4e3dd">{{ searchValue }}</span>
+            <span style="color: #37b3a4">{{ searchValue }}</span>
             <span>{{ title.substring(title.toLowerCase().indexOf(searchValue.toLowerCase()) + searchValue.length) }}</span>
           </span>
           <span v-else>{{ title }}</span>

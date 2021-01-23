@@ -61,6 +61,10 @@ class CmdbService extends BaseService {
     // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
     cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
 
+    // https://github.com/vueComponent/ant-design-vue/issues/634
+    // https://www.antdv.com/components/tree-cn/#components-tree-demo-searchable
+    const treeNodeTitleSlots = { scopedSlots: { title: 'title' } }
+
     // 树形结构构建
     const root = {
       id: 'root',
@@ -68,7 +72,7 @@ class CmdbService extends BaseService {
       children: [],
       type: 'root',
       selectable: false,
-      scopedSlots: { title: 'title' }
+      ...treeNodeTitleSlots
     }
 
     // 按采集系统 / 区域划分第一层
@@ -85,10 +89,14 @@ class CmdbService extends BaseService {
             // 此处 id 仅用作树形结构唯一标识，并无实际作用
             id: `${location}-${host_type}`,
             alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
-            children: list.map(e => ({ ...e, selectable: true })),
+            children: list.map(e => ({
+              ...e,
+              selectable: true,
+              ...treeNodeTitleSlots
+            })),
             type: 'hostType',
             selectable: false,
-            scopedSlots: { title: 'title' }
+            ...treeNodeTitleSlots
           }))
         root.children.push({
           id: location,
@@ -96,7 +104,7 @@ class CmdbService extends BaseService {
           type: 'location',
           children: children,
           selectable: false,
-          scopedSlots: { title: 'title' }
+          ...treeNodeTitleSlots
         })
       })
 
