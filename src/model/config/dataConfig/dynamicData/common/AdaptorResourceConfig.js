@@ -83,11 +83,15 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       }) => {
         const endpoint = endpointAggregateMode === 'cmdb' ? endpointAlias : endpointModelAlias
         const metric = metricAlias || metricName
+        // 去除 endpoint 与 metric 重名部分
+        // 内存 + 总内存 = 内存总内存
+        // CPU + CPU使用率 = CPU使用率
+        const v = `${endpoint}${metric.startsWith(endpoint) ? metric.replace(endpoint, '') : metric}`
         const result = {
           data: metricValueStr || metricValue,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
-          legend: groupByHost ? hostAlias : endpoint + metric.replace(endpoint, ''),
-          name: !groupByHost ? hostAlias : endpoint + metric.replace(endpoint, ''),
+          legend: groupByHost ? hostAlias : v,
+          name: !groupByHost ? hostAlias : v,
           unit: uint
         }
 
