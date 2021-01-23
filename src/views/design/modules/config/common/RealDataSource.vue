@@ -121,7 +121,7 @@
         @change="change()"
       >
         <a-select-option value="model">模型</a-select-option>
-        <a-select-option value="cmdb">实体</a-select-option>
+        <a-select-option value="cmdb">实例</a-select-option>
       </a-select>
     </a-form-item>
 

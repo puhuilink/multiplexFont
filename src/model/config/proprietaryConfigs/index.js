@@ -21,7 +21,8 @@ class Legend {
     right = 'auto',
     bottom = 'auto',
     left = 'auto',
-    textStyle = {}
+    textStyle = {},
+    type = 'scroll'
   }) {
     this.show = show
     this.orient = orient
@@ -31,6 +32,7 @@ class Legend {
     this.left = left
     this.icon = icon
     this.textStyle = new TextStyle(textStyle)
+    this.type = type
   }
 }
 

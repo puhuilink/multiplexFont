@@ -95,7 +95,6 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
 
   async getComboDataOption () {
     const dataList = await this.comboConfig.fetch()
-    console.log(dataList)
     const groupByLegend = _.groupBy(dataList, 'legend')
     const groupByName = _.groupBy(dataList, 'name')
     const aggregate = Object.keys(groupByLegend).length > 1 ? groupByLegend : groupByName
