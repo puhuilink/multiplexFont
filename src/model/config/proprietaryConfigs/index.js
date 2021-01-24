@@ -32,7 +32,9 @@ class Legend {
     this.left = left
     this.icon = icon
     this.textStyle = new TextStyle(textStyle)
-    this.type = type
+    // https://echarts.apache.org/zh/option.html#legend.type
+    // TODO: 详细配置
+    // this.type = type
   }
 }
 
