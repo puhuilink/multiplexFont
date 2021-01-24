@@ -23,6 +23,11 @@ export class AdaptorComboConfig {
     this.delayTime = delayTime
   }
 
+  // TODO:
+  get isAvailable () {
+    return true
+  }
+
   getOption () {
     const { dataType, isGroup, calculateType, top, content, timeRangeConfig } = this
 

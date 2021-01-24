@@ -6,7 +6,7 @@
 * Email: dong.xing@outlook.com
 */
 import Factory from '@/model/factory/factory'
-import { SOURCE_TYPE_STATIC } from './dynamicData/types/sourceType'
+import { SOURCE_TYPE_STATIC, SOURCE_TYPE_NULL } from './dynamicData/types/sourceType'
 
 const StaticDataConfigFactory = Factory.createStaticDataConfigFactory()
 const CreateDynamicDataFactory = Factory.createDynamicDataFactory()
@@ -27,10 +27,13 @@ export default class DataConfig {
    * 获取当前启用的 config
    */
   getCurrentConfig () {
-    if (this.sourceType === SOURCE_TYPE_STATIC) {
-      return this.staticDataConfig
-    } else {
-      return this.dbDataConfig.getCurrentConfig(this.sourceType) || {}
+    switch (this.sourceType) {
+      case SOURCE_TYPE_STATIC:
+        return this.staticDataConfig || {}
+      case SOURCE_TYPE_NULL:
+        return {}
+      default:
+        return this.dbDataConfig.getCurrentConfig(this.sourceType) || {}
     }
   }
 }

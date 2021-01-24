@@ -1,8 +1,6 @@
 <template>
   <a-form-model class="ComboDataSource" v-bind="formItemLayout">
-    <a-form-item>
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+    <PreviewButton :preview="preview" />
 
     <a-form-item label="指标配置">
       {{ comboConfig.content.length }}条
@@ -11,13 +9,9 @@
 
     <TimeRange @change="change()" />
 
-    <CalculateTypeSelect
-      @change="change()"
-    />
+    <CalculateTypeSelect @change="change()" />
 
-    <GroupSelect
-      @change="change()"
-    />
+    <GroupSelect @change="change()" />
 
     <a-form-item label="top">
       <a-input-number
@@ -72,14 +66,6 @@ export default {
     parserInt,
     detail () {
       this.visible = true
-    },
-    async preview () {
-      try {
-        this.btnLoading = true
-        await this.change(true)
-      } finally {
-        this.btnLoading = false
-      }
     }
   }
 }

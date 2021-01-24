@@ -1,10 +1,8 @@
 <template>
-  <div class="AlarmDataSource">
-    <a-form-item v-bind="formItemLayout">
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+  <a-form-model class="AlarmDataSource" v-bind="formItemLayout">
+    <PreviewButton :preview="preview" />
 
-    <a-form-item label="数据域" v-bind="formItemLayout">
+    <a-form-item label="数据域">
       <OriginSelect
         mode="multiple"
         v-model="alarmConfig.origin"
@@ -12,7 +10,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="监控类型" v-bind="formItemLayout" required>
+    <a-form-item label="监控类型" required>
       <DeviceTypeSelect
         multiple
         :value="alarmConfig.deviceType"
@@ -35,7 +33,7 @@
 
     <AlarmLevelSelect
       mode="multiple"
-      v-bind="formItemLayout"
+
       v-model="alarmConfig.level"
       @change="event => {
         alarmConfig.level = event
@@ -43,7 +41,7 @@
       }"
     />
 
-    <a-form-item label="告警状态" v-bind="formItemLayout" required>
+    <a-form-item label="告警状态" required>
       <a-select
         v-model="alarmConfig.type"
         @change="change()"
@@ -53,19 +51,15 @@
       </a-select>
     </a-form-item>
 
-    <CalculateTypeSelect
-      @change="change()"
-    />
+    <CalculateTypeSelect @change="change()" />
 
     <!-- TODO: 只有当时间段不为实时时，才可按时间分组 -->
-    <GroupSelect
-      @change="change()"
-    />
+    <GroupSelect @change="change()" />
 
     <TimeRange @change="change()" />
 
     <RefreshTime @change="change()" />
-  </div>
+  </a-form-model>
 </template>
 
 <script>

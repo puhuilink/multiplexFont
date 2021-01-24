@@ -152,7 +152,7 @@ export default {
   }),
   computed: {
     timeRangeConfig () {
-      return this.config.dataConfig.getCurrentConfig().timeRangeConfig
+      return this.config.dataConfig.getCurrentConfig().timeRangeConfig || {}
     },
     startTime: {
       get () {

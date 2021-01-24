@@ -86,6 +86,9 @@ export default {
       } finally {
         this.btnLoading = false
       }
+    },
+    async preview () {
+      await this.change(true)
     }
   }
 }

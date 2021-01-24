@@ -1,8 +1,6 @@
 <template>
   <a-form-model class="OverviewDataSource" v-bind="formItemLayout">
-    <a-form-item>
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+    <PreviewButton :validate="validate" :preview="() => change(true)" />
 
     <a-form-item label="数据域">
       <OriginSelect
@@ -60,13 +58,9 @@
       </a-select>
     </a-form-item>
 
-    <CalculateTypeSelect
-      @change="change()"
-    />
+    <CalculateTypeSelect @change="change()" />
 
-    <GroupSelect
-      @change="change()"
-    />
+    <GroupSelect @change="change()" />
 
     <TimeRange @change="change()" />
 
@@ -114,23 +108,9 @@ export default {
   computed: {},
   methods: {
     /**
-     * 预览数据
-     */
-    async preview () {
-      this.validate(async passValidate => {
-        if (!passValidate) return
-        try {
-          this.btnLoading = true
-          await this.change(true)
-        } finally {
-          this.btnLoading = false
-        }
-      })
-    },
-    /**
      * 校验数据配置
      */
-    validate (cb = (passValidate) => {}) {
+    validate () {
       const {
         calculateType, isGroup, timeRangeConfig
       } = this.overviewConfig
@@ -142,15 +122,15 @@ export default {
         _.isEmpty(timeRange)
       ) {
         this.$message.error('选中计算类型或分组时，必须选择查询时间')
-        return cb(false)
+        return false
       }
 
       if (isGroup && !calculateType) {
         this.$message.error('选中分组时，必须选择计算类型')
-        return cb(false)
+        return false
       }
 
-      return cb(true)
+      return true
     }
   }
 }

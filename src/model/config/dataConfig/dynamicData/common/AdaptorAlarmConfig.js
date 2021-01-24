@@ -29,7 +29,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.type = type
   }
 
-  isAvailable () {
+  get isAvailable () {
     return Boolean(
       this.type
     )

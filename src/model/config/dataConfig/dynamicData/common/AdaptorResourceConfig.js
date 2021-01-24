@@ -36,7 +36,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.metricIds = metricIds
   }
 
-  isAvailable () {
+  get isAvailable () {
     return Boolean(
       this.deviceType &&
       this.deviceBrand &&

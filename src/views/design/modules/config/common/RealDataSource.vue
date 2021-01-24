@@ -1,8 +1,6 @@
 <template>
   <a-form-model class="RealDataSource" v-bind="formItemLayout">
-    <a-form-item>
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+    <PreviewButton :validate="validate" :preview="() => change(true)" />
 
     <TimeRange v-if="useTimeRange" @change="change()" />
 
@@ -11,9 +9,7 @@
       @change="change()"
     />
 
-    <GroupSelect
-      @change="change()"
-    />
+    <GroupSelect @change="change()" />
 
     <a-form-item label="监控类型" required>
       <DeviceTypeSelect
@@ -120,16 +116,7 @@
 
     <RefreshTime v-if="useRefreshTime" />
 
-    <a-form-item label="延迟时间" v-if="useRefreshTime" >
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="毫秒"
-        type="number"
-        v-model.number="resourceConfig.delayTime"
-        @input="change()"
-      />
-    </a-form-item>
+    <DelayTime />
   </a-form-model>
 </template>
 
@@ -202,23 +189,9 @@ export default {
   },
   methods: {
     /**
-     * 预览数据
-     */
-    async preview () {
-      this.validate(async passValidate => {
-        if (!passValidate) return
-        try {
-          this.btnLoading = true
-          await this.change(true)
-        } finally {
-          this.btnLoading = false
-        }
-      })
-    },
-    /**
      * 校验数据配置
      */
-    validate (cb = (passValidate) => {}) {
+    validate () {
       const {
         calculateType, isGroup, timeRangeConfig
       } = this.resourceConfig
@@ -227,10 +200,10 @@ export default {
         calculateType && (_.isEmpty(timeRangeConfig.getOption()) || !isGroup)
       ) {
         this.$message.error('选择计算类型时必须指定查询时间段与分组条件')
-        return cb(false)
+        return false
       }
 
-      return cb(true)
+      return true
     },
     /**
      * 设置监控类型
