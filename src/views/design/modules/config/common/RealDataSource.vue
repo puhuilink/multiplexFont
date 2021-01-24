@@ -197,10 +197,6 @@ export default {
       type: Boolean,
       default: true
     },
-    useExternalCi: {
-      type: Boolean,
-      default: true
-    },
     useLegendType: {
       type: Boolean,
       default: false
@@ -216,9 +212,6 @@ export default {
   },
   data: () => ({}),
   computed: {
-    dbDataConfig () {
-      return this.config.dataConfig.dbDataConfig
-    },
     resourceConfig () {
       return this.config.dataConfig.dbDataConfig.resourceConfig
     }

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import DataSourceMixins from '../dataSourceMixins/index'
+import { mapState } from 'vuex'
 import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_ALARM,
@@ -23,17 +23,18 @@ import {
 
 export default {
   name: 'RefreshTime',
-  mixins: [DataSourceMixins],
+  mixins: [],
   components: {},
   props: {},
   data () {
     return {}
   },
   computed: {
+    ...mapState('screen', ['activeWidget']),
     refreshTimeConfig () {
-      const { dbDataConfig = {} } = this.config.dataConfig
+      const { dbDataConfig = {}, sourceType } = this.activeWidget.config.dataConfig
 
-      switch (this.sourceType) {
+      switch (sourceType) {
         case SOURCE_TYPE_ALARM:
           return dbDataConfig.alarmConfig || {}
         case SOURCE_TYPE_OVERVIEW:

@@ -22,6 +22,9 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
+    dbDataConfig () {
+      return this.config.dataConfig.dbDataConfig
+    },
     sourceType () {
       return this.config.dataConfig.sourceType
     },
@@ -49,21 +52,6 @@ export default {
       },
       set (v) {
         Object.assign(this.config.dataConfig.dbDataConfig.overviewConfig, v)
-        this.change()
-      }
-    },
-    available () {
-      return Boolean(
-        _.get(this.resourceConfig, 'selectedKpi.length') &&
-        _.get(this.resourceConfig, 'selectedInstance.length')
-      )
-    },
-    xAxisType: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.xAxisType', 'RESOURCE')
-      },
-      set (xAxisType) {
-        Object.assign(this.config.dataConfig.dbDataConfig, { xAxisType })
         this.change()
       }
     }
