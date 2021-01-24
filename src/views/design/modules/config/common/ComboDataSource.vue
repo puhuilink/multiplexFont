@@ -22,6 +22,10 @@
       ></a-input-number>
     </a-form-item>
 
+    <RefreshTime />
+
+    <DelayTime />
+
     <a-modal
       :footer="null"
       title="配置详情"

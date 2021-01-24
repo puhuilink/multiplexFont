@@ -3,7 +3,7 @@
     <a-input
       :min="0"
       :parser="parserInt"
-      suffix="分钟"
+      suffix="毫秒"
       type="number"
       v-model.number="config.dataConfig.getCurrentConfig().delayTime"
       @input="$emit('change')"
