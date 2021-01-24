@@ -69,24 +69,16 @@
       />
     </a-form-item>
 
-    <TimeRange :type="SOURCE_TYPE_ALARM" />
+    <TimeRange />
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout">
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="alarmConfig.refreshTime"
-        @input="change()"
-      />
-    </a-form-item>
+    <RefreshTime />
   </div>
 </template>
 
 <script>
 import TimeRange from './TimeRange'
 import DataSourceMixins from '../dataSourceMixins/index'
+import RefreshTime from './RefreshTime'
 
 import { OriginSelect } from '@/components/Alarm'
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
@@ -105,7 +97,8 @@ export default {
     TimeRange,
     CalculateTypeSelect,
     GroupSelect,
-    AlarmLevelSelect
+    AlarmLevelSelect,
+    RefreshTime
   },
   props: {},
   data: () => ({

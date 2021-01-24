@@ -140,13 +140,6 @@ const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
 export default {
   name: 'TimeRange',
   mixins: [DataSourceMixins],
-  props: {
-    type: {
-      type: String,
-      default: SOURCE_TYPE_REAL,
-      validator: type => [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO].includes(type)
-    }
-  },
   data: () => ({
     TIME_RANGE_FORMAT,
     TIME_RANGE_TYPE_DEFAULT,
@@ -167,9 +160,9 @@ export default {
   }),
   computed: {
     timeRangeConfig () {
-      const { dbDataConfig } = this.config.dataConfig
+      const { dbDataConfig = {} } = this.config.dataConfig
 
-      switch (this.type) {
+      switch (dbDataConfig.type) {
         case SOURCE_TYPE_ALARM:
           return dbDataConfig.alarmConfig.timeRangeConfig || {}
         case SOURCE_TYPE_OVERVIEW:

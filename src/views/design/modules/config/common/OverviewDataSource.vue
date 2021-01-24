@@ -75,17 +75,9 @@
       />
     </a-form-item>
 
-    <TimeRange :type="SOURCE_TYPE_OVERVIEW" />
+    <TimeRange />
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout">
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="overviewConfig.refreshTime"
-      />
-    </a-form-item>
+    <RefreshTime />
   </div>
 </template>
 
@@ -98,6 +90,7 @@ import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
 import { SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import _ from 'lodash'
+import RefreshTime from './RefreshTime'
 
 export default {
   name: 'OverviewDataSource',
@@ -106,7 +99,8 @@ export default {
     OriginSelect,
     TimeRange,
     CalculateTypeSelect,
-    GroupSelect
+    GroupSelect,
+    RefreshTime
   },
   props: {},
   data: () => ({

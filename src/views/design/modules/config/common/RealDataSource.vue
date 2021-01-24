@@ -125,16 +125,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="resourceConfig.refreshTime"
-        @input="change()"
-      />
-    </a-form-item>
+    <RefreshTime v-if="useRefreshTime" />
 
     <a-form-item label="延迟时间" v-bind="formItemLayout" v-if="useRefreshTime" >
       <a-input
@@ -158,6 +149,7 @@ import DataSourceMixins from '../dataSourceMixins/index'
 import TimeRange from './TimeRange'
 import CalculateTypeSelect from './CalculateTypeSelect'
 import GroupSelect from './GroupSelect'
+import RefreshTime from './RefreshTime'
 
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
 import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
@@ -179,7 +171,8 @@ export default {
     EndpointSelect,
     MetricSelect,
     CalculateTypeSelect,
-    GroupSelect
+    GroupSelect,
+    RefreshTime
   },
   props: {
     singleHost: {

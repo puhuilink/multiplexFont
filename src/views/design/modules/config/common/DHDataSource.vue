@@ -15,26 +15,20 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout">
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="dhConfig.refreshTime"
-        @input="change()"
-      />
-    </a-form-item>
+    <RefreshTime />
   </div>
 </template>
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
+import RefreshTime from './RefreshTime'
 
 export default {
   name: 'DHDataSource',
   mixins: [DataSourceMixins],
-  components: {},
+  components: {
+    RefreshTime
+  },
   props: {},
   data () {
     return {

@@ -5,6 +5,7 @@ import { ScreenMutations } from '@/store/modules/screen'
 import CacheMixin from '../cache'
 
 export default {
+  name: 'DataSourceMixins',
   mixins: [CacheMixin],
   data: () => ({
     formItemLayout: {
@@ -21,6 +22,9 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
+    sourceType () {
+      return this.config.dataConfig.sourceType
+    },
     resourceConfig: {
       get () {
         return this.config.dataConfig.dbDataConfig.resourceConfig

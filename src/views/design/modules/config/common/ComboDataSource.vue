@@ -9,7 +9,7 @@
       <a-button @click="detail">详情</a-button>
     </a-form-item>
 
-    <TimeRange :type="SOURCE_TYPE_COMBO" />
+    <TimeRange />
 
     <a-form-item label="计算类型" v-bind="formItemLayout">
       <CalculateTypeSelect
