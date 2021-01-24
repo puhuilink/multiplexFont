@@ -17,6 +17,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     deviceType = [],
     // 告警等级
     level = [],
+    hostId = '',
     // 告警状态: all / unclose
     type = ALARM_TYPE_ALL,
     ...props
@@ -27,6 +28,7 @@ export class AdaptorAlarmConfig extends AdaptorConfig {
     this.deviceType = deviceType
     this.level = level
     this.type = type
+    this.hostId = hostId
   }
 
   get isAvailable () {

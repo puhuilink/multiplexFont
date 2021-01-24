@@ -19,11 +19,22 @@
             ...alarmConfig,
             ...{
               deviceType,
-              deviceBrand: null,
-              deviceModel: null,
-              hostId: [],
-              endpointModelId: null,
-              metricModelIds: []
+              hostId: null
+            }
+          }
+        }"
+        class="fw"
+      />
+    </a-form-item>
+
+    <a-form-item label="设备ID" v-bind="formItemLayout" required>
+      <a-input
+        :value="alarmConfig.hostId"
+        @input="e => {
+          alarmConfig = {
+            ...alarmConfig,
+            ...{
+              hostId: e.target.value
             }
           }
         }"
