@@ -1,6 +1,6 @@
 <template>
   <a-form-model class="AlarmDataSource" v-bind="formItemLayout">
-    <PreviewButton :preview="preview" />
+    <PreviewButton :preview="() => change(true)" />
 
     <a-form-item label="数据域">
       <OriginSelect
@@ -96,18 +96,7 @@ export default {
     ALARM_TYPE_UNCLOSE
   }),
   computed: {},
-  methods: {
-    async preview () {
-      try {
-        this.btnLoading = true
-        await this.change(true)
-      } catch (e) {
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
-    }
-  }
+  methods: {}
 }
 </script>
 

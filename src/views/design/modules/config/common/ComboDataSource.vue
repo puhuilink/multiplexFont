@@ -2,9 +2,15 @@
   <a-form-model class="ComboDataSource" v-bind="formItemLayout">
     <PreviewButton :preview="preview" />
 
+    <a-form-item label="数据类型">
+      <a-select class="fw" v-model="comboConfig.dataType">
+        <a-select-option value="1">性能数据</a-select-option>
+        <a-select-option value="6">健康度</a-select-option>
+      </a-select>
+    </a-form-item>
+
     <a-form-item label="指标配置">
-      {{ comboConfig.content.length }}条
-      <a-button @click="() => visible = true">详情</a-button>
+      <a-button @click="() => visible = true">{{ comboConfig.content.length }}条</a-button>
     </a-form-item>
 
     <TimeRange @change="change()" />

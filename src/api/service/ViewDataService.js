@@ -82,7 +82,8 @@ export class ViewDataService extends BaseService {
       'origin',
       'isGroup',
       'calculateType',
-      'type'
+      'type',
+      'hostId'
     ])
 
     // 时间范围
@@ -91,6 +92,11 @@ export class ViewDataService extends BaseService {
     } else {
       // 不选时间段时只能为 type
       Reflect.deleteProperty(data, 'isGroup')
+    }
+
+    // 设备ID可选
+    if (!data['hostId']) {
+      Reflect.deleteProperty(data, 'hostId')
     }
 
     for (const key in data) {
@@ -103,6 +109,7 @@ export class ViewDataService extends BaseService {
     if (this._validate(data)) {
       return axios.post('/view/alarm', data, config).catch(() => ({ data: [] }))
     } else {
+      console.warn(`/view/alarm未生效的接口传参`, data)
       return []
     }
   }

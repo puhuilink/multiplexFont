@@ -26,28 +26,7 @@ export default {
   props: {
     content: {
       type: Array,
-      default: () => [
-        {
-          'dictValue': [
-            'Host',
-            'HostLinux',
-            'HostAIXLinux'
-          ],
-          'hostId': '21755076410478592',
-          'endpointModelId': '1233261630',
-          'metricModelId': '1233261631'
-        },
-        {
-          'dictValue': [
-            'Host',
-            'HostLinux',
-            'HostAIXLinux'
-          ],
-          'hostId': '25936887306915841',
-          'endpointModelId': '1233261630',
-          'metricModelId': '1233261631'
-        }
-      ]
+      default: () => []
     }
   },
   data () {
