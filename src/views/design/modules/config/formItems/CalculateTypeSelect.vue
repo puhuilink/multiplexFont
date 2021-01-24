@@ -1,17 +1,22 @@
 <template>
-  <a-select
-    allowClear
-    v-bind="$props"
-    v-on="$listeners"
-  >
-    <a-select-option
-      v-for="option in calculateTypeList"
-      :key="option.value"
-    >{{ option.label }}</a-select-option>
-  </a-select>
+  <a-form-item label="计算类型">
+    <a-select
+      allowClear
+      class="fw"
+      v-model="activeWidget.config.dataConfig.getCurrentConfig().calculateType"
+      v-bind="$props"
+      v-on="$listeners"
+    >
+      <a-select-option
+        v-for="option in calculateTypeList"
+        :key="option.value"
+      >{{ option.label }}</a-select-option>
+    </a-select>
+  </a-form-item>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { Select } from 'ant-design-vue'
 import {
   CALCULATE_TYPE_SUM,
@@ -31,7 +36,9 @@ export default {
       { label: '均值', value: CALCULATE_TYPE_AVG }
     ]
   }),
-  computed: {},
+  computed: {
+    ...mapState('screen', ['activeWidget'])
+  },
   methods: {}
 }
 </script>

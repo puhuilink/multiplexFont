@@ -22,4 +22,15 @@ export default class DataConfig {
     this.staticDataConfig = StaticDataConfigFactory.create(widgetType, staticDataConfig)
     this.dbDataConfig = CreateDynamicDataFactory.create(widgetType, dbDataConfig)
   }
+
+  /**
+   * 获取当前启用的 config
+   */
+  getCurrentConfig () {
+    if (this.sourceType === SOURCE_TYPE_STATIC) {
+      return this.staticDataConfig
+    } else {
+      return this.dbDataConfig.getCurrentConfig(this.sourceType)
+    }
+  }
 }

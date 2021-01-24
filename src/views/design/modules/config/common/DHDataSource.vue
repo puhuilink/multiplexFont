@@ -1,5 +1,5 @@
 <template>
-  <div class="DHDataSource">
+  <a-form-model class="DHDataSource" v-bind="formItemLayout">
     <a-form-item v-bind="formItemLayout">
       <a-button
         :disabled="!dhConfig.code"
@@ -8,27 +8,24 @@
       >预览</a-button>
     </a-form-item>
 
-    <a-form-item label="采集指标" v-bind="formItemLayout">
+    <a-form-item label="采集指标">
       <a-select allowClear class="fw" v-model="dhConfig.code">
         <a-select-option value="Temperature">温度</a-select-option>
         <a-select-option value="Humidity">湿度</a-select-option>
       </a-select>
     </a-form-item>
 
-    <RefreshTime />
-  </div>
+    <RefreshTime @change="change()" />
+  </a-form-model>
 </template>
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
-import RefreshTime from './RefreshTime'
 
 export default {
   name: 'DHDataSource',
   mixins: [DataSourceMixins],
-  components: {
-    RefreshTime
-  },
+  components: {},
   props: {},
   data () {
     return {

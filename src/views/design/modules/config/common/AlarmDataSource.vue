@@ -53,37 +53,28 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="计算类型" v-bind="formItemLayout">
-      <CalculateTypeSelect
-        v-model="alarmConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect
+      @change="change()"
+    />
 
     <!-- TODO: 只有当时间段不为实时时，才可按时间分组 -->
-    <a-form-item label="分组条件" v-bind="formItemLayout" required>
-      <GroupSelect
-        :type="SOURCE_TYPE_ALARM"
-        v-model="alarmConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect
+      @change="change()"
+    />
 
-    <TimeRange />
+    <TimeRange @change="change()" />
 
-    <RefreshTime />
+    <RefreshTime @change="change()" />
   </div>
 </template>
 
 <script>
-import TimeRange from './TimeRange'
+
 import DataSourceMixins from '../dataSourceMixins/index'
-import RefreshTime from './RefreshTime'
 
 import { OriginSelect } from '@/components/Alarm'
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
+
 import { AlarmLevelSelect } from '~~~/Alarm'
 import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import { ALARM_TYPE_ALL, ALARM_TYPE_UNCLOSE } from '@/model/config/dataConfig/dynamicData/types/alarmType'
@@ -94,11 +85,7 @@ export default {
   components: {
     OriginSelect,
     DeviceTypeSelect,
-    TimeRange,
-    CalculateTypeSelect,
-    GroupSelect,
-    AlarmLevelSelect,
-    RefreshTime
+    AlarmLevelSelect
   },
   props: {},
   data: () => ({

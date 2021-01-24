@@ -1,28 +1,21 @@
 <template>
-  <div class="RealDataSource">
-    <a-form-item v-bind="formItemLayout">
+  <a-form-model class="RealDataSource" v-bind="formItemLayout">
+    <a-form-item>
       <a-button :loading="btnLoading" @click="preview">预览</a-button>
     </a-form-item>
 
-    <TimeRange v-if="useTimeRange" />
+    <TimeRange v-if="useTimeRange" @change="change()" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
-      <CalculateTypeSelect
-        class="fw"
-        v-model="resourceConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect
+      v-if="useCalculateType"
+      @change="change()"
+    />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout" required v-if="useRefreshTime" v-show="resourceConfig.calculateType">
-      <GroupSelect
-        class="fw"
-        v-model="resourceConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect
+      @change="change()"
+    />
 
-    <a-form-item label="监控类型" v-bind="formItemLayout" required>
+    <a-form-item label="监控类型" required>
       <DeviceTypeSelect
         class="fw"
         :value="resourceConfig.deviceType"
@@ -33,7 +26,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="品牌名称" v-bind="formItemLayout" required>
+    <a-form-item label="品牌名称" required>
       <DeviceBrandSelect
         class="fw"
         :deviceType="resourceConfig.deviceType"
@@ -45,7 +38,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="品牌设备" v-bind="formItemLayout" required>
+    <a-form-item label="品牌设备" required>
       <DeviceModelSelect
         class="fw"
         :deviceBrand="resourceConfig.deviceBrand"
@@ -57,7 +50,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="设备名称" v-bind="formItemLayout" required>
+    <a-form-item label="设备名称" required>
       <HostSelect
         class="fw"
         :multiple="multipleHost || (!singleHost && resourceConfig.metricModelIds.length <= 1)"
@@ -70,7 +63,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="监控实体" v-bind="formItemLayout" required >
+    <a-form-item label="监控实体" required >
       <EndpointSelect
         :parentId="resourceConfig.deviceModel"
         schema="model"
@@ -82,7 +75,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="检查项" v-bind="formItemLayout" required >
+    <a-form-item label="检查项" required >
       <MetricSelect
         :multiple="multipleMetric || (!singleMetric && resourceConfig.hostId.length <= 1)"
         schema="model"
@@ -95,7 +88,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="检查项(DH)" v-bind="formItemLayout">
+    <a-form-item label="检查项(DH)">
       <AceEditor
         class="RealDataSource__editor"
         :code="JSON.stringify(resourceConfig.metricIds, null, '\t')"
@@ -105,7 +98,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="图例类型" v-show="useLegendType" v-bind="formItemLayout" required>
+    <a-form-item label="图例类型" v-show="useLegendType" required>
       <a-select
         v-model="resourceConfig.legendType"
         @change="change()"
@@ -115,7 +108,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="聚合方式" v-bind="formItemLayout" required>
+    <a-form-item label="聚合方式" required>
       <a-select
         v-model="resourceConfig.endpointAggregateMode"
         @change="change()"
@@ -127,7 +120,7 @@
 
     <RefreshTime v-if="useRefreshTime" />
 
-    <a-form-item label="延迟时间" v-bind="formItemLayout" v-if="useRefreshTime" >
+    <a-form-item label="延迟时间" v-if="useRefreshTime" >
       <a-input
         :min="0"
         :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
@@ -137,7 +130,7 @@
         @input="change()"
       />
     </a-form-item>
-  </div>
+  </a-form-model>
 </template>
 
 <script>
@@ -145,11 +138,6 @@
 import _ from 'lodash'
 import AceEditor from 'vue-ace-editor-valid'
 import DataSourceMixins from '../dataSourceMixins/index'
-
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
-import RefreshTime from './RefreshTime'
 
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
 import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
@@ -163,16 +151,12 @@ export default {
   mixins: [DataSourceMixins],
   components: {
     AceEditor,
-    TimeRange,
     DeviceTypeSelect,
     DeviceBrandSelect,
     DeviceModelSelect,
     HostSelect,
     EndpointSelect,
-    MetricSelect,
-    CalculateTypeSelect,
-    GroupSelect,
-    RefreshTime
+    MetricSelect
   },
   props: {
     singleHost: {

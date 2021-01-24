@@ -1,10 +1,10 @@
 <template>
-  <div class="OverviewDataSource">
-    <a-form-item v-bind="formItemLayout">
+  <a-form-model class="OverviewDataSource" v-bind="formItemLayout">
+    <a-form-item>
       <a-button :loading="btnLoading" @click="preview">预览</a-button>
     </a-form-item>
 
-    <a-form-item label="数据域" v-bind="formItemLayout">
+    <a-form-item label="数据域">
       <OriginSelect
         mode="multiple"
         v-model="overviewConfig.origin"
@@ -12,7 +12,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="设备" v-bind="formItemLayout">
+    <a-form-item label="设备">
       <a-select
         allowClear
         class="fw"
@@ -28,7 +28,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="监控实体" v-bind="formItemLayout">
+    <a-form-item label="监控实体">
       <a-select
         allowClear
         class="fw"
@@ -44,7 +44,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="检查项" v-bind="formItemLayout">
+    <a-form-item label="检查项">
       <a-select
         allowClear
         class="fw"
@@ -60,47 +60,33 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="计算类型" v-bind="formItemLayout">
-      <CalculateTypeSelect
-        v-model="overviewConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect
+      @change="change()"
+    />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout" required>
-      <GroupSelect
-        :type="SOURCE_TYPE_OVERVIEW"
-        v-model="overviewConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect
+      @change="change()"
+    />
 
-    <TimeRange />
+    <TimeRange @change="change()" />
 
-    <RefreshTime />
-  </div>
+    <RefreshTime @change="change()" />
+  </a-form-model>
 </template>
 
 <script>
 /* eslint-disable standard/no-callback-literal */
 import DataSourceMixins from '../dataSourceMixins/index'
 import { OriginSelect } from '@/components/Alarm'
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
+
 import { SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import _ from 'lodash'
-import RefreshTime from './RefreshTime'
 
 export default {
   name: 'OverviewDataSource',
   mixins: [DataSourceMixins],
   components: {
-    OriginSelect,
-    TimeRange,
-    CalculateTypeSelect,
-    GroupSelect,
-    RefreshTime
+    OriginSelect
   },
   props: {},
   data: () => ({

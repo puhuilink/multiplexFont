@@ -1,12 +1,8 @@
 <template>
-  <a-form-item
-    class="TimeRange"
-    label="查询时间"
-    v-bind="formItemLayout"
-  >
+  <a-form-item class="TimeRange" label="查询时间">
 
     <!-- / 类型选择 -->
-    <a-select v-model="timeRangeConfig.timeRangeType" @change="change()">
+    <a-select v-model="timeRangeConfig.timeRangeType" @change="$emit('change')">
       <a-select-option :value="TIME_RANGE_TYPE_DEFAULT">默认</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_RECENT">最近</a-select-option>
       <a-select-option :value="TIME_RANGE_TYPE_CUSTOM">自定义</a-select-option>
@@ -18,7 +14,7 @@
         :filterOption="filterOption"
         showSearch
         v-model="startTime"
-        @change="change()"
+        @change="$emit('change')"
       >
         <a-select-option
           v-for="option in options.defaultTimeRange"
@@ -34,7 +30,7 @@
         :value="(timeRangeConfig.recentValue || 0) * -1"
         @change="$event => {
           timeRangeConfig.recentValue = ($event.target.value || 0) * -1
-          change()
+          $emit('change')
         }"
         :min="1"
       >
@@ -43,7 +39,7 @@
           slot="addonAfter"
           style="width: 80px"
           v-model="timeRangeConfig.recentType"
-          @change="change()"
+          @change="$emit('change')"
         >
           <a-select-option
             v-for="option in options.timeRecent"
@@ -63,14 +59,14 @@
         :showTime="{ format: 'HH:mm' }"
         :valueFormat="TIME_RANGE_FORMAT"
         v-model="timeRangeConfig.customTimeRange"
-        @ok="change()"
+        @ok="$emit('change')"
       />
     </div>
   </a-form-item>
 </template>
 
 <script>
-import DataSourceMixins from '../dataSourceMixins/index'
+import { mapState } from 'vuex'
 import {
   DEFAULT_TIME_RANGE_START,
   TIME_RANGE_FORMAT,
@@ -83,12 +79,6 @@ import {
   TIME_TYPE_WEEKS,
   TIME_TYPE_MONTHS
 } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
-import {
-  SOURCE_TYPE_REAL,
-  SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_COMBO
-} from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
   {
@@ -139,7 +129,6 @@ const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
 
 export default {
   name: 'TimeRange',
-  mixins: [DataSourceMixins],
   data: () => ({
     TIME_RANGE_FORMAT,
     TIME_RANGE_TYPE_DEFAULT,
@@ -159,21 +148,9 @@ export default {
     }
   }),
   computed: {
+    ...mapState('screen', ['activeWidget']),
     timeRangeConfig () {
-      const { dbDataConfig = {} } = this.config.dataConfig
-
-      switch (dbDataConfig.type) {
-        case SOURCE_TYPE_ALARM:
-          return dbDataConfig.alarmConfig.timeRangeConfig || {}
-        case SOURCE_TYPE_OVERVIEW:
-          return dbDataConfig.overviewConfig.timeRangeConfig || {}
-        case SOURCE_TYPE_REAL:
-          return dbDataConfig.resourceConfig.timeRangeConfig || {}
-        case SOURCE_TYPE_COMBO:
-          return dbDataConfig.comboConfig.timeRangeConfig || {}
-        default:
-          return {}
-      }
+      return this.activeWidget.config.dataConfig.getCurrentConfig().timeRangeConfig
     },
     startTime: {
       get () {

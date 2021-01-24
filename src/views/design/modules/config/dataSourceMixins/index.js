@@ -3,10 +3,14 @@ import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
 import CacheMixin from '../cache'
+import * as formItems from '../formItems/index'
 
 export default {
   name: 'DataSourceMixins',
   mixins: [CacheMixin],
+  components: {
+    ...formItems
+  },
   data: () => ({
     formItemLayout: {
       labelCol: {

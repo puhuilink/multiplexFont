@@ -1,33 +1,25 @@
 <template>
-  <div class="ComboDataSource">
-    <a-form-item v-bind="formItemLayout">
+  <a-form-model class="ComboDataSource" v-bind="formItemLayout">
+    <a-form-item>
       <a-button :loading="btnLoading" @click="preview">预览</a-button>
     </a-form-item>
 
-    <a-form-item label="指标配置" v-bind="formItemLayout">
+    <a-form-item label="指标配置">
       {{ comboConfig.content.length }}条
       <a-button @click="detail">详情</a-button>
     </a-form-item>
 
-    <TimeRange />
+    <TimeRange @change="change()" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout">
-      <CalculateTypeSelect
-        class="fw"
-        v-model="comboConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect
+      @change="change()"
+    />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout">
-      <GroupSelect
-        class="fw"
-        v-model="comboConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect
+      @change="change()"
+    />
 
-    <a-form-item label="top" v-bind="formItemLayout">
+    <a-form-item label="top">
       <a-input-number
         class="fw"
         v-model.number="comboConfig.top"
@@ -45,15 +37,13 @@
     >
       <CascaderHostEndpointMetricList :content="comboConfig.content" />
     </a-modal>
-  </div>
+  </a-form-model>
 </template>
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
+
 import { parserInt } from '@/utils/util'
 import { SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
@@ -61,10 +51,7 @@ export default {
   name: 'ComboDataSource',
   mixins: [DataSourceMixins],
   components: {
-    CascaderHostEndpointMetricList,
-    TimeRange,
-    CalculateTypeSelect,
-    GroupSelect
+    CascaderHostEndpointMetricList
   },
   props: {},
   data () {
