@@ -3,7 +3,7 @@
     <a-select
       allowClear
       class="fw"
-      v-model="activeWidget.config.dataConfig.getCurrentConfig().isGroup"
+      v-model="config.dataConfig.getCurrentConfig().isGroup"
       v-bind="$props"
       v-on="$listeners"
     >
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import CacheMixin from '../cache'
 import { Select } from 'ant-design-vue'
 import {
   SOURCE_TYPE_ALARM,
@@ -33,10 +33,10 @@ import {
 export default {
   name: 'GroupSelect',
   extends: Select,
+  mixins: [CacheMixin],
   computed: {
-    ...mapState('screen', ['activeWidget']),
     groupList () {
-      const { sourceType } = this.activeWidget.config.dataConfig
+      const { sourceType } = this.config.dataConfig
       return [
         { label: '按小时', value: GROUP_TYPE_HOUR },
         { label: '按天', value: GROUP_TYPE_DAY },

@@ -30,7 +30,7 @@ export default class DataConfig {
     if (this.sourceType === SOURCE_TYPE_STATIC) {
       return this.staticDataConfig
     } else {
-      return this.dbDataConfig.getCurrentConfig(this.sourceType)
+      return this.dbDataConfig.getCurrentConfig(this.sourceType) || {}
     }
   }
 }

@@ -5,7 +5,7 @@
       :parser="parserInt"
       suffix="分钟"
       type="number"
-      v-model.number="activeWidget.config.dataConfig.getCurrentConfig().delayTime"
+      v-model.number="config.dataConfig.getCurrentConfig().delayTime"
       @input="$emit('change')"
     />
   </a-form-item>
@@ -13,13 +13,11 @@
 
 <script>
 import { parserInt } from '@/utils/util'
-import { mapState } from 'vuex'
+import CacheMixin from '../cache'
 
 export default {
   name: 'DelayTime',
-  computed: {
-    ...mapState('screen', ['activeWidget'])
-  },
+  mixins: [CacheMixin],
   methods: {
     parserInt
   }

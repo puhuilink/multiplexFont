@@ -62,11 +62,12 @@
         @ok="$emit('change')"
       />
     </div>
+
   </a-form-item>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import CacheMixin from '../cache'
 import {
   DEFAULT_TIME_RANGE_START,
   TIME_RANGE_FORMAT,
@@ -79,6 +80,7 @@ import {
   TIME_TYPE_WEEKS,
   TIME_TYPE_MONTHS
 } from '@/model/config/dataConfig/dynamicData/common/TimeRangeConfig'
+import { filterOption } from '@/utils/util'
 
 const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
   {
@@ -129,6 +131,7 @@ const DEFAULT_TIME_RANGE_SELECT_OPTIONS = [
 
 export default {
   name: 'TimeRange',
+  mixins: [CacheMixin],
   data: () => ({
     TIME_RANGE_FORMAT,
     TIME_RANGE_TYPE_DEFAULT,
@@ -148,9 +151,8 @@ export default {
     }
   }),
   computed: {
-    ...mapState('screen', ['activeWidget']),
     timeRangeConfig () {
-      return this.activeWidget.config.dataConfig.getCurrentConfig().timeRangeConfig
+      return this.config.dataConfig.getCurrentConfig().timeRangeConfig
     },
     startTime: {
       get () {
@@ -166,20 +168,18 @@ export default {
     }
   },
   methods: {
-    filterOption (input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      )
-    }
+    filterOption
   }
 }
 </script>
 
 <style lang="less">
 .TimeRange {
+
   .ant-select {
     width: 100%;
   }
+
   &__date_picker {
     margin: -52% !important;
     width: 155% !important;

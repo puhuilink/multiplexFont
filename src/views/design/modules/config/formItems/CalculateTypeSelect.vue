@@ -3,7 +3,7 @@
     <a-select
       allowClear
       class="fw"
-      v-model="activeWidget.config.dataConfig.getCurrentConfig().calculateType"
+      v-model="config.dataConfig.getCurrentConfig().calculateType"
       v-bind="$props"
       v-on="$listeners"
     >
@@ -16,17 +16,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { Select } from 'ant-design-vue'
 import {
   CALCULATE_TYPE_SUM,
   CALCULATE_TYPE_MAX,
   CALCULATE_TYPE_AVG
 } from '@/model/config/dataConfig/dynamicData/types/calculate'
+import CacheMixin from '../cache'
 
 export default {
   name: 'CalculateTypeSelect',
-  mixins: [],
+  mixins: [CacheMixin],
   extends: Select,
   props: {},
   data: () => ({
@@ -35,11 +35,7 @@ export default {
       { label: '最大值', value: CALCULATE_TYPE_MAX },
       { label: '均值', value: CALCULATE_TYPE_AVG }
     ]
-  }),
-  computed: {
-    ...mapState('screen', ['activeWidget'])
-  },
-  methods: {}
+  })
 }
 </script>
 
