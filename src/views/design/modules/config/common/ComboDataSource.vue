@@ -4,7 +4,7 @@
 
     <a-form-item label="指标配置">
       {{ comboConfig.content.length }}条
-      <a-button @click="detail">详情</a-button>
+      <a-button @click="() => visible = true">详情</a-button>
     </a-form-item>
 
     <TimeRange @change="change()" />
@@ -24,7 +24,7 @@
 
     <a-modal
       :footer="null"
-      title="20px to Top"
+      title="配置详情"
       v-model="visible"
       :width="1200"
       wrapClassName="ComboDataSource__modal"
@@ -37,9 +37,7 @@
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
-
 import { parserInt } from '@/utils/util'
-import { SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'ComboDataSource',
@@ -50,23 +48,16 @@ export default {
   props: {},
   data () {
     return {
-      visible: false,
-      SOURCE_TYPE_COMBO
+      visible: false
     }
   },
   computed: {
-    dbDataConfig () {
-      return this.config.dataConfig.dbDataConfig
-    },
     comboConfig () {
       return this.config.dataConfig.dbDataConfig.comboConfig
     }
   },
   methods: {
-    parserInt,
-    detail () {
-      this.visible = true
-    }
+    parserInt
   }
 }
 </script>

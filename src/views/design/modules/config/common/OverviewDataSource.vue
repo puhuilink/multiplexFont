@@ -69,12 +69,9 @@
 </template>
 
 <script>
-/* eslint-disable standard/no-callback-literal */
+import _ from 'lodash'
 import DataSourceMixins from '../dataSourceMixins/index'
 import { OriginSelect } from '@/components/Alarm'
-
-import { SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
-import _ from 'lodash'
 
 export default {
   name: 'OverviewDataSource',
@@ -84,7 +81,6 @@ export default {
   },
   props: {},
   data: () => ({
-    SOURCE_TYPE_OVERVIEW,
     hostAliasList: [
       { label: '广域网路由器', value: '广域网路由器' },
       { label: '深信服设备AD', value: '深信服设备AD' },

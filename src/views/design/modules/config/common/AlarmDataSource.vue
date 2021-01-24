@@ -63,12 +63,9 @@
 </template>
 
 <script>
-
 import DataSourceMixins from '../dataSourceMixins/index'
-
 import { OriginSelect } from '@/components/Alarm'
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
-
 import { AlarmLevelSelect } from '~~~/Alarm'
 import { SOURCE_TYPE_ALARM } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import { ALARM_TYPE_ALL, ALARM_TYPE_UNCLOSE } from '@/model/config/dataConfig/dynamicData/types/alarmType'

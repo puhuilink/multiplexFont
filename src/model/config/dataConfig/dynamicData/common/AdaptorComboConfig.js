@@ -23,9 +23,17 @@ export class AdaptorComboConfig {
     this.delayTime = delayTime
   }
 
-  // TODO:
   get isAvailable () {
-    return true
+    if (
+      (this.calculateType && !this.isGroup) ||
+      (!this.calculateType && this.isGroup)
+    ) {
+      return false
+    }
+
+    return Boolean(
+      this.content.length
+    )
   }
 
   getOption () {

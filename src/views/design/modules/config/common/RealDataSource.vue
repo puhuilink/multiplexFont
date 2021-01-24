@@ -121,11 +121,9 @@
 </template>
 
 <script>
-/* eslint-disable standard/no-callback-literal */
 import _ from 'lodash'
 import AceEditor from 'vue-ace-editor-valid'
 import DataSourceMixins from '../dataSourceMixins/index'
-
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
 import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
 import { Select as DeviceModelSelect } from '~~~/ResourceConfig/Device/DeviceModel'

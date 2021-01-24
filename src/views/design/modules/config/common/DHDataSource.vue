@@ -18,14 +18,7 @@ import DataSourceMixins from '../dataSourceMixins/index'
 
 export default {
   name: 'DHDataSource',
-  mixins: [DataSourceMixins],
-  components: {},
-  props: {},
-  data () {
-    return {
-      btnLoading: false
-    }
-  }
+  mixins: [DataSourceMixins]
 }
 </script>
 
