@@ -7,36 +7,49 @@
 */
 <template>
   <div class="image-config">
-    <a-tabs
-      defaultActiveKey="1"
-      tabPosition="top"
-      :style="{ height: '100%'}"
-    >
+    <a-tabs defaultActiveKey="1" tabPosition="top" :style="{ height: '100%' }">
       <a-tab-pane tab="样式" key="1">
-
         <!-- S 公共配置模板 -->
         <CommonTemplate />
         <!-- E 公共配置模板 -->
-
       </a-tab-pane>
 
       <a-tab-pane tab="属性" key="2">
         <div class="image-config__template">
           <a-collapse :defaultActiveKey="[1, 2, 3]" :bordered="false">
+            <!-- 超链接 -->
+            <a-collapse-panel header="超链接" key="4">
+              <div class="comment-template__item">
+                <p class="comment-template__leading">链接:</p>
+                <div class="comment-template__inner">
+                  <a-input type="text" v-model.trim="config.proprietaryConfig.graphic.link" @change="change" />
+                </div>
+              </div>
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">打开方式:</p>
+                <div class="comment-template__inner">
+                  <a-select v-model="config.proprietaryConfig.graphic.target" @change="change">
+                    <a-select-option value="blank">新窗口打开</a-select-option>
+                    <a-select-option value="self">当前窗口打开</a-select-option>
+                  </a-select>
+                </div>
+              </div>
+              <!-- / 打开方式 -->
+            </a-collapse-panel>
 
             <!-- S 图片 -->
             <a-collapse-panel header="图片" key="1">
-
               <div class="comment-template__item">
                 <p class="comment-template__leading">地址:</p>
                 <div class="comment-template__inner">
                   <a-input
                     type="text"
                     v-model.trim="config.proprietaryConfig.graphic.style.image"
-                    @change="imageChange" />
+                    @change="imageChange"
+                  />
                 </div>
               </div>
-
             </a-collapse-panel>
             <!-- E 图片 -->
 
@@ -44,13 +57,8 @@
             <a-collapse-panel header="图标" key="2">
               <div class="comment-template__item">
                 <div class="comment-template__inner icon-picker__list">
-                  <div
-                    class="icon-picker__icon"
-                    v-for="(item, index) of icons"
-                    :key="index"
-                    @click="iconChoose(index)"
-                  >
-                    <img :src="item.img" alt="">
+                  <div class="icon-picker__icon" v-for="(item, index) of icons" :key="index" @click="iconChoose(index)">
+                    <img :src="item.img" alt="" />
                   </div>
                 </div>
               </div>
@@ -61,17 +69,20 @@
             <a-collapse-panel header="预览" key="3">
               <div class="image-config__screen">
                 <div class="image-config__screenshot">
-                  <img ref="img" :src="config.proprietaryConfig.graphic.style.image" alt="" v-if="config.proprietaryConfig.graphic.style.image" />
+                  <img
+                    ref="img"
+                    :src="config.proprietaryConfig.graphic.style.image"
+                    alt=""
+                    v-if="config.proprietaryConfig.graphic.style.image"
+                  />
                   <p v-else>图片预览</p>
                 </div>
               </div>
             </a-collapse-panel>
             <!-- E 预览 -->
-
           </a-collapse>
         </div>
       </a-tab-pane>
-
     </a-tabs>
   </div>
 </template>
@@ -101,7 +112,8 @@ export default {
       try {
         const { width, height } = await this.imageUrlLoader(this.config.proprietaryConfig.graphic.style.image)
         Object.assign(this.config.proprietaryConfig.graphic.style, {
-          width, height
+          width,
+          height
         })
         this.change()
       } catch (e) {
