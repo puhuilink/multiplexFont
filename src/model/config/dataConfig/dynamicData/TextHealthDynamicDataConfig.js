@@ -46,7 +46,8 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getComboDataOption () {
-    this.text = await this.comboConfig.fetch().then(data => _.get(data, '0.data', ''))
+    const dataList = await this.comboConfig.fetch()
+    this.text = _.get(dataList, '0.data', '')
   }
 
   async getAlarmOption () {

@@ -10,7 +10,7 @@
     </a-form-item>
 
     <a-form-item label="指标配置">
-      <a-button @click="() => visible = true">{{ comboConfig.content.length }}条</a-button>
+      <a-button @click="() => visible = true">{{ comboConfig.getCurrentContent().length }}条</a-button>
     </a-form-item>
 
     <TimeRange @change="change()" />
@@ -39,7 +39,14 @@
       :width="1200"
       wrapClassName="ComboDataSource__modal"
     >
-      <CascaderHostEndpointMetricList :content="comboConfig.content" />
+      <CascaderHostEndpointMetricList
+        :content="comboConfig.content"
+        v-show="comboConfig.dataType === '1'"
+      />
+      <BusinessSystemTreeHealthList
+        :content="comboConfig.healthyContent"
+        v-show="comboConfig.dataType === '6'"
+      />
     </a-modal>
   </a-form-model>
 </template>
@@ -47,13 +54,15 @@
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
+import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
 import { parserInt } from '@/utils/util'
 
 export default {
   name: 'ComboDataSource',
   mixins: [DataSourceMixins],
   components: {
-    CascaderHostEndpointMetricList
+    CascaderHostEndpointMetricList,
+    BusinessSystemTreeHealthList
   },
   props: {},
   data () {

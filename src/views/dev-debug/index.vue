@@ -1,20 +1,21 @@
 <template>
   <div class="DevDebug">
-    <CascaderHostEndpointMetricList />
+    <BusinessSystemTreeHealthList :content="content" />
   </div>
 </template>
 
 <script>
-import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
+import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
 
 export default {
   name: 'DevDebug',
   mixins: [],
   components: {
-    CascaderHostEndpointMetricList
+    BusinessSystemTreeHealthList
   },
   props: {},
   data: () => ({
+    content: []
   }),
   computed: {},
   methods: {}
