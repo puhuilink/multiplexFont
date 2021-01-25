@@ -11,19 +11,6 @@ import Chart from './index'
 export default class ImageChart extends Chart {
   constructor ({ widget }) {
     super({ widget })
-    this.chart.on('dblclick', () => {
-      const tmpLink = this.config.proprietaryConfig.graphic.link
-      const tmpTarget = this.config.proprietaryConfig.graphic.target
-      if (!tmpLink) {
-        return
-      }
-
-      if (tmpTarget === 'blank') {
-        window.open(tmpLink, '_blank')
-      } else {
-        window.location.href = tmpLink
-      }
-    })
   }
 
   resize (config) {
