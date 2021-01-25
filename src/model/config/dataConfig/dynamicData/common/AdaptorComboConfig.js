@@ -35,9 +35,7 @@ export class AdaptorComboConfig {
       return false
     }
 
-    return Boolean(
-      this.content.length
-    )
+    return !!this.getCurrentContent().length
   }
 
   getCurrentContent () {
