@@ -48,6 +48,13 @@ class PatrolConfigService extends BaseService {
     endpointIdList = _.uniq(endpointIdList)
     metricIdList = _.uniq(metricIdList)
     answerIdList = _.uniq(answerIdList)
+    console.log(
+      // checkpointIdList,
+      // hostIdList,
+      // endpointIdList,
+      // metricIdList,
+      answerIdList
+    )
 
     const buildArgus = (_in, alias) => ({
       where: { id: { _in } },
@@ -86,6 +93,7 @@ class PatrolConfigService extends BaseService {
     const { content = [] } = _.first(pathList)
     // 第一层
     const { checkpoints } = _.first(content)
+    console.log(checkpoints)
     this._aliasMapping(checkpoints)
     // return checkpoints
     // 递归构造 alias

@@ -45,23 +45,21 @@ export default {
     AuthMenu
   },
   props: {},
-  data () {
-    return {
-      activeTabKey: '1',
-      form: this.$form.createForm(this),
-      formItemLayout,
-      loading: false,
-      record: null,
-      title: '',
-      visible: false,
-      authView: {
-        // 选中的 viewId
-        viewIds: [],
-        record: null
-      },
-      userId: ''
-    }
-  },
+  data: (vm) => ({
+    activeTabKey: '1',
+    form: vm.$form.createForm(vm),
+    formItemLayout,
+    loading: false,
+    record: null,
+    title: '',
+    visible: false,
+    authView: {
+      // 选中的 viewId
+      viewIds: [],
+      record: null
+    },
+    userId: ''
+  }),
 
   methods: {
     edit (record) {
