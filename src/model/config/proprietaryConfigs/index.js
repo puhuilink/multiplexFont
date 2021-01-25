@@ -21,8 +21,7 @@ class Legend {
     right = 'auto',
     bottom = 'auto',
     left = 'auto',
-    textStyle = {},
-    type = 'scroll'
+    textStyle = {}
   }) {
     this.show = show
     this.orient = orient
@@ -32,9 +31,6 @@ class Legend {
     this.left = left
     this.icon = icon
     this.textStyle = new TextStyle(textStyle)
-    // https://echarts.apache.org/zh/option.html#legend.type
-    // TODO: 详细配置
-    // this.type = type
   }
 }
 
@@ -1182,12 +1178,16 @@ class ImageStyle {
  */
 class ImageGraphic extends Graphic {
   constructor ({
+    link = '',
+    target = 'blank',
     style = {},
     ...graphicOption
   }) {
     super(graphicOption)
     this.type = 'image'
     this.style = new ImageStyle(style)
+    this.link = link
+    this.target = target
   }
 
   /**
