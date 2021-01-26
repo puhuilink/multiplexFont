@@ -24,7 +24,7 @@
           <div :class="{ fold: !advanced }">
 
             <a-row>
-              <a-col :md="6" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="监控对象"
                   v-bind="formItemLayout"
@@ -36,7 +36,7 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="6" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="监控实体"
                   v-bind="formItemLayout"
@@ -50,7 +50,7 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="6" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="检查项"
                   v-bind="formItemLayout"
@@ -63,26 +63,10 @@
                   />
                 </a-form-item>
               </a-col>
-
-              <a-col :md="6" :sm="24">
-                <a-form-item
-                  label="告警级别"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-select allowClear v-model.number="queryParams.alarm_level">
-                    <a-select-option
-                      v-for="level in [1, 2, 3, 4, 5]"
-                      :key="level"
-                      :value="level"
-                    >{{ level }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
             </a-row>
 
             <a-row v-show="advanced">
-              <a-col :md="6" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="采集系统"
                   v-bind="formItemLayout"
@@ -92,10 +76,10 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="12" :sm="24">
+              <a-col :md="8" :sm="24">
                 <a-form-item
                   label="告警时间"
-                  v-bind="fullFormItemLayout"
+                  v-bind="formItemLayout"
                   class="fw"
                 >
                   <a-range-picker
@@ -127,32 +111,54 @@
 
       <!-- / 操作区域 -->
       <div class="operation" slot="operation">
-        <a-button
-          v-bind="btnProps"
-          @click="onDetail()"
-          :disabled="!hasSelectedOne"
-        >查看</a-button>
+        <div class="AlarmMonitor__operation">
+          <div>
+            <a-button
+              v-bind="btnProps"
+              @click="onDetail()"
+              :disabled="!hasSelectedOne"
+            >查看</a-button>
 
-        <a-button
-          v-bind="btnProps"
-          v-if="showSolve"
-          v-show="state !== ALARM_STATE.solved"
-          @click="onSolve()"
-          :disabled="!hasSelectedOne"
-        >解决</a-button>
+            <a-button
+              v-bind="btnProps"
+              v-if="showSolve"
+              v-show="state !== ALARM_STATE.solved"
+              @click="onSolve()"
+              :disabled="!hasSelectedOne"
+            >解决</a-button>
+          </div>
 
-        <a-popover title="表格列设置">
-          <a-list slot="content" item-layout="horizontal" :data-source="columns">
-            <a-list-item slot="renderItem" slot-scope="column">
-              <a-list-item-meta>
-                <a-checkbox slot="title" v-model="column.show">
-                  {{ column.title }}
-                </a-checkbox>
-              </a-list-item-meta>
-            </a-list-item>
-          </a-list>
-          <a-button icon="setting">显示设置</a-button>
-        </a-popover>
+          <div class="AlarmMonitor__operation-badge-group">
+            <span>告警级别：</span>
+            <a-button
+              v-for="(color, index) in colors"
+              :key="index"
+              shape="round"
+              size="small"
+              :style="{
+                marginLeft: '4px',
+                marginRight: '4px',
+                backgroundColor: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',
+                color: queryParams.alarmLevelList.includes(index + 1) ? '#fffced' : 'rgba(0,0,0,.25)',
+                borderColor: 'transparent'
+              }"
+              @click="onToggleAlarmLevel(index + 1)"
+            >{{ `L${index + 1}` }}</a-button>
+          </div>
+
+          <a-popover title="表格列设置" placement="leftBottom">
+            <a-list slot="content" item-layout="horizontal" :data-source="columns">
+              <a-list-item slot="renderItem" slot-scope="column">
+                <a-list-item-meta>
+                  <a-checkbox slot="title" v-model="column.show">
+                    {{ column.title }}
+                  </a-checkbox>
+                </a-list-item-meta>
+              </a-list-item>
+            </a-list>
+            <a-button icon="setting">显示设置</a-button>
+          </a-popover>
+        </div>
 
       </div>
     </CTable>
@@ -184,6 +190,7 @@ import moment from 'moment'
 import EndpointSelect from '~~~/ResourceConfig/Endpoint'
 import MetricSelect from '~~~/ResourceConfig/Metric'
 import { ALARM_STATE } from '@/tables/alarm/enum'
+import { levelColorMapping } from '@/components/Alarm/color.config'
 
 export default {
   name: 'AlarmMonitor',
@@ -225,19 +232,21 @@ export default {
   data () {
     return {
       ALARM_STATE,
+      colors: [...levelColorMapping.values()],
+      formItemLayout: { 'labelCol': { 'sm': { 'span': 8 }, 'md': { 'span': 8 }, 'xl': { 'span': 4 } }, 'wrapperCol': { 'sm': { 'span': 14, 'offset': 2 }, 'md': { 'span': 14, 'offset': 1 }, 'xl': { 'span': 18, 'offset': 2 } } },
       state: ALARM_STATE.unSolved,
       columns: [
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 120,
+          width: 90,
           sorter: true,
           show: true
         },
         {
           title: '监控设备',
           dataIndex: 'host_id cmdbHost { alias }',
-          width: 220,
+          width: 270,
           show: true,
           customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
         },
@@ -258,7 +267,7 @@ export default {
         {
           title: '告警时间',
           dataIndex: 'receive_time',
-          width: 180,
+          width: 150,
           show: true,
           sorter: true,
           customRender: formatTime
@@ -266,18 +275,21 @@ export default {
         {
           title: '告警描述',
           dataIndex: 'detail',
-          width: 100,
-          show: true,
-          customRender: (__, record) => <a-button type="link" onClick={() => this.onDetail(record.id)}>查看</a-button>
+          width: 360,
+          show: true
+          // customRender: (__, record) => <a-button type="link" onClick={() => this.onDetail(record.id)}>查看</a-button>
         },
         {
           title: '采集系统',
           dataIndex: 'agent_id',
-          width: 100,
+          width: 90,
           sorter: true,
           show: true
         }
-      ]
+      ],
+      queryParams: {
+        alarmLevelList: [1, 2, 3, 4, 5]
+      }
     }
   },
   computed: {
@@ -293,11 +305,11 @@ export default {
   },
   methods: {
     moment,
-    customRow ({ id, state }) {
+    customRow ({ id }) {
       return {
         on: {
           dblclick: () => {
-            state === ALARM_STATE.unSolved && this.$refs.solve.open(id)
+            this.onDetail(id)
           }
         }
       }
@@ -305,9 +317,12 @@ export default {
     loadData (parameter) {
       return AlarmService.find({
         where: {
-          ...generateQuery(this.queryParams),
+          ...generateQuery(_.omit(this.queryParams, ['alarmLevelList'])),
           ...this.showAll ? {} : {
             state: this.state
+          },
+          alarm_level: {
+            _in: this.queryParams.alarmLevelList
           }
         },
         fields: _.uniq([
@@ -346,6 +361,19 @@ export default {
       this.query(false)
     },
     /**
+     * 切换告警级别筛选条件
+     */
+    onToggleAlarmLevel (alarmLevel) {
+      const { alarmLevelList = [] } = this.queryParams
+      const index = alarmLevelList.indexOf(alarmLevel)
+      if (index === -1) {
+        alarmLevelList.push(alarmLevel)
+      } else {
+        alarmLevelList.splice(index, 1)
+      }
+      this.query(true)
+    },
+    /**
      * 切换未解决/已解决
      */
     onToggleState (state) {
@@ -357,4 +385,27 @@ export default {
 </script>
 
 <style lang="less">
+.AlarmMonitor {
+  &__operation {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    &-badge-group {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex: 1;
+      margin-left: 8px;
+    }
+  }
+
+  .CTable-operation {
+    padding-top: 0;
+  }
+
+  .expand {
+    transform: translateY(-36.5px);
+  }
+}
 </style>
