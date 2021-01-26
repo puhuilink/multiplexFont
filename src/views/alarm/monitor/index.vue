@@ -24,19 +24,34 @@
           <div :class="{ fold: !advanced }">
 
             <a-row>
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
+                <a-form-item
+                  label="品牌设备"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CascaderDictValue
+                    :value="queryParams.dictValue"
+                    @change="onChangDictValue"
+                  />
+                </a-form-item>
+              </a-col>
+
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
                   label="监控对象"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <CmdbHostSelect
-                    :value.sync="queryParams.host_id"
+                  <HostSelect
+                    :hostTypeDictValueCode="hostTypeDictValueCode"
+                    :value="queryParams.host_id"
+                    @update:value="onChangeHostId($event)"
                   />
                 </a-form-item>
               </a-col>
 
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
                   label="监控实体"
                   v-bind="formItemLayout"
@@ -45,12 +60,13 @@
                   <EndpointSelect
                     schema="cmdb"
                     :parentId="queryParams.host_id"
-                    :value.sync="queryParams.endpoint_id"
+                    :value="queryParams.endpoint_id"
+                    @update:value="onChangeEndpointId($event)"
                   />
                 </a-form-item>
               </a-col>
 
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
                   label="检查项"
                   v-bind="formItemLayout"
@@ -59,14 +75,13 @@
                   <MetricSelect
                     schema="cmdb"
                     :parentId="queryParams.endpoint_id"
-                    :value.sync="queryParams.metric_id"
+                    :value="queryParams.metric_id"
+                    @update:value="onChangeMetricId($event)"
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
 
-            <a-row v-show="advanced">
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
                   label="采集系统"
                   v-bind="formItemLayout"
@@ -76,7 +91,7 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
                   label="告警时间"
                   v-bind="formItemLayout"
@@ -84,7 +99,6 @@
                 >
                   <a-range-picker
                     allowClear
-                    class="fw"
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     :ranges="{
@@ -97,14 +111,14 @@
                   />
                 </a-form-item>
               </a-col>
-
             </a-row>
+
           </div>
 
           <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
-            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+            <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
           </span>
         </a-form>
       </template>
@@ -178,19 +192,18 @@
 
 <script>
 import _ from 'lodash'
-import { List } from '@/components/Mixins'
-import { AlarmService } from '@/api'
+import { List } from '~~~/Mixins'
+import { AlarmService } from '@/api/index'
 import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
-import {
-  CmdbHostSelect
-} from '@/components/Resource'
 import moment from 'moment'
 import EndpointSelect from '~~~/ResourceConfig/Endpoint'
+import { Select as HostSelect } from '~~~/ResourceConfig/Host'
 import MetricSelect from '~~~/ResourceConfig/Metric'
 import { ALARM_STATE } from '@/tables/alarm/enum'
-import { levelColorMapping } from '@/components/Alarm/color.config'
+import { levelColorMapping } from '~~~/Alarm/color.config'
+import CascaderDictValue from '~~~/CascaderDictValue'
 
 export default {
   name: 'AlarmMonitor',
@@ -198,9 +211,10 @@ export default {
   components: {
     AlarmDetail,
     AlarmSolve,
-    CmdbHostSelect,
+    HostSelect,
     EndpointSelect,
-    MetricSelect
+    MetricSelect,
+    CascaderDictValue
   },
   props: {
     cTableProps: {
@@ -233,7 +247,10 @@ export default {
     return {
       ALARM_STATE,
       colors: [...levelColorMapping.values()],
-      formItemLayout: { 'labelCol': { 'sm': { 'span': 8 }, 'md': { 'span': 8 }, 'xl': { 'span': 4 } }, 'wrapperCol': { 'sm': { 'span': 14, 'offset': 2 }, 'md': { 'span': 14, 'offset': 1 }, 'xl': { 'span': 18, 'offset': 2 } } },
+      formItemLayout: {
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        wrapperCol: { xs: { span: 10, offset: 0 }, md: { span: 14, offset: 0 }, xl: { span: 14, offset: 2 }, xxl: { span: 20, offset: 0 } }
+      },
       state: ALARM_STATE.unSolved,
       columns: [
         {
@@ -244,30 +261,45 @@ export default {
           show: true
         },
         {
-          title: '监控设备',
-          dataIndex: 'host_id cmdbHost { alias }',
-          width: 270,
+          title: '品牌设备',
+          dataIndex: `cmdbHost { modelHost { dictBrand { value_label } } }`,
+          width: 100,
           show: true,
-          customRender: (text, record) => _.get(record, 'cmdbHost.alias', record.host_id)
+          customRender: (text, record) => _.get(record, 'cmdbHost.modelHost.dictBrand.value_label', '')
+        },
+        {
+          title: '监控对象',
+          dataIndex: 'host_id cmdbHost2: cmdbHost { alias }',
+          width: 290,
+          show: true,
+          customRender: (text, record) => _.get(record, 'cmdbHost2.alias', record.host_id)
         },
         {
           title: '监控实体',
-          dataIndex: 'metric_id cmdbEndpoint { modelEndpoint { alias } }',
-          width: 220,
+          dataIndex: 'endpoint_id cmdbEndpoint { alias modelEndpoint { alias } }',
+          width: 190,
           show: true,
-          customRender: (text, record) => _.get(record, 'cmdbEndpoint.modelEndpoint.alias', record.metric_id)
+          customRender: (text, record) => {
+            const endpointAlias = _.get(record, 'cmdbEndpoint.alias', '')
+            const endpointModelAlias = _.get(record, 'cmdbEndpoint.modelEndpoint.alias', '')
+            return endpointAlias || endpointModelAlias || record.endpoint_id
+          }
         },
         {
           title: '检查项',
-          dataIndex: 'endpoint_id cmdbMetric { modelMetric { alias } }',
-          width: 220,
+          dataIndex: 'metric_id cmdbMetric { alias modelMetric { alias } }',
+          width: 190,
           show: true,
-          customRender: (text, record) => _.get(record, 'cmdbMetric.modelMetric.alias', record.endpoint_id)
+          customRender: (text, record) => {
+            const metricAlias = _.get(record, 'cmdbMetric.alias', '')
+            const metricModelAlias = _.get(record, 'cmdbMetric.modelMetric.alias', '')
+            return metricAlias || metricModelAlias || record.metric_id
+          }
         },
         {
           title: '告警时间',
           dataIndex: 'receive_time',
-          width: 150,
+          width: 160,
           show: true,
           sorter: true,
           customRender: formatTime
@@ -277,7 +309,6 @@ export default {
           dataIndex: 'detail',
           width: 360,
           show: true
-          // customRender: (__, record) => <a-button type="link" onClick={() => this.onDetail(record.id)}>查看</a-button>
         },
         {
           title: '采集系统',
@@ -288,13 +319,20 @@ export default {
         }
       ],
       queryParams: {
-        alarmLevelList: [1, 2, 3, 4, 5]
+        alarmLevelList: [1, 2, 3, 4, 5],
+        dictValue: [],
+        host_id: undefined,
+        endpoint_id: undefined,
+        metric_id: undefined
       }
     }
   },
   computed: {
+    hostTypeDictValueCode () {
+      return this.queryParams.dictValue[2]
+    },
     scrollY () {
-      return 'max(calc(100vh - 385px), 100px)'
+      return 'max(calc(100vh - 400px), 100px)'
     },
     visibleColumns () {
       const { columnAlign: align, columns } = this
@@ -315,15 +353,33 @@ export default {
       }
     },
     loadData (parameter) {
+      const {
+        hostTypeDictValueCode,
+        queryParams: {
+          agent_id,
+          alarmLevelList,
+          ...queryParams
+        }
+      } = this
       return AlarmService.find({
         where: {
-          ...generateQuery(_.omit(this.queryParams, ['alarmLevelList'])),
+          ...generateQuery(queryParams, true),
+          ...generateQuery({ agent_id }),
           ...this.showAll ? {} : {
             state: this.state
           },
           alarm_level: {
-            _in: this.queryParams.alarmLevelList
-          }
+            _in: alarmLevelList
+          },
+          ...hostTypeDictValueCode ? {
+            cmdbHost: {
+              modelHost: {
+                host_type_dict_value_code: {
+                  _eq: hostTypeDictValueCode
+                }
+              }
+            }
+          } : {}
         },
         fields: _.uniq([
           'id',
@@ -333,6 +389,21 @@ export default {
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
+    },
+    onChangDictValue (dictValue) {
+      this.queryParams.dictValue = dictValue
+      this.onChangeHostId()
+    },
+    onChangeHostId (hostId) {
+      this.queryParams.host_id = hostId
+      this.onChangeEndpointId()
+    },
+    onChangeEndpointId (endpointId) {
+      this.queryParams.endpoint_id = endpointId
+      this.onChangeMetricId()
+    },
+    onChangeMetricId (metricId) {
+      this.queryParams.metric_id = metricId
     },
     /**
      * 查看告警详情
