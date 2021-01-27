@@ -1,4 +1,4 @@
-import { CmdbService, ModelService } from '@/api'
+import { CmdbService, ModelService } from '@/api/index'
 import SelectMixin from '../SelectMixin'
 
 export default {

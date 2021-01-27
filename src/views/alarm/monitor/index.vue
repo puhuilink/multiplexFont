@@ -193,28 +193,21 @@
 <script>
 import _ from 'lodash'
 import { List } from '~~~/Mixins'
+import QueryMixin from '../queryMixin'
 import { AlarmService } from '@/api/index'
 import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import moment from 'moment'
-import EndpointSelect from '~~~/ResourceConfig/Endpoint'
-import { Select as HostSelect } from '~~~/ResourceConfig/Host'
-import MetricSelect from '~~~/ResourceConfig/Metric'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping } from '~~~/Alarm/color.config'
-import CascaderDictValue from '~~~/CascaderDictValue'
 
 export default {
   name: 'AlarmMonitor',
-  mixins: [List],
+  mixins: [List, QueryMixin],
   components: {
     AlarmDetail,
-    AlarmSolve,
-    HostSelect,
-    EndpointSelect,
-    MetricSelect,
-    CascaderDictValue
+    AlarmSolve
   },
   props: {
     cTableProps: {
@@ -332,7 +325,7 @@ export default {
       return this.queryParams.dictValue[2]
     },
     scrollY () {
-      return 'max(calc(100vh - 400px), 100px)'
+      return 'max(calc(100vh - 415px), 100px)'
     },
     visibleColumns () {
       const { columnAlign: align, columns } = this

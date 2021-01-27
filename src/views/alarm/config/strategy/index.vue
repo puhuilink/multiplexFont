@@ -20,7 +20,49 @@
 
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="12" :sm="24">
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="品牌设备"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CascaderDictValue
+                    :value="queryParams.dictValue"
+                    @change="onChangDictValue"
+                  />
+                </a-form-item>
+              </a-col>
+
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="监控实体"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <EndpointSelect
+                    schema="model"
+                    :parentId="queryParams.dictValue[2]"
+                    :value="queryParams.endpoint_model_id"
+                    @update:value="onChangeEndpointModelId($event)"
+                  />
+                </a-form-item>
+              </a-col>
+
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="检查项"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <MetricSelect
+                    schema="model"
+                    :parentId="queryParams.endpoint_model_id"
+                    :value="queryParams.metric_model_id"
+                    @update:value="onChangeMetricModelId($event)"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col v-bind="colProps">
                 <a-form-item
                   label="阈值名称"
                   v-bind="formItemLayout"
@@ -29,7 +71,7 @@
                   <a-input allowClear v-model.trim="queryParams.name" />
                 </a-form-item>
               </a-col>
-              <a-col :md="12" :sm="24">
+              <a-col v-bind="colProps">
                 <a-form-item
                   label="启用状态"
                   v-bind="formItemLayout"
@@ -85,6 +127,7 @@
 
 <script>
 import { List } from '@/components/Mixins'
+import QueryMixin from '../../queryMixin'
 import { StrategyService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import AlarmStrategySchema from '../modules/AlarmStrategySchema/index'
@@ -104,7 +147,7 @@ import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
 
 export default {
   name: 'AlarmStrategy',
-  mixins: [List],
+  mixins: [List, QueryMixin],
   components: {
     AlarmStrategySchema
   },
@@ -123,19 +166,32 @@ export default {
           metricModelIdColumn,
           lastUpdateTime
         ].map(fn => fn.call(this))
-      ]
+      ],
+      queryParams: {
+        dictValue: [],
+        endpoint_model_id: '',
+        metric_model_id: ''
+      }
     }
   },
   computed: {
     scrollY () {
-      return 'max(calc(100vh - 370px), 100px)'
+      return 'max(calc(100vh - 410px), 100px)'
     }
   },
   methods: {
     loadData (parameter) {
+      const { dictValue, endpoint_model_id, metric_model_id, ...restQueryParams } = this.queryParams
       return StrategyService.find({
         where: {
-          ...generateQuery(this.queryParams),
+          ...generateQuery(restQueryParams),
+          ...generateQuery({
+            ...dictValue[2] ? {
+              device_model: dictValue[2]
+            } : {},
+            endpoint_model_id,
+            metric_model_id
+          }, true),
           mode: this.mode
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
@@ -148,6 +204,17 @@ export default {
      */
     onAdd () {
       this.$refs.schema.add()
+    },
+    onChangDictValue (dictValue) {
+      this.queryParams.dictValue = dictValue
+      this.onChangeEndpointModelId()
+    },
+    onChangeEndpointModelId (endpointModelId) {
+      this.queryParams.endpoint_model_id = endpointModelId
+      this.onChangeMetricModelId()
+    },
+    onChangeMetricModelId (metricModelId) {
+      this.queryParams.metric_model_id = metricModelId
     },
     /**
      * 阈值规则详情
