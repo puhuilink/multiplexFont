@@ -15,7 +15,7 @@ export class AdaptorDHConfig {
     }
   }
 
-  isAvailable () {
+  get isAvailable () {
     return !!this.code
   }
 

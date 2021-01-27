@@ -30,7 +30,7 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
     this.isGroup = isGroup
   }
 
-  isAvailable () {
+  get isAvailable () {
     return Boolean(
       this.alias && this.alias.length
     )

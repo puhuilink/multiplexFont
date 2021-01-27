@@ -4,7 +4,8 @@ import {
   CmdbHostDao,
   CmdbEndpointMetricDao,
   CmdbHostEndpointDao,
-  CmdbHostEndpointMetricDao
+  CmdbHostEndpointMetricDao,
+  CmdbHostTreeDao
 } from '../dao/index'
 import _ from 'lodash'
 
@@ -268,6 +269,32 @@ class CmdbService extends BaseService {
     )
 
     return list
+  }
+
+  static async healthyTree () {
+    const { data: { tree } } = await query(
+      CmdbHostTreeDao.find({
+        where: { id: { _eq: 1 } },
+        fields: [
+          `id
+            alias
+            children {
+              id
+              alias
+              children {
+                id
+                alias
+                children{
+                  id
+                  alias
+                }
+              }
+            }`
+        ],
+        alias: 'tree'
+      })
+    )
+    return tree
   }
 }
 

@@ -3,9 +3,14 @@ import { mapState, mapMutations } from 'vuex'
 import '@/assets/less/template.less'
 import { ScreenMutations } from '@/store/modules/screen'
 import CacheMixin from '../cache'
+import * as formItems from '../formItems/index'
 
 export default {
+  name: 'DataSourceMixins',
   mixins: [CacheMixin],
+  components: {
+    ...formItems
+  },
   data: () => ({
     formItemLayout: {
       labelCol: {
@@ -21,6 +26,12 @@ export default {
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
+    dbDataConfig () {
+      return this.config.dataConfig.dbDataConfig
+    },
+    sourceType () {
+      return this.config.dataConfig.sourceType
+    },
     resourceConfig: {
       get () {
         return this.config.dataConfig.dbDataConfig.resourceConfig
@@ -45,21 +56,6 @@ export default {
       },
       set (v) {
         Object.assign(this.config.dataConfig.dbDataConfig.overviewConfig, v)
-        this.change()
-      }
-    },
-    available () {
-      return Boolean(
-        _.get(this.resourceConfig, 'selectedKpi.length') &&
-        _.get(this.resourceConfig, 'selectedInstance.length')
-      )
-    },
-    xAxisType: {
-      get () {
-        return _.get(this.config, 'dataConfig.dbDataConfig.xAxisType', 'RESOURCE')
-      },
-      set (xAxisType) {
-        Object.assign(this.config.dataConfig.dbDataConfig, { xAxisType })
         this.change()
       }
     }
@@ -90,6 +86,9 @@ export default {
       } finally {
         this.btnLoading = false
       }
+    },
+    async preview () {
+      await this.change(true)
     }
   }
 }

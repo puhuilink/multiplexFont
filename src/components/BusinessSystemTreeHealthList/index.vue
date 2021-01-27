@@ -1,11 +1,11 @@
 <template>
-  <div class="CascaderHostEndpointMetricList">
+  <div class="BusinessSystemTreeHealthList">
     <div
-      class="CascaderHostEndpointMetricList__item"
+      class="BusinessSystemTreeHealthList__item"
       v-for="(config, index) in content"
       :key="index"
     >
-      <CascaderHostEndpointMetric :config="config" />
+      <BusinessSystemTreeHealth :config="config" />
       <a-button type="link" icon="delete" @click="removeItem(index)" />
       <a-button type="link" icon="snippets" @click="copyItem(index)" />
     </div>
@@ -14,14 +14,14 @@
 </template>
 
 <script>
-import CascaderHostEndpointMetric from '~~~/CascaderHostEndpointMetric'
+import BusinessSystemTreeHealth from '~~~/BusinessSystemTreeHealth'
 import _ from 'lodash'
 
 export default {
-  name: 'CascaderHostEndpointMetricList',
+  name: 'BusinessSystemTreeHealthList',
   mixins: [],
   components: {
-    CascaderHostEndpointMetric
+    BusinessSystemTreeHealth
   },
   props: {
     content: {
@@ -40,10 +40,8 @@ export default {
       this.addItem(copyItem)
     },
     addItem (item = {
-      dictValue: [],
-      hostId: null,
-      endpointModelId: null,
-      metricModelId: null
+      systemId: null,
+      systemType: null
     }) {
       this.content.push(item)
     },
@@ -55,7 +53,7 @@ export default {
 </script>
 
 <style lang="less">
-.CascaderHostEndpointMetricList {
+.BusinessSystemTreeHealthList {
   &__item {
     display: flex;
     flex-direction: row;

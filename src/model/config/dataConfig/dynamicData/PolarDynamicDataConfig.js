@@ -112,7 +112,6 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
         // { data: level5Collection, stack: '最新通知', name: '最新通知' }
       ]
     }
-    console.log(_.cloneDeep(option))
     Object.assign(this, option)
   }
 

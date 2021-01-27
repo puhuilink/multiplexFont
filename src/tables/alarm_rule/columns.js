@@ -140,9 +140,9 @@ export function deviceModelColumn () {
 export function metricModelIdColumn () {
   const column = {
     title: '检查项',
-    dataIndex: 'endpoint_model_id modelEndpoint { alias }',
+    dataIndex: 'metric_model_id modelMetric { alias }',
     width: 200,
-    customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
+    customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
   }
 
   column.customRender = column.customRender.bind(this)
@@ -152,9 +152,9 @@ export function metricModelIdColumn () {
 export function endpointModelIdColumn () {
   const column = {
     title: '监控实体',
-    dataIndex: 'metric_model_id modelMetric { alias }',
+    dataIndex: 'endpoint_model_id modelEndpoint { alias }',
     width: 200,
-    customRender: (metricModelId, { modelMetric }) => _.get(modelMetric, 'alias') || metricModelId
+    customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
   }
 
   column.customRender = column.customRender.bind(this)
