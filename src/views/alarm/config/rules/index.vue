@@ -63,7 +63,7 @@
             </a-col>
 
             <a-col v-bind="colProps">
-              <a-form-item label="状态" v-bind="formItemLayout" class="fw">
+              <a-form-item label="启用状态" v-bind="formItemLayout" class="fw">
                 <a-select allowClear v-model.number="queryParams.enabled" >
                   <a-select-option :value="1">启用</a-select-option>
                   <a-select-option :value="0">禁用</a-select-option>
