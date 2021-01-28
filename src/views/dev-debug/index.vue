@@ -1,17 +1,17 @@
 <template>
   <div class="DevDebug">
-    <BusinessSystemTreeHealthList :content="content" />
+    <CascaderDictValue :content="content" />
   </div>
 </template>
 
 <script>
-import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
+import CascaderDictValue from '~~~/CascaderDictValue'
 
 export default {
   name: 'DevDebug',
   mixins: [],
   components: {
-    BusinessSystemTreeHealthList
+    CascaderDictValue
   },
   props: {},
   data: () => ({
