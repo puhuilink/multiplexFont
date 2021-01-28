@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import { ViewDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
-import { imp } from '../config/client'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import store from '@/store'
@@ -58,8 +57,10 @@ class ViewDesignService extends BaseService {
    * @return {Promise<any>}
    */
   static async updateViewDesign (viewId, content) {
-    return imp.mutate({
-      mutation: gql`mutation ($viewId: numeric!, $set: t_view_set_input! = {}) {
+    return ViewDao
+      .getProvider()
+      .mutate({
+        mutation: gql`mutation ($viewId: numeric!, $set: t_view_set_input! = {}) {
         update_t_view (
           where: {
             view_id: {
@@ -71,15 +72,15 @@ class ViewDesignService extends BaseService {
           affected_rows
         }
       }`,
-      variables: {
-        viewId: Number(viewId),
-        set: {
-          content: content ? JSON.stringify(content) : '',
-          updator: store.state.user.info.userId,
-          updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+        variables: {
+          viewId: Number(viewId),
+          set: {
+            content: content ? JSON.stringify(content) : '',
+            updator: store.state.user.info.userId,
+            updatedate: moment().format('YYYY-MM-DDTHH:mm:ss')
+          }
         }
-      }
-    })
+      })
   }
 }
 
