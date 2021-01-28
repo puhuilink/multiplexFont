@@ -289,11 +289,11 @@ export default class TopologyChart extends Chart {
     if (_.isEmpty(hostIds)) return
 
     const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
-    const hostIdEventLevelMapping = new Map(
-      alarmList.map((alarm) => [alarm.host_id, alarm.event_level])
+    const hostIdAlarmLevelMapping = new Map(
+      alarmList.map((alarm) => [alarm.host_id, alarm.alarm_level])
     )
     models.forEach((model) => {
-      const eventLevel = hostIdEventLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
+      const eventLevel = hostIdAlarmLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
       eventLevel && this.setNodeAlarmState(
         model.id,
         Number(eventLevel)
