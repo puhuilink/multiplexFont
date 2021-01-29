@@ -46,7 +46,7 @@ export default {
         this.activeKey = viewId
         this.view = null
         this.isLoadingViewConfig = true
-        this.view = await ViewDesignService.getDesign(viewId)
+        this.view = await ViewDesignService.getDesign({ view_id: viewId })
       } catch (e) {
         this.view = null
         throw e

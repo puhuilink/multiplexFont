@@ -134,7 +134,10 @@ export default {
           throw new Error('当前设备未关联视图')
         }
         this.hostId = t_cmdb_host_id
-        this.view = await ViewDesignService.getDesign(this.viewId, t_cmdb_host_id)
+        this.view = await ViewDesignService.getDesign({
+          view_id: this.viewId,
+          host_id: t_cmdb_host_id
+        })
         this.viewError = false
       } catch (e) {
         this.viewId = null
