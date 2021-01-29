@@ -53,7 +53,9 @@ class CmdbService extends BaseService {
           'location',
           'host',
           'host_type',
-          'modelHost { host }'
+          'modelHost { host }',
+          'hostTypeView { view_id:  t_view_id }',
+          'hostView { view_id: t_view_id }'
         ],
         alias: 'cmdbHostList'
       })

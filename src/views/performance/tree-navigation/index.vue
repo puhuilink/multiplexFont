@@ -63,8 +63,7 @@
 import { CmdbTree } from '@/components/Resource'
 import PerformanceAggregate from '@/components/Performance/Aggregate'
 import Renderer from '@/components/Renderer'
-import { CmdbHostViewService, ViewDesignService } from '@/api'
-import Timeout from 'await-timeout'
+import { ViewDesignService } from '@/api'
 import _ from 'lodash'
 import Preview from '@/components/Preview'
 
@@ -126,10 +125,11 @@ export default {
       try {
         const {
           id: t_cmdb_host_id,
-          host_type: t_model_host_type
+          hostTypeView = {},
+          hostView = {}
         } = this.dataRef
         this.spinning = true
-        this.viewId = await CmdbHostViewService.viewIdByHost({ t_cmdb_host_id, t_model_host_type })
+        this.viewId = _.get(hostView, ['view_id']) || _.get(hostTypeView, ['view_id'])
         if (!this.viewId) {
           throw new Error('当前设备未关联视图')
         }
@@ -143,8 +143,6 @@ export default {
         this.hostId = null
         throw e
       } finally {
-        // 预留时间给动画与视图动态数据加载
-        await Timeout.set(150)
         this.spinning = false
       }
     },
