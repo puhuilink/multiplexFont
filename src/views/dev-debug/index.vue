@@ -1,22 +1,22 @@
 <template>
-  <div class="DevDebug">
-    <CascaderDictValue :content="content" />
+  <div class="DevBug">
+    <DrillPreview />
   </div>
 </template>
 
 <script>
-import CascaderDictValue from '~~~/CascaderDictValue'
+import DrillPreview from '~~~/DrillPreview'
 
 export default {
-  name: 'DevDebug',
+  name: 'DevBug',
   mixins: [],
   components: {
-    CascaderDictValue
+    DrillPreview
   },
   props: {},
-  data: () => ({
-    content: []
-  }),
+  data () {
+    return {}
+  },
   computed: {},
   methods: {}
 }

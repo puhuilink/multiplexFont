@@ -234,6 +234,10 @@ export default {
     showAll: {
       type: Boolean,
       default: false
+    },
+    queryParamsProps: {
+      type: Object,
+      default: () => ({})
     }
   },
   data () {
@@ -352,11 +356,13 @@ export default {
           agent_id,
           alarmLevelList,
           ...queryParams
-        }
+        },
+        queryParamsProps
       } = this
       return AlarmService.find({
         where: {
           ...generateQuery(queryParams, true),
+          ...generateQuery(queryParamsProps, true),
           ...generateQuery({ agent_id }),
           ...this.showAll ? {} : {
             state: this.state
