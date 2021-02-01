@@ -261,6 +261,13 @@ export default {
           customRender: (text, record) => _.get(record, 'cmdbHost.modelHost.dictBrand.value_label', '')
         },
         {
+          title: 'IP',
+          dataIndex: 'cmdbHost3: cmdbHost { ip }',
+          width: 120,
+          show: true,
+          customRender: (text, record) => _.get(record, 'cmdbHost3.ip', '')
+        },
+        {
           title: '监控对象',
           dataIndex: 'host_id cmdbHost2: cmdbHost { alias }',
           width: 290,
@@ -281,7 +288,7 @@ export default {
         {
           title: '检查项',
           dataIndex: 'metric_id cmdbMetric { alias modelMetric { alias } }',
-          width: 190,
+          width: 170,
           show: true,
           customRender: (text, record) => {
             const metricAlias = _.get(record, 'cmdbMetric.alias', '')
@@ -292,7 +299,7 @@ export default {
         {
           title: '告警时间',
           dataIndex: 'receive_time',
-          width: 160,
+          width: 170,
           show: true,
           sorter: true,
           customRender: formatTime
