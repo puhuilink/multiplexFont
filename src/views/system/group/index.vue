@@ -8,27 +8,18 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="工作组编号"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="工作组编号" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.group_id" />
                 </a-form-item>
               </a-col>
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="工作组名称"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="工作组名称" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.group_name" />
                 </a-form-item>
               </a-col>
@@ -36,17 +27,8 @@
 
             <a-row v-show="advanced">
               <a-col :md="12" :sm="24">
-                <a-form-item
-                  v-bind="formItemLayout"
-                  label="有效标识"
-                  class="fw"
-                >
-                  <a-select
-                    allowClear
-                    defaultValue="1"
-                    v-model="queryParams.flag"
-                    placeholder="请选择"
-                  >
+                <a-form-item v-bind="formItemLayout" label="有效标识" class="fw">
+                  <a-select allowClear defaultValue="1" v-model="queryParams.flag" placeholder="请选择">
                     <a-select-option :value="1">有效</a-select-option>
                     <a-select-option :value="0">无效</a-select-option>
                   </a-select>
@@ -71,34 +53,17 @@
         <a-button @click="onAllocateUser" :disabled="!isSelectedValid" v-action:M0101>分配用户</a-button>
         <a-button @click="onAllocateAdmin" :disabled="!isSelectedValid" v-action:M0101>分配管理员</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0101>更改状态</a-button>
-        <a-button @click="onAllocateAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
-
     </CTable>
 
-    <GroupSchema
-      ref="schema"
-      @addSuccess="query"
-      @editSuccess="query(false)"
-    />
+    <GroupSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <AuthSchema
-      v-action:M0110
-      ref="auth"
-      @success="query(false)"
-    />
+    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />
 
-    <GroupAdministratorSchema
-      v-action:M0101
-      ref="groupAdmin"
-      @editSuccess="query(false)"
-    />
+    <GroupAdministratorSchema v-action:M0101 ref="groupAdmin" @editSuccess="query(false)" />
 
-    <GroupUserSchema
-      v-action:M0101
-      ref="groupUser"
-      @editSuccess="query(false)"
-    />
+    <GroupUserSchema v-action:M0101 ref="groupUser" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -140,7 +105,7 @@ export default {
         dataIndex: 'flag',
         width: 50,
         sorter: true,
-        customRender: flag => flag === GROUP_FLAG.enabled ? '有效' : '无效'
+        customRender: (flag) => (flag === GROUP_FLAG.enabled ? '有效' : '无效')
       },
       {
         title: '备注',
@@ -173,7 +138,7 @@ export default {
         fields: this.columns.map(({ dataIndex }) => dataIndex),
         alias: 'data',
         ...parameter
-      }).then(r => r.data)
+      }).then((r) => r.data)
     },
     /**
      * 为工作组分配管理员
@@ -212,13 +177,13 @@ export default {
      */
     async onBatchDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => GroupService
-          .batchDelete(this.selectedRowKeys)
-          .then(() => {
-            this.$notifyDeleteSuccess()
-            this.query(false)
-          })
-          .catch(this.$notifyError)
+        onOk: () =>
+          GroupService.batchDelete(this.selectedRowKeys)
+            .then(() => {
+              this.$notifyDeleteSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
       })
     },
     /**
@@ -230,13 +195,13 @@ export default {
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认更改工作组状态？',
-        onOk: () => GroupService
-          .toggleFlag(group_id, flag === GROUP_FLAG.enabled ? GROUP_FLAG.disabled : GROUP_FLAG.enabled)
-          .then(() => {
-            this.$notifyToggleFlagSuccess()
-            this.query(false)
-          })
-          .catch(this.$notifyError)
+        onOk: () =>
+          GroupService.toggleFlag(group_id, flag === GROUP_FLAG.enabled ? GROUP_FLAG.disabled : GROUP_FLAG.enabled)
+            .then(() => {
+              this.$notifyToggleFlagSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
       })
     },
     /**
