@@ -263,7 +263,7 @@ export default {
                 cursor: 'default',
                 borderColor: 'transparent'
               }}
-            >{alarmLevel}</a-button>
+            >L{alarmLevel}</a-button>
           )
         },
         {
@@ -275,7 +275,8 @@ export default {
         {
           title: 'IP',
           dataIndex: 'cmdbHost.ip',
-          width: 120
+          width: 120,
+          show: true
         },
         {
           title: '监控对象',
