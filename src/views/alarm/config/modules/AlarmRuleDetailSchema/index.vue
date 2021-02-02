@@ -6,6 +6,7 @@
     wrapClassName="AlarmRuleDetailSchema__modal"
     v-model="visible"
     :afterClose="reset"
+    @ok="cancel"
   >
     <a-spin :spinning="spinning">
 
@@ -59,7 +60,7 @@
             v-if="component"
             :formModel="model"
             :is="component"
-            :isEdit="true"
+            :isEdit="false"
           />
         </a-tab-pane>
       </a-tabs>

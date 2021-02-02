@@ -138,7 +138,7 @@ export default {
           AlarmTempModel.serialize(this.formModel)
         )
         this.$emit('addSuccess')
-        this.$notifyEditSuccess()
+        this.$notifyAddSuccess()
         this.cancel()
       } catch (e) {
         this.$notifyError(e)
