@@ -1,22 +1,22 @@
 <template>
-  <div class="DevDebug">
-    <BusinessSystemTreeHealthList :content="content" />
+  <div class="DevBug">
+    <DrillPreview />
   </div>
 </template>
 
 <script>
-import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
+import DrillPreview from '~~~/DrillPreview'
 
 export default {
-  name: 'DevDebug',
+  name: 'DevBug',
   mixins: [],
   components: {
-    BusinessSystemTreeHealthList
+    DrillPreview
   },
   props: {},
-  data: () => ({
-    content: []
-  }),
+  data () {
+    return {}
+  },
   computed: {},
   methods: {}
 }

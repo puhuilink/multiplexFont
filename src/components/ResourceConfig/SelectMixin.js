@@ -84,6 +84,10 @@ export default {
       this.$emit('change', payload)
       this.$emit('update:value', payload)
       this.$emit('input', payload)
+      // https://www.antdv.com/components/form-model-cn/#API
+      // Form.Item 会对唯一子元素进行劫持，并监听 blur 和 change 事件，来达到自动校验的目的
+      // 此处自定义组件需要触发 blur 来触发 Form.Item 校验
+      this.$emit('blur')
     },
     renderSelect () {
       const { change, filterValue, value } = this

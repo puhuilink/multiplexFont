@@ -4,6 +4,7 @@
       :btnProps="btnProps"
       :columnAlign="align"
       :cTableProps="cTableProps"
+      :queryParamsProps="queryParamsProps"
       :showSolve="false"
       :showQuery="false"
     />
@@ -17,6 +18,7 @@ import ListMixin from '@/components/Elements/ListMixin'
 
 export default {
   name: 'LatestAlarmElement',
+  inject: ['externalHostId'],
   mixins: [ListMixin],
   components: {
     AlarmMonitor
@@ -41,6 +43,10 @@ export default {
       return {
         style: styleConfig.button || {}
       }
+    },
+    queryParamsProps () {
+      const { externalHostId: host_id } = this
+      return host_id ? { host_id } : {}
     }
   }
 }
