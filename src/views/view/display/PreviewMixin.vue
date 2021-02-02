@@ -28,12 +28,12 @@ export default {
      * 切换查看模式
      * 缩略图 | 页签
      */
-    toggleThumbnailMode () {
-      this.isThumbnailMode = !this.isThumbnailMode
-      if (!this.isThumbnailMode) {
-        // 从当前视图列表第一项开始自动播放
+    toggleThumbnailMode (els) {
+      if (els === 'thumbnail') {
+        this.isThumbnailMode = true
         this.tabsChange(this.filterViewList[0].view_id)
-      } else {
+      } else if (els === 'tabsPags') {
+        this.isThumbnailMode = false
         clearInterval(this.timer)
       }
     },
@@ -75,7 +75,6 @@ export default {
 
 <style lang="less">
 .ViewDisplay {
-
   &-tabs.fullscreen {
     position: fixed;
     height: 100vh;
@@ -95,6 +94,5 @@ export default {
   &-tab-content.fullscreen {
     height: 100%;
   }
-
 }
 </style>
