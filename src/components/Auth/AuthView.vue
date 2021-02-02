@@ -2,11 +2,12 @@
   <a-spin :spinning="loading">
     <a-transfer
       :dataSource="viewList"
+      :titles="['未分配视图', '已分配视图']"
       showSearch
       :filterOption="filterOption"
       :targetKeys="_targetKeys"
       @change="handleChange"
-      :render="item => item.view_title"
+      :render="(item) => item.view_title"
     >
     </a-transfer>
   </a-spin>
@@ -28,7 +29,7 @@ export default {
     // 选中的 viewIds
     viewIds: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     record: {
       type: Object,
@@ -45,7 +46,7 @@ export default {
   }),
   computed: {
     dataSourceKeys () {
-      return this.viewList.map(el => el.key)
+      return this.viewList.map((el) => el.key)
     },
     _targetKeys: {
       get () {
@@ -83,24 +84,25 @@ export default {
     async fetchAllViewList () {
       try {
         this.loading = true
-        const { data: { viewList } } = await ViewListService.find({
+        const {
+          data: { viewList }
+        } = await ViewListService.find({
           where: {
             view_type: VIEW_TYPE.instance
           },
           alias: 'viewList'
         })
-        this.viewList = viewList
-          .filter(el => {
-            if (el.view_id) {
-              Object.assign(el, {
-                title: el['view_title'],
-                key: el['view_id'].toString(),
-                description: '',
-                chosen: false
-              })
-            }
-            return el
-          })
+        this.viewList = viewList.filter((el) => {
+          if (el.view_id) {
+            Object.assign(el, {
+              title: el['view_title'],
+              key: el['view_id'].toString(),
+              description: '',
+              chosen: false
+            })
+          }
+          return el
+        })
       } catch (e) {
         this.viewList = []
         throw e
@@ -138,9 +140,7 @@ export default {
      */
     filterOption (inputValue, option) {
       const title = option['view_title'] || ''
-      return title.toLowerCase().includes(
-        inputValue.trim().toLowerCase()
-      )
+      return title.toLowerCase().includes(inputValue.trim().toLowerCase())
     },
     handleChange (targetKeys, direction, moveKeys) {
       this._targetKeys = targetKeys
