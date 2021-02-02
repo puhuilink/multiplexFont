@@ -251,32 +251,41 @@ export default {
           dataIndex: 'alarm_level',
           width: 90,
           sorter: true,
-          show: true
+          show: true,
+          customRender: (alarmLevel) => (
+            <a-button
+              disabled
+              shape="round"
+              size="small"
+              style={{
+                backgroundColor: levelColorMapping.get(Number(alarmLevel) - 1),
+                color: '#fffced',
+                cursor: 'default',
+                borderColor: 'transparent'
+              }}
+            >{alarmLevel}</a-button>
+          )
         },
         {
           title: '品牌设备',
-          dataIndex: `cmdbHost { modelHost { dictBrand { value_label } } }`,
+          dataIndex: `cmdbHost.modelHost.dictBrand.value_label`,
           width: 100,
-          show: true,
-          customRender: (text, record) => _.get(record, 'cmdbHost.modelHost.dictBrand.value_label', '')
+          show: true
         },
         {
           title: 'IP',
-          dataIndex: 'cmdbHost3: cmdbHost { ip }',
-          width: 120,
-          show: true,
-          customRender: (text, record) => _.get(record, 'cmdbHost3.ip', '')
+          dataIndex: 'cmdbHost.ip',
+          width: 120
         },
         {
           title: '监控对象',
-          dataIndex: 'host_id cmdbHost2: cmdbHost { alias }',
+          dataIndex: 'cmdbHost.alias',
           width: 290,
-          show: true,
-          customRender: (text, record) => _.get(record, 'cmdbHost2.alias', record.host_id)
+          show: true
         },
         {
           title: '监控实体',
-          dataIndex: 'endpoint_id cmdbEndpoint { alias modelEndpoint { alias } }',
+          dataIndex: 'cmdbEndpoint.alias',
           width: 190,
           show: true,
           customRender: (text, record) => {
@@ -287,7 +296,7 @@ export default {
         },
         {
           title: '检查项',
-          dataIndex: 'metric_id cmdbMetric { alias modelMetric { alias } }',
+          dataIndex: 'cmdbMetric.alias',
           width: 170,
           show: true,
           customRender: (text, record) => {
@@ -381,11 +390,30 @@ export default {
             }
           } : {}
         },
-        fields: _.uniq([
+        fields: [
           'id',
           'state',
-          ...this.columns.map(({ dataIndex }) => dataIndex)
-        ]),
+          'alarm_level',
+          'host_id',
+          'endpoint_id',
+          'metric_id',
+          `cmdbHost {
+            alias
+            ip
+            modelHost { dictBrand { value_label } }
+          }`,
+          `cmdbEndpoint {
+            alias
+            modelEndpoint { alias }
+          }`,
+          `cmdbMetric {
+            alias
+            modelMetric { alias }
+          }`,
+          'receive_time',
+          'detail',
+          'agent_id'
+        ],
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
