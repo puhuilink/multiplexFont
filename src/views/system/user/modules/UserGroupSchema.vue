@@ -8,7 +8,7 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    :rowKey="record => record.group_id"
+    :rowKey="(record) => record.group_id"
     okText="保存"
     @ok="submit"
     cancelText="取消"
@@ -16,11 +16,12 @@
     <a-transfer
       :dataSource="groupList"
       showSearch
+      :titles="['未分配工作组', '已分配工作组']"
       :filterOption="filterOption"
       :targetKeys="targetKeys"
       @change="handleChange"
       @search="handleSearch"
-      :render="item => item.title"
+      :render="(item) => item.title"
     >
     </a-transfer>
   </a-modal>
@@ -51,17 +52,13 @@ export default {
      */
     async getAllGroupList () {
       try {
-        const { data: { groupList } } = await GroupService.find({
-          fields: [
-            'key: group_id',
-            'title: group_name',
-            'group_id',
-            'group_name',
-            'flag'
-          ],
+        const {
+          data: { groupList }
+        } = await GroupService.find({
+          fields: ['key: group_id', 'title: group_name', 'group_id', 'group_name', 'flag'],
           alias: 'groupList'
         })
-        this.groupList = groupList.map(el => ({
+        this.groupList = groupList.map((el) => ({
           ...el,
           disabled: el.flag !== GROUP_FLAG.enabled
         }))
@@ -72,23 +69,25 @@ export default {
     },
     async getCurrentGroupList (user_id) {
       try {
-        const { data: { userGroupList } } = await UserGroupService.find({
+        const {
+          data: { userGroupList }
+        } = await UserGroupService.find({
           where: { user_id },
           fields: ['group_id'],
           alias: 'userGroupList'
         })
-        this.targetKeys = userGroupList.map(e => e.group_id)
+        this.targetKeys = userGroupList.map((e) => e.group_id)
       } catch (e) {
         this.targetKeys = []
         throw e
       }
     },
     /**
-       * 过滤条件
-       * @param inputValue
-       * @param option
-       * @return {boolean}
-       */
+     * 过滤条件
+     * @param inputValue
+     * @param option
+     * @return {boolean}
+     */
     filterOption: filterTransferOption('group_name'),
     handleChange (targetKeys, direction, moveKeys) {
       this.targetKeys = targetKeys
