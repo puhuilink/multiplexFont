@@ -188,7 +188,7 @@ export default {
       this.show('告警信息')
     },
     solve () {
-      this.$refs.solve.open(this.record.id)
+      this.$refs.solve.open(this.record)
     },
     solveSuccess () {
       this.record.state = ALARM_STATE.solved

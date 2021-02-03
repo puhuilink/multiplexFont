@@ -8,7 +8,7 @@
     wrapClassName="AlarmSolve__modal"
     @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="解决"
     cancelText="取消"
     @ok="submit"
   >
