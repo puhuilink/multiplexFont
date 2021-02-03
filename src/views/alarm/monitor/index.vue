@@ -233,8 +233,8 @@ export default {
       type: Boolean,
       default: true
     },
-    // 展示所有记录
-    showAll: {
+    // 历史告警为已经解决的主告警
+    showHistory: {
       type: Boolean,
       default: false
     },
@@ -334,7 +334,7 @@ export default {
           width: 100,
           show: true,
           // 仅查看已解决的告警时展示该列
-          validate: () => this.showAll || this.state === ALARM_STATE.solved
+          validate: () => this.showHistory || this.state === ALARM_STATE.solved
         },
         {
           title: '告警描述',
@@ -410,9 +410,7 @@ export default {
           ...generateQuery(queryParams, true),
           ...generateQuery(queryParamsProps, true),
           ...generateQuery({ agent_id }),
-          ...this.showAll ? {} : {
-            state: this.state
-          },
+          state: this.showHistory ? ALARM_STATE.solved : this.state,
           alarm_level: {
             _in: alarmLevelList
           },

@@ -1,7 +1,7 @@
 <template>
   <div class="AlarmLogHistory">
     <AlarmMonitor
-      showAll
+      showHistory
       :showSolve="false"
       :cTableProps="{
         scroll: {
