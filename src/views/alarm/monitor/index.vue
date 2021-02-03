@@ -162,7 +162,7 @@
           </div>
 
           <a-popover title="表格列设置" placement="leftBottom">
-            <a-list slot="content" item-layout="horizontal" :data-source="columns">
+            <a-list slot="content" item-layout="horizontal" :data-source="availableColumns">
               <a-list-item slot="renderItem" slot-scope="column">
                 <a-list-item-meta>
                   <a-checkbox slot="title" v-model="column.show">
@@ -202,6 +202,8 @@ import AlarmSolve from '../modules/AlarmSolve'
 import moment from 'moment'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping } from '~~~/Alarm/color.config'
+
+console.log(ALARM_STATE)
 
 export default {
   name: 'AlarmMonitor',
@@ -327,6 +329,14 @@ export default {
           customRender: formatTime
         },
         {
+          title: '解决人',
+          dataIndex: 'close_by',
+          width: 100,
+          show: true,
+          // 仅查看已解决的告警时展示该列
+          validate: () => this.showAll || this.state === ALARM_STATE.solved
+        },
+        {
           title: '告警描述',
           dataIndex: 'detail',
           width: 360,
@@ -359,9 +369,17 @@ export default {
       const { y = 'max(calc(100vh - 415px), 100px)' } = scroll
       return y
     },
-    visibleColumns () {
-      const { columnAlign: align, columns } = this
+    availableColumns () {
+      const { columns } = this
       return columns
+        .filter(column => {
+          if (column.validate) return column.validate()
+          return true
+        })
+    },
+    visibleColumns () {
+      const { columnAlign: align, availableColumns } = this
+      return availableColumns
         .filter(({ show }) => show)
         .map((column) => Object.assign({}, column, { align }))
     }
@@ -429,6 +447,7 @@ export default {
             modelMetric { alias }
           }`,
           'receive_time',
+          'close_by',
           'detail',
           'agent_id',
           'origin'
