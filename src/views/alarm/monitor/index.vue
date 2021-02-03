@@ -203,8 +203,6 @@ import moment from 'moment'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping } from '~~~/Alarm/color.config'
 
-console.log(ALARM_STATE)
-
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -346,9 +344,24 @@ export default {
           title: '采集系统',
           dataIndex: 'agent_id',
           width: 90,
-          sorter: true,
           show: true,
           fixed: 'right'
+        },
+        {
+          title: '操作',
+          width: 50,
+          show: true,
+          fixed: 'right',
+          customRender: (__, record) => (
+            <a-button
+              type="link"
+              style={{
+                paddingLeft: 0
+              }}
+              onClick={() => this.onShowHistory(record)}
+            >图表</a-button>
+          ),
+          validate: () => this.showHistory
         }
       ],
       queryParams: {
@@ -363,6 +376,12 @@ export default {
   computed: {
     hostTypeDictValueCode () {
       return this.queryParams.dictValue[2]
+    },
+    scrollX () {
+      const { cTableProps = {}, visibleColumns } = this
+      const { scroll = {} } = cTableProps
+      const { x = 1200 } = scroll
+      return x || _.sum(visibleColumns.map(e => e.width || 60))
     },
     scrollY () {
       const { scroll = {} } = this.cTableProps
@@ -481,6 +500,12 @@ export default {
      */
     onDetailClose (state) {
       state === ALARM_STATE.solved && this.onSolveSuccess()
+    },
+    /**
+     * 查看告警历史曲线
+     */
+    onShowHistory (record) {
+      console.log(record)
     },
     /**
      * 关闭告警
