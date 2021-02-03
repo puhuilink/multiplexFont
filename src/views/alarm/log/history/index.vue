@@ -3,6 +3,11 @@
     <AlarmMonitor
       showAll
       :showSolve="false"
+      :cTableProps="{
+        scroll: {
+          y: 'max(calc(100vh - 360px), 100px)'
+        }
+      }"
     />
   </div>
 </template>
