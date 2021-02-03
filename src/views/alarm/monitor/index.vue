@@ -6,13 +6,14 @@
     </a-tabs>
 
     <!-- / FIXME: resizeableTitle 失效 -->
+    <!-- resizeableTitle -->
     <CTable
+      bordered
       :customRow="customRow"
       :columns="visibleColumns"
       :data="loadData"
       ref="table"
       rowKey="id"
-      resizeableTitle
       :rowSelection="rowSelection"
       :scroll="scroll"
       v-bind="cTableProps"
@@ -253,9 +254,10 @@ export default {
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 90,
+          width: 100,
           sorter: true,
           show: true,
+          fixed: 'left',
           customRender: (alarmLevel) => (
             <a-button
               disabled
@@ -269,6 +271,12 @@ export default {
               }}
             >L{alarmLevel}</a-button>
           )
+        },
+        {
+          title: '数据域',
+          dataIndex: `origin`,
+          width: 100,
+          show: true
         },
         {
           title: '品牌设备',
@@ -329,7 +337,8 @@ export default {
           dataIndex: 'agent_id',
           width: 90,
           sorter: true,
-          show: true
+          show: true,
+          fixed: 'right'
         }
       ],
       queryParams: {
@@ -346,7 +355,9 @@ export default {
       return this.queryParams.dictValue[2]
     },
     scrollY () {
-      return 'max(calc(100vh - 415px), 100px)'
+      const { scroll = {} } = this.cTableProps
+      const { y = 'max(calc(100vh - 415px), 100px)' } = scroll
+      return y
     },
     visibleColumns () {
       const { columnAlign: align, columns } = this
@@ -419,7 +430,8 @@ export default {
           }`,
           'receive_time',
           'detail',
-          'agent_id'
+          'agent_id',
+          'origin'
         ],
         ...parameter,
         alias: 'data'
