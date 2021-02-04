@@ -7,7 +7,6 @@
     v-model="visible"
     :afterClose="reset"
   >
-
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
@@ -23,7 +22,6 @@
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
-
         <a-form-model-item label="通知模板名称" v-bind="formItemLayout" prop="title">
           <a-input v-model.trim="formModel.title" />
         </a-form-model-item>
@@ -40,21 +38,15 @@
 
         <a-form-model-item label="通知方式" v-bind="formItemLayout" prop="mode">
           <a-select v-model="formModel.mode" class="fw">
-            <a-select-option
-              v-for="(label, value) in allMode"
-              :key="value"
-              :value="value"
-            >{{ label }}</a-select-option>
+            <a-select-option v-for="(label, value) in allMode" :key="value" :value="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
 
         <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
           <TempEditor ref="editor" v-model="formModel.message" />
         </a-form-model-item>
-
       </a-form-model>
     </a-spin>
-
   </a-modal>
 </template>
 
@@ -72,9 +64,7 @@ export default {
   },
   props: {},
   data: () => ({
-    allMode: Object.freeze(
-      Object.fromEntries(SEND_TYPE_MAPPING)
-    ),
+    allMode: Object.freeze(Object.fromEntries(SEND_TYPE_MAPPING)),
     formModel: {
       enabled: 1
     },
@@ -93,16 +83,12 @@ export default {
           { max: 50, message: '最多输入50个字符' },
           { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }
         ],
-        event_level: [
-          { required: true, message: '请选择事件等级' }
-        ],
+        event_level: [{ required: true, message: '请选择事件等级' }],
         message: [
           { required: true, message: '请输入模板内容' },
           { max: 255, message: '最多输入255个字符' }
         ],
-        mode: [
-          { required: true, message: '请选择前转方式' }
-        ]
+        mode: [{ required: true, message: '请选择前转方式' }]
       }
     }
   },
@@ -129,14 +115,12 @@ export default {
       }
     },
     handleSubmit () {
-      this.$refs.ruleForm.validate(passValidate => passValidate && this.submit())
+      this.$refs.ruleForm.validate((passValidate) => passValidate && this.submit())
     },
     async insert () {
       try {
         this.submitLoading = true
-        await AlarmTempService.add(
-          AlarmTempModel.serialize(this.formModel)
-        )
+        await AlarmTempService.add(AlarmTempModel.serialize(this.formModel))
         this.$emit('addSuccess')
         this.$notifyEditSuccess()
         this.cancel()
@@ -155,10 +139,7 @@ export default {
     async update () {
       try {
         this.submitLoading = true
-        await AlarmTempService.update(
-          AlarmTempModel.serialize(this.formModel),
-          { id: this.formModel.id }
-        )
+        await AlarmTempService.update(AlarmTempModel.serialize(this.formModel), { id: this.formModel.id })
         this.$emit('editSuccess')
         this.$notifyEditSuccess()
         this.cancel()
@@ -180,6 +161,7 @@ export default {
   }
 
   .enabled {
+    margin-left: 20px;
     width: 80px;
   }
 
