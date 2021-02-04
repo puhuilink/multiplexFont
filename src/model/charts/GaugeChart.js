@@ -1,5 +1,6 @@
 import Chart from './index'
 import {
+  SOURCE_TYPE_COMBO,
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC
@@ -28,8 +29,9 @@ export default class GaugeChart extends Chart {
         Object.assign(data, staticData)
         break
       }
+      case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_REAL: {
-        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(data, dynamicData)
         break
       }
