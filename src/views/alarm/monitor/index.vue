@@ -327,12 +327,27 @@ export default {
           customRender: formatTime
         },
         {
+          title: '持续时间',
+          width: 100,
+          show: true,
+          // 仅查看已解决的告警时展示该列
+          validate: () => this.showHistory,
+          customRender: (__, { receive_time, close_time }) => {
+            if (receive_time && close_time) {
+              const duration = moment(close_time).diff(moment(receive_time), 'minutes')
+              return moment.duration(duration, 'minutes').humanize()
+            } else {
+              return ''
+            }
+          }
+        },
+        {
           title: '解决人',
           dataIndex: 'close_by',
           width: 100,
           show: true,
           // 仅查看已解决的告警时展示该列
-          validate: () => this.showHistory || this.state === ALARM_STATE.solved
+          validate: () => this.showHistory
         },
         {
           title: '告警描述',
@@ -380,7 +395,7 @@ export default {
     scrollX () {
       const { cTableProps = {}, visibleColumns } = this
       const { scroll = {} } = cTableProps
-      const { x = 1200 } = scroll
+      const { x } = scroll
       return x || _.sum(visibleColumns.map(e => e.width || 60))
     },
     scrollY () {
@@ -464,6 +479,7 @@ export default {
             modelMetric { alias }
           }`,
           'receive_time',
+          'close_time',
           'close_by',
           'detail',
           'agent_id',
@@ -505,7 +521,7 @@ export default {
      * 查看告警历史曲线
      */
     onShowHistory (record) {
-      console.log(record)
+      this.$emit('showHistory', record)
     },
     /**
      * 关闭告警
