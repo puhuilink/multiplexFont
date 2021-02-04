@@ -162,7 +162,7 @@
           </div>
 
           <a-popover title="表格列设置" placement="leftBottom">
-            <a-list slot="content" item-layout="horizontal" :data-source="columns">
+            <a-list slot="content" item-layout="horizontal" :data-source="availableColumns">
               <a-list-item slot="renderItem" slot-scope="column">
                 <a-list-item-meta>
                   <a-checkbox slot="title" v-model="column.show">
@@ -231,8 +231,8 @@ export default {
       type: Boolean,
       default: true
     },
-    // 展示所有记录
-    showAll: {
+    // 历史告警为已经解决的主告警
+    showHistory: {
       type: Boolean,
       default: false
     },
@@ -327,6 +327,29 @@ export default {
           customRender: formatTime
         },
         {
+          title: '持续时间',
+          width: 100,
+          show: true,
+          // 仅查看已解决的告警时展示该列
+          validate: () => this.showHistory,
+          customRender: (__, { receive_time, close_time }) => {
+            if (receive_time && close_time) {
+              const duration = moment(close_time).diff(moment(receive_time), 'minutes')
+              return moment.duration(duration, 'minutes').humanize()
+            } else {
+              return ''
+            }
+          }
+        },
+        {
+          title: '解决人',
+          dataIndex: 'close_by',
+          width: 100,
+          show: true,
+          // 仅查看已解决的告警时展示该列
+          validate: () => this.showHistory
+        },
+        {
           title: '告警描述',
           dataIndex: 'detail',
           width: 360,
@@ -336,9 +359,23 @@ export default {
           title: '采集系统',
           dataIndex: 'agent_id',
           width: 90,
-          sorter: true,
+          show: true
+        },
+        {
+          title: '操作',
+          width: 50,
           show: true,
-          fixed: 'right'
+          fixed: 'right',
+          customRender: (__, record) => (
+            <a-button
+              type="link"
+              style={{
+                paddingLeft: 0
+              }}
+              onClick={() => this.onShowHistory(record)}
+            >图表</a-button>
+          ),
+          validate: () => this.showHistory
         }
       ],
       queryParams: {
@@ -354,14 +391,28 @@ export default {
     hostTypeDictValueCode () {
       return this.queryParams.dictValue[2]
     },
+    scrollX () {
+      const { cTableProps = {}, visibleColumns } = this
+      const { scroll = {} } = cTableProps
+      const { x } = scroll
+      return x || _.sum(visibleColumns.map(e => e.width || 60))
+    },
     scrollY () {
       const { scroll = {} } = this.cTableProps
       const { y = 'max(calc(100vh - 415px), 100px)' } = scroll
       return y
     },
-    visibleColumns () {
-      const { columnAlign: align, columns } = this
+    availableColumns () {
+      const { columns } = this
       return columns
+        .filter(column => {
+          if (column.validate) return column.validate()
+          return true
+        })
+    },
+    visibleColumns () {
+      const { columnAlign: align, availableColumns } = this
+      return availableColumns
         .filter(({ show }) => show)
         .map((column) => Object.assign({}, column, { align }))
     }
@@ -392,9 +443,7 @@ export default {
           ...generateQuery(queryParams, true),
           ...generateQuery(queryParamsProps, true),
           ...generateQuery({ agent_id }),
-          ...this.showAll ? {} : {
-            state: this.state
-          },
+          state: this.showHistory ? ALARM_STATE.solved : this.state,
           alarm_level: {
             _in: alarmLevelList
           },
@@ -429,6 +478,8 @@ export default {
             modelMetric { alias }
           }`,
           'receive_time',
+          'close_time',
+          'close_by',
           'detail',
           'agent_id',
           'origin'
@@ -464,6 +515,12 @@ export default {
      */
     onDetailClose (state) {
       state === ALARM_STATE.solved && this.onSolveSuccess()
+    },
+    /**
+     * 查看告警历史曲线
+     */
+    onShowHistory (record) {
+      this.$emit('showHistory', record)
     },
     /**
      * 关闭告警
