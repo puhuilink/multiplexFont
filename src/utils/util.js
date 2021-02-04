@@ -265,7 +265,7 @@ export function toggleFullscreen () {
  * @param {*} value 要截取的值
  * @param {*} 保留小时的长度
  */
-export const formatFloat = function (value, n) {
+export const formatFloat = function (value, n = 0) {
   var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
   var s = f.toString()
   var rs = s.indexOf('.')
