@@ -35,6 +35,12 @@ class MetricService extends BaseService {
           metric_value
           metric_value_str
           collect_time
+          metric {
+            alias
+            modelMetric {
+              alias
+            }
+          }
         }`
       ],
       ...argus,
