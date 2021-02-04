@@ -36,7 +36,8 @@ export default class LinesProprietaryConfig {
     areaStyle = {},
     legend = {},
     xAxis = {},
-    yAxis = {}
+    yAxis = {},
+    decimalPoint = 0
   }) {
     // 是否平滑曲线显示
     this.smooth = smooth
@@ -52,6 +53,7 @@ export default class LinesProprietaryConfig {
     this.yAxis = new YAxis(yAxis)
     this.barType = barType
     this.barItemStyle = new BarItemStyle(barItemStyle)
+    this.decimalPoint = decimalPoint
   }
 
   /**
