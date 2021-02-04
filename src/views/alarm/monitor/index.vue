@@ -359,8 +359,7 @@ export default {
           title: '采集系统',
           dataIndex: 'agent_id',
           width: 90,
-          show: true,
-          fixed: 'right'
+          show: true
         },
         {
           title: '操作',
