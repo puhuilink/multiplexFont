@@ -63,7 +63,10 @@ export default {
           title: '检查项',
           dataIndex: 'metric_alias',
           width: 90,
-          customRender: (metric_alias, { children }) => children ? '' : metric_alias
+          customRender: (__, record) => {
+            if (record.children) return ''
+            return _.get(record, ['metric', 'alias']) || _.get(record, ['metric', 'modelMetric', 'alias'])
+          }
         },
         {
           title: '指标值',
