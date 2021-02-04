@@ -106,7 +106,10 @@ export default {
               'metric_value',
               'upload_time'
             ],
-            alias: `metric_${child.metric_id}`
+            alias: `metric_${child.metric_id}`,
+            orderBy: {
+              upload_time: 'desc'
+            }
           }))
         )
 

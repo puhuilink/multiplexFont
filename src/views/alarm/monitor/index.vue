@@ -347,7 +347,8 @@ export default {
           width: 100,
           show: true,
           // 仅查看已解决的告警时展示该列
-          validate: () => this.showHistory
+          validate: () => this.showHistory,
+          customRender: (closeBy) => closeBy === 'auto' ? '自动' : closeBy
         },
         {
           title: '告警描述',
