@@ -68,6 +68,6 @@ export default class LinesProprietaryConfig {
       itemStyle: _.pick(this.barItemStyle.getOption(), ['color'])
     })
     // lineStyle 会覆盖 itemStyle
-    return _.omit(result, ['lineStyle', 'barItemStyle'])
+    return _.omit(result, ['barItemStyle'])
   }
 }
