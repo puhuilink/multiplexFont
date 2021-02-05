@@ -79,7 +79,7 @@
                       :max="4" />
                   </div>
                 </div>
-              <!-- / 小数点保留 -->
+                <!-- / 小数点保留 -->
 
                 <!-- <div class="comment-template__item">
                   <p class="comment-template__leading">颜色:</p>

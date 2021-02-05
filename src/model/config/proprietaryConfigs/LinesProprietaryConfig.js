@@ -37,7 +37,7 @@ export default class LinesProprietaryConfig {
     legend = {},
     xAxis = {},
     yAxis = {},
-    decimalPoint = 0
+    decimalPoint = -1
   }) {
     // 是否平滑曲线显示
     this.smooth = smooth

@@ -15,6 +15,7 @@ import {
   SOURCE_TYPE_COMBO
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
+import { formatFloat } from '@/utils/util'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
   ..._.cloneDeep(option),
@@ -58,7 +59,7 @@ export default class BarChart extends Chart {
       itemStyle: otherItemStyle
     }
 
-    const { reverse } = proprietaryConfig
+    const { reverse, decimalPoint } = proprietaryConfig
 
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
@@ -107,6 +108,13 @@ export default class BarChart extends Chart {
         })
         break
       }
+    }
+
+    if (Array.isArray(option.series)) {
+      option.series = option.series.map(({ data, ...rest }) => ({
+        data: data.map((value) => decimalPoint === -1 ? value : formatFloat(value, decimalPoint)),
+        ...rest
+      }))
     }
 
     return Object.assign({}, option, {
