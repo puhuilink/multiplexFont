@@ -18,32 +18,19 @@
       :scroll="scroll"
       v-bind="cTableProps"
     >
-
       <!-- / 查询区域 -->
       <template #query v-if="showQuery">
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
-
             <a-row>
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="品牌设备"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <CascaderDictValue
-                    :value="queryParams.dictValue"
-                    @change="onChangDictValue"
-                  />
+                <a-form-item label="品牌设备" v-bind="formItemLayout" class="fw">
+                  <CascaderDictValue :value="queryParams.dictValue" @change="onChangDictValue" />
                 </a-form-item>
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="监控对象"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="监控对象" v-bind="formItemLayout" class="fw">
                   <HostSelect
                     :hostTypeDictValueCode="hostTypeDictValueCode"
                     :value="queryParams.host_id"
@@ -53,11 +40,7 @@
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="监控实体"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="监控实体" v-bind="formItemLayout" class="fw">
                   <EndpointSelect
                     schema="cmdb"
                     :parentId="queryParams.host_id"
@@ -68,11 +51,7 @@
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="检查项"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="检查项" v-bind="formItemLayout" class="fw">
                   <MetricSelect
                     schema="cmdb"
                     :parentId="queryParams.endpoint_id"
@@ -83,29 +62,21 @@
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="采集系统"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="采集系统" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.agent_id" />
                 </a-form-item>
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item
-                  label="告警时间"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
+                <a-form-item label="告警时间" v-bind="formItemLayout" class="fw">
                   <a-range-picker
                     allowClear
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     :ranges="{
-                      '最近1天': [moment().add(-1, 'days'), moment(), moment()],
-                      '最近1周': [moment().add(-7, 'days'), moment()],
-                      '最近1月': [moment().add(-30, 'days'), moment()]
+                      最近1天: [moment().add(-1, 'days'), moment(), moment()],
+                      最近1周: [moment().add(-7, 'days'), moment()],
+                      最近1月: [moment().add(-30, 'days'), moment()],
                     }"
                     :showTime="{ format: 'HH:mm' }"
                     v-model="queryParams.receive_time"
@@ -113,7 +84,6 @@
                 </a-form-item>
               </a-col>
             </a-row>
-
           </div>
 
           <span :class="advanced ? 'expand' : 'collapse'">
@@ -128,11 +98,7 @@
       <div class="operation" slot="operation">
         <div class="AlarmMonitor__operation">
           <div>
-            <a-button
-              v-bind="btnProps"
-              @click="onDetail()"
-              :disabled="!hasSelectedOne"
-            >查看</a-button>
+            <a-button v-bind="btnProps" @click="onDetail()" :disabled="!hasSelectedOne">查看</a-button>
 
             <a-button
               v-bind="btnProps"
@@ -140,7 +106,8 @@
               v-show="state !== ALARM_STATE.solved"
               @click="onSolve()"
               :disabled="!hasSelectedOne"
-            >解决</a-button>
+            >解决</a-button
+            >
           </div>
 
           <div class="AlarmMonitor__operation-badge-group">
@@ -155,10 +122,11 @@
                 marginRight: '4px',
                 backgroundColor: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',
                 color: queryParams.alarmLevelList.includes(index + 1) ? '#fffced' : 'rgba(0,0,0,.25)',
-                borderColor: 'transparent'
+                borderColor: 'transparent',
               }"
               @click="onToggleAlarmLevel(index + 1)"
-            >{{ `L${index + 1}` }}</a-button>
+            >{{ `L${index + 1}` }}</a-button
+            >
           </div>
 
           <a-popover title="表格列设置" placement="leftBottom">
@@ -174,20 +142,12 @@
             <a-button icon="setting">显示设置</a-button>
           </a-popover>
         </div>
-
       </div>
     </CTable>
 
-    <AlarmDetail
-      ref="detail"
-      @close="onDetailClose"
-    />
+    <AlarmDetail ref="detail" @close="onDetailClose" />
 
-    <AlarmSolve
-      v-if="showSolve"
-      ref="solve"
-      @solveSuccess="onSolveSuccess"
-    />
+    <AlarmSolve v-if="showSolve" ref="solve" @solveSuccess="onSolveSuccess" />
   </div>
 </template>
 
@@ -247,7 +207,12 @@ export default {
       colors: [...levelColorMapping.values()],
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
-        wrapperCol: { xs: { span: 10, offset: 0 }, md: { span: 14, offset: 0 }, xl: { span: 14, offset: 2 }, xxl: { span: 20, offset: 0 } }
+        wrapperCol: {
+          xs: { span: 10, offset: 0 },
+          md: { span: 14, offset: 0 },
+          xl: { span: 14, offset: 2 },
+          xxl: { span: 20, offset: 0 }
+        }
       },
       state: ALARM_STATE.unSolved,
       columns: [
@@ -269,7 +234,9 @@ export default {
                 cursor: 'default',
                 borderColor: 'transparent'
               }}
-            >L{alarmLevel}</a-button>
+            >
+              L{alarmLevel}
+            </a-button>
           )
         },
         {
@@ -348,7 +315,7 @@ export default {
           show: true,
           // 仅查看已解决的告警时展示该列
           validate: () => this.showHistory,
-          customRender: (closeBy) => closeBy === 'auto' ? '自动' : closeBy
+          customRender: (closeBy) => (closeBy === 'auto' ? '自动' : closeBy)
         },
         {
           title: '告警描述',
@@ -366,7 +333,7 @@ export default {
           title: '操作',
           width: 50,
           show: true,
-          fixed: 'right',
+          // fixed: 'right',
           customRender: (__, record) => (
             <a-button
               type="link"
@@ -374,7 +341,9 @@ export default {
                 paddingLeft: 0
               }}
               onClick={() => this.onShowHistory(record)}
-            >图表</a-button>
+            >
+              图表
+            </a-button>
           ),
           validate: () => this.showHistory
         }
@@ -396,7 +365,7 @@ export default {
       const { cTableProps = {}, visibleColumns } = this
       const { scroll = {} } = cTableProps
       const { x } = scroll
-      return x || _.sum(visibleColumns.map(e => e.width || 60))
+      return x || _.sum(visibleColumns.map((e) => e.width || 60))
     },
     scrollY () {
       const { scroll = {} } = this.cTableProps
@@ -405,17 +374,14 @@ export default {
     },
     availableColumns () {
       const { columns } = this
-      return columns
-        .filter(column => {
-          if (column.validate) return column.validate()
-          return true
-        })
+      return columns.filter((column) => {
+        if (column.validate) return column.validate()
+        return true
+      })
     },
     visibleColumns () {
       const { columnAlign: align, availableColumns } = this
-      return availableColumns
-        .filter(({ show }) => show)
-        .map((column) => Object.assign({}, column, { align }))
+      return availableColumns.filter(({ show }) => show).map((column) => Object.assign({}, column, { align }))
     }
   },
   methods: {
@@ -432,11 +398,7 @@ export default {
     loadData (parameter) {
       const {
         hostTypeDictValueCode,
-        queryParams: {
-          agent_id,
-          alarmLevelList,
-          ...queryParams
-        },
+        queryParams: { agent_id, alarmLevelList, ...queryParams },
         queryParamsProps
       } = this
       return AlarmService.find({
@@ -448,15 +410,17 @@ export default {
           alarm_level: {
             _in: alarmLevelList
           },
-          ...hostTypeDictValueCode ? {
-            cmdbHost: {
-              modelHost: {
-                host_type_dict_value_code: {
-                  _eq: hostTypeDictValueCode
+          ...(hostTypeDictValueCode
+            ? {
+              cmdbHost: {
+                modelHost: {
+                  host_type_dict_value_code: {
+                    _eq: hostTypeDictValueCode
+                  }
                 }
               }
             }
-          } : {}
+            : {})
         },
         fields: [
           'id',
@@ -487,7 +451,7 @@ export default {
         ],
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then((r) => r.data)
     },
     onChangDictValue (dictValue) {
       this.queryParams.dictValue = dictValue
