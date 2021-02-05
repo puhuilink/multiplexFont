@@ -70,10 +70,13 @@ export default class BarChart extends Chart {
           legend: Object.assign(legend, staticLegend),
           xAxis: Object.assign(xAxis, staticXAxis),
           yAxis: Object.assign(yAxis, staticYAxis),
-          series: series.map((item) => {
+          series: series.map(({ data = [], ...item }) => {
             return Object.assign(
               {}, item, bar,
-              { barWidth, stack: barType === 'single' }
+              { barWidth, stack: barType === 'single' },
+              {
+                data: data.map((value) => decimalPoint === -1 ? value : formatFloat(value, decimalPoint))
+              }
             )
           })
         })
@@ -99,6 +102,18 @@ export default class BarChart extends Chart {
           }
         })
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
+        if (dataset) {
+          dataset.source = dataset.source.map((el) => {
+            Object
+              .entries(el)
+              .forEach(([key, value]) => {
+                if (typeof value === 'number' && decimalPoint !== -1) {
+                  el[key] = formatFloat(value, decimalPoint)
+                }
+              })
+            return el
+          })
+        }
         Object.assign(option, {
           dataset,
           legend: Object.assign(legend, dynamicLegend),
@@ -108,13 +123,6 @@ export default class BarChart extends Chart {
         })
         break
       }
-    }
-
-    if (Array.isArray(option.series)) {
-      option.series = option.series.map(({ data, ...rest }) => ({
-        data: data.map((value) => decimalPoint === -1 ? value : formatFloat(value, decimalPoint)),
-        ...rest
-      }))
     }
 
     return Object.assign({}, option, {

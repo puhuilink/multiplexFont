@@ -263,9 +263,14 @@ export function toggleFullscreen () {
 /**
  * 截取小数位数
  * @param {*} value 要截取的值
- * @param {*} 保留小时的长度
+ * @param {*} 保留小数的长度
  */
 export const formatFloat = function (value, n = 0) {
+  if (typeof value !== 'number') {
+    console.warn(`${value}非number类型，无法处理小数位数`)
+    return value
+  }
+
   var f = Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
   var s = f.toString()
   var rs = s.indexOf('.')
