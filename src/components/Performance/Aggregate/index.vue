@@ -11,9 +11,8 @@
       :rowSelection="null"
       :showPagination="false"
       :scroll="scroll"
-      @expandedRowsChange="events => expandedRowKeys = events"
+      @expandedRowsChange="(events) => (expandedRowKeys = events)"
     >
-
       <template #query>
         <a-form layout="inline" class="form__only">
           <span :class="advanced ? 'expand' : 'collapse'">
@@ -24,7 +23,7 @@
               </a-menu>
               <a-button>行操作<a-icon type="down" /> </a-button>
             </a-dropdown>
-            <QueryBtn @click="query" />
+            <!-- <QueryBtn @click="query" /> -->
           </span>
         </a-form>
       </template>
@@ -50,6 +49,7 @@ export default {
   props: {},
   data () {
     return {
+      timer: null,
       expandedRowKeys: [],
       columns: Object.freeze([
         {
@@ -57,7 +57,7 @@ export default {
           dataIndex: 'endpoint_alias',
           width: 180,
           tooltip: true,
-          customRender: (endpoint_alias, { children }) => children ? endpoint_alias : ''
+          customRender: (endpoint_alias, { children }) => (children ? endpoint_alias : '')
         },
         {
           title: '检查项',
@@ -72,18 +72,19 @@ export default {
           title: '指标值',
           width: 60,
           tooltip: true,
-          customRender: (__, { children, metric_value, metric_value_str }) => children ? '' : (metric_value_str || metric_value)
+          customRender: (__, { children, metric_value, metric_value_str }) =>
+            children ? '' : metric_value_str || metric_value
         },
         {
           title: '指标单位',
           width: 60,
-          customRender: (__, { children, metric_unit }) => children ? '' : metric_unit
+          customRender: (__, { children, metric_unit }) => (children ? '' : metric_unit)
         },
         {
           title: '采集时间',
           dataIndex: 'collect_time',
           width: 70,
-          customRender: (__, { children, collect_time }) => children ? '' : moment(collect_time).format()
+          customRender: (__, { children, collect_time }) => (children ? '' : moment(collect_time).format())
         },
         {
           title: '历史图',
@@ -98,7 +99,9 @@ export default {
             if (children) {
               obj.attrs.rowSpan = 1
               // obj.attrs.rowSpan = expanded ? children.length : 1
-              obj.children = <a-button icon="bar-chart" onClick={() => this.$refs['historyChart'].showHistory(record)} />
+              obj.children = (
+                <a-button icon="bar-chart" onClick={() => this.$refs['historyChart'].showHistory(record)} />
+              )
             }
             return obj
           }
@@ -119,22 +122,29 @@ export default {
       immediate: true,
       deep: true,
       async handler (where) {
+        const flag = this.isEmpty(where)
+        if (flag === false) {
+          this.setTime()
+        } else {
+          this.setClearTime()
+        }
         await this.$nextTick()
         this.$refs['table'].refresh(true)
       }
     }
   },
   methods: {
+    isEmpty (obj) {
+      return Object.keys(obj).length === 0
+    },
     loadData (parameter) {
       if (_.isEmpty(this.where)) {
         return {}
       }
-      return MetricService
-        .aggregateFind({ host_id: this.host_id, ...parameter })
-        .then(({ data, pagination }) => {
-          this.expandedRowKeys = data.map(row => this.rowKey(row))
-          return ({ data, pagination })
-        })
+      return MetricService.aggregateFind({ host_id: this.host_id, ...parameter }).then(({ data, pagination }) => {
+        this.expandedRowKeys = data.map((row) => this.rowKey(row))
+        return { data, pagination }
+      })
     },
     rowKey ({ endpoint_alias = '', metric_id = '' }) {
       return `${endpoint_alias}${metric_id}`
@@ -146,12 +156,20 @@ export default {
       const { table: aTable } = gTable.$refs
       const { dataSource = [] } = aTable
 
-      this.expandedRowKeys = key === 'collapseAll' ? [] : dataSource.map(row => this.rowKey(row))
+      this.expandedRowKeys = key === 'collapseAll' ? [] : dataSource.map((row) => this.rowKey(row))
+    },
+
+    setTime () {
+      this.timer = setInterval(() => {
+        this.query()
+      }, 300000)
+    },
+    setClearTime () {
+      window.clearInterval(this.timer)
     }
   }
 }
 </script>
 
 <style lang="less">
-
 </style>

@@ -32,6 +32,7 @@ export default class LinesProprietaryConfig {
     symbolSize = 4,
     symbolRotate = 0,
     lineStyle = {},
+    testLint = {}, // 新增加 问题
     itemStyle = {},
     areaStyle = {},
     legend = {},
@@ -46,6 +47,7 @@ export default class LinesProprietaryConfig {
     this.symbolSize = symbolSize
     this.symbolRotate = symbolRotate
     this.lineStyle = new LineStyle(lineStyle)
+    this.testLint = new LineStyle(testLint)
     this.itemStyle = new ItemStyle(itemStyle)
     this.areaStyle = new AreaStyle(areaStyle || {})
     this.legend = new Legend(legend)
@@ -68,6 +70,6 @@ export default class LinesProprietaryConfig {
       itemStyle: _.pick(this.barItemStyle.getOption(), ['color'])
     })
     // lineStyle 会覆盖 itemStyle
-    return _.omit(result, ['barItemStyle'])
+    return _.omit(result, ['lineStyle', 'barItemStyle'])
   }
 }

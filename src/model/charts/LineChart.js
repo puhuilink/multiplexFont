@@ -32,12 +32,18 @@ export default class LineChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { legend, xAxis, yAxis, decimalPoint, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
+
+    const { legend, xAxis, yAxis, decimalPoint, testLint: { type, width }, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
+
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     const line = (index) => ({
       type: 'line',
       itemStyle: {
         color: Array.isArray(color) ? color[index] : color
+      },
+      lineStyle: {
+        type,
+        width
       },
       ...options
     })
