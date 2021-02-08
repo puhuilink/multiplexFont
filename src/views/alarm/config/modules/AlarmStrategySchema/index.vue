@@ -7,18 +7,17 @@
     v-model="visible"
     :afterClose="reset"
   >
-
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item
         v-bind="{
           labelCol: { span: 4 },
-          wrapperCol: { span: 1, offset: 1 }
+          wrapperCol: { span: 1, offset: 1 },
         }"
         label="启用"
         :style="{
           float: 'left',
-          width: '300px'
+          width: '300px',
         }"
         class="AlarmStrategy__modal-footer-left"
       >
@@ -40,7 +39,6 @@
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel">
-
         <a-form-model-item
           label="阈值名称"
           v-bind="formItemLayout"
@@ -55,17 +53,14 @@
 
         <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
         <a-row :gutter="[4, 8]" type="flex" align="middle">
-
           <a-col :span="5">
             <a-form-model-item
               label="阈值计算条件"
               v-bind="{
                 labelCol: { span: 20, offset: 4 },
-                wrapperCol: { span: 0 }
+                wrapperCol: { span: 0 },
               }"
-              :rules="[
-                { required: true, message: '请填写阈值计算条件' }
-              ]"
+              :rules="[{ required: true, message: '请填写阈值计算条件' }]"
             >
             </a-form-model-item>
           </a-col>
@@ -77,18 +72,12 @@
           <a-col :span="3">
             <a-form-model-item
               v-bind="{
-                labelCol: { span: 24 }
+                labelCol: { span: 24 },
               }"
               prop="exprs.interval"
-              :rules="[
-                { required: true, message: '请输入采集周期' }
-              ]"
+              :rules="[{ required: true, message: '请输入采集周期' }]"
             >
-              <a-input-number
-                :min="1"
-                :disabled="isDetail"
-                v-model.number="formModel.exprs.interval"
-              />
+              <a-input-number :min="1" :disabled="isDetail" v-model.number="formModel.exprs.interval" />
             </a-form-model-item>
           </a-col>
 
@@ -105,12 +94,10 @@
               v-bind="{
                 disabled: isDetail,
                 labelCol: { span: 0 },
-                wrapperCol: { span: 23 }
+                wrapperCol: { span: 23 },
               }"
               prop="exprs.trigger_condition"
-              :rules="[
-                { required: true, message: '请选择触发条件' }
-              ]"
+              :rules="[{ required: true, message: '请选择触发条件' }]"
               v-model="formModel.exprs.trigger_condition"
             />
           </a-col>
@@ -118,21 +105,18 @@
           <a-col :span="3">
             <a-form-model-item
               v-bind="{
-                labelCol: { span: 24 }
+                labelCol: { span: 24 },
               }"
               prop="exprs.trigger_value"
-              :rules="[
-                { required: true, message: '请输入触发值' }
-              ]"
+              :rules="[{ required: true, message: '请输入触发值' }]"
             >
               <a-input-number :disabled="isDetail" v-model="formModel.exprs.trigger_value" />
             </a-form-model-item>
           </a-col>
 
-          <a-col :span="1">
-            <p class="ant-form-item">时</p>
+          <a-col :span="1" v-show="orderTime">
+            <p class="ant-form-item">次时</p>
           </a-col>
-
         </a-row>
 
         <transition-group
@@ -149,13 +133,12 @@
             v-for="(opt, index) in formModel.exprs.opts"
             :key="opt.uuid"
           >
-
             <a-col :span="10">
               <ThresholdOperatorSelect
                 v-bind="{
                   disabled: isDetail,
                   labelCol: { span: 12 },
-                  wrapperCol: { span: 8, offset: 2 }
+                  wrapperCol: { span: 8, offset: 2 },
                 }"
                 label="阈值条件"
                 :rules="[{ required: true, message: '请选择阈值条件' }]"
@@ -178,9 +161,9 @@
                 label="告警级别"
                 v-bind="{
                   disabled: isDetail,
-                  optionDisabled: level => selectedAlarmLevel.includes(level),
+                  optionDisabled: (level) => selectedAlarmLevel.includes(level),
                   labelCol: { span: 9 },
-                  wrapperCol: { span: 14, offset: 1 }
+                  wrapperCol: { span: 14, offset: 1 },
                 }"
                 :prop="`exprs.opts.${index}.alarm_level`"
                 :rules="[{ required: true, message: '请选择告警级别' }]"
@@ -196,11 +179,11 @@
                     v-if="!isDetail"
                     v-show="formModel.exprs.opts.length > 1"
                     @click="removeExpressionOpt(index)"
-                  >删除</a-button>
+                  >删除</a-button
+                  >
                 </transition>
               </a-form-model-item>
             </a-col>
-
           </a-row>
         </transition-group>
 
@@ -211,14 +194,12 @@
               :disabled="formModel.exprs.opts.length === 5"
               type="primary"
               @click="addExpressionOpts"
-            >添加</a-button>
+            >添加</a-button
+            >
           </a-col>
         </a-row>
-
       </a-form-model>
-
     </a-spin>
-
   </a-modal>
 </template>
 
@@ -226,15 +207,12 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import { StrategyService } from '@/api'
 import { CombineSelect } from '@/components/Resource'
-import {
-  ThresholdOperatorSelect,
-  ThresholdConditionSelect,
-  AlarmLevelSelect
-} from '~~~/Alarm'
+import { ThresholdOperatorSelect, ThresholdConditionSelect, AlarmLevelSelect } from '~~~/Alarm'
 import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 import anime from 'animejs'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
+import bus from '@/utils/bus'
 
 const makeOpt = () => ({
   // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
@@ -264,6 +242,7 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
+    orderTime: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -305,7 +284,7 @@ export default {
     },
     model () {
       const { exprs, ...rest } = _.cloneDeep(this.formModel)
-      exprs.opts = exprs.opts.map(opt => {
+      exprs.opts = exprs.opts.map((opt) => {
         Reflect.deleteProperty(opt, 'uuid')
         return opt
       })
@@ -316,6 +295,7 @@ export default {
       }
     }
   },
+
   methods: {
     add () {
       this.show('新建阈值规则')
@@ -350,7 +330,7 @@ export default {
       try {
         this.spinning = true
         const formModel = await StrategyService.detail(id)
-        formModel.exprs.opts.forEach(opt => {
+        formModel.exprs.opts.forEach((opt) => {
           opt['uuid'] = uuid()
         })
         formModel.exprs.interval = (formModel.exprs.interval || 0) / 60
@@ -363,7 +343,7 @@ export default {
       }
     },
     async insert () {
-      this.$refs.ruleForm.validate(async valid => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.submitLoading = true
@@ -387,7 +367,7 @@ export default {
       this.formModel.exprs.opts.splice(index, 1)
     },
     update () {
-      this.$refs.ruleForm.validate(async valid => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return
         try {
           this.submitLoading = true
@@ -402,14 +382,29 @@ export default {
           this.submitLoading = false
         }
       })
+    },
+    getSelectVal () {
+      bus.$on('sel', (val) => {
+        if (val === 'happen') {
+          this.orderTime = true
+        } else {
+          this.orderTime = false
+        }
+      })
     }
+  },
+  mounted () {
+    this.getSelectVal()
+  },
+  beforeDestroy () {
+    // 组件销毁前需要解绑事件。否则会出现重复触发事件的问题
+    bus.$off('sel')
   }
 }
 </script>
 
 <style lang="less">
 .AlarmStrategy__modal {
-
   &-opts {
     position: relative;
     height: 300px;
@@ -417,11 +412,11 @@ export default {
     overflow-x: hidden;
 
     .transition-flip {
-      background: #fff
+      background: #fff;
     }
 
     .transition-flip-leave {
-    position: absolute;
+      position: absolute;
       z-index: 0;
       background-color: #e6f7ff;
     }
