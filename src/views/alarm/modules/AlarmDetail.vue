@@ -13,7 +13,6 @@
     </template>
 
     <a-tabs defaultActiveKey="1">
-
       <a-tab-pane key="1" tab="基础信息">
         <a-spin :spinning="spinning">
           <DetailForm :record="record" :formItemList="formItemList" />
@@ -30,14 +29,9 @@
           :scroll="scroll"
         ></CTable>
       </a-tab-pane>
-
     </a-tabs>
 
-    <AlarmSolve
-      v-if="useResolve"
-      ref="solve"
-      @solveSuccess="solveSuccess"
-    />
+    <AlarmSolve v-if="useResolve" ref="solve" @solveSuccess="solveSuccess" />
   </a-modal>
 </template>
 
@@ -62,7 +56,7 @@ export default {
         { label: '告警次数', key: '' },
         { label: '首次告警时间', key: 'collect_time', customRender: formatTime },
         { label: '最近告警时间', key: 'receive_time', customRender: formatTime },
-        { label: '数据域', key: '' },
+        { label: '数据域', key: 'agent_id' },
         { label: '监控类型', key: 'cmdbHost.host_type' },
         {
           children: [
@@ -80,7 +74,7 @@ export default {
         {
           label: '告警状态',
           key: 'state',
-          customRender: text => text === ALARM_STATE.solved ? '已处理' : '未处理'
+          customRender: (text) => (text === ALARM_STATE.solved ? '已处理' : '未处理')
         },
         { label: '通知人员', key: 'forward_person' },
         { label: '通知时间', key: 'forward_person', customRender: formatTime },
@@ -148,12 +142,13 @@ export default {
     },
     scrollX () {
       const { columns = [] } = this
-      return _.sum(columns.map(e => e.width || 60))
+      return _.sum(columns.map((e) => e.width || 60))
     },
     scroll () {
       const { scrollY: y, scrollX: x } = this
       return {
-        x, y
+        x,
+        y
       }
     }
   },
@@ -181,7 +176,7 @@ export default {
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then((r) => r.data)
     },
     open (id) {
       this.fetch(id)
@@ -199,7 +194,6 @@ export default {
 
 <style lang="less">
 .AlarmDetail__modal {
-
   .ant-tabs-tabpane {
     height: 500px;
     overflow-y: auto;

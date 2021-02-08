@@ -162,7 +162,6 @@ import AlarmSolve from '../modules/AlarmSolve'
 import moment from 'moment'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping } from '~~~/Alarm/color.config'
-
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -201,6 +200,7 @@ export default {
       default: () => ({})
     }
   },
+
   data () {
     return {
       ALARM_STATE,
@@ -291,6 +291,7 @@ export default {
           width: 170,
           show: true,
           sorter: true,
+          defaultSortOrder: 'descend',
           customRender: formatTime
         },
         {
