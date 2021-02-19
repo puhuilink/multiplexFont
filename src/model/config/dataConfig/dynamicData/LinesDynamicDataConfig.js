@@ -6,7 +6,8 @@ import { DynamicDataConfig } from './common/index'
 import _ from 'lodash'
 import {
   SOURCE_TYPE_REAL,
-  SOURCE_TYPE_OVERVIEW
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO
 } from './types/sourceType'
 
 const initialOption = {
@@ -26,6 +27,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_OVERVIEW: {
           await this.getOverviewDataOption()
+          break
+        }
+        case SOURCE_TYPE_COMBO: {
+          await this.getComboDataOption()
           break
         }
       }
@@ -83,6 +88,34 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       series: legendList.map(legend => ({
         name: legend,
         data: groupByLegend[legend].map(({ data }) => data)
+      }))
+    }
+    Object.assign(this, option)
+  }
+
+  async getComboDataOption () {
+    const dataList = await this.comboConfig.fetch()
+    const groupByLegend = _.groupBy(dataList, 'legend')
+    const groupByName = _.groupBy(dataList, 'name')
+    const aggregate = Object.keys(groupByLegend).length > 1 ? groupByLegend : groupByName
+    const categoryList = Object.keys(aggregate)
+    const option = {
+      legend: {
+        data: categoryList
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          dataList.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: categoryList.map(category => ({
+        name: category,
+        data: aggregate[category].map(({ data }) => data)
       }))
     }
     Object.assign(this, option)

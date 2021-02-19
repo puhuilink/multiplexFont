@@ -1,21 +1,22 @@
 <template>
-  <div class="DevDebug">
-    <CascaderHostEndpointMetricList />
+  <div class="DevBug">
+    <DrillPreview />
   </div>
 </template>
 
 <script>
-import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
+import DrillPreview from '~~~/DrillPreview'
 
 export default {
-  name: 'DevDebug',
+  name: 'DevBug',
   mixins: [],
   components: {
-    CascaderHostEndpointMetricList
+    DrillPreview
   },
   props: {},
-  data: () => ({
-  }),
+  data () {
+    return {}
+  },
   computed: {},
   methods: {}
 }

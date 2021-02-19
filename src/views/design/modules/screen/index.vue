@@ -683,7 +683,10 @@ export default {
     async init () {
       try {
         this.loading = true
-        const options = await ViewDesignService.getDesign(this.$route.query.id)
+        const options = await ViewDesignService.getDesign({
+          view_id: this.$route.query.id,
+          useCache: false
+        })
         this.import(options)
       } catch (e) {
         throw e

@@ -44,8 +44,7 @@ export default class CircleNode extends Node {
   }
 
   intervalRefresh () {
-    const isAvailable = this.resourceConfig.isAvailable()
-    if (!isAvailable) return
+    if (!this.resourceConfig.isAvailable) return
 
     this.getRealDataOption()
     this.timer = setInterval(() => {

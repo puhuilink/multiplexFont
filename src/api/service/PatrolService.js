@@ -108,7 +108,8 @@ class PatrolService extends BaseService {
   }
 
   // 不同告警等级对应的用户列表
-  static async senderConfig () {
+  static async senderConfig (res) {
+    // console.log('res==', res)
     // 获取不同通知级别对应的用户 id
     // TODO: 区分 IT / 动环
     const { data: { senderList } } = await query(
@@ -117,12 +118,12 @@ class PatrolService extends BaseService {
           event_level: {
             _in: [2, 3, 4, 5]
           },
-          mode: {
+          group_id: {
             // _like: `%巡更%`
             _in: ['XMDH', 'XMID']
           }
         },
-        fields: ['event_level', 'contact', 'mode', 'send_type'],
+        fields: ['event_level', 'contact', 'group_id', 'send_type'],
         alias: 'senderList'
       })
     )
@@ -167,39 +168,43 @@ class PatrolService extends BaseService {
   }
 
   // 任务单详情
-  static async taskDetail (task_id) {
+  static async taskDetail (id) {
+    // const basicFields = [
+    //   'task_code',
+    //   'task_name',
+    //   'task_id',
+    //   'real_start_time',
+    //   'real_end_time',
+    //   'transactor_name',
+    //   'is_delay'
+    // ]
     const basicFields = [
-      'task_code',
-      'task_name',
-      'task_id',
-      'real_start_time',
-      'real_end_time',
-      'transactor_name',
-      'is_delay'
+      'id',
+      'content'
     ]
 
-    const rfFields = [
-      'file_urls',
-      'is_enable',
-      'memo',
-      'rf_level_no',
-      'rf_name',
-      'rf_value',
-      'route_code',
-      'scan_type',
-      'state',
-      'task_code',
-      'update_time',
-      'urmp_rf_code',
-      'task_rf_status',
-      'task_rf_id'
-    ]
+    // const rfFields = [
+    //   'file_urls',
+    //   'is_enable',
+    //   'memo',
+    //   'rf_level_no',
+    //   'rf_name',
+    //   'rf_value',
+    //   'route_code',
+    //   'scan_type',
+    //   'state',
+    //   'task_code',
+    //   'update_time',
+    //   'urmp_rf_code',
+    //   'task_rf_status',
+    //   'task_rf_id'
+    // ]
 
     const { data: { taskList } } = await this.taskFind({
-      where: { task_id },
+      where: { id },
       fields: [
-        ...basicFields,
-        `rfList { ${rfFields.join(' ')} }`
+        ...basicFields
+        // `rfList { ${rfFields.join(' ')} }`
       ],
       alias: 'taskList'
     })
@@ -242,6 +247,7 @@ class PatrolService extends BaseService {
 
   // 计划详情
   static async planDetail (id) {
+    console.log('这里是Patrol', id)
     const { data: { planList } } = await this.planFind({
       where: { id },
       fields: [
@@ -253,8 +259,6 @@ class PatrolService extends BaseService {
       ],
       alias: 'planList'
     })
-
-    console.log(planList)
 
     return _.first(planList)
   }

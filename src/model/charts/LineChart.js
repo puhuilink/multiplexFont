@@ -11,9 +11,11 @@ import {
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
-  SOURCE_TYPE_OVERVIEW
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
+import { formatFloat } from '@/utils/util'
 
 export default class LineChart extends Chart {
   constructor ({ widget }) {
@@ -30,7 +32,7 @@ export default class LineChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const { legend, xAxis, yAxis, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
+    const { legend, xAxis, yAxis, decimalPoint, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     const line = (index) => ({
       type: 'line',
@@ -62,6 +64,7 @@ export default class LineChart extends Chart {
         break
       }
       case SOURCE_TYPE_REAL:
+      case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_OVERVIEW: {
         const dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         series = dynamicData.series.map((item, index) => ({ ...item, ...line(index) }))
@@ -74,6 +77,13 @@ export default class LineChart extends Chart {
         })
         break
       }
+    }
+
+    if (Array.isArray(option.series)) {
+      option.series = option.series.map(({ data, ...rest }) => ({
+        data: data.map((value) => decimalPoint === -1 ? value : formatFloat(value, decimalPoint)),
+        ...rest
+      }))
     }
 
     return Object.assign({}, option, {

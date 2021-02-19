@@ -1,33 +1,25 @@
 <template>
-  <div class="ComboDataSource">
-    <a-form-item v-bind="formItemLayout">
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
+  <a-form-model class="ComboDataSource" v-bind="formItemLayout">
+    <PreviewButton :preview="preview" />
+
+    <a-form-item label="数据类型">
+      <a-select class="fw" v-model="comboConfig.dataType">
+        <a-select-option value="1">性能数据</a-select-option>
+        <a-select-option value="6">健康度</a-select-option>
+      </a-select>
     </a-form-item>
 
-    <a-form-item label="指标配置" v-bind="formItemLayout">
-      {{ comboConfig.content.length }}条
-      <a-button :loading="btnLoading" @click="detail">详情</a-button>
+    <a-form-item label="指标配置">
+      <a-button @click="() => visible = true">{{ comboConfig.getCurrentContent().length }}条</a-button>
     </a-form-item>
 
-    <TimeRange />
+    <TimeRange @change="change()" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout">
-      <CalculateTypeSelect
-        class="fw"
-        v-model="comboConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect @change="change()" />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout">
-      <GroupSelect
-        class="fw"
-        v-model="comboConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect @change="change()" />
 
-    <a-form-item label="top" v-bind="formItemLayout">
+    <a-form-item label="top">
       <a-input-number
         class="fw"
         v-model.number="comboConfig.top"
@@ -36,24 +28,33 @@
       ></a-input-number>
     </a-form-item>
 
+    <RefreshTime />
+
+    <DelayTime />
+
     <a-modal
       :footer="null"
-      title="20px to Top"
+      title="配置详情"
       v-model="visible"
       :width="1200"
       wrapClassName="ComboDataSource__modal"
     >
-      <CascaderHostEndpointMetricList :content="comboConfig.content" />
+      <CascaderHostEndpointMetricList
+        :content="comboConfig.content"
+        v-show="comboConfig.dataType === '1'"
+      />
+      <BusinessSystemTreeHealthList
+        :content="comboConfig.healthyContent"
+        v-show="comboConfig.dataType === '6'"
+      />
     </a-modal>
-  </div>
+  </a-form-model>
 </template>
 
 <script>
 import DataSourceMixins from '../dataSourceMixins/index'
 import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
+import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
 import { parserInt } from '@/utils/util'
 
 export default {
@@ -61,9 +62,7 @@ export default {
   mixins: [DataSourceMixins],
   components: {
     CascaderHostEndpointMetricList,
-    TimeRange,
-    CalculateTypeSelect,
-    GroupSelect
+    BusinessSystemTreeHealthList
   },
   props: {},
   data () {
@@ -72,26 +71,12 @@ export default {
     }
   },
   computed: {
-    dbDataConfig () {
-      return this.config.dataConfig.dbDataConfig
-    },
     comboConfig () {
       return this.config.dataConfig.dbDataConfig.comboConfig
     }
   },
   methods: {
-    parserInt,
-    detail () {
-      this.visible = true
-    },
-    async preview () {
-      try {
-        this.btnLoading = true
-        await this.change(true)
-      } finally {
-        this.btnLoading = false
-      }
-    }
+    parserInt
   }
 }
 </script>

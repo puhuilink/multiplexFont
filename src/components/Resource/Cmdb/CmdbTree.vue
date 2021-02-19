@@ -11,7 +11,6 @@
     <a-spin :spinning="spinning">
       <a-tree
         :expandedKeys.sync="expandedKeys"
-        :filterTreeNode="filterTreeNode"
         :replaceFields="{
           children: 'children',
           title: 'alias',
@@ -21,7 +20,16 @@
         :treeData="treeData"
         v-on="$listeners"
         v-bind="$props"
-      />
+      >
+        <template v-slot:title="{ alias: title }">
+          <span v-if="filterTreeNode({ title })">
+            <span>{{ title.substring(0, title.toLowerCase().indexOf(searchValue.toLowerCase())) }}</span>
+            <span style="color: #37b3a4">{{ searchValue }}</span>
+            <span>{{ title.substring(title.toLowerCase().indexOf(searchValue.toLowerCase()) + searchValue.length) }}</span>
+          </span>
+          <span v-else>{{ title }}</span>
+        </template>
+      </a-tree>
     </a-spin>
   </div>
 </template>
@@ -41,6 +49,7 @@ export default {
   },
   data: () => ({
     expandedKeys: [],
+    searchValue: '',
     spinning: false,
     treeData: []
   }),
@@ -84,12 +93,15 @@ export default {
       recursive(collection)
       return expandedKeys
     },
-    filterTreeNode (node = {}) {
-      // 使用了 replaceFields
-      const title = (node.title || node.alias || '').trim().toLowerCase()
-      const searchValue = (this.searchValue || '').trim().toLowerCase()
-      if (searchValue) {
-        return title.includes(searchValue)
+    /**
+     * 判断节点是否符合搜索条件
+     */
+    filterTreeNode ({ title = '' }) {
+      const t = title.trim().toLowerCase()
+      const s = (this.searchValue || '').trim().toLowerCase()
+
+      if (t && s) {
+        return t.includes(s)
       } else {
         return false
       }

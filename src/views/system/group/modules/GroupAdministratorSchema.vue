@@ -14,6 +14,7 @@
     <a-transfer
       :dataSource="userList"
       showSearch
+      :titles="['未分配管理员', '已分配管理员']"
       :filterOption="filterOption"
       :targetKeys="targetKeys"
       @change="handleChange"

@@ -58,7 +58,7 @@
         <a-button @click="onResetPwd" :disabled="!isSelectedValid" v-action:M0105>重置密码</a-button>
         <a-button @click="onAllocateUserGroup" :disabled="!isSelectedValid" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
-        <a-button @click="onAllocateUserAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
     </CTable>
 

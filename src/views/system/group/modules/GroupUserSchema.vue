@@ -8,18 +8,19 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    :rowKey="record => record.group_id"
+    :rowKey="(record) => record.group_id"
     okText="保存"
     @ok="submit"
   >
     <a-transfer
       :dataSource="userList"
       showSearch
+      :titles="['未分配用户', '已分配用户']"
       :filterOption="filterOption"
       :targetKeys="targetKeys"
       @change="handleChange"
       @search="handleSearch"
-      :render="item => item.title"
+      :render="(item) => item.title"
     >
     </a-transfer>
   </a-modal>
@@ -48,15 +49,13 @@ export default {
      */
     async getAllUserList () {
       try {
-        const { data: { userList } } = await UserService.find({
-          fields: [
-            'key: user_id',
-            'title: staff_name',
-            'flag'
-          ],
+        const {
+          data: { userList }
+        } = await UserService.find({
+          fields: ['key: user_id', 'title: staff_name', 'flag'],
           alias: 'userList'
         })
-        this.userList = userList.map(el => ({
+        this.userList = userList.map((el) => ({
           ...el,
           disabled: el.flag === 1
         }))
@@ -67,12 +66,14 @@ export default {
     },
     async getCurrentUserList (group_id) {
       try {
-        const { data: { userGroupList } } = await UserGroupService.find({
+        const {
+          data: { userGroupList }
+        } = await UserGroupService.find({
           where: { group_id },
           fields: ['user_id'],
           alias: 'userGroupList'
         })
-        this.targetKeys = userGroupList.map(e => e.user_id)
+        this.targetKeys = userGroupList.map((e) => e.user_id)
       } catch (e) {
         this.targetKeys = []
         throw e
@@ -112,7 +113,6 @@ export default {
 
 <style lang="less">
 .GroupUserSchema__modal {
-
   .ant-modal-body {
     height: 508px;
   }

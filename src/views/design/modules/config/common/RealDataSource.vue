@@ -1,28 +1,17 @@
 <template>
-  <div class="RealDataSource">
-    <a-form-item v-bind="formItemLayout">
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+  <a-form-model class="RealDataSource" v-bind="formItemLayout">
+    <PreviewButton :validate="validate" :preview="() => change(true)" />
 
-    <TimeRange v-if="useTimeRange" />
+    <TimeRange v-if="useTimeRange" @change="change()" />
 
-    <a-form-item label="计算类型" v-bind="formItemLayout" v-if="useCalculateType">
-      <CalculateTypeSelect
-        class="fw"
-        v-model="resourceConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect
+      v-if="useCalculateType"
+      @change="change()"
+    />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout" required v-if="useRefreshTime" v-show="resourceConfig.calculateType">
-      <GroupSelect
-        class="fw"
-        v-model="resourceConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect @change="change()" />
 
-    <a-form-item label="监控类型" v-bind="formItemLayout" required>
+    <a-form-item label="监控类型" required>
       <DeviceTypeSelect
         class="fw"
         :value="resourceConfig.deviceType"
@@ -33,7 +22,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="品牌名称" v-bind="formItemLayout" required>
+    <a-form-item label="品牌名称" required>
       <DeviceBrandSelect
         class="fw"
         :deviceType="resourceConfig.deviceType"
@@ -45,7 +34,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="品牌设备" v-bind="formItemLayout" required>
+    <a-form-item label="品牌设备" required>
       <DeviceModelSelect
         class="fw"
         :deviceBrand="resourceConfig.deviceBrand"
@@ -57,7 +46,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="设备名称" v-bind="formItemLayout" required>
+    <a-form-item label="设备名称" required>
       <HostSelect
         class="fw"
         :multiple="multipleHost || (!singleHost && resourceConfig.metricModelIds.length <= 1)"
@@ -70,7 +59,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="监控实体" v-bind="formItemLayout" required >
+    <a-form-item label="监控实体" required >
       <EndpointSelect
         :parentId="resourceConfig.deviceModel"
         schema="model"
@@ -82,7 +71,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="检查项" v-bind="formItemLayout" required >
+    <a-form-item label="检查项" required >
       <MetricSelect
         :multiple="multipleMetric || (!singleMetric && resourceConfig.hostId.length <= 1)"
         schema="model"
@@ -95,7 +84,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="检查项(DH)" v-bind="formItemLayout">
+    <a-form-item label="检查项(DH)">
       <AceEditor
         class="RealDataSource__editor"
         :code="JSON.stringify(resourceConfig.metricIds, null, '\t')"
@@ -105,7 +94,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="图例类型" v-show="useLegendType" v-bind="formItemLayout" required>
+    <a-form-item label="图例类型" v-show="useLegendType" required>
       <a-select
         v-model="resourceConfig.legendType"
         @change="change()"
@@ -115,50 +104,26 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="聚合方式" v-bind="formItemLayout" required>
+    <a-form-item label="聚合方式" required>
       <a-select
         v-model="resourceConfig.endpointAggregateMode"
         @change="change()"
       >
         <a-select-option value="model">模型</a-select-option>
-        <a-select-option value="cmdb">实体</a-select-option>
+        <a-select-option value="cmdb">实例</a-select-option>
       </a-select>
     </a-form-item>
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="resourceConfig.refreshTime"
-        @input="change()"
-      />
-    </a-form-item>
+    <RefreshTime v-if="useRefreshTime" />
 
-    <a-form-item label="延迟时间" v-bind="formItemLayout" v-if="useRefreshTime" >
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="毫秒"
-        type="number"
-        v-model.number="resourceConfig.delayTime"
-        @input="change()"
-      />
-    </a-form-item>
-  </div>
+    <DelayTime />
+  </a-form-model>
 </template>
 
 <script>
-/* eslint-disable standard/no-callback-literal */
 import _ from 'lodash'
 import AceEditor from 'vue-ace-editor-valid'
 import DataSourceMixins from '../dataSourceMixins/index'
-
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
-
 import { Select as DeviceTypeSelect } from '~~~/ResourceConfig/Device/DeviceType'
 import { Select as DeviceBrandSelect } from '~~~/ResourceConfig/Device/DeviceBrand'
 import { Select as DeviceModelSelect } from '~~~/ResourceConfig/Device/DeviceModel'
@@ -171,15 +136,12 @@ export default {
   mixins: [DataSourceMixins],
   components: {
     AceEditor,
-    TimeRange,
     DeviceTypeSelect,
     DeviceBrandSelect,
     DeviceModelSelect,
     HostSelect,
     EndpointSelect,
-    MetricSelect,
-    CalculateTypeSelect,
-    GroupSelect
+    MetricSelect
   },
   props: {
     singleHost: {
@@ -204,10 +166,6 @@ export default {
       type: Boolean,
       default: true
     },
-    useExternalCi: {
-      type: Boolean,
-      default: true
-    },
     useLegendType: {
       type: Boolean,
       default: false
@@ -223,32 +181,15 @@ export default {
   },
   data: () => ({}),
   computed: {
-    dbDataConfig () {
-      return this.config.dataConfig.dbDataConfig
-    },
     resourceConfig () {
       return this.config.dataConfig.dbDataConfig.resourceConfig
     }
   },
   methods: {
     /**
-     * 预览数据
-     */
-    async preview () {
-      this.validate(async passValidate => {
-        if (!passValidate) return
-        try {
-          this.btnLoading = true
-          await this.change(true)
-        } finally {
-          this.btnLoading = false
-        }
-      })
-    },
-    /**
      * 校验数据配置
      */
-    validate (cb = (passValidate) => {}) {
+    validate () {
       const {
         calculateType, isGroup, timeRangeConfig
       } = this.resourceConfig
@@ -257,10 +198,10 @@ export default {
         calculateType && (_.isEmpty(timeRangeConfig.getOption()) || !isGroup)
       ) {
         this.$message.error('选择计算类型时必须指定查询时间段与分组条件')
-        return cb(false)
+        return false
       }
 
-      return cb(true)
+      return true
     },
     /**
      * 设置监控类型

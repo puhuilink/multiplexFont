@@ -1,10 +1,8 @@
 <template>
-  <div class="OverviewDataSource">
-    <a-form-item v-bind="formItemLayout">
-      <a-button :loading="btnLoading" @click="preview">预览</a-button>
-    </a-form-item>
+  <a-form-model class="OverviewDataSource" v-bind="formItemLayout">
+    <PreviewButton :validate="validate" :preview="() => change(true)" />
 
-    <a-form-item label="数据域" v-bind="formItemLayout">
+    <a-form-item label="数据域">
       <OriginSelect
         mode="multiple"
         v-model="overviewConfig.origin"
@@ -12,7 +10,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="设备" v-bind="formItemLayout">
+    <a-form-item label="设备">
       <a-select
         allowClear
         class="fw"
@@ -28,7 +26,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="监控实体" v-bind="formItemLayout">
+    <a-form-item label="监控实体">
       <a-select
         allowClear
         class="fw"
@@ -44,7 +42,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="检查项" v-bind="formItemLayout">
+    <a-form-item label="检查项">
       <a-select
         allowClear
         class="fw"
@@ -60,57 +58,29 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="计算类型" v-bind="formItemLayout">
-      <CalculateTypeSelect
-        v-model="overviewConfig.calculateType"
-        @change="change()"
-      />
-    </a-form-item>
+    <CalculateTypeSelect @change="change()" />
 
-    <a-form-item label="分组条件" v-bind="formItemLayout" required>
-      <GroupSelect
-        :type="SOURCE_TYPE_OVERVIEW"
-        v-model="overviewConfig.isGroup"
-        @change="change()"
-      />
-    </a-form-item>
+    <GroupSelect @change="change()" />
 
-    <TimeRange :type="SOURCE_TYPE_OVERVIEW" />
+    <TimeRange @change="change()" />
 
-    <a-form-item label="刷新时间" v-bind="formItemLayout">
-      <a-input
-        :min="0"
-        :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-        suffix="分钟"
-        type="number"
-        v-model.number="overviewConfig.refreshTime"
-      />
-    </a-form-item>
-  </div>
+    <RefreshTime @change="change()" />
+  </a-form-model>
 </template>
 
 <script>
-/* eslint-disable standard/no-callback-literal */
+import _ from 'lodash'
 import DataSourceMixins from '../dataSourceMixins/index'
 import { OriginSelect } from '@/components/Alarm'
-import TimeRange from './TimeRange'
-import CalculateTypeSelect from './CalculateTypeSelect'
-import GroupSelect from './GroupSelect'
-import { SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
-import _ from 'lodash'
 
 export default {
   name: 'OverviewDataSource',
   mixins: [DataSourceMixins],
   components: {
-    OriginSelect,
-    TimeRange,
-    CalculateTypeSelect,
-    GroupSelect
+    OriginSelect
   },
   props: {},
   data: () => ({
-    SOURCE_TYPE_OVERVIEW,
     hostAliasList: [
       { label: '广域网路由器', value: '广域网路由器' },
       { label: '深信服设备AD', value: '深信服设备AD' },
@@ -134,23 +104,9 @@ export default {
   computed: {},
   methods: {
     /**
-     * 预览数据
-     */
-    async preview () {
-      this.validate(async passValidate => {
-        if (!passValidate) return
-        try {
-          this.btnLoading = true
-          await this.change(true)
-        } finally {
-          this.btnLoading = false
-        }
-      })
-    },
-    /**
      * 校验数据配置
      */
-    validate (cb = (passValidate) => {}) {
+    validate () {
       const {
         calculateType, isGroup, timeRangeConfig
       } = this.overviewConfig
@@ -162,15 +118,15 @@ export default {
         _.isEmpty(timeRange)
       ) {
         this.$message.error('选中计算类型或分组时，必须选择查询时间')
-        return cb(false)
+        return false
       }
 
       if (isGroup && !calculateType) {
         this.$message.error('选中分组时，必须选择计算类型')
-        return cb(false)
+        return false
       }
 
-      return cb(true)
+      return true
     }
   }
 }

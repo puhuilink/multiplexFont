@@ -4,10 +4,10 @@ import _ from 'lodash'
 import { resizeableTitleHOC } from './ResizeableTitle'
 
 const defaultPagination = {
-  pageSizeOptions: ['30', '50', '100'],
+  pageSizeOptions: ['25', '30', '50', '100'],
   defaultCurrent: 1,
-  pageSize: 30,
-  defaultPageSize: 30,
+  pageSize: 25,
+  defaultPageSize: 25,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,

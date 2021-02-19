@@ -4,7 +4,8 @@ import {
   CmdbHostDao,
   CmdbEndpointMetricDao,
   CmdbHostEndpointDao,
-  CmdbHostEndpointMetricDao
+  CmdbHostEndpointMetricDao,
+  CmdbHostTreeDao
 } from '../dao/index'
 import _ from 'lodash'
 
@@ -52,7 +53,9 @@ class CmdbService extends BaseService {
           'location',
           'host',
           'host_type',
-          'modelHost { host }'
+          'modelHost { host }',
+          'hostTypeView { view_id:  t_view_id }',
+          'hostView { view_id: t_view_id }'
         ],
         alias: 'cmdbHostList'
       })
@@ -61,13 +64,18 @@ class CmdbService extends BaseService {
     // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
     cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
 
+    // https://github.com/vueComponent/ant-design-vue/issues/634
+    // https://www.antdv.com/components/tree-cn/#components-tree-demo-searchable
+    const treeNodeTitleSlots = { scopedSlots: { title: 'title' } }
+
     // 树形结构构建
     const root = {
       id: 'root',
       alias: '数据中心',
       children: [],
       type: 'root',
-      selectable: false
+      selectable: false,
+      ...treeNodeTitleSlots
     }
 
     // 按采集系统 / 区域划分第一层
@@ -84,16 +92,22 @@ class CmdbService extends BaseService {
             // 此处 id 仅用作树形结构唯一标识，并无实际作用
             id: `${location}-${host_type}`,
             alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
-            children: list.map(e => ({ ...e, selectable: true })),
+            children: list.map(e => ({
+              ...e,
+              selectable: true,
+              ...treeNodeTitleSlots
+            })),
             type: 'hostType',
-            selectable: false
+            selectable: false,
+            ...treeNodeTitleSlots
           }))
         root.children.push({
           id: location,
           alias: location,
           type: 'location',
           children: children,
-          selectable: false
+          selectable: false,
+          ...treeNodeTitleSlots
         })
       })
 
@@ -257,6 +271,32 @@ class CmdbService extends BaseService {
     )
 
     return list
+  }
+
+  static async healthyTree () {
+    const { data: { tree } } = await query(
+      CmdbHostTreeDao.find({
+        where: { id: { _eq: 1 } },
+        fields: [
+          `id
+            alias
+            children {
+              id
+              alias
+              children {
+                id
+                alias
+                children{
+                  id
+                  alias
+                }
+              }
+            }`
+        ],
+        alias: 'tree'
+      })
+    )
+    return tree
   }
 }
 

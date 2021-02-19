@@ -16,27 +16,17 @@
             <div :class="{ fold: !advanced }">
               <a-row>
                 <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="审批状态"
-                    v-bind="formItemLayout"
-                    class="fw"
-                  >
+                  <a-form-item label="审批状态" v-bind="formItemLayout" class="fw">
                     <a-select allowClear v-model="queryParams.review">
-                      <a-select-option
-                        v-for="[value, label] in ALL_TASK_REVIEW_LIST"
-                        :key="value"
-                        :value="value"
-                      >{{ label }}</a-select-option>
+                      <a-select-option v-for="[value, label] in ALL_TASK_REVIEW_LIST" :key="value" :value="value">{{
+                        label
+                      }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
 
                 <a-col :md="12" :sm="24">
-                  <a-form-item
-                    label="日期范围"
-                    v-bind="formItemLayout"
-                    class="fw"
-                  >
+                  <a-form-item label="日期范围" v-bind="formItemLayout" class="fw">
                     <a-range-picker
                       allowClear
                       class="fw"
@@ -65,21 +55,17 @@
         </template>
 
         <!-- / 子表：告警条目 -->
-        <template v-slot:expandedRowRender="{ id, hasExpanded, review }">
+        <template v-slot:expandedRowRender="{ id, review }">
           <EventList
-            :taskId="id"
+            :taskId="Number(id)"
             v-show="expandedRowKeys.includes(id)"
             :hasReviewed="review === TASK_REVIEW_ACCOMPLISHED"
             @selectSubRow="onSelectSubRow"
           />
         </template>
-
       </CTable>
 
-      <ApproveSchema
-        ref="schema"
-      />
-
+      <ApproveSchema ref="schema" />
     </div>
   </div>
 </template>
@@ -135,14 +121,14 @@ export default {
         dataIndex: 'create_time',
         sorter: true,
         width: 180,
-        customRender: createTime => moment(createTime).format('YYYY-MM-DD HH:mm:ss')
+        customRender: (createTime) => moment(createTime).format('YYYY-MM-DD HH:mm:ss')
       },
       {
         title: '审批状态',
         dataIndex: 'review',
         sorter: true,
         width: 180,
-        customRender: review => TASK_REVIEW_MAPPING.get(review)
+        customRender: (review) => TASK_REVIEW_MAPPING.get(review)
       },
       {
         title: '巡更人员',
@@ -181,10 +167,10 @@ export default {
         })
       }
     },
+
+    // 这里获取的是需要获取审批的 单号 与 详情
     selectedTaskList () {
-      return Object
-        .entries(this.selectedEvents)
-        .filter(([taskId, selectedEvents]) => selectedEvents.length)
+      return Object.entries(this.selectedEvents).filter(([taskId, selectedEvents]) => selectedEvents.length)
     }
   },
   methods: {
@@ -194,10 +180,10 @@ export default {
         where: {
           ...generateQuery(this.queryParams)
         },
-        fields: _.uniq([ 'id', ...this.columns.map(({ dataIndex }) => dataIndex) ]),
+        fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then((r) => r.data)
     },
     /**
      * 详细审批（发送异常数据后修改任务单状态）
@@ -214,16 +200,16 @@ export default {
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认审批选中任务？',
-        onOk: () => PatrolService
-          .eventTaskBatchApprove(this.selectedRowKeys)
-          .then(() => {
-            this.$notification.success({
-              message: '系统提示',
-              description: '审批成功'
+        onOk: () =>
+          PatrolService.eventTaskBatchApprove(this.selectedRowKeys)
+            .then(() => {
+              this.$notification.success({
+                message: '系统提示',
+                description: '审批成功'
+              })
+              this.query(false)
             })
-            this.query(false)
-          })
-          .catch(this.$notifyError)
+            .catch(this.$notifyError)
       })
     },
     onSelectSubRow ({ selectedRows = [], taskId }) {
@@ -238,5 +224,4 @@ export default {
 </script>
 
 <style lang="less">
-
 </style>

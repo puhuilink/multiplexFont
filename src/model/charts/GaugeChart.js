@@ -1,9 +1,11 @@
 import Chart from './index'
 import {
+  SOURCE_TYPE_COMBO,
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
+import { formatFloat } from '@/utils/util'
 
 /**
  * 仪表盘组件
@@ -15,7 +17,7 @@ export default class GaugeChart extends Chart {
 
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-    const itemOptions = proprietaryConfig.getOption()
+    const { decimalPoint, ...itemOptions } = proprietaryConfig.getOption()
     const { sourceType } = dataConfig
 
     // const [data] = itemOptions.series.data
@@ -28,8 +30,9 @@ export default class GaugeChart extends Chart {
         Object.assign(data, staticData)
         break
       }
+      case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_REAL: {
-        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData)
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(data, dynamicData)
         break
       }
@@ -37,6 +40,9 @@ export default class GaugeChart extends Chart {
         break
       }
     }
+
+    data.value = decimalPoint === -1 ? data.value : formatFloat(Number(data.value), decimalPoint)
+
     return {
       grid,
       ...itemOptions

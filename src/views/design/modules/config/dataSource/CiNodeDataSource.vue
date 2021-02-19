@@ -124,16 +124,6 @@
             }"
           />
         </a-form-item>
-
-        <!-- <a-form-item label="刷新时间" v-bind="formItemLayout" v-if="useRefreshTime" >
-          <a-input
-            :min="0"
-            :parser="num => (Number(num) >= 0 ? Number(num) : 0).toFixed(0)"
-            suffix="分钟"
-            type="number"
-            v-model.number="refreshTime"
-          />
-        </a-form-item> -->
       </a-collapse-panel>
     </a-collapse>
 

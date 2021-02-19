@@ -26,7 +26,8 @@
               <a-select-option :value="SOURCE_TYPE_REAL" v-if="getSlot(SOURCE_TYPE_REAL)">性能数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_ALARM" v-if="getSlot(SOURCE_TYPE_ALARM)">告警数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_OVERVIEW" v-if="getSlot(SOURCE_TYPE_OVERVIEW)">总览数据</a-select-option>
-              <a-select-option :value="SOURCE_TYPE_COMBO" v-if="getSlot(SOURCE_TYPE_COMBO)">新接口</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_COMBO" v-if="getSlot(SOURCE_TYPE_COMBO)">新接口数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_DH" v-if="getSlot(SOURCE_TYPE_DH)">动环数据</a-select-option>
             </a-select>
           </div>
 
@@ -36,9 +37,9 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO].includes(sourceType)">
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH].includes(sourceType)">
         <div
-          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO]"
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH]"
           :key="type"
           class="data-source__wrap"
           v-show="sourceType === type"
@@ -79,7 +80,8 @@ import {
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_COMBO
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_DH
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -93,7 +95,8 @@ export default {
     SOURCE_TYPE_STATIC,
     SOURCE_TYPE_ALARM,
     SOURCE_TYPE_OVERVIEW,
-    SOURCE_TYPE_COMBO
+    SOURCE_TYPE_COMBO,
+    SOURCE_TYPE_DH
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),

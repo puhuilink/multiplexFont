@@ -39,7 +39,7 @@ class InnerCircle {
       color: '#fff',
       insideColor: 'rgba(255,255,255,1)'
     },
-    decimalPoint = 1
+    decimalPoint = -1
   }) {
     this.type = type
     this.radius = radius

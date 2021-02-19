@@ -9,7 +9,7 @@
         { required: true, message: '请选择合并方式' }
       ]"
     >
-      <a-select v-model="_formModel.merge.type">
+      <a-select :disabled="!isEdit && !isAdd" v-model="_formModel.merge.type">
         <a-select-option value="count">次数</a-select-option>
         <a-select-option value="time">时间</a-select-option>
       </a-select>
@@ -26,6 +26,7 @@
       ]"
     >
       <a-input
+        :disabled="!isEdit && !isAdd"
         :min="1"
         :suffix="useTime ? '分钟' : '次'"
         type="number"

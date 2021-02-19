@@ -13,7 +13,6 @@
         <RealDataSource
           :key="SOURCE_TYPE_REAL"
           useComboSelect
-          :useExternalCi="false"
           :comboSelectProps="{ multiple: true, hasDomain: true, hasAlarmType: true, hasKpi: false }"
         />
       </template>

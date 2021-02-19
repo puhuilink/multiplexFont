@@ -4,7 +4,6 @@ const IMP_TABLE_LIST = [
   // 告警
   { schema: 't_alarm' },
   { schema: 't_alarm_sub' },
-  { schema: 't_alarm_latest' },
   { schema: 't_alarm_sender' },
   { schema: 't_cmdb_strategy' },
   // 系统设置
@@ -19,6 +18,7 @@ const IMP_TABLE_LIST = [
   { schema: 't_cmdb_host' },
   { schema: 't_cmdb_host_view' }, // 关联表
   { schema: 't_cmdb_metric' },
+  { schema: 't_cmdb_host_tree' }, // 业务系统关系表
   // 字典
   { schema: 't_dict_value', primaryKey: 'value_code' },
   // 模型
@@ -50,7 +50,9 @@ const IMP_TABLE_LIST = [
   // 告警发送记录
   { schema: 't_send_record' },
   // 主题
-  { schema: 't_theme' }
+  { schema: 't_theme' },
+  // 动环
+  { schema: 't_xm_paess_metric' }
 ]
 
 const IMP_DAO_MAPPING = new Map([

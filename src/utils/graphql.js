@@ -13,8 +13,9 @@ const isValueAvailable = function (val) {
 /**
  * 生成 GraphQL where 某一项的表达式
  * @param {*} param0
+ * @param {Boolean} accurate 完全匹配
  */
-const generateItemExpression = function ({ key, value }) {
+const generateItemExpression = function ({ key, value }, accurate = false) {
   let expression = {}
   switch (Object.prototype.toString.call(value)) {
     case '[object Array]':
@@ -29,7 +30,7 @@ const generateItemExpression = function ({ key, value }) {
       }
       break
     case '[object String]':
-      expression = { [key]: { _ilike: `%${value.trim()}%` } }
+      expression = accurate ? { [key]: { _eq: value } } : { [key]: { _ilike: `%${value.trim()}%` } }
       break
     case '[object Number]':
       expression = { [key]: { _eq: value } }
@@ -47,13 +48,14 @@ const generateItemExpression = function ({ key, value }) {
 /**
  * 生成 GraphQL where 查询语句
  * @param {*} params
+ * @param {Boolean} accurate 完全匹配
  */
-export const generateQuery = function (params = {}) {
+export const generateQuery = function (params = {}, accurate = false) {
   const where = {}
   Object
     .entries(params)
     .filter(([key, value]) => isValueAvailable(value))
-    .map(([key, value]) => generateItemExpression({ key, value }))
+    .map(([key, value]) => generateItemExpression({ key, value }, accurate))
     .forEach((expression) => { Object.assign(where, expression) })
   return where
 }

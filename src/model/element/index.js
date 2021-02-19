@@ -10,11 +10,7 @@ import anime from 'animejs'
 import store from '@/store'
 import { ScreenMutations } from '@/store/modules/screen'
 import _ from 'lodash'
-import {
-  SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_REAL
-} from '../config/dataConfig/dynamicData/types/sourceType'
+import Timeout from 'await-timeout'
 
 export default class Element {
   constructor ({ widget, element, onlyShow }) {
@@ -84,35 +80,16 @@ export default class Element {
   /**
    * 定时刷新动态数据
    */
-  intervalRefresh () {
+  async intervalRefresh () {
     this.refresh()
-    const { dataConfig = {} } = this.config
-    const {
-      sourceType = '',
-      dbDataConfig: {
-        alarmConfig = {},
-        overviewConfig = {},
-        resourceConfig = {}
-      } = {}
-    } = dataConfig
 
-    let refreshTime
-    let isAvailable
-    switch (sourceType) {
-      case SOURCE_TYPE_ALARM:
-        refreshTime = alarmConfig.refreshTime
-        isAvailable = alarmConfig.isAvailable()
-        break
-      case SOURCE_TYPE_OVERVIEW:
-        refreshTime = overviewConfig.refreshTime
-        isAvailable = overviewConfig.isAvailable()
-        break
-      case SOURCE_TYPE_REAL:
-        refreshTime = resourceConfig.refreshTime
-        isAvailable = resourceConfig.isAvailable()
-        break
-      default:
-        break
+    const { dataConfig = {} } = this.config
+    const refreshTime = dataConfig.getCurrentConfig().refreshTime
+    const isAvailable = dataConfig.getCurrentConfig().isAvailable
+    const delayTime = dataConfig.getCurrentConfig().delayTime
+
+    if (delayTime) {
+      await Timeout.set(delayTime)
     }
 
     if (refreshTime && isAvailable) {

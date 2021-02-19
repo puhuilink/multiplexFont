@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import app from './modules/app'
 import user from './modules/user'
+import cache from './modules/cache'
 
 // 动态路由与权限
 import permission from './modules/permission'
@@ -19,7 +20,8 @@ export default new Vuex.Store({
     app,
     user,
     permission,
-    screen
+    screen,
+    cache
   },
   state: {
 

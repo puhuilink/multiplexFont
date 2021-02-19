@@ -4,7 +4,9 @@
  */
 import { BaseService } from './BaseService'
 import { axios } from '@/utils/request'
+import { XmPaessMetricDao } from '../dao/index'
 import _ from 'lodash'
+import { query } from '../utils/hasura-orm/index'
 
 export class ViewDataService extends BaseService {
   static _validate (argus = {}) {
@@ -80,7 +82,8 @@ export class ViewDataService extends BaseService {
       'origin',
       'isGroup',
       'calculateType',
-      'type'
+      'type',
+      'hostId'
     ])
 
     // 时间范围
@@ -89,6 +92,11 @@ export class ViewDataService extends BaseService {
     } else {
       // 不选时间段时只能为 type
       Reflect.deleteProperty(data, 'isGroup')
+    }
+
+    // 设备ID可选
+    if (!data['hostId']) {
+      Reflect.deleteProperty(data, 'hostId')
     }
 
     for (const key in data) {
@@ -101,6 +109,7 @@ export class ViewDataService extends BaseService {
     if (this._validate(data)) {
       return axios.post('/view/alarm', data, config).catch(() => ({ data: [] }))
     } else {
+      console.warn(`/view/alarm未生效的接口传参`, data)
       return []
     }
   }
@@ -148,5 +157,26 @@ export class ViewDataService extends BaseService {
     }
 
     return axios.post('/data/view', data)
+  }
+
+  /**
+   * 厦门动环指标
+   */
+  static async xmDHMetric ({ code = '' }) {
+    const { data: { list } } = await query(
+      XmPaessMetricDao.find({
+        where: {
+          code: { _eq: code }
+        },
+        fields: ['value: metric_value'],
+        limit: 1,
+        orderBy: {
+          upload_time: 'desc_nulls_last'
+        },
+        alias: 'list'
+      })
+    )
+
+    return _.get(list, ['0', 'value'], '')
   }
 }

@@ -31,7 +31,7 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
           break
         }
         case SOURCE_TYPE_COMBO: {
-          await this.getComboOption()
+          await this.getComboDataOption()
           break
         }
       }
@@ -98,18 +98,19 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         {
           name: '一般告警',
           data: dataList.map(({ level4 }) => level4)
-        },
-        {
-          name: '最新通知',
-          data: dataList.map(({ level5 }) => level5)
         }
+        // 暂不展示5级告警
+        // {
+        //   name: '最新通知',
+        //   data: dataList.map(({ level5 }) => level5)
+        // }
       ]
 
     }
     Object.assign(this, option)
   }
 
-  async getComboOption () {
+  async getComboDataOption () {
     const dataList = await this.comboConfig.fetch()
 
     const groupByLegend = _.groupBy(dataList, 'legend')

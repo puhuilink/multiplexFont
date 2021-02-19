@@ -54,7 +54,8 @@ import {
   notification,
   Transfer,
   Cascader,
-  Empty
+  Empty,
+  TreeSelect
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -105,6 +106,7 @@ Vue.use(notification)
 Vue.use(Transfer)
 Vue.use(Cascader)
 Vue.use(Empty)
+Vue.use(TreeSelect)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

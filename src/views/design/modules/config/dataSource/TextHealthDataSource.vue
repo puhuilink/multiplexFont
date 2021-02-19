@@ -21,6 +21,16 @@
         :key="SOURCE_TYPE_OVERVIEW"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_COMBO]>
+      <ComboDataSource
+        :key="SOURCE_TYPE_COMBO"
+      />
+    </template>
+    <template v-slot:[SOURCE_TYPE_DH]>
+      <DHDataSource
+        :key="SOURCE_TYPE_DH"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -30,7 +40,16 @@ import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
 import AlarmDataSource from '../common/AlarmDataSource.vue'
 import OverviewDataSource from '../common/OverviewDataSource'
-import { SOURCE_TYPE_ALARM, SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import ComboDataSource from '../common/ComboDataSource'
+import DHDataSource from '../common/DHDataSource'
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_DH
+} from '@/model/config/dataConfig/dynamicData/types/sourceType'
+
 export default {
   name: 'TextHealthDataSource',
   mixins: [DataSourceMixins],
@@ -38,12 +57,16 @@ export default {
     DataSourceTemplate,
     RealDataSource,
     AlarmDataSource,
-    OverviewDataSource
+    OverviewDataSource,
+    ComboDataSource,
+    DHDataSource
   },
   data: () => ({
     SOURCE_TYPE_ALARM,
     SOURCE_TYPE_REAL,
-    SOURCE_TYPE_OVERVIEW
+    SOURCE_TYPE_OVERVIEW,
+    SOURCE_TYPE_COMBO,
+    SOURCE_TYPE_DH
   })
 }
 </script>
