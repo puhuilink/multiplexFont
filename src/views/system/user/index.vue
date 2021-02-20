@@ -54,9 +54,9 @@
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增 </a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
-        <a-button @click="onBatchDeleteUser" :disabled="!isSelectedValid" v-action:M0103>删除</a-button>
-        <a-button @click="onResetPwd" :disabled="!isSelectedValid" v-action:M0105>重置密码</a-button>
-        <a-button @click="onAllocateUserGroup" :disabled="!isSelectedValid" v-action:M0104>分配工作组</a-button>
+        <a-button @click="onBatchDeleteUser" :disabled="!hasSelectedOne" v-action:M0103>删除</a-button>
+        <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
+        <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
         <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
@@ -197,13 +197,19 @@ export default {
      */
     async onBatchDeleteUser () {
       this.$promiseConfirmDelete({
-        onOk: () =>
-          UserService.batchDelete(this.selectedRowKeys)
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.query(false)
-            })
-            .catch(this.$notifyError)
+        onOk: () => {
+          const [{ flag }] = this.selectedRows
+          if (flag === USER_FLAG.enabled) {
+            alert('无法删除有效标志为 : (有效用户,如需删除请更改标志状态为无效)')
+          } else {
+            UserService.batchDelete(this.selectedRowKeys)
+              .then(() => {
+                this.$notifyDeleteSuccess()
+                this.query(false)
+              })
+              .catch(this.$notifyError)
+          }
+        }
       })
     },
     /**
