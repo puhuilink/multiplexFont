@@ -49,7 +49,7 @@ export default class TextsChart extends Chart {
     }
 
     if (!isNaN(Number(title.text))) {
-      title.text = decimalPoint === -1 ? title.text : formatFloat(title.text, decimalPoint)
+      title.text = decimalPoint === -1 ? title.text : formatFloat(Number(title.text), decimalPoint)
     }
 
     title.textStyle.color = thresholdColorRule.calculateColor(title.text) || title.textStyle.color
