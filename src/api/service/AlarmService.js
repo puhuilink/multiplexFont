@@ -1,8 +1,9 @@
 import { BaseService } from './BaseService'
-import { AlarmDao, AlarmSubDao, AlarmLatestDao } from '../dao/index'
+import { AlarmDao, AlarmSubDao } from '../dao/index'
 import { query } from '../utils/hasura-orm/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
+import { ALARM_STATE } from '@/tables/alarm/enum'
 
 class AlarmService extends BaseService {
   static async find (argus = {}) {
@@ -19,15 +20,21 @@ class AlarmService extends BaseService {
     if (_.isEmpty(hostIds)) return []
 
     const { data: { alarmList } } = await query(
-      AlarmLatestDao.find({
+      AlarmDao.find({
         where: {
-          host_id: { _in: hostIds }
+          host_id: { _in: hostIds },
+          state: { _eq: ALARM_STATE.unSolved }
         },
-        fields: ['host_id', 'event_level'],
-        alias: 'alarmList'
+        fields: ['host_id', 'alarm_level'],
+        alias: 'alarmList',
+        orderBy: {
+          collect_time: 'desc_nulls_last'
+        }
       })
     )
-    return alarmList
+
+    // 一个 host_id 有多条告警时，取最新一条
+    return _.uniqBy(alarmList, e => e.host_id)
   }
 
   static async findSub (argus = {}) {

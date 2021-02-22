@@ -54,6 +54,7 @@
               :is="component"
               :formModel.sync="formModel"
               :isEdit="isEdit"
+              :isAdd="isAdd"
             />
           </div>
         </transition-group>
@@ -106,6 +107,7 @@ export default {
     formItemLayout,
     formModel: AlarmRuleModelFactory.create({}),
     isEdit: false,
+    isAdd: false,
     ruleTypeMapping,
     spinning: false,
     stepIndex: 0
@@ -145,6 +147,8 @@ export default {
     add () {
       this.show('新建告警规则')
       this.submit = this.insert
+      this.isEdit = false
+      this.isAdd = true
     },
     back () {
       this.$refs.ruleForm.clearValidate()
@@ -155,6 +159,7 @@ export default {
       this.show('编辑告警规则')
       this.submit = this.update
       this.isEdit = true
+      this.isAdd = false
     },
     async fetch (id) {
       try {

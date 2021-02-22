@@ -90,6 +90,18 @@
                 </div>
                 <!-- / 柱条宽度 -->
 
+                <div class="comment-template__item">
+                  <p class="comment-template__leading">小数位数:</p>
+                  <div class="comment-template__inner">
+                    <a-slider
+                      v-model="config.proprietaryConfig.decimalPoint"
+                      @change="change()"
+                      :min="-1"
+                      :max="4" />
+                  </div>
+                </div>
+                <!-- / 小数点保留 -->
+
               </a-collapse-panel>
               <!-- / 图形 -->
 

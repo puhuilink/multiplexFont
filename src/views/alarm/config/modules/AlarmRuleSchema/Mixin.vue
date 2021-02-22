@@ -15,6 +15,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isAdd: {
+      type: Boolean,
+      default: false
+    },
     formModel: {
       type: Object,
       default: () => ({})

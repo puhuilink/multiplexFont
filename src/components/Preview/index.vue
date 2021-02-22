@@ -197,7 +197,7 @@ export default {
     async getViewConfigFromApi (id) {
       try {
         this.isViewConfigLoading = true
-        this.view = await ViewDesignService.getDesign(id)
+        this.view = await ViewDesignService.getDesign({ view_id: id })
       } catch (e) {
         this.view = null
         throw e

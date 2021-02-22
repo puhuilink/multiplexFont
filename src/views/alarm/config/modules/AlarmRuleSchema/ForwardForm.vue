@@ -12,6 +12,7 @@
             { required: true, message: '请选择通知等级' },
           ]">
           <a-select
+            :disabled="!isEdit && !isAdd"
             v-model="send.level"
           >
             <a-select-option
@@ -33,6 +34,7 @@
           ]">
           <a-select
             allowClear
+            :disabled="!isEdit && !isAdd"
             :filterOption="filterOption"
             mode="multiple"
             :notFoundContent="userListLoading ? '加载中...' : '暂无数据'"
