@@ -133,7 +133,8 @@ export default {
         width: 280,
         tooltip: true
       }
-    ])
+    ]),
+    selectedRows: []
   }),
   computed: {
     isSelectedValid () {
@@ -196,12 +197,12 @@ export default {
      * @event
      */
     async onBatchDeleteUser () {
-      this.$promiseConfirmDelete({
-        onOk: () => {
-          const [{ flag }] = this.selectedRows
-          if (flag === USER_FLAG.enabled) {
-            alert('无法删除有效标志为 : (有效用户,如需删除请更改标志状态为无效)')
-          } else {
+      const [{ flag }] = this.selectedRows
+      if (flag === USER_FLAG.enabled) {
+        this.$promiseConfirmInvalidDelete({})
+      } else {
+        this.$promiseConfirmDelete({
+          onOk: () => {
             UserService.batchDelete(this.selectedRowKeys)
               .then(() => {
                 this.$notifyDeleteSuccess()
@@ -209,8 +210,8 @@ export default {
               })
               .catch(this.$notifyError)
           }
-        }
-      })
+        })
+      }
     },
     /**
      * 重置用户密码

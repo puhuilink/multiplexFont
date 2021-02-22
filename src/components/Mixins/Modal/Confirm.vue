@@ -6,8 +6,7 @@ export default {
   name: 'Confirm',
   components: {},
   props: {},
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {},
   methods: {
     $promiseConfirm ({
@@ -29,7 +28,7 @@ export default {
         maskClosable,
         keyboard,
         onOk () {
-          return new Promise(async resolve => {
+          return new Promise(async (resolve) => {
             try {
               await onOk()
             } catch (e) {
@@ -47,6 +46,27 @@ export default {
     $promiseConfirmDelete ({
       title = '删除',
       content = '确定要删除选中的记录吗？',
+      okText = '确定',
+      okType = 'danger',
+      cancelText = '取消',
+      onOk = async () => {},
+      maskClosable = false,
+      keyboard = false
+    }) {
+      this.$promiseConfirm({
+        title,
+        content,
+        okText,
+        okType,
+        cancelText,
+        maskClosable,
+        keyboard,
+        onOk
+      })
+    },
+    $promiseConfirmInvalidDelete ({
+      title = '无法删除',
+      content = '只能删除无效用户',
       okText = '确定',
       okType = 'danger',
       cancelText = '取消',
