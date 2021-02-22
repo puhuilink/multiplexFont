@@ -98,6 +98,8 @@
       <div class="operation" slot="operation">
         <div class="AlarmMonitor__operation">
           <div>
+            <a-button :disabled="!hasSelected" :loading="exportLoading" v-if="showHistory" @click="onExportExcel()">导出</a-button>
+
             <a-button v-bind="btnProps" @click="onDetail()" :disabled="!hasSelectedOne">查看</a-button>
 
             <a-button
@@ -153,15 +155,18 @@
 
 <script>
 import _ from 'lodash'
+import Timeout from 'await-timeout'
+import { Excel } from 'antd-vue-table-saveas-excel'
+import moment from 'moment'
 import { List } from '~~~/Mixins'
 import QueryMixin from '../queryMixin'
 import { AlarmService } from '@/api/index'
 import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
-import moment from 'moment'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping } from '~~~/Alarm/color.config'
+
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -200,11 +205,11 @@ export default {
       default: () => ({})
     }
   },
-
   data () {
     return {
       ALARM_STATE,
       colors: [...levelColorMapping.values()],
+      exportLoading: false,
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
         wrapperCol: {
@@ -481,6 +486,42 @@ export default {
      */
     onDetailClose (state) {
       state === ALARM_STATE.solved && this.onSolveSuccess()
+    },
+    /**
+     * 导出excel
+     */
+    async onExportExcel () {
+      try {
+        this.exportLoading = true
+
+        const { columns: originalColumns, selectedRows } = this
+        const columns = originalColumns.map(c => Object.assign({}, c))
+        // 去除"操作"列
+        columns.pop()
+        // "告警级别"列导出文本而非DOM
+        columns[0].customRender = (alarmLevel) => alarmLevel ? `L${alarmLevel}` : ''
+
+        const excel = new Excel()
+        await excel
+          .addSheet('sheet')
+          .addColumns(columns)
+          .addDataSource(selectedRows, {}, 2)
+          .saveAs(`告警历史${moment().format()}.xlsx`)
+        await Timeout.set(900)
+
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出excel成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: `导出excel失败${e}` } })
+        })
+        throw e
+      } finally {
+        this.exportLoading = false
+      }
     },
     /**
      * 查看告警历史曲线
