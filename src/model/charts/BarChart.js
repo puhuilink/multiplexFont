@@ -94,6 +94,13 @@ export default class BarChart extends Chart {
         let dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
         series = dynamicData.series.map((item) => {
+          if (decimalPoint !== -1) {
+            if (Array.isArray(item.data)) {
+              item.data = item.data.map(v => formatFloat(v, decimalPoint))
+            } else if (typeof item.data === 'number') {
+              item.data = formatFloat(item.data, decimalPoint)
+            }
+          }
           return {
             ...item,
             ...bar,
@@ -101,21 +108,9 @@ export default class BarChart extends Chart {
             stack: barType === 'single'
           }
         })
-        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
-        if (dataset) {
-          dataset.source = dataset.source.map((el) => {
-            Object
-              .entries(el)
-              .forEach(([key, value]) => {
-                if (typeof value === 'number' && decimalPoint !== -1) {
-                  el[key] = formatFloat(value, decimalPoint)
-                }
-              })
-            return el
-          })
-        }
+
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
         Object.assign(option, {
-          dataset,
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
