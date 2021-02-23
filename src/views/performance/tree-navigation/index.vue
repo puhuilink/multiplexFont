@@ -159,7 +159,7 @@ export default {
     onTabChange (tabIndex) {
       if (tabIndex === '2') {
         !this.view && this.fetchView()
-      }else if (tabIndex === '1') {
+      } else if (tabIndex === '1') {
         this.fetchMetricList()
       }
     },
