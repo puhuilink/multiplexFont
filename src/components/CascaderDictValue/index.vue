@@ -13,11 +13,6 @@
 <script>
 import { DictValueService } from '@/api/index'
 
-const itemOnDictValue = `
-  label: value_label
-  value: value_code
-`
-
 export default {
   name: 'CascaderDictValue',
   props: {
@@ -36,22 +31,7 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        const { data: { options } } = await DictValueService.find({
-          where: { value_param: { _eq: '1' } },
-          alias: 'options',
-          fields: [
-            `
-            ${itemOnDictValue},
-              children {
-                ${itemOnDictValue}
-                children {
-                  ${itemOnDictValue}
-                }
-              }
-            `
-          ]
-        })
-        this.options = options
+        this.options = await DictValueService.treeData()
       } catch (err) {
         this.options = []
         throw err

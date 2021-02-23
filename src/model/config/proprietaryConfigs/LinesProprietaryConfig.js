@@ -32,11 +32,13 @@ export default class LinesProprietaryConfig {
     symbolSize = 4,
     symbolRotate = 0,
     lineStyle = {},
+    testLint = {}, // 新增加 问题
     itemStyle = {},
     areaStyle = {},
     legend = {},
     xAxis = {},
-    yAxis = {}
+    yAxis = {},
+    decimalPoint = -1
   }) {
     // 是否平滑曲线显示
     this.smooth = smooth
@@ -45,6 +47,7 @@ export default class LinesProprietaryConfig {
     this.symbolSize = symbolSize
     this.symbolRotate = symbolRotate
     this.lineStyle = new LineStyle(lineStyle)
+    this.testLint = new LineStyle(testLint)
     this.itemStyle = new ItemStyle(itemStyle)
     this.areaStyle = new AreaStyle(areaStyle || {})
     this.legend = new Legend(legend)
@@ -52,6 +55,7 @@ export default class LinesProprietaryConfig {
     this.yAxis = new YAxis(yAxis)
     this.barType = barType
     this.barItemStyle = new BarItemStyle(barItemStyle)
+    this.decimalPoint = decimalPoint
   }
 
   /**

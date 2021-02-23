@@ -72,6 +72,12 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
         time: this.formatTime(collect, this.isGroup),
         name: origin
       }))
+      .filter(({ data }) => {
+        if (typeof data === 'number') {
+          return data >= 0
+        }
+        return true
+      })
       .sort((a, b) => {
         return compare(a.time, b.time)
       })

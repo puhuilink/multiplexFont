@@ -123,9 +123,11 @@ const defaultOutSideSeries = _.cloneDeep(Object.assign({}, defaultInsideSeries, 
  */
 export default class GaugeProprietaryConfig {
   constructor ({
-    series = _.cloneDeep([defaultInsideSeries, defaultOutSideSeries])
+    series = _.cloneDeep([defaultInsideSeries, defaultOutSideSeries]),
+    decimalPoint = -1
   }) {
     this.series = series.map(s => new SeriesGauge(s))
+    this.decimalPoint = decimalPoint
   }
 
   /**

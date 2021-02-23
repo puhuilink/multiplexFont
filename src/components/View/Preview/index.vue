@@ -49,7 +49,7 @@ export default {
     async fetch () {
       try {
         this.loading = true
-        this.preview = this.viewId ? await ViewDesignService.getDesign(this.viewId) : this.view.getOption()
+        this.preview = this.viewId ? await ViewDesignService.getDesign({ view_id: this.viewId }) : this.view.getOption()
       } catch (e) {
         throw e
       } finally {

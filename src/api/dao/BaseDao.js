@@ -21,6 +21,14 @@ class BaseDao {
   }
 
   /**
+   * 获取原生 apollo-client
+   * @public
+   */
+  static getProvider () {
+    return this.PROVIDER
+  }
+
+  /**
    * Dao 唯一字段校验
    * @param {Object} obj 校验对象实体
    * @param {Boolean} add 新增模式下校验
