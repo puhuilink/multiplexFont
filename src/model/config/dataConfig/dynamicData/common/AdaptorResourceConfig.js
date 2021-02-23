@@ -92,7 +92,10 @@ export class AdaptorResourceConfig extends AdaptorConfig {
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
           legend: groupByHost ? hostAlias : v,
           name: !groupByHost ? hostAlias : v,
-          unit: uint
+          unit: uint,
+          endpointAlias,
+          endpointModelAlias,
+          metric
         }
 
         // TODO: hack for multiple hosts and metrics

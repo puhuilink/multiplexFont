@@ -42,30 +42,24 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     const dataList = await this.resourceConfig.fetch()
-    const groupByLegend = _.groupBy(dataList, 'legend')
-    const legendList = Object.keys(groupByLegend)
-    const groupByName = _.groupBy(dataList, 'name')
-    const nameList = Object.keys(groupByName)
+    const groupByModel = _.groupBy(dataList, el => el.endpointModelAlias + el.metric)
+    const groupByInstance = _.groupBy(dataList, 'endpointAlias')
+
     const option = {
-      legend: {},
-      xAxis: { type: 'category' },
-      yAxis: { type: 'value' },
-      dataset: {
-        dimensions: ['name', ...legendList],
-        source: [
-          ...nameList.map(name => {
-            const result = { name }
-            groupByName[name].forEach(({ legend, data }) => {
-              result[legend] = data
-            })
-            return result
-          })
-        ]
+      legend: {
+        data: Object.keys(groupByInstance)
       },
-      series: legendList.map(() => ({
-        type: 'bar'
+      xAxis: {
+        type: 'category',
+        data: Object.keys(groupByModel)
+      },
+      yAxis: { type: 'value' },
+      series: Object.entries(groupByInstance).map(([key, value]) => ({
+        name: key,
+        data: value.map(({ data }) => data)
       }))
     }
+
     Object.assign(this, option)
   }
 
