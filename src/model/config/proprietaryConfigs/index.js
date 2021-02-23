@@ -11,6 +11,7 @@ import _ from 'lodash'
  * 图例
  * @param orient 'horizontal' | 'vertical'
  * @param icon 'circle' | 'rect' | 'roundRect' | 'triangle' |  'diamond' | 'pin' | 'arrow' | 'none'
+ * @param type 'plain' | 'scroll'
  */
 class Legend {
   constructor ({
@@ -21,7 +22,8 @@ class Legend {
     right = 'auto',
     bottom = 'auto',
     left = 'auto',
-    textStyle = {}
+    textStyle = {},
+    type = 'plain'
   }) {
     this.show = show
     this.orient = orient
@@ -31,6 +33,7 @@ class Legend {
     this.left = left
     this.icon = icon
     this.textStyle = new TextStyle(textStyle)
+    this.type = type
   }
 }
 
