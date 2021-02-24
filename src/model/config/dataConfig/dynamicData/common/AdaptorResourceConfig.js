@@ -88,7 +88,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         // CPU + CPU使用率 = CPU使用率
         const v = `${endpoint}${metric.startsWith(endpoint) ? metric.replace(endpoint, '') : metric}`
         const result = {
-          data: metricValueStr || metricValue,
+          data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
           legend: groupByHost ? hostAlias : v,
           name: !groupByHost ? hostAlias : v,
