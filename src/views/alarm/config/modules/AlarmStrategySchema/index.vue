@@ -171,6 +171,10 @@
               />
             </a-col>
 
+            <a-col class="transition-flip-text" :span="24" >
+              说明:当指标值 持续 120秒内，阀值条件 等于 60且 满足发送次数 2次时产生一次告警; 告警级别为L{{ opt.alarm_level }};
+            </a-col>
+
             <a-col :span="2" :offset="1">
               <a-form-model-item>
                 <transition name="transition-scale">
@@ -429,6 +433,10 @@ export default {
     .transition-flip-enter-to {
       z-index: 1;
       background-color: #e6f7ff;
+    }
+
+    .transition-flip-text {
+     text-align: center;
     }
   }
 
