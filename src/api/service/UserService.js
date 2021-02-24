@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 // import { actionname, moduleName } from '../utils/decorator/log'
-import { mutate, query } from '../utils/hasura-orm/index'
+import { query, generateQuery, generateMutation } from '../utils/hasura-orm/index'
 import {
   AuthorizeObjectDao,
   FunctionDao,
@@ -24,18 +24,19 @@ class UserService extends BaseService {
    * @return {Promise<any>}
    */
   static async add (user = {}) {
-    await mutate(
+    const q = await generateMutation(
       // 新增用户
       UserDao.add(user)
     )
+    await this.hasuraTransfer({ query: q })
     await UserService.setInitialPwd(user.user_id)
   }
 
   static async find (argus = {}) {
-    const res = query(
+    const q = await generateQuery(
       UserDao.find(argus)
     )
-    return res
+    return this.hasuraTransfer({ query: q })
   }
 
   // @actionname('删除用户')
@@ -45,7 +46,7 @@ class UserService extends BaseService {
    * @return {Promise<any>}
    */
   static async batchDelete (userIdList = []) {
-    await mutate(
+    const q = await generateMutation(
       // 删除用户
       UserDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户自定义桌面
@@ -55,25 +56,28 @@ class UserService extends BaseService {
       // 删除用户的权限
       AuthorizeObjectDao.batchDelete({ user_id: { _in: userIdList } })
     )
+    return this.hasuraTransfer({ query: q })
   }
 
   static async update (user, where) {
-    await mutate(
+    const q = await generateMutation(
       UserDao.update(user, where)
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async toggleFlag (user_id, flag) {
-    await mutate(
+    const q = await generateMutation(
       UserDao.update({ flag }, { user_id })
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async getAllPermission () {
     // 当前用户信息
     const { groupIdList, userId } = store.getters
 
-    const { data: { authorizeObjectList } } = await query(
+    const q = await generateQuery(
       AuthorizeObjectDao.find({
         where: {
           _or: [
@@ -103,6 +107,8 @@ class UserService extends BaseService {
         alias: 'authorizeObjectList'
       })
     )
+
+    const { data: { authorizeObjectList } } = await this.hasuraTransfer({ query: q })
     // 用户权限等于自身权限 + 所属工作组权限的并集
     const permissionList = _.uniq(authorizeObjectList.map(({ object_id }) => object_id)).filter(Boolean)
 
