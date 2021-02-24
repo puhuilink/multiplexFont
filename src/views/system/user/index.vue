@@ -198,11 +198,15 @@ export default {
      */
     async onBatchDeleteUser () {
       const [{ flag }] = this.selectedRows
-      if (flag === USER_FLAG.enabled) {
-        this.$promiseConfirmInvalidDelete({})
-      } else {
-        this.$promiseConfirmDelete({
-          onOk: () => {
+      const title = flag === USER_FLAG.enabled ? '无法删除' : '删除'
+      const content = flag === USER_FLAG.enabled ? '只能删除无效用户' : '确定要删除选中的记录吗？'
+      const onOk = flag === USER_FLAG.enabled ? 1 : 0
+      this.$promiseConfirmDelete({
+        title,
+        content,
+        onOk: () => {
+          if (onOk === 1) {
+          } else {
             UserService.batchDelete(this.selectedRowKeys)
               .then(() => {
                 this.$notifyDeleteSuccess()
@@ -210,9 +214,10 @@ export default {
               })
               .catch(this.$notifyError)
           }
-        })
-      }
+        }
+      })
     },
+
     /**
      * 重置用户密码
      * @event
