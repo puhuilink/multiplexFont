@@ -18,6 +18,16 @@ const linkList = [
   })
 ]
 
+export const notifyGraphQLError = (graphQLErrors) => {
+  notification.error({
+    message: '系统内部异常',
+    description: graphQLErrors.map(({ message, extensions: { path, code } }) => {
+      const text = `[GraphQL error]: Message: ${message}, Code: ${code}, Path: ${path}`
+      return text
+    }).join('/\r/\n')
+  })
+}
+
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
   if (networkError) {
     notification.error({
@@ -26,13 +36,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
     })
   }
   if (graphQLErrors) {
-    notification.error({
-      message: '系统内部异常',
-      description: graphQLErrors.map(({ message, extensions: { path, code } }) => {
-        const text = `[GraphQL error]: Message: ${message}, Code: ${code}, Path: ${path}`
-        return text
-      }).join('/\r/\n')
-    })
+    notifyGraphQLError(graphQLErrors)
   }
 })
 
