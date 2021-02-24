@@ -109,8 +109,23 @@ export default class BarChart extends Chart {
           }
         })
 
-        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis } = dynamicData
+        const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
+
+        if (dataset) {
+          dataset.source = dataset.source.map((el) => {
+            Object
+              .entries(el)
+              .forEach(([key, value]) => {
+                if (typeof value === 'number' && decimalPoint !== -1) {
+                  el[key] = formatFloat(value, decimalPoint)
+                }
+              })
+            return el
+          })
+        }
+
         Object.assign(option, {
+          dataset,
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, dynamicXAxis),
           yAxis: Object.assign(yAxis, dynamicYAxis),
