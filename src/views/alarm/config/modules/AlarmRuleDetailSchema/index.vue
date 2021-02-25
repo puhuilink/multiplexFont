@@ -25,7 +25,7 @@
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">监控类型</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.deviceType }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.dictType == null ? '暂无数据' : model.dictType.value_label }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
@@ -40,17 +40,17 @@
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">设备名称</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.dictBrand == null ? '暂无数据' :model.dictBrand.value_label }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">监控实体</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.modelEndpoint == null ? '暂无数据': model.modelEndpoint.alias }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">检查项</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.modelMetric == null ? '暂无数据': model.modelMetric.alias }}</span>
             </div>
           </div>
         </a-tab-pane>

@@ -171,8 +171,16 @@ class BasicRuleModel {
     metricModelId = '',
     enabled = true,
     ruleType = [],
-    content = '{}'
+    content = '{}',
+    dictBrand = '{}',
+    modelMetric = '{}',
+    modelEndpoint = '{}',
+    dictType = '{}'
   } = {}) {
+    this.dictBrand = dictBrand
+    this.modelMetric = modelMetric
+    this.modelEndpoint = modelEndpoint
+    this.dictType = dictType
     this.id = id
     this.title = title
     // this.deviceType = deviceType
