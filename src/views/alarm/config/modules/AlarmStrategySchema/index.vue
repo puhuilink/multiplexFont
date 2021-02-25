@@ -117,6 +117,10 @@
           <a-col :span="1" v-show="orderTime">
             <p class="ant-form-item">次时</p>
           </a-col>
+
+          <a-col :span="1" v-show="otherTime">
+            <p class="ant-form-item">时</p>
+          </a-col>
         </a-row>
 
         <transition-group
@@ -247,6 +251,7 @@ export default {
   data: () => ({
     addBtnLoading: false,
     orderTime: false,
+    otherTime: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -391,8 +396,10 @@ export default {
       bus.$on('sel', (val) => {
         if (val === 'happen') {
           this.orderTime = true
+          this.otherTime = false
         } else {
           this.orderTime = false
+          this.otherTime = true
         }
       })
     }
