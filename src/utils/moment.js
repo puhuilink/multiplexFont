@@ -4,8 +4,7 @@ export const compare = (a = moment().format(), b = moment().format()) => {
   let aTime = a
   let bTime = b
 
-  // hack: moment 无法直接比较小时
-  // TODO: 寻求官方解决方案
+  // hack: 缺少日期时无法直接比较小时
   if (aTime.length === 8 && aTime.split(':').length === 3) {
     aTime = `2020-01-14 ${aTime}`
   }
