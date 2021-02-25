@@ -175,7 +175,7 @@
               />
             </a-col>
 
-            <a-col class="transition-flip-text" :span="24" >
+            <a-col class="alarm-rule-text" :span="24" >
               说明:当指标值 持续 120秒内，阀值条件 等于 60且 满足发送次数 2次时产生一次告警; 告警级别为L{{ opt.alarm_level }};
             </a-col>
 
@@ -442,7 +442,7 @@ export default {
       background-color: #e6f7ff;
     }
 
-    .transition-flip-text {
+    .alarm-rule-text {
      text-align: center;
     }
   }
