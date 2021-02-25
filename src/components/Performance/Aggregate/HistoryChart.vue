@@ -21,12 +21,13 @@
             format="YYYY-MM-DD HH:mm"
             :placeholder="['开始时间', '结束时间']"
             :ranges="{
+              '最近1小时': [moment().add(-1, 'hours'), moment(), moment()],
               '最近1天': [moment().add(-1, 'days'), moment(), moment()],
               '最近1周': [moment().add(-7, 'days'), moment()],
               '最近1月': [moment().add(-30, 'days'), moment()]
             }"
             :showTime="{ format: 'HH:mm' }"
-            v-model="queryParams.collect_time"
+            v-model="queryParams.upload_time"
             @ok="fetch"
           />
         </a-form-item>
@@ -57,7 +58,7 @@ export default {
     // host endpoint metric list
     hEMList: [],
     queryParams: {
-      'collect_time': [
+      'upload_time': [
         moment().add(-1, 'hours').add(-2, 'days'),
         moment().add(-2, 'days')
       ]
@@ -71,9 +72,11 @@ export default {
       return `${host_alias}-${endpoint_alias}历史图`
     },
     metricAliasMapping () {
-      return new Map(
-        this.hEMList.map(({ metric_alias, metric_id }) => [metric_id, metric_alias])
-      )
+      return new Map([
+        ...this.hEMList.map(record => (
+          [record.metric_id, _.get(record, ['metric', 'alias']) || _.get(record, ['metric', 'modelMetric', 'alias'])]
+        ))
+      ])
     }
   },
   methods: {
@@ -85,7 +88,7 @@ export default {
       this.initChart()
     },
     async fetch () {
-      if (_.isEmpty(this.queryParams.collect_time)) {
+      if (_.isEmpty(this.queryParams.upload_time)) {
         return
       }
 
@@ -93,21 +96,29 @@ export default {
         this.spinning = true
         const { data } = await MetricService.batchFind(
           this.hEMList.map((child, index) => ({
-            where: generateQuery({
-              ...this.queryParams,
-              ..._.pick(child, ['host_id', 'endpoint_id', 'metric_ic'])
-            }),
-            fields: ['metric_value', 'collect_time'],
-            alias: `metric_${child.metric_id}`
+            where: {
+              ...generateQuery({
+                ...this.queryParams
+              }, true),
+              metric_id: child['metric_id']
+            },
+            fields: [
+              'metric_value',
+              'upload_time'
+            ],
+            alias: `metric_${child.metric_id}`,
+            orderBy: {
+              upload_time: 'desc'
+            }
           }))
         )
 
         const series = Object
           .entries(data)
           .map(([key, value]) => {
-            const metric_id = Number(_.last(key.split('metric_')))
-            const valueList = value.map(({ metric_value, collect_time }) => (
-              [moment(collect_time).format(), metric_value]
+            const metric_id = _.last(key.split('metric_'))
+            const valueList = value.map(({ metric_value, upload_time }) => (
+              [moment(upload_time).format(), metric_value]
             ))
             return {
               name: this.metricAliasMapping.get(metric_id),

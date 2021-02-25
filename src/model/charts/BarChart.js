@@ -15,6 +15,7 @@ import {
   SOURCE_TYPE_COMBO
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
+import { formatFloat } from '@/utils/util'
 
 export const reverseOption = ({ xAxis, yAxis, ...option }) => ({
   ..._.cloneDeep(option),
@@ -58,7 +59,7 @@ export default class BarChart extends Chart {
       itemStyle: otherItemStyle
     }
 
-    const { reverse } = proprietaryConfig
+    const { reverse, decimalPoint } = proprietaryConfig
 
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
@@ -69,10 +70,13 @@ export default class BarChart extends Chart {
           legend: Object.assign(legend, staticLegend),
           xAxis: Object.assign(xAxis, staticXAxis),
           yAxis: Object.assign(yAxis, staticYAxis),
-          series: series.map((item) => {
+          series: series.map(({ data = [], ...item }) => {
             return Object.assign(
               {}, item, bar,
-              { barWidth, stack: barType === 'single' }
+              { barWidth, stack: barType === 'single' },
+              {
+                data: data.map((value) => decimalPoint === -1 ? value : formatFloat(value, decimalPoint))
+              }
             )
           })
         })
@@ -90,6 +94,13 @@ export default class BarChart extends Chart {
         let dynamicData = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         dynamicData = reverse ? reverseOption(dynamicData) : dynamicData
         series = dynamicData.series.map((item) => {
+          if (decimalPoint !== -1) {
+            if (Array.isArray(item.data)) {
+              item.data = item.data.map(v => formatFloat(v, decimalPoint))
+            } else if (typeof item.data === 'number') {
+              item.data = formatFloat(item.data, decimalPoint)
+            }
+          }
           return {
             ...item,
             ...bar,
@@ -97,7 +108,22 @@ export default class BarChart extends Chart {
             stack: barType === 'single'
           }
         })
+
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
+
+        if (dataset) {
+          dataset.source = dataset.source.map((el) => {
+            Object
+              .entries(el)
+              .forEach(([key, value]) => {
+                if (typeof value === 'number' && decimalPoint !== -1) {
+                  el[key] = formatFloat(value, decimalPoint)
+                }
+              })
+            return el
+          })
+        }
+
         Object.assign(option, {
           dataset,
           legend: Object.assign(legend, dynamicLegend),

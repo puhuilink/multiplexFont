@@ -1,6 +1,7 @@
-import HasuraORM, { query } from '../utils/hasura-orm/index'
+import HasuraORM, { generateQuery } from '../utils/hasura-orm/index'
 import _ from 'lodash'
 import { imp } from '../config/client'
+import { BaseService } from '../service/BaseService'
 
 class BaseDao {
   // 对应 vue-apollo
@@ -18,6 +19,14 @@ class BaseDao {
     // 部分表没有主键，PRIMARY_KEY 为 undefined
     const fields = [ ..._.uniq([...this.FIELDS_MAPPING.keys(), this.PRIMARY_KEY]) ].filter(Boolean)
     return new HasuraORM(this.SCHEMA, this.PROVIDER, '', fields)
+  }
+
+  /**
+   * 获取原生 apollo-client
+   * @public
+   */
+  static getProvider () {
+    return this.PROVIDER
   }
 
   /**
@@ -42,7 +51,8 @@ class BaseDao {
       val => val.map(([key, value]) => self._createHasuraORM().where({ [key]: value }).alias(key).select(_.uniq([key, PRIMARY_KEY])))
     ])()
 
-    const { data } = await query(...queryList)
+    const q = await generateQuery(...queryList)
+    const { data } = await BaseService.hasuraTransfer({ query: q })
 
     const errList = _.flow([
       // 对象转二维数组

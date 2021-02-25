@@ -5,11 +5,9 @@
       v-bind="formItemLayout"
       label="合并方式"
       prop="merge.type"
-      :rules="[
-        { required: true, message: '请选择合并方式' }
-      ]"
+      :rules="[{ required: true, message: '请选择合并方式' }]"
     >
-      <a-select v-model="_formModel.merge.type">
+      <a-select :disabled="!isEdit && !isAdd" v-model="_formModel.merge.type">
         <a-select-option value="count">次数</a-select-option>
         <a-select-option value="time">时间</a-select-option>
       </a-select>
@@ -21,11 +19,10 @@
       v-bind="formItemLayout"
       :label="useTime ? '合并时间' : '最大合并次数'"
       prop="merge.number"
-      :rules="[
-        { required: true, message: useTime ? '请输入合并时间' : '请输入最大合并时间' }
-      ]"
+      :rules="[{ required: true, message: useTime ? '请输入合并时间' : '请输入最大合并次数' }]"
     >
       <a-input
+        :disabled="!isEdit && !isAdd"
         :min="1"
         :suffix="useTime ? '分钟' : '次'"
         type="number"
@@ -44,8 +41,7 @@ export default {
   mixins: [Mixin],
   components: {},
   props: {},
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {
     useTime () {
       return this._formModel.merge.type === CONTENT_TYPE_TIME
@@ -56,5 +52,4 @@ export default {
 </script>
 
 <style lang="less">
-
 </style>

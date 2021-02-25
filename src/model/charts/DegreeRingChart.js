@@ -46,7 +46,7 @@ export default class DegreeRingChart extends Chart {
     }
 
     // 处理小数点后的值
-    series.label.formatter = formatFloat(Number(formatter), decimalPoint)
+    series.label.formatter = decimalPoint === -1 ? Number(formatter) : formatFloat(Number(formatter), decimalPoint)
 
     const insideColor = thresholdColorRule.calculateColor(series.label.formatter) || series.label.insideColor
     Object.assign(series.label, { insideColor })

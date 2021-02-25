@@ -41,7 +41,7 @@
                   <a-slider
                     v-model="config.proprietaryConfig.decimalPoint"
                     @change="change()"
-                    :min="0"
+                    :min="-1"
                     :max="4" />
                 </div>
               </div>

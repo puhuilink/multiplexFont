@@ -106,7 +106,7 @@ export class AdaptorComboConfig {
         metricValueStr = '',
         unit = ''
       }) => ({
-        data: metricValue || metricValueStr,
+        data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
         legend: hostAlias,
         name: `${endpointModelAlias}__${metricModelAlias}`,
         time: bucket,

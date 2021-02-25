@@ -28,7 +28,6 @@ const {
   VUE_APP_ENABLED_CDN
 } = process.env
 
-// FIXME: useCDN 为 true 时打包后运行有报错
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
 
 const assetsCDN = {
@@ -45,7 +44,7 @@ const assetsCDN = {
   ] : [],
   js: useCDN ? [
     '//unpkg.com/vue@2.6.10/dist/vue.min.js',
-    '//unpkg.com/vue-router@3.1.3/dist/vue-router.min.js',
+    '//unpkg.com/vue-router@3.1.2/dist/vue-router.min.js',
     '//unpkg.com/vuex@3.1.1/dist/vuex.min.js',
     '//unpkg.com/axios@0.19.0/dist/axios.min.js',
     '//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js',
@@ -64,7 +63,7 @@ const vueConfig = {
     ],
     externals: {
       ace: 'ace',
-      ...assetsCDN
+      ...assetsCDN.externals
     }
   },
 
@@ -127,39 +126,40 @@ const vueConfig = {
     }))
 
     // https://www.cnblogs.com/leiting/p/11542608.html
-    // TODO: 配合 useCDN
-    config.optimization.splitChunks({
-      chunks: 'all',
-      cacheGroups: {
-        vue: {
-          name: 'chunk-vue',
-          priority: 20,
-          test: /[\\/]node_modules[\\/]_?vue(.*)/
-        },
-        vueRouter: {
-          name: 'chunk-vue-router',
-          priority: 20,
-          test: /[\\/]node_modules[\\/]_?vue-router(.*)/
-        },
-        vuex: {
-          name: 'chunk-vuex',
-          priority: 20,
-          test: /[\\/]node_modules[\\/]_?vuex(.*)/
-        },
-        axios: {
-          name: 'chunk-axios',
-          priority: 20,
-          test: /[\\/]node_modules[\\/]_?axios(.*)/
-        },
-        commons: {
-          name: 'chunk-common-components',
-          test: resolve('src/components'),
-          minChunks: 2,
-          priority: 5,
-          reuseExistingChunk: true
+    if (!useCDN) {
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          vue: {
+            name: 'chunk-vue',
+            priority: 20,
+            test: /[\\/]node_modules[\\/]_?vue(.*)/
+          },
+          vueRouter: {
+            name: 'chunk-vue-router',
+            priority: 20,
+            test: /[\\/]node_modules[\\/]_?vue-router(.*)/
+          },
+          vuex: {
+            name: 'chunk-vuex',
+            priority: 20,
+            test: /[\\/]node_modules[\\/]_?vuex(.*)/
+          },
+          axios: {
+            name: 'chunk-axios',
+            priority: 20,
+            test: /[\\/]node_modules[\\/]_?axios(.*)/
+          },
+          commons: {
+            name: 'chunk-common-components',
+            test: resolve('src/components'),
+            minChunks: 2,
+            priority: 5,
+            reuseExistingChunk: true
+          }
         }
-      }
-    })
+      })
+    }
   },
 
   css: {

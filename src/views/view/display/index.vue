@@ -2,26 +2,21 @@
   <div class="ViewDisplay">
     <a-spin :spinning="isLoadingDesktopConfig">
       <div class="ViewDisplay-header">
-        <a-select style="width: 300px;" v-model="selectedDesktopName">
-
+        <a-select style="width: 300px" v-model="selectedDesktopName">
           <a-select-opt-group label="所有桌面">
             <a-select-option :label="ALL_VIEW" :value="ALL_VIEW">{{ ALL_VIEW }}</a-select-option>
           </a-select-opt-group>
 
           <a-select-opt-group label="用户桌面">
-            <a-select-option
-              v-for="(desktop, idx) in userDesktopList"
-              :key="idx"
-              :value="desktop.desktopName"
-            >{{ desktop.desktopName }}</a-select-option>
+            <a-select-option v-for="(desktop, idx) in userDesktopList" :key="idx" :value="desktop.desktopName">{{
+              desktop.desktopName
+            }}</a-select-option>
           </a-select-opt-group>
 
           <a-select-opt-group label="工作组桌面">
-            <a-select-option
-              v-for="(desktop, idx) in groupDesktopList"
-              :key="idx"
-              :value="desktop.desktopName"
-            >{{ desktop.desktopName }}</a-select-option>
+            <a-select-option v-for="(desktop, idx) in groupDesktopList" :key="idx" :value="desktop.desktopName">{{
+              desktop.desktopName
+            }}</a-select-option>
           </a-select-opt-group>
         </a-select>
 
@@ -30,7 +25,7 @@
             v-show="isThumbnailMode"
             allowClear
             autoFocus
-            style="width: 200px;"
+            style="width: 200px"
             placeholder="按视图标题搜索..."
             v-model.trim="queryParams.view_title"
           />
@@ -42,13 +37,22 @@
             :placeholder="['开始时间', '结束时间']"
             v-model="timeRange"
             @change="dateChange"
-            @ok="dateSet" />
+            @ok="dateSet"
+          />
           <div class="ViewDisplay-type">
-            <p class="ViewDisplay-button" :class="[isThumbnailMode && 'ViewDisplay-button--active']" @click="toggleThumbnailMode">
+            <p
+              class="ViewDisplay-button"
+              :class="[isThumbnailMode && 'ViewDisplay-button--active']"
+              @click="toggleThumbnailMode('thumbnail')"
+            >
               <a-icon type="appstore" />
               缩略图
             </p>
-            <p class="ViewDisplay-button" :class="[!isThumbnailMode && 'ViewDisplay-button--active']" @click="toggleThumbnailMode">
+            <p
+              class="ViewDisplay-button"
+              :class="[!isThumbnailMode && 'ViewDisplay-button--active']"
+              @click="toggleThumbnailMode('tabsPags')"
+            >
               <a-icon type="bars" />
               页签
             </p>
@@ -72,12 +76,16 @@
               :xxl="6"
             >
               <div class="ViewDisplay-item" @click="preview(viewConfig)">
-                <img v-lazy="thumbnail(viewConfig.view_img)" :alt="viewConfig.view_title">
+                <img v-lazy="thumbnail(viewConfig.view_img)" :alt="viewConfig.view_title" />
                 <div class="ViewDisplay-item-info">
                   <p class="ViewDisplay-item-info_title">{{ `${viewConfig.view_id}-${viewConfig.view_title}` }}</p>
                   <p class="ViewDisplay-item-info_creator">
                     <span><a-icon type="clock-circle" />{{ (viewConfig.createdate || '').replace('T', ' ') }}</span>
-                    <span><a-icon type="user" />{{ viewConfig.user ? viewConfig.user.staff_name : viewConfig.creator }}</span>
+                    <span
+                    ><a-icon type="user" />{{
+                      viewConfig.user ? viewConfig.user.staff_name : viewConfig.creator
+                    }}</span
+                    >
                   </p>
                 </div>
               </div>
@@ -104,43 +112,63 @@
 
       <!-- S 视图页签 -->
       <div class="ViewDisplay-tabs" :class="[isFullScreen && 'fullscreen']" v-else>
-        <a-tabs
-          :active-key="activeKey || filterViewList[0].view_id"
-          tab-position="top"
-          @change="tabsChange"
-        >
+        <a-tabs :active-key="activeKey || filterViewList[0].view_id" tab-position="top" @change="tabsChange">
           <div class="PreviewMixin-bar" slot="tabBarExtraContent">
             <a-tooltip placement="top" :title="isAutoPlay ? '暂停' : '播放'">
               <a-icon :type="isAutoPlay ? 'pause-circle' : 'play-circle'" @click="toggleAutoPlay" />
             </a-tooltip>
             <a-tooltip placement="top" title="等宽">
-              <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
+              <a-icon
+                type="column-width"
+                :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }"
+                @click="setScaleMode('fullWidth')"
+              />
             </a-tooltip>
 
             <a-tooltip placement="top" title="等高">
-              <a-icon type="column-height" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
+              <a-icon
+                type="column-height"
+                :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullHeight' }"
+                @click="setScaleMode('fullHeight')"
+              />
             </a-tooltip>
 
             <a-tooltip placement="top" title="拉伸">
-              <a-icon type="swap" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
+              <a-icon
+                type="swap"
+                :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullscreen' }"
+                @click="setScaleMode('fullscreen')"
+              />
             </a-tooltip>
 
             <a-tooltip placement="top" title="原始">
-              <a-icon type="pic-center" :class="{ 'PreviewMixin-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
+              <a-icon
+                type="pic-center"
+                :class="{ 'PreviewMixin-bar--active': scaleMode === 'primary' }"
+                @click="setScaleMode('primary')"
+              />
             </a-tooltip>
 
             <a-tooltip placement="top" title="自适应">
-              <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
+              <a-icon
+                type="border-outer"
+                :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }"
+                @click="setScaleMode('auto')"
+              />
             </a-tooltip>
 
             <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
               <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />
             </a-tooltip>
           </div>
-          <a-tab-pane v-for="viewConfig in filterViewList" :key="viewConfig.view_id" :tab="viewConfig.view_title"></a-tab-pane>
+          <a-tab-pane
+            v-for="viewConfig in filterViewList"
+            :key="viewConfig.view_id"
+            :tab="viewConfig.view_title"
+          ></a-tab-pane>
         </a-tabs>
-        <a-spin :spinning="isLoadingViewConfig" >
-          <div class="ViewDisplay-tab-content" :class="[isFullScreen && 'fullscreen']" >
+        <a-spin :spinning="isLoadingViewConfig">
+          <div class="ViewDisplay-tab-content" :class="[isFullScreen && 'fullscreen']">
             <transition name="renderer">
               <Renderer v-if="view" :view="view" ref="renderer" :timeRange="timeRange" />
             </transition>
@@ -168,7 +196,6 @@
         :userId="selectedDesktop.user_id"
         @success="fetchDesktopConfig"
       />
-
     </a-spin>
   </div>
 </template>
@@ -249,10 +276,10 @@ export default {
     height: 32px;
     width: 96px;
     cursor: pointer;
-    color: rgba(0, 0, 0, .67);
+    color: rgba(0, 0, 0, 0.67);
     line-height: 32px;
     text-align: center;
-    border: 1px solid rgba(0, 0, 0, .23);
+    border: 1px solid rgba(0, 0, 0, 0.23);
     margin: 0;
 
     &:nth-of-type(1) {
@@ -294,12 +321,12 @@ export default {
     border-radius: 4px;
     box-shadow: 0 0 32px #f0f0f0;
     transform: scale(1);
-    transition: transform .4s ease;
+    transition: transform 0.4s ease;
     cursor: pointer;
 
     &:hover {
       transform: scale(1.03);
-      transition: transform .4s ease;
+      transition: transform 0.4s ease;
     }
 
     img {
@@ -357,7 +384,6 @@ export default {
     }
   }
 }
-
 </style>
 
 <style lang="less" scoped>

@@ -69,6 +69,11 @@ const user = {
       state.token = token
     },
     SET_NAME: (state, { name }) => {
+      const originalUser = Vue.ls.get(USER)
+      originalUser.staffName = name
+      originalUser.name = name
+      Vue.ls.set(USER, originalUser)
+
       state.name = name
       state.info.staffName = name
     },

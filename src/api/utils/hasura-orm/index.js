@@ -17,6 +17,24 @@ const mutate = async function () {
 }
 
 /**
+ * 合并一条或多条操作的query
+ * @return {Promise<String>}
+ */
+const generateQuery = async function () {
+  const hasuraInstanceList = await Promise.all(Array.from(arguments))
+  return `query{ ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())} }`
+}
+
+/**
+ * 合并一条或多条操作的mutation
+ * @return {Promise<String>}
+ */
+const generateMutation = async function () {
+  const hasuraInstanceList = await Promise.all(Array.from(arguments))
+  return `mutation{ ${hasuraInstanceList.map(hasuraInstance => hasuraInstance.parsed())} }`
+}
+
+/**
  * 执行一条或多条查询
  * @param {Promise<HasuraORM>}
  * @return {Promise<any>}
@@ -31,6 +49,8 @@ const query = async function () {
 export default HasuraORM
 
 export {
+  generateQuery,
+  generateMutation,
   query,
   mutate
 }

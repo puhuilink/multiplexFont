@@ -88,11 +88,14 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         // CPU + CPU使用率 = CPU使用率
         const v = `${endpoint}${metric.startsWith(endpoint) ? metric.replace(endpoint, '') : metric}`
         const result = {
-          data: metricValueStr || metricValue,
+          data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
           legend: groupByHost ? hostAlias : v,
           name: !groupByHost ? hostAlias : v,
-          unit: uint
+          unit: uint,
+          endpointAlias,
+          endpointModelAlias,
+          metric
         }
 
         // TODO: hack for multiple hosts and metrics
@@ -108,6 +111,12 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         }
 
         return result
+      })
+      .filter(({ data }) => {
+        if (typeof data === 'number') {
+          return data >= 0
+        }
+        return true
       })
       .sort((a, b) => {
         return compare(a.time, b.time)

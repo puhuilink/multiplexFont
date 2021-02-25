@@ -29,7 +29,18 @@
         </div>
         <!-- / 显示 -->
 
-        <div v-if="config.proprietaryConfig.legend.show">
+        <div class="comment-template__item" v-show="config.proprietaryConfig.legend.show">
+          <p class="comment-template__leading">类型:</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-select v-model="config.proprietaryConfig.legend.type" @change="change">
+              <a-select-option value="plain">默认</a-select-option>
+              <a-select-option value="scroll">滚动</a-select-option>
+            </a-select>
+          </div>
+        </div>
+        <!-- / 类型 -->
+
+        <div v-show="config.proprietaryConfig.legend.show">
           <div class="comment-template__item">
             <p class="comment-template__leading">方向:</p>
             <div class="comment-template__inner">

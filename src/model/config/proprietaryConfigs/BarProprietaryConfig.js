@@ -23,7 +23,8 @@ export default class BarProprietaryConfig {
     barWidth = 'auto',
     reverse = false,
     xAxis = {},
-    yAxis = {}
+    yAxis = {},
+    decimalPoint = -1
   }) {
     this.barType = barType
     this.legend = new Legend(legend)
@@ -33,6 +34,7 @@ export default class BarProprietaryConfig {
     this.xAxis = new XAxis(xAxis)
     this.yAxis = new YAxis(yAxis)
     this.reverse = reverse
+    this.decimalPoint = decimalPoint
   }
 
   /**

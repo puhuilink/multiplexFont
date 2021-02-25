@@ -9,6 +9,7 @@
       >
         <a-input-number
           class="inline_input"
+          :disabled="!isEdit && !isAdd"
           :min="1"
           :parser="parserInt"
           v-model.number="formModel.recover.number"
@@ -26,6 +27,7 @@
       >
         <a-input-number
           class="inline_input"
+          :disabled="!isEdit && !isAdd"
           :min="1"
           :parser="parserInt"
           v-model.number="formModel.recover.count"

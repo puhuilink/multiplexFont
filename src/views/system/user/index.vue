@@ -54,11 +54,11 @@
       <template #operation>
         <a-button @click="onAddUser" v-action:M0101>新增 </a-button>
         <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
-        <a-button @click="onBatchDeleteUser" :disabled="!isSelectedValid" v-action:M0103>删除</a-button>
-        <a-button @click="onResetPwd" :disabled="!isSelectedValid" v-action:M0105>重置密码</a-button>
-        <a-button @click="onAllocateUserGroup" :disabled="!isSelectedValid" v-action:M0104>分配工作组</a-button>
+        <a-button @click="onBatchDeleteUser" :disabled="!hasSelectedOne" v-action:M0103>删除</a-button>
+        <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
+        <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
-        <a-button @click="onAllocateUserAuth" :disabled="!isSelectedValid" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
     </CTable>
 
@@ -133,7 +133,8 @@ export default {
         width: 280,
         tooltip: true
       }
-    ])
+    ]),
+    selectedRows: []
   }),
   computed: {
     isSelectedValid () {
@@ -196,16 +197,27 @@ export default {
      * @event
      */
     async onBatchDeleteUser () {
+      const [{ flag }] = this.selectedRows
+      const title = flag === USER_FLAG.enabled ? '无法删除' : '删除'
+      const content = flag === USER_FLAG.enabled ? '只能删除无效用户' : '确定要删除选中的记录吗？'
+      const onOk = flag === USER_FLAG.enabled ? 1 : 0
       this.$promiseConfirmDelete({
-        onOk: () =>
-          UserService.batchDelete(this.selectedRowKeys)
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.query(false)
-            })
-            .catch(this.$notifyError)
+        title,
+        content,
+        onOk: () => {
+          if (onOk === 1) {
+          } else {
+            UserService.batchDelete(this.selectedRowKeys)
+              .then(() => {
+                this.$notifyDeleteSuccess()
+                this.query(false)
+              })
+              .catch(this.$notifyError)
+          }
+        }
       })
     },
+
     /**
      * 重置用户密码
      * @event

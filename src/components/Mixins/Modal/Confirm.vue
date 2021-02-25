@@ -6,8 +6,7 @@ export default {
   name: 'Confirm',
   components: {},
   props: {},
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {},
   methods: {
     $promiseConfirm ({
@@ -29,7 +28,7 @@ export default {
         maskClosable,
         keyboard,
         onOk () {
-          return new Promise(async resolve => {
+          return new Promise(async (resolve) => {
             try {
               await onOk()
             } catch (e) {
