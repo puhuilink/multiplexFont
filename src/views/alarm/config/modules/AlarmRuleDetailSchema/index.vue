@@ -111,10 +111,12 @@ export default {
     async fetch (id) {
       try {
         this.spinning = true
-        const model = await AlarmRuleService.detail(id)
+        const { dictBrand, modelMetric, modelEndpoint, dictType, ...model } = await AlarmRuleService.detail(id)
+
         // TODO
         AlarmRuleService.devices(id)
         this.model = AlarmRuleModelFactory.create(model)
+        Object.assign(this.model, { dictBrand, modelMetric, modelEndpoint, dictType })
       } catch (e) {
         this.model = {}
         throw e
