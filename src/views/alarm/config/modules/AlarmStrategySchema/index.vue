@@ -114,13 +114,10 @@
             </a-form-model-item>
           </a-col>
 
-          <a-col :span="1" v-show="orderTime">
-            <p class="ant-form-item">次时</p>
+          <a-col :span="1">
+            <p class="ant-form-item"> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }}</p>
           </a-col>
 
-          <a-col :span="1" v-show="otherTime">
-            <p class="ant-form-item">时</p>
-          </a-col>
         </a-row>
 
         <transition-group
@@ -220,7 +217,6 @@ import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 import anime from 'animejs'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-import bus from '@/utils/bus'
 
 const makeOpt = () => ({
   // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
@@ -250,8 +246,6 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
-    orderTime: false,
-    otherTime: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -391,25 +385,7 @@ export default {
           this.submitLoading = false
         }
       })
-    },
-    getSelectVal () {
-      bus.$on('sel', (val) => {
-        if (val === 'happen') {
-          this.orderTime = true
-          this.otherTime = false
-        } else {
-          this.orderTime = false
-          this.otherTime = true
-        }
-      })
     }
-  },
-  mounted () {
-    this.getSelectVal()
-  },
-  beforeDestroy () {
-    // 组件销毁前需要解绑事件。否则会出现重复触发事件的问题
-    bus.$off('sel')
   }
 }
 </script>
