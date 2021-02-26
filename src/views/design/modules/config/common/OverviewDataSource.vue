@@ -97,8 +97,8 @@ export default {
     metricAliasList: [
       { label: 'CPU总使用率', value: 'CPU总使用率' },
       { label: '内存使用率', value: '内存使用率' },
-      { label: '下行流量', value: 'Input Rate' },
-      { label: '上行流量', value: 'Output Rate' }
+      { label: '下行流量', value: '输入流量' },
+      { label: '上行流量', value: '输出流量' }
     ]
   }),
   computed: {},
