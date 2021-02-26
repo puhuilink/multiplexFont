@@ -5,19 +5,19 @@ import {
   UserGroupDao,
   AuthorizeObjectDao
 } from '../dao/index'
-import { query, mutate } from '../utils/hasura-orm/index'
+import { generateQuery, generateMutation } from '../utils/hasura-orm/index'
 
 class GroupService extends BaseService {
   static async find (argus = {}) {
-    const res = await query(
+    const q = await generateQuery(
       GroupDao.find(argus)
     )
-    return res
+    return this.hasuraTransfer({ query: q })
   }
 
   // FIXME: 目前未确定数据表具体标识字段
   static async patrolFind ({ where = {}, ...rest } = {}) {
-    return query(
+    const q = await generateQuery(
       GroupDao.find({
         where: {
           ...where,
@@ -28,23 +28,26 @@ class GroupService extends BaseService {
         ...rest
       })
     )
+    return this.hasuraTransfer({ query: q })
   }
 
   static async add (group = {}) {
-    await mutate(
+    const q = await generateMutation(
       // 新建工作组
       GroupDao.add(group)
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async update (group = {}, where = {}) {
-    await mutate(
+    const q = await generateMutation(
       GroupDao.update(group, where)
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async batchDelete (groupIdList = []) {
-    await mutate(
+    const q = await generateMutation(
       // 工作组删除
       GroupDao.batchDelete({ group_id: { _in: groupIdList } }),
       // 工作组下分配的用户解除关联
@@ -54,12 +57,14 @@ class GroupService extends BaseService {
       // 工作组的桌面删除
       ViewDesktopDao.batchDeleteGroupDesktop({ group_id: { _in: groupIdList } })
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async toggleFlag (group_id, flag) {
-    await mutate(
+    const q = await generateMutation(
       GroupDao.toggleFlag(group_id, flag)
     )
+    await this.hasuraTransfer({ query: q })
   }
 }
 
