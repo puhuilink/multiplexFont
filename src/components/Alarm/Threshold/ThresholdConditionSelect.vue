@@ -17,7 +17,6 @@
 
 <script>
 import { FormModel } from 'ant-design-vue'
-import bus from '@/utils/bus'
 export default {
   name: 'ThresholdConditionSelect',
   mixins: [],
@@ -46,16 +45,6 @@ export default {
       { label: '突增突降率', value: 'pdiff' }
     ]
   }),
-  computed: {
-    setSelectVal () {
-      return this.value
-    }
-  },
-  watch: {
-    setSelectVal: (newV, oldV) => {
-      bus.$emit('sel', newV)
-    }
-  },
   methods: {}
 }
 </script>

@@ -114,9 +114,10 @@
             </a-form-model-item>
           </a-col>
 
-          <a-col :span="1" v-show="orderTime">
-            <p class="ant-form-item">次时</p>
+          <a-col :span="1">
+            <p class="ant-form-item"> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }}</p>
           </a-col>
+
         </a-row>
 
         <transition-group
@@ -171,6 +172,10 @@
               />
             </a-col>
 
+            <a-col class="alarm-rule-text" :span="24" >
+              说明:当指标值 持续 120秒内，阀值条件 等于 60且 满足发送次数 2次时产生一次告警; 告警级别为L{{ opt.alarm_level }};
+            </a-col>
+
             <a-col :span="2" :offset="1">
               <a-form-model-item>
                 <transition name="transition-scale">
@@ -212,7 +217,6 @@ import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 import anime from 'animejs'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-import bus from '@/utils/bus'
 
 const makeOpt = () => ({
   // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
@@ -242,7 +246,6 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
-    orderTime: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -382,23 +385,7 @@ export default {
           this.submitLoading = false
         }
       })
-    },
-    getSelectVal () {
-      bus.$on('sel', (val) => {
-        if (val === 'happen') {
-          this.orderTime = true
-        } else {
-          this.orderTime = false
-        }
-      })
     }
-  },
-  mounted () {
-    this.getSelectVal()
-  },
-  beforeDestroy () {
-    // 组件销毁前需要解绑事件。否则会出现重复触发事件的问题
-    bus.$off('sel')
   }
 }
 </script>
@@ -429,6 +416,10 @@ export default {
     .transition-flip-enter-to {
       z-index: 1;
       background-color: #e6f7ff;
+    }
+
+    .alarm-rule-text {
+     text-align: center;
     }
   }
 
