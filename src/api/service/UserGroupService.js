@@ -1,17 +1,18 @@
 import { BaseService } from './BaseService'
-import { mutate, query } from '../utils/hasura-orm/index'
+import { generateMutation, generateQuery } from '../utils/hasura-orm/index'
 import { UserGroupDao } from '../dao/index'
 import { USER_ROLE } from '@/tables/user_group/enum'
 
 class UserGroupService extends BaseService {
   static async find (argus) {
-    return query(
+    const q = await generateQuery(
       UserGroupDao.find(argus)
     )
+    return this.hasuraTransfer({ query: q })
   }
 
   static async allocateAdmin (group_id, userIds) {
-    await mutate(
+    const q = await generateMutation(
       // 全量删除之前的分配关系
       UserGroupDao.update({
         user_role: USER_ROLE.user
@@ -22,6 +23,7 @@ class UserGroupService extends BaseService {
         group_id: { _eq: group_id }
       })
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   /**
@@ -30,7 +32,7 @@ class UserGroupService extends BaseService {
    * @param {*} userIds
    */
   static async allocateGroupUsers (group_id, userIds) {
-    await mutate(
+    const q = await generateMutation(
       // 全量删除旧用户
       UserGroupDao.batchDelete({ group_id: { _eq: group_id } }),
 
@@ -39,6 +41,7 @@ class UserGroupService extends BaseService {
         userIds.map(user_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   /**
@@ -47,7 +50,7 @@ class UserGroupService extends BaseService {
    * @param {*} groupIds
    */
   static async allocateUserGroups (user_id, groupIds) {
-    await mutate(
+    const q = await generateMutation(
       // 全量删除旧用户
       UserGroupDao.batchDelete({ user_id }),
       // 全量删除新用户
@@ -55,6 +58,7 @@ class UserGroupService extends BaseService {
         groupIds.map(group_id => ({ group_id, user_id, user_role: USER_ROLE.user }))
       )
     )
+    await this.hasuraTransfer({ query: q })
   }
 
   static async availableGroupIdListByUserId (user_id) {
