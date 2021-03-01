@@ -78,8 +78,21 @@ class AlarmService extends BaseService {
   /**
    * 手动管理告警
    */
-  static async close ({ hostId, endpointId, metricId }) {
-    return axios.post('/redisData/closeAlarm', { hostId, endpointId, metricId })
+  // static async close ({ hostId, endpointId, metricId }) {
+  //   return axios.post('/redisData/closeAlarm', { hostId, endpointId, metricId })
+  // }
+
+  /*
+  * 告警监控批量解决
+  */
+  static async batchClose (alarmIds = []) {
+    const formData = new FormData()
+    formData.append('alarmIds', alarmIds)
+    return axios.post(`/AlarmAndRule/batchCloseAlarm`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
   }
 }
 

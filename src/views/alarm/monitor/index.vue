@@ -105,7 +105,7 @@
               v-if="showSolve"
               v-show="state !== ALARM_STATE.solved"
               @click="onSolve()"
-              :disabled="!hasSelectedOne"
+              :disabled="!hasSelected"
             >解决</a-button
             >
           </div>
@@ -492,7 +492,7 @@ export default {
      * 关闭告警
      */
     onSolve () {
-      const [record] = this.selectedRows
+      const [...record] = this.selectedRowKeys
       this.$refs.solve.open(record)
     },
     /**
