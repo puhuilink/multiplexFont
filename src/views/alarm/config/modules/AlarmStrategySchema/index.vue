@@ -102,7 +102,7 @@
             />
           </a-col>
 
-          <a-col :span="3" v-show="formModel.exprs.trigger_condition === 'happen' ? true : false " >
+          <a-col :span="3" v-show="formModel.exprs.trigger_condition === 'happen' " >
             <a-form-model-item
               v-bind="{
                 labelCol: { span: 24 },
@@ -174,7 +174,15 @@
 
             <!-- 且 满足发送次数 -->
             <a-col class="alarm-rule-text" :span="24" >
-              说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内， {{ alertText }}  {{ condition( opt.operator) }}   {{ contentText }} <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>  <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>  {{ changeText(formModel.exprs.trigger_condition ) }}  <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>  产生一次告警; 告警级别为L{{ opt.alarm_level }};
+
+              说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内，
+              {{ formatConditionText(formModel.exprs.trigger_condition ) }}
+              {{ condition( opt.operator) }}
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
+              产生一次告警; 告警级别为L{{ opt.alarm_level }};
+
             </a-col>
 
             <a-col :span="2" :offset="1">
@@ -274,19 +282,7 @@ export default {
     isEdit: false,
     isDetail: false,
     spinning: false,
-    submitLoading: false,
-    conditionList: [
-      { label: '任意一条', value: 'all', symbols: '=', letter: '等于' },
-      { label: '全部值中存在', value: 'happen', symbols: '>', letter: '大于' },
-      { label: '最大值', value: 'max', symbols: '>=', letter: '大于等于' },
-      { label: '最小值', value: 'min', symbols: '<', letter: '小于' },
-      { label: '均值', value: 'avg', symbols: '<=', letter: '小于等于' },
-      { label: '求和', value: 'sum' },
-      { label: '最新值与其之前', value: 'diff' },
-      { label: '最新值A与其之前', value: 'pdiff' }
-    ],
-    alertText: '暂无数据',
-    contentText: '暂无数据'
+    submitLoading: false
   }),
   computed: {
     editAbleProps () {
@@ -399,27 +395,43 @@ export default {
         }
       })
     },
-    changeText (val) {
-      const alertTexts = this.conditionList.filter((el) => {
-        if (el.value === val) {
-          return {
-            label: el.label,
-            value: el.value
-          }
-        }
-      })
-      this.alertText = alertTexts[0] === undefined ? '暂无数据' : alertTexts[0].label
+    formatConditionText (val) {
+      switch (val) {
+        case 'all':
+          return '任意一条'
+        case 'happen':
+          return '全部值中存在'
+        case 'max':
+          return '最大值'
+        case 'min':
+          return '最小值'
+        case 'avg':
+          return '均值'
+        case 'sum':
+          return '求和'
+        case 'diff':
+          return '最新值与其之前'
+        case 'pdiff':
+          return '最新值与其之前'
+        default:
+          break
+      }
     },
     condition (val) {
-      const seleTexts = this.conditionList.filter((el) => {
-        if (el.symbols === val) {
-          return {
-            label: el.symbols,
-            value: el.letter
-          }
-        }
-      })
-      this.contentText = seleTexts[0] === undefined ? '暂无数据' : seleTexts[0].letter
+      switch (val) {
+        case '=':
+          return '等于'
+        case '>':
+          return '大于'
+        case '>=':
+          return '大于等于'
+        case '<':
+          return '小于'
+        case '<=':
+          return '小于等于'
+        default:
+          break
+      }
     }
   }
 }
