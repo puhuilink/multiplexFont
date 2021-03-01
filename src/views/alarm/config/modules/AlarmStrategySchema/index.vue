@@ -172,19 +172,6 @@
               />
             </a-col>
 
-            <!-- 且 满足发送次数 -->
-            <a-col class="alarm-rule-text" :span="24" >
-
-              说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内，
-              {{ formatConditionText(formModel.exprs.trigger_condition ) }}
-              {{ condition( opt.operator) }}
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
-              产生一次告警; 告警级别为L{{ opt.alarm_level }};
-
-            </a-col>
-
             <a-col :span="2" :offset="1">
               <a-form-model-item>
                 <transition name="transition-scale">
@@ -198,6 +185,20 @@
                 </transition>
               </a-form-model-item>
             </a-col>
+
+            <!-- 且 满足发送次数 -->
+            <a-col class="alarm-rule-text" :span="24" >
+
+              说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内，
+              {{ formatConditionText(formModel.exprs.trigger_condition ) }}
+              {{ formatOperatorText( opt.operator) }}
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
+              产生一次告警; 告警级别为L{{ opt.alarm_level }};
+
+            </a-col>
+
           </a-row>
         </transition-group>
 
@@ -417,7 +418,7 @@ export default {
           break
       }
     },
-    condition (val) {
+    formatOperatorText (val) {
       switch (val) {
         case '=':
           return '等于'
