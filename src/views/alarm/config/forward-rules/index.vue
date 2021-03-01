@@ -47,7 +47,7 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button @click="onAdd">新增</a-button>
+        <a-button @click="onAdd(['forward'])">新增</a-button>
         <a-button @click="onEdit" :disabled="!hasSelectedOne">编辑</a-button>
         <a-button @click="onBatchDelete" :disabled="!hasSelected">删除</a-button>
         <a-button @click="onEditGlobalRule" class="fr" type="primary">全局告警通知设置</a-button>

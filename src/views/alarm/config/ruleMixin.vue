@@ -18,8 +18,11 @@ export default {
   }),
   computed: {},
   methods: {
-    onAdd () {
-      this.$refs.schema.add()
+    /**
+     * @param {String[]} ruleType 要新增的规则类型
+     */
+    onAdd (ruleType = []) {
+      this.$refs.schema.add(ruleType)
     },
     async onBatchDelete () {
       this.$promiseConfirmDelete({

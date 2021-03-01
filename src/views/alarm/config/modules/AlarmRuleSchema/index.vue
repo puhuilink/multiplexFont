@@ -144,11 +144,15 @@ export default {
       if (type === 'basic') return true
       return this.formModel.ruleType.includes(type)
     },
-    add () {
+    /**
+     * @param {String[]} ruleType 要新增的规则类型
+     */
+    add (ruleType = []) {
       this.show('新建告警规则')
       this.submit = this.insert
       this.isEdit = false
       this.isAdd = true
+      this.formModel = AlarmRuleModelFactory.create({ ruleType })
     },
     back () {
       this.$refs.ruleForm.clearValidate()

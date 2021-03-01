@@ -175,10 +175,12 @@ class BasicRuleModel {
   } = {}) {
     this.id = id
     this.title = title
-    // this.deviceType = deviceType
-    this.deviceType = 'test'
+    this.deviceType = deviceType
     this.deviceBrand = deviceBrand
     this.deviceModel = deviceModel
+    // this.deviceType = 'Host'
+    // this.deviceBrand = 'HostLinux'
+    // this.deviceModel = 'HostAIXLinux'
     this.hostId = hostId
     this.endpointModelId = endpointModelId
     this.metricModelId = metricModelId
