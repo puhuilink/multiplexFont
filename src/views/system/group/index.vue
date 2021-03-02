@@ -176,14 +176,24 @@ export default {
      * @event
      */
     async onBatchDelete () {
+      const [{ flag }] = this.selectedRows
+      const title = flag === GROUP_FLAG.enabled ? '无法删除' : '删除'
+      const content = flag === GROUP_FLAG.enabled ? '只能删除无效用户' : '确定要删除选中的记录吗？'
+      const onOk = flag === GROUP_FLAG.enabled ? 1 : 0
       this.$promiseConfirmDelete({
-        onOk: () =>
-          GroupService.batchDelete(this.selectedRowKeys)
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.query(false)
-            })
-            .catch(this.$notifyError)
+        title,
+        content,
+        onOk: () => {
+          if (onOk === 1) {
+          } else {
+            GroupService.batchDelete(this.selectedRowKeys)
+              .then(() => {
+                this.$notifyDeleteSuccess()
+                this.query(false)
+              })
+              .catch(this.$notifyError)
+          }
+        }
       })
     },
     /**
