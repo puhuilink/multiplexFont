@@ -29,7 +29,7 @@
 
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
-      <a-form-model ref="ruleForm" :model="formModel" v-if="component">
+      <a-form-model ref="ruleForm" :model="formModel" v-if="component && !isEmpty(formModel)">
         <component
           v-if="component"
           :formModel="formModel"
@@ -48,6 +48,7 @@ import MergeForm from '../AlarmRuleSchema/MergeForm'
 import ForwardForm from '../AlarmRuleSchema/ForwardForm'
 import { AlarmRuleService } from '@/api'
 import { AlarmRuleModelFactory } from '../AlarmRuleSchema/model'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'AlarmRuleGlobalSchema',
@@ -72,6 +73,7 @@ export default {
     }
   },
   methods: {
+    isEmpty,
     edit (ruleType) {
       this.show('编辑全局告警规则')
       this.fetch(ruleType)
