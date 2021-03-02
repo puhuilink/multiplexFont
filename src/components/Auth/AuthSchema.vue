@@ -80,7 +80,7 @@ export default {
     async submit () {
       try {
         this.loading = true
-        const menu = this.$refs.menu.getCheckedMenu()
+        const menu = await this.$refs.menu.getCheckedMenu()
         const {
           authView: { viewIds },
           record: { user_id, group_id }

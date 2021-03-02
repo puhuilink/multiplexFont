@@ -9,6 +9,7 @@ import { CmdbHostModelBrandService } from './CmdbHostModelBrandService.js'
 import { CmdbHostViewService } from './CmdbHostViewService.js'
 import { CmdbService } from './CmdbService.js'
 import { DictValueService } from './DictValueService.js'
+import { FunctionService } from './FunctionService.js'
 import { GroupService } from './GroupService.js'
 import { MetricService } from './MetricService.js'
 import { ModelHistoryService } from './ModelHistoryService.js'
@@ -37,6 +38,7 @@ export {
   CmdbHostViewService,
   CmdbService,
   DictValueService,
+  FunctionService,
   GroupService,
   MetricService,
   ModelHistoryService,
