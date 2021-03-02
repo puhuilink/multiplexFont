@@ -97,6 +97,46 @@ export default {
     &--active {
       color: #1890ff !important;
     }
+
+    &__fullscreen {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-evenly;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: calc(50% - 300px);
+      height: 48px;
+      width: 600px;
+      background: #636872;
+      border-radius: 48px 48px 0 0;
+      transform: translateY(37px);
+      transition: transform .3s;
+      z-index: 201;
+
+      &:hover {
+        transform: translate(0);
+        transition: transform .3s;
+      }
+
+      & > i {
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          color: lighten(#1890ff, 10%);
+        }
+
+        &:active {
+          color: #1890ff;
+        }
+      }
+
+      &--active {
+        color: #1890ff !important;
+      }
+    }
   }
 }
 </style>
