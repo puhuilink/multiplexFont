@@ -10,7 +10,10 @@ class UserDao extends BaseDao {
   static PROVIDER = imp
 
   // 唯一字段
-  static UNIQUE_FIELDS = ['user_id', 'email', 'mobile_phone']
+  // static UNIQUE_FIELDS = ['user_id', 'email', 'mobile_phone']
+  // 注释部分是为防止以后再次需要添加唯一邮箱校验。
+
+  static UNIQUE_FIELDS = ['user_id', 'mobile_phone']
 
   // 主键
   static PRIMARY_KEY = 'user_id'
