@@ -134,6 +134,7 @@ export default {
     reset () {
       this.$refs.ruleForm.resetFields()
       this.$refs.editor.resetContent()
+      this.$refs.editor.preview = false
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     async update () {
