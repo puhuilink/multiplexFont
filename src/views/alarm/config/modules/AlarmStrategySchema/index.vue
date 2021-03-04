@@ -195,7 +195,7 @@
               <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
               <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
               <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
-              产生一次告警; 告警级别为L{{ opt.alarm_level }};
+              产生一次告警; 告警级别为 {{ !opt.alarm_level ? ' ' : 'L' + opt.alarm_level }};
 
             </a-col>
 
