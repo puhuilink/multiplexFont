@@ -401,7 +401,7 @@ export default {
         }
       }
     },
-    loadData (parameter) {
+    loadData ({ offset, limit, orderBy = { receive_time: 'desc' } }) {
       const {
         hostTypeDictValueCode,
         queryParams: { agent_id, alarmLevelList, ...queryParams },
@@ -455,7 +455,9 @@ export default {
           'agent_id',
           'origin'
         ],
-        ...parameter,
+        offset,
+        limit,
+        orderBy,
         alias: 'data'
       }).then((r) => r.data)
     },
