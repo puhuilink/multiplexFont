@@ -96,10 +96,10 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-        <a-button @click="onAdd" v-show="mode === STRATEGY_MODE.personal">新建</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="mode === STRATEGY_MODE.personal">编辑</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="mode === STRATEGY_MODE.personal">删除</a-button>
+        <a-button @click="onDetail" :disabled="!hasSelectedOne" v-action:M0314>查看</a-button>
+        <a-button @click="onAdd" v-show="mode === STRATEGY_MODE.personal" v-action:M0315>新建</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="mode === STRATEGY_MODE.personal" v-action:M0316>编辑</a-button>
+        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="mode === STRATEGY_MODE.personal" v-action:M0317>删除</a-button>
       </template>
 
       <template v-slot:enabled="enabled, { id }">
