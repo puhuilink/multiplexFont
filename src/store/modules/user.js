@@ -44,6 +44,7 @@ function generatePermission (user) {
 
     const buttonTree = getButtonTree(null, buttonOriginalPermission)
     const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
+    buttonOriginalPermission.forEach(el => permissionTree.allPermission.push(el.code))
     const userPermission = Object.assign({}, user, permissionTree)
     resolve(userPermission)
   })
