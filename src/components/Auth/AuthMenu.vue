@@ -94,7 +94,7 @@ export default {
 
       return functionList.map(({ code, functionType }) => ({
         objectId: code,
-        functionType,
+        objectType: functionType,
         domainName: null
       }))
     }
