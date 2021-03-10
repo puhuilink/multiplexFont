@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
-import { ALLPERMISSION } from '@/utils/menu'
+// import { ALLPERMISSION } from '@/utils/menu'
 
 /**
  * Action 权限指令
@@ -24,7 +24,7 @@ const action = Vue.directive('action', {
       return
     }
     const [permissionId] = elVal instanceof String && [elVal] || elVal
-    const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
+    // const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
     // const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
     // TODO 还有些按钮权限未添加，后续优化
     roles.permissions.forEach(p => {
