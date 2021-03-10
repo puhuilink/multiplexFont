@@ -85,7 +85,7 @@ export const asyncRouterMap = [
                 path: '/alarm/config/strategy',
                 name: 'AlarmStrategy',
                 component: () => import('@/views/alarm/config/strategy/index'),
-                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003003' ] }
+                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003001' ] }
               },
               // {
               //   path: '/alarm/config/describe-temp',
@@ -97,19 +97,19 @@ export const asyncRouterMap = [
                 path: '/alarm/config/forward-temp',
                 name: 'ForwardTemp',
                 component: () => import('@/views/alarm/config/forward-temp/index'),
-                meta: { title: '告警通知模板', keepAlive: true, permission: ['F003002003'] }
+                meta: { title: '告警通知模板', keepAlive: true, permission: ['F003003002'] }
               },
               {
                 path: '/alarm/config/forward-rules',
                 name: 'ForwardRules',
                 component: () => import('@/views/alarm/config/forward-rules/index'),
-                meta: { title: '告警通知规则', keepAlive: true }
+                meta: { title: '告警通知规则', keepAlive: true, permission: ['F003003003'] }
               },
               {
                 path: '/alarm/config/rules',
                 name: 'AlarmRules',
                 component: () => import('@/views/alarm/config/rules/index'),
-                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003002' ] }
+                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003004' ] }
               }
             ]
           }
@@ -128,63 +128,18 @@ export const asyncRouterMap = [
             path: '/performance/tree-navigation',
             name: 'TreeNavigation',
             component: () => import('@/views/performance/tree-navigation/index'),
-            meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004002' ] }
+            meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004001' ] }
           },
-          // {
-          //   path: '/performance/quota',
-          //   name: 'QuotaList',
-          //   component: () => import('@/views/performance/quota/QuotaList'),
-          //   meta: { title: '指标列表', keepAlive: true, permission: [ 'F004001' ] }
-          // },
           {
             path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
             name: 'VideoMonitor',
-            meta: { title: '视频监控', target: '_blank', permission: [ 'F004003' ] }
+            meta: { title: '视频监控', target: '_blank', permission: [ 'F004002' ] }
           },
           {
             path: 'http://vicube.ccccltd.cn:48080/PlatformDockingURL?type=IMS',
             name: '服务管理',
-            meta: { title: '服务管理', target: '_blank', permission: [ 'F004008' ] }
+            meta: { title: '服务管理', target: '_blank', permission: [ 'F004003' ] }
           },
-          /* {
-            path: '/performance/',
-            name: '安全态势',
-            meta: { title: '安全态势', target: '_blank', permission: [ 'F004007' ] },
-            children: [
-              {
-                path: 'https://10.1.1.113/libra/tsa/#/overview',
-                name: '整体态势',
-                meta: { title: '整体态势', target: '_blank', permission: [ 'F004007001' ] }
-              },
-              {
-                path: 'https://10.1.1.113/libra/tsa/#/intrusion',
-                name: '入侵态势',
-                meta: { title: '入侵态势', target: '_blank', permission: [ 'F004007002' ] }
-              }
-            ]
-          },
-          {
-            path: '/performance/',
-            name: '360安全',
-            meta: { title: '360安全', target: '_blank', permission: [ 'F004009' ] },
-            children: [
-              {
-                path: 'http://10.1.1.114:8080/login?refer=%2F',
-                name: '360天擎',
-                meta: { title: '360天擎', target: '_blank', permission: [ 'F004009001' ] }
-              },
-              {
-                path: 'https://10.1.1.8/',
-                name: '360天眼',
-                meta: { title: '360天眼', target: '_blank', permission: [ 'F004009002' ] }
-              },
-              {
-                path: 'https://10.1.1.9/',
-                name: '分析平台',
-                meta: { title: '分析平台', target: '_blank', permission: [ 'F004009003' ] }
-              }
-            ]
-          }, */
           {
             path: 'http://10.1.1.7/login.jsp',
             name: '北京Pigoss',
@@ -193,19 +148,19 @@ export const asyncRouterMap = [
           {
             path: 'http://10.201.1.38/login.jsp',
             name: '厦门Pigoss',
-            meta: { title: '厦门Pigoss', target: '_blank', permission: [ 'F004004' ] }
+            meta: { title: '厦门Pigoss', target: '_blank', permission: [ 'F004008' ] }
           },
           {
             path: 'http://10.1.1.10/',
             name: '北京动环',
             // 东环不存在权限配置项，则和主视图同等权重
-            meta: { title: '北京动环', target: '_blank', permission: [ 'F004' ] }
+            meta: { title: '北京动环', target: '_blank', permission: [ 'F004009' ] }
           },
           {
             path: 'http://10.201.52.2/',
             name: '厦门动环',
             // 东环不存在权限配置项，则和主视图同等权重
-            meta: { title: '厦门动环', target: '_blank', permission: [ 'F004' ] }
+            meta: { title: '厦门动环', target: '_blank', permission: [ 'F004010' ] }
           },
           {
             path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
@@ -303,7 +258,7 @@ export const asyncRouterMap = [
             path: '/patrol/plan',
             name: 'Plan',
             component: () => import('@/views/patrol/plan/index'),
-            meta: { title: '计划管理', keepAlive: true, permission: [ 'F010003' ] }
+            meta: { title: '计划管理', keepAlive: true, permission: [ 'F010002' ] }
           },
           {
             path: '/patrol/change-shift',

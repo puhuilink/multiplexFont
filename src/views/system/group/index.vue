@@ -57,13 +57,13 @@
       </template>
     </CTable>
 
-    <GroupSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <GroupSchema v-action:M0106 ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />
+    <AuthSchema v-action:M0114 ref="auth" @success="query(false)" />
 
-    <GroupAdministratorSchema v-action:M0101 ref="groupAdmin" @editSuccess="query(false)" />
+    <GroupAdministratorSchema v-action:M0115 ref="groupAdmin" @editSuccess="query(false)" />
 
-    <GroupUserSchema v-action:M0101 ref="groupUser" @editSuccess="query(false)" />
+    <GroupUserSchema v-action:M0109 ref="groupUser" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -224,6 +224,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang='less'>
