@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import { MENU, MODULE, ALLPERMISSION } from '@/utils/menu'
+import { MENU, MODULE } from '@/utils/menu'
 import { getMenuTree, getButtonTree } from '@/utils/util'
-import { AuthorizeObjectService } from '@/api'
+import { AuthorizeObjectService, FunctionService } from '@/api/index'
 
 export default {
   name: 'AuthMenu',
@@ -31,8 +31,7 @@ export default {
     menu: [...MENU, ...MODULE],
     checkedKeys: [],
     expandedKeys: [],
-    loading: false,
-    allPermission: ALLPERMISSION
+    loading: false
   }),
   created () {
     this.getInitMenu()
@@ -80,16 +79,24 @@ export default {
     /**
      * 获取当前已选菜单
      */
-    getCheckedMenu () {
+    async getCheckedMenu () {
       const checked = this.checkedKeys.checked || this.checkedKeys
-      return checked.map(key => {
-        const menu = this.allPermission.find(item => item.code === key)
-        return {
-          objectId: menu.key,
-          objectType: menu.functionType,
-          domainName: menu.domainName
-        }
+
+      if (checked.length === 0) {
+        return []
+      }
+
+      const { data: { functionList } } = await FunctionService.find({
+        where: { code: { _in: checked } },
+        fields: [ 'code', 'functionType: function_type' ],
+        alias: 'functionList'
       })
+
+      return functionList.map(({ code, functionType }) => ({
+        objectId: code,
+        objectType: functionType,
+        domainName: null
+      }))
     }
   }
 }

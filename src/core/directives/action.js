@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
-import { ALLPERMISSION } from '@/utils/menu'
+// import { ALLPERMISSION } from '@/utils/menu'
 
 /**
  * Action 权限指令
@@ -17,26 +17,29 @@ import { ALLPERMISSION } from '@/utils/menu'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
-    const actionName = binding.arg || binding.value
+    // const actionName = binding.arg || binding.value
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
     if (!elVal || !elVal.length) {
       return
     }
     const [permissionId] = elVal instanceof String && [elVal] || elVal
-    const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
-    const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
+    // const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
+    // const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
     // TODO 还有些按钮权限未添加，后续优化
     roles.permissions.forEach(p => {
       if (!roles.allPermission.includes(permissionId)) {
         return
       }
 
-      if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
-        // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
-        if (p.actionList && !p.actionList.includes(actionName)) {
-          el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
-        }
+      // if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
+      //   // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
+      //   if (p.actionList && !p.actionList.includes(actionName)) {
+      //     el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+      //   }
+      // }
+      if (!roles.allPermission.includes(binding.arg)) {
+        el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
       }
       // if (!permissionId.includes(p.permissionId)) {
       //   return

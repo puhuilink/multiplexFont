@@ -53,18 +53,14 @@ export default {
   methods: {
     open (record) {
       this.show('告警解决')
-      this.record = {
-        hostId: record.host_id,
-        endpointId: record.endpoint_id,
-        metricId: record.metric_id
-      }
+      this.record = record
       this.submit = this.close
     },
     async close () {
       try {
         this.confirmLoading = true
         // FIXME：解决后未更新记录state值？
-        await AlarmService.close(this.record)
+        await AlarmService.batchClose(this.record)
         this.cancel()
         this.$notification.success({
           message: '系统提示',

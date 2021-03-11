@@ -88,8 +88,8 @@ export default {
       { label: '互联网负载均衡设备-2(10.1.1.32)', value: '互联网负载均衡设备-2(10.1.1.32)' }
     ],
     endpointAliasList: [
-      { label: 'Gi2/2/0/1(link to HongKongZhongXin-CTE)', value: 'Gi2/2/0/1(link to HongKongZhongXin-CTE)' },
-      { label: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)', value: 'Gi2/2/0/8(link to BaLiZhongXin-CTE)' },
+      { label: '端口组.Gi2/2/0/1(link to HongKongZhongXin-CTE)', value: '端口组.Gi2/2/0/1(link to HongKongZhongXin-CTE)' },
+      { label: '端口组.Gi2/2/0/8(link to BaLiZhongXin-CTE)', value: '端口组.Gi2/2/0/8(link to BaLiZhongXin-CTE)' },
       { label: 'eth1', value: 'eth1' },
       { label: 'Vlan-4', value: 'Vlan-4' },
       { label: 'Gi2/2/0/1', value: 'Gi2/2/0/1' }
@@ -97,8 +97,8 @@ export default {
     metricAliasList: [
       { label: 'CPU总使用率', value: 'CPU总使用率' },
       { label: '内存使用率', value: '内存使用率' },
-      { label: '下行流量', value: 'Input Rate' },
-      { label: '上行流量', value: 'Output Rate' }
+      { label: '下行流量', value: '输入流量' },
+      { label: '上行流量', value: '输出流量' }
     ]
   }),
   computed: {},

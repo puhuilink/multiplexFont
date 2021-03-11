@@ -107,7 +107,7 @@
               v-if="showSolve"
               v-show="state !== ALARM_STATE.solved"
               @click="onSolve()"
-              :disabled="!hasSelectedOne"
+              :disabled="!hasSelected"
             >解决</a-button
             >
           </div>
@@ -401,7 +401,7 @@ export default {
         }
       }
     },
-    loadData (parameter) {
+    loadData ({ offset, limit, orderBy = { receive_time: 'desc' } }) {
       const {
         hostTypeDictValueCode,
         queryParams: { agent_id, alarmLevelList, ...queryParams },
@@ -455,7 +455,9 @@ export default {
           'agent_id',
           'origin'
         ],
-        ...parameter,
+        offset,
+        limit,
+        orderBy,
         alias: 'data'
       }).then((r) => r.data)
     },
@@ -533,7 +535,7 @@ export default {
      * 关闭告警
      */
     onSolve () {
-      const [record] = this.selectedRows
+      const [...record] = this.selectedRowKeys
       this.$refs.solve.open(record)
     },
     /**

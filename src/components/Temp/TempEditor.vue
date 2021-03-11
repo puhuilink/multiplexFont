@@ -9,8 +9,9 @@
           :disabled="preview"
           v-for="(label, id) in tempKeywordList"
           :key="id"
-          @click="commands.mention({ id, label })"
+          @click="commands.mention({ id, label: label + ' ' })"
         >{{ label }}</a-button>
+        <!-- hack https://github.com/ueberdosis/tiptap/issues/932 -->
       </div>
     </editor-menu-bar>
     <editor-content class="editor__content" :editor="editor" />

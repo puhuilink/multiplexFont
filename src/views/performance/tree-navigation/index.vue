@@ -22,10 +22,10 @@
           </a-tab-pane>
 
           <!-- / 视图 -->
-          <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content">
+          <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content" :class="isFullScreen ? ['TreeNavigation__renderer-fullscreen'] : []">
             <div class="TreeNavigation__renderer">
               <a-spin size="large" :spinning="spinning">
-                <div class="PreviewMixin-bar" v-show="view">
+                <div class="PreviewMixin-bar" :class="isFullScreen ? ['PreviewMixin-bar__fullscreen'] : []" v-show="view">
                   <a-tooltip placement="top" title="等宽">
                     <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
                   </a-tooltip>
@@ -44,6 +44,10 @@
 
                   <a-tooltip placement="top" title="自适应">
                     <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
+                  </a-tooltip>
+
+                  <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
+                    <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />
                   </a-tooltip>
                 </div>
                 <Renderer ref="renderer" :view="view" v-if="view" />
@@ -79,8 +83,8 @@ export default {
   data: () => ({
     dataRef: null,
     hostId: null,
-    tabIndex: '1',
     spinning: false,
+    tabIndex: '1',
     view: null,
     viewId: null,
     viewError: false,
@@ -192,6 +196,16 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
+
+    &-fullscreen {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 200;
+      background-color: #fff;
+    }
 
     .ant-spin-nested-loading {
       width: 100%;

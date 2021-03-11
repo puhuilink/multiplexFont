@@ -52,12 +52,12 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAddUser" v-action:M0101>新增 </a-button>
-        <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0103>编辑</a-button>
+        <a-button @click="onAddUser" v-action:M0101>新增</a-button>
+        <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M0102>编辑</a-button>
         <a-button @click="onBatchDeleteUser" :disabled="!hasSelectedOne" v-action:M0103>删除</a-button>
         <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M0105>重置密码</a-button>
         <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
-        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0110>更改状态</a-button>
+        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0111>更改状态</a-button>
         <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
       </template>
     </CTable>

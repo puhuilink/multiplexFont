@@ -25,7 +25,7 @@
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">监控类型</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.deviceType }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.dictType ? model.dictType.value_label :'暂无数据' }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
@@ -40,17 +40,17 @@
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">设备名称</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.dictBrand ? model.dictBrand.value_label : '暂无数据' }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">监控实体</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.modelEndpoint ? model.modelEndpoint.alias :'暂无数据' }}</span>
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">检查项</label>
-              <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
+              <span class="AlarmRuleDetailSchema__item-value">{{ model.modelMetric ? model.modelMetric.alias :'暂无数据' }}</span>
             </div>
           </div>
         </a-tab-pane>
@@ -111,10 +111,12 @@ export default {
     async fetch (id) {
       try {
         this.spinning = true
-        const model = await AlarmRuleService.detail(id)
+        const { dictBrand, modelMetric, modelEndpoint, dictType, ...model } = await AlarmRuleService.detail(id)
+
         // TODO
         AlarmRuleService.devices(id)
         this.model = AlarmRuleModelFactory.create(model)
+        Object.assign(this.model, { dictBrand, modelMetric, modelEndpoint, dictType })
       } catch (e) {
         this.model = {}
         throw e

@@ -45,22 +45,23 @@ export default {
     AuthMenu
   },
   props: {},
-  data: (vm) => ({
-    activeTabKey: '1',
-    form: vm.$form.createForm(vm),
-    formItemLayout,
-    loading: false,
-    record: null,
-    title: '',
-    visible: false,
-    authView: {
+  data () {
+    return {
+      activeTabKey: '1',
+      form: this.$form.createForm(this),
+      formItemLayout,
+      loading: false,
+      record: null,
+      title: '',
+      visible: false,
+      authView: {
       // 选中的 viewId
-      viewIds: [],
-      record: null
-    },
-    userId: ''
-  }),
-
+        viewIds: [],
+        record: null
+      },
+      userId: ''
+    }
+  },
   methods: {
     edit (record) {
       this.title = '授权'
@@ -79,7 +80,7 @@ export default {
     async submit () {
       try {
         this.loading = true
-        const menu = this.$refs.menu.getCheckedMenu()
+        const menu = await this.$refs.menu.getCheckedMenu()
         const {
           authView: { viewIds },
           record: { user_id, group_id }

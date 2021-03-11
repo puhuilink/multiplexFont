@@ -102,7 +102,7 @@
             />
           </a-col>
 
-          <a-col :span="3">
+          <a-col :span="3" v-show="formModel.exprs.trigger_condition === 'happen' " >
             <a-form-model-item
               v-bind="{
                 labelCol: { span: 24 },
@@ -114,9 +114,10 @@
             </a-form-model-item>
           </a-col>
 
-          <a-col :span="1" v-show="orderTime">
-            <p class="ant-form-item">次时</p>
+          <a-col :span="1">
+            <p class="ant-form-item"> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }}</p>
           </a-col>
+
         </a-row>
 
         <transition-group
@@ -184,6 +185,20 @@
                 </transition>
               </a-form-model-item>
             </a-col>
+
+            <!-- 且 满足发送次数 -->
+            <a-col class="alarm-rule-text" :span="24" >
+
+              说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内，
+              {{ formatConditionText(formModel.exprs.trigger_condition ) }}
+              {{ formatOperatorText( opt.operator) }}
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
+              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
+              产生一次告警; 告警级别为 {{ !opt.alarm_level ? ' ' : 'L' + opt.alarm_level }};
+
+            </a-col>
+
           </a-row>
         </transition-group>
 
@@ -212,7 +227,6 @@ import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
 import anime from 'animejs'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-import bus from '@/utils/bus'
 
 const makeOpt = () => ({
   // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
@@ -242,7 +256,6 @@ export default {
   props: {},
   data: () => ({
     addBtnLoading: false,
-    orderTime: false,
     formModel: {
       deviceType: 'test',
       deviceBrand: '',
@@ -383,22 +396,44 @@ export default {
         }
       })
     },
-    getSelectVal () {
-      bus.$on('sel', (val) => {
-        if (val === 'happen') {
-          this.orderTime = true
-        } else {
-          this.orderTime = false
-        }
-      })
+    formatConditionText (val) {
+      switch (val) {
+        case 'all':
+          return '任意一条'
+        case 'happen':
+          return '全部值中存在'
+        case 'max':
+          return '最大值'
+        case 'min':
+          return '最小值'
+        case 'avg':
+          return '均值'
+        case 'sum':
+          return '求和'
+        case 'diff':
+          return '最新值与其之前'
+        case 'pdiff':
+          return '最新值与其之前'
+        default:
+          break
+      }
+    },
+    formatOperatorText (val) {
+      switch (val) {
+        case '=':
+          return '等于'
+        case '>':
+          return '大于'
+        case '>=':
+          return '大于等于'
+        case '<':
+          return '小于'
+        case '<=':
+          return '小于等于'
+        default:
+          break
+      }
     }
-  },
-  mounted () {
-    this.getSelectVal()
-  },
-  beforeDestroy () {
-    // 组件销毁前需要解绑事件。否则会出现重复触发事件的问题
-    bus.$off('sel')
   }
 }
 </script>
@@ -429,6 +464,10 @@ export default {
     .transition-flip-enter-to {
       z-index: 1;
       background-color: #e6f7ff;
+    }
+
+    .alarm-rule-text {
+     text-align: center;
     }
   }
 

@@ -47,23 +47,23 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAdd" v-action:M0106>新增</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-action:M0101>编辑</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelectedOne" v-action:M0108>删除</a-button>
-        <a-button @click="onAllocateUser" :disabled="!hasSelectedOne" v-action:M0101>分配用户</a-button>
-        <a-button @click="onAllocateAdmin" :disabled="!hasSelectedOne" v-action:M0101>分配管理员</a-button>
-        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0101>更改状态</a-button>
-        <a-button @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
+        <a-button @click="onAdd" v-action:M0106>新增工作组</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-action:M0112>编辑工作组</a-button>
+        <a-button @click="onBatchDelete" :disabled="!hasSelectedOne" v-action:M0108>删除工作组</a-button>
+        <a-button @click="onAllocateUser" :disabled="!hasSelectedOne" v-action:M0109>分配用户</a-button>
+        <a-button @click="onAllocateAdmin" :disabled="!hasSelectedOne" v-action:M0115>分配管理员</a-button>
+        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0113>更改工作组状态</a-button>
+        <a-button @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M0114>分配工作组权限</a-button>
       </template>
     </CTable>
 
-    <GroupSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <GroupSchema v-action:M0106 ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />
+    <AuthSchema v-action:M0114 ref="auth" @success="query(false)" />
 
-    <GroupAdministratorSchema v-action:M0101 ref="groupAdmin" @editSuccess="query(false)" />
+    <GroupAdministratorSchema v-action:M0115 ref="groupAdmin" @editSuccess="query(false)" />
 
-    <GroupUserSchema v-action:M0101 ref="groupUser" @editSuccess="query(false)" />
+    <GroupUserSchema v-action:M0109 ref="groupUser" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -176,14 +176,24 @@ export default {
      * @event
      */
     async onBatchDelete () {
+      const [{ flag }] = this.selectedRows
+      const title = flag === GROUP_FLAG.enabled ? '无法删除' : '删除'
+      const content = flag === GROUP_FLAG.enabled ? '只能删除无效用户' : '确定要删除选中的记录吗？'
+      const onOk = flag === GROUP_FLAG.enabled ? 1 : 0
       this.$promiseConfirmDelete({
-        onOk: () =>
-          GroupService.batchDelete(this.selectedRowKeys)
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.query(false)
-            })
-            .catch(this.$notifyError)
+        title,
+        content,
+        onOk: () => {
+          if (onOk === 1) {
+          } else {
+            GroupService.batchDelete(this.selectedRowKeys)
+              .then(() => {
+                this.$notifyDeleteSuccess()
+                this.query(false)
+              })
+              .catch(this.$notifyError)
+          }
+        }
       })
     },
     /**
@@ -214,6 +224,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang='less'>
