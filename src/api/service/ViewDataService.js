@@ -155,7 +155,7 @@ export class ViewDataService extends BaseService {
     if (top) {
       Object.assign(data, { top })
     }
-
+    console.log('data', data)
     return axios.post('/data/view', data)
   }
 
