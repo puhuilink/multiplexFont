@@ -357,7 +357,6 @@ export default {
           break
         case 'padding':
           // 图表Padding样式更改，只需更新数据即可
-          console.log('config', this.config)
           this.activeWidget.render.mergeOption(this.config)
           break
         case 'size':

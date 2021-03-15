@@ -3,7 +3,7 @@
  */
 
 import { DynamicDataConfig } from './common/index'
-import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL, SOURCE_TYPE_COMBO } from './types/sourceType'
+import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL } from './types/sourceType'
 import _ from 'lodash'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {
@@ -113,10 +113,6 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
           await this.getOverviewDataOption()
           break
         }
-        case SOURCE_TYPE_COMBO : {
-          await this.getComboDataOption()
-          break
-        }
       }
     }
     const { dataSource = [], columns = [] } = this
@@ -125,7 +121,9 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
 
   async getOverviewDataOption () {
     const dataList = await this.overviewConfig.fetch()
+
     const { columns, dataSource } = this.generate(dataList)
+
     Object.assign(this, {
       columns,
       dataSource
@@ -134,18 +132,9 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     const dataList = await this.resourceConfig.fetch()
-    const { columns, dataSource } = this.generate(dataList, true)
-    // console.log('zonglan', dataList)
-    Object.assign(this, {
-      columns,
-      dataSource
-    })
-  }
 
-  async getComboDataOption () {
-    // 对应新接口网络请求
-    const dataList = await this.comboConfig.fetch()
     const { columns, dataSource } = this.generate(dataList, true)
+
     Object.assign(this, {
       columns,
       dataSource
