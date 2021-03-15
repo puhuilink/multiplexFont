@@ -126,7 +126,6 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
   async getOverviewDataOption () {
     const dataList = await this.overviewConfig.fetch()
     const { columns, dataSource } = this.generate(dataList)
-
     Object.assign(this, {
       columns,
       dataSource
@@ -135,9 +134,8 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     const dataList = await this.resourceConfig.fetch()
-    console.log('dataList', dataList)
     const { columns, dataSource } = this.generate(dataList, true)
-
+    // console.log('zonglan', dataList)
     Object.assign(this, {
       columns,
       dataSource
@@ -147,6 +145,10 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
   async getComboDataOption () {
     // 对应新接口网络请求
     const dataList = await this.comboConfig.fetch()
-    console.log('dataList', dataList)
+    const { columns, dataSource } = this.generate(dataList, true)
+    Object.assign(this, {
+      columns,
+      dataSource
+    })
   }
 }
