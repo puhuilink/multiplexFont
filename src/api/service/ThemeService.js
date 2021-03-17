@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { ThemeDao } from '../dao/index'
+import { ThemeDao } from '../dao/ThemeDao'
 import _ from 'lodash'
 
 class ThemeService extends BaseService {
@@ -14,7 +14,7 @@ class ThemeService extends BaseService {
     const { data: { themeList } } = await query(
       ThemeDao.find({
         where: { is_activated: 1 },
-        fields: ['settings', 'bg_image'],
+        fields: ['settings', 'logo', 'bg_image'],
         alias: 'themeList'
       })
     )

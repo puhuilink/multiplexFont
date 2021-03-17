@@ -1,27 +1,48 @@
 <template>
   <div class="logo">
-    <router-link :to="{name:'view'}">
-      <img src="~@/assets/logo.png" alt="">
+    <router-link :to="{ name: 'view' }">
+      <img :src="logo" alt="" />
       <h1 v-if="showTitle" class="logo__title">{{ title }}</h1>
     </router-link>
   </div>
 </template>
 
 <script>
+import { ThemeService } from '@/api'
+
 export default {
   name: 'Logo',
   props: {
     title: {
       type: String,
       default: '中国交建· 统一监控管理平台',
-      required: false
+      required: false,
     },
     showTitle: {
       type: Boolean,
       default: true,
-      required: false
+      required: false,
+    },
+  },
+  data() {
+    return {
+      logo: require('@/assets/logo.png'),
     }
-  }
+  },
+  methods: {
+    async getTheme() {
+      //读取当前主题
+      try {
+        let { logo } = await ThemeService.fetchTheme()
+        if (logo) this.logo = logo
+      } catch (error) {
+        this.$message.error('主题请求异常!' + error)
+      }
+    },
+  },
+  created() {
+    this.getTheme()
+  },
 }
 </script>
 <style scoped lang="less">
