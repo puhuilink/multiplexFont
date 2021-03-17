@@ -52,7 +52,6 @@
         <a-button @click="onBatchDelete" :disabled="!hasSelected" v-action:M0309>删除</a-button>
         <a-button @click="onEditGlobalRule" class="fr" type="primary">全局告警通知设置</a-button>
       </template>
-    </ctable></div></template>
     </CTable>
 
     <AlarmRuleSchema
