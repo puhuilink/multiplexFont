@@ -154,5 +154,4 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
       dataSource
     })
   }
-
 }
