@@ -30,22 +30,22 @@ export default {
   name: 'UserLayout',
   components: { RouteView },
   mixins: [mixinDevice],
-  data() {
+  data () {
     return { bgImage: require('@/assets/images/bg-login-compress.jpg') }
   },
-  mounted() {
+  mounted () {
     document.body.classList.add('userLayout')
     this.getTheme()
   },
   methods: {
-    async getTheme() {
-      //读取当前主题
+    async getTheme () {
+      // 读取当前主题
       try {
-        let theme = await ThemeService.fetchTheme()
+        const theme = await ThemeService.fetchTheme()
         if (theme) {
-          let {
+          const {
             bg_image,
-            settings: { primaryColor },
+            settings: { primaryColor }
           } = theme
           this.bgImage = bg_image
           this.$store.dispatch('ToggleColor', primaryColor)
@@ -53,11 +53,11 @@ export default {
       } catch (error) {
         this.$message.error('主题请求异常!' + error)
       }
-    },
+    }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     document.body.classList.remove('userLayout')
-  },
+  }
 }
 </script>
 
