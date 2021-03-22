@@ -8,6 +8,7 @@ import {
   CmdbHostTreeDao
 } from '../dao/index'
 import _ from 'lodash'
+import { alias } from 'ant-design-vue/lib/icon/utils'
 
 class CmdbService extends BaseService {
   static async tree () {
@@ -26,6 +27,7 @@ class CmdbService extends BaseService {
         alias: 'hostList'
       })
     )
+    // console.log('hostList', hostList)
     const treeData = hostList.map(host => ({
       title: host.host,
       key: host.id,
@@ -123,7 +125,8 @@ class CmdbService extends BaseService {
         },
         fields: [
           'key: id',
-          'label: alias'
+          // 'label: alias'
+          'label: id'
         ],
         alias: 'cmdbHostList'
       })
@@ -279,15 +282,19 @@ class CmdbService extends BaseService {
         where: { id: { _eq: 1 } },
         fields: [
           `id
+            host_ids
             alias
             children {
               id
+              host_ids
               alias
               children {
                 id
+                host_ids
                 alias
                 children{
                   id
+                  host_ids
                   alias
                 }
               }

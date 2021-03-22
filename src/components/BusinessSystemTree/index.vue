@@ -7,7 +7,8 @@
     :replaceFields="{
       title: 'alias',
       key: 'id',
-      value: 'id'
+      value: 'id',
+      hostIds: 'host_ids'
     }"
     showSearch
     treeNodeFilterProp="title"

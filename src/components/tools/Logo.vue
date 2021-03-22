@@ -13,7 +13,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '中国交建· 统一监控管理平台',
+      default: '统一监控管理平台',
       required: false
     },
     showTitle: {
@@ -30,8 +30,8 @@ export default {
   transform: translateY(-2px);
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 62px;
+    height: 20px;
   }
 
   &__title {
