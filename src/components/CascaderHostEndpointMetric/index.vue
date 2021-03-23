@@ -110,7 +110,6 @@ export default {
       try {
         this.loading.endpointModels = true
         this.options.endpointModels = await ModelService.endpointModelsByHostTypeDictValueCode(this.hostTypeDictValueCode)
-        console.log('endModelId', this.options.endpointModels)
       } catch (e) {
         this.options.endpointModels = []
         throw e

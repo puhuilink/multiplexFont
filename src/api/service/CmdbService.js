@@ -124,7 +124,6 @@ class CmdbService extends BaseService {
         },
         fields: [
           'key: id',
-          // 'label: alias'
           'label: id'
         ],
         alias: 'cmdbHostList'
@@ -281,19 +280,15 @@ class CmdbService extends BaseService {
         where: { id: { _eq: 1 } },
         fields: [
           `id
-            host_ids
             alias
             children {
               id
-              host_ids
               alias
               children {
                 id
-                host_ids
                 alias
                 children{
                   id
-                  host_ids
                   alias
                 }
               }
