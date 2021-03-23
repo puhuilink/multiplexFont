@@ -1,11 +1,3 @@
-<!--
- * @Author: your name
- * @Date: 2021-03-11 15:34:33
- * @LastEditTime: 2021-03-12 11:18:53
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \web\src\views\design\modules\config\dataSource\ListDataSource.vue
--->
 <template>
   <DataSourceTemplate>
     <template v-slot:[SOURCE_TYPE_REAL]>
@@ -25,7 +17,6 @@
         :key="SOURCE_TYPE_OVERVIEW"
       />
     </template> -->
-
     <template v-slot:[SOURCE_TYPE_COMBO]>
       <ComboDataSource
         :key="SOURCE_TYPE_COMBO"
@@ -39,8 +30,8 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
 import OverviewDataSource from '../common/OverviewDataSource'
-import ComboDataSource from '../common/ComboDataSource'
 import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import ComboDataSource from '../common/ComboDataSource'
 
 export default {
   name: 'ListDataSource',
@@ -50,6 +41,7 @@ export default {
     RealDataSource,
     OverviewDataSource,
     ComboDataSource
+
   },
   data: () => ({
     SOURCE_TYPE_REAL,

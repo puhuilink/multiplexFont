@@ -36,7 +36,6 @@ export class DynamicDataConfig {
       resourceConfig: this.resourceConfig.getOption(),
       alarmConfig: this.alarmConfig.getOption(),
       overviewConfig: this.overviewConfig.getOption(),
-      // 待定
       comboConfig: this.comboConfig.getOption()
     }
   }

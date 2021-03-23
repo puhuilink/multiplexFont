@@ -1,8 +1,8 @@
 /*
- * @Author: your name
- * @Date: 2021-03-12 18:04:54
- * @LastEditTime: 2021-03-15 11:19:23
- * @LastEditors: your name
+ * @Author: xcs
+ * @Date: 2021-03-16 16:54:57
+ * @LastEditTime: 2021-03-16 17:27:47
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \web\src\model\element\ListElement.js
  */

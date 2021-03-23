@@ -1,13 +1,15 @@
 <template>
   <div class="logo">
-    <router-link :to="{name:'view'}">
-      <img src="~@/assets/logo.png" alt="">
+    <router-link :to="{ name: 'view' }">
+      <img :src="logo" alt="" />
       <h1 v-if="showTitle" class="logo__title">{{ title }}</h1>
     </router-link>
   </div>
 </template>
 
 <script>
+import { ThemeService } from '@/api'
+
 export default {
   name: 'Logo',
   props: {
@@ -21,6 +23,25 @@ export default {
       default: true,
       required: false
     }
+  },
+  data () {
+    return {
+      logo: require('@/assets/logo.png')
+    }
+  },
+  methods: {
+    async getTheme () {
+      // 读取当前主题
+      try {
+        const { logo } = await ThemeService.fetchTheme()
+        if (logo) this.logo = logo
+      } catch (error) {
+        this.$message.error('主题请求异常!' + error)
+      }
+    }
+  },
+  created () {
+    this.getTheme()
   }
 }
 </script>

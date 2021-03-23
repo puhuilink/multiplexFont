@@ -113,7 +113,7 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
           await this.getOverviewDataOption()
           break
         }
-        case SOURCE_TYPE_COMBO : {
+        case SOURCE_TYPE_COMBO: {
           await this.getComboDataOption()
           break
         }
@@ -125,7 +125,9 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
 
   async getOverviewDataOption () {
     const dataList = await this.overviewConfig.fetch()
+
     const { columns, dataSource } = this.generate(dataList)
+
     Object.assign(this, {
       columns,
       dataSource
@@ -134,8 +136,9 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     const dataList = await this.resourceConfig.fetch()
+
     const { columns, dataSource } = this.generate(dataList, true)
-    // console.log('zonglan', dataList)
+
     Object.assign(this, {
       columns,
       dataSource
