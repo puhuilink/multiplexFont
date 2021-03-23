@@ -1,23 +1,27 @@
 <script>
-import { ModelService, CmdbHostEndpointMetricTreeService } from '@/api/index'
+import { ModelService, CmdbHostEndpointMetricTreeService, CmdbHostTreeService } from '@/api/index'
+import BusinessSystemTree from '~~~/BusinessSystemTree'
 import { filterOption } from '@/utils/util'
 export default {
   name: 'BusinessSystemCascader',
+  components: { BusinessSystemTree },
   mixins: [],
   props: {
     config: {
       type: Object,
       default: () => ({
+        systemId: null,
+        hostIds: [],
         endpointModelId: null,
         endpointId: null,
         metricModelId: null,
         metricId: null
       })
-    },
-    hostIds: {
-      type: Array,
-      default: () => []
     }
+    // hostIds: {
+    //   type: Array,
+    //   default: () => [25614330288541700, 25614330288541704]
+    // }
   },
   data () {
     return {
@@ -36,10 +40,18 @@ export default {
     }
   },
   watch: {
-    hostIds: {
+    'config.systemId': {
       immediate: true,
       handler () {
-        if (this.hostIds) {
+        if (this.config.systemId) {
+          this.fetchHosyId()
+        }
+      }
+    },
+    'config.hostIds': {
+      immediate: true,
+      handler () {
+        if (this.config.systemId && this.config.hostIds) {
           this.fetchEndpointModels(this.hostIds)
         }
       }
@@ -49,7 +61,6 @@ export default {
       handler () {
         if (this.config.endpointModelId) {
           this.fetchMetricModels()
-          console.log('EndModelID', this.config.endpointModelId)
           if (this.config.hostIds) {
             this.fetchEndpoints()
           }
@@ -77,10 +88,23 @@ export default {
     }
   },
   methods: {
-    async fetchEndpointModels (ids) {
+    async fetchHosyId () {
       try {
+        const host_ids = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
+        this.config.hostIds = host_ids[0].host_ids
+      } catch (e) {
+        this.config.hostIds = []
+      }
+    },
+    async fetchEndpointModels () {
+      try {
+        this.config.hostIds = this.hostIds
         this.loading.endpointModels = true
-        this.options.endpointModels = await CmdbHostEndpointMetricTreeService.endpointModel(ids)
+        this.options.endpointModels = await CmdbHostEndpointMetricTreeService.endpointModel(this.config.hostIds)
+        // this.setEndpointModelId(null)
+        // this.setEndpointId(null)
+        // this.setMetricModelId(null)
+        // this.setMetricId(null)
       } catch (e) {
         this.options.endpointModels = []
         throw e
@@ -103,7 +127,6 @@ export default {
       try {
         this.loading.metricModels = true
         this.options.metricModels = await ModelService.metricModelsByEndpointModelId(this.config.endpointModelId)
-        console.log('metricModel', this.options.metricModels)
       } catch (e) {
         this.options.metricModels = []
         throw e
@@ -114,6 +137,7 @@ export default {
     async fetchMetrics () {
       try {
         this.loading.metrics = true
+        // TODO 复制item和置空冲突
         // this.options.metrics = await CmdbService.metrics(
         //   this.config.hostId,
         //   this.config.endpointModelId,
@@ -124,7 +148,6 @@ export default {
           this.config.endpointModelId,
           this.config.metricModelId
         )
-        console.log('metrics', this.option.metric)
       } catch (e) {
         this.options.metrics = []
         throw e
@@ -134,7 +157,6 @@ export default {
     },
     setEndpointModelId (endpointModelId) {
       this.config.endpointModelId = endpointModelId
-      console.log('endpoint', this.config.endpointModelId)
       this.setEndpointId(null)
       this.setMetricModelId(null)
     },
@@ -152,27 +174,25 @@ export default {
     renderSelect ({ options, placeholder = '', loading, value, onChange }) {
       // hack: ASelect传入null时不展示placeholder
       return (
-        <div>
-          <a-select
-            allowClear
-            class="CascaderHostEndpointMetric__select"
-            filterOption={filterOption}
-            notFoundContent={loading ? '加载中' : '暂无数据'}
-            placeholder={placeholder}
-            showSearch
-            value={value === null ? undefined : value}
-            onChange={onChange}
-          >
-            {
-              options.map(({ label, key }) => (
-                <a-select-option
-                  key={key}
-                  value={key}
-                >{label}</a-select-option>
-              ))
-            }
-          </a-select>
-        </div>
+        <a-select
+          allowClear
+          class="CascaderHostEndpointMetric__select"
+          filterOption={filterOption}
+          notFoundContent={loading ? '加载中' : '暂无数据'}
+          placeholder={placeholder}
+          showSearch
+          value={value === null ? undefined : value}
+          onChange={onChange}
+        >
+          {
+            options.map(({ label, key }) => (
+              <a-select-option
+                key={key}
+                value={key}
+              >{label}</a-select-option>
+            ))
+          }
+        </a-select>
       )
     }
   },
@@ -180,6 +200,9 @@ export default {
     const { config, options, loading } = this
     return (
       <div>
+        <BusinessSystemTree
+          v-model={config.systemId}
+        />
         {
           this.renderSelect({
             loading: loading.endpointModels,
@@ -219,6 +242,7 @@ export default {
             onChange: this.setMetricId
           })
         }
+
       </div>
     )
   }

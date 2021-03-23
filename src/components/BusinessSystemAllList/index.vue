@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-03-22 16:29:11
+ * @LastEditTime: 2021-03-23 14:49:59
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \web\src\components\BusinessSystemAllList\index.vue
+-->
 <template>
   <div class="BusinessSystemAllList">
     <div
@@ -5,7 +13,7 @@
       v-for="(config, index) in content"
       :key="index"
     >
-      <BusinessSystemItem :config="config" />
+      <BusinessSystemCascader :config="config" />
       <a-button type="link" icon="delete" @click="removeItem(index)" />
       <a-button type="link" icon="snippets" @click="copyItem(index)" />
     </div>
@@ -15,10 +23,10 @@
 
 <script>
 import _ from 'lodash'
-import BusinessSystemItem from '~~~/BusinessSystemItem/index'
+import BusinessSystemCascader from '~~~/BusinessSystemCascader/index'
 export default {
   name: 'BusinessSystemAllList',
-  components: { BusinessSystemItem },
+  components: { BusinessSystemCascader },
   props: {
     content: {
       type: Array,
@@ -32,8 +40,13 @@ export default {
     },
     // 新增节点
     addItem (item = {
-      // 新增节点需要哪些：systemId、system
-      systemId: null
+      // 新增节点需要哪些：systemId
+      systemId: null,
+      hostIds: [],
+      endpointModelId: null,
+      endpointId: null,
+      metricModelId: null,
+      metricId: null
     }) {
       this.content.push(item)
     },
@@ -49,9 +62,9 @@ export default {
 <style lang="less">
 .BusinessSystemAllList {
    &__item {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
+     display: flex;
+     flex-direction: row;
+     width: 100%;
    }
 }
 </style>

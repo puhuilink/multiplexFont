@@ -8,7 +8,6 @@ import {
   CmdbHostTreeDao
 } from '../dao/index'
 import _ from 'lodash'
-import { alias } from 'ant-design-vue/lib/icon/utils'
 
 class CmdbService extends BaseService {
   static async tree () {
