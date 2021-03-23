@@ -19,6 +19,7 @@ const IMP_TABLE_LIST = [
   { schema: 't_cmdb_host_view' }, // 关联表
   { schema: 't_cmdb_metric' },
   { schema: 't_cmdb_host_tree' }, // 业务系统关系表
+  { schema: 't_cmdb_host_endpoint_metric_tree' }, // 业务系统完整映射表
   // 字典
   { schema: 't_dict_value', primaryKey: 'value_code' },
   // 模型

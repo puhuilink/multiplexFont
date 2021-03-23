@@ -25,6 +25,8 @@ import { ViewDataService } from './ViewDataService.js'
 import { ViewDesignService } from './ViewDesignService.js'
 import { ViewDesktopService } from './ViewDesktopService.js'
 import { ViewListService } from './ViewListService.js'
+import { CmdbHostEndpointMetricTreeService } from '@/api/service/CmdbHostEndpointMetricTreeService'
+import { CmdbHostTreeService } from '@/api/service/CmdbHostTreeService'
 
 export {
   AlarmForwardService,
@@ -33,7 +35,9 @@ export {
   AlarmTempService,
   AuditService,
   AuthorizeObjectService,
+  CmdbHostEndpointMetricTreeService,
   CmdbHostEndpointMetricService,
+  CmdbHostTreeService,
   CmdbHostModelBrandService,
   CmdbHostViewService,
   CmdbService,

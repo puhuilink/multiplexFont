@@ -13,6 +13,8 @@ export class AdaptorComboConfig {
     content = [],
     // dataType为6时
     healthyContent = [],
+    // dataType为2时
+    businessContent = [],
     refreshTime = 0,
     delayTime = 0
   }) {
@@ -23,6 +25,7 @@ export class AdaptorComboConfig {
     this.top = top
     this.content = content
     this.healthyContent = healthyContent
+    this.businessContent = businessContent
     this.refreshTime = refreshTime
     this.delayTime = delayTime
   }
@@ -44,6 +47,9 @@ export class AdaptorComboConfig {
         return this.content
       case '6':
         return this.healthyContent
+      // 业务系统
+      case '2':
+        return this.businessContent
       default:
         throw new Error(`Unknown dataType in AdaptorComboConfig: ${this.dataType}`)
     }

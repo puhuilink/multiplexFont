@@ -1,37 +1,37 @@
 <script>
-import CascaderDictValue from '~~~/CascaderDictValue'
-import { CmdbService, ModelService } from '@/api/index'
+import { ModelService, CmdbHostEndpointMetricTreeService, CmdbHostTreeService } from '@/api/index'
+import BusinessSystemTree from '~~~/BusinessSystemTree'
 import { filterOption } from '@/utils/util'
 export default {
-  name: 'CascaderHostEndpointMetric',
+  name: 'BusinessSystemCascader',
+  components: { BusinessSystemTree },
   mixins: [],
-  components: {
-    CascaderDictValue
-  },
   props: {
     config: {
       type: Object,
       default: () => ({
-        dictValue: [],
-        hostId: null,
+        systemId: null,
+        hostIds: [],
         endpointModelId: null,
         endpointId: null,
         metricModelId: null,
         metricId: null
       })
     }
+    // hostIds: {
+    //   type: Array,
+    //   default: () => [25614330288541700, 25614330288541704]
+    // }
   },
   data () {
     return {
       options: {
-        hosts: [],
         endpointModels: [],
         endpoints: [],
         metricModels: [],
         metrics: []
       },
       loading: {
-        hosts: false,
         endpointModels: false,
         endpoints: false,
         metricModels: false,
@@ -39,26 +39,20 @@ export default {
       }
     }
   },
-  computed: {
-    hostTypeDictValueCode () {
-      return this.config.dictValue[2]
-    }
-  },
   watch: {
-    'config.dictValue': {
+    'config.systemId': {
       immediate: true,
       handler () {
-        if (this.hostTypeDictValueCode) {
-          this.fetchHosts()
-          this.fetchEndpointModels()
+        if (this.config.systemId) {
+          this.fetchHosyId()
         }
       }
     },
-    'config.hostId': {
+    'config.hostIds': {
       immediate: true,
       handler () {
-        if (this.config.hostId && this.config.endpointModelId) {
-          this.fetchEndpoints()
+        if (this.config.systemId && this.config.hostIds) {
+          this.fetchEndpointModels(this.hostIds)
         }
       }
     },
@@ -67,7 +61,7 @@ export default {
       handler () {
         if (this.config.endpointModelId) {
           this.fetchMetricModels()
-          if (this.config.hostId) {
+          if (this.config.hostIds) {
             this.fetchEndpoints()
           }
         }
@@ -77,7 +71,6 @@ export default {
       immediate: true,
       handler () {
         if (
-          this.config.hostId &&
           this.config.endpointModelId &&
           this.config.metricModelId
         ) {
@@ -88,28 +81,30 @@ export default {
     'config.metricModelId': {
       immediate: true,
       handler () {
-        if (this.config.hostId && this.config.endpointModelId && this.config.metricModelId) {
+        if (this.config.endpointModelId && this.config.metricModelId) {
           this.fetchMetrics()
         }
       }
     }
   },
   methods: {
-    async fetchHosts () {
+    async fetchHosyId () {
       try {
-        this.loading.hosts = true
-        this.options.hosts = await ModelService.hostsByHostTypeDictValueCode(this.hostTypeDictValueCode)
+        const host_ids = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
+        this.config.hostIds = host_ids[0].host_ids
       } catch (e) {
-        this.options.hosts = []
-        throw e
-      } finally {
-        this.loading.hosts = false
+        this.config.hostIds = []
       }
     },
     async fetchEndpointModels () {
       try {
+        this.config.hostIds = this.hostIds
         this.loading.endpointModels = true
-        this.options.endpointModels = await ModelService.endpointModelsByHostTypeDictValueCode(this.hostTypeDictValueCode)
+        this.options.endpointModels = await CmdbHostEndpointMetricTreeService.endpointModel(this.config.hostIds)
+        // this.setEndpointModelId(null)
+        // this.setEndpointId(null)
+        // this.setMetricModelId(null)
+        // this.setMetricId(null)
       } catch (e) {
         this.options.endpointModels = []
         throw e
@@ -120,7 +115,7 @@ export default {
     async fetchEndpoints () {
       try {
         this.loading.endpoints = true
-        this.options.endpoints = await CmdbService.endpointsByHostIdAndEndpointModelId(this.config.hostId, this.config.endpointModelId)
+        this.options.endpoints = await CmdbHostEndpointMetricTreeService.endpintItem(this.config.hostIds, this.config.endpointModelId)
       } catch (e) {
         this.options.endpoints = []
         throw e
@@ -142,8 +137,14 @@ export default {
     async fetchMetrics () {
       try {
         this.loading.metrics = true
-        this.options.metrics = await CmdbService.metrics(
-          this.config.hostId,
+        // TODO 复制item和置空冲突
+        // this.options.metrics = await CmdbService.metrics(
+        //   this.config.hostId,
+        //   this.config.endpointModelId,
+        //   this.config.metricModelId
+        // )
+        this.option.metrics = await CmdbHostEndpointMetricTreeService.metricItem(
+          this.config.hostIds,
           this.config.endpointModelId,
           this.config.metricModelId
         )
@@ -153,15 +154,6 @@ export default {
       } finally {
         this.loading.metrics = false
       }
-    },
-    setDictValue (dictValue) {
-      this.config.dictValue = dictValue
-      this.setHostId(null)
-      this.setEndpointModelId(null)
-    },
-    setHostId (hostId) {
-      this.config.hostId = hostId
-      this.setEndpointId(null)
     },
     setEndpointModelId (endpointModelId) {
       this.config.endpointModelId = endpointModelId
@@ -208,21 +200,9 @@ export default {
     const { config, options, loading } = this
     return (
       <div>
-        <CascaderDictValue
-          value={config.dictValue}
-          onChange={this.setDictValue}
+        <BusinessSystemTree
+          v-model={config.systemId}
         />
-
-        {
-          this.renderSelect({
-            loading: loading.hosts,
-            options: options.hosts,
-            placeholder: '请选择具体设备',
-            value: config.hostId,
-            onChange: this.setHostId
-          })
-        }
-
         {
           this.renderSelect({
             loading: loading.endpointModels,
@@ -270,10 +250,10 @@ export default {
 </script>
 
 <style lang="less">
-.CascaderHostEndpointMetric {
+  .CascaderHostEndpointMetric {
 
-  &__select {
-    width: 170px !important;
+    &__select {
+      width: 170px !important;
+    }
   }
-}
 </style>

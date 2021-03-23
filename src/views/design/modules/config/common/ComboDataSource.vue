@@ -6,6 +6,7 @@
       <a-select class="fw" v-model="comboConfig.dataType">
         <a-select-option value="1">性能数据</a-select-option>
         <a-select-option value="6">健康度</a-select-option>
+        <a-select-option value="2">业务系统</a-select-option>
       </a-select>
     </a-form-item>
 
@@ -47,6 +48,10 @@
         :content="comboConfig.healthyContent"
         v-show="comboConfig.dataType === '6'"
       />
+      <BusinessSystemAllList
+        :content="comboConfig.businessContent"
+        v-show="comboConfig.dataType === '2'"
+      ></BusinessSystemAllList>
     </a-modal>
   </a-form-model>
 </template>
@@ -55,6 +60,7 @@
 import DataSourceMixins from '../dataSourceMixins/index'
 import CascaderHostEndpointMetricList from '~~~/CascaderHostEndpointMetricList'
 import BusinessSystemTreeHealthList from '~~~/BusinessSystemTreeHealthList'
+import BusinessSystemAllList from '~~~/BusinessSystemAllList'
 import { parserInt } from '@/utils/util'
 
 export default {
@@ -62,7 +68,8 @@ export default {
   mixins: [DataSourceMixins],
   components: {
     CascaderHostEndpointMetricList,
-    BusinessSystemTreeHealthList
+    BusinessSystemTreeHealthList,
+    BusinessSystemAllList
   },
   props: {},
   data () {
