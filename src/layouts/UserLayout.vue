@@ -24,7 +24,7 @@
 <script>
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
-import { ThemeService } from '@/api'
+import { ThemeService } from '@/api/service/ThemeService'
 
 export default {
   name: 'UserLayout',

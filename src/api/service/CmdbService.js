@@ -26,6 +26,7 @@ class CmdbService extends BaseService {
         alias: 'hostList'
       })
     )
+    // console.log('hostList', hostList)
     const treeData = hostList.map(host => ({
       title: host.host,
       key: host.id,
@@ -123,7 +124,7 @@ class CmdbService extends BaseService {
         },
         fields: [
           'key: id',
-          'label: alias'
+          'label: id'
         ],
         alias: 'cmdbHostList'
       })
