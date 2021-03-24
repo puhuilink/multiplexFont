@@ -44,7 +44,7 @@ export default {
       immediate: true,
       handler () {
         if (this.config.systemId) {
-          this.fetchHosyId()
+          this.fetchHostId()
         }
       }
     },
@@ -88,23 +88,18 @@ export default {
     }
   },
   methods: {
-    async fetchHosyId () {
+    async fetchHostId () {
       try {
         const host_ids = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
-        this.config.hostIds = host_ids[0].host_ids
+        this.config.hostIds = host_ids
       } catch (e) {
         this.config.hostIds = []
       }
     },
     async fetchEndpointModels () {
       try {
-        this.config.hostIds = this.hostIds
         this.loading.endpointModels = true
         this.options.endpointModels = await CmdbHostEndpointMetricTreeService.endpointModel(this.config.hostIds)
-        // this.setEndpointModelId(null)
-        // this.setEndpointId(null)
-        // this.setMetricModelId(null)
-        // this.setMetricId(null)
       } catch (e) {
         this.options.endpointModels = []
         throw e
@@ -143,11 +138,13 @@ export default {
         //   this.config.endpointModelId,
         //   this.config.metricModelId
         // )
-        this.option.metrics = await CmdbHostEndpointMetricTreeService.metricItem(
+        const metrics = await CmdbHostEndpointMetricTreeService.metricItem(
           this.config.hostIds,
           this.config.endpointModelId,
           this.config.metricModelId
         )
+        console.log('metrics', metrics)
+        this.option.metrics = metrics
       } catch (e) {
         this.options.metrics = []
         throw e
