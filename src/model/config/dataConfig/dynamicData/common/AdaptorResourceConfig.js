@@ -21,6 +21,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     // 监控实体聚合方式：model / cmdb
     endpointAggregateMode = 'model',
     legendType = 'host',
+    refreshTime = '',
+    metricRefreshTime = '',
     ...props
   }) {
     super(props)
@@ -34,6 +36,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     this.endpointAggregateMode = endpointAggregateMode
     this.legendType = legendType
     this.metricIds = metricIds
+    this.refreshTime = refreshTime
+    this.metricRefreshTime = metricRefreshTime
   }
 
   get isAvailable () {
@@ -43,7 +47,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
       this.deviceModel &&
       this.hostId && this.hostId.length &&
       this.endpointModelId &&
-      this.metricModelIds && this.metricModelIds.length
+      this.metricModelIds && this.metricModelIds.length,
+      this.refreshTime && this.metricRefreshTime.length
     )
   }
 
