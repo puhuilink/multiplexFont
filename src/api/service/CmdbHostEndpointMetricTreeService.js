@@ -43,7 +43,6 @@ class CmdbHostEndpointMetricTreeService extends BaseService {
    * @returns {Promise<void>}
    */
   static async endpintItem (ids, endpointModelId) {
-    console.log('ids', ids, 'endpointIds', endpointModelId)
     const { data: { endpoint } } = await query(
       CmdbHostEndpointMetricTreeDao.find({
         where: {
@@ -84,6 +83,9 @@ class CmdbHostEndpointMetricTreeService extends BaseService {
           },
           metric_model_id: {
             _eq: metricModelId
+          },
+          metric_alias: {
+            _is_null: false
           }
         },
         fields: [
@@ -93,7 +95,8 @@ class CmdbHostEndpointMetricTreeService extends BaseService {
         alias: 'metric'
       })
     )
-    return metric
+    const unqiList = _.uniqBy(metric.map(el => ({ key: el.key, label: el.label })), 'key')
+    return unqiList
   }
 }
 export {
