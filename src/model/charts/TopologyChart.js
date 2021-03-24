@@ -256,13 +256,13 @@ export default class TopologyChart extends Chart {
   /**
    * 设置节点告警状态
    * @param {String} id 节点id
-   * @param {Number} eventLevel 告警等级
+   * @param {Number} alarmLevel 告警等级
    */
-  setNodeAlarmState (id, eventLevel) {
+  setNodeAlarmState (id, alarmLevel) {
     this.chart.clearItemStates(id)
     // 不展示5级告警
-    if (eventLevel !== 5) {
-      this.chart.setItemState(id, animateTypeList[eventLevel - 1], true)
+    if (alarmLevel && alarmLevel !== 5) {
+      this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
     }
   }
 
@@ -289,14 +289,17 @@ export default class TopologyChart extends Chart {
     if (_.isEmpty(hostIds)) return
 
     const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
+
     const hostIdAlarmLevelMapping = new Map(
       alarmList.map((alarm) => [alarm.host_id, alarm.alarm_level])
     )
+
     models.forEach((model) => {
-      const eventLevel = hostIdAlarmLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
-      eventLevel && this.setNodeAlarmState(
+      const alarmLevel = hostIdAlarmLevelMapping.get(_.get(model, ['resourceConfig', 'hostId', '0']))
+      this.chart.updateItem(model.id, Object.assign(model, { alarmLevel }))
+      this.setNodeAlarmState(
         model.id,
-        Number(eventLevel)
+        Number(alarmLevel)
       )
     })
   }
