@@ -128,6 +128,20 @@ class AlarmRuleService extends BaseService {
       }
     })
   }
+
+  // 告警下钻第一个展示的页面 请求接口
+  static async AlarmPopupDetail (id = {}) {
+    return axios.post('/host/hostDetail', {
+      id
+    })
+  }
+
+  // 告警下钻,点击单个内容详情
+  static async AlarmRecordDetails (id) {
+    return axios.post('/endpoint/endpointDetail', {
+      id
+    })
+  }
 }
 
 export {

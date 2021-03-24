@@ -22,7 +22,13 @@ export default class CircleNode extends Node {
   }
 
   async getRealDataOption () {
-    const dataList = await this.resourceConfig.fetch()
+    // FIXME: resourceConfig 运行过程中被改变为普通对象
+    if (!(this.resourceConfig instanceof AdaptorResourceConfig)) {
+      this.resourceConfig = new AdaptorResourceConfig(this.resourceConfig)
+    }
+
+    const dataList = await new AdaptorResourceConfig(this.resourceConfig).fetch()
+    // const dataList = await this.resourceConfig.fetch()
     if (_.isEmpty(dataList)) {
       this.tooltipContent = ''
     } else {
@@ -45,7 +51,6 @@ export default class CircleNode extends Node {
 
   intervalRefresh () {
     if (!this.resourceConfig.isAvailable) return
-
     this.getRealDataOption()
     this.timer = setInterval(() => {
       this.getRealDataOption()

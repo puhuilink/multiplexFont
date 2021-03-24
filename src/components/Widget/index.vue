@@ -28,26 +28,30 @@
       v-if="useComponent"
     />
 
+    <AlarmPopupDetails ref="alarmSchema" ></AlarmPopupDetails>
+
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
+// import _ from 'lodash'
 import { mapMutations, mapState } from 'vuex'
 import { ScreenMutations } from '@/store/modules/screen'
 import Factory from '@/model/factory/factory'
 import Widget from '@/model/widget'
 import TopologyChart from '@/model/charts/TopologyChart'
-import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
+// import { NODE_CI_DRILL_TYPE_VIEW } from '@/model/nodes'
 import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 import { ELEMENTS, ELEMENT_MAPPING } from '../Elements'
+import AlarmPopupDetails from '@/components/Alarm/AlarmPopup/AlarmPopupDetails.vue'
 
 const nodeFactory = Factory.createNodeFactory()
 
 export default {
   name: 'Widget',
   components: {
-    ...ELEMENTS
+    ...ELEMENTS,
+    AlarmPopupDetails
   },
   props: {
     widget: {
@@ -99,16 +103,32 @@ export default {
     /**
      * 拓扑节点钻取事件
      */
-    drillFromNode ({ item }) {
-      const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
-      this.$emit('drill', _.cloneDeep(drillConfig))
+
+    // drillFromNode ({ item }) {
+    //   const drillConfig = { drillType: NODE_CI_DRILL_TYPE_VIEW, viewList: [9401] }
+    //   this.$emit('drill', _.cloneDeep(drillConfig))
+    // },
+
+    drillFromNode (node) {
+      // 判断是否有圆形有警告
+      const m = node.item.getModel()
+      const drillAlarm = []
+      if (m.alarmLevel !== undefined) {
+        drillAlarm.push({
+          alarmLevel: m.alarmLevel,
+          hostId: m.resourceConfig.hostId[0]
+        })
+        this.$refs['alarmSchema'].add(drillAlarm)
+      }
     },
+
     initTopologyChart () {
       const { render } = this
       const {
+        chart,
         config: { proprietaryConfig }
       } = render
-      // chart.on('node:click', this.drillFromNode)
+      chart.on('node:click', this.drillFromNode)
       proprietaryConfig.nodes = proprietaryConfig.nodes.map(node => {
         // 筛选出需要定时刷新的节点，因为节点只存储了配置，展示时需要将其实例化
         if (node.shape === NODE_TYPE_CIRCLE) {
