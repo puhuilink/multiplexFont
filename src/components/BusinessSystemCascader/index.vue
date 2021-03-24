@@ -138,13 +138,11 @@ export default {
         //   this.config.endpointModelId,
         //   this.config.metricModelId
         // )
-        const metrics = await CmdbHostEndpointMetricTreeService.metricItem(
+        this.option.metrics = await CmdbHostEndpointMetricTreeService.metricItem(
           this.config.hostIds,
           this.config.endpointModelId,
           this.config.metricModelId
         )
-        console.log('metrics', metrics)
-        this.option.metrics = metrics
       } catch (e) {
         this.options.metrics = []
         throw e
