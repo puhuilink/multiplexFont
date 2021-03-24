@@ -285,6 +285,18 @@ class PatrolService extends BaseService {
     })
   }
 
+  // 二维码下载
+  static async qrCode (qrId) {
+    const formData = new FormData()
+    formData.append('content', qrId)
+    return axios.post(`qrcode/create`, formData, {
+      responseType: 'arraybuffer',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+  }
+
   // 告警审批
   static async approveSend () { }
 
