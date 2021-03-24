@@ -16,7 +16,7 @@
               deviceModel: null,
               hostId: [],
               endpointModelId: null,
-              metricModelIds: []
+              metricModelIds: [],
             }
               }
             }"
@@ -124,6 +124,25 @@
             }"
           />
         </a-form-item>
+
+        <a-form-item label="刷新时间" v-bind="formItemLayout">
+          <a-input
+            :min="0"
+            :parser="parserInt"
+            suffix="分钟"
+            type="number"
+            v-model.number="resourceConfig.refreshTime"
+            :value="resourceConfig.metricRefreshTime"
+            @input="metricRefreshTime => {
+              resourceConfig = {
+                ...resourceConfig,
+                metricRefreshTime
+              }
+            }"
+          />
+
+        </a-form-item>
+
       </a-collapse-panel>
     </a-collapse>
 
@@ -169,7 +188,10 @@ export default {
         offset: 2
       }
     },
-    selectProps: {}
+    selectProps: {},
+    parserInt: null,
+    refreshTime: null,
+    metricRefreshTime: null
   }),
   computed: {
     resourceConfig: {
