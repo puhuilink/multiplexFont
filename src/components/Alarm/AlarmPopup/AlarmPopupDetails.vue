@@ -13,7 +13,6 @@
     @ok="submit">
 
     <!-- okText="保存" -->
-
     <CTable
       v-show="alarmRecord"
       :columns="columns"
@@ -25,7 +24,7 @@
     >
 
       <!-- 告警等级通知 -->
-      <div class="operation" slot="operation">
+      <!-- <div class="operation" slot="operation">
         <div class="AlarmMonitor__operation-badge-group">
           <span>告警级别：</span>
           <span class="alarmStyle urgent">紧急</span>
@@ -34,7 +33,7 @@
           <span class="alarmStyle commonly">一般</span>
           <span class="alarmStyle normal">正常</span>
         </div>
-      </div>
+      </div> -->
     </CTable>
 
     <CTable
@@ -50,16 +49,18 @@
       <!-- 告警等级通知 -->
       <div class="operation" slot="operation">
         <div class="AlarmMonitor__operation-badge-group">
-          <span>告警级别：</span>
+          <!-- <span>告警级别：</span>
           <span class="alarmStyle urgent">紧急</span>
           <span class="alarmStyle alarmMain">主要</span>
           <span class="alarmStyle secondary">次要</span>
           <span class="alarmStyle commonly">一般</span>
-          <span class="alarmStyle normal">正常</span>
+          <span class="alarmStyle normal">正常</span> -->
           <span @click="upfloor" class="upfloor normal">返回上一层数据</span>
         </div>
       </div>
     </CTable>
+
+    <HistoryChart ref="historyChart" />
 
   </a-modal>
 </template>
@@ -68,10 +69,14 @@
 import { List } from '@/components/Mixins'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { AlarmRuleService } from '@/api'
+import HistoryChart from './AlarmHistoryChart'
 
 export default {
   name: 'AlarmPopupDetails',
   mixins: [Schema, List],
+  components: {
+    HistoryChart
+  },
   data () {
     return {
       confirmLoading: false,
@@ -190,7 +195,11 @@ export default {
       })
     },
 
+    // 告警点击查看当前所在数据的内容详情
     async  alarmSingleDetails (record) {
+      this.endpointId = record.endpointId
+      this.endpointModelId = record.endpointModelId
+
       if (record.endpointId !== '') {
         this.alarmRecord = false
         this.alarmRecordDetails = true
@@ -204,7 +213,6 @@ export default {
     async loadDataDetails () {
       const record = this.endpointId
       return AlarmRuleService.AlarmRecordDetails(record).then((res) => {
-        console.log('res', res)
         return res.data
       })
     },
@@ -213,8 +221,17 @@ export default {
       this.alarmRecord = true
       this.alarmRecordDetails = false
     },
-    onShowHistory (record) {
-      console.log('record', record)
+
+    async onShowHistory (record) {
+      const content = []
+      content.push({
+        AlarmhostId: this.drillAlarm[0].hostId, // 设备id
+        endpointId: this.endpointId, // 第一展示单个问题 id
+        endpointModelId: this.endpointModelId, // 第一展示单个问题 id
+        metricId: record.metricId, // 第二次请求id
+        metricModelId: record.metricModelId // 第二次请求id
+      })
+      this.$refs['historyChart'].AlarmonShowHistory(content[0])
     }
 
   }
