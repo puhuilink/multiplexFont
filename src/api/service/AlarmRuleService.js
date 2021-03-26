@@ -145,7 +145,7 @@ class AlarmRuleService extends BaseService {
 
   // 告警下钻，展示历史记录详情
   static async historyAlarmDataView (startTime, entTime, content) {
-    return axios.post('/data/view', { dataType: 1, startTime: entTime[0], entTime: startTime[0], content: [{ hostId: content.AlarmhostId, endpointId: content.endpointId, endpointModelId: content.endpointModelId, metricId: content.metricId, metricModelId: content.metricModelId }]
+    return axios.post('/data/view', { dataType: 1, startTime: entTime[0], endTime: startTime[0], content: [{ hostId: content.AlarmhostId, endpointId: content.endpointId, endpointModelId: content.endpointModelId, metricId: content.metricId, metricModelId: content.metricModelId }]
     })
   }
 }
