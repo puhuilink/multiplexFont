@@ -74,7 +74,7 @@ export default {
           this.config.endpointModelId &&
           this.config.metricModelId
         ) {
-          this.fetchMetrics()
+          this.fetchMetricModels()
         }
       }
     },
@@ -90,8 +90,11 @@ export default {
   methods: {
     async fetchHostId () {
       try {
-        const host_ids = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
-        this.config.hostIds = host_ids
+        this.config.hostIds = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
+        this.setEndpointModelId(null)
+        this.setEndpointId(null)
+        this.setMetricModelId(null)
+        this.setMetricId(null)
       } catch (e) {
         this.config.hostIds = []
       }
@@ -131,14 +134,14 @@ export default {
     },
     async fetchMetrics () {
       try {
-        this.loading.metrics = true
         // TODO 复制item和置空冲突
         // this.options.metrics = await CmdbService.metrics(
         //   this.config.hostId,
         //   this.config.endpointModelId,
         //   this.config.metricModelId
         // )
-        this.option.metrics = await CmdbHostEndpointMetricTreeService.metricItem(
+        this.loading.metrics = true
+        this.options.metrics = await CmdbHostEndpointMetricTreeService.metricItem(
           this.config.hostIds,
           this.config.endpointModelId,
           this.config.metricModelId
