@@ -24,7 +24,7 @@ export function enabledColumn () {
       {
         const { id, enabled } = record
         const directives = [
-          { name: 'action', value: 'M0304', modifiers: { abc: true } }
+          { name: 'v-action', value: 'M0304', modifiers: { abc: true } }
         ]
 
         // 默认配置
