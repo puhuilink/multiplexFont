@@ -1,6 +1,7 @@
 <template>
   <a-modal
     centered
+    :footer="null"
     :title="title"
     :width="920"
     wrapClassName="HistoryChart__modal"

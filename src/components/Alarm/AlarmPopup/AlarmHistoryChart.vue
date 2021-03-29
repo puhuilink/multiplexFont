@@ -2,6 +2,7 @@
   <a-modal
     centered
     :title="title"
+    :footer="null"
     :width="920"
     wrapClassName="HistoryChart__modal"
     v-model="visible"
