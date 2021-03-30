@@ -21,7 +21,7 @@
             <div class="PatrolConfig__th operations__with-scroll"><span>操作</span></div>
           </div>
 
-          <div class="PatrolConfig__tbody">
+          <div class="PatrolConfig__tbody" ref="tBody">
 
             <!-- / Checkpoints -->
             <div
@@ -92,7 +92,7 @@
                     </div>
                   </div>
                   <div class="PatrolConfig__td display-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
-                    <a-button type="link" @click="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
+                    <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
                     <a-button type="link">删除</a-button>
                   </div>
                 </div>
@@ -120,7 +120,7 @@
 
     <HostSchema
       :form.sync="form"
-      :visible="visible"
+      :visible.sync="visible"
       :xgModelPoint="xgModelPoint"
       v-if="visible"
     />
@@ -131,7 +131,7 @@
 import { PatrolService, PatrolConfigService } from '@/api'
 import Timeout from 'await-timeout'
 import { Confirm, List } from '@/components/Mixins'
-import { downloadFile } from '@/utils/util'
+import { downloadFile, scrollTo } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 
@@ -214,17 +214,20 @@ export default {
           throw err
         })
         .finally(() => {
+          this.$nextTick(() => {
+            scrollTo(0, { getContainer: () => this.$refs.tBody })
+          })
           this.spinning = false
         })
     },
 
     // 点击编辑
     infoEdit (pointsId, alias) {
-      // console.log('11', pointsId)
-      // console.log('222', alias)
-      // this.visible = true
-      // this.xgModelPoint = pointsId
-      // this.form.modalEndpointId = alias
+      console.log('11', pointsId)
+      console.log('222', alias)
+      this.visible = true
+      this.xgModelPoint = pointsId
+      this.form.modalEndpointId = alias
     },
 
     qrCodeDownload (code) {
@@ -264,5 +267,5 @@ export default {
 <style lang="less">
   @import url('./index.less');
   @import url('./utils.less');
-  @import url('./table.less');
+  @import url('./layout.less');
 </style>

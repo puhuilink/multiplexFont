@@ -2,7 +2,8 @@
   <a-modal
     title="监控对象"
     wrapClassName="HostSchema"
-    v-model="visible"
+    :visible="visible"
+    @change="$emit('update:visible', $event)"
     @ok="handleOk"
   >
     <div>巡更点位: {{ xgModelPoint }}</div>

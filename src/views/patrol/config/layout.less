@@ -1,3 +1,4 @@
+// 继承自 global.less
 @scrollWidth: .5rem;
 
 @checkboxWidth: 70px;
@@ -6,7 +7,7 @@
 @hostsWidth: 260px;
 @endpointsWidth: 300px;
 @metricsWidth: 260px;
-@operationsWidth: 170px;
+@operationsWidth: 130px;
 
 @totalWidth: @checkboxWidth + @indexWidth + @qrCodeWidth + @hostsWidth + @endpointsWidth + @metricsWidth + @operationsWidth;
 
@@ -31,6 +32,9 @@
     width: @qrCodeWidth !important;
   }
   
+  // hosts 前几列，在 HTML 结构中为兄弟节点关系，可使用百分比宽度
+  // hosts 及之后几列，在 HTML 结构中均为嵌套结构，使用百分比宽度可能带来计算问题
+  // 故均采用固定像素宽度，checkpoints 列宽度采用动态计算占满
   .hosts {
     width: @hostsWidth !important;
   }
