@@ -4,7 +4,7 @@
       <!-- / 工作组 -->
       <div class="PatrolConfig__header">
         <div>
-          <a-radio-group v-model="selectedGroupId" default-value="group_id" button-style="solid">
+          <a-radio-group v-model="groupId" default-value="group_id" button-style="solid">
             <a-radio-button v-for="{ group_id, group_name } in groupList" :key="group_id" :value="group_id">
               {{ group_name }}
             </a-radio-button>
@@ -34,7 +34,7 @@
 
       <div class="PatrolConfig__content">
         <a-tabs @change="changeZone">
-          <a-tab-pane v-for="{ alias, id } in floorList" :key="id" :tab="alias">
+          <a-tab-pane v-for="{ alias, id } in zoneList" :key="id" :tab="alias">
             <div class="box">
               <div class="PatrolConfig__thead">
                 <div class="PatrolConfig__th">点位</div>
@@ -47,7 +47,7 @@
               <div>
                 <div
                   class="tableCount"
-                  v-for="{ checkpointId, alias: checkpointAlias, hosts } in checkpoints"
+                  v-for="{ checkpointId, checkpointAlias, hosts } in checkpoints"
                   :key="checkpointId"
                 >
                   <div class="countCheck">
@@ -66,14 +66,14 @@
                   <div class="countDiv2">
                     <div
                       class="countDiv3"
-                      v-for="({ hostId, alias: hostAlias, endpoints }) in hosts"
+                      v-for="({ hostId, hostAlias, endpoints }) in hosts"
                       :key="hostId"
                     >
                       <div class="countDiv3-div">{{ hostAlias }}</div>
                       <div class="countDiv4">
                         <div
                           class="countDiv5"
-                          v-for="{ endpointId, alias: endpointAlias, metrics } in endpoints"
+                          v-for="{ endpointId, endpointAlias, metrics } in endpoints"
                           :key="endpointId"
                         >
                           <div class="countDiv5-div">
@@ -82,7 +82,7 @@
                           <div class="countDiv5-div">
                             <div
                               class="countDiv5Div-metricId"
-                              v-for="{ metricId, alias: metricAlias } in metrics"
+                              v-for="{ metricId, metricAlias } in metrics"
                               :key="metricId"
                             >
                               <div>
@@ -118,7 +118,6 @@
 <script>
 import { GroupService, PatrolService, PatrolConfigService } from '@/api'
 import Timeout from 'await-timeout'
-import _ from 'lodash'
 import { Confirm, List } from '@/components/Mixins'
 import { downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
@@ -137,10 +136,12 @@ export default {
       disableBtn: true,
       checkpoints: [],
       floorTabIndex: 0,
-      floorList: [],
+      zoneList: [],
       groupList: [],
       qcCodeLoading: {},
-      selectedGroupId: null,
+      groupId: null,
+      pathId: null,
+      zoneId: null,
       spinning: false,
       searchInput: '',
       visible: false,
@@ -176,12 +177,12 @@ export default {
         .then((groupList) => {
           this.groupList = groupList
           // FIXME: 工作组未完全录入
-          // this.selectedGroupId = _.get(_.first(groupList), 'group_id')
-          this.selectedGroupId = 'patrolgroup-xmenv'
+          // this.groupId = _.get(_.first(groupList), 'group_id')
+          this.groupId = 'patrolgroup-xmenv'
         })
         .catch((err) => {
           this.groupList = []
-          this.selectedGroupId = null
+          this.groupId = null
           this.$notifyError(err)
           throw err
         })
@@ -193,16 +194,23 @@ export default {
     loadPathConfig () {
       return PatrolService
         .pathFind({
-          where: { group_id: this.selectedGroupId },
-          fields: ['floorList { alias id }'],
+          where: { group_id: this.groupId },
+          fields: [
+            'id',
+            'zoneList: floorList { alias id }'
+          ],
           alias: 'pathList'
         })
         .then(({ data: { pathList } }) => pathList)
-        .then((pathList) => {
-          this.floorList = _.get(_.first(pathList), 'floorList')
+        .then(([path]) => {
+          this.pathId = path.id
+          this.zoneList = path.zoneList
+          this.zoneId = this.zoneList[0].id
         })
         .catch((err) => {
-          this.floorList = []
+          this.pathId = null
+          this.zoneList = []
+          this.zoneId = null
           this.$notifyError(err)
           throw err
         })
@@ -210,7 +218,10 @@ export default {
 
     loadPatrolConfig (parameter) {
       return PatrolConfigService
-        .patrolConfig()
+        .patrolConfig({
+          pathId: this.pathId,
+          zoneId: this.zoneId
+        })
         .then(({ data }) => {
           this.checkpoints = data
         })

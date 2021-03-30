@@ -2,17 +2,19 @@
  * 巡更配置服务：设备管理
  */
 
+import { axios } from '@/utils/request'
 import { BaseService } from './BaseService'
-import { tableMock } from './tableMock'
-// import { axios } from '@/utils/request'
 
 class PatrolConfigService extends BaseService {
-  static async patrolConfig () {
-    // return axios.get('/patrol/getPatrolPath', { pathId, zoneId })
-    const [floor] = tableMock.content
-    return {
-      data: floor.checkpoints.slice(0, 10)
-    }
+  static async patrolConfig (data) {
+    // FIXME: 返回 id 超出精度，需后端处理
+    return axios({
+      baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
+      url: '/patrol/getPatrolPath',
+      method: 'post',
+      data
+    })
+      .then(({ data }) => data)
   }
 }
 
