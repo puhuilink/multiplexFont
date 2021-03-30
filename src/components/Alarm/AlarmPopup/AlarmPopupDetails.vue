@@ -13,7 +13,6 @@
     @cancel="cancel"
     @ok="submit">
 
-    <!-- okText="保存" -->
     <CTable
       v-show="alarmRecord"
       :columns="columns"
@@ -24,17 +23,9 @@
       :scroll="scroll"
     >
 
-      <!-- 告警等级通知 -->
-      <!-- <div class="operation" slot="operation">
-        <div class="AlarmMonitor__operation-badge-group">
-          <span>告警级别：</span>
-          <span class="alarmStyle urgent">紧急</span>
-          <span class="alarmStyle alarmMain">主要</span>
-          <span class="alarmStyle secondary">次要</span>
-          <span class="alarmStyle commonly">一般</span>
-          <span class="alarmStyle normal">正常</span>
-        </div>
-      </div> -->
+      <template #operation>
+        <AlarmStatusBadgeGroup />
+      </template>
     </CTable>
 
     <CTable
@@ -47,17 +38,9 @@
       :scroll="scroll"
     >
 
-      <!-- 告警等级通知 -->
-      <div class="operation" slot="operation">
-        <div class="AlarmMonitor__operation-badge-group">
-          <!-- <span>告警级别：</span>
-          <span class="alarmStyle urgent">紧急</span>
-          <span class="alarmStyle alarmMain">主要</span>
-          <span class="alarmStyle secondary">次要</span>
-          <span class="alarmStyle commonly">一般</span>
-          <span class="alarmStyle normal">正常</span> -->
-        </div>
-      </div>
+      <template #operation>
+        <AlarmStatusBadgeGroup />
+      </template>
 
       <template #footer>
         <a-button type="link" @click="back">&lt;&nbsp;返回</a-button>
@@ -74,12 +57,14 @@ import { List } from '@/components/Mixins'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { AlarmRuleService } from '@/api'
 import HistoryChart from './AlarmHistoryChart'
-import { levelColorMapping } from '@/components/Alarm/color.config'
+import { pureLevelColorMapping } from '@/components/Alarm/color.config'
+import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 
 export default {
   name: 'AlarmPopupDetails',
   mixins: [Schema, List],
   components: {
+    AlarmStatusBadgeGroup,
     HistoryChart
   },
   data () {
@@ -95,7 +80,7 @@ export default {
           customRender: (alarmLevel) => {
             return (
               <a-icon
-                style={{ color: levelColorMapping.get(alarmLevel) }}
+                style={{ color: pureLevelColorMapping.get(alarmLevel) }}
                 type="flag"
                 theme="filled"
               />
@@ -154,7 +139,7 @@ export default {
           customRender: (alarmLevel) => {
             return (
               <a-icon
-                style={{ color: levelColorMapping.get(alarmLevel) }}
+                style={{ color: pureLevelColorMapping.get(alarmLevel) }}
                 type="flag"
                 theme="filled"
               />
@@ -213,9 +198,10 @@ export default {
     }
   },
   methods: {
+
     /**
-       * 打开闪烁告警问题弹窗
-       */
+     * 打开闪烁告警问题弹窗
+     */
     async add (drillAlarm) {
       this.submit = this.searchDetails
       this.show('监控对象')
@@ -293,50 +279,53 @@ export default {
   }
 }
 .alarmStyle{
-    width: 60px;
-    height: 24px;
-    color: #fff;
-    text-align: center;
-    font-weight: 300;
-    border-radius: 20px;
-    margin-right: 15px;
-  }
-  .back{
-    width: 140px;
-    height: 24px;
-    color: #fff;
-    text-align: center;
-    font-weight: 300;
-    border-radius: 10px;
-    margin-right: 15px;
-    padding:-3px 5px 5px 5px;
-    cursor:pointer;
+  width: 60px;
+  height: 24px;
+  color: #fff;
+  text-align: center;
+  font-weight: 300;
+  border-radius: 20px;
+  margin-right: 15px;
+}
+.back{
+  width: 140px;
+  height: 24px;
+  color: #fff;
+  text-align: center;
+  font-weight: 300;
+  border-radius: 10px;
+  margin-right: 15px;
+  padding:-3px 5px 5px 5px;
+  cursor:pointer;
+}
+
+.urgent{
+  background: #ff0202;
+}
+.alarmMain{
+  background: #f68808;
+}
+.secondary{
+  background:#ffdb00
+}
+.commonly{
+  background: #2d97ff
+}
+.normal{
+  background: #06c357
+}
+
+.AlarmPopupDetail__modal {
+
+  .ant-table-content {
+    position: relative;
   }
 
-  .urgent{
-    background: #ff0202;
+  .ant-table-footer {
+    position: absolute;
+    bottom: -62px;
+    left: 0;
+    background-color: #fff;
   }
-  .alarmMain{
-    background: #f68808;
-  }
-  .secondary{
-    background:#ffdb00
-  }
-  .commonly{
-    background: #2d97ff
-  }
-  .normal{
-    background: #06c357
-  }
-
-  .AlarmPopupDetail__modal {
-    .ant-table-content {
-      position: relative;
-    }
-    .ant-table-footer {
-      position: absolute;
-      bottom: -62px;
-      left: 0;
-    }
-  }
-  </style>
+}
+</style>
