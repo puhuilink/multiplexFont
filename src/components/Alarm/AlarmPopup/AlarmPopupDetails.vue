@@ -247,15 +247,13 @@ export default {
     },
 
     async onShowHistory (record) {
-      const content = []
-      content.push({
+      this.$refs['historyChart'].showHistory({
         AlarmhostId: this.drillAlarm[0].hostId, // 设备id
         endpointId: this.endpointId, // 第一展示单个问题 id
         endpointModelId: this.endpointModelId, // 第一展示单个问题 id
         metricId: record.metricId, // 第二次请求id
         metricModelId: record.metricModelId // 第二次请求id
       })
-      this.$refs['historyChart'].AlarmonShowHistory(content[0])
     }
 
   }
