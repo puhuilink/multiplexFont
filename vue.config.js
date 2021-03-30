@@ -21,6 +21,8 @@ function addStyleResource (rule) {
 const {
   VUE_APP_API_BASE_URL,
   VUE_APP_API_ORIGINAL_URL,
+  VUE_APP_XUNJIAN_API_BASE_URL,
+  VUE_APP_API_XUNJIAN_ORIGINAL_URL,
   VUE_APP_HASURA_IMP_URI,
   VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
@@ -182,6 +184,15 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_API_BASE_URL]: ''
+        }
+      },
+      // 后端接口
+      [VUE_APP_XUNJIAN_API_BASE_URL]: {
+        target: VUE_APP_API_XUNJIAN_ORIGINAL_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_XUNJIAN_API_BASE_URL]: ''
         }
       },
       // hasura
