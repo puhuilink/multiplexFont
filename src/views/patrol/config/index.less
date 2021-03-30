@@ -1,9 +1,10 @@
 .PatrolConfig {
+  * {
+    box-sizing: border-box !important;
+  }
+
   &__header {
     margin-bottom: 8px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
 
     &__search {
       display: flex;
@@ -17,25 +18,16 @@
     }
   }
 
-  &__content {
-
-    .ant-tabs-content {
-      max-height: 760px;
-      overflow-y: auto;
-    }
-  }
-
   .textcheck {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     width: 50px;
-    border: 1px solid grey;
+    // border: 1px solid grey;
   }
   
-  //这里是重新设置的
-  .box {
+  &__table {
     width: 100%;
     border: 0.4px solid gray;
   }
@@ -48,27 +40,47 @@
   &__th {
     display: flex;
     flex: auto;
-    width: 100%;
     height: 40px;
     background-color: #ccc;
     line-height: 40px;
     justify-content: center;
-    border: 1px solid grey;
+    // border: 1px solid grey;
+
+    &-operation {
+      width: 100px;
+    }
+  }
+
+  &__tbody {
+    max-height: calc(100vh - 286px);
+    overflow-y: auto;
+  }
+
+  &__tfooter {
+    margin: 8px 0;
   }
   
-  .tableCount {
+  &__tr {
     display: flex;
     flex-direction: row;
     width: 100%;
-    border: 1px solid grey;
     text-align: center;
   }
+
+  &__td {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  
   .countCheck{
     display: flex;
     flex-direction: row;
     width: 4%;
     justify-content: center;
-    border-right: 1px solid gray;
+    // border-right: 1px solid gray;
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -78,7 +90,7 @@
     flex-direction: row;
     width: 14.8%;
     justify-content: center;
-    border-right: 1px solid gray;
+    // border-left: 1px solid gray;
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -89,7 +101,7 @@
   .countDiv3 {
     display: flex;
     flex-direction: row;
-    border-bottom: 1px solid gray;
+    // border-bottom: 1px solid gray;
   }
   .countDiv4 {
     flex: 1;
@@ -97,15 +109,13 @@
   .countDiv5 {
     display: flex;
     flex-direction: row;
-  }
-  .textClick {
-    width: 25%;
-    color: rgb(37, 99, 192);
-    cursor: pointer;
+    // min-height: 66px;
+    align-items: stretch;
+    // height: 100%;
   }
   .countDiv3-div {
     width: 25%;
-    border-right: 1px solid gray;
+    // border-bottom: 1px solid gray;
     align-items: center;
     justify-content: center;
     display: flex;
@@ -113,11 +123,8 @@
   
   .countDiv5-div {
     width: 50%;
-    border-right: 1px solid gray;
+    // border-right: 1px solid gray;
     align-items: center;
     justify-content: center;
-  }
-  .countDiv5Div-metricId {
-    border-bottom: 1px solid gray;
   }
 }

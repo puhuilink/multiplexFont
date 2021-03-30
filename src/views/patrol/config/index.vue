@@ -1,108 +1,107 @@
 <template>
   <div class="PatrolConfig">
+    <div class="PatrolConfig__header">
+      <ZoneSelect @change="changeZone" />
+    </div>
     <a-spin :spinning="spinning">
-      <!-- / 工作组 -->
-      <div class="PatrolConfig__header">
-        <div>
-          <a-radio-group v-model="groupId" default-value="group_id" button-style="solid">
-            <a-radio-button v-for="{ group_id, group_name } in groupList" :key="group_id" :value="group_id">
-              {{ group_name }}
-            </a-radio-button>
-          </a-radio-group>
-        </div>
-        <div class="PatrolConfig__header__search">
-          <a-input class="PatrolConfig__header__search__input" allowClear v-model.trim="searchInput" />
-          <a-button type="primary">查询</a-button>
-        </div>
-        <div>
-          <div class="PatrolConfig__header__addFun">
-            <!-- <div>
-              <a-button
-                :disabled="disableBtn"
-                @click="addTableLists"
-                class="PatrolConfig__header__search__input"
-                type="primary"
-                >新增监控对象</a-button
-              >
-            </div> -->
-            <div>
-              <a-button type="primary">下载</a-button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="PatrolConfig__content">
-        <a-tabs @change="changeZone">
-          <a-tab-pane v-for="{ alias, id } in zoneList" :key="id" :tab="alias">
-            <div class="box">
-              <div class="PatrolConfig__thead">
-                <div class="PatrolConfig__th">点位</div>
-                <div class="PatrolConfig__th">二维码</div>
-                <div class="PatrolConfig__th">监控对象</div>
-                <div class="PatrolConfig__th">监控实体</div>
-                <div class="PatrolConfig__th">检查项</div>
-                <div class="PatrolConfig__th">操作</div>
-              </div>
-              <div>
-                <div
-                  class="tableCount"
-                  v-for="{ checkpointId, checkpointAlias, hosts } in checkpoints"
-                  :key="checkpointId"
-                >
-                  <div class="countCheck">
-                    <span>
-                      <a-checkbox ref="checkbox" @change="onCheckBox(checkpointId)"></a-checkbox>
-                    </span>
-                  </div>
-                  <div class="countDiv1">
-                    <span>{{ checkpointAlias }}</span>
-                  </div>
-                  <div class="countDiv1">
-                    <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
-                    <a-button v-else type="link" @click="qrCodeDownload(checkpointId)">下载</a-button>
-                  </div>
+        <div class="PatrolConfig__table">
 
-                  <div class="countDiv2">
+          <div class="PatrolConfig__thead bb">
+            <div class="PatrolConfig__th br checkbox">
+              <a-checkbox></a-checkbox>
+            </div>
+            <div class="PatrolConfig__th br index">序号</div>
+            <div class="PatrolConfig__th br checkpoints">点位</div>
+            <div class="PatrolConfig__th br qrCode">二维码</div>
+            <div class="PatrolConfig__th br hosts">监控对象</div>
+            <div class="PatrolConfig__th br endpoints">监控实体</div>
+            <div class="PatrolConfig__th br metrics">检查项</div>
+            <div class="PatrolConfig__th operations">操作</div>
+          </div>
+
+          <div class="PatrolConfig__tbody">
+            <div
+              class="PatrolConfig__tr"
+              v-for="({ checkpointId, checkpointAlias, hosts }, index) in checkpoints"
+              :key="checkpointId"
+            >
+              <div class="countCheck checkbox br bb" :class="{ bt: index === 0 }">
+                <span>
+                  <a-checkbox ref="checkbox" @change="onCheckBox(checkpointId)"></a-checkbox>
+                </span>
+              </div>
+              <div class="countDiv1 index br bb" :class="{ bt: index === 0 }">
+                <span>{{ index + offset }}</span>
+              </div>
+              <div class="countDiv1 checkpoints br bb" :class="{ bt: index === 0 }">
+                <span>{{ checkpointAlias }}</span>
+              </div>
+              <div class="countDiv1 qrCode br bb" :class="{ bt: index === 0 }">
+                <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
+                <a-button v-else type="link" @click="qrCodeDownload(checkpointId)">下载</a-button>
+              </div>
+
+              <div class="countDiv2">
+                <div
+                  class="countDiv3"
+                  v-for="({ hostId, hostAlias, endpoints }, hostIndex) in hosts"
+                  :key="hostId"
+                >
+                  <div class="countDiv3-div hosts br bb" :class="{ bt: hostIndex === 0 && index === 0 }">{{ hostAlias }}</div>
+                  <div class="countDiv4">
                     <div
-                      class="countDiv3"
-                      v-for="({ hostId, hostAlias, endpoints }) in hosts"
-                      :key="hostId"
+                      class="countDiv5"
+                      v-for="({ endpointId, endpointAlias, metrics }, endpointIndex) in endpoints"
+                      :key="endpointId"
                     >
-                      <div class="countDiv3-div">{{ hostAlias }}</div>
-                      <div class="countDiv4">
+                      <div class="countDiv5-div endpoints br bb df ac jc" :class="{ bt: hostIndex === 0 && index === 0 && endpointIndex === 0 }">
+                        <span>{{ endpointAlias }}</span>
+                      </div>
+                      <div class="countDiv5-div metrics df ac jc flex-column" :style="{ minHeight: '66px' }">
                         <div
-                          class="countDiv5"
-                          v-for="{ endpointId, endpointAlias, metrics } in endpoints"
-                          :key="endpointId"
+                          class="fw"
+                          v-for="({ metricId, metricAlias }, metricIndex) in metrics"
+                          :key="metricId"
                         >
-                          <div class="countDiv5-div">
-                            <span>{{ endpointAlias }}</span>
-                          </div>
-                          <div class="countDiv5-div">
-                            <div
-                              class="countDiv5Div-metricId"
-                              v-for="{ metricId, metricAlias } in metrics"
-                              :key="metricId"
-                            >
-                              <div>
-                                <span>{{ metricAlias }}</span>
-                              </div>
-                            </div>
+                          <div
+                            class="br bb df jc ac"
+                            :class="{ bt: hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
+                            :style="{
+                              minHeight: [0, 1].includes(metrics.length) ? '66px' : '33px'
+                            }"
+                          >
+                            <span>{{ metricAlias }}</span>
                           </div>
                         </div>
                       </div>
-                      <div class="textClick">
-                        <a-button type="link" @click="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
-                        <a-button type="link">删除</a-button>
-                      </div>
                     </div>
+                  </div>
+                  <div class="PatrolConfig__td operations bb" :class="{ bt: index === 0 }">
+                    <a-button type="link" @click="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
+                    <a-button type="link">删除</a-button>
                   </div>
                 </div>
               </div>
             </div>
-          </a-tab-pane>
-        </a-tabs>
+          </div>
+        </div>
+
+        <div class="ant-pagination mini ant-table-pagination">
+          <a-pagination
+            :defaultPageSize="5"
+            :pageSize.sync="pagination.pageSize"
+            :pageSizeOptions="['5', '10', '15']"
+            size="small"
+            showQuickJumper
+            showSizeChanger
+            :showTotal="(total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`"
+            :total="pagination.total"
+            @change="changePagination"
+            @showSizeChange="changePagination"
+          />
+        </div>
       </div>
     </a-spin>
 
@@ -116,18 +115,20 @@
   </div>
 </template>
 <script>
-import { GroupService, PatrolService, PatrolConfigService } from '@/api'
+import { PatrolService, PatrolConfigService } from '@/api'
 import Timeout from 'await-timeout'
 import { Confirm, List } from '@/components/Mixins'
 import { downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
+import ZoneSelect from './modules/ZoneSelect'
 
 export default {
   name: 'PatrolConfig',
   mixins: [Confirm, List],
   props: {},
   components: {
-    HostSchema
+    HostSchema,
+    ZoneSelect
   },
   data () {
     return {
@@ -139,7 +140,6 @@ export default {
       zoneList: [],
       groupList: [],
       qcCodeLoading: {},
-      groupId: null,
       pathId: null,
       zoneId: null,
       spinning: false,
@@ -159,75 +159,55 @@ export default {
           }
         ]
       },
+      pagination: {
+        pageNo: 1,
+        pageSize: 5,
+        total: 0
+      },
       xgModelPoint: ''
     }
   },
+  computed: {
+    offset () {
+      const { pageNo, pageSize } = this.pagination
+      return (pageNo - 1) * pageSize
+    }
+  },
   methods: {
-    /**
-    * 加载巡更组列表
-    */
-    loadGroupList () {
-      return GroupService
-        .find({
-          where: { is_patrol: true },
-          fields: ['group_id', 'group_name'],
-          alias: 'groupList'
-        })
-        .then(({ data: { groupList } }) => groupList)
-        .then((groupList) => {
-          this.groupList = groupList
-          // FIXME: 工作组未完全录入
-          // this.groupId = _.get(_.first(groupList), 'group_id')
-          this.groupId = 'patrolgroup-xmenv'
-        })
-        .catch((err) => {
-          this.groupList = []
-          this.groupId = null
-          this.$notifyError(err)
-          throw err
-        })
+    changeZone ({ pathId, zoneId }) {
+      Object.assign(this, { pathId, zoneId })
+      this.resetPagination()
+      this.loadPatrolConfig()
     },
 
-    /**
-    * 加载巡更组下路线配置
-    */
-    loadPathConfig () {
-      return PatrolService
-        .pathFind({
-          where: { group_id: this.groupId },
-          fields: [
-            'id',
-            'zoneList: floorList { alias id }'
-          ],
-          alias: 'pathList'
-        })
-        .then(({ data: { pathList } }) => pathList)
-        .then(([path]) => {
-          this.pathId = path.id
-          this.zoneList = path.zoneList
-          this.zoneId = this.zoneList[0].id
-        })
-        .catch((err) => {
-          this.pathId = null
-          this.zoneList = []
-          this.zoneId = null
-          this.$notifyError(err)
-          throw err
-        })
-    },
+    loadPatrolConfig () {
+      const { pathId, zoneId, pagination } = this
+      const { pageNo = 1, pageSize = 5 } = pagination
 
-    loadPatrolConfig (parameter) {
+      if (!pathId || !zoneId) {
+        return
+      }
+
+      this.spinning = true
       return PatrolConfigService
         .patrolConfig({
-          pathId: this.pathId,
-          zoneId: this.zoneId
+          pathId,
+          zoneId,
+          limit: pageSize,
+          offset: (pageNo - 1) * pageSize
         })
-        .then(({ data }) => {
+        .then(({ data, pagination }) => {
           this.checkpoints = data
+          this.pagination.total = pagination.aggregate.count
         })
         .catch((err) => {
+          this.checkpoints = []
+          this.resetPagination()
           this.$notifyError(err)
           throw err
+        })
+        .finally(() => {
+          this.spinning = false
         })
     },
 
@@ -238,10 +218,6 @@ export default {
       this.visible = true
       this.xgModelPoint = pointsId
       this.form.modalEndpointId = alias
-    },
-
-    changeZone (zoneId) {
-      this.loadPatrolConfig({ zoneId })
     },
 
     qrCodeDownload (code) {
@@ -257,26 +233,29 @@ export default {
         })
     },
 
+    changePagination (pageNo, pageSize) {
+      Object.assign(this.pagination, { pageNo, pageSize })
+      this.loadPatrolConfig()
+    },
+
+    resetPagination () {
+      Object.assign(
+        this.pagination,
+        this.$options.data.apply(this).pagination
+      )
+    },
+
     onCheckBox (e) {
       this.disableBtn = !true
       console.log('11', this.$refs.checkbox)
     }
 
-  },
-
-  async created () {
-    try {
-      this.spinning = true
-      await this.loadGroupList()
-      await this.loadPathConfig()
-      await this.loadPatrolConfig()
-    } finally {
-      this.spinning = false
-    }
   }
 }
 </script>
 
 <style lang="less">
   @import url('./index.less');
+  @import url('./utils.less');
+  @import url('./table.less');
 </style>
