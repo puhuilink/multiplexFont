@@ -546,12 +546,49 @@ body {
   width: 100%;
 }
 
+.fh {
+  height: 100%;
+}
+
+.display-flex {
+  display: flex;
+
+
+  &.justify-content-center {
+    justify-content: center;
+  }
+
+  &.align-items-center {
+    align-items: center;
+  }
+
+  &.align-items-stretch {
+    align-items: stretch
+  }
+
+  &.flex-row {
+    flex-direction: row;
+  }
+
+  &.flex-column {
+    flex-direction: column;
+  }
+}
+
+.flex-1 {
+  flex: 1;
+}
+
 .text-left {
   text-align: left;
 }
 
 .text-right {
   text-align: right;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .transition-scale {

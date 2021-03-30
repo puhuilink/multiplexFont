@@ -1,31 +1,53 @@
-.checkbox {
-  width: 3vw !important;
-}
+@scrollWidth: .5rem;
 
-.index {
-  width: 3vw !important;
-}
+@checkboxWidth: 70px;
+@indexWidth: 70px;
+@qrCodeWidth: 70px;
+@hostsWidth: 260px;
+@endpointsWidth: 300px;
+@metricsWidth: 260px;
+@operationsWidth: 170px;
 
-.checkpoints {
-  width: 22vw !important;
-}
+@totalWidth: @checkboxWidth + @indexWidth + @qrCodeWidth + @hostsWidth + @endpointsWidth + @metricsWidth + @operationsWidth;
 
-.qrCode {
-  width: 5vw !important;
-}
+.PatrolConfig {
+  .checkbox {
+    width: @checkboxWidth !important;
+  }
+  
+  .index {
+    width: @indexWidth !important;
+  }
+  
+  .checkpoints {
+    width: calc(100% - @totalWidth) !important;
 
-.hosts {
-  width: 22vw !important;
-}
+    &__with-scroll {
+      width: calc(100% - @totalWidth - @scrollWidth) !important;
+    }
+  }
+  
+  .qrCode {
+    width: @qrCodeWidth !important;
+  }
+  
+  .hosts {
+    width: @hostsWidth !important;
+  }
+  
+  .endpoints {
+    width: @endpointsWidth !important;
+  }
+  
+  .metrics {
+    width: @metricsWidth !important;
+  }
+  
+  .operations {
+    width: @operationsWidth !important;
 
-.endpoints {
-  width: 22vw !important;
-}
-
-.metrics {
-  width: 15vw !important;
-}
-
-.operations {
-  width: 8vw !important;
+    &__with-scroll {
+      width: calc(@operationsWidth + @scrollWidth) !important;
+    }
+  }
 }

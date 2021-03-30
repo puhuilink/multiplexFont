@@ -8,68 +8,81 @@
       <div class="PatrolConfig__content">
         <div class="PatrolConfig__table">
 
-          <div class="PatrolConfig__thead bb">
-            <div class="PatrolConfig__th br checkbox">
+          <div class="PatrolConfig__thead border-bottom text-center">
+            <div class="PatrolConfig__th border-right checkbox">
               <a-checkbox></a-checkbox>
             </div>
-            <div class="PatrolConfig__th br index">序号</div>
-            <div class="PatrolConfig__th br checkpoints">点位</div>
-            <div class="PatrolConfig__th br qrCode">二维码</div>
-            <div class="PatrolConfig__th br hosts">监控对象</div>
-            <div class="PatrolConfig__th br endpoints">监控实体</div>
-            <div class="PatrolConfig__th br metrics">检查项</div>
-            <div class="PatrolConfig__th operations">操作</div>
+            <div class="PatrolConfig__th border-right index"><span>序号</span></div>
+            <div class="PatrolConfig__th border-right checkpoints__with-scroll"><span>点位</span></div>
+            <div class="PatrolConfig__th border-right qrCode"><span>二维码</span></div>
+            <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
+            <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
+            <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
+            <div class="PatrolConfig__th operations__with-scroll"><span>操作</span></div>
           </div>
 
           <div class="PatrolConfig__tbody">
+
+            <!-- / Checkpoints -->
             <div
               class="PatrolConfig__tr"
               v-for="({ checkpointId, checkpointAlias, hosts }, index) in checkpoints"
               :key="checkpointId"
             >
-              <div class="countCheck checkbox br bb" :class="{ bt: index === 0 }">
-                <span>
-                  <a-checkbox ref="checkbox" @change="onCheckBox(checkpointId)"></a-checkbox>
-                </span>
+              <div class="display-flex justify-content-center align-items-center checkbox border-right border-bottom" :class="{ 'border-top': index === 0 }">
+                <a-checkbox ref="checkbox" @change="onCheckBox(checkpointId)"></a-checkbox>
               </div>
-              <div class="countDiv1 index br bb" :class="{ bt: index === 0 }">
-                <span>{{ index + offset }}</span>
+              <div class="display-flex justify-content-center align-items-center flex-row index border-right border-bottom" :class="{ 'border-top': index === 0 }">
+                <span>{{ index + 1 + offset }}</span>
               </div>
-              <div class="countDiv1 checkpoints br bb" :class="{ bt: index === 0 }">
+              <div class="display-flex justify-content-center align-items-center flex-row checkpoints border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <span>{{ checkpointAlias }}</span>
               </div>
-              <div class="countDiv1 qrCode br bb" :class="{ bt: index === 0 }">
+              <div class="display-flex justify-content-center align-items-center flex-row qrCode border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
                 <a-button v-else type="link" @click="qrCodeDownload(checkpointId)">下载</a-button>
               </div>
 
-              <div class="countDiv2">
+              <!-- / Hosts -->
+              <div class="flex-1 flex-row">
                 <div
-                  class="countDiv3"
+                  class="display-flex flex-row"
                   v-for="({ hostId, hostAlias, endpoints }, hostIndex) in hosts"
                   :key="hostId"
                 >
-                  <div class="countDiv3-div hosts br bb" :class="{ bt: hostIndex === 0 && index === 0 }">{{ hostAlias }}</div>
-                  <div class="countDiv4">
+                  <div class="hosts border-right border-bottom PatrolConfig__td" :class="{ 'border-top': hostIndex === 0 && index === 0 }">
+                    <span>{{ hostAlias }}</span>
+                  </div>
+
+                  <!-- / Endpoints -->
+                  <div class="flex-1">
                     <div
-                      class="countDiv5"
+                      class="display-flex flex-row align-items-center justify-content-center"
                       v-for="({ endpointId, endpointAlias, metrics }, endpointIndex) in endpoints"
                       :key="endpointId"
                     >
-                      <div class="countDiv5-div endpoints br bb df ac jc" :class="{ bt: hostIndex === 0 && index === 0 && endpointIndex === 0 }">
+                      <div
+                        class="endpoints border-right border-bottom PatrolConfig__td"
+                        :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 }"
+                        :style="{
+                          minHeight: (metrics.length || 1) * 40 + 'px'
+                        }"
+                      >
                         <span>{{ endpointAlias }}</span>
                       </div>
-                      <div class="countDiv5-div metrics df ac jc flex-column" :style="{ minHeight: '66px' }">
+
+                      <!-- / Metrics -->
+                      <div class="metrics PatrolConfig__td">
                         <div
                           class="fw"
                           v-for="({ metricId, metricAlias }, metricIndex) in metrics"
                           :key="metricId"
                         >
                           <div
-                            class="br bb df jc ac"
-                            :class="{ bt: hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
+                            class="border-right border-bottom display-flex justify-content-center align-items-center"
+                            :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
                             :style="{
-                              minHeight: [0, 1].includes(metrics.length) ? '66px' : '33px'
+                              height: '40px'
                             }"
                           >
                             <span>{{ metricAlias }}</span>
@@ -78,7 +91,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="PatrolConfig__td operations bb" :class="{ bt: index === 0 }">
+                  <div class="PatrolConfig__td display-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
                     <a-button type="link" @click="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
                     <a-button type="link">删除</a-button>
                   </div>
@@ -132,13 +145,8 @@ export default {
   },
   data () {
     return {
-      dataList: [],
-      dataSource: [],
       disableBtn: true,
       checkpoints: [],
-      floorTabIndex: 0,
-      zoneList: [],
-      groupList: [],
       qcCodeLoading: {},
       pathId: null,
       zoneId: null,
@@ -203,7 +211,6 @@ export default {
         .catch((err) => {
           this.checkpoints = []
           this.resetPagination()
-          this.$notifyError(err)
           throw err
         })
         .finally(() => {
@@ -213,11 +220,11 @@ export default {
 
     // 点击编辑
     infoEdit (pointsId, alias) {
-      console.log('11', pointsId)
-      console.log('222', alias)
-      this.visible = true
-      this.xgModelPoint = pointsId
-      this.form.modalEndpointId = alias
+      // console.log('11', pointsId)
+      // console.log('222', alias)
+      // this.visible = true
+      // this.xgModelPoint = pointsId
+      // this.form.modalEndpointId = alias
     },
 
     qrCodeDownload (code) {
