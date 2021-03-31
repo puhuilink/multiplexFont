@@ -13,7 +13,8 @@ function addStyleResource (rule) {
     .loader('style-resources-loader')
     .options({
       patterns: [
-        path.resolve(__dirname, './src/components/global.less')
+        // ant-design less 变量
+        path.resolve(__dirname, 'node_modules', 'ant-design-vue', 'lib', 'style', 'themes', 'index.less')
       ]
     })
 }
