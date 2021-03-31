@@ -2,12 +2,26 @@
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
       <ZoneSelect @change="changeZone">
-        <a-button
-          :disabled="!hasSelected"
-          :loading="qcCodeGlobalLoading"
-          type="primary"
-          @click="batchDownloadQrCode"
-        >下载</a-button>
+        <div class="PatrolConfig__operation">
+          <a-input
+            allowClear
+            class="PatrolConfig__search"
+            placeholder="搜索点位名称、监控对象"
+          ></a-input>
+          <a-button
+            type="primary"
+            @click="() => {
+              changePagination(1, this.pagination.pageSize)
+            }"
+          >查询</a-button>
+          <a-button type="primary">新增监控对象</a-button>
+          <a-button
+            :disabled="!hasSelected"
+            :loading="qcCodeGlobalLoading"
+            type="primary"
+            @click="batchDownloadQrCode"
+          >下载</a-button>
+        </div>
       </ZoneSelect>
     </div>
     <a-spin :spinning="spinning">
@@ -113,6 +127,8 @@
               </div>
             </div>
           </div>
+
+          <a-empty v-show="checkpoints.length === 0" />
         </div>
 
         <div class="ant-pagination mini ant-table-pagination">
@@ -125,6 +141,7 @@
             showSizeChanger
             :showTotal="(total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`"
             :total="pagination.total"
+            v-model="pagination.pageNo"
             @change="changePagination"
             @showSizeChange="changePagination"
           />
@@ -213,9 +230,11 @@ export default {
 
     loadPatrolConfig () {
       const { pathId, zoneId, pagination } = this
-      const { pageNo = 1, pageSize = 5 } = pagination
+      const { offset, pageSize: limit } = pagination
 
       if (!pathId || !zoneId) {
+        this.checkpoints = []
+        this.resetPagination()
         return
       }
 
@@ -225,8 +244,8 @@ export default {
         .patrolConfig({
           pathId,
           zoneId,
-          limit: pageSize,
-          offset: (pageNo - 1) * pageSize
+          limit,
+          offset
         })
         .then(({ data, pagination }) => {
           this.checkpoints = data
