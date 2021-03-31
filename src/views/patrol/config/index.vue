@@ -18,18 +18,18 @@
           <div class="PatrolConfig__thead border-bottom text-center">
             <div class="PatrolConfig__th border-right checkbox">
               <a-checkbox
-                :checked="hasSelectedAll"
+                :checked="hasSelectedAll && selectedRowKeys.length !== 0"
                 :indeterminate="!hasSelectedAll && hasSelected"
                 @change="toggleSelectAll"
               />
             </div>
             <div class="PatrolConfig__th border-right index"><span>序号</span></div>
-            <div class="PatrolConfig__th border-right checkpoints__with-scroll"><span>点位</span></div>
+            <div class="PatrolConfig__th border-right checkpoints"><span>点位</span></div>
             <div class="PatrolConfig__th border-right qrCode"><span>二维码</span></div>
             <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
             <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
             <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
-            <div class="PatrolConfig__th operations__with-scroll"><span>操作</span></div>
+            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>
           </div>
 
           <div class="PatrolConfig__tbody" ref="tBody">
@@ -79,7 +79,7 @@
                         class="endpoints border-right border-bottom PatrolConfig__td"
                         :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 }"
                         :style="{
-                          minHeight: (metrics.length || 1) * 40 + 'px'
+                          minHeight: (metrics.length || 1) * (device === 'desktop' ? 44 : 56) + 'px'
                         }"
                       >
                         <span>{{ endpointAlias }}</span>
@@ -96,7 +96,7 @@
                             class="border-right border-bottom d-flex j-c-center a-i-center hover hover__primary-4"
                             :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
                             :style="{
-                              height: '40px'
+                              height: (device === 'desktop' ? 44 : 56) + 'px'
                             }"
                           >
                             <span>{{ metricAlias }}</span>
@@ -147,6 +147,7 @@ import { Confirm, List } from '@/components/Mixins'
 import { downloadFile, scrollTo } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
+import { mapState } from 'vuex'
 
 export default {
   name: 'PatrolConfig',
@@ -191,6 +192,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      device: state => state.app.device
+    }),
     hasSelectedAll () {
       const { selectedRowKeys, checkpoints } = this
       return selectedRowKeys.length === checkpoints.length
@@ -264,10 +268,9 @@ export default {
     },
 
     async batchDownloadQrCode () {
-      const { selectedRowKeys } = this
       try {
         this.qcCodeGlobalLoading = true
-        await Promise.all(selectedRowKeys.map(async (checkpointId) => {
+        await Promise.all(this.selectedRowKeys.map((checkpointId) => {
           return this.downloadQrCode(checkpointId)
         }))
       } finally {

@@ -1,58 +1,85 @@
-// 继承自 global.less
-@scrollWidth: .5rem;
-
-@checkboxWidth: 70px;
-@indexWidth: 70px;
-@qrCodeWidth: 70px;
-@hostsWidth: 260px;
-@endpointsWidth: 300px;
-@metricsWidth: 260px;
-@operationsWidth: 130px;
-
-@totalWidth: @checkboxWidth + @indexWidth + @qrCodeWidth + @hostsWidth + @endpointsWidth + @metricsWidth + @operationsWidth;
+@import './variables.less';
 
 .PatrolConfig {
   .checkbox {
-    width: @checkboxWidth !important;
+    width: @checkboxWidth;
   }
-  
-  .index {
-    width: @indexWidth !important;
-  }
-  
-  .checkpoints {
-    width: calc(100% - @totalWidth) !important;
 
-    &__with-scroll {
-      width: calc(100% - @totalWidth - @scrollWidth) !important;
+  @media screen and (min-width: @XXLMinWidth) {
+    .index {
+      width: @indexWidthXXL;
+    }
+
+    .hosts {
+      width: @hostsWidthXXL;
+    }
+
+    .endpoints {
+      width: @endpointsWidthXXL;
+    }
+
+    .metrics {
+      width: @metricsWidthXXL;
+    }
+  }
+
+  @media (min-width: @XLMinWidth) and (max-width: @XLMaxWidth) {
+    .index {
+      width: @indexWidthXl;
+    }
+
+    .hosts {
+      width: @hostsWidthXL;
+    }
+
+    .endpoints {
+      width: @endpointsWidthXL;
+    }
+
+    .metrics {
+      width: @metricsWidthXL;
+    }
+  }
+
+  @media screen and (max-width: @LGMinWidth) {
+    .index {
+      width: @indexWidthLG;
+    }
+
+    .hosts {
+      width: @hostsWidthLG;
+    }
+
+    .endpoints {
+      width: @endpointsWidthLG;
+    }
+
+    .metrics {
+      width: @metricsWidthLG;
     }
   }
   
+  // hosts 前几列，在 HTML 结构中为兄弟节点关系，可使用 flex: 1 撑满
+  // hosts 及之后几列，在 HTML 结构中均为嵌套结构，需具体到 px
+  .checkpoints {
+    flex: 1;
+  }
+  
   .qrCode {
-    width: @qrCodeWidth !important;
-  }
-  
-  // hosts 前几列，在 HTML 结构中为兄弟节点关系，可使用百分比宽度
-  // hosts 及之后几列，在 HTML 结构中均为嵌套结构，使用百分比宽度可能带来计算问题
-  // 故均采用固定像素宽度，checkpoints 列宽度采用动态计算占满
-  .hosts {
-    width: @hostsWidth !important;
-  }
-  
-  .endpoints {
-    width: @endpointsWidth !important;
-  }
-  
-  .metrics {
-    width: @metricsWidth !important;
+    width: @qrCodeWidth;
   }
   
   .operations {
-    width: @operationsWidth !important;
+    width: @operationsWidthXXL;
 
-    // 最后一列预留 y 方向滚动条宽度
+    .ant-btn.ant-btn-link {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    // 表头最后一列预留 y 方向滚动条宽度与 tbody 对齐
     &__with-scroll {
-      width: calc(@operationsWidth + @scrollWidth) !important;
+      width: calc(@operationsWidthXXL + @scrollWidth);
     }
   }
 }
