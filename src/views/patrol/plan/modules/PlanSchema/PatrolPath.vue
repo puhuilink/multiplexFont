@@ -4,7 +4,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
-      rowKey="user_id"
+      :rowKey="el => el.path.id"
       :rowSelection="null"
       :scroll="scroll"
       :showPagination="false"

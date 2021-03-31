@@ -93,13 +93,13 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     Object.assign(this, option)
   }
 
-  async getComboDataOption () {
-    const dataList = await this.comboConfig.fetch()
+  // 对外数据转换接口，支持直接以数据生成柱形图配置
+  static transferComboDataOption (dataList) {
     const groupByLegend = _.groupBy(dataList, 'legend')
     const groupByName = _.groupBy(dataList, 'name')
     const aggregate = Object.keys(groupByLegend).length > 1 ? groupByLegend : groupByName
     const categoryList = Object.keys(aggregate)
-    const option = {
+    return {
       legend: {
         data: categoryList
       },
@@ -114,10 +114,16 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         type: 'value'
       },
       series: categoryList.map(category => ({
+        type: 'line',
         name: category,
         data: aggregate[category].map(({ data }) => data)
       }))
     }
+  }
+
+  async getComboDataOption () {
+    const dataList = await this.comboConfig.fetch()
+    const option = LinesDynamicDataConfig.transferComboDataOption(dataList)
     Object.assign(this, option)
   }
 

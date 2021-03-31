@@ -13,7 +13,8 @@ function addStyleResource (rule) {
     .loader('style-resources-loader')
     .options({
       patterns: [
-        path.resolve(__dirname, './src/components/global.less')
+        // ant-design less 变量
+        path.resolve(__dirname, 'node_modules', 'ant-design-vue', 'lib', 'style', 'themes', 'index.less')
       ]
     })
 }
@@ -21,6 +22,8 @@ function addStyleResource (rule) {
 const {
   VUE_APP_API_BASE_URL,
   VUE_APP_API_ORIGINAL_URL,
+  VUE_APP_XUNJIAN_API_BASE_URL,
+  VUE_APP_API_XUNJIAN_ORIGINAL_URL,
   VUE_APP_HASURA_IMP_URI,
   VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
@@ -69,7 +72,7 @@ const vueConfig = {
 
   chainWebpack: (config) => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-    types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))
+    types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
 
     config.resolve.alias
       .set('@$', resolve('src'))
@@ -182,6 +185,15 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_API_BASE_URL]: ''
+        }
+      },
+      // 后端接口
+      [VUE_APP_XUNJIAN_API_BASE_URL]: {
+        target: VUE_APP_API_XUNJIAN_ORIGINAL_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_XUNJIAN_API_BASE_URL]: ''
         }
       },
       // hasura

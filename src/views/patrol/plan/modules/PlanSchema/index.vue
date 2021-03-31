@@ -16,9 +16,9 @@
       <a-form-model :model="plan" ref="ruleForm" :rules="rules" layout="inline">
         <BasicInfo :plan.sync="plan" />
 
-        <Cron />
+        <Cron v-if="plan.schedule" :cron.sync="plan.schedule" />
 
-        <!-- <TimeRange/> -->
+        <TimeRange v-if="plan.interval" :interval.sync="plan.interval" />
 
         <PatrolPath :plan.sync="plan" />
       </a-form-model>
@@ -27,12 +27,13 @@
 </template>
 
 <script>
-import Schema from '@/components/Mixins/Modal/Schema'
 import { PatrolService } from '@/api'
-import BasicInfo, { basicInfoRule } from './BasicInfo'
-import Cron, { cronRule } from './Cron'
-import PatrolPath, { patrolPathRule } from './PatrolPath'
-import TimeRange, { timeRangeRule } from './TimeRange'
+import Schema from '@/components/Mixins/Modal/Schema'
+import { PlanModel } from './PlanModel'
+import BasicInfo, { basicInfoRule } from './BasicInfo.vue'
+import Cron, { cronRule } from './Cron/index.vue'
+import PatrolPath, { patrolPathRule } from './PatrolPath.vue'
+import TimeRange, { timeRangeRule } from './TimeRange/index.vue'
 
 export default {
   name: 'PlanSchema',
@@ -71,7 +72,8 @@ export default {
     async fetchPlanDetail (id) {
       try {
         this.spinning = true
-        this.plan = await PatrolService.planDetail(id)
+        const plan = await PatrolService.planDetail(id)
+        this.plan = new PlanModel(plan)
       } catch (e) {
         this.plan = {}
         throw e
@@ -87,7 +89,7 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          // await PatrolService.planAdd(this.plan)
+          // await PatrolService.planAdd(this.plan.serialize())
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
           this.cancel()
@@ -107,8 +109,8 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          // const { id } = this.plan
-          // await PatrolService.planEdit(this.plan, { id })
+          // const { id, ...plan } = this.plan.serialize()
+          // await PatrolService.planAdd(plan, { id })
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
@@ -131,7 +133,7 @@ export default {
 .PlanSchema {
   &__modal {
     .ant-modal-body {
-      height: 500px;
+      height: 700px;
       overflow-y: auto;
     }
   }

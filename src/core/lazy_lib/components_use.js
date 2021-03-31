@@ -49,6 +49,7 @@ import {
   // Skeleton,
   Slider,
   Collapse,
+  Pagination,
   Popconfirm,
   message,
   notification,
@@ -98,6 +99,7 @@ Vue.use(Upload)
 Vue.use(Progress)
 // Vue.use(Skeleton)
 Vue.use(Popconfirm)
+Vue.use(Pagination)
 Vue.use(Slider)
 Vue.use(Collapse)
 Vue.use(Tree)

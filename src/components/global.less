@@ -546,12 +546,52 @@ body {
   width: 100%;
 }
 
+.fh {
+  height: 100%;
+}
+
+.d-flex {
+  display: flex;
+
+  &.j-c-center {
+    justify-content: center;
+  }
+
+  &.j-c-space-between {
+    justify-content: space-between;
+  }
+
+  &.a-i-center {
+    align-items: center;
+  }
+
+  &.a-i-stretch {
+    align-items: stretch
+  }
+
+  &.flex-row {
+    flex-direction: row;
+  }
+
+  &.flex-column {
+    flex-direction: column;
+  }
+}
+
+.flex-1 {
+  flex: 1;
+}
+
 .text-left {
   text-align: left;
 }
 
 .text-right {
   text-align: right;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .transition-scale {
