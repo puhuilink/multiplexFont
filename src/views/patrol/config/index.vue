@@ -58,7 +58,7 @@
               :key="checkpointId"
             >
               <div class="d-flex j-c-center a-i-center checkbox border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <a-checkbox :checked="selectedRowKeys.includes(checkpointId)" @change="toggleSelect(checkpointId)"></a-checkbox>
+                <a-checkbox :checked="selectedRowKeys.includes(checkpointId)" @change="toggleSelect({ checkpointId, checkpointAlias, hosts })"></a-checkbox>
               </div>
               <div class="d-flex j-c-center a-i-center flex-row index border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <span>{{ index + 1 + offset }}</span>
@@ -68,7 +68,7 @@
               </div>
               <div class="d-flex j-c-center a-i-center flex-row qrCode border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
-                <a-button v-else type="link" @click="downloadQrCode(checkpointId)">下载</a-button>
+                <a-button v-else type="link" @click="downloadQrCode({ checkpointId, checkpointAlias})">下载</a-button>
               </div>
 
               <!-- / Hosts -->
@@ -273,13 +273,13 @@ export default {
       this.form.modalEndpointId = alias
     },
 
-    downloadQrCode (checkpointId) {
+    downloadQrCode ({ checkpointId, checkpointAlias }) {
       this.$set(this.qcCodeLoading, checkpointId, true)
       return PatrolService
         .qrCode(checkpointId)
         .then(async (res) => {
           await this.$nextTick()
-          downloadFile(`二维码-${checkpointId}.png`, new Uint8Array(res))
+          downloadFile(`${checkpointAlias}.png`, new Uint8Array(res))
         })
         .finally(() => {
           this.$set(this.qcCodeLoading, checkpointId, false)
@@ -289,8 +289,8 @@ export default {
     async batchDownloadQrCode () {
       try {
         this.qcCodeGlobalLoading = true
-        await Promise.all(this.selectedRowKeys.map((checkpointId) => {
-          return this.downloadQrCode(checkpointId)
+        await Promise.all(this.selectedRows.map((checkpoint) => {
+          return this.downloadQrCode(checkpoint)
         }))
       } finally {
         this.qcCodeGlobalLoading = false
@@ -316,21 +316,25 @@ export default {
       })
     },
 
-    toggleSelect (checkpointId) {
-      const { selectedRowKeys } = this
-      const index = selectedRowKeys.indexOf(checkpointId)
+    toggleSelect (checkpoint) {
+      const { selectedRowKeys, selectedRows } = this
+      const index = selectedRowKeys.indexOf(checkpoint.checkpointId)
       if (index !== -1) {
         selectedRowKeys.splice(index, 1)
+        selectedRows.splice(index, 1)
       } else {
-        selectedRowKeys.push(checkpointId)
+        selectedRowKeys.push(checkpoint.checkpointId)
+        selectedRows.push(checkpoint)
       }
     },
 
     toggleSelectAll () {
       if (this.hasSelectedAll) {
         this.selectedRowKeys = []
+        this.selectedRows = []
       } else {
         this.selectedRowKeys = this.checkpoints.map(({ checkpointId }) => checkpointId)
+        this.selectedRows = this.checkpoints.slice()
       }
     }
 
