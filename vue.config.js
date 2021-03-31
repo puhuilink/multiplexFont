@@ -71,7 +71,7 @@ const vueConfig = {
 
   chainWebpack: (config) => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-    types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))
+    types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
 
     config.resolve.alias
       .set('@$', resolve('src'))
