@@ -55,7 +55,10 @@
     flex-direction: row;
     width: 100%;
     text-align: center;
-    transition: all 0.3s;
+
+    &.selected {
+      background-color:@table-body-selected-sort-bg;
+    }
   }
 
   &__td {
@@ -65,7 +68,6 @@
     align-items: center;
   }
 
-  // background-color:@table-body-selected-sort-bg;
   .hover {
     transition: background-color 0.3s;
 

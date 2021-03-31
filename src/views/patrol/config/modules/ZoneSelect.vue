@@ -1,15 +1,19 @@
 <template>
   <div class="ZoneSelect">
-    <a-radio-group
-      class="ZoneSelect__path"
-      button-style="solid"
-      :value="options.pathId"
-      @input="changePathId"
-    >
-      <a-radio-button v-for="{ pathId, pathName } in pathList" :key="pathId" :value="pathId">
-        {{ pathName }}
-      </a-radio-button>
-    </a-radio-group>
+    <div class="ZoneSelect__header">
+      <a-radio-group
+        class="ZoneSelect__path"
+        button-style="solid"
+        :value="options.pathId"
+        @input="changePathId"
+      >
+        <a-radio-button v-for="{ pathId, pathName } in pathList" :key="pathId" :value="pathId">
+          {{ pathName }}
+        </a-radio-button>
+      </a-radio-group>
+
+      <slot name="default"></slot>
+    </div>
 
     <a-tabs
       class="ZoneSelect__zone"
@@ -115,6 +119,13 @@ export default {
 
 <style lang="less">
 .ZoneSelect {
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: 8px;
+  }
+
   &__path {}
 
   &__zone {

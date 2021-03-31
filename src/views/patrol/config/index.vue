@@ -1,7 +1,14 @@
 <template>
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
-      <ZoneSelect @change="changeZone" />
+      <ZoneSelect @change="changeZone">
+        <a-button
+          :disabled="!hasSelected"
+          :loading="qcCodeGlobalLoading"
+          type="primary"
+          @click="batchDownloadQrCode"
+        >下载</a-button>
+      </ZoneSelect>
     </div>
     <a-spin :spinning="spinning">
 
@@ -10,7 +17,11 @@
 
           <div class="PatrolConfig__thead border-bottom text-center">
             <div class="PatrolConfig__th border-right checkbox">
-              <a-checkbox></a-checkbox>
+              <a-checkbox
+                :checked="hasSelectedAll"
+                :indeterminate="!hasSelectedAll && hasSelected"
+                @change="toggleSelectAll"
+              />
             </div>
             <div class="PatrolConfig__th border-right index"><span>序号</span></div>
             <div class="PatrolConfig__th border-right checkpoints__with-scroll"><span>点位</span></div>
@@ -25,28 +36,31 @@
 
             <!-- / Checkpoints -->
             <div
-              class="PatrolConfig__tr checkpoint hover hover__primary-1"
               v-for="({ checkpointId, checkpointAlias, hosts }, index) in checkpoints"
+              class="PatrolConfig__tr checkpoint hover hover__primary-1"
+              :class="{
+                selected: selectedRowKeys.includes(checkpointId)
+              }"
               :key="checkpointId"
             >
-              <div class="display-flex justify-content-center align-items-center checkbox border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <a-checkbox ref="checkbox" @change="onCheckBox(checkpointId)"></a-checkbox>
+              <div class="d-flex j-c-center a-i-center checkbox border-right border-bottom" :class="{ 'border-top': index === 0 }">
+                <a-checkbox :checked="selectedRowKeys.includes(checkpointId)" @change="toggleSelect(checkpointId)"></a-checkbox>
               </div>
-              <div class="display-flex justify-content-center align-items-center flex-row index border-right border-bottom" :class="{ 'border-top': index === 0 }">
+              <div class="d-flex j-c-center a-i-center flex-row index border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <span>{{ index + 1 + offset }}</span>
               </div>
-              <div class="display-flex justify-content-center align-items-center flex-row checkpoints border-right border-bottom" :class="{ 'border-top': index === 0 }">
+              <div class="d-flex j-c-center a-i-center flex-row checkpoints border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <span>{{ checkpointAlias }}</span>
               </div>
-              <div class="display-flex justify-content-center align-items-center flex-row qrCode border-right border-bottom" :class="{ 'border-top': index === 0 }">
+              <div class="d-flex j-c-center a-i-center flex-row qrCode border-right border-bottom" :class="{ 'border-top': index === 0 }">
                 <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
-                <a-button v-else type="link" @click="qrCodeDownload(checkpointId)">下载</a-button>
+                <a-button v-else type="link" @click="downloadQrCode(checkpointId)">下载</a-button>
               </div>
 
               <!-- / Hosts -->
-              <div class="flex-1 flex-row hover hover__primary-2">
+              <div class="flex-1 flex-row">
                 <div
-                  class="display-flex flex-row"
+                  class="d-flex flex-row hover hover__primary-2"
                   v-for="({ hostId, hostAlias, endpoints }, hostIndex) in hosts"
                   :key="hostId"
                 >
@@ -57,7 +71,7 @@
                   <!-- / Endpoints -->
                   <div class="flex-1">
                     <div
-                      class="display-flex flex-row align-items-center justify-content-center hover hover__primary-3"
+                      class="d-flex flex-row a-i-center j-c-center hover hover__primary-3"
                       v-for="({ endpointId, endpointAlias, metrics }, endpointIndex) in endpoints"
                       :key="endpointId"
                     >
@@ -79,7 +93,7 @@
                           :key="metricId"
                         >
                           <div
-                            class="border-right border-bottom display-flex justify-content-center align-items-center hover hover__primary-4"
+                            class="border-right border-bottom d-flex j-c-center a-i-center hover hover__primary-4"
                             :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
                             :style="{
                               height: '40px'
@@ -91,7 +105,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="PatrolConfig__td display-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
+                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
                     <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
                     <a-button type="link">删除</a-button>
                   </div>
@@ -129,7 +143,6 @@
 </template>
 <script>
 import { PatrolService, PatrolConfigService } from '@/api'
-import Timeout from 'await-timeout'
 import { Confirm, List } from '@/components/Mixins'
 import { downloadFile, scrollTo } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
@@ -147,9 +160,11 @@ export default {
     return {
       disableBtn: true,
       checkpoints: [],
+      qcCodeGlobalLoading: false,
       qcCodeLoading: {},
       pathId: null,
       zoneId: null,
+      selectedRowKeys: [],
       spinning: false,
       searchInput: '',
       visible: false,
@@ -176,6 +191,10 @@ export default {
     }
   },
   computed: {
+    hasSelectedAll () {
+      const { selectedRowKeys, checkpoints } = this
+      return selectedRowKeys.length === checkpoints.length
+    },
     offset () {
       const { pageNo, pageSize } = this.pagination
       return (pageNo - 1) * pageSize
@@ -196,6 +215,7 @@ export default {
         return
       }
 
+      this.resetSelect()
       this.spinning = true
       return PatrolConfigService
         .patrolConfig({
@@ -230,17 +250,29 @@ export default {
       this.form.modalEndpointId = alias
     },
 
-    qrCodeDownload (code) {
-      this.$set(this.qcCodeLoading, code, true)
+    downloadQrCode (checkpointId) {
+      this.$set(this.qcCodeLoading, checkpointId, true)
       return PatrolService
-        .qrCode(code)
+        .qrCode(checkpointId)
         .then(async (res) => {
-          downloadFile(`二维码-${code}.png`, new Uint8Array(res))
-          await Timeout.set(300)
+          await this.$nextTick()
+          downloadFile(`二维码-${checkpointId}.png`, new Uint8Array(res))
         })
         .finally(() => {
-          this.$set(this.qcCodeLoading, code, false)
+          this.$set(this.qcCodeLoading, checkpointId, false)
         })
+    },
+
+    async batchDownloadQrCode () {
+      const { selectedRowKeys } = this
+      try {
+        this.qcCodeGlobalLoading = true
+        await Promise.all(selectedRowKeys.map(async (checkpointId) => {
+          return this.downloadQrCode(checkpointId)
+        }))
+      } finally {
+        this.qcCodeGlobalLoading = false
+      }
     },
 
     changePagination (pageNo, pageSize) {
@@ -255,9 +287,29 @@ export default {
       )
     },
 
-    onCheckBox (e) {
-      this.disableBtn = !true
-      console.log('11', this.$refs.checkbox)
+    resetSelect () {
+      Object.assign(this, {
+        selectedRowKeys: [],
+        selectedRows: []
+      })
+    },
+
+    toggleSelect (checkpointId) {
+      const { selectedRowKeys } = this
+      const index = selectedRowKeys.indexOf(checkpointId)
+      if (index !== -1) {
+        selectedRowKeys.splice(index, 1)
+      } else {
+        selectedRowKeys.push(checkpointId)
+      }
+    },
+
+    toggleSelectAll () {
+      if (this.hasSelectedAll) {
+        this.selectedRowKeys = []
+      } else {
+        this.selectedRowKeys = this.checkpoints.map(({ checkpointId }) => checkpointId)
+      }
     }
 
   }
