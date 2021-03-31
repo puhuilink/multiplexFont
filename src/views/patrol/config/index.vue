@@ -25,7 +25,7 @@
 
             <!-- / Checkpoints -->
             <div
-              class="PatrolConfig__tr"
+              class="PatrolConfig__tr checkpoint hover hover__primary-1"
               v-for="({ checkpointId, checkpointAlias, hosts }, index) in checkpoints"
               :key="checkpointId"
             >
@@ -44,7 +44,7 @@
               </div>
 
               <!-- / Hosts -->
-              <div class="flex-1 flex-row">
+              <div class="flex-1 flex-row hover hover__primary-2">
                 <div
                   class="display-flex flex-row"
                   v-for="({ hostId, hostAlias, endpoints }, hostIndex) in hosts"
@@ -57,7 +57,7 @@
                   <!-- / Endpoints -->
                   <div class="flex-1">
                     <div
-                      class="display-flex flex-row align-items-center justify-content-center"
+                      class="display-flex flex-row align-items-center justify-content-center hover hover__primary-3"
                       v-for="({ endpointId, endpointAlias, metrics }, endpointIndex) in endpoints"
                       :key="endpointId"
                     >
@@ -79,7 +79,7 @@
                           :key="metricId"
                         >
                           <div
-                            class="border-right border-bottom display-flex justify-content-center align-items-center"
+                            class="border-right border-bottom display-flex justify-content-center align-items-center hover hover__primary-4"
                             :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
                             :style="{
                               height: '40px'

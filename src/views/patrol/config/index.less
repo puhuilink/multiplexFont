@@ -1,3 +1,10 @@
+// ant-design-vue/lib/table/style/index.less
+
+@hoverBgColorPrimary-1: lighten(@table-row-hover-bg, 3%);
+@hoverBgColorPrimary-2: lighten(@table-row-hover-bg, 1%);
+@hoverBgColorPrimary-3: darken(@table-row-hover-bg, 1%);
+@hoverBgColorPrimary-4: darken(@table-row-hover-bg, 4%);
+
 .PatrolConfig {
   &__header {
     margin-bottom: 8px;
@@ -16,8 +23,8 @@
   
   &__table {
     width: 100%;
-    border: 1px solid #e8e8e8;
-    border-radius: 4px;
+    border: @border-width-base @border-style-base @border-color-split;
+    border-radius: @table-border-radius-base @table-border-radius-base 0 0;
   }
 
   &__thead {
@@ -29,7 +36,7 @@
   &__th {
     display: inline-block;
     padding: 8px;
-    color: rgba(0, 0, 0, 0.85);
+    color: @table-header-color;
     font-weight: 500;
     background: transparent;
   }
@@ -43,12 +50,12 @@
     margin: 8px 0;
   }
   
-  // TODO: hover
   &__tr {
     display: flex;
     flex-direction: row;
     width: 100%;
     text-align: center;
+    transition: all 0.3s;
   }
 
   &__td {
@@ -57,4 +64,30 @@
     justify-content: center;
     align-items: center;
   }
+
+  // background-color:@table-body-selected-sort-bg;
+  .hover {
+    transition: background-color 0.3s;
+
+    &:hover {
+      transition: background-color 0.3s;
+    }
+  }
+
+  .hover__primary-1:hover  {
+    background-color: @hoverBgColorPrimary-1;
+  }
+
+  .hover__primary-2:hover  {
+    background-color: @hoverBgColorPrimary-2;
+  }
+
+  .hover__primary-3:hover  {
+    background-color: @hoverBgColorPrimary-3;
+  }
+  
+  .hover__primary-4:hover  {
+    background-color: @hoverBgColorPrimary-4;
+  }
+  
 }
