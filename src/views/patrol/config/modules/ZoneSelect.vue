@@ -91,8 +91,8 @@ export default {
             return {
               // 以工作组名称区分巡更路线
               pathName: groupName,
-              pathId: patrolPath?.id,
-              zoneList: patrolPath?.zoneRelationList?.map(({ zone }) => ({ ...zone })) || []
+              pathId: _.get(patrolPath, ['id']),
+              zoneList: _.get(patrolPath, ['zoneRelationList'], []).map(({ zone }) => ({ ...zone }))
             }
           })
 
