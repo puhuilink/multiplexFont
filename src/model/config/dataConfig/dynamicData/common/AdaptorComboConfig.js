@@ -73,7 +73,7 @@ export class AdaptorComboConfig {
       .comboData(this.getOption())
       .then(({ data }) => data || [])
       .catch(() => [])
-      .then(this.transfer.bind(this))
+      .then(AdaptorComboConfig.transfer.bind(this))
   }
 
   transferHealthValue (obj = {}) {
