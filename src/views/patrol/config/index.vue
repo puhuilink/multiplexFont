@@ -49,8 +49,9 @@
           <div class="PatrolConfig__tbody" ref="tBody">
 
             <!-- / Checkpoints -->
+            <!-- hosts 可能为空，给定一条空数据用于占位 -->
             <div
-              v-for="({ checkpointId, checkpointAlias, hosts }, index) in checkpoints"
+              v-for="({ checkpointId, checkpointAlias, hosts = [{}] }, index) in checkpoints"
               class="PatrolConfig__tr checkpoint hover hover__primary-1"
               :class="{
                 selected: selectedRowKeys.includes(checkpointId)
@@ -72,22 +73,24 @@
               </div>
 
               <!-- / Hosts -->
-              <div class="flex-1 flex-row">
+              <!-- endpoints 可能为空，给定一条空数据用于占位 -->
+              <div class="flex-row">
                 <div
                   class="d-flex flex-row hover hover__primary-2"
-                  v-for="({ hostId, hostAlias, endpoints }, hostIndex) in hosts"
-                  :key="hostId"
+                  v-for="({ hostId, hostAlias, endpoints = [{}] }, hostIndex) in hosts"
+                  :key="hostId || hostIndex"
                 >
                   <div class="hosts border-right border-bottom PatrolConfig__td" :class="{ 'border-top': hostIndex === 0 && index === 0 }">
                     <span>{{ hostAlias }}</span>
                   </div>
 
                   <!-- / Endpoints -->
+                  <!-- metrics 可能为空，给定一条空数据用于占位 -->
                   <div class="flex-1">
                     <div
                       class="d-flex flex-row a-i-center j-c-center hover hover__primary-3"
-                      v-for="({ endpointId, endpointAlias, metrics }, endpointIndex) in endpoints"
-                      :key="endpointId"
+                      v-for="({ endpointId, endpointAlias, metrics = [{}] }, endpointIndex) in endpoints"
+                      :key="endpointId || endpointIndex"
                     >
                       <div
                         class="endpoints border-right border-bottom PatrolConfig__td"
@@ -104,7 +107,7 @@
                         <div
                           class="fw"
                           v-for="({ metricId, metricAlias }, metricIndex) in metrics"
-                          :key="metricId"
+                          :key="metricId || metricIndex"
                         >
                           <div
                             class="border-right border-bottom d-flex j-c-center a-i-center hover hover__primary-4"
@@ -120,8 +123,10 @@
                     </div>
                   </div>
                   <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
-                    <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
-                    <a-button type="link">删除</a-button>
+                    <template v-if="hostId">
+                      <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
+                      <a-button type="link">删除</a-button>
+                    </template>
                   </div>
                 </div>
               </div>
