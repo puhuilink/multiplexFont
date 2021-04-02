@@ -6,7 +6,8 @@
           <a-input
             allowClear
             class="PatrolConfig__search"
-            placeholder="搜索点位名称、监控对象"
+            placeholder="搜索点位名称"
+            v-model.trim="queryParams.alias"
           ></a-input>
           <a-button
             type="primary"
@@ -234,8 +235,9 @@ export default {
     },
 
     loadPatrolConfig () {
-      const { pathId, zoneId, pagination } = this
+      const { queryParams, pathId, zoneId, pagination } = this
       const { offset, pageSize: limit } = pagination
+      const { alias } = queryParams
 
       if (!pathId || !zoneId) {
         this.checkpoints = []
@@ -247,6 +249,7 @@ export default {
       this.spinning = true
       return PatrolConfigService
         .patrolConfig({
+          alias,
           pathId,
           zoneId,
           limit,
