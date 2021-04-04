@@ -13,7 +13,7 @@ const {
 
 const linkList = [
   new HttpLink({
-    uri: `${VUE_APP_HASURA_IMP_URI}/v1/graphql`
+    uri: `${VUE_APP_HASURA_IMP_URI}/graphql`
     // headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_IMP_KEY }
   })
 ]
