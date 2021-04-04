@@ -7,14 +7,14 @@ import { onError } from 'apollo-link-error'
 
 const {
   NODE_ENV,
-  VUE_APP_HASURA_IMP_URI,
-  VUE_APP_HASURA_IMP_KEY
+  VUE_APP_HASURA_IMP_URI
+  // VUE_APP_HASURA_IMP_KEY
 } = process.env
 
 const linkList = [
   new HttpLink({
-    uri: `${VUE_APP_HASURA_IMP_URI}/v1/graphql`,
-    headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_IMP_KEY }
+    uri: `${VUE_APP_HASURA_IMP_URI}/v1/graphql`
+    // headers: { 'x-hasura-admin-secret': VUE_APP_HASURA_IMP_KEY }
   })
 ]
 
