@@ -14,7 +14,7 @@
       v-bind="$props"
       label="监控实体"
       prop="endpointModelId"
-      >
+    >
       <EndpointSelect
         schema="model"
         v-bind="ctx && ctx.editAbleProps"
@@ -27,7 +27,7 @@
       v-bind="$props"
       label="检查项"
       prop="metricModelId"
-      >
+    >
       <MetricSelect
         schema="model"
         v-bind="ctx && ctx.editAbleProps"
