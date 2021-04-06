@@ -3,7 +3,7 @@
     <a-form-model-item
       v-bind="$props"
       label="监控对象"
-      prop="deviceModel"
+      prop="deviceBrand"
       :rules="[
         { required: true, message: '请选择监控对象' }
       ]">
@@ -14,9 +14,7 @@
       v-bind="$props"
       label="监控实体"
       prop="endpointModelId"
-      :rules="[
-        { required: true, message: '请选择监控实体' }
-      ]">
+      >
       <EndpointSelect
         schema="model"
         v-bind="ctx && ctx.editAbleProps"
@@ -29,9 +27,7 @@
       v-bind="$props"
       label="检查项"
       prop="metricModelId"
-      :rules="[
-        { required: true, message: '请选择检查项' }
-      ]">
+      >
       <MetricSelect
         schema="model"
         v-bind="ctx && ctx.editAbleProps"

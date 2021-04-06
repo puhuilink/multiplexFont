@@ -64,6 +64,19 @@ class AlarmRuleService extends BaseService {
     return detail
   }
 
+  static async addUser (param) {
+    console.log('sendParam', param)
+    const newParam = {
+      level: param.level,
+      groupId: param.group,
+      contact: _.join(param.contact, '/'),
+      smsId: Number(param.temp_sms_id),
+      emailId: Number(param.temp_email_id),
+      auto: param.auto
+    }
+    return axios.post('notice/addNoticeMember', newParam)
+  }
+
   static async global (rule_type) {
     const { data: { alarmRuleList } } = await query(
       AlarmRuleDao.find({

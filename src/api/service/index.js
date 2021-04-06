@@ -1,6 +1,7 @@
 import { AlarmForwardService } from './AlarmForwardService.js'
 import { AlarmRuleService } from './AlarmRuleService.js'
 import { AlarmService } from './AlarmService.js'
+import { AlarmSenderService } from './AlarmSenderService'
 import { AlarmTempService } from './AlarmTempService.js'
 import { AuditService } from './AuditService.js'
 import { AuthorizeObjectService } from './AuthorizeObjectService.js'
@@ -33,6 +34,7 @@ export {
   AlarmRuleService,
   AlarmService,
   AlarmTempService,
+  AlarmSenderService,
   AuditService,
   AuthorizeObjectService,
   CmdbHostEndpointMetricTreeService,
