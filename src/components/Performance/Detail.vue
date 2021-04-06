@@ -30,7 +30,7 @@
       </template>
 
       <template #footer>
-        <a-button type="link" @click="back">&lt;&nbsp;返回</a-button>
+        <a-button type="link" @click="onBack">&lt;&nbsp;返回</a-button>
       </template>
     </CTable>
 
@@ -195,12 +195,18 @@ export default {
     }
   },
   computed: {},
+  watch: {
+    hostId () {
+      // 重置到默认状态
+      this.alarmRecord = true
+      this.alarmRecordDetails = false
+      this.$refs['table'].refresh(true)
+    }
+  },
   methods: {
     // 首次展示内容数据接口
     async loadData () {
-      return AlarmRuleService.AlarmPopupDetail(this.hostId).then((res) => {
-        return res.data
-      })
+      return AlarmRuleService.hostPerformanceDetail(this.hostId)
     },
 
     // 告警点击查看当前所在数据的内容详情
@@ -218,12 +224,12 @@ export default {
     // 点击查看详细内容数据接口
     async loadDataDetails () {
       const record = this.endpointId
-      return AlarmRuleService.AlarmRecordDetails(record).then((res) => {
+      return AlarmRuleService.endpointPerformanceDetail(record).then((res) => {
         return res.data
       })
     },
 
-    back () {
+    onBack () {
       this.alarmRecord = true
       this.alarmRecordDetails = false
     },
@@ -264,22 +270,6 @@ export default {
     margin-right: 15px;
     padding:-3px 5px 5px 5px;
     cursor:pointer;
-  }
-
-  .urgent{
-    background: #ff0202;
-  }
-  .alarmMain{
-    background: #f68808;
-  }
-  .secondary{
-    background:#ffdb00
-  }
-  .commonly{
-    background: #2d97ff
-  }
-  .normal{
-    background: #06c357
   }
 }
 </style>
