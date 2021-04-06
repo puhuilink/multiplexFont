@@ -39,15 +39,24 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { List } from '@/components/Mixins'
 import { AlarmRuleService } from '@/api'
 import { pureLevelColorMapping } from '@/components/Alarm/color.config'
 import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 import HistoryChart from './History.vue'
 
+const { computed, ...rest } = List
+
 export default {
   name: 'PerformanceDetail',
-  mixins: [List],
+  mixins: [
+    {
+      // scrollY 用于 props 覆盖默认 computed
+      computed: _.omit(computed, ['scrollY']),
+      ...rest
+    }
+  ],
   components: {
     AlarmStatusBadgeGroup,
     HistoryChart
@@ -57,6 +66,10 @@ export default {
       require: true,
       type: String,
       default: ''
+    },
+    scrollY: {
+      type: String,
+      default: 'max(calc(100vh - 320px), 100px)'
     }
   },
   data () {
