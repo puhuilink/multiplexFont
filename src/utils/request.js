@@ -19,7 +19,8 @@ const requestInterceptor = config => {
 
 const responseInterceptor = (response) => {
   const { data: { code, msg } } = response
-  if (code && code !== 200) {
+  // hack: 30 代表查询到未匹配内容
+  if (code && ![30, 200].includes(code)) {
     switch (code) {
       case 401: {
         notification.error({

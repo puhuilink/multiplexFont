@@ -13,7 +13,18 @@ class PatrolConfigService extends BaseService {
       method: 'post',
       data
     })
-      .then(({ data }) => data)
+      .then(({ data, code }) => {
+        // hack for backend
+        if (code === 30) {
+          return {
+            data: [],
+            pagination: {
+              aggregate: 0
+            }
+          }
+        }
+        return data
+      })
   }
 }
 
