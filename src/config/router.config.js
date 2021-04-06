@@ -110,6 +110,13 @@ export const asyncRouterMap = [
                 name: 'AlarmRules',
                 component: () => import('@/views/alarm/config/rules/index'),
                 meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003004' ] }
+              },
+              {
+                path: '/alarm/config/forward-bind',
+                name: 'ForwardBind',
+                component: () => import('@/views/alarm/config/forward-bind/index'),
+                // TODO 告警绑定没加权限位
+                meta: { title: '告警绑定', keepAlive: true }
               }
             ]
           }

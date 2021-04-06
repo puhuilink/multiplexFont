@@ -2,12 +2,17 @@ import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
 import { AlarmTempDao } from '../dao/index'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 class AlarmTempService extends BaseService {
   static async find (argus = {}) {
     return query(
       AlarmTempDao.find(argus)
     )
+  }
+
+  static async addNoticeMember (param) {
+    return axios.post('notice/addNoticeMember', param)
   }
 
   static async detail (id) {

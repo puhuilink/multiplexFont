@@ -23,9 +23,11 @@ export function enabledColumn () {
     customRender (__, record, index) {
       {
         const { id, enabled } = record
-        const directives = [
-          { name: 'v-action', value: 'M0304', modifiers: { abc: true } }
-        ]
+        // TODO 启用权限位
+        // const directives = [
+        //   { name: 'v-action', value: 'M0304', modifiers: { abc: true } }
+        // ]
+        // {...{ directives }}
 
         // 默认配置
         if (!btnPropsList[index]) this.$set(btnPropsList, `${index}`, { loading: false })
@@ -33,7 +35,6 @@ export function enabledColumn () {
 
         return (
           <a-popconfirm
-            {...{ directives }}
             title={`确定要更改${enabled ? '启用' : '停用'}状态吗？`}
             okText="确定"
             cancelText="取消"
