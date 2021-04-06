@@ -39,7 +39,6 @@
         :rules="[{ required: true, message: '请选择通知组' }]"
       >
         <a-select
-          style="width: 200px"
           allowClear
           mode="default"
           showSearch
@@ -59,14 +58,14 @@
         :rules="[{ required: true, message: '请选择通知组' }]"
       >
         <a-select
-          style="width: 200px"
+          class="item2"
           allowClear
           mode="multiple"
           showSearch
           v-model="send.contact"
         >
           <a-select-option
-            style="width: 200px"
+            class="item2"
             v-for="{ user_id, staff_name } in userList"
             :key="user_id"
             :value="user_id">{{ staff_name }}</a-select-option>
@@ -81,13 +80,13 @@
           <a-row>
             <a-col :span="8">
               <a-form-model-item label="短信" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="!!send.hasEnabledSMS" @input="toggleSMS"/>
+                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS"/>
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
               <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
                 <a-select
-                  style="width: 100px"
+                  class="item1"
                   allowClear
                   :disabled="!send.hasEnabledSMS"
                   v-model="send.temp_sms_id"
@@ -101,13 +100,13 @@
           <a-row>
             <a-col :span="8">
               <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="!!send.hasEnabledEmail" @input="toggleEmail"/>
+                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail"/>
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
               <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
                 <a-select
-                  style="width: 100px"
+                  class="item1"
                   allowClear
                   :disabled="!send.hasEnabledEmail"
                   v-model="send.temp_email_id"
@@ -182,8 +181,8 @@ export default {
       group: '',
       level: '',
       auto: false,
-      hasEnabledSMS: 0,
-      hasEnabledEmail: 0,
+      hasEnabledSMS: false,
+      hasEnabledEmail: false,
       temp_email_id: '',
       temp_sms_id: '',
       contact: []
@@ -235,6 +234,7 @@ export default {
         this.cancel()
       } catch (e) {
         this.$notifyError(e)
+        throw e
       } finally {
         this.btnLoading = false
       }
@@ -356,6 +356,12 @@ export default {
       justify-items: center;
       &__Select {
         width: 40%;
+      }
+      .item1{
+        width: 100px;
+      }
+      .item2 {
+        width: 200px;
       }
     }
 

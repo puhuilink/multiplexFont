@@ -65,7 +65,6 @@ class AlarmRuleService extends BaseService {
   }
 
   static async addUser (param) {
-    console.log('sendParam', param)
     const newParam = {
       level: param.level,
       groupId: param.group,
