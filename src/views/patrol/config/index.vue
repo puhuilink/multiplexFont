@@ -3,18 +3,24 @@
     <div class="PatrolConfig__header">
       <ZoneSelect @change="changeZone">
         <div class="PatrolConfig__operation">
-          <a-input
-            allowClear
-            class="PatrolConfig__search"
-            placeholder="搜索点位名称"
-            v-model.trim="queryParams.alias"
-          ></a-input>
-          <a-button
-            type="primary"
-            @click="() => {
-              changePagination(1, this.pagination.pageSize)
-            }"
-          >查询</a-button>
+          <a-form class="d-flex flex-row">
+            <a-input
+              allowClear
+              class="PatrolConfig__search"
+              placeholder="搜索点位名称"
+              :style="{
+                'margin-right': '12px'
+              }"
+              v-model.trim="queryParams.alias"
+            ></a-input>
+            <a-button
+              type="primary"
+              htmlType="submit"
+              @click="() => {
+                changePagination(1, this.pagination.pageSize)
+              }"
+            >查询</a-button>
+          </a-form>
           <a-button type="primary">新增监控对象</a-button>
           <a-button
             :disabled="!hasSelected"

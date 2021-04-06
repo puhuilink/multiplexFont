@@ -1,5 +1,6 @@
 import uuid from 'uuid/v4'
 import moment from 'moment'
+import _ from 'lodash'
 
 export class TimeRangeModel {
   // example: A08:45-A10:45,A10:45-A13:45,A13:45-A15:45,A15:45-A19:45
@@ -23,16 +24,24 @@ export class TimeRangeModel {
   }
 
   add () {
-    // TODO: 在最后一条记录基础上+2
-    const now = moment()
+    const { end: { dayType, time } } = _.last(this.dataSource) || {
+      dayType: 'A',
+      time: moment().format('HH:mm')
+    }
+
+    // moment 比较时间需跟上年月日
+    const startTime = `${moment().format(`YYYY-MM-DD`)} ${time}`
+    const startMoment = moment(startTime, 'YYYY-MM-DD HH:mm')
+    const endMoment = moment(startMoment).add(2, 'hours')
+
     this.dataSource.push({
       start: {
-        dayType: 'A',
-        time: now.format('HH:mm')
+        dayType: dayType,
+        time: time
       },
       end: {
-        dayType: 'A',
-        time: now.add(2, 'hours').format('HH:mm')
+        dayType: startMoment.isSame(endMoment, 'day') ? dayType : 'B',
+        time: endMoment.format('HH:mm')
       },
       uuid: uuid()
     })

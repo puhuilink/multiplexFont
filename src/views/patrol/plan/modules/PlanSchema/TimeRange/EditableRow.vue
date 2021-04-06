@@ -35,6 +35,7 @@ export default {
         </a-select>
 
         <a-time-picker
+          allowClear={false}
           format="HH:mm"
           value={moment(value.time, format)}
           onChange={(time) => {

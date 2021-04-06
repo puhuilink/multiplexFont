@@ -52,7 +52,7 @@ export default {
         const { data } = await AlarmRuleService.historyAlarmDataView(this.queryStartTime, this.queryEndTime, this.historyDataList)
         const dataList = AdaptorComboConfig.transfer(data)
         const option = LinesDynamicDataConfig.transferComboDataOption(dataList)
-        this.title = `${Object.keys(data)[0]}历史图`
+        this.title = `${Object.keys(data)[0] || ''}历史图`
         this.$chart.setOption({
           ...option,
           title: { text: '' },

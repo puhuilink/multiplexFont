@@ -116,7 +116,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       series: categoryList.map(category => ({
         type: 'line',
         name: category,
-        data: aggregate[category].map(({ data }) => data)
+        data: aggregate[category].map(({ data }) => data),
+        itemStyle: {
+          color: '#7ed3f4'
+        }
       }))
     }
   }

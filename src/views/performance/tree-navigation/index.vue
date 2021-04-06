@@ -17,7 +17,11 @@
 
           <!-- / 指标列表 -->
           <a-tab-pane key="1" tab="指标列表" class="TreeNavigation__content">
-            <PerformanceAggregate :where="where" v-show="dataRef" />
+            <PerformanceDetail
+              :hostId="dataRef.id"
+              :scrollY="'max(calc(100vh - 360px), 100px)'"
+              v-if="dataRef"
+            />
             <a-empty v-show="!dataRef" description="请在左侧资源树选择具体设备" />
           </a-tab-pane>
 
@@ -65,7 +69,7 @@
 
 <script>
 import { CmdbTree } from '@/components/Resource'
-import PerformanceAggregate from '@/components/Performance/Aggregate'
+import PerformanceDetail from '@/components/Performance/Detail.vue'
 import Renderer from '@/components/Renderer'
 import { ViewDesignService } from '@/api'
 import _ from 'lodash'
@@ -76,7 +80,7 @@ export default {
   mixins: [Preview],
   components: {
     CmdbTree,
-    PerformanceAggregate,
+    PerformanceDetail,
     Renderer
   },
   props: {},
