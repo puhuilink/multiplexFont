@@ -241,8 +241,8 @@ export default {
     },
 
     loadPatrolConfig () {
-      const { queryParams, pathId, zoneId, pagination } = this
-      const { offset, pageSize: limit } = pagination
+      const { queryParams, pathId, zoneId, pagination, offset } = this
+      const { pageSize: limit } = pagination
       const { alias } = queryParams
 
       if (!pathId || !zoneId) {
