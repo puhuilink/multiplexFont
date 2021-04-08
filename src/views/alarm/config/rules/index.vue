@@ -13,80 +13,80 @@
       <template #query>
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
-            <a-col v-bind="colProps">
-              <a-form-item
-                label="品牌设备"
-                v-bind="formItemLayout"
-                class="fw"
-              >
-                <CascaderDictValue
-                  :value="queryParams.dictValue"
-                  @change="onChangDictValue"
-                />
-              </a-form-item>
-            </a-col>
+            <a-row>
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="品牌设备"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <CascaderDictValue
+                    :value="queryParams.dictValue"
+                    @change="onChangDictValue"
+                  />
+                </a-form-item>
+              </a-col>
 
-            <a-col v-bind="colProps">
-              <a-form-item
-                label="监控实体"
-                v-bind="formItemLayout"
-                class="fw"
-              >
-                <EndpointSelect
-                  schema="model"
-                  :parentId="queryParams.dictValue[2]"
-                  :value="queryParams.endpoint_model_id"
-                  @update:value="onChangeEndpointModelId($event)"
-                />
-              </a-form-item>
-            </a-col>
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="监控实体"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <EndpointSelect
+                    schema="model"
+                    :parentId="queryParams.dictValue[2]"
+                    :value="queryParams.endpoint_model_id"
+                    @update:value="onChangeEndpointModelId($event)"
+                  />
+                </a-form-item>
+              </a-col>
 
-            <a-col v-bind="colProps">
-              <a-form-item
-                label="检查项"
-                v-bind="formItemLayout"
-                class="fw"
-              >
-                <MetricSelect
-                  schema="model"
-                  :parentId="queryParams.endpoint_model_id"
-                  :value="queryParams.metric_model_id"
-                  @update:value="onChangeMetricModelId($event)"
-                />
-              </a-form-item>
-            </a-col>
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="检查项"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <MetricSelect
+                    schema="model"
+                    :parentId="queryParams.endpoint_model_id"
+                    :value="queryParams.metric_model_id"
+                    @update:value="onChangeMetricModelId($event)"
+                  />
+                </a-form-item>
+              </a-col>
 
-            <a-col v-bind="colProps">
-              <a-form-item label="规则名称" v-bind="formItemLayout" class="fw">
-                <a-input allowClear v-model.trim="queryParams.title" />
-              </a-form-item>
-            </a-col>
+              <a-col v-bind="colProps">
+                <a-form-item label="规则名称" v-bind="formItemLayout" class="fw">
+                  <a-input allowClear v-model.trim="queryParams.title" />
+                </a-form-item>
+              </a-col>
 
-            <a-col v-bind="colProps">
-              <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M0304>
-                <a-select allowClear v-model.number="queryParams.enabled" >
-                  <a-select-option :value="1">启用</a-select-option>
-                  <a-select-option :value="0">禁用</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
+              <a-col v-bind="colProps">
+                <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M0304>
+                  <a-select allowClear v-model.number="queryParams.enabled" >
+                    <a-select-option :value="1">启用</a-select-option>
+                    <a-select-option :value="0">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
 
-            <a-col v-bind="colProps">
-              <a-form-item
-                label="规则类型"
-                v-bind="formItemLayout"
-                class="fw"
-              >
-                <a-select v-model="queryParams.rule_type">
-                  <a-select-option
-                    v-for="(label, value) in allRuleType"
-                    :key="value"
-                    :value="value"
-                  >{{ label }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-
+              <a-col v-bind="colProps">
+                <a-form-item
+                  label="规则类型"
+                  v-bind="formItemLayout"
+                  class="fw"
+                >
+                  <a-select v-model="queryParams.rule_type">
+                    <a-select-option
+                      v-for="(label, value) in allRuleType"
+                      :key="value"
+                      :value="value"
+                    >{{ label }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
 
@@ -109,6 +109,7 @@
             <a-menu-item key="merge">合并规则</a-menu-item>
             <a-menu-item key="upgrade">升级规则</a-menu-item>
             <a-menu-item key="recover">消除规则</a-menu-item>
+            <a-menu-item key="forward">通知规则</a-menu-item>
           </a-menu>
           <a-button class="fr" type="primary"> 全局告警规则设置 <a-icon type="down" /> </a-button>
         </a-dropdown>

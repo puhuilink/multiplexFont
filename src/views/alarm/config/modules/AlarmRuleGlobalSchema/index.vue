@@ -45,7 +45,7 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import RecoverForm from '../AlarmRuleSchema/RecoverForm'
 import UpgradeForm from '../AlarmRuleSchema/UpgradeForm'
 import MergeForm from '../AlarmRuleSchema/MergeForm'
-import ForwardForm from '../AlarmRuleSchema/ForwardForm'
+import FrequencyForm from '@/views/alarm/config/modules/AlarmRuleSchema/FrequencyForm'
 import { AlarmRuleService } from '@/api'
 import { AlarmRuleModelFactory } from '../AlarmRuleSchema/model'
 import { isEmpty } from 'lodash'
@@ -67,7 +67,7 @@ export default {
         case 'merge': return MergeForm
         case 'recover': return RecoverForm
         case 'upgrade': return UpgradeForm
-        case 'forward': return ForwardForm
+        case 'FrequencyForm': return FrequencyForm
         default: return null
       }
     }

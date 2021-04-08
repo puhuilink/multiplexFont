@@ -99,12 +99,13 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alarm/config/forward-temp/index'),
                 meta: { title: '告警通知模板', keepAlive: true, permission: ['F003003002'] }
               },
-              {
-                path: '/alarm/config/forward-rules',
-                name: 'ForwardRules',
-                component: () => import('@/views/alarm/config/forward-rules/index'),
-                meta: { title: '告警通知规则', keepAlive: true, permission: ['F003003003'] }
-              },
+              // 前转规则合并
+              // {
+              //   path: '/alarm/config/forward-rules',
+              //   name: 'ForwardRules',
+              //   component: () => import('@/views/alarm/config/forward-rules/index'),
+              //   meta: { title: '告警通知规则', keepAlive: true, permission: ['F003003003'] }
+              // },
               {
                 path: '/alarm/config/rules',
                 name: 'AlarmRules',

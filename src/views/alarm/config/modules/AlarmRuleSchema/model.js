@@ -47,20 +47,19 @@ class UpgradeContentModel extends ContentModel {}
 /**
  * 发送规则
  */
-class ForwardContentModel extends ContentModel {
-  constructor ({ content, sendList = [], ...props }) {
-    super(content)
-    const cmdbConfig = _.pick(props, ['hostId', 'endpointModelId', 'metricModelId'])
-    this.ruleType = [ALARM_RULE_FORWARD]
-    this.sendList = sendList.map(sendConfig => new SendModel({ ...sendConfig, ...cmdbConfig }))
-  }
-
-  serialize () {
-    const { sendList = [] } = this
-    return {
-      ...super.serialize(),
-      sendList: sendList.map(sendModel => sendModel.serialize())
-    }
+class ForwardContentModel {
+  constructor ({
+    startTime = '',
+    endTime = '',
+    firstInterval = '',
+    secondInterval = '',
+    thirdInterval = ''
+  } = {}) {
+    this.frequencyStart = startTime
+    this.frequencyEnd = endTime
+    this.number = firstInterval
+    this.number24 = secondInterval
+    this.number48 = thirdInterval
   }
 }
 
@@ -86,78 +85,93 @@ export const contentModelMapping = new Map([
   [ALARM_RULE_RECOVER, RecoverContentModel]
 ])
 
-export class SendModel {
-  constructor ({
-    id,
-    hostId,
-    endpointModelId,
-    metricModelId,
-    event_level,
-    send_type = '',
-    contact = '',
-    temp_sms_id,
-    temp_email_id
-  } = {}) {
-    this.id = id
-    this.hostId = hostId
-    this.endpointModelId = endpointModelId
-    this.metricModelId = metricModelId
-    this.event_level = event_level
-    this.send_type = send_type.split('/').filter(Boolean)
-    this.contact = contact.split('/').filter(Boolean)
-    this.temp_sms_id = temp_sms_id
-    this.temp_email_id = temp_email_id
-  }
-
-  toggleEmail () {
-    const index = this.send_type.indexOf(SEND_TYPE_EMAIL)
-    if (index === -1) {
-      this.send_type.push(SEND_TYPE_EMAIL)
-    } else {
-      this.send_type.splice(index, 1)
-    }
-  }
-
-  toggleSMS () {
-    const index = this.send_type.indexOf(SEND_TYPE_SMS)
-    if (index === -1) {
-      this.send_type.push(SEND_TYPE_SMS)
-    } else {
-      this.send_type.splice(index, 1)
-    }
-  }
-
-  get hasEnabledEmail () {
-    return this.send_type.includes(SEND_TYPE_EMAIL)
-  }
-
-  get hasEnabledSMS () {
-    return this.send_type.includes(SEND_TYPE_SMS)
-  }
-
-  // 仅写入数据库时用到
-  get temp_id () {
-    const tempIdList = []
-    const { send_type, temp_sms_id, temp_email_id } = this
-
-    send_type.includes(SEND_TYPE_EMAIL) && tempIdList.push(temp_email_id)
-    send_type.includes(SEND_TYPE_SMS) && tempIdList.push(temp_sms_id)
-
-    return tempIdList
-      .filter(Boolean)
-      .join('/')
-  }
-
-  serialize () {
-    const { contact, send_type, temp_id, ...rest } = this
-    return {
-      contact: contact.filter(Boolean).join('/'),
-      send_type: send_type.filter(Boolean).join('/'),
-      temp_id,
-      ...rest
-    }
-  }
-}
+// export class SendModel {
+//   constructor ({
+//     id,
+//     hostId,
+//     endpointModelId,
+//     metricModelId,
+//     event_level,
+//     send_type = '',
+//     contact = '',
+//     temp_sms_id,
+//     temp_email_id,
+// id,
+// title,
+// ruleType,
+// deviceType,
+// deviceBrand,
+// deviceModel,
+// hostIds,
+// endpointModelId,
+// metricModelId,
+// frequencyStart,
+// frequencyEnd,
+// number,
+// number24,
+// number48,
+// enabled
+//   } = {}) {
+//     this.id = id
+//     this.hostId = hostId
+//     this.endpointModelId = endpointModelId
+//     this.metricModelId = metricModelId
+//     this.event_level = event_level
+//     this.send_type = send_type.split('/').filter(Boolean)
+//     this.contact = contact.split('/').filter(Boolean)
+//     this.temp_sms_id = temp_sms_id
+//     this.temp_email_id = temp_email_id
+//   }
+//
+//   toggleEmail () {
+//     const index = this.send_type.indexOf(SEND_TYPE_EMAIL)
+//     if (index === -1) {
+//       this.send_type.push(SEND_TYPE_EMAIL)
+//     } else {
+//       this.send_type.splice(index, 1)
+//     }
+//   }
+//
+//   toggleSMS () {
+//     const index = this.send_type.indexOf(SEND_TYPE_SMS)
+//     if (index === -1) {
+//       this.send_type.push(SEND_TYPE_SMS)
+//     } else {
+//       this.send_type.splice(index, 1)
+//     }
+//   }
+//
+//   get hasEnabledEmail () {
+//     return this.send_type.includes(SEND_TYPE_EMAIL)
+//   }
+//
+//   get hasEnabledSMS () {
+//     return this.send_type.includes(SEND_TYPE_SMS)
+//   }
+//
+//   // 仅写入数据库时用到
+//   get temp_id () {
+//     const tempIdList = []
+//     const { send_type, temp_sms_id, temp_email_id } = this
+//
+//     send_type.includes(SEND_TYPE_EMAIL) && tempIdList.push(temp_email_id)
+//     send_type.includes(SEND_TYPE_SMS) && tempIdList.push(temp_sms_id)
+//
+//     return tempIdList
+//       .filter(Boolean)
+//       .join('/')
+//   }
+//
+//   serialize () {
+//     const { contact, send_type, temp_id, ...rest } = this
+//     return {
+//       contact: contact.filter(Boolean).join('/'),
+//       send_type: send_type.filter(Boolean).join('/'),
+//       temp_id,
+//       ...rest
+//     }
+//   }
+// }
 
 class BasicRuleModel {
   constructor ({
@@ -191,6 +205,7 @@ class BasicRuleModel {
     this.merge = new MergeContentModel()
     this.recover = new RecoverContentModel()
     this.upgrade = new UpgradeContentModel()
+    this.forward = new ForwardContentModel()
     const [currentRuleType] = this.ruleType
     if (currentRuleType && contentModelMapping.has(currentRuleType)) {
       this[currentRuleType] = Reflect.construct(

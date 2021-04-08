@@ -1,7 +1,8 @@
 import { BaseService } from './BaseService'
-import { generateMutation, generateQuery } from '../utils/hasura-orm/index'
+import { generateMutation, generateQuery, query } from '../utils/hasura-orm/index'
 import { UserGroupDao } from '../dao/index'
 import { USER_ROLE } from '@/tables/user_group/enum'
+import _ from 'lodash'
 
 class UserGroupService extends BaseService {
   static async find (argus) {
@@ -24,6 +25,19 @@ class UserGroupService extends BaseService {
       })
     )
     await this.hasuraTransfer({ query: q })
+  }
+
+  static async findUserByGroup (group) {
+    const { data: { user } } = await query(
+      UserGroupDao.find({
+        where: { group_id: { _eq: group } },
+        fields: [
+          'user { staff_name user_id }'
+        ],
+        alias: 'user'
+      })
+    )
+    return _.uniqBy(user.filter(el => el.user != null).map(el => el.user), 'user_id')
   }
 
   /**

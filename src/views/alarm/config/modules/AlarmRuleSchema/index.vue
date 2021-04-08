@@ -78,6 +78,7 @@ import UpgradeForm from './UpgradeForm'
 import MergeForm from './MergeForm'
 import ForwardForm from './ForwardForm'
 import { formItemLayout } from './Mixin'
+import _ from 'lodash'
 
 export default {
   name: 'AlarmRuleSchema',
@@ -92,7 +93,7 @@ export default {
   props: {
     ruleType: {
       type: Array,
-      default: () => ['merge', 'upgrade', 'recover']
+      default: () => ['merge', 'upgrade', 'recover', 'forward']
     }
   },
   data: () => ({
@@ -149,6 +150,7 @@ export default {
      */
     add (ruleType = []) {
       this.show('新建告警规则')
+      this.formModel = AlarmRuleModelFactory.create()
       this.submit = this.insert
       this.isEdit = false
       this.isAdd = true
@@ -180,6 +182,9 @@ export default {
     async insert () {
       try {
         this.btnLoading = true
+        if (_.isEmpty(this.formModel.hostId)) {
+          Reflect.deleteProperty(this.formModel, 'hostId')
+        }
         await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
         this.$emit('addSuccess')
         this.$notifyAddSuccess()

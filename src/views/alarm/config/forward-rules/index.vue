@@ -56,7 +56,7 @@
 
     <AlarmRuleSchema
       ref="schema"
-      :ruleType="['forward']"
+      :ruleType="['FrequencyForm']"
       @addSuccess="query"
       @editSuccess="query(false)"
     />

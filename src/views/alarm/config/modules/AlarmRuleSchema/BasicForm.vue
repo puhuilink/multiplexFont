@@ -15,7 +15,6 @@
     <ComplexSnippet v-bind="formItemLayout" v-model="_formModel" />
 
     <a-form-model-item
-      v-if="!ruleType.includes('forward')"
       v-bind="formItemLayout"
       label="规则类型"
       prop="ruleType"
@@ -53,7 +52,7 @@ export default {
   props: {
     ruleType: {
       type: Array,
-      default: () => ['merge', 'upgrade', 'recover']
+      default: () => ['merge', 'upgrade', 'recover', 'forward']
     }
   },
   data: () => ({

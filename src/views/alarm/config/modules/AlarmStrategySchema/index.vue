@@ -360,6 +360,9 @@ export default {
         if (!valid) return
         try {
           this.submitLoading = true
+          if (_.isEmpty(this.formModel.hostId)) {
+            Reflect.deleteProperty(this.formModel, 'hostId')
+          }
           await StrategyService.add(this.model)
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
