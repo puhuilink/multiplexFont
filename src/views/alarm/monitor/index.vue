@@ -83,6 +83,14 @@
                   />
                 </a-form-item>
               </a-col>
+              <a-col :xl="8" :md="12" :sm="24">
+                <a-form-item label="ip" v-bind="formItemLayout" class="fw">
+                  <a-input
+                    allowClear
+                    v-model.number="queryParams.ip"
+                  ></a-input>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
 
@@ -219,6 +227,7 @@ export default {
           xxl: { span: 20, offset: 0 }
         }
       },
+      ipList: [],
       state: ALARM_STATE.unSolved,
       columns: [
         {
@@ -355,11 +364,12 @@ export default {
         }
       ],
       queryParams: {
-        alarmLevelList: [1, 2, 3, 4, 5],
+        alarmLevelList: [1, 2, 3, 4],
         dictValue: [],
         host_id: undefined,
         endpoint_id: undefined,
-        metric_id: undefined
+        metric_id: undefined,
+        ip: undefined
       }
     }
   },

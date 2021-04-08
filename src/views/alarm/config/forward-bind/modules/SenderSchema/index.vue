@@ -19,7 +19,6 @@
         ]">
         <a-select
           class="SendForm__Select"
-          style="width: 200px"
           v-model="send.level"
           :disabled="levelBtn"
         >
@@ -42,6 +41,7 @@
           allowClear
           mode="default"
           showSearch
+          class="item2"
           v-model="send.group"
           :disabled="groupBtn"
         >
@@ -250,7 +250,6 @@ export default {
     async fetch (id) {
       try {
         const model = await AlarmSenderService.findByid(id)
-        console.log('model', model)
         this.serializeModel(model)
       } catch (e) {
         this.$notifyError(e)
@@ -268,7 +267,6 @@ export default {
         temp_email_id: model.temp_email_id,
         temp_sms_id: model.temp_sms_id
       }
-      console.log('sender', this.send)
     },
     async update () {
       try {
@@ -355,13 +353,13 @@ export default {
       width: 100%;
       justify-items: center;
       &__Select {
-        width: 40%;
+        width: 60%;
       }
       .item1{
-        width: 100px;
+        width: 60%;
       }
       .item2 {
-        width: 200px;
+        width: 60%;
       }
     }
 

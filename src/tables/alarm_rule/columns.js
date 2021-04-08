@@ -7,7 +7,7 @@ export const ruleTypeMapping = new Map([
   ['merge', '告警合并'],
   ['upgrade', '告警升级'],
   ['recover', '告警消除'],
-  ['recover', '告警消除']
+  ['forward', '告警通知']
 ])
 
 export function enabledColumn () {

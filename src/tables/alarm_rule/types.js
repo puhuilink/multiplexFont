@@ -18,7 +18,8 @@ export {
 const ruleMappingArr = [
   [ALARM_RULE_MERGE, '告警合并'],
   [ALARM_RULE_UPGRADE, '告警升级'],
-  [ALARM_RULE_RECOVER, '告警消除']
+  [ALARM_RULE_RECOVER, '告警消除'],
+  [ALARM_RULE_FORWARD, '告警通知']
 ]
 
 export const ruleTypeMapping = new Map(ruleMappingArr)

@@ -1,7 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
 import { AlarmRuleDao } from '../dao/index'
-import { AlarmForwardService } from './AlarmForwardService'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
@@ -58,9 +57,9 @@ class AlarmRuleService extends BaseService {
     const detail = _.first(alarmRuleList)
 
     // 告警规则类型为前转时，查询其关联的前转配置
-    if (_.get(detail, 'rule_type') === 'forward') {
-      detail.sendList = await this.sendList(detail)
-    }
+    // if (_.get(detail, 'rule_type') === 'forward') {
+    //   detail.sendList = await this.sendList(detail)
+    // }
     return detail
   }
 
@@ -101,15 +100,15 @@ class AlarmRuleService extends BaseService {
   /**
    * 前转规则的通知内容
    */
-  static async sendList ({ host_id, endpoint_id, metric_id }) {
-    const { data: { sendList } } = await AlarmForwardService.find({
-      where: { host_id, endpoint_id, metric_id },
-      fields: ['event_level', 'send_type', 'contact', 'temp_id'],
-      alias: 'sendList'
-    })
-
-    return sendList
-  }
+  // static async sendList ({ host_id, endpoint_id, metric_id }) {
+  //   const { data: { sendList } } = await AlarmForwardService.find({
+  //     where: { host_id, endpoint_id, metric_id },
+  //     fields: ['event_level', 'send_type', 'contact', 'temp_id'],
+  //     alias: 'sendList'
+  //   })
+  //
+  //   return sendList
+  // }
 
   static async batchDelete (ruleIds = []) {
     const formData = new FormData()
