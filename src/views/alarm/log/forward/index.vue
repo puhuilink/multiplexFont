@@ -15,27 +15,27 @@
 
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
-                  label="前转名称"
+                  label="通知名称："
                   v-bind="formItemLayout"
                   class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.user_id" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24">
                 <a-form-item
-                  label="前转方式"
+                  label="通知方式："
                   v-bind="formItemLayout"
                   class="fw"
                 >
                   <a-input allowClear v-model.trim="queryParams.staff_name" />
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :xl="8" :md="12" :sm="24" >
                 <a-form-item
-                  label="时间范围"
+                  label="时间范围："
                   v-bind="formItemLayout"
                   class="fw"
                 >
@@ -112,7 +112,7 @@ export default {
         customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'metric_alias'])
       },
       {
-        title: '前转内容',
+        title: '通知内容',
         dataIndex: 'send_content',
         width: 420,
         tooltip: true
@@ -158,7 +158,11 @@ export default {
         ],
         ...parameter,
         alias: 'data'
-      }).then(r => r.data)
+      }).then((r) => {
+        console.log(r.data)
+        console.log(r.data.data.map(el => JSON.parse(el.send_content).content))
+        return r.data
+      })
     },
     onDetail () {
       // const [id] = this.selectedRowKeys

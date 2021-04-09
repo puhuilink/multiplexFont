@@ -83,14 +83,14 @@
                   />
                 </a-form-item>
               </a-col>
-              <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item label="ip" v-bind="formItemLayout" class="fw">
-                  <a-input
-                    allowClear
-                    v-model.number="queryParams.ip"
-                  ></a-input>
-                </a-form-item>
-              </a-col>
+              <!--              <a-col :xl="8" :md="12" :sm="24">-->
+              <!--                <a-form-item label="IP" v-bind="formItemLayout" class="fw">-->
+              <!--                  <a-input-->
+              <!--                    allowClear-->
+              <!--                    v-model="ip"-->
+              <!--                  ></a-input>-->
+              <!--                </a-form-item>-->
+              <!--              </a-col>-->
             </a-row>
           </div>
 
@@ -122,21 +122,44 @@
 
           <div class="AlarmMonitor__operation-badge-group">
             <span>告警级别：</span>
+            <!--                <a-button-->
+            <!--                  v-for="(color, index) in colors"-->
+            <!--                  :key="index"-->
+            <!--                  shape="round"-->
+            <!--                  size="small"-->
+            <!--                  :style="{-->
+            <!--                    marginLeft: '4px',-->
+            <!--                    marginRight: '4px',-->
+            <!--                    backgroundColor: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',-->
+            <!--                    borderColor: 'transparent',-->
+            <!--                  }"-->
+            <!--                  @click="onToggleAlarmLevel(index + 1)"-->
+            <!--                >{{ `L${index + 1}` }}</a-button>-->
             <a-button
               v-for="(color, index) in colors"
               :key="index"
-              shape="round"
-              size="small"
               :style="{
-                marginLeft: '4px',
-                marginRight: '4px',
-                backgroundColor: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',
-                color: queryParams.alarmLevelList.includes(index + 1) ? '#fffced' : 'rgba(0,0,0,.25)',
                 borderColor: 'transparent',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: queryParams.alarmLevelList.includes(index + 1) ? 'rgba(0,0,0,.5)' : '#f5f5f5'
               }"
+              class="AlarmMonitor__operation-badge-group-btn"
               @click="onToggleAlarmLevel(index + 1)"
-            >{{ `L${index + 1}` }}</a-button
             >
+              <a-icon
+                :key="index"
+                :style="{
+                  color: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',
+                  fontSize: '18px',
+                  marginLeft: '10px'
+                }"
+                type="flag"
+                theme="filled"
+              />
+              <span>{{ `L${index + 1}` }}</span>
+            </a-button>
           </div>
 
           <a-popover title="表格列设置" placement="leftBottom">
@@ -238,19 +261,28 @@ export default {
           show: true,
           fixed: 'left',
           customRender: (alarmLevel) => (
-            <a-button
-              disabled
-              shape="round"
-              size="small"
+            <div
               style={{
-                backgroundColor: levelColorMapping.get(Number(alarmLevel) - 1),
-                color: '#fffced',
+                borderColor: 'transparent',
+                color: 'rgba(0,0,0,.5)',
                 cursor: 'default',
-                borderColor: 'transparent'
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                fontSize: '5px'
               }}
             >
+              <a-icon
+                style={{
+                  color: levelColorMapping.get(Number(alarmLevel) - 1),
+                  fontSize: '12px'
+                }}
+                type="flag"
+                theme="filled"
+              />
               L{alarmLevel}
-            </a-button>
+            </div>
+
           )
         },
         {
@@ -363,13 +395,13 @@ export default {
           validate: () => this.showHistory
         }
       ],
+      ip: '',
       queryParams: {
         alarmLevelList: [1, 2, 3, 4],
         dictValue: [],
         host_id: undefined,
         endpoint_id: undefined,
-        metric_id: undefined,
-        ip: undefined
+        metric_id: undefined
       }
     }
   },
@@ -426,6 +458,11 @@ export default {
           alarm_level: {
             _in: alarmLevelList
           },
+          // cmdbHost: {
+          //   ip: {
+          //     _ilike: this.ip
+          //   }
+          // },
           ...(hostTypeDictValueCode
             ? {
               cmdbHost: {
