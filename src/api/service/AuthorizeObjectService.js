@@ -36,7 +36,7 @@ class AuthorizeObjectService extends BaseService {
             }
           }`
         ],
-        alias: 'userList'
+        alias: 'list'
       })
     )
 
@@ -110,6 +110,12 @@ class AuthorizeObjectService extends BaseService {
       currentViewIdList,
       view_id => !intersectionalViewIdList.includes(view_id)
     )
+
+    console.log({
+      currentViewIdList,
+      intersectionalViewIdList,
+      abandonViewIdList
+    })
 
     await mutate(
       // 删除之前的视图权限
