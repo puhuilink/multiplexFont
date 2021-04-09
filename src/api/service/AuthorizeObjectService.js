@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { mutate, query } from '../utils/hasura-orm/index'
-import { AuthorizeObjectDao, ViewDao, ViewDesktopDao } from '../dao/index'
+import { AuthorizeObjectDao, ViewDao, ViewDesktopDao, UserDao, GroupDao } from '../dao/index'
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
@@ -13,21 +13,41 @@ class AuthorizeObjectService extends BaseService {
   }
 
   /**
-   * 获取用户或工作组分配的视图id
+   * 获取用户或工作组使用到的视图id
    */
   static async viewIdList ({ user_id, group_id }) {
     const snippet = {
       ...user_id ? { user_id } : { group_id }
     }
-    const { data: { authorizeList } } = await query(
+    const { data: { authorizeList, list } } = await query(
+      // 已分配权限的视图
       AuthorizeObjectDao.find({
         where: { ...snippet, object_type: OBJECT_TYPE.view },
         fields: ['object_id'],
         alias: 'authorizeList'
+      }),
+      // 已放置到视图桌面的视图
+      (user_id ? UserDao : GroupDao).find({
+        where: { ...snippet },
+        fields: [
+          `viewDesktops {
+            view {
+                view_id
+            }
+          }`
+        ],
+        alias: 'userList'
       })
     )
+
     const viewIdList = authorizeList.map(({ object_id }) => object_id)
-    return viewIdList
+    if (list.length) {
+      const [{ viewDesktops }] = list
+      viewDesktops.forEach((el) => {
+        viewIdList.push(el.view.view_id)
+      })
+    }
+    return _.uniq(viewIdList)
   }
 
   /**
