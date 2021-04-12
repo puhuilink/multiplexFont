@@ -82,6 +82,7 @@ export default {
           align: 'center',
           dataIndex: 'alarmLevel',
           width: 80,
+          sorter: true,
           customRender: (alarmLevel) => {
             return (
               <a-icon
@@ -169,7 +170,13 @@ export default {
           title: '采集周期',
           align: 'center',
           dataIndex: 'collectInterval',
-          width: 90
+          width: 90,
+          customRender: (collectInterval, record) => {
+            console.log('record', record)
+            return (
+              `${collectInterval}秒`
+            )
+          }
         },
         {
           title: '采集方式',

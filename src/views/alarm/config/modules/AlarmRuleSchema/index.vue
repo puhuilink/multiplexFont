@@ -185,9 +185,13 @@ export default {
         if (_.isEmpty(this.formModel.hostId)) {
           Reflect.deleteProperty(this.formModel, 'hostId')
         }
-        await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
+        const msg = await AlarmRuleService.add(AlarmRuleModelFactory.serialize(this.formModel))
+        if (msg.code !== 200) {
+          this.$notifyError(msg.msg)
+        } else {
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+        }
         this.cancel()
       } catch (e) {
         this.$notifyError(e)

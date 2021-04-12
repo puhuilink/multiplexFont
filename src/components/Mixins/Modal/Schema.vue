@@ -1,5 +1,6 @@
 <script>
 import OperationNotification from '@/components/Mixins/OperationNotification'
+import _ from 'lodash'
 
 export default {
   name: 'Schema',
@@ -31,6 +32,7 @@ export default {
   methods: {
     cancel () {
       this.visible = false
+      this.$emit('close', _.get(this.record, 'state'))
     },
     reset () {
       this.form.resetFields()
