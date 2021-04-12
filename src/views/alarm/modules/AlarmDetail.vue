@@ -187,6 +187,7 @@ export default {
     },
     solveSuccess () {
       this.record.state = ALARM_STATE.solved
+      this.cancel()
     }
   }
 }
