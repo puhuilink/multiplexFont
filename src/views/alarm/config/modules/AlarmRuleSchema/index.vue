@@ -251,7 +251,7 @@ export default {
 
   .inline_input {
     display: inline-block;
-    width: 120px;
+    width: 80px;
   }
 }
 </style>
