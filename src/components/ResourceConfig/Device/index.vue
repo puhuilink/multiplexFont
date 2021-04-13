@@ -6,7 +6,9 @@
         v-show="advanced"
         class="ComplexSelect__mask"
         @click="onShowAdvancedSelect"
-      ></div>
+      >
+
+      </div>
       <a-select
         v-bind="ctx.editAbleProps"
         class="ComplexSelect__select"
@@ -14,7 +16,9 @@
         :notFoundContent="fetching ? '加载中' : '暂无数据'"
         placeholder="请输入IP地址、序列号、资产设备标签精准搜索"
         @search="onSearch"
+        v-model="selectValue"
       >
+
         <a-spin v-if="fetching" slot="notFoundContent" size="small" />
         <a-select-option v-for="d in dataList" :key="d.value">
           {{ d.text }}
@@ -119,7 +123,8 @@ export default {
     cache: null,
     dataList: [],
     fetching: false,
-    visible: false
+    visible: false,
+    selectValue: ''
   }),
   computed: {
     model: {
@@ -165,6 +170,44 @@ export default {
     },
     onToggleAdvanced () {
       this.advanced = !this.advanced
+    }
+  },
+  watch: {
+    'model.deviceType': {
+      immediate: true,
+      handler: function (value) {
+        if (!_.isEmpty(value)) {
+          this.selectValue += value
+          this.selectValue += '/'
+        }
+        console.log(this.selectValue)
+      }
+    },
+    'model.deviceBrand': {
+      immediate: true,
+      handler: function (value) {
+        if (!_.isEmpty(value)) {
+          this.selectValue += value
+          this.selectValue += '/'
+        }
+      }
+    },
+    'model.deviceModel': {
+      immediate: true,
+      handler: function (value) {
+        if (!_.isEmpty(value)) {
+          this.selectValue += value
+          this.selectValue += '/'
+        }
+      }
+    },
+    'model.hostId': {
+      immediate: true,
+      handler: function (value) {
+        if (!_.isEmpty(value)) {
+          this.selectValue += '/' + value
+        }
+      }
     }
   }
 }
