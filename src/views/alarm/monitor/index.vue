@@ -158,7 +158,7 @@
                 type="flag"
                 theme="filled"
               />
-              <span>{{ `L${index + 1}` }}</span>
+              {{fontColors.get(index)}}
             </a-button>
           </div>
 
@@ -196,7 +196,7 @@ import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import { ALARM_STATE } from '@/tables/alarm/enum'
-import { levelColorMapping } from '~~~/Alarm/color.config'
+import { levelColorMapping, fontLevelColorMapping } from '~~~/Alarm/color.config'
 
 export default {
   name: 'AlarmMonitor',
@@ -240,6 +240,7 @@ export default {
     return {
       ALARM_STATE,
       colors: [...levelColorMapping.values()],
+      fontColors: fontLevelColorMapping,
       exportLoading: false,
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
@@ -275,12 +276,11 @@ export default {
               <a-icon
                 style={{
                   color: levelColorMapping.get(Number(alarmLevel) - 1),
-                  fontSize: '12px'
+                  fontSize: '20px'
                 }}
                 type="flag"
                 theme="filled"
               />
-              L{alarmLevel}
             </div>
 
           )

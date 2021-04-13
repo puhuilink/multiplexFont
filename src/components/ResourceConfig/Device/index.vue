@@ -178,7 +178,6 @@ export default {
       handler: function (value) {
         if (!_.isEmpty(value)) {
           this.selectValue += value
-          this.selectValue += '/'
         }
         console.log(this.selectValue)
       }
@@ -187,8 +186,8 @@ export default {
       immediate: true,
       handler: function (value) {
         if (!_.isEmpty(value)) {
-          this.selectValue += value
           this.selectValue += '/'
+          this.selectValue += value
         }
       }
     },
@@ -196,8 +195,8 @@ export default {
       immediate: true,
       handler: function (value) {
         if (!_.isEmpty(value)) {
-          this.selectValue += value
           this.selectValue += '/'
+          this.selectValue += value
         }
       }
     },
@@ -205,7 +204,8 @@ export default {
       immediate: true,
       handler: function (value) {
         if (!_.isEmpty(value)) {
-          this.selectValue += '/' + value
+          this.selectValue += '/'
+          this.selectValue += value
         }
       }
     }
