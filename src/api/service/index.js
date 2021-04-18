@@ -9,6 +9,7 @@ import { CmdbHostEndpointMetricService } from './CmdbHostEndpointMetricService.j
 import { CmdbHostModelBrandService } from './CmdbHostModelBrandService.js'
 import { CmdbHostViewService } from './CmdbHostViewService.js'
 import { CmdbService } from './CmdbService.js'
+import { CmdbEnpointSerivce } from './CmdbEndpointService'
 import { DictValueService } from './DictValueService.js'
 import { FunctionService } from './FunctionService.js'
 import { GroupService } from './GroupService.js'
@@ -43,6 +44,7 @@ export {
   CmdbHostModelBrandService,
   CmdbHostViewService,
   CmdbService,
+  CmdbEnpointSerivce,
   DictValueService,
   FunctionService,
   GroupService,

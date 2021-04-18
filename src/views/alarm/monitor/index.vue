@@ -158,7 +158,7 @@
                 type="flag"
                 theme="filled"
               />
-              {{fontColors.get(index)}}
+              {{ fontColors.get(index + 1) }}
             </a-button>
           </div>
 
@@ -275,7 +275,7 @@ export default {
             >
               <a-icon
                 style={{
-                  color: levelColorMapping.get(Number(alarmLevel) - 1),
+                  color: levelColorMapping.get(Number(alarmLevel)),
                   fontSize: '20px'
                 }}
                 type="flag"
