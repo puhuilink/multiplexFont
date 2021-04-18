@@ -1,8 +1,9 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao } from '../dao/index'
+import { AlarmRuleDao, CmdbEndpointDao } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
+import { dataToArray } from 'ant-design-vue/lib/vc-drawer/src/utils'
 
 class AlarmRuleService extends BaseService {
   static async find (argus = {}) {
@@ -140,16 +141,37 @@ class AlarmRuleService extends BaseService {
     })
   }
 
-  static async hostPerformanceDetail (id) {
+  /**
+   * index为offset和limit的集合 {limit: 25, offset: 0}
+   * @param id
+   * @param index
+   */
+  static async hostPerformanceDetail (id, index, alarmList) {
+    const { offset, limit, ...rest } = index
+    const data = { hostId: id, offset, limit, level: alarmList }
+    if (index.hasOwnProperty('orderBy')) {
+      Reflect.set(data, 'order', rest.alarmLevel)
+    }
+    if (alarmList.length === 0) {
+      Reflect.deleteProperty(data, 'level')
+    }
     return axios
-      .post('/host/hostDetail', { id })
-      .then(({ data }) => _.omit(data, ['pageNo']))
+      .post('/host/hostDetail', { ...data })
+      .then(({ data }) => data)
   }
 
-  static async endpointPerformanceDetail (id) {
-    return axios.post('/endpoint/endpointDetail', {
-      id
-    })
+  static async endpointPerformanceDetail (id, index, alarmList) {
+    const { offset, limit, ...rest } = index
+    const data = { endpointId: id, offset, limit, level: alarmList }
+    if (index.hasOwnProperty('orderBy')) {
+      Reflect.set(data, 'order', rest.alarmLevel)
+    }
+    if (alarmList.length === 0) {
+      Reflect.deleteProperty(data, 'level')
+    }
+    return axios
+      .post('/endpoint/endpointDetail', { ...data })
+      .then(({ data }) => data)
   }
 
   // 告警下钻，展示历史记录详情

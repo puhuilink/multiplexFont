@@ -80,51 +80,53 @@ export default {
   components: {
     SenderSchema
   },
-  data: (vm) => ({
-    visible: false,
-    allMode: Object.freeze(
-      Object.fromEntries(ALL_SEND_TYPE_MAPPING)
-    ),
-    levelList: [
-      [1, '一级（紧急通知）'],
-      [2, '二级（主要通知）'],
-      [3, '三级（次要通知）'],
-      [4, '四级（一般通知）']
-    ],
-    sendMethod: [
-      ['SMS', '短信'],
-      ['EMAIL', '邮件'],
-      ['SMS/EMAIL', '全部分类']
-    ],
-    columns: Object.freeze([
-      {
-        title: '通知等级',
-        dataIndex: 'event_level',
-        width: 120,
-        sorter: true
-      },
-      {
-        title: '通知组',
-        dataIndex: 'group_id',
-        width: 120
-      },
-      {
-        title: '发送人',
-        dataIndex: 'contact',
-        width: 120
-      },
-      {
-        title: '发送方式',
-        dataIndex: 'send_type',
-        width: 120
+  data () {
+    return {
+      visible: false,
+      allMode: Object.freeze(
+        Object.fromEntries(ALL_SEND_TYPE_MAPPING)
+      ),
+      levelList: [
+        [1, '一级（紧急通知）'],
+        [2, '二级（主要通知）'],
+        [3, '三级（次要通知）'],
+        [4, '四级（一般通知）']
+      ],
+      sendMethod: [
+        ['SMS', '短信'],
+        ['EMAIL', '邮件'],
+        ['SMS/EMAIL', '全部分类']
+      ],
+      columns: Object.freeze([
+        {
+          title: '通知等级',
+          dataIndex: 'event_level',
+          width: 120,
+          sorter: true
+        },
+        {
+          title: '通知组',
+          dataIndex: 'group_id',
+          width: 120
+        },
+        {
+          title: '发送人',
+          dataIndex: 'contact',
+          width: 120
+        },
+        {
+          title: '发送方式',
+          dataIndex: 'send_type',
+          width: 120
+        }
+      ]),
+      queryParams: {
+        event_level: '',
+        contact: '',
+        send_type: ''
       }
-    ]),
-    queryParams: {
-      event_level: '',
-      contact: '',
-      send_type: ''
     }
-  }),
+  },
   methods: {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
@@ -139,7 +141,7 @@ export default {
     },
     loadData (parameter) {
       const { ...restQueryParams } = this.queryParams
-      return AlarmSenderService.find({
+      console.log('data', AlarmSenderService.find({
         where: {
           ...generateQuery({
             ...restQueryParams
@@ -151,6 +153,24 @@ export default {
           'send_type',
           'group_id',
           'contact'
+        ],
+        alias: 'data',
+        ...parameter
+      }).then(r => r.data))
+      return AlarmSenderService.find({
+        where: {
+          ...generateQuery({
+            ...restQueryParams
+          })
+        },
+        fields: [
+          'id',
+          'event_level',
+          'send_type',
+          'group_id',
+          'contact',
+          'source',
+          'auto'
         ],
         alias: 'data',
         ...parameter

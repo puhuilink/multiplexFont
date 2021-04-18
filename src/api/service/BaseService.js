@@ -10,7 +10,6 @@ class BaseService {
    */
   static async hasuraTransfer (requestBody = {}) {
     const requestBodyStr = JSON.stringify(requestBody)
-
     const formData = new FormData()
     formData.append('body', encrypt(requestBodyStr))
 
@@ -26,12 +25,10 @@ class BaseService {
     })
 
     const data = JSON.parse(decrypt(response.data))
-
     if (data.errors) {
       notifyGraphQLError(data.errors)
       return Promise.reject(data.errors)
     }
-
     return Promise.resolve(data)
   }
 }
