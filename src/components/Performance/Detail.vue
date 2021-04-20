@@ -1,39 +1,17 @@
 <template>
   <div class="PerformanceDetail">
-    <CTable
-      :columns="columns"
-      :data="loadData"
-      ref="table"
-      rowKey="endpointId"
-      :rowSelection="null"
-      :scroll="scroll"
-      v-show="alarmRecord"
-    >
-
-      <template #operation>
-        <AlarmStatusBadgeGroup />
-      </template>
-    </CTable>
-
-    <CTable
-      v-if="alarmRecordDetails"
-      :columns="detailColumns"
-      :data="loadDataDetails"
-      ref="tableAlarm"
-      rowKey="endpointIds"
-      :rowSelection="null"
-      :scroll="scroll"
-    >
-
-      <template #operation>
-        <AlarmStatusBadgeGroup />
-      </template>
-
-      <template #footer>
-        <a-button type="link" @click="onBack">&lt;&nbsp;返回</a-button>
-      </template>
-    </CTable>
-
+    <a-tabs v-model="activeKey" hide-add type="editable-card" @edit="onEdit">
+      <a-tab-pane
+        :key="hostId"
+        :closable="false"
+        tab="主机信息"
+      >
+        <tabPane :id="hostId" @pointCheckout="alarmSingleDetails"></tabPane>
+      </a-tab-pane>
+      <a-tab-pane v-for="(pane) in panes" :key="pane.key" :tab="pane.title" :closable="true">
+        <TabPaneEndpoint :id="pane.key" @historyView="onShowHistory"></TabPaneEndpoint>
+      </a-tab-pane>
+    </a-tabs>
     <HistoryChart ref="historyChart" />
   </div>
 </template>
@@ -42,9 +20,11 @@
 import _ from 'lodash'
 import { List } from '@/components/Mixins'
 import { AlarmRuleService } from '@/api'
-import { pureLevelColorMapping } from '@/components/Alarm/color.config'
 import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 import HistoryChart from './History.vue'
+import { CmdbEndpointService } from '@/api/service/CmdbEndpointService'
+import tabPane from './tabPane'
+import TabPaneEndpoint from '~~~/Performance/tabPaneEndpoint'
 
 const { computed, ...rest } = List
 
@@ -59,7 +39,9 @@ export default {
   ],
   components: {
     AlarmStatusBadgeGroup,
-    HistoryChart
+    HistoryChart,
+    tabPane,
+    TabPaneEndpoint
   },
   props: {
     hostId: {
@@ -74,171 +56,52 @@ export default {
   },
   data () {
     return {
-      alarmRecord: true,
-      alarmRecordDetails: false,
-      columns: Object.freeze([
-        {
-          title: '监控状态',
-          align: 'center',
-          dataIndex: 'alarmLevel',
-          width: 80,
-          sorter: true,
-          customRender: (alarmLevel) => {
-            return (
-              <a-icon
-                style={{ color: pureLevelColorMapping.get(alarmLevel) }}
-                type="flag"
-                theme="filled"
-              />
-            )
-          }
-        },
-        {
-          title: '监控实体',
-          align: 'left',
-          dataIndex: 'endpointAlias',
-          width: 160
-        },
-        {
-          title: '告警情况',
-          align: 'center',
-          width: 180,
-          customRender: (__, record) => {
-            return (
-              <a-button
-                type="link"
-                onClick = {() => this.alarmSingleDetails(record)}
-              >
-                总计指标:{record.metricCount}个;正常:{record.metricNormal}个;告警:{record.metricAlarm}个
-              </a-button>
-            )
-          }
-        },
-        {
-          title: '更新时间',
-          align: 'center',
-          dataIndex: 'uploadTime',
-          width: 150
-        },
-        {
-          title: '操作',
-          align: 'center',
-          width: 60,
-          customRender: (__, record) => {
-            return (
-              <a-button
-                type="link"
-                onClick = {() => this.alarmSingleDetails(record)}
-              >查看</a-button>
-            )
-          }
-        }
-      ]),
-      detailColumns: Object.freeze([
-        {
-          title: '监控状态',
-          align: 'center',
-          dataIndex: 'alarmLevel',
-          width: 80,
-          customRender: (alarmLevel) => {
-            return (
-              <a-icon
-                style={{ color: pureLevelColorMapping.get(alarmLevel) }}
-                type="flag"
-                theme="filled"
-              />
-            )
-          }
-        },
-        {
-          title: '检查项',
-          dataIndex: 'metricAlias',
-          width: 160
-        },
-        {
-          title: '状态描述',
-          dataIndex: 'metricModelAlias',
-          width: 180
-        },
-        {
-          title: '更新时间',
-          align: 'center',
-          dataIndex: 'uploadTime',
-          width: 155
-        },
-        {
-          title: '采集周期',
-          align: 'center',
-          dataIndex: 'collectInterval',
-          width: 90,
-          customRender: (collectInterval, record) => {
-            console.log('record', record)
-            return (
-              `${collectInterval}秒`
-            )
-          }
-        },
-        {
-          title: '采集方式',
-          align: 'center',
-          dataIndex: 'collectType',
-          width: 90
-        },
-        {
-          title: '历史图',
-          align: 'center',
-          width: 60,
-          customRender: (__, record) => {
-            return (
-              <a-icon
-                style={{ color: 'rgb(0, 152, 255)' }}
-                type="bar-chart"
-                onClick = {() => this.onShowHistory(record)}
-              />
-            )
-          }
-        }
-      ])
+      alarmList: [1, 2, 3, 4],
+      activeKey: '',
+      panes: []
     }
   },
   computed: {},
   watch: {
-    hostId () {
-      // 重置到默认状态
-      this.alarmRecord = true
-      this.alarmRecordDetails = false
-      this.$refs['table'].refresh(true)
+    'hostId': {
+      immediate: true,
+      handler: function () {
+        this.activeKey = this.hostId
+      }
     }
   },
   methods: {
-    // 首次展示内容数据接口
-    async loadData () {
-      return AlarmRuleService.hostPerformanceDetail(this.hostId)
-    },
-
     // 告警点击查看当前所在数据的内容详情
     async  alarmSingleDetails (record) {
-      this.endpointId = record.endpointId
-      this.endpointModelId = record.endpointModelId
-
-      if (record.endpointId !== '') {
-        this.alarmRecord = false
-        this.alarmRecordDetails = true
-        this.endpointId = record.endpointId
+      if (record !== '') {
+        this.endpointId = record
+        if (!_.includes(this.panes.map(el => el.key), this.endpointId)) {
+          this.panes.push({
+            key: this.endpointId,
+            column: this.detailColumns,
+            alarmLevel: [],
+            title: await CmdbEndpointService.find({
+              where: { endpoint_id: this.endpointId },
+              fields: [
+                'alias'
+              ]
+            }).then(r => {
+              return r.data.t_cmdb_endpoint[0].alias
+            })
+          })
+          this.activeKey = this.endpointId
+        }
       }
     },
 
     // 点击查看详细内容数据接口
-    async loadDataDetails () {
+    async loadDataDetails (index) {
       const record = this.endpointId
-      return AlarmRuleService.endpointPerformanceDetail(record).then((res) => {
-        return res.data
-      })
+      return AlarmRuleService.endpointPerformanceDetail(record, index, this.alarmChange)
     },
 
-    onBack () {
-      this.alarmRecord = true
-      this.alarmRecordDetails = false
+    alarmChange (data) {
+      this.alarmList = data
     },
 
     async onShowHistory (record) {
@@ -249,6 +112,35 @@ export default {
         metricId: record.metricId, // 第二次请求id
         metricModelId: record.metricModelId // 第二次请求id
       })
+    },
+
+    // 删除导航栏
+    remove (targetKey) {
+      let activeKey = this.activeKey
+      let lastIndex
+      if (_.isNull(this.panes)) {
+        this.activeKey = this.hostId
+      } else {
+        this.panes.forEach((pane, i) => {
+          if (pane.key === targetKey) {
+            lastIndex = i - 1
+          }
+        })
+        const panes = this.panes.filter(pane => pane.key !== targetKey)
+        if (panes.length && activeKey === targetKey) {
+          if (lastIndex >= 0) {
+            activeKey = panes[lastIndex].key
+          } else {
+            activeKey = panes[0].key
+          }
+        }
+        this.panes = panes
+        this.activeKey = activeKey
+      }
+    },
+
+    onEdit (targetKey, action) {
+      this[action](targetKey)
     }
   }
 }

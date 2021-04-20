@@ -1,12 +1,12 @@
 <template>
   <fragment>
     <CTable
-      :columns="columns"
-      :data="loadData"
-      ref="table"
-      rowKey="endpointId"
+      :columns="detailColumns"
+      :data="loadDataDetails"
+      rowKey="endpointIds"
       :rowSelection="null"
       :scroll="scroll"
+      ref="column"
     >
       <template #operation>
         <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
@@ -24,7 +24,7 @@ import { pureLevelColorMapping } from '~~~/Alarm/color.config'
 
 const { computed, ...rest } = List
 export default {
-  name: 'TabPane',
+  name: 'TabPaneEndpoint',
   mixins: [
     {
       // scrollY 用于 props 覆盖默认 computed
@@ -45,13 +45,12 @@ export default {
   data () {
     return {
       alarmList: [],
-      columns: Object.freeze([
+      detailColumns: Object.freeze([
         {
           title: '监控状态',
           align: 'center',
           dataIndex: 'alarmLevel',
           width: 80,
-          sorter: true,
           customRender: (alarmLevel) => {
             return (
               <a-icon
@@ -63,42 +62,49 @@ export default {
           }
         },
         {
-          title: '监控实体',
-          align: 'left',
-          dataIndex: 'endpointAlias',
+          title: '检查项',
+          dataIndex: 'metricAlias' && 'metricModelAlias',
           width: 160
         },
         {
-          title: '告警情况',
-          align: 'center',
-          width: 180,
-          customRender: (__, record) => {
-            return (
-              <a-button
-                type="link"
-                onClick = {() => { this.$emit('pointCheckout', record.endpointId) } }
-              >
-                总计指标:{record.metricCount}个;正常:{record.metricNormal}个;告警:{record.metricAlarm}个
-              </a-button>
-            )
-          }
+          title: '状态描述',
+          dataIndex: 'detail',
+          width: 180
         },
         {
           title: '更新时间',
           align: 'center',
           dataIndex: 'uploadTime',
-          width: 150
+          width: 155
         },
         {
-          title: '操作',
+          title: '采集周期',
+          align: 'center',
+          dataIndex: 'collectInterval',
+          width: 90,
+          customRender: (collectInterval) => {
+            return (
+              `${collectInterval}秒`
+            )
+          }
+        },
+        {
+          title: '采集方式',
+          align: 'center',
+          dataIndex: 'collectType',
+          width: 90
+        },
+        {
+          title: '历史图',
           align: 'center',
           width: 60,
           customRender: (__, record) => {
             return (
-              <a-button
-                type="link"
-                onClick = {() => this.$emit('pointCheckout', record.endpointId)}
-              >查看</a-button>
+              <a-icon
+                style={{ color: 'rgb(0, 152, 255)' }}
+                type="bar-chart"
+                onClick = {() => this.$emit('historyView', record)}
+              />
             )
           }
         }
@@ -106,12 +112,13 @@ export default {
     }
   },
   methods: {
-    async loadData (index) {
-      return AlarmRuleService.hostPerformanceDetail(this.id, index, this.alarmList)
+    async loadDataDetails (index) {
+      const record = this.id
+      return AlarmRuleService.endpointPerformanceDetail(record, index, this.alarmList)
     },
     alarmChange (data) {
       this.alarmList = data
-      this.$refs.table.refresh()
+      this.$refs.column.refresh()
     }
   }
 }

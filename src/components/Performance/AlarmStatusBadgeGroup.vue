@@ -6,23 +6,23 @@
     <!--    </div>-->
     <div
       class="AlarmStatus__badge_item"
-      v-for="(color, index) in colors"
+      v-for="(index) in colors"
       :key="index"
-      @click="onToggleIndex(index+1)"
+      @click="onToggleIndex(index)"
     >
       <a-icon
         theme="filled"
         type="flag"
         :style="{
-          color: alarmList.includes(index+1) ? color : 'rgba(0,0,0,.5 )'
+          color: alarmList.includes(index) ? fontPureLevelColorMapping.get(index) : 'rgba(0,0,0,.5 )'
         }"/>
-      {{ fontColors.get(index+1) }}
+      {{ fontColors.get(index) }}
     </div>
   </div>
 </template>
 
 <script>
-import { fontLevelColorMapping, levelColorMapping } from '@/components/Alarm/color.config'
+import { pureLevelColorMapping, fontPureLevelColorMapping } from '@/components/Alarm/color.config'
 import _ from 'lodash'
 
 export default {
@@ -31,9 +31,9 @@ export default {
   components: {},
   data () {
     return {
-      colors: [...levelColorMapping.values()],
-      fontColors: fontLevelColorMapping,
-      alarmList: [1, 2, 3, 4]
+      colors: [...pureLevelColorMapping.keys()],
+      fontColors: fontPureLevelColorMapping,
+      alarmList: [1, 2, 3, 4, 6]
     }
   },
   computed: {},
@@ -43,7 +43,7 @@ export default {
       if (index === -1) {
         this.alarmList.push(alarmLevel)
       } else {
-        this.alarmList.splice(index, 1)
+        this.alarmList.splice(index === 5 ? 6 : index, 1)
       }
       this.alarmList = _.uniq(this.alarmList)
       this.$emit('alarmSend', this.alarmList)
