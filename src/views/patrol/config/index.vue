@@ -280,8 +280,6 @@ export default {
 
     // 点击编辑
     infoEdit (pointsId, alias) {
-      console.log('11', pointsId)
-      console.log('222', alias)
       this.visible = true
       this.xgModelPoint = pointsId
       this.form.modalEndpointId = alias
