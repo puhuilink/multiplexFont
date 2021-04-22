@@ -1,9 +1,8 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { AlarmRuleDao, CmdbEndpointDao } from '../dao/index'
+import { AlarmRuleDao } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
-import { dataToArray } from 'ant-design-vue/lib/vc-drawer/src/utils'
 
 class AlarmRuleService extends BaseService {
   static async find (argus = {}) {

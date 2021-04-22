@@ -62,6 +62,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'List', name: '列表', icon: 'table', width: 1200, height: 560, backgroundColor: 'rgba(230, 230, 230, 1)'
+  },
+  {
+    category: 'ELEMENT', type: 'UPS', name: 'UPS视图', icon: 'plus', width: 1920, height: 1080
   }
 ]
 

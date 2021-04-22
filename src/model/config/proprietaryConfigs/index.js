@@ -1262,6 +1262,19 @@ class ListProps {
   }
 }
 
+class UpsProps {
+  constructor ({
+    styleConfig = {},
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
+  }) {
+    this.styleConfig = styleConfig
+    this.params = params
+    this.isCallInterface = isCallInterface
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
@@ -1288,7 +1301,8 @@ export {
   Polar,
   Radar,
   PolarLinearColors,
-  PolarMask
+  PolarMask,
+  UpsProps
 }
 
 export const THRESHOLD_RULE_NAME_EQUAL = '='
@@ -1320,7 +1334,7 @@ export class ThresholdColorRule {
    */
   static equal ({ value, thresholdValue, thresholdColor }) {
     // eslint-disable-next-line
-    if (value == thresholdValue) return thresholdColor
+    if (value === thresholdValue) return thresholdColor
   }
 
   /**
@@ -1328,7 +1342,7 @@ export class ThresholdColorRule {
    */
   static notEqual ({ value, thresholdValue, thresholdColor }) {
     // eslint-disable-next-line
-    if (value != thresholdValue) return thresholdColor
+    if (value !== thresholdValue) return thresholdColor
   }
 
   /**
