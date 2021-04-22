@@ -86,7 +86,6 @@ export default {
      */
     filterOption: filterTransferOption('staff_name'),
     handleChange (targetKeys, direction, moveKeys) {
-      console.log('targetKeys', targetKeys)
       this.targetKeys = targetKeys
     },
     handleSearch (dir, value) {},

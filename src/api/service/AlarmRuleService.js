@@ -147,9 +147,10 @@ class AlarmRuleService extends BaseService {
    */
   static async hostPerformanceDetail (id, index, alarmList) {
     const { offset, limit, ...rest } = index
+    console.log('rest', rest, rest.hasOwnProperty('orderBy'))
     const data = { hostId: id, offset, limit, level: alarmList }
-    if (index.hasOwnProperty('orderBy')) {
-      Reflect.set(data, 'order', rest.alarmLevel)
+    if (rest.hasOwnProperty('orderBy')) {
+      Reflect.set(data, 'order', rest.orderBy.alarmLevel)
     }
     if (alarmList.length === 0) {
       Reflect.deleteProperty(data, 'level')
@@ -162,8 +163,8 @@ class AlarmRuleService extends BaseService {
   static async endpointPerformanceDetail (id, index, alarmList) {
     const { offset, limit, ...rest } = index
     const data = { endpointId: id, offset, limit, level: alarmList }
-    if (index.hasOwnProperty('orderBy')) {
-      Reflect.set(data, 'order', rest.alarmLevel)
+    if (rest.hasOwnProperty('orderBy')) {
+      Reflect.set(data, 'order', rest.orderBy.alarmLevel)
     }
     if (alarmList.length === 0) {
       Reflect.deleteProperty(data, 'level')

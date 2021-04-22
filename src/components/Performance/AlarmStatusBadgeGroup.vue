@@ -6,7 +6,7 @@
     <!--    </div>-->
     <div
       class="AlarmStatus__badge_item"
-      v-for="(index) in colors"
+      v-for="(index) in levelList"
       :key="index"
       @click="onToggleIndex(index)"
     >
@@ -14,7 +14,7 @@
         theme="filled"
         type="flag"
         :style="{
-          color: alarmList.includes(index) ? fontPureLevelColorMapping.get(index) : 'rgba(0,0,0,.5 )'
+          color: alarmList.includes(index) ? colors.get(index) : 'rgba(0,0,0,.5 )'
         }"/>
       {{ fontColors.get(index) }}
     </div>
@@ -31,7 +31,8 @@ export default {
   components: {},
   data () {
     return {
-      colors: [...pureLevelColorMapping.keys()],
+      levelList: [...pureLevelColorMapping.keys()],
+      colors: pureLevelColorMapping,
       fontColors: fontPureLevelColorMapping,
       alarmList: [1, 2, 3, 4, 6]
     }

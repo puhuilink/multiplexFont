@@ -24,9 +24,6 @@ export default {
       addr: ''
     }
   },
-  mounted () {
-    console.log('clone', this.elementProps)
-  },
   watch: {
     'elementProps.styleConfig.addr': {
       immediate: true,

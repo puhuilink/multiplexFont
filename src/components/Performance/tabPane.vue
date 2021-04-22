@@ -55,10 +55,9 @@ export default {
           customRender: (alarmLevel) => {
             return (
               <a-icon
-                style={{ color: pureLevelColorMapping.get(alarmLevel + 1) }}
+                style={{ color: pureLevelColorMapping.get(alarmLevel) }}
                 type="flag"
-                theme="filled"
-              />
+                theme="filled"/>
             )
           }
         },

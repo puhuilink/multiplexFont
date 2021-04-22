@@ -47,7 +47,6 @@ export default {
     Object.assign(this.viewConfig, {
       template, alarm
     })
-    console.log(this)
   }
 }
 </script>

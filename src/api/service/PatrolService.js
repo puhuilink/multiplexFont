@@ -247,7 +247,6 @@ class PatrolService extends BaseService {
 
   // 计划详情
   static async planDetail (id) {
-    console.log('这里是Patrol', id)
     const { data: { planList } } = await this.planFind({
       where: { id },
       fields: [
