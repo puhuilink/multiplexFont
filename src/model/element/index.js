@@ -20,9 +20,9 @@ export default class Element {
     this.config = widget.config
     this.widget = widget
     this.onlyShow = onlyShow
+    this.$component = element
     // 初始化配置
     this.mergeOption(widget.config)
-    this.$component = element
   }
 
   /**
@@ -58,7 +58,7 @@ export default class Element {
 
   async mergeOption (config, loadingDynamicData = false) {
     this.$component.elementProps = await this.mappingOption(config, loadingDynamicData)
-    if (this.widget && !this.onlyShow) {
+    if (this.widget && !this.onlyShow && !store.state.screen.isImporting) {
       const { render, ...rest } = this.widget
       const widget = Object.assign({}, _.cloneDeep(rest), { render })
       Object.assign(widget.config, {

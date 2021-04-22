@@ -7,6 +7,7 @@
 */
 import AlarmListElement from '../element/AlarmListElement'
 import ListElement from '../element/ListElement'
+import UpsElement from '@/model/element/UpsElement'
 
 export default class ElementFactory {
   static create (type, { widget, element, onlyShow = false }) {
@@ -15,6 +16,8 @@ export default class ElementFactory {
         return new AlarmListElement({ widget, element, onlyShow })
       case 'List':
         return new ListElement({ widget, element, onlyShow })
+      case 'UPS':
+        return new UpsElement({ widget, element, onlyShow })
       default:
         return null
     }

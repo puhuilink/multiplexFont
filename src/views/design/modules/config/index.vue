@@ -68,7 +68,8 @@ export default {
       ['TextHealth', 'TextHealthConfig'],
       ['List', 'ListConfig'],
       ['Pie', 'PieConfig'],
-      ['Polar', 'PolarConfig']
+      ['Polar', 'PolarConfig'],
+      ['UPS', 'UpsConfig']
     ])
   }),
   computed: {

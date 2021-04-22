@@ -8,15 +8,18 @@
 
 import ListElement from './ListElement.vue'
 import LatestAlarmElement from './LatestAlarmElement'
+import UpsElement from '~~~/Elements/UpsElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
-  ['List', 'ListElement']
+  ['List', 'ListElement'],
+  ['UPS', 'UpsElement']
 ])
 
 const ELEMENTS = {
   LatestAlarmElement,
-  ListElement
+  ListElement,
+  UpsElement
 }
 
 export {
