@@ -14,7 +14,7 @@ class ThemeService extends BaseService {
     const { data: { themeList } } = await query(
       ThemeDao.find({
         where: { is_activated: 1 },
-        fields: ['settings', 'logo', 'bg_image'],
+        fields: ['settings', 'logo', 'bg_image', 'title', 'name'],
         alias: 'themeList'
       })
     )

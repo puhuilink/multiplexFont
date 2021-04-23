@@ -83,14 +83,14 @@
                   />
                 </a-form-item>
               </a-col>
-              <!--              <a-col :xl="8" :md="12" :sm="24">-->
-              <!--                <a-form-item label="IP" v-bind="formItemLayout" class="fw">-->
-              <!--                  <a-input-->
-              <!--                    allowClear-->
-              <!--                    v-model="ip"-->
-              <!--                  ></a-input>-->
-              <!--                </a-form-item>-->
-              <!--              </a-col>-->
+              <a-col :xl="8" :md="12" :sm="24">
+                <a-form-item label="IP" v-bind="formItemLayout" class="fw">
+                  <a-input
+                    allowClear
+                    v-model="ip"
+                  ></a-input>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
 
@@ -458,11 +458,11 @@ export default {
           alarm_level: {
             _in: alarmLevelList
           },
-          // cmdbHost: {
-          //   ip: {
-          //     _ilike: this.ip
-          //   }
-          // },
+          cmdbHost: {
+            ip: {
+              eq: this.ip
+            }
+          },
           ...(hostTypeDictValueCode
             ? {
               cmdbHost: {

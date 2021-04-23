@@ -5,8 +5,8 @@
     <div class="container">
       <div class="top">
         <div class="header">
-          <img src="~@/assets/logo.png" class="logo" alt="logo" />
-          <span class="title">中国交建 · 统一监控管理平台</span>
+          <img class="logo" alt="logo" ref="imgLogo"/>
+          <span class="title">{{ title }}</span>
           <p class="small">Visualization and Insight for Your Business and Environment</p>
         </div>
         <div class="desc"></div>
@@ -31,7 +31,11 @@ export default {
   components: { RouteView },
   mixins: [mixinDevice],
   data () {
-    return { bgImage: require('@/assets/images/bg-login-compress.jpg') }
+    return {
+      bgImage: require('@/assets/images/bg-login-compress.jpg'),
+      title: '',
+      logoIndex: ''
+    }
   },
   mounted () {
     document.body.classList.add('userLayout')
@@ -45,9 +49,13 @@ export default {
         if (theme) {
           const {
             bg_image,
-            settings: { primaryColor }
+            settings: { primaryColor },
+            name,
+            logo
           } = theme
           this.bgImage = bg_image
+          this.title = name
+          this.$refs.imgLogo.src = logo
           this.$store.dispatch('ToggleColor', primaryColor)
         }
       } catch (error) {
