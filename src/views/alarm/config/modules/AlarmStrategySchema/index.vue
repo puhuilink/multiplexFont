@@ -108,7 +108,6 @@
                 labelCol: { span: 24 },
               }"
               prop="exprs.trigger_value"
-              :rules="[{ required: true, message: '请输入触发值' }]"
             >
               <a-input-number :disabled="isDetail" v-model="formModel.exprs.trigger_value" />
             </a-form-model-item>

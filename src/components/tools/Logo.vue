@@ -2,7 +2,7 @@
   <div class="logo">
     <router-link :to="{ name: 'view' }">
       <img :src="logo" alt="" />
-      <h1 v-if="showTitle" class="logo__title">{{ title }}</h1>
+      <h1 v-if="showTitle" class="logo__title">{{ titleName }}</h1>
     </router-link>
   </div>
 </template>
@@ -26,15 +26,17 @@ export default {
   },
   data () {
     return {
-      logo: require('@/assets/logo.png')
+      logo: require('@/assets/logo.png'),
+      titleName: ''
     }
   },
   methods: {
     async getTheme () {
       // 读取当前主题
       try {
-        const { logo } = await ThemeService.fetchTheme()
+        const { logo, name } = await ThemeService.fetchTheme()
         if (logo) this.logo = logo
+        if (name) this.titleName = name
       } catch (error) {
         this.$message.error('主题请求异常!' + error)
       }
