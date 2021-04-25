@@ -1,5 +1,6 @@
 <template>
   <div class="PerformanceDetail">
+
     <a-tabs v-model="activeKey" hide-add type="editable-card" @edit="onEdit">
       <a-tab-pane
         :key="hostId"
@@ -9,7 +10,7 @@
         <tabPane :id="hostId" @pointCheckout="alarmSingleDetails"></tabPane>
       </a-tab-pane>
       <a-tab-pane v-for="(pane) in panes" :key="pane.key" :tab="pane.title" :closable="true">
-        <TabPaneEndpoint :id="pane.key" @historyView="onShowHistory"></TabPaneEndpoint>
+        <TabPaneEndpoint :id="pane.key" :hostId="hostId" @historyView="onShowHistory"></TabPaneEndpoint>
       </a-tab-pane>
     </a-tabs>
     <HistoryChart ref="historyChart" />
@@ -25,7 +26,6 @@ import HistoryChart from './History.vue'
 import { CmdbEndpointService } from '@/api/service/CmdbEndpointService'
 import tabPane from './tabPane'
 import TabPaneEndpoint from '~~~/Performance/tabPaneEndpoint'
-
 const { computed, ...rest } = List
 
 export default {
@@ -58,14 +58,15 @@ export default {
     return {
       alarmList: [1, 2, 3, 4],
       activeKey: '',
-      panes: []
+      panes: [],
+      titleMsg: {}
     }
   },
   computed: {},
   watch: {
     'hostId': {
       immediate: true,
-      handler: function () {
+      handler: async function () {
         this.activeKey = this.hostId
       }
     }
