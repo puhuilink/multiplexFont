@@ -24,7 +24,7 @@ import _ from 'lodash'
 import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 import { AlarmRuleService } from '@/api'
 import { pureLevelColorMapping } from '~~~/Alarm/color.config'
-import TitleMsg from '~~~/Performance/TitleMsg'
+import TitleMsg from './TitleMsg'
 
 const { computed, ...rest } = List
 export default {
