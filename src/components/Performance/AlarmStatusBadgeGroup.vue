@@ -43,7 +43,7 @@ export default {
       const index = this.alarmList.indexOf(alarmLevel)
       if (index === -1) {
         this.alarmList.push(alarmLevel)
-      } else {
+      } else if (this.alarmList.length > 1) {
         this.alarmList.splice(index === 5 ? 6 : index, 1)
       }
       this.alarmList = _.uniq(this.alarmList)

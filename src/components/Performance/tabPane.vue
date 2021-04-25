@@ -9,7 +9,10 @@
       :scroll="scroll"
     >
       <template #operation>
-        <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
+        <div style="display: flex;align-items: center">
+          <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
+          <TitleMsg :id="id"></TitleMsg>
+        </div>
       </template>
     </CTable>
   </fragment>
@@ -21,6 +24,7 @@ import _ from 'lodash'
 import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 import { AlarmRuleService } from '@/api'
 import { pureLevelColorMapping } from '~~~/Alarm/color.config'
+import TitleMsg from './TitleMsg'
 
 const { computed, ...rest } = List
 export default {
@@ -33,7 +37,8 @@ export default {
     }
   ],
   components: {
-    AlarmStatusBadgeGroup
+    AlarmStatusBadgeGroup,
+    TitleMsg
   },
   props: {
     id: {
@@ -83,9 +88,9 @@ export default {
           }
         },
         {
-          title: '更新时间',
+          title: '告警时间',
           align: 'center',
-          dataIndex: 'uploadTime',
+          dataIndex: 'alarmTime',
           width: 150
         },
         {

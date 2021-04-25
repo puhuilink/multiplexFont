@@ -147,7 +147,6 @@ class AlarmRuleService extends BaseService {
    */
   static async hostPerformanceDetail (id, index, alarmList) {
     const { offset, limit, ...rest } = index
-    console.log('rest', rest, rest.hasOwnProperty('orderBy'))
     const data = { hostId: id, offset, limit, level: alarmList }
     if (rest.hasOwnProperty('orderBy')) {
       Reflect.set(data, 'order', rest.orderBy.alarmLevel)

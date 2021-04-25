@@ -10,6 +10,9 @@ import {
 import _ from 'lodash'
 
 class CmdbService extends BaseService {
+  static find (argus = {}) {
+    return query(CmdbHostDao.find(argus))
+  }
   static async tree () {
     const { data: { hostList } } = await query(
       CmdbHostDao.find({
@@ -26,7 +29,6 @@ class CmdbService extends BaseService {
         alias: 'hostList'
       })
     )
-    // console.log('hostList', hostList)
     const treeData = hostList.map(host => ({
       title: host.host,
       key: host.id,

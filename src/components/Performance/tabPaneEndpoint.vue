@@ -9,7 +9,10 @@
       ref="column"
     >
       <template #operation>
-        <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
+        <div style="display: flex;align-items: center">
+          <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
+          <TitleMsg :id="id"></TitleMsg>
+        </div>
       </template>
     </CTable>
   </fragment>
@@ -21,6 +24,7 @@ import _ from 'lodash'
 import AlarmStatusBadgeGroup from './AlarmStatusBadgeGroup.vue'
 import { AlarmRuleService } from '@/api'
 import { pureLevelColorMapping } from '~~~/Alarm/color.config'
+import TitleMsg from '~~~/Performance/TitleMsg'
 
 const { computed, ...rest } = List
 export default {
@@ -33,10 +37,16 @@ export default {
     }
   ],
   components: {
-    AlarmStatusBadgeGroup
+    AlarmStatusBadgeGroup,
+    TitleMsg
   },
   props: {
     id: {
+      require: true,
+      type: String,
+      default: ''
+    },
+    hostId: {
       require: true,
       type: String,
       default: ''
