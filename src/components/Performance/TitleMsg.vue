@@ -1,6 +1,6 @@
 <template>
-  <div style="font-weight: bold;font-size: 17px;margin-left: -40%;">
-    {{}}
+  <div style="font-weight: bold;font-size: 17px;margin-left: -40%;width: 100%;">
+    {{ tabMsg.alias }}  ({{ tabMsg.ip }}) 数据域: {{ tabMsg.location }}/{{ tabMsg.hostType }}
   </div>
 </template>
 
@@ -36,8 +36,12 @@ export default {
         ],
         alias: 'source'
       })
+      console.log(this.tabMsg)
       this.tabMsg = _.first(source)
     }
+  },
+  created () {
+    this.loadData()
   }
 }
 </script>
