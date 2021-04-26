@@ -251,6 +251,7 @@ export default {
           xxl: { span: 20, offset: 0 }
         }
       },
+      ip: '',
       ipList: [],
       state: ALARM_STATE.unSolved,
       columns: [
@@ -395,7 +396,6 @@ export default {
           validate: () => this.showHistory
         }
       ],
-      ip: '',
       queryParams: {
         alarmLevelList: [1, 2, 3, 4],
         dictValue: [],
@@ -447,6 +447,7 @@ export default {
       const {
         hostTypeDictValueCode,
         queryParams: { agent_id, alarmLevelList, ...queryParams },
+        ip,
         queryParamsProps
       } = this
       return AlarmService.find({
@@ -458,11 +459,7 @@ export default {
           alarm_level: {
             _in: alarmLevelList
           },
-          cmdbHost: {
-            ip: {
-              eq: this.ip
-            }
-          },
+          ...(ip ? { cmdbHost: { ip: { _eq: this.ip } } } : {}),
           ...(hostTypeDictValueCode
             ? {
               cmdbHost: {
