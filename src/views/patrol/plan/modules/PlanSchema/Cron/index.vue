@@ -43,9 +43,9 @@ import { CronModel } from './CronModel'
 const prefixInteger = (num, n) => (Array(n).join(0) + num).slice(-n)
 
 export const cronRule = {
-  // interval: [
-  //   { required: true, message: '请选择循环周期' }
-  // ]
+  interval: [
+    { required: true, message: '请选择循环周期' }
+  ]
 }
 
 export default {

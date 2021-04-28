@@ -42,7 +42,7 @@ export class CronModel {
   }
 
   get everyDay () {
-    return '* * * * * *'
+    return '0 30 0 * * *'
   }
 
   get dayOfMonth () {
@@ -51,10 +51,11 @@ export class CronModel {
   }
 
   set dayOfMonth (dayOfMonth = []) {
+    console.log(dayOfMonth)
     if (_.isEmpty(dayOfMonth)) {
       this.useDayOfMonth()
     } else {
-      this.cron = `* * * ${
+      this.cron = `0 30 0 ${
         dayOfMonth.sort().join(',')
       } * ?`
     }
@@ -69,7 +70,7 @@ export class CronModel {
     if (_.isEmpty(dayOfWeek)) {
       this.useDayOfWeek()
     } else {
-      this.cron = `* * * ? * ${
+      this.cron = `0 30 0 ? * ${
         dayOfWeek.sort().join(',')
       }`
     }
@@ -80,7 +81,7 @@ export class CronModel {
   }
 
   useEveryDay () {
-    this.cron = '* * * * * *'
+    this.cron = '0 30 0 * * *'
   }
 
   get isDayOfWeek () {
@@ -89,7 +90,7 @@ export class CronModel {
   }
 
   useDayOfWeek () {
-    this.cron = '* * * ? * *'
+    this.cron = '0 30 0 ? * *'
   }
 
   get isDayOfMonth () {
@@ -98,7 +99,7 @@ export class CronModel {
   }
 
   useDayOfMonth () {
-    this.cron = '* * * * * ?'
+    this.cron = '0 30 0 * * ?'
   }
 
   get currentType () {

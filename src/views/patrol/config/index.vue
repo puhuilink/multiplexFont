@@ -21,7 +21,7 @@
               }"
             >查询</a-button>
           </a-form>
-          <a-button type="primary">新增监控对象</a-button>
+          <!--          <a-button type="primary">新增监控对象</a-button>-->
           <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
@@ -50,7 +50,7 @@
             <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
             <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
             <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
-            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>
+            <!--            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>-->
           </div>
 
           <div class="PatrolConfig__tbody" ref="tBody">
@@ -129,12 +129,12 @@
                       </div>
                     </div>
                   </div>
-                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
-                    <template v-if="hostId">
-                      <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>
-                      <a-button type="link">删除</a-button>
-                    </template>
-                  </div>
+                  <!--                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">-->
+                  <!--                    <template v-if="hostId">-->
+                  <!--                      <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>-->
+                  <!--                      <a-button type="link">删除</a-button>-->
+                  <!--                    </template>-->
+                  <!--                  </div>-->
                 </div>
               </div>
             </div>
