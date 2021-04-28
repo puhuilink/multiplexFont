@@ -60,6 +60,7 @@ class ForwardContentModel {
     this.number = firstInterval
     this.number24 = secondInterval
     this.number48 = thirdInterval
+    this.type = 'time'
   }
 }
 
