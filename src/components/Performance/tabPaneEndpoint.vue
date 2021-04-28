@@ -1,20 +1,24 @@
 <template>
   <fragment>
-    <CTable
-      :columns="detailColumns"
-      :data="loadDataDetails"
-      rowKey="endpointIds"
-      :rowSelection="null"
-      :scroll="scroll"
-      ref="column"
+    <div
+      style="margin-bottom: 15%"
     >
-      <template #operation>
-        <div style="display: flex;align-items: center">
-          <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
-          <TitleMsg :id="hostId"></TitleMsg>
-        </div>
-      </template>
-    </CTable>
+      <CTable
+        :columns="detailColumns"
+        :data="loadDataDetails"
+        rowKey="endpointIds"
+        :rowSelection="null"
+        :scroll="scroll"
+        ref="column"
+      >
+        <template #operation>
+          <div style="display: flex;align-items: center">
+            <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
+            <TitleMsg :id="hostId"></TitleMsg>
+          </div>
+        </template>
+      </CTable>
+    </div>
   </fragment>
 </template>
 
