@@ -19,8 +19,7 @@
                       v-for="{ group_id, group_name } in patrolGroupList"
                       :key="group_id"
                       :value="group_id"
-                    >{{ group_name }}</a-select-option
-                    >
+                    >{{ group_name }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>

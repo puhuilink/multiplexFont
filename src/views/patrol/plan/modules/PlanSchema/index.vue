@@ -20,7 +20,16 @@
 
         <TimeRange v-if="plan.interval" :interval.sync="plan.interval" />
 
-        <PatrolPath :plan.sync="plan" />
+        <!--        设计中无此模块-->
+        <!--        <PatrolPath :plan.sync="plan" />-->
+        <a-range-picker
+          style="width:80%;margin-top: 10%;margin-left: 10%"
+          format="YYYY-MM-DD HH:mm:ss"
+          :placeholder="['生效时间', '失效时间']"
+          v-model="plan.effectTime"
+        />
+
+        <EditableRow></EditableRow>
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -61,6 +70,7 @@ export default {
   },
   methods: {
     add () {
+      this.plan = new PlanModel({})
       this.submit = this.insert
       this.show('新增巡检计划')
     },
@@ -90,6 +100,7 @@ export default {
         try {
           this.confirmLoading = true
           // await PatrolService.planAdd(this.plan.serialize())
+          await PatrolService.addPlan(this.plan.serialize())
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
           this.cancel()

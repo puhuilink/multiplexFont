@@ -238,6 +238,18 @@ class PatrolService extends BaseService {
     )
   }
 
+  /**
+   * 改为接口校验数据正确性，是否允许添加
+   */
+  static async addPlan (plan = {}) {
+    const { ...rest } = await axios({
+      baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
+      url: '/plan/addJob',
+      plan
+    })
+    console.log(rest)
+  }
+
   // 更新计划
   static async planEdit (set = {}, where = {}) {
     return mutate(
