@@ -59,7 +59,8 @@ export default {
       alarmList: [1, 2, 3, 4],
       activeKey: '',
       panes: [],
-      titleMsg: {}
+      titleMsg: {},
+      endpointModelId: ''
     }
   },
   computed: {},
@@ -84,10 +85,16 @@ export default {
             title: await CmdbEndpointService.find({
               where: { endpoint_id: this.endpointId },
               fields: [
-                'alias'
-              ]
+                'alias',
+                'endpointModelId: endpoint_model_id'
+              ],
+              alias: 'data'
             }).then(r => {
-              return r.data.t_cmdb_endpoint[0].alias
+              const data = _.first(r.data.data)
+              if (data.endpointModelId) {
+                this.endpointModelId = data.endpointModelId
+              }
+              return data.alias
             })
           })
           this.activeKey = this.endpointId
