@@ -256,7 +256,7 @@ export default {
   data: () => ({
     addBtnLoading: false,
     formModel: {
-      deviceType: 'test',
+      deviceType: '',
       deviceBrand: '',
       deviceModel: '',
       endpointModelId: '',
@@ -311,6 +311,8 @@ export default {
   methods: {
     add () {
       this.show('新建阈值规则')
+      // TODO 打开新建菜单的时候重置
+      this.$refs.ruleForm.resetFields()
       this.submit = this.insert
     },
     addExpressionOpts: _.throttle(async function () {
