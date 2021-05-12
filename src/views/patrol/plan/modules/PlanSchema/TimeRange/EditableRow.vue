@@ -12,7 +12,7 @@ export default {
     },
     value: {
       type: Object,
-      default: () => ({})
+      default: () => ({ value: { time: new Date(), dayType: '' } })
     }
   },
   data () {
@@ -37,9 +37,8 @@ export default {
         <a-time-picker
           allowClear={false}
           format="HH:mm"
-          value={moment(value.time, format)}
+          value={(value.time === '') ? null : moment(value.time, 'HH:mm')}
           onChange={(time) => {
-            // console.log(time, time.format(format))
             this.$emit('change', { ...value, time: time.format(format) })
           }}
         />

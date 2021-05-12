@@ -9,6 +9,10 @@ const service = axios.create({
   // timeout: 500000
 })
 
+const serviceXungeng = axios.create({
+  baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL
+})
+
 const requestInterceptor = config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
@@ -45,14 +49,22 @@ service.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
 
+serviceXungeng.interceptors.request.use(requestInterceptor)
+
+serviceXungeng.interceptors.response.use(responseInterceptor)
+
+serviceXungeng.defaults.withCredentials = true
+
 const installer = {
   vm: {},
   install (Vue) {
     Vue.use(VueAxios, service)
+    Vue.use(VueAxios, serviceXungeng)
   }
 }
 
 export {
   installer as VueAxios,
-  service as axios
+  service as axios,
+  serviceXungeng as xungeng
 }

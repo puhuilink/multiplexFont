@@ -30,7 +30,6 @@ export class CronModel {
       // 1 ~ 7
       dayOfWeek = '*'
     ] = this.cron.split(' ')
-
     return {
       seconds,
       minutes,
@@ -51,7 +50,6 @@ export class CronModel {
   }
 
   set dayOfMonth (dayOfMonth = []) {
-    console.log(dayOfMonth)
     if (_.isEmpty(dayOfMonth)) {
       this.useDayOfMonth()
     } else {

@@ -24,10 +24,10 @@ export class TimeRangeModel {
   }
 
   add () {
-    const { end: { dayType, time } } = _.last(this.dataSource) || {
+    const { end: { dayType, time } } = { end: {
       dayType: 'A',
       time: moment().format('HH:mm')
-    }
+    } } || _.last(this.dataSource)
 
     // moment 比较时间需跟上年月日
     const startTime = `${moment().format(`YYYY-MM-DD`)} ${time}`

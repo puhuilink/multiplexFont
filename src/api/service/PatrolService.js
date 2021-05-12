@@ -6,7 +6,7 @@ import {
   XjChangeShiftDao, PatrolTaskStatusDao
 } from '../dao/index'
 import _ from 'lodash'
-import { axios } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -62,8 +62,8 @@ class PatrolService extends BaseService {
   }
 
   static async planBatchDelete (idList = []) {
-    return mutate(
-      PatrolPlanDao.delete({
+    await mutate(
+      PatrolPlanDao.batchDelete({
         id: {
           _in: idList
         }
@@ -109,7 +109,6 @@ class PatrolService extends BaseService {
 
   // 不同告警等级对应的用户列表
   static async senderConfig (res) {
-    // console.log('res==', res)
     // 获取不同通知级别对应的用户 id
     // TODO: 区分 IT / 动环
     const { data: { senderList } } = await query(
@@ -217,8 +216,6 @@ class PatrolService extends BaseService {
     const { rfList, ...basicInfo } = task
 
     // TODO: host、endpoint、metric
-    // const { task_code } = task
-    // console.log(rfList)
     return {
       basicInfo
     }
@@ -238,16 +235,16 @@ class PatrolService extends BaseService {
     )
   }
 
+  // 修改计划
+  static async planUpdate (plan = {}) {
+    await xungeng.post(`/plan/updateJob`, plan)
+  }
+
   /**
    * 改为接口校验数据正确性，是否允许添加
    */
   static async addPlan (plan = {}) {
-    const { ...rest } = await axios({
-      baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
-      url: '/plan/addJob',
-      plan
-    })
-    console.log(rest)
+    await xungeng.post(`/plan/addJob`, plan)
   }
 
   // 更新计划
@@ -259,18 +256,25 @@ class PatrolService extends BaseService {
 
   // 计划详情
   static async planDetail (id) {
-    const { data: { planList } } = await this.planFind({
-      where: { id },
-      fields: [
-        'alias',
-        'schedule',
-        'interval',
-        // TODO: 巡更组管理
-        'group_id'
-      ],
-      alias: 'planList'
-    })
-
+    const { data: { planList } } = await query(
+      PatrolPlanDao.find({
+        where: { id: { _eq: id.toString() } },
+        fields: [
+          'id',
+          'alias',
+          'schedule',
+          'interval',
+          // TODO: 巡更组管理
+          'groupId: group_id',
+          'cron: schedule',
+          'effectTime: effect_time',
+          'expireTime: expire_time',
+          'exception',
+          'status'
+        ],
+        alias: 'planList'
+      })
+    )
     return _.first(planList)
   }
 
