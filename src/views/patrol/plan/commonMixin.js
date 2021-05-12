@@ -11,7 +11,7 @@ export default {
         this.patrolGroupLoading = true
         const { data: { patrolGroupList } } = await GroupService.patrolFind({
           where: { is_patrol: { _eq: true } },
-          fields: ['group_name', 'group_id'],
+          fields: ['group_name', 'groupId: group_id'],
           alias: 'patrolGroupList'
         })
         this.patrolGroupList = patrolGroupList

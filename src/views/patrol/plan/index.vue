@@ -4,7 +4,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
-      :rowKey="(el) => el.id + el.alias"
+      :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
@@ -16,9 +16,9 @@
                 <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
                   <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="{ group_id, group_name } in patrolGroupList"
-                      :key="group_id"
-                      :value="group_id"
+                      v-for="{ groupId, group_name } in patrolGroupList"
+                      :key="groupId"
+                      :value="groupId"
                     >{{ group_name }}</a-select-option>
                   </a-select>
                 </a-form-item>

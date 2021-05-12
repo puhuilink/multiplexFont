@@ -27,7 +27,6 @@ export const timeRangeRule = {
       required: true,
       message: '请选择生效时间段',
       validator (rule, value, callback) {
-        console.log(rule, value)
         if (value === '') {
           callback(new Error('Please input the password again'))
         } else if (value !== this.ruleForm.pass) {
@@ -42,7 +41,6 @@ export const timeRangeRule = {
 
 export default {
   name: 'TimeRange',
-  mixins: [],
   components: {},
   props: {
     interval: {

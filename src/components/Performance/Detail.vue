@@ -113,7 +113,6 @@ export default {
     },
 
     async onShowHistory (record) {
-      console.log('record', record)
       this.$refs['historyChart'].showHistory({
         AlarmhostId: this.hostId, // 设备id
         endpointId: this.endpointId, // 第一展示单个问题 id

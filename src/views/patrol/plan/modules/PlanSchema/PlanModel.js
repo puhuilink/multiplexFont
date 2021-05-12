@@ -7,15 +7,19 @@ export const timeFormat = 'YYYY-MM-DD HH:mm:ss'
 export class PlanModel {
   constructor ({
     interval = '',
-    schedule = '0 30 0 * * * ?',
+    schedule = '',
     alias = '',
-    group_id = '',
+    groupId = '',
     id = '',
     effectTime = '',
-    crash = {}
+    expireTime = '',
+    crash = {},
+    pathId = '',
+    zoneId = '',
+    exception = [],
+    status = ''
   }) {
     this.alias = alias
-    this.group_id = group_id
     this.schedule = new CronModel(schedule)
     this.interval = new TimeRangeModel(interval)
     this.effectTime = effectTime
@@ -23,19 +27,30 @@ export class PlanModel {
     if (id) {
       this.id = id
     }
+    this.pathId = pathId
+    this.zoneId = zoneId
+    this.exception = (exception === '') ? [] : exception
+    this.groupId = groupId
+    this.expireTime = expireTime
+    this.status = status
   }
 
   serialize () {
-    const { schedule, interval, effectTime, ...plan } = this
-    const { effect, expire } = effectTime
-    console.log('rest', plan)
-    return {
+    const { schedule, interval, effectTime, expireTime, crash, exception, groupId, ...plan } = this
+    const obj = {
       schedule: schedule.serialize(),
       interval: interval.serialize(),
-      effect: moment(effect).format(timeFormat),
-      expire: moment(expire).format(timeFormat),
+      effectTime: moment(effectTime).format(timeFormat),
+      expireTime: moment(expireTime).format(timeFormat),
+      createTime: moment(new Date()).format(timeFormat),
+      groupId: groupId,
       ...plan
     }
+    console.log('eff', obj)
+    if (exception) {
+      Reflect.set(obj, 'exception', exception.toString())
+    }
+    return obj
   }
 
   toJson () {
