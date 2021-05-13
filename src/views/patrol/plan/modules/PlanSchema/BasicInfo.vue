@@ -22,12 +22,12 @@
         <span class="ant-form-item-label">
           <label title="巡更组">巡更组</label>
         </span>
-        <a-form-model-item prop="group_id">
-          <a-select v-model="_value.group_id" style="min-width: 140px">
+        <a-form-model-item prop="groupId">
+          <a-select v-model="_value.groupId" style="min-width: 140px">
             <a-select-option
-              v-for="{ group_id, group_name } in patrolGroupList"
-              :key="group_id"
-              :value="group_id"
+              v-for="{ groupId, group_name } in patrolGroupList"
+              :key="groupId"
+              :value="groupId"
             >{{ group_name }}</a-select-option>
           </a-select>
         </a-form-model-item>
@@ -56,8 +56,11 @@ export const basicInfoRule = {
   alias: [
     { required: true, message: '请输入计划名称' }
   ],
-  group_id: [
+  groupId: [
     { required: true, message: '请选择巡更组' }
+  ],
+  status: [
+    { required: true, message: '请选择是否启用' }
   ]
 }
 

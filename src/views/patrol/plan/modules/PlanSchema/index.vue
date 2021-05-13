@@ -20,16 +20,11 @@
 
         <TimeRange v-if="plan.interval" :interval.sync="plan.interval" />
 
-        <!--        设计中无此模块-->
-        <!--        <PatrolPath :plan.sync="plan" />-->
-        <a-range-picker
-          style="width:80%;margin-top: 10%;margin-left: 10%"
-          format="YYYY-MM-DD HH:mm:ss"
-          :placeholder="['生效时间', '失效时间']"
-          v-model="plan.effectTime"
-        />
+        <PatrolPath :plan.sync="plan" />
 
-        <EditableRow></EditableRow>
+        <TimePicker :plan.sync="plan"></TimePicker>
+
+        <TimeMultiPicker :plan.sync="plan"></TimeMultiPicker>
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -43,6 +38,9 @@ import BasicInfo, { basicInfoRule } from './BasicInfo.vue'
 import Cron, { cronRule } from './Cron/index.vue'
 import PatrolPath, { patrolPathRule } from './PatrolPath.vue'
 import TimeRange, { timeRangeRule } from './TimeRange/index.vue'
+import TimeMultiPicker from './TimeMultiPicker/index'
+import TimePicker, { TimePickerRule } from './TimePicker/index'
+import moment from 'moment'
 
 export default {
   name: 'PlanSchema',
@@ -51,7 +49,9 @@ export default {
     BasicInfo,
     Cron,
     PatrolPath,
-    TimeRange
+    TimeRange,
+    TimeMultiPicker,
+    TimePicker
   },
   props: {},
   data: () => ({
@@ -64,8 +64,46 @@ export default {
         ...basicInfoRule,
         ...patrolPathRule,
         ...timeRangeRule,
-        ...cronRule
+        ...cronRule,
+        ...TimePickerRule,
+        effectTime: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              const format = 'HH:mm:ss MM/D/YYYY'
+              const startTime = moment(value, format)
+              const endTime = moment(this.plan.expireTime, format)
+              if (Object.is(value, '')) {
+                callback(new Error('生效时间为必填项'))
+              } else if (startTime.isAfter(endTime) && endTime) {
+                callback(new Error('生效时间不能晚于失效时间'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        expireTime: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              const format = 'HH:mm:ss MM/D/YYYY'
+              const startTime = moment(this.plan.effectTime, format)
+              const endTime = moment(value, format)
+              if (Object.is(value, '')) {
+                callback(new Error('失效时间为必填项'))
+              } else if (startTime.isAfter(endTime) && endTime) {
+                callback(new Error('失效时间不能晚于生效时间'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       }
+    },
+    timeExcept () {
+      return this.$store.date
     }
   },
   methods: {
@@ -81,7 +119,6 @@ export default {
     },
     async fetchPlanDetail (id) {
       try {
-        this.spinning = true
         const plan = await PatrolService.planDetail(id)
         this.plan = new PlanModel(plan)
       } catch (e) {
@@ -96,10 +133,8 @@ export default {
      */
     async insert () {
       this.$refs.ruleForm.validate(async (valid) => {
-        if (!valid) return
         try {
           this.confirmLoading = true
-          // await PatrolService.planAdd(this.plan.serialize())
           await PatrolService.addPlan(this.plan.serialize())
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
@@ -121,7 +156,7 @@ export default {
         try {
           this.confirmLoading = true
           // const { id, ...plan } = this.plan.serialize()
-          // await PatrolService.planAdd(plan, { id })
+          await PatrolService.planUpdate(this.plan.serialize())
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
@@ -146,6 +181,31 @@ export default {
     .ant-modal-body {
       height: 700px;
       overflow-y: auto;
+    }
+
+    &__range {
+      margin-top: 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      hr {
+        width: 80%;
+        background: rgb(232,232,232);
+        height: 0.1px;
+        border: none;
+      }
+      &__font {
+        background: rgb(250,250,250);
+        height: 60px;
+        line-height: 60px;
+        width: 80%;
+        display: flex;
+        justify-content: space-around;
+      }
+      &__picker {
+        width:80%;
+      }
     }
   }
 }

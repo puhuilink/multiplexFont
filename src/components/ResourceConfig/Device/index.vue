@@ -179,7 +179,6 @@ export default {
         if (!_.isEmpty(value)) {
           this.selectValue += value
         }
-        console.log(this.selectValue)
       }
     },
     'model.deviceBrand': {

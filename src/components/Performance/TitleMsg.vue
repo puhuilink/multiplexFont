@@ -36,7 +36,6 @@ export default {
         ],
         alias: 'source'
       })
-      console.log(this.tabMsg)
       this.tabMsg = _.first(source)
     }
   },

@@ -20,10 +20,7 @@ class GroupService extends BaseService {
     const q = await generateQuery(
       GroupDao.find({
         where: {
-          ...where,
-          ascription: {
-            _in: ['MachineRoom-XM-DH', 'MachineRoom-XM-IT']
-          }
+          ...where
         },
         ...rest
       })
