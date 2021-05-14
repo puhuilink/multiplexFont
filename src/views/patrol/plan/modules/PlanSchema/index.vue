@@ -70,12 +70,12 @@ export default {
           {
             required: true,
             validator: (rule, value, callback) => {
-              const format = 'HH:mm:ss MM/D/YYYY'
+              const format = 'YYYY-MM-DD HH:mm:ss'
               const startTime = moment(value, format)
               const endTime = moment(this.plan.expireTime, format)
-              if (Object.is(value, '')) {
+              if (Object.is(startTime, '') || !startTime.isValid()) {
                 callback(new Error('生效时间为必填项'))
-              } else if (startTime.isAfter(endTime) && endTime) {
+              } else if (startTime.isAfter(endTime)) {
                 callback(new Error('生效时间不能晚于失效时间'))
               } else {
                 callback()
@@ -87,13 +87,13 @@ export default {
           {
             required: true,
             validator: (rule, value, callback) => {
-              const format = 'HH:mm:ss MM/D/YYYY'
+              const format = 'YYYY-MM-DD HH:mm:ss'
               const startTime = moment(this.plan.effectTime, format)
               const endTime = moment(value, format)
-              if (Object.is(value, '')) {
+              if (Object.is(endTime, '') || !endTime.isValid()) {
                 callback(new Error('失效时间为必填项'))
-              } else if (startTime.isAfter(endTime) && endTime) {
-                callback(new Error('失效时间不能晚于生效时间'))
+              } else if (startTime.isAfter(endTime)) {
+                callback(new Error('失效时间不能早于生效时间'))
               } else {
                 callback()
               }
