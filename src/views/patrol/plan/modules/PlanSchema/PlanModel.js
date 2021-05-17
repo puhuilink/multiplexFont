@@ -46,7 +46,6 @@ export class PlanModel {
       groupId: groupId,
       ...plan
     }
-    console.log('eff', obj)
     if (exception) {
       Reflect.set(obj, 'exception', exception.toString())
     }

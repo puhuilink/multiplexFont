@@ -41,7 +41,7 @@ export class CronModel {
   }
 
   get everyDay () {
-    return '0 30 0 * * *'
+    return '0 30 0 * * ?'
   }
 
   get dayOfMonth () {
@@ -55,7 +55,7 @@ export class CronModel {
     } else {
       this.cron = `0 30 0 ${
         dayOfMonth.sort().join(',')
-      } * ?`
+      } * ? *`
     }
   }
 
@@ -79,7 +79,7 @@ export class CronModel {
   }
 
   useEveryDay () {
-    this.cron = '0 30 0 * * *'
+    this.cron = '0 30 0 * * ?'
   }
 
   get isDayOfWeek () {
@@ -93,11 +93,11 @@ export class CronModel {
 
   get isDayOfMonth () {
     const { dayOfWeek, dayOfMonth } = this._split()
-    return dayOfMonth !== '?' && dayOfWeek === '?'
+    return dayOfMonth !== '?' && dayOfWeek === '?' && this.cron !== '0 30 0 * * ?'
   }
 
   useDayOfMonth () {
-    this.cron = '0 30 0 * * ?'
+    this.cron = '0 30 0 * * ? *'
   }
 
   get currentType () {

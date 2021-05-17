@@ -237,14 +237,16 @@ class PatrolService extends BaseService {
 
   // 修改计划
   static async planUpdate (plan = {}) {
-    await xungeng.post(`/plan/updateJob`, plan)
+    const msg = await xungeng.post(`/plan/updateJob`, plan)
+    return msg
   }
 
   /**
    * 改为接口校验数据正确性，是否允许添加
    */
   static async addPlan (plan = {}) {
-    await xungeng.post(`/plan/addJob`, plan)
+    const msg = await xungeng.post(`/plan/addJob`, plan)
+    return msg
   }
 
   // 更新计划

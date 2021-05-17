@@ -123,8 +123,8 @@ export default {
     cache: null,
     dataList: [],
     fetching: false,
-    visible: false,
-    selectValue: ''
+    visible: false
+    // selectValue: ''
   }),
   computed: {
     model: {
@@ -141,6 +141,19 @@ export default {
     },
     disabled () {
       return _.get(this, 'ctx.editAbleProps.disabled')
+    },
+    selectValue () {
+      let value = ''
+      if (this.model.deviceType) {
+        value = this.model.deviceType
+      }
+      if (this.model.deviceBrand) {
+        value = value.concat('/' + this.model.deviceBrand)
+      }
+      if (this.model.deviceModel) {
+        value = value.concat('/' + this.model.deviceModel)
+      }
+      return value === '' ? undefined : value
     }
   },
   methods: {
@@ -171,44 +184,44 @@ export default {
     onToggleAdvanced () {
       this.advanced = !this.advanced
     }
-  },
-  watch: {
-    'model.deviceType': {
-      immediate: true,
-      handler: function (value) {
-        if (!_.isEmpty(value)) {
-          this.selectValue += value
-        }
-      }
-    },
-    'model.deviceBrand': {
-      immediate: true,
-      handler: function (value) {
-        if (!_.isEmpty(value)) {
-          this.selectValue += '/'
-          this.selectValue += value
-        }
-      }
-    },
-    'model.deviceModel': {
-      immediate: true,
-      handler: function (value) {
-        if (!_.isEmpty(value)) {
-          this.selectValue += '/'
-          this.selectValue += value
-        }
-      }
-    },
-    'model.hostId': {
-      immediate: true,
-      handler: function (value) {
-        if (!_.isEmpty(value)) {
-          this.selectValue += '/'
-          this.selectValue += value
-        }
-      }
-    }
   }
+  // watch: {
+  //   'model.deviceType': {
+  //     immediate: true,
+  //     handler: function (value) {
+  //       if (!_.isEmpty(value)) {
+  //         this.selectValue += value
+  //       }
+  //     }
+  //   },
+  //   'model.deviceBrand': {
+  //     immediate: true,
+  //     handler: function (value) {
+  //       if (!_.isEmpty(value)) {
+  //         this.selectValue += '/'
+  //         this.selectValue += value
+  //       }
+  //     }
+  //   },
+  //   'model.deviceModel': {
+  //     immediate: true,
+  //     handler: function (value) {
+  //       if (!_.isEmpty(value)) {
+  //         this.selectValue += '/'
+  //         this.selectValue += value
+  //       }
+  //     }
+  //   },
+  //   'model.hostId': {
+  //     immediate: true,
+  //     handler: function (value) {
+  //       if (!_.isEmpty(value)) {
+  //         this.selectValue += '/'
+  //         this.selectValue += value
+  //       }
+  //     }
+  //   }
+  // }
 }
 </script>
 

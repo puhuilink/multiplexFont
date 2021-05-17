@@ -54,7 +54,7 @@ export class TimeRangeModel {
   serialize () {
     return this.dataSource
       .map(({ start, end }) => `${start.dayType}${start.time}-${end.dayType}${end.time}`)
-      .join('-')
+      .join(',')
   }
 
   toJson () {
