@@ -52,6 +52,9 @@ export class TimeRangeModel {
   }
 
   serialize () {
+    if (this.dataSource[0].start.time === '' || this.dataSource[0].end.time === '') {
+      return
+    }
     return this.dataSource
       .map(({ start, end }) => `${start.dayType}${start.time}-${end.dayType}${end.time}`)
       .join(',')

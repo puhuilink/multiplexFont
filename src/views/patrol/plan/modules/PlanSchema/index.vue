@@ -137,7 +137,7 @@ export default {
         try {
           this.confirmLoading = true
           const { code, msg } = await PatrolService.addPlan(this.plan.serialize())
-          if (code !== '200') {
+          if (code !== 200) {
             this.$notifyError(msg)
           } else {
             this.$emit('addSuccess')
@@ -162,7 +162,7 @@ export default {
           this.confirmLoading = true
           // const { id, ...plan } = this.plan.serialize()
           const { code, msg } = await PatrolService.planUpdate(this.plan.serialize())
-          if (code !== '200') {
+          if (code !== 200) {
             this.$notifyError(msg)
           } else {
             this.$emit('editSuccess')
