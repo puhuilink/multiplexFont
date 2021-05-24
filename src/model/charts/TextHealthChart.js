@@ -25,7 +25,6 @@ export default class TextsChart extends Chart {
     const { grid } = commonConfig.getOption()
     const { title, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
-
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
         title.text = `${staticData}`
@@ -51,8 +50,14 @@ export default class TextsChart extends Chart {
     if (!isNaN(Number(title.text))) {
       title.text = decimalPoint === -1 ? title.text : formatFloat(Number(title.text), decimalPoint)
     }
-
-    title.textStyle.color = thresholdColorRule.calculateColor(title.text) || title.textStyle.color
+    const colors = thresholdColorRule.calculateColor(title.text)
+    if (colors) {
+      const { thresBgColor, thresholdColor } = colors
+      title.textStyle.color = thresholdColor || title.textStyle.color
+      grid[1].backgroundColor = thresBgColor || grid[1].backgroundColor
+    } else {
+      title.textStyle.color = 'rgba(0, 0 ,0)'
+    }
     return { grid, title }
   }
 }

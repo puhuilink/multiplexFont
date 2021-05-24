@@ -47,9 +47,21 @@ export default class DegreeRingChart extends Chart {
 
     // 处理小数点后的值
     series.label.formatter = decimalPoint === -1 ? Number(formatter) : formatFloat(Number(formatter), decimalPoint)
-
-    const insideColor = thresholdColorRule.calculateColor(series.label.formatter) || series.label.insideColor
-    Object.assign(series.label, { insideColor })
+    const colors = thresholdColorRule.calculateColor(series.label.formatter)
+    if (colors) {
+      const { thresholdColor, thresBgColor, thresInlineColor } = colors
+      series.label.insideColor = thresholdColor
+      // grid[1].backgroundColor = thresBgColor || grid[1].backgroundColor
+      // 外环颜色
+      series.backgroundStyle.borderColor = thresBgColor || series.backgroundStyle.borderColor
+      series.backgroundStyle.color = thresInlineColor || series.backgroundStyle.color
+    } else {
+      Object.assign(series.label, series.label.insideColor)
+      series.label.insideColor = '#fff'
+      series.backgroundStyle.borderColor = '#195ba6'
+      series.backgroundStyle.color = '#195ba6'
+    }
+    // const insideColor = thresholdColorRule.calculateColor(series.label.formatter) || series.label.insideColor
 
     switch (type) {
       case DEGREE_TYPE_HEALTH_RING: {

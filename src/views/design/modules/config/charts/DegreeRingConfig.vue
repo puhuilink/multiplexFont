@@ -65,7 +65,7 @@
               </div>
               <!-- / 小数点保留 -->
 
-              <ThresholdColor />
+              <ThresholdColor :name="value"/>
             </a-collapse-panel>
 
             <a-collapse-panel header="底色设置" key="3" v-show="config.proprietaryConfig.type === DEGREE_TYPE_HEALTH_RING">
@@ -224,7 +224,8 @@ export default {
   },
   data: () => ({
     DEGREE_TYPE_HEALTH_DEGREE,
-    DEGREE_TYPE_HEALTH_RING
+    DEGREE_TYPE_HEALTH_RING,
+    value: 'DegreeRing'
   }),
   computed: {},
   methods: {

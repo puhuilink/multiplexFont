@@ -389,7 +389,8 @@ class Title {
     link = '',
     target = 'blank',
     textStyle = {
-      fontSize: 24
+      fontSize: 24,
+      color: '#000'
     },
     position = {}
   }) {
@@ -1332,26 +1333,28 @@ export class ThresholdColorRule {
   /**
    * 判断是否相等
    */
-  static equal ({ value, thresholdValue, thresholdColor }) {
+  static equal ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
     // eslint-disable-next-line
-    if (value === thresholdValue) return thresholdColor
+    if (value.toString() === thresholdValue) {
+      return { thresholdColor, thresBgColor, thresInlineColor }
+    }
   }
 
   /**
    * 判断是否不等
    */
-  static notEqual ({ value, thresholdValue, thresholdColor }) {
+  static notEqual ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
     // eslint-disable-next-line
-    if (value !== thresholdValue) return thresholdColor
+    if (value !== thresholdValue) return {thresholdColor, thresBgColor, thresInlineColor}
   }
 
   /**
    * 判断是否匹配正则表达式
    */
-  static test ({ value, thresholdValue, thresholdColor }) {
+  static test ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
     try {
       const regexp = new RegExp(thresholdValue)
-      if (regexp.test(value)) return thresholdColor
+      if (regexp.test(value)) return { thresholdColor, thresBgColor, thresInlineColor }
     } catch (e) {
       throw e
     }
@@ -1360,10 +1363,10 @@ export class ThresholdColorRule {
   /**
    * 判断是否不匹配正则表达式
    */
-  static notTest ({ value, thresholdValue, thresholdColor }) {
+  static notTest ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
     try {
       const regexp = new RegExp(thresholdValue)
-      if (!regexp.test(value)) return thresholdColor
+      if (!regexp.test(value)) return { thresholdColor, thresBgColor, thresInlineColor }
     } catch (e) {
       throw e
     }
@@ -1372,29 +1375,29 @@ export class ThresholdColorRule {
   /**
    * 判断是否大于
    */
-  static gt ({ value, thresholdValue, thresholdColor }) {
-    if (value > ~~thresholdValue) return thresholdColor
+  static gt ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
+    if (value > ~~thresholdValue) return { thresholdColor, thresBgColor, thresInlineColor }
   }
 
   /**
    * 判断是否大于等于
    */
-  static gte ({ value, thresholdValue, thresholdColor }) {
-    if (value >= ~~thresholdValue) return thresholdColor
+  static gte ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
+    if (value >= ~~thresholdValue) return { thresholdColor, thresBgColor, thresInlineColor }
   }
 
   /**
    * 判断是否小于
    */
-  static lt ({ value, thresholdValue, thresholdColor }) {
-    if (value < ~~thresholdValue) return thresholdColor
+  static lt ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
+    if (value < ~~thresholdValue) return { thresholdColor, thresBgColor, thresInlineColor }
   }
 
   /**
    * 判断是否小于等于
    */
-  static lte ({ value, thresholdValue, thresholdColor }) {
-    if (value <= ~~thresholdValue) return thresholdColor
+  static lte ({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) {
+    if (value <= ~~thresholdValue) return { thresholdColor, thresBgColor, thresInlineColor }
   }
 
   constructor ({ rules = [] }) {
@@ -1403,11 +1406,10 @@ export class ThresholdColorRule {
 
   calculateColor (value) {
     const colors = []
-    this.rules.forEach(({ ruleName, thresholdValue, thresholdColor }) => {
+    this.rules.forEach(({ ruleName, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }) => {
       const filter = ThresholdColorRule.ruleMapping.get(ruleName)
-      filter && colors.push(filter({ value, thresholdValue, thresholdColor }))
+      filter && colors.push(filter({ value, thresholdValue, thresholdColor, thresBgColor, thresInlineColor }))
     })
-
     // 多条规则生效时取最后一条
     return colors.filter(color => !!color).pop()
   }

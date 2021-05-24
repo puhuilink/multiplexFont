@@ -69,8 +69,14 @@ const THRESHOLD_RULE_NAME_LIST = [
 export default {
   name: 'ThresholdColor',
   mixins: [ProprietaryMixins],
-  components: {},
-  props: {},
+  components: { ColorPicker },
+  props: {
+    name: {
+      type: String,
+      required: true,
+      default: 'TextHealth'
+    }
+  },
   data: () => ({
     dataSource: [],
     $scrollTable: null,
@@ -79,7 +85,7 @@ export default {
   computed: {
     columns () {
       const { dataSource } = this
-      return [
+      const array = [
         {
           align: 'center',
           // fixed: 'left',
@@ -109,10 +115,19 @@ export default {
         },
         {
           align: 'center',
-          title: '颜色',
+          title: '文字颜色',
           width: 240,
           dataIndex: 'thresholdColor',
           customRender: (thresholdColor, record, idx) => <ColorPicker color={thresholdColor} onChange={e => { record['thresholdColor'] = e }} />
+        },
+        {
+          align: 'center',
+          title: '背景颜色',
+          width: 240,
+          dataIndex: 'thresBgColor',
+          customRender: (thresBgColor, record, idx) => {
+            return <ColorPicker color={thresBgColor} onChange={e => { record['thresBgColor'] = e }} />
+          }
         },
         {
           align: 'center',
@@ -121,6 +136,16 @@ export default {
           customRender: (text, record, idx) => <a-button type="link" onClick={() => dataSource.splice(idx, 1)}>删除</a-button>
         }
       ]
+      if (this.name === 'DegreeRing') {
+        array.splice(5, 0, {
+          align: 'center',
+          title: '内环颜色',
+          width: 240,
+          dataIndex: 'thresInlineColor',
+          customRender: (thresInlineColor, record, idx) => <ColorPicker color={thresInlineColor} onChange={e => { record['thresInlineColor'] = e }} />
+        })
+      }
+      return array
     },
     rules: {
       get () {
@@ -152,11 +177,16 @@ export default {
       this.dataSource = []
     },
     onAppendRule: _.debounce(function () {
-      this.dataSource.push({
+      const item = {
         ruleName: THRESHOLD_RULE_NAME_EQUAL,
         thresholdValue: '',
-        thresholdColor: 'rgba(84, 185, 228, 1)'
-      })
+        thresholdColor: 'rgba(84, 185, 228, 1)',
+        thresBgColor: 'rgba(84, 185, 228, 1)'
+      }
+      if (this.name === 'DegreeRing') {
+        Object.assign(item, { thresInlineColor: 'rgba(84, 185, 228, 1)' })
+      }
+      this.dataSource.push(item)
       const { table: { $children: [child] } } = this.$refs
       const { vcTable } = child.$refs
       this.$scrollTable = this.$scrollTable || vcTable.getBodyTable()
