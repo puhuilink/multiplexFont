@@ -279,6 +279,7 @@ class TextStyle {
     this.fontStyle = fontStyle
     this.fontSize = fontSize
     this.fontWeight = fontWeight
+    // this.defaultColor = color
   }
 }
 
@@ -389,9 +390,9 @@ class Title {
     link = '',
     target = 'blank',
     textStyle = {
-      fontSize: 24,
-      color: '#000'
+      fontSize: 24
     },
+    // defaultColor = '',
     position = {}
   }) {
     this.text = text
@@ -399,13 +400,15 @@ class Title {
     this.target = target
     this.textStyle = new TextStyle(textStyle)
     this.position = new Position(position)
+    // this.defaultColor = defaultColor
   }
 
   /**
    * 获取标题配置
    */
   getOption () {
-    return Object.assign({}, this, this.position.getOption())
+    // console.log('深浅', Object.assign({}, { ...this }, this.position.getOption()), _.cloneDeep(Object.assign({}, { ...this }, this.position.getOption())))
+    return Object.assign({}, { ...this }, this.position.getOption())
   }
 }
 

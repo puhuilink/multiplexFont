@@ -4,6 +4,7 @@
 import { ThresholdColorRule } from './index'
 // eslint-disable-next-line
 import echartsLiquidfill from 'echarts-liquidfill'
+import _ from 'lodash'
 
 class InnerCircle {
   constructor ({
@@ -77,9 +78,9 @@ export default class DegreeRingProprietaryConfig {
   getOption () {
     const { innerCircle, ...rest } = this
     const { decimalPoint = 0 } = innerCircle
-    return Object.assign({}, rest, {
+    return _.cloneDeep(Object.assign({}, rest, {
       series: this.innerCircle,
       decimalPoint
-    })
+    }))
   }
 }

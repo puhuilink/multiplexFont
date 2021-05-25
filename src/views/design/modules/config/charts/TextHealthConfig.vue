@@ -190,6 +190,15 @@ export default {
     TextHealthDataSource,
     ThresholdColor
   },
+  // watch: {
+  //   'config.proprietaryConfig.title.textStyle.color': {
+  //     handler (value) {
+  //       console.log()
+  //       this.config.proprietaryConfig.title.defaultColor = value
+  //       console.log('listen', value, this.config.proprietaryConfig.title.defaultColor)
+  //     }
+  //   }
+  // },
   methods: {
     positionChange () {
       const { position = {} } = this.config.proprietaryConfig.title

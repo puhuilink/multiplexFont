@@ -55,11 +55,6 @@ export default class DegreeRingChart extends Chart {
       // 外环颜色
       series.backgroundStyle.borderColor = thresBgColor || series.backgroundStyle.borderColor
       series.backgroundStyle.color = thresInlineColor || series.backgroundStyle.color
-    } else {
-      Object.assign(series.label, series.label.insideColor)
-      series.label.insideColor = '#fff'
-      series.backgroundStyle.borderColor = '#195ba6'
-      series.backgroundStyle.color = '#195ba6'
     }
     // const insideColor = thresholdColorRule.calculateColor(series.label.formatter) || series.label.insideColor
 

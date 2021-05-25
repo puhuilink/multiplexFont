@@ -46,7 +46,7 @@ export default class TextsChart extends Chart {
         break
       }
     }
-
+    // const textCopy = _.cloneDeep(title)
     if (!isNaN(Number(title.text))) {
       title.text = decimalPoint === -1 ? title.text : formatFloat(Number(title.text), decimalPoint)
     }
@@ -55,8 +55,6 @@ export default class TextsChart extends Chart {
       const { thresBgColor, thresholdColor } = colors
       title.textStyle.color = thresholdColor || title.textStyle.color
       grid[1].backgroundColor = thresBgColor || grid[1].backgroundColor
-    } else {
-      title.textStyle.color = 'rgba(0, 0 ,0)'
     }
     return { grid, title }
   }
