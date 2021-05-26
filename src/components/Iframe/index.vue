@@ -11,7 +11,24 @@ export default {
       required: true
     }
   },
-  methods () {}
+  mounted () {
+    const mapFrame = this.$refs['childIframe']
+    if (mapFrame.attachEvent) {
+      mapFrame.attachEvent('onload', function () {
+        mapFrame.contentWindow.postMessage({
+          type: 'token',
+          data: '123'
+        }, '*')
+      })
+    } else {
+      mapFrame.onload = function () {
+        mapFrame.contentWindow.postMessage({
+          type: 'token',
+          data: '123'
+        }, '*')
+      }
+    }
+  }
 }
 </script>
 
