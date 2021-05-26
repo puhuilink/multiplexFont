@@ -152,7 +152,7 @@
               </div>
               <!-- / 居下 -->
 
-              <ThresholdColor />
+              <ThresholdColor :name="value"/>
 
             </a-collapse-panel>
             <!-- E 文本样式 -->
@@ -179,12 +179,26 @@ import ThresholdColor from '../common/ThresholdColor'
 export default {
   name: 'TextHealthConfig',
   mixins: [ProprietaryMixins],
+  data () {
+    return {
+      value: 'TextHealth'
+    }
+  },
   components: {
     CommonTemplate,
     ColorPicker,
     TextHealthDataSource,
     ThresholdColor
   },
+  // watch: {
+  //   'config.proprietaryConfig.title.textStyle.color': {
+  //     handler (value) {
+  //       console.log()
+  //       this.config.proprietaryConfig.title.defaultColor = value
+  //       console.log('listen', value, this.config.proprietaryConfig.title.defaultColor)
+  //     }
+  //   }
+  // },
   methods: {
     positionChange () {
       const { position = {} } = this.config.proprietaryConfig.title

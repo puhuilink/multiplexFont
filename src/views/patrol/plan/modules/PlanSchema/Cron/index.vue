@@ -1,7 +1,7 @@
 <template>
   <div class="Cron">
     <a-row class="Cron__paragraph">
-      <a-form-model-item>
+      <a-form-model-item props="interval">
         <a-radio-group v-model="cron.currentType">
           <!-- / 每天 -->
           <a-radio value="everyDay">每天</a-radio>

@@ -294,6 +294,174 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // capacity
+      {
+        path: '/prediction',
+        name: 'prediction',
+        redirect: '/prediction/capacity',
+        component: RouteView,
+        meta: { title: '数据预测', keepAlive: true, icon: 'environment' },
+        children: [
+          {
+            path: '/prediction/capacity',
+            name: 'capacity',
+            redirect: '/prediction/capacity/Summary',
+            component: RouteView,
+            meta: { title: '容量视图', keepAlive: true },
+            children: [
+              {
+                path: '/prediction/capacity/Summary',
+                name: 'Summary',
+                component: () => import('@/views/prediction/capacity/Summary'),
+                meta: { title: '容量总览', keepAlive: true }
+              },
+              {
+                path: '/prediction/capacity/EchartsView',
+                name: '容量预测',
+                component: RouteView,
+                meta: { title: '容量预测', keepAlive: true },
+                redirect: '/prediction/capacity/EchartsView',
+                // hideChildrenInMenu: 'MetadataBasic',
+                children: [
+                  {
+                    path: '/prediction/capacity/capacityForcastBusinessSystem',
+                    name: '业务系统容量预测',
+                    component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastBusinessSystem'),
+                    meta: { title: '业务系统容量预测', keepAlive: true }
+                  },
+                  {
+                    path: '/prediction/capacity/capacityForcastFileSystem',
+                    name: '文件系统容量预测',
+                    component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastFileSystem'),
+                    meta: { title: '文件系统容量预测', keepAlive: true }
+                  }]
+              }
+            ]
+          },
+          {
+            path: '/prediction/report',
+            name: 'report',
+            redirect: '/prediction/report/sql',
+            component: RouteView,
+            meta: { title: '报表管理', keepAlive: true },
+            children: [
+              {
+                path: '/report/NEW',
+                name: 'NEW',
+                component: () => import('@/views/prediction/report/new'),
+                meta: { title: '报表生成', keepAlive: true }
+              },
+              {
+                path: '/report/sql',
+                name: 'sql',
+                component: () => import('@/views/prediction/report/sql'),
+                meta: { title: '子表数据源管理', keepAlive: true }
+              }
+            ]
+          },
+          {
+            path: '/prediction/metadata',
+            name: 'metadataPage',
+            component: RouteView,
+            meta: { title: '数据管理' },
+            redirect: '/prediction/metadata/source',
+            children: [
+              {
+                path: '/prediction/metadata/Information',
+                name: 'Information',
+                component: () => import('@/views/prediction/metadata/InformationList'),
+                meta: { title: '容量管理', keepAlive: true }
+              },
+              {
+                path: '/metadata/source',
+                name: 'SourceList',
+                component: () => import('@/views/prediction/metadata/SourceList'),
+                meta: { title: '数据源管理', keepAlive: true }
+              },
+              {
+                path: '/metadata/Label',
+                name: 'LabelList',
+                component: () => import('@/views/prediction/metadata/LabelList'),
+                meta: { title: '标签列表', keepAlive: true },
+                hidden: true
+              },
+              {
+                path: '/metadata/Dimension',
+                name: 'DimensionList',
+                component: () => import('@/views/prediction/metadata/DimensionList'),
+                meta: { title: '维度列表', keepAlive: true },
+                hidden: true
+              },
+              {
+                path: '/prediction/metadata/metadataModel',
+                name: 'MetadataModelList',
+                component: RouteView,
+                meta: { title: '元模型', keepAlive: true },
+                redirect: '/prediction/metadata/MetadataModel',
+                // hideChildrenInMenu: 'MetadataBasic',
+                children: [
+                  {
+                    path: '/prediction/metadata/MetadataModel',
+                    name: 'metamodelModelList',
+                    component: () => import('@/views/prediction/metadata/MetadataModelList'),
+                    meta: { title: '元模型列表', keepAlive: true }
+                  }
+                  // {
+                  //   hidden: true,
+                  //   path: '/prediction/metadata/metadataModel/create',
+                  //   name: 'metamodelCreate',
+                  //   component: () => import('@/views/prediction/metadata/modules/CreateMetadataModel/stepForm/StepForm'),
+                  //   meta: { title: '元模型新建', keepAlive: true }
+                  // },
+                  // {
+                  //   hidden: true,
+                  //   path: '/prediction/metadata/metadataModel/graph/:id',
+                  //   name: 'metamodelGraph',
+                  //   component: () => import('@/views/prediction/metadata/modules/MetadataModelGraph'),
+                  //   meta: { title: '元模型关系图', keepAlive: true }
+                  // },
+                  // {
+                  //   hidden: true,
+                  //   path: '/prediction/metadata/modules/MetadataBasic/:id',
+                  //   name: 'MetadataBasic',
+                  //   component: () => import('@/views/prediction/metadata/modules/MetadataBasic'),
+                  //   meta: { title: '基础详情页', permission: ['profile'] }
+                  // },
+                  // {
+                  //   hidden: true,
+                  //   path: '/metadata/modules/QueryData/:sourceId/:dbName/:tableName',
+                  //   name: 'QueryData',
+                  //   component: () => import('@/views/metadata/modules/QueryData'),
+                  //   meta: { title: '模型数据', permission: ['profile'] }
+                  // }
+                ]
+              }
+              // {
+              //   hidden: true,
+              //   path: '/metadata/MetadataModel1/:id',
+              //   name: 'metamodelModelList1',
+              //   component: () => import('@/views/metadata/MetadataModelList1'),
+              //   meta: { title: '主题域元模型列表', keepAlive: true, permission: ['profile'] }
+              // }
+            ]
+          },
+          {
+            path: '/prediction/serverauth',
+            name: 'serverAuth',
+            redirect: '/prediction/serverAuth/managment',
+            component: RouteView,
+            meta: { title: '服务授权', keepAlive: true },
+            children: [
+              {
+                path: '/prediction/serverAuth/managment',
+                name: 'serverAuthMg',
+                component: () => import('@/views/prediction/serverAuth/serverAuth'),
+                meta: { title: '服务注册', keepAlive: true }
+              }
+            ]
+          }
+        ]
+      },
 
       // 个人设置
       {
@@ -328,6 +496,8 @@ export const asyncRouterMap = [
     meta: { title: '视图设计', permission: ['F002002'] },
     props: route => route.query
   },
+
+  // 数据管理平台
   {
     path: '*', redirect: '/404', hidden: true
   }
