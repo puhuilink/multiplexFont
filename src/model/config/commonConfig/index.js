@@ -68,7 +68,8 @@ export default class CommonConfig {
           borderWidth: 0,
           backgroundColor: 'transparent'
         }
-      ]
+      ],
+      backgroundColor: { backgroundColor: this.backgroundColor }
     })
   }
 }

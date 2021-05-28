@@ -22,7 +22,7 @@ export default class TextsChart extends Chart {
    * 映射成 echarts 配置项
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
-    const { grid } = commonConfig.getOption()
+    const { grid, backgroundColor } = commonConfig.getOption()
     const { title, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
     switch (sourceType) {
@@ -54,8 +54,8 @@ export default class TextsChart extends Chart {
     if (colors) {
       const { thresBgColor, thresholdColor } = colors
       title.textStyle.color = thresholdColor || title.textStyle.color
-      grid[1].backgroundColor = thresBgColor || grid[1].backgroundColor
+      backgroundColor.backgroundColor = thresBgColor || backgroundColor
     }
-    return { grid, title }
+    return { grid, title, ...backgroundColor }
   }
 }
