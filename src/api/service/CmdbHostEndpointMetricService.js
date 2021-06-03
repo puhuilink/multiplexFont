@@ -15,6 +15,12 @@ class CmdbHostEndpointMetricService extends BaseService {
       })
     )
   }
+  static async findCommon (argus = {}) {
+    const q = await query(
+      CmdbHostEndpointMetricDao.find(argus)
+    )
+    return q
+  }
 }
 
 export {

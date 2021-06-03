@@ -17,6 +17,7 @@ export default class Hasura {
     this._fields = _fields
     this._schemaArguments = _schemaArguments
     this._alias = ''
+    this._distinct = ''
   }
 
   get schemaArguments () {
@@ -61,6 +62,8 @@ export default class Hasura {
    * @param {*} distinct
    */
   distinct (distinct) {
+    this._distinct = Object.assign(this._distinct, distinct)
+    this._schemaArguments = Object.assign(this._schemaArguments, { 'distinct_on': distinct })
     this.addArg('distinct_on', distinct)
     return this
   }

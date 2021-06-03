@@ -2,7 +2,7 @@
 export function stringify (object, trim = true) {
   let res = JSON.stringify(object)
     .replace(/(\"order_by\":\{\"[\w]+\":)\"([^"]+)\"/g, '$1$2')
-    .replace(/((\"distinct_on\"|\"constraint\"):)\"([^"]+)\",/g, '$1$3,')
+    .replace(/(\"distinct_on\":)\"([^"]+)\"/g, '$1$2')
     .replace(/\"([^"]+)\":/g, '$1:')
   if (trim) {
     res = res.replace(/\uFFFF/g, '\\"').replace(/^.|.$/g, '')

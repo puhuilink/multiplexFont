@@ -191,13 +191,13 @@ import { Excel } from 'antd-vue-table-saveas-excel'
 import moment from 'moment'
 import { List } from '~~~/Mixins'
 import QueryMixin from '../queryMixin'
-import { AlarmService } from '@/api/index'
+import { AlarmService, CmdbHostEndpointMetricService } from '@/api/index'
 import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping, fontLevelColorMapping } from '~~~/Alarm/color.config'
-
+const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip']
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -294,41 +294,46 @@ export default {
         },
         {
           title: '品牌设备',
-          dataIndex: `cmdbHost.modelHost.dictBrand.value_label`,
+          dataIndex: `device_model_value_code`,
           width: 100,
-          show: true
+          show: true,
+          customRender: (text, record) => {
+            const brand = _.get(record, 'brand_value_code', '')
+            const model = _.get(record, 'device_model_value_code', '')
+            return brand || model
+          }
         },
         {
           title: 'IP',
-          dataIndex: 'cmdbHost.ip',
+          dataIndex: 'ip',
           width: 120,
           show: true
         },
         {
           title: '监控对象',
-          dataIndex: 'cmdbHost.alias',
+          dataIndex: 'hostAlias',
           width: 290,
           show: true
         },
         {
           title: '监控实体',
-          dataIndex: 'cmdbEndpoint.alias',
+          dataIndex: 'endpointAlias',
           width: 190,
           show: true,
           customRender: (text, record) => {
-            const endpointAlias = _.get(record, 'cmdbEndpoint.alias', '')
-            const endpointModelAlias = _.get(record, 'cmdbEndpoint.modelEndpoint.alias', '')
+            const endpointAlias = _.get(record, 'endpointAlias', '')
+            const endpointModelAlias = _.get(record, 'endpointModelAlias', '')
             return endpointAlias || endpointModelAlias || record.endpoint_id
           }
         },
         {
           title: '检查项',
-          dataIndex: 'cmdbMetric.alias',
+          dataIndex: 'metricAlias',
           width: 170,
           show: true,
           customRender: (text, record) => {
-            const metricAlias = _.get(record, 'cmdbMetric.alias', '')
-            const metricModelAlias = _.get(record, 'cmdbMetric.modelMetric.alias', '')
+            const metricAlias = _.get(record, 'metricAlias', '')
+            const metricModelAlias = _.get(record, 'metricModelAlias', '')
             return metricAlias || metricModelAlias || record.metric_id
           }
         },
@@ -348,6 +353,7 @@ export default {
           // 仅查看已解决的告警时展示该列
           validate: () => this.showHistory,
           customRender: (__, { receive_time, close_time }) => {
+            console.log(receive_time, close_time)
             if (receive_time && close_time) {
               const duration = moment(close_time).diff(moment(receive_time), 'minutes')
               return moment.duration(duration, 'minutes').humanize()
@@ -443,67 +449,84 @@ export default {
         }
       }
     },
-    loadData ({ offset, limit, orderBy = { receive_time: 'desc' } }) {
+
+    async aliasList (hostCondition = {}, fields = [], rest = {}) {
+      const { data: { Host } } = await CmdbHostEndpointMetricService.findCommon({
+        where: {
+          ...hostCondition
+        },
+        fields: fields,
+        alias: 'Host',
+        ...rest
+      })
+      return Host
+    },
+    async alarmList (alarmCondition = {}, fields = [], rest = {}) {
+      const { data } = await AlarmService.find({
+        where: {
+          ...alarmCondition,
+          state: this.showHistory ? ALARM_STATE.solved : this.state
+        },
+        fields: fields,
+        alias: 'data',
+        ...rest
+      })
+      const metrics = data.data.map(el => Number(el.metric_id))
+      const concatList = await this.aliasList({ metric_id: { _in: metrics } }, concatFields)
+      data.data.map(el => {
+        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id))
+      })
+      return data
+    },
+    async loadData ({ offset, limit, orderBy = { receive_time: 'desc' } }) {
       const {
         hostTypeDictValueCode,
-        queryParams: { agent_id, alarmLevelList, ...queryParams },
-        ip,
-        queryParamsProps
+        queryParams: { agent_id, alarmLevelList, dictValue, ...queryParams },
+        ip
+        // queryParamsProps
       } = this
-      return AlarmService.find({
-        where: {
-          ...generateQuery(queryParams, true),
-          ...generateQuery(queryParamsProps, true),
-          ...generateQuery({ agent_id }),
-          state: this.showHistory ? ALARM_STATE.solved : this.state,
-          alarm_level: {
-            _in: alarmLevelList
-          },
-          ...(ip ? { cmdbHost: { ip: { _eq: this.ip } } } : {}),
-          ...(hostTypeDictValueCode
-            ? {
-              cmdbHost: {
-                modelHost: {
-                  host_type_dict_value_code: {
-                    _eq: hostTypeDictValueCode
-                  }
-                }
-              }
-            }
-            : {})
-        },
-        fields: [
-          'id',
-          'state',
-          'alarm_level',
-          'host_id',
-          'endpoint_id',
-          'metric_id',
-          `cmdbHost {
-            alias
-            ip
-            modelHost { dictBrand { value_label } }
-          }`,
-          `cmdbEndpoint {
-            alias
-            modelEndpoint { alias }
-          }`,
-          `cmdbMetric {
-            alias
-            modelMetric { alias }
-          }`,
-          'receive_time',
-          'close_time',
-          'close_by',
-          'detail',
-          'agent_id',
-          'origin'
-        ],
-        offset,
-        limit,
-        orderBy,
-        alias: 'data'
-      }).then((r) => r.data)
+      const alarmFields = [
+        'id',
+        'state',
+        'alarm_level',
+        'host_id',
+        'endpoint_id',
+        'metric_id',
+        'receive_time',
+        'close_time',
+        'close_by',
+        'detail',
+        'agent_id',
+        'origin'
+      ]
+      // cmdb_host_endpoint_metric条件
+      const hostCondition = {
+        ...generateQuery({ device_model_value_code: hostTypeDictValueCode }, true),
+        ...generateQuery({ ip: ip }, true)
+      }
+      // alarm条件
+      const middleCondition = {
+        ...generateQuery(queryParams, true),
+        ...generateQuery({ agent_id: agent_id }, true)
+      }
+      let { alarmList } = Object
+      if (!_.isEmpty(hostCondition) && _.isEmpty(middleCondition)) {
+        const fields = [
+          'host_id'
+        ]
+        let hostList = await this.aliasList(hostCondition, fields, { distinct_on: 'host_id' })
+        hostList = hostList.map(el => Number(el.host_id))
+        alarmList = this.alarmList({ 'host_id': { _in: hostList } }, alarmFields, { limit, orderBy })
+      } else if (!_.isEmpty(middleCondition)) {
+        // 选取除品牌设备外其余三项
+        // const List = await this.aliasList(middleCondition, ['metric_id'])
+        // 筛选metricId
+        // metricList = List.map(el => Number(el.metric_id))
+        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...generateQuery(queryParams, true) }, alarmFields, { limit, orderBy })
+      } else {
+        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList } }, alarmFields, { limit, orderBy })
+      }
+      return alarmList
     },
     onChangDictValue (dictValue) {
       this.queryParams.dictValue = dictValue
