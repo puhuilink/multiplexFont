@@ -353,7 +353,6 @@ export default {
           // 仅查看已解决的告警时展示该列
           validate: () => this.showHistory,
           customRender: (__, { receive_time, close_time }) => {
-            console.log(receive_time, close_time)
             if (receive_time && close_time) {
               const duration = moment(close_time).diff(moment(receive_time), 'minutes')
               return moment.duration(duration, 'minutes').humanize()
@@ -474,7 +473,7 @@ export default {
       const metrics = data.data.map(el => Number(el.metric_id))
       const concatList = await this.aliasList({ metric_id: { _in: metrics } }, concatFields)
       data.data.map(el => {
-        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id))
+        return Object.assign(el, ...concatList.filter(ele => Number(ele.metric_id) === Number(el.metric_id)))
       })
       return data
     },
