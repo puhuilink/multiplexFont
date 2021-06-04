@@ -106,6 +106,9 @@ export default class Hasura {
     if (!this._fields) {
       this._fields = 'id'
     }
+    // console.log('parse', `${this._paginate} ${this._alias} ${this._schema} ${Object.keys(this._schemaArguments).length > 0
+    //   ? '(' + stringify(this._schemaArguments) + ')'
+    //   : ''}{  ${this.getFields()} }`)
     return `${this._paginate} ${this._alias} ${this._schema} ${Object.keys(this._schemaArguments).length > 0
       ? '(' + stringify(this._schemaArguments) + ')'
       : ''}{  ${this.getFields()} }`

@@ -34,18 +34,18 @@ export default {
   methods: {
     onShowHistory (record) {
       const {
-        cmdbHost: { alias: host_alias },
-        cmdbEndpoint: { alias: endpoint_alias },
-        cmdbMetric: { alias: metric_alias, modelMetric = {} },
+        hostAlias,
+        endpointAlias,
+        metricAlias,
+        metricModelAlias,
         metric_id
       } = record
       this.$refs['historyChart'].showHistory({
         children: [{
-          host_alias,
-          endpoint_alias,
-          metric: {
-            alias: metric_alias || modelMetric.alias
-          },
+          hostAlias,
+          endpointAlias,
+          metricModelAlias,
+          metricAlias,
           metric_id
         }]
       })
