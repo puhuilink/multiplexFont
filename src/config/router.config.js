@@ -300,7 +300,7 @@ export const asyncRouterMap = [
         name: 'prediction',
         redirect: '/prediction/capacity',
         component: RouteView,
-        meta: { title: '数据预测', keepAlive: true, icon: 'environment', permission: [ 'F011' ] },
+        meta: { title: '数据预测', keepAlive: true, icon: 'environment' },
         children: [
           {
             path: '/prediction/capacity',

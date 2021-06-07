@@ -34,6 +34,7 @@
           v-if="component"
           :formModel="formModel"
           :is="component"
+          :isEdit="isEdit"
         />
       </a-form-model>
     </a-spin>
@@ -59,7 +60,8 @@ export default {
     btnLoading: false,
     formModel: {},
     ruleType: '',
-    spinning: false
+    spinning: false,
+    isEdit: false
   }),
   computed: {
     component () {
@@ -75,6 +77,7 @@ export default {
   methods: {
     isEmpty,
     edit (ruleType) {
+      this.isEdit = true
       this.show('编辑全局告警规则')
       this.fetch(ruleType)
       this.ruleType = ruleType
