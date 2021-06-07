@@ -286,7 +286,6 @@ export default {
           width: 100,
           show: true,
           customRender: (text, record) => {
-            console.log('record', record)
             const brand = _.get(record, 'brand_value_code', '')
             const model = _.get(record, 'device_model_value_code', '')
             return brand || model
