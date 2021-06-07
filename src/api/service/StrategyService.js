@@ -49,7 +49,8 @@ class StrategyService extends BaseService {
     if (_.isEmpty(data['hostId'])) {
       data['hostId'] = null
     }
-    await axios.post('/strategy/add', data)
+    const post = await axios.post('/strategy/add', data)
+    return post
   }
 
   static async update (argus = {}) {

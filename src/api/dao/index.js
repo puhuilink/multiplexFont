@@ -4,14 +4,14 @@ import { IMP_DAO_MAPPING } from '../config/daoMapping'
 
 export class StaticFactory {
   static create = () => {
+    // 获取路径下的所有Dao.js
     const requirePlugins = require.context('./', true, /Dao.js$/)
     const exposed = {}
-
+    // 处理Dao,抛出
     requirePlugins.keys().forEach((fileName) => {
       const className = fileName.replace(/(\.)*(\/)*(js)*/g, '')
       exposed[className] = requirePlugins(fileName)[className]
     })
-
     return exposed
   }
 }

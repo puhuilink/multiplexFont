@@ -408,7 +408,7 @@ class Title {
    */
   getOption () {
     // console.log('深浅', Object.assign({}, { ...this }, this.position.getOption()), _.cloneDeep(Object.assign({}, { ...this }, this.position.getOption())))
-    return Object.assign({}, { ...this }, this.position.getOption())
+    return _.cloneDeep(Object.assign({}, { ...this }, this.position.getOption()))
   }
 }
 

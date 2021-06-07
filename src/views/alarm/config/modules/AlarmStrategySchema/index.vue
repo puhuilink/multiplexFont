@@ -43,10 +43,7 @@
           label="阈值名称"
           v-bind="formItemLayout"
           prop="name"
-          :rules="[
-            { required: true, message: '请输入规则名称' },
-            { max: 50, message: '最多输入50个字符' },
-          ]"
+          :rules="[{ required: true, message: '请输入规则名称' }, { max: 50, message: '最多输入50个字符' }]"
         >
           <a-input :disabled="isDetail" v-model.trim="formModel.name" />
         </a-form-model-item>
@@ -312,7 +309,6 @@ export default {
     add () {
       this.show('新建阈值规则')
       // TODO 打开新建菜单的时候重置
-      this.$refs.ruleForm.resetFields()
       this.submit = this.insert
     },
     addExpressionOpts: _.throttle(async function () {
@@ -364,10 +360,16 @@ export default {
           if (_.isEmpty(this.formModel.hostId)) {
             Reflect.deleteProperty(this.formModel, 'hostId')
           }
-          await StrategyService.add(this.model)
-          this.$emit('addSuccess')
-          this.$notifyAddSuccess()
-          this.cancel()
+          const { code, msg } = await StrategyService.add(this.model)
+          if (code !== 200) {
+            this.$notifyError(msg)
+            throw msg
+          } else {
+            this.$emit('addSuccess')
+            this.$notifyAddSuccess()
+            this.cancel()
+            this.$refs.ruleForm.resetFields()
+          }
         } catch (e) {
           this.$notifyError(e)
           throw e

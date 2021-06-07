@@ -69,13 +69,13 @@ export default {
   computed: {
     modalTitle () {
       const [item = {}] = this.hEMList
-      const { host_alias = '', endpoint_alias = '' } = item
-      return `${host_alias}-${endpoint_alias}历史图`
+      const { hostAlias = '', endpointAlias = '' } = item
+      return `${hostAlias}-${endpointAlias}历史图`
     },
     metricAliasMapping () {
       return new Map([
         ...this.hEMList.map(record => (
-          [record.metric_id, _.get(record, ['metric', 'alias']) || _.get(record, ['metric', 'modelMetric', 'alias'])]
+          [record.metric_id, _.get(record, 'metricAlias') || _.get(record, 'metricModelAlias')]
         ))
       ])
     }
@@ -92,7 +92,6 @@ export default {
       if (_.isEmpty(this.queryParams.upload_time)) {
         return
       }
-
       try {
         this.spinning = true
         const { data } = await MetricService.batchFind(
@@ -130,7 +129,7 @@ export default {
               data: _.uniqBy(valueList, el => el[0])
             }
           })
-
+        console.log(series)
         this.setChartOptions({ series })
       } catch (e) {
         throw e

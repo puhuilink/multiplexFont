@@ -3,7 +3,7 @@ import Insert from './insert'
 import Hasura from './hasura'
 import Delete from './delete'
 export default class HasuraORM extends Hasura {
-  constructor (_schema, provider = {}, _with = '', _fields = '', _schemaArguments = {}) {
+  constructor (_schema, provider = {}, _with = '', _fields = '', _schemaArguments = {}, _distinct = '') {
     super(_schema, provider, _with, _fields, _schemaArguments)
   }
   insert (args) {

@@ -12,7 +12,6 @@ class BaseService {
     const requestBodyStr = JSON.stringify(requestBody)
     const formData = new FormData()
     formData.append('body', encrypt(requestBodyStr))
-
     // debug info
     if (process.env.NODE_ENV === 'development') {
       formData.append('originalRequestBody', requestBodyStr)
@@ -25,6 +24,7 @@ class BaseService {
     })
 
     const data = JSON.parse(decrypt(response.data))
+    console.log('传回来', data)
     if (data.errors) {
       notifyGraphQLError(data.errors)
       return Promise.reject(data.errors)

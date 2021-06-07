@@ -145,7 +145,7 @@ export default {
     selectValue () {
       let value = ''
       if (this.model.deviceType) {
-        value = this.model.deviceType
+        value = value.concat(this.model.deviceType)
       }
       if (this.model.deviceBrand) {
         value = value.concat('/' + this.model.deviceBrand)

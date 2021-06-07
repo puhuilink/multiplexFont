@@ -847,6 +847,23 @@ const MENU = [
           }
         ],
         title: '巡更管理'
+      },
+      {
+        childs: [],
+        code: 'F011',
+        createDate: null,
+        creator: '',
+        functionType: '5',
+        icon: '',
+        module: '',
+        name: '数据预测',
+        note: '',
+        order: 5,
+        parentCode: 'F',
+        updateDate: null,
+        updator: '',
+        key: 'F010',
+        title: '数据预测'
       }
     ]
   }
