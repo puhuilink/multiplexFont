@@ -862,7 +862,7 @@ const MENU = [
         parentCode: 'F',
         updateDate: null,
         updator: '',
-        key: 'F010',
+        key: 'F011',
         title: '数据预测'
       }
     ]
