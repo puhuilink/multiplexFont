@@ -24,7 +24,6 @@ class BaseService {
     })
 
     const data = JSON.parse(decrypt(response.data))
-    console.log('传回来', data)
     if (data.errors) {
       notifyGraphQLError(data.errors)
       return Promise.reject(data.errors)
