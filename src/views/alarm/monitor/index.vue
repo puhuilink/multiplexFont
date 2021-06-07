@@ -79,6 +79,7 @@
                       最近1月: [moment().add(-30, 'days'), moment()],
                     }"
                     :showTime="{ format: 'HH:mm' }"
+                    :defaultValue="[moment().add(-1, 'days'), moment()]"
                     v-model="queryParams.receive_time"
                   />
                 </a-form-item>
@@ -122,19 +123,6 @@
 
           <div class="AlarmMonitor__operation-badge-group">
             <span>告警级别：</span>
-            <!--                <a-button-->
-            <!--                  v-for="(color, index) in colors"-->
-            <!--                  :key="index"-->
-            <!--                  shape="round"-->
-            <!--                  size="small"-->
-            <!--                  :style="{-->
-            <!--                    marginLeft: '4px',-->
-            <!--                    marginRight: '4px',-->
-            <!--                    backgroundColor: queryParams.alarmLevelList.includes(index + 1) ? color : '#f5f5f5',-->
-            <!--                    borderColor: 'transparent',-->
-            <!--                  }"-->
-            <!--                  @click="onToggleAlarmLevel(index + 1)"-->
-            <!--                >{{ `L${index + 1}` }}</a-button>-->
             <a-button
               v-for="(color, index) in colors"
               :key="index"
@@ -406,7 +394,8 @@ export default {
         dictValue: [],
         host_id: undefined,
         endpoint_id: undefined,
-        metric_id: undefined
+        metric_id: undefined,
+        receive_time: [moment().add(-1, 'days'), moment()]
       }
     }
   },
@@ -509,21 +498,15 @@ export default {
         ...generateQuery({ agent_id: agent_id }, true)
       }
       let { alarmList } = Object
-      if (!_.isEmpty(hostCondition) && _.isEmpty(middleCondition)) {
+      if (!_.isEmpty(hostCondition)) {
         const fields = [
           'host_id'
         ]
-        let hostList = await this.aliasList(hostCondition, fields, { distinct_on: 'host_id' })
+        let hostList = await this.aliasList(hostCondition, fields, { distinct: 'host_id' })
         hostList = hostList.map(el => Number(el.host_id))
-        alarmList = this.alarmList({ 'host_id': { _in: hostList } }, alarmFields, { limit, orderBy })
-      } else if (!_.isEmpty(middleCondition)) {
-        // 选取除品牌设备外其余三项
-        // const List = await this.aliasList(middleCondition, ['metric_id'])
-        // 筛选metricId
-        // metricList = List.map(el => Number(el.metric_id))
-        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...generateQuery(queryParams, true) }, alarmFields, { limit, orderBy })
+        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, 'host_id': { _in: hostList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
       } else {
-        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList } }, alarmFields, { limit, orderBy })
+        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
       }
       return alarmList
     },
