@@ -179,7 +179,6 @@ export default {
           } catch (e) {
             this.localPagination = false
           }
-          console.log('loadData -> this.localPagination', this.localPagination)
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
@@ -281,7 +280,6 @@ export default {
       if (k === 'rowSelection') {
         if (showAlert && this.rowSelection) {
           // 如果需要使用alert，则重新绑定 rowSelection 事件
-          console.log('this.rowSelection', this.rowSelection)
           props[k] = {
             ...this.rowSelection,
             selectedRows: this.selectedRows,

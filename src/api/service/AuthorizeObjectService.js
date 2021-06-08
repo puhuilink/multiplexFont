@@ -111,12 +111,6 @@ class AuthorizeObjectService extends BaseService {
       view_id => !intersectionalViewIdList.includes(view_id)
     )
 
-    console.log({
-      currentViewIdList,
-      intersectionalViewIdList,
-      abandonViewIdList
-    })
-
     await mutate(
       // 删除之前的视图权限
       AuthorizeObjectDao.batchDelete(({ user_id, object_type: OBJECT_TYPE.view })),

@@ -13,23 +13,33 @@
 </template>
 <script>
 import { Select } from 'ant-design-vue'
+import { CmdbService } from '@/api/service/CmdbService'
 
 export default {
   name: 'OriginSelect',
   mixins: [],
   extends: Select,
-  components: {},
+  components: {
+    CmdbService
+  },
   props: {},
   data: () => ({
-    list: [
-      { label: 'BJ1', value: 'BJ1' },
-      { label: 'BJ2', value: 'BJ2' },
-      { label: 'XM1', value: 'XM1' },
-      { label: 'XM2', value: 'XM2' }
-    ]
+    list: []
   }),
   computed: {},
-  methods: {}
+  mounted () {
+    this.loadList()
+  },
+  methods: {
+    async loadList () {
+      const { data: { data } } = await CmdbService.find({
+        distinct: 'location',
+        fields: ['location'],
+        alias: 'data'
+      })
+      data.map(el => this.list.push({ label: el.location, value: el.location }))
+    }
+  }
 }
 </script>
 

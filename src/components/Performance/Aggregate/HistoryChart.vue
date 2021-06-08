@@ -129,7 +129,6 @@ export default {
               data: _.uniqBy(valueList, el => el[0])
             }
           })
-        console.log(series)
         this.setChartOptions({ series })
       } catch (e) {
         throw e
