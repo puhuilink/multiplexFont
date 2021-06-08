@@ -159,8 +159,6 @@ export default {
         ...parameter,
         alias: 'data'
       }).then((r) => {
-        console.log(r.data)
-        console.log(r.data.data.map(el => JSON.parse(el.send_content).content))
         return r.data
       })
     },

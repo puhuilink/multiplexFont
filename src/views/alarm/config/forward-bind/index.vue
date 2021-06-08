@@ -141,22 +141,6 @@ export default {
     },
     loadData (parameter) {
       const { ...restQueryParams } = this.queryParams
-      console.log('data', AlarmSenderService.find({
-        where: {
-          ...generateQuery({
-            ...restQueryParams
-          })
-        },
-        fields: [
-          'id',
-          'event_level',
-          'send_type',
-          'group_id',
-          'contact'
-        ],
-        alias: 'data',
-        ...parameter
-      }).then(r => r.data))
       return AlarmSenderService.find({
         where: {
           ...generateQuery({
