@@ -118,10 +118,10 @@ export default {
       },
       {
         title: '告警提交时间',
-        dataIndex: 'create_time',
+        dataIndex: 'actual_end_time',
         sorter: true,
         width: 180,
-        customRender: (createTime) => moment(createTime).format('YYYY-MM-DD HH:mm:ss')
+        customRender: (actualEndTime) => moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss')
       },
       {
         title: '审批状态',

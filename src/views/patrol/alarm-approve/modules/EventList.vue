@@ -80,11 +80,9 @@ export default {
           dataIndex: 'value',
           sorter: true,
           width: 180,
-          customRender: (value, { answer: { alias, format, type } }) => {
+          customRender: (value, { answer: { format, type } }) => {
             if (type === ANSWER_TYPE_SELECT) {
-              const aliasList = alias.split('/')
-              const index = format.findIndex(f => f.value === value)
-              return aliasList[index]
+              return format.filter(el => el.value === Number(value))[0].alias
             } else {
               return value
             }
@@ -94,7 +92,10 @@ export default {
           title: '备注',
           dataIndex: 'note',
           tooltip: true,
-          width: 220
+          width: 220,
+          customRender: (value, data) => {
+            return data.note
+          }
         },
         {
           title: '图片',
