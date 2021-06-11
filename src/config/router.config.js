@@ -291,6 +291,18 @@ export const asyncRouterMap = [
             name: 'AlarmApprove',
             component: () => import('@/views/patrol/alarm-approve/index'),
             meta: { title: '告警审批', keepAlive: true, permission: [ 'F010005' ] }
+          },
+          {
+            path: '/patrol/NoticeTemp',
+            name: 'NoticeTemp',
+            component: () => import('@/views/patrol/NoticeTemp/index'),
+            meta: { title: '巡更通知模板', keepAlive: true }
+          },
+          {
+            path: '/patrol/informConfig',
+            name: 'InformConfig',
+            component: () => import('@/views/patrol/informConfig/index'),
+            meta: { title: '巡更通知配置', keepAlive: true }
           }
         ]
       },

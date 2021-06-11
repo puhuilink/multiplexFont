@@ -3,8 +3,9 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
-  XjChangeShiftDao, PatrolTaskStatusDao
+  PatrolTaskStatusDao
 } from '../dao/index'
+import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
 import { axios, xungeng } from '@/utils/request'
 
@@ -12,7 +13,7 @@ class PatrolService extends BaseService {
   // 交接班查询
   static async changeShiftFind (argus = {}) {
     return query(
-      XjChangeShiftDao.find(argus)
+      PatrolChangeShiftDao.find(argus)
     )
   }
   // 交接班详情
@@ -45,6 +46,11 @@ class PatrolService extends BaseService {
       ]
     })
     return _.first(changeShiftList)
+  }
+
+  // 导出任务单
+  static async onExport () {
+    return xungeng.post('changeShift/exportChangeShift')
   }
 
   // 任务单异常项
