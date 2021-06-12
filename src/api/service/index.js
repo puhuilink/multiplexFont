@@ -18,6 +18,8 @@ import { ModelHistoryService } from './ModelHistoryService.js'
 import { ModelService } from './ModelService.js'
 import { PatrolConfigService } from './PatrolConfigService.js'
 import { PatrolService } from './PatrolService.js'
+import { PatrolSenderService } from './PatrolSenderService.js'
+import { PatrolTemplateService } from './PatrolTemplateService'
 import { StrategyService } from './StrategyService.js'
 import { TempService } from './TempService.js'
 import { ThemeService } from './ThemeService.js'
@@ -53,6 +55,8 @@ export {
   ModelService,
   PatrolConfigService,
   PatrolService,
+  PatrolSenderService,
+  PatrolTemplateService,
   StrategyService,
   TempService,
   ThemeService,

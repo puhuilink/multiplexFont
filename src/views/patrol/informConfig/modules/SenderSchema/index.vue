@@ -12,15 +12,14 @@
       ref="content"
     >
       <a-form-model-item
-        label="通知等级"
+        label="告警等级"
         v-bind="formItemLayout"
         :rules="[
           { required: true, message: '请选择通知等级' },
         ]">
         <a-select
           class="SendForm__Select"
-          v-model="send.level"
-          :disabled="levelBtn"
+          v-model="send.severity"
         >
           <a-select-option
             v-for="[value, label] in levelList"
@@ -33,22 +32,21 @@
       </a-form-model-item>
 
       <a-form-model-item
-        label="通知组"
+        label="计划组"
         v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
+        :rules="[{ required: true, message: '请选择计划组' }]"
       >
         <a-select
           allowClear
           mode="default"
           showSearch
           class="item2"
-          v-model="send.group"
-          :disabled="groupBtn"
+          v-model="send.groupId"
         >
           <a-select-option
-            v-for="{ group_id, group_name } in groupList"
-            :key="group_id"
-            :value="group_id">{{ group_name }}</a-select-option>
+            v-for="{ groupId, group_name } in groupList"
+            :key="groupId"
+            :value="groupId">{{ group_name }}</a-select-option>
         </a-select>
       </a-form-model-item>
 
@@ -89,7 +87,7 @@
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledSMS"
-                  v-model="send.temp_sms_id"
+                  v-model="send.tempSmsId"
                 >
                   <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
                 </a-select>
@@ -109,7 +107,7 @@
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledEmail"
-                  v-model="send.temp_email_id"
+                  v-model="send.tempEmailId"
                 >
                   <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
                 </a-select>
@@ -125,7 +123,6 @@
         v-bind="formItemLayout"
         label="自动"
         class="footer"
-        v-if="btnVisible"
       >
         <a-select v-model="send.auto" class="enabled" >
           <a-select-option :value="true">是</a-select-option>
@@ -142,10 +139,9 @@
 import {
   UserGroupService,
   GroupService,
-  AlarmRuleService,
   UserService,
-  AlarmTempService,
-  AlarmSenderService
+  PatrolSenderService,
+  PatrolTemplateService
 } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
@@ -155,9 +151,7 @@ export default {
   components: {},
   mixins: [ Schema ],
   data: () => ({
-    groupBtn: false,
-    levelBtn: false,
-    forwardTempList: [],
+    TempList: [],
     forwardTempListLoading: false,
     formModel: [
       { auto: false }
@@ -177,13 +171,13 @@ export default {
     groupList: [],
     title: '新增告警绑定',
     send: {
-      group: '',
-      level: '',
-      auto: false,
+      groupId: '',
+      severity: '',
+      auto: true,
       hasEnabledSMS: false,
       hasEnabledEmail: false,
-      temp_email_id: '',
-      temp_sms_id: '',
+      tempEmailId: '',
+      tempSmsId: '',
       contact: []
     },
     formItemLayout: {
@@ -198,18 +192,23 @@ export default {
     },
     toggleSMS (e) {
       this.send.hasEnabledSMS = e
+      if (e === false) {
+        this.send.tempSmsId = ''
+      }
     },
     toggleEmail (e) {
       this.send.hasEnabledEmail = e
+      if (e === false) {
+        this.send.tempEmailId = ''
+      }
     },
     async getGroup () {
       const { data: { GroupList } } = await GroupService.find({
         where: {
-          is_patrol: { _neq: true }
+          is_patrol: { _eq: true }
         },
         fields: [
-          'is_patrol',
-          'group_id',
+          'groupId: group_id',
           'group_name'
         ],
         alias: 'GroupList'
@@ -217,12 +216,15 @@ export default {
       this.groupList = GroupList
     },
     fetchFix () {
-      this.fetchUserList()
-      this.fetchForwardTempList()
+      // 巡更组
       this.getGroup()
+      // 用户
+      this.fetchUserList()
+      // 巡更模板
+      this.fetchPatrolTempList()
     },
     add () {
-      this.show('新建告警通知绑定')
+      this.show('新建巡更通知配置')
       this.fetchFix()
       this.submit = this.insert
     },
@@ -230,10 +232,10 @@ export default {
       try {
         this.btnLoading = true
         // 新增用户
-        await AlarmRuleService.addUser(this.send)
+        await PatrolSenderService.insert(this.send)
         this.$emit('addSuccess')
         this.$notifyAddSuccess()
-        this.cancel()
+        // this.cancel()
       } catch (e) {
         this.$notifyError(e)
         throw e
@@ -242,17 +244,20 @@ export default {
       }
     },
     edit (id) {
-      this.groupBtn = true
-      this.levelBtn = true
       this.fetchFix()
       this.fetch(id)
       this.show('编辑告警规则')
       this.submit = this.update
     },
+
     async fetch (id) {
       try {
-        const model = await AlarmSenderService.findByid(id)
-        this.serializeModel(model)
+        const { data: { model } } = await PatrolSenderService.find({
+          where: { id: { _eq: Number(id[0]) } },
+          fields: [ 'id', 'contact', 'groupId: group_id', 'severity', 'send_type', 'tempSmsId: temp_sms_id', 'tempEmailId: temp_email_id', 'auto' ],
+          alias: 'model'
+        })
+        this.serializeModel(model[0])
       } catch (e) {
         this.$notifyError(e)
         throw e
@@ -260,29 +265,28 @@ export default {
     },
     serializeModel (model) {
       this.send = {
-        group: model.group_id,
+        id: model.id,
+        groupId: model.groupId,
         contact: _.split(model.contact, '/'),
-        level: model.event_level,
+        severity: model.severity,
         auto: model.auto,
         hasEnabledEmail: !_.includes(_.words(model.send_type, '/'), 'EMAIL'),
         hasEnabledSMS: !_.includes(_.words(model.send_type, '/'), 'SMS'),
-        temp_email_id: model.temp_email_id,
-        temp_sms_id: model.temp_sms_id
+        tempEmailId: model.tempEmailId,
+        tempSmsId: model.tempSmsId
       }
     },
     async update () {
       try {
         this.btnLoading = true
-        await AlarmSenderService.update(
-          { contact: this.send.contact,
-            temp_sms_id: this.send.temp_sms_id,
-            temp_email_id: this.send.temp_email_id,
-            auto: this.send.auto
-          },
-          { event_level: this.send.level })
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        this.cancel()
+        const { code, msg } = await PatrolSenderService.update(this.send)
+        if (Number(code) !== 200) {
+          this.$notifyError(msg)
+        } else {
+          this.$emit('addSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        }
       } catch (e) {
         this.$notifyError(e)
         throw e
@@ -293,8 +297,12 @@ export default {
     async fetchUserList () {
       try {
         this.userListLoading = true
+        const groupCondition = this.send.groupId === '' ? {} : { group_id: { _eq: this.send.groupId } }
         const { data: { userList } } = await UserService.find({
-          where: { flag: 1 },
+          where: {
+            flag: { _eq: 1 },
+            ...groupCondition
+          },
           fields: ['user_id', 'staff_name'],
           alias: 'userList'
         })
@@ -306,16 +314,19 @@ export default {
         this.userListLoading = false
       }
     },
-    async fetchForwardTempList () {
+    async fetchPatrolTempList () {
       try {
         this.forwardTempListLoading = true
-        const { data: { forwardTempList } } = await AlarmTempService.find({
-          fields: ['id', 'title', 'message', 'mode'],
-          alias: 'forwardTempList'
+        const { data: { TempList } } = await PatrolTemplateService.find({
+          where: {
+            enabled: true
+          },
+          fields: ['id', 'title', 'message', 'type'],
+          alias: 'TempList'
         })
-        this.forwardTempList = forwardTempList
+        this.TempList = TempList
       } catch (e) {
-        this.forwardTempList = []
+        this.TempList = []
         throw e
       } finally {
         this.forwardTempListLoading = false
@@ -324,18 +335,14 @@ export default {
   },
   computed: {
     emailTempList () {
-      return this.forwardTempList.filter(({ mode }) => mode === SEND_TYPE_EMAIL)
+      return this.TempList.filter(({ type }) => type === SEND_TYPE_EMAIL)
     },
     smsTempList () {
-      return this.forwardTempList.filter(({ mode }) => mode === SEND_TYPE_SMS)
-    },
-    btnVisible () {
-      const group = this.groupList.filter(el => el.group_id === this.send.group)
-      return _.includes(group.map(el => el.is_patrol), true)
+      return this.TempList.filter(({ type }) => type === SEND_TYPE_SMS)
     }
   },
   watch: {
-    'send.group': {
+    'send.groupId': {
       immediate: true,
       async handler (group) {
         this.userList = await UserGroupService.findUserByGroup(group)

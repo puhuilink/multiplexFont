@@ -38,29 +38,35 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    mapping: {
+      type: Map,
+      default: () => TEMP_KEYWORD_MAPPING
     }
   },
-  data: (vm) => ({
-    editor: new Editor({
-      extensions: [
-        new Mention({
-          // TODO: label @ 符号
-          items: () => [...TEMP_KEYWORD_MAPPING].map(([id, name]) => ({ id, name }))
-        })
-      ],
-      content: '',
-      onUpdate: ({ getJSON }) => {
-        vm.$emit('input', MessageModel.serialize(getJSON()), vm.singleLine)
-        // TODO: trigger input event and validator
-        // TODO: singleLine 禁止换行
-      }
-    }),
-    insertMention: () => {},
-    preview: false,
-    tempKeywordList: Object.freeze(
-      Object.fromEntries(TEMP_KEYWORD_MAPPING)
-    )
-  }),
+  data (vm) {
+    return {
+      editor: new Editor({
+        extensions: [
+          new Mention({
+            // TODO: label @ 符号
+            items: () => [...this.mapping].map(([id, name]) => ({ id, name }))
+          })
+        ],
+        content: '',
+        onUpdate: ({ getJSON }) => {
+          vm.$emit('input', MessageModel.serialize(getJSON()), vm.singleLine)
+          // TODO: trigger input event and validator
+          // TODO: singleLine 禁止换行
+        }
+      }),
+      insertMention: () => {},
+      preview: false,
+      tempKeywordList: Object.freeze(
+        Object.fromEntries(this.mapping)
+      )
+    }
+  },
   watch: {
     preview (preview) {
       if (preview) {
@@ -79,6 +85,9 @@ export default {
       this.setContent(
         MessageModel.deSerialize(value)
       )
+    },
+    'mapping': function (val) {
+      this.mapping = val
     }
   },
   methods: {

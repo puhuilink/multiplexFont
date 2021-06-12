@@ -147,7 +147,18 @@ export default {
       const [record] = this.selectedRowKeys
       this.$refs['schema'].detail(record)
     },
-    onExport () {}
+    async onExport () {
+      try {
+        const { code, msg } = await PatrolService.onExport()
+        if (Number(code) === 200) {
+          this.$notification('成功')
+        } else {
+          this.$notification('导出失败')
+        }
+      } catch (e) {
+        this.$notifyError(e)
+      }
+    }
   }
 }
 </script>
