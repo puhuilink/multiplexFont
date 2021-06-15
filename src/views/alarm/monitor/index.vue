@@ -459,10 +459,10 @@ export default {
         alias: 'data',
         ...rest
       })
-      const metrics = data.data.map(el => Number(el.metric_id))
+      const metrics = data.data.map(el => el.metric_id)
       const concatList = await this.aliasList({ metric_id: { _in: metrics } }, concatFields)
       data.data.map(el => {
-        return Object.assign(el, ...concatList.filter(ele => Number(ele.metric_id) === Number(el.metric_id)))
+        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id))
       })
       return data
     },

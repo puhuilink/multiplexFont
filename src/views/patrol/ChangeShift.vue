@@ -149,7 +149,7 @@ export default {
     },
     async onExport () {
       try {
-        const { code, msg } = await PatrolService.onExport()
+        const { code } = await PatrolService.onExport()
         if (Number(code) === 200) {
           this.$notification('成功')
         } else {
