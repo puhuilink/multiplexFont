@@ -19,6 +19,7 @@
           float: 'left',
           width: '300px',
         }"
+        v-if="mode === 'personal'"
         class="AlarmStrategy__modal-footer-left"
       >
         <a-select
@@ -26,6 +27,7 @@
           :style="{ width: '100px' }"
           :disabled="isDetail"
           :value="~~formModel.enabled"
+          v-if="mode === 'personal'"
           @select="formModel.enabled = !!$event"
         >
           <a-select-option :value="1">是</a-select-option>
@@ -43,12 +45,16 @@
           label="阈值名称"
           v-bind="formItemLayout"
           prop="name"
+          v-if="mode === 'personal'"
           :rules="[{ required: true, message: '请输入规则名称' }, { max: 50, message: '最多输入50个字符' }]"
         >
           <a-input :disabled="isDetail" v-model.trim="formModel.name" />
         </a-form-model-item>
 
-        <ComplexSnippet v-bind="formItemLayout" v-model="formModel" />
+        <ComplexSnippet v-bind="formItemLayout" v-model="formModel" v-if="mode === 'personal'"/>
+
+        <ComplexInput v-if="mode === 'common'" v-bind="formItemLayout" ref="complexInput"></ComplexInput>
+
         <a-row :gutter="[4, 8]" type="flex" align="middle">
           <a-col :span="5">
             <a-form-model-item
@@ -220,9 +226,11 @@ import { StrategyService } from '@/api'
 import { CombineSelect } from '@/components/Resource'
 import { ThresholdOperatorSelect, ThresholdConditionSelect, AlarmLevelSelect } from '~~~/Alarm'
 import ComplexSnippet from '@/components/Alarm/ComplexSnippet'
+import ComplexInput from '@/components/ComplexInput'
 import anime from 'animejs'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
+import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
 
 const makeOpt = () => ({
   // 用于为 transition 元素绑定唯一 key，调取接口时剔除该属性
@@ -247,11 +255,22 @@ export default {
     ThresholdOperatorSelect,
     ThresholdConditionSelect,
     AlarmLevelSelect,
-    ComplexSnippet
+    ComplexSnippet,
+    ComplexInput
   },
-  props: {},
+  props: {
+    mode: {
+      type: String,
+      default: STRATEGY_MODE.personal
+    }
+  },
   data: () => ({
     addBtnLoading: false,
+    inputEle: {
+      deviceType: '',
+      deviceBrand: '',
+      deviceModel: ''
+    },
     formModel: {
       deviceType: '',
       deviceBrand: '',
@@ -330,6 +349,12 @@ export default {
       this.submit = this.cancel
       this.isDetail = true
     },
+    modelDetail (id) {
+      this.modelFetch(id)
+      this.show('查看默认阈值规则')
+      this.submit = this.cancel
+      this.isDetail = true
+    },
     edit (id) {
       this.fetch(id)
       this.show('编辑阈值规则')
@@ -340,6 +365,25 @@ export default {
       try {
         this.spinning = true
         const formModel = await StrategyService.detail(id)
+        formModel.exprs.opts.forEach((opt) => {
+          opt['uuid'] = uuid()
+        })
+        formModel.exprs.interval = (formModel.exprs.interval || 0) / 60
+        this.formModel = formModel
+      } catch (e) {
+        this.formModel = this.$options.data.apply(this).formModel
+        throw e
+      } finally {
+        this.spinning = false
+      }
+    },
+    async modelFetch (id) {
+      try {
+        this.spinning = true
+        const formModel = await StrategyService.modelFetch(id)
+        const { deviceType, deviceBrand, deviceModel } = formModel
+        this.inputEle = { deviceType, deviceBrand, deviceModel }
+        this.$refs.complexInput.inputEle = this.inputEle
         formModel.exprs.opts.forEach((opt) => {
           opt['uuid'] = uuid()
         })

@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { CmdbStrategyDao } from '../dao/index'
+import { CmdbStrategyDao, ModelStrategyDao } from '../dao/index'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 
@@ -8,6 +8,12 @@ class StrategyService extends BaseService {
   static async find (argus = {}) {
     return query(
       CmdbStrategyDao.find(argus)
+    )
+  }
+
+  static async modelFind (argus = {}) {
+    return query(
+      ModelStrategyDao.find(argus)
     )
   }
 
@@ -31,6 +37,31 @@ class StrategyService extends BaseService {
       })
     )
     return _.first(strategyList)
+  }
+
+  static async modelFetch (id) {
+    const { data: { strategyList } } = await query(
+      ModelStrategyDao.find({
+        where: { id },
+        fields: [
+          'id',
+          'deviceType: model { device_type }',
+          'deviceBrand: model { brand_name }',
+          'deviceModel: model { endpoint_alias }',
+          'hostId: model { host_id }',
+          'endpointModelId: model { endpoint_id }',
+          'metricModelId: metric_id',
+          'exprs'
+        ],
+        alias: 'strategyList'
+      })
+    )
+    const list = _.first(strategyList)
+    list.deviceType = list.deviceType.device_type
+    list.deviceBrand = list.deviceBrand.brand_name
+    list.deviceModel = list.deviceModel.endpoint_alias
+    list.endpointModelId = list.endpointModelId.endpoint_id
+    return list
   }
 
   static async add (argus = {}) {

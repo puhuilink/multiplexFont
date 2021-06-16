@@ -6,7 +6,7 @@
     </a-tabs>
 
     <CTable
-      :columns="columns"
+      :columns="mode === STRATEGY_MODE.personal ? columns : modelColumns"
       :data="loadData"
       ref="table"
       rowKey="id"
@@ -62,7 +62,7 @@
                   />
                 </a-form-item>
               </a-col>
-              <a-col v-bind="colProps">
+              <a-col v-bind="colProps" v-if="mode === 'personal'">
                 <a-form-item
                   label="阈值名称"
                   v-bind="formItemLayout"
@@ -71,7 +71,7 @@
                   <a-input allowClear v-model.trim="queryParams.name" />
                 </a-form-item>
               </a-col>
-              <a-col v-bind="colProps">
+              <a-col v-bind="colProps" v-if="mode === 'personal'">
                 <a-form-item
                   label="启用状态"
                   v-bind="formItemLayout"
@@ -120,6 +120,7 @@
     <AlarmStrategySchema
       @addSuccess="query"
       @editSuccess="query(false)"
+      :mode="mode"
       ref="schema"
     />
   </div>
@@ -137,7 +138,12 @@ import {
   deviceBrandColumn,
   deviceModelColumn,
   endpointModelIdColumn,
-  metricModelIdColumn
+  metricModelIdColumn,
+  modelTypeColumn,
+  modelDeviceBrandColumn,
+  modelEndpointModelIdColumn,
+  metricModelColumn,
+  hostModelType
 } from '@/tables/alarm_rule/columns'
 import {
   nameColumn,
@@ -167,6 +173,15 @@ export default {
           lastUpdateTime
         ].map(fn => fn.call(this))
       ],
+      modelColumns: [
+        ...[
+          modelTypeColumn,
+          modelDeviceBrandColumn,
+          hostModelType,
+          modelEndpointModelIdColumn,
+          metricModelColumn
+        ].map(fn => fn.call(this))
+      ],
       queryParams: {
         dictValue: [],
         endpoint_model_id: '',
@@ -182,22 +197,39 @@ export default {
   methods: {
     loadData (parameter) {
       const { dictValue, endpoint_model_id, metric_model_id, ...restQueryParams } = this.queryParams
-      return StrategyService.find({
-        where: {
-          ...generateQuery(restQueryParams),
-          ...generateQuery({
+      if (this.mode === 'common') {
+        return StrategyService.modelFind({
+          where: {
             ...dictValue[2] ? {
-              device_model: dictValue[2]
+              model: { device_model_value_code: { _eq: dictValue[2] } }
             } : {},
-            endpoint_model_id,
-            metric_model_id
-          }, true),
-          mode: this.mode
-        },
-        fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
-        ...parameter,
-        alias: 'data'
-      }).then(r => r.data)
+            ...endpoint_model_id ? {
+              model: { endpint_id: { _eq: endpoint_model_id } }
+            } : {},
+            ...generateQuery({ metric_id: metric_model_id }, true),
+            ...generateQuery(restQueryParams)
+          },
+          fields: _.uniq(['id', ...this.modelColumns.map(({ dataIndex }) => dataIndex)]),
+          alias: 'data',
+          ...parameter
+        }).then(r => r.data)
+      } else {
+        return StrategyService.find({
+          where: {
+            ...generateQuery(restQueryParams),
+            ...generateQuery({
+              ...dictValue[2] ? {
+                device_model: dictValue[2]
+              } : {},
+              endpoint_model_id,
+              metric_model_id
+            }, true)
+          },
+          fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+          ...parameter,
+          alias: 'data'
+        }).then(r => r.data)
+      }
     },
     /**
      * 新增阈值规则
@@ -221,7 +253,11 @@ export default {
      */
     onDetail () {
       const [id] = this.selectedRowKeys
-      this.$refs.schema.detail(id)
+      if (this.mode === STRATEGY_MODE.personal) {
+        this.$refs.schema.detail(id)
+      } else {
+        this.$refs.schema.modelDetail(id)
+      }
     },
     /**
      * (批量删除)阈值规则
