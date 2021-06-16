@@ -181,7 +181,9 @@ export default {
         dataIndex: 'status',
         width: 120,
         sorter: true,
-        customRender: status => STATUS_MAPPING.get(status)
+        customRender: status => {
+          return STATUS_MAPPING.get(status)
+        }
       },
       {
         title: '存在异常',
