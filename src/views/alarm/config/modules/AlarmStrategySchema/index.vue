@@ -99,25 +99,25 @@
                 labelCol: { span: 0 },
                 wrapperCol: { span: 23 },
               }"
-              prop="exprs.trigger_condition"
+              prop="exprs.func"
               :rules="[{ required: true, message: '请选择触发条件' }]"
-              v-model="formModel.exprs.trigger_condition"
+              v-model="formModel.exprs.func"
             />
           </a-col>
 
-          <a-col :span="3" v-show="formModel.exprs.trigger_condition === 'happen' " >
+          <a-col :span="3" v-show="formModel.exprs.func === 'happen' " >
             <a-form-model-item
               v-bind="{
                 labelCol: { span: 24 },
               }"
-              prop="exprs.trigger_value"
+              prop="exprs.threshold"
             >
-              <a-input-number :disabled="isDetail" v-model="formModel.exprs.trigger_value" />
+              <a-input-number :disabled="isDetail" v-model="formModel.exprs.threshold" />
             </a-form-model-item>
           </a-col>
 
           <a-col :span="1">
-            <p class="ant-form-item"> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }}</p>
+            <p class="ant-form-item"> {{ formModel.exprs.func === 'happen' ? '次时' :'时' }}</p>
           </a-col>
 
         </a-row>
@@ -192,11 +192,11 @@
             <a-col class="alarm-rule-text" :span="24" >
 
               说明:当指标值 持续 {{ (formModel.exprs.interval || 0) * 60 }} 秒内，
-              {{ formatConditionText(formModel.exprs.trigger_condition ) }}
+              {{ formatConditionText(formModel.exprs.func ) }}
               {{ formatOperatorText( opt.operator) }}
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? opt.threshold :'' }} </span>
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.trigger_condition === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
-              <span> {{ formModel.exprs.trigger_condition === 'happen' ? '次时' :'时' }} </span>
+              <span> {{ formModel.exprs.func === 'happen' ? opt.threshold :'' }} </span>
+              <span> {{ formModel.exprs.func === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.func === 'happen' ? formModel.exprs.threshold : opt.threshold }}</span>
+              <span> {{ formModel.exprs.func === 'happen' ? '次时' :'时' }} </span>
               产生一次告警; 告警级别为 {{ !opt.alarm_level ? ' ' : 'L' + opt.alarm_level }};
 
             </a-col>
@@ -281,8 +281,8 @@ export default {
       enabled: 1,
       exprs: {
         interval: 1,
-        trigger_condition: '',
-        trigger_value: undefined,
+        func: '',
+        threshold: undefined,
         opts: [
           {
             ...makeOpt()
