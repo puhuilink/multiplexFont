@@ -6,134 +6,261 @@
     @change="$emit('update:visible', $event)"
     @ok="handleOk"
   >
-    <div>巡更点位: {{ xgModelPoint }}</div>
-    <a-form-model ref="ruleForm" :model="form" :labelCol="labelCol" :wrapperCol="wrapperCol">
+    <div>巡更点位: {{ xgModelPoint.alias }}</div>
+    <a-form-model
+      ref="ruleForm"
+      :model="form"
+      :labelCol="labelCol"
+      :wrapperCol="wrapperCol">
       <a-form-model-item
         label="监控对象"
-        prop="modalEndpointId"
+        prop="hostId"
         :rules="[{ required: true, message: '请输入监控对象' }]"
       >
-        <a-input placeholder="请输入监控对象" v-model="form.modalEndpointId" />
+        <a-select placeholder="请输入监控对象" v-model="form.hostId" :disabled="!isNew">
+          <a-select-option v-for="h in Object.values(hosts)" :key="h.id" :value="h.id">{{ h.alias }}</a-select-option>
+        </a-select>
       </a-form-model-item>
 
       <div class="HostSchema__content" ref="content">
-        <div class="tablesStyle" v-for="(item, index) in form.shareParams" :key="index">
+        <div class="tablesStyle" v-for="(item, index) in form.endpoints" :key="index">
           <a-form-model-item
             label="监控实体"
             style="margin-bottom: 0"
-            :prop="`shareParams.${index}.modelMetrics`"
-            :rules="[{ required: true, message: '请输入监控实体' }]"
+            :prop="`endpoints.${index}.endpointId`"
+            :rules="[{ required: !item.isVirtual, message: '监控实体不能为空' }]"
           >
-            <a-input placeholder="请输入监控实体" v-model="item.modelMetrics" />
-          </a-form-model-item>
-
-          <a-form-model-item
-            label="检查项"
-            style="margin-bottom: 0"
-            :prop="`shareParams.${index}.modalCheck`"
-            :rules="[{ required: true, message: '检查项不能为空' }]"
-          >
-            <a-select v-model="item.modalCheck" placeholder="检查项不能为空">
-              <a-select-option value="value1"> 运行状态 </a-select-option>
-              <a-select-option value="value2"> 有无状态 </a-select-option>
-            </a-select>
-          </a-form-model-item>
-
-          <a-form-model-item label="检查值" style="margin-bottom: 0">
-            <a-form-model-item
-              :prop="`shareParams.${index}.modalCheckValue`"
-              :style="{
-                display: 'inline-block',
-                width: '100px',
-                marginBottom: 0,
-              }"
-              :rules="[{ required: true, message: '检查值不能为空' }]"
+            <a-select
+              mode="default"
+              placeholder="请输入监控实体"
+              style="width: 160px"
+              v-model="item.endpointId"
+              :disabled="form.endpoints[index].isVirtual"
+              :show-arrow="false"
             >
-              <a-select v-model="item.modalCheckValue">
-                <a-select-option value="value4"> 运行状态 </a-select-option>
-                <a-select-option value="value5"> 有无状态 </a-select-option>
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="endpoint in Object.values(endpoints)" :key="endpoint.id" :value="endpoint.id">{{ endpoint.alias
+              }}({{ endpoint.id }})
+              </a-select-option>
+            </a-select>
+            <a-checkbox
+              style="margin-left: 10px"
+              @change="()=>{
+                form.endpoints[index].isVirtual = !form.endpoints[index].isVirtual
+                if(form.endpoints[index].isVirtual){
+                  form.endpoints[index].endpointId = null
+                }
+              }">虚拟
+            </a-checkbox>
+          </a-form-model-item>
+          <div class="tablesStyle" v-for="(element, i) in item.metric" :key="i">
+            <a-form-model-item
+              label="检查项"
+              style="margin-bottom: 0"
+              :prop="`endpoints.${index}.metrics.${i}.metricId`"
+              :rules="[{ required: true, message: '检查项不能为空' }]"
+            >
+              <a-select v-model="element.metricId" placeholder="检查项不能为空">
+                <div slot="dropdownRender" slot-scope="menu">
+                  <v-nodes :vnodes="menu" />
+                  <a-divider style="margin: 4px 0;" />
+                  <div
+                    style="padding: 4px 8px; cursor: pointer;"
+                    @mousedown="e => e.preventDefault()"
+                    @click="navigatorToEditMetric"
+                  >
+                    <a-icon type="edit" />
+                    编辑
+                  </div>
+                </div>
+                <a-select-option v-for="(metric,id) in metrics" :key="id" :value="id">{{ metric.metric_alias }}
+                </a-select-option>
+              </a-select>
+              <a-modal
+                title="编辑检查项"
+                wrapClassName="MetricSchema"
+                :visible="isEditMetric"
+                @cancel="popEditMetric"
+                @close="popEditMetric"
+                @ok="popEditMetric"
+              >
+                <a-table
+                  :data-source="Object.values(metrics)"
+                  :pagination="pagination"
+                  :columns="metricColumns"
+                >
+                  <template slot="answer" slot-scope="text, record">
+                    <span v-if="record.editable">
+                      <a-select v-model="record['answer_id']">
+                        <a-select-option v-for="a in Object.values(answers)" :key="a.id" :value="a.id">{{ a.alias
+                        }}</a-select-option>
+                      </a-select>
+                    </span>
+                    <span v-else>
+                      {{ answers[record['answer_id']].alias }}
+                    </span>
+                  </template>
+                  <template slot="operation" slot-scope="text, record">
+                    <div class="editable-row-operations">
+                      <span v-if="record.editable">
+                        <a @click="() => save(record.key)">保存</a>
+                        <a-popconfirm title="确认取消?" @confirm="() => cancel(record.key)">
+                          <a>取消</a>
+                        </a-popconfirm>
+                      </span>
+                      <span v-else>
+                        <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
+                        <a-divider type="vertical" />
+                        <a :disabled="editingKey !== ''" @click="() => delete(record.key)">删除</a>
+                      </span>
+                    </div>
+                  </template>
+
+                </a-table>
+              </a-modal>
+            </a-form-model-item>
+
+            <a-form-model-item label="阈值设置" style="margin-bottom: 0" :rules="[{ required: true, message: '检查项不能为空' }]">
+              <a-form-model-item
+                :prop="`endpoints.${index}.metric.${i}.threshold.condition`"
+                :style="{
+                  // display: 'inline-block',
+                  // width: '70px',
+                  marginBottom: 0,
+                }"
+                :rules="[{ required: true, message: '检查值不能为空' }]"
+              >
+                <a-select v-model="element.threshold.condition">
+                  <a-select-option
+                    value="eq"
+                    v-if="element.metricId!=null
+                      ?metrics[element.metricId] != null
+                        ?answers[metrics[element.metricId].answer_id].type === 'select'
+                        :false
+                      :false"
+                  > 等于
+                  </a-select-option>
+                  <a-select-option
+                    value="lt"
+                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                  > 小于
+                  </a-select-option>
+                  <a-select-option
+                    value="gt"
+                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                  > 大于
+                  </a-select-option>
+                  <a-select-option
+                    value="out"
+                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                  > 超出
+                  </a-select-option>
+                  <a-select-option
+                    value="ne"
+                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'select':false:false"
+                  > 不等于
+                  </a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item
+                :prop="`endpoints.${index}.metric.${i}.threshold.lowerThreshold`"
+                :style="{
+                  // display: 'inline-block',
+                  // width: '70px',
+                  marginBottom: 0
+                }"
+                :rules="[{ required: true, message: '阈值不能为空' }]"
+                v-if="element.threshold.condition !=='gt'"
+              >
+                <a-input-number
+                  placeholder="请输入阈值"
+                  v-model="element.threshold.lowerThreshold"
+                  v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                  :min="0"
+                  :step="0.1"
+                ></a-input-number>
+                <a-select
+                  :default-value="element.threshold.condition === 'ne'? '请选择非异常项' : '请选择异常项'"
+                  v-model="element.threshold.lowerThreshold"
+                  v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'select':false:false"
+                >
+                  <a-select-option
+                    v-for="m in answers[metrics[element.metricId].answer_id].format"
+                    :key="m.value"
+                    :value="m.value">
+                    {{ m.alias }}
+                  </a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item
+                :prop="`endpoints.${index}.metrics.${i}.threshold.upperThreshold`"
+                :style="{
+                  // display: 'inline-block',
+                  // width: '70px',
+                  marginBottom: 0
+                }"
+                :rules="[{ required: true, message: '阈值不能为空' }]"
+                v-if="element.threshold.condition === 'out'||element.threshold.condition === 'gt'"
+              >
+                <span v-show="element.threshold.condition ==='out'">---</span>
+                <a-input-number placeholder="请输入阈值" v-model="element.threshold.upperThreshold"></a-input-number>
+              </a-form-model-item>
+            </a-form-model-item>
+            <a-form-model-item
+              label="告警级别"
+              style="margin-bottom: 0"
+              :prop="`endpoints.${index}.metrics.${i}.threshold.severity`"
+              :rules="[{ required: true, message: '告警级别不能为空' }]"
+            >
+              <a-select v-model="element.threshold.severity">
+                <a-select-option :value="1"> L1(紧急告警)</a-select-option>
+                <a-select-option :value="2"> L2(主要告警)</a-select-option>
+                <a-select-option :value="3"> L3(次要告警)</a-select-option>
+                <a-select-option :value="4"> L4(一般告警)</a-select-option>
               </a-select>
             </a-form-model-item>
-
-            <span> 或值</span>
-
-            <a-form-model-item
-              :prop="`shareParams.${index}.modalCheckId`"
-              :style="{
-                display: 'inline-block',
-                width: '100px',
-                marginBottom: 0,
-              }"
-              :rules="[{ required: true, message: '检查值不能为空' }]"
-            >
-              <a-select v-model="item.modalCheckId">
-                <a-select-option value="value6"> 运行状态 </a-select-option>
-                <a-select-option value="value7"> 有无状态 </a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-form-model-item>
-
-          <a-form-model-item label="则需异常告警" style="margin-bottom: 0">
-            <a-form-model-item
-              :prop="`shareParams.${index}.modalWarning`"
-              :style="{
-                display: 'inline-block',
-                width: '100px',
-                marginBottom: 0,
-              }"
-              :rules="[{ required: true, message: '检查值不能为空' }]"
-            >
-              <a-input placeholder="请输入监控对象" v-model="item.modalWarning" />
-            </a-form-model-item>
-
-            <span> - - </span>
-
-            <a-form-model-item
-              :prop="`shareParams.${index}.modalAbnormal`"
-              :style="{
-                display: 'inline-block',
-                width: '100px',
-                marginBottom: 0,
-              }"
-              :rules="[{ required: true, message: '检查值不能为空' }]"
-            >
-              <a-input placeholder="请输入监控对象" v-model="item.modalAbnormal" />
-            </a-form-model-item>
-          </a-form-model-item>
-
-          <a-form-model-item
-            label="告警级别"
-            style="margin-bottom: 0"
-            :prop="`shareParams.${index}.modalWarningLevel`"
-            :rules="[{ required: true, message: '告警级别不能为空' }]"
-          >
-            <a-select v-model="item.modalWarningLevel">
-              <a-select-option value="value8"> 运行状态 </a-select-option>
-              <a-select-option value="value9"> 有无状态 </a-select-option>
-            </a-select>
-          </a-form-model-item>
-
-          <div class="HostSchema__btn-remove" v-show="form.shareParams.length > 1">
-            <a-button type="primary" @click="removeParam(index)"> 删除 </a-button>
+            <div style="display: block;float: right" v-show="form.endpoints[index].metric.length > 1">
+              <a-button type="primary" @click="removeMetric(index,i)" icon="delete"></a-button>
+            </div>
+          </div>
+          <div class="HostSchema__btn-remove">
+            <a-button type="primary" @click="removeParam(index)"> 删除</a-button>
+          </div>
+          <div class="HostSchema__btn_group">
+            <a-button type="primary" @click="addMetric(index)" icon="plus"></a-button>
           </div>
         </div>
-
+        <div class="HostSchema__btn_group">
+          <a-button type="primary" @click="addEndpoint"> 添加</a-button>
+        </div>
       </div>
     </a-form-model>
-
-    <div class="HostSchema__btn_group">
-      <a-button type="primary" @click="addShareTable"> 添加 </a-button>
-    </div>
   </a-modal>
 </template>
 
 <script>
 import { scrollTo } from '@/utils/util'
+import _ from 'lodash'
+import { PatrolHostService } from '@/api/service/PatrolHostService'
+import { PatrolEndpointService } from '@/api/service/PatrolEndpointService'
+import { PatrolMetricService } from '@/api/service/PatrolMetricService'
+import Template from '@/views/design/modules/template/index'
+import { PatrolThresholdService } from '@/api/service/PatrolThresholdService'
+import { PatrolAnswerService } from '@/api/service/PatrolAnswerService'
+import TagSelectOption from '~~~/TagSelect/TagSelectOption'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'HostSchema',
   mixins: [],
-  components: {},
+  components: {
+    TagSelectOption,
+    Template,
+    VNodes: {
+      functional: true,
+      render: (h, ctx) => ctx.props.vnodes
+    }
+  },
   props: {
     visible: {
       type: Boolean,
@@ -142,27 +269,103 @@ export default {
     form: {
       type: Object,
       default: () => ({
-        modalEndpointId: '',
-        shareParams: [
+        hostId: '',
+        hostAlias: '',
+        endpoints: [
           {
-            modelMetrics: '',
-            modalCheck: '',
-            modalCheckValue: '',
-            modalCheckId: '',
-            modalWarning: '',
-            modalAbnormal: '',
-            modalWarningLevel: ''
+            endpointId: '',
+            endpointAlias: '',
+            isVirtual: false,
+            metric: [
+              {
+                metricId: '',
+                answerId: '',
+                threshold: {
+                  condition: '',
+                  lowerThreshold: '',
+                  upperThreshold: '',
+                  severity: 4
+                }
+              }
+            ]
           }
         ]
       })
     },
     xgModelPoint: {
-      type: String,
-      default: ''
+      type: Object,
+      default: () => ({ id: '', alias: '' })
+    },
+    isNew: {
+      type: Boolean,
+      default: false
     }
   },
+  computed: {},
+  created () {
+    this.fetchHost()
+    this.fetchEndpoint()
+    this.fetchMetric()
+    this.fetchAnswer()
+    this.fetchThreshold()
+  },
   data () {
+    this.fetchHost = _.debounce(this.fetchHost, 800)
+    this.fetchEndpoint = _.debounce(this.fetchEndpoint, 800)
+    this.fetchMetric = _.debounce(this.fetchMetric, 800)
+    this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
+    this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
+      fetching: false,
+      editingKey: '',
+      metricColumns: [
+        {
+          title: '',
+          dataIndex: 'metric_alias',
+          width: '25%',
+          scopedSlots: { customRender: 'metric_alias' }
+        },
+        {
+          title: '',
+          scopedSlots: { customRender: 'answer' }
+        },
+        {
+          title: '',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' }
+        }
+      ],
+      tempAnswer: {
+        id: '',
+        alias: '',
+        format: ''
+      },
+      metrics: {},
+      answers: {},
+      endpoints: {
+        id: '',
+        alias: '',
+        metrics: []
+      },
+      hosts: {
+        id: '',
+        alias: '',
+        endpoints: []
+      },
+      thresholds: [{
+        host_id: '',
+        endpoint_id: '',
+        metric_id: '',
+        answer_id: '',
+        lower_threshold: '',
+        severity: '',
+        upper_threshold: ''
+      }],
+      pagination: {
+        // total: Object.values(this.metrics).length,
+        pageSize: 10
+      },
+      isEditMetric: false,
       labelCol: {
         xs: { span: 14 },
         sm: { span: 6 }
@@ -173,17 +376,106 @@ export default {
       }
     }
   },
-  computed: {},
   methods: {
-    addShareTable () {
-      this.form.shareParams.push({
-        modelMetrics: '',
-        modalCheck: '',
-        modalCheckValue: '',
-        modalCheckId: '',
-        modalWarning: '',
-        modalAbnormal: '',
-        modalWarningLevel: ''
+    async editHost () {
+      await xungeng.post('/host/edit', { checkpointId: this.xgModelPoint.id, ...this.form })
+    },
+    async fetchHost () {
+      this.fetching = true
+      const res = await PatrolHostService.find()
+      if (res != null) {
+        this.hosts = { }
+        res.data.t_patrol_host.forEach(host => {
+          this.hosts[host.id] = {
+            id: host.id,
+            alias: host.alias,
+            endpoints: host.content
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchEndpoint () {
+      this.fetching = true
+      const res = await PatrolEndpointService.find()
+      if (res != null) {
+        this.endpoints = { }
+        res.data.t_patrol_endpoint.forEach(endpoint => {
+          this.endpoints[endpoint.id] = {
+            id: endpoint.id,
+            alias: endpoint.alias,
+            metrics: endpoint.content
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchMetric () {
+      this.fetching = true
+      const res = await PatrolMetricService.find()
+      if (res != null) {
+        this.metrics = {}
+        res.data.t_patrol_metric.forEach(metric => {
+          this.metrics[metric.id] = {
+            metric_id: metric.id,
+            metric_alias: metric.alias,
+            answer_id: metric.answer_id
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchAnswer () {
+      this.fetching = true
+      const res = await PatrolAnswerService.find()
+      if (res != null) {
+        this.answers = {}
+        res.data.t_patrol_answer.forEach(answer => {
+          this.answers[answer.id] = answer
+        })
+      }
+      this.fetching = false
+    },
+    async fetchThreshold () {
+      this.fetching = true
+      const res = await PatrolThresholdService.find()
+      if (res != null) {
+        this.thresholds = res.data.t_patrol_threshold
+      }
+      this.fetching = false
+    },
+    addEndpoint () {
+      this.form.endpoints.push({
+        endpointId: '',
+        endpointAlias: '',
+        isVirtual: false,
+        metric: [
+          {
+            metricId: '',
+            answerId: '',
+            threshold: {
+              condition: '',
+              lowerThreshold: '',
+              upperThreshold: '',
+              severity: 4
+            }
+          }
+        ]
+      })
+      this.$nextTick(() => {
+        scrollTo(this.$refs.content.scrollHeight, { getContainer: () => this.$refs.content })
+      })
+    },
+    addMetric (index) {
+      this.form.endpoints[index].metric.push({
+        metricId: '',
+        answerId: '',
+        threshold: {
+          condition: '',
+          lowerThreshold: '',
+          upperThreshold: '',
+          severity: 4
+        }
       })
       this.$nextTick(() => {
         scrollTo(this.$refs.content.scrollHeight, { getContainer: () => this.$refs.content })
@@ -196,9 +488,78 @@ export default {
         }
       })
     },
-
     removeParam (index) {
-      this.form.shareParams.splice(index, 1)
+      this.form.endpoints.splice(index, 1)
+    },
+    removeMetric (index, i) {
+      this.form.endpoints[index].metrics.splice(i, 1)
+    },
+    navigatorToEditMetric () {
+      this.pagination = {
+        total: Object.values(this.metrics).length,
+        size: 'small',
+        pageSize: 10
+      }
+      console.log(Object.values(this.metrics))
+      this.isEditMetric = true
+    },
+    popEditMetric () {
+      this.isEditMetric = false
+    },
+    transformForm (value) {
+      if (this.fetching) {
+        return
+      }
+      console.log('host:')
+      console.log(this.hosts[value])
+      this.form.hostAlias = this.hosts[value].alias
+      this.form.endpoints = []
+      this.hosts[value].endpoints.forEach((e) => {
+        console.log('endpoints:')
+        console.log(this.endpoints[e])
+        if (this.endpoints[e] === null) {
+          return
+        }
+        const eObj = {
+          endpointId: e,
+          endpointAlias: this.endpoints[e].alias,
+          metric: []
+        }
+        this.endpoints[e].metrics.forEach((m) => {
+          console.log('metrics:')
+          console.log(this.metrics[m])
+          if (this.metrics[m] === null) {
+            return
+          }
+          const t = this.thresholds.find(th => {
+            return th.host_id === value && th.endpoint_id === e && th.metric_id === m && th.answer_id === this.metrics[m].answer_id
+          })
+          if (t === null) {
+            return
+          }
+          eObj.metric.push({
+            metricId: m,
+            answerId: this.metrics[m].answer_id,
+            threshold: {
+              lowerThreshold: t.lower_threshold,
+              upperThreshold: t.upper_threshold,
+              severity: t.severity
+            }
+          })
+        })
+        this.form.endpoints.push(eObj)
+      })
+      console.log('form')
+      console.log(this.form)
+    }
+  },
+  watch: {
+    'form.hostId': {
+      handler (value) {
+        setTimeout(this.transformForm(value), 5000)
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

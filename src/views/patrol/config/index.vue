@@ -21,7 +21,7 @@
               }"
             >查询</a-button>
           </a-form>
-          <!--          <a-button type="primary">新增监控对象</a-button>-->
+          <a-button type="primary">新增监控对象</a-button>
           <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
@@ -50,7 +50,7 @@
             <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
             <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
             <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
-            <!--            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>-->
+            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>
           </div>
 
           <div class="PatrolConfig__tbody" ref="tBody">
@@ -129,12 +129,14 @@
                       </div>
                     </div>
                   </div>
-                  <!--                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">-->
-                  <!--                    <template v-if="hostId">-->
-                  <!--                      <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>-->
-                  <!--                      <a-button type="link">删除</a-button>-->
-                  <!--                    </template>-->
-                  <!--                  </div>-->
+                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
+                    <template v-if="hostId" >
+                      <a-row>
+                        <a-col :span="12"><a-button type="link" @click.prevent.stop="infoEdit(checkpointId,checkpointAlias,hostId)">编辑</a-button></a-col>
+                        <a-col :span="12"><a-button type="link">删除</a-button></a-col>
+                      </a-row>
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,16 +201,25 @@ export default {
       searchInput: '',
       visible: false,
       form: {
-        modalEndpointId: '',
-        shareParams: [
+        hostId: '',
+        hostAlias: '',
+        endpoints: [
           {
-            modelMetrics: '',
-            modalCheck: '',
-            modalCheckValue: '',
-            modalCheckId: '',
-            modalWarning: '',
-            modalAbnormal: '',
-            modalWarningLevel: ''
+            endpointId: '',
+            endpointAlias: '',
+            isVirtual: false,
+            metric: [
+              {
+                metricId: '',
+                answerId: '',
+                threshold: {
+                  condition: '',
+                  lowerThreshold: '',
+                  upperThreshold: '',
+                  severity: 4
+                }
+              }
+            ]
           }
         ]
       },
@@ -217,7 +228,7 @@ export default {
         pageSize: 5,
         total: 0
       },
-      xgModelPoint: ''
+      xgModelPoint: { id: '', alias: '' }
     }
   },
   computed: {
@@ -279,10 +290,10 @@ export default {
     },
 
     // 点击编辑
-    infoEdit (pointsId, alias) {
+    infoEdit (checkId, checkAlias, id) {
       this.visible = true
-      this.xgModelPoint = pointsId
-      this.form.modalEndpointId = alias
+      this.xgModelPoint = { id: checkId, alias: checkAlias }
+      this.form.hostId = id
     },
 
     downloadQrCode ({ checkpointId, checkpointAlias }) {
