@@ -14,25 +14,25 @@
       <div class="TaskDetailSchema__basicInfo">
         <a-row>
           <a-col :span="12">
-            <span>任务名称：{{ basicInfo.task_name }}</span>
+            <span>任务名称：{{ basicInfo.alias }}</span>
           </a-col>
           <a-col :span="12">
-            <span>任务单号：{{ basicInfo.task_id }}</span>
+            <span>任务单号：{{ basicInfo.id }}</span>
           </a-col>
         </a-row>
 
         <a-row>
           <a-col :span="6">
-            <span>开始时间：{{ basicInfo.real_start_time | time }}</span>
+            <span>开始时间：{{ basicInfo.actualStartTime }}</span>
           </a-col>
           <a-col :span="6">
-            <span>完成时间：{{ basicInfo.real_end_time | time }}</span>
+            <span>完成时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
           <a-col :span="6">
-            <span>执行人：{{ basicInfo.transactor_name }}</span>
+            <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor.replaceAll('\"','').replace('[','').replace(']','') }}</span>
           </a-col>
           <a-col :span="6">
-            <span>是否延迟执行：{{ basicInfo.is_delay | delay }}</span>
+            <span v-if="basicInfo.status!==null">任务状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
       </div>
@@ -41,7 +41,22 @@
       <div class="TaskDetailSchema__pointsInfo">
         <a-tabs default-active-key="id" @change="changeTitle">
           <a-tab-pane v-for="{ alias, id } in switchCardList" :key="id" :tab="alias">
-            <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll"></a-table>
+            <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
+              <template slot="position" slot-scope="position">
+                {{ position!==null?position.group:'无柜位信息' }}
+              </template>
+              <template slot="value" slot-scope="text, record">
+                {{ valueMapping(record.type,record.format,text) }}
+              </template>
+              <template slot="imgs" slot-scope="imgs">
+                <span v-if="imgs.imgs.length > 0">
+                  <img :src="i" alt="" :key="index" v-for="(i,index) in imgs.imgs">
+                </span>
+              </template>
+              <template slot="endpoint" slot-scope="endpoint">
+                {{ endpoint!==null?endpoint:'虚拟实体' }}
+              </template>
+            </a-table>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -55,6 +70,7 @@ import { PatrolService } from '@/api'
 import { DELAY_MAPPING } from '../../../typing'
 import moment from 'moment'
 import _ from 'lodash'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'TaskDetailSchema',
@@ -65,45 +81,71 @@ export default {
     columns: Object.freeze([
       {
         title: '点位',
-        dataIndex: 'zoneId',
+        dataIndex: 'point_alias',
         width: 180
       },
       {
         title: '柜位',
-        dataIndex: 'hostId',
-        width: 180
+        dataIndex: 'position',
+        width: 180,
+        scopedSlots: { customRender: 'position' }
       },
       {
         title: '设备',
-        dataIndex: 'endpointId',
+        dataIndex: 'host_alias',
         width: 180
       },
       {
+        title: '监控实体',
+        dataIndex: 'endpoint_alias',
+        width: 180,
+        scopedSlots: { customRender: 'endpoint' }
+      },
+      {
         title: '检查项',
-        dataIndex: 'metricId',
+        dataIndex: 'metric_alias',
         width: 180
       },
       {
         title: '值',
         dataIndex: 'value',
-        width: 180
+        width: 180,
+        scopedSlots: { customRender: 'value' }
       },
       {
         title: '备注',
-        dataIndex: 'note',
+        dataIndex: 'tags.remarks',
         width: 180
       },
       {
         title: '图片',
-        dataIndex: 'imagePathList',
-        width: 180
+        dataIndex: 'tags',
+        width: 180,
+        scopedSlots: { customRender: 'imgs' }
       }
     ]),
     dataSource: [],
     record: {},
     spinning: false,
     switchCardList: [],
-    taskDetail: []
+    taskDetail: [],
+    basicInfo: {
+      id: '723',
+      alias: '厦门数据中心 动环巡更计划',
+      status: '10',
+      planId: '1267708679575048194',
+      executor: '',
+      actualStartTime: '2021-05-21 13:48:22',
+      actualEndTime: '2021-05-21 14:02:03'
+    },
+    statusMapping: {
+      '0': '未开始',
+      '1': '进行中',
+      '3': '超时完成',
+      '10': '异常完成',
+      '20': '正常完成',
+      '30': '已过期'
+    }
   }),
   filters: {
     delay (delay) {
@@ -114,9 +156,6 @@ export default {
     }
   },
   computed: {
-    basicInfo () {
-      return this.record.basicInfo || {}
-    },
     pointsInfo () {
       return this.record.rfInfo || {}
     },
@@ -128,14 +167,34 @@ export default {
     }
   },
   methods: {
+    valueMapping (type, list, value) {
+      if (type === 'fill') {
+        return value
+      }
+      for (const obj of list) {
+        if (obj.value.toString() === value.toString()) {
+          return obj.alias
+        }
+      }
+      return value
+    },
     async fetch (task_id) {
       try {
         this.spinning = true
-        const {
-          basicInfo: { content }
-        } = await PatrolService.taskDetail(task_id)
-        this.taskDetail = content
-        this.switchCardName(this.taskDetail)
+        const v = await xungeng.post('/taskResultHistory/taskHistory', { 'taskId': task_id })
+        const content = await PatrolService.taskReportDetail(task_id)
+        if (v.code !== 200) {
+          this.$message.error('请求失败')
+          return
+        }
+        const resData = v.data.data
+        this.basicInfo = resData.taskData
+        this.switchCardList = resData.zoneData
+        if (content === null) {
+          this.$message.error('没有该条巡更记录')
+          return
+        }
+        this.dataSource = content
       } catch (e) {
         this.taskDetail = []
         this.record = {}
@@ -180,9 +239,9 @@ export default {
 
       return checkpointsList
     },
-    changeTitle (key) {
+    async changeTitle (key) {
       const index = this.switchCardList.findIndex((itemId) => itemId.id === key)
-      this.dataSource = this.setShowList(this.taskDetail[index])
+      this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, index)
     }
   }
 }
