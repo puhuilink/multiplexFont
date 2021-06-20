@@ -66,6 +66,8 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
+import { SHIFT_STATUS_MAPPING } from './typing'
+import { downloadExcel } from '@/utils/util'
 
 export default {
   name: 'ChangeShift',
@@ -106,12 +108,13 @@ export default {
         sorter: true,
         width: 180
       },
-      // {
-      //   title: '接班状态',
-      //   dataIndex: 'receive_time',
-      //   sorter: true,
-      //   width: 180
-      // },
+      {
+        title: '接班状态',
+        dataIndex: 'status',
+        sorter: true,
+        width: 180,
+        customRender: value => SHIFT_STATUS_MAPPING.get(value)
+      },
       {
         title: '交接时间',
         dataIndex: 'receive_time',
@@ -148,16 +151,8 @@ export default {
       this.$refs['schema'].detail(record)
     },
     async onExport () {
-      try {
-        const { code } = await PatrolService.onExport()
-        if (Number(code) === 200) {
-          this.$notification('成功')
-        } else {
-          this.$notification('导出失败')
-        }
-      } catch (e) {
-        this.$notifyError(e)
-      }
+      const data = await PatrolService.onExport(this.selectedRowKeys)
+      downloadExcel('巡更记录单', data)
     }
   }
 }

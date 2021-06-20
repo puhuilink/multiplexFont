@@ -5,26 +5,25 @@
       :confirmLoading="confirmLoading"
       :title="title"
       v-model="visible"
-      :width="640"
+      :width="800"
       wrapClassName="ApproveSchema__modal"
       @cancel="cancel"
       :afterClose="reset"
       okText="发送"
       cancelText="取消"
-      @ok="submit"
     >
       <template slot="footer">
         <a-button @click="editRule" class="fl">审批模板</a-button>
         <a-button @click="cancel">取消</a-button>
-        <a-button @click="submit" :loading="submitLoading" type="primary">发送</a-button>
+        <a-button @click="submitMsg" :loading="submitLoading" type="primary">发送</a-button>
       </template>
 
       <a-spin :spinning="spinning">
-        <ATable :columns="columns" :dataSource="events" :pagination="false" rowKey="id" />
+        <ATable :columns="columns" :dataSource="events" rowKey="uuid" bordered/>
       </a-spin>
     </a-modal>
 
-    <TempRule ref="rule" @updateConfig="onUpdateConfig" />
+    <TempRule ref="rule" @updateConfig="onUpdateConfig" @submit="cancel"/>
   </fragment>
 </template>
 
@@ -33,6 +32,8 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import TempRule from './modules/TempRule'
 import { PatrolService, TempService } from '@/api'
 import _ from 'lodash'
+import { xungeng } from '@/utils/request'
+import uuid from 'uuid/v4'
 
 export default {
   name: 'ApproveSchema',
@@ -48,23 +49,43 @@ export default {
           title: '通知等级',
           dataIndex: 'severity',
           width: 90,
-          customRender: (severity) => (severity ? `L${severity}` : '')
+          customRender: (__, severity) => __ ? `L${__}` : {}
         },
         {
           title: '通知用户',
-          width: 90,
-          customRender: (severity) => this.severityUserMapping.get(severity)
+          dataIndex: 'contact',
+          width: 120,
+          customRender: (contact) => {
+            if (contact) { return contact } else return '未找到用户'
+          }
         },
-        // {
-        //   title: '通知方式',
-        //   dataIndex: 'send_type',
-        //   width: 180,
-        //   customRender: sendType => sendType.map(type => SEND_TYPE_MAPPING.get(type)).join('、')
-        // },
+        {
+          title: '通知方式',
+          // dataIndex: 'send_type',
+          width: 55,
+          align: 'center',
+          // customRender: sendType => sendType.map(type => SEND_TYPE_MAPPING.get(type)).join('、')
+          customRender: () => <div>
+            <tr>短信</tr>
+            <hr style="background-color:rgb(210,210,210);height:1px;border:none;"/>
+            <tr>邮件</tr>
+          </div>
+        },
         {
           title: '通知内容',
-          width: 180,
-          customRender: () => '模板内容'
+          width: 360,
+          customRender: (__, record, index) => {
+            // 筛选对象转换成数组
+            const senderList = _.pick(record, ['smsMessage', 'emailMessage'])
+            // senderList.smsMessage = '短信   '.concat(senderList.smsMessage)
+            // senderList.emailMessage = '邮件   '.concat(senderList.emailMessage)
+            const sendList = _.values(senderList)
+            return (<div style="width:100%;">
+              <tr>{sendList[0]}</tr>
+              <hr style="background-color:rgb(210,210,210);height:1px;border:none;"/>
+              <tr>{sendList[1]}</tr>
+            </div>)
+          }
         }
       ]),
       // 告警具体条目
@@ -72,7 +93,11 @@ export default {
       senderConfig: [],
       spinning: false,
       submitLoading: false,
-      tempConfig: []
+      tempConfig: [],
+      formModel: {
+        taskId: '',
+        eventIds: []
+      }
     }
   },
   computed: {
@@ -88,22 +113,46 @@ export default {
     }
   },
   methods: {
-    approve (events = []) {
-      this.show('审批预览')
+    uuid,
+    async submitMsg () {
+      try {
+        this.submitLoading = true
+        const { code, msg } = await xungeng.post('/approval/sendMessage', this.formModel)
+        if (code === 200) {
+          this.$notification('审批成功')
+        } else {
+          this.$notifyError(msg)
+        }
+      } catch (e) {
+        this.$notifyError(e)
+        throw e
+      } finally {
+        this.submitLoading = false
+        this.cancel()
+      }
+    },
+    approve (taskId, events) {
+      this.show('审批配置')
+      this.formModel.taskId = taskId
+      this.formModel.eventIds = events.map(el => el.id)
       // this.fetchSenderConfig()
-      this.fetch(events)
+      this.fetch(taskId, events)
       this.events = events
     },
     editRule () {
-      const { senderConfig = [], tempConfig = [] } = this
-      this.$refs['rule'].open({ senderConfig, tempConfig })
+      const { senderConfig = [] } = this
+      const eventsList = _.sortBy(_.unionBy(this.events, 'severity'), item => item.severity)
+      if (!!_.find(eventsList, 'tempSmsId') || !!_.find(eventsList, 'tempEmailId')) {
+        this.$refs['rule'].open({ senderConfig }, this.formModel.eventIds)
+      } else {
+        alert('暂无联系人模板')
+      }
     },
-
-    async fetch (res) {
+    async fetch (taskId, events) {
       try {
         this.spinning = true
         await Promise.all([
-          this.fetchSenderConfig(res)
+          this.fetchSenderConfig(taskId, events)
           // this.fetchTemp()
         ])
       } catch (e) {
@@ -115,10 +164,14 @@ export default {
     /**
      * 获取发送配置
      */
-    async fetchSenderConfig (res) {
+    async fetchSenderConfig (taskId, events) {
       try {
-        const senderConfig = await PatrolService.senderConfig(res)
-        this.senderConfig = _.orderBy(senderConfig, ['event_level'], ['asc'])
+        // const senderConfig = await PatrolService.senderConfig(taskId, res)
+        const senderConfig = await PatrolService.previewApproval(taskId, events)
+        this.events = senderConfig
+        this.senderConfig.push(taskId, senderConfig)
+        // this.formModel.eventIds =
+        // this.senderConfig = _.orderBy(senderConfig, ['event_level'], ['asc'])
       } catch (e) {
         this.senderConfig = []
         throw e

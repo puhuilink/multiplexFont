@@ -63,6 +63,7 @@
     </CTable>
     <SenderSchema
       ref="schema"
+      @addSuccess="query"
     ></SenderSchema>
   </div>
 </template>
@@ -105,7 +106,7 @@ export default {
         },
         {
           title: '通知组',
-          dataIndex: 'group_id',
+          dataIndex: 'group.group_name',
           width: 120
         },
         {
@@ -158,6 +159,7 @@ export default {
           'send_type',
           'group_id',
           'contact',
+          'group { group_name }',
           'auto'
         ],
         alias: 'data',
