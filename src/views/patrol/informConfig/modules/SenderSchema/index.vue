@@ -11,7 +11,7 @@
     <a-form-model
       class="SendForm"
       :model="send"
-      ref="content"
+      ref="form"
     >
       <a-form-model-item
         label="告警等级"
@@ -23,6 +23,7 @@
         <a-select
           class="SendForm__Select"
           v-model="send.severity"
+          type="text"
         >
           <a-select-option
             v-for="[value, label] in levelList"
@@ -46,6 +47,7 @@
           showSearch
           class="item2"
           v-model="send.groupId"
+          type="text"
         >
           <a-select-option
             v-for="{ groupId, group_name } in groupList"
@@ -70,6 +72,7 @@
           <a-select-option
             class="item2"
             v-for="{ user_id, staff_name } in userList"
+            type="String"
             :key="user_id"
             :value="user_id">{{ staff_name }}</a-select-option>
         </a-select>
@@ -92,6 +95,7 @@
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledSMS"
+                  type="String"
                   v-model="send.tempSmsId"
                 >
                   <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
@@ -112,6 +116,7 @@
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledEmail"
+                  type="String"
                   v-model="send.tempEmailId"
                 >
                   <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
@@ -121,22 +126,22 @@
           </a-row>
         </a-col>
       </a-row>
+      <!-- / 底部按钮 -->
+      <template slot="footer" >
+        <a-form-model-item
+          v-bind="formItemLayout"
+          label="自动"
+          class="footer"
+        >
+          <a-select v-model="send.auto" class="enabled" >
+            <a-select-option :value="true">是</a-select-option>
+            <a-select-option :value="false">否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-button @click="cancel">取消</a-button>
+        <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
+      </template>
     </a-form-model>
-    <!-- / 底部按钮 -->
-    <template slot="footer" >
-      <a-form-model-item
-        v-bind="formItemLayout"
-        label="自动"
-        class="footer"
-      >
-        <a-select v-model="send.auto" class="enabled" >
-          <a-select-option :value="true">是</a-select-option>
-          <a-select-option :value="false">否</a-select-option>
-        </a-select>
-      </a-form-model-item>
-      <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
-    </template>
   </a-modal>
 </template>
 
@@ -234,7 +239,7 @@ export default {
       this.submit = this.insert
     },
     async insert () {
-      this.$refs.content.validate(async isValid => {
+      this.$refs.form.validate(async isValid => {
         if (!isValid) return
         try {
           this.btnLoading = true

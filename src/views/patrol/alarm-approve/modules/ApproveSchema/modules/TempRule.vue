@@ -10,6 +10,89 @@
     :afterClose="reset"
     @ok="submit"
   >
+    <a-spin :spinning="spinning">
+      <a-form-model :model="formModel" ref="formModel" :label-col="{ span: 5 }" :wrapper-col="{ span: 24 }" >
+        <div
+          v-for="(sender, index) in formModel.senderContent.sender"
+          :key="index"
+          style="background-color:rgba(246,246,246,0.9);">
+          <a-row type="flex">
+            <a-col :span="4" :offset="3" style="margin-top: 1.5%">
+              <label >告警等级</label>{{ `L${sender.severity}` }}
+              <a-tooltip style="margin-left: 2px">
+                <span slot="title">L1(紧急告警)L2(主要告警)L3(次要告警)L4(一般告警)L5(告警)</span>
+                <a-icon type="info-circle" class="TemporaryApproveRule__icon_info" />
+              </a-tooltip>
+            </a-col>
+            <a-col :span="16" >
+              <a-form-model-item
+                label="通知方式"
+                :rules="{ required: true, message: '请至少选择一种通知方式' }"
+                v-bind="formItemLayout"
+              >
+                <a-checkbox-group
+                  :options="plainOptions"
+                  @change="e => sendChange(e, index)"
+                  :default-value="sender.sendType | sendSwitchType"
+                  style="margin-left: 2%"/>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-form-model-item
+              :prop="`senderContent.sender[${index}].contact`"
+              :rules="[{ required: true, message: '请选择通知用户' }]"
+              v-bind="formItemLayout"
+              label="通知用户"
+            >
+              <a-select
+                style="width: 70%"
+                mode="tags"
+                placeholder="选择通知用户"
+                :defaultValue="sender.contact"
+                @change="e => contactChange(e, index)">
+                <a-select-option
+                  v-for="{value, label} in userList"
+                  :key="value"
+                  :value="value"
+                >
+                  {{ label }}
+                </a-select-option>
+              </a-select>
+              <a-checkbox style="margin-left: 2%" :defaultChecked="sender.auto" @change="e => autoChange(e, index)">自动发送</a-checkbox>
+            </a-form-model-item>
+          </a-row>
+        </div>
+        <a-row>
+          <a-form-model-item
+            label="邮件标题"
+            v-bind="formItemLayout"
+            :prop="`senderContent.subject`"
+            :rules="[{ required: true, message: '请输入通知邮件标题' }]"
+          >
+            <a-input v-model.trim="formModel.senderContent.subject" />
+          </a-form-model-item>
+          <a-form-model-item
+            label="邮件通知模板"
+            v-bind="formItemLayout"
+            :prop="`senderContent.subject`"
+            :rules="[{ required: true, message: '请输入通知模板标题' }]"
+          >
+            <TempEditor ref="editor" v-model="formModel.senderContent.emailMessage" :mapping="mapping"/>
+          </a-form-model-item>
+        </a-row>
+        <a-row>
+          <a-form-model-item
+            label="短信通知模板"
+            v-bind="formItemLayout"
+            :prop="`senderContent.smsMessage`"
+            :rules="[{ required: true, message: '请输入短信模板' }]"
+          >
+            <TempEditor ref="editor" v-model="formModel.senderContent.smsMessage" :mapping="mapping"/>
+          </a-form-model-item>
+        </a-row>
+      </a-form-model>
+    </a-spin>
     <template slot="footer">
 
       <span>生效方式：</span>
@@ -30,67 +113,6 @@
       <a-button @click="submit" :loading="submitLoading" type="primary">提交</a-button>
 
     </template>
-    <a-spin :spinning="spinning">
-      <a-form-model :model="formModel" ref="formModel" :label-col="{ span: 5 }" :wrapper-col="{ span: 24 }" >
-        <div v-for="(item, index) in formModel.senderContent.sender" :key="item" style="background-color:rgba(246,246,246,0.9);">
-          <a-row type="flex">
-            <a-col :span="6" :offset="3">
-              <span>告警级别:L{{ item.severity }}</span>
-              <a-tooltip style="margin-left: 2px">
-                <span slot="title">L1(紧急告警)L2(主要告警)L3(次要告警)L4(一般告警)L5(告警)</span>
-                <a-icon type="info-circle" class="TemporaryApproveRule__icon_info" />
-              </a-tooltip>
-            </a-col>
-            <a-col :span="12" >
-              <span>通知方式:</span>
-              <a-checkbox-group :options="plainOptions" @change="e => sendChange(e, index)" :default-value="`formModel.senderContent.sender` || sendType" style="margin-left: 2%"/>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-form-model-item
-              label="通知用户"
-            >
-              <a-form-model-item
-                :prop="`formModel.senderContent.sender[${index}].contact`"
-                :rules="[{ required: true, message: '请选择通知用户' }]"
-              >
-                <a-select style="width: 60%" mode="tags" placeholder="选择通知用户" :defaultValue="item.sendType" @change="e => contactChange(e, index)">
-                  <a-select-option
-                    v-for="{value, label} in userList"
-                    :key="value"
-                    :value="value"
-                  >
-                    {{ label }}
-                  </a-select-option>
-                </a-select>
-                <a-checkbox style="margin-left: 2%" :checked="item.auto" @change="e => autoChange(e, index)">自动发送</a-checkbox>
-              </a-form-model-item>
-            </a-form-model-item>
-          </a-row>
-        </div>
-        <a-row>
-          <a-form-model-item
-            label="邮件标题"
-            v-bind="formItemLayout"
-            prop="`senderContent.subject`"
-          >
-            <a-input v-model.trim="formModel.senderContent.subject" />
-          </a-form-model-item>
-          <a-form-model-item
-            label="邮件通知模板"
-            v-bind="formItemLayout"
-            :prop="`senderContent.emailMessage`"
-          >
-            <TempEditor ref="editor" v-model="formModel.senderContent.emailMessage" :mapping="mapping"/>
-          </a-form-model-item>
-        </a-row>
-        <a-row>
-          <a-form-model-item label="短信通知模板" v-bind="formItemLayout" :prop="`senderContent.smsMessage`">
-            <TempEditor ref="editor" v-model="formModel.senderContent.smsMessage" :mapping="mapping"/>
-          </a-form-model-item>
-        </a-row>
-      </a-form-model>
-    </a-spin>
 
   </a-modal>
 </template>
@@ -121,14 +143,18 @@ export default {
     TempEditor
   },
   filters: {
-    sendType: value => {
+    sendSwitchType: value => {
       switch (value) {
         case 'SMS': {
           return ['SMS']
         }
+        case 'EMAIL': {
+          return ['EMAIL']
+        }
         case 'SMS/EMAIL': {
           return ['SMS', 'EMAIL']
         }
+        default: return []
       }
     }
   },
@@ -167,22 +193,6 @@ export default {
     userList: [],
     recive_msg: []
   }),
-  computed: {
-    useEmail () {
-      const { senderConfig = [] } = this.formModel
-      return senderConfig
-        .map(({ send_type }) => send_type)
-        .flat()
-        .includes(SEND_TYPE_EMAIL)
-    },
-    useSms () {
-      const { senderConfig = [] } = this.formModel
-      return senderConfig
-        .map(({ send_type }) => send_type)
-        .flat()
-        .includes(SEND_TYPE_SMS)
-    }
-  },
   methods: {
     async open ({ senderConfig = [] }, eventsIds) {
       // 处理上个页面传递过来的数据，以告警等级聚合信息
@@ -217,7 +227,7 @@ export default {
         } else if (el.tempEmailId) {
           sendType += 'EMAIL'
         }
-        return { contact: encrypt(el.contact), id: el.id, auto: !!el.auto, sendType: sendType, severity: el.severity }
+        return { contact: el.contact, id: el.id, auto: !!el.auto, sendType: sendType, severity: el.severity }
       })
       // 填充加载用户列表
       const { data } = await UserService.find({
@@ -232,14 +242,13 @@ export default {
       this.submit = this.save
     },
     autoChange (e, item) {
-      this.recive_msg[item].auto = e.target.checked
       this.formModel.senderContent.sender[item].auto = e.target.checked
     },
-    sendChange (e, item) {
-      this.formModel.senderContent.sender[item].sendType = _.join(e, '/')
+    sendChange (e, index) {
+      this.formModel.senderContent.sender[index].sendType = _.join(e, '/')
     },
     contactChange (e, item) {
-      this.formModel.senderContent.sender[item].sendType = encrypt(_.join(e, '/'))
+      this.formModel.senderContent.sender[item].contact = _.join(e, '/')
     },
     save () {
       this.$refs.formModel.validate(async isValid => {
@@ -247,7 +256,14 @@ export default {
         // TODO: validator and scroll
         try {
           this.submitLoading = true
-          const { msg, code } = await xungeng.post('/approval/sendMessage', this.formModel)
+          const model = this.formModel
+          model.senderContent.sender
+            .map(el => {
+              el.contact = encrypt(el.contact)
+              return el
+            }
+            )
+          const { msg, code } = await xungeng.post('/approval/sendMessage', model)
           if (code === 200) {
             this.$notifyAddSuccess('提交成功')
           } else if (msg === 30) {
@@ -262,6 +278,13 @@ export default {
         }
       })
     }
+  },
+  computed: {
+    // useEmail () {
+    //   this.formModel.senderContent.sender
+    //     .map(el => el.sendType)
+    //     .split
+    // }
   }
 }
 </script>

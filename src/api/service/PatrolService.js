@@ -189,7 +189,7 @@ class PatrolService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      throw e
     }
   }
 

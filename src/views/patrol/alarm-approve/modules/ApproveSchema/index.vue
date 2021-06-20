@@ -13,7 +13,7 @@
       cancelText="取消"
     >
       <template slot="footer">
-        <a-button @click="editRule" class="fl">审批模板</a-button>
+        <a-button :loading="examineLoading" @click="editRule" class="fl">审批模板</a-button>
         <a-button @click="cancel">取消</a-button>
         <a-button @click="submitMsg" :loading="submitLoading" type="primary">发送</a-button>
       </template>
@@ -93,6 +93,7 @@ export default {
       senderConfig: [],
       spinning: false,
       submitLoading: false,
+      examineLoading: false,
       tempConfig: [],
       formModel: {
         taskId: '',
@@ -120,7 +121,7 @@ export default {
         const { code, msg } = await xungeng.post('/approval/sendMessage', this.formModel)
         if (code === 200) {
           this.$notification('审批成功')
-        } else {
+        } else if (code === 30) {
           this.$notifyError(msg)
         }
       } catch (e) {
@@ -143,7 +144,9 @@ export default {
       const { senderConfig = [] } = this
       const eventsList = _.sortBy(_.unionBy(this.events, 'severity'), item => item.severity)
       if (!!_.find(eventsList, 'tempSmsId') || !!_.find(eventsList, 'tempEmailId')) {
+        this.examineLoading = true
         this.$refs['rule'].open({ senderConfig }, this.formModel.eventIds)
+        setInterval(() => { this.examineLoading = false }, 500)
       } else {
         alert('暂无联系人模板')
       }
