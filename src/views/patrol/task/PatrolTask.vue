@@ -228,7 +228,13 @@ export default {
     },
     seeDetail () {
       const [id] = this.selectedRowKeys
-      this.$refs['schema'].detail(id)
+      const [record] = this.selectedRows
+      const status = parseInt(record.status)
+      if (status < 30 && status > 2) {
+        this.$refs['schema'].detail(id)
+      } else {
+        this.$message.error('该任务单没有巡更记录可查看！')
+      }
     },
     /**
      * 导出

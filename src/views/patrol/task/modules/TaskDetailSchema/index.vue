@@ -29,10 +29,10 @@
             <span>完成时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
           <a-col :span="6">
-            <span>执行人：{{ basicInfo.executor.replace('\"','').replace('[','').replace(']','') }}</span>
+            <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor.replaceAll('\"','').replace('[','').replace(']','') }}</span>
           </a-col>
           <a-col :span="6">
-            <span>任务状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
+            <span v-if="basicInfo.status!==null">任务状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
       </div>
@@ -183,13 +183,17 @@ export default {
         this.spinning = true
         const v = await xungeng.post('/taskResultHistory/taskHistory', { 'taskId': task_id })
         const content = await PatrolService.taskReportDetail(task_id)
-        if (v.code !== 200 || content == null) {
+        if (v.code !== 200) {
           this.$message.error('请求失败')
           return
         }
         const resData = v.data.data
         this.basicInfo = resData.taskData
         this.switchCardList = resData.zoneData
+        if (content === null) {
+          this.$message.error('没有该条巡更记录')
+          return
+        }
         this.dataSource = content
       } catch (e) {
         this.taskDetail = []
