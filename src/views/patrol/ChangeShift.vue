@@ -67,6 +67,7 @@ import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
 import { SHIFT_STATUS_MAPPING } from './typing'
+import { downloadExcel } from '@/utils/util'
 
 export default {
   name: 'ChangeShift',
@@ -150,16 +151,8 @@ export default {
       this.$refs['schema'].detail(record)
     },
     async onExport () {
-      try {
-        const { code } = await PatrolService.onExport()
-        if (Number(code) === 200) {
-          this.$notification('成功')
-        } else {
-          this.$notification('导出失败')
-        }
-      } catch (e) {
-        this.$notifyError(e)
-      }
+      const data = await PatrolService.onExport(this.selectedRowKeys)
+      downloadExcel('巡更记录单', data)
     }
   }
 }

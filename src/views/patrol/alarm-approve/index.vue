@@ -54,7 +54,7 @@
           <a-button @click="onBatchApprove" :disabled="!hasSelected">置为已审批</a-button>
         </template>
 
-        <!-- / 子表：告警条目 -->
+        <!--         // 子表：告警条目 -->
         <template v-slot:expandedRowRender="{ id, review }">
           <EventList
             :taskId="Number(id)"
@@ -190,8 +190,8 @@ export default {
      */
     onApprove () {
       const [selectedTask] = this.selectedTaskList
-      const [, events] = selectedTask
-      this.$refs['schema'].approve(events)
+      const [taskId, events] = selectedTask
+      this.$refs['schema'].approve(taskId, events)
     },
     /**
      * 快速批量审批（直接修改任务单状态）

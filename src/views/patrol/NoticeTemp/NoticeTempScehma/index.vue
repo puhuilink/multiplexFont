@@ -165,6 +165,8 @@ export default {
     },
     reset () {
       this.form.resetFields()
+      this.$refs.editor.resetContent()
+      this.$refs.editor.preview = false
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {

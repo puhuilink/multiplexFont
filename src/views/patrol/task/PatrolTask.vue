@@ -75,7 +75,20 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-range-picker class="fw" />
+                  <a-range-picker
+                    allowClear
+                    class="fw"
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    :ranges="{
+                      最近1天: [moment().add(-1, 'days'), moment(), moment()],
+                      最近1周: [moment().add(-7, 'days'), moment()],
+                      最近1月: [moment().add(-30, 'days'), moment()],
+                    }"
+                    :showTime="{ format: 'HH:mm' }"
+                    :defaultValue="[moment().add(-1, 'days'), moment()]"
+                    v-model="queryParams.actual_end_time"
+                  />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -111,6 +124,7 @@ import {
   STATUS_MAPPING
 } from '../typing'
 import { PatrolService } from '@/api'
+import moment from 'moment'
 
 export default {
   name: 'PatrolTask',
@@ -201,6 +215,7 @@ export default {
     ])
   }),
   methods: {
+    moment,
     loadData (parameter) {
       return PatrolService.taskFind({
         where: {

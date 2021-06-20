@@ -8,6 +8,7 @@ import {
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
 import { axios, xungeng } from '@/utils/request'
+import { decrypt } from '@/utils/aes'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -49,8 +50,9 @@ class PatrolService extends BaseService {
   }
 
   // 导出任务单
-  static async onExport () {
-    return xungeng.post('changeShift/exportChangeShift')
+  static async onExport (ids) {
+    console.log(ids)
+    return xungeng.post('changeShift/exportChangeShift', ids, { responseType: 'arraybuffer' })
   }
 
   // 任务单异常项
@@ -169,6 +171,25 @@ class PatrolService extends BaseService {
           userList: allUserList.filter(({ user_id }) => userIdList.includes(user_id))
         }
       })
+    }
+  }
+
+  // 审批预览
+  static async previewApproval (taskId, res) {
+    const ids = res.map(el => el.id)
+    try {
+      const { code, data } = await xungeng.post('/approval/preview', { 'taskId': taskId, 'eventIds': ids })
+      if (code === 200) {
+        data.map(el => {
+          if (el.contact) {
+            el.contact = decrypt(el.contact)
+          }
+          return el
+        })
+        return data
+      }
+    } catch (e) {
+      this.$notifyError(e)
     }
   }
 

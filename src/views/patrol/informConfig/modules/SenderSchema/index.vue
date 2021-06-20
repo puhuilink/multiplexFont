@@ -6,14 +6,17 @@
     wrapClassName="SenderSchema__modal"
     v-model="visible"
     :afterClose="reset"
+    @cancel="cancel"
   >
-    <div
+    <a-form-model
       class="SendForm"
+      :model="send"
       ref="content"
     >
       <a-form-model-item
         label="告警等级"
         v-bind="formItemLayout"
+        prop="severity"
         :rules="[
           { required: true, message: '请选择通知等级' },
         ]">
@@ -34,6 +37,7 @@
       <a-form-model-item
         label="计划组"
         v-bind="formItemLayout"
+        prop="groupId"
         :rules="[{ required: true, message: '请选择计划组' }]"
       >
         <a-select
@@ -52,6 +56,7 @@
 
       <a-form-model-item
         label="通知人"
+        prop="contact"
         v-bind="formItemLayout"
         :rules="[{ required: true, message: '请选择通知组' }]"
       >
@@ -82,7 +87,7 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
-              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
+              <a-form-model-item label="短信模板" prop="tempSmsId" v-bind="nestedFormItemLayout">
                 <a-select
                   class="item1"
                   allowClear
@@ -102,7 +107,7 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
-              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
+              <a-form-model-item label="邮箱模板" prop="tempEmailId" v-bind="nestedFormItemLayout">
                 <a-select
                   class="item1"
                   allowClear
@@ -116,7 +121,7 @@
           </a-row>
         </a-col>
       </a-row>
-    </div>
+    </a-form-model>
     <!-- / 底部按钮 -->
     <template slot="footer" >
       <a-form-model-item
@@ -229,19 +234,27 @@ export default {
       this.submit = this.insert
     },
     async insert () {
-      try {
-        this.btnLoading = true
-        // 新增用户
-        await PatrolSenderService.insert(this.send)
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        // this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.content.validate(async isValid => {
+        if (!isValid) return
+        try {
+          this.btnLoading = true
+          // 新增用户
+          const { msg, code } = await PatrolSenderService.insert(this.send)
+          if (code === 200) {
+            this.$emit('addSuccess')
+            this.$notifyAddSuccess()
+          } else if (code === 30) {
+            this.$notifyError(msg)
+            throw msg
+          }
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+          this.cancel()
+        }
+      })
     },
     edit (id) {
       this.fetchFix()
@@ -253,7 +266,7 @@ export default {
     async fetch (id) {
       try {
         const { data: { model } } = await PatrolSenderService.find({
-          where: { id: { _eq: Number(id[0]) } },
+          where: { id: { _in: id } },
           fields: [ 'id', 'contact', 'groupId: group_id', 'severity', 'send_type', 'tempSmsId: temp_sms_id', 'tempEmailId: temp_email_id', 'auto' ],
           alias: 'model'
         })
@@ -280,12 +293,12 @@ export default {
       try {
         this.btnLoading = true
         const { code, msg } = await PatrolSenderService.update(this.send)
-        if (Number(code) !== 200) {
-          this.$notifyError(msg)
-        } else {
+        if (code === 200) {
           this.$emit('addSuccess')
           this.$notifyEditSuccess()
           this.cancel()
+        } else {
+          this.$notifyError(msg)
         }
       } catch (e) {
         this.$notifyError(e)

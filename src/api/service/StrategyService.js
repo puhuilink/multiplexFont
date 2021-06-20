@@ -76,7 +76,6 @@ class StrategyService extends BaseService {
       'exprs',
       'enabled'
     ])
-
     if (_.isEmpty(data['hostId'])) {
       data['hostId'] = null
     }

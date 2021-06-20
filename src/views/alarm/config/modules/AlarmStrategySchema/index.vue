@@ -195,7 +195,7 @@
               {{ formatConditionText(formModel.exprs.func ) }}
               {{ formatOperatorText( opt.operator) }}
               <span> {{ formModel.exprs.func === 'happen' ? opt.threshold :'' }} </span>
-              <span> {{ formModel.exprs.func === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.func === 'happen' ? formModel.exprs.threshold : opt.threshold }}</span>
+              <span> {{ formModel.exprs.func === 'happen' ? '且满足' : '' }}  {{ formModel.exprs.func === 'happen' ? formModel.exprs.trigger_value : opt.threshold }}</span>
               <span> {{ formModel.exprs.func === 'happen' ? '次时' :'时' }} </span>
               产生一次告警; 告警级别为 {{ !opt.alarm_level ? ' ' : 'L' + opt.alarm_level }};
 
@@ -239,7 +239,9 @@ const makeOpt = () => ({
   threshold: '',
   alarm_level: undefined,
   frequency: 1,
-  template: ''
+  template: '',
+  // TODO
+  threshold_str: ''
 })
 
 export default {
@@ -282,7 +284,7 @@ export default {
       exprs: {
         interval: 1,
         func: '',
-        threshold: undefined,
+        trigger_value: undefined,
         opts: [
           {
             ...makeOpt()

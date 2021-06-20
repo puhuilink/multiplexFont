@@ -503,7 +503,7 @@ export default {
           'host_id'
         ]
         let hostList = await this.aliasList(hostCondition, fields, { distinct: 'host_id' })
-        hostList = hostList.map(el => Number(el.host_id))
+        hostList = hostList.map(el => el.host_id)
         alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, 'host_id': { _in: hostList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
       } else {
         alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })

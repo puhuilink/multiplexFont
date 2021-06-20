@@ -407,7 +407,6 @@ class Title {
    * 获取标题配置
    */
   getOption () {
-    // console.log('深浅', Object.assign({}, { ...this }, this.position.getOption()), _.cloneDeep(Object.assign({}, { ...this }, this.position.getOption())))
     return _.cloneDeep(Object.assign({}, { ...this }, this.position.getOption()))
   }
 }
