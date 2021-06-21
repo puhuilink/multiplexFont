@@ -240,8 +240,7 @@ export default {
       return checkpointsList
     },
     async changeTitle (key) {
-      const index = this.switchCardList.findIndex((itemId) => itemId.id === key)
-      this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, index)
+      this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, key)
     }
   }
 }
