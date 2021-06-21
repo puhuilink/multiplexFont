@@ -459,10 +459,10 @@ export default {
         alias: 'data',
         ...rest
       })
-      const metrics = data.data.map(el => Number(el.metric_id))
+      const metrics = data.data.map(el => el.metric_id)
       const concatList = await this.aliasList({ metric_id: { _in: metrics } }, concatFields)
       data.data.map(el => {
-        return Object.assign(el, ...concatList.filter(ele => Number(ele.metric_id) === Number(el.metric_id)))
+        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id))
       })
       return data
     },
@@ -503,7 +503,7 @@ export default {
           'host_id'
         ]
         let hostList = await this.aliasList(hostCondition, fields, { distinct: 'host_id' })
-        hostList = hostList.map(el => Number(el.host_id))
+        hostList = hostList.map(el => el.host_id)
         alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, 'host_id': { _in: hostList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
       } else {
         alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })

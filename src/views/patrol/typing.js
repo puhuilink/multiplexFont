@@ -1,8 +1,10 @@
 export const STATUS_LIST = [
-  ['pending', '待执行'],
-  ['processing', '执行中'],
-  ['accomplished', '已完成'],
-  ['aborted', '未完成']
+  ['0', '未开始'],
+  ['1', '进行中'],
+  ['3', '超时完成'],
+  ['10', '告警完成'],
+  ['20', '无告警完成'],
+  ['30', '已过期']
 ]
 
 export const STATUS_MAPPING = new Map(STATUS_LIST)
@@ -67,3 +69,10 @@ const PLAN_STATUS_LIST = [
 ]
 
 export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)
+
+export const SHIFT_STATUS_MAPPING = new Map(
+  [
+    ['0', '已关闭'],
+    ['1', '已交班'],
+    ['2', '已接班']]
+)

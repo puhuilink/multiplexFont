@@ -114,6 +114,18 @@ export function deviceBrandColumn () {
   return column
 }
 
+export function modelDeviceBrandColumn () {
+  const column = {
+    title: '品牌名称',
+    dataIndex: 'model { brand_name }',
+    width: 200,
+    customRender: (__, { model }) => _.get(model, 'brand_name')
+  }
+
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
 export function deviceTypeColumn () {
   const column = {
     title: '监控类型',
@@ -126,12 +138,38 @@ export function deviceTypeColumn () {
   return column
 }
 
+export function hostModelType () {
+  const column = {
+    title: '品牌设备',
+    dataIndex: 'model { device_model_name }',
+    width: 200,
+    customRender: (__, { model }) => _.get(model, 'device_model_name')
+  }
+
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
+export function modelTypeColumn () {
+  const column = {
+    title: '监控类型',
+    dataIndex: 'model { deviceLabel { value_label } }',
+    width: 200,
+    customRender: (__, { model: { deviceLabel } }) => {
+      return _.get(deviceLabel, 'value_label')
+    }
+  }
+
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
 export function deviceModelColumn () {
   const column = {
     title: '品牌设备',
     dataIndex: 'device_model dictModel { value_label }',
     width: 200,
-    customRender: (__, { device_model, dictModel }) => _.get(dictModel, 'value_label') || device_model
+    customRender: (__, { device_model, dictModel, model }) => _.get(dictModel, 'value_label') || device_model
   }
 
   column.customRender = column.customRender.bind(this)
@@ -150,12 +188,36 @@ export function metricModelIdColumn () {
   return column
 }
 
+export function metricModelColumn () {
+  const column = {
+    title: '检查项',
+    dataIndex: 'modelMetric { alias }',
+    width: 200,
+    customRender: (__, { modelMetric }) => _.get(modelMetric, 'alias')
+  }
+
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
 export function endpointModelIdColumn () {
   const column = {
     title: '监控实体',
     dataIndex: 'endpoint_model_id modelEndpoint { alias }',
     width: 200,
-    customRender: (endpointModelId, { modelEndpoint }) => _.get(modelEndpoint, 'alias') || endpointModelId
+    customRender: (endpointModelId, { modelEndpoint }, model) => _.get(modelEndpoint, 'alias') || endpointModelId
+  }
+
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
+export function modelEndpointModelIdColumn () {
+  const column = {
+    title: '监控实体',
+    dataIndex: 'model { endpoint_alias }',
+    width: 200,
+    customRender: (__, { model }) => _.get(model, 'endpoint_alias')
   }
 
   column.customRender = column.customRender.bind(this)

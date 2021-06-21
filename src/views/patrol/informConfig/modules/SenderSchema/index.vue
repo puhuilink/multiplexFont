@@ -6,20 +6,24 @@
     wrapClassName="SenderSchema__modal"
     v-model="visible"
     :afterClose="reset"
+    @cancel="cancel"
   >
-    <div
+    <a-form-model
       class="SendForm"
-      ref="content"
+      :model="send"
+      ref="form"
     >
       <a-form-model-item
         label="告警等级"
         v-bind="formItemLayout"
+        prop="severity"
         :rules="[
           { required: true, message: '请选择通知等级' },
         ]">
         <a-select
           class="SendForm__Select"
           v-model="send.severity"
+          type="text"
         >
           <a-select-option
             v-for="[value, label] in levelList"
@@ -34,6 +38,7 @@
       <a-form-model-item
         label="计划组"
         v-bind="formItemLayout"
+        prop="groupId"
         :rules="[{ required: true, message: '请选择计划组' }]"
       >
         <a-select
@@ -42,6 +47,7 @@
           showSearch
           class="item2"
           v-model="send.groupId"
+          type="text"
         >
           <a-select-option
             v-for="{ groupId, group_name } in groupList"
@@ -52,6 +58,7 @@
 
       <a-form-model-item
         label="通知人"
+        prop="contact"
         v-bind="formItemLayout"
         :rules="[{ required: true, message: '请选择通知组' }]"
       >
@@ -65,6 +72,7 @@
           <a-select-option
             class="item2"
             v-for="{ user_id, staff_name } in userList"
+            type="String"
             :key="user_id"
             :value="user_id">{{ staff_name }}</a-select-option>
         </a-select>
@@ -82,11 +90,12 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
-              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
+              <a-form-model-item label="短信模板" prop="tempSmsId" v-bind="nestedFormItemLayout">
                 <a-select
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledSMS"
+                  type="String"
                   v-model="send.tempSmsId"
                 >
                   <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
@@ -102,11 +111,12 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
-              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
+              <a-form-model-item label="邮箱模板" prop="tempEmailId" v-bind="nestedFormItemLayout">
                 <a-select
                   class="item1"
                   allowClear
                   :disabled="!send.hasEnabledEmail"
+                  type="String"
                   v-model="send.tempEmailId"
                 >
                   <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
@@ -116,22 +126,22 @@
           </a-row>
         </a-col>
       </a-row>
-    </div>
-    <!-- / 底部按钮 -->
-    <template slot="footer" >
-      <a-form-model-item
-        v-bind="formItemLayout"
-        label="自动"
-        class="footer"
-      >
-        <a-select v-model="send.auto" class="enabled" >
-          <a-select-option :value="true">是</a-select-option>
-          <a-select-option :value="false">否</a-select-option>
-        </a-select>
-      </a-form-model-item>
-      <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
-    </template>
+      <!-- / 底部按钮 -->
+      <template slot="footer" >
+        <a-form-model-item
+          v-bind="formItemLayout"
+          label="自动"
+          class="footer"
+        >
+          <a-select v-model="send.auto" class="enabled" >
+            <a-select-option :value="true">是</a-select-option>
+            <a-select-option :value="false">否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-button @click="cancel">取消</a-button>
+        <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
+      </template>
+    </a-form-model>
   </a-modal>
 </template>
 
@@ -229,19 +239,27 @@ export default {
       this.submit = this.insert
     },
     async insert () {
-      try {
-        this.btnLoading = true
-        // 新增用户
-        await PatrolSenderService.insert(this.send)
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        // this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.form.validate(async isValid => {
+        if (!isValid) return
+        try {
+          this.btnLoading = true
+          // 新增用户
+          const { msg, code } = await PatrolSenderService.insert(this.send)
+          if (code === 200) {
+            this.$emit('addSuccess')
+            this.$notifyAddSuccess()
+          } else if (code === 30) {
+            this.$notifyError(msg)
+            throw msg
+          }
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+          this.cancel()
+        }
+      })
     },
     edit (id) {
       this.fetchFix()
@@ -253,7 +271,7 @@ export default {
     async fetch (id) {
       try {
         const { data: { model } } = await PatrolSenderService.find({
-          where: { id: { _eq: Number(id[0]) } },
+          where: { id: { _in: id } },
           fields: [ 'id', 'contact', 'groupId: group_id', 'severity', 'send_type', 'tempSmsId: temp_sms_id', 'tempEmailId: temp_email_id', 'auto' ],
           alias: 'model'
         })
@@ -280,12 +298,12 @@ export default {
       try {
         this.btnLoading = true
         const { code, msg } = await PatrolSenderService.update(this.send)
-        if (Number(code) !== 200) {
-          this.$notifyError(msg)
-        } else {
+        if (code === 200) {
           this.$emit('addSuccess')
           this.$notifyEditSuccess()
           this.cancel()
+        } else {
+          this.$notifyError(msg)
         }
       } catch (e) {
         this.$notifyError(e)

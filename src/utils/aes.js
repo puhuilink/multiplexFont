@@ -15,8 +15,10 @@ export function encrypt (message) {
 }
 
 export function decrypt (encryptMessage) {
-  return CryptoJS.AES.decrypt(encryptMessage, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC
-  }).toString(CryptoJS.enc.Utf8)
+  if (encryptMessage) {
+    return CryptoJS.AES.decrypt(encryptMessage, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC
+    }).toString(CryptoJS.enc.Utf8)
+  }
 }

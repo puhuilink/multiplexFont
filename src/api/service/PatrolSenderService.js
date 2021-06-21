@@ -3,6 +3,7 @@ import { PatrolSenderDao } from '../dao/PatrolSenderDao'
 import { query } from '../utils/hasura-orm/index'
 import { xungeng } from '@/utils/request'
 import _ from 'lodash'
+import { encrypt } from '@/utils/aes'
 
 class PatrolSenderService extends BaseService {
   static async find (args = {}) {
@@ -13,8 +14,8 @@ class PatrolSenderService extends BaseService {
   }
 
   static async insert (sender) {
-    if (sender.contact.length > 1) {
-      sender.contact = _.join(sender.contact, '/')
+    if (sender.contact.length > 0) {
+      sender.contact = encrypt(_.join(sender.contact, '/'))
     }
     const q = await xungeng.post('/sender/add', sender)
     return q
@@ -27,8 +28,8 @@ class PatrolSenderService extends BaseService {
   }
 
   static async update (sender) {
-    if (sender.contact.length > 1) {
-      sender.contact = _.join(sender.contact, '/')
+    if (sender.contact.length > 0) {
+      sender.contact = encrypt(_.join(sender.contact, '/'))
     }
     const q = await xungeng.post('/sender/update', sender)
     return q

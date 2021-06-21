@@ -55,7 +55,11 @@
         <a-button :disabled="!hasSelected" @click="onBatchDelete">删除</a-button>
       </template>
     </CTable>
-    <NoticeSchema ref="schema"></NoticeSchema>
+    <NoticeSchema
+      ref="schema"
+      @addSuccess="query"
+      @editSuccess="query(false)">
+    </NoticeSchema>
   </div>
 </template>
 
