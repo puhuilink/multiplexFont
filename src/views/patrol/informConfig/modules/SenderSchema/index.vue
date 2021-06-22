@@ -7,6 +7,7 @@
     v-model="visible"
     :afterClose="reset"
     @cancel="cancel"
+    @ok="submit"
   >
     <a-form-model
       class="SendForm"

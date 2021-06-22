@@ -86,7 +86,6 @@
                       最近1月: [moment().add(-30, 'days'), moment()],
                     }"
                     :showTime="{ format: 'HH:mm' }"
-                    :defaultValue="[moment().add(-1, 'days'), moment()]"
                     v-model="queryParams.actual_end_time"
                   />
                 </a-form-item>
@@ -167,7 +166,8 @@ export default {
         title: '巡更实际开始时间',
         dataIndex: 'actual_start_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD hh:mm:ss') : ''
       },
       {
         title: '延迟开始',
@@ -180,7 +180,8 @@ export default {
         title: '巡更实际结束时间',
         dataIndex: 'actual_end_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD hh:mm:ss') : ''
       },
       {
         title: '超时完成',
@@ -210,7 +211,8 @@ export default {
       {
         title: '巡更人员',
         dataIndex: 'executor',
-        width: 150
+        width: 150,
+        customRender: executor => executor ? executor.slice(1, executor.length - 1) : ''
       }
     ])
   }),

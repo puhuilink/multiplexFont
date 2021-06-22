@@ -14,9 +14,7 @@ class PatrolSenderService extends BaseService {
   }
 
   static async insert (sender) {
-    if (sender.contact.length > 0) {
-      sender.contact = encrypt(_.join(sender.contact, '/'))
-    }
+    sender.contact = encrypt(_.join(sender.contact, '/'))
     const q = await xungeng.post('/sender/add', sender)
     return q
   }

@@ -19,7 +19,7 @@
       </template>
 
       <a-spin :spinning="spinning">
-        <ATable :columns="columns" :dataSource="events" rowKey="uuid" bordered/>
+        <ATable :columns="columns" :dataSource="events" rowKey="id" bordered/>
       </a-spin>
     </a-modal>
 

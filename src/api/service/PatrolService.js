@@ -3,7 +3,7 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
-  PatrolTaskStatusDao
+  PatrolTaskStatusDao, PatrolTaskReportViewDao
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
@@ -51,7 +51,6 @@ class PatrolService extends BaseService {
 
   // 导出任务单
   static async onExport (ids) {
-    console.log(ids)
     return xungeng.post('changeShift/exportChangeShift', ids, { responseType: 'arraybuffer' })
   }
 
@@ -369,6 +368,30 @@ class PatrolService extends BaseService {
       data,
       responseType: 'arraybuffer'
     })
+  }
+
+  static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
+    const result = await this.reportFind({
+      where: { task_id, zone_id },
+      alias: 'content',
+      fields: [
+        'point_alias',
+        'host_alias',
+        'endpoint_alias',
+        'metric_alias',
+        'format',
+        'type',
+        'tags',
+        'position',
+        'value'
+      ]
+    })
+    const { data: { content } } = result
+    return content
+  }
+
+  static async reportFind (argus = {}) {
+    return query(PatrolTaskReportViewDao.find(argus))
   }
 }
 

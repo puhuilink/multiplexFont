@@ -67,16 +67,12 @@
           <a-form-model-item
             label="邮件标题"
             v-bind="formItemLayout"
-            :prop="`senderContent.subject`"
-            :rules="[{ required: true, message: '请输入通知邮件标题' }]"
           >
             <a-input v-model.trim="formModel.senderContent.subject" />
           </a-form-model-item>
           <a-form-model-item
             label="邮件通知模板"
             v-bind="formItemLayout"
-            :prop="`senderContent.subject`"
-            :rules="[{ required: true, message: '请输入通知模板标题' }]"
           >
             <TempEditor ref="editor" v-model="formModel.senderContent.emailMessage" :mapping="mapping"/>
           </a-form-model-item>
@@ -86,7 +82,6 @@
             label="短信通知模板"
             v-bind="formItemLayout"
             :prop="`senderContent.smsMessage`"
-            :rules="[{ required: true, message: '请输入短信模板' }]"
           >
             <TempEditor ref="editor" v-model="formModel.senderContent.smsMessage" :mapping="mapping"/>
           </a-form-model-item>
@@ -183,6 +178,7 @@ export default {
     },
     enabledType: ENABLED_TYPE_TEMPORARY,
     formModel: {
+      saveFlag: ENABLED_TYPE_TEMPORARY,
       senderContent: {}
     },
     // L2, L3, L4, L5
@@ -191,7 +187,8 @@ export default {
     spinning: false,
     submitLoading: false,
     userList: [],
-    recive_msg: []
+    recive_msg: [],
+    test: {}
   }),
   methods: {
     async open ({ senderConfig = [] }, eventsIds) {
@@ -241,11 +238,23 @@ export default {
       this.show('巡更组审批模板')
       this.submit = this.save
     },
-    autoChange (e, item) {
-      this.formModel.senderContent.sender[item].auto = e.target.checked
+    autoChange (e, index) {
+      const { auto, ...rest } = this.formModel.senderContent.sender[index]
+      this.formModel.senderContent.sender.splice(index, 1, {
+        ...rest,
+        auto: e.target.checked
+      })
     },
     sendChange (e, index) {
-      this.formModel.senderContent.sender[index].sendType = _.join(e, '/')
+      const { sendType, ...rest } = this.formModel.senderContent.sender[index]
+      const arr = this.formModel.senderContent.sender
+      arr.splice(index, 1, {
+        ...rest,
+        sendType: _.join(e, '/')
+      })
+      this.formModel.senderContent.sender = arr
+      this.$set(this.formModel.senderContent, 'sender', arr)
+      this.$forceUpdate()
     },
     contactChange (e, item) {
       this.formModel.senderContent.sender[item].contact = _.join(e, '/')
@@ -266,26 +275,36 @@ export default {
           const { msg, code } = await xungeng.post('/approval/sendMessage', model)
           if (code === 200) {
             this.$notifyAddSuccess('提交成功')
-          } else if (msg === 30) {
+            this.cancel()
+            this.$emit('submit')
+          } else if (code === 30) {
             this.$notifyError(msg)
+            return
           }
         } catch (e) {
           throw e
         } finally {
           this.submitLoading = false
-          this.cancel()
-          this.$emit('submit')
         }
       })
     }
-  },
-  computed: {
-    // useEmail () {
-    //   this.formModel.senderContent.sender
-    //     .map(el => el.sendType)
-    //     .split
-    // }
   }
+  // computed: {
+  //   useEmail () {
+  //     console.log(123)
+  //     return this.formModel.senderContent.sender
+  //   },
+  //   useSMS () {
+  //     return this.formModel.senderContent.sender
+  //       .map(el => this.$options.filters['sendSwitchType'](el.sendType))
+  //       .flat()
+  //       .includes('SMS')
+  //   },
+  //   testCom () {
+  //     console.log('test发生改变')
+  //     return this.test + '12'
+  //   }
+  // }
 }
 </script>
 
