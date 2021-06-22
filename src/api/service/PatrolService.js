@@ -48,10 +48,29 @@ class PatrolService extends BaseService {
     })
     return _.first(changeShiftList)
   }
+  static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
+    const result = await this.reportFind({
+      where: { task_id, zone_id },
+      alias: 'content',
+      fields: [
+        'point_alias',
+        'host_alias',
+        'endpoint_alias',
+        'metric_alias',
+        'format',
+        'type',
+        'tags',
+        'position',
+        'value'
+      ]
+    })
+    const { data: { content } } = result
+    return content
+  }
 
   // 导出任务单
-  static async onExport (ids) {
-    return xungeng.post('changeShift/exportChangeShift', ids, { responseType: 'arraybuffer' })
+  static async onExport () {
+    return xungeng.post('changeShift/exportChangeShift')
   }
 
   // 任务单异常项
@@ -60,6 +79,9 @@ class PatrolService extends BaseService {
     return query(
       PatrolTaskEventHistoryDao.find(argus)
     )
+  }
+  static async reportFind (argus = {}) {
+    return query(PatrolTaskReportViewDao.find(argus))
   }
 
   static async pathFind (argus = {}) {
@@ -188,7 +210,7 @@ class PatrolService extends BaseService {
         return data
       }
     } catch (e) {
-      throw e
+      this.$notifyError(e)
     }
   }
 
@@ -368,30 +390,6 @@ class PatrolService extends BaseService {
       data,
       responseType: 'arraybuffer'
     })
-  }
-
-  static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
-    const result = await this.reportFind({
-      where: { task_id, zone_id },
-      alias: 'content',
-      fields: [
-        'point_alias',
-        'host_alias',
-        'endpoint_alias',
-        'metric_alias',
-        'format',
-        'type',
-        'tags',
-        'position',
-        'value'
-      ]
-    })
-    const { data: { content } } = result
-    return content
-  }
-
-  static async reportFind (argus = {}) {
-    return query(PatrolTaskReportViewDao.find(argus))
   }
 }
 
