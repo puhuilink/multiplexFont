@@ -16,7 +16,7 @@
             <a-row>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="发送方式" v-bind="formItemLayout" class="fw">
+                <a-form-item label="通知方式" v-bind="formItemLayout" class="fw">
                   <a-select allowClear v-model="queryParams.send_type" >
                     <a-select-option
                       v-for="[value, label] in sendMethod"
@@ -28,7 +28,7 @@
               </a-col>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="发送人" v-bind="formItemLayout" class="fw">
+                <a-form-item label="接收人" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.contact" />
                 </a-form-item>
               </a-col>
@@ -111,7 +111,7 @@ export default {
           width: 120
         },
         {
-          title: '发送人',
+          title: '接收人',
           dataIndex: 'contact',
           width: 120,
           customRender: contact => contact
@@ -129,7 +129,7 @@ export default {
           // }
         },
         {
-          title: '发送方式',
+          title: '通知方式',
           dataIndex: 'send_type',
           width: 120,
           customRender: send_type => this.$options.filters.sendTypeSwitch(send_type)

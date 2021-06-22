@@ -45,13 +45,37 @@ const responseInterceptor = (response) => {
   return response.data
 }
 
+const XungengresponseInterceptor = (response) => {
+  const { data: { code, msg } } = response
+  // hack: 30 代表查询到未匹配内容
+  if (code && ![200].includes(code)) {
+    switch (code) {
+      case 401: {
+        notification.error({
+          message: '登录已过期',
+          description: '请重新登录'
+        })
+        break
+      }
+      default: {
+        notification.error({
+          message: '操作失败',
+          description: msg
+        })
+      }
+    }
+    return Promise.reject(new Error(msg))
+  }
+  return response.data
+}
+
 service.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
 
-serviceXungeng.interceptors.request.use(requestInterceptor)
+serviceXungeng.interceptors.request.use(XungengresponseInterceptor)
 
-serviceXungeng.interceptors.response.use(responseInterceptor)
+serviceXungeng.interceptors.response.use(XungengresponseInterceptor)
 
 serviceXungeng.defaults.withCredentials = true
 

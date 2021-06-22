@@ -94,7 +94,8 @@ export default {
         title: '交班时间',
         dataIndex: 'hand_time',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: hand_time => moment(hand_time).format('YYYY-MM-DD hh:mm:ss')
       },
       // {
       //   title: '交班状态',
