@@ -167,6 +167,11 @@
       :form.sync="form"
       :visible.sync="visible"
       :xgModelPoint="xgModelPoint"
+      :hosts="hostList"
+      :endpoints="endpointList"
+      :metrics="metricList"
+      :answers="answerList"
+      :thresholds="thresholdList"
       v-if="visible"
     />
 
@@ -179,6 +184,12 @@ import { downloadFile, scrollTo } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import { mapState } from 'vuex'
+import _ from 'lodash'
+import { PatrolEndpointService } from '@/api/service/PatrolEndpointService'
+import { PatrolMetricService } from '@/api/service/PatrolMetricService'
+import { PatrolAnswerService } from '@/api/service/PatrolAnswerService'
+import { PatrolThresholdService } from '@/api/service/PatrolThresholdService'
+import { PatrolHostService } from '@/api/service/PatrolHostService'
 
 export default {
   name: 'PatrolConfig',
@@ -189,6 +200,11 @@ export default {
     ZoneSelect
   },
   data () {
+    this.fetchHost = _.debounce(this.fetchHost, 800)
+    this.fetchEndpoint = _.debounce(this.fetchEndpoint, 800)
+    this.fetchMetric = _.debounce(this.fetchMetric, 800)
+    this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
+    this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
       disableBtn: true,
       checkpoints: [],
@@ -196,6 +212,11 @@ export default {
       qcCodeLoading: {},
       pathId: null,
       zoneId: null,
+      hostList: null,
+      endpointList: null,
+      metricList: null,
+      answerList: null,
+      thresholdList: null,
       selectedRowKeys: [],
       spinning: false,
       searchInput: '',
@@ -223,6 +244,7 @@ export default {
           }
         ]
       },
+      fetching: false,
       pagination: {
         pageNo: 1,
         pageSize: 5,
@@ -245,6 +267,73 @@ export default {
     }
   },
   methods: {
+    async fetchHost () {
+      this.fetching = true
+      const get = await PatrolService.hostFind()
+      console.log(JSON.parse(get[1][2]))
+      const res = await PatrolHostService.find()
+      if (res != null) {
+        this.hostList = { }
+        res.data.t_patrol_host.forEach(host => {
+          this.hostList[host.id] = {
+            id: host.id,
+            alias: host.alias,
+            endpoints: host.content
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchEndpoint () {
+      this.fetching = true
+      // const get = await PatrolService.endpointFind()
+      const res = await PatrolEndpointService.find()
+      if (res != null) {
+        this.endpointList = { }
+        res.data.t_patrol_endpoint.forEach(endpoint => {
+          this.endpointList[endpoint.id] = {
+            id: endpoint.id,
+            alias: endpoint.alias,
+            metrics: endpoint.content
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchMetric () {
+      this.fetching = true
+      const res = await PatrolMetricService.find()
+      if (res != null) {
+        this.metricList = {}
+        res.data.t_patrol_metric.forEach(metric => {
+          this.metricList[metric.id] = {
+            metric_id: metric.id,
+            metric_alias: metric.alias,
+            answer_id: metric.answer_id
+          }
+        })
+      }
+      this.fetching = false
+    },
+    async fetchAnswer () {
+      this.fetching = true
+      const res = await PatrolAnswerService.find()
+      if (res != null) {
+        this.answerList = {}
+        res.data.t_patrol_answer.forEach(answer => {
+          this.answerList[answer.id] = answer
+        })
+      }
+      this.fetching = false
+    },
+    async fetchThreshold () {
+      this.fetching = true
+      const res = await PatrolThresholdService.find()
+      if (res != null) {
+        this.thresholdList = res.data.t_patrol_threshold
+      }
+      this.fetching = false
+    },
     changeZone ({ pathId, zoneId }) {
       Object.assign(this, { pathId, zoneId })
       this.resetPagination()
@@ -361,6 +450,13 @@ export default {
       }
     }
 
+  },
+  created () {
+    this.fetchHost()
+    this.fetchEndpoint()
+    this.fetchMetric()
+    this.fetchAnswer()
+    this.fetchThreshold()
   }
 }
 </script>

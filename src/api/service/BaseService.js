@@ -30,6 +30,37 @@ class BaseService {
     }
     return Promise.resolve(data)
   }
+  static async hasuraQuery (sql) {
+    const payload = {
+      type: 'bulk',
+      args: [
+        {
+          type: 'run_sql',
+          args: {
+            read_only: false,
+            cascade: false,
+            sql: sql
+          }
+        }
+      ]
+    }
+    const formData = new FormData()
+    formData.append('body', encrypt(JSON.stringify(payload)))
+
+    const { data } = await axios.post('/Hasura/query', formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+
+    const list = JSON.parse(decrypt(data))
+
+    if (list.length) {
+      const [{ result }] = list
+      return result
+    }
+    return []
+  }
 }
 
 export {

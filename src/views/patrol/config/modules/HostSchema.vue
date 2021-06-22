@@ -240,13 +240,7 @@
 
 <script>
 import { scrollTo } from '@/utils/util'
-import _ from 'lodash'
-import { PatrolHostService } from '@/api/service/PatrolHostService'
-import { PatrolEndpointService } from '@/api/service/PatrolEndpointService'
-import { PatrolMetricService } from '@/api/service/PatrolMetricService'
 import Template from '@/views/design/modules/template/index'
-import { PatrolThresholdService } from '@/api/service/PatrolThresholdService'
-import { PatrolAnswerService } from '@/api/service/PatrolAnswerService'
 import TagSelectOption from '~~~/TagSelect/TagSelectOption'
 import { xungeng } from '@/utils/request'
 
@@ -299,24 +293,45 @@ export default {
     isNew: {
       type: Boolean,
       default: false
-    }
+    },
+    metrics: {
+      type: Object,
+      default: () => {}
+    },
+    answers: { type: Object,
+      default: () => {} },
+    endpoints: {
+      type: Object,
+      default: () => ({
+        id: '',
+        alias: '',
+        metrics: [] })
+
+    },
+    hosts: {
+      type: Object,
+      default: () => ({ id: '',
+        alias: '',
+        endpoints: [] })
+
+    },
+    thresholds: { type: Array,
+      default: () => ([{
+        host_id: '',
+        endpoint_id: '',
+        metric_id: '',
+        answer_id: '',
+        lower_threshold: '',
+        severity: '',
+        upper_threshold: ''
+      }]) }
   },
   computed: {},
   created () {
-    this.fetchHost()
-    this.fetchEndpoint()
-    this.fetchMetric()
-    this.fetchAnswer()
-    this.fetchThreshold()
+
   },
   data () {
-    this.fetchHost = _.debounce(this.fetchHost, 800)
-    this.fetchEndpoint = _.debounce(this.fetchEndpoint, 800)
-    this.fetchMetric = _.debounce(this.fetchMetric, 800)
-    this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
-    this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
-      fetching: false,
       editingKey: '',
       metricColumns: [
         {
@@ -340,27 +355,6 @@ export default {
         alias: '',
         format: ''
       },
-      metrics: {},
-      answers: {},
-      endpoints: {
-        id: '',
-        alias: '',
-        metrics: []
-      },
-      hosts: {
-        id: '',
-        alias: '',
-        endpoints: []
-      },
-      thresholds: [{
-        host_id: '',
-        endpoint_id: '',
-        metric_id: '',
-        answer_id: '',
-        lower_threshold: '',
-        severity: '',
-        upper_threshold: ''
-      }],
       pagination: {
         // total: Object.values(this.metrics).length,
         pageSize: 10
@@ -379,70 +373,6 @@ export default {
   methods: {
     async editHost () {
       await xungeng.post('/host/edit', { checkpointId: this.xgModelPoint.id, ...this.form })
-    },
-    async fetchHost () {
-      this.fetching = true
-      const res = await PatrolHostService.find()
-      if (res != null) {
-        this.hosts = { }
-        res.data.t_patrol_host.forEach(host => {
-          this.hosts[host.id] = {
-            id: host.id,
-            alias: host.alias,
-            endpoints: host.content
-          }
-        })
-      }
-      this.fetching = false
-    },
-    async fetchEndpoint () {
-      this.fetching = true
-      const res = await PatrolEndpointService.find()
-      if (res != null) {
-        this.endpoints = { }
-        res.data.t_patrol_endpoint.forEach(endpoint => {
-          this.endpoints[endpoint.id] = {
-            id: endpoint.id,
-            alias: endpoint.alias,
-            metrics: endpoint.content
-          }
-        })
-      }
-      this.fetching = false
-    },
-    async fetchMetric () {
-      this.fetching = true
-      const res = await PatrolMetricService.find()
-      if (res != null) {
-        this.metrics = {}
-        res.data.t_patrol_metric.forEach(metric => {
-          this.metrics[metric.id] = {
-            metric_id: metric.id,
-            metric_alias: metric.alias,
-            answer_id: metric.answer_id
-          }
-        })
-      }
-      this.fetching = false
-    },
-    async fetchAnswer () {
-      this.fetching = true
-      const res = await PatrolAnswerService.find()
-      if (res != null) {
-        this.answers = {}
-        res.data.t_patrol_answer.forEach(answer => {
-          this.answers[answer.id] = answer
-        })
-      }
-      this.fetching = false
-    },
-    async fetchThreshold () {
-      this.fetching = true
-      const res = await PatrolThresholdService.find()
-      if (res != null) {
-        this.thresholds = res.data.t_patrol_threshold
-      }
-      this.fetching = false
     },
     addEndpoint () {
       this.form.endpoints.push({
@@ -510,12 +440,12 @@ export default {
       if (this.fetching) {
         return
       }
-      console.log('host:')
-      console.log(this.hosts[value])
       this.form.hostAlias = this.hosts[value].alias
       this.form.endpoints = []
+      console.log(this.hosts[value])
       this.hosts[value].endpoints.forEach((e) => {
         console.log('endpoints:')
+        console.log(e.toString())
         console.log(this.endpoints[e])
         if (this.endpoints[e] === null) {
           return
@@ -527,6 +457,8 @@ export default {
         }
         this.endpoints[e].metrics.forEach((m) => {
           console.log('metrics:')
+          console.log(m.toString())
+          console.log(this.metrics)
           console.log(this.metrics[m])
           if (this.metrics[m] === null) {
             return
