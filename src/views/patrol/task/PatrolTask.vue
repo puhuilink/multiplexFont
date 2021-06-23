@@ -120,7 +120,7 @@ import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
   ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
-  STATUS_MAPPING
+  STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
 import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
@@ -134,6 +134,7 @@ export default {
   data: () => ({
     groups: [],
     ENABLE_LIST,
+    ENABLE_LIST_MAPPING,
     STATUS_LIST,
     exportLoading: false,
     columns: Object.freeze([
@@ -206,9 +207,8 @@ export default {
         title: '存在异常',
         dataIndex: 'event_occur',
         width: 80,
-        sorter: true,
         // TODO: useMapping
-        customRender: eventOccur => eventOccur ? '是' : '否'
+        customRender: eventOccur => eventOccur ? ENABLE_LIST_MAPPING.get(eventOccur) : '否'
       },
       {
         title: '巡更人员',
