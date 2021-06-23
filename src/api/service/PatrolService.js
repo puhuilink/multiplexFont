@@ -3,11 +3,12 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
-  PatrolTaskStatusDao
+  PatrolTaskStatusDao, PatrolTaskReportViewDao
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
 import { axios, xungeng } from '@/utils/request'
+import { decrypt } from '@/utils/aes'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -47,6 +48,25 @@ class PatrolService extends BaseService {
     })
     return _.first(changeShiftList)
   }
+  static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
+    const result = await this.reportFind({
+      where: { task_id, zone_id },
+      alias: 'content',
+      fields: [
+        'point_alias',
+        'host_alias',
+        'endpoint_alias',
+        'metric_alias',
+        'format',
+        'type',
+        'tags',
+        'position',
+        'value'
+      ]
+    })
+    const { data: { content } } = result
+    return content
+  }
 
   // 导出任务单
   static async onExport () {
@@ -59,6 +79,9 @@ class PatrolService extends BaseService {
     return query(
       PatrolTaskEventHistoryDao.find(argus)
     )
+  }
+  static async reportFind (argus = {}) {
+    return query(PatrolTaskReportViewDao.find(argus))
   }
 
   static async pathFind (argus = {}) {
@@ -101,7 +124,7 @@ class PatrolService extends BaseService {
   static async eventTaskBatchApprove (idList = []) {
     return mutate(
       PatrolTaskStatusDao.update({
-        review: 'accomplished'
+        review: '1'
       }, { id: { _in: idList } })
     )
   }
@@ -169,6 +192,25 @@ class PatrolService extends BaseService {
           userList: allUserList.filter(({ user_id }) => userIdList.includes(user_id))
         }
       })
+    }
+  }
+
+  // 审批预览
+  static async previewApproval (taskId, res) {
+    const ids = res.map(el => el.id)
+    try {
+      const { code, data } = await xungeng.post('/approval/preview', { 'taskId': taskId, 'eventIds': ids })
+      if (code === 200) {
+        data.map(el => {
+          if (el.contact) {
+            el.contact = decrypt(el.contact)
+          }
+          return el
+        })
+        return data
+      }
+    } catch (e) {
+      this.$notifyError(e)
     }
   }
 
@@ -290,7 +332,7 @@ class PatrolService extends BaseService {
   static async resumeJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/resumeJob`, formData, {
+    return xungeng.post(`plan/resumeJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
@@ -301,7 +343,7 @@ class PatrolService extends BaseService {
   static async pauseJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/pauseJob`, formData, {
+    return xungeng.post(`plan/pauseJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }

@@ -456,22 +456,22 @@ export const asyncRouterMap = [
               //   meta: { title: '主题域元模型列表', keepAlive: true, permission: ['profile'] }
               // }
             ]
-          },
-          {
-            path: '/prediction/serverauth',
-            name: 'serverAuth',
-            redirect: '/prediction/serverAuth/managment',
-            component: RouteView,
-            meta: { title: '服务授权', keepAlive: true },
-            children: [
-              {
-                path: '/prediction/serverAuth/managment',
-                name: 'serverAuthMg',
-                component: () => import('@/views/prediction/serverAuth/serverAuth'),
-                meta: { title: '服务注册', keepAlive: true }
-              }
-            ]
           }
+          // {
+          //   path: '/prediction/serverauth',
+          //   name: 'serverAuth',
+          //   redirect: '/prediction/serverAuth/managment',
+          //   component: RouteView,
+          //   meta: { title: '服务授权', keepAlive: true },
+          //   children: [
+          //     {
+          //       path: '/prediction/serverAuth/managment',
+          //       name: 'serverAuthMg',
+          //       component: () => import('@/views/prediction/serverAuth/serverAuth'),
+          //       meta: { title: '服务注册', keepAlive: true }
+          //     }
+          //   ]
+          // }
         ]
       },
 

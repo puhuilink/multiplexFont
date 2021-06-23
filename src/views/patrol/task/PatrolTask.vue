@@ -18,15 +18,15 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡更区域"
+                  label="巡更组"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.ascription">
+                  <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="[code, name] in ASCRIPTION_LIST"
-                      :key="code"
-                    >{{ name }}</a-select-option>
+                      v-for="{label, value} in groups"
+                      :key="value"
+                    >{{ label }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -75,7 +75,19 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-range-picker class="fw" />
+                  <a-range-picker
+                    allowClear
+                    class="fw"
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    :ranges="{
+                      最近1天: [moment().add(-1, 'days'), moment(), moment()],
+                      最近1周: [moment().add(-7, 'days'), moment()],
+                      最近1月: [moment().add(-30, 'days'), moment()],
+                    }"
+                    :showTime="{ format: 'HH:mm' }"
+                    v-model="queryParams.actual_end_time"
+                  />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -108,9 +120,10 @@ import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
   ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
-  STATUS_MAPPING
+  STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
-import { PatrolService } from '@/api'
+import { GroupService, PatrolService } from '@/api'
+import moment from 'moment'
 
 export default {
   name: 'PatrolTask',
@@ -119,8 +132,9 @@ export default {
     TaskDetailSchema
   },
   data: () => ({
-    ASCRIPTION_LIST,
+    groups: [],
     ENABLE_LIST,
+    ENABLE_LIST_MAPPING,
     STATUS_LIST,
     exportLoading: false,
     columns: Object.freeze([
@@ -133,8 +147,9 @@ export default {
       },
       {
         title: '巡更区域',
-        dataIndex: 'zone_id',
-        width: 120
+        dataIndex: 'zone { alias }',
+        width: 120,
+        customRender: (__, { zone: { alias } }) => alias
         // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
       },
       {
@@ -145,15 +160,17 @@ export default {
       },
       {
         title: '巡更组',
-        dataIndex: 'group_id',
+        dataIndex: 'group { group_name }',
         width: 220,
-        sorter: true
+        sorter: true,
+        customRender: (__, { group: { group_name } }) => group_name
       },
       {
         title: '巡更实际开始时间',
         dataIndex: 'actual_start_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD hh:mm:ss') : ''
       },
       {
         title: '延迟开始',
@@ -166,7 +183,8 @@ export default {
         title: '巡更实际结束时间',
         dataIndex: 'actual_end_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD hh:mm:ss') : ''
       },
       {
         title: '超时完成',
@@ -181,24 +199,40 @@ export default {
         dataIndex: 'status',
         width: 120,
         sorter: true,
-        customRender: status => STATUS_MAPPING.get(status)
+        customRender: status => {
+          return STATUS_MAPPING.get(status)
+        }
       },
       {
         title: '存在异常',
         dataIndex: 'event_occur',
         width: 80,
-        sorter: true,
         // TODO: useMapping
-        customRender: eventOccur => eventOccur ? '是' : '否'
+        customRender: eventOccur => eventOccur ? ENABLE_LIST_MAPPING.get(eventOccur) : '否'
       },
       {
         title: '巡更人员',
         dataIndex: 'executor',
-        width: 150
+        width: 150,
+        customRender: executor => executor ? executor.slice(1, executor.length - 1) : ''
       }
     ])
   }),
   methods: {
+    moment,
+    async getGroup () {
+      const { data: { GroupList } } = await GroupService.find({
+        where: {
+          is_patrol: { _eq: true }
+        },
+        fields: [
+          'value: group_id',
+          'label: group_name'
+        ],
+        alias: 'GroupList'
+      })
+      this.groups = GroupList
+    },
     loadData (parameter) {
       return PatrolService.taskFind({
         where: {
@@ -211,7 +245,13 @@ export default {
     },
     seeDetail () {
       const [id] = this.selectedRowKeys
-      this.$refs['schema'].detail(id)
+      const [record] = this.selectedRows
+      const status = parseInt(record.status)
+      if (status < 30 && status > 2) {
+        this.$refs['schema'].detail(id)
+      } else {
+        this.$message.error('该任务单没有巡更记录可查看！')
+      }
     },
     /**
      * 导出
@@ -227,6 +267,9 @@ export default {
         this.exportLoading = false
       }
     }
+  },
+  mounted () {
+    this.getGroup()
   }
 }
 </script>

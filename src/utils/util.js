@@ -52,6 +52,18 @@ export function handleScrollHeader (callback) {
   )
 }
 
+/*
+*  转换对象为驼峰写法
+* */
+export function camelExchange (arr) {
+  const keys = Object.keys(arr)
+  const newArr = {}
+  keys.forEach((item, index) => {
+    newArr[_.camelCase(item)] = arr[item]
+  })
+  return newArr
+}
+
 export function isIE () {
   const bw = window.navigator.userAgent
   const compare = (s) => bw.indexOf(s) >= 0

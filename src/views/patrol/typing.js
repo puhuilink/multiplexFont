@@ -1,8 +1,10 @@
 export const STATUS_LIST = [
-  ['pending', '待执行'],
-  ['processing', '执行中'],
-  ['accomplished', '已完成'],
-  ['aborted', '未完成']
+  ['0', '未开始'],
+  ['1', '进行中'],
+  ['3', '超时完成'],
+  ['10', '告警完成'],
+  ['20', '无告警完成'],
+  ['30', '已过期']
 ]
 
 export const STATUS_MAPPING = new Map(STATUS_LIST)
@@ -41,9 +43,9 @@ export const ANSWER_TYPE_FILL = 'fill'
  */
 
 //  待审批
-export const TASK_REVIEW_PENDING = 'pending'
+export const TASK_REVIEW_PENDING = '0'
 // 已审批
-export const TASK_REVIEW_ACCOMPLISHED = 'accomplished'
+export const TASK_REVIEW_ACCOMPLISHED = '1'
 
 const TASK_REVIEW_LIST = [
   [TASK_REVIEW_PENDING, '待审批'],
@@ -62,8 +64,15 @@ export const PLAN_STATUS_ENABLED = 'enabled'
 export const PLAN_STATUS_DISABLED = 'disabled'
 
 const PLAN_STATUS_LIST = [
-  [PLAN_STATUS_ENABLED, '启用'],
-  [PLAN_STATUS_DISABLED, '停用']
+  [PLAN_STATUS_ENABLED, '停用'],
+  [PLAN_STATUS_DISABLED, '启用']
 ]
 
 export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)
+
+export const SHIFT_STATUS_MAPPING = new Map(
+  [
+    ['0', '已关闭'],
+    ['1', '已交班'],
+    ['2', '已接班']]
+)

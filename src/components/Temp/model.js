@@ -7,8 +7,18 @@ import {
   TEMP_KEYWORD_ENDPOINT,
   TEMP_KEYWORD_METRIC,
   TEMP_KEYWORD_LEVEL,
-  TEMP_KEYWORD_MAPPING
+  TEMP_KEYWORD_MAPPING,
+  PATROL_LEVEL,
+  PATROL_LEVEL_ALIAS,
+  PATROL_CHECKPOINT,
+  PATROL_HOST,
+  PATROL_ZONE,
+  PATROL_ENDPOINT,
+  PATROL_METRIC, PATROL_ANSWER, PATROL_EXECUTOR, PATROL_TIME,
+  TEMP_PATROL_MAPPING
 } from '@/tables/alarm_temp/types'
+
+const TEMP_MAPPING = new Map([...TEMP_KEYWORD_MAPPING, ...TEMP_PATROL_MAPPING])
 
 class Tiptap {
   static createTextNode (text) {
@@ -16,7 +26,7 @@ class Tiptap {
   }
 
   static createMentionNode (id) {
-    const label = TEMP_KEYWORD_MAPPING.get(id)
+    const label = TEMP_MAPPING.get(id)
     return { type: 'mention', attrs: { id, label } }
   }
 
@@ -40,7 +50,17 @@ export class MessageModel {
       [TEMP_KEYWORD_DETAIL]: 'cpu温度过高,温度79度',
       [TEMP_KEYWORD_ENDPOINT]: '串口管理器',
       [TEMP_KEYWORD_METRIC]: '面板告警状态',
-      [TEMP_KEYWORD_LEVEL]: '1'
+      [TEMP_KEYWORD_LEVEL]: '1',
+      [PATROL_LEVEL]: 'L1',
+      [PATROL_LEVEL_ALIAS]: '一般告警',
+      [PATROL_CHECKPOINT]: 'DM01-数据中心大门',
+      [PATROL_HOST]: 'UPS输出柜',
+      [PATROL_ZONE]: 'XF01',
+      [PATROL_ENDPOINT]: '温度',
+      [PATROL_METRIC]: '设备温湿度',
+      [PATROL_ANSWER]: '23℃',
+      [PATROL_EXECUTOR]: '张三',
+      [PATROL_TIME]: moment().format('YYYY-MM-DD HH:mm:ss')
     }
     Object
       .entries(data)
@@ -80,7 +100,7 @@ export class MessageModel {
       for (let i = 0; i < str.length; i++) {
         // 逐字匹配直至匹配成功或遍历结束
         snippet += str[i]
-        const [keyword] = [...TEMP_KEYWORD_MAPPING].find(([id]) => snippet.includes(id)) || []
+        const [keyword] = [...TEMP_MAPPING].find(([id]) => snippet.includes(id)) || []
         // 匹配成功，记录匹配结果并开始新匹配
         if (snippet.includes(keyword)) {
           const text = snippet.replace(keyword, '')

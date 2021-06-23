@@ -1,5 +1,5 @@
 <template>
-  <div class="PatrolPath">
+  <div class="PatrolPath" v-show="false">
     <CTable
       :columns="columns"
       :data="loadData"

@@ -9,6 +9,7 @@
         rowKey="id"
         :rowSelection="rowSelection"
         @expandedRowsChange="expandedRowsChange"
+        :scroll="scroll"
       >
         <!-- / 操作区域 -->
         <template #query>
@@ -54,7 +55,7 @@
           <a-button @click="onBatchApprove" :disabled="!hasSelected">置为已审批</a-button>
         </template>
 
-        <!-- / 子表：告警条目 -->
+        <!--         // 子表：告警条目 -->
         <template v-slot:expandedRowRender="{ id, review }">
           <EventList
             :taskId="Number(id)"
@@ -121,7 +122,7 @@ export default {
         dataIndex: 'actual_end_time',
         sorter: true,
         width: 180,
-        customRender: (actualEndTime) => moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss')
+        customRender: (actualEndTime) => actualEndTime ? moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '审批状态',
@@ -134,7 +135,13 @@ export default {
         title: '巡更人员',
         dataIndex: 'executor',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: (executor) => {
+          const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
+          if (initArr.length > 1) {
+            return _.join(initArr, ' ')
+          } else return initArr
+        }
       },
       {
         title: '异常数量',
@@ -190,8 +197,8 @@ export default {
      */
     onApprove () {
       const [selectedTask] = this.selectedTaskList
-      const [, events] = selectedTask
-      this.$refs['schema'].approve(events)
+      const [taskId, events] = selectedTask
+      this.$refs['schema'].approve(taskId, events)
     },
     /**
      * 快速批量审批（直接修改任务单状态）
