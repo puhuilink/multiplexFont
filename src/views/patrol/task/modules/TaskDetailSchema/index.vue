@@ -32,7 +32,7 @@
             <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor.replaceAll('\"','').replace('[','').replace(']','') }}</span>
           </a-col>
           <a-col :span="6">
-            <span v-if="basicInfo.status!==null">任务状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
+            <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
       </div>

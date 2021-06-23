@@ -16,9 +16,9 @@
             <span>交班人：{{ record.hand_name }}</span>
           </a-col>
 
-          <a-col :span="8">
-            <span>状态：{{ record.status | status }}</span>
-          </a-col>
+<!--          <a-col :span="8">-->
+<!--            <span>状态：{{ record.status | status }}</span>-->
+<!--          </a-col>-->
 
           <a-col :span="8">
             <span>交班时间：{{ record.hand_time | timeFormat }}</span>
@@ -91,9 +91,9 @@
             <span>接班人：{{ record.receive_name }}</span>
           </a-col>
 
-          <a-col :span="8">
-            <span>状态：{{ record.status | status }}</span>
-          </a-col>
+<!--          <a-col :span="8">-->
+<!--            <span>状态：{{ record.status | status }}</span>-->
+<!--          </a-col>-->
 
           <a-col :span="8">
             <span>交班时间：{{ record.receive_time | timeFormat }}</span>

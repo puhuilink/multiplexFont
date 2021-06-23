@@ -114,7 +114,7 @@ export default {
           title: '接收人',
           dataIndex: 'contact',
           width: 120,
-          customRender: contact => contact
+          customRender: contact => _.join(_.split(contact, '/'), ' ')
           //   async contact => {
           //   console.log(_.split(contact, '/'))
           //   const { data: { name } } = await UserService.find({

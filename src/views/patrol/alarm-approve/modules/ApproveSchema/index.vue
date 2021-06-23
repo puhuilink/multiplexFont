@@ -53,10 +53,10 @@ export default {
         },
         {
           title: '通知用户',
-          dataIndex: 'contact',
+          dataIndex: 'staffName',
           width: 120,
           customRender: (contact) => {
-            if (contact) { return contact } else return '未找到用户'
+            if (contact) { return _.join(contact, '/') } else return '未找到用户'
           }
         },
         {
@@ -118,11 +118,9 @@ export default {
     async submitMsg () {
       try {
         this.submitLoading = true
-        const { code, msg } = await xungeng.post('/approval/sendMessage', this.formModel)
+        const { code } = await xungeng.post('/approval/sendMessage', this.formModel)
         if (code === 200) {
           this.$notification('审批成功')
-        } else if (code === 30) {
-          this.$notifyError(msg)
         }
       } catch (e) {
         this.$notifyError(e)

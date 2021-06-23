@@ -69,8 +69,8 @@ class PatrolService extends BaseService {
   }
 
   // 导出任务单
-  static async onExport () {
-    return xungeng.post('changeShift/exportChangeShift')
+  static async onExport (selectRow) {
+    return xungeng.post('changeShift/exportChangeShift', selectRow)
   }
 
   // 任务单异常项
