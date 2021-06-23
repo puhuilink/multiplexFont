@@ -249,9 +249,6 @@ export default {
           if (code === 200) {
             this.$emit('addSuccess')
             this.$notifyAddSuccess()
-          } else if (code === 30) {
-            this.$notifyError(msg)
-            throw msg
           }
         } catch (e) {
           this.$notifyError(e)

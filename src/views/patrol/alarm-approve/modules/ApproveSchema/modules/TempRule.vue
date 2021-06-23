@@ -224,7 +224,7 @@ export default {
         } else if (el.tempEmailId) {
           sendType += 'EMAIL'
         }
-        return { contact: el.contact, id: el.id, auto: !!el.auto, sendType: sendType, severity: el.severity }
+        return { contact: _.split(el.contact, '/'), id: el.id, auto: !!el.auto, sendType: sendType, severity: el.severity }
       })
       // 填充加载用户列表
       const { data } = await UserService.find({
@@ -268,20 +268,19 @@ export default {
           const model = this.formModel
           model.senderContent.sender
             .map(el => {
-              el.contact = encrypt(el.contact)
+              el.contact = encrypt(_.join(el.contact, '/'))
               return el
             }
             )
           const { msg, code } = await xungeng.post('/approval/sendMessage', model)
           if (code === 200) {
-            this.$notifyAddSuccess('提交成功')
+            this.$notifyAddSuccess()
+            this.$notification.success({ message: '系统提示', description: '审批成功' })
             this.cancel()
             this.$emit('submit')
-          } else if (code === 30) {
-            this.$notifyError(msg)
-            return
           }
         } catch (e) {
+          this.$notifyError(e)
           throw e
         } finally {
           this.submitLoading = false

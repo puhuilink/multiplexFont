@@ -157,7 +157,7 @@ export default {
       const tempVal = PLAN_STATUS_MAPPING.get(val.status)
       this.$promiseConfirm({
         title: '系统提示',
-        content: '确认更改' + tempVal + '状态？',
+        content: '确认更改为' + tempVal + '状态？',
         onOk: () => {
           if (val.status === PLAN_STATUS_ENABLED) {
             PatrolService.pauseJob(val.id)
