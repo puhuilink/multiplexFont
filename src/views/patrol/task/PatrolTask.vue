@@ -18,15 +18,15 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡更区域"
+                  label="巡更组"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.ascription">
+                  <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="[code, name] in ASCRIPTION_LIST"
-                      :key="code"
-                    >{{ name }}</a-select-option>
+                      v-for="{label, value} in groups"
+                      :key="value"
+                    >{{ label }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -122,7 +122,7 @@ import {
   ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING
 } from '../typing'
-import { PatrolService } from '@/api'
+import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
 
 export default {
@@ -132,7 +132,7 @@ export default {
     TaskDetailSchema
   },
   data: () => ({
-    ASCRIPTION_LIST,
+    groups: [],
     ENABLE_LIST,
     STATUS_LIST,
     exportLoading: false,
@@ -146,8 +146,9 @@ export default {
       },
       {
         title: '巡更区域',
-        dataIndex: 'zone_id',
-        width: 120
+        dataIndex: 'zone { alias }',
+        width: 120,
+        customRender: (__, { zone: { alias } }) => alias
         // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
       },
       {
@@ -219,6 +220,19 @@ export default {
   }),
   methods: {
     moment,
+    async getGroup () {
+      const { data: { GroupList } } = await GroupService.find({
+        where: {
+          is_patrol: { _eq: true }
+        },
+        fields: [
+          'value: group_id',
+          'label: group_name'
+        ],
+        alias: 'GroupList'
+      })
+      this.groups = GroupList
+    },
     loadData (parameter) {
       return PatrolService.taskFind({
         where: {
@@ -253,6 +267,9 @@ export default {
         this.exportLoading = false
       }
     }
+  },
+  mounted () {
+    this.getGroup()
   }
 }
 </script>
