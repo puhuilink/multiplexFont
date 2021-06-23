@@ -21,7 +21,7 @@
           </a-col>
 
           <a-col :span="8">
-            <span>交班时间：{{ record.hand_time }}</span>
+            <span>交班时间：{{ record.hand_time | timeFormat }}</span>
           </a-col>
 
         </a-row>
@@ -96,7 +96,7 @@
           </a-col>
 
           <a-col :span="8">
-            <span>交班时间：{{ record.receive_name }}</span>
+            <span>交班时间：{{ record.receive_time | timeFormat }}</span>
           </a-col>
 
         </a-row>
@@ -129,6 +129,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
+import moment from 'moment'
 import { PatrolService } from '@/api'
 
 export default {
@@ -204,6 +205,9 @@ export default {
         default:
           return ''
       }
+    },
+    timeFormat (time = '') {
+      return moment(time).format('YYYY-MM-DD hh:mm:ss')
     }
   },
   computed: {},
