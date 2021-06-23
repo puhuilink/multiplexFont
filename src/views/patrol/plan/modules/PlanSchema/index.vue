@@ -4,7 +4,7 @@
     :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
-    :width="940"
+    :width="920"
     wrapClassName="PlanSchema__modal"
     @cancel="cancel"
     :afterClose="reset"
@@ -110,11 +110,11 @@ export default {
     add () {
       this.plan = new PlanModel({})
       this.submit = this.insert
-      this.show('新增巡检计划')
+      this.show('新增巡更计划')
     },
     edit (id) {
       this.submit = this.update
-      this.show('编辑巡检计划')
+      this.show('编辑巡更计划')
       this.fetchPlanDetail(id)
     },
     async fetchPlanDetail (id) {
