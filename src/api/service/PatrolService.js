@@ -124,7 +124,7 @@ class PatrolService extends BaseService {
   static async eventTaskBatchApprove (idList = []) {
     return mutate(
       PatrolTaskStatusDao.update({
-        review: 'accomplished'
+        review: '1'
       }, { id: { _in: idList } })
     )
   }
@@ -332,7 +332,7 @@ class PatrolService extends BaseService {
   static async resumeJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/resumeJob`, formData, {
+    return xungeng.post(`plan/resumeJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
@@ -343,7 +343,7 @@ class PatrolService extends BaseService {
   static async pauseJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/pauseJob`, formData, {
+    return xungeng.post(`plan/pauseJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }

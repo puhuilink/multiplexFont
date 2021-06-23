@@ -45,7 +45,7 @@ const responseInterceptor = (response) => {
   return response.data
 }
 
-const XungengresponseInterceptor = (response) => {
+const xungengresponseInterceptor = (response) => {
   const { data: { code, msg } } = response
   // hack: 30 代表查询到未匹配内容
   if (code && ![200].includes(code)) {
@@ -73,9 +73,9 @@ service.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
 
-serviceXungeng.interceptors.request.use(XungengresponseInterceptor)
+serviceXungeng.interceptors.request.use(requestInterceptor)
 
-serviceXungeng.interceptors.response.use(XungengresponseInterceptor)
+serviceXungeng.interceptors.response.use(xungengresponseInterceptor)
 
 serviceXungeng.defaults.withCredentials = true
 

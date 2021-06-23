@@ -43,9 +43,9 @@ export const ANSWER_TYPE_FILL = 'fill'
  */
 
 //  待审批
-export const TASK_REVIEW_PENDING = 'pending'
+export const TASK_REVIEW_PENDING = '0'
 // 已审批
-export const TASK_REVIEW_ACCOMPLISHED = 'accomplished'
+export const TASK_REVIEW_ACCOMPLISHED = '1'
 
 const TASK_REVIEW_LIST = [
   [TASK_REVIEW_PENDING, '待审批'],
@@ -64,8 +64,8 @@ export const PLAN_STATUS_ENABLED = 'enabled'
 export const PLAN_STATUS_DISABLED = 'disabled'
 
 const PLAN_STATUS_LIST = [
-  [PLAN_STATUS_ENABLED, '启用'],
-  [PLAN_STATUS_DISABLED, '停用']
+  [PLAN_STATUS_ENABLED, '停用'],
+  [PLAN_STATUS_DISABLED, '启用']
 ]
 
 export const PLAN_STATUS_MAPPING = new Map(PLAN_STATUS_LIST)

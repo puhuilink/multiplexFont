@@ -33,7 +33,7 @@
           <a-select-option v-for="(label, value) in allMode" :key="value" :value="value">{{ label }}</a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-form-model-item label="邮件标题" v-if="formModel.type==='EMAIL'" v-bind="formItemLayout" prop="subject" :rules="[{ required: true, message: '请输入邮件标题' }]">
+      <a-form-model-item label="邮件标题" v-if="formModel.type==='EMAIL'" v-bind="formItemLayout" :rules="[{ required: true, message: '请输入邮件标题' }]">
         <a-input v-model.trim="formModel.subject" />
       </a-form-model-item>
       <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
