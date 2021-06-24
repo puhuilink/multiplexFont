@@ -141,7 +141,7 @@ export default {
       }
     },
     async insert () {
-      this.$refs.form.validator(async isValid => {
+      this.$refs.form.validate(async isValid => {
         if (!isValid) return
         try {
           this.spinning = true
