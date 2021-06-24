@@ -274,13 +274,11 @@ export default {
             )
           const { code } = await xungeng.post('/approval/sendMessage', model)
           if (code === 200) {
-            this.$notifyAddSuccess()
             this.$notification.success({ message: '系统提示', description: '审批成功' })
             this.cancel()
             this.$emit('submit')
           }
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.submitLoading = false

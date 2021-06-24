@@ -10,8 +10,8 @@ export const STATUS_LIST = [
 export const STATUS_MAPPING = new Map(STATUS_LIST)
 
 export const ENABLE_LIST = [
-  [0, '否'],
-  [1, '是']
+  [false, '否'],
+  [true, '是']
 ]
 
 export const ENABLE_LIST_MAPPING = new Map(ENABLE_LIST)
