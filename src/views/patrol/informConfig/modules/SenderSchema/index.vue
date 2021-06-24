@@ -252,7 +252,6 @@ export default {
             this.$notifyAddSuccess()
           }
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.btnLoading = false
@@ -294,20 +293,22 @@ export default {
       }
     },
     async update () {
-      try {
-        this.btnLoading = true
-        const { code } = await PatrolSenderService.update(this.send)
-        if (code === 200) {
-          this.$emit('addSuccess')
-          this.$notifyEditSuccess()
-          this.cancel()
+      this.$refs.form.validate(async value => {
+        if (!value) return
+        try {
+          this.btnLoading = true
+          const { code } = await PatrolSenderService.update(this.send)
+          if (code === 200) {
+            this.$emit('addSuccess')
+            this.$notifyEditSuccess()
+            this.cancel()
+          }
+        } catch (e) {
+          throw e
+        } finally {
+          this.btnLoading = false
         }
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      })
     },
     async fetchUserList () {
       try {

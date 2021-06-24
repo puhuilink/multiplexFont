@@ -33,7 +33,7 @@
           <a-select-option v-for="(label, value) in allMode" :key="value" :value="value">{{ label }}</a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-form-model-item label="邮件标题" v-if="formModel.type==='EMAIL'" v-bind="formItemLayout" :rules="[{ required: true, message: '请输入邮件标题' }]">
+      <a-form-model-item label="邮件标题" v-if="formModel.type==='EMAIL'" v-bind="formItemLayout" prop="subject">
         <a-input v-model.trim="formModel.subject" />
       </a-form-model-item>
       <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
@@ -190,11 +190,6 @@ export default {
   },
   computed: {
     formRules () {
-      const subject = this.formModel.type === 'EMAIL' ? {} : { subject: [
-        { required: true, message: '请输入模板名称' },
-        { max: 100, message: '最多输入100个字符' },
-        { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }
-      ] }
       return {
         title: [
           { required: true, message: '请输入模板名称' },
@@ -207,7 +202,9 @@ export default {
           { max: 255, message: '最多输入255个字符' }
         ],
         type: [{ required: true, message: '请选择通知方式' }],
-        ...subject
+        subject: [{ required: true, message: '请输入模板名称' },
+          { max: 100, message: '最多输入100个字符' },
+          { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }]
       }
     }
   }

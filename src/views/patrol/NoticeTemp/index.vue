@@ -75,7 +75,7 @@ export default {
   name: 'NoticeTemp',
   mixins: [List],
   data () {
-    const format = 'YY-MM-DD hh:mm:ss'
+    const format = 'YY-MM-DD HH:mm:ss'
     return {
       columns: Object.freeze([
         {

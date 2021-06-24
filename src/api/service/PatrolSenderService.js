@@ -13,7 +13,8 @@ class PatrolSenderService extends BaseService {
     return q
   }
 
-  static async insert (sender) {
+  static async insert (send) {
+    const sender = _.cloneDeep(send)
     sender.contact = encrypt(_.join(sender.contact, '/'))
     const q = await xungeng.post('/sender/add', sender)
     return q
@@ -25,7 +26,8 @@ class PatrolSenderService extends BaseService {
     return q
   }
 
-  static async update (sender) {
+  static async update (send) {
+    const sender = _.cloneDeep(send)
     if (sender.contact.length > 0) {
       sender.contact = encrypt(_.join(sender.contact, '/'))
     }

@@ -170,7 +170,7 @@ export default {
         dataIndex: 'actual_start_time',
         width: 180,
         sorter: true,
-        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD hh:mm:ss') : ''
+        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '延迟开始',
@@ -184,7 +184,7 @@ export default {
         dataIndex: 'actual_end_time',
         width: 180,
         sorter: true,
-        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD hh:mm:ss') : ''
+        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '超时完成',
