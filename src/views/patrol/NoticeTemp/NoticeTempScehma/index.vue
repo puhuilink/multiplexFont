@@ -20,7 +20,7 @@
     </template>
 
     <!-- / 正文 -->
-    <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
+    <a-form-model ref="form" :model="formModel" :rules="formRules">
       <a-form-model-item
         label="巡更通知模板名称"
         v-bind="formItemLayout"
@@ -164,7 +164,7 @@ export default {
       this.$refs.ruleForm.validate((passValidate) => passValidate && this.submit())
     },
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       this.$refs.editor.resetContent()
       this.$refs.editor.preview = false
       Object.assign(this.$data, this.$options.data.apply(this))

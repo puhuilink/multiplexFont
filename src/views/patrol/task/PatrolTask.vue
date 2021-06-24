@@ -145,13 +145,13 @@ export default {
         fixed: 'left',
         sorter: true
       },
-      {
-        title: '巡更区域',
-        dataIndex: 'zone { alias }',
-        width: 120,
-        customRender: (__, { zone: { alias } }) => alias
-        // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
-      },
+      // {
+      //   title: '巡更区域',
+      //   dataIndex: 'zone { alias }',
+      //   width: 120,
+      //   customRender: (__, { zone: { alias } }) => alias
+      //   // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
+      // },
       {
         title: '计划名称',
         dataIndex: 'alias',

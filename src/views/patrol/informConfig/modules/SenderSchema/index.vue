@@ -12,6 +12,7 @@
     <a-form-model
       class="SendForm"
       :model="send"
+      :form="form"
       ref="form"
     >
       <a-form-model-item
@@ -198,7 +199,7 @@ export default {
   }),
   methods: {
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
