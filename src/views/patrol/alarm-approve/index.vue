@@ -97,12 +97,12 @@ export default {
         title: '任务单号',
         dataIndex: 'id',
         sorter: true,
-        width: 180
+        width: 90
       },
       {
         title: '巡更区域',
         dataIndex: 'zone { alias }',
-        sorter: true,
+        width: 130,
         customRender: (__, { zone }) => _.get(zone, 'alias')
       },
       {

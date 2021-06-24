@@ -119,7 +119,7 @@ import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
-  ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
+  ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
 import { GroupService, PatrolService } from '@/api'
@@ -145,13 +145,13 @@ export default {
         fixed: 'left',
         sorter: true
       },
-      {
-        title: '巡更区域',
-        dataIndex: 'zone { alias }',
-        width: 120,
-        customRender: (__, { zone: { alias } }) => alias
-        // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
-      },
+      // {
+      //   title: '巡更区域',
+      //   dataIndex: 'zone { alias }',
+      //   width: 120,
+      //   customRender: (__, { zone: { alias } }) => alias
+      //   // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
+      // },
       {
         title: '计划名称',
         dataIndex: 'alias',

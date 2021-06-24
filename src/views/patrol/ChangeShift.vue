@@ -66,7 +66,6 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
-import { SHIFT_STATUS_MAPPING } from './typing'
 import { downloadExcel } from '@/utils/util'
 
 export default {
@@ -109,13 +108,6 @@ export default {
         sorter: true,
         width: 180
       },
-      // {
-      //   title: '接班状态',
-      //   dataIndex: 'status',
-      //   sorter: true,
-      //   width: 180,
-      //   customRender: value => SHIFT_STATUS_MAPPING.get(value)
-      // },
       {
         title: '交接时间',
         dataIndex: 'receive_time',

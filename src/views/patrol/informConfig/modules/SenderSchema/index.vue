@@ -12,6 +12,7 @@
     <a-form-model
       class="SendForm"
       :model="send"
+      :form="form"
       ref="form"
     >
       <a-form-model-item
@@ -198,7 +199,7 @@ export default {
   }),
   methods: {
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
@@ -245,7 +246,7 @@ export default {
         try {
           this.btnLoading = true
           // 新增用户
-          const { msg, code } = await PatrolSenderService.insert(this.send)
+          const { code } = await PatrolSenderService.insert(this.send)
           if (code === 200) {
             this.$emit('addSuccess')
             this.$notifyAddSuccess()
@@ -295,13 +296,11 @@ export default {
     async update () {
       try {
         this.btnLoading = true
-        const { code, msg } = await PatrolSenderService.update(this.send)
+        const { code } = await PatrolSenderService.update(this.send)
         if (code === 200) {
           this.$emit('addSuccess')
           this.$notifyEditSuccess()
           this.cancel()
-        } else {
-          this.$notifyError(msg)
         }
       } catch (e) {
         this.$notifyError(e)

@@ -7,11 +7,12 @@
       rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :afterClose="reset"
     >
 
       <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline" class="form">
+        <a-form layout="inline" class="form" :form="form">
           <div :class="{ fold: !advanced }">
             <a-row>
 
