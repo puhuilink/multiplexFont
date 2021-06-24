@@ -127,16 +127,13 @@ export default {
       try {
         this.submitLoading = true
         this.spinning = true
-        const { code, msg } = await PatrolTemplateService.update(PatrolModel.serialize(this.formModel))
+        const { code } = await PatrolTemplateService.update(PatrolModel.serialize(this.formModel))
         if (Number(code) === 200) {
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
-        } else {
-          this.$notifyError(msg)
         }
       } catch (e) {
-        this.$notifyError(e)
         throw e
       } finally {
         this.submitLoading = false
@@ -144,24 +141,25 @@ export default {
       }
     },
     async insert () {
-      try {
-        this.spinning = true
-        const { msg, code } = await PatrolTemplateService.insert(PatrolModel.serialize(this.formModel))
-        if (Number(code) === 200) {
-          this.$emit('addSuccess')
-          this.$notifyAddSuccess()
-          this.cancel()
-        } else {
-          this.$notifyError(msg)
+      this.$refs.form.validator(async isValid => {
+        if (!isValid) return
+        try {
+          this.spinning = true
+          const { code } = await PatrolTemplateService.insert(PatrolModel.serialize(this.formModel))
+          if (Number(code) === 200) {
+            this.$emit('addSuccess')
+            this.$notification.success({ message: '系统提示', description: '添加成功' })
+            this.cancel()
+          }
+        } catch (e) {
+          throw e
+        } finally {
+          this.spinning = false
         }
-      } catch (e) {
-        this.$notifyError()
-      } finally {
-        this.spinning = false
-      }
+      })
     },
     handleSubmit () {
-      this.$refs.ruleForm.validate((passValidate) => passValidate && this.submit())
+      this.$refs.form.validate((passValidate) => passValidate && this.submit())
     },
     reset () {
       this.$refs.form.resetFields()

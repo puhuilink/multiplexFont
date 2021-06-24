@@ -200,7 +200,6 @@ export default {
         width: 120,
         sorter: true,
         customRender: status => {
-          console.log(status)
           return STATUS_MAPPING.get(status)
         }
       },
@@ -239,7 +238,7 @@ export default {
       return PatrolService.taskFind({
         where: {
           ...status ? { status: { _eq: status } } : {},
-          ...generateQuery({ rest })
+          ...generateQuery(rest)
         },
         fields: this.columns.map(({ dataIndex }) => dataIndex),
         ...parameter,
