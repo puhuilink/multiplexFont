@@ -23,7 +23,7 @@
       </a-spin>
     </a-modal>
 
-    <TempRule ref="rule" @updateConfig="onUpdateConfig" @submit="cancel"/>
+    <TempRule ref="rule" @updateConfig="onUpdateConfig" @submit="succeedSubmit"/>
   </fragment>
 </template>
 
@@ -120,7 +120,11 @@ export default {
         this.submitLoading = true
         const { code } = await xungeng.post('/approval/sendMessage', this.formModel)
         if (code === 200) {
-          this.$notification('审批成功')
+          this.$notification.success({
+            message: '系统提示',
+            description: '审批成功'
+          })
+          this.$emit('success')
         }
       } catch (e) {
         this.$notifyError(e)
@@ -148,6 +152,10 @@ export default {
       } else {
         alert('暂无联系人模板')
       }
+    },
+    succeedSubmit () {
+      this.$emit('success')
+      this.cancel()
     },
     async fetch (taskId, events) {
       try {

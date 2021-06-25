@@ -34,8 +34,7 @@
               <a-col :md="12" :sm="24">
                 <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
                   <a-select allowClear v-model="queryParams.flag" placeholder="请选择">
-                    <a-select-option :value="1">有效</a-select-option>
-                    <a-select-option :value="0">无效</a-select-option>
+                    <a-select-option v-for="[value, label] in userFlags" :value="value" :key="value">{{ label }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -134,7 +133,11 @@ export default {
         tooltip: true
       }
     ]),
-    selectedRows: []
+    selectedRows: [],
+    userFlags: [
+      ['0', '无效'],
+      ['1', '有效']
+    ]
   }),
   computed: {
     isSelectedValid () {

@@ -12,7 +12,7 @@
 
       <!-- / 查询区域 -->
       <template #query>
-        <a-form layout="inline" class="form" :form="form">
+        <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
 

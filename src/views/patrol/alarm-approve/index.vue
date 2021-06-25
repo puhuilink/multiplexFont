@@ -66,7 +66,7 @@
         </template>
       </CTable>
 
-      <ApproveSchema ref="schema" />
+      <ApproveSchema ref="schema" @success="query(false)"/>
     </div>
   </div>
 </template>
