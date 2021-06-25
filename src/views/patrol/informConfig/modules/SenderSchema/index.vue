@@ -280,14 +280,15 @@ export default {
       }
     },
     serializeModel (model) {
+      console.log('modal', _.includes(_.split(model.send_type, '/'), 'EMAIL'), model)
       this.send = {
         id: model.id,
         groupId: model.groupId,
         contact: _.split(model.contact, '/'),
         severity: model.severity,
         auto: model.auto,
-        hasEnabledEmail: !_.includes(_.words(model.send_type, '/'), 'EMAIL'),
-        hasEnabledSMS: !_.includes(_.words(model.send_type, '/'), 'SMS'),
+        hasEnabledEmail: _.includes(_.split(model.send_type, '/'), 'EMAIL'),
+        hasEnabledSMS: _.includes(_.split(model.send_type, '/'), 'SMS'),
         tempEmailId: model.tempEmailId,
         tempSmsId: model.tempSmsId
       }
