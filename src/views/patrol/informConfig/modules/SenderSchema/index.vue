@@ -20,7 +20,7 @@
         v-bind="formItemLayout"
         prop="severity"
         :rules="[
-          { required: true, message: '请选择通知等级' },
+          { required: true, message: '请选择告警等级' },
         ]">
         <a-select
           class="SendForm__Select"
@@ -38,10 +38,10 @@
       </a-form-model-item>
 
       <a-form-model-item
-        label="计划组"
+        label="通知组"
         v-bind="formItemLayout"
         prop="groupId"
-        :rules="[{ required: true, message: '请选择计划组' }]"
+        :rules="[{ required: true, message: '请选择通知组' }]"
       >
         <a-select
           allowClear
@@ -62,7 +62,7 @@
         label="通知人"
         prop="contact"
         v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
+        :rules="[{ required: true, message: '请选择通知人' }]"
       >
         <a-select
           class="item2"
@@ -158,6 +158,7 @@ import {
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
 import _ from 'lodash'
+import { LEVEL_LIST } from '../../../typing'
 export default {
   name: 'SenderSchema',
   components: {},
@@ -172,12 +173,7 @@ export default {
       labelCol: { span: 7 },
       wrapperCol: { span: 16, offset: 1 }
     },
-    levelList: [
-      [1, '一级（紧急通知）'],
-      [2, '二级（主要通知）'],
-      [3, '三级（次要通知）'],
-      [4, '四级（一般通知）']
-    ],
+    levelList: LEVEL_LIST,
     btnLoading: false,
     userList: [],
     groupList: [],
@@ -280,7 +276,6 @@ export default {
       }
     },
     serializeModel (model) {
-      console.log('modal', _.includes(_.split(model.send_type, '/'), 'EMAIL'), model)
       this.send = {
         id: model.id,
         groupId: model.groupId,

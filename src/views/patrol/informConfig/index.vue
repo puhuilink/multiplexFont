@@ -35,7 +35,7 @@
               </a-col>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="通知等级" v-bind="formItemLayout" class="fw">
+                <a-form-item label="告警等级" v-bind="formItemLayout" class="fw">
                   <a-select allowClear v-model.number="queryParams.severity" >
                     <a-select-option
                       v-for="[value, label] in levelList"
@@ -76,6 +76,7 @@ import { PatrolSenderService, UserService } from '@/api'
 import SenderSchema from './modules/SenderSchema/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
+import { LEVEL_LIST, LEVEL_MAPPING } from '../typing'
 export default {
   name: 'InformConfig',
   mixins: [List],
@@ -84,16 +85,12 @@ export default {
   },
   data () {
     return {
+      LEVEL_MAPPING,
       visible: false,
       allMode: Object.freeze(
         Object.fromEntries(ALL_SEND_TYPE_MAPPING)
       ),
-      levelList: [
-        [1, '一级（紧急通知）'],
-        [2, '二级（主要通知）'],
-        [3, '三级（次要通知）'],
-        [4, '四级（一般通知）']
-      ],
+      levelList: LEVEL_LIST,
       sendMethod: [
         ['SMS', '短信'],
         ['EMAIL', '邮件'],
@@ -101,10 +98,11 @@ export default {
       ],
       columns: Object.freeze([
         {
-          title: '通知等级',
+          title: '告警等级',
           dataIndex: 'severity',
           width: 120,
-          sorter: true
+          sorter: true,
+          customRender: (severity) => LEVEL_MAPPING.get(severity)
         },
         {
           title: '通知组',

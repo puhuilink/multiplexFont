@@ -16,7 +16,7 @@
             <a-row>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="规则名称" v-bind="formItemLayout" class="fw">
+                <a-form-item label="模板名称" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.title" />
                 </a-form-item>
               </a-col>
@@ -88,20 +88,20 @@ export default {
           title: '通知方式',
           dataIndex: 'type',
           width: 90,
-          sorter: true,
+          align: 'center',
           customRender: mode => ALL_SEND_TYPE_MAPPING.get(mode)
         },
         {
           title: '更新时间',
           dataIndex: 'update_time',
-          width: 200,
+          width: 160,
           sorter: true,
           customRender: time => time ? moment(time).format(format) : ''
         },
         {
           title: '创建时间',
           dataIndex: 'create_time',
-          width: 200,
+          width: 160,
           sorter: true,
           customRender: time => time ? moment(time).format(format) : ''
         },
@@ -110,6 +110,7 @@ export default {
           dataIndex: 'enabled',
           width: 90,
           sorter: true,
+          align: 'center',
           customRender: enabled => enabled ? '是' : '否'
         }
       ]),

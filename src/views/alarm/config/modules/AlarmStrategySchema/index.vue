@@ -208,7 +208,7 @@
           <a-col :span="4" :offset="11">
             <a-button
               v-show="!isDetail"
-              :disabled="formModel.exprs.opts.length === 5"
+              :disabled="formModel.exprs.opts.length === 10"
               type="primary"
               @click="addExpressionOpts"
             >添加</a-button

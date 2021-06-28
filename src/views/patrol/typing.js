@@ -7,6 +7,14 @@ export const STATUS_LIST = [
   ['30', '已过期']
 ]
 
+export const LEVEL_LIST = [
+  ['1', '一级（紧急告警）'],
+  ['2', '二级（主要告警）'],
+  ['3', '三级（次要告警）'],
+  ['4', '四级（一般告警）'],
+  ['5', '五级（警告）']
+]
+
 export const STATUS_MAPPING = new Map(STATUS_LIST)
 
 export const ENABLE_LIST = [
@@ -58,6 +66,8 @@ export const ALL_TASK_REVIEW_LIST = [
 ]
 
 export const TASK_REVIEW_MAPPING = new Map(TASK_REVIEW_LIST)
+
+export const LEVEL_MAPPING = new Map(LEVEL_LIST)
 
 export const ALL_TASK_REVIEW_MAPPING = new Map(ALL_TASK_REVIEW_LIST)
 export const PLAN_STATUS_ENABLED = 'enabled'

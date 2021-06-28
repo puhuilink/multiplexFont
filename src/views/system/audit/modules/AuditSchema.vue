@@ -114,6 +114,7 @@
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
   name: 'AuditSchema',
@@ -125,6 +126,9 @@ export default {
   methods: {
     async detail (record) {
       this.show('审计详情')
+      if (record.operation_time) {
+        moment(record.operation_time).format('YYYY-MM-DD HH:mm:ss')
+      }
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
       this.form.setFieldsValue(_.pick(record, keys))
