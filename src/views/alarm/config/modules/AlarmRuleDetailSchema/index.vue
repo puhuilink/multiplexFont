@@ -18,10 +18,10 @@
               <span class="AlarmRuleDetailSchema__item-value">{{ model.title }}</span>
             </div>
 
-            <div class="AlarmRuleDetailSchema__item">
-              <label class="AlarmRuleDetailSchema__item-label">数据域</label>
-              <span class="AlarmRuleDetailSchema__item-value">123</span>
-            </div>
+            <!--            <div class="AlarmRuleDetailSchema__item">-->
+            <!--              <label class="AlarmRuleDetailSchema__item-label">数据域</label>-->
+            <!--              <span class="AlarmRuleDetailSchema__item-value">123</span>-->
+            <!--            </div>-->
 
             <div class="AlarmRuleDetailSchema__item">
               <label class="AlarmRuleDetailSchema__item-label">监控类型</label>

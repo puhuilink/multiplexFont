@@ -102,7 +102,8 @@ export default {
           title: '通知等级',
           dataIndex: 'event_level',
           width: 120,
-          sorter: true
+          sorter: true,
+          customRender: level => level ? `L${level}` : ''
         },
         {
           title: '通知组',

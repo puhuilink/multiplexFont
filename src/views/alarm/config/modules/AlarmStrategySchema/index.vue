@@ -100,7 +100,7 @@
                 wrapperCol: { span: 23 },
               }"
               prop="exprs.func"
-              :rules="[{ required: true, message: '请选择触发条件' }]"
+              :rules="[{ required: true, message: '请选择触发条件', trigger: 'blur' }]"
               v-model="formModel.exprs.func"
             />
           </a-col>
@@ -144,7 +144,7 @@
                   wrapperCol: { span: 8, offset: 2 },
                 }"
                 label="阈值条件"
-                :rules="[{ required: true, message: '请选择阈值条件' }]"
+                :rules="[{ required: true, message: '请选择阈值条件', trigger: 'blur' }]"
                 :prop="`exprs.opts.${index}.operator`"
                 v-model="opt.operator"
               />
@@ -153,7 +153,7 @@
             <a-col :span="4">
               <a-form-model-item
                 :prop="`exprs.opts.${index}.threshold`"
-                :rules="[{ required: true, message: '请输入阈值条件值' }]"
+                :rules="[{ required: true, message: '请输入阈值条件值', trigger: 'blur' }]"
               >
                 <a-input-number :disabled="isDetail" v-model="opt.threshold" />
               </a-form-model-item>
@@ -169,7 +169,7 @@
                   wrapperCol: { span: 14, offset: 1 },
                 }"
                 :prop="`exprs.opts.${index}.alarm_level`"
-                :rules="[{ required: true, message: '请选择告警级别' }]"
+                :rules="[{ required: true, message: '请选择告警级别'}]"
                 v-model="opt.alarm_level"
               />
             </a-col>
