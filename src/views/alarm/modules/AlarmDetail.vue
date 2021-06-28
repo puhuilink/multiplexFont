@@ -70,7 +70,7 @@ export default {
             { label: '值', key: '' }
           ]
         },
-        { label: '通知等级', key: 'state' },
+        // { label: '通知等级', key: 'state' },
         {
           label: '告警状态',
           key: 'state',
@@ -155,7 +155,7 @@ export default {
   methods: {
     cancel () {
       this.visible = false
-      this.$emit('close', _.get(this.record, 'state'))
+      // this.$emit('close', _.get(this.record, 'state'))
     },
     async fetch (id) {
       try {

@@ -35,21 +35,25 @@ export function enabledColumn () {
 
         return (
           <a-popconfirm
-            title={`确定要更改${enabled ? '启用' : '停用'}状态吗？`}
+            title={`确定要${!enabled ? '启用' : '停用'}吗？`}
             okText="确定"
             cancelText="取消"
             onconfirm={async () => {
               try {
                 btnProps.loading = true
-                await AlarmRuleService.batchToggleEnabled([id], enabled)
-                record.enabled = !enabled
+                await AlarmRuleService.batchToggleEnabled([id], !enabled)
+                record.enabled = enabled
+                this.query(false)
+              } catch (e) {
+                this.$notifyError(e)
+                throw e
               } finally {
                 btnProps.loading = false
               }
             }}
           >
-            <a-button { ...{ props: btnProps } } type={enabled ? 'primary' : 'default'}>
-              {enabled ? '启用' : '停用'}
+            <a-button { ...{ props: btnProps } } type={!enabled ? 'primary' : 'default'}>
+              {!enabled ? '启用' : '停用'}
             </a-button>
           </a-popconfirm>
         )
@@ -156,7 +160,7 @@ export function modelTypeColumn () {
     dataIndex: 'model { deviceLabel { value_label } }',
     width: 200,
     customRender: (__, { model: { deviceLabel } }) => {
-      return _.get(deviceLabel, 'value_label')
+      return deviceLabel ? _.get(deviceLabel, 'value_label') : ''
     }
   }
 
