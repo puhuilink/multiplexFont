@@ -185,11 +185,6 @@ import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import { PatrolEndpointService } from '@/api/service/PatrolEndpointService'
-import { PatrolMetricService } from '@/api/service/PatrolMetricService'
-import { PatrolAnswerService } from '@/api/service/PatrolAnswerService'
-import { PatrolThresholdService } from '@/api/service/PatrolThresholdService'
-import { PatrolHostService } from '@/api/service/PatrolHostService'
 
 export default {
   name: 'PatrolConfig',
@@ -250,7 +245,7 @@ export default {
         pageSize: 5,
         total: 0
       },
-      xgModelPoint: { id: '', alias: '' }
+      xgModelPoint: { id: '', alias: '', path: '', zone: '' }
     }
   },
   computed: {
@@ -270,67 +265,81 @@ export default {
     async fetchHost () {
       this.fetching = true
       const get = await PatrolService.hostFind()
-      console.log(JSON.parse(get[1][2]))
-      const res = await PatrolHostService.find()
-      if (res != null) {
+      if (get != null) {
         this.hostList = { }
-        res.data.t_patrol_host.forEach(host => {
-          this.hostList[host.id] = {
-            id: host.id,
-            alias: host.alias,
-            endpoints: host.content
+        for (let i = 1; i < get.length; i++) {
+          this.hostList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            endpoints: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
           }
-        })
+        }
       }
       this.fetching = false
     },
     async fetchEndpoint () {
       this.fetching = true
-      // const get = await PatrolService.endpointFind()
-      const res = await PatrolEndpointService.find()
-      if (res != null) {
+      const get = await PatrolService.endpointFind()
+      if (get != null) {
         this.endpointList = { }
-        res.data.t_patrol_endpoint.forEach(endpoint => {
-          this.endpointList[endpoint.id] = {
-            id: endpoint.id,
-            alias: endpoint.alias,
-            metrics: endpoint.content
+        for (let i = 1; i < get.length; i++) {
+          this.endpointList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            metrics: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
           }
-        })
+        }
       }
       this.fetching = false
     },
     async fetchMetric () {
       this.fetching = true
-      const res = await PatrolMetricService.find()
-      if (res != null) {
-        this.metricList = {}
-        res.data.t_patrol_metric.forEach(metric => {
-          this.metricList[metric.id] = {
-            metric_id: metric.id,
-            metric_alias: metric.alias,
-            answer_id: metric.answer_id
+      const get = await PatrolService.metricFind()
+      if (get != null) {
+        this.metricList = { }
+        for (let i = 1; i < get.length; i++) {
+          this.metricList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            answer_id: get[i][2]
           }
-        })
+        }
       }
       this.fetching = false
     },
     async fetchAnswer () {
       this.fetching = true
-      const res = await PatrolAnswerService.find()
-      if (res != null) {
+      const get = await PatrolService.answerFind()
+      if (get != null) {
         this.answerList = {}
-        res.data.t_patrol_answer.forEach(answer => {
-          this.answerList[answer.id] = answer
-        })
+        for (let i = 1; i < get.length; i++) {
+          this.answerList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            type: get[i][2],
+            format: JSON.parse(get[i][3])
+          }
+        }
       }
       this.fetching = false
     },
     async fetchThreshold () {
       this.fetching = true
-      const res = await PatrolThresholdService.find()
+      const res = await PatrolService.thresholdFind()
       if (res != null) {
-        this.thresholdList = res.data.t_patrol_threshold
+        this.thresholdList = []
+        for (let i = 1; i < res.length; i++) {
+          this.thresholdList.push({
+            host_id: res[i][0],
+            endpoint_id: res[i][1],
+            metric_id: res[i][2],
+            answer_id: res[i][3],
+            condition: res[i][4],
+            lower_threshold: res[i][5],
+            upper_threshold: res[i][6],
+            severity: res[i][7]
+          })
+        }
       }
       this.fetching = false
     },
@@ -381,7 +390,7 @@ export default {
     // 点击编辑
     infoEdit (checkId, checkAlias, id) {
       this.visible = true
-      this.xgModelPoint = { id: checkId, alias: checkAlias }
+      this.xgModelPoint = { id: checkId, alias: checkAlias, path: this.pathId, zone: this.zoneId }
       this.form.hostId = id
     },
 

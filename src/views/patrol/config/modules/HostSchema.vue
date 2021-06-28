@@ -27,7 +27,7 @@
           <a-form-model-item
             label="监控实体"
             style="margin-bottom: 0"
-            :prop="`endpoints.${index}.endpointId`"
+            :prop="`endpoints[${index}].endpointId`"
             :rules="[{ required: !item.isVirtual, message: '监控实体不能为空' }]"
           >
             <a-select
@@ -37,10 +37,10 @@
               v-model="item.endpointId"
               :disabled="form.endpoints[index].isVirtual"
               :show-arrow="false"
+              @change="dynamicMetrics"
             >
-              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-              <a-select-option v-for="endpoint in Object.values(endpoints)" :key="endpoint.id" :value="endpoint.id">{{ endpoint.alias
-              }}({{ endpoint.id }})
+              <a-select-option v-for="endpoint in Object.values(endpoints)" :key="endpoint.id" :value="endpoint.id">
+                {{ endpoint.alias }}({{ endpoint.id }})
               </a-select-option>
             </a-select>
             <a-checkbox
@@ -49,6 +49,7 @@
                 form.endpoints[index].isVirtual = !form.endpoints[index].isVirtual
                 if(form.endpoints[index].isVirtual){
                   form.endpoints[index].endpointId = null
+                  form.endpoints[index].endpointAlias = null
                 }
               }">虚拟
             </a-checkbox>
@@ -57,10 +58,10 @@
             <a-form-model-item
               label="检查项"
               style="margin-bottom: 0"
-              :prop="`endpoints.${index}.metrics.${i}.metricId`"
+              :prop="`endpoints[${index}].metric[${i}].metricId`"
               :rules="[{ required: true, message: '检查项不能为空' }]"
             >
-              <a-select v-model="element.metricId" placeholder="检查项不能为空">
+              <a-select v-model="element.metricId" placeholder="检查项不能为空" @change="dynamicAnswer(element.metricId,index,i)">
                 <div slot="dropdownRender" slot-scope="menu">
                   <v-nodes :vnodes="menu" />
                   <a-divider style="margin: 4px 0;" />
@@ -73,7 +74,7 @@
                     编辑
                   </div>
                 </div>
-                <a-select-option v-for="(metric,id) in metrics" :key="id" :value="id">{{ metric.metric_alias }}
+                <a-select-option v-for="(metric,id) in metrics" :key="id" :value="id">{{ metric.alias }}
                 </a-select-option>
               </a-select>
               <a-modal
@@ -122,7 +123,7 @@
 
             <a-form-model-item label="阈值设置" style="margin-bottom: 0" :rules="[{ required: true, message: '检查项不能为空' }]">
               <a-form-model-item
-                :prop="`endpoints.${index}.metric.${i}.threshold.condition`"
+                :prop="`endpoints[${index}].metric[${i}].threshold.condition`"
                 :style="{
                   // display: 'inline-block',
                   // width: '70px',
@@ -142,28 +143,28 @@
                   </a-select-option>
                   <a-select-option
                     value="lt"
-                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                    v-if="answers[element.answerId].type === 'fill'"
                   > 小于
                   </a-select-option>
                   <a-select-option
                     value="gt"
-                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                    v-if="answers[element.answerId].type === 'fill'"
                   > 大于
                   </a-select-option>
                   <a-select-option
                     value="out"
-                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                    v-if="answers[element.answerId].type === 'fill'"
                   > 超出
                   </a-select-option>
                   <a-select-option
                     value="ne"
-                    v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'select':false:false"
+                    v-if="answers[element.answerId].type === 'select'"
                   > 不等于
                   </a-select-option>
                 </a-select>
               </a-form-model-item>
               <a-form-model-item
-                :prop="`endpoints.${index}.metric.${i}.threshold.lowerThreshold`"
+                :prop="`endpoints[${index}].metric[${i}].threshold.lowerThreshold`"
                 :style="{
                   // display: 'inline-block',
                   // width: '70px',
@@ -175,25 +176,25 @@
                 <a-input-number
                   placeholder="请输入阈值"
                   v-model="element.threshold.lowerThreshold"
-                  v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'fill':false:false"
+                  v-if="answers[element.answerId].type === 'fill'"
                   :min="0"
                   :step="0.1"
                 ></a-input-number>
                 <a-select
                   :default-value="element.threshold.condition === 'ne'? '请选择非异常项' : '请选择异常项'"
                   v-model="element.threshold.lowerThreshold"
-                  v-if="element.metricId!=null?metrics[element.metricId] != null?answers[metrics[element.metricId].answer_id].type === 'select':false:false"
+                  v-if="answers[element.answerId].type === 'select'"
                 >
                   <a-select-option
-                    v-for="m in answers[metrics[element.metricId].answer_id].format"
+                    v-for="m in answers[element.answerId].format"
                     :key="m.value"
-                    :value="m.value">
+                    :value="m.value.toString()">
                     {{ m.alias }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item>
               <a-form-model-item
-                :prop="`endpoints.${index}.metrics.${i}.threshold.upperThreshold`"
+                :prop="`endpoints[${index}].metric[${i}].threshold.upperThreshold`"
                 :style="{
                   // display: 'inline-block',
                   // width: '70px',
@@ -209,14 +210,15 @@
             <a-form-model-item
               label="告警级别"
               style="margin-bottom: 0"
-              :prop="`endpoints.${index}.metrics.${i}.threshold.severity`"
+              :prop="`endpoints[${index}].metric[${i}].threshold.severity`"
               :rules="[{ required: true, message: '告警级别不能为空' }]"
             >
               <a-select v-model="element.threshold.severity">
-                <a-select-option :value="1"> L1(紧急告警)</a-select-option>
-                <a-select-option :value="2"> L2(主要告警)</a-select-option>
-                <a-select-option :value="3"> L3(次要告警)</a-select-option>
-                <a-select-option :value="4"> L4(一般告警)</a-select-option>
+                <a-select-option :value="'1'"> L1(紧急告警)</a-select-option>
+                <a-select-option :value="'2'"> L2(主要告警)</a-select-option>
+                <a-select-option :value="'3'"> L3(次要告警)</a-select-option>
+                <a-select-option :value="'4'"> L4(一般告警)</a-select-option>
+                <a-select-option :value="'5'"> L5(警告)</a-select-option>
               </a-select>
             </a-form-model-item>
             <div style="display: block;float: right" v-show="form.endpoints[index].metric.length > 1">
@@ -371,8 +373,64 @@ export default {
     }
   },
   methods: {
+    dynamicMetrics (value) {
+      const index = this.form.endpoints.findIndex(_ => { return _.endpointId === value })
+      const endpointEntity = this.endpoints[value]
+      const mList = []
+      endpointEntity.metrics.forEach(m => {
+        const metricEntity = this.metrics[m]
+        const t = this.thresholds.find(th => {
+          return th.endpoint_id === value &&
+            th.metric_id === m &&
+            th.answer_id === metricEntity.answer_id
+        })
+        if (t === null) {
+          return
+        }
+        mList.push({
+          metricId: m,
+          answerId: metricEntity.answer_id,
+          threshold: {
+            condition: t.condition,
+            lowerThreshold: t.lower_threshold !== 'NULL' ? t.lower_threshold : null,
+            upperThreshold: t.upper_threshold !== 'NULL' ? t.upper_threshold : null,
+            severity: t.severity
+          }
+        })
+      })
+      this.form.endpoints[index] = {
+        endpointId: value,
+        endpointAlias: endpointEntity.alias,
+        metric: mList
+      }
+      this.$forceUpdate()
+    },
+    dynamicAnswer (value, endpointIndex, metricIndex) {
+      const t = this.thresholds.find(th => {
+        return th.metric_id === value &&
+          th.answer_id === this.metrics[value].answer_id
+      })
+      if (t === null) {
+        return
+      }
+      this.form.endpoints[endpointIndex].metric[metricIndex] = {
+        metricId: value,
+        answerId: this.metrics[value].answer_id,
+        threshold: {
+          condition: t.condition,
+          lowerThreshold: t.lower_threshold !== 'NULL' ? t.lower_threshold : null,
+          upperThreshold: t.upper_threshold !== 'NULL' ? t.upper_threshold : null,
+          severity: t.severity
+        }
+      }
+      this.$forceUpdate()
+    },
     async editHost () {
-      await xungeng.post('/host/edit', { checkpointId: this.xgModelPoint.id, ...this.form })
+      await xungeng.post('/host/edit',
+        { checkpointId: this.xgModelPoint.id,
+          pathId: this.xgModelPoint.path,
+          zoneId: this.xgModelPoint.zone,
+          ...this.form })
     },
     addEndpoint () {
       this.form.endpoints.push({
@@ -414,6 +472,7 @@ export default {
     handleOk () {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          this.editHost()
           this.$emit('update', this.form)
         }
       })
@@ -437,16 +496,9 @@ export default {
       this.isEditMetric = false
     },
     transformForm (value) {
-      if (this.fetching) {
-        return
-      }
       this.form.hostAlias = this.hosts[value].alias
       this.form.endpoints = []
-      console.log(this.hosts[value])
       this.hosts[value].endpoints.forEach((e) => {
-        console.log('endpoints:')
-        console.log(e.toString())
-        console.log(this.endpoints[e])
         if (this.endpoints[e] === null) {
           return
         }
@@ -456,10 +508,6 @@ export default {
           metric: []
         }
         this.endpoints[e].metrics.forEach((m) => {
-          console.log('metrics:')
-          console.log(m.toString())
-          console.log(this.metrics)
-          console.log(this.metrics[m])
           if (this.metrics[m] === null) {
             return
           }
@@ -473,22 +521,21 @@ export default {
             metricId: m,
             answerId: this.metrics[m].answer_id,
             threshold: {
-              lowerThreshold: t.lower_threshold,
-              upperThreshold: t.upper_threshold,
+              condition: t.condition,
+              lowerThreshold: t.lower_threshold !== 'NULL' ? t.lower_threshold : null,
+              upperThreshold: t.upper_threshold !== 'NULL' ? t.upper_threshold : null,
               severity: t.severity
             }
           })
         })
         this.form.endpoints.push(eObj)
       })
-      console.log('form')
-      console.log(this.form)
     }
   },
   watch: {
     'form.hostId': {
       handler (value) {
-        setTimeout(this.transformForm(value), 5000)
+        this.transformForm(value)
       },
       deep: true,
       immediate: true
