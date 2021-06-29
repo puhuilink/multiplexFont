@@ -20,7 +20,7 @@
                 </a-col>
 
                 <a-col :md="12" :sm="24">
-                  <a-form-item label="交接时间" v-bind="formItemLayout" class="fw">
+                  <a-form-item label="接班时间" v-bind="formItemLayout" class="fw">
                     <a-range-picker
                       class="fw"
                       :disabledDate="(current) => current && current > moment().endOf('day')"
@@ -49,7 +49,7 @@
 
         <!-- / 操作区域 -->
         <template #operation>
-          <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
+          <a-button @click="onDetail" :loading="exportLoading" :disabled="!hasSelectedOne">查看</a-button>
           <a-button @click="onExport" :disabled="!hasSelected">导出</a-button>
         </template>
       </CTable>
@@ -67,6 +67,8 @@ import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
 import { downloadExcel } from '@/utils/util'
+import { Excel } from 'antd-vue-table-saveas-excel'
+import Timeout from 'await-timeout'
 
 export default {
   name: 'ChangeShift',
@@ -109,7 +111,7 @@ export default {
         width: 180
       },
       {
-        title: '交接时间',
+        title: '接班时间',
         dataIndex: 'receive_time',
         sorter: true,
         width: 180,
@@ -121,7 +123,8 @@ export default {
       //   sorter: true,
       //   width: 180
       // }
-    ])
+    ]),
+    exportLoading: false
   }),
   computed: {},
   methods: {
@@ -144,8 +147,37 @@ export default {
       this.$refs['schema'].detail(record)
     },
     async onExport () {
-      const data = await PatrolService.onExport(this.selectedRowKeys)
-      downloadExcel('巡更记录单', data)
+      // const data = await PatrolService.onExport(this.selectedRowKeys)
+      // downloadExcel('巡更记录单', data)
+      try {
+        this.exportLoading = true
+        const { columns: originalColumns, selectedRows } = this
+        // 去除"操作"列
+        // columns.pop()
+        // "告警级别"列导出文本而非DOM
+        // columns[0].customRender = (alarmLevel) => alarmLevel ? `L${alarmLevel}` : ''
+
+        const excel = new Excel()
+        await excel
+          .addSheet('sheet')
+          .addColumns(originalColumns)
+          .addDataSource(selectedRows, {}, 2)
+          .saveAs(`交接班记录${moment().format()}.xlsx`)
+        await Timeout.set(900)
+
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出excel成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: `导出excel失败${e}` } })
+        })
+        throw e
+      } finally {
+        this.exportLoading = false
+      }
     }
   }
 }
