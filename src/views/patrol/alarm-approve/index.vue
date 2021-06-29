@@ -99,12 +99,12 @@ export default {
         sorter: true,
         width: 90
       },
-      {
-        title: '巡更区域',
-        dataIndex: 'zone { alias }',
-        width: 130,
-        customRender: (__, { zone }) => _.get(zone, 'alias')
-      },
+      // {
+      //   title: '巡更区域',
+      //   dataIndex: 'zone { alias }',
+      //   width: 130,
+      //   customRender: (__, { zone }) => _.get(zone, 'alias')
+      // },
       {
         title: '计划名称',
         dataIndex: 'alias',

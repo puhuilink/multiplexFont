@@ -137,15 +137,10 @@ export default {
         try {
           this.confirmLoading = true
           const { code, msg } = await PatrolService.addPlan(this.plan.serialize())
-          if (code !== 200) {
-            this.$notifyError(msg)
-          } else {
-            this.$emit('addSuccess')
-            this.$notifyAddSuccess()
-            this.cancel()
-          }
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -161,16 +156,11 @@ export default {
         try {
           this.confirmLoading = true
           // const { id, ...plan } = this.plan.serialize()
-          const { code, msg } = await PatrolService.planUpdate(this.plan.serialize())
-          if (code !== 200) {
-            this.$notifyError(msg)
-          } else {
-            this.$emit('editSuccess')
-            this.$notifyEditSuccess()
-            this.cancel()
-          }
+          await PatrolService.planUpdate(this.plan.serialize())
+          this.$emit('editSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false

@@ -162,7 +162,6 @@ export default {
         title: '巡更组',
         dataIndex: 'group { group_name }',
         width: 220,
-        sorter: true,
         customRender: (__, { group: { group_name } }) => group_name
       },
       {
