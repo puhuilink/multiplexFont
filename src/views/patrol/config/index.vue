@@ -50,7 +50,7 @@
             <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
             <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
             <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
-            <!--            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>-->
+            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>
           </div>
 
           <div class="PatrolConfig__tbody" ref="tBody">
@@ -129,12 +129,14 @@
                       </div>
                     </div>
                   </div>
-                  <!--                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">-->
-                  <!--                    <template v-if="hostId">-->
-                  <!--                      <a-button type="link" @click.prevent.stop="infoEdit(checkpointAlias,hostAlias)">编辑</a-button>-->
-                  <!--                      <a-button type="link">删除</a-button>-->
-                  <!--                    </template>-->
-                  <!--                  </div>-->
+                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
+                    <template v-if="false" >
+                      <a-row>
+                        <a-col :span="12"><a-button type="link" @click.prevent.stop="infoEdit(checkpointId,checkpointAlias,hostId)">编辑</a-button></a-col>
+                        <a-col :span="12"><a-button type="link">删除</a-button></a-col>
+                      </a-row>
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -165,6 +167,11 @@
       :form.sync="form"
       :visible.sync="visible"
       :xgModelPoint="xgModelPoint"
+      :hosts="hostList"
+      :endpoints="endpointList"
+      :metrics="metricList"
+      :answers="answerList"
+      :thresholds="thresholdList"
       v-if="visible"
     />
 
@@ -177,6 +184,7 @@ import { downloadFile, scrollTo } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import { mapState } from 'vuex'
+import _ from 'lodash'
 
 export default {
   name: 'PatrolConfig',
@@ -187,6 +195,11 @@ export default {
     ZoneSelect
   },
   data () {
+    this.fetchHost = _.debounce(this.fetchHost, 800)
+    this.fetchEndpoint = _.debounce(this.fetchEndpoint, 800)
+    this.fetchMetric = _.debounce(this.fetchMetric, 800)
+    this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
+    this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
       disableBtn: true,
       checkpoints: [],
@@ -194,30 +207,45 @@ export default {
       qcCodeLoading: {},
       pathId: null,
       zoneId: null,
+      hostList: null,
+      endpointList: null,
+      metricList: null,
+      answerList: null,
+      thresholdList: null,
       selectedRowKeys: [],
       spinning: false,
       searchInput: '',
       visible: false,
       form: {
-        modalEndpointId: '',
-        shareParams: [
+        hostId: '',
+        hostAlias: '',
+        endpoints: [
           {
-            modelMetrics: '',
-            modalCheck: '',
-            modalCheckValue: '',
-            modalCheckId: '',
-            modalWarning: '',
-            modalAbnormal: '',
-            modalWarningLevel: ''
+            endpointId: '',
+            endpointAlias: '',
+            isVirtual: false,
+            metric: [
+              {
+                metricId: '',
+                answerId: '',
+                threshold: {
+                  condition: '',
+                  lowerThreshold: '',
+                  upperThreshold: '',
+                  severity: 4
+                }
+              }
+            ]
           }
         ]
       },
+      fetching: false,
       pagination: {
         pageNo: 1,
         pageSize: 5,
         total: 0
       },
-      xgModelPoint: ''
+      xgModelPoint: { id: '', alias: '', path: '', zone: '' }
     }
   },
   computed: {
@@ -234,6 +262,87 @@ export default {
     }
   },
   methods: {
+    async fetchHost () {
+      this.fetching = true
+      const get = await PatrolService.hostFind()
+      if (get != null) {
+        this.hostList = { }
+        for (let i = 1; i < get.length; i++) {
+          this.hostList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            endpoints: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
+          }
+        }
+      }
+      this.fetching = false
+    },
+    async fetchEndpoint () {
+      this.fetching = true
+      const get = await PatrolService.endpointFind()
+      if (get != null) {
+        this.endpointList = { }
+        for (let i = 1; i < get.length; i++) {
+          this.endpointList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            metrics: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
+          }
+        }
+      }
+      this.fetching = false
+    },
+    async fetchMetric () {
+      this.fetching = true
+      const get = await PatrolService.metricFind()
+      if (get != null) {
+        this.metricList = { }
+        for (let i = 1; i < get.length; i++) {
+          this.metricList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            answer_id: get[i][2]
+          }
+        }
+      }
+      this.fetching = false
+    },
+    async fetchAnswer () {
+      this.fetching = true
+      const get = await PatrolService.answerFind()
+      if (get != null) {
+        this.answerList = {}
+        for (let i = 1; i < get.length; i++) {
+          this.answerList[get[i][0]] = {
+            id: get[i][0],
+            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
+            type: get[i][2],
+            format: JSON.parse(get[i][3])
+          }
+        }
+      }
+      this.fetching = false
+    },
+    async fetchThreshold () {
+      this.fetching = true
+      const res = await PatrolService.thresholdFind()
+      if (res != null) {
+        this.thresholdList = []
+        for (let i = 1; i < res.length; i++) {
+          this.thresholdList.push({
+            host_id: res[i][0],
+            endpoint_id: res[i][1],
+            metric_id: res[i][2],
+            answer_id: res[i][3],
+            condition: res[i][4],
+            lower_threshold: res[i][5],
+            upper_threshold: res[i][6],
+            severity: res[i][7]
+          })
+        }
+      }
+      this.fetching = false
+    },
     changeZone ({ pathId, zoneId }) {
       Object.assign(this, { pathId, zoneId })
       this.resetPagination()
@@ -279,10 +388,10 @@ export default {
     },
 
     // 点击编辑
-    infoEdit (pointsId, alias) {
+    infoEdit (checkId, checkAlias, id) {
       this.visible = true
-      this.xgModelPoint = pointsId
-      this.form.modalEndpointId = alias
+      this.xgModelPoint = { id: checkId, alias: checkAlias, path: this.pathId, zone: this.zoneId }
+      this.form.hostId = id
     },
 
     downloadQrCode ({ checkpointId, checkpointAlias }) {
@@ -350,6 +459,13 @@ export default {
       }
     }
 
+  },
+  created () {
+    this.fetchHost()
+    this.fetchEndpoint()
+    this.fetchMetric()
+    this.fetchAnswer()
+    this.fetchThreshold()
   }
 }
 </script>
