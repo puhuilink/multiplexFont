@@ -80,7 +80,6 @@ export default {
         {
           title: '巡更组',
           dataIndex: 'group { group_name }',
-          sorter: true,
           width: 160,
           customRender: (__, { group }) => _.get(group, 'group_name')
         },
