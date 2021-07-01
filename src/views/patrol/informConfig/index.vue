@@ -30,7 +30,18 @@
 
               <a-col :md="12" :sm="24">
                 <a-form-item label="接收人" v-bind="formItemLayout" class="fw">
-                  <a-input allowClear v-model.trim="queryParams.contact" />
+                  <!--                  <a-input allowClear v-model.trim="queryParams.contact" />-->
+                  <a-select
+                    placeholder="选择通知用户"
+                    v-model="queryParams.contact">
+                    <a-select-option
+                      v-for="{value, label} in userList"
+                      :key="value"
+                      :value="value"
+                    >
+                      {{ label }}
+                    </a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
 
@@ -134,6 +145,7 @@ export default {
           customRender: send_type => this.$options.filters.sendTypeSwitch(send_type)
         }
       ]),
+      userList: [],
       queryParams: {
         event_level: '',
         contact: '',
@@ -158,6 +170,16 @@ export default {
     }
   },
   methods: {
+    async getUser () {
+      const { data } = await UserService.find({
+        fields: [
+          'label: staff_name',
+          'value: user_id'
+        ],
+        data: 'userList'
+      })
+      this.userList = data.t_user
+    },
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         onOk: () => PatrolSenderService
@@ -212,6 +234,9 @@ export default {
         return r.data
       })
     }
+  },
+  mounted () {
+    this.getUser()
   }
 }
 </script>
