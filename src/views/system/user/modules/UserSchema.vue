@@ -193,7 +193,7 @@
               v-decorator="[
                 'flag',
                 {
-                  initialValue: 1,
+                  initialValue: '1',
                   rules: [
                     {
                       required: true,
