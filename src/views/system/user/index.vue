@@ -135,8 +135,8 @@ export default {
     ]),
     selectedRows: [],
     userFlags: [
-      ['0', '无效'],
-      ['1', '有效']
+      [0, '无效'],
+      [1, '有效']
     ]
   }),
   computed: {
