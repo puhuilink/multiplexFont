@@ -68,9 +68,14 @@ class PatrolService extends BaseService {
     return content
   }
 
-  // 导出任务单
+  // 导出交接班记录
   static async onExport (selectRow) {
-    return xungeng.post('changeShift/exportChangeShift', selectRow)
+    return xungeng({
+      url: 'changeShift/exportChangeShift',
+      method: 'post',
+      data: selectRow,
+      responseType: 'arraybuffer'
+    })
   }
 
   // 任务单异常项
@@ -375,7 +380,7 @@ class PatrolService extends BaseService {
   }
 
   static async getPatrolTaskExcel (data) {
-    return axios({
+    return xungeng({
       url: '/taskInfo/exportTask',
       method: 'post',
       data,
