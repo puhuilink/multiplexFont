@@ -26,7 +26,7 @@ export default {
       },
       (sorter && sorter.field && sorter.order && {
         orderBy: {
-          [`${sorter.field}`]: sorter.order === 'descend' ? 'desc' : 'asc'
+          [`${sorter.field}`]: sorter.order === 'descend' ? 'desc_nulls_last' : 'asc_nulls_last'
         }
       }) || {}
       )

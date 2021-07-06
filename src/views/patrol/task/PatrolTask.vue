@@ -104,7 +104,7 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
-        <!-- <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button> -->
+        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
       </template>
 
     </CTable>
@@ -219,6 +219,9 @@ export default {
   }),
   methods: {
     moment,
+    handleTableChange (pagination, filters, sorter) {
+      console.log('pag', pagination, filters, sorter)
+    },
     async getGroup () {
       const { data: { GroupList } } = await GroupService.find({
         where: {
@@ -240,6 +243,7 @@ export default {
           ...generateQuery(rest)
         },
         fields: this.columns.map(({ dataIndex }) => dataIndex),
+        ...parameter.orderBy ? {} : { orderBy: { actual_start_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then(r => r.data)

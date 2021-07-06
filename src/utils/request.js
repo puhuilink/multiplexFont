@@ -3,6 +3,7 @@ import axios from 'axios'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { encrypt, decrypt } from '@/utils/aes'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL
@@ -12,6 +13,39 @@ const service = axios.create({
 const serviceXungeng = axios.create({
   baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL
 })
+
+const sql = async (s) => {
+  const payload = {
+    type: 'bulk',
+    args: [
+      {
+        type: 'run_sql',
+        args: {
+          read_only: false,
+          cascade: false,
+          sql: s
+        }
+      }
+    ]
+  }
+
+  const formData = new FormData()
+  formData.append('body', encrypt(JSON.stringify(payload)))
+
+  const { data: { data } } = await axios.create().post('/api/Hasura/query', formData, {
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
+
+  const list = JSON.parse(decrypt(data))
+
+  if (list.length) {
+    const [{ result }] = list
+    return result
+  }
+  return []
+}
 
 const requestInterceptor = config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
@@ -77,8 +111,6 @@ serviceXungeng.interceptors.request.use(requestInterceptor)
 
 serviceXungeng.interceptors.response.use(xungengresponseInterceptor)
 
-serviceXungeng.defaults.withCredentials = true
-
 const installer = {
   vm: {},
   install (Vue) {
@@ -90,5 +122,6 @@ const installer = {
 export {
   installer as VueAxios,
   service as axios,
-  serviceXungeng as xungeng
+  serviceXungeng as xungeng,
+  sql
 }

@@ -92,7 +92,7 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
  */
 export function downloadFile (fileName, content, options = {}) {
   const link = document.createElement('a')
-  const blob = new Blob([content], Object.assign({}, options))
+  const blob = new Blob([content], options)
   link.download = fileName
   const href = URL.createObjectURL(blob)
   link.href = href
