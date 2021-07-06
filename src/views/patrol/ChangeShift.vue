@@ -49,8 +49,8 @@
 
         <!-- / 操作区域 -->
         <template #operation>
-          <a-button @click="onDetail" :loading="exportLoading" :disabled="!hasSelectedOne">查看</a-button>
-          <a-button @click="onExport" :disabled="!hasSelected">导出</a-button>
+          <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
+          <a-button @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
         </template>
       </CTable>
 
@@ -67,8 +67,6 @@ import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
 import { downloadExcel } from '@/utils/util'
-import { Excel } from 'antd-vue-table-saveas-excel'
-import Timeout from 'await-timeout'
 
 export default {
   name: 'ChangeShift',
@@ -147,24 +145,10 @@ export default {
       this.$refs['schema'].detail(record)
     },
     async onExport () {
-      // const data = await PatrolService.onExport(this.selectedRowKeys)
-      // downloadExcel('巡更记录单', data)
       try {
         this.exportLoading = true
-        const { columns: originalColumns, selectedRows } = this
-        // 去除"操作"列
-        // columns.pop()
-        // "告警级别"列导出文本而非DOM
-        // columns[0].customRender = (alarmLevel) => alarmLevel ? `L${alarmLevel}` : ''
-
-        const excel = new Excel()
-        await excel
-          .addSheet('sheet')
-          .addColumns(originalColumns)
-          .addDataSource(selectedRows, {}, 2)
-          .saveAs(`交接班记录${moment().format()}.xlsx`)
-        await Timeout.set(900)
-
+        const data = await PatrolService.onExport(this.selectedRowKeys)
+        downloadExcel('巡更记录单', data)
         this.$notification.success({
           message: '系统提示',
           description: '导出excel成功'

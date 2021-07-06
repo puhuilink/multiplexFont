@@ -136,7 +136,7 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          const { code, msg } = await PatrolService.addPlan(this.plan.serialize())
+          await PatrolService.addPlan(this.plan.serialize())
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
           this.cancel()
