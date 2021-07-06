@@ -148,15 +148,15 @@ export default {
       try {
         this.exportLoading = true
         const data = await PatrolService.onExport(this.selectedRowKeys)
-        downloadExcel('巡更记录单', data)
+        downloadExcel('交接班记录', data)
         this.$notification.success({
           message: '系统提示',
-          description: '导出excel成功'
+          description: '导出交接班记录成功'
         })
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: `导出excel失败${e}` } })
+          description: h => h('p', { domProps: { innerHTML: `导出交接班记录失败${e}` } })
         })
         throw e
       } finally {
