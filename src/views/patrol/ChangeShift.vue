@@ -112,6 +112,7 @@ export default {
         title: '接班时间',
         dataIndex: 'receive_time',
         sorter: true,
+        defaultSortOrder: 'descend',
         width: 180,
         customRender: time => time ? moment(time).format() : ''
       }
@@ -136,6 +137,7 @@ export default {
           ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', 'receive_time', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        ...parameter.orderBy ? {} : { orderBy: { receive_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then((r) => r.data)

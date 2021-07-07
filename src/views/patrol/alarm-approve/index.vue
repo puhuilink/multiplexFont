@@ -121,6 +121,7 @@ export default {
         title: '告警提交时间',
         dataIndex: 'actual_end_time',
         sorter: true,
+        defaultSortOrder: 'descend',
         width: 180,
         customRender: (actualEndTime) => actualEndTime ? moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss') : ''
       },
@@ -188,6 +189,7 @@ export default {
           ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        ...parameter.orderBy ? {} : { orderBy: { actual_end_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then((r) => r.data)

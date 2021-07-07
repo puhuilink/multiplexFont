@@ -169,6 +169,7 @@ export default {
         dataIndex: 'actual_start_time',
         width: 180,
         sorter: true,
+        defaultSortOrder: 'descend',
         customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
@@ -236,6 +237,7 @@ export default {
       this.groups = GroupList
     },
     loadData (parameter) {
+      console.log(parameter)
       const { status, ...rest } = this.queryParams
       return PatrolService.taskFind({
         where: {
