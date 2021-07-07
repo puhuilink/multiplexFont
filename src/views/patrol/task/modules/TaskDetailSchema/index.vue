@@ -29,7 +29,7 @@
             <span>完成时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
           <a-col :span="6">
-            <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor.replaceAll('\"','').replace('[','').replace(']','') }}</span>
+            <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor!=null?basicInfo.executor.replaceAll('\"','').replace('[','').replace(']',''):'' }}</span>
           </a-col>
           <a-col :span="6">
             <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>

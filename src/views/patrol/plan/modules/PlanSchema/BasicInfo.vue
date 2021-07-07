@@ -2,12 +2,12 @@
   <div class="BasicInfo">
 
     <a-row>
-      <a-col :span="8">
+      <a-col :span="7">
         <span class="ant-form-item-label">
           <label title="计划名称">计划名称</label>
         </span>
         <a-form-model-item prop="alias">
-          <a-input v-model="_value.alias" />
+          <a-input v-model="_value.alias" style="width: 140px"/>
         </a-form-model-item>
       </a-col>
 
@@ -23,7 +23,7 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item prop="groupId">
-          <a-select v-model="_value.groupId" style="min-width: 140px">
+          <a-select v-model="_value.groupId" style="min-width: 120px">
             <a-select-option
               v-for="{ groupId, group_name } in patrolGroupList"
               :key="groupId"
@@ -60,7 +60,7 @@ export const basicInfoRule = {
     { required: true, message: '请选择巡更组' }
   ],
   status: [
-    { required: true, message: '请选择是否启用' }
+    { required: true, message: '选择启用' }
   ]
 }
 

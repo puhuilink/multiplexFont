@@ -24,7 +24,7 @@
 
         <TimePicker :plan.sync="plan"></TimePicker>
 
-        <TimeMultiPicker :plan.sync="plan"></TimeMultiPicker>
+        <TimeMultiPicker :exception.sync="plan.exception"></TimeMultiPicker>
       </a-form-model>
     </a-spin>
   </a-modal>
