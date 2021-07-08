@@ -69,6 +69,7 @@ export default {
       immediate: true,
       handler: async function () {
         this.activeKey = this.hostId
+        this.panes = []
       }
     }
   },
