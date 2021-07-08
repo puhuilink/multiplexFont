@@ -126,10 +126,13 @@ class PatrolService extends BaseService {
   }
 
   // 批量审批
-  static async eventTaskBatchApprove (idList = []) {
+  static async eventTaskBatchApprove (idList = [], user = {}) {
+    const { id } = user
     return mutate(
       PatrolTaskStatusDao.update({
-        review: '1'
+        review: '1',
+        reviewer: id,
+        review_time: new Date()
       }, { id: { _in: idList } })
     )
   }

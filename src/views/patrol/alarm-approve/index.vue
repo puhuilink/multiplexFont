@@ -135,14 +135,26 @@ export default {
       {
         title: '巡更人员',
         dataIndex: 'executor',
-        sorter: true,
-        width: 180,
+        width: 130,
         customRender: (executor) => {
           const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
           if (initArr.length > 1) {
             return _.join(initArr, ' ')
           } else return initArr
         }
+      },
+      {
+        title: '审批人员',
+        dataIndex: 'reviewUser { staff_name }',
+        width: 130,
+        customRender: (__, { reviewUser }) => _.get(reviewUser, 'staff_name')
+      },
+      {
+        title: '审批时间',
+        dataIndex: 'review_time',
+        sorter: true,
+        width: 180,
+        customRender: value => value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '异常数量',
@@ -206,11 +218,12 @@ export default {
      * 快速批量审批（直接修改任务单状态）
      */
     async onBatchApprove () {
+      const user = { id: this.$store.getters.userId, name: this.$store.getters.nickname }
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认审批选中任务？',
         onOk: () =>
-          PatrolService.eventTaskBatchApprove(this.selectedRowKeys)
+          PatrolService.eventTaskBatchApprove(this.selectedRowKeys, user)
             .then(() => {
               this.$notification.success({
                 message: '系统提示',
