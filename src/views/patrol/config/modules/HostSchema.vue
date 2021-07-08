@@ -77,48 +77,16 @@
                 <a-select-option v-for="(metric,id) in metrics" :key="id" :value="id">{{ metric.alias }}
                 </a-select-option>
               </a-select>
-              <a-modal
-                title="编辑检查项"
-                wrapClassName="MetricSchema"
+              <MetricTable
                 :visible="isEditMetric"
-                @cancel="popEditMetric"
+                :pagination="pagination"
+                :answers="answers"
+                :metrics="metrics"
                 @close="popEditMetric"
+                @cancel="popEditMetric"
                 @ok="popEditMetric"
-              >
-                <a-table
-                  :data-source="Object.values(metrics)"
-                  :pagination="pagination"
-                  :columns="metricColumns"
-                >
-                  <template slot="answer" slot-scope="text, record">
-                    <span v-if="record.editable">
-                      <a-select v-model="record['answer_id']">
-                        <a-select-option v-for="a in Object.values(answers)" :key="a.id" :value="a.id">{{ a.alias
-                        }}</a-select-option>
-                      </a-select>
-                    </span>
-                    <span v-else>
-                      {{ answers[record['answer_id']].alias }}
-                    </span>
-                  </template>
-                  <template slot="operation" slot-scope="text, record">
-                    <div class="editable-row-operations">
-                      <span v-if="record.editable">
-                        <a @click="() => save(record.key)">保存</a>
-                        <a-popconfirm title="确认取消?" @confirm="() => cancel(record.key)">
-                          <a>取消</a>
-                        </a-popconfirm>
-                      </span>
-                      <span v-else>
-                        <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
-                        <a-divider type="vertical" />
-                        <a :disabled="editingKey !== ''" @click="() => delete(record.key)">删除</a>
-                      </span>
-                    </div>
-                  </template>
-
-                </a-table>
-              </a-modal>
+                @change="logData"
+              />
             </a-form-model-item>
 
             <a-form-model-item label="阈值设置" style="margin-bottom: 0" :rules="[{ required: true, message: '检查项不能为空' }]">
@@ -242,16 +210,13 @@
 
 <script>
 import { scrollTo } from '@/utils/util'
-import Template from '@/views/design/modules/template/index'
-import TagSelectOption from '~~~/TagSelect/TagSelectOption'
 import { xungeng } from '@/utils/request'
-
+import MetricTable from '@/views/patrol/config/MetricTable/MetricTable'
 export default {
   name: 'HostSchema',
   mixins: [],
   components: {
-    TagSelectOption,
-    Template,
+    MetricTable,
     VNodes: {
       functional: true,
       render: (h, ctx) => ctx.props.vnodes
@@ -328,35 +293,14 @@ export default {
         upper_threshold: ''
       }]) }
   },
-  computed: {},
+  computed: {
+
+  },
   created () {
 
   },
   data () {
     return {
-      editingKey: '',
-      metricColumns: [
-        {
-          title: '',
-          dataIndex: 'metric_alias',
-          width: '25%',
-          scopedSlots: { customRender: 'metric_alias' }
-        },
-        {
-          title: '',
-          scopedSlots: { customRender: 'answer' }
-        },
-        {
-          title: '',
-          dataIndex: 'operation',
-          scopedSlots: { customRender: 'operation' }
-        }
-      ],
-      tempAnswer: {
-        id: '',
-        alias: '',
-        format: ''
-      },
       pagination: {
         // total: Object.values(this.metrics).length,
         pageSize: 10
@@ -373,6 +317,11 @@ export default {
     }
   },
   methods: {
+    logData (data) {
+      this.metrics = data
+      this.transformForm(this.form.hostId)
+      this.$forceUpdate()
+    },
     dynamicMetrics (value) {
       const index = this.form.endpoints.findIndex(_ => { return _.endpointId === value })
       const endpointEntity = this.endpoints[value]
@@ -484,16 +433,18 @@ export default {
       this.form.endpoints[index].metrics.splice(i, 1)
     },
     navigatorToEditMetric () {
+      const m = this.metrics
       this.pagination = {
-        total: Object.values(this.metrics).length,
+        total: Object.values(m).length,
         size: 'small',
-        pageSize: 10
+        pageSize: 5
       }
-      console.log(Object.values(this.metrics))
       this.isEditMetric = true
     },
     popEditMetric () {
       this.isEditMetric = false
+      this.metrics = this.metrics
+      this.$forceUpdate()
     },
     transformForm (value) {
       this.form.hostAlias = this.hosts[value].alias
@@ -511,19 +462,24 @@ export default {
           if (this.metrics[m] === null) {
             return
           }
-          const t = this.thresholds.find(th => {
+          let t = this.thresholds.find(th => {
             return th.host_id === value && th.endpoint_id === e && th.metric_id === m && th.answer_id === this.metrics[m].answer_id
           })
-          if (t === null) {
-            return
+          if (t === undefined) {
+            t = {
+              condition: this.answers[this.metrics[m].answer_id].type === 'select' ? 'eq' : 'gt',
+              lowerThreshold: '0',
+              upperThreshold: null,
+              severity: '3'
+            }
           }
           eObj.metric.push({
             metricId: m,
             answerId: this.metrics[m].answer_id,
             threshold: {
               condition: t.condition,
-              lowerThreshold: t.lower_threshold !== 'NULL' ? t.lower_threshold : null,
-              upperThreshold: t.upper_threshold !== 'NULL' ? t.upper_threshold : null,
+              lowerThreshold: t.lower_threshold ?? '0',
+              upperThreshold: t.upper_threshold ?? '1',
               severity: t.severity
             }
           })
@@ -536,6 +492,15 @@ export default {
     'form.hostId': {
       handler (value) {
         this.transformForm(value)
+      },
+      deep: true,
+      immediate: true
+    },
+    'metrics': {
+      handler (value) {
+        console.log(value)
+        this.transformForm(this.form.hostId)
+        this.$forceUpdate()
       },
       deep: true,
       immediate: true

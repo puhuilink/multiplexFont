@@ -389,6 +389,9 @@ export default {
 
     // 点击编辑
     infoEdit (checkId, checkAlias, id) {
+      if (this.fetching) {
+        return
+      }
       this.visible = true
       this.xgModelPoint = { id: checkId, alias: checkAlias, path: this.pathId, zone: this.zoneId }
       this.form.hostId = id
