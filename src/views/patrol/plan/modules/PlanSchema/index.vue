@@ -6,11 +6,11 @@
     v-model="visible"
     :width="920"
     wrapClassName="PlanSchema__modal"
-    @cancel="cancel"
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
     @ok="submit"
+    @cancel="cancel"
   >
     <a-spin :spinning="spinning">
       <a-form-model :model="plan" ref="ruleForm" :rules="rules" layout="inline">

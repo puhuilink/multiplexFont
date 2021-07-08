@@ -84,7 +84,7 @@ export default {
           customRender: (__, { group }) => _.get(group, 'group_name')
         },
         {
-          title: '新建时间',
+          title: '更新时间',
           dataIndex: 'create_time',
           ...timeColumnSnippet
         },
