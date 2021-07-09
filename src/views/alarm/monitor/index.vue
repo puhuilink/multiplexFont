@@ -150,6 +150,10 @@
             </a-button>
           </div>
 
+          <div style="height: 40px;line-height: 40px; margin-right: 30px;border-radius: 10px;">
+            页面刷新时间<a-input-number v-model="fetchTime" :min="1" :max="10"/>分钟
+          </div>
+
           <a-popover title="表格列设置" placement="leftBottom">
             <a-list slot="content" item-layout="horizontal" :data-source="availableColumns">
               <a-list-item slot="renderItem" slot-scope="column">
@@ -226,6 +230,7 @@ export default {
   },
   data () {
     return {
+      timer: null,
       ALARM_STATE,
       colors: [...levelColorMapping.values()],
       fontColors: fontLevelColorMapping,
@@ -239,6 +244,7 @@ export default {
           xxl: { span: 20, offset: 0 }
         }
       },
+      fetchTime: 10,
       ip: '',
       ipList: [],
       state: ALARM_STATE.unSolved,
@@ -613,6 +619,22 @@ export default {
       this.state = state
       this.query()
     }
+  },
+  watch: {
+    'fetchTime': {
+      immediate: true,
+      handler: function async (value) {
+        // 动态刷新时间
+        clearInterval(this.timer)
+        this.timer = null
+        this.timer = setInterval(() => {
+          this.query(false)
+        }, value * 60 * 1000)
+      }
+    }
+  },
+  destroyed () {
+    clearInterval(this.timer)
   }
 }
 </script>
