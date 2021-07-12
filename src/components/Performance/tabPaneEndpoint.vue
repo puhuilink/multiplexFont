@@ -83,14 +83,17 @@ export default {
         },
         {
           title: '状态描述',
-          dataIndex: 'detail',
+          dataIndex: 'status',
           width: 180
         },
         {
           title: '更新时间',
           align: 'center',
           dataIndex: 'uploadTime',
-          width: 155
+          width: 155,
+          customRender: value => {
+            return value || '暂无更新时间'
+          }
         },
         {
           title: '采集周期',
