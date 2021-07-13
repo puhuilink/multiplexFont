@@ -268,7 +268,7 @@ export default {
           const model = this.formModel
           model.senderContent.sender
             .map(el => {
-              el.contact = encrypt(_.join(el.contact, '/'))
+              el.contact = encrypt(el.contact)
               return el
             }
             )
