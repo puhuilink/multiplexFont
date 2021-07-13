@@ -155,7 +155,6 @@ export default {
             this.$notifyDeleteSuccess()
             this.query(false)
           })
-          .catch(this.$notifyError)
       })
     }
   }
