@@ -116,22 +116,27 @@ export default {
   methods: {
     uuid,
     async submitMsg () {
-      try {
-        this.submitLoading = true
-        const { code } = await xungeng.post('/approval/sendMessage', this.formModel)
-        if (code === 200) {
-          this.$notification.success({
-            message: '系统提示',
-            description: '审批成功'
-          })
-          this.$emit('success')
+      const eventsList = _.sortBy(_.unionBy(this.events, 'severity'), item => item.severity)
+      if (!!_.find(eventsList, 'tempSmsId') || !!_.find(eventsList, 'tempEmailId')) {
+        try {
+          this.submitLoading = true
+          const { code } = await xungeng.post('/approval/sendMessage', this.formModel)
+          if (code === 200) {
+            this.$notification.success({
+              message: '系统提示',
+              description: '审批成功'
+            })
+            this.$emit('success')
+          }
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.submitLoading = false
+          this.cancel()
         }
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.submitLoading = false
-        this.cancel()
+      } else {
+        alert('暂无联系人')
       }
     },
     approve (taskId, events) {
