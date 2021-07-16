@@ -71,7 +71,7 @@ class PatrolService extends BaseService {
   // 导出交接班记录
   static async onExport (selectRow) {
     return xungeng({
-      url: 'changeShift/exportChangeShift',
+      url: 'export/ChangeShift',
       method: 'post',
       data: selectRow,
       responseType: 'arraybuffer'
@@ -382,11 +382,13 @@ class PatrolService extends BaseService {
     })
   }
 
-  static async getPatrolTaskExcel (data) {
+  static async getPatrolTaskExcel ([data]) {
+    console.log(data)
+    const json = { taskId: data }
     return xungeng({
-      url: '/taskInfo/exportTask',
+      url: '/export/taskHistory',
       method: 'post',
-      data,
+      data: json,
       responseType: 'arraybuffer'
     })
   }
