@@ -270,7 +270,7 @@ export default {
         downloadExcel('巡更记录单', content)
         this.$notification.success({
           message: '系统提示',
-          description: '导出交接班记录成功'
+          description: '导出巡更记录单成功'
         })
       } catch (e) {
         this.$notification.error({
