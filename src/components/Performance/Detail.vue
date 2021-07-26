@@ -4,7 +4,7 @@
     <a-tabs v-model="activeKey" hide-add type="editable-card" @edit="onEdit">
       <a-tab-pane
         :key="hostId"
-        :closable="false"
+        :closable="true"
         tab="主机信息"
       >
         <tabPane :id="hostId" @pointCheckout="alarmSingleDetails"></tabPane>
@@ -63,13 +63,20 @@ export default {
       endpointModelId: ''
     }
   },
-  computed: {},
   watch: {
     'hostId': {
       immediate: true,
       handler: async function () {
         this.activeKey = this.hostId
         this.panes = []
+      }
+    },
+    'panes': {
+      immediate: true,
+      handler: function (value) {
+        if (_.isEmpty(value)) {
+          this.activeKey = this.hostId
+        }
       }
     }
   },
