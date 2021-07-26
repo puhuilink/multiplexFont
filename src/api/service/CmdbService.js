@@ -267,8 +267,8 @@ class CmdbService extends BaseService {
         },
         alias: 'list',
         fields: [
-          'key: endpoint_id',
-          'label: endpoint_alias'
+          'key: metric_id',
+          'label: metric_alias'
         ]
       })
     )
