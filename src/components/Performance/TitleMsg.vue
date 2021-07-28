@@ -1,6 +1,6 @@
 <template>
   <div style="font-weight: bold;font-size: 17px;margin-left: -40%;width: 100%;">
-    {{ tabMsg.alias }}  ({{ tabMsg.ip }}) 数据域: {{ tabMsg.location }}/{{ tabMsg.hostType }}
+    {{ tabMsg.alias }}  {{tabMsg.ip ? `(${tabMsg.ip})` : ''}} {{ tabMsg.location ? `数据域: ${tabMsg.location}` : '' }} {{ tabMsg.hostType ? `\/${tabMsg.hostType}` : '' }}
   </div>
 </template>
 
