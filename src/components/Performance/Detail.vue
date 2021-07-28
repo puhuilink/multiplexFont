@@ -4,7 +4,7 @@
     <a-tabs v-model="activeKey" hide-add type="editable-card" @edit="onEdit">
       <a-tab-pane
         :key="hostId"
-        :closable="true"
+        :closable="false"
         tab="主机信息"
       >
         <tabPane :id="hostId" @pointCheckout="alarmSingleDetails"></tabPane>
