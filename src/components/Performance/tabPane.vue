@@ -93,8 +93,9 @@ export default {
         {
           title: '告警时间',
           align: 'center',
-          dataIndex: 'alarmTime',
-          width: 150
+          // dataIndex: 'alarmTime',
+          width: 150,
+          customRender: (__, record) => record.alarmTime || record.uploadTime || '暂无告警时间'
         },
         {
           title: '操作',
