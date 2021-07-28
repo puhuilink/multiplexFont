@@ -58,7 +58,7 @@ const requestInterceptor = config => {
 const responseInterceptor = (response) => {
   const { data: { code, msg } } = response
   // hack: 30 代表查询到未匹配内容
-  if (code && ![30, 200].includes(code)) {
+  if (code && code !== 200) {
     switch (code) {
       case 401: {
         notification.error({
@@ -66,6 +66,9 @@ const responseInterceptor = (response) => {
           description: '请重新登录'
         })
         break
+      }
+      case 30: {
+        throw new Error(msg)
       }
       default: {
         notification.error({
