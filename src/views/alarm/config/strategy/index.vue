@@ -266,10 +266,9 @@ export default {
       this.$promiseConfirmDelete({
         onOk: async () => {
           try {
-            console.log(123)
             await StrategyService.batchDelete(this.selectedRowKeys)
-            // this.$notifyDeleteSuccess()
-            // this.query(false)
+            this.$notifyDeleteSuccess()
+            this.query(false)
           } catch (e) {
             this.$notification.error({
               message: '删除失败',
