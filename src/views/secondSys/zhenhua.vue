@@ -1,5 +1,5 @@
 <template>
-  <Iframe width="100%" height="100%" src="https://www.baicom.com"></Iframe>
+  <Iframe width="100%" height="100%" src="https://10.201.20.84/yigongju/show/"></Iframe>
 </template>
 
 <script>
