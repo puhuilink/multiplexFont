@@ -484,9 +484,9 @@ export const asyncRouterMap = [
         children: [
           {
             path: '/secondSys/Zhenhua',
-            name: '振华',
+            name: '一公局',
             component: () => import('@/views/secondSys/zhenhua'),
-            meta: { title: '振华' }
+            meta: { title: '一公局' }
           }
         ]
       },
