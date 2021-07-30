@@ -474,7 +474,22 @@ export const asyncRouterMap = [
           // }
         ]
       },
-
+      // 二级单位
+      {
+        path: '/secondSys',
+        name: 'secondSys',
+        redirect: 'secondSys/Zhenhua',
+        component: RouteView,
+        meta: { title: '二级单位', keepAlive: true, icon: 'user' },
+        children: [
+          {
+            path: '/secondSys/Zhenhua',
+            name: '振华',
+            component: () => import('@/views/secondSys/zhenhua'),
+            meta: { title: '振华' }
+          }
+        ]
+      },
       // 个人设置
       {
         path: '/user',
