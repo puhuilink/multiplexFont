@@ -205,7 +205,7 @@ export default {
     async getGroup () {
       const { data: { GroupList } } = await GroupService.find({
         where: {
-          is_patrol: { _neq: true }
+          is_patrol: { _eq: false }
         },
         fields: [
           'is_patrol',
@@ -274,7 +274,7 @@ export default {
       try {
         this.btnLoading = true
         await AlarmSenderService.update(
-          { contact: this.send.contact,
+          { contact: this.send.contact.join(''),
             temp_sms_id: this.send.temp_sms_id,
             temp_email_id: this.send.temp_email_id,
             auto: this.send.auto
