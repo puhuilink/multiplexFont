@@ -257,13 +257,14 @@ class CmdbService extends BaseService {
     return _.uniqBy(list, el => el.key)
   }
 
-  static async metrics (host_id, endpoint_model_id, metric_model_id) {
+  static async metrics (host_id, endpoint_model_id, metric_model_id, endpoint_id) {
     const { data: { list } } = await query(
       CmdbHostEndpointMetricDao.find({
         where: {
           host_id: { _eq: host_id },
           endpoint_model_id: { _eq: endpoint_model_id },
-          metric_model_id: { _eq: metric_model_id }
+          metric_model_id: { _eq: metric_model_id },
+          ...endpoint_id ? { endpoint_id: { _eq: endpoint_id } } : {}
         },
         alias: 'list',
         fields: [
