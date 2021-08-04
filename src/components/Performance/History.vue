@@ -25,6 +25,7 @@ import echarts from 'echarts'
 import { AdaptorComboConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorComboConfig'
 import LinesDynamicDataConfig from '@/model/config/dataConfig/dynamicData/LinesDynamicDataConfig'
 import { autoTooltipPosition } from '@/utils/echarts'
+import _ from 'lodash'
 
 export default {
   name: 'HistoryChart',
@@ -50,18 +51,23 @@ export default {
       try {
         this.spinning = true
         const { data } = await AlarmRuleService.historyAlarmDataView(this.queryStartTime, this.queryEndTime, this.historyDataList)
-        const dataList = AdaptorComboConfig.transfer(data)
-        const option = LinesDynamicDataConfig.transferComboDataOption(dataList)
-        this.title = `${Object.keys(data)[0] || ''}历史图`
-        this.$chart.setOption({
-          ...option,
-          title: { text: '' },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' },
-            position: autoTooltipPosition
-          }
-        }, true)
+        if (_.isEmpty(data)) {
+          alert('暂无数据')
+          this.cancel()
+        } else {
+          const dataList = AdaptorComboConfig.transfer(data)
+          const option = LinesDynamicDataConfig.transferComboDataOption(dataList)
+          this.title = `${Object.keys(data)[0] || ''}历史图`
+          this.$chart.setOption({
+            ...option,
+            title: { text: '' },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: { type: 'shadow' },
+              position: autoTooltipPosition
+            }
+          }, true)
+        }
       } finally {
         this.spinning = false
       }
