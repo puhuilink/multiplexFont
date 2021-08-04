@@ -17,6 +17,20 @@ export function welcome () {
   return arr[index]
 }
 
+export function dealQuery (result) {
+  const keys = result[0]
+  const data = []
+  for (let i = 1; i < result.length; i++) {
+    const record = result[i]
+    const ob = {}
+    for (let j = 0; j < record.length; j++) {
+      ob[keys[j]] = record[j]
+    }
+    data.push(ob)
+  }
+  return data
+}
+
 /**
  * 触发 window.resize
  */
