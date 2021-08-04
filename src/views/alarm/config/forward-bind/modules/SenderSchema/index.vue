@@ -149,6 +149,7 @@ import {
 } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
+import { sql } from '@/utils/request'
 import _ from 'lodash'
 export default {
   name: 'SenderSchema',
@@ -203,18 +204,9 @@ export default {
       this.send.hasEnabledEmail = e
     },
     async getGroup () {
-      const { data: { GroupList } } = await GroupService.find({
-        where: {
-          is_patrol: { _eq: false }
-        },
-        fields: [
-          'is_patrol',
-          'group_id',
-          'group_name'
-        ],
-        alias: 'GroupList'
-      })
-      this.groupList = GroupList
+      const data = await sql('select group_id as groupId, group_name as groupName, is_patrol as flag from t_group where  is_patrol is null or is_patrol = false;')
+      const list = data.slice(1, data.length).map(el => ({ 'group_id': el[0], 'group_name': el[1] }))
+      this.groupList = list
     },
     fetchFix () {
       this.fetchUserList()

@@ -145,7 +145,8 @@ export default {
         this.options.metrics = await CmdbService.metrics(
           this.config.hostId,
           this.config.endpointModelId,
-          this.config.metricModelId
+          this.config.metricModelId,
+          this.config.endpointId
         )
       } catch (e) {
         this.options.metrics = []
