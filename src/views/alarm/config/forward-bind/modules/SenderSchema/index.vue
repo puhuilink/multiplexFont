@@ -11,66 +11,71 @@
       class="SendForm"
       ref="content"
     >
-      <a-form-model-item
-        label="通知等级"
-        v-bind="formItemLayout"
-        :rules="[
-          { required: true, message: '请选择通知等级' },
-        ]">
-        <a-select
-          class="SendForm__Select"
-          v-model="send.level"
-          :disabled="levelBtn"
-        >
-          <a-select-option
-            v-for="[value, label] in levelList"
-            :key="value"
-            :value="value"
+      <a-form-model ref="form" :model="send">
+        <a-form-model-item
+          label="通知等级"
+          v-bind="formItemLayout"
+          prop="level"
+          :rules="[
+            { required: true, message: '请选择通知等级' },
+          ]">
+          <a-select
+            class="SendForm__Select"
+            v-model="send.level"
+            :disabled="levelBtn"
           >
-            {{ label }}
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
+            <a-select-option
+              v-for="[value, label] in levelList"
+              :key="value"
+              :value="value"
+            >
+              {{ label }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
 
-      <a-form-model-item
-        label="通知组"
-        v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
-      >
-        <a-select
-          allowClear
-          mode="default"
-          showSearch
-          class="item2"
-          v-model="send.group"
-          :disabled="groupBtn"
+        <a-form-model-item
+          label="通知组"
+          prop="group"
+          v-bind="formItemLayout"
+          :rules="[{ required: true, message: '请选择通知组' }]"
         >
-          <a-select-option
-            v-for="{ group_id, group_name } in groupList"
-            :key="group_id"
-            :value="group_id">{{ group_name }}</a-select-option>
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item
-        label="通知人"
-        v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
-      >
-        <a-select
-          class="item2"
-          allowClear
-          mode="multiple"
-          showSearch
-          v-model="send.contact"
-        >
-          <a-select-option
+          <a-select
+            allowClear
+            mode="default"
+            showSearch
             class="item2"
-            v-for="{ user_id, staff_name } in userList"
-            :key="user_id"
-            :value="user_id">{{ staff_name }}</a-select-option>
-        </a-select>
-      </a-form-model-item>
+            v-model="send.group"
+            :disabled="groupBtn"
+          >
+            <a-select-option
+              v-for="{ group_id, group_name } in groupList"
+              :key="group_id"
+              :value="group_id">{{ group_name }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item
+          label="通知人"
+          v-bind="formItemLayout"
+          prop="contact"
+          :rules="[{ required: true, message: '请选择通知人' }]"
+        >
+          <a-select
+            class="item2"
+            allowClear
+            mode="multiple"
+            showSearch
+            v-model="send.contact"
+          >
+            <a-select-option
+              class="item2"
+              v-for="{ user_id, staff_name } in userList"
+              :key="user_id"
+              :value="user_id">{{ staff_name }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
       <a-row class="ant-form-item">
         <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
           <label title="通知方式">通知方式</label>
@@ -141,7 +146,6 @@
 <script>
 import {
   UserGroupService,
-  GroupService,
   AlarmRuleService,
   UserService,
   AlarmTempService,
@@ -219,19 +223,22 @@ export default {
       this.submit = this.insert
     },
     async insert () {
-      try {
-        this.btnLoading = true
-        // 新增用户
-        await AlarmRuleService.addUser(this.send)
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.form.validate(async value => {
+        if (!value) return
+        try {
+          this.btnLoading = true
+          // 新增用户
+          await AlarmRuleService.addUser(this.send)
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+        }
+      })
     },
     edit (id) {
       this.groupBtn = true
@@ -263,24 +270,28 @@ export default {
       }
     },
     async update () {
-      try {
-        this.btnLoading = true
-        await AlarmSenderService.update(
-          { contact: this.send.contact.join(''),
-            temp_sms_id: this.send.temp_sms_id,
-            temp_email_id: this.send.temp_email_id,
-            auto: this.send.auto
-          },
-          { event_level: this.send.level })
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.form.validate(async value => {
+        console.log(value)
+        if (!value) return
+        try {
+          this.btnLoading = true
+          await AlarmSenderService.update(
+            { contact: this.send.contact.join(''),
+              temp_sms_id: this.send.temp_sms_id,
+              temp_email_id: this.send.temp_email_id,
+              auto: this.send.auto
+            },
+            { event_level: this.send.level })
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+        }
+      })
     },
     async fetchUserList () {
       try {

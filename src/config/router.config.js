@@ -312,20 +312,20 @@ export const asyncRouterMap = [
         name: 'prediction',
         redirect: '/prediction/capacity',
         component: RouteView,
-        meta: { title: '数据预测', keepAlive: true, icon: 'environment', permission: 'F011' },
+        meta: { title: '数据管理', keepAlive: true, icon: 'line-chart', permission: 'F011' },
         children: [
           {
             path: '/prediction/capacity',
             name: 'capacity',
             redirect: '/prediction/capacity/Summary',
             component: RouteView,
-            meta: { title: '容量视图', keepAlive: true },
+            meta: { title: '指标视图', keepAlive: true },
             children: [
               {
                 path: '/prediction/capacity/Summary',
                 name: 'Summary',
                 component: () => import('@/views/prediction/capacity/Summary'),
-                meta: { title: '容量总览', keepAlive: true }
+                meta: { title: '指标总览', keepAlive: true }
               },
               {
                 path: '/prediction/capacity/EchartsView',
@@ -480,7 +480,7 @@ export const asyncRouterMap = [
         name: 'secondSys',
         redirect: 'secondSys/Zhenhua',
         component: RouteView,
-        meta: { title: '二级单位', keepAlive: true, icon: 'user' },
+        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete' },
         children: [
           {
             path: '/secondSys/Zhenhua',

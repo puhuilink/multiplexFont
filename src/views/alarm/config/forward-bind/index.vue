@@ -62,6 +62,7 @@
       </template>
     </CTable>
     <SenderSchema
+      @addSuccess="query(false)"
       ref="schema"
     ></SenderSchema>
   </div>
