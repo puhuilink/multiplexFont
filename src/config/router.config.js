@@ -483,10 +483,16 @@ export const asyncRouterMap = [
         meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete' },
         children: [
           {
-            path: '/secondSys/Zhenhua',
+            path: '/secondSys/yigongju',
             name: '一公局',
             component: () => import('@/views/secondSys/zhenhua'),
             meta: { title: '一公局' }
+          },
+          {
+            path: 'secondSys/lujiao',
+            name: '路桥',
+            component: () => import('@/views/secondSys/lujian'),
+            meta: { title: '路桥' }
           }
         ]
       },
