@@ -50,7 +50,7 @@
               </template>
               <template slot="imgs" slot-scope="imgs">
                 <span v-if="imgs.imgs.length > 0">
-                  <img :src="i" alt="" :key="index" v-for="(i,index) in imgs.imgs">
+                  <vue-preview :slides="[{src:i,msrc:i,w:1920,h:1080}]" style="width:75px" :key="index" v-for="(i,index) in imgs.imgs" class="preview"></vue-preview>
                 </span>
               </template>
               <template slot="endpoint" slot-scope="endpoint">
@@ -78,6 +78,7 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    details: [],
     columns: Object.freeze([
       {
         title: '点位',
@@ -177,6 +178,17 @@ export default {
         }
       }
       return value
+    },
+    setPreview () {
+      this.details.forEach(img => {
+        img.src = img.header
+        img.msrc = img.header
+        img.alt = img.top_commentsName
+        img.title = img.top_commentsName
+        img.w = 200
+        img.h = 200
+      })
+      return this.details
     },
     async fetch (task_id) {
       try {

@@ -15,6 +15,16 @@
 }
 
 body {
+  .preview figure {
+    float: left;
+    width: 30%;
+    height:calc(30vw - 0px);
+    margin: 1.5%;
+  }
+
+  .preview figure img {
+    width: 100%;
+  }
 
   &.colorWeak {
     filter: invert(80%);
@@ -606,7 +616,7 @@ body {
   &-leave-to {
     transform: scale(0);
   }
-  
+
 }
 
 .transition-fade {
