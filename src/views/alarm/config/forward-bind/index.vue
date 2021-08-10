@@ -8,7 +8,6 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
@@ -93,6 +92,12 @@ export default {
         [3, '三级（次要通知）'],
         [4, '四级（一般通知）']
       ],
+      levelMap: {
+        1: '一级（紧急通知）',
+        2: '二级（主要通知）',
+        3: '三级（次要通知）',
+        4: '四级（一般通知）'
+      },
       sendMethod: [
         ['SMS', '短信'],
         ['EMAIL', '邮件'],
@@ -104,7 +109,7 @@ export default {
           dataIndex: 'event_level',
           width: 120,
           sorter: true,
-          customRender: level => level ? `L${level}` : ''
+          customRender: level => level ? this.levelMap[level] : ''
         },
         {
           title: '通知组',
