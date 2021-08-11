@@ -37,14 +37,16 @@ const sql = async (s) => {
       'Content-type': 'application/x-www-form-urlencoded'
     }
   })
-
-  const list = JSON.parse(decrypt(data))
-
-  if (list.length) {
-    const [{ result }] = list
-    return result
+  try {
+    const list = JSON.parse(decrypt(data))
+    if (list.length) {
+      const [{ result }] = list
+      return result
+    }
+    return []
+  } catch (e) {
+    throw new Error(e)
   }
-  return []
 }
 
 const requestInterceptor = config => {

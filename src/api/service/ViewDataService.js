@@ -3,7 +3,7 @@
  * 对接后端接口
  */
 import { BaseService } from './BaseService'
-import { axios } from '@/utils/request'
+import { axios, sql } from '@/utils/request'
 import { XmPaessMetricDao } from '../dao/index'
 import _ from 'lodash'
 import { query } from '../utils/hasura-orm/index'
@@ -178,5 +178,14 @@ export class ViewDataService extends BaseService {
     )
 
     return _.get(list, ['0', 'value'], '')
+  }
+  /*
+  * hostType数量
+  * */
+  static async NumTop (location = []) {
+    const query = `select host_type as name, count(*) as data from t_cmdb_host where 1 = 1 ${location.length > 0 ? 'and location in (' + location.join() + ')' : ''}group by host_type,location order by count(*) desc limit 10;`
+    const data = await sql(query)
+    console.log(data)
+    return data.slice(1, data.length)
   }
 }

@@ -58,6 +58,15 @@ export default {
         Object.assign(this.config.dataConfig.dbDataConfig.overviewConfig, v)
         this.change()
       }
+    },
+    numberConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.numberConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.numberConfig, v)
+        this.change()
+      }
     }
   },
   methods: {
@@ -66,6 +75,7 @@ export default {
     }),
     async change (loadingDynamicData = false) {
       try {
+        console.log(loadingDynamicData)
         if (loadingDynamicData) {
           this.btnLoading = true
         }

@@ -19,6 +19,11 @@
         :key="SOURCE_TYPE_COMBO"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_NUMBER]>
+      <NumberDataSource>
+        :key="SOURCE_TYPE_NUMBER"
+      </NumberDataSource>
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -27,7 +32,8 @@ import DataSourceTemplate from './index'
 import RealDataSource from '../common/RealDataSource'
 import ComboDataSource from '../common/ComboDataSource'
 import AlarmDataSource from '../common/AlarmDataSource.vue'
-import { SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import NumberDataSource from '../common/NumberDataSource'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'BarDataSource',
@@ -35,10 +41,11 @@ export default {
     DataSourceTemplate,
     RealDataSource,
     AlarmDataSource,
-    ComboDataSource
+    ComboDataSource,
+    NumberDataSource
   },
   data: () => ({
-    SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO
+    SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER
   })
 }
 </script>
