@@ -12,7 +12,8 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_COMBO
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_NUMBER
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
 import { formatFloat } from '@/utils/util'
@@ -86,6 +87,7 @@ export default class BarChart extends Chart {
         dbDataConfig.resetData()
         break
       }
+      case SOURCE_TYPE_NUMBER:
       case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_ALARM:
       case SOURCE_TYPE_REAL: {

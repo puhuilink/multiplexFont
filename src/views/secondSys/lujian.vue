@@ -3,7 +3,7 @@
 </template>
 <script>
 export default {
-  name: 'Lujiao'
+  name: 'Lujian'
 }
 </script>
 

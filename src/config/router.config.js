@@ -489,10 +489,10 @@ export const asyncRouterMap = [
             meta: { title: '一公局' }
           },
           {
-            path: 'secondSys/lujiao',
+            path: '/secondSys/lujian',
             name: '路桥',
             component: () => import('@/views/secondSys/lujian'),
-            meta: { title: '路桥' }
+            meta: { title: '路建' }
           }
         ]
       },

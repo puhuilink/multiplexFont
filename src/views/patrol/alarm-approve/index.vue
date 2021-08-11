@@ -39,6 +39,18 @@
                   </a-form-item>
                 </a-col>
               </a-row>
+
+              <a-row>
+                <a-col :md="12" :sm="24">
+                  <a-form-item label="任务单号" v-bind="formItemLayout" class="fw">
+                    <a-input-number
+                      class="fw"
+                      v-model="queryParams.id"
+                      placeholder="请输入任务单号"
+                    ></a-input-number>
+                  </a-form-item>
+                </a-col>
+              </a-row>
             </div>
 
             <span :class="advanced ? 'expand' : 'collapse'">
@@ -137,10 +149,13 @@ export default {
         dataIndex: 'executor',
         width: 130,
         customRender: (executor) => {
-          const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
-          if (initArr.length > 1) {
-            return _.join(initArr, ' ')
-          } else return initArr
+          if (executor) {
+            const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
+            console.log(initArr)
+            if (initArr.length > 1) {
+              return _.join(initArr, ' ')
+            } else return initArr
+          } else return ''
         }
       },
       {
