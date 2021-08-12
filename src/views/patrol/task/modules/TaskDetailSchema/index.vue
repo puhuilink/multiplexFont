@@ -50,7 +50,14 @@
               </template>
               <template slot="imgs" slot-scope="imgs">
                 <span v-if="imgs.imgs.length > 0">
-                  <vue-preview :slides="[{src:i,msrc:i,w:1920,h:1080}]" style="width:75px" :key="index" v-for="(i,index) in imgs.imgs" class="preview"></vue-preview>
+                  <viewer :images="imgs.imgs">
+                    <img
+                      v-for="(src,index) in imgs.imgs"
+                      :src="src"
+                      :key="index"
+                      style="width: 50px"
+                    >
+                  </viewer>
                 </span>
               </template>
               <template slot="endpoint" slot-scope="endpoint">
