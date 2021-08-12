@@ -19,7 +19,6 @@ export function enabledColumn () {
     dataIndex: 'enabled',
     width: 100,
     sorter: true,
-    fixed: 'right',
     customRender (__, record, index) {
       {
         const { id, enabled } = record
@@ -101,8 +100,7 @@ export function titleColumn () {
     title: '规则名称',
     dataIndex: 'title',
     width: 300,
-    fixed: 'left',
-    sorter: true
+    fixed: 'left'
   }
 }
 
