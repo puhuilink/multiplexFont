@@ -382,10 +382,9 @@ class PatrolService extends BaseService {
     })
   }
 
-  static async getPatrolTaskExcel ([data]) {
-    console.log(data)
+  static async getPatrolTaskExcel (data) {
     const json = { taskId: data }
-    return xungeng({
+    xungeng({
       url: '/export/taskHistory',
       method: 'post',
       data: json,
