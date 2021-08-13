@@ -266,12 +266,11 @@ export default {
     async exportExcel () {
       try {
         this.exportLoading = true
-        console.log(this.selectedRows)
         for (let i = 0; i < this.selectedRowKeys.length; i++) {
           const key = this.selectedRowKeys[i]
           const record = this.selectedRows[i]
           const content = await PatrolService.getPatrolTaskExcel(key)
-          downloadExcel('巡更记录单-' + record.actual_end_time.toString(), content)
+          await downloadExcel('巡更记录单-' + record.actual_end_time.toString(), content)
         }
         this.$notification.success({
           message: '系统提示',
