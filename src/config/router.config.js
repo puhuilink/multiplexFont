@@ -176,9 +176,10 @@ export const asyncRouterMap = [
             meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
           },
           {
-            path: 'http://10.1.1.211/zh-hans/accounts/login/?next=/',
+            path: '/performance/npm',
             name: 'NPM',
-            meta: { title: 'NPM', target: '_blank', permission: [ 'F004006' ] }
+            component: () => import('@/views/performance/npm/index'),
+            meta: { title: 'NPM', keepAlive: true, permission: [ 'F004006' ] }
           }
         ]
       },
