@@ -104,7 +104,7 @@
       <!-- / 操作区域 -->
       <template #operation>
         <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
-        <a-button :disabled="!hasSelectedOne" :loading="exportLoading" @click="exportExcel">导出</a-button>
+        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
       </template>
 
     </CTable>
@@ -266,8 +266,12 @@ export default {
     async exportExcel () {
       try {
         this.exportLoading = true
-        const content = await PatrolService.getPatrolTaskExcel(this.selectedRowKeys)
-        downloadExcel('巡更记录单', content)
+        for (let i = 0; i < this.selectedRowKeys.length; i++) {
+          const key = this.selectedRowKeys[i]
+          const record = this.selectedRows[i]
+          const content = await PatrolService.getPatrolTaskExcel(key)
+          await downloadExcel('巡更记录单-' + record.actual_end_time.toString(), content)
+        }
         this.$notification.success({
           message: '系统提示',
           description: '导出巡更记录单成功'
