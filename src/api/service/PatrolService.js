@@ -138,7 +138,7 @@ class PatrolService extends BaseService {
       PatrolTaskStatusDao.update({
         review: '1',
         reviewer: id,
-        review_time: moment().tz('Asia/ShangHai').format()
+        review_time: new Date()
       }, { id: { _in: idList } })
     )
   }
@@ -388,7 +388,7 @@ class PatrolService extends BaseService {
     })
   }
 
-  static async getPatrolTaskExcel ([data]) {
+  static async getPatrolTaskExcel (data) {
     const json = { taskId: data }
     return xungeng({
       url: '/export/taskHistory',

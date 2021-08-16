@@ -11263,6 +11263,11 @@ throat@^4.0.0:
   resolved "https://registry.npmjs.org/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
 
+throttle-debounce@^2.0.1:
+  version "2.3.0"
+  resolved "https://registry.npm.taobao.org/throttle-debounce/download/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
+  integrity sha1-/TGGXmZQIHHkEYF+JBRls+nDcuI=
+
 throttle-debounce@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/throttle-debounce/download/throttle-debounce-2.1.0.tgz#257e648f0a56bd9e54fe0f132c4ab8611df4e1d5"
@@ -11762,6 +11767,14 @@ uuid@^3.3.3:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
   integrity sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
 
+v-viewer@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.nlark.com/v-viewer/download/v-viewer-1.6.4.tgz#39e36b534baab34076fb816704c6a734de0dc72f"
+  integrity sha1-OeNrU0uqs0B2+4FnBManNN4Nxy8=
+  dependencies:
+    throttle-debounce "^2.0.1"
+    viewerjs "^1.5.0"
+
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
   resolved "https://registry.npmjs.org/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz#fc91f6b9c7ba15c857f4cb2c5defeec39d4f410a"
@@ -11788,6 +11801,11 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+viewerjs@^1.5.0:
+  version "1.10.1"
+  resolved "https://registry.nlark.com/viewerjs/download/viewerjs-1.10.1.tgz#07499ed043d0a29e3002b90f55c5b228bd1a742c"
+  integrity sha1-B0me0EPQop4wArkPVcWyKL0adCw=
 
 vm-browserify@^1.0.1:
   version "1.1.0"
