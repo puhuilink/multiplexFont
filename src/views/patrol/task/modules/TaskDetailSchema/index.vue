@@ -43,25 +43,28 @@
           <a-tab-pane v-for="{ alias, id } in switchCardList" :key="id" :tab="alias">
             <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
               <template slot="position" slot-scope="position">
-                {{ position!==null?position.group:'无柜位信息' }}
+                {{ position!==null||position!='NULL'?position.group:'无柜位信息' }}
               </template>
               <template slot="value" slot-scope="text, record">
-                {{ valueMapping(record.type,record.format,text) }}
+                {{ valueMapping(record) }}
               </template>
-              <template slot="imgs" slot-scope="imgs">
-                <span v-if="imgs.imgs.length > 0">
-                  <viewer :images="imgs.imgs">
+              <template slot="imgs" slot-scope="imgs,record">
+                <span v-if="JSON.parse(record.tags).imgs.length > 0">
+                  <viewer :images="JSON.parse(record.tags).imgs">
                     <img
-                      v-for="(src,index) in imgs.imgs"
+                      v-for="(src,index) in JSON.parse(record.tags).imgs"
                       :src="src"
                       :key="index"
-                      style="width: 50px"
+                      style="width: 50px;height: 50px"
                     >
                   </viewer>
                 </span>
               </template>
+              <template slot="remark" slot-scope="remark">
+                {{ JSON.parse(remark).remarks }}
+              </template>
               <template slot="endpoint" slot-scope="endpoint">
-                {{ endpoint!==null?endpoint:'虚拟实体' }}
+                {{ endpoint!==null||endpoint!='NULL'?endpoint:'虚拟实体' }}
               </template>
             </a-table>
           </a-tab-pane>
@@ -122,12 +125,12 @@ export default {
       },
       {
         title: '备注',
-        dataIndex: 'tags.remarks',
-        width: 180
+        dataIndex: 'tags',
+        width: 180,
+        scopedSlots: { customRender: 'remark' }
       },
       {
         title: '图片',
-        dataIndex: 'tags',
         width: 180,
         scopedSlots: { customRender: 'imgs' }
       }
@@ -175,7 +178,10 @@ export default {
     }
   },
   methods: {
-    valueMapping (type, list, value) {
+    valueMapping (record) {
+      const type = record.type
+      const list = JSON.parse(record.format)
+      const value = record.value
       if (type === 'fill') {
         return value
       }

@@ -7,8 +7,9 @@ import {
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
-import { axios, xungeng } from '@/utils/request'
+import { axios, sql, xungeng } from '@/utils/request'
 import { decrypt } from '@/utils/aes'
+import { sqlResultDealer } from '@/utils/util'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -49,25 +50,21 @@ class PatrolService extends BaseService {
     return _.first(changeShiftList)
   }
   static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
-    const result = await this.reportFind({
-      where: { task_id, zone_id },
-      alias: 'content',
-      fields: [
-        'point_alias',
-        'host_alias',
-        'endpoint_alias',
-        'metric_alias',
-        'format',
-        'type',
-        'tags',
-        'position',
-        'value'
-      ]
-    })
-    const { data: { content } } = result
-    return content
+    let baseSql = `select 
+    point_alias,
+    host_alias,
+    endpoint_alias,
+    metric_alias,
+    format,
+    type,
+    tags,
+    position,
+    value from t_patrol_task_report_view where task_id = ${task_id} and zone_id = ${zone_id} order by 
+    endpoint_sequence, metric_sequence, zone_sequence, checkpoint_sequence, host_sequence`
+    baseSql += ';'
+    const result = await sql(baseSql)
+    return sqlResultDealer(result)
   }
-
   // 导出交接班记录
   static async onExport (selectRow) {
     return xungeng({
