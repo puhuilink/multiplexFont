@@ -43,7 +43,7 @@
           <a-tab-pane v-for="{ alias, id } in switchCardList" :key="id" :tab="alias">
             <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
               <template slot="position" slot-scope="position">
-                {{ position!==null||position!='NULL'?position.group:'无柜位信息' }}
+                {{ position!==null&&position!='NULL'?JSON.parse(position).group:'无柜位信息' }}
               </template>
               <template slot="value" slot-scope="text, record">
                 {{ valueMapping(record) }}
@@ -64,7 +64,7 @@
                 {{ JSON.parse(remark).remarks }}
               </template>
               <template slot="endpoint" slot-scope="endpoint">
-                {{ endpoint!==null||endpoint!='NULL'?endpoint:'虚拟实体' }}
+                {{ endpoint!==null&&endpoint!='NULL'?endpoint:'虚拟实体' }}
               </template>
             </a-table>
           </a-tab-pane>
