@@ -589,7 +589,8 @@ export default {
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
-          description: '保存失败'
+          description: '保存失败',
+          duration: 2
         })
         throw e
       } finally {
