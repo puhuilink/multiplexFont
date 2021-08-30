@@ -20,6 +20,7 @@
       :showAlarmSelection="false"
       :showAlarmIcon="false"
       :showPagin="false"
+      :showTimer="false"
     />
   </div>
 </template>

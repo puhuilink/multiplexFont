@@ -151,7 +151,7 @@
             </a-button>
           </div>
 
-          <div style="height: 40px;line-height: 40px; margin-right: 30px;border-radius: 10px;">
+          <div style="height: 40px;line-height: 40px; margin-right: 30px;border-radius: 10px;" v-if="showTimer">
             页面刷新时间<a-input-number v-model="fetchTime" :min="1" :max="10"/>分钟
           </div>
 
@@ -272,6 +272,10 @@ export default {
       type: Boolean,
       default: true
     },
+    showTimer: {
+      type: Boolean,
+      default: true
+    },
     inlineColumns: {
       type: Array,
       default: () => ([
@@ -295,7 +299,7 @@ export default {
           customRender: (alarmLevel) => (
             <div
               style={{
-                borderColor: 'transparent',
+                // borderColor: 'transparent',
                 color: 'rgba(0,0,0,.5)',
                 cursor: 'default',
                 display: 'flex',
@@ -692,6 +696,10 @@ export default {
       handler: function async (value) {
         // 动态刷新时间
         clearInterval(this.timer)
+        // 关闭定时器的情况下默认刷新时间为一分钟
+        if (!this.showTimer) {
+          value = 1
+        }
         this.timer = null
         this.timer = setInterval(() => {
           this.queryParams.receive_time = [moment().add(-1, 'days'), moment()]
