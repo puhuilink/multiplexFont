@@ -176,10 +176,9 @@ export const asyncRouterMap = [
             meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
           },
           {
-            path: '/performance/npm',
+            path: 'http://10.201.51.30/zh-cn/apc/manager/alert/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
-            component: () => import('@/views/performance/npm/index'),
-            meta: { title: 'NPM', keepAlive: true, permission: [ 'F004006' ] }
+            meta: { title: 'NPM', target: '_blank', permission: [ 'F004006' ] }
           }
         ]
       },
