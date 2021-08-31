@@ -51,7 +51,8 @@
             <a-select-option
               v-for="{ group_id, group_name } in groupList"
               :key="group_id"
-              :value="group_id">{{ group_name }}</a-select-option>
+              :value="group_id">{{ group_name }}
+            </a-select-option>
           </a-select>
         </a-form-model-item>
 
@@ -72,7 +73,8 @@
               class="item2"
               v-for="{ user_id, staff_name } in userList"
               :key="user_id"
-              :value="user_id">{{ staff_name }}</a-select-option>
+              :value="user_id">{{ staff_name }}
+            </a-select-option>
           </a-select>
         </a-form-model-item>
       </a-form-model>
@@ -85,7 +87,7 @@
           <a-row>
             <a-col :span="8">
               <a-form-model-item label="短信" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS"/>
+                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
@@ -96,7 +98,8 @@
                   :disabled="!send.hasEnabledSMS"
                   v-model="send.temp_sms_id"
                 >
-                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
+                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}
+                  </a-select-option>
                 </a-select>
               </a-form-model-item>
             </a-col>
@@ -105,7 +108,7 @@
           <a-row>
             <a-col :span="8">
               <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail"/>
+                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />
               </a-form-model-item>
             </a-col>
             <a-col :span="16">
@@ -116,7 +119,8 @@
                   :disabled="!send.hasEnabledEmail"
                   v-model="send.temp_email_id"
                 >
-                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
+                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}
+                  </a-select-option>
                 </a-select>
               </a-form-model-item>
             </a-col>
@@ -125,19 +129,19 @@
       </a-row>
     </div>
     <!-- / 底部按钮 -->
-    <template slot="footer" >
+    <template slot="footer">
       <a-form-model-item
         v-bind="formItemLayout"
         label="自动"
         class="footer"
         v-if="btnVisible"
       >
-        <a-select v-model="send.auto" class="enabled" >
+        <a-select v-model="send.auto" class="enabled">
           <a-select-option :value="true">是</a-select-option>
           <a-select-option :value="false">否</a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-button @click="cancel">取消</a-button>
+      <a-button @click="localCancel">取消</a-button>
       <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
     </template>
   </a-modal>
@@ -155,10 +159,11 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
 import { sql } from '@/utils/request'
 import _ from 'lodash'
+
 export default {
   name: 'SenderSchema',
   components: {},
-  mixins: [ Schema ],
+  mixins: [Schema],
   data: () => ({
     groupBtn: false,
     levelBtn: false,
@@ -197,8 +202,12 @@ export default {
     }
   }),
   methods: {
+    localCancel () {
+      this.reset()
+      this.cancel()
+    },
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
@@ -276,7 +285,8 @@ export default {
         try {
           this.btnLoading = true
           await AlarmSenderService.update(
-            { contact: this.send.contact.join(''),
+            {
+              contact: this.send.contact.join(''),
               temp_sms_id: this.send.temp_sms_id,
               temp_email_id: this.send.temp_email_id,
               auto: this.send.auto
@@ -351,30 +361,33 @@ export default {
 </script>
 
 <style lang="less">
-  .SenderSchema__modal {
-    .SendForm {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      justify-items: center;
-      &__Select {
-        width: 60%;
-      }
-      .item1{
-        width: 60%;
-      }
-      .item2 {
-        width: 60%;
-      }
+.SenderSchema__modal {
+  .SendForm {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-items: center;
+
+    &__Select {
+      width: 60%;
     }
 
-    .footer {
-      float: left;
+    .item1 {
+      width: 60%;
     }
 
-    .enabled {
-      width: 100px;
+    .item2 {
+      width: 60%;
     }
   }
+
+  .footer {
+    float: left;
+  }
+
+  .enabled {
+    width: 100px;
+  }
+}
 
 </style>
