@@ -211,9 +211,15 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
+      if (!e) {
+        this.send.temp_sms_id = null
+      }
       this.send.hasEnabledSMS = e
     },
     toggleEmail (e) {
+      if (!e) {
+        this.send.temp_email_id = null
+      }
       this.send.hasEnabledEmail = e
     },
     async getGroup () {
