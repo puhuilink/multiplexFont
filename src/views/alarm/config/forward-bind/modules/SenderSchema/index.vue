@@ -278,8 +278,8 @@ export default {
         contact: _.split(model.contact, '/'),
         level: model.event_level,
         auto: model.auto,
-        hasEnabledEmail: !_.includes(_.words(model.send_type, '/'), 'EMAIL'),
-        hasEnabledSMS: !_.includes(_.words(model.send_type, '/'), 'SMS'),
+        hasEnabledEmail: _.includes(_.split(model.send_type, '/'), 'EMAIL'),
+        hasEnabledSMS: _.includes(_.split(model.send_type, '/'), 'SMS'),
         temp_email_id: model.temp_email_id,
         temp_sms_id: model.temp_sms_id
       }
@@ -293,8 +293,8 @@ export default {
           await AlarmSenderService.update(
             {
               contact: this.send.contact.join(''),
-              temp_sms_id: this.send.temp_sms_id,
-              temp_email_id: this.send.temp_email_id,
+              temp_sms_id: this.send.temp_sms_id === '' ? null : this.send.temp_sms_id,
+              temp_email_id: this.send.temp_email_id === '' ? null : this.send.temp_email_id,
               auto: this.send.auto
             },
             { event_level: this.send.level })
