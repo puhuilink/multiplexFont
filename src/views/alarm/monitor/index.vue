@@ -545,8 +545,7 @@ export default {
       const {
         hostTypeDictValueCode,
         queryParams: { agent_id, alarmLevelList, dictValue, ...queryParams },
-        ip,
-        queryParamsProps
+        ip
       } = this
       const alarmFields = [
         'id',

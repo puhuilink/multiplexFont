@@ -583,12 +583,14 @@ export default {
         await ViewDesignService.updateViewDesign(this.$route.query.id, this.viewOptions)
         this.$notification.success({
           message: '系统提示',
-          description: '保存成功'
+          description: '保存成功',
+          duration: 2
         })
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
-          description: '保存失败'
+          description: '保存失败',
+          duration: 2
         })
         throw e
       } finally {
