@@ -68,8 +68,8 @@ class AlarmRuleService extends BaseService {
       level: param.level,
       groupId: param.group,
       contact: _.join(param.contact, '/'),
-      smsId: Number(param.temp_sms_id),
-      emailId: Number(param.temp_email_id),
+      smsId: param.temp_sms_id,
+      emailId: param.temp_email_id,
       auto: param.auto
     }
     return axios.post('notice/addNoticeMember', newParam)
