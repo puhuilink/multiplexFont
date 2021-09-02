@@ -150,11 +150,11 @@ export default {
         width: 130,
         customRender: (executor) => {
           if (executor) {
-            const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
-            console.log(initArr)
-            if (initArr.length > 1) {
-              return _.join(initArr, ' ')
-            } else return initArr
+            if (executor.toString().includes('[')) {
+              return executor.toString().slice(1, executor.length - 1)
+            } else {
+              return executor.executor
+            }
           } else return ''
         }
       },

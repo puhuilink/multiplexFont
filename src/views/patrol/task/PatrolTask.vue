@@ -9,7 +9,6 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
@@ -26,7 +25,8 @@
                     <a-select-option
                       v-for="{label, value} in groups"
                       :key="value"
-                    >{{ label }}</a-select-option>
+                    >{{ label }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -37,11 +37,12 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.event_occur" >
+                  <a-select allowClear v-model="queryParams.event_occur">
                     <a-select-option
                       v-for="[code, name] in ENABLE_LIST"
                       :key="code"
-                    >{{ name }}</a-select-option>
+                    >{{ name }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -64,7 +65,8 @@
                       v-for="[type, label] in STATUS_LIST"
                       :key="type"
                       :value="type"
-                    >{{ label }}</a-select-option>
+                    >{{ label }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -103,7 +105,7 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
         <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
       </template>
 
@@ -214,7 +216,15 @@ export default {
         title: '巡更人员',
         dataIndex: 'executor',
         width: 150,
-        customRender: executor => executor ? executor.slice(1, executor.length - 1) : ''
+        customRender: (executor) => {
+          if (!executor) {
+            return ''
+          } else if (executor.toString().includes('[')) {
+            return executor.slice(1, executor.length - 1)
+          } else {
+            return executor.executor
+          }
+        }
       }
     ])
   }),
