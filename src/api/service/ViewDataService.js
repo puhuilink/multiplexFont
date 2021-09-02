@@ -185,7 +185,6 @@ export class ViewDataService extends BaseService {
   static async NumTop (location = []) {
     const query = `select host_type as name, count(*) as data from t_cmdb_host where 1 = 1 ${location.length > 0 ? 'and location in (' + location.join() + ')' : ''}group by host_type,location order by count(*) desc limit 10;`
     const data = await sql(query)
-    console.log(data)
     return data.slice(1, data.length)
   }
 }
