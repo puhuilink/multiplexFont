@@ -31,6 +31,11 @@
         :key="SOURCE_TYPE_DH"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_SQL]>
+      <SQLDataSource
+        :key="SOURCE_TYPE_SQL"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -42,12 +47,14 @@ import AlarmDataSource from '../common/AlarmDataSource.vue'
 import OverviewDataSource from '../common/OverviewDataSource'
 import ComboDataSource from '../common/ComboDataSource'
 import DHDataSource from '../common/DHDataSource'
+import SQLDataSource from '../common/SQLDataSource'
 import {
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
-  SOURCE_TYPE_DH
+  SOURCE_TYPE_DH,
+  SOURCE_TYPE_SQL
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -59,14 +66,16 @@ export default {
     AlarmDataSource,
     OverviewDataSource,
     ComboDataSource,
-    DHDataSource
+    DHDataSource,
+    SQLDataSource
   },
   data: () => ({
     SOURCE_TYPE_ALARM,
     SOURCE_TYPE_REAL,
     SOURCE_TYPE_OVERVIEW,
     SOURCE_TYPE_COMBO,
-    SOURCE_TYPE_DH
+    SOURCE_TYPE_DH,
+    SOURCE_TYPE_SQL
   })
 }
 </script>

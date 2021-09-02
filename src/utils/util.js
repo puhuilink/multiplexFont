@@ -16,6 +16,29 @@ export function welcome () {
   const index = Math.floor(Math.random() * arr.length)
   return arr[index]
 }
+export function sqlResultDealer (list) {
+  if (list == null) {
+    return null
+  }
+  if (list.length <= 1) {
+    return null
+  }
+  const keys = list[0]
+  const array = []
+  for (let i = 1; i < list.length; i++) {
+    const record = list[i]
+    const temp = {}
+    for (let j = 0; j < keys.length; j++) {
+      temp[keys[j]] = record[j]
+    }
+    array.push(temp)
+  }
+  if (array.length > 0) {
+    return array
+  } else {
+    return null
+  }
+}
 
 /**
  * 触发 window.resize

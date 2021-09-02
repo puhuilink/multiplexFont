@@ -76,7 +76,6 @@ export default {
     cTableProps () {
       const {
         headerRowStyle,
-        rowStyle,
         scroll
       } = this
       return {

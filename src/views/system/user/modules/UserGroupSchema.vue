@@ -14,6 +14,7 @@
     cancelText="取消"
   >
     <a-transfer
+      v-if="visible"
       :dataSource="groupList"
       showSearch
       :titles="['未分配工作组', '已分配工作组']"

@@ -270,7 +270,7 @@ export default {
           const key = this.selectedRowKeys[i]
           const record = this.selectedRows[i]
           const content = await PatrolService.getPatrolTaskExcel(key)
-          await downloadExcel('巡更记录单-' + record.actual_end_time.toString(), content)
+          await downloadExcel('巡更记录单-' + record.actual_end_time.replaceAll('T', '-'), content)
         }
         this.$notification.success({
           message: '系统提示',
