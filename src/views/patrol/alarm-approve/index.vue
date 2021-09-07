@@ -149,12 +149,13 @@ export default {
         dataIndex: 'executor',
         width: 130,
         customRender: (executor) => {
-          if (executor) {
-            const initArr = _.compact(_.split(executor.slice(1, executor.length - 1), ' '))
-            if (initArr.length > 1) {
-              return _.join(initArr, ' ')
-            } else return initArr
-          } else return ''
+          if (!executor) {
+            return ''
+          } else if (executor === executor.toString()) {
+            return executor.toString().slice(1, executor.length - 1)
+          } else {
+            return executor.executor
+          }
         }
       },
       {

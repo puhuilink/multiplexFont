@@ -29,7 +29,12 @@
             <span>完成时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
           <a-col :span="6">
-            <span v-if="basicInfo.executor!==null">执行人：{{ basicInfo.executor!=null?basicInfo.executor.replaceAll('\"','').replace('[','').replace(']',''):'' }}</span>
+            <span v-if="basicInfo.executor!==null">
+              执行人：{{ basicInfo.executor!=null ?
+                basicInfo.executor === basicInfo.executor.toString()?
+                  basicInfo.executor.toString().replaceAll('\"','').replace('[','').replace(']',''):
+                  basicInfo.executor.executor:
+                '' }}</span>
           </a-col>
           <a-col :span="6">
             <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
@@ -145,7 +150,7 @@ export default {
       alias: '厦门数据中心 动环巡更计划',
       status: '10',
       planId: '1267708679575048194',
-      executor: '',
+      executor: { executor: '' },
       actualStartTime: '2021-05-21 13:48:22',
       actualEndTime: '2021-05-21 14:02:03'
     },
