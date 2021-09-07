@@ -29,7 +29,7 @@ class UserService extends BaseService {
       // 新增用户
       UserDao.add(user)
     )
-    await this.saveRedis(user)
+    await this.saveRedis(Object.assign(user, { type: 'insert' }))
     await this.hasuraTransfer({ query: q })
     await UserService.setInitialPwd(user.user_id)
   }
@@ -64,7 +64,7 @@ class UserService extends BaseService {
 
   static async saveRedis (data) {
     const formData = new FormData()
-    formData.append('userInfo', encrypt(JSON.stringify(data)))
+    formData.append('userInfo', encrypt(JSON.stringify(camelExchange(data))))
     await axios.post(`/redisData/userAlter`, formData, {
       headers: {
         'Content-type': 'application/json'
@@ -75,7 +75,7 @@ class UserService extends BaseService {
   static async update (user, where) {
     // 写入redis
     const redisUser = _.cloneDeep(user)
-    await this.saveRedis(camelExchange(Object.assign(redisUser, { type: 'update' })))
+    await this.saveRedis(Object.assign(redisUser, { type: 'update' }))
     const q = await generateMutation(
       UserDao.update(user, where)
     )
