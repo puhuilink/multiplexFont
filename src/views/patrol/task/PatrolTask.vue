@@ -219,8 +219,8 @@ export default {
         customRender: (executor) => {
           if (!executor) {
             return ''
-          } else if (executor.toString().includes('[')) {
-            return executor.slice(1, executor.length - 1)
+          } else if (executor === executor.toString()) {
+            return executor.toString().slice(1, executor.length - 1)
           } else {
             return executor.executor
           }

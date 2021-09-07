@@ -31,7 +31,7 @@
           <a-col :span="6">
             <span v-if="basicInfo.executor!==null">
               执行人：{{ basicInfo.executor!=null ?
-                basicInfo.executor.toString().includes('[') ?
+                basicInfo.executor === basicInfo.executor.toString()?
                   basicInfo.executor.toString().replaceAll('\"','').replace('[','').replace(']',''):
                   basicInfo.executor.executor:
                 '' }}</span>

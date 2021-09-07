@@ -149,13 +149,13 @@ export default {
         dataIndex: 'executor',
         width: 130,
         customRender: (executor) => {
-          if (executor) {
-            if (executor.toString().includes('[')) {
-              return executor.toString().slice(1, executor.length - 1)
-            } else {
-              return executor.executor
-            }
-          } else return ''
+          if (!executor) {
+            return ''
+          } else if (executor === executor.toString()) {
+            return executor.toString().slice(1, executor.length - 1)
+          } else {
+            return executor.executor
+          }
         }
       },
       {
