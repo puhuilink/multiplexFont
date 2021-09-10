@@ -11,7 +11,7 @@ import {
 } from '../dao/index'
 import store from '@/store'
 import _ from 'lodash'
-import { axios } from '@/utils/request'
+import { axios, zhenhua } from '@/utils/request'
 import { encrypt } from '@/utils/aes'
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import Timeout from 'await-timeout'
@@ -159,6 +159,13 @@ class UserService extends BaseService {
       ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
         verifCode: encrypt(verifCode)
       } : {}
+    })
+  }
+
+  static async seondLogin ({ userId, pwd }) {
+    return zhenhua.post('/user/login', {
+      userId: encrypt(userId),
+      encryptedPwd: encrypt(pwd)
     })
   }
 

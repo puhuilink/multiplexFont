@@ -22,13 +22,15 @@ function addStyleResource (rule) {
 const {
   VUE_APP_API_BASE_URL,
   VUE_APP_API_ORIGINAL_URL,
+  VUE_APP_API_ZHENHUA_BASE_URL,
   VUE_APP_XUNJIAN_API_BASE_URL,
   VUE_APP_API_XUNJIAN_ORIGINAL_URL,
   VUE_APP_HASURA_IMP_URI,
   VUE_APP_HASURA_IMP_ORIGINAL_URL,
   VUE_APP_VIEW_THUMBNAIL_URI,
   VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
-  VUE_APP_ENABLED_CDN
+  VUE_APP_ENABLED_CDN,
+  VUE_APP_API_ORIGINAL_ZHENHUA_BASE_URL
 } = process.env
 
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
@@ -178,6 +180,15 @@ const vueConfig = {
   devServer: {
     port: 8080,
     proxy: {
+      // 后端接口
+      [VUE_APP_API_ZHENHUA_BASE_URL]: {
+        target: VUE_APP_API_ORIGINAL_ZHENHUA_BASE_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_API_ZHENHUA_BASE_URL]: ''
+        }
+      },
       // 后端接口
       [VUE_APP_API_BASE_URL]: {
         target: VUE_APP_API_ORIGINAL_URL,
