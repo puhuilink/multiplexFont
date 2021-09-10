@@ -10,6 +10,10 @@ const service = axios.create({
   // timeout: 500000
 })
 
+const serviceZhenhua = axios.create({
+  baseURL: process.env.VUE_APP_API_ZHENHUA_BASE_URL
+})
+
 const serviceXungeng = axios.create({
   baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL
 })
@@ -112,6 +116,10 @@ service.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
 
+serviceZhenhua.interceptors.request.use(requestInterceptor)
+
+serviceZhenhua.interceptors.response.use(responseInterceptor)
+
 serviceXungeng.interceptors.request.use(requestInterceptor)
 
 serviceXungeng.interceptors.response.use(xungengresponseInterceptor)
@@ -128,5 +136,6 @@ export {
   installer as VueAxios,
   service as axios,
   serviceXungeng as xungeng,
+  serviceZhenhua as zhenhua,
   sql
 }

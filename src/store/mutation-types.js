@@ -1,5 +1,6 @@
 export const ACCESS_TOKEN = 'Authorization'
 export const USER = 'User'
+export const SHOW_USER = 'specialUser'
 export const ROLES = 'Roles'
 export const SIDEBAR_TYPE = 'SIDEBAR_TYPE'
 export const DEFAULT_THEME = 'DEFAULT_THEME'
