@@ -62,6 +62,7 @@
     </CTable>
     <SenderSchema
       @addSuccess="query(false)"
+      @updateSuccess="query(false)"
       ref="schema"
     ></SenderSchema>
   </div>
