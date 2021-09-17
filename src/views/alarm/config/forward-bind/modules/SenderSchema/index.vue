@@ -77,42 +77,37 @@
             </a-select-option>
           </a-select>
         </a-form-model-item>
-      </a-form-model>
-      <a-row class="ant-form-item">
-        <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
-          <label title="通知方式">通知方式</label>
-        </a-col>
-
-        <a-col v-bind="formItemLayout.wrapperCol">
-          <a-row>
-            <a-col :span="8">
-              <a-form-model-item label="短信" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />
-              </a-form-model-item>
+        <a-form-model-item
+          label="通知方式"
+          v-bind="formItemLayout"
+          :rules="[{ required: true, message: '请选择短信' }]"
+        >
+          <a-row type="flex">
+            <a-col :flex="2">
+              <span>短信:</span>
+              <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />
             </a-col>
-            <a-col :span="16">
-              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
-                <a-select
-                  class="item1"
-                  allowClear
-                  :disabled="!send.hasEnabledSMS"
-                  v-model="send.temp_sms_id"
-                >
-                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
+            <a-col :flex="5">
+              <a-select
+                class="item1"
+                allowClear
+                :disabled="!send.hasEnabledSMS"
+                v-model="send.temp_sms_id"
+              >
+                <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}
+                </a-select-option>
+              </a-select>
             </a-col>
           </a-row>
-
-          <a-row>
-            <a-col :span="8">
-              <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />
-              </a-form-model-item>
+          <a-row type="flex">
+            <a-col :flex="2">
+              <span>邮箱:</span>
+              <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />
             </a-col>
-            <a-col :span="16">
-              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
+            <a-col :flex="5">
+              <a-form-model-item
+                prop="temp_email_id"
+              >
                 <a-select
                   class="item1"
                   allowClear
@@ -125,8 +120,58 @@
               </a-form-model-item>
             </a-col>
           </a-row>
-        </a-col>
-      </a-row>
+        </a-form-model-item>
+
+      </a-form-model>
+      <!--      <a-row class="ant-form-item">-->
+      <!--        <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">-->
+      <!--          <label title="通知方式">通知方式</label>-->
+      <!--        </a-col>-->
+
+      <!--        <a-col v-bind="formItemLayout.wrapperCol">-->
+      <!--          <a-row>-->
+      <!--            <a-col :span="8">-->
+      <!--              <a-form-model-item label="短信" v-bind="nestedFormItemLayout">-->
+      <!--                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />-->
+      <!--              </a-form-model-item>-->
+      <!--            </a-col>-->
+      <!--            <a-col :span="16">-->
+      <!--              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">-->
+      <!--                <a-select-->
+      <!--                  class="item1"-->
+      <!--                  allowClear-->
+      <!--                  :disabled="!send.hasEnabledSMS"-->
+      <!--                  v-model="send.temp_sms_id"-->
+      <!--                >-->
+      <!--                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}-->
+      <!--                  </a-select-option>-->
+      <!--                </a-select>-->
+      <!--              </a-form-model-item>-->
+      <!--            </a-col>-->
+      <!--          </a-row>-->
+
+      <!--          <a-row>-->
+      <!--            <a-col :span="8">-->
+      <!--              <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">-->
+      <!--                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />-->
+      <!--              </a-form-model-item>-->
+      <!--            </a-col>-->
+      <!--            <a-col :span="16">-->
+      <!--              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">-->
+      <!--                <a-select-->
+      <!--                  class="item1"-->
+      <!--                  allowClear-->
+      <!--                  :disabled="!send.hasEnabledEmail"-->
+      <!--                  v-model="send.temp_email_id"-->
+      <!--                >-->
+      <!--                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}-->
+      <!--                  </a-select-option>-->
+      <!--                </a-select>-->
+      <!--              </a-form-model-item>-->
+      <!--            </a-col>-->
+      <!--          </a-row>-->
+      <!--        </a-col>-->
+      <!--      </a-row>-->
     </div>
     <!-- / 底部按钮 -->
     <template slot="footer">
@@ -286,7 +331,6 @@ export default {
     },
     async update () {
       this.$refs.form.validate(async value => {
-        console.log(value)
         if (!value) return
         try {
           this.btnLoading = true
@@ -298,8 +342,8 @@ export default {
               auto: this.send.auto
             },
             { event_level: this.send.level })
-          this.$emit('addSuccess')
-          this.$notifyAddSuccess()
+          this.$emit('updateSuccess')
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
           this.$notifyError(e)
