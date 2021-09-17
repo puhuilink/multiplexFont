@@ -515,6 +515,12 @@ export const asyncRouterMap = [
             name: '港湾',
             component: () => import('@/views/secondSys/gangwan'),
             meta: { title: '港湾' }
+          },
+          {
+            path: '/secondSys/yigongju',
+            name: '一公局',
+            component: () => import('@/views/secondSys/yigongju'),
+            meta: { title: '一公局' }
           }
         ]
       },
