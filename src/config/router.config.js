@@ -149,14 +149,24 @@ export const asyncRouterMap = [
             meta: { title: '服务管理', target: '_blank', permission: [ 'F004003' ] }
           },
           {
-            path: 'http://10.1.1.7/login.jsp',
-            name: '北京Pigoss',
-            meta: { title: '北京Pigoss', target: '_blank', permission: [ 'F004004' ] }
+            path: 'http://10.1.19.15/#/login',
+            name: '北京Pigoss1',
+            meta: { title: '北京Pigoss1', target: '_blank', permission: [ 'F004004' ] }
           },
           {
-            path: 'http://10.201.1.38/login.jsp',
-            name: '厦门Pigoss',
-            meta: { title: '厦门Pigoss', target: '_blank', permission: [ 'F004008' ] }
+            path: 'http://10.1.19.16/#/login',
+            name: '北京Pigoss2',
+            meta: { title: '北京Pigoss2', target: '_blank', permission: [ 'F004004' ] }
+          },
+          {
+            path: 'http://10.201.22.38/#/login',
+            name: '厦门Pigoss1',
+            meta: { title: '厦门Pigoss1', target: '_blank', permission: [ 'F004008' ] }
+          },
+          {
+            path: 'http://10.201.22.39/#/login',
+            name: '厦门Pigoss2',
+            meta: { title: '厦门Pigoss2', target: '_blank', permission: [ 'F004008' ] }
           },
           {
             path: 'http://10.1.1.10/',
@@ -176,9 +186,9 @@ export const asyncRouterMap = [
             meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
           },
           {
-            path: 'http://10.201.51.30/zh-cn/apc/manager/alert/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
+            path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
-            meta: { title: 'NPM', target: '_blank', permission: [ 'F004006' ] }
+            meta: { title: '4A告警监控', target: '_blank', permission: [ 'F004006' ] }
           }
         ]
       },
