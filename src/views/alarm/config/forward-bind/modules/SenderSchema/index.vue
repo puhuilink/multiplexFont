@@ -336,10 +336,11 @@ export default {
           this.btnLoading = true
           await AlarmSenderService.update(
             {
-              contact: this.send.contact.join(''),
+              contact: this.send.contact.join('/'),
               temp_sms_id: this.send.temp_sms_id === '' ? null : this.send.temp_sms_id,
               temp_email_id: this.send.temp_email_id === '' ? null : this.send.temp_email_id,
-              auto: this.send.auto
+              auto: this.send.auto,
+              send_type: this.sendType.join('/')
             },
             { event_level: this.send.level })
           this.$emit('updateSuccess')
@@ -395,6 +396,16 @@ export default {
     btnVisible () {
       const group = this.groupList.filter(el => el.group_id === this.send.group)
       return _.includes(group.map(el => el.is_patrol), true)
+    },
+    sendType () {
+      let send = []
+      if (this.send.temp_sms_id !== null) {
+        send.push('SMS')
+      }
+      if (this.send.temp_email_id !== null) {
+        send.push('EMAIL')
+      }
+      return send
     }
   },
   watch: {

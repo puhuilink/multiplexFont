@@ -72,9 +72,11 @@
 import { List, Schema } from '@/components/Mixins'
 import RuleMixin from '../ruleMixin'
 import { ALL_SEND_TYPE_MAPPING } from '@/tables/alarm_temp/types'
-import { AlarmSenderService } from '@/api'
+import { AlarmSenderService, GroupService, UserService } from '@/api'
 import SenderSchema from './modules/SenderSchema/index'
 import { generateQuery } from '@/utils/graphql'
+import _ from 'lodash'
+
 export default {
   name: 'ForwardBind',
   mixins: [List, RuleMixin, Schema],
@@ -84,6 +86,8 @@ export default {
   data () {
     return {
       visible: false,
+      listGroup: '',
+      listUser: '',
       allMode: Object.freeze(
         Object.fromEntries(ALL_SEND_TYPE_MAPPING)
       ),
@@ -115,12 +119,40 @@ export default {
         {
           title: '通知组',
           dataIndex: 'group_id',
-          width: 120
+          width: 120,
+          customRender: (group) => {
+            GroupService.find({
+              where: {
+                group_id: {
+                  _eq: group
+                }
+              },
+              fields: ['alias: group_name '],
+              alias: 'data'
+            }).then(r => {
+              this.listGroup = r.data.data[0].alias
+            })
+            return this.listGroup
+          }
         },
         {
           title: '发送人',
           dataIndex: 'contact',
-          width: 120
+          width: 120,
+          customRender: contact => {
+            UserService.find({
+              where: {
+                user_id: {
+                  _in: contact.split('/')
+                }
+              },
+              fields: ['staff_name'],
+              alias: 'data'
+            }).then(r => {
+              this.listUser = r.data.data.map(el => el.staff_name).join('/')
+            })
+            return this.listUser
+          }
         },
         {
           title: '发送方式',
