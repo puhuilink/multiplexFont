@@ -247,7 +247,6 @@ export default {
       this.groups = GroupList
     },
     loadData (parameter) {
-      console.log(parameter)
       const { status, ...rest } = this.queryParams
       return PatrolService.taskFind({
         where: {
