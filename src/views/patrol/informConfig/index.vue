@@ -125,18 +125,6 @@ export default {
           dataIndex: 'contact',
           width: 120,
           customRender: contact => _.join(_.split(contact, '/'), ' ')
-          //   async contact => {
-          //   console.log(_.split(contact, '/'))
-          //   const { data: { name } } = await UserService.find({
-          //     where: {
-          //       user_id: { _in: _.split(contact, '/') }
-          //     },
-          //     fields: ['staffName: staff_name'],
-          //     alias: 'name'
-          //   })
-          //   console.log(_.join(name.map(el => el.staffName), '/'))
-          //   return _.join(name.map(el => el.staffName), '/')
-          // }
         },
         {
           title: '通知方式',
@@ -150,22 +138,6 @@ export default {
         event_level: '',
         contact: '',
         send_type: ''
-      }
-    }
-  },
-  filters: {
-    sendTypeSwitch (val) {
-      switch (val) {
-        case 'SMS':
-          return '短信'
-        case 'EMAIL':
-          return '邮箱'
-        case 'SMS/EMAIL':
-          return '短信/邮箱'
-        case 'EMAIL/SMS':
-          return '短信/邮箱'
-        default:
-          return ''
       }
     }
   },
