@@ -398,7 +398,7 @@ export default {
       return _.includes(group.map(el => el.is_patrol), true)
     },
     sendType () {
-      let send = []
+      const send = []
       if (this.send.temp_sms_id !== null) {
         send.push('SMS')
       }

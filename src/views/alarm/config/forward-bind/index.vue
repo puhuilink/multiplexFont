@@ -72,7 +72,7 @@
 import { List, Schema } from '@/components/Mixins'
 import RuleMixin from '../ruleMixin'
 import { ALL_SEND_TYPE_MAPPING } from '@/tables/alarm_temp/types'
-import { AlarmSenderService, GroupService, UserService } from '@/api'
+import { AlarmSenderService, UserService } from '@/api'
 import SenderSchema from './modules/SenderSchema/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
@@ -118,46 +118,23 @@ export default {
         },
         {
           title: '通知组',
-          dataIndex: 'group_id',
+          dataIndex: 'groupAlias',
           width: 120,
-          customRender: (group) => {
-            GroupService.find({
-              where: {
-                group_id: {
-                  _eq: group
-                }
-              },
-              fields: ['alias: group_name '],
-              alias: 'data'
-            }).then(r => {
-              this.listGroup = r.data.data[0].alias
-            })
-            return this.listGroup
+          customRender: (groupAlias) => {
+            return groupAlias.group_name ? groupAlias.group_name : ''
           }
         },
         {
           title: '发送人',
           dataIndex: 'contact',
           width: 120,
-          customRender: contact => {
-            UserService.find({
-              where: {
-                user_id: {
-                  _in: contact.split('/')
-                }
-              },
-              fields: ['staff_name'],
-              alias: 'data'
-            }).then(r => {
-              this.listUser = r.data.data.map(el => el.staff_name).join('/')
-            })
-            return this.listUser
-          }
+          customRender: contact => _.join(contact.split('/'), ' ')
         },
         {
           title: '发送方式',
           dataIndex: 'send_type',
-          width: 120
+          width: 120,
+          customRender: send_type => this.$options.filters.sendTypeSwitch(send_type)
         }
       ]),
       queryParams: {
@@ -194,11 +171,28 @@ export default {
           'group_id',
           'contact',
           'source',
-          'auto'
+          'auto',
+          'groupAlias: groupName { group_name }'
         ],
         alias: 'data',
         ...parameter
-      }).then(r => r.data)
+      }).then(async r => {
+        r.data.data = await Promise.all(
+          r.data.data.map(async el => {
+            const userId = el.contact
+            const { data: { name } } = await UserService.find({
+              where: {
+                user_id: { _in: _.split(userId, '/') }
+              },
+              fields: ['staffName: staff_name'],
+              alias: 'name'
+            })
+            el.contact = _.join(name.map(el => el.staffName), '/')
+            return el
+          })
+        )
+        return r.data
+      })
     }
   }
 }
