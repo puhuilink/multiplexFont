@@ -202,7 +202,7 @@ export default {
           { max: 255, message: '最多输入255个字符' }
         ],
         type: [{ required: true, message: '请选择通知方式' }],
-        subject: [{ required: true, message: '请输入模板名称' },
+        subject: [{ required: true, message: '请输入标题' },
           { max: 100, message: '最多输入100个字符' },
           { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }]
       }
