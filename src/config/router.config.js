@@ -495,7 +495,7 @@ export const asyncRouterMap = [
         name: 'secondSys',
         redirect: 'secondSys/Zhenhua',
         component: RouteView,
-        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete' },
+        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
         children: [
           {
             path: '/secondSys/zhenhua',
