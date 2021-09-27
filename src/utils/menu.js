@@ -864,6 +864,23 @@ const MENU = [
         updator: '',
         key: 'F011',
         title: '数据预测'
+      },
+      {
+        childs: [],
+        code: 'F012',
+        createDate: null,
+        creator: '',
+        functionType: '5',
+        icon: '',
+        module: '',
+        name: '二级单位',
+        note: '',
+        order: 5,
+        parentCode: 'F',
+        updateDate: null,
+        updator: '',
+        key: 'F012',
+        title: '二级单位'
       }
     ]
   }
