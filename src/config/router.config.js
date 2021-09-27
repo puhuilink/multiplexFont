@@ -531,7 +531,7 @@ export const asyncRouterMap = [
             path: '/secondSys/luqiao',
             name: 'luqiao',
             component: () => import('@/views/secondSys/luqiao'),
-            meta: { title: 'luqiao' }
+            meta: { title: '路桥' }
           },
           {
             path: '/secondSys/ergongju',
