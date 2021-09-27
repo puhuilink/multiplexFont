@@ -189,6 +189,11 @@ export const asyncRouterMap = [
             path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
             meta: { title: '4A告警监控', target: '_blank', permission: [ 'F004006' ] }
+          },
+          {
+            path: 'http://10.1.13.34/#/login',
+            name: 'AWX',
+            meta: { title: 'AXW', target: '_blank', permission: [ 'F004005' ] }
           }
         ]
       },

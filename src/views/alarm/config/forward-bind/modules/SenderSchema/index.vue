@@ -11,14 +11,12 @@
       class="SendForm"
       ref="content"
     >
-      <a-form-model ref="form" :model="send">
+      <a-form-model ref="form" :model="send" :rules="rules">
         <a-form-model-item
           label="通知等级"
           v-bind="formItemLayout"
           prop="level"
-          :rules="[
-            { required: true, message: '请选择通知等级' },
-          ]">
+        >
           <a-select
             class="SendForm__Select"
             v-model="send.level"
@@ -80,98 +78,19 @@
         <a-form-model-item
           label="通知方式"
           v-bind="formItemLayout"
-          :rules="[{ required: true, message: '请选择短信' }]"
+          prop="methods"
         >
-          <a-row type="flex">
-            <a-col :flex="2">
-              <span>短信:</span>
-              <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />
-            </a-col>
-            <a-col :flex="5">
-              <a-select
-                class="item1"
-                allowClear
-                :disabled="!send.hasEnabledSMS"
-                v-model="send.temp_sms_id"
-              >
-                <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}
-                </a-select-option>
-              </a-select>
-            </a-col>
-          </a-row>
-          <a-row type="flex">
-            <a-col :flex="2">
-              <span>邮箱:</span>
-              <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />
-            </a-col>
-            <a-col :flex="5">
-              <a-form-model-item
-                prop="temp_email_id"
-              >
-                <a-select
-                  class="item1"
-                  allowClear
-                  :disabled="!send.hasEnabledEmail"
-                  v-model="send.temp_email_id"
-                >
-                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
+          <checkSends
+            v-if="visible"
+            :smsTempList="smsTempList"
+            :emailTempList="emailTempList"
+            :send.sync="send"
+            :value="send.methods"
+            @deleteStatus="deleteCheck"
+            @addStatus="uploadCheck">
+          </checkSends>
         </a-form-model-item>
-
       </a-form-model>
-      <!--      <a-row class="ant-form-item">-->
-      <!--        <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">-->
-      <!--          <label title="通知方式">通知方式</label>-->
-      <!--        </a-col>-->
-
-      <!--        <a-col v-bind="formItemLayout.wrapperCol">-->
-      <!--          <a-row>-->
-      <!--            <a-col :span="8">-->
-      <!--              <a-form-model-item label="短信" v-bind="nestedFormItemLayout">-->
-      <!--                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS" />-->
-      <!--              </a-form-model-item>-->
-      <!--            </a-col>-->
-      <!--            <a-col :span="16">-->
-      <!--              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">-->
-      <!--                <a-select-->
-      <!--                  class="item1"-->
-      <!--                  allowClear-->
-      <!--                  :disabled="!send.hasEnabledSMS"-->
-      <!--                  v-model="send.temp_sms_id"-->
-      <!--                >-->
-      <!--                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}-->
-      <!--                  </a-select-option>-->
-      <!--                </a-select>-->
-      <!--              </a-form-model-item>-->
-      <!--            </a-col>-->
-      <!--          </a-row>-->
-
-      <!--          <a-row>-->
-      <!--            <a-col :span="8">-->
-      <!--              <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">-->
-      <!--                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail" />-->
-      <!--              </a-form-model-item>-->
-      <!--            </a-col>-->
-      <!--            <a-col :span="16">-->
-      <!--              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">-->
-      <!--                <a-select-->
-      <!--                  class="item1"-->
-      <!--                  allowClear-->
-      <!--                  :disabled="!send.hasEnabledEmail"-->
-      <!--                  v-model="send.temp_email_id"-->
-      <!--                >-->
-      <!--                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}-->
-      <!--                  </a-select-option>-->
-      <!--                </a-select>-->
-      <!--              </a-form-model-item>-->
-      <!--            </a-col>-->
-      <!--          </a-row>-->
-      <!--        </a-col>-->
-      <!--      </a-row>-->
     </div>
     <!-- / 底部按钮 -->
     <template slot="footer">
@@ -203,11 +122,14 @@ import {
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
 import { sql } from '@/utils/request'
+import checkSends from '@/views/alarm/config/forward-bind/modules/SenderSchema/checkSends'
 import _ from 'lodash'
 
 export default {
   name: 'SenderSchema',
-  components: {},
+  components: {
+    checkSends
+  },
   mixins: [Schema],
   data: () => ({
     groupBtn: false,
@@ -235,8 +157,7 @@ export default {
       group: '',
       level: '',
       auto: false,
-      hasEnabledSMS: false,
-      hasEnabledEmail: false,
+      methods: '',
       temp_email_id: '',
       temp_sms_id: '',
       contact: []
@@ -244,6 +165,13 @@ export default {
     formItemLayout: {
       labelCol: { span: 5 },
       wrapperCol: { span: 17, offset: 1 }
+    },
+    rules: {
+      level: [
+        { required: true, message: '请选择告警等级', trigger: 'blur' },
+        { validator: (rule, value, callback) => { if (value === '') callback(new Error('12345')); else callback() }, trigger: 'change' }
+      ],
+      methods: [{ required: true, message: '请选择通知方式', trigger: 'blur' }]
     }
   }),
   methods: {
@@ -257,15 +185,28 @@ export default {
     },
     toggleSMS (e) {
       if (!e) {
+        Reflect.deleteProperty(this.rules, 'temp_sms_id')
         this.send.temp_sms_id = null
+      } else {
+        const rule = { temp_sms_id: [
+          { required: true, message: '请选择短信联系人', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
       }
       this.send.hasEnabledSMS = e
     },
     toggleEmail (e) {
       if (!e) {
+        Reflect.deleteProperty(this.rules, 'temp_email_id')
         this.send.temp_email_id = null
+      } else {
+        const rule = { temp_email_id: [
+          { required: true, message: '请选择邮箱', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
       }
       this.send.hasEnabledEmail = e
+      // const emailRule = { temp_email_id: [ required: true, message: 'Please input Activity name', trigger: 'blur' ] }
     },
     async getGroup () {
       const data = await sql('select group_id as groupId, group_name as groupName, is_patrol as flag from t_group where  is_patrol is null or is_patrol = false;')
@@ -318,13 +259,27 @@ export default {
       }
     },
     serializeModel (model) {
+      const send = []
+      if (model.temp_email_id && model.temp_email_id !== null) {
+        send.push('EMAIL')
+        const rule = { temp_email_id: [
+          { required: true, message: '请选择邮箱', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
+      if (model.temp_sms_id && model.temp_sms_id !== null) {
+        send.push('SMS')
+        const rule = { temp_sms_id: [
+          { required: true, message: '请选择短信联系人', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
       this.send = {
         group: model.group_id,
         contact: _.split(model.contact, '/'),
         level: model.event_level,
         auto: model.auto,
-        hasEnabledEmail: _.includes(_.split(model.send_type, '/'), 'EMAIL'),
-        hasEnabledSMS: _.includes(_.split(model.send_type, '/'), 'SMS'),
+        methods: send.join('/'),
         temp_email_id: model.temp_email_id,
         temp_sms_id: model.temp_sms_id
       }
@@ -384,6 +339,15 @@ export default {
       } finally {
         this.forwardTempListLoading = false
       }
+    },
+    // 更新校验规则判断是否需要校验SMSID和EMAILID
+    uploadCheck (rule) {
+      this.rules = { ...this.rules, ...rule }
+      this.$forceUpdate()
+    },
+    deleteCheck (arg) {
+      Reflect.deleteProperty(this.rules, arg)
+      this.$forceUpdate()
     }
   },
   computed: {
