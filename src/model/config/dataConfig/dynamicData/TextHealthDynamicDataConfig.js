@@ -51,7 +51,7 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getSqlDataOption () {
-    this.text = await this.sqlConfig.fetch()
+    this.text = await this.sqlConfig.fetch().then(data => data[1])
   }
 
   async getComboDataOption () {

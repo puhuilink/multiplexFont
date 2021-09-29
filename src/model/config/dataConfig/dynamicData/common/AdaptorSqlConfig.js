@@ -25,7 +25,7 @@ export class AdaptorSqlConfig extends AdaptorConfig {
 
   async fetch () {
     const text = await sql(this.sql)
-    return text[1]
+    return text
   }
 
   // transfer (dataList = []) {
