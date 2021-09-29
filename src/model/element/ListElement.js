@@ -14,7 +14,7 @@ import {
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_NULL,
   SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_REAL, SOURCE_TYPE_SQL,
   SOURCE_TYPE_STATIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import _ from 'lodash'
@@ -43,6 +43,11 @@ export default class ListElement extends Element {
         break
       }
       case SOURCE_TYPE_NULL: {
+        break
+      }
+      case SOURCE_TYPE_SQL: {
+        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns })
         break
       }
     }

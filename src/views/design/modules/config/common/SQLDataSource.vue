@@ -5,7 +5,7 @@
       <a-textarea
         v-model="config.dataConfig.dbDataConfig.sqlConfig.sql"
         placeholder="请输入sql"
-        :auto-size="{ minRows: 3, maxRows: 5 }"
+        :auto-size="{ minRows: 5, maxRows: 10 }"
         @blur="change()"
       />
     </a-form-item>

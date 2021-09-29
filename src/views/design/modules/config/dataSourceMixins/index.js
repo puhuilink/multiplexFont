@@ -70,7 +70,6 @@ export default {
     },
     sqlConfig: {
       get () {
-        console.log(this.config.dataConfig.dbDataConfig.sqlConfig)
         return this.config.dataConfig.dbDataConfig.sqlConfig
       },
       set (v) {
@@ -85,12 +84,10 @@ export default {
     }),
     async change (loadingDynamicData = false) {
       try {
-        console.log(loadingDynamicData)
         if (loadingDynamicData) {
           this.btnLoading = true
         }
         const { render, ...rest } = this.activeWidget
-        console.log('render', render)
         const activeWidget = Object.assign({}, _.cloneDeep(rest), { render })
         // 设置当前选中部件
         this.activateWidget({
@@ -98,9 +95,7 @@ export default {
         })
         await this.$nextTick()
         // 此处可能会改变数据，需要再次提交 vuex
-        console.log('config', this.config)
         await render.mergeOption(this.config, loadingDynamicData)
-        console.log(123)
         this.activateWidget({
           widget: Object.assign(activeWidget, { config: this.config })
         })

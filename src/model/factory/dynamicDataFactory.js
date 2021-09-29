@@ -9,7 +9,7 @@ import BarDynamicDataConfig from '../config/dataConfig/dynamicData/BarDynamicDat
 import DegreeDynamicDataConfig from '../config/dataConfig/dynamicData/DegreeDynamicRingDataConfig'
 import GaugeDynamicDataConfig from '../config/dataConfig/dynamicData/GaugeDynamicDataConfig'
 import LinesDynamicDataConfig from '../config/dataConfig/dynamicData/LinesDynamicDataConfig'
-import ListDynamicDataConfig from '../config/dataConfig/dynamicData/ListDynamicDataConfig.jsDataConfig'
+import ListDynamicDataConfig from '../config/dataConfig/dynamicData/ListDynamicDataConfig'
 import PieDynamicDataConfig from '../config/dataConfig/dynamicData/PieDynamicDataConfig'
 import PolarDynamicDataConfig from '../config/dataConfig/dynamicData/PolarDynamicDataConfig'
 import TextHealthDynamicDataConfig from '../config/dataConfig/dynamicData/TextHealthDynamicDataConfig'
