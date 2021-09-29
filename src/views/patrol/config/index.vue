@@ -75,13 +75,15 @@
       </template>
       <template slot="action" slot-scope="value,row">
         <a-button
+          type="primary"
           @click="infoEdit(row.checkpoint_id, row.checkpoint_alias, row.host_id)"
         >
           编辑
         </a-button>
         <a-divider type="vertical"/>
         <a-button
-          @click="deletesss()"
+          type="primary"
+          @click="deleteHost()"
         >
           删除
         </a-button>
@@ -532,14 +534,6 @@ export default {
     changePagination (pageNo, pageSize) {
       Object.assign(this.pagination, { pageNo, pageSize })
     },
-
-    resetPagination () {
-      Object.assign(
-        this.pagination,
-        this.$options.data.apply(this).pagination
-      )
-    },
-
     resetSelect () {
       Object.assign(this, {
         selectedRowKeys: [],

@@ -44,7 +44,9 @@ const sql = async (s) => {
       'Content-type': 'application/x-www-form-urlencoded'
     }
   })
-
+  if (decrypt(data) === null || !decrypt(data).length) {
+    return []
+  }
   const list = JSON.parse(decrypt(data))
 
   if (list.length) {

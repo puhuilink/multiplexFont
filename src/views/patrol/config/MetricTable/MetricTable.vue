@@ -1,21 +1,50 @@
 <template>
   <div>
+    <a-form class="ant-advanced-search-form" :form="form">
+      <a-row :gutter="24">
+        <a-col
+          :span="8"
+        >
+          <a-form-item>
+            检查项名称：
+            <a-input
+              :style="{width:'30%'}"
+              v-decorator="[
+                `alias`,
+                {
+                  rules: [ ],
+                },
+              ]"
+              placeholder="请输入关键字"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :span="16" :style="{ textAlign: 'right' }">
+          <a-button type="primary" @click="handleSearch">
+            搜索
+          </a-button>
+          <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+            清空
+          </a-button>
+        </a-col>
+      </a-row>
+    </a-form>
+    <a-button type="primary" @click="()=>{this.visible=true}">新增</a-button>
     <a-modal
-      title="编辑检查项"
+      title="新增检查项"
       wrapClassName="MetricSchema"
       :visible="visible"
-      @cancel="$emit('cancel',$event)"
-      @close="$emit('close',$event)"
-      @ok="$emit('ok',$event)"
+      @cancel="resetSubmit"
+      @close="resetSubmit"
+      @ok="newSubmit"
     >
       <a-form layout="inline" :form="metricForm">
         <a-form-item
-          label="检查项"
+          label="检查项名称"
         >
           <a-input
             v-decorator="[
               'alias',
-              { rules: [{ required: true, message: 'Please input your name' }] },
+              { rules: [{ required: true, message: '检查项不能为空' }] },
             ]"
             style="width: 110px"
           />
@@ -25,23 +54,11 @@
         >
           <a-select
             v-decorator="[
-              'metric_id',
-              { rules: [{ required: true, message: 'Please input your name' }] },
+              'answer_id',
+              { rules: [{ required: true, message: '检查值不能为空' }] },
             ]"
             style="width: 110px"
           >
-            <div slot="dropdownRender" slot-scope="menu">
-              <v-nodes :vnodes="menu" />
-              <a-divider style="margin: 4px 0;" />
-              <div
-                style="padding: 4px 8px; cursor: pointer;"
-                @mousedown="e => e.preventDefault()"
-                @click="navigatorToEditMetric"
-              >
-                <a-icon type="edit" />
-                编辑
-              </div>
-            </div>
             <a-select-option
               v-for="a in Object.values(answers)"
               :key="a.id"
@@ -52,11 +69,6 @@
 
           </a-select>
         </a-form-item>
-        <a-form-item>
-          <a-button type="primary">
-            新建
-          </a-button>
-        </a-form-item>
       </a-form>
 
     </a-modal>
@@ -64,7 +76,7 @@
       :data-source="Object.values(metrics)"
       :pagination="pagination"
       :columns="metricColumns"
-      key="metric_id"
+      row-key="id"
     >
       <template slot="metric_alias" slot-scope="text, record">
         <span v-if="record.editable">
@@ -82,7 +94,7 @@
           </a-select>
         </span>
         <span v-else>
-          {{ answers[record.answer_id.toString()].alias }}
+          {{ answers[record.answer_id] != null ? answers[record.answer_id].alias : '' }}
         </span>
       </template>
       <template slot="operation" slot-scope="text, record">
@@ -95,9 +107,9 @@
             </a-popconfirm>
           </span>
           <span v-else>
-            <a :disabled="editingKey !== ''" @click="() => edit(record.id)">编辑</a>
+            <a-button type="primary" :disabled="editingKey !== ''" @click="() => edit(record.id)">编辑</a-button>
             <a-divider type="vertical" />
-            <a :disabled="editingKey !== ''" @click="() => deleteMetric(record.id)">删除</a>
+            <a-button type="primary" :disabled="editingKey !== ''" @click="() => deleteMetric(record.id)">删除</a-button>
           </span>
         </div>
       </template>
@@ -120,24 +132,26 @@ export default {
   },
   data () {
     return {
+      form: this.$form.createForm(this, { name: 'advanced_search' }),
       visible: false,
       metrics: {},
       pagination: {},
       answers: {},
       editingKey: '',
       metricForm: this.$form.createForm(this, {
-        alias: '',
-        answer_id: ''
+        name: 'metricForm', data: {}
       }),
       metricColumns: [
         {
           title: '检查项',
           dataIndex: 'metric_alias',
+          align: 'center',
           width: '25%',
           scopedSlots: { customRender: 'metric_alias' }
         },
         {
           title: '检查值',
+          align: 'center',
           scopedSlots: { customRender: 'answer' }
         },
         {
@@ -166,20 +180,55 @@ export default {
   mounted () {
   },
   methods: {
-    async fetchMetric (limit = 10, qu) {
-      let base_sql = 'select * from t_patrol_metric where 1=1'
+    handleSearch () {
+      this.metrics = {}
+      let where
+      this.form.validateFields((err, value) => {
+        if (!err) {
+          if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
+            where = 'alias like %' + value.alias + '%'
+            this.fetchMetric(10, where)
+          } else {
+            this.fetchMetric()
+          }
+        }
+      })
+    },
+    handleReset () {
+      this.form.resetFields()
+    },
+    newSubmit () {
+      this.metricForm.validateFields(err => {
+        if (!err) {
+          this.fetchMetric()
+        }
+      })
+    },
+    resetSubmit () {
+      this.visible = false
+      this.metricForm.resetFields()
+    },
+    toggle () {
+      this.expand = !this.expand
+    },
+    async fetchMetric (limit = 10, where) {
+      let base_sql = 'select * from t_patrol_metric where 1=1 '
+      if (where !== null && where !== undefined) {
+        base_sql += 'and' + where
+      }
       if (limit !== 10) {
-        base_sql += ''
+        base_sql += 'limit' + limit
       } else {
         base_sql += 'limit 10'
       }
-      const data = dealQuery(await sql(base_sql))
+      const result = await sql(base_sql)
+      const data = dealQuery(result)
       this.metrics = {}
       for (let i = 0; i < data.length; i++) {
         const metric = data[i]
         this.metrics[metric.id] = metric
       }
-      console.log(this.metrics)
+      // console.log(this.metrics)
     },
     async fetchAnswer () {
       const base_sql = 'select * from t_patrol_answer where 1=1'
@@ -189,7 +238,7 @@ export default {
         const answer = data[i]
         this.answers[answer.id] = answer
       }
-      console.log(this.answers)
+      // console.log(this.answers)
     },
     edit (id) {
       this.metrics[id].editable = true
