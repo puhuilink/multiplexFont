@@ -111,6 +111,23 @@ class PatrolService extends BaseService {
     )
   }
 
+  static async hostFind () {
+    return this.hasuraQuery('select id,alias,content from t_patrol_host')
+  }
+  static async endpointFind () {
+    return this.hasuraQuery('select id,alias,content from t_patrol_endpoint')
+  }
+  static async metricFind () {
+    return this.hasuraQuery('select id,alias,answer_id from t_patrol_metric')
+  }
+  static async answerFind () {
+    return this.hasuraQuery('select id,alias,type,format from t_patrol_answer')
+  }
+  static async thresholdFind () {
+    return this.hasuraQuery('select host_id,endpoint_id,metric_id,answer_id,condition,lower_threshold,' +
+      'upper_threshold,severity from t_patrol_threshold')
+  }
+
   // 存在异常的任务单查询
   static async eventTaskFind ({ where = {}, ...argus }) {
     return this.taskFind({

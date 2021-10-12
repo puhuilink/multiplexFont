@@ -62,163 +62,8 @@
               :rules="[{ required: true, message: '检查项不能为空' }]"
             >
               <a-select v-model="element.metricId" placeholder="检查项不能为空" @change="dynamicAnswer(element.metricId,index,i)">
-                <div slot="dropdownRender" slot-scope="menu">
-                  <v-nodes :vnodes="menu" />
-                  <a-divider style="margin: 4px 0;" />
-                  <div
-                    style="padding: 4px 8px; cursor: pointer;"
-                    @mousedown="e => e.preventDefault()"
-                    @click="navigatorToEditMetric"
-                  >
-                    <a-icon type="edit" />
-                    编辑
-                  </div>
-                </div>
                 <a-select-option v-for="(metric,id) in metrics" :key="id" :value="id">{{ metric.alias }}
                 </a-select-option>
-              </a-select>
-              <a-modal
-                title="编辑检查项"
-                wrapClassName="MetricSchema"
-                :visible="isEditMetric"
-                @cancel="popEditMetric"
-                @close="popEditMetric"
-                @ok="popEditMetric"
-              >
-                <a-table
-                  :data-source="Object.values(metrics)"
-                  :pagination="pagination"
-                  :columns="metricColumns"
-                >
-                  <template slot="answer" slot-scope="text, record">
-                    <span v-if="record.editable">
-                      <a-select v-model="record['answer_id']">
-                        <a-select-option v-for="a in Object.values(answers)" :key="a.id" :value="a.id">{{ a.alias
-                        }}</a-select-option>
-                      </a-select>
-                    </span>
-                    <span v-else>
-                      {{ answers[record['answer_id']].alias }}
-                    </span>
-                  </template>
-                  <template slot="operation" slot-scope="text, record">
-                    <div class="editable-row-operations">
-                      <span v-if="record.editable">
-                        <a @click="() => save(record.key)">保存</a>
-                        <a-popconfirm title="确认取消?" @confirm="() => cancel(record.key)">
-                          <a>取消</a>
-                        </a-popconfirm>
-                      </span>
-                      <span v-else>
-                        <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
-                        <a-divider type="vertical" />
-                        <a :disabled="editingKey !== ''" @click="() => delete(record.key)">删除</a>
-                      </span>
-                    </div>
-                  </template>
-
-                </a-table>
-              </a-modal>
-            </a-form-model-item>
-
-            <a-form-model-item label="阈值设置" style="margin-bottom: 0" :rules="[{ required: true, message: '检查项不能为空' }]">
-              <a-form-model-item
-                :prop="`endpoints[${index}].metric[${i}].threshold.condition`"
-                :style="{
-                  // display: 'inline-block',
-                  // width: '70px',
-                  marginBottom: 0,
-                }"
-                :rules="[{ required: true, message: '检查值不能为空' }]"
-              >
-                <a-select v-model="element.threshold.condition">
-                  <a-select-option
-                    value="eq"
-                    v-if="element.metricId!=null
-                      ?metrics[element.metricId] != null
-                        ?answers[metrics[element.metricId].answer_id].type === 'select'
-                        :false
-                      :false"
-                  > 等于
-                  </a-select-option>
-                  <a-select-option
-                    value="lt"
-                    v-if="answers[element.answerId].type === 'fill'"
-                  > 小于
-                  </a-select-option>
-                  <a-select-option
-                    value="gt"
-                    v-if="answers[element.answerId].type === 'fill'"
-                  > 大于
-                  </a-select-option>
-                  <a-select-option
-                    value="out"
-                    v-if="answers[element.answerId].type === 'fill'"
-                  > 超出
-                  </a-select-option>
-                  <a-select-option
-                    value="ne"
-                    v-if="answers[element.answerId].type === 'select'"
-                  > 不等于
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item
-                :prop="`endpoints[${index}].metric[${i}].threshold.lowerThreshold`"
-                :style="{
-                  // display: 'inline-block',
-                  // width: '70px',
-                  marginBottom: 0
-                }"
-                :rules="[{ required: true, message: '阈值不能为空' }]"
-                v-if="element.threshold.condition !=='gt'"
-              >
-                <a-input-number
-                  placeholder="请输入阈值"
-                  v-model="element.threshold.lowerThreshold"
-                  v-if="answers[element.answerId].type === 'fill'"
-                  :min="0"
-                  :step="0.1"
-                ></a-input-number>
-                <a-select
-                  :default-value="element.threshold.condition === 'ne'? '请选择非异常项' : '请选择异常项'"
-                  v-model="element.threshold.lowerThreshold"
-                  v-if="answers[element.answerId].type === 'select'"
-                >
-                  <a-select-option
-                    v-for="m in answers[element.answerId].format"
-                    :key="m.value"
-                    :value="m.value.toString()">
-                    {{ m.alias }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item
-                :prop="`endpoints[${index}].metric[${i}].threshold.upperThreshold`"
-                :style="{
-                  // display: 'inline-block',
-                  // width: '70px',
-                  marginBottom: 0
-                }"
-                :rules="[{ required: true, message: '阈值不能为空' }]"
-                v-if="element.threshold.condition === 'out'||element.threshold.condition === 'gt'"
-              >
-                <span v-show="element.threshold.condition ==='out'">---</span>
-                <a-input-number placeholder="请输入阈值" v-model="element.threshold.upperThreshold"></a-input-number>
-              </a-form-model-item>
-            </a-form-model-item>
-            <a-form-model-item
-              label="告警级别"
-              style="margin-bottom: 0"
-              :prop="`endpoints[${index}].metric[${i}].threshold.severity`"
-              :rules="[{ required: true, message: '告警级别不能为空' }]"
-            >
-              <a-select v-model="element.threshold.severity">
-                <a-select-option :value="'1'"> L1(紧急告警)</a-select-option>
-                <a-select-option :value="'2'"> L2(主要告警)</a-select-option>
-                <a-select-option :value="'3'"> L3(次要告警)</a-select-option>
-                <a-select-option :value="'4'"> L4(一般告警)</a-select-option>
-                <a-select-option :value="'5'"> L5(警告)</a-select-option>
               </a-select>
             </a-form-model-item>
             <div style="display: block;float: right" v-show="form.endpoints[index].metric.length > 1">
@@ -242,16 +87,13 @@
 
 <script>
 import { scrollTo } from '@/utils/util'
-import Template from '@/views/design/modules/template/index'
-import TagSelectOption from '~~~/TagSelect/TagSelectOption'
 import { xungeng } from '@/utils/request'
-
+import MetricTable from '@/views/patrol/config/MetricTable/MetricTable'
 export default {
   name: 'HostSchema',
   mixins: [],
   components: {
-    TagSelectOption,
-    Template,
+    MetricTable,
     VNodes: {
       functional: true,
       render: (h, ctx) => ctx.props.vnodes
@@ -328,35 +170,14 @@ export default {
         upper_threshold: ''
       }]) }
   },
-  computed: {},
+  computed: {
+
+  },
   created () {
 
   },
   data () {
     return {
-      editingKey: '',
-      metricColumns: [
-        {
-          title: '',
-          dataIndex: 'metric_alias',
-          width: '25%',
-          scopedSlots: { customRender: 'metric_alias' }
-        },
-        {
-          title: '',
-          scopedSlots: { customRender: 'answer' }
-        },
-        {
-          title: '',
-          dataIndex: 'operation',
-          scopedSlots: { customRender: 'operation' }
-        }
-      ],
-      tempAnswer: {
-        id: '',
-        alias: '',
-        format: ''
-      },
       pagination: {
         // total: Object.values(this.metrics).length,
         pageSize: 10
@@ -373,6 +194,11 @@ export default {
     }
   },
   methods: {
+    logData (data) {
+      this.metrics = data
+      this.transformForm(this.form.hostId)
+      this.$forceUpdate()
+    },
     dynamicMetrics (value) {
       const index = this.form.endpoints.findIndex(_ => { return _.endpointId === value })
       const endpointEntity = this.endpoints[value]
@@ -484,16 +310,18 @@ export default {
       this.form.endpoints[index].metrics.splice(i, 1)
     },
     navigatorToEditMetric () {
+      const m = this.metrics
       this.pagination = {
-        total: Object.values(this.metrics).length,
+        total: Object.values(m).length,
         size: 'small',
-        pageSize: 10
+        pageSize: 5
       }
-      console.log(Object.values(this.metrics))
       this.isEditMetric = true
     },
     popEditMetric () {
       this.isEditMetric = false
+      this.metrics = this.metrics
+      this.$forceUpdate()
     },
     transformForm (value) {
       this.form.hostAlias = this.hosts[value].alias
@@ -511,19 +339,24 @@ export default {
           if (this.metrics[m] === null) {
             return
           }
-          const t = this.thresholds.find(th => {
+          let t = this.thresholds.find(th => {
             return th.host_id === value && th.endpoint_id === e && th.metric_id === m && th.answer_id === this.metrics[m].answer_id
           })
-          if (t === null) {
-            return
+          if (t === undefined) {
+            t = {
+              condition: this.answers[this.metrics[m].answer_id].type === 'select' ? 'eq' : 'gt',
+              lowerThreshold: '0',
+              upperThreshold: null,
+              severity: '3'
+            }
           }
           eObj.metric.push({
             metricId: m,
             answerId: this.metrics[m].answer_id,
             threshold: {
               condition: t.condition,
-              lowerThreshold: t.lower_threshold !== 'NULL' ? t.lower_threshold : null,
-              upperThreshold: t.upper_threshold !== 'NULL' ? t.upper_threshold : null,
+              lowerThreshold: t.lower_threshold ?? '0',
+              upperThreshold: t.upper_threshold ?? '1',
               severity: t.severity
             }
           })
@@ -536,6 +369,15 @@ export default {
     'form.hostId': {
       handler (value) {
         this.transformForm(value)
+      },
+      deep: true,
+      immediate: true
+    },
+    'metrics': {
+      handler (value) {
+        console.log(value)
+        this.transformForm(this.form.hostId)
+        this.$forceUpdate()
       },
       deep: true,
       immediate: true
