@@ -19,11 +19,11 @@
       </template>
 
       <a-spin :spinning="spinning">
-        <ATable :columns="columns" :dataSource="events" rowKey="uuid" bordered/>
+        <ATable :columns="columns" :dataSource="events" rowKey="id" bordered/>
       </a-spin>
     </a-modal>
 
-    <TempRule ref="rule" @updateConfig="onUpdateConfig" @submit="cancel"/>
+    <TempRule ref="rule" @updateConfig="onUpdateConfig" @submit="succeedSubmit"/>
   </fragment>
 </template>
 
@@ -53,10 +53,10 @@ export default {
         },
         {
           title: '通知用户',
-          dataIndex: 'contact',
+          dataIndex: 'staffName',
           width: 120,
           customRender: (contact) => {
-            if (contact) { return contact } else return '未找到用户'
+            if (contact) { return _.join(contact, '/') } else return '未找到用户'
           }
         },
         {
@@ -116,20 +116,27 @@ export default {
   methods: {
     uuid,
     async submitMsg () {
-      try {
-        this.submitLoading = true
-        const { code, msg } = await xungeng.post('/approval/sendMessage', this.formModel)
-        if (code === 200) {
-          this.$notification('审批成功')
-        } else if (code === 30) {
-          this.$notifyError(msg)
+      const eventsList = _.sortBy(_.unionBy(this.events, 'severity'), item => item.severity)
+      if (!!_.find(eventsList, 'tempSmsId') || !!_.find(eventsList, 'tempEmailId')) {
+        try {
+          this.submitLoading = true
+          const { code } = await xungeng.post('/approval/sendMessage', this.formModel)
+          if (code === 200) {
+            this.$notification.success({
+              message: '系统提示',
+              description: '审批成功'
+            })
+            this.$emit('success')
+          }
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.submitLoading = false
+          this.cancel()
         }
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.submitLoading = false
-        this.cancel()
+      } else {
+        alert('暂无联系人')
       }
     },
     approve (taskId, events) {
@@ -150,6 +157,10 @@ export default {
       } else {
         alert('暂无联系人模板')
       }
+    },
+    succeedSubmit () {
+      this.$emit('success')
+      this.cancel()
     },
     async fetch (taskId, events) {
       try {

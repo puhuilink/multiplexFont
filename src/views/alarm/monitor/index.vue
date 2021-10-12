@@ -9,14 +9,15 @@
     <!-- resizeableTitle -->
     <CTable
       bordered
-      :customRow="customRow"
+      v-bind="cTableProps"
       :columns="visibleColumns"
+      :customRow="cTableProps.customRow || customRow"
       :data="loadData"
       ref="table"
       rowKey="id"
-      :rowSelection="rowSelection"
+      :rowSelection="showSelectRow ? rowSelection : undefined"
       :scroll="scroll"
-      v-bind="cTableProps"
+      :show-pagination="showPagin"
     >
       <!-- / 查询区域 -->
       <template #query v-if="showQuery">
@@ -78,7 +79,7 @@
                       最近1周: [moment().add(-7, 'days'), moment()],
                       最近1月: [moment().add(-30, 'days'), moment()],
                     }"
-                    :showTime="{ format: 'HH:mm' }"
+                    :showTime="{ format: 'HH:mm:ss' }"
                     :defaultValue="[moment().add(-1, 'days'), moment()]"
                     v-model="queryParams.receive_time"
                   />
@@ -109,7 +110,7 @@
           <div>
             <a-button :disabled="!hasSelected" :loading="exportLoading" v-if="showHistory" @click="onExportExcel()">导出</a-button>
 
-            <a-button v-bind="btnProps" @click="onDetail()" :disabled="!hasSelectedOne">查看</a-button>
+            <a-button v-if="showBtn" v-bind="btnProps" @click="onDetail()" :disabled="!hasSelectedOne">查看</a-button>
 
             <a-button
               v-bind="btnProps"
@@ -121,7 +122,7 @@
             >
           </div>
 
-          <div class="AlarmMonitor__operation-badge-group">
+          <div class="AlarmMonitor__operation-badge-group" v-if="showAlarmSelection">
             <span>告警级别：</span>
             <a-button
               v-for="(color, index) in colors"
@@ -150,7 +151,11 @@
             </a-button>
           </div>
 
-          <a-popover title="表格列设置" placement="leftBottom">
+          <div style="height: 40px;line-height: 40px; margin-right: 30px;border-radius: 10px;" v-if="showTimer">
+            页面刷新时间<a-input-number v-model="fetchTime" :min="1" :max="10"/>分钟
+          </div>
+
+          <a-popover title="表格列设置" placement="leftBottom" v-if="showSetting">
             <a-list slot="content" item-layout="horizontal" :data-source="availableColumns">
               <a-list-item slot="renderItem" slot-scope="column">
                 <a-list-item-meta>
@@ -194,6 +199,10 @@ export default {
     AlarmSolve
   },
   props: {
+    showBtn: {
+      type: Boolean,
+      default: true
+    },
     cTableProps: {
       type: Object,
       default: () => ({})
@@ -214,6 +223,26 @@ export default {
       type: Boolean,
       default: true
     },
+    showOrigin: {
+      type: Boolean,
+      default: true
+    },
+    showIp: {
+      type: Boolean,
+      default: true
+    },
+    showReceive: {
+      type: Boolean,
+      default: true
+    },
+    showAgent: {
+      type: Boolean,
+      default: true
+    },
+    showDeviceModel: {
+      type: Boolean,
+      default: true
+    },
     // 历史告警为已经解决的主告警
     showHistory: {
       type: Boolean,
@@ -222,38 +251,55 @@ export default {
     queryParamsProps: {
       type: Object,
       default: () => ({})
+    },
+    showSelectRow: {
+      type: Boolean,
+      default: true
+    },
+    showSetting: {
+      type: Boolean,
+      default: true
+    },
+    showAlarmSelection: {
+      type: Boolean,
+      default: true
+    },
+    showAlarmIcon: {
+      type: Boolean,
+      default: true
+    },
+    showPagin: {
+      type: Boolean,
+      default: true
+    },
+    showTimer: {
+      type: Boolean,
+      default: true
+    },
+    inlineColumns: {
+      type: Array,
+      default: () => ([
+        { title: 1 },
+        { yue: 2 }
+      ])
     }
   },
   data () {
     return {
+      timer: null,
       ALARM_STATE,
+      alarmSearchTime: [moment().add(-1, 'days'), moment()],
       colors: [...levelColorMapping.values()],
-      fontColors: fontLevelColorMapping,
-      exportLoading: false,
-      formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
-        wrapperCol: {
-          xs: { span: 10, offset: 0 },
-          md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 2 },
-          xxl: { span: 20, offset: 0 }
-        }
-      },
-      ip: '',
-      ipList: [],
-      state: ALARM_STATE.unSolved,
       columns: [
         {
           title: '告警级别',
           dataIndex: 'alarm_level',
-          width: 100,
-          sorter: true,
+          width: 70,
           show: true,
-          fixed: 'left',
           customRender: (alarmLevel) => (
             <div
               style={{
-                borderColor: 'transparent',
+                // borderColor: 'transparent',
                 color: 'rgba(0,0,0,.5)',
                 cursor: 'default',
                 display: 'flex',
@@ -262,14 +308,20 @@ export default {
                 fontSize: '5px'
               }}
             >
-              <a-icon
+              {this.showAlarmIcon ? <a-icon
                 style={{
                   color: levelColorMapping.get(Number(alarmLevel)),
                   fontSize: '20px'
                 }}
                 type="flag"
                 theme="filled"
-              />
+              /> : <svg t="1629272702868" className="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="1114" width="20" height="20"
+                data-spm-anchor-id="a313x.7781069.0.i4">
+                <path
+                  d="M881.387 297.813c38.08 65.387 57.28 136.747 57.28 214.187s-19.094 148.8-57.28 214.187c-38.187 65.28-89.92 117.12-155.2 155.2S589.44 938.667 512 938.667s-148.8-19.094-214.187-57.28c-65.28-38.08-117.013-89.814-155.306-155.307C104.427 660.8 85.333 589.44 85.333 512c0-77.333 19.094-148.693 57.28-214.187 38.08-65.28 89.814-117.013 155.307-155.306C363.2 104.533 434.56 85.333 512 85.333c77.333 0 148.693 19.094 214.187 57.28 65.28 38.187 117.013 89.92 155.2 155.2z m-217.707-47.36C617.387 223.467 566.827 209.92 512 209.92s-105.387 13.547-151.68 40.533-82.987 63.68-109.973 109.974c-26.987 46.293-40.534 96.853-40.534 151.68s13.547 105.386 40.534 151.68c26.986 46.293 63.68 82.986 109.973 109.973 46.293 26.987 96.853 40.533 151.68 40.533s105.387-13.546 151.68-40.533c46.293-26.987 82.987-63.68 109.973-109.973 26.987-46.294 40.534-96.854 40.534-151.68s-13.547-105.387-40.534-151.68c-27.093-46.294-63.786-82.987-109.973-109.974z"
+                  p-id="1115" fill={`${levelColorMapping.get(Number(alarmLevel))}`}></path>
+              </svg>}
             </div>
 
           )
@@ -278,7 +330,8 @@ export default {
           title: '数据域',
           dataIndex: `origin`,
           width: 100,
-          show: true
+          show: true,
+          validate: () => this.showOrigin
         },
         {
           title: '品牌设备',
@@ -289,18 +342,20 @@ export default {
             const brand = _.get(record, 'brand_value_code', '')
             const model = _.get(record, 'device_model_value_code', '')
             return brand || model
-          }
+          },
+          validate: () => this.showDeviceModel
         },
         {
           title: 'IP',
           dataIndex: 'ip',
           width: 120,
-          show: true
+          show: true,
+          validate: () => this.showIp
         },
         {
           title: '监控对象',
           dataIndex: 'hostAlias',
-          width: 290,
+          width: 150,
           show: true
         },
         {
@@ -317,7 +372,7 @@ export default {
         {
           title: '检查项',
           dataIndex: 'metricAlias',
-          width: 170,
+          width: 150,
           show: true,
           customRender: (text, record) => {
             const metricAlias = _.get(record, 'metricAlias', '')
@@ -332,7 +387,8 @@ export default {
           show: true,
           sorter: true,
           defaultSortOrder: 'descend',
-          customRender: formatTime
+          customRender: formatTime,
+          validate: () => this.showReceive
         },
         {
           title: '持续时间',
@@ -362,13 +418,15 @@ export default {
           title: '告警描述',
           dataIndex: 'detail',
           width: 360,
-          show: true
+          show: true,
+          tooltip: true
         },
         {
           title: '采集系统',
           dataIndex: 'agent_id',
           width: 90,
-          show: true
+          show: true,
+          validate: () => this.showAgent
         },
         {
           title: '操作',
@@ -389,6 +447,21 @@ export default {
           validate: () => this.showHistory
         }
       ],
+      fontColors: fontLevelColorMapping,
+      exportLoading: false,
+      formItemLayout: {
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        wrapperCol: {
+          xs: { span: 10, offset: 0 },
+          md: { span: 14, offset: 0 },
+          xl: { span: 14, offset: 2 },
+          xxl: { span: 20, offset: 0 }
+        }
+      },
+      fetchTime: 10,
+      ip: '',
+      ipList: [],
+      state: ALARM_STATE.unSolved,
       queryParams: {
         alarmLevelList: [1, 2, 3, 4],
         dictValue: [],
@@ -428,13 +501,15 @@ export default {
   },
   methods: {
     moment,
-    customRow ({ id }) {
+    customRow ({ id }, index) {
+      const { customRow } = this.cTableProps
       return {
         on: {
           dblclick: () => {
             this.onDetail(id)
           }
-        }
+        },
+        customRow
       }
     },
 
@@ -471,7 +546,6 @@ export default {
         hostTypeDictValueCode,
         queryParams: { agent_id, alarmLevelList, dictValue, ...queryParams },
         ip
-        // queryParamsProps
       } = this
       const alarmFields = [
         'id',
@@ -487,6 +561,7 @@ export default {
         'agent_id',
         'origin'
       ]
+      // const alarmFields = this.columns.map(({ dataIndex }) => dataIndex)
       // cmdb_host_endpoint_metric条件
       const hostCondition = {
         ...generateQuery({ device_model_value_code: hostTypeDictValueCode }, true),
@@ -613,6 +688,27 @@ export default {
       this.state = state
       this.query()
     }
+  },
+  watch: {
+    'fetchTime': {
+      immediate: true,
+      handler: function async (value) {
+        // 动态刷新时间
+        clearInterval(this.timer)
+        // 关闭定时器的情况下默认刷新时间为一分钟
+        if (!this.showTimer) {
+          value = 1
+        }
+        this.timer = null
+        this.timer = setInterval(() => {
+          this.queryParams.receive_time = [moment().add(-1, 'days'), moment()]
+          this.query(false)
+        }, value * 60 * 1000)
+      }
+    }
+  },
+  destroyed () {
+    clearInterval(this.timer)
   }
 }
 </script>

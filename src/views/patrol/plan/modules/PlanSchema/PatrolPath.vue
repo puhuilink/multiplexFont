@@ -1,5 +1,5 @@
 <template>
-  <div class="PatrolPath">
+  <div class="PatrolPath" v-show="false">
     <CTable
       :columns="columns"
       :data="loadData"
@@ -128,6 +128,9 @@ export default {
           if (data.data.length !== 0) {
             this.plan.pathId = _.first(data.data).pathId
             this.plan.zoneId = _.first(data.data).zone_id
+          } else {
+            this.plan.pathId = ''
+            this.plan.zoneId = ''
           }
           return r.data
         })

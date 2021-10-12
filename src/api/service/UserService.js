@@ -1,5 +1,6 @@
 import { BaseService } from './BaseService'
 // import { actionname, moduleName } from '../utils/decorator/log'
+import { camelExchange } from '@/utils/util'
 import { query, generateQuery, generateMutation } from '../utils/hasura-orm/index'
 import {
   AuthorizeObjectDao,
@@ -10,7 +11,7 @@ import {
 } from '../dao/index'
 import store from '@/store'
 import _ from 'lodash'
-import { axios } from '@/utils/request'
+import { axios, zhenhua } from '@/utils/request'
 import { encrypt } from '@/utils/aes'
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import Timeout from 'await-timeout'
@@ -28,6 +29,7 @@ class UserService extends BaseService {
       // 新增用户
       UserDao.add(user)
     )
+    await this.saveRedis(Object.assign(user, { type: 'insert' }))
     await this.hasuraTransfer({ query: q })
     await UserService.setInitialPwd(user.user_id)
   }
@@ -47,7 +49,7 @@ class UserService extends BaseService {
    */
   static async batchDelete (userIdList = []) {
     const q = await generateMutation(
-      // 删除用户
+    // 删除用户
       UserDao.batchDelete({ user_id: { _in: userIdList } }),
       // 删除用户自定义桌面
       ViewDesktopDao.batchDeleteUserDesktop({ user_id: { _in: userIdList } }),
@@ -56,10 +58,24 @@ class UserService extends BaseService {
       // 删除用户的权限
       AuthorizeObjectDao.batchDelete({ user_id: { _in: userIdList } })
     )
+    await this.saveRedis({ userId: userIdList, type: 'delete' })
     return this.hasuraTransfer({ query: q })
   }
 
+  static async saveRedis (data) {
+    const formData = new FormData()
+    formData.append('userInfo', encrypt(JSON.stringify(camelExchange(data))))
+    await axios.post(`/redisData/userAlter`, formData, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    })
+  }
+
   static async update (user, where) {
+    // 写入redis
+    const redisUser = _.cloneDeep(user)
+    await this.saveRedis(Object.assign(redisUser, { type: 'update' }))
     const q = await generateMutation(
       UserDao.update(user, where)
     )
@@ -143,6 +159,13 @@ class UserService extends BaseService {
       ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
         verifCode: encrypt(verifCode)
       } : {}
+    })
+  }
+
+  static async seondLogin ({ userId, pwd }) {
+    return zhenhua.post('/user/login', {
+      userId: encrypt(userId),
+      encryptedPwd: encrypt(pwd)
     })
   }
 

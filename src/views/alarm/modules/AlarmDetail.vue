@@ -52,7 +52,14 @@ export default {
     formItemList: {
       type: Array,
       default: () => [
-        { label: '告警等级', key: 'alarm_level' },
+        { label: '告警等级',
+          key: 'alarm_level',
+          customRender: (text) => (text ? {
+            '1': '紧急告警',
+            '2': '主要告警',
+            '3': '次要告警',
+            '4': '一般告警'
+          }[text] : '') },
         { label: '告警次数', key: '' },
         { label: '首次告警时间', key: 'collect_time', customRender: formatTime },
         { label: '最近告警时间', key: 'receive_time', customRender: formatTime },
@@ -70,7 +77,7 @@ export default {
             { label: '值', key: '' }
           ]
         },
-        { label: '通知等级', key: 'state' },
+        // { label: '通知等级', key: 'state' },
         {
           label: '告警状态',
           key: 'state',
@@ -155,7 +162,7 @@ export default {
   methods: {
     cancel () {
       this.visible = false
-      this.$emit('close', _.get(this.record, 'state'))
+      // this.$emit('close', _.get(this.record, 'state'))
     },
     async fetch (id) {
       try {

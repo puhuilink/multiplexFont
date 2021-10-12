@@ -4,13 +4,13 @@
     :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
-    :width="940"
+    :width="920"
     wrapClassName="PlanSchema__modal"
-    @cancel="cancel"
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
     @ok="submit"
+    @cancel="cancel"
   >
     <a-spin :spinning="spinning">
       <a-form-model :model="plan" ref="ruleForm" :rules="rules" layout="inline">
@@ -24,7 +24,7 @@
 
         <TimePicker :plan.sync="plan"></TimePicker>
 
-        <TimeMultiPicker :plan.sync="plan"></TimeMultiPicker>
+        <TimeMultiPicker :exception.sync="plan.exception"></TimeMultiPicker>
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -110,11 +110,11 @@ export default {
     add () {
       this.plan = new PlanModel({})
       this.submit = this.insert
-      this.show('新增巡检计划')
+      this.show('新增巡更计划')
     },
     edit (id) {
       this.submit = this.update
-      this.show('编辑巡检计划')
+      this.show('编辑巡更计划')
       this.fetchPlanDetail(id)
     },
     async fetchPlanDetail (id) {
@@ -136,16 +136,11 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          const { code, msg } = await PatrolService.addPlan(this.plan.serialize())
-          if (code !== 200) {
-            this.$notifyError(msg)
-          } else {
-            this.$emit('addSuccess')
-            this.$notifyAddSuccess()
-            this.cancel()
-          }
+          await PatrolService.addPlan(this.plan.serialize())
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -161,16 +156,11 @@ export default {
         try {
           this.confirmLoading = true
           // const { id, ...plan } = this.plan.serialize()
-          const { code, msg } = await PatrolService.planUpdate(this.plan.serialize())
-          if (code !== 200) {
-            this.$notifyError(msg)
-          } else {
-            this.$emit('editSuccess')
-            this.$notifyEditSuccess()
-            this.cancel()
-          }
+          await PatrolService.planUpdate(this.plan.serialize())
+          this.$emit('editSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false

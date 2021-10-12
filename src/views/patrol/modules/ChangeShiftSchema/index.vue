@@ -16,12 +16,12 @@
             <span>交班人：{{ record.hand_name }}</span>
           </a-col>
 
-          <a-col :span="8">
-            <span>状态：{{ record.status | status }}</span>
-          </a-col>
+          <!--          <a-col :span="8">-->
+          <!--            <span>状态：{{ record.status | status }}</span>-->
+          <!--          </a-col>-->
 
           <a-col :span="8">
-            <span>交班时间：{{ record.hand_time }}</span>
+            <span>交班时间：{{ record.hand_time | timeFormat }}</span>
           </a-col>
 
         </a-row>
@@ -45,11 +45,11 @@
           </a-col>
 
           <a-col :span="8">
-            <span>机房湿度（%rH）：{{ record.sanitary | sanitary }}</span>
+            <span>机房湿度（%rH）：{{ record.humidity }}</span>
           </a-col>
 
           <a-col :span="8">
-            <span>机房整洁度：{{ record.hand_name }}</span>
+            <span>机房整洁度：{{ record.sanitary | sanitary }}</span>
           </a-col>
         </a-row>
 
@@ -91,12 +91,12 @@
             <span>接班人：{{ record.receive_name }}</span>
           </a-col>
 
-          <a-col :span="8">
-            <span>状态：{{ record.status | status }}</span>
-          </a-col>
+          <!--          <a-col :span="8">-->
+          <!--            <span>状态：{{ record.status | status }}</span>-->
+          <!--          </a-col>-->
 
           <a-col :span="8">
-            <span>交班时间：{{ record.receive_name }}</span>
+            <span>接班时间：{{ record.receive_time | timeFormat }}</span>
           </a-col>
 
         </a-row>
@@ -129,6 +129,7 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
+import moment from 'moment'
 import { PatrolService } from '@/api'
 
 export default {
@@ -204,6 +205,9 @@ export default {
         default:
           return ''
       }
+    },
+    timeFormat (time = '') {
+      return moment(time).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   computed: {},

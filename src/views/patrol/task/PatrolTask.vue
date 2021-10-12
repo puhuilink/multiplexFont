@@ -9,7 +9,6 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-
       <!-- / 查询区域 -->
       <template #query>
         <a-form layout="inline" class="form">
@@ -18,15 +17,16 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="巡更区域"
+                  label="巡更组"
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.ascription">
+                  <a-select allowClear v-model="queryParams.group_id">
                     <a-select-option
-                      v-for="[code, name] in ASCRIPTION_LIST"
-                      :key="code"
-                    >{{ name }}</a-select-option>
+                      v-for="{label, value} in groups"
+                      :key="value"
+                    >{{ label }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -37,11 +37,12 @@
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-select allowClear v-model="queryParams.event_occur" >
+                  <a-select allowClear v-model="queryParams.event_occur">
                     <a-select-option
                       v-for="[code, name] in ENABLE_LIST"
                       :key="code"
-                    >{{ name }}</a-select-option>
+                    >{{ name }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -64,7 +65,8 @@
                       v-for="[type, label] in STATUS_LIST"
                       :key="type"
                       :value="type"
-                    >{{ label }}</a-select-option>
+                    >{{ label }}
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -86,7 +88,6 @@
                       最近1月: [moment().add(-30, 'days'), moment()],
                     }"
                     :showTime="{ format: 'HH:mm' }"
-                    :defaultValue="[moment().add(-1, 'days'), moment()]"
                     v-model="queryParams.actual_end_time"
                   />
                 </a-form-item>
@@ -104,8 +105,8 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button :disabled="!hasSelectedOne" @click="seeDetail" >查看</a-button>
-        <!-- <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button> -->
+        <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
+        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
       </template>
 
     </CTable>
@@ -120,10 +121,10 @@ import { List } from '@/components/Mixins'
 import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
-  ASCRIPTION_LIST, ENABLE_LIST, STATUS_LIST,
-  STATUS_MAPPING
+  ENABLE_LIST, STATUS_LIST,
+  STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
-import { PatrolService } from '@/api'
+import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
 
 export default {
@@ -133,8 +134,9 @@ export default {
     TaskDetailSchema
   },
   data: () => ({
-    ASCRIPTION_LIST,
+    groups: [],
     ENABLE_LIST,
+    ENABLE_LIST_MAPPING,
     STATUS_LIST,
     exportLoading: false,
     columns: Object.freeze([
@@ -145,12 +147,13 @@ export default {
         fixed: 'left',
         sorter: true
       },
-      {
-        title: '巡更区域',
-        dataIndex: 'zone_id',
-        width: 120
-        // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
-      },
+      // {
+      //   title: '巡更区域',
+      //   dataIndex: 'zone { alias }',
+      //   width: 120,
+      //   customRender: (__, { zone: { alias } }) => alias
+      //   // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
+      // },
       {
         title: '计划名称',
         dataIndex: 'alias',
@@ -159,15 +162,17 @@ export default {
       },
       {
         title: '巡更组',
-        dataIndex: 'group_id',
+        dataIndex: 'group { group_name }',
         width: 220,
-        sorter: true
+        customRender: (__, { group: { group_name } }) => group_name
       },
       {
         title: '巡更实际开始时间',
         dataIndex: 'actual_start_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        defaultSortOrder: 'descend',
+        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '延迟开始',
@@ -180,7 +185,8 @@ export default {
         title: '巡更实际结束时间',
         dataIndex: 'actual_end_time',
         width: 180,
-        sorter: true
+        sorter: true,
+        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '超时完成',
@@ -203,32 +209,65 @@ export default {
         title: '存在异常',
         dataIndex: 'event_occur',
         width: 80,
-        sorter: true,
         // TODO: useMapping
-        customRender: eventOccur => eventOccur ? '是' : '否'
+        customRender: eventOccur => eventOccur ? ENABLE_LIST_MAPPING.get(eventOccur) : '否'
       },
       {
         title: '巡更人员',
         dataIndex: 'executor',
-        width: 150
+        width: 150,
+        customRender: (executor) => {
+          if (!executor) {
+            return ''
+          } else if (executor === executor.toString()) {
+            return executor.toString().slice(1, executor.length - 1)
+          } else {
+            return executor.executor
+          }
+        }
       }
     ])
   }),
   methods: {
     moment,
+    handleTableChange (pagination, filters, sorter) {
+      console.log('pag', pagination, filters, sorter)
+    },
+    async getGroup () {
+      const { data: { GroupList } } = await GroupService.find({
+        where: {
+          is_patrol: { _eq: true }
+        },
+        fields: [
+          'value: group_id',
+          'label: group_name'
+        ],
+        alias: 'GroupList'
+      })
+      this.groups = GroupList
+    },
     loadData (parameter) {
+      const { status, ...rest } = this.queryParams
       return PatrolService.taskFind({
         where: {
-          ...generateQuery(this.queryParams)
+          ...status ? { status: { _eq: status } } : {},
+          ...generateQuery(rest)
         },
         fields: this.columns.map(({ dataIndex }) => dataIndex),
+        ...parameter.orderBy ? {} : { orderBy: { actual_start_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then(r => r.data)
     },
     seeDetail () {
       const [id] = this.selectedRowKeys
-      this.$refs['schema'].detail(id)
+      const [record] = this.selectedRows
+      const status = parseInt(record.status)
+      if (status < 30 && status > 2) {
+        this.$refs['schema'].detail(id)
+      } else {
+        this.$message.error('该任务单没有巡更记录可查看！')
+      }
     },
     /**
      * 导出
@@ -236,14 +275,29 @@ export default {
     async exportExcel () {
       try {
         this.exportLoading = true
-        const content = await PatrolService.getPatrolTaskExcel(this.selectedRowKeys)
-        downloadExcel('巡更记录单', content)
+        for (let i = 0; i < this.selectedRowKeys.length; i++) {
+          const key = this.selectedRowKeys[i]
+          const record = this.selectedRows[i]
+          const content = await PatrolService.getPatrolTaskExcel(key)
+          await downloadExcel('巡更记录单-' + record.actual_end_time.replaceAll('T', '-') + '.xls', content)
+        }
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出巡更记录单成功'
+        })
       } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: `导出交接班记录失败${e}` } })
+        })
         throw e
       } finally {
         this.exportLoading = false
       }
     }
+  },
+  mounted () {
+    this.getGroup()
   }
 }
 </script>

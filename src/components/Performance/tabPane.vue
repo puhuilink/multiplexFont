@@ -83,7 +83,7 @@ export default {
             return (
               <a-button
                 type="link"
-                onClick = {() => { this.$emit('pointCheckout', record.endpointId) } }
+                onClick = {() => { record.endpointId ? this.$emit('pointCheckout', record.endpointId) : alert('无有效检查项') } }
               >
                 总计指标:{record.metricCount}个;正常:{record.metricNormal}个;告警:{record.metricAlarm}个
               </a-button>
@@ -93,8 +93,9 @@ export default {
         {
           title: '告警时间',
           align: 'center',
-          dataIndex: 'alarmTime',
-          width: 150
+          // dataIndex: 'alarmTime',
+          width: 150,
+          customRender: (__, record) => record.alarmTime || record.uploadTime || '暂无告警时间'
         },
         {
           title: '操作',
@@ -104,7 +105,7 @@ export default {
             return (
               <a-button
                 type="link"
-                onClick = {() => this.$emit('pointCheckout', record.endpointId)}
+                onClick = {() => { record.endpointId ? this.$emit('pointCheckout', record.endpointId) : alert('无有效检查项') }}
               >查看</a-button>
             )
           }

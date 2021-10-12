@@ -3,8 +3,9 @@
  */
 
 import { DynamicDataConfig } from './common/index'
-import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL, SOURCE_TYPE_COMBO } from './types/sourceType'
+import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL } from './types/sourceType'
 import _ from 'lodash'
+import { STATUS_MAPPING } from '@/views/patrol/typing'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {
   /**
@@ -98,6 +99,37 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
     return { columns, dataSource }
   }
 
+  /*
+  * 自定义sql生成对应的行和列
+  * 页头自定义
+  * 对应数据为legend data
+  * */
+  generateSql (dataList = [], reverse = false) {
+    const columns = []
+    const dataSource = []
+    if (_.isEmpty(dataList)) {
+      return { columns, dataSource }
+    }
+    // 表头
+    const head = _.head(dataList)
+    const body = _.slice(dataList, 1, dataList.length)
+    head.map(el => { columns.push({ title: el, dataIndex: el, width: 300, ellipsis: true }) })
+
+    body.map(el => {
+      const result = {}
+      el.forEach((value, index) => {
+        const obj = columns[index].dataIndex
+        // Object.assign(result, {columns[dataIndex]:value})
+        if (obj === '状态') {
+          value = STATUS_MAPPING.get(value)
+        }
+        result[obj] = value
+      })
+      dataSource.push(result)
+    })
+    return { columns, dataSource }
+  }
+
   /**
    * 与静态数据保持一致的数据结构
    * @returns {Promise<any>}
@@ -115,6 +147,10 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_COMBO: {
           await this.getComboDataOption()
+          break
+        }
+        case SOURCE_TYPE_SQL: {
+          await this.getSqlDataOption()
           break
         }
       }
@@ -149,6 +185,15 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
     // 对应新接口网络请求
     const dataList = await this.comboConfig.fetch()
     const { columns, dataSource } = this.generate(dataList, true)
+    Object.assign(this, {
+      columns,
+      dataSource
+    })
+  }
+
+  async getSqlDataOption () {
+    const dataList = await this.sqlConfig.fetch()
+    const { columns, dataSource } = this.generateSql(dataList, false)
     Object.assign(this, {
       columns,
       dataSource

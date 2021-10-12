@@ -25,9 +25,20 @@
           <span v-if="filterTreeNode({ title })">
             <span>{{ title.substring(0, title.toLowerCase().indexOf(searchValue.toLowerCase())) }}</span>
             <span style="color: #37b3a4">{{ searchValue }}</span>
-            <span>{{ title.substring(title.toLowerCase().indexOf(searchValue.toLowerCase()) + searchValue.length) }}</span>
+            <a-popover>
+              <template slot="content">
+                <span>{{ title.substring(title.toLowerCase().indexOf(searchValue.toLowerCase()) + searchValue.length) }}</span>
+              </template>
+            </a-popover>
           </span>
-          <span v-else>{{ title }}</span>
+          <span v-else>
+            <a-popover placement="right">
+              <template slot="content">
+                <span>{{ title }}</span>
+              </template>
+              <span>{{ title }}</span>
+            </a-popover>
+          </span>
         </template>
       </a-tree>
     </a-spin>

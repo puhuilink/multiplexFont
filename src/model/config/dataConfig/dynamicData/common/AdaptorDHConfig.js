@@ -21,7 +21,6 @@ export class AdaptorDHConfig {
 
   fetch () {
     const { code } = this
-
     return ViewDataService
       .xmDHMetric({ code })
       .catch(() => '')

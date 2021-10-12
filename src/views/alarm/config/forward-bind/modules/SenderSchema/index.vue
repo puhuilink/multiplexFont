@@ -11,128 +11,101 @@
       class="SendForm"
       ref="content"
     >
-      <a-form-model-item
-        label="通知等级"
-        v-bind="formItemLayout"
-        :rules="[
-          { required: true, message: '请选择通知等级' },
-        ]">
-        <a-select
-          class="SendForm__Select"
-          v-model="send.level"
-          :disabled="levelBtn"
+      <a-form-model ref="form" :model="send" :rules="rules">
+        <a-form-model-item
+          label="通知等级"
+          v-bind="formItemLayout"
+          prop="level"
         >
-          <a-select-option
-            v-for="[value, label] in levelList"
-            :key="value"
-            :value="value"
+          <a-select
+            class="SendForm__Select"
+            v-model="send.level"
+            :disabled="levelBtn"
           >
-            {{ label }}
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
+            <a-select-option
+              v-for="[value, label] in levelList"
+              :key="value"
+              :value="value"
+            >
+              {{ label }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
 
-      <a-form-model-item
-        label="通知组"
-        v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
-      >
-        <a-select
-          allowClear
-          mode="default"
-          showSearch
-          class="item2"
-          v-model="send.group"
-          :disabled="groupBtn"
+        <a-form-model-item
+          label="通知组"
+          prop="group"
+          v-bind="formItemLayout"
+          :rules="[{ required: true, message: '请选择通知组' }]"
         >
-          <a-select-option
-            v-for="{ group_id, group_name } in groupList"
-            :key="group_id"
-            :value="group_id">{{ group_name }}</a-select-option>
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item
-        label="通知人"
-        v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
-      >
-        <a-select
-          class="item2"
-          allowClear
-          mode="multiple"
-          showSearch
-          v-model="send.contact"
-        >
-          <a-select-option
+          <a-select
+            allowClear
+            mode="default"
+            showSearch
             class="item2"
-            v-for="{ user_id, staff_name } in userList"
-            :key="user_id"
-            :value="user_id">{{ staff_name }}</a-select-option>
-        </a-select>
-      </a-form-model-item>
-      <a-row class="ant-form-item">
-        <a-col v-bind="formItemLayout.labelCol" class="ant-form-item-label">
-          <label title="通知方式">通知方式</label>
-        </a-col>
+            v-model="send.group"
+            :disabled="groupBtn"
+          >
+            <a-select-option
+              v-for="{ group_id, group_name } in groupList"
+              :key="group_id"
+              :value="group_id">{{ group_name }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
 
-        <a-col v-bind="formItemLayout.wrapperCol">
-          <a-row>
-            <a-col :span="8">
-              <a-form-model-item label="短信" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledSMS" @input="toggleSMS"/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="16">
-              <a-form-model-item label="短信模板" v-bind="nestedFormItemLayout">
-                <a-select
-                  class="item1"
-                  allowClear
-                  :disabled="!send.hasEnabledSMS"
-                  v-model="send.temp_sms_id"
-                >
-                  <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}</a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-
-          <a-row>
-            <a-col :span="8">
-              <a-form-model-item label="邮箱" v-bind="nestedFormItemLayout">
-                <a-checkbox :checked="send.hasEnabledEmail" @input="toggleEmail"/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="16">
-              <a-form-model-item label="邮箱模板" v-bind="nestedFormItemLayout">
-                <a-select
-                  class="item1"
-                  allowClear
-                  :disabled="!send.hasEnabledEmail"
-                  v-model="send.temp_email_id"
-                >
-                  <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}</a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-col>
-      </a-row>
+        <a-form-model-item
+          label="通知人"
+          v-bind="formItemLayout"
+          prop="contact"
+          :rules="[{ required: true, message: '请选择通知人' }]"
+        >
+          <a-select
+            class="item2"
+            allowClear
+            mode="multiple"
+            showSearch
+            v-model="send.contact"
+          >
+            <a-select-option
+              class="item2"
+              v-for="{ user_id, staff_name } in userList"
+              :key="user_id"
+              :value="user_id">{{ staff_name }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item
+          label="通知方式"
+          v-bind="formItemLayout"
+          prop="methods"
+        >
+          <checkSends
+            v-if="visible"
+            :smsTempList="smsTempList"
+            :emailTempList="emailTempList"
+            :send.sync="send"
+            :value="send.methods"
+            @deleteStatus="deleteCheck"
+            @addStatus="uploadCheck">
+          </checkSends>
+        </a-form-model-item>
+      </a-form-model>
     </div>
     <!-- / 底部按钮 -->
-    <template slot="footer" >
+    <template slot="footer">
       <a-form-model-item
         v-bind="formItemLayout"
         label="自动"
         class="footer"
         v-if="btnVisible"
       >
-        <a-select v-model="send.auto" class="enabled" >
+        <a-select v-model="send.auto" class="enabled">
           <a-select-option :value="true">是</a-select-option>
           <a-select-option :value="false">否</a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-button @click="cancel">取消</a-button>
+      <a-button @click="localCancel">取消</a-button>
       <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
     </template>
   </a-modal>
@@ -141,7 +114,6 @@
 <script>
 import {
   UserGroupService,
-  GroupService,
   AlarmRuleService,
   UserService,
   AlarmTempService,
@@ -149,11 +121,16 @@ import {
 } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
+import { sql } from '@/utils/request'
+import checkSends from '@/views/alarm/config/forward-bind/modules/SenderSchema/checkSends'
 import _ from 'lodash'
+
 export default {
   name: 'SenderSchema',
-  components: {},
-  mixins: [ Schema ],
+  components: {
+    checkSends
+  },
+  mixins: [Schema],
   data: () => ({
     groupBtn: false,
     levelBtn: false,
@@ -180,8 +157,7 @@ export default {
       group: '',
       level: '',
       auto: false,
-      hasEnabledSMS: false,
-      hasEnabledEmail: false,
+      methods: '',
       temp_email_id: '',
       temp_sms_id: '',
       contact: []
@@ -189,32 +165,53 @@ export default {
     formItemLayout: {
       labelCol: { span: 5 },
       wrapperCol: { span: 17, offset: 1 }
+    },
+    rules: {
+      level: [
+        { required: true, message: '请选择告警等级', trigger: 'blur' },
+        { validator: (rule, value, callback) => { if (value === '') callback(new Error('12345')); else callback() }, trigger: 'change' }
+      ],
+      methods: [{ required: true, message: '请选择通知方式', trigger: 'blur' }]
     }
   }),
   methods: {
+    localCancel () {
+      this.reset()
+      this.cancel()
+    },
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
+      if (!e) {
+        Reflect.deleteProperty(this.rules, 'temp_sms_id')
+        this.send.temp_sms_id = null
+      } else {
+        const rule = { temp_sms_id: [
+          { required: true, message: '请选择短信联系人', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
       this.send.hasEnabledSMS = e
     },
     toggleEmail (e) {
+      if (!e) {
+        Reflect.deleteProperty(this.rules, 'temp_email_id')
+        this.send.temp_email_id = null
+      } else {
+        const rule = { temp_email_id: [
+          { required: true, message: '请选择邮箱', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
       this.send.hasEnabledEmail = e
+      // const emailRule = { temp_email_id: [ required: true, message: 'Please input Activity name', trigger: 'blur' ] }
     },
     async getGroup () {
-      const { data: { GroupList } } = await GroupService.find({
-        where: {
-          is_patrol: { _neq: true }
-        },
-        fields: [
-          'is_patrol',
-          'group_id',
-          'group_name'
-        ],
-        alias: 'GroupList'
-      })
-      this.groupList = GroupList
+      const data = await sql('select group_id as groupId, group_name as groupName, is_patrol as flag from t_group where  is_patrol is null or is_patrol = false;')
+      const list = data.slice(1, data.length).map(el => ({ 'group_id': el[0], 'group_name': el[1] }))
+      this.groupList = list
     },
     fetchFix () {
       this.fetchUserList()
@@ -227,19 +224,22 @@ export default {
       this.submit = this.insert
     },
     async insert () {
-      try {
-        this.btnLoading = true
-        // 新增用户
-        await AlarmRuleService.addUser(this.send)
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.form.validate(async value => {
+        if (!value) return
+        try {
+          this.btnLoading = true
+          // 新增用户
+          await AlarmRuleService.addUser(this.send)
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+        }
+      })
     },
     edit (id) {
       this.groupBtn = true
@@ -259,36 +259,55 @@ export default {
       }
     },
     serializeModel (model) {
+      const send = []
+      if (model.temp_email_id && model.temp_email_id !== null) {
+        send.push('EMAIL')
+        const rule = { temp_email_id: [
+          { required: true, message: '请选择邮箱', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
+      if (model.temp_sms_id && model.temp_sms_id !== null) {
+        send.push('SMS')
+        const rule = { temp_sms_id: [
+          { required: true, message: '请选择短信联系人', trigger: 'blur' }
+        ] }
+        this.rules = { ...this.rules, ...rule }
+      }
       this.send = {
         group: model.group_id,
         contact: _.split(model.contact, '/'),
         level: model.event_level,
         auto: model.auto,
-        hasEnabledEmail: !_.includes(_.words(model.send_type, '/'), 'EMAIL'),
-        hasEnabledSMS: !_.includes(_.words(model.send_type, '/'), 'SMS'),
+        methods: send.join('/'),
         temp_email_id: model.temp_email_id,
         temp_sms_id: model.temp_sms_id
       }
     },
     async update () {
-      try {
-        this.btnLoading = true
-        await AlarmSenderService.update(
-          { contact: this.send.contact,
-            temp_sms_id: this.send.temp_sms_id,
-            temp_email_id: this.send.temp_email_id,
-            auto: this.send.auto
-          },
-          { event_level: this.send.level })
-        this.$emit('addSuccess')
-        this.$notifyAddSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      this.$refs.form.validate(async value => {
+        if (!value) return
+        try {
+          this.btnLoading = true
+          await AlarmSenderService.update(
+            {
+              contact: this.send.contact.join('/'),
+              temp_sms_id: this.send.temp_sms_id === '' ? null : this.send.temp_sms_id,
+              temp_email_id: this.send.temp_email_id === '' ? null : this.send.temp_email_id,
+              auto: this.send.auto,
+              send_type: this.sendType.join('/')
+            },
+            { event_level: this.send.level })
+          this.$emit('updateSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.btnLoading = false
+        }
+      })
     },
     async fetchUserList () {
       try {
@@ -320,6 +339,15 @@ export default {
       } finally {
         this.forwardTempListLoading = false
       }
+    },
+    // 更新校验规则判断是否需要校验SMSID和EMAILID
+    uploadCheck (rule) {
+      this.rules = { ...this.rules, ...rule }
+      this.$forceUpdate()
+    },
+    deleteCheck (arg) {
+      Reflect.deleteProperty(this.rules, arg)
+      this.$forceUpdate()
     }
   },
   computed: {
@@ -332,6 +360,16 @@ export default {
     btnVisible () {
       const group = this.groupList.filter(el => el.group_id === this.send.group)
       return _.includes(group.map(el => el.is_patrol), true)
+    },
+    sendType () {
+      const send = []
+      if (this.send.temp_sms_id !== null) {
+        send.push('SMS')
+      }
+      if (this.send.temp_email_id !== null) {
+        send.push('EMAIL')
+      }
+      return send
     }
   },
   watch: {
@@ -348,30 +386,33 @@ export default {
 </script>
 
 <style lang="less">
-  .SenderSchema__modal {
-    .SendForm {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      justify-items: center;
-      &__Select {
-        width: 60%;
-      }
-      .item1{
-        width: 60%;
-      }
-      .item2 {
-        width: 60%;
-      }
+.SenderSchema__modal {
+  .SendForm {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-items: center;
+
+    &__Select {
+      width: 60%;
     }
 
-    .footer {
-      float: left;
+    .item1 {
+      width: 60%;
     }
 
-    .enabled {
-      width: 100px;
+    .item2 {
+      width: 60%;
     }
   }
+
+  .footer {
+    float: left;
+  }
+
+  .enabled {
+    width: 100px;
+  }
+}
 
 </style>

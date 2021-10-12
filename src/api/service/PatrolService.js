@@ -3,12 +3,14 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import {
   AlarmSenderDao, UserDao,
   PatrolTaskEventHistoryDao, PatrolPlanDao, PatrolPathDao,
-  PatrolTaskStatusDao
+  PatrolTaskStatusDao, PatrolTaskReportViewDao
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
 import _ from 'lodash'
-import { axios, xungeng } from '@/utils/request'
+import { axios, sql, xungeng } from '@/utils/request'
 import { decrypt } from '@/utils/aes'
+import moment from 'moment-timezone'
+import { sqlResultDealer } from '@/utils/util'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -48,11 +50,31 @@ class PatrolService extends BaseService {
     })
     return _.first(changeShiftList)
   }
+  static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
+    let baseSql = `select 
+    point_alias,
+    host_alias,
+    endpoint_alias,
+    metric_alias,
+    format,
+    type,
+    tags,
+    position,
+    value from t_patrol_task_report_view where task_id = ${task_id} and zone_id = ${zone_id} order by 
+    endpoint_sequence, metric_sequence, zone_sequence, checkpoint_sequence, host_sequence`
+    baseSql += ';'
+    const result = await sql(baseSql)
+    return sqlResultDealer(result)
+  }
 
-  // 导出任务单
-  static async onExport (ids) {
-    console.log(ids)
-    return xungeng.post('changeShift/exportChangeShift', ids, { responseType: 'arraybuffer' })
+  // 导出交接班记录
+  static async onExport (selectRow) {
+    return xungeng({
+      url: 'export/ChangeShift',
+      method: 'post',
+      data: selectRow,
+      responseType: 'arraybuffer'
+    })
   }
 
   // 任务单异常项
@@ -61,6 +83,9 @@ class PatrolService extends BaseService {
     return query(
       PatrolTaskEventHistoryDao.find(argus)
     )
+  }
+  static async reportFind (argus = {}) {
+    return query(PatrolTaskReportViewDao.find(argus))
   }
 
   static async pathFind (argus = {}) {
@@ -117,10 +142,13 @@ class PatrolService extends BaseService {
   }
 
   // 批量审批
-  static async eventTaskBatchApprove (idList = []) {
+  static async eventTaskBatchApprove (idList = [], user = {}) {
+    const { id } = user
     return mutate(
       PatrolTaskStatusDao.update({
-        review: 'accomplished'
+        review: '1',
+        reviewer: id,
+        review_time: moment().tz('Asia/ShangHai').format()
       }, { id: { _in: idList } })
     )
   }
@@ -206,7 +234,7 @@ class PatrolService extends BaseService {
         return data
       }
     } catch (e) {
-      throw e
+      this.$notifyError(e)
     }
   }
 
@@ -328,7 +356,7 @@ class PatrolService extends BaseService {
   static async resumeJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/resumeJob`, formData, {
+    return xungeng.post(`plan/resumeJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
@@ -339,7 +367,7 @@ class PatrolService extends BaseService {
   static async pauseJob (planId) {
     const formData = new FormData()
     formData.append('planId', planId)
-    return axios.post(`plan/pauseJob`, formData, {
+    return xungeng.post(`plan/pauseJob`, formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
@@ -371,10 +399,11 @@ class PatrolService extends BaseService {
   }
 
   static async getPatrolTaskExcel (data) {
-    return axios({
-      url: '/taskInfo/exportTask',
+    const json = { taskId: data }
+    return xungeng({
+      url: '/export/taskHistory',
       method: 'post',
-      data,
+      data: json,
       responseType: 'arraybuffer'
     })
   }

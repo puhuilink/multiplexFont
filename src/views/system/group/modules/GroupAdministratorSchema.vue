@@ -12,6 +12,7 @@
     @ok="submit"
   >
     <a-transfer
+      v-if="visible"
       :dataSource="userList"
       showSearch
       :titles="['未分配管理员', '已分配管理员']"

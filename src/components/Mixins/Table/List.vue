@@ -60,6 +60,22 @@ export default {
     // 展开行的 key
     expandedRowKeys: []
   }),
+  filters: {
+    sendTypeSwitch (val) {
+      switch (val) {
+        case 'SMS':
+          return '短信'
+        case 'EMAIL':
+          return '邮箱'
+        case 'SMS/EMAIL':
+          return '短信/邮箱'
+        case 'EMAIL/SMS':
+          return '短信/邮箱'
+        default:
+          return ''
+      }
+    }
+  },
   computed: {
     hasSelected () {
       return this.selectedRowKeys.length > 0

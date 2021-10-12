@@ -9,7 +9,8 @@ import {
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
-  SOURCE_TYPE_DH
+  SOURCE_TYPE_DH,
+  SOURCE_TYPE_SQL
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -36,6 +37,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
           await this.getDhDataOption()
           break
         }
+        case SOURCE_TYPE_SQL: {
+          await this.getSqlDataOption()
+          break
+        }
       }
     }
     return this.text
@@ -43,6 +48,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     this.text = await this.resourceConfig.fetch().then(data => _.get(data, '0.data', ''))
+  }
+
+  async getSqlDataOption () {
+    this.text = await this.sqlConfig.fetch().then(data => data[1])
   }
 
   async getComboDataOption () {

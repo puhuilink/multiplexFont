@@ -7,10 +7,12 @@
     v-model="visible"
     :afterClose="reset"
     @cancel="cancel"
+    @ok="submit"
   >
     <a-form-model
       class="SendForm"
       :model="send"
+      :form="form"
       ref="form"
     >
       <a-form-model-item
@@ -18,7 +20,7 @@
         v-bind="formItemLayout"
         prop="severity"
         :rules="[
-          { required: true, message: '请选择通知等级' },
+          { required: true, message: '请选择告警等级' },
         ]">
         <a-select
           class="SendForm__Select"
@@ -36,10 +38,10 @@
       </a-form-model-item>
 
       <a-form-model-item
-        label="计划组"
+        label="通知组"
         v-bind="formItemLayout"
         prop="groupId"
-        :rules="[{ required: true, message: '请选择计划组' }]"
+        :rules="[{ required: true, message: '请选择通知组' }]"
       >
         <a-select
           allowClear
@@ -60,7 +62,7 @@
         label="通知人"
         prop="contact"
         v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请选择通知组' }]"
+        :rules="[{ required: true, message: '请选择通知人' }]"
       >
         <a-select
           class="item2"
@@ -156,6 +158,7 @@ import {
 import Schema from '@/components/Mixins/Modal/Schema'
 import { SEND_TYPE_EMAIL, SEND_TYPE_SMS } from '@/tables/alarm_temp/types'
 import _ from 'lodash'
+import { LEVEL_LIST } from '../../../typing'
 export default {
   name: 'SenderSchema',
   components: {},
@@ -170,12 +173,7 @@ export default {
       labelCol: { span: 7 },
       wrapperCol: { span: 16, offset: 1 }
     },
-    levelList: [
-      [1, '一级（紧急通知）'],
-      [2, '二级（主要通知）'],
-      [3, '三级（次要通知）'],
-      [4, '四级（一般通知）']
-    ],
+    levelList: LEVEL_LIST,
     btnLoading: false,
     userList: [],
     groupList: [],
@@ -197,7 +195,7 @@ export default {
   }),
   methods: {
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     },
     toggleSMS (e) {
@@ -244,16 +242,12 @@ export default {
         try {
           this.btnLoading = true
           // 新增用户
-          const { msg, code } = await PatrolSenderService.insert(this.send)
+          const { code } = await PatrolSenderService.insert(this.send)
           if (code === 200) {
             this.$emit('addSuccess')
             this.$notifyAddSuccess()
-          } else if (code === 30) {
-            this.$notifyError(msg)
-            throw msg
           }
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.btnLoading = false
@@ -288,29 +282,29 @@ export default {
         contact: _.split(model.contact, '/'),
         severity: model.severity,
         auto: model.auto,
-        hasEnabledEmail: !_.includes(_.words(model.send_type, '/'), 'EMAIL'),
-        hasEnabledSMS: !_.includes(_.words(model.send_type, '/'), 'SMS'),
+        hasEnabledEmail: _.includes(_.split(model.send_type, '/'), 'EMAIL'),
+        hasEnabledSMS: _.includes(_.split(model.send_type, '/'), 'SMS'),
         tempEmailId: model.tempEmailId,
         tempSmsId: model.tempSmsId
       }
     },
     async update () {
-      try {
-        this.btnLoading = true
-        const { code, msg } = await PatrolSenderService.update(this.send)
-        if (code === 200) {
-          this.$emit('addSuccess')
-          this.$notifyEditSuccess()
-          this.cancel()
-        } else {
-          this.$notifyError(msg)
+      this.$refs.form.validate(async value => {
+        if (!value) return
+        try {
+          this.btnLoading = true
+          const { code } = await PatrolSenderService.update(this.send)
+          if (code === 200) {
+            this.$emit('addSuccess')
+            this.$notifyEditSuccess()
+            this.cancel()
+          }
+        } catch (e) {
+          throw e
+        } finally {
+          this.btnLoading = false
         }
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.btnLoading = false
-      }
+      })
     },
     async fetchUserList () {
       try {

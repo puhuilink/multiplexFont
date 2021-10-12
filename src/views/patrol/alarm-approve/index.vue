@@ -9,6 +9,7 @@
         rowKey="id"
         :rowSelection="rowSelection"
         @expandedRowsChange="expandedRowsChange"
+        :scroll="scroll"
       >
         <!-- / 操作区域 -->
         <template #query>
@@ -35,6 +36,18 @@
                       :showTime="{ format: 'HH:mm:ss' }"
                       v-model="queryParams.create_time"
                     />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+
+              <a-row>
+                <a-col :md="12" :sm="24">
+                  <a-form-item label="任务单号" v-bind="formItemLayout" class="fw">
+                    <a-input-number
+                      class="fw"
+                      v-model="queryParams.id"
+                      placeholder="请输入任务单号"
+                    ></a-input-number>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -65,7 +78,7 @@
         </template>
       </CTable>
 
-      <ApproveSchema ref="schema" />
+      <ApproveSchema ref="schema" @success="query(false)"/>
     </div>
   </div>
 </template>
@@ -96,14 +109,14 @@ export default {
         title: '任务单号',
         dataIndex: 'id',
         sorter: true,
-        width: 180
+        width: 90
       },
-      {
-        title: '巡更区域',
-        dataIndex: 'zone { alias }',
-        sorter: true,
-        customRender: (__, { zone }) => _.get(zone, 'alias')
-      },
+      // {
+      //   title: '巡更区域',
+      //   dataIndex: 'zone { alias }',
+      //   width: 130,
+      //   customRender: (__, { zone }) => _.get(zone, 'alias')
+      // },
       {
         title: '计划名称',
         dataIndex: 'alias',
@@ -120,8 +133,9 @@ export default {
         title: '告警提交时间',
         dataIndex: 'actual_end_time',
         sorter: true,
+        defaultSortOrder: 'descend',
         width: 180,
-        customRender: (actualEndTime) => moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss')
+        customRender: (actualEndTime) => actualEndTime ? moment(actualEndTime).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '审批状态',
@@ -133,8 +147,29 @@ export default {
       {
         title: '巡更人员',
         dataIndex: 'executor',
+        width: 130,
+        customRender: (executor) => {
+          if (!executor) {
+            return ''
+          } else if (executor === executor.toString()) {
+            return executor.toString().slice(1, executor.length - 1)
+          } else {
+            return executor.executor
+          }
+        }
+      },
+      {
+        title: '审批人员',
+        dataIndex: 'reviewUser { staff_name }',
+        width: 130,
+        customRender: (__, { reviewUser }) => _.get(reviewUser, 'staff_name')
+      },
+      {
+        title: '审批时间',
+        dataIndex: 'review_time',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: value => value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '异常数量',
@@ -181,6 +216,7 @@ export default {
           ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        ...parameter.orderBy ? {} : { orderBy: { actual_end_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then((r) => r.data)
@@ -197,11 +233,12 @@ export default {
      * 快速批量审批（直接修改任务单状态）
      */
     async onBatchApprove () {
+      const user = { id: this.$store.getters.userId, name: this.$store.getters.nickname }
       this.$promiseConfirm({
         title: '系统提示',
         content: '确认审批选中任务？',
         onOk: () =>
-          PatrolService.eventTaskBatchApprove(this.selectedRowKeys)
+          PatrolService.eventTaskBatchApprove(this.selectedRowKeys, user)
             .then(() => {
               this.$notification.success({
                 message: '系统提示',

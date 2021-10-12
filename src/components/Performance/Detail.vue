@@ -63,12 +63,20 @@ export default {
       endpointModelId: ''
     }
   },
-  computed: {},
   watch: {
     'hostId': {
       immediate: true,
       handler: async function () {
         this.activeKey = this.hostId
+        this.panes = []
+      }
+    },
+    'panes': {
+      immediate: true,
+      handler: function (value) {
+        if (_.isEmpty(value)) {
+          this.activeKey = this.hostId
+        }
       }
     }
   },

@@ -79,7 +79,7 @@ export default {
     formRules () {
       return {
         title: [
-          { required: true, message: '请输入前转名称' },
+          { required: true, message: '请输入通知模板名称' },
           { max: 50, message: '最多输入50个字符' },
           { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }
         ],
@@ -88,7 +88,7 @@ export default {
           { required: true, message: '请输入模板内容' },
           { max: 255, message: '最多输入255个字符' }
         ],
-        mode: [{ required: true, message: '请选择前转方式' }]
+        mode: [{ required: true, message: '请选择通知方式' }]
       }
     }
   },

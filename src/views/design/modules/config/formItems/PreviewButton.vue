@@ -44,6 +44,9 @@ export default {
         this.previewButtonLoading = false
       }
     }
+  },
+  created () {
+    window.config = this.config.dataConfig.getCurrentConfig()
   }
 }
 </script>

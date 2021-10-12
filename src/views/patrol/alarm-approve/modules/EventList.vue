@@ -3,7 +3,7 @@
     <CTable
       :columns="columns"
       :data="loadData"
-      :showPagination="false"
+      :showPagination="true"
       rowKey="id"
       :rowSelection="hasReviewed ? null : rowSelection"
       :subScroll="scroll"

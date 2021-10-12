@@ -58,6 +58,24 @@ export default {
         Object.assign(this.config.dataConfig.dbDataConfig.overviewConfig, v)
         this.change()
       }
+    },
+    numberConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.numberConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.numberConfig, v)
+        this.change()
+      }
+    },
+    sqlConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.sqlConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.sqlConfig, v)
+        this.change()
+      }
     }
   },
   methods: {

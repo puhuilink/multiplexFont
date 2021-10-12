@@ -264,13 +264,18 @@ export default {
      */
     async onBatchDelete () {
       this.$promiseConfirmDelete({
-        onOk: () => StrategyService
-          .batchDelete(this.selectedRowKeys)
-          .then(() => {
+        onOk: async () => {
+          try {
+            await StrategyService.batchDelete(this.selectedRowKeys)
             this.$notifyDeleteSuccess()
             this.query(false)
-          })
-          .catch(this.$notifyError)
+          } catch (e) {
+            this.$notification.error({
+              message: '删除失败',
+              description: e.toString() })
+            throw e
+          }
+        }
       })
     },
     /**

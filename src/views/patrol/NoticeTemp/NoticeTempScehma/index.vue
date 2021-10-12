@@ -20,7 +20,7 @@
     </template>
 
     <!-- / 正文 -->
-    <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
+    <a-form-model ref="form" :model="formModel" :rules="formRules">
       <a-form-model-item
         label="巡更通知模板名称"
         v-bind="formItemLayout"
@@ -127,16 +127,13 @@ export default {
       try {
         this.submitLoading = true
         this.spinning = true
-        const { code, msg } = await PatrolTemplateService.update(PatrolModel.serialize(this.formModel))
+        const { code } = await PatrolTemplateService.update(PatrolModel.serialize(this.formModel))
         if (Number(code) === 200) {
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
-        } else {
-          this.$notifyError(msg)
         }
       } catch (e) {
-        this.$notifyError(e)
         throw e
       } finally {
         this.submitLoading = false
@@ -144,27 +141,28 @@ export default {
       }
     },
     async insert () {
-      try {
-        this.spinning = true
-        const { msg, code } = await PatrolTemplateService.insert(PatrolModel.serialize(this.formModel))
-        if (Number(code) === 200) {
-          this.$emit('addSuccess')
-          this.$notifyAddSuccess()
-          this.cancel()
-        } else {
-          this.$notifyError(msg)
+      this.$refs.form.validate(async isValid => {
+        if (!isValid) return
+        try {
+          this.spinning = true
+          const { code } = await PatrolTemplateService.insert(PatrolModel.serialize(this.formModel))
+          if (Number(code) === 200) {
+            this.$emit('addSuccess')
+            this.$notification.success({ message: '系统提示', description: '添加成功' })
+            this.cancel()
+          }
+        } catch (e) {
+          throw e
+        } finally {
+          this.spinning = false
         }
-      } catch (e) {
-        this.$notifyError()
-      } finally {
-        this.spinning = false
-      }
+      })
     },
     handleSubmit () {
-      this.$refs.ruleForm.validate((passValidate) => passValidate && this.submit())
+      this.$refs.form.validate((passValidate) => passValidate && this.submit())
     },
     reset () {
-      this.form.resetFields()
+      this.$refs.form.resetFields()
       this.$refs.editor.resetContent()
       this.$refs.editor.preview = false
       Object.assign(this.$data, this.$options.data.apply(this))
@@ -192,11 +190,6 @@ export default {
   },
   computed: {
     formRules () {
-      const subject = this.formModel.type === 'EMAIL' ? {} : { subject: [
-        { required: true, message: '请输入模板名称' },
-        { max: 100, message: '最多输入100个字符' },
-        { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }
-      ] }
       return {
         title: [
           { required: true, message: '请输入模板名称' },
@@ -209,7 +202,9 @@ export default {
           { max: 255, message: '最多输入255个字符' }
         ],
         type: [{ required: true, message: '请选择通知方式' }],
-        ...subject
+        subject: [{ required: true, message: '请输入标题' },
+          { max: 100, message: '最多输入100个字符' },
+          { pattern: /^[\\Sa-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '仅支持中英文、数字与下划线' }]
       }
     }
   }

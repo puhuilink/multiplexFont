@@ -5,13 +5,17 @@ import App from './App.vue'
 import router from './router'
 import store from './store/'
 import './plugins'
-
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
 import './permission'
 import './utils/filter'
 import './components/global.less'
-
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+Vue.use(Viewer)
+Viewer.setDefaults({
+  Options: { 'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }
+})
 Vue.config.productionTip = false
 
 new Vue({

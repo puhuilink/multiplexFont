@@ -20,7 +20,7 @@
                 </a-col>
 
                 <a-col :md="12" :sm="24">
-                  <a-form-item label="交接时间" v-bind="formItemLayout" class="fw">
+                  <a-form-item label="接班时间" v-bind="formItemLayout" class="fw">
                     <a-range-picker
                       class="fw"
                       :disabledDate="(current) => current && current > moment().endOf('day')"
@@ -50,7 +50,7 @@
         <!-- / 操作区域 -->
         <template #operation>
           <a-button @click="onDetail" :disabled="!hasSelectedOne">查看</a-button>
-          <a-button @click="onExport" :disabled="!hasSelected">导出</a-button>
+          <a-button @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
         </template>
       </CTable>
 
@@ -66,7 +66,6 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import ChangeShiftSchema from './modules/ChangeShiftSchema'
 import moment from 'moment'
-import { SHIFT_STATUS_MAPPING } from './typing'
 import { downloadExcel } from '@/utils/util'
 
 export default {
@@ -94,7 +93,8 @@ export default {
         title: '交班时间',
         dataIndex: 'hand_time',
         sorter: true,
-        width: 180
+        width: 180,
+        customRender: hand_time => moment(hand_time).format('YYYY-MM-DD HH:mm:ss')
       },
       // {
       //   title: '交班状态',
@@ -109,16 +109,10 @@ export default {
         width: 180
       },
       {
-        title: '接班状态',
-        dataIndex: 'status',
-        sorter: true,
-        width: 180,
-        customRender: value => SHIFT_STATUS_MAPPING.get(value)
-      },
-      {
-        title: '交接时间',
+        title: '接班时间',
         dataIndex: 'receive_time',
         sorter: true,
+        defaultSortOrder: 'descend',
         width: 180,
         customRender: time => time ? moment(time).format() : ''
       }
@@ -128,7 +122,8 @@ export default {
       //   sorter: true,
       //   width: 180
       // }
-    ])
+    ]),
+    exportLoading: false
   }),
   computed: {},
   methods: {
@@ -142,6 +137,7 @@ export default {
           ...generateQuery(this.queryParams)
         },
         fields: _.uniq(['id', 'receive_time', ...this.columns.map(({ dataIndex }) => dataIndex)]),
+        ...parameter.orderBy ? {} : { orderBy: { receive_time: 'desc_nulls_last' } },
         ...parameter,
         alias: 'data'
       }).then((r) => r.data)
@@ -151,8 +147,23 @@ export default {
       this.$refs['schema'].detail(record)
     },
     async onExport () {
-      const data = await PatrolService.onExport(this.selectedRowKeys)
-      downloadExcel('巡更记录单', data)
+      try {
+        this.exportLoading = true
+        const data = await PatrolService.onExport(this.selectedRowKeys)
+        downloadExcel('交接班记录', data)
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出交接班记录成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: `导出交接班记录失败${e}` } })
+        })
+        throw e
+      } finally {
+        this.exportLoading = false
+      }
     }
   }
 }

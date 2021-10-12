@@ -7,7 +7,8 @@ import { DynamicDataConfig } from './common/index'
 import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_ALARM,
-  SOURCE_TYPE_COMBO
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_NUMBER
 } from './types/sourceType'
 
 const initialOption = {
@@ -33,6 +34,9 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         case SOURCE_TYPE_COMBO: {
           await this.getComboDataOption()
           break
+        }
+        case SOURCE_TYPE_NUMBER: {
+          await this.getNumberDataOption()
         }
       }
     }
@@ -103,10 +107,26 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
     }
     Object.assign(this, option)
   }
+  async getNumberDataOption () {
+    const dataList = await this.numberConfig.fetch()
+    const option = {
+      legend: {},
+      xAxis: {
+        type: 'category',
+        data: dataList.map(el => el[0]).reverse()
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: dataList.map(el => el[1]).reverse()
+      }]
+    }
+    Object.assign(this, option)
+  }
 
   async getComboDataOption () {
     const dataList = await this.comboConfig.fetch()
-
     const groupByLegend = _.groupBy(dataList, 'legend')
     const legendList = Object.keys(groupByLegend)
     const groupByName = _.groupBy(dataList, 'name')

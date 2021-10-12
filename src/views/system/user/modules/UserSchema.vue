@@ -193,7 +193,7 @@
               v-decorator="[
                 'flag',
                 {
-                  initialValue: 1,
+                  initialValue: '1',
                   rules: [
                     {
                       required: true,
@@ -233,11 +233,11 @@ export default {
       flag: [
         {
           name: '有效',
-          value: 1
+          value: '1'
         },
         {
           name: '无效',
-          value: 0
+          value: '0'
         }
       ]
     },

@@ -16,6 +16,29 @@ export function welcome () {
   const index = Math.floor(Math.random() * arr.length)
   return arr[index]
 }
+export function sqlResultDealer (list) {
+  if (list == null) {
+    return null
+  }
+  if (list.length <= 1) {
+    return null
+  }
+  const keys = list[0]
+  const array = []
+  for (let i = 1; i < list.length; i++) {
+    const record = list[i]
+    const temp = {}
+    for (let j = 0; j < keys.length; j++) {
+      temp[keys[j]] = record[j]
+    }
+    array.push(temp)
+  }
+  if (array.length > 0) {
+    return array
+  } else {
+    return null
+  }
+}
 
 export function dealQuery (result) {
   const keys = result[0]
@@ -66,6 +89,18 @@ export function handleScrollHeader (callback) {
   )
 }
 
+/*
+*  转换对象为驼峰写法
+* */
+export function camelExchange (arr) {
+  const keys = Object.keys(arr)
+  const newArr = {}
+  keys.forEach((item, index) => {
+    newArr[_.camelCase(item)] = arr[item]
+  })
+  return newArr
+}
+
 export function isIE () {
   const bw = window.navigator.userAgent
   const compare = (s) => bw.indexOf(s) >= 0
@@ -94,7 +129,7 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
  */
 export function downloadFile (fileName, content, options = {}) {
   const link = document.createElement('a')
-  const blob = new Blob([content], Object.assign({}, options))
+  const blob = new Blob([content], options)
   link.download = fileName
   const href = URL.createObjectURL(blob)
   link.href = href

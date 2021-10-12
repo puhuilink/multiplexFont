@@ -149,14 +149,24 @@ export const asyncRouterMap = [
             meta: { title: '服务管理', target: '_blank', permission: [ 'F004003' ] }
           },
           {
-            path: 'http://10.1.1.7/login.jsp',
-            name: '北京Pigoss',
-            meta: { title: '北京Pigoss', target: '_blank', permission: [ 'F004004' ] }
+            path: 'http://10.1.19.15/#/login',
+            name: '北京Pigoss1',
+            meta: { title: '北京Pigoss1', target: '_blank', permission: [ 'F004004' ] }
           },
           {
-            path: 'http://10.201.1.38/login.jsp',
-            name: '厦门Pigoss',
-            meta: { title: '厦门Pigoss', target: '_blank', permission: [ 'F004008' ] }
+            path: 'http://10.1.19.16/#/login',
+            name: '北京Pigoss2',
+            meta: { title: '北京Pigoss2', target: '_blank', permission: [ 'F004004' ] }
+          },
+          {
+            path: 'http://10.201.22.38/#/login',
+            name: '厦门Pigoss1',
+            meta: { title: '厦门Pigoss1', target: '_blank', permission: [ 'F004008' ] }
+          },
+          {
+            path: 'http://10.201.22.39/#/login',
+            name: '厦门Pigoss2',
+            meta: { title: '厦门Pigoss2', target: '_blank', permission: [ 'F004008' ] }
           },
           {
             path: 'http://10.1.1.10/',
@@ -176,9 +186,14 @@ export const asyncRouterMap = [
             meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
           },
           {
-            path: 'http://10.1.1.211/zh-hans/accounts/login/?next=/',
+            path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
-            meta: { title: 'NPM', target: '_blank', permission: [ 'F004006' ] }
+            meta: { title: '4A告警监控', target: '_blank', permission: [ 'F004006' ] }
+          },
+          {
+            path: 'http://10.1.13.34/#/login',
+            name: 'AWX',
+            meta: { title: 'AXW', target: '_blank', permission: [ 'F004005' ] }
           }
         ]
       },
@@ -338,20 +353,20 @@ export const asyncRouterMap = [
         name: 'prediction',
         redirect: '/prediction/capacity',
         component: RouteView,
-        meta: { title: '数据预测', keepAlive: true, icon: 'environment', permission: 'F011' },
+        meta: { title: '数据管理', keepAlive: true, icon: 'line-chart', permission: 'F011' },
         children: [
           {
             path: '/prediction/capacity',
             name: 'capacity',
             redirect: '/prediction/capacity/Summary',
             component: RouteView,
-            meta: { title: '容量视图', keepAlive: true },
+            meta: { title: '指标视图', keepAlive: true },
             children: [
               {
                 path: '/prediction/capacity/Summary',
                 name: 'Summary',
                 component: () => import('@/views/prediction/capacity/Summary'),
-                meta: { title: '容量总览', keepAlive: true }
+                meta: { title: '指标总览', keepAlive: true }
               },
               {
                 path: '/prediction/capacity/EchartsView',
@@ -500,7 +515,58 @@ export const asyncRouterMap = [
           // }
         ]
       },
-
+      // 二级单位
+      {
+        path: '/secondSys',
+        name: 'secondSys',
+        redirect: 'secondSys/Zhenhua',
+        component: RouteView,
+        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
+        children: [
+          {
+            path: '/secondSys/zhenhua',
+            name: '振华重工',
+            component: () => import('@/views/secondSys/zhenhua'),
+            meta: { title: '振华重工' }
+          },
+          {
+            path: '/secondSys/lujian',
+            name: '路建',
+            component: () => import('@/views/secondSys/lujian'),
+            meta: { title: '路建' }
+          },
+          {
+            path: '/secondSys/erhangju',
+            name: '二航局',
+            component: () => import('@/views/secondSys/erhangju'),
+            meta: { title: '二航局' }
+          },
+          {
+            path: '/secondSys/gangwan',
+            name: '港湾',
+            component: () => import('@/views/secondSys/gangwan'),
+            meta: { title: '港湾' }
+          },
+          {
+            path: '/secondSys/yigongju',
+            name: '一公局',
+            component: () => import('@/views/secondSys/yigongju'),
+            meta: { title: '一公局' }
+          },
+          {
+            path: '/secondSys/luqiao',
+            name: 'luqiao',
+            component: () => import('@/views/secondSys/luqiao'),
+            meta: { title: '路桥' }
+          },
+          {
+            path: '/secondSys/ergongju',
+            name: '二公局',
+            component: () => import('@/views/secondSys/ergongju'),
+            meta: { title: '二公局' }
+          }
+        ]
+      },
       // 个人设置
       {
         path: '/user',
