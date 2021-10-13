@@ -111,10 +111,11 @@ export class AdaptorComboConfig {
         metricModelAlias = '',
         metricValue = 0,
         metricValueStr = '',
-        unit = ''
+        unit = '',
+        systemAlias = ''
       }) => ({
         data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
-        legend: hostAlias,
+        legend: hostAlias || systemAlias === '物资采购' ? '电子商务' : systemAlias,
         name: `${endpointModelAlias}__${metricModelAlias}`,
         time: bucket,
         unit
