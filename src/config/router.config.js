@@ -262,8 +262,34 @@ export const asyncRouterMap = [
           {
             path: '/patrol/config',
             name: 'PatrolConfig',
-            component: () => import('@/views/patrol/config/index'),
-            meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010001' ] }
+            redirect: '/patrol/config/path',
+            component: RouteView,
+            meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010' ] },
+            children: [{
+              path: '/patrol/config/path',
+              name: 'PatrolConfigPath',
+              component: () => import('@/views/patrol/config/index'),
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+            },
+            {
+              path: '/patrol/config/metric',
+              name: 'PatrolConfigMetric',
+              component: () => import('@/views/patrol/config/MetricTable/MetricTable'),
+              meta: { title: '检查项管理', keepAlive: true, permission: ['F010'] }
+            },
+            {
+              path: '/patrol/config/answer',
+              name: 'PatrolConfigAnswer',
+              component: () => import('@/views/patrol/config/AnswerTable/index'),
+              meta: { title: '检查值管理', keepAlive: true, permission: ['F010'] }
+            },
+            {
+              path: '/patrol/config/threshold',
+              name: 'PatrolConfigThreshold',
+              component: () => import('@/views/patrol/config/ThresholdConfig/index'),
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010'] }
+            }
+            ]
           },
           // {
           //   path: '/patrol/calendar',

@@ -21,7 +21,7 @@
               }"
             >查询</a-button>
           </a-form>
-          <!--          <a-button type="primary">新增监控对象</a-button>-->
+          <a-button type="primary">新增监控对象</a-button>
           <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
@@ -31,138 +31,64 @@
         </div>
       </ZoneSelect>
     </div>
-    <a-spin :spinning="spinning">
-
-      <div class="PatrolConfig__content">
-        <div class="PatrolConfig__table">
-
-          <div class="PatrolConfig__thead border-bottom text-center">
-            <div class="PatrolConfig__th border-right checkbox">
-              <a-checkbox
-                :checked="hasSelectedAll && selectedRowKeys.length !== 0"
-                :indeterminate="!hasSelectedAll && hasSelected"
-                @change="toggleSelectAll"
-              />
-            </div>
-            <div class="PatrolConfig__th border-right index"><span>序号</span></div>
-            <div class="PatrolConfig__th border-right checkpoints"><span>点位</span></div>
-            <div class="PatrolConfig__th border-right qrCode"><span>二维码</span></div>
-            <div class="PatrolConfig__th border-right hosts"><span>监控对象</span></div>
-            <div class="PatrolConfig__th border-right endpoints"><span>监控实体</span></div>
-            <div class="PatrolConfig__th border-right metrics"><span>检查项</span></div>
-            <div class="PatrolConfig__th operations operations__with-scroll"><span>操作</span></div>
-          </div>
-
-          <div class="PatrolConfig__tbody" ref="tBody">
-
-            <!-- / Checkpoints -->
-            <!-- hosts 可能为空，给定一条空数据用于占位 -->
-            <div
-              v-for="({ checkpointId, checkpointAlias, hosts = [{}] }, index) in checkpoints"
-              class="PatrolConfig__tr checkpoint hover hover__primary-1"
-              :class="{
-                selected: selectedRowKeys.includes(checkpointId)
-              }"
-              :key="checkpointId"
-            >
-              <div class="d-flex j-c-center a-i-center checkbox border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <a-checkbox :checked="selectedRowKeys.includes(checkpointId)" @change="toggleSelect({ checkpointId, checkpointAlias, hosts })"></a-checkbox>
-              </div>
-              <div class="d-flex j-c-center a-i-center flex-row index border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <span>{{ index + 1 + offset }}</span>
-              </div>
-              <div class="d-flex j-c-center a-i-center flex-row checkpoints border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <span>{{ checkpointAlias }}</span>
-              </div>
-              <div class="d-flex j-c-center a-i-center flex-row qrCode border-right border-bottom" :class="{ 'border-top': index === 0 }">
-                <a-spin spinning v-if="qcCodeLoading[checkpointId]" />
-                <a-button v-else type="link" @click="downloadQrCode({ checkpointId, checkpointAlias})">下载</a-button>
-              </div>
-
-              <!-- / Hosts -->
-              <!-- endpoints 可能为空，给定一条空数据用于占位 -->
-              <div class="flex-row">
-                <div
-                  class="d-flex flex-row hover hover__primary-2"
-                  v-for="({ hostId, hostAlias, endpoints = [{}] }, hostIndex) in hosts"
-                  :key="hostId || hostIndex"
-                >
-                  <div class="hosts border-right border-bottom PatrolConfig__td" :class="{ 'border-top': hostIndex === 0 && index === 0 }">
-                    <span>{{ hostAlias }}</span>
-                  </div>
-
-                  <!-- / Endpoints -->
-                  <!-- metrics 可能为空，给定一条空数据用于占位 -->
-                  <div class="flex-1">
-                    <div
-                      class="d-flex flex-row a-i-center j-c-center hover hover__primary-3"
-                      v-for="({ endpointId, endpointAlias, metrics = [{}] }, endpointIndex) in endpoints"
-                      :key="endpointId || endpointIndex"
-                    >
-                      <div
-                        class="endpoints border-right border-bottom PatrolConfig__td"
-                        :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 }"
-                        :style="{
-                          minHeight: (metrics.length || 1) * (device === 'desktop' ? 44 : 56) + 'px'
-                        }"
-                      >
-                        <span>{{ endpointAlias }}</span>
-                      </div>
-
-                      <!-- / Metrics -->
-                      <div class="metrics PatrolConfig__td">
-                        <div
-                          class="fw"
-                          v-for="({ metricId, metricAlias }, metricIndex) in metrics"
-                          :key="metricId || metricIndex"
-                        >
-                          <div
-                            class="border-right border-bottom d-flex j-c-center a-i-center hover hover__primary-4"
-                            :class="{ 'border-top': hostIndex === 0 && index === 0 && endpointIndex === 0 && metricIndex === 0 }"
-                            :style="{
-                              height: (device === 'desktop' ? 44 : 56) + 'px'
-                            }"
-                          >
-                            <span>{{ metricAlias }}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="PatrolConfig__td d-flex flex-row operations border-bottom" :class="{ 'border-top': index === 0 }">
-                    <template v-if="false" >
-                      <a-row>
-                        <a-col :span="12"><a-button type="link" @click.prevent.stop="infoEdit(checkpointId,checkpointAlias,hostId)">编辑</a-button></a-col>
-                        <a-col :span="12"><a-button type="link">删除</a-button></a-col>
-                      </a-row>
-                    </template>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <a-empty v-show="checkpoints.length === 0" />
-        </div>
-
-        <div class="ant-pagination mini ant-table-pagination">
-          <a-pagination
-            :defaultPageSize="5"
-            :pageSize.sync="pagination.pageSize"
-            :pageSizeOptions="['5', '10', '15']"
-            size="small"
-            showQuickJumper
-            showSizeChanger
-            :showTotal="(total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`"
-            :total="pagination.total"
-            v-model="pagination.pageNo"
-            @change="changePagination"
-            @showSizeChange="changePagination"
-          />
-        </div>
-      </div>
-    </a-spin>
-
+    <a-table
+      ref="table"
+      :columns="columns"
+      :data-source="data"
+      :row-key="record => record.index"
+      bordered
+      :loadind="spinning"
+      :pagination="{
+        current: table.pageNumber,
+        defaultPageSize: 10,
+        showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
+        onChange:(pageNumber) =>{
+          table.pageNumber = pageNumber
+          this.checkpoints = []
+          this.hostTable = []
+          this.endpointTable = []
+        }
+      }"
+    >
+      <template slot="checkboxes">
+        <a-checkbox
+          :checked="hasSelectedAll"
+          :indeterminate="hasSelectedOne"
+          @change="onSelectGroupChange"
+        />
+      </template>
+      <template slot="checkbox" slot-scope="value,row">
+        <a-checkbox
+          :checked="isChecked(row.checkpoint_id)"
+          @change="onSelectChange(row.checkpoint_id)"
+        />
+      </template>
+      <template slot="endpoint" slot-scope="value">
+        {{ value!=='NULL'?value:'虚拟实体' }}
+      </template>
+      <template slot="code" slot-scope="value,row">
+        <a
+          @click="downloadQrCode({ checkpointId: row.checkpoint_id, checkpointAlias: row.checkpoint_alias })"
+        >
+          下载
+        </a>
+      </template>
+      <template slot="action" slot-scope="value,row">
+        <a-button
+          type="primary"
+          @click="infoEdit(row.checkpoint_id, row.checkpoint_alias, row.host_id)"
+        >
+          编辑
+        </a-button>
+        <a-divider type="vertical"/>
+        <a-button
+          type="primary"
+          @click="deleteHost()"
+        >
+          删除
+        </a-button>
+      </template>
+    </a-table>
     <HostSchema
       :form.sync="form"
       :visible.sync="visible"
@@ -174,17 +100,18 @@
       :thresholds="thresholdList"
       v-if="visible"
     />
-
   </div>
+
 </template>
 <script>
-import { PatrolService, PatrolConfigService } from '@/api'
+import { PatrolService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
-import { downloadFile, scrollTo } from '@/utils/util'
+import { dealQuery, downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import { mapState } from 'vuex'
 import _ from 'lodash'
+import { sql } from '@/utils/request'
 
 export default {
   name: 'PatrolConfig',
@@ -201,6 +128,188 @@ export default {
     this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
     this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
+      table: {
+        pageNumber: 1,
+        pageSize: 10
+      },
+      a_check: {
+        value: false
+      },
+      columns: [
+        {
+          slots: { title: 'checkboxes' },
+          scopedSlots: { customRender: 'checkbox' },
+          customCell: (row, index) => {
+            if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.checkpoints) {
+                if (argument === row.checkpoint_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '点位',
+          dataIndex: 'checkpoint_alias',
+          customCell: (row, index) => {
+            if (this.checkpoints.length < 10) { this.checkpoints.push(row.checkpoint_id) }
+            if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.checkpoints) {
+                if (argument === row.checkpoint_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '二维码',
+          align: 'center',
+          scopedSlots: { customRender: 'code' },
+          customCell: (row, index) => {
+            if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.checkpoints) {
+                if (argument === row.checkpoint_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '监控对象',
+          dataIndex: 'host_alias',
+          customCell: (row, index) => {
+            if (this.hostTable.length < 10) {
+              this.hostTable.push(row.host_id)
+            }
+            if (index !== this.hostTable.indexOf(row.host_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.hostTable) {
+                if (argument === row.host_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '监控实体',
+          dataIndex: 'endpoint_alias',
+          scopedSlots: { customRender: 'endpoint' },
+          customCell: (row, index) => {
+            if (this.endpointTable.length < 10) {
+              this.endpointTable.push(row.endpoint_id)
+            }
+            if (index !== this.endpointTable.indexOf(row.endpoint_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.endpointTable) {
+                if (argument === row.endpoint_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '检查项',
+          dataIndex: 'metric_alias'
+        },
+        {
+          title: '操作',
+          align: 'center',
+          scopedSlots: { customRender: 'action' },
+          customCell: (row, index) => {
+            if (index !== this.hostTable.indexOf(row.host_id)) {
+              return {
+                style: { display: 'none' },
+                attrs: {
+                  rowSpan: 0
+                }
+              }
+            } else {
+              let count = 0
+              for (const argument of this.hostTable) {
+                if (argument === row.host_id) {
+                  count += 1
+                }
+              }
+              return {
+                attrs: {
+                  rowSpan: count
+                }
+              }
+            }
+          }
+        }
+      ],
+      hostTable: [],
+      endpointTable: [],
+      data: [],
       disableBtn: true,
       checkpoints: [],
       qcCodeGlobalLoading: false,
@@ -252,16 +361,57 @@ export default {
     ...mapState({
       device: state => state.app.device
     }),
-    hasSelectedAll () {
-      const { selectedRowKeys, checkpoints } = this
-      return selectedRowKeys.length === checkpoints.length
-    },
     offset () {
       const { pageNo, pageSize } = this.pagination
       return (pageNo - 1) * pageSize
+    },
+    hasSelectedOne () {
+      return this.selectedRowKeys.length > 0 && this.selectedRowKeys.length !== new Set(this.checkpoints).size
+    },
+    hasSelected () {
+      return this.selectedRowKeys.length > 0
+    },
+    hasSelectedAll () {
+      return this.selectedRowKeys.length === new Set(this.checkpoints).size
     }
   },
   methods: {
+    onPaginationChange (pageNumber) {
+      this.$table.pageNumber = pageNumber
+    },
+
+    isChecked (id) {
+      return this.selectedRowKeys.includes(id)
+    },
+    onSelectGroupChange () {
+      if (!this.hasSelectedAll) {
+        this.selectedRowKeys = []
+        this.selectedRowKeys.push(...new Set(this.checkpoints))
+        this.a_check.checked = true
+      } else {
+        this.selectedRowKeys = []
+      }
+    },
+    onSelectChange (e) {
+      if (this.selectedRowKeys.includes(e)) {
+        this.selectedRowKeys.pop(e)
+      } else {
+        this.selectedRowKeys.push(e)
+      }
+    },
+    async getPatrolPath ({ path_id = '1267708678983651329', zone_id = '1267708678362894336' }) {
+      this.spinning = true
+      this.data = []
+      this.checkpoints = []
+      this.selectedRowKeys = []
+      this.hostTable = []
+      this.endpointTable = []
+      let query_sql = 'select * from v_patrol_path where 1=1 '
+      query_sql += 'and path_id = ' + path_id
+      query_sql += 'and zone_id =' + zone_id
+      this.data = dealQuery(await sql(query_sql))
+      this.spinning = false
+    },
     async fetchHost () {
       this.fetching = true
       const get = await PatrolService.hostFind()
@@ -344,51 +494,14 @@ export default {
       this.fetching = false
     },
     changeZone ({ pathId, zoneId }) {
-      Object.assign(this, { pathId, zoneId })
-      this.resetPagination()
-      this.loadPatrolConfig()
+      this.table.pageNumber = 1
+      this.getPatrolPath({ path_id: pathId, zone_id: zoneId })
     },
-
-    loadPatrolConfig () {
-      const { queryParams, pathId, zoneId, pagination, offset } = this
-      const { pageSize: limit } = pagination
-      const { alias } = queryParams
-
-      if (!pathId || !zoneId) {
-        this.checkpoints = []
-        this.resetPagination()
-        return
-      }
-
-      this.resetSelect()
-      this.spinning = true
-      return PatrolConfigService
-        .patrolConfig({
-          alias,
-          pathId,
-          zoneId,
-          limit,
-          offset
-        })
-        .then(({ data, pagination }) => {
-          this.checkpoints = data
-          this.pagination.total = pagination.aggregate.count
-        })
-        .catch((err) => {
-          this.checkpoints = []
-          this.resetPagination()
-          throw err
-        })
-        .finally(() => {
-          this.$nextTick(() => {
-            scrollTo(0, { getContainer: () => this.$refs.tBody })
-          })
-          this.spinning = false
-        })
-    },
-
     // 点击编辑
     infoEdit (checkId, checkAlias, id) {
+      if (this.fetching) {
+        return
+      }
       this.visible = true
       this.xgModelPoint = { id: checkId, alias: checkAlias, path: this.pathId, zone: this.zoneId }
       this.form.hostId = id
@@ -400,7 +513,7 @@ export default {
         .qrCode(checkpointId)
         .then(async (res) => {
           await this.$nextTick()
-          downloadFile(`${checkpointAlias}.png`, new Uint8Array(res))
+          downloadFile(`${checkpointAlias ?? 'new'}.png`, new Uint8Array(res))
         })
         .finally(() => {
           this.$set(this.qcCodeLoading, checkpointId, false)
@@ -410,9 +523,9 @@ export default {
     async batchDownloadQrCode () {
       try {
         this.qcCodeGlobalLoading = true
-        await Promise.all(this.selectedRows.map((checkpoint) => {
-          return this.downloadQrCode(checkpoint)
-        }))
+        for (const checkpoint in this.selectedRowKeys) {
+          await this.downloadQrCode({ checkpointId: checkpoint, checkpointAlias: 'new' })
+        }
       } finally {
         this.qcCodeGlobalLoading = false
       }
@@ -420,16 +533,7 @@ export default {
 
     changePagination (pageNo, pageSize) {
       Object.assign(this.pagination, { pageNo, pageSize })
-      this.loadPatrolConfig()
     },
-
-    resetPagination () {
-      Object.assign(
-        this.pagination,
-        this.$options.data.apply(this).pagination
-      )
-    },
-
     resetSelect () {
       Object.assign(this, {
         selectedRowKeys: [],
@@ -447,18 +551,7 @@ export default {
         selectedRowKeys.push(checkpoint.checkpointId)
         selectedRows.push(checkpoint)
       }
-    },
-
-    toggleSelectAll () {
-      if (this.hasSelectedAll) {
-        this.selectedRowKeys = []
-        this.selectedRows = []
-      } else {
-        this.selectedRowKeys = this.checkpoints.map(({ checkpointId }) => checkpointId)
-        this.selectedRows = this.checkpoints.slice()
-      }
     }
-
   },
   created () {
     this.fetchHost()
@@ -466,6 +559,7 @@ export default {
     this.fetchMetric()
     this.fetchAnswer()
     this.fetchThreshold()
+    this.getPatrolPath({})
   }
 }
 </script>
