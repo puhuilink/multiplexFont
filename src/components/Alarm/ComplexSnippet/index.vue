@@ -14,6 +14,7 @@
       v-bind="$props"
       label="监控实体"
       prop="endpointModelId"
+      :rules="rules.endpoint"
     >
       <EndpointSelect
         schema="model"
@@ -27,6 +28,7 @@
       v-bind="$props"
       label="检查项"
       prop="metricModelId"
+      :rules="rules.metric"
     >
       <MetricSelect
         schema="model"
@@ -56,6 +58,10 @@ export default {
   props: {
     ...FormModel.Item.props,
     value: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
       type: Object,
       default: () => ({})
     }

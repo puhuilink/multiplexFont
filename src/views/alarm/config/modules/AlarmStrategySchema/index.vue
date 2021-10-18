@@ -51,7 +51,7 @@
           <a-input :disabled="isDetail" v-model.trim="formModel.name" />
         </a-form-model-item>
 
-        <ComplexSnippet v-bind="formItemLayout" v-model="formModel" v-if="mode === 'personal'"/>
+        <ComplexSnippet v-bind="formItemLayout" v-model="formModel" v-if="mode === 'personal'" :rules="rules"/>
 
         <ComplexInput v-if="mode === 'common'" v-bind="formItemLayout" ref="complexInput"></ComplexInput>
 
@@ -299,6 +299,14 @@ export default {
     },
     isEdit: false,
     isDetail: false,
+    rules: {
+      endpoint: [
+        { required: true, message: '请选择监控实体' }
+      ],
+      metric: [
+        { required: true, message: '请选择检查项' }
+      ]
+    },
     spinning: false,
     submitLoading: false
   }),

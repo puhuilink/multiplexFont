@@ -193,7 +193,7 @@ export const asyncRouterMap = [
           {
             path: 'http://10.1.13.34/#/login',
             name: 'AWX',
-            meta: { title: 'AXW', target: '_blank', permission: [ 'F004005' ] }
+            meta: { title: 'AWX', target: '_blank', permission: [ 'F004005' ] }
           }
         ]
       },

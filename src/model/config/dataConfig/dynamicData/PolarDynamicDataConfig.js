@@ -101,11 +101,11 @@ export default class PolarDynamicDataConfig extends DynamicDataConfig {
         data: legendData
       },
       legend: {
-        data: [ '严重告警', '重大告警', '次要告警', '一般告警', '最新通知' ]
+        data: [ '紧急告警', '主要告警', '次要告警', '一般告警', '最新通知' ]
       },
       series: [
-        { data: level1Collection, stack: '严重告警', name: '严重告警' },
-        { data: level2Collection, stack: '重大告警', name: '重大告警' },
+        { data: level1Collection, stack: '紧急告警', name: '紧急告警' },
+        { data: level2Collection, stack: '主要告警', name: '主要告警' },
         { data: level3Collection, stack: '次要告警', name: '次要告警' },
         { data: level4Collection, stack: '一般告警', name: '一般告警' }
         // 暂不展示5级告警
