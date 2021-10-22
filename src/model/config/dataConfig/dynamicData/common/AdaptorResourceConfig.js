@@ -72,6 +72,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     // 具体以哪种方式组织根据选择项的长度来判断
     const { endpointAggregateMode, hostId } = this
     const groupByHost = hostId.length > 1
+    console.log('是否是多个', hostId)
     const finalDataList = dataList
 
     return finalDataList
@@ -95,7 +96,8 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         const result = {
           data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
-          legend: groupByHost ? hostAlias : v,
+          // legend: groupByHost ? hostAlias : v,
+          legend: `${endpointAlias}${metric}`,
           name: !groupByHost ? hostAlias : v,
           unit: uint,
           endpointAlias,

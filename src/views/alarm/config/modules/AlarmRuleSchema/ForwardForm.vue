@@ -154,7 +154,9 @@ export default {
       return this._formModel.forward.frequencyEnd < this._formModel.forward.frequencyStart ? '' : this._formModel.forward.frequencyEnd
     }
   },
-  created () {}
+  created () {
+    this._formModel.forward.type = 'time'
+  }
 }
 </script>
 <style lang="less">

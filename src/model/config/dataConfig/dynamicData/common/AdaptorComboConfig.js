@@ -32,8 +32,7 @@ export class AdaptorComboConfig {
 
   get isAvailable () {
     if (
-      (this.calculateType && !this.isGroup) ||
-      (!this.calculateType && this.isGroup)
+      !this.calculateType && this.isGroup
     ) {
       return false
     }

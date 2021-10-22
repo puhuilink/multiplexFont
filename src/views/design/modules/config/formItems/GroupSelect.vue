@@ -1,5 +1,5 @@
 <template>
-  <a-form-item label="分组条件" required>
+  <a-form-item label="分组条件">
     <a-select
       allowClear
       class="fw"
