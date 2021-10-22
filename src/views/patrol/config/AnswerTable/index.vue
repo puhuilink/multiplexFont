@@ -138,11 +138,11 @@
       row-key="id"
     >
       <template slot="format" slot-scope="text,record">
-        <a-card v-if="record.type!=='fill'" :key="index" v-for="(a,index) in Object.values(JSON.parse(text))">
-          <a-card-grid style="width: 50%;text-align: center">{{ a.alias }}</a-card-grid>
-          <a-card-grid style="width: 50%;text-align: center">{{ a.value }}</a-card-grid>
+        <a-card size="small" v-if="record.type!=='fill'" :key="index" v-for="(a,index) in Object.values(JSON.parse(text))">
+          <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.alias }}</a-card-grid>
+          <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.value }}</a-card-grid>
         </a-card>
-        <a-tag v-else>{{ JSON.parse(text).format }}</a-tag>
+        <a-tag size="small" v-else>{{ JSON.parse(text).format }}</a-tag>
       </template>
       <template slot="type" slot-scope="text">
         {{ text === 'select' ? '选择' : '填写' }}

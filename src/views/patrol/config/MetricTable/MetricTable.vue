@@ -36,6 +36,7 @@
       @cancel="resetSubmit"
       @close="resetSubmit"
       @ok="newSubmit"
+
     >
       <a-form layout="inline" :form="metricForm">
         <a-form-item
@@ -43,7 +44,7 @@
         >
           <a-input
             v-decorator="[
-              'alias',
+              'metricAlias',
               { rules: [{ required: true, message: '检查项不能为空' }] },
             ]"
             style="width: 110px"
@@ -54,7 +55,7 @@
         >
           <a-select
             v-decorator="[
-              'answer_id',
+              'answerId',
               { rules: [{ required: true, message: '检查值不能为空' }] },
             ]"
             style="width: 110px"
@@ -74,7 +75,16 @@
     </a-modal>
     <a-table
       :data-source="Object.values(metrics)"
-      :pagination="pagination"
+      :pagination="{
+        current: this.current,
+        defaultPageSize: 10,
+        total:this.total,
+        showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
+        onChange:(pageNumber) =>{
+          this.current = pageNumber
+          handleSearch(pageNumber)
+        }
+      }"
       :columns="metricColumns"
       row-key="id"
     >
@@ -120,7 +130,7 @@
 
 <script>
 import { dealQuery } from '@/utils/util'
-import { sql } from '@/utils/request'
+import { sql, xungeng } from '@/utils/request'
 
 export default {
   name: 'MetricTable',
@@ -132,6 +142,8 @@ export default {
   },
   data () {
     return {
+      total: 0,
+      current: 1,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       visible: false,
       metrics: {},
@@ -174,22 +186,22 @@ export default {
   computed: {},
   watch: {},
   created () {
-    this.fetchMetric()
+    this.fetchMetric('', 1)
     this.fetchAnswer()
   },
   mounted () {
   },
   methods: {
-    handleSearch () {
+    handleSearch (pageNo = 1) {
       this.metrics = {}
       let where
       this.form.validateFields((err, value) => {
         if (!err) {
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
             where = 'alias like %' + value.alias + '%'
-            this.fetchMetric(10, where)
+            this.fetchMetric(where, pageNo)
           } else {
-            this.fetchMetric()
+            this.fetchMetric(null, pageNo)
           }
         }
       })
@@ -198,9 +210,16 @@ export default {
       this.form.resetFields()
     },
     newSubmit () {
-      this.metricForm.validateFields(err => {
+      this.metricForm.validateFields(async (err, val) => {
         if (!err) {
-          this.fetchMetric()
+          const { metricAlias, answerId } = val
+          const result = await xungeng.post('metric/add', { 'metricAlias': metricAlias, 'answerId': answerId })
+          if (result.code === 200) {
+            this.$message.success(result.msg)
+          } else {
+            this.$message.error(result.msg)
+          }
+          await this.fetchMetric(null, 1)
         }
       })
     },
@@ -211,17 +230,16 @@ export default {
     toggle () {
       this.expand = !this.expand
     },
-    async fetchMetric (limit = 10, where) {
+    async fetchMetric (where, pageNo) {
       let base_sql = 'select * from t_patrol_metric where 1=1 '
+      let bases = 'select count(1) as total from t_patrol_metric where 1=1 '
       if (where !== null && where !== undefined) {
         base_sql += 'and' + where
+        bases += 'and' + where
       }
-      if (limit !== 10) {
-        base_sql += 'limit' + limit
-      } else {
-        base_sql += 'limit 10'
-      }
+      base_sql += 'limit 10 offset ' + (pageNo - 1) * 10
       const result = await sql(base_sql)
+      this.total = dealQuery(await sql(bases))[0]['total']
       const data = dealQuery(result)
       this.metrics = {}
       for (let i = 0; i < data.length; i++) {
