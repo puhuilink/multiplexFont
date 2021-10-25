@@ -21,8 +21,6 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
     const groupByLegend = _.groupBy(dataList, 'legend')
     const groupByName = _.groupBy(dataList, 'name')
 
-    console.log('data', dataList, groupByLegend, groupByName)
-
     // 切换行与列（默认列为指标，行为设备）
     if (this.resourceConfig.legendType === 'metric') {
       columns.push(
@@ -97,7 +95,6 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
       //   })
       // )
     }
-    console.log('data', dataSource)
     return { columns, dataSource }
   }
 
