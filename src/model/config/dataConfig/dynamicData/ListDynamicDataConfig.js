@@ -95,7 +95,6 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
       //   })
       // )
     }
-
     return { columns, dataSource }
   }
 
