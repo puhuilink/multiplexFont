@@ -233,13 +233,15 @@ export default {
     async fetchMetric (where, pageNo) {
       let base_sql = 'select * from t_patrol_metric where 1=1 '
       let bases = 'select count(1) as total from t_patrol_metric where 1=1 '
-      if (where !== null && where !== undefined) {
+      if (where !== null && where !== undefined && where !== '') {
         base_sql += 'and' + where
         bases += 'and' + where
       }
-      base_sql += 'limit 10 offset ' + (pageNo - 1) * 10
+      base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      // console.log(base_sql)
       const result = await sql(base_sql)
-      this.total = dealQuery(await sql(bases))[0]['total']
+      // console.log(result)
+      this.total = parseInt(dealQuery(await sql(bases))[0]['total'])
       const data = dealQuery(result)
       this.metrics = {}
       for (let i = 0; i < data.length; i++) {
@@ -265,17 +267,34 @@ export default {
       this.tempMetric.answer_id = this.metrics[id].answer_id
       this.$forceUpdate()
     },
-    deleteMetric (id) {
-      delete this.metrics[id]
-      this.$forceUpdate()
+    async deleteMetric (id) {
+      const result = await xungeng.post('metric/delete',
+        {
+          'id': id
+        })
+      if (result.code === 200) {
+        delete this.metrics[id]
+        this.$forceUpdate()
+      } else {
+
+      }
     },
-    save (id) {
+    async save (id) {
       this.metrics[id].editable = false
       this.editingKey = ''
-      this.metrics[id].metric_alias = this.tempMetric.metric_alias
-      this.metrics[id].answer_id = this.tempMetric.answer_id
-      this.$forceUpdate()
-      this.$emit('change', this.metrics)
+      const result = await xungeng.post('metric/edit',
+        {
+          'id': id,
+          'alias': this.tempMetric.metric_alias,
+          'answerId': this.tempMetric.answer_id
+        })
+      if (result.code === 200) {
+        this.metrics[id].metric_alias = this.tempMetric.metric_alias
+        this.metrics[id].answer_id = this.tempMetric.answer_id
+        this.$forceUpdate()
+      } else {
+        this.$message.error(result.msg)
+      }
     },
     cancel (id) {
       this.metrics[id].editable = false
