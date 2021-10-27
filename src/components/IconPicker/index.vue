@@ -139,6 +139,15 @@ import WirelessAP from '@/assets/network-icons/WirelessAP.png'
 import cloud from '@/assets/network-icons/cloud.png'
 import DeletedNodeIcon from '@/assets/network-icons/DeletedNodeIcon.png'
 import IDS from '@/assets/network-icons/IDS.png'
+import dog from '@/assets/network-icons/dog.jpeg'
+import ACDevice from '@/assets/network-icons/ACDevice.png'
+import Mssql from '@/assets/network-icons/Mssql.png'
+import NetworkDevice from '@/assets/network-icons/NetworkDevice.png'
+import NetworkDeviceLen from '@/assets/network-icons/NetworkDeviceLen.png'
+import StorageAndBackup from '@/assets/network-icons/StorageAndBackup.png'
+import TOPSECFireWall from '@/assets/network-icons/TOPSECFireWall.png'
+import VirtualESX from '@/assets/network-icons/VirtualESX.png'
+import WirelessControl from '@/assets/network-icons/WirelessControl.png'
 
 export default {
   name: 'IconPicker',
@@ -151,6 +160,15 @@ export default {
   data: () => ({
     defaultIcon: { name: 'Others', img: Others },
     icons: [
+      { name: 'dog', img: dog },
+      { name: 'ACDevice', img: ACDevice },
+      { name: 'Mssql', img: Mssql },
+      { name: 'NetworkDevice', img: NetworkDevice },
+      { name: 'NetworkDeviceLen', img: NetworkDeviceLen },
+      { name: 'StorageAndBackup', img: StorageAndBackup },
+      { name: 'TOPSECFireWall', img: TOPSECFireWall },
+      { name: 'VirtualESX', img: VirtualESX },
+      { name: 'WirelessControl', img: WirelessControl },
       { name: 'icona1', img: icona1 },
       { name: 'icona2', img: icona2 },
       { name: 'icona3', img: icona3 },
