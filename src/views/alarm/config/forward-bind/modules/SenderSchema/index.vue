@@ -246,7 +246,7 @@ export default {
       this.levelBtn = true
       this.fetchFix()
       this.fetch(id)
-      this.show('编辑告警规则')
+      this.show('编辑告警通知绑定')
       this.submit = this.update
     },
     async fetch (id) {

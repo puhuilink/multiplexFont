@@ -71,7 +71,7 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
     const dataList = await this.alarmConfig.fetch()
     const option = {
       legend: {
-        data: [ '严重告警', '重大告警', '次要告警', '一般告警', '最新通知' ]
+        data: [ '紧急告警', '主要告警', '次要告警', '一般告警', '最新通知' ]
       },
       xAxis: {
         type: 'category',
@@ -82,11 +82,11 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
       },
       series: [
         {
-          name: '严重告警',
+          name: '紧急告警',
           data: dataList.map(({ level1 }) => level1)
         },
         {
-          name: '重大告警',
+          name: '主要告警',
           data: dataList.map(({ level2 }) => level2)
         },
         {

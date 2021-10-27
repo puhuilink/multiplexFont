@@ -95,7 +95,9 @@ export class AdaptorResourceConfig extends AdaptorConfig {
         const result = {
           data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
           time: this.formatTime(collectTime, this.calculateType ? this.isGroup : null),
-          legend: groupByHost ? hostAlias : v,
+          // legend: groupByHost ? hostAlias : v,
+          // 将legend暂时改为endpoint加上metric的形式
+          legend: `${endpointAlias}${metric}`,
           name: !groupByHost ? hostAlias : v,
           unit: uint,
           endpointAlias,

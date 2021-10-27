@@ -23,7 +23,7 @@
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
       <a-button @click="back" :disabled="btnLoading" v-show="!firstStep">上一步</a-button>
-      <a-button @click="next" :loading="btnLoading" type="primary">{{ lastStep ? '提交' : '下一步' }}</a-button>
+      <a-button @click="next" :loading="btnLoading" type="primary" :disabled="!isSubmit">{{ lastStep ? '提交' : '下一步' }}</a-button>
     </template>
 
     <!-- / 正文 -->
@@ -120,6 +120,9 @@ export default {
       } else {
         return this.formModel.ruleType[this.stepIndex - 1]
       }
+    },
+    isSubmit () {
+      return this.formModel.ruleType.includes('merge') || this.formModel.ruleType.includes('upgrade') || this.formModel.ruleType.includes('recover') || this.formModel.ruleType.includes('forward')
     },
     firstStep () {
       return this.stepIndex === 0

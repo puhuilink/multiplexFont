@@ -48,19 +48,26 @@ class UpgradeContentModel extends ContentModel {}
  * 发送规则
  */
 class ForwardContentModel {
-  constructor ({
-    startTime = '',
-    endTime = '',
-    firstInterval = '',
-    secondInterval = '',
-    thirdInterval = ''
-  } = {}) {
-    this.frequencyStart = startTime
-    this.frequencyEnd = endTime
-    this.number = firstInterval
-    this.number24 = secondInterval
-    this.number48 = thirdInterval
+  // constructor ({
+  //   startTime = '',
+  //   endTime = '',
+  //   firstInterval = '',
+  //   secondInterval = '',
+  //   thirdInterval = ''
+  // } = {}) {
+  //   this.frequencyStart = startTime
+  //   this.frequencyEnd = endTime
+  //   this.number = firstInterval
+  //   this.number24 = secondInterval
+  //   this.number48 = thirdInterval
+  //   this.type = 'time'
+  // }
+  constructor (content = '{}') {
+    Object.assign(this, _.pick(JSON.parse(content), ['frequencyStart', 'frequencyEnd', 'number', 'number24', 'number48', 'type']))
+  }
+  serialize () {
     this.type = 'time'
+    return _.pick(this, ['frequencyStart', 'frequencyEnd', 'number', 'number24', 'number48', 'type'])
   }
 }
 

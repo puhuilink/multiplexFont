@@ -31,10 +31,8 @@ export class AdaptorComboConfig {
   }
 
   get isAvailable () {
-    if (
-      (this.calculateType && !this.isGroup) ||
-      (!this.calculateType && this.isGroup)
-    ) {
+    // 在有分组条件是必填计算类型
+    if (!this.calculateType && this.isGroup) {
       return false
     }
 
@@ -101,6 +99,8 @@ export class AdaptorComboConfig {
       return this.transferHealthValue(obj)
     }
 
+    // 业务系统和性能数据合并到一起
+    // 业务系统返回的特有变量systemAlias，性能数据返回的特有变量为hostAlias
     return Object
       .values(obj)
       .flat()
@@ -111,10 +111,11 @@ export class AdaptorComboConfig {
         metricModelAlias = '',
         metricValue = 0,
         metricValueStr = '',
-        unit = ''
+        unit = '',
+        systemAlias = ''
       }) => ({
         data: ['', null, undefined].includes(metricValueStr) ? metricValue : metricValueStr,
-        legend: hostAlias,
+        legend: hostAlias || (systemAlias === '物资采购' ? '电子商务' : systemAlias),
         name: `${endpointModelAlias}__${metricModelAlias}`,
         time: bucket,
         unit
