@@ -4,7 +4,7 @@
       <a-form class="ant-advanced-search-form" :form="form">
         <a-row :gutter="16">
           <a-col
-            :span="4"
+            :span="5"
           >
             <a-form-item >
               监控对象：
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col
-            :span="4"
+            :span="5"
           >
             <a-form-item >
               监控实体：
@@ -29,7 +29,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="3"
           >
             <a-form-item >
               检查项：
@@ -62,7 +62,7 @@
               </a-select>
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="3"
           >
             <a-form-item >
               告警等级：
@@ -93,25 +93,36 @@
         type="primary"
         @click="()=>{
           this.visible=true
+          this.isNew=true
         }">新增阈值规则</a-button>
       <ThresholdSchema
         :visible="visible"
-        :edit-form="editForm"
+        :data-form="editForm"
+        :is-new="isNew"
         @cancel="()=>{this.visible=false}"
-        @ok="()=>{this.visible=false}"
+        @ok="updateThreshold"
       />
     </div>
     <a-table
       :columns="columns"
       :data-source="data"
       :loading="loading"
-      row-key="index"
+      :row-key="(record,index) => index"
+      :pagination="{
+        current: table.pageNumber,
+        defaultPageSize: 10,
+        total: this.total,
+        onChange:(pageNumber) =>{
+          table.pageNumber = pageNumber
+          handleSearch(pageNumber)
+        }
+      }"
     >
       <template slot="endpoint" slot-scope="value,record">{{ record.visible==='t'?value:'虚拟实体' }}</template>
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
       <template slot="action" slot-scope="value,record">
-        <a-button type="primary" @click="updateThreshold(record)">修改</a-button>
+        <a-button type="primary" @click="toUpdate(record)">修改</a-button>
         <a-divider type="vertical"/>
         <a-button type="primary" @click="deleteThreshold(record.id)">删除</a-button>
       </template>
@@ -121,7 +132,7 @@
 
 <script>
 import { dealQuery } from '@/utils/util'
-import { sql } from '@/utils/request'
+import { sql, xungeng } from '@/utils/request'
 import ThresholdSchema from '@/views/patrol/config/ThresholdConfig/modules/ThresholdSchema'
 
 export default {
@@ -132,6 +143,10 @@ export default {
   props: {},
   data () {
     return {
+      table: {
+        pageNumber: 1,
+        pageSize: 10
+      },
       queryParams: {},
       pagination: {},
       columns: [
@@ -174,7 +189,9 @@ export default {
       expand: false,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       editForm: {},
-      visible: false
+      visible: false,
+      total: 0,
+      isNew: false
     }
   },
   computed: {
@@ -184,7 +201,7 @@ export default {
   },
   watch: {},
   created () {
-    this.fetchThreshold()
+    this.fetchThreshold({})
   },
   mounted () {
   },
@@ -192,7 +209,7 @@ export default {
     isBlank (element) {
       return element !== null && element !== undefined && element !== ''
     },
-    handleSearch () {
+    handleSearch (pageNo = 1) {
       this.form.validateFields((err, value) => {
         if (!err) {
           let where = ''
@@ -212,21 +229,25 @@ export default {
             where += ' and severity =' + value.level
           }
           if (where !== '') {
-            this.fetchThreshold(where)
+            this.fetchThreshold({ condition_sql: where, pageNo: pageNo })
           } else {
-            this.fetchThreshold()
+            this.fetchThreshold({ pageNo: pageNo })
           }
         }
       })
     },
-    async fetchThreshold (condition_sql = null) {
-      let base_sql = `select * from v_patrol_threshold where 1=1`
+    async fetchThreshold ({ condition_sql = null, pageNo = 1 }) {
+      let base_sql = `select * from v_patrol_threshold where 1=1 `
+      let base = `select count(1) as total from v_patrol_threshold where 1=1 `
       if (condition_sql !== null) {
         base_sql += condition_sql
+        base += condition_sql
       }
+      base_sql += 'limit 10 offset ' + (pageNo - 1) * 10
       this.loading = true
       this.data = []
       this.data = dealQuery(await sql(base_sql))
+      this.total = parseInt(dealQuery(await sql(base))[0]['total'])
       this.loading = false
     },
     handleReset () {
@@ -250,11 +271,52 @@ export default {
           return '值小于"' + record.lower_threshold + '"则异常'
       }
     },
-    updateThreshold (record) {
+    toUpdate (record) {
       this.visible = true
+      this.isNew = false
       this.editForm = { ...record }
     },
-    deleteThreshold () {}
+    async updateThreshold (data) {
+      let result
+      if (this.isNew) {
+        result = await xungeng.post('threshold/add', {
+          'hostId': data.hostId,
+          'endpointId': data.endpointId,
+          'metricId': data.metricId,
+          'answerId': data.answerId,
+          'condition': data.condition,
+          'lowerThreshold': data.lowerThreshold,
+          'upperThreshold': data.upperThreshold,
+          'severity': data.severity
+        })
+      } else {
+        result = await xungeng.post('threshold/edit', {
+          'id': data.id,
+          'condition': data.condition,
+          'lowerThreshold': data.lowerThreshold,
+          'upperThreshold': data.upperThreshold,
+          'severity': data.severity
+        })
+      }
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+        this.visible = false
+        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+      } else {
+        this.$message.error(result.msg)
+      }
+    },
+    async deleteThreshold (id) {
+      const result = await xungeng.post('threshold/delete', {
+        'id': id
+      })
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+      } else {
+        this.$message.error(result.msg)
+      }
+    }
   }
 }
 </script>

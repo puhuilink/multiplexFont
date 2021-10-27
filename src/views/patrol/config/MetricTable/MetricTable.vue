@@ -28,7 +28,12 @@
         </a-col>
       </a-row>
     </a-form>
-    <a-button type="primary" @click="()=>{this.visible=true}">新增</a-button>
+    <a-button
+      type="primary"
+      @click="()=>{
+        this.visible = true
+        this.isNew = true
+      }">新增</a-button>
     <a-modal
       title="新增检查项"
       wrapClassName="MetricSchema"
@@ -36,6 +41,7 @@
       @cancel="resetSubmit"
       @close="resetSubmit"
       @ok="newSubmit"
+
     >
       <a-form layout="inline" :form="metricForm">
         <a-form-item
@@ -43,7 +49,7 @@
         >
           <a-input
             v-decorator="[
-              'alias',
+              'metricAlias',
               { rules: [{ required: true, message: '检查项不能为空' }] },
             ]"
             style="width: 110px"
@@ -54,7 +60,7 @@
         >
           <a-select
             v-decorator="[
-              'answer_id',
+              'answerId',
               { rules: [{ required: true, message: '检查值不能为空' }] },
             ]"
             style="width: 110px"
@@ -74,7 +80,16 @@
     </a-modal>
     <a-table
       :data-source="Object.values(metrics)"
-      :pagination="pagination"
+      :pagination="{
+        current: this.current,
+        defaultPageSize: 10,
+        total:this.total,
+        showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
+        onChange:(pageNumber) =>{
+          this.current = pageNumber
+          handleSearch(pageNumber)
+        }
+      }"
       :columns="metricColumns"
       row-key="id"
     >
@@ -120,7 +135,7 @@
 
 <script>
 import { dealQuery } from '@/utils/util'
-import { sql } from '@/utils/request'
+import { sql, xungeng } from '@/utils/request'
 
 export default {
   name: 'MetricTable',
@@ -132,8 +147,11 @@ export default {
   },
   data () {
     return {
+      total: 0,
+      current: 1,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       visible: false,
+      isNew: false,
       metrics: {},
       pagination: {},
       answers: {},
@@ -171,25 +189,29 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    modalTitle () {
+      return this.isNew ? '新增检查值' : '编辑检查值'
+    }
+  },
   watch: {},
   created () {
-    this.fetchMetric()
+    this.fetchMetric('', 1)
     this.fetchAnswer()
   },
   mounted () {
   },
   methods: {
-    handleSearch () {
+    handleSearch (pageNo = 1) {
       this.metrics = {}
       let where
       this.form.validateFields((err, value) => {
         if (!err) {
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
             where = 'alias like %' + value.alias + '%'
-            this.fetchMetric(10, where)
+            this.fetchMetric(where, pageNo)
           } else {
-            this.fetchMetric()
+            this.fetchMetric(null, pageNo)
           }
         }
       })
@@ -198,9 +220,16 @@ export default {
       this.form.resetFields()
     },
     newSubmit () {
-      this.metricForm.validateFields(err => {
+      this.metricForm.validateFields(async (err, val) => {
         if (!err) {
-          this.fetchMetric()
+          const { metricAlias, answerId } = val
+          const result = await xungeng.post('metric/add', { 'metricAlias': metricAlias, 'answerId': answerId })
+          if (result.code === 200) {
+            this.$message.success(result.msg)
+          } else {
+            this.$message.error(result.msg)
+          }
+          await this.fetchMetric(null, 1)
         }
       })
     },
@@ -211,17 +240,18 @@ export default {
     toggle () {
       this.expand = !this.expand
     },
-    async fetchMetric (limit = 10, where) {
+    async fetchMetric (where, pageNo) {
       let base_sql = 'select * from t_patrol_metric where 1=1 '
-      if (where !== null && where !== undefined) {
+      let bases = 'select count(1) as total from t_patrol_metric where 1=1 '
+      if (where !== null && where !== undefined && where !== '') {
         base_sql += 'and' + where
+        bases += 'and' + where
       }
-      if (limit !== 10) {
-        base_sql += 'limit' + limit
-      } else {
-        base_sql += 'limit 10'
-      }
+      base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      // console.log(base_sql)
       const result = await sql(base_sql)
+      // console.log(result)
+      this.total = parseInt(dealQuery(await sql(bases))[0]['total'])
       const data = dealQuery(result)
       this.metrics = {}
       for (let i = 0; i < data.length; i++) {
@@ -247,17 +277,34 @@ export default {
       this.tempMetric.answer_id = this.metrics[id].answer_id
       this.$forceUpdate()
     },
-    deleteMetric (id) {
-      delete this.metrics[id]
-      this.$forceUpdate()
+    async deleteMetric (id) {
+      const result = await xungeng.post('metric/delete',
+        {
+          'id': id
+        })
+      if (result.code === 200) {
+        delete this.metrics[id]
+        this.$forceUpdate()
+      } else {
+
+      }
     },
-    save (id) {
+    async save (id) {
       this.metrics[id].editable = false
       this.editingKey = ''
-      this.metrics[id].metric_alias = this.tempMetric.metric_alias
-      this.metrics[id].answer_id = this.tempMetric.answer_id
-      this.$forceUpdate()
-      this.$emit('change', this.metrics)
+      const result = await xungeng.post('metric/edit',
+        {
+          'id': id,
+          'alias': this.tempMetric.metric_alias,
+          'answerId': this.tempMetric.answer_id
+        })
+      if (result.code === 200) {
+        this.metrics[id].metric_alias = this.tempMetric.metric_alias
+        this.metrics[id].answer_id = this.tempMetric.answer_id
+        this.$forceUpdate()
+      } else {
+        this.$message.error(result.msg)
+      }
     },
     cancel (id) {
       this.metrics[id].editable = false
