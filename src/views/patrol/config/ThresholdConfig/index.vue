@@ -93,12 +93,14 @@
         type="primary"
         @click="()=>{
           this.visible=true
+          this.isNew=true
         }">新增阈值规则</a-button>
       <ThresholdSchema
         :visible="visible"
-        :edit-form="editForm"
+        :data-form="editForm"
+        :is-new="isNew"
         @cancel="()=>{this.visible=false}"
-        @ok="()=>{this.visible=false}"
+        @ok="updateThreshold"
       />
     </div>
     <a-table
@@ -120,7 +122,7 @@
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
       <template slot="action" slot-scope="value,record">
-        <a-button type="primary" @click="updateThreshold(record)">修改</a-button>
+        <a-button type="primary" @click="toUpdate(record)">修改</a-button>
         <a-divider type="vertical"/>
         <a-button type="primary" @click="deleteThreshold(record.id)">删除</a-button>
       </template>
@@ -130,7 +132,7 @@
 
 <script>
 import { dealQuery } from '@/utils/util'
-import { sql } from '@/utils/request'
+import { sql, xungeng } from '@/utils/request'
 import ThresholdSchema from '@/views/patrol/config/ThresholdConfig/modules/ThresholdSchema'
 
 export default {
@@ -188,7 +190,8 @@ export default {
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       editForm: {},
       visible: false,
-      total: 0
+      total: 0,
+      isNew: false
     }
   },
   computed: {
@@ -268,11 +271,52 @@ export default {
           return '值小于"' + record.lower_threshold + '"则异常'
       }
     },
-    updateThreshold (record) {
+    toUpdate (record) {
       this.visible = true
+      this.isNew = false
       this.editForm = { ...record }
     },
-    deleteThreshold () {}
+    async updateThreshold (data) {
+      let result
+      if (this.isNew) {
+        result = await xungeng.post('threshold/add', {
+          'hostId': data.hostId,
+          'endpointId': data.endpointId,
+          'metricId': data.metricId,
+          'answerId': data.answerId,
+          'condition': data.condition,
+          'lowerThreshold': data.lowerThreshold,
+          'upperThreshold': data.upperThreshold,
+          'severity': data.severity
+        })
+      } else {
+        result = await xungeng.post('threshold/edit', {
+          'id': data.id,
+          'condition': data.condition,
+          'lowerThreshold': data.lowerThreshold,
+          'upperThreshold': data.upperThreshold,
+          'severity': data.severity
+        })
+      }
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+        this.visible = false
+        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+      } else {
+        this.$message.error(result.msg)
+      }
+    },
+    async deleteThreshold (id) {
+      const result = await xungeng.post('threshold/delete', {
+        'id': id
+      })
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+      } else {
+        this.$message.error(result.msg)
+      }
+    }
   }
 }
 </script>

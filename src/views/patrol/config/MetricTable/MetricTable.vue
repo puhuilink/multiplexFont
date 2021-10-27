@@ -28,7 +28,12 @@
         </a-col>
       </a-row>
     </a-form>
-    <a-button type="primary" @click="()=>{this.visible=true}">新增</a-button>
+    <a-button
+      type="primary"
+      @click="()=>{
+        this.visible = true
+        this.isNew = true
+      }">新增</a-button>
     <a-modal
       title="新增检查项"
       wrapClassName="MetricSchema"
@@ -146,6 +151,7 @@ export default {
       current: 1,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       visible: false,
+      isNew: false,
       metrics: {},
       pagination: {},
       answers: {},
@@ -183,7 +189,11 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    modalTitle () {
+      return this.isNew ? '新增检查值' : '编辑检查值'
+    }
+  },
   watch: {},
   created () {
     this.fetchMetric('', 1)
