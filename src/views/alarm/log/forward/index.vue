@@ -67,7 +67,6 @@
 import { List } from '@/components/Mixins'
 import { AlarmForwardService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
-import _ from 'lodash'
 import ForwardHistoryDetail from '../modules/ForwardHistoryDetail'
 import moment from 'moment'
 
@@ -80,37 +79,38 @@ export default {
   props: {},
   data: () => ({
     columns: Object.freeze([
-      {
-        title: '告警级别',
-        width: 90,
-        customRender: (__, alarm) => _.get(alarm, ['alarm_level'], '')
-      },
-      {
-        title: '事件等级',
-        width: 90,
-        customRender: (__, alarm) => _.get(alarm, ['event_level'], '')
-      },
-      {
-        title: '数据域',
-        dataIndex: 'domain',
-        width: 100
-      },
-      {
-        title: '设备名称',
-        width: 120,
-        customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'host_alias'])
-      },
-      {
-        title: '监控实体',
-        width: 120,
-        tooltip: true,
-        customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'endpoint_alias'])
-      },
-      {
-        title: '检查项',
-        width: 120,
-        customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'metric_alias'])
-      },
+      // TODO: 暂时将通知记录中得绑定项去掉
+      // {
+      //   title: '告警级别',
+      //   width: 90,
+      //   customRender: (__, alarm) => _.get(alarm, ['alarm_level'], '')
+      // },
+      // {
+      //   title: '事件等级',
+      //   width: 90,
+      //   customRender: (__, alarm) => _.get(alarm, ['event_level'], '')
+      // },
+      // {
+      //   title: '数据域',
+      //   dataIndex: 'domain',
+      //   width: 100
+      // },
+      // {
+      //   title: '设备名称',
+      //   width: 120,
+      //   customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'host_alias'])
+      // },
+      // {
+      //   title: '监控实体',
+      //   width: 120,
+      //   tooltip: true,
+      //   customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'endpoint_alias'])
+      // },
+      // {
+      //   title: '检查项',
+      //   width: 120,
+      //   customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'metric_alias'])
+      // },
       {
         title: '通知内容',
         dataIndex: 'send_content',
