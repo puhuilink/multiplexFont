@@ -118,6 +118,24 @@ export default {
         tooltip: true
       },
       {
+        title: '电话',
+        dataIndex: 'mobile',
+        width: 120,
+        tooltip: true
+      },
+      {
+        title: '邮箱',
+        dataIndex: 'email',
+        width: 120,
+        tooltip: true
+      },
+      {
+        title: '邮箱主题',
+        dataIndex: 'subject',
+        width: 120,
+        tooltip: true
+      },
+      {
         title: '通知时间',
         dataIndex: 'send_time',
         width: 120,
@@ -159,6 +177,15 @@ export default {
         ...parameter,
         alias: 'data'
       }).then((r) => {
+        r.data.data.forEach((item, value, index) => {
+          if (item.send_content) {
+            const json = JSON.parse(item.send_content)
+            item.send_content = json.content
+            item.email = json.email ? json.email.toString() : '暂无'
+            item.subject = json.subject ? json.subject : '暂无'
+            item.mobile = json.mobile ? json.mobile.toString() : '暂无'
+          }
+        })
         return r.data
       })
     },
