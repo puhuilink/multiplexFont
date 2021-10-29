@@ -15,13 +15,11 @@
             ></a-input>
             <a-button
               type="primary"
-              htmlType="submit"
               @click="() => {
                 changePagination(1, this.pagination.pageSize)
               }"
             >查询</a-button>
           </a-form>
-          <a-button type="primary">新增监控对象</a-button>
           <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
@@ -45,7 +43,7 @@
         showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
         onChange:(pageNumber) =>{
           table.pageNumber = pageNumber
-          getPatrolPath({pageNo:pageNumber})
+          getPatrolPath(pageNumber)
           this.checkpoints = []
           this.hostTable = []
           this.endpointTable = []
@@ -67,11 +65,14 @@
       </template>
       <template slot="endpoint" slot-scope="value,row">
         {{ value!=='NULL'?value:'虚拟实体' }}
-        <a-button
-          icon="plus"
-          @click="infoEdit(row,1)"
-        >
-        </a-button>
+        <a-row>
+          <a-icon
+            type="plus"
+
+            @click="infoEdit(row,1)"
+          >
+          </a-icon>
+        </a-row>
       </template>
       <template slot="code" slot-scope="value,row">
         <a
@@ -97,18 +98,24 @@
       </template>
       <template slot="checkpoint" slot-scope="value,row">
         {{ value }}
-        <a-button
-          icon="plus"
-          @click="infoEdit(row, 3)"
-        >
-        </a-button>
+        <a-row>
+          <a-icon
+            type="plus"
+
+            @click="infoEdit(row,3)"
+          >
+          </a-icon>
+        </a-row>
       </template><template slot="host" slot-scope="value,row">
         {{ value }}
-        <a-button
-          icon="plus"
-          @click="infoEdit(row,2)"
-        >
-        </a-button>
+        <a-row>
+          <a-icon
+            type="plus"
+
+            @click="infoEdit(row,2)"
+          >
+          </a-icon>
+        </a-row>
       </template>
     </a-table>
     <HostSchema
@@ -189,7 +196,7 @@ export default {
         {
           title: '点位',
           dataIndex: 'checkpoint_alias',
-          align: 'right',
+          align: 'center',
           scopedSlots: { customRender: 'checkpoint' },
           customCell: (row, index) => {
             if (this.checkpoints.length < this.data.length) { this.checkpoints.push(row.checkpoint_id) }
@@ -218,6 +225,7 @@ export default {
         {
           title: '二维码',
           align: 'center',
+          width: '10%',
           scopedSlots: { customRender: 'code' },
           customCell: (row, index) => {
             if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
@@ -245,7 +253,7 @@ export default {
         {
           title: '监控对象',
           dataIndex: 'host_alias',
-          align: 'right',
+          align: 'center',
           scopedSlots: { customRender: 'host' },
           customCell: (row, index) => {
             if (this.hostTable.length < this.data.length) {
@@ -275,7 +283,8 @@ export default {
         },
         {
           title: '监控实体',
-          align: 'right',
+          align: 'center',
+          width: '15%',
           dataIndex: 'endpoint_alias',
           scopedSlots: { customRender: 'endpoint' },
           customCell: (row, index) => {
@@ -311,6 +320,7 @@ export default {
         {
           title: '操作',
           align: 'center',
+          width: '20%',
           scopedSlots: { customRender: 'action' }
         }
       ],
@@ -416,7 +426,7 @@ export default {
         this.selectedRowKeys.push(e)
       }
     },
-    async getPatrolPath ({ path_id = '1267708678983651329', zone_id = '1267708678362894336', pageNo = 1 }) {
+    async getPatrolPath (pageNo = 1) {
       this.spinning = true
       this.data = []
       this.checkpoints = []
@@ -424,13 +434,13 @@ export default {
       this.hostTable = []
       this.endpointTable = []
       let query_sql = 'select * from v_patrol_path where 1=1 '
-      query_sql += 'and path_id = ' + path_id
-      query_sql += 'and zone_id =' + zone_id
+      query_sql += 'and path_id = ' + this.pathId
+      query_sql += 'and zone_id =' + this.zoneId
       query_sql += 'limit 10 offset ' + (pageNo - 1) * 10
       this.data = dealQuery(await sql(query_sql))
       let querys = 'select count(1) as total from v_patrol_path where 1=1 '
-      querys += 'and path_id = ' + path_id
-      querys += 'and zone_id =' + zone_id
+      querys += 'and path_id = ' + this.pathId
+      querys += 'and zone_id =' + this.zoneId
       this.pagination.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
       this.spinning = false
     },
@@ -519,7 +529,7 @@ export default {
       this.table.pageNumber = 1
       this.pathId = pathId
       this.zoneId = zoneId
-      this.getPatrolPath({ path_id: pathId, zone_id: zoneId })
+      this.getPatrolPath()
     },
     // 点击编辑
     infoEdit (row, status) {
@@ -594,7 +604,7 @@ export default {
     this.fetchMetric()
     this.fetchAnswer()
     this.fetchThreshold()
-    this.getPatrolPath({})
+    this.getPatrolPath()
   }
 }
 </script>
