@@ -15,31 +15,62 @@
 
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :xl="8" :md="12" :sm="24">
+              <!--              <a-col :xl="8" :md="12" :sm="24">-->
+              <!--                <a-form-item-->
+              <!--                  label="通知名称："-->
+              <!--                  v-bind="formItemLayout"-->
+              <!--                  class="fw"-->
+              <!--                >-->
+              <!--                  <a-input allowClear v-model.trim="queryParams.user_id" />-->
+              <!--                </a-form-item>-->
+              <!--              </a-col>-->
+              <!--              <a-col :xl="8" :md="12" :sm="24">-->
+              <!--                <a-form-item-->
+              <!--                  label="通知方式："-->
+              <!--                  v-bind="formItemLayout"-->
+              <!--                  class="fw"-->
+              <!--                >-->
+              <!--                  <a-input allowClear v-model.trim="queryParams.staff_name" />-->
+              <!--                </a-form-item>-->
+              <!--              </a-col>-->
+              <a-col :xl="14" :md="24" :sm="24" >
                 <a-form-item
-                  label="通知名称："
+                  label="通知时间："
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.user_id" />
+                  <!--                  <a-input allowClear v-model.trim="queryParams.send_time" />-->
+                  <a-range-picker
+                    allowClear
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    :ranges="{
+                      最近1天: [moment().add(-1, 'days'), moment(), moment()],
+                      最近1周: [moment().add(-7, 'days'), moment()],
+                      最近1月: [moment().add(-30, 'days'), moment()],
+                    }"
+                    :showTime="{ format: 'HH:mm:ss' }"
+                    :defaultValue="[moment().add(-1, 'days'), moment()]"
+                    v-model="queryParams.send_time"
+                  />
                 </a-form-item>
               </a-col>
-              <a-col :xl="8" :md="12" :sm="24">
+
+              <a-col :xl="10" :md="24" :sm="24" >
                 <a-form-item
-                  label="通知方式："
+                  label="通知状态："
                   v-bind="formItemLayout"
                   class="fw"
                 >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
-                </a-form-item>
-              </a-col>
-              <a-col :xl="8" :md="12" :sm="24" >
-                <a-form-item
-                  label="时间范围："
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-input allowClear v-model.trim="queryParams.staff_name" />
+                  <!--                  <a-select allowClear v-model.trim="queryParams.status" />-->
+                  <a-select v-model="queryParams.status">
+                    <a-select-option :value="true">
+                      已通知
+                    </a-select-option>
+                    <a-select-option :value="false">
+                      未通知
+                    </a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -78,6 +109,9 @@ export default {
   },
   props: {},
   data: () => ({
+    queryParams: {
+      send_time: [moment().add(-1, 'days'), moment()]
+    },
     columns: Object.freeze([
       // TODO: 暂时将通知记录中得绑定项去掉
       // {
@@ -147,16 +181,17 @@ export default {
         dataIndex: 'status',
         width: 90,
         sorter: true,
-        customRender: status => status ? '已通知' : '通知失败'
+        customRender: status => status ? '已通知' : '未通知'
       }
     ])
   }),
   computed: {},
   methods: {
+    moment,
     loadData (parameter) {
       return AlarmForwardService.findHistory({
         where: {
-          ...generateQuery(this.queryParams)
+          ...generateQuery(this.queryParams, true)
         },
         fields: [
           'id',

@@ -18,7 +18,7 @@
         />
       </a-form-model-item>
 
-      <span>小时之后每</span>
+      <span>小时之内每</span>
 
       <a-form-model-item
         class="inline_input"

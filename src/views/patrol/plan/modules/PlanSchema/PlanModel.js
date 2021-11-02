@@ -29,7 +29,7 @@ export class PlanModel {
     }
     this.pathId = pathId
     this.zoneId = zoneId
-    this.exception = (exception === '') ? [] : exception
+    this.exception = (exception === '') ? [] : exception.split(',')
     this.groupId = groupId
     this.expireTime = expireTime
     this.status = status
