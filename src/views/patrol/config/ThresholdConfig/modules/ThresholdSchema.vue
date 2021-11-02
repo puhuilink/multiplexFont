@@ -91,12 +91,20 @@
       </a-form-item>
       <a-form-item label="阈值数值">
         <a-input
-          v-if="this.editForm.getFieldsValue().condition !== 'gt'"
+          v-if="this.dataForm.answer_type ==='fill'&&this.editForm.getFieldsValue().condition !== 'gt'"
           v-decorator="[
             'lowerThreshold',
             { rules: [{ required: true, message: '默认报警条件不能为空' }] },
           ]">
         </a-input>
+        <a-select
+          v-if="this.dataForm.answer_type ==='select'"
+          v-decorator="[
+            'lowerThreshold',
+            { rules: [{ required: true, message: '默认报警条件不能为空' }] },
+          ]">
+          <a-select-option v-for="option in JSON.parse(this.dataForm.format)" :key="option.value" :value="option.value.toString()">{{ option.alias }}</a-select-option>
+        </a-select>
         <a-input
           v-if="this.editForm.getFieldsValue().condition === 'gt' || editForm.getFieldsValue().condition === 'out'"
           v-decorator="[
@@ -187,6 +195,7 @@ export default {
   },
   methods: {
     appendAlias () {
+      console.log(this.dataForm)
       this.alias = ''
       this.alias += this.dataForm.host_alias + '/'
       this.alias += this.dataForm.endpoint_alias !== 'NULL' ? this.dataForm.endpoint_alias : '虚拟实体' + '/'

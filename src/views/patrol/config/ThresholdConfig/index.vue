@@ -4,7 +4,7 @@
       <a-form class="ant-advanced-search-form" :form="form">
         <a-row :gutter="16">
           <a-col
-            :span="5"
+            :span="4"
           >
             <a-form-item >
               监控对象：
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col
-            :span="5"
+            :span="4"
           >
             <a-form-item >
               监控实体：
@@ -29,7 +29,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="3"
+            :span="4"
           >
             <a-form-item >
               检查项：
@@ -62,7 +62,7 @@
               </a-select>
             </a-form-item>
           </a-col><a-col
-            :span="3"
+            :span="4"
           >
             <a-form-item >
               告警等级：
@@ -80,7 +80,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="4" :style="{ textAlign: 'right' }">
-            <a-button type="primary" @click="handleSearch">
+            <a-button type="primary" @click="()=>handleSearch()">
               搜索
             </a-button>
             <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
@@ -212,7 +212,6 @@ export default {
     handleSearch (pageNo = 1) {
       this.form.validateFields((err, value) => {
         if (!err) {
-          console.log(value)
           let where = ''
           if (this.isBlank(value.host_alias)) {
             where += ' and host_alis like \'%' + value.host_alias + '%\''

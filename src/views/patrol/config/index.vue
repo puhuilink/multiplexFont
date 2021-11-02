@@ -11,12 +11,12 @@
               :style="{
                 'margin-right': '12px'
               }"
-              v-model.trim="queryParams.alias"
+              v-model.trim="alias"
             ></a-input>
             <a-button
               type="primary"
               @click="() => {
-                changePagination(1, this.pagination.pageSize)
+                this.getPatrolPath(1, {checkpoint_alias:this.alias})
               }"
             >查询</a-button>
           </a-form>
@@ -43,7 +43,7 @@
         showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
         onChange:(pageNumber) =>{
           table.pageNumber = pageNumber
-          getPatrolPath(pageNumber)
+          getPatrolPath(pageNumber,{checkpoint_alias:this.alias})
           this.checkpoints = []
           this.hostTable = []
           this.endpointTable = []
@@ -66,12 +66,10 @@
       <template slot="endpoint" slot-scope="value,row">
         {{ value!=='NULL'?value:'虚拟实体' }}
         <a-row>
-          <a-icon
-            type="plus"
-
-            @click="infoEdit(row,1)"
-          >
-          </a-icon>
+          <a @click="infoEdit(row,1)">
+            <a-icon
+              type="plus"
+            /></a>
         </a-row>
       </template>
       <template slot="code" slot-scope="value,row">
@@ -99,22 +97,20 @@
       <template slot="checkpoint" slot-scope="value,row">
         {{ value }}
         <a-row>
-          <a-icon
-            type="plus"
-
-            @click="infoEdit(row,3)"
-          >
-          </a-icon>
+          <a @click="infoEdit(row,3)">
+            <a-icon
+              type="plus"
+            >
+            </a-icon></a>
         </a-row>
       </template><template slot="host" slot-scope="value,row">
         {{ value }}
         <a-row>
-          <a-icon
-            type="plus"
-
+          <a
             @click="infoEdit(row,2)"
           >
-          </a-icon>
+            <a-icon type="plus"/>
+          </a>
         </a-row>
       </template>
     </a-table>
@@ -158,6 +154,7 @@ export default {
     this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
     this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
+      alias: '',
       formStatus: 1,
       table: {
         pageNumber: 1,
@@ -397,7 +394,7 @@ export default {
       this.$table.pageNumber = pageNumber
     },
     async deleteMetric (row) {
-      await xungeng.post('host/deleteMetric', {
+      const result = await xungeng.post('host/deleteMetric', {
         pathId: this.pathId,
         zoneId: this.zoneId,
         checkpointId: row.checkpoint_id,
@@ -406,6 +403,11 @@ export default {
         metricId: row.metric_id,
         answerId: row.answer_id
       })
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+      } else {
+        this.$message.error(result.msg)
+      }
     },
     isChecked (id) {
       return this.selectedRowKeys.includes(id)
@@ -426,7 +428,8 @@ export default {
         this.selectedRowKeys.push(e)
       }
     },
-    async getPatrolPath (pageNo = 1) {
+    async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
+      console.log(checkpoint_alias)
       this.spinning = true
       this.data = []
       this.checkpoints = []
@@ -434,13 +437,18 @@ export default {
       this.hostTable = []
       this.endpointTable = []
       let query_sql = 'select * from v_patrol_path where 1=1 '
+      let querys = 'select count(1) as total from v_patrol_path where 1=1 '
       query_sql += 'and path_id = ' + this.pathId
       query_sql += 'and zone_id =' + this.zoneId
-      query_sql += 'limit 10 offset ' + (pageNo - 1) * 10
+      if (checkpoint_alias !== null && checkpoint_alias !== undefined && checkpoint_alias !== '') {
+        query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
+        querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
+      }
+      query_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      console.log(query_sql)
       this.data = dealQuery(await sql(query_sql))
-      let querys = 'select count(1) as total from v_patrol_path where 1=1 '
-      querys += 'and path_id = ' + this.pathId
-      querys += 'and zone_id =' + this.zoneId
+      querys += ' and path_id = ' + this.pathId
+      querys += ' and zone_id =' + this.zoneId
       this.pagination.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
       this.spinning = false
     },
@@ -529,7 +537,7 @@ export default {
       this.table.pageNumber = 1
       this.pathId = pathId
       this.zoneId = zoneId
-      this.getPatrolPath()
+      this.getPatrolPath(1, {})
     },
     // 点击编辑
     infoEdit (row, status) {
@@ -604,7 +612,7 @@ export default {
     this.fetchMetric()
     this.fetchAnswer()
     this.fetchThreshold()
-    this.getPatrolPath()
+    this.getPatrolPath(1, {})
   }
 }
 </script>

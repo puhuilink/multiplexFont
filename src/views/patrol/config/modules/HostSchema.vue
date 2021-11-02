@@ -187,18 +187,25 @@ export default {
   methods: {
     async editHost () {
       const sts = this.formStatus
+      let result
       switch (sts) {
         case 3:
-          await xungeng.post('host/addHost', this.form)
+          result = await xungeng.post('host/addHost', this.form)
           break
         case 2:
-          await xungeng.post('host/addEndpoint', this.form)
+          result = await xungeng.post('host/addEndpoint', this.form)
           break
         case 1:
-          await xungeng.post('host/addMetric', this.form)
+          result = await xungeng.post('host/addMetric', this.form)
           break
         case 0:
-          await xungeng.post('host/editMetric', this.form)
+          result = await xungeng.post('host/editMetric', this.form)
+      }
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+        this.visible = false
+      } else {
+        this.$message.error(result.msg)
       }
     },
     loadNewHost () {

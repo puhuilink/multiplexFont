@@ -121,12 +121,10 @@
                 initialValue: this.tempObject.format
               },
             ]"
+            defaultValue="%.1f"
           >
-            <a-select-option value="%.1f">
+            <a-select-option value="%.1f" >
               1位小数
-            </a-select-option>
-            <a-select-option value="%d">
-              整数
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -151,6 +149,7 @@
           v-if="this.answerForm.getFieldsValue().defaultCondition !=='gt'"
         >
           <a-select
+            v-if="this.answerForm.getFieldsValue().defaultCondition === 'eq'"
             v-decorator="[
               'defaultLowerThreshold',
               { rules: [{ required: true, message: '默认报警条件不能为空' }] },
@@ -165,29 +164,26 @@
             </a-select-option>
 
           </a-select>
+          <a-input-number
+            :style="{width:'100%'}"
+            v-decorator="[
+              'defaultLowerThreshold',
+              { rules: [{ required: true, message: '默认报警条件不能为空' }] },
+            ]"
+          />
         </a-form-item>
         <a-form-item
           label="默认报警最大值"
           v-if="this.answerForm.getFieldsValue().type!=='select'&&this.answerForm.getFieldsValue().defaultCondition !=='lt'"
         >
-          <a-input
+          <a-input-number
+            :style="{width:'100%'}"
             v-decorator="[
               'defaultUpperThreshold',
               { rules: [{ required: true, message: '默认报警条件不能为空' }] },
             ]"
           >
-            <a-select-option
-              value="select"
-            >
-              选择
-            </a-select-option>
-            <a-select-option
-              value="fill"
-            >
-              填写
-            </a-select-option>
-
-          </a-input>
+          </a-input-number>
         </a-form-item><a-form-item
           label="默认报警等级"
         >
@@ -222,7 +218,7 @@
           <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.alias }}</a-card-grid>
           <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.value }}</a-card-grid>
         </a-card>
-        <a-tag size="small" v-else>{{ JSON.parse(text).format }}</a-tag>
+        <a-tag size="small" v-else>一位小数</a-tag>
       </template>
       <template slot="type" slot-scope="text">
         {{ text === 'select' ? '选择' : '填写' }}
@@ -358,15 +354,15 @@ export default {
     translateThreshold (record) {
       switch (record.default_condition) {
         case 'eq':
-          return '值为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          return '值为"' + JSON.parse(record.format)[record.default_lower_threshold].alias + '"则异常'
         case 'ne':
-          return '值不为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          return '值不为"' + JSON.parse(record.format)[record.default_lower_threshold].alias + '"则异常'
         case 'out':
-          return '值超出"' + record.lower_threshold + '~' + record.upper_threshold + '"范围则异常'
+          return '值超出"' + record.default_lower_threshold + '~' + record.default_upper_threshold + '"范围则异常'
         case 'gt':
-          return '值大于"' + record.upper_threshold + '"则异常'
+          return '值大于"' + record.default_upper_threshold + '"则异常'
         case 'lt':
-          return '值小于"' + record.lower_threshold + '"则异常'
+          return '值小于"' + record.default_lower_threshold + '"则异常'
         default:
           return '暂无阈值'
       }
