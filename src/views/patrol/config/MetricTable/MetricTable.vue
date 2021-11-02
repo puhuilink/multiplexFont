@@ -3,12 +3,13 @@
     <a-form class="ant-advanced-search-form" :form="form">
       <a-row :gutter="24">
         <a-col
-          :span="8"
+          :span="5"
+          offset="15"
         >
           <a-form-item>
             检查项名称：
             <a-input
-              :style="{width:'30%'}"
+              :style="{width:'60%'}"
               v-decorator="[
                 `alias`,
                 {
@@ -18,12 +19,12 @@
               placeholder="请输入关键字"></a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="16" :style="{ textAlign: 'right' }">
+        <a-col :span="4" :style="{ textAlign: 'left' }">
           <a-button type="primary" @click="()=>handleSearch()">
-            搜索
+            查询
           </a-button>
           <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-            清空
+            重置
           </a-button>
         </a-col>
       </a-row>

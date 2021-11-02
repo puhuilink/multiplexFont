@@ -4,11 +4,13 @@
       <a-row :gutter="24">
         <a-col
           :span="6"
+          offset="8"
+          :style="{textAlign: 'right'}"
         >
           <a-form-item>
             检查值名称:
             <a-input
-              style="width: 60%"
+              style="width: 70%"
               v-decorator="[
                 `alias`
               ]"
@@ -20,7 +22,7 @@
           <a-form-item>
             类型:
             <a-select
-              style="width: 60%"
+              style="width: 80%"
               v-decorator="[
                 `type`
               ]"
@@ -28,12 +30,12 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="12" style="text-align: right">
+        <a-col :span="4" :style="{textAlign: 'left',marginLeft: '-10px'}">
           <a-button type="primary" @click="handleSearch">
-            搜索
+            查询
           </a-button>
           <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-            清空
+            重置
           </a-button>
         </a-col>
       </a-row>

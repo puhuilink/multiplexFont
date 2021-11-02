@@ -2,9 +2,9 @@
   <div>
     <div>
       <a-form class="ant-advanced-search-form" :form="form">
-        <a-row :gutter="16">
+        <a-row :gutter="32">
           <a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               监控对象：
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               监控实体：
@@ -29,7 +29,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               检查项：
@@ -42,12 +42,12 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               检查值类型：
               <a-select
-                :style="{width:'50%'}"
+                :style="{width:'60%'}"
                 v-decorator="[
                   `answer_type` ]"
                 placeholder="请选择类型"
@@ -62,12 +62,12 @@
               </a-select>
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               告警等级：
               <a-select
-                :style="{width:'50%'}"
+                :style="{width:'60%'}"
                 v-decorator="[
                   `level` ]"
                 placeholder="请选择告警等级"
@@ -79,7 +79,7 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="4" :style="{ textAlign: 'right' }">
+          <a-col :span="4" :style="{ textAlign: 'left' }">
             <a-button type="primary" @click="()=>handleSearch()">
               搜索
             </a-button>
