@@ -195,7 +195,6 @@ export default {
   },
   methods: {
     appendAlias () {
-      console.log(this.dataForm)
       this.alias = ''
       this.alias += this.dataForm.host_alias + '/'
       this.alias += this.dataForm.endpoint_alias !== 'NULL' ? this.dataForm.endpoint_alias : '虚拟实体' + '/'
