@@ -95,12 +95,12 @@ export default {
   }),
   methods: {
     add () {
-      this.show('新建巡更规则模板')
+      this.show('新建巡更通知模板')
       this.disabled = false
       this.submit = this.insert
     },
     edit (id) {
-      this.show('编辑巡更规则模板')
+      this.show('编辑巡更通知模板')
       this.disabled = true
       this.fetch(id)
       this.submit = this.update

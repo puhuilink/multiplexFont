@@ -16,7 +16,7 @@
             <a-row>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="规则名称" v-bind="formItemLayout" class="fw">
+                <a-form-item label="模板名称" v-bind="formItemLayout" class="fw">
                   <a-input allowClear v-model.trim="queryParams.title" />
                 </a-form-item>
               </a-col>

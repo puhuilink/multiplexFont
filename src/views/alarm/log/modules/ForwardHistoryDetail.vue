@@ -65,7 +65,7 @@ export default {
       }
     },
     open (record) {
-      this.show('前转详情')
+      this.show('通知记录详情')
       this.record = record
     }
   }

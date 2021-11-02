@@ -91,10 +91,10 @@ export default {
     async fetchHostId () {
       try {
         this.config.hostIds = await CmdbHostTreeService.hostIdsQuery(this.config.systemId)
-        this.setEndpointModelId(null)
-        this.setEndpointId(null)
-        this.setMetricModelId(null)
-        this.setMetricId(null)
+        // this.setEndpointModelId(null)
+        // this.setEndpointId(null)
+        // this.setMetricModelId(null)
+        // this.setMetricId(null)
       } catch (e) {
         this.config.hostIds = []
       }

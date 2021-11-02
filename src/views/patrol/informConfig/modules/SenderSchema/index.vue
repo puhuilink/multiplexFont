@@ -13,6 +13,7 @@
       class="SendForm"
       :model="send"
       :form="form"
+      :rules="rules"
       ref="form"
     >
       <a-form-model-item
@@ -128,6 +129,21 @@
           </a-row>
         </a-col>
       </a-row>
+      <!--      <a-form-model-item-->
+      <!--        label="通知方式"-->
+      <!--        v-bind="formItemLayout"-->
+      <!--        prop="methods"-->
+      <!--      >-->
+      <!--        <checkSends-->
+      <!--          v-if="visible"-->
+      <!--          :smsTempList="smsTempList"-->
+      <!--          :emailTempList="emailTempList"-->
+      <!--          :send.sync="send"-->
+      <!--          :value="send.methods"-->
+      <!--          @deleteStatus="deleteCheck"-->
+      <!--          @addStatus="uploadCheck">-->
+      <!--        </checkSends>-->
+      <!--      </a-form-model-item>-->
       <!-- / 底部按钮 -->
       <template slot="footer" >
         <a-form-model-item
@@ -191,6 +207,9 @@ export default {
     formItemLayout: {
       labelCol: { span: 5 },
       wrapperCol: { span: 17, offset: 1 }
+    },
+    rules: {
+      // methods: [{ required: true, message: '请选择通知方式', trigger: 'blur' }]
     }
   }),
   methods: {
@@ -258,8 +277,18 @@ export default {
     edit (id) {
       this.fetchFix()
       this.fetch(id)
-      this.show('编辑告警规则')
+      this.show('编辑巡更通知配置')
       this.submit = this.update
+    },
+
+    // 更新校验规则判断是否需要校验SMSID和EMAILID
+    uploadCheck (rule) {
+      this.rules = { ...this.rules, ...rule }
+      this.$forceUpdate()
+    },
+    deleteCheck (arg) {
+      Reflect.deleteProperty(this.rules, arg)
+      this.$forceUpdate()
     },
 
     async fetch (id) {
