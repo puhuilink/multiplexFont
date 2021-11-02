@@ -160,7 +160,9 @@ export default {
     loadData (parameter) {
       const { taskId: task_id } = this
       return PatrolService.eventFind({
-        where: { task_id },
+        where: { task_id,
+          status: { _eq: '0' }
+        },
         fields: _.uniq([
           'id',
           ...this.columns.map(({ dataIndex }) => dataIndex),

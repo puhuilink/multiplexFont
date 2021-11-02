@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     add () {
-      this.show('新建通知规则模板')
+      this.show('新建通知模板')
       this.submit = this.insert
     },
     edit (id) {

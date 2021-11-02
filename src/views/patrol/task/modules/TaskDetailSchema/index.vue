@@ -14,7 +14,7 @@
       <div class="TaskDetailSchema__basicInfo">
         <a-row>
           <a-col :span="12">
-            <span>任务名称：{{ basicInfo.alias }}</span>
+            <span>计划名称：{{ basicInfo.alias }}</span>
           </a-col>
           <a-col :span="12">
             <span>任务单号：{{ basicInfo.id }}</span>

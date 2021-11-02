@@ -138,16 +138,16 @@ export const asyncRouterMap = [
             component: () => import('@/views/performance/tree-navigation/index'),
             meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004001' ] }
           },
-          {
-            path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
-            name: 'VideoMonitor',
-            meta: { title: '视频监控', target: '_blank', permission: [ 'F004002' ] }
-          },
-          {
-            path: 'http://vicube.ccccltd.cn:48080/PlatformDockingURL?type=IMS',
-            name: '服务管理',
-            meta: { title: '服务管理', target: '_blank', permission: [ 'F004003' ] }
-          },
+          // {
+          //   path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
+          //   name: 'VideoMonitor',
+          //   meta: { title: '视频监控', target: '_blank', permission: [ 'F004002' ] }
+          // },
+          // {
+          //   path: 'http://vicube.ccccltd.cn:48080/PlatformDockingURL?type=IMS',
+          //   name: '服务管理',
+          //   meta: { title: '服务管理', target: '_blank', permission: [ 'F004003' ] }
+          // },
           {
             path: 'http://10.1.19.15/#/login',
             name: '北京Pigoss1',
@@ -168,23 +168,23 @@ export const asyncRouterMap = [
             name: '厦门Pigoss2',
             meta: { title: '厦门Pigoss2', target: '_blank', permission: [ 'F004008' ] }
           },
-          {
-            path: 'http://10.1.1.10/',
-            name: '北京动环',
-            // 东环不存在权限配置项，则和主视图同等权重
-            meta: { title: '北京动环', target: '_blank', permission: [ 'F004009' ] }
-          },
+          // {
+          //   path: 'http://10.1.1.10/',
+          //   name: '北京动环',
+          //   // 东环不存在权限配置项，则和主视图同等权重
+          //   meta: { title: '北京动环', target: '_blank', permission: [ 'F004009' ] }
+          // },
           {
             path: 'http://10.201.52.2/',
             name: '厦门动环',
             // 东环不存在权限配置项，则和主视图同等权重
             meta: { title: '厦门动环', target: '_blank', permission: [ 'F004010' ] }
           },
-          {
-            path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
-            name: 'APM',
-            meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
-          },
+          // {
+          //   path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
+          //   name: 'APM',
+          //   meta: { title: 'APM', target: '_blank', permission: [ 'F004005' ] }
+          // },
           {
             path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',

@@ -14,7 +14,7 @@
             <div :class="{ fold: !advanced }">
               <a-row>
                 <a-col :md="12" :sm="24">
-                  <a-form-item label="交接人员姓名" v-bind="formItemLayout" class="fw">
+                  <a-form-item label="交班人姓名" v-bind="formItemLayout" class="fw">
                     <a-input allowClear v-model.trim="queryParams.hand_name" />
                   </a-form-item>
                 </a-col>
