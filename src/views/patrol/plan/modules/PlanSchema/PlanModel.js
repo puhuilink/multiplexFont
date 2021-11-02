@@ -16,7 +16,7 @@ export class PlanModel {
     crash = {},
     pathId = '',
     zoneId = '',
-    exception = [],
+    exception = '',
     status = ''
   }) {
     this.alias = alias
