@@ -45,6 +45,12 @@
       @click="()=>{
         this.visible = true
         this.modalTitle = '新增检查项'
+        this.formatList = [
+          {
+            value: null,
+            alias:''
+          }
+        ]
       }">新增
     </a-button>
     <a-modal
@@ -110,8 +116,10 @@
                 </a-input>
               </a-col>
               <a-col :span="4">
-                <a-button type="primary" @click="addRecord"><a-icon type="plus" /></a-button>
+                <a><a-icon type="minus" @click="removeRecord(index)"/></a>
               </a-col>
+            </a-row>
+            <a-row :style="{display:'flex',justifyContent:'center'}"><a type="primary" @click="addRecord"><a-icon type="plus" /></a>
             </a-row>
           </div>
           <a-select
@@ -275,11 +283,6 @@ export default {
           scopedSlots: { customRender: 'format' }
         },
         {
-          title: '默认告警条件',
-          align: 'center',
-          dataIndex: 'default_condition'
-        },
-        {
           title: '默认告警阈值',
           align: 'center',
           scopedSlots: { customRender: 'threshold' }
@@ -314,6 +317,9 @@ export default {
 
   },
   methods: {
+    removeRecord (index) {
+      this.formatList.splice(index, 1)
+    },
     newSubmit () {
       this.answerForm.validateFields(async (err, val) => {
         if (!err) {

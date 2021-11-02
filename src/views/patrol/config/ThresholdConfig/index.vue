@@ -81,10 +81,10 @@
           </a-col>
           <a-col :span="4" :style="{ textAlign: 'left' }">
             <a-button type="primary" @click="()=>handleSearch()">
-              搜索
+              查询
             </a-button>
             <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              清空
+              重置
             </a-button>
           </a-col>
         </a-row>
