@@ -2,9 +2,9 @@
   <div>
     <div>
       <a-form class="ant-advanced-search-form" :form="form">
-        <a-row :gutter="16">
+        <a-row :gutter="32">
           <a-col
-            :span="5"
+            :span="6"
           >
             <a-form-item >
               监控对象：
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col
-            :span="5"
+            :span="6"
           >
             <a-form-item >
               监控实体：
@@ -29,7 +29,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="3"
+            :span="6"
           >
             <a-form-item >
               检查项：
@@ -42,12 +42,12 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="4"
+            :span="6"
           >
             <a-form-item >
               检查值类型：
               <a-select
-                :style="{width:'50%'}"
+                :style="{width:'60%'}"
                 v-decorator="[
                   `answer_type` ]"
                 placeholder="请选择类型"
@@ -62,12 +62,12 @@
               </a-select>
             </a-form-item>
           </a-col><a-col
-            :span="3"
+            :span="6"
           >
             <a-form-item >
               告警等级：
               <a-select
-                :style="{width:'50%'}"
+                :style="{width:'60%'}"
                 v-decorator="[
                   `level` ]"
                 placeholder="请选择告警等级"
@@ -79,8 +79,8 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="4" :style="{ textAlign: 'right' }">
-            <a-button type="primary" @click="handleSearch">
+          <a-col :span="4" :style="{ textAlign: 'left' }">
+            <a-button type="primary" @click="()=>handleSearch()">
               搜索
             </a-button>
             <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
@@ -214,16 +214,16 @@ export default {
         if (!err) {
           let where = ''
           if (this.isBlank(value.host_alias)) {
-            where += ' and host_alis like %' + value.host_alias + '%'
+            where += ' and host_alis like \'%' + value.host_alias + '%\''
           }
           if (this.isBlank(value.endpoint_alias)) {
-            where += ' and endpoint_alias like %' + value.endpoint_alias + '%'
+            where += ' and endpoint_alias like \'%' + value.endpoint_alias + '%\''
           }
           if (this.isBlank(value.metric_alias)) {
-            where += ' and metric_alias like %' + value.metric_alias + '%'
+            where += ' and metric_alias like \'%' + value.metric_alias + '%\''
           }
           if (this.isBlank(value.answer_type)) {
-            where += ' and answer_type =' + value.metric_alias
+            where += ' and answer_type like \'%' + value.answer_type + '%\''
           }
           if (this.isBlank(value.level)) {
             where += ' and severity =' + value.level
@@ -243,11 +243,13 @@ export default {
         base_sql += condition_sql
         base += condition_sql
       }
-      base_sql += 'limit 10 offset ' + (pageNo - 1) * 10
+      base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
       this.loading = true
       this.data = []
-      this.data = dealQuery(await sql(base_sql))
-      this.total = parseInt(dealQuery(await sql(base))[0]['total'])
+      const result = await sql(base_sql)
+      const results = await sql(base)
+      this.data = dealQuery(result)
+      this.total = parseInt(dealQuery(results)[0]['total'])
       this.loading = false
     },
     handleReset () {

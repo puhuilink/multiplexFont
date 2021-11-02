@@ -3,12 +3,13 @@
     <a-form class="ant-advanced-search-form" :form="form">
       <a-row :gutter="24">
         <a-col
-          :span="8"
+          :span="5"
+          offset="15"
         >
           <a-form-item>
             检查项名称：
             <a-input
-              :style="{width:'30%'}"
+              :style="{width:'60%'}"
               v-decorator="[
                 `alias`,
                 {
@@ -18,12 +19,12 @@
               placeholder="请输入关键字"></a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="16" :style="{ textAlign: 'right' }">
-          <a-button type="primary" @click="handleSearch">
-            搜索
+        <a-col :span="4" :style="{ textAlign: 'left' }">
+          <a-button type="primary" @click="()=>handleSearch()">
+            查询
           </a-button>
           <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-            清空
+            重置
           </a-button>
         </a-col>
       </a-row>
@@ -203,7 +204,6 @@ export default {
   },
   methods: {
     handleSearch (pageNo = 1) {
-      this.metrics = {}
       let where
       this.form.validateFields((err, value) => {
         if (!err) {
@@ -241,6 +241,7 @@ export default {
       this.expand = !this.expand
     },
     async fetchMetric (where, pageNo) {
+      this.metrics = {}
       let base_sql = 'select * from t_patrol_metric where 1=1 '
       let bases = 'select count(1) as total from t_patrol_metric where 1=1 '
       if (where !== null && where !== undefined && where !== '') {
@@ -248,7 +249,6 @@ export default {
         bases += 'and' + where
       }
       base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
-      // console.log(base_sql)
       const result = await sql(base_sql)
       // console.log(result)
       this.total = parseInt(dealQuery(await sql(bases))[0]['total'])
