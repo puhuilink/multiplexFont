@@ -11,17 +11,15 @@
               :style="{
                 'margin-right': '12px'
               }"
-              v-model.trim="queryParams.alias"
+              v-model.trim="alias"
             ></a-input>
             <a-button
               type="primary"
-              htmlType="submit"
               @click="() => {
-                changePagination(1, this.pagination.pageSize)
+                this.getPatrolPath(1, {checkpoint_alias:this.alias})
               }"
             >查询</a-button>
           </a-form>
-          <a-button type="primary">新增监控对象</a-button>
           <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
@@ -35,15 +33,17 @@
       ref="table"
       :columns="columns"
       :data-source="data"
-      :row-key="record => record.index"
+      :row-key="(record,index) => index"
       bordered
       :loadind="spinning"
       :pagination="{
         current: table.pageNumber,
         defaultPageSize: 10,
+        total:this.pagination.total,
         showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
         onChange:(pageNumber) =>{
           table.pageNumber = pageNumber
+          getPatrolPath(pageNumber,{checkpoint_alias:this.alias})
           this.checkpoints = []
           this.hostTable = []
           this.endpointTable = []
@@ -63,8 +63,14 @@
           @change="onSelectChange(row.checkpoint_id)"
         />
       </template>
-      <template slot="endpoint" slot-scope="value">
+      <template slot="endpoint" slot-scope="value,row">
         {{ value!=='NULL'?value:'虚拟实体' }}
+        <a-row>
+          <a @click="infoEdit(row,1)">
+            <a-icon
+              type="plus"
+            /></a>
+        </a-row>
       </template>
       <template slot="code" slot-scope="value,row">
         <a
@@ -76,23 +82,43 @@
       <template slot="action" slot-scope="value,row">
         <a-button
           type="primary"
-          @click="infoEdit(row.checkpoint_id, row.checkpoint_alias, row.host_id)"
+          @click="infoEdit(row,0)"
         >
           编辑
         </a-button>
         <a-divider type="vertical"/>
         <a-button
           type="primary"
-          @click="deleteHost()"
+          @click="deleteMetric(row)"
         >
           删除
         </a-button>
+      </template>
+      <template slot="checkpoint" slot-scope="value,row">
+        {{ value }}
+        <a-row>
+          <a @click="infoEdit(row,3)">
+            <a-icon
+              type="plus"
+            >
+            </a-icon></a>
+        </a-row>
+      </template><template slot="host" slot-scope="value,row">
+        {{ value }}
+        <a-row>
+          <a
+            @click="infoEdit(row,2)"
+          >
+            <a-icon type="plus"/>
+          </a>
+        </a-row>
       </template>
     </a-table>
     <HostSchema
       :form.sync="form"
       :visible.sync="visible"
       :xgModelPoint="xgModelPoint"
+      :form-status="formStatus"
       :hosts="hostList"
       :endpoints="endpointList"
       :metrics="metricList"
@@ -111,7 +137,7 @@ import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import { sql } from '@/utils/request'
+import { sql, xungeng } from '@/utils/request'
 
 export default {
   name: 'PatrolConfig',
@@ -128,6 +154,8 @@ export default {
     this.fetchAnswer = _.debounce(this.fetchAnswer, 800)
     this.fetchThreshold = _.debounce(this.fetchThreshold, 800)
     return {
+      alias: '',
+      formStatus: 1,
       table: {
         pageNumber: 1,
         pageSize: 10
@@ -165,8 +193,10 @@ export default {
         {
           title: '点位',
           dataIndex: 'checkpoint_alias',
+          align: 'center',
+          scopedSlots: { customRender: 'checkpoint' },
           customCell: (row, index) => {
-            if (this.checkpoints.length < 10) { this.checkpoints.push(row.checkpoint_id) }
+            if (this.checkpoints.length < this.data.length) { this.checkpoints.push(row.checkpoint_id) }
             if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
               return {
                 style: { display: 'none' },
@@ -192,6 +222,7 @@ export default {
         {
           title: '二维码',
           align: 'center',
+          width: '10%',
           scopedSlots: { customRender: 'code' },
           customCell: (row, index) => {
             if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
@@ -219,8 +250,10 @@ export default {
         {
           title: '监控对象',
           dataIndex: 'host_alias',
+          align: 'center',
+          scopedSlots: { customRender: 'host' },
           customCell: (row, index) => {
-            if (this.hostTable.length < 10) {
+            if (this.hostTable.length < this.data.length) {
               this.hostTable.push(row.host_id)
             }
             if (index !== this.hostTable.indexOf(row.host_id)) {
@@ -247,10 +280,12 @@ export default {
         },
         {
           title: '监控实体',
+          align: 'center',
+          width: '15%',
           dataIndex: 'endpoint_alias',
           scopedSlots: { customRender: 'endpoint' },
           customCell: (row, index) => {
-            if (this.endpointTable.length < 10) {
+            if (this.endpointTable.length < this.data.length) {
               this.endpointTable.push(row.endpoint_id)
             }
             if (index !== this.endpointTable.indexOf(row.endpoint_id)) {
@@ -282,29 +317,8 @@ export default {
         {
           title: '操作',
           align: 'center',
-          scopedSlots: { customRender: 'action' },
-          customCell: (row, index) => {
-            if (index !== this.hostTable.indexOf(row.host_id)) {
-              return {
-                style: { display: 'none' },
-                attrs: {
-                  rowSpan: 0
-                }
-              }
-            } else {
-              let count = 0
-              for (const argument of this.hostTable) {
-                if (argument === row.host_id) {
-                  count += 1
-                }
-              }
-              return {
-                attrs: {
-                  rowSpan: count
-                }
-              }
-            }
-          }
+          width: '20%',
+          scopedSlots: { customRender: 'action' }
         }
       ],
       hostTable: [],
@@ -314,8 +328,8 @@ export default {
       checkpoints: [],
       qcCodeGlobalLoading: false,
       qcCodeLoading: {},
-      pathId: null,
-      zoneId: null,
+      pathId: '1267708678983651329',
+      zoneId: '1267708678362894336',
       hostList: null,
       endpointList: null,
       metricList: null,
@@ -379,7 +393,22 @@ export default {
     onPaginationChange (pageNumber) {
       this.$table.pageNumber = pageNumber
     },
-
+    async deleteMetric (row) {
+      const result = await xungeng.post('host/deleteMetric', {
+        pathId: this.pathId,
+        zoneId: this.zoneId,
+        checkpointId: row.checkpoint_id,
+        hostId: row.host_id,
+        endpointId: row.endpoint_id,
+        metricId: row.metric_id,
+        answerId: row.answer_id
+      })
+      if (result.code === 200) {
+        this.$message.success(result.msg)
+      } else {
+        this.$message.error(result.msg)
+      }
+    },
     isChecked (id) {
       return this.selectedRowKeys.includes(id)
     },
@@ -399,7 +428,8 @@ export default {
         this.selectedRowKeys.push(e)
       }
     },
-    async getPatrolPath ({ path_id = '1267708678983651329', zone_id = '1267708678362894336' }) {
+    async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
+      console.log(checkpoint_alias)
       this.spinning = true
       this.data = []
       this.checkpoints = []
@@ -407,9 +437,19 @@ export default {
       this.hostTable = []
       this.endpointTable = []
       let query_sql = 'select * from v_patrol_path where 1=1 '
-      query_sql += 'and path_id = ' + path_id
-      query_sql += 'and zone_id =' + zone_id
+      let querys = 'select count(1) as total from v_patrol_path where 1=1 '
+      query_sql += 'and path_id = ' + this.pathId
+      query_sql += 'and zone_id =' + this.zoneId
+      if (checkpoint_alias !== null && checkpoint_alias !== undefined && checkpoint_alias !== '') {
+        query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
+        querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
+      }
+      query_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      console.log(query_sql)
       this.data = dealQuery(await sql(query_sql))
+      querys += ' and path_id = ' + this.pathId
+      querys += ' and zone_id =' + this.zoneId
+      this.pagination.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
       this.spinning = false
     },
     async fetchHost () {
@@ -495,18 +535,31 @@ export default {
     },
     changeZone ({ pathId, zoneId }) {
       this.table.pageNumber = 1
-      this.getPatrolPath({ path_id: pathId, zone_id: zoneId })
+      this.pathId = pathId
+      this.zoneId = zoneId
+      this.getPatrolPath(1, {})
     },
     // 点击编辑
-    infoEdit (checkId, checkAlias, id) {
+    infoEdit (row, status) {
       if (this.fetching) {
         return
       }
       this.visible = true
-      this.xgModelPoint = { id: checkId, alias: checkAlias, path: this.pathId, zone: this.zoneId }
-      this.form.hostId = id
+      this.formStatus = status
+      this.xgModelPoint = { alias: row.checkpoint_alias }
+      this.form = {
+        checkpointId: row.checkpoint_id,
+        pathId: this.pathId,
+        zoneId: this.zoneId,
+        hostId: status < 3 ? row.host_id : '',
+        ...status < 3 ? {} : { hostAlias: '' },
+        ...status === 0 ? {} : { originMetricId: row.metric_id, originAnswerId: row.answer_id },
+        endpointId: status < 2 ? row.endpoint_id : '',
+        ...status < 2 ? {} : { endpointAlias: '',
+          visible: true },
+        metricId: status < 1 ? row.metric_id : ''
+      }
     },
-
     downloadQrCode ({ checkpointId, checkpointAlias }) {
       this.$set(this.qcCodeLoading, checkpointId, true)
       return PatrolService
@@ -559,7 +612,7 @@ export default {
     this.fetchMetric()
     this.fetchAnswer()
     this.fetchThreshold()
-    this.getPatrolPath({})
+    this.getPatrolPath(1, {})
   }
 }
 </script>
