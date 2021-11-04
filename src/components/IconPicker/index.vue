@@ -148,6 +148,9 @@ import StorageAndBackup from '@/assets/network-icons/StorageAndBackup.png'
 import TOPSECFireWall from '@/assets/network-icons/TOPSECFireWall.png'
 import VirtualESX from '@/assets/network-icons/VirtualESX.png'
 import WirelessControl from '@/assets/network-icons/WirelessControl.png'
+import CloudSpec from '@/assets/network-icons/CloudSpec.png'
+import FirewallSpec from '@/assets/network-icons/FirewallSpec.png'
+import SwitchSpec from '@/assets/network-icons/SwitchSpec.png'
 
 export default {
   name: 'IconPicker',
@@ -160,6 +163,9 @@ export default {
   data: () => ({
     defaultIcon: { name: 'Others', img: Others },
     icons: [
+      { name: 'CloudSpec', img: CloudSpec },
+      { name: 'FirewallSpec', img: FirewallSpec },
+      { name: 'SwitchSpec', img: SwitchSpec },
       { name: 'dog', img: dog },
       { name: 'ACDevice', img: ACDevice },
       { name: 'Mssql', img: Mssql },
