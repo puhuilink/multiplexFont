@@ -46,7 +46,7 @@
               </a-col>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="告警等级" v-bind="formItemLayout" class="fw">
+                <a-form-item label="告警等级" v-bind="formItemLayout" class="fw" v-show="advanced">
                   <a-select allowClear v-model.number="queryParams.severity" >
                     <a-select-option
                       v-for="[value, label] in levelList"
@@ -62,6 +62,7 @@
           <span :class="advanced ? 'expand' : 'collapse'">
             <QueryBtn @click="query" />
             <ResetBtn @click="resetQueryParams" />
+            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
           </span>
         </a-form>
       </template>

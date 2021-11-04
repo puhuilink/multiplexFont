@@ -42,7 +42,7 @@
 
               <a-row>
                 <a-col :md="12" :sm="24">
-                  <a-form-item label="任务单号" v-bind="formItemLayout" class="fw">
+                  <a-form-item label="任务单号" v-bind="formItemLayout" class="fw" v-show="advanced">
                     <a-input-number
                       class="fw"
                       v-model="queryParams.id"

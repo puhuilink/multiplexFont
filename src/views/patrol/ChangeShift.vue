@@ -42,7 +42,7 @@
             <span :class="advanced ? 'expand' : 'collapse'">
               <QueryBtn @click="query" />
               <ResetBtn @click="resetQueryParams" />
-              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+              <!--              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />-->
             </span>
           </a-form>
         </template>
