@@ -202,10 +202,16 @@ export default {
           result = await xungeng.post('host/editMetric', this.form)
       }
       if (result.code === 200) {
-        this.$message.success(result.msg)
-        this.visible = false
+        this.$notification.success({
+          message: '系统提示',
+          description: '巡更路径变更成功'
+        })
+        this.$emit('fresh')
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     loadNewHost () {

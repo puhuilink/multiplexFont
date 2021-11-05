@@ -3,8 +3,7 @@
     <a-form class="ant-advanced-search-form" :form="form">
       <a-row :gutter="24">
         <a-col
-          :span="6"
-          offset="8"
+          :span="10"
           :style="{textAlign: 'right'}"
         >
           <a-form-item>
@@ -18,7 +17,7 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="6">
+        <a-col :span="10">
           <a-form-item>
             类型:
             <a-select
@@ -27,7 +26,18 @@
                 `type`
               ]"
               placeholder="请选择类型"
-            />
+            >
+              <a-select-option
+                value="select"
+              >
+                选择
+              </a-select-option>
+              <a-select-option
+                value="fill"
+              >
+                填写
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="4" :style="{textAlign: 'left',marginLeft: '-10px'}">
@@ -41,10 +51,10 @@
       </a-row>
     </a-form>
     <a-button
-      type="primary"
       @click="()=>{
         this.visible = true
         this.modalTitle = '新增检查项'
+        this.isNew = true
         this.formatList = [
           {
             value: null,
@@ -116,10 +126,14 @@
                 </a-input>
               </a-col>
               <a-col :span="4">
-                <a><a-icon type="minus" @click="removeRecord(index)"/></a>
+                <a>
+                  <a-icon type="minus" @click="removeRecord(index)" />
+                </a>
               </a-col>
             </a-row>
-            <a-row :style="{display:'flex',justifyContent:'center'}"><a type="primary" @click="addRecord"><a-icon type="plus" /></a>
+            <a-row :style="{display:'flex',justifyContent:'center'}"><a type="primary" @click="addRecord">
+              <a-icon type="plus" />
+            </a>
             </a-row>
           </div>
           <a-select
@@ -133,7 +147,7 @@
             ]"
             defaultValue="%.1f"
           >
-            <a-select-option value="%.1f" >
+            <a-select-option value="%.1f">
               1位小数
             </a-select-option>
           </a-select>
@@ -149,32 +163,36 @@
           >
             <a-select-option :value="'eq'">等于</a-select-option>
             <a-select-option :value="'ne'">不等于</a-select-option>
-            <a-select-option :value="'gt'">大于</a-select-option>
-            <a-select-option :value="'lt'">小于</a-select-option>
-            <a-select-option :value="'out'">超过</a-select-option>
+            <div v-if="this.answerForm.getFieldsValue().type === 'fill'">
+              <a-select-option :value="'gt'">大于</a-select-option>
+              <a-select-option :value="'lt'">小于</a-select-option>
+              <a-select-option :value="'out'">超过</a-select-option>
+            </div>
           </a-select>
         </a-form-item>
         <a-form-item
           label="默认报警最小值"
-          v-if="this.answerForm.getFieldsValue().defaultCondition !=='gt'"
+          v-if="this.answerForm.getFieldsValue().defaultCondition !=='gt' && this.answerForm.getFieldsValue().defaultCondition !== undefined"
         >
           <a-select
-            v-if="this.answerForm.getFieldsValue().defaultCondition === 'eq'"
+            v-if="(this.answerForm.getFieldsValue().defaultCondition === 'eq'||this.answerForm.getFieldsValue().defaultCondition === 'ne')&&this.answerForm.getFieldsValue().type === 'select'"
             v-decorator="[
               'defaultLowerThreshold',
               { rules: [{ required: true, message: '默认报警条件不能为空' }] },
             ]"
           >
             <a-select-option
+              v-if="formatList[0].alias!==null"
               v-for="(f,index) in formatList"
               :key="index"
-              :value="f.value"
+              :value="f.value.toString()"
             >
               {{ f.alias }}
             </a-select-option>
 
           </a-select>
           <a-input-number
+            v-else-if="this.answerForm.getFieldsValue().defaultCondition !== 'gt'&&this.answerForm.getFieldsValue().type !== 'select'"
             :style="{width:'100%'}"
             v-decorator="[
               'defaultLowerThreshold',
@@ -184,7 +202,10 @@
         </a-form-item>
         <a-form-item
           label="默认报警最大值"
-          v-if="this.answerForm.getFieldsValue().type!=='select'&&this.answerForm.getFieldsValue().defaultCondition !=='lt'"
+          v-if="(this.answerForm.getFieldsValue().type!=='select'||this.answerForm.getFieldsValue().defaultCondition !=='lt')
+            && this.answerForm.getFieldsValue().defaultCondition !== undefined
+            && this.answerForm.getFieldsValue().defaultCondition !== 'eq'
+            && this.answerForm.getFieldsValue().defaultCondition !== 'ne'"
         >
           <a-input-number
             :style="{width:'100%'}"
@@ -194,7 +215,8 @@
             ]"
           >
           </a-input-number>
-        </a-form-item><a-form-item
+        </a-form-item>
+        <a-form-item
           label="默认报警等级"
         >
           <a-select
@@ -204,11 +226,11 @@
             ]"
           >
             <a-select-option
-              v-for="a in 5"
+              v-for="a in 4"
               :key="a"
-              :value="a"
+              :value="a.toString()"
             >
-              告警等级{{ a }}
+              L{{ a }}
             </a-select-option>
 
           </a-select>
@@ -224,7 +246,11 @@
       row-key="id"
     >
       <template slot="format" slot-scope="text,record">
-        <a-card size="small" v-if="record.type!=='fill'" :key="index" v-for="(a,index) in Object.values(JSON.parse(text))">
+        <a-card
+          size="small"
+          v-if="record.type!=='fill'"
+          :key="index"
+          v-for="(a,index) in Object.values(JSON.parse(text))">
           <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.alias }}</a-card-grid>
           <a-card-grid style="width: 50%;text-align: center;height: 15px">{{ a.value }}</a-card-grid>
         </a-card>
@@ -290,7 +316,8 @@ export default {
         {
           title: '默认告警等级',
           dataIndex: 'default_severity',
-          align: 'center'
+          align: 'center',
+          customRender: (value) => 'L' + value
         },
         {
           title: '操作',
@@ -305,7 +332,9 @@ export default {
         alias: ''
       }],
       pagination: {},
-      modalTitle: ''
+      modalTitle: '',
+      isNew: false,
+      editId: null
     }
   },
   computed: {},
@@ -318,6 +347,9 @@ export default {
   },
   methods: {
     removeRecord (index) {
+      if (this.formatList.length < 2) {
+        return
+      }
       this.formatList.splice(index, 1)
     },
     newSubmit () {
@@ -341,20 +373,39 @@ export default {
                 'defaultLowerThreshold': val.defaultLowerThreshold
               }
           }
-          const result = await xungeng.post('answer/add', {
-            'alias': val.alias,
-            'type': val.type,
-            'format': JSON.stringify(this.formatList),
-            'defaultCondition': val.defaultCondition,
-            ...threshold,
-            'defaultSeverity': val.defaultSeverity
-          })
+          let result
+          if (this.isNew) {
+            result = await xungeng.post('answer/add', {
+              'alias': val.alias,
+              'type': val.type,
+              'format': JSON.stringify(this.formatList),
+              'defaultCondition': val.defaultCondition,
+              ...threshold,
+              'defaultSeverity': val.defaultSeverity
+            })
+          } else {
+            result = await xungeng.post('answer/edit', {
+              'id': this.editId,
+              'alias': val.alias,
+              'type': val.type,
+              'format': JSON.stringify(this.formatList),
+              'defaultCondition': val.defaultCondition,
+              ...threshold,
+              'defaultSeverity': val.defaultSeverity
+            })
+          }
           if (result.code === 200) {
-            this.$message.success(result.msg)
+            this.$notification.success({
+              message: '系统提示',
+              description: this.isNew ? '新增检查值成功' : '编辑检查值成功'
+            })
             this.visible = false
             await this.fetchAnswer()
           } else {
-            this.$message.error(result.msg)
+            this.$notification.error({
+              message: '系统提示',
+              description: '操作失败：' + result.msg.toString()
+            })
           }
         }
       })
@@ -385,7 +436,7 @@ export default {
           this.answers = {}
           let where = ''
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
-            where += ' and alias like %' + value.alias + '%'
+            where += ' and alias like \'%' + value.alias + '%\''
           }
           if (value.type !== null && value.type !== undefined && value.type !== '') {
             where += 'and type = ' + value.type
@@ -404,19 +455,23 @@ export default {
     edit (record) {
       this.modalTitle = '编辑检查值'
       this.visible = true
+      this.isNew = false
+      this.editId = record.id
       this.$nextTick(() => {
         this.answerForm.setFieldsValue({
-          'id': record.id,
           'alias': record.alias,
           'type': record.type,
           'format': JSON.parse(record.format).format,
           'defaultCondition': record.default_condition,
-          'defaultLowerThreshold': record.default_lower_threshold,
-          'defaultUpperThreshold': record.default_upper_uhreshold,
           'defaultSeverity': record.default_severity
         })
-        console.log(JSON.parse(record.format))
         this.formatList = JSON.parse(record.format)
+        this.$nextTick(() => {
+          this.answerForm.setFieldsValue({
+            'defaultLowerThreshold': record.default_lower_threshold,
+            'defaultUpperThreshold': record.default_upper_threshold
+          })
+        })
       })
     },
     async remove (id) {
@@ -424,11 +479,17 @@ export default {
         'id': id
       })
       if (result.code === 200) {
-        this.$message.success(result.msg)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除检查值成功'
+        })
         this.visible = false
         await this.fetchAnswer()
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     addRecord () {
@@ -461,5 +522,5 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang='less'>
 </style>

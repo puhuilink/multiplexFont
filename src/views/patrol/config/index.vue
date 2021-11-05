@@ -125,6 +125,10 @@
       :answers="answerList"
       :thresholds="thresholdList"
       v-if="visible"
+      @fresh="()=>{
+        this.visible = false
+        getPatrolPath(1,{})
+      }"
     />
   </div>
 
@@ -404,9 +408,16 @@ export default {
         answerId: row.answer_id
       })
       if (result.code === 200) {
-        this.$message.success(result.msg)
+        this.$notification.success({
+          message: '系统提示',
+          description: '巡更路径变更成功'
+        })
+        await this.getPatrolPath(1, {})
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     isChecked (id) {
@@ -429,7 +440,6 @@ export default {
       }
     },
     async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
-      console.log(checkpoint_alias)
       this.spinning = true
       this.data = []
       this.checkpoints = []

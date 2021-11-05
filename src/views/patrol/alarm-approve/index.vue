@@ -173,9 +173,13 @@ export default {
       },
       {
         title: '异常数量',
-        dataIndex: 'events { id }',
+        dataIndex: 'events_aggregate(where: {status: {_eq: "0"}}) {\n' +
+          '      aggregate {\n' +
+          '        count\n' +
+          '      }\n' +
+          '    }',
         width: 180,
-        customRender: (_events, { events }) => events.length
+        customRender: (_events_aggregate, { events_aggregate }) => events_aggregate.aggregate.count
       }
     ]),
     queryParams: {

@@ -206,11 +206,12 @@ export default {
         }
       },
       {
-        title: '存在异常',
-        dataIndex: 'event_occur',
+        title: '异常数量',
+        dataIndex: 'events_aggregate{aggregate{count}}',
         width: 80,
-        // TODO: useMapping
-        customRender: eventOccur => eventOccur ? ENABLE_LIST_MAPPING.get(eventOccur) : '否'
+        customRender: (errorCount, record) => {
+          return record.events_aggregate.aggregate.count
+        }
       },
       {
         title: '巡更人员',
@@ -231,7 +232,6 @@ export default {
   methods: {
     moment,
     handleTableChange (pagination, filters, sorter) {
-      console.log('pag', pagination, filters, sorter)
     },
     async getGroup () {
       const { data: { GroupList } } = await GroupService.find({
@@ -279,7 +279,11 @@ export default {
           const key = this.selectedRowKeys[i]
           const record = this.selectedRows[i]
           const content = await PatrolService.getPatrolTaskExcel(key)
-          await downloadExcel('巡更记录单-' + record.actual_end_time.replaceAll('T', '-') + '.xls', content)
+          if (content.length > 0) {
+            await downloadExcel('巡更记录单-' + record.id.toString() + '.xls', content)
+          } else {
+            throw Error('该任务单没有任务报告！无法导出！')
+          }
         }
         this.$notification.success({
           message: '系统提示',
@@ -288,7 +292,7 @@ export default {
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: `导出交接班记录失败${e}` } })
+          description: h => h('p', { domProps: { innerHTML: e.message } })
         })
         throw e
       } finally {
