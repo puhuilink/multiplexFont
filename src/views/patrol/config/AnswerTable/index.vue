@@ -140,9 +140,9 @@
             </a-row>
           </div>
           <a-select
-            v-else
+            v-else-if="this.answerForm.type === 'fill'"
             :defaultValue="'%.1f'"
-            v-model="JSON.parse(answerForm.format).format"
+            v-model="temp"
           >
             <a-select-option value="%.1f">
               1位小数
@@ -317,6 +317,7 @@ export default {
         value: null,
         alias: ''
       }],
+      temp: '',
       pagination: {},
       modalTitle: '',
       isNew: false,
@@ -326,7 +327,7 @@ export default {
   computed: {
     isFill: {
       get () {
-        return this.answerForm.type.toString() === 'fill'
+        return this.answerForm.type === 'fill'
       }
     }
   },
@@ -348,7 +349,15 @@ export default {
             alias: ''
           }]
           this.answerForm.defaultCondition = 'eq'
+        } else if (val === 'fill') {
+          this.answerForm.format = JSON.stringify({ format: '' })
         }
+      },
+      immediate: true
+    },
+    temp: {
+      handler (val) {
+        this.answerForm.format = JSON.stringify({ format: val })
       },
       immediate: true
     }
