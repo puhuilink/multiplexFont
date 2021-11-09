@@ -242,6 +242,7 @@ export default {
               message: '系统提示',
               description: '新增检查项成功'
             })
+            this.visible = false
           } else {
             this.$notification.error({
               message: '系统提示',
