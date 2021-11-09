@@ -125,7 +125,7 @@
       <template slot="action" slot-scope="value,record">
         <a-button type="primary" @click="toUpdate(record)">编辑</a-button>
         <a-divider type="vertical"/>
-        <a-button type="primary" @click="deleteThreshold(record.id)">删除</a-button>
+        <a-button type="primary" @click="toRemove(record.id)">删除</a-button>
       </template>
     </a-table>
   </div>
@@ -144,6 +144,8 @@ export default {
   props: {},
   data () {
     return {
+      delId: null,
+      deleteVisible: false,
       table: {
         pageNumber: 1,
         pageSize: 10
@@ -209,6 +211,20 @@ export default {
   methods: {
     isBlank (element) {
       return element !== null && element !== undefined && element !== ''
+    },
+    toRemove (item) {
+      const that = this
+      this.$confirm({
+        title: '确定要删除该项吗',
+        content: '删除后路径相关信息将变更',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          that.deleteThreshold(item)
+        },
+        onCancel () {}
+      })
     },
     handleSearch (pageNo = 1) {
       this.form.validateFields((err, value) => {

@@ -22,7 +22,9 @@
         <a-form-model-item label="监控对象" ref="hostId" prop="hostId">
           <a-select
             show-search
+            :filterOption="filterOption"
             @focus="()=>{ this.host = this.host_list}"
+
             :not-found-content="null"
             v-model="editForm.hostId"
           >
@@ -34,6 +36,7 @@
           <a-select
             v-model="editForm.endpointId"
             show-search
+            :filterOption="filterOption"
             @focus="()=>{ this.endpoint = this.endpoint_list}"
             :not-found-content="null"
           >
@@ -45,6 +48,7 @@
           <a-select
             v-model="editForm.metricId"
             show-search
+            :filterOption="filterOption"
             @focus="()=>{ this.metric = this.metric_list}"
             :not-found-content="null"
           >
@@ -56,6 +60,7 @@
           <a-select
             v-model="editForm.answerId"
             show-search
+            :filterOption="filterOption"
             @focus="()=>{ this.answer = this.answer_list}"
             :not-found-content="this.fetching ? undefined : null"
           >
@@ -69,16 +74,16 @@
           v-model="editForm.condition">
           <a-select-option :value="'eq'">等于</a-select-option>
           <a-select-option :value="'ne'">不等于</a-select-option>
-          <a-select-option :value="'gt'">大于</a-select-option>
-          <a-select-option :value="'lt'">小于</a-select-option>
-          <a-select-option :value="'out'">超过</a-select-option>
+          <a-select-option v-if="isFill " :value="'gt'">大于</a-select-option>
+          <a-select-option v-if="isFill" :value="'lt'">小于</a-select-option>
+          <a-select-option v-if="isFill" :value="'out'">超过</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-form-model-item
         label="阈值数值"
         ref="threshold"
         prop="lowerThreshold"
-        v-if="!this.isNew||this.isLowThresholdInput||this.isLowThresholdSelect">
+        v-if="this.isLowThresholdInput||this.isLowThresholdSelect">
         <a-input-number
           :style="{width:'100%'}"
           v-if="isLowThresholdInput"
@@ -177,10 +182,10 @@ export default {
         condition: [{ required: true, message: '阈值条件不能为空！', trigger: 'blur' }],
         severity: [{ required: true, message: '阈值等级不能为空！', trigger: 'blur' }],
         lowerThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'blur' },
-          { pattern: '^(\\d+)(\\.\\d{1})?$', message: '必须填写数字！', trigger: 'change' }
+          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }
         ],
         upperThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'blur' },
-          { pattern: '^(\\d+)(\\.\\d{1})?$', message: '必须填写数字！', trigger: 'change' }]
+          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }]
       }
     }
   },
@@ -218,6 +223,8 @@ export default {
               case 'ne':
                 return true
               case 'out':
+                return true
+              case 'lt':
                 return true
               default:
                 return false
@@ -279,12 +286,12 @@ export default {
     },
     isUpThreshold () {
       if (this.isNew) {
-        if (this.editData.answerId === undefined || this.editData.answerId === null || this.editData.answerId === '') {
+        if (this.editForm.answerId === undefined || this.editForm.answerId === null || this.editForm.answerId === '') {
           return false
         } else {
-          const obj = this.answer_list.find((answer) => answer.id.toString() === this.editData.answerId.toString())
+          const obj = this.answer_list.find((answer) => answer.id.toString() === this.editForm.answerId.toString())
           if (obj.type === 'fill') {
-            switch (this.editData.condition) {
+            switch (this.editForm.condition) {
               case 'gt':
                 return true
               case 'out':
@@ -313,6 +320,13 @@ export default {
     },
     editData () {
       return this.editForm
+    },
+    isFill () {
+      if (this.editForm.answerId === undefined || this.editForm.answerId === '') {
+        return false
+      }
+      const a = this.answer_list.find(_ => _.id === this.editForm.answerId)
+      return a.type === 'fill'
     }
   },
   watch: {
@@ -342,6 +356,11 @@ export default {
     this.appendAlias()
   },
   methods: {
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
     closeModal () {
       this.$refs.ruleForm.resetFields()
       this.$emit('cancel')

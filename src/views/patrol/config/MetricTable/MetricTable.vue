@@ -124,7 +124,7 @@
           <span v-else>
             <a-button type="primary" :disabled="editingKey !== ''" @click="() => edit(record.id)">编辑</a-button>
             <a-divider type="vertical" />
-            <a-button type="primary" :disabled="editingKey !== ''" @click="() => deleteMetric(record.id)">删除</a-button>
+            <a-button type="primary" :disabled="editingKey !== ''" @click="() => toRemove(record.id)">删除</a-button>
           </span>
         </div>
       </template>
@@ -213,6 +213,20 @@ export default {
             this.fetchMetric(null, pageNo)
           }
         }
+      })
+    },
+    toRemove (item) {
+      const that = this
+      this.$confirm({
+        title: '确定要删除该项吗',
+        content: '删除后路径相关信息将变更',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          that.deleteMetric(item)
+        },
+        onCancel () {}
       })
     },
     handleReset () {
