@@ -240,7 +240,7 @@ export default {
           if (result.code === 200) {
             this.$notification.success({
               message: '系统提示',
-              description: '导出交接班记录成功'
+              description: '新增检查项成功'
             })
           } else {
             this.$notification.error({
