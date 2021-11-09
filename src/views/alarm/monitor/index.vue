@@ -181,7 +181,7 @@
 import _ from 'lodash'
 import Timeout from 'await-timeout'
 import { Excel } from 'antd-vue-table-saveas-excel'
-import moment from 'moment'
+import moment, { now } from 'moment'
 import { List } from '~~~/Mixins'
 import QueryMixin from '../queryMixin'
 import { AlarmService, CmdbHostEndpointMetricService } from '@/api/index'
@@ -190,7 +190,7 @@ import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import { ALARM_STATE } from '@/tables/alarm/enum'
 import { levelColorMapping, fontLevelColorMapping } from '~~~/Alarm/color.config'
-const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip']
+const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip', 'type_model_name', 'device_model_name']
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -334,15 +334,22 @@ export default {
           validate: () => this.showOrigin
         },
         {
+          title: '设备类型',
+          dataIndex: `type_model_name`,
+          width: 100,
+          show: true
+        },
+        {
           title: '品牌设备',
-          dataIndex: `device_model_value_code`,
+          dataIndex: `device_model_name`,
           width: 100,
           show: true,
-          customRender: (text, record) => {
-            const brand = _.get(record, 'brand_value_code', '')
-            const model = _.get(record, 'device_model_value_code', '')
-            return brand || model
-          },
+          // customRender: (text, record) => {
+          //   const brand = _.get(record, 'brand_value_code', '')
+          //   const model = _.get(record, 'device_model_value_code', '')
+          //   console.log(brand, model)
+          //   return brand || model
+          // },
           validate: () => this.showDeviceModel
         },
         {
@@ -396,9 +403,10 @@ export default {
           show: true,
           // 仅查看已解决的告警时展示该列
           validate: () => this.showHistory,
-          customRender: (__, { receive_time, close_time }) => {
-            if (receive_time && close_time) {
-              const duration = moment(close_time).diff(moment(receive_time), 'minutes')
+          customRender: (__, { first_tme, close_time }) => {
+            console.log(moment(now()), moment(close_time))
+            if (first_tme) {
+              const duration = moment(now()).diff(moment(first_tme), 'minutes')
               return moment.duration(duration, 'minutes').humanize()
             } else {
               return ''
@@ -559,7 +567,8 @@ export default {
         'close_by',
         'detail',
         'agent_id',
-        'origin'
+        'origin',
+        'first_time'
       ]
       // const alarmFields = this.columns.map(({ dataIndex }) => dataIndex)
       // cmdb_host_endpoint_metric条件

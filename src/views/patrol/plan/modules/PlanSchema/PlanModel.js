@@ -1,6 +1,7 @@
 import { CronModel } from './Cron/CronModel'
 import { TimeRangeModel } from './TimeRange/TimeRangeModel'
 import moment from 'moment'
+import _ from 'lodash'
 
 export const timeFormat = 'YYYY-MM-DD HH:mm:ss'
 
@@ -29,7 +30,7 @@ export class PlanModel {
     }
     this.pathId = pathId
     this.zoneId = zoneId
-    this.exception = (exception === '') ? [] : exception.split(',')
+    this.exception = (_.isEmpty(exception)) ? [] : exception.split(',')
     this.groupId = groupId
     this.expireTime = expireTime
     this.status = status
