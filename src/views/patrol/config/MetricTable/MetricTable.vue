@@ -249,7 +249,7 @@ export default {
               description: '操作失败：' + result.msg.toString()
             })
           }
-          await this.fetchMetric(null, 1)
+          await this.fetchMetric(null, this.current)
         }
       })
     },
@@ -270,9 +270,9 @@ export default {
         bases += ' and' + where
       }
       base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
-      console.log(base_sql)
+      // console.log(base_sql)
       const result = await sql(base_sql)
-      console.log(result)
+      // console.log(result)
       this.total = parseInt(dealQuery(await sql(bases))[0]['total'])
       const data = dealQuery(result)
       this.metrics = {}
