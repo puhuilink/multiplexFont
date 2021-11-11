@@ -331,3 +331,10 @@ export const formatFloat = function (value, n = 0) {
   }
   return s
 }
+
+/**
+ * 数组去空值
+ */
+export const removeEmpty = function (arr) {
+  return arr.filter(el => !_.isEmpty(el))
+}

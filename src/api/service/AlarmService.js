@@ -95,6 +95,19 @@ class AlarmService extends BaseService {
       }
     })
   }
+
+  /**
+   * 告警批量确认
+   */
+  static async batchComfirm (alarmIds = []) {
+    const formData = new FormData()
+    formData.append('alarmIds', alarmIds)
+    return axios.post(`/AlarmAndRule/batchAckAlarm`, formData, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+  }
 }
 
 export {
