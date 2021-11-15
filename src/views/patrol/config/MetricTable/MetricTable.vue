@@ -3,8 +3,8 @@
     <a-form class="ant-advanced-search-form" :form="form">
       <a-row :gutter="24">
         <a-col
-          :span="5"
-          offset="15"
+          :span="15"
+          offset="5"
         >
           <a-form-item>
             检查项名称：
@@ -30,7 +30,6 @@
       </a-row>
     </a-form>
     <a-button
-      type="primary"
       @click="()=>{
         this.visible = true
         this.isNew = true
@@ -50,7 +49,7 @@
         >
           <a-input
             v-decorator="[
-              'metricAlias',
+              'alias',
               { rules: [{ required: true, message: '检查项不能为空' }] },
             ]"
             style="width: 110px"
@@ -125,7 +124,7 @@
           <span v-else>
             <a-button type="primary" :disabled="editingKey !== ''" @click="() => edit(record.id)">编辑</a-button>
             <a-divider type="vertical" />
-            <a-button type="primary" :disabled="editingKey !== ''" @click="() => deleteMetric(record.id)">删除</a-button>
+            <a-button type="primary" :disabled="editingKey !== ''" @click="() => toRemove(record.id)">删除</a-button>
           </span>
         </div>
       </template>
@@ -208,12 +207,26 @@ export default {
       this.form.validateFields((err, value) => {
         if (!err) {
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
-            where = 'alias like %' + value.alias + '%'
+            where = ' alias like \'%' + value.alias + '%\''
             this.fetchMetric(where, pageNo)
           } else {
             this.fetchMetric(null, pageNo)
           }
         }
+      })
+    },
+    toRemove (item) {
+      const that = this
+      this.$confirm({
+        title: '确定要删除该项吗',
+        content: '删除后路径相关信息将变更',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          that.deleteMetric(item)
+        },
+        onCancel () {}
       })
     },
     handleReset () {
@@ -222,14 +235,21 @@ export default {
     newSubmit () {
       this.metricForm.validateFields(async (err, val) => {
         if (!err) {
-          const { metricAlias, answerId } = val
-          const result = await xungeng.post('metric/add', { 'metricAlias': metricAlias, 'answerId': answerId })
+          const { alias, answerId } = val
+          const result = await xungeng.post('metric/add', { 'alias': alias, 'answerId': answerId })
           if (result.code === 200) {
-            this.$message.success(result.msg)
+            this.$notification.success({
+              message: '系统提示',
+              description: '新增检查项成功'
+            })
+            this.visible = false
           } else {
-            this.$message.error(result.msg)
+            this.$notification.error({
+              message: '系统提示',
+              description: '操作失败：' + result.msg.toString()
+            })
           }
-          await this.fetchMetric(null, 1)
+          await this.fetchMetric(null, this.current)
         }
       })
     },
@@ -241,14 +261,16 @@ export default {
       this.expand = !this.expand
     },
     async fetchMetric (where, pageNo) {
+      this.editingKey = ''
       this.metrics = {}
       let base_sql = 'select * from t_patrol_metric where 1=1 '
       let bases = 'select count(1) as total from t_patrol_metric where 1=1 '
       if (where !== null && where !== undefined && where !== '') {
-        base_sql += 'and' + where
-        bases += 'and' + where
+        base_sql += ' and' + where
+        bases += ' and' + where
       }
       base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      // console.log(base_sql)
       const result = await sql(base_sql)
       // console.log(result)
       this.total = parseInt(dealQuery(await sql(bases))[0]['total'])
@@ -284,9 +306,16 @@ export default {
         })
       if (result.code === 200) {
         delete this.metrics[id]
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除检查项成功'
+        })
         this.$forceUpdate()
       } else {
-
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     async save (id) {
@@ -301,9 +330,16 @@ export default {
       if (result.code === 200) {
         this.metrics[id].metric_alias = this.tempMetric.metric_alias
         this.metrics[id].answer_id = this.tempMetric.answer_id
+        this.$notification.success({
+          message: '系统提示',
+          description: '编辑检查项成功'
+        })
         this.$forceUpdate()
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     cancel (id) {

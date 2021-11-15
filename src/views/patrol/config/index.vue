@@ -89,7 +89,7 @@
         <a-divider type="vertical"/>
         <a-button
           type="primary"
-          @click="deleteMetric(row)"
+          @click="()=>toRemove(row)"
         >
           删除
         </a-button>
@@ -114,6 +114,15 @@
         </a-row>
       </template>
     </a-table>
+    <delete-warn
+      :visible="deleteVisible"
+      :item="'检查项'"
+      @ok="deleteMetric(delId)"
+      @cancel="()=>{
+        this.deleteVisible = false
+        this.delId = null
+      }"
+    />
     <HostSchema
       :form.sync="form"
       :visible.sync="visible"
@@ -125,6 +134,10 @@
       :answers="answerList"
       :thresholds="thresholdList"
       v-if="visible"
+      @fresh="()=>{
+        this.visible = false
+        getPatrolPath(1,{})
+      }"
     />
   </div>
 
@@ -368,7 +381,9 @@ export default {
         pageSize: 5,
         total: 0
       },
-      xgModelPoint: { id: '', alias: '', path: '', zone: '' }
+      xgModelPoint: { id: '', alias: '', path: '', zone: '' },
+      delId: null,
+      deleteVisible: false
     }
   },
   computed: {
@@ -393,6 +408,20 @@ export default {
     onPaginationChange (pageNumber) {
       this.$table.pageNumber = pageNumber
     },
+    toRemove (item) {
+      const that = this
+      this.$confirm({
+        title: '确定要删除该项吗',
+        content: '删除后路径相关信息将变更',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          that.deleteMetric(item)
+        },
+        onCancel () {}
+      })
+    },
     async deleteMetric (row) {
       const result = await xungeng.post('host/deleteMetric', {
         pathId: this.pathId,
@@ -404,9 +433,16 @@ export default {
         answerId: row.answer_id
       })
       if (result.code === 200) {
-        this.$message.success(result.msg)
+        this.$notification.success({
+          message: '系统提示',
+          description: '巡更路径变更成功'
+        })
+        await this.getPatrolPath(1, {})
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     isChecked (id) {
@@ -429,7 +465,6 @@ export default {
       }
     },
     async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
-      console.log(checkpoint_alias)
       this.spinning = true
       this.data = []
       this.checkpoints = []
@@ -445,7 +480,6 @@ export default {
         querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
       }
       query_sql += ' limit 10 offset ' + (pageNo - 1) * 10
-      console.log(query_sql)
       this.data = dealQuery(await sql(query_sql))
       querys += ' and path_id = ' + this.pathId
       querys += ' and zone_id =' + this.zoneId

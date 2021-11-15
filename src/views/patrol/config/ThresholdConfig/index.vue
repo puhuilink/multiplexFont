@@ -4,12 +4,12 @@
       <a-form class="ant-advanced-search-form" :form="form">
         <a-row :gutter="32">
           <a-col
-            :span="6"
+            :span="8"
           >
             <a-form-item >
               监控对象：
               <a-input
-                :style="{width:'60%'}"
+                :style="{width:'63%'}"
                 v-decorator="[
                   `host_alias` ]"
                 placeholder="请输入关键字"
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col
-            :span="6"
+            :span="8"
           >
             <a-form-item >
               监控实体：
@@ -29,7 +29,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="6"
+            :span="8"
           >
             <a-form-item >
               检查项：
@@ -42,7 +42,7 @@
               />
             </a-form-item>
           </a-col><a-col
-            :span="6"
+            :span="8"
           >
             <a-form-item >
               检查值类型：
@@ -62,7 +62,7 @@
               </a-select>
             </a-form-item>
           </a-col><a-col
-            :span="6"
+            :span="8"
           >
             <a-form-item >
               告警等级：
@@ -90,12 +90,13 @@
         </a-row>
       </a-form>
       <a-button
-        type="primary"
         @click="()=>{
           this.visible=true
           this.isNew=true
-        }">新增阈值规则</a-button>
+          this.editForm = null
+        }">新增</a-button>
       <ThresholdSchema
+        v-if="visible"
         :visible="visible"
         :data-form="editForm"
         :is-new="isNew"
@@ -122,9 +123,9 @@
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
       <template slot="action" slot-scope="value,record">
-        <a-button type="primary" @click="toUpdate(record)">修改</a-button>
+        <a-button type="primary" @click="toUpdate(record)">编辑</a-button>
         <a-divider type="vertical"/>
-        <a-button type="primary" @click="deleteThreshold(record.id)">删除</a-button>
+        <a-button type="primary" @click="toRemove(record.id)">删除</a-button>
       </template>
     </a-table>
   </div>
@@ -143,6 +144,8 @@ export default {
   props: {},
   data () {
     return {
+      delId: null,
+      deleteVisible: false,
       table: {
         pageNumber: 1,
         pageSize: 10
@@ -209,12 +212,26 @@ export default {
     isBlank (element) {
       return element !== null && element !== undefined && element !== ''
     },
+    toRemove (item) {
+      const that = this
+      this.$confirm({
+        title: '确定要删除该项吗',
+        content: '删除后路径相关信息将变更',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk () {
+          that.deleteThreshold(item)
+        },
+        onCancel () {}
+      })
+    },
     handleSearch (pageNo = 1) {
       this.form.validateFields((err, value) => {
         if (!err) {
           let where = ''
           if (this.isBlank(value.host_alias)) {
-            where += ' and host_alis like \'%' + value.host_alias + '%\''
+            where += ' and host_alias like \'%' + value.host_alias + '%\''
           }
           if (this.isBlank(value.endpoint_alias)) {
             where += ' and endpoint_alias like \'%' + value.endpoint_alias + '%\''
@@ -262,9 +279,17 @@ export default {
     translateThreshold (record) {
       switch (record.condition) {
         case 'eq':
-          return '值为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          if (record.answer_type === 'fill') {
+            return '值为"' + record.lower_threshold + '"则异常'
+          } else {
+            return '值为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          }
         case 'ne':
-          return '值不为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          if (record.answer_type === 'fill') {
+            return '值不为"' + record.lower_threshold + '"则异常'
+          } else {
+            return '值不为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+          }
         case 'out':
           return '值超出"' + record.lower_threshold + '~' + record.upper_threshold + '"范围则异常'
         case 'gt':
@@ -301,11 +326,17 @@ export default {
         })
       }
       if (result.code === 200) {
-        this.$message.success(result.msg)
+        this.$notification.success({
+          message: '系统提示',
+          description: this.isNew ? '新增阈值成功' : '编辑阈值成功'
+        })
         this.visible = false
         await this.fetchThreshold({ pageNo: this.table.pageNumber })
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     async deleteThreshold (id) {
@@ -313,10 +344,16 @@ export default {
         'id': id
       })
       if (result.code === 200) {
-        this.$message.success(result.msg)
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除阈值成功'
+        })
         await this.fetchThreshold({ pageNo: this.table.pageNumber })
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     }
   }

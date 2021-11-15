@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="监控对象"
+    :title="modalTitle"
     wrapClassName="HostSchema"
     :visible="visible"
     @change="$emit('update:visible', $event)"
@@ -120,7 +120,7 @@ export default {
       type: Object,
       default: () => ({ id: '', alias: '' })
     },
-    // 1：编辑或新增检查项。2：新增监控实体及检查项。3：新增监控对象、监控实体、检查项
+    // 0：编辑检查项 1：新增检查项。2：新增监控实体及检查项。3：新增监控对象、监控实体、检查项
     formStatus: {
       type: Number,
       default: 1
@@ -155,6 +155,22 @@ export default {
       set (value) {
         this.form.visible = !value
       }
+    },
+    modalTitle: {
+      get () {
+        switch (this.formStatus) {
+          case 0:
+            return '编辑检查项'
+          case 1:
+            return '新增检查项'
+          case 2:
+            return '新增监控实体'
+          case 3:
+            return '新增监控对象'
+          default:
+            return '新增监控对象'
+        }
+      }
     }
   },
   created () {
@@ -168,6 +184,10 @@ export default {
       tempHe: {
         hostId: '',
         endpointId: ''
+      },
+      originalMetric: {
+        originalMetricId: '',
+        originalAnswerId: ''
       },
       pagination: {
         // total: Object.values(this.metrics).length,
@@ -199,13 +219,19 @@ export default {
           result = await xungeng.post('host/addMetric', this.form)
           break
         case 0:
-          result = await xungeng.post('host/editMetric', this.form)
+          result = await xungeng.post('host/editMetric', { ...this.form, ...this.originalMetric })
       }
       if (result.code === 200) {
-        this.$message.success(result.msg)
-        this.visible = false
+        this.$notification.success({
+          message: '系统提示',
+          description: '巡更路径变更成功'
+        })
+        this.$emit('fresh')
       } else {
-        this.$message.error(result.msg)
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
       }
     },
     loadNewHost () {
@@ -241,7 +267,20 @@ export default {
       })
     }
   },
-  watch: {}
+  watch: {
+    'form.metricId': {
+      handler (newValue, oldValue) {
+        if (oldValue !== undefined) {
+          this.originalMetric = {
+            originalMetricId: oldValue,
+            originalAnswerId: this.metrics[oldValue].answer_id
+          }
+        }
+        this.form.answerId = this.metrics[newValue].answer_id
+      },
+      immediate: true
+    }
+  }
 }
 </script>
 
