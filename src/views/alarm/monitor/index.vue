@@ -93,6 +93,21 @@
                   ></a-input>
                 </a-form-item>
               </a-col>
+              <a-col :xl="8" :md="12" :sm="24">
+                <a-form-item label="确认状态" v-bind="formItemLayout" class="fw">
+                  <a-select
+                    allowClear
+                    v-model="queryParams.ack_status"
+                  >
+                    <a-select-option :value="0">
+                      未确认
+                    </a-select-option>
+                    <a-select-option :value="1">
+                      已确认
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
 
@@ -116,10 +131,17 @@
               v-bind="btnProps"
               v-if="showSolve"
               v-show="state !== ALARM_STATE.solved"
+              @click="onComfirm"
+              :disabled="hasAck"
+            >确定告警</a-button>
+
+            <a-button
+              v-bind="btnProps"
+              v-if="showSolve"
+              v-show="state !== ALARM_STATE.solved"
               @click="onSolve()"
-              :disabled="!hasSelected"
-            >解决</a-button
-            >
+              :disabled="!hasSolve"
+            >解决</a-button>
           </div>
 
           <div class="AlarmMonitor__operation-badge-group" v-if="showAlarmSelection">
@@ -181,16 +203,17 @@
 import _ from 'lodash'
 import Timeout from 'await-timeout'
 import { Excel } from 'antd-vue-table-saveas-excel'
-import moment from 'moment'
+import moment, { now } from 'moment'
 import { List } from '~~~/Mixins'
 import QueryMixin from '../queryMixin'
-import { AlarmService, CmdbHostEndpointMetricService } from '@/api/index'
+import { AlarmService, CmdbHostEndpointMetricService, UserService } from '@/api/index'
 import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
-import { ALARM_STATE } from '@/tables/alarm/enum'
+import { ALARM_STATE, ALARM_ACK_STATUS, ALARM_ACK_MAP } from '@/tables/alarm/enum'
 import { levelColorMapping, fontLevelColorMapping } from '~~~/Alarm/color.config'
-const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip']
+import { removeEmpty } from '@/utils/util'
+const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip', 'type_model_name', 'device_model_name']
 export default {
   name: 'AlarmMonitor',
   mixins: [List, QueryMixin],
@@ -288,6 +311,8 @@ export default {
     return {
       timer: null,
       ALARM_STATE,
+      ALARM_ACK_STATUS,
+      ALARM_ACK_MAP,
       alarmSearchTime: [moment().add(-1, 'days'), moment()],
       colors: [...levelColorMapping.values()],
       columns: [
@@ -327,6 +352,23 @@ export default {
           )
         },
         {
+          title: '确认状态',
+          dataIndex: 'ack_status',
+          width: 100,
+          show: true,
+          sorter: true,
+          customRender: (ack_status) => {
+            return ALARM_ACK_MAP.get(ack_status)
+          }
+        },
+        {
+          title: '确认人',
+          dataIndex: 'staff_name',
+          width: 100,
+          show: true,
+          customRender: (staff_name) => staff_name || ''
+        },
+        {
           title: '数据域',
           dataIndex: `origin`,
           width: 100,
@@ -334,15 +376,22 @@ export default {
           validate: () => this.showOrigin
         },
         {
+          title: '设备类型',
+          dataIndex: `type_model_name`,
+          width: 100,
+          show: true
+        },
+        {
           title: '品牌设备',
-          dataIndex: `device_model_value_code`,
+          dataIndex: `device_model_name`,
           width: 100,
           show: true,
-          customRender: (text, record) => {
-            const brand = _.get(record, 'brand_value_code', '')
-            const model = _.get(record, 'device_model_value_code', '')
-            return brand || model
-          },
+          // customRender: (text, record) => {
+          //   const brand = _.get(record, 'brand_value_code', '')
+          //   const model = _.get(record, 'device_model_value_code', '')
+          //   console.log(brand, model)
+          //   return brand || model
+          // },
           validate: () => this.showDeviceModel
         },
         {
@@ -395,10 +444,9 @@ export default {
           width: 100,
           show: true,
           // 仅查看已解决的告警时展示该列
-          validate: () => this.showHistory,
-          customRender: (__, { receive_time, close_time }) => {
-            if (receive_time && close_time) {
-              const duration = moment(close_time).diff(moment(receive_time), 'minutes')
+          customRender: (__, { first_time, close_time, receive_time }) => {
+            if (receive_time || first_time) {
+              const duration = moment(first_time || receive_time).diff(moment(close_time || now()), 'minutes')
               return moment.duration(duration, 'minutes').humanize()
             } else {
               return ''
@@ -468,7 +516,8 @@ export default {
         host_id: undefined,
         endpoint_id: undefined,
         metric_id: undefined,
-        receive_time: [moment().add(-1, 'days'), moment()]
+        receive_time: [moment().add(-1, 'days'), moment()],
+        ack_status: 0
       }
     }
   },
@@ -497,6 +546,26 @@ export default {
     visibleColumns () {
       const { columnAlign: align, availableColumns } = this
       return availableColumns.filter(({ show }) => show).map((column) => Object.assign({}, column, { align }))
+    },
+    hasAck () {
+      for (const item of this.selectedRows) {
+        if (item.ack_status === ALARM_ACK_STATUS.unAck) {
+          return false
+        }
+      }
+      return true
+    },
+    hasSolve () {
+      if (this.selectedRows === []) {
+        return false
+      } else {
+        for (const item of this.selectedRows) {
+          if (item.ack_status === ALARM_ACK_STATUS.Ack) {
+            return true
+          }
+        }
+        return false
+      }
     }
   },
   methods: {
@@ -511,6 +580,20 @@ export default {
         },
         customRow
       }
+    },
+
+    async ackAliasList (ids = []) {
+      const { data: { names } } = await UserService.find({
+        where: {
+          user_id: { _in: ids }
+        },
+        fields: [
+          'ack_by:user_id',
+          'staff_name'
+        ],
+        alias: 'names'
+      })
+      return names
     },
 
     async aliasList (hostCondition = {}, fields = [], rest = {}) {
@@ -535,9 +618,11 @@ export default {
         ...rest
       })
       const metrics = data.data.map(el => el.metric_id)
+      const acks = _.sortedUniq(removeEmpty(data.data.map(el => el.ack_by)))
       const concatList = await this.aliasList({ metric_id: { _in: metrics } }, concatFields)
+      const concatUserList = await this.ackAliasList(acks)
       data.data.map(el => {
-        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id))
+        return Object.assign(el, ...concatList.filter(ele => ele.metric_id === el.metric_id), ...concatUserList.filter(ele => ele.ack_by === el.ack_by))
       })
       return data
     },
@@ -559,7 +644,11 @@ export default {
         'close_by',
         'detail',
         'agent_id',
-        'origin'
+        'origin',
+        'first_time',
+        'ack_status',
+        'ack_by',
+        'ack_time'
       ]
       // const alarmFields = this.columns.map(({ dataIndex }) => dataIndex)
       // cmdb_host_endpoint_metric条件
@@ -654,6 +743,33 @@ export default {
      */
     onShowHistory (record) {
       this.$emit('showHistory', record)
+    },
+    /**
+     * 确认告警
+     */
+    onComfirm () {
+      this.$confirm({
+        title: '告警确认',
+        content: '是否确认此告警到您账户上?',
+        onOk: () => {
+          return AlarmService.batchComfirm(this.selectedRowKeys)
+            .then(({ msg, code }) => {
+              if (code === 200) {
+                this.$notification.success({
+                  message: '系统提示',
+                  description: '确认告警成功'
+                })
+                this.query(true)
+              } else {
+                this.$notification.error({
+                  message: '系统提示',
+                  description: msg
+                })
+              }
+            })
+        },
+        onCancel () {}
+      })
     },
     /**
      * 关闭告警

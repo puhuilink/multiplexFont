@@ -288,6 +288,7 @@ export default class TopologyChart extends Chart {
 
     if (_.isEmpty(hostIds)) return
 
+    // 查询所有拓扑节点的告警数据
     const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
 
     const hostIdAlarmLevelMapping = new Map(
