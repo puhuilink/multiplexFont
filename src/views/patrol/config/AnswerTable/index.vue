@@ -176,7 +176,7 @@
             v-model="answerForm.defaultLowerThreshold"
           >
             <a-select-option
-              v-if="formatList[0].alias!==null"
+              v-if="answerForm.type === 'select' && f.alias !==null && f.alias!==undefined && f.alias !== ''"
               v-for="(f,index) in formatList"
               :key="index"
               :value="f.value"
@@ -229,6 +229,7 @@
 
     </a-modal>
     <a-table
+      :loading="loading"
       :columns="columns"
       :data-source="Object.values(this.answers)"
       :pagination="pagination"
@@ -270,6 +271,7 @@ export default {
   props: {},
   data () {
     return {
+      loading: false,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       data: [],
       answerForm: {},
@@ -353,6 +355,8 @@ export default {
         } else if (val === 'fill') {
           this.answerForm.format = JSON.stringify({ format: '' })
         }
+        this.answerForm.defaultLowerThreshold = null
+        this.answerForm.defaultUpperThreshold = null
         this.$forceUpdate()
       },
       immediate: true
@@ -398,15 +402,17 @@ export default {
           if (this.answerForm.type === 'fill') {
             this.answerForm.format = JSON.stringify({ 'format': '%.1f' })
           } else if (this.answerForm.type === 'select') {
-            this.formatList = this.formatList.filter(item => item === {
+            this.formatList = this.formatList.filter(item => item !== {
               value: null,
               alias: ''
             })
+            console.log(this.formatList)
             if (this.formatList.length < 1) {
               this.$notification.error({
                 message: '系统提示',
                 description: '操作失败：具体内容不能为空！'
               })
+              this.addRecord()
               return
             } else {
               this.answerForm.format = JSON.stringify(this.formatList)
@@ -536,6 +542,8 @@ export default {
         'type': record.type,
         'format': record.format
       }
+      console.log(record)
+      this.temp = record.type === 'select' ? '' : '%.1f'
       this.$nextTick(() => {
         this.answerForm = { ...this.answerForm,
           'defaultCondition': record.default_condition,
@@ -579,6 +587,7 @@ export default {
       this.expand = !this.expand
     },
     async fetchAnswer (where) {
+      this.loading = true
       let base_sql = 'select * from t_patrol_answer where 1=1 '
       if (where !== null && where !== undefined && where !== '') {
         base_sql += where
@@ -589,6 +598,7 @@ export default {
         const answer = data[i]
         this.answers[answer.id] = answer
       }
+      this.loading = false
     }
   }
 }
