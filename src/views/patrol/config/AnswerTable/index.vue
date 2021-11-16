@@ -156,6 +156,7 @@
         >
           <a-select
             v-model="answerForm.defaultCondition"
+            @change="()=>this.$forceUpdate()"
           >
             <a-select-option :value="'eq'">等于</a-select-option>
             <a-select-option :value="'ne'">不等于</a-select-option>
@@ -264,7 +265,7 @@ import { dealQuery } from '@/utils/util'
 import { sql, xungeng } from '@/utils/request'
 
 export default {
-  name: '',
+  name: 'AnswerManagement',
   components: {},
   props: {},
   data () {
@@ -343,7 +344,7 @@ export default {
     },
     'answerForm.type': {
       handler (val, oldVal) {
-        if (val === 'select' && oldVal !== undefined) {
+        if (val === 'select' && oldVal !== undefined && oldVal !== 'select') {
           this.formatList = [{
             value: null,
             alias: ''
@@ -352,6 +353,7 @@ export default {
         } else if (val === 'fill') {
           this.answerForm.format = JSON.stringify({ format: '' })
         }
+        this.$forceUpdate()
       },
       immediate: true
     },
@@ -392,7 +394,24 @@ export default {
     newSubmit () {
       this.$refs.answerForm.validate(async valid => {
         if (valid) {
-          let threshold = {}
+          let threshold
+          if (this.answerForm.type === 'fill') {
+            this.answerForm.format = JSON.stringify({ 'format': '%.1f' })
+          } else if (this.answerForm.type === 'select') {
+            this.formatList = this.formatList.filter(item => item === {
+              value: null,
+              alias: ''
+            })
+            if (this.formatList.length < 1) {
+              this.$notification.error({
+                message: '系统提示',
+                description: '操作失败：具体内容不能为空！'
+              })
+              return
+            } else {
+              this.answerForm.format = JSON.stringify(this.formatList)
+            }
+          }
           switch (this.answerForm.defaultCondition) {
             case 'out':
               threshold = {
@@ -413,18 +432,20 @@ export default {
                 _.value = parseInt(_.value)
               })
           }
-          let result
+          let url, postData
           if (this.isNew) {
-            result = await xungeng.post('answer/add', {
+            url = 'answer/add'
+            postData = {
               'alias': this.answerForm.alias,
               'type': this.answerForm.type,
               'format': this.answerForm.format,
               'defaultCondition': this.answerForm.defaultCondition,
               ...threshold,
               'defaultSeverity': this.answerForm.defaultSeverity
-            })
+            }
           } else {
-            result = await xungeng.post('answer/edit', {
+            url = 'answer/edit'
+            postData = {
               'id': this.editId,
               'alias': this.answerForm.alias,
               'type': this.answerForm.type,
@@ -432,8 +453,9 @@ export default {
               'defaultCondition': this.answerForm.defaultCondition,
               ...threshold,
               'defaultSeverity': this.answerForm.defaultSeverity
-            })
+            }
           }
+          const result = await xungeng.post(url, postData)
           if (result.code === 200) {
             this.$notification.success({
               message: '系统提示',
@@ -459,6 +481,9 @@ export default {
         j.forEach((_) => {
           obj[_.value] = _
         })
+      } else {
+        obj[record.default_lower_threshold] = {}
+        obj[record.default_lower_threshold].alias = record.default_lower_threshold
       }
       switch (record.default_condition) {
         case 'eq':
