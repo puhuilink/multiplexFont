@@ -20,6 +20,8 @@ import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 import { AlarmService } from '@/api/index'
 import { animateTypeMapping } from '@/plugins/g6'
 import { runTimeNodes } from '../nodes/CircleNode'
+import { sql } from '@/utils/request'
+import { dealQuery } from '@/utils/util'
 
 const pluginsMap = new Map([
   ['Grid', Grid]
@@ -272,17 +274,28 @@ export default class TopologyChart extends Chart {
   async fetchNodesAlarm () {
     const models = []
     let hostIds = []
-    this.chart.getNodes().forEach((node) => {
+    const metricAlarm = []
+    for (const node of this.chart.getNodes()) {
       // const model = node.getModel()
       // hack
       const model = runTimeNodes[node.getModel().id]
+      if (model.Basis.length > 0) {
+        const hostIdSpec = _.get(model, ['resourceConfig', 'hostId'], [])
+        const metricSql = `select metric_value, upload_time from t_metric 
+                where upload_time > (now() - Interval '30 min')
+                and metric_id = ${model.Basis}
+                order by upload_time desc limit 1;`
+        const q = dealQuery(await sql(metricSql))
+        if (q.length) {
+          metricAlarm.push({ host_id: hostIdSpec[0], alarm_level: Number(q[0].metric_value) + 5 })
+        }
+      }
       const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
-
       if (hostId.length) {
         models.push(model)
         hostIds.push(...hostId)
       }
-    })
+    }
 
     hostIds = _.uniq(hostIds).filter(Boolean)
 
@@ -290,7 +303,6 @@ export default class TopologyChart extends Chart {
 
     // 查询所有拓扑节点的告警数据
     const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
-
     const hostIdAlarmLevelMapping = new Map(
       alarmList.map((alarm) => [alarm.host_id, alarm.alarm_level])
     )
