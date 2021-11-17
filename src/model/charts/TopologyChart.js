@@ -274,21 +274,13 @@ export default class TopologyChart extends Chart {
   async fetchNodesAlarm () {
     const models = []
     let hostIds = []
-    const metricAlarm = []
+    let metricIds = []
     for (const node of this.chart.getNodes()) {
       // const model = node.getModel()
       // hack
       const model = runTimeNodes[node.getModel().id]
       if (model.Basis.length > 0) {
-        const hostIdSpec = _.get(model, ['resourceConfig', 'hostId'], [])
-        const metricSql = `select metric_value, upload_time from t_metric 
-                where upload_time > (now() - Interval '30 min')
-                and metric_id = ${model.Basis}
-                order by upload_time desc limit 1;`
-        const q = dealQuery(await sql(metricSql))
-        if (q.length) {
-          metricAlarm.push({ host_id: hostIdSpec[0], alarm_level: Number(q[0].metric_value) + 5 })
-        }
+        metricIds.push(model.Basis)
       }
       const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
       if (hostId.length) {
@@ -296,13 +288,20 @@ export default class TopologyChart extends Chart {
         hostIds.push(...hostId)
       }
     }
-
     hostIds = _.uniq(hostIds).filter(Boolean)
+    metricIds = _.uniq(metricIds).filter(Boolean)
+    const metricSql = `select host_id, last(metric_value, upload_time)+5 alarm_level from t_metric
+            where 1 = 1
+            and metric_id in (${metricIds}) 
+            and upload_time > (now() - Interval '30 min')
+            group by (host_id);`
+
+    const q = dealQuery(await sql(metricSql))
 
     if (_.isEmpty(hostIds)) return
 
     // 查询所有拓扑节点的告警数据
-    const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
+    const alarmList = _.merge(await AlarmService.latestAlarm(hostIds).catch(() => []), q)
     const hostIdAlarmLevelMapping = new Map(
       alarmList.map((alarm) => [alarm.host_id, alarm.alarm_level])
     )
