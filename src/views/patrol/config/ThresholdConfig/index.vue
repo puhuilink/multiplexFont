@@ -105,6 +105,7 @@
       />
     </div>
     <a-table
+      :locale="{emptyText:' '}"
       :columns="columns"
       :data-source="data"
       :loading="loading"

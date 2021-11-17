@@ -230,6 +230,7 @@
     </a-modal>
     <a-table
       :loading="loading"
+      :locale="{emptyText:''}"
       :columns="columns"
       :data-source="Object.values(this.answers)"
       :pagination="pagination"

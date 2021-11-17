@@ -79,6 +79,7 @@
 
     </a-modal>
     <a-table
+      :locale="{emptyText:''}"
       :data-source="Object.values(metrics)"
       :pagination="{
         current: this.current,
