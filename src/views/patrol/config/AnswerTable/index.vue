@@ -151,7 +151,7 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultCondition"
-          :rules="[{ required: true, message: '默认报警条件不能为空' }]"
+          :rules="[{ required: true, message: '默认报警条件不能为空', trigger: 'blur' }]"
           label="默认报警条件"
         >
           <a-select
@@ -166,7 +166,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          :rules="[{ required: true, message: '默认报警最小值不能为空' }]"
+          :rules="[{ required: true, message: '默认报警最小值不能为空', trigger: 'blur' }]"
           label="默认报警最小值"
           v-if="this.answerForm.defaultCondition !=='gt' && this.answerForm.defaultCondition !== undefined"
           prop="defaultLowerThreshold"
@@ -193,7 +193,7 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultUpperThreshold"
-          :rules="[{ required: true, message: '默认报警数值不能为空' }]"
+          :rules="[{ required: true, message: '默认报警数值不能为空', trigger: 'blur' }]"
           label="默认报警最大值"
           v-if="(this.answerForm.type!=='select'||this.answerForm.defaultCondition !=='lt')
             && this.answerForm.defaultCondition !== undefined
@@ -208,7 +208,7 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultSeverity"
-          :rules="[{ required: true, message: '默认报警条件不能为空' }]"
+          :rules="[{ required: true, message: '默认报警条件不能为空', trigger: 'blur' }]"
           label="默认报警等级"
         >
           <a-select
