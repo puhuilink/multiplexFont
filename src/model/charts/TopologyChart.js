@@ -263,8 +263,14 @@ export default class TopologyChart extends Chart {
   setNodeAlarmState (id, alarmLevel) {
     this.chart.clearItemStates(id)
     // 不展示5级告警
-    if (alarmLevel && alarmLevel !== 5) {
-      this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
+    // 不展示6级告警 动环告警延续普通告警等级+5
+    if (alarmLevel && alarmLevel !== 5 && alarmLevel !== 6) {
+      if (alarmLevel > 9) {
+        // 动环告警未映射告警都采用低告警颜色 全局搜索 动环告警 异常
+        this.chart.setItemState(id, animateTypeList[7], true)
+      } else {
+        this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
+      }
     }
   }
 
