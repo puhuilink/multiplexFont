@@ -10,11 +10,11 @@ import { BaseService } from '@/api/service/BaseService'
 import {
   CmdbHostTreeDao
 } from '../dao/index'
-import { query } from '@/api/utils/hasura-orm'
+import { generateQuery } from '@/api/utils/hasura-orm'
 class CmdbHostTreeService extends BaseService {
   static async hostIdsQuery (systemId) {
-    const { data: { hostIds } } = await query(
-      CmdbHostTreeDao.find({
+    const data =
+      await generateQuery(CmdbHostTreeDao.find({
         where: {
           id: {
             _eq: systemId
@@ -24,8 +24,8 @@ class CmdbHostTreeService extends BaseService {
           'hostIds: host_ids'
         ],
         alias: 'hostIds'
-      })
-    )
+      }))
+    const { data: { hostIds } } = await this.hasuraTransfer({ query: data })
     return hostIds[0].hostIds
   }
 }

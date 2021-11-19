@@ -1,6 +1,7 @@
 import { axios } from '@/utils/request'
 import { encrypt, decrypt } from '@/utils/aes'
 import { notifyGraphQLError } from '@/utils/clientConfig'
+import JSONBig from 'json-bigint'
 
 class BaseService {
   /**
@@ -9,7 +10,7 @@ class BaseService {
    * @return {Promise<{ data, code }>}
    */
   static async hasuraTransfer (requestBody = {}) {
-    const requestBodyStr = JSON.stringify(requestBody)
+    const requestBodyStr = JSONBig.stringify(requestBody)
     const formData = new FormData()
     formData.append('body', encrypt(requestBodyStr))
     // debug info
@@ -23,7 +24,7 @@ class BaseService {
       }
     })
 
-    const data = JSON.parse(decrypt(response.data))
+    const data = JSONBig.parse(decrypt(response.data))
     if (data.errors) {
       notifyGraphQLError(data.errors)
       return Promise.reject(data.errors)

@@ -38,7 +38,8 @@ export default class Node {
     anchorPoints = defaultAnchorPoints,
     style = defaultStyle,
     labelCfg = defaultLabelCfg,
-    animateType = 'none'
+    animateType = 'none',
+    Basis = ''
   }) {
     this.id = id
     this.x = x
@@ -50,6 +51,7 @@ export default class Node {
     this.label = label
     this.labelCfg = labelCfg
     this.animateType = animateType
+    this.Basis = Basis
   }
 
   resetTimer () {

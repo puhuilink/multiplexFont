@@ -20,6 +20,8 @@ import { NODE_TYPE_CIRCLE } from '@/plugins/g6-types'
 import { AlarmService } from '@/api/index'
 import { animateTypeMapping } from '@/plugins/g6'
 import { runTimeNodes } from '../nodes/CircleNode'
+import { sql } from '@/utils/request'
+import { dealQuery } from '@/utils/util'
 
 const pluginsMap = new Map([
   ['Grid', Grid]
@@ -261,8 +263,14 @@ export default class TopologyChart extends Chart {
   setNodeAlarmState (id, alarmLevel) {
     this.chart.clearItemStates(id)
     // 不展示5级告警
-    if (alarmLevel && alarmLevel !== 5) {
-      this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
+    // 不展示6级告警 动环告警延续普通告警等级+5
+    if (alarmLevel && alarmLevel !== 5 && alarmLevel !== 6) {
+      if (alarmLevel > 9) {
+        // 动环告警未映射告警都采用低告警颜色 全局搜索 动环告警 异常
+        this.chart.setItemState(id, animateTypeList[7], true)
+      } else {
+        this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
+      }
     }
   }
 
@@ -272,25 +280,34 @@ export default class TopologyChart extends Chart {
   async fetchNodesAlarm () {
     const models = []
     let hostIds = []
-    this.chart.getNodes().forEach((node) => {
+    let metricIds = []
+    for (const node of this.chart.getNodes()) {
       // const model = node.getModel()
       // hack
       const model = runTimeNodes[node.getModel().id]
+      if (model.Basis.length > 0) {
+        metricIds.push(model.Basis)
+      }
       const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
-
       if (hostId.length) {
         models.push(model)
         hostIds.push(...hostId)
       }
-    })
-
+    }
     hostIds = _.uniq(hostIds).filter(Boolean)
+    metricIds = _.uniq(metricIds).filter(Boolean)
+    const metricSql = `select host_id, last(metric_value, upload_time)+5 alarm_level from t_metric
+            where 1 = 1
+            and metric_id in (${metricIds}) 
+            and upload_time > (now() - Interval '30 min')
+            group by (host_id);`
+
+    const q = dealQuery(await sql(metricSql))
 
     if (_.isEmpty(hostIds)) return
 
     // 查询所有拓扑节点的告警数据
-    const alarmList = await AlarmService.latestAlarm(hostIds).catch(() => [])
-
+    const alarmList = _.merge(await AlarmService.latestAlarm(hostIds).catch(() => []), q)
     const hostIdAlarmLevelMapping = new Map(
       alarmList.map((alarm) => [alarm.host_id, alarm.alarm_level])
     )

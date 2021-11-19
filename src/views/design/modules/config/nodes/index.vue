@@ -232,6 +232,16 @@
       </a-collapse-panel>
       <!-- / 节点 -->
 
+      <!--新增依据metric_id来增加告警规则      -->
+      <a-collapse-panel header="告警依据" key="2">
+        <div class="comment-template__item">
+          <p class="comment-template__leading">依据ID</p>
+          <div class="comment-template__inner">
+            <a-input v-model="model.Basis" @change="change"></a-input>
+          </div>
+        </div>
+      </a-collapse-panel>
+
     </a-collapse>
 
     <!-- S 节点通用配置默认插槽 -->
