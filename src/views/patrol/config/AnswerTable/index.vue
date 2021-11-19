@@ -174,12 +174,13 @@
           <a-select
             v-if="(this.answerForm.defaultCondition === 'eq'||this.answerForm.defaultCondition === 'ne')&&this.answerForm.type === 'select'"
             v-model="answerForm.defaultLowerThreshold"
+            @change="()=>this.$forceUpdate()"
           >
             <a-select-option
               v-if="answerForm.type === 'select' && f.alias !==null && f.alias!==undefined && f.alias !== ''"
               v-for="(f,index) in formatList"
               :key="index"
-              :value="f.value"
+              :value="f.value.toString()"
             >
               {{ f.alias }}
             </a-select-option>
