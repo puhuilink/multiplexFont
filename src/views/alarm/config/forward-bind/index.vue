@@ -77,7 +77,6 @@ import { AlarmSenderService, UserService } from '@/api'
 import SenderSchema from './modules/SenderSchema/index'
 import { generateQuery } from '@/utils/graphql'
 import _ from 'lodash'
-import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
 
 export default {
   name: 'ForwardBind',
