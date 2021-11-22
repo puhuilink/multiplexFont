@@ -10,20 +10,20 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-form-model-item label="启用" v-bind="formItemLayout" class="fl">
-        <a-select v-model="formModel.enabled" class="enabled">
+        <a-select :disabled="isDetail" v-model="formModel.enabled" class="enabled">
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="handleSubmit" :loading="submitLoading" type="primary">提交</a-button>
+      <a-button v-show="!isDetail" @click="handleSubmit" :loading="submitLoading" type="primary">提交</a-button>
     </template>
 
     <!-- / 正文 -->
     <a-spin :spinning="spinning">
       <a-form-model ref="ruleForm" :model="formModel" :rules="formRules">
         <a-form-model-item label="通知模板名称" v-bind="formItemLayout" prop="title">
-          <a-input v-model.trim="formModel.title" />
+          <a-input v-model.trim="formModel.title" :disabled="isDetail"/>
         </a-form-model-item>
 
         <!-- <a-form-model-item label="事件等级" v-bind="formItemLayout" prop="event_level">
@@ -37,13 +37,13 @@
         </a-form-model-item> -->
 
         <a-form-model-item label="通知方式" v-bind="formItemLayout" prop="mode">
-          <a-select v-model="formModel.mode" class="fw">
+          <a-select v-model="formModel.mode" class="fw" :disabled="isDetail">
             <a-select-option v-for="(label, value) in allMode" :key="value" :value="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
 
         <a-form-model-item label="模板内容" v-bind="formItemLayout" prop="message">
-          <TempEditor ref="editor" v-model="formModel.message" />
+          <TempEditor ref="editor" v-model="formModel.message" :disabled="isDetail"/>
         </a-form-model-item>
       </a-form-model>
     </a-spin>
@@ -73,7 +73,8 @@ export default {
       wrapperCol: { span: 15, offset: 1 }
     },
     spinning: false,
-    submitLoading: false
+    submitLoading: false,
+    isDetail: false
   }),
   computed: {
     formRules () {
@@ -101,6 +102,11 @@ export default {
       this.fetch(id)
       this.show('编辑通知规则模板')
       this.submit = this.update
+    },
+    detail (id) {
+      this.fetch(id)
+      this.show('查看通知规则模板')
+      this.isDetail = true
     },
     async fetch (id) {
       try {

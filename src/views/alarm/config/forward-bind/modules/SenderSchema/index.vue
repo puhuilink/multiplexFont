@@ -20,7 +20,7 @@
           <a-select
             class="SendForm__Select"
             v-model="send.level"
-            :disabled="levelBtn"
+            :disabled="isDetail || levelBtn"
           >
             <a-select-option
               v-for="[value, label] in levelList"
@@ -44,7 +44,7 @@
             showSearch
             class="item2"
             v-model="send.group"
-            :disabled="groupBtn"
+            :disabled="isDetail || groupBtn"
           >
             <a-select-option
               v-for="{ group_id, group_name } in groupList"
@@ -66,6 +66,7 @@
             mode="multiple"
             showSearch
             v-model="send.contact"
+            :disabled="isDetail"
           >
             <a-select-option
               class="item2"
@@ -86,6 +87,7 @@
             :emailTempList="emailTempList"
             :send.sync="send"
             :value="send.methods"
+            :disable="isDetail"
             @deleteStatus="deleteCheck"
             @addStatus="uploadCheck">
           </checkSends>
@@ -106,7 +108,7 @@
         </a-select>
       </a-form-model-item>
       <a-button @click="localCancel">取消</a-button>
-      <a-button @click="submit" :loading="btnLoading" type="primary">提交</a-button>
+      <a-button @click="submit" :loading="btnLoading" type="primary" v-show="!isDetail">提交</a-button>
     </template>
   </a-modal>
 </template>
@@ -172,7 +174,8 @@ export default {
         { validator: (rule, value, callback) => { if (value === '') callback(new Error('12345')); else callback() }, trigger: 'change' }
       ],
       methods: [{ required: true, message: '请选择通知方式', trigger: 'blur' }]
-    }
+    },
+    isDetail: false
   }),
   methods: {
     localCancel () {
@@ -222,6 +225,12 @@ export default {
       this.show('新建告警通知绑定')
       this.fetchFix()
       this.submit = this.insert
+    },
+    detail (id) {
+      this.fetchFix()
+      this.show('查看告警通知绑定')
+      this.isDetail = true
+      this.fetch(id)
     },
     async insert () {
       this.$refs.form.validate(async value => {

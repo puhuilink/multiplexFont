@@ -2,7 +2,7 @@
   <fragment>
     <a-row>
       <a-col :span="8">
-        <a-checkbox ref="sms" :checked="value | smsFilter" @input="toggleSMS">
+        <a-checkbox ref="sms" :checked="value | smsFilter" @input="toggleSMS" :disabled="disable">
           短信
         </a-checkbox>
       </a-col>
@@ -11,7 +11,7 @@
           <a-select
             class="item1"
             allowClear
-            :disabled="value | smsCheck"
+            :disabled="smsCheck"
             v-model="send.temp_sms_id"
           >
             <a-select-option v-for="{ id, title } in smsTempList" :key="id" :value="id">{{ title }}
@@ -22,7 +22,7 @@
     </a-row>
     <a-row>
       <a-col :span="8">
-        <a-checkbox ref="email" :checked="value | emailFilter" @input="toggleEmail">
+        <a-checkbox ref="email" :checked="value | emailFilter" @input="toggleEmail" :disabled="disable">
           邮箱
         </a-checkbox>
       </a-col>
@@ -31,7 +31,7 @@
           <a-select
             class="item1"
             allowClear
-            :disabled="value | emailCheck"
+            :disabled="emailCheck"
             v-model="send.temp_email_id"
           >
             <a-select-option v-for="{ id, title } in emailTempList" :key="id" :value="id">{{ title }}
@@ -63,6 +63,10 @@ export default {
     send: {
       type: Object,
       default: () => ({})
+    },
+    disable: {
+      type: Boolean,
+      default: false
     }
   },
   filters: {
@@ -84,6 +88,18 @@ export default {
     emailCheck (val) {
       const v = val.split('/')
       if (v.includes('EMAIL')) return false
+      else return true
+    }
+  },
+  computed: {
+    smsCheck () {
+      const v = this.value.split('/')
+      if (!this.disable && v.includes('SMS')) return false
+      return true
+    },
+    emailCheck () {
+      const v = this.value.split('/')
+      if (!this.disable && v.includes('EMAIL')) return false
       else return true
     }
   },
