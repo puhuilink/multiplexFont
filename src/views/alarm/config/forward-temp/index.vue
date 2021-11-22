@@ -49,7 +49,7 @@
             :value="value"
           >{{ label }}</a-select-option>
         </a-select>
-        &nbsp;&nbsp;
+        <a-button @click="onDetail">查看</a-button>
         <a-button @click="onAdd" v-action:M0311>新增</a-button>
         <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0312>编辑</a-button>
         <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0313>删除</a-button>
@@ -157,6 +157,10 @@ export default {
     onEdit () {
       const [id] = this.selectedRowKeys
       this.$refs.schema.edit(id)
+    },
+    onDetail () {
+      const [id] = this.selectedRowKeys
+      this.$refs.schema.detail(id)
     }
   }
 }

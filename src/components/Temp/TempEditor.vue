@@ -1,12 +1,12 @@
 <template>
   <div class="editor" :class="{ 'editor__single_line': singleLine }">
     <a-input :value="value" class="input" ref="input" />
-    <editor-menu-bar :editor="editor" v-slot="{ commands }">
+    <editor-menu-bar :editor="editor" v-slot="{ commands }" :disable="!disabled">
       <div class="menubar">
-        <a-button class="menubar__btn" @click="togglePreview" type="primary">{{ preview ? '取消预览' : '预览' }}</a-button>
+        <a-button :disabled="disabled" class="menubar__btn" @click="togglePreview" type="primary">{{ preview ? '取消预览' : '预览' }}</a-button>
         <a-button
           class="menubar__btn"
-          :disabled="preview"
+          :disabled="disabled"
           v-for="(label, id) in tempKeywordList"
           :key="id"
           @click="commands.mention({ id, label: label + ' ' })"
@@ -42,6 +42,10 @@ export default {
     mapping: {
       type: Map,
       default: () => TEMP_KEYWORD_MAPPING
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data (vm) {
