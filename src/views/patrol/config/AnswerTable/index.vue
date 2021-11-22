@@ -151,11 +151,12 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultCondition"
-          :rules="[{ required: true, message: '默认报警条件不能为空' }]"
+          :rules="[{ required: true, message: '默认报警条件不能为空', trigger: 'blur' }]"
           label="默认报警条件"
         >
           <a-select
             v-model="answerForm.defaultCondition"
+            @change="()=>this.$forceUpdate()"
           >
             <a-select-option :value="'eq'">等于</a-select-option>
             <a-select-option :value="'ne'">不等于</a-select-option>
@@ -165,7 +166,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          :rules="[{ required: true, message: '默认报警最小值不能为空' }]"
+          :rules="[{ required: true, message: '默认报警最小值不能为空', trigger: 'blur' }]"
           label="默认报警最小值"
           v-if="this.answerForm.defaultCondition !=='gt' && this.answerForm.defaultCondition !== undefined"
           prop="defaultLowerThreshold"
@@ -173,12 +174,13 @@
           <a-select
             v-if="(this.answerForm.defaultCondition === 'eq'||this.answerForm.defaultCondition === 'ne')&&this.answerForm.type === 'select'"
             v-model="answerForm.defaultLowerThreshold"
+            @change="()=>this.$forceUpdate()"
           >
             <a-select-option
-              v-if="formatList[0].alias!==null"
+              v-if="answerForm.type === 'select' && f.alias !==null && f.alias!==undefined && f.alias !== ''"
               v-for="(f,index) in formatList"
               :key="index"
-              :value="f.value"
+              :value="f.value.toString()"
             >
               {{ f.alias }}
             </a-select-option>
@@ -192,7 +194,7 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultUpperThreshold"
-          :rules="[{ required: true, message: '默认报警数值不能为空' }]"
+          :rules="[{ required: true, message: '默认报警数值不能为空', trigger: 'blur' }]"
           label="默认报警最大值"
           v-if="(this.answerForm.type!=='select'||this.answerForm.defaultCondition !=='lt')
             && this.answerForm.defaultCondition !== undefined
@@ -207,7 +209,7 @@
         </a-form-model-item>
         <a-form-model-item
           prop="defaultSeverity"
-          :rules="[{ required: true, message: '默认报警条件不能为空' }]"
+          :rules="[{ required: true, message: '默认报警条件不能为空', trigger: 'blur' }]"
           label="默认报警等级"
         >
           <a-select
@@ -228,6 +230,8 @@
 
     </a-modal>
     <a-table
+      :loading="loading"
+      :locale="{emptyText:''}"
       :columns="columns"
       :data-source="Object.values(this.answers)"
       :pagination="pagination"
@@ -264,11 +268,12 @@ import { dealQuery } from '@/utils/util'
 import { sql, xungeng } from '@/utils/request'
 
 export default {
-  name: '',
+  name: 'AnswerManagement',
   components: {},
   props: {},
   data () {
     return {
+      loading: false,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       data: [],
       answerForm: {},
@@ -343,7 +348,7 @@ export default {
     },
     'answerForm.type': {
       handler (val, oldVal) {
-        if (val === 'select' && oldVal !== undefined) {
+        if (val === 'select' && oldVal !== undefined && oldVal !== 'select') {
           this.formatList = [{
             value: null,
             alias: ''
@@ -352,6 +357,9 @@ export default {
         } else if (val === 'fill') {
           this.answerForm.format = JSON.stringify({ format: '' })
         }
+        this.answerForm.defaultLowerThreshold = null
+        this.answerForm.defaultUpperThreshold = null
+        this.$forceUpdate()
       },
       immediate: true
     },
@@ -392,7 +400,26 @@ export default {
     newSubmit () {
       this.$refs.answerForm.validate(async valid => {
         if (valid) {
-          let threshold = {}
+          let threshold
+          if (this.answerForm.type === 'fill') {
+            this.answerForm.format = JSON.stringify({ 'format': '%.1f' })
+          } else if (this.answerForm.type === 'select') {
+            this.formatList = this.formatList.filter(item => item !== {
+              value: null,
+              alias: ''
+            })
+            console.log(this.formatList)
+            if (this.formatList.length < 1) {
+              this.$notification.error({
+                message: '系统提示',
+                description: '操作失败：具体内容不能为空！'
+              })
+              this.addRecord()
+              return
+            } else {
+              this.answerForm.format = JSON.stringify(this.formatList)
+            }
+          }
           switch (this.answerForm.defaultCondition) {
             case 'out':
               threshold = {
@@ -413,18 +440,20 @@ export default {
                 _.value = parseInt(_.value)
               })
           }
-          let result
+          let url, postData
           if (this.isNew) {
-            result = await xungeng.post('answer/add', {
+            url = 'answer/add'
+            postData = {
               'alias': this.answerForm.alias,
               'type': this.answerForm.type,
               'format': this.answerForm.format,
               'defaultCondition': this.answerForm.defaultCondition,
               ...threshold,
               'defaultSeverity': this.answerForm.defaultSeverity
-            })
+            }
           } else {
-            result = await xungeng.post('answer/edit', {
+            url = 'answer/edit'
+            postData = {
               'id': this.editId,
               'alias': this.answerForm.alias,
               'type': this.answerForm.type,
@@ -432,8 +461,9 @@ export default {
               'defaultCondition': this.answerForm.defaultCondition,
               ...threshold,
               'defaultSeverity': this.answerForm.defaultSeverity
-            })
+            }
           }
+          const result = await xungeng.post(url, postData)
           if (result.code === 200) {
             this.$notification.success({
               message: '系统提示',
@@ -459,6 +489,9 @@ export default {
         j.forEach((_) => {
           obj[_.value] = _
         })
+      } else {
+        obj[record.default_lower_threshold] = {}
+        obj[record.default_lower_threshold].alias = record.default_lower_threshold
       }
       switch (record.default_condition) {
         case 'eq':
@@ -511,6 +544,8 @@ export default {
         'type': record.type,
         'format': record.format
       }
+      console.log(record)
+      this.temp = record.type === 'select' ? '' : '%.1f'
       this.$nextTick(() => {
         this.answerForm = { ...this.answerForm,
           'defaultCondition': record.default_condition,
@@ -554,6 +589,7 @@ export default {
       this.expand = !this.expand
     },
     async fetchAnswer (where) {
+      this.loading = true
       let base_sql = 'select * from t_patrol_answer where 1=1 '
       if (where !== null && where !== undefined && where !== '') {
         base_sql += where
@@ -564,6 +600,7 @@ export default {
         const answer = data[i]
         this.answers[answer.id] = answer
       }
+      this.loading = false
     }
   }
 }

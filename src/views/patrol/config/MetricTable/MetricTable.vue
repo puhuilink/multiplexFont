@@ -79,6 +79,7 @@
 
     </a-modal>
     <a-table
+      :locale="{emptyText:''}"
       :data-source="Object.values(metrics)"
       :pagination="{
         current: this.current,
@@ -91,6 +92,7 @@
         }
       }"
       :columns="metricColumns"
+      :loading="loading"
       row-key="id"
     >
       <template slot="metric_alias" slot-scope="text, record">
@@ -147,6 +149,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       total: 0,
       current: 1,
       form: this.$form.createForm(this, { name: 'advanced_search' }),
@@ -212,6 +215,8 @@ export default {
           } else {
             this.fetchMetric(null, pageNo)
           }
+          this.current = pageNo
+          this.$forceUpdate()
         }
       })
     },
@@ -243,13 +248,14 @@ export default {
               description: '新增检查项成功'
             })
             this.visible = false
+            this.metricForm.resetFields()
           } else {
             this.$notification.error({
               message: '系统提示',
               description: '操作失败：' + result.msg.toString()
             })
           }
-          await this.fetchMetric(null, this.current)
+          await this.handleSearch(this.current)
         }
       })
     },
@@ -261,6 +267,7 @@ export default {
       this.expand = !this.expand
     },
     async fetchMetric (where, pageNo) {
+      this.loading = true
       this.editingKey = ''
       this.metrics = {}
       let base_sql = 'select * from t_patrol_metric where 1=1 '
@@ -280,6 +287,7 @@ export default {
         const metric = data[i]
         this.metrics[metric.id] = metric
       }
+      this.loading = false
       // console.log(this.metrics)
     },
     async fetchAnswer () {
@@ -305,12 +313,11 @@ export default {
           'id': id
         })
       if (result.code === 200) {
-        delete this.metrics[id]
         this.$notification.success({
           message: '系统提示',
           description: '删除检查项成功'
         })
-        this.$forceUpdate()
+        await this.handleSearch(this.current)
       } else {
         this.$notification.error({
           message: '系统提示',

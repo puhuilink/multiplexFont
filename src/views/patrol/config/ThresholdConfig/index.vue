@@ -105,6 +105,7 @@
       />
     </div>
     <a-table
+      :locale="{emptyText:' '}"
       :columns="columns"
       :data-source="data"
       :loading="loading"
@@ -119,6 +120,7 @@
         }
       }"
     >
+      <template slot="host" slot-scope="value,record">{{ value }} <a-tag v-if="record.update_time =='NULL'" color="red">new</a-tag> </template>
       <template slot="endpoint" slot-scope="value,record">{{ record.visible==='t'?value:'虚拟实体' }}</template>
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
@@ -260,7 +262,7 @@ export default {
         base_sql += condition_sql
         base += condition_sql
       }
-      base_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      base_sql += ' order by create_time desc,update_time limit 10 offset ' + (pageNo - 1) * 10
       this.loading = true
       this.data = []
       const result = await sql(base_sql)
