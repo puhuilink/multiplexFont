@@ -211,7 +211,7 @@ import { formatTime, generateQuery } from '@/utils/graphql'
 import AlarmDetail from '../modules/AlarmDetail'
 import AlarmSolve from '../modules/AlarmSolve'
 import { ALARM_STATE, ALARM_ACK_STATUS, ALARM_ACK_MAP } from '@/tables/alarm/enum'
-import { levelColorMapping, fontLevelColorMapping } from '~~~/Alarm/color.config'
+import { levelColorMapping, fontLevelColorMapping, partLevelColorMapping } from '~~~/Alarm/color.config'
 import { removeEmpty } from '@/utils/util'
 const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip', 'type_model_name', 'device_model_name']
 export default {
@@ -314,7 +314,7 @@ export default {
       ALARM_ACK_STATUS,
       ALARM_ACK_MAP,
       alarmSearchTime: [moment().add(-1, 'days'), moment()],
-      colors: [...levelColorMapping.values()],
+      colors: [...partLevelColorMapping.values()],
       columns: [
         {
           title: '告警级别',
