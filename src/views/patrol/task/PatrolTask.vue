@@ -279,7 +279,7 @@ export default {
           const key = this.selectedRowKeys[i]
           const record = this.selectedRows[i]
           const content = await PatrolService.getPatrolTaskExcel(key)
-          if (content.length > 0) {
+          if (content.byteLength > 0) {
             await downloadExcel('巡更记录单-' + record.id.toString() + '.xls', content)
           } else {
             throw Error('该任务单没有任务报告！无法导出！')
