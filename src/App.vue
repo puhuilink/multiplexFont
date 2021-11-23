@@ -1,5 +1,9 @@
 <template>
-  <a-config-provider :locale="locale">
+  <a-config-provider :locale="locale" :transformCellText="({ text, column, record, index }) => text||''">
+    <template #renderEmpty>
+      <div style="text-align: center">
+      </div>
+    </template>
     <div id="app">
       <router-view/>
     </div>
