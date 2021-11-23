@@ -269,6 +269,20 @@ export default {
         this.$message.error('该任务单没有巡更记录可查看！')
       }
     },
+    getFormatDate () {
+      const date = new Date()
+      let month = date.getMonth() + 1
+      let strDate = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      if (strDate >= 0 && strDate <= 9) {
+        strDate = '0' + strDate
+      }
+      const currentDate = date.getFullYear() + '-' + month + '-' + strDate +
+        '_' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+      return currentDate
+    },
     /**
      * 导出
      */
@@ -279,8 +293,15 @@ export default {
           const key = this.selectedRowKeys[i]
           const record = this.selectedRows[i]
           const content = await PatrolService.getPatrolTaskExcel(key)
+          let suffix
+          if (record.actual_end_time !== null) {
+            suffix = record.actual_end_time.toString().replaceAll('T', '_')
+          } else {
+            suffix = this.getFormatDate()
+          }
+          console.log(suffix)
           if (content.byteLength > 0) {
-            await downloadExcel('巡更记录单-' + record.id.toString() + '.xls', content)
+            await downloadExcel('巡更记录单-' + record.actual_end_time.toString() + '.xls', content)
           } else {
             throw Error('该任务单没有任务报告！无法导出！')
           }
