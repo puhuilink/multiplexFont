@@ -301,7 +301,7 @@ export default {
           }
           console.log(suffix)
           if (content.byteLength > 0) {
-            await downloadExcel('巡更记录单-' + record.actual_end_time.toString() + '.xls', content)
+            await downloadExcel('巡更记录单-' + suffix + '.xls', content)
           } else {
             throw Error('该任务单没有任务报告！无法导出！')
           }
