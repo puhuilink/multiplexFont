@@ -267,7 +267,7 @@ export default class TopologyChart extends Chart {
     if (alarmLevel && alarmLevel !== 5 && alarmLevel !== 6) {
       if (alarmLevel > 9) {
         // 动环告警未映射告警都采用低告警颜色 全局搜索 动环告警 异常
-        this.chart.setItemState(id, animateTypeList[7], true)
+        this.chart.setItemState(id, animateTypeList[9], true)
       } else {
         this.chart.setItemState(id, animateTypeList[alarmLevel - 1], true)
       }
