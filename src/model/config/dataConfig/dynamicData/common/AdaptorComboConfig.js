@@ -16,7 +16,8 @@ export class AdaptorComboConfig {
     // dataType为2时
     businessContent = [],
     refreshTime = 0,
-    delayTime = 0
+    delayTime = 0,
+    topContent = {}
   }) {
     this.dataType = dataType
     this.isGroup = isGroup
@@ -28,6 +29,7 @@ export class AdaptorComboConfig {
     this.businessContent = businessContent
     this.refreshTime = refreshTime
     this.delayTime = delayTime
+    this.topContent = topContent
   }
 
   get isAvailable () {
@@ -35,8 +37,35 @@ export class AdaptorComboConfig {
     if (!this.calculateType && this.isGroup) {
       return false
     }
+    if (this.dataType === '8') {
+      return !(this.isEmpty(this.topContent.metricAlias) ||
+      this.isObjectEmpty(this.topContent.hostType) ||
+      this.isObjectEmpty(this.topContent.location)) ||
+        this.isEmpty(this.top)
+    }
 
     return !!this.getCurrentContent().length
+  }
+
+  isEmpty (str) {
+    return str === null || str === undefined || str.toString().trim() === ''
+  }
+  isObjectEmpty (obj) {
+    if (obj === null || obj === undefined || obj.length === 0) {
+      return true
+    }
+    for (const o in obj) {
+      if (typeof o === 'object') {
+        if (this.isObjectEmpty(o)) {
+          return true
+        }
+      } else {
+        if (this.isEmpty(o)) {
+          return true
+        }
+      }
+    }
+    return false
   }
 
   getCurrentContent () {
@@ -48,19 +77,25 @@ export class AdaptorComboConfig {
       // 业务系统
       case '2':
         return this.businessContent
+      case '8':
+        return [{}]
       default:
         throw new Error(`Unknown dataType in AdaptorComboConfig: ${this.dataType}`)
     }
   }
 
   getOption () {
-    const { dataType, isGroup, calculateType, top, timeRangeConfig } = this
-
+    const { dataType, isGroup, calculateType, top, timeRangeConfig, topContent } = this
+    let temp = {}
+    if (dataType === '8') {
+      temp = topContent
+    }
     return {
       dataType,
       isGroup,
       calculateType,
       top,
+      ...temp,
       content: this.getCurrentContent(),
       timeRange: timeRangeConfig.getOption()
     }
