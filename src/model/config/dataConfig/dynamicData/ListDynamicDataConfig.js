@@ -95,6 +95,11 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
       //   })
       // )
     }
+    let count = columns.length
+    count = 100 / 3
+    columns.forEach(c => {
+      c.width = count.toString() + '%'
+    })
     return { columns, dataSource }
   }
 
@@ -125,6 +130,11 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
         result[obj] = value
       })
       dataSource.push(result)
+    })
+    let count = columns.length
+    count = 100 / 3
+    columns.forEach(c => {
+      c.width = count.toString() + '%'
     })
     return { columns, dataSource }
   }
