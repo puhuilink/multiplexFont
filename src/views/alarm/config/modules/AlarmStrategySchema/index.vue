@@ -416,7 +416,6 @@ export default {
           }
           const { code, msg } = await StrategyService.add(this.model)
           if (code !== 200) {
-            this.$notifyError(msg)
             throw msg
           } else {
             this.$emit('addSuccess')
