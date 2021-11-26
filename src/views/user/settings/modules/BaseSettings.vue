@@ -139,7 +139,7 @@ export default {
       this.form.validateFields((errors, values) => {
         if (errors) return
         this.loading = true
-        UserService.update(values, { user_id: this.userId })
+        UserService.updateCommon(values, { user_id: this.userId })
           .then((msg) => {
             this.$notifyEditSuccess()
             this.SET_NAME({ name: values.staff_name })

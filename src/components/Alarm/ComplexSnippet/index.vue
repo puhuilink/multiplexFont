@@ -7,7 +7,7 @@
       :rules="[
         { required: true, message: '请选择监控对象' }
       ]">
-      <ComplexSelect v-model="model" />
+      <ComplexSelect v-model="model" v-bind="$props"/>
     </a-form-model-item>
 
     <a-form-model-item

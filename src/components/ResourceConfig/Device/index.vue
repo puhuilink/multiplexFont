@@ -184,8 +184,10 @@ export default {
       }
     }, 200),
     onShowAdvancedSelect () {
-      this.visible = true
-      this.cache = _.cloneDeep(this.model)
+      if (!this.ctx._data.isEdit) {
+        this.visible = true
+        this.cache = _.cloneDeep(this.model)
+      }
     },
     onToggleAdvanced () {
       this.advanced = !this.advanced
