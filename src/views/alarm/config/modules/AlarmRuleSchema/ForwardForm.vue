@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <h3 class="title">告警频率</h3>
+    <h3 class="title">告警通知频率</h3>
     <div class="RecoverForm__p">
       <span>告警产生后</span>
       <a-form-model-item
