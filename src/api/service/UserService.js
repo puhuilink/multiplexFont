@@ -82,6 +82,13 @@ class UserService extends BaseService {
     await this.hasuraTransfer({ query: q })
   }
 
+  static async updateCommon (user, where) {
+    const q = await generateMutation(
+      UserDao.update(user, where)
+    )
+    await this.hasuraTransfer({ query: q })
+  }
+
   static async toggleFlag (user_id, flag) {
     const q = await generateMutation(
       UserDao.update({ flag }, { user_id })

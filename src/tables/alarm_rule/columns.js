@@ -81,6 +81,7 @@ export function createTimeColumn () {
     dataIndex: 'create_ime',
     width: 200,
     sorter: true,
+    orderBy: 'descend',
     customRender: time => time ? moment(time).format() : ''
   }
 }
