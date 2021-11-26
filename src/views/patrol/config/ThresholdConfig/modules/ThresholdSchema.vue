@@ -74,9 +74,9 @@
           v-model="editForm.condition">
           <a-select-option :value="'eq'">等于</a-select-option>
           <a-select-option :value="'ne'">不等于</a-select-option>
-          <a-select-option v-if="isFill " :value="'gt'">大于</a-select-option>
-          <a-select-option v-if="isFill" :value="'lt'">小于</a-select-option>
-          <a-select-option v-if="isFill" :value="'out'">超过</a-select-option>
+          <a-select-option v-show="isFill " :value="'gt'">大于</a-select-option>
+          <a-select-option v-show="isFill" :value="'lt'">小于</a-select-option>
+          <a-select-option v-show="isFill" :value="'out'">超过</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-form-model-item

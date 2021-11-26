@@ -168,7 +168,7 @@ export default {
                 val.status = PLAN_STATUS_DISABLED
               })
               .catch((err) => {
-                this.$notifyError(err)
+                // this.$notifyError(err)
                 throw err
               })
           } else if (val.status === PLAN_STATUS_DISABLED) {
@@ -181,7 +181,7 @@ export default {
                 val.status = PLAN_STATUS_ENABLED
               })
               .catch((err) => {
-                this.$notifyError(err)
+                // this.$notifyError(err)
                 throw err
               })
           }

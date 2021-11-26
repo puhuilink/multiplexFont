@@ -31,10 +31,7 @@
 
       <a-steps :current="stepIndex">
         <a-step title="告警基础设置" />
-        <a-step title="告警合并" v-if="formModel.ruleType.includes('merge')" />
-        <a-step title="告警升级" v-if="formModel.ruleType.includes('upgrade')" />
-        <a-step title="告警消除" v-if="formModel.ruleType.includes('recover')" />
-        <a-step title="告警通知" v-if="formModel.ruleType.includes('forward')" />
+        <a-step v-for="(t,index) in formModel.ruleType" :key="index" :title="titleMapping[t]"/>
       </a-steps>
 
       <a-form-model
@@ -105,6 +102,12 @@ export default {
       ['recover', RecoverForm],
       ['forward', ForwardForm]
     ]),
+    titleMapping: {
+      'merge': '告警合并',
+      'upgrade': '告警升级',
+      'recover': '告警消除',
+      'forward': '告警通知'
+    },
     formItemLayout,
     formModel: AlarmRuleModelFactory.create({}),
     isEdit: false,
