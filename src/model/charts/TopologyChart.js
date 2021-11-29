@@ -285,7 +285,7 @@ export default class TopologyChart extends Chart {
       // const model = node.getModel()
       // hack
       const model = runTimeNodes[node.getModel().id]
-      if (model.Basis.length > 0) {
+      if (model && model.Basis.length > 0) {
         metricIds.push(model.Basis)
       }
       const hostId = _.get(model, ['resourceConfig', 'hostId'], [])
@@ -303,7 +303,6 @@ export default class TopologyChart extends Chart {
             group by (host_id);`
 
     const q = dealQuery(await sql(metricSql))
-
     if (_.isEmpty(hostIds)) return
 
     // 查询所有拓扑节点的告警数据
