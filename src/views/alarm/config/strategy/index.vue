@@ -169,9 +169,15 @@ export default {
           deviceBrandColumn,
           deviceModelColumn,
           endpointModelIdColumn,
-          metricModelIdColumn,
-          lastUpdateTime
-        ].map(fn => fn.call(this))
+          metricModelIdColumn
+        ].map(fn => fn.call(this)),
+        {
+          title: '更新时间',
+          dataIndex: 'last_update_time',
+          width: 300,
+          sorter: true,
+          orderBy: 'descend'
+        }
       ],
       modelColumns: [
         ...[

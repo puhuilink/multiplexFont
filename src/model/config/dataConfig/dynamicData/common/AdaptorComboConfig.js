@@ -127,11 +127,32 @@ export class AdaptorComboConfig {
       }))
   }
 
+  transferTopValue (obj = {}) {
+    return Object
+      .values(obj)
+      .flat()
+      .map(({
+        hostAlias = '',
+        metricValue = 0,
+        unit = '',
+        metricAlias = ''
+      }) => ({
+        data: metricValue,
+        legend: hostAlias,
+        name: `${metricAlias}`,
+        unit
+      }))
+  }
+
   // 对外数据转换接口，支持直接以原始数据生成通用数据格式
   static transfer (obj = {}) {
     // TODO: 整合不同返回结果
     if (this.dataType === '6') {
       return this.transferHealthValue(obj)
+    }
+
+    if (this.dataType === '8') {
+      return this.transferTopValue(obj)
     }
 
     // 业务系统和性能数据合并到一起
