@@ -126,7 +126,6 @@ export default {
       })
       const { data: { t_cmdb_host } } = result
       this.hType = t_cmdb_host
-      console.log(this.hType)
     }
   }
 }
