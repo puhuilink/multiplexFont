@@ -414,17 +414,12 @@ export default {
           if (_.isEmpty(this.formModel.hostId)) {
             Reflect.deleteProperty(this.formModel, 'hostId')
           }
-          const { code, msg } = await StrategyService.add(this.model)
-          if (code !== 200) {
-            throw msg
-          } else {
-            this.$emit('addSuccess')
-            this.$notifyAddSuccess()
-            this.cancel()
-            this.$refs.ruleForm.resetFields()
-          }
+          await StrategyService.add(this.model)
+          this.$emit('addSuccess')
+          this.$notifyAddSuccess()
+          this.cancel()
+          this.$refs.ruleForm.resetFields()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.submitLoading = false
@@ -448,7 +443,6 @@ export default {
           this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.submitLoading = false

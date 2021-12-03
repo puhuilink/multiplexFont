@@ -42,6 +42,9 @@ const sql = async (s) => {
     }
   })
   try {
+    if (decrypt(data) === '') {
+      return []
+    }
     const list = JSON.parse(decrypt(data))
     if (list.length) {
       const [{ result }] = list
