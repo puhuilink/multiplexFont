@@ -415,7 +415,8 @@ export default {
           customRender: (text, record) => {
             const endpointAlias = _.get(record, 'endpointAlias', '')
             const endpointModelAlias = _.get(record, 'endpointModelAlias', '')
-            return endpointAlias.slice('.') || endpointModelAlias.slice('.') || record.endpoint_id
+            console.log()
+            return endpointAlias.replaceAll('.', ' ') || endpointModelAlias.replaceAll('.', ' ') || record.endpoint_id
           }
         },
         {

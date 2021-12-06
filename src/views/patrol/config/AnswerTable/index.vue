@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div>
     <a-form class="ant-advanced-search-form" :form="form">
@@ -355,11 +356,13 @@ export default {
           }]
           this.answerForm.defaultCondition = 'eq'
         } else if (val === 'fill') {
-          this.answerForm.format = JSON.stringify({ format: '' })
+          this.answerForm.format = JSON.stringify({ format: '%.1f' })
+          this.temp = '%.1f'
         }
         this.answerForm.defaultLowerThreshold = null
         this.answerForm.defaultUpperThreshold = null
         this.$forceUpdate()
+        console.log(this.answerForm.format)
       },
       immediate: true
     },
@@ -408,7 +411,6 @@ export default {
               value: null,
               alias: ''
             })
-            console.log(this.formatList)
             if (this.formatList.length < 1) {
               this.$notification.error({
                 message: '系统提示',
@@ -544,7 +546,6 @@ export default {
         'type': record.type,
         'format': record.format
       }
-      console.log(record)
       this.temp = record.type === 'select' ? '' : '%.1f'
       this.$nextTick(() => {
         this.answerForm = { ...this.answerForm,
