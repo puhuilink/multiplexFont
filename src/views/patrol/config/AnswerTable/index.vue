@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div>
     <a-form class="ant-advanced-search-form" :form="form">
