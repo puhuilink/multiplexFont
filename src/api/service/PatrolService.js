@@ -61,7 +61,7 @@ class PatrolService extends BaseService {
     tags,
     position,
     value from t_patrol_task_report_view where task_id = ${task_id} and zone_id = ${zone_id} order by 
-    endpoint_sequence, metric_sequence, zone_sequence, checkpoint_sequence, host_sequence`
+    sequence`
     baseSql += ';'
     const result = await sql(baseSql)
     return sqlResultDealer(result)
