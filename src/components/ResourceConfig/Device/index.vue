@@ -40,6 +40,7 @@
       :afterClose="() => cache = null"
       title="选择监控对象"
       v-model="visible"
+      v-if="visible"
       :width="1024"
       wrapClassName="ComplexSelect__modal"
       @cancel="onCancel"
