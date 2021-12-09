@@ -52,6 +52,9 @@ const charts = [
   },
   {
     category: 'CHART', type: 'TextHealth', name: '文本健康度', icon: 'underline', width: 200, height: 100
+  },
+  {
+    category: 'CHART', type: 'Global', name: '全球', icon: 'global', width: 800, height: 600
   }
 ]
 
