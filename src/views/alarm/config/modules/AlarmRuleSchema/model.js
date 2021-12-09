@@ -235,6 +235,9 @@ class BasicRuleModel {
 
 export class AlarmRuleModelFactory {
   static create (model = {}) {
+    if (model.hostId && model.hostId.length) {
+      model.hostId = model.hostId.map(el => el.toString())
+    }
     return Reflect.construct(BasicRuleModel, [model])
   }
 
