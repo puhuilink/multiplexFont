@@ -379,6 +379,7 @@ export default {
           opt['uuid'] = uuid()
         })
         formModel.exprs.interval = (formModel.exprs.interval || 0) / 60
+        formModel.hostId = formModel.hostId.map(el => el.toString())
         this.formModel = formModel
       } catch (e) {
         this.formModel = this.$options.data.apply(this).formModel

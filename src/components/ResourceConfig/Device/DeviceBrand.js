@@ -62,7 +62,7 @@ const Select = {
     deviceType: {
       immediate: true,
       async handler (deviceType) {
-        await this.$nextTick()
+        // await this.$nextTick()
         this.list = []
         deviceType && this.fetch(deviceType)
       }
