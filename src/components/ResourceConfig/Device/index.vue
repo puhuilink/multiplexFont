@@ -52,8 +52,7 @@
           Object.assign(model, {
             deviceType,
             deviceBrand: null,
-            deviceModel: null,
-            hostId: []
+            deviceModel: null
           })
         }"
       />
@@ -65,8 +64,7 @@
         @input="deviceBrand => {
           Object.assign(model, {
             deviceBrand,
-            deviceModel: null,
-            hostId: []
+            deviceModel: null
           })
         }"
       />
@@ -77,8 +75,7 @@
         :value="model.deviceModel"
         @input="deviceModel => {
           Object.assign(model, {
-            deviceModel,
-            hostId: []
+            deviceModel
           })
         }"
       />
@@ -87,7 +84,7 @@
         v-bind="ctx.editAbleProps"
         :hostTypeDictValueCode="model.deviceModel"
         multiple
-        v-model="model.hostId"
+        :value="model.hostId"
       />
     </a-modal>
 

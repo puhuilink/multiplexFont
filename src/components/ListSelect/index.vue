@@ -119,7 +119,9 @@ export default {
   watch: {
     checkedKeys: {
       deep: true,
-      handler (checkedKeys) {
+      async handler (checkedKeys) {
+        // 初始化变更checkKeys之后需要同步自动通知上层方法，以避免影响上层方法等待
+        await this.$nextTick()
         this.$emit(
           'input',
           this.multiple ? checkedKeys : checkedKeys[0]
@@ -129,6 +131,7 @@ export default {
     value: {
       deep: true,
       handler (value) {
+        // 初始化时SelectList时并未处罚value
         // 内部存储始终按数组格式
         const keys = _.castArray(value).filter(Boolean)
         if (!_.isEqual(keys, this.checkedKeys)) {
@@ -160,6 +163,12 @@ export default {
       } else {
         this.searchLabel = ''
       }
+    }
+  },
+  created () {
+    const keys = _.castArray(this.value)
+    if (!_.isEqual(keys, this.checkedKeys)) {
+      this.checkedKeys = [ ...keys ]
     }
   }
 }
