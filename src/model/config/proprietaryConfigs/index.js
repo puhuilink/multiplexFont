@@ -6,6 +6,7 @@
  * Email: dong.xing@outlook.com
  */
 import _ from 'lodash'
+import BarProprietaryConfig from '@/model/config/proprietaryConfigs/BarProprietaryConfig'
 
 /**
  * 图例
@@ -1277,7 +1278,31 @@ class UpsProps {
     this.isCallInterface = isCallInterface
   }
 }
-
+class MoreProps {
+  constructor ({
+    styleConfig = {},
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
+  }) {
+    this.styleConfig = styleConfig
+    this.params = params
+    this.isCallInterface = isCallInterface
+  }
+}
+class TabProps {
+  constructor ({
+    styleConfig = {},
+    params = {},
+    // 是否调用接口
+    isCallInterface = false
+  }) {
+    this.styleConfig = Object.assign({}, styleConfig, new BarProprietaryConfig(styleConfig))
+    // this.styleConfig = styleConfig
+    this.params = params
+    this.isCallInterface = isCallInterface
+  }
+}
 export {
   AreaStyle,
   BarItemStyle,
@@ -1305,6 +1330,8 @@ export {
   Radar,
   PolarLinearColors,
   PolarMask,
+  MoreProps,
+  TabProps,
   UpsProps
 }
 

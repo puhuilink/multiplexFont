@@ -68,6 +68,12 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'UPS', name: 'UPS视图', icon: 'plus', width: 1920, height: 1080
+  },
+  {
+    category: 'ELEMENT', type: 'Tab', name: '标签列表', icon: 'tag', width: 100, height: 100
+  },
+  {
+    category: 'ELEMENT', type: 'More', name: '更多信息', icon: 'more', width: 100, height: 100
   }
 ]
 

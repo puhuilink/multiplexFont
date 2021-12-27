@@ -8,7 +8,7 @@
 <template>
   <div class="config">
     <div class="config__header">
-      <p>窗口配置</p>
+      <p></p>
     </div>
     <div class="config__content">
       <div class="comment-template" v-if="activeWidget">
@@ -69,7 +69,9 @@ export default {
       ['List', 'ListConfig'],
       ['Pie', 'PieConfig'],
       ['Polar', 'PolarConfig'],
-      ['UPS', 'UpsConfig']
+      ['UPS', 'UpsConfig'],
+      ['Tab', 'TabConfig'],
+      ['More', 'MoreConfig']
     ])
   }),
   computed: {

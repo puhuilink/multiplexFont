@@ -8,6 +8,8 @@
 import AlarmListElement from '../element/AlarmListElement'
 import ListElement from '../element/ListElement'
 import UpsElement from '@/model/element/UpsElement'
+import MoreElement from '@/model/element/MoreElement'
+import TabElement from '@/model/element/TabElement'
 
 export default class ElementFactory {
   static create (type, { widget, element, onlyShow = false }) {
@@ -18,6 +20,10 @@ export default class ElementFactory {
         return new ListElement({ widget, element, onlyShow })
       case 'UPS':
         return new UpsElement({ widget, element, onlyShow })
+      case 'More':
+        return new MoreElement({ widget, element, onlyShow })
+      case 'Tab':
+        return new TabElement({ widget, element, onlyShow })
       default:
         return null
     }

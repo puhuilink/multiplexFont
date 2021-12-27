@@ -17,7 +17,7 @@ Viewer.setDefaults({
   Options: { 'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }
 })
 Vue.config.productionTip = false
-
+Vue.prototype.$EventBus = new Vue()
 new Vue({
   router,
   store,
