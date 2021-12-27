@@ -11,6 +11,7 @@ import ListProprietaryConfig from '../config/proprietaryConfigs/ListProprietaryC
 import UpsProprietaryConfig from '@/model/config/proprietaryConfigs/UpsProprietaryConfig'
 import MoreProprietaryConfig from '@/model/config/proprietaryConfigs/MoreProprietaryConfig'
 import TabProprietaryConfig from '@/model/config/proprietaryConfigs/TabProprietaryConfig'
+import SelectProprietaryConfig from '@/model/config/proprietaryConfigs/SelectProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -21,6 +22,8 @@ export default class ElementProprietaryConfigFactory {
         return new ListProprietaryConfig(proprietaryConfig)
       case 'UPS':
         return new UpsProprietaryConfig(proprietaryConfig)
+      case 'Select':
+        return new SelectProprietaryConfig(proprietaryConfig)
       case 'More':
         return new MoreProprietaryConfig(proprietaryConfig)
       case 'Tab':

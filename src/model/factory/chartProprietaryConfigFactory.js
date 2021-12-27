@@ -20,6 +20,7 @@ import TriangleChartProprietaryConfig from '../config/proprietaryConfigs/Triangl
 import ImageProprietaryConfig from '../config/proprietaryConfigs/ImageProprietaryConfig'
 import GaugeProprietaryConfig from '../config/proprietaryConfigs/GaugePropritaryConfig'
 import TextHealthProprietaryConfig from '../config/proprietaryConfigs/TextHealthProprietaryConfig'
+import GlobalProprietaryConfig from '@/model/config/proprietaryConfigs/GlobalProprietaryConfig'
 
 export default class ChartProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -54,6 +55,8 @@ export default class ChartProprietaryConfigFactory {
         return new GaugeProprietaryConfig(proprietaryConfig)
       case 'TextHealth':
         return new TextHealthProprietaryConfig(proprietaryConfig)
+      case 'Global':
+        return new GlobalProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

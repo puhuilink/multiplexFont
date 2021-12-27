@@ -74,6 +74,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'More', name: '更多信息', icon: 'more', width: 100, height: 100
+  },
+  {
+    category: 'ELEMENT', type: 'Select', name: '选择栏', icon: 'unordered-list', width: 200, height: 100
   }
 ]
 

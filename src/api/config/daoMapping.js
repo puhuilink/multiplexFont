@@ -53,7 +53,13 @@ const IMP_TABLE_LIST = [
   // 主题
   { schema: 't_theme' },
   // 动环
-  { schema: 't_xm_paess_metric' }
+  { schema: 't_xm_paess_metric' },
+  // SDWAN
+  { schema: 't_sdwan_site' },
+  { schema: 't_sdwan_connection' },
+  { schema: 't_sdwan_cpe' },
+  { schema: 't_sdwan_wan' }
+
 ]
 
 const IMP_DAO_MAPPING = new Map([

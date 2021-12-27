@@ -920,6 +920,30 @@ class Graphic {
 }
 
 /**
+ * Global echart暴露配置
+ */
+class Global {
+  constructor ({
+    // 地图底图背景颜色
+    backgroundColor = '#323c48',
+    // 版图颜色
+    areaColor = '#01588E',
+    // 版图边缘颜色
+    borderColor = '#404a59',
+    // 连线颜色渐变
+    lineColor = '#58B3CC',
+    // 版图文字颜色
+    fontColor = '#000'
+  }) {
+    this.backgroundColor = backgroundColor
+    this.areaColor = areaColor
+    this.borderColor = borderColor
+    this.lineColor = lineColor
+    this.fontColor = fontColor
+  }
+}
+
+/**
  * 矩形形状
  */
 class RectShape {
@@ -1303,6 +1327,15 @@ class TabProps {
     this.isCallInterface = isCallInterface
   }
 }
+
+class SelectProps {
+  constructor ({
+    styleConfig = {}
+  }) {
+    this.styleConfig = styleConfig
+  }
+}
+
 export {
   AreaStyle,
   BarItemStyle,
@@ -1332,7 +1365,9 @@ export {
   PolarMask,
   MoreProps,
   TabProps,
-  UpsProps
+  UpsProps,
+  SelectProps,
+  Global
 }
 
 export const THRESHOLD_RULE_NAME_EQUAL = '='

@@ -19,6 +19,7 @@ import GaugeChart from '../charts/GaugeChart'
 import DegreeRingChart from '../charts/DegreeRingChart'
 import TextHealthChart from '../charts/TextHealthChart'
 import PolarChart from '../charts/PolarChart'
+import Global from '../charts/Global'
 
 export default class ChartFactory {
   static create (type, { widget, onlyShow = false }) {
@@ -51,6 +52,8 @@ export default class ChartFactory {
         return new DegreeRingChart({ widget })
       case 'TextHealth':
         return new TextHealthChart({ widget })
+      case 'Global':
+        return new Global({ widget })
       default:
         return null
     }

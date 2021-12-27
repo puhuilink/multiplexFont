@@ -103,6 +103,7 @@ export default class Chart {
    */
   async mergeOption (config, loadingDynamicData = false) {
     // 向外暴露 echarts 配置
+    console.log('merge', config)
     this.chartConfig = await this.mappingOption(config, loadingDynamicData)
     // 如果数据为空则清空图表
     if (_.isEmpty(this.chartConfig.series)) {
@@ -110,7 +111,7 @@ export default class Chart {
     }
     // 重新配置图表
     // https://github.com/apache/incubator-echarts/issues/3976
-    this.chart.setOption(this.chartConfig, true)
+    this.chart.setOption(this.chartConfig)
   }
 
   refresh () {

@@ -8,6 +8,7 @@
 import AlarmListElement from '../element/AlarmListElement'
 import ListElement from '../element/ListElement'
 import UpsElement from '@/model/element/UpsElement'
+import SelectElement from '@/model/element/SelectElement'
 import MoreElement from '@/model/element/MoreElement'
 import TabElement from '@/model/element/TabElement'
 
@@ -20,6 +21,8 @@ export default class ElementFactory {
         return new ListElement({ widget, element, onlyShow })
       case 'UPS':
         return new UpsElement({ widget, element, onlyShow })
+      case 'Select':
+        return new SelectElement({ widget, element, onlyShow })
       case 'More':
         return new MoreElement({ widget, element, onlyShow })
       case 'Tab':

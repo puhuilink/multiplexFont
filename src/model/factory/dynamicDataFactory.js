@@ -13,6 +13,7 @@ import ListDynamicDataConfig from '../config/dataConfig/dynamicData/ListDynamicD
 import PieDynamicDataConfig from '../config/dataConfig/dynamicData/PieDynamicDataConfig'
 import PolarDynamicDataConfig from '../config/dataConfig/dynamicData/PolarDynamicDataConfig'
 import TextHealthDynamicDataConfig from '../config/dataConfig/dynamicData/TextHealthDynamicDataConfig'
+import { GlobalDynamicDataConfig } from '../config/dataConfig/dynamicData/GlobalDynamicDataConfig'
 import MoreDynamicDataConfig from '@/model/config/dataConfig/dynamicData/MoreDynamicDataConfig'
 import TabDynamicDataConfig from '@/model/config/dataConfig/dynamicData/TabDynamicDataConfig'
 
@@ -26,6 +27,8 @@ export default class DynamicDataFactory {
     ['List', ListDynamicDataConfig],
     ['Pie', PieDynamicDataConfig],
     ['Polar', PolarDynamicDataConfig],
+    ['TextHealth', TextHealthDynamicDataConfig],
+    ['Global', GlobalDynamicDataConfig],
     ['TextHealth', TextHealthDynamicDataConfig],
     ['More', MoreDynamicDataConfig],
     ['Tab', TabDynamicDataConfig]

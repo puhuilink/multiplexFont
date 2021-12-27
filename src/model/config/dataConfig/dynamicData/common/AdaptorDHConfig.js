@@ -20,6 +20,7 @@ export class AdaptorDHConfig {
   }
 
   fetch () {
+    console.log('DHgetoption', this.getOption())
     const { code } = this
     return ViewDataService
       .xmDHMetric({ code })

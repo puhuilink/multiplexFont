@@ -14,7 +14,8 @@ const getters = {
   userId: state => _.get(state, 'user.info.userId'),
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab,
-  lang: state => _.get(state, 'i18n.lang')
+  lang: state => _.get(state, 'i18n.lang'),
+  orm: state => state.cache.orm
 }
 
 export default getters

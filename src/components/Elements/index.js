@@ -11,10 +11,13 @@ import LatestAlarmElement from './LatestAlarmElement'
 import UpsElement from '~~~/Elements/UpsElement'
 import MoreElement from '~~~/Elements/MoreElement'
 import TabElement from '~~~/Elements/TabElement'
+import SelectElement from '~~~/Elements/SelectElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
   ['List', 'ListElement'],
+  ['UPS', 'UpsElement'],
+  ['Select', 'SelectElement'],
   ['More', 'MoreElement'],
   ['Tab', 'TabElement'],
   ['UPS', 'UpsElement']
@@ -23,9 +26,10 @@ const ELEMENT_MAPPING = new Map([
 const ELEMENTS = {
   LatestAlarmElement,
   ListElement,
+  UpsElement,
+  SelectElement,
   MoreElement,
-  TabElement,
-  UpsElement
+  TabElement
 }
 
 export {

@@ -77,5 +77,6 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
 
   async getDhDataOption () {
     this.text = await this.dhConfig.fetch()
+    console.log('option', this.text)
   }
 }
