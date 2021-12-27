@@ -23,6 +23,8 @@ import ListConfig from './elements/ListConfig'
 import PieConfig from './charts/PieConfig'
 import PolarConfig from './charts/PolarConfig'
 import UpsConfig from '@/views/design/modules/config/elements/UpsConfig'
+import MoreConfig from '@/views/design/modules/config/elements/MoreConfig'
+import TabConfig from '@/views/design/modules/config/elements/TabConfig'
 
 // 图表模板配置
 const charts = {
@@ -46,7 +48,9 @@ const charts = {
 const elements = {
   AlarmListConfig,
   ListConfig,
-  UpsConfig
+  UpsConfig,
+  TabConfig,
+  MoreConfig
 }
 
 // 模板配置组件

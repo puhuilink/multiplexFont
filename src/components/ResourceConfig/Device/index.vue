@@ -50,6 +50,9 @@
         v-bind="ctx.editAbleProps"
         :value="model.deviceType"
         @input="deviceType => {
+          if (deviceType == null){
+            return
+          }
           Object.assign(model, {
             deviceType,
             deviceBrand: null,
@@ -63,6 +66,9 @@
         :deviceType="model.deviceType"
         :value="model.deviceBrand"
         @input="deviceBrand => {
+          if (deviceBrand == null){
+            return
+          }
           Object.assign(model, {
             deviceBrand,
             deviceModel: null
@@ -75,6 +81,9 @@
         :deviceBrand="model.deviceBrand"
         :value="model.deviceModel"
         @input="deviceModel => {
+          if (deviceModel == null){
+            return
+          }
           Object.assign(model, {
             deviceModel
           })

@@ -9,6 +9,8 @@
 import AlarmListProprietaryConfig from '../config/proprietaryConfigs/AlarmListProprietaryConfig'
 import ListProprietaryConfig from '../config/proprietaryConfigs/ListProprietaryConfig'
 import UpsProprietaryConfig from '@/model/config/proprietaryConfigs/UpsProprietaryConfig'
+import MoreProprietaryConfig from '@/model/config/proprietaryConfigs/MoreProprietaryConfig'
+import TabProprietaryConfig from '@/model/config/proprietaryConfigs/TabProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -19,6 +21,10 @@ export default class ElementProprietaryConfigFactory {
         return new ListProprietaryConfig(proprietaryConfig)
       case 'UPS':
         return new UpsProprietaryConfig(proprietaryConfig)
+      case 'More':
+        return new MoreProprietaryConfig(proprietaryConfig)
+      case 'Tab':
+        return new TabProprietaryConfig(proprietaryConfig)
       default:
         return null
     }
