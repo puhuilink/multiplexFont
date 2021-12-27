@@ -23,6 +23,8 @@ import ListConfig from './elements/ListConfig'
 import PieConfig from './charts/PieConfig'
 import PolarConfig from './charts/PolarConfig'
 import UpsConfig from '@/views/design/modules/config/elements/UpsConfig'
+import GlobalConfig from './charts/Global'
+import SelectConfig from '@/views/design/modules/config/elements/SelectConfig'
 
 // 图表模板配置
 const charts = {
@@ -39,14 +41,16 @@ const charts = {
   DegreeRingConfig,
   TextHealthConfig,
   PieConfig,
-  PolarConfig
+  PolarConfig,
+  GlobalConfig
 }
 
 // 元素模板配置
 const elements = {
   AlarmListConfig,
   ListConfig,
-  UpsConfig
+  UpsConfig,
+  SelectConfig
 }
 
 // 模板配置组件

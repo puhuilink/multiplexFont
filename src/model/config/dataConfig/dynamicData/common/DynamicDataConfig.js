@@ -9,7 +9,17 @@ import { AdaptorComboConfig } from './AdaptorComboConfig'
 import { AdaptorDHConfig } from './AdaptorDHConfig'
 import { AdaptorNumConfig } from './AdaptorNumConfig'
 import { AdaptorSqlConfig } from './AdaptorSqlConfig'
-import { SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL } from '../types/sourceType'
+import { AdaptorOrmConfig } from './AdaptorOrmConfig'
+import {
+  SOURCE_TYPE_ALARM,
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_DH,
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_NUMBER,
+  SOURCE_TYPE_SQL,
+  SOURCE_TYPE_ORM
+} from '../types/sourceType'
 
 export class DynamicDataConfig {
   constructor ({
@@ -26,7 +36,9 @@ export class DynamicDataConfig {
     // 数量数据配置
     numberConfig = {},
     // 自定义sql数据配置
-    sqlConfig = {}
+    sqlConfig = {},
+    // Orm数据配置
+    ormConfig = {}
   }) {
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
@@ -35,6 +47,7 @@ export class DynamicDataConfig {
     this.dhConfig = new AdaptorDHConfig(dhConfig)
     this.numberConfig = new AdaptorNumConfig(numberConfig)
     this.sqlConfig = new AdaptorSqlConfig(sqlConfig)
+    this.ormConfig = new AdaptorOrmConfig(ormConfig)
     this.resetData()
   }
 
@@ -46,7 +59,8 @@ export class DynamicDataConfig {
       overviewConfig: this.overviewConfig.getOption(),
       comboConfig: this.comboConfig.getOption(),
       numberConfig: this.numberConfig.getOption(),
-      sqlConfig: this.sqlConfig.getOption()
+      sqlConfig: this.sqlConfig.getOption(),
+      ormConfig: this.ormConfig.getOption()
     }
   }
 
@@ -59,6 +73,7 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_OVERVIEW: return this.overviewConfig
       case SOURCE_TYPE_NUMBER: return this.numberConfig
       case SOURCE_TYPE_SQL: return this.sqlConfig
+      case SOURCE_TYPE_ORM: return this.ormConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

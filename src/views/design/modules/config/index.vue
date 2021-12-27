@@ -69,7 +69,9 @@ export default {
       ['List', 'ListConfig'],
       ['Pie', 'PieConfig'],
       ['Polar', 'PolarConfig'],
-      ['UPS', 'UpsConfig']
+      ['UPS', 'UpsConfig'],
+      ['Global', 'GlobalConfig'],
+      ['Select', 'SelectConfig']
     ])
   }),
   computed: {

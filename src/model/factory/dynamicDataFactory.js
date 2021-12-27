@@ -13,6 +13,7 @@ import ListDynamicDataConfig from '../config/dataConfig/dynamicData/ListDynamicD
 import PieDynamicDataConfig from '../config/dataConfig/dynamicData/PieDynamicDataConfig'
 import PolarDynamicDataConfig from '../config/dataConfig/dynamicData/PolarDynamicDataConfig'
 import TextHealthDynamicDataConfig from '../config/dataConfig/dynamicData/TextHealthDynamicDataConfig'
+import { GlobalDynamicDataConfig } from '../config/dataConfig/dynamicData/GlobalDynamicDataConfig'
 
 export default class DynamicDataFactory {
   static map = new Map([
@@ -24,7 +25,8 @@ export default class DynamicDataFactory {
     ['List', ListDynamicDataConfig],
     ['Pie', PieDynamicDataConfig],
     ['Polar', PolarDynamicDataConfig],
-    ['TextHealth', TextHealthDynamicDataConfig]
+    ['TextHealth', TextHealthDynamicDataConfig],
+    ['Global', GlobalDynamicDataConfig]
   ])
 
   static create (type, dbDataConfig) {

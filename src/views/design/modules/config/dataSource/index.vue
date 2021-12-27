@@ -30,6 +30,7 @@
               <a-select-option :value="SOURCE_TYPE_DH" v-if="getSlot(SOURCE_TYPE_DH)">动环数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_NUMBER" v-if="getSlot(SOURCE_TYPE_NUMBER)">数量数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_SQL" v-if="getSlot(SOURCE_TYPE_SQL)">自定义SQL</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_ORM" v-if="getSlot(SOURCE_TYPE_ORM)">ORM数据</a-select-option>
             </a-select>
           </div>
 
@@ -39,9 +40,9 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL].includes(sourceType)">
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM].includes(sourceType)">
         <div
-          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL]"
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM]"
           :key="type"
           class="data-source__wrap"
           v-show="sourceType === type"
@@ -65,6 +66,26 @@
       </a-collapse-panel>
       <!-- E 静态数据编辑 -->
 
+      <a-collapse-panel header="缓存数据读取" key="4" v-show="sourceType === SOURCE_TYPE_ORM">
+        <div class="comment-template__item" >
+          <p class="comment-template__leading">显示</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-switch
+              checkedChildren="显示"
+              unCheckedChildren="不显示"
+              @change="cache" />
+          </div>
+        </div>
+        <div class="comment-template__item" v-if="cacheStatus">
+          <p class="comment-template__leading">变量名</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-input
+              v-model="cacheValue"
+            ></a-input>
+          </div>
+        </div>
+      </a-collapse-panel>
+
     </a-collapse>
 
   </div>
@@ -85,7 +106,8 @@ import {
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
   SOURCE_TYPE_NUMBER,
-  SOURCE_TYPE_SQL
+  SOURCE_TYPE_SQL,
+  SOURCE_TYPE_ORM
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -102,7 +124,10 @@ export default {
     SOURCE_TYPE_COMBO,
     SOURCE_TYPE_DH,
     SOURCE_TYPE_NUMBER,
-    SOURCE_TYPE_SQL
+    SOURCE_TYPE_SQL,
+    SOURCE_TYPE_ORM,
+    cacheStatus: false,
+    cacheValue: ''
   }),
   computed: {
     ...mapState('screen', ['activeWidget']),
@@ -212,6 +237,9 @@ export default {
     },
     getSlot (slot) {
       return this.$slots[slot] && !_.isEmpty(this.$slots[slot])
+    },
+    cache (checked) {
+      this.cacheStatus = checked
     }
   }
 }
@@ -225,7 +253,7 @@ export default {
   }
 
   &__wrap {
-    height: calc(100vh - 388px);
+    height: calc(75vh - 388px);
     overflow-y: auto;
   }
 

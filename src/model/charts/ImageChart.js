@@ -39,6 +39,7 @@ export default class ImageChart extends Chart {
   mappingOption ({ commonConfig, proprietaryConfig }) {
     const padding = commonConfig.getPadding()
     const graphic = proprietaryConfig.getOption(this.chart, padding)
+    console.log('grap', { graphic })
     return { graphic }
   }
 }
