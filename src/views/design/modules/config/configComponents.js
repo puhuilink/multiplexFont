@@ -16,6 +16,7 @@ import CircleConfig from './charts/CircleConfig'
 import TriangleConfig from './charts/TriangleConfig'
 import ImageConfig from './charts/ImageConfig'
 import Gauge from './charts/Gauge'
+import GlobalConfig from '@/views/design/modules/config/charts/Global'
 import DegreeRingConfig from './charts/DegreeRingConfig'
 import AlarmListConfig from './elements/AlarmListConfig'
 import TextHealthConfig from './charts/TextHealthConfig'
@@ -23,6 +24,7 @@ import ListConfig from './elements/ListConfig'
 import PieConfig from './charts/PieConfig'
 import PolarConfig from './charts/PolarConfig'
 import UpsConfig from '@/views/design/modules/config/elements/UpsConfig'
+import SelectConfig from '@/views/design/modules/config/elements/SelectConfig'
 import MoreConfig from '@/views/design/modules/config/elements/MoreConfig'
 import TabConfig from '@/views/design/modules/config/elements/TabConfig'
 
@@ -41,7 +43,9 @@ const charts = {
   DegreeRingConfig,
   TextHealthConfig,
   PieConfig,
-  PolarConfig
+  PolarConfig,
+  GlobalConfig,
+  SelectConfig
 }
 
 // 元素模板配置
