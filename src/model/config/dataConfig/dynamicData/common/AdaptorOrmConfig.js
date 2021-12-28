@@ -1,6 +1,5 @@
-import { AdaptorConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorConfig'
+
 import { SdwanSiteService } from '@/api'
-import _ from 'lodash'
 
 class AdaptorOrmConfig {
   constructor ({
@@ -24,7 +23,7 @@ class AdaptorOrmConfig {
 
   fetch () {
     console.log('first1', this.name, this.cache)
-    const { name, code, cache } = this.getOption()
+    const { name, cache } = this.getOption()
     const where = {}
     if (cache.length) {
       where.id = { _eq: cache }

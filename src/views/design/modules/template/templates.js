@@ -77,6 +77,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'Select', name: '选择栏', icon: 'unordered-list', width: 200, height: 100
+  },
+  {
+    category: 'ELEMENT', type: 'NewAlarm', name: '新告警列表', icon: 'exclamation', width: 200, height: 100
   }
 ]
 
