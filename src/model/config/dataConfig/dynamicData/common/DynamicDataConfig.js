@@ -18,8 +18,9 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_NUMBER,
   SOURCE_TYPE_SQL,
-  SOURCE_TYPE_ORM
+  SOURCE_TYPE_ORM, SOURCE_TYPE_OPEN
 } from '../types/sourceType'
+import { AdaptorOpenConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorOpenConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -37,6 +38,8 @@ export class DynamicDataConfig {
     numberConfig = {},
     // 自定义sql数据配置
     sqlConfig = {},
+    // 自定义sql数据配置
+    openConfig = {},
     // Orm数据配置
     ormConfig = {}
   }) {
@@ -48,6 +51,7 @@ export class DynamicDataConfig {
     this.numberConfig = new AdaptorNumConfig(numberConfig)
     this.sqlConfig = new AdaptorSqlConfig(sqlConfig)
     this.ormConfig = new AdaptorOrmConfig(ormConfig)
+    this.openConfig = new AdaptorOpenConfig(openConfig)
     this.resetData()
   }
 
@@ -60,6 +64,7 @@ export class DynamicDataConfig {
       comboConfig: this.comboConfig.getOption(),
       numberConfig: this.numberConfig.getOption(),
       sqlConfig: this.sqlConfig.getOption(),
+      openConfig: this.openConfig.getOption(),
       ormConfig: this.ormConfig.getOption()
     }
   }
@@ -74,6 +79,7 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_NUMBER: return this.numberConfig
       case SOURCE_TYPE_SQL: return this.sqlConfig
       case SOURCE_TYPE_ORM: return this.ormConfig
+      case SOURCE_TYPE_OPEN: return this.openConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

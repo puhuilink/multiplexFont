@@ -85,6 +85,15 @@ export default {
         Object.assign(this.config.dataConfig.dbDataConfig.ormConfig, v)
         this.change()
       }
+    },
+    openConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.openConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.openConfig, v)
+        this.change()
+      }
     }
   },
   methods: {
@@ -108,7 +117,6 @@ export default {
         this.activateWidget({
           widget: Object.assign(activeWidget, { config: this.config })
         })
-        console.log('this', this.activateWidget)
       } catch (e) {
         throw e
       } finally {

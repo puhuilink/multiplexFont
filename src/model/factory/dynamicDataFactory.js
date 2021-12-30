@@ -31,7 +31,7 @@ export default class DynamicDataFactory {
     ['Global', GlobalDynamicDataConfig],
     ['TextHealth', TextHealthDynamicDataConfig],
     ['More', MoreDynamicDataConfig],
-    ['More', MoreDynamicDataConfig],
+    ['NewAlarm', ListDynamicDataConfig],
     ['Tab', TabDynamicDataConfig]
   ])
 

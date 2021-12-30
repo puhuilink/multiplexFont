@@ -68,17 +68,19 @@ export default {
       },
       {
         title: '告警类型',
-        dataIndex: `type_model_name`,
+        dataIndex: `alarm_type`,
         width: '25%',
         align,
-        show: true
+        show: true,
+        ellipsis: true
       },
       {
         title: '告警详细信息',
         dataIndex: 'detail',
         width: '45%',
         show: true,
-        align
+        align,
+        ellipsis: true
       }]
     },
     dataSource () {

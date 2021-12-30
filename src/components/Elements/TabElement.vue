@@ -174,7 +174,6 @@ export default {
         yAxis: y,
         series: XData
       }
-      console.log('option', option)
       this.myChart.setOption(option)
       this.$nextTick(() => {
         this.myChart.resize()

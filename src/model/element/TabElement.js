@@ -12,7 +12,7 @@
 import _ from 'lodash'
 import Element from '@/model/element/index'
 import {
-  SOURCE_TYPE_COMBO, SOURCE_TYPE_NULL,
+  SOURCE_TYPE_COMBO, SOURCE_TYPE_NULL, SOURCE_TYPE_OPEN,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_REAL, SOURCE_TYPE_SQL, SOURCE_TYPE_STATIC
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
@@ -44,6 +44,11 @@ export default class TabElement extends Element {
         break
       }
       case SOURCE_TYPE_SQL: {
+        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns })
+        break
+      }
+      case SOURCE_TYPE_OPEN: {
         const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(props, { dataSource, columns })
         break
