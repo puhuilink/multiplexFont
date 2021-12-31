@@ -33,13 +33,13 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
     return { columns, dataSource }
   }
   generateStaticData (dataList = [], reverse = false) {
-    const columns = []
+    let columns = []
     let dataSource = []
     if (_.isEmpty(dataList)) {
       return { columns, dataSource }
     }
     const { data } = dataList
-    columns.push(Object.keys(data))
+    columns = Object.keys(data)
     dataSource = data
     return { columns, dataSource }
   }

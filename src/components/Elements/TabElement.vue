@@ -1,7 +1,6 @@
 <template>
-
-  <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts" size="large">
-    <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e">
+  <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts">
+    <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e.title">
       <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }" ></div>
     </a-tab-pane>
   </a-tabs>
@@ -25,7 +24,7 @@ export default {
       styleConfig: {
       },
       fatherStyle: {},
-      columns: [{ title: '空' }],
+      columns: ['空'],
       dataSource: [],
       visible: false,
       myChart: null,
@@ -51,12 +50,17 @@ export default {
       handler (value) {
         if (value) {
           if (value.length < 1) {
-            this.columns = [{ title: 'text' }]
+            this.columns = [ 'text' ]
           } else {
-            this.columns = value
+            const t = []
+            for (let i = 0; i < value.length; i++) {
+              const s = { 'title': value[i] }
+              t.push(s)
+            }
+            this.columns = t
           }
         } else {
-          this.columns = [{ title: 'text' }]
+          this.columns = ['text']
         }
       }
     },
@@ -114,7 +118,7 @@ export default {
         YData = []
         XData = []
         const tempObj = {}
-        this.dataSource[this.columns[key]].forEach((e) => {
+        this.dataSource[this.columns[key].title].forEach((e) => {
           const name = e.originSiteName + '-' + e.peerSiteName
           delete e.originSiteName
           delete e.peerSiteName
