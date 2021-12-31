@@ -8,7 +8,7 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_COMBO,
-  SOURCE_TYPE_NUMBER
+  SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC
 } from './types/sourceType'
 
 const initialOption = {
@@ -37,6 +37,11 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_NUMBER: {
           await this.getNumberDataOption()
+          break
+        }
+        case SOURCE_TYPE_STATIC_TRAFFIC: {
+          await this.getSiteTrafficOption()
+          break
         }
       }
     }
@@ -150,6 +155,37 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
       series: legendList.map(() => ({
         type: 'bar'
       }))
+    }
+    Object.assign(this, option)
+  }
+
+  async getSiteTrafficOption () {
+    const { data: { top } } = await this.siteTrafficConfig.fetchBar()
+    const option = {
+      legend: {
+        data: [ '重要告警', '一般告警', '次要告警' ]
+      },
+      xAxis: {
+        type: 'category',
+        data: top.map(({ siteName }) => siteName)
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          name: '重要告警',
+          data: top.map(({ critical }) => critical)
+        },
+        {
+          name: '一般告警',
+          data: top.map(({ major }) => major)
+        },
+        {
+          name: '次要告警',
+          data: top.map(({ trivial }) => trivial)
+        }
+      ]
     }
     Object.assign(this, option)
   }

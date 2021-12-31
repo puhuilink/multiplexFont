@@ -13,7 +13,7 @@ import {
   SOURCE_TYPE_STATIC,
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_COMBO,
-  SOURCE_TYPE_NUMBER
+  SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { autoTooltipPosition } from '@/utils/echarts'
 import { formatFloat } from '@/utils/util'
@@ -90,6 +90,7 @@ export default class BarChart extends Chart {
       case SOURCE_TYPE_NUMBER:
       case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_ALARM:
+      case SOURCE_TYPE_STATIC_TRAFFIC:
       case SOURCE_TYPE_REAL: {
         // 根据数据流向，静态数据在进入 mappingOption 前已经完成 reverse
         // 而动态数据需要进入到 mappingOption 内部才能执行 reverse

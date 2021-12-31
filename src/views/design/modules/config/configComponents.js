@@ -44,8 +44,7 @@ const charts = {
   TextHealthConfig,
   PieConfig,
   PolarConfig,
-  GlobalConfig,
-  SelectConfig
+  GlobalConfig
 }
 
 // 元素模板配置
@@ -54,7 +53,8 @@ const elements = {
   ListConfig,
   UpsConfig,
   TabConfig,
-  MoreConfig
+  MoreConfig,
+  SelectConfig
 }
 
 // 模板配置组件

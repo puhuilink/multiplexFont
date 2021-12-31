@@ -19,6 +19,7 @@
         :timeRange="timeRange"
         @select="() => $emit('change', { el: 'widget', widget })"
         @drill="$emit('drill', $event)"
+        @selectChange="(value) => $emit('selectChange', value)"
       />
       <!-- / 部件渲染 -->
     </div>

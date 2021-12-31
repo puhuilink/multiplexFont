@@ -18,8 +18,10 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_NUMBER,
   SOURCE_TYPE_SQL,
-  SOURCE_TYPE_ORM
+  SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE
 } from '../types/sourceType'
+import { AdaptorStaticSiteConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorStaticSiteConfig'
+import AdaptorCpeConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -38,7 +40,11 @@ export class DynamicDataConfig {
     // 自定义sql数据配置
     sqlConfig = {},
     // Orm数据配置
-    ormConfig = {}
+    ormConfig = {},
+    // 站点流量配置
+    siteTrafficConfig = {},
+    // 站点CPE数据
+    siteCpeConfig = {}
   }) {
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
@@ -48,6 +54,8 @@ export class DynamicDataConfig {
     this.numberConfig = new AdaptorNumConfig(numberConfig)
     this.sqlConfig = new AdaptorSqlConfig(sqlConfig)
     this.ormConfig = new AdaptorOrmConfig(ormConfig)
+    this.siteTrafficConfig = new AdaptorStaticSiteConfig(siteTrafficConfig)
+    this.siteCpeConfig = new AdaptorCpeConfig(siteCpeConfig)
     this.resetData()
   }
 
@@ -60,7 +68,9 @@ export class DynamicDataConfig {
       comboConfig: this.comboConfig.getOption(),
       numberConfig: this.numberConfig.getOption(),
       sqlConfig: this.sqlConfig.getOption(),
-      ormConfig: this.ormConfig.getOption()
+      ormConfig: this.ormConfig.getOption(),
+      siteTrafficConfig: this.siteTrafficConfig.getOption(),
+      siteCpeConfig: this.siteCpeConfig.getOption()
     }
   }
 
@@ -74,6 +84,8 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_NUMBER: return this.numberConfig
       case SOURCE_TYPE_SQL: return this.sqlConfig
       case SOURCE_TYPE_ORM: return this.ormConfig
+      case SOURCE_TYPE_STATIC_TRAFFIC: return this.siteTrafficConfig
+      case SOURCE_TYPE_CPE: return this.siteCpeConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

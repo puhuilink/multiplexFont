@@ -21,6 +21,18 @@
         :key="SOURCE_TYPE_COMBO"
       />
     </template>
+
+    <template v-slot:[SOURCE_TYPE_STATIC_TRAFFIC]>
+      <StaticTrafficDataSource
+        :key="SOURCE_TYPE_STATIC_TRAFFIC"
+      />
+    </template>
+
+    <template v-slot:[SOURCE_TYPE_CPE]>
+      <CpeDataSource
+        :key="SOURCE_TYPE_CPE"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -29,7 +41,9 @@ import DataSourceTemplate from './index'
 import RealDataSource from '../common/RealDataSource'
 import OverviewDataSource from '../common/OverviewDataSource'
 import ComboDataSource from '../common/ComboDataSource'
-import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import StaticTrafficDataSource from '../common/StaticTrafficDataSource'
+import CpeDataSource from '../common/CpeDataSource'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
   name: 'LinesDataSource',
@@ -37,12 +51,16 @@ export default {
     DataSourceTemplate,
     RealDataSource,
     OverviewDataSource,
-    ComboDataSource
+    ComboDataSource,
+    StaticTrafficDataSource,
+    CpeDataSource
   },
   data: () => ({
     SOURCE_TYPE_REAL,
     SOURCE_TYPE_OVERVIEW,
-    SOURCE_TYPE_COMBO
+    SOURCE_TYPE_COMBO,
+    SOURCE_TYPE_STATIC_TRAFFIC,
+    SOURCE_TYPE_CPE
   })
 }
 </script>

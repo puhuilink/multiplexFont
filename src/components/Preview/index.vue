@@ -24,6 +24,7 @@
             :view="view"
             :timeRange="timeRange"
             ref="renderer"
+            @selectChange="selectChanged"
             @drill="onDrill" />
 
         </div>
@@ -104,11 +105,12 @@ import html2canvas from 'html2canvas'
 import { encrypt } from '@/utils/aes'
 import { copyText } from '@/utils/domUtil'
 import DrillMixin from './Drill'
+import SelectChangeMixin from './SelectChange'
 import { enterFullscreen, exitFullscreen } from '@/utils/util'
 
 export default {
   name: 'ViewPreview',
-  mixins: [PreviewMixin, DrillMixin],
+  mixins: [PreviewMixin, DrillMixin, SelectChangeMixin],
   components: {
     Renderer
   },

@@ -50,8 +50,7 @@ export default {
   watch: {
     async isFollowed ([label, id]) {
       this.ormConfig.cache = id
-      console.log('fetch', id)
-      await this.change(true)
+      this.$emit('change')
     }
   }
 }

@@ -23,40 +23,7 @@ export default {
     return {
       selectValue: '',
       elementProp: _.clone(defaultSelectProprietaryConfig),
-      options: [
-        {
-          value: 'zhejiang',
-          label: 'Zhejiang',
-          children: [
-            {
-              value: 'hangzhou',
-              label: 'Hangzhou',
-              children: [
-                {
-                  value: 'xihu',
-                  label: 'West Lake'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          value: 'jiangsu',
-          label: 'Jiangsu',
-          children: [
-            {
-              value: 'nanjing',
-              label: 'Nanjing',
-              children: [
-                {
-                  value: 'zhonghuamen',
-                  label: 'Zhong Hua Men'
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      options: []
     }
   },
   methods: {
@@ -67,6 +34,7 @@ export default {
     },
     onChange (value) {
       this.selectValue = value
+      this.$emit('selectChange', value)
       store.commit(CacheMutationTypes.setORM, value)
     },
     async fetch () {

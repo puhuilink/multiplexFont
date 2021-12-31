@@ -7,7 +7,7 @@ import _ from 'lodash'
 import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_COMBO
+  SOURCE_TYPE_COMBO, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE
 } from './types/sourceType'
 
 const initialOption = {
@@ -31,6 +31,14 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_COMBO: {
           await this.getComboDataOption()
+          break
+        }
+        case SOURCE_TYPE_STATIC_TRAFFIC: {
+          await this.getSiteTrafficOption()
+          break
+        }
+        case SOURCE_TYPE_CPE: {
+          await this.getSiteCpeOption()
           break
         }
       }
@@ -89,6 +97,62 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         name: legend,
         data: groupByLegend[legend].map(({ data }) => data)
       }))
+    }
+    Object.assign(this, option)
+  }
+
+  async getSiteTrafficOption () {
+    const { data: { throughput } } = await this.siteTrafficConfig.fetch()
+    const option = {
+      legend: {
+        data: ['rx', 'tx']
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          throughput.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        name: 'rx',
+        data: throughput.map(({ rx }) => rx)
+      }, {
+        name: 'tx',
+        data: throughput.map(({ tx }) => tx)
+      }
+      ]
+    }
+    Object.assign(this, option)
+  }
+
+  async getSiteCpeOption () {
+    const { data: { cpu, mem } } = await this.siteCpeConfig.fetch()
+    const option = {
+      legend: {
+        data: ['cpu利用率', '内存利用率']
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: _.uniq(
+          cpu.map(({ time }) => time)
+        )
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        name: 'cpu利用率',
+        data: cpu.map(({ usage }) => usage)
+      }, {
+        name: '内存利用率',
+        data: mem.map(({ usage }) => usage)
+      }
+      ]
     }
     Object.assign(this, option)
   }

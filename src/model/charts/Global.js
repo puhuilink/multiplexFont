@@ -5,7 +5,7 @@ import { SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC } from '@/model/config/dataConfig/d
 // const ROOT_PATH = 'https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples'
 import _ from 'lodash'
 import echarts from 'echarts'
-export default class PieChart extends Chart {
+export default class Global extends Chart {
   constructor ({ widget }) {
     super({ widget })
   }
@@ -20,9 +20,7 @@ export default class PieChart extends Chart {
         break
       }
       case SOURCE_TYPE_ORM: {
-        console.log('before')
         const { connection } = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
-        console.log('after')
         if (connection === 'data') {
           return {}
         }
@@ -67,20 +65,5 @@ export default class PieChart extends Chart {
     option.series[0].data = node
     option.series[1].data = moveLine
     return option
-  }
-
-  async mergeOption (config, loadingDynamicData = false) {
-    this.chart.dispose()
-    this.chart = echarts.init(this.container, '', {
-      renderer: 'canvas'
-    })
-    this.chartConfig = await this.mappingOption(config, loadingDynamicData)
-    // 如果数据为空则清空图表
-    if (_.isEmpty(this.chartConfig.series)) {
-      this.chart.clear()
-    }
-    // 重新配置图表
-    // https://github.com/apache/incubator-echarts/issues/3976
-    this.chart.setOption(this.chartConfig)
   }
 }

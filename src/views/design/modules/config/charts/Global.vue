@@ -82,6 +82,7 @@
             <OrmDataSource
               :key="SOURCE_TYPE_ORM"
               :useCalculateType="false"
+              @change="change()"
             />
           </template>
         </DataSourceTemplate>
