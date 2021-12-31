@@ -18,8 +18,12 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_NUMBER,
   SOURCE_TYPE_SQL,
-  SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE
+  SOURCE_TYPE_ORM,
+  SOURCE_TYPE_STATIC_TRAFFIC,
+  SOURCE_TYPE_CPE,
+  SOURCE_TYPE_OPEN
 } from '../types/sourceType'
+import { AdaptorOpenConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorOpenConfig'
 import { AdaptorStaticSiteConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorStaticSiteConfig'
 import AdaptorCpeConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeConfig'
 
@@ -39,6 +43,8 @@ export class DynamicDataConfig {
     numberConfig = {},
     // 自定义sql数据配置
     sqlConfig = {},
+    // 自定义sql数据配置
+    openConfig = {},
     // Orm数据配置
     ormConfig = {},
     // 站点流量配置
@@ -56,6 +62,7 @@ export class DynamicDataConfig {
     this.ormConfig = new AdaptorOrmConfig(ormConfig)
     this.siteTrafficConfig = new AdaptorStaticSiteConfig(siteTrafficConfig)
     this.siteCpeConfig = new AdaptorCpeConfig(siteCpeConfig)
+    this.openConfig = new AdaptorOpenConfig(openConfig)
     this.resetData()
   }
 
@@ -68,6 +75,7 @@ export class DynamicDataConfig {
       comboConfig: this.comboConfig.getOption(),
       numberConfig: this.numberConfig.getOption(),
       sqlConfig: this.sqlConfig.getOption(),
+      openConfig: this.openConfig.getOption(),
       ormConfig: this.ormConfig.getOption(),
       siteTrafficConfig: this.siteTrafficConfig.getOption(),
       siteCpeConfig: this.siteCpeConfig.getOption()
@@ -86,6 +94,7 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_ORM: return this.ormConfig
       case SOURCE_TYPE_STATIC_TRAFFIC: return this.siteTrafficConfig
       case SOURCE_TYPE_CPE: return this.siteCpeConfig
+      case SOURCE_TYPE_OPEN: return this.openConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

@@ -28,6 +28,12 @@
         :key="SOURCE_TYPE_SQL"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_OPEN]>
+      <OpenDataSource
+        :key="SOURCE_TYPE_OPEN"
+        :useCalculateType="false"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -36,9 +42,10 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
 import OverviewDataSource from '../common/OverviewDataSource'
-import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import ComboDataSource from '../common/ComboDataSource'
 import SQLDataSource from '../common/SQLDataSource'
+import OpenDataSource from '../common/OpenDataSource'
 
 export default {
   name: 'ListDataSource',
@@ -48,13 +55,15 @@ export default {
     RealDataSource,
     OverviewDataSource,
     ComboDataSource,
-    SQLDataSource
+    SQLDataSource,
+    OpenDataSource
   },
   data: () => ({
     SOURCE_TYPE_REAL,
     SOURCE_TYPE_OVERVIEW,
     SOURCE_TYPE_COMBO,
-    SOURCE_TYPE_SQL
+    SOURCE_TYPE_SQL,
+    SOURCE_TYPE_OPEN
   })
 }
 </script>

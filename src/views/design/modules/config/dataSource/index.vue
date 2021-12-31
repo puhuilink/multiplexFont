@@ -33,6 +33,7 @@
               <a-select-option :value="SOURCE_TYPE_ORM" v-if="getSlot(SOURCE_TYPE_ORM)">ORM数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_STATIC_TRAFFIC" v-if="getSlot(SOURCE_TYPE_STATIC_TRAFFIC)">Traffic数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_CPE" v-if="getSlot(SOURCE_TYPE_CPE)">Cpe数据</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_OPEN" v-if="getSlot(SOURCE_TYPE_OPEN)">OPEN接口</a-select-option>
             </a-select>
           </div>
 
@@ -42,9 +43,9 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE].includes(sourceType)">
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN].includes(sourceType)">
         <div
-          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE]"
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN]"
           :key="type"
           class="data-source__wrap"
           v-show="sourceType === type"
@@ -111,7 +112,8 @@ import {
   SOURCE_TYPE_SQL,
   SOURCE_TYPE_ORM,
   SOURCE_TYPE_STATIC_TRAFFIC,
-  SOURCE_TYPE_CPE
+  SOURCE_TYPE_CPE,
+  SOURCE_TYPE_OPEN
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -132,6 +134,7 @@ export default {
     SOURCE_TYPE_ORM,
     SOURCE_TYPE_STATIC_TRAFFIC,
     SOURCE_TYPE_CPE,
+    SOURCE_TYPE_OPEN,
     cacheStatus: false,
     cacheValue: ''
   }),
@@ -259,7 +262,7 @@ export default {
   }
 
   &__wrap {
-    height: calc(75vh - 388px);
+    height: calc(75vh - 288px);
     overflow-y: auto;
   }
 

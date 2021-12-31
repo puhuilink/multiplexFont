@@ -12,7 +12,7 @@
 import Element from './index'
 import {
   SOURCE_TYPE_COMBO,
-  SOURCE_TYPE_NULL,
+  SOURCE_TYPE_NULL, SOURCE_TYPE_OPEN,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_REAL, SOURCE_TYPE_SQL,
   SOURCE_TYPE_STATIC
@@ -48,6 +48,11 @@ export default class NewAlarmElement extends Element {
       case SOURCE_TYPE_SQL: {
         const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(props, { dataSource, columns })
+        break
+      }
+      case SOURCE_TYPE_OPEN: {
+        const { dataSource } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource })
         break
       }
     }

@@ -103,6 +103,15 @@ export default {
         Object.assign(this.config.dataConfig.dbDataConfig.siteCpeConfig, v)
         this.change()
       }
+    },
+    openConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.openConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.openConfig, v)
+        this.change()
+      }
     }
   },
   methods: {

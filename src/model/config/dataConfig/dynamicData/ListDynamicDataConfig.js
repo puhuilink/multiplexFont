@@ -3,7 +3,13 @@
  */
 
 import { DynamicDataConfig } from './common/index'
-import { SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_REAL, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL } from './types/sourceType'
+import {
+  SOURCE_TYPE_OVERVIEW,
+  SOURCE_TYPE_REAL,
+  SOURCE_TYPE_COMBO,
+  SOURCE_TYPE_SQL,
+  SOURCE_TYPE_OPEN
+} from './types/sourceType'
 import _ from 'lodash'
 import { STATUS_MAPPING } from '@/views/patrol/typing'
 
@@ -138,6 +144,48 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
     })
     return { columns, dataSource }
   }
+  generateOpenData (dataList = [], reverse = false) {
+    const columns = []
+    let dataSource = []
+    if (_.isEmpty(dataList)) {
+      return { columns, dataSource }
+    }
+    let lead = null
+    try {
+      lead = JSON.parse(this.openConfig.back)
+    } catch (e) {
+      this.$message.error('返回值填写错误，请检查是否为正确的JSON格式！')
+      return
+    }
+    dataSource = this.dealOpen(dataList, lead)
+    return { columns, dataSource }
+  }
+
+  dealOpen (data, lead) {
+    const dataSource = []
+    if (!lead) {
+      return data
+    }
+    lead.key.forEach(k => {
+      data = data[k]
+    })
+    data.forEach(d => {
+      const obj = {}
+      for (let i = 0; i < lead.index.length; i++) {
+        let value = d[lead.index[i]]
+        if (lead.mapping.length) {
+          lead.mapping.forEach(m => {
+            if (value in m) {
+              value = m[value]
+            }
+          })
+        }
+        obj[lead.alias[i]] = value
+      }
+      dataSource.push(obj)
+    })
+    return dataSource
+  }
 
   /**
    * 与静态数据保持一致的数据结构
@@ -160,6 +208,10 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_SQL: {
           await this.getSqlDataOption()
+          break
+        }
+        case SOURCE_TYPE_OPEN: {
+          await this.getOpenDataOption()
           break
         }
       }
@@ -203,6 +255,14 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
   async getSqlDataOption () {
     const dataList = await this.sqlConfig.fetch()
     const { columns, dataSource } = this.generateSql(dataList, false)
+    Object.assign(this, {
+      columns,
+      dataSource
+    })
+  }
+  async getOpenDataOption () {
+    const dataList = await this.openConfig.fetch()
+    const { columns, dataSource } = this.generateOpenData(dataList, false)
     Object.assign(this, {
       columns,
       dataSource
