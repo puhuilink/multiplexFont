@@ -1,10 +1,6 @@
 import Chart from '@/model/charts/index'
-import 'echarts/map/js/china.js'
 import { SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC } from '@/model/config/dataConfig/dynamicData/types/sourceType'
-// import { axios } from '@/utils/request'
-// const ROOT_PATH = 'https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples'
 import _ from 'lodash'
-import echarts from 'echarts'
 export default class Global extends Chart {
   constructor ({ widget }) {
     super({ widget })

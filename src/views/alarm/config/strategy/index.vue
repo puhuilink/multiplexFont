@@ -146,8 +146,7 @@ import {
   hostModelType
 } from '@/tables/alarm_rule/columns'
 import {
-  nameColumn,
-  lastUpdateTime
+  nameColumn
 } from '@/tables/cmdb_strategy/columns'
 import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
 

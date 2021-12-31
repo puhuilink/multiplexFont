@@ -1,4 +1,3 @@
-import echarts from 'echarts'
 import 'echarts/map/js/china.js'
 
 export const allData = {
