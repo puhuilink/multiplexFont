@@ -29,6 +29,13 @@ class AdaptorStaticSiteConfig {
     return SdwanSiteService.getWanTraffic({ siteId: siteId, type: type })
     // return SdwanSiteService.getAlert()
   }
+  fetchConnection () {
+    const { siteId, type, cache } = this.getOption()
+    // TODO:从缓存中读取时忽略siteId值
+    if (cache.length) {}
+    return SdwanSiteService.getConnection({ siteId: siteId, type: type })
+    // return SdwanSiteService.getAlert()
+  }
 
   // 更新柱状图数据
   fetchBar () {

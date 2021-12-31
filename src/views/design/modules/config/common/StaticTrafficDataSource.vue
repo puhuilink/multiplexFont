@@ -1,6 +1,6 @@
 <template>
   <a-form-model class="ormDataSource" v-bind="formItemLayout">
-    <PreviewButton :preview="() => change(true)" />
+    <PreviewButton :preview="preview" />
     <SiteTypeSelect
       :model.sync="siteTrafficConfig"
     ></SiteTypeSelect>
@@ -23,11 +23,15 @@
 <script>
 import DataSourceMixins from '@/views/design/modules/config/dataSourceMixins'
 import SiteTypeSelect from '@/components/SdwanSiteComponent/SiteTypeSelect'
+import PreviewButton from '@/views/design/modules/config/formItems/PreviewButton'
+import RefreshTime from '@/views/design/modules/config/formItems/RefreshTime'
 export default {
   name: 'StaticTrafficDataSource',
   mixins: [DataSourceMixins],
   components: {
-    SiteTypeSelect
+    SiteTypeSelect,
+    PreviewButton,
+    RefreshTime
   }
 }
 </script>

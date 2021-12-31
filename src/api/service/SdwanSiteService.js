@@ -24,6 +24,9 @@ class SdwanSiteService extends BaseService {
   static async getCpuTraffic (param = {}) {
     return axios.post('/sdwan/getCPE', param)
   }
+  static async getConnection (param = {}) {
+    return axios.post('/sdwan/getConnection', param)
+  }
 
   static async getCommon (param = {}) {
     const { addr, ...rest } = param
