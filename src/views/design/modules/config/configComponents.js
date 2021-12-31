@@ -27,6 +27,7 @@ import UpsConfig from '@/views/design/modules/config/elements/UpsConfig'
 import SelectConfig from '@/views/design/modules/config/elements/SelectConfig'
 import MoreConfig from '@/views/design/modules/config/elements/MoreConfig'
 import TabConfig from '@/views/design/modules/config/elements/TabConfig'
+import NewAlarmConfig from '@/views/design/modules/config/elements/NewAlarmConfig'
 
 // 图表模板配置
 const charts = {
@@ -54,7 +55,8 @@ const elements = {
   UpsConfig,
   TabConfig,
   MoreConfig,
-  SelectConfig
+  SelectConfig,
+  NewAlarmConfig
 }
 
 // 模板配置组件

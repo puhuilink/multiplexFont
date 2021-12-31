@@ -74,6 +74,7 @@ export default {
       ['Select', 'SelectConfig'],
       ['UPS', 'UpsConfig'],
       ['Tab', 'TabConfig'],
+      ['NewAlarm', 'NewAlarmConfig'],
       ['More', 'MoreConfig']
     ])
   }),

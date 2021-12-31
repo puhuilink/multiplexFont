@@ -20,6 +20,8 @@ export default class ElementProprietaryConfigFactory {
         return new AlarmListProprietaryConfig(proprietaryConfig)
       case 'List':
         return new ListProprietaryConfig(proprietaryConfig)
+      case 'NewAlarm':
+        return new ListProprietaryConfig(proprietaryConfig)
       case 'UPS':
         return new UpsProprietaryConfig(proprietaryConfig)
       case 'Select':
