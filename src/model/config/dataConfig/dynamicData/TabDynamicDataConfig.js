@@ -8,7 +8,7 @@ import {
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_SQL,
-  SOURCE_TYPE_OPEN
+  SOURCE_TYPE_OPEN, SOURCE_TYPE_STATIC_TRAFFIC
 } from './types/sourceType'
 import _ from 'lodash'
 import { STATUS_MAPPING } from '@/views/patrol/typing'
@@ -30,6 +30,17 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
     const result = this.dealOpen(dataList, lead)
     columns = result[columns]
     dataSource = result[dataSource]
+    return { columns, dataSource }
+  }
+  generateStaticData (dataList = [], reverse = false) {
+    const columns = []
+    let dataSource = []
+    if (_.isEmpty(dataList)) {
+      return { columns, dataSource }
+    }
+    const { data } = dataList
+    columns.push(Object.keys(data))
+    dataSource = data
     return { columns, dataSource }
   }
 
@@ -263,6 +274,7 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
    * @returns {Promise<any>}
    */
   async getOption (loadingDynamicData, sourceType) {
+    console.log(sourceType)
     if (loadingDynamicData) {
       switch (sourceType) {
         case SOURCE_TYPE_REAL: {
@@ -283,6 +295,10 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_OPEN: {
           await this.getOpenDataOption()
+          break
+        }
+        case SOURCE_TYPE_STATIC_TRAFFIC: {
+          await this.geSiteTrafficDataOption()
           break
         }
       }
@@ -334,6 +350,14 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
   async getOpenDataOption () {
     const dataList = await this.openConfig.fetch()
     const { columns, dataSource } = this.generateOpenData(dataList, false)
+    Object.assign(this, {
+      columns,
+      dataSource
+    })
+  }
+  async geSiteTrafficDataOption () {
+    const dataList = await this.siteTrafficConfig.fetchConnection()
+    const { columns, dataSource } = this.generateStaticData(dataList, false)
     Object.assign(this, {
       columns,
       dataSource

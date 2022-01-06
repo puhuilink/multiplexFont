@@ -27,6 +27,8 @@
 import DataSourceMixins from '@/views/design/modules/config/dataSourceMixins'
 import SiteTypeSelect from '@/components/SdwanSiteComponent/SiteTypeSelect'
 import Cache from '@/components/SdwanSiteComponent/Cache'
+import PreviewButton from '@/views/design/modules/config/formItems/PreviewButton'
+import RefreshTime from '@/views/design/modules/config/formItems/RefreshTime'
 export default {
   name: 'StaticTrafficDataSource',
   mixins: [DataSourceMixins],
@@ -38,7 +40,9 @@ export default {
   },
   components: {
     SiteTypeSelect,
-    Cache
+    Cache,
+    PreviewButton,
+    RefreshTime
   }
 }
 </script>

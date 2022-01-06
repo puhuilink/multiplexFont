@@ -34,6 +34,12 @@
         :useCalculateType="false"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_STATIC_TRAFFIC]>
+      <StaticTrafficDataSource
+        :key="SOURCE_TYPE_STATIC_TRAFFIC"
+        :useCalculateType="false"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -42,10 +48,11 @@ import DataSourceTemplate from './index'
 import DataSourceMixins from '../dataSourceMixins'
 import RealDataSource from '../common/RealDataSource'
 import OverviewDataSource from '../common/OverviewDataSource'
-import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN, SOURCE_TYPE_STATIC_TRAFFIC } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import ComboDataSource from '../common/ComboDataSource'
 import SQLDataSource from '../common/SQLDataSource'
 import OpenDataSource from '../common/OpenDataSource'
+import StaticTrafficDataSource from '../common/StaticTrafficDataSource'
 export default {
   name: 'MoreDataSource',
   mixins: [DataSourceMixins],
@@ -55,14 +62,16 @@ export default {
     OverviewDataSource,
     ComboDataSource,
     SQLDataSource,
-    OpenDataSource
+    OpenDataSource,
+    StaticTrafficDataSource
   },
   data: () => ({
     SOURCE_TYPE_REAL,
     SOURCE_TYPE_OVERVIEW,
     SOURCE_TYPE_COMBO,
     SOURCE_TYPE_SQL,
-    SOURCE_TYPE_OPEN
+    SOURCE_TYPE_OPEN,
+    SOURCE_TYPE_STATIC_TRAFFIC
   })
 }
 </script>
