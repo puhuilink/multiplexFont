@@ -112,6 +112,15 @@ export default {
         Object.assign(this.config.dataConfig.dbDataConfig.openConfig, v)
         this.change()
       }
+    },
+    siteCpeStatusConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.siteCpeStatusConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.siteCpeStatusConfig, v)
+        this.change()
+      }
     }
   },
   methods: {

@@ -21,11 +21,13 @@ import {
   SOURCE_TYPE_ORM,
   SOURCE_TYPE_STATIC_TRAFFIC,
   SOURCE_TYPE_CPE,
-  SOURCE_TYPE_OPEN
+  SOURCE_TYPE_OPEN,
+  SOURCE_TYPE_CPE_STATUS
 } from '../types/sourceType'
 import { AdaptorOpenConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorOpenConfig'
 import { AdaptorStaticSiteConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorStaticSiteConfig'
 import AdaptorCpeConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeConfig'
+import AdaptorCpeStatusConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeStatusConfig'
 
 export class DynamicDataConfig {
   constructor ({
@@ -50,7 +52,9 @@ export class DynamicDataConfig {
     // 站点流量配置
     siteTrafficConfig = {},
     // 站点CPE数据
-    siteCpeConfig = {}
+    siteCpeConfig = {},
+    // 站点CPE状态
+    siteCpeStatusConfig = {}
   }) {
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
@@ -62,6 +66,7 @@ export class DynamicDataConfig {
     this.ormConfig = new AdaptorOrmConfig(ormConfig)
     this.siteTrafficConfig = new AdaptorStaticSiteConfig(siteTrafficConfig)
     this.siteCpeConfig = new AdaptorCpeConfig(siteCpeConfig)
+    this.siteCpeStatusConfig = new AdaptorCpeStatusConfig(siteCpeStatusConfig)
     this.openConfig = new AdaptorOpenConfig(openConfig)
     this.resetData()
   }
@@ -78,7 +83,8 @@ export class DynamicDataConfig {
       openConfig: this.openConfig.getOption(),
       ormConfig: this.ormConfig.getOption(),
       siteTrafficConfig: this.siteTrafficConfig.getOption(),
-      siteCpeConfig: this.siteCpeConfig.getOption()
+      siteCpeConfig: this.siteCpeConfig.getOption(),
+      siteCpeStatusConfig: this.siteCpeStatusConfig.getOption()
     }
   }
 
@@ -95,6 +101,7 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_STATIC_TRAFFIC: return this.siteTrafficConfig
       case SOURCE_TYPE_CPE: return this.siteCpeConfig
       case SOURCE_TYPE_OPEN: return this.openConfig
+      case SOURCE_TYPE_CPE_STATUS: return this.siteCpeStatusConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

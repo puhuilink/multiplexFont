@@ -36,6 +36,17 @@
         :key="SOURCE_TYPE_SQL"
       />
     </template>
+    <!--    <template v-slot:[SOURCE_TYPE_CPE_STATUS]>-->
+    <!--      <CpeStatusDataSource-->
+    <!--        :key="SOURCE_TYPE_CPE_STATUS"-->
+    <!--      />-->
+    <!--    </template>-->
+    <template v-slot:[SOURCE_TYPE_STATIC_TRAFFIC]>
+      <StaticTrafficDataSource
+        :key="SOURCE_TYPE_STATIC_TRAFFIC"
+        :switchSt="true"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -48,13 +59,17 @@ import OverviewDataSource from '../common/OverviewDataSource'
 import ComboDataSource from '../common/ComboDataSource'
 import DHDataSource from '../common/DHDataSource'
 import SQLDataSource from '../common/SQLDataSource'
+import CpeStatusDataSource from '../common/CpeStatusDataSource'
+import StaticTrafficDataSource from '../common/StaticTrafficDataSource'
 import {
   SOURCE_TYPE_ALARM,
   SOURCE_TYPE_REAL,
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
-  SOURCE_TYPE_SQL
+  SOURCE_TYPE_SQL,
+  SOURCE_TYPE_CPE_STATUS,
+  SOURCE_TYPE_STATIC_TRAFFIC
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -67,7 +82,9 @@ export default {
     OverviewDataSource,
     ComboDataSource,
     DHDataSource,
-    SQLDataSource
+    SQLDataSource,
+    CpeStatusDataSource,
+    StaticTrafficDataSource
   },
   data: () => ({
     SOURCE_TYPE_ALARM,
@@ -75,7 +92,9 @@ export default {
     SOURCE_TYPE_OVERVIEW,
     SOURCE_TYPE_COMBO,
     SOURCE_TYPE_DH,
-    SOURCE_TYPE_SQL
+    SOURCE_TYPE_SQL,
+    SOURCE_TYPE_CPE_STATUS,
+    SOURCE_TYPE_STATIC_TRAFFIC
   })
 }
 </script>

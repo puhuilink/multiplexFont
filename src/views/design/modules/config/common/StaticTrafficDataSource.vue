@@ -3,8 +3,11 @@
     <PreviewButton :preview="() => change(true)" />
     <SiteTypeSelect
       :model.sync="siteTrafficConfig"
+      :stateSwitch="switchSt"
     ></SiteTypeSelect>
-
+    <Cache
+      :model.sync="siteTrafficConfig"
+    ></Cache>
     <RefreshTime @change="change()" />
     <!--      <a-form-model-item label="使用缓存">-->
     <!--        <a-switch-->
@@ -23,11 +26,19 @@
 <script>
 import DataSourceMixins from '@/views/design/modules/config/dataSourceMixins'
 import SiteTypeSelect from '@/components/SdwanSiteComponent/SiteTypeSelect'
+import Cache from '@/components/SdwanSiteComponent/Cache'
 export default {
   name: 'StaticTrafficDataSource',
   mixins: [DataSourceMixins],
+  props: {
+    switchSt: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
-    SiteTypeSelect
+    SiteTypeSelect,
+    Cache
   }
 }
 </script>

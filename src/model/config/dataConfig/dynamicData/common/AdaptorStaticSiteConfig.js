@@ -5,11 +5,15 @@ class AdaptorStaticSiteConfig {
     // 筛选site区域名称
     siteId = '',
     type = '',
+    status = [],
+    isCache = false,
     cache = ''
   }) {
     this.siteId = siteId
     this.type = type
     this.cache = cache
+    this.status = status
+    this.isCache = isCache
   }
 
   getOption () {
@@ -23,9 +27,11 @@ class AdaptorStaticSiteConfig {
   }
 
   fetch () {
-    const { siteId, type, cache } = this.getOption()
+    const { siteId, type, isCache, cache } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
-    if (cache.length) {}
+    if (isCache && cache.length > 0) {
+      return SdwanSiteService.getWanTraffic({ siteId: cache, type: type })
+    }
     return SdwanSiteService.getWanTraffic({ siteId: siteId, type: type })
     // return SdwanSiteService.getAlert()
   }
@@ -34,6 +40,12 @@ class AdaptorStaticSiteConfig {
   fetchBar () {
     const { type } = this.getOption()
     return SdwanSiteService.getAlert({ type: type })
+  }
+
+  // 更新文本健康度数据
+  fetchText () {
+    const { siteId, status } = this.getOption()
+    return SdwanSiteService.getSiteStatus({ siteId: siteId, status: status })
   }
 }
 
