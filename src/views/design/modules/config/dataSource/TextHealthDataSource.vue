@@ -36,6 +36,12 @@
         :key="SOURCE_TYPE_SQL"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_OPEN]>
+      <OpenDataSource
+        :key="SOURCE_TYPE_OPEN"
+        :useCalculateType="false"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -54,8 +60,9 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
-  SOURCE_TYPE_SQL
+  SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import OpenDataSource from '@/views/design/modules/config/common/OpenDataSource'
 
 export default {
   name: 'TextHealthDataSource',
@@ -67,6 +74,7 @@ export default {
     OverviewDataSource,
     ComboDataSource,
     DHDataSource,
+    OpenDataSource,
     SQLDataSource
   },
   data: () => ({
@@ -75,6 +83,7 @@ export default {
     SOURCE_TYPE_OVERVIEW,
     SOURCE_TYPE_COMBO,
     SOURCE_TYPE_DH,
+    SOURCE_TYPE_OPEN,
     SOURCE_TYPE_SQL
   })
 }

@@ -10,7 +10,7 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
-  SOURCE_TYPE_SQL
+  SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -41,6 +41,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
           await this.getSqlDataOption()
           break
         }
+        case SOURCE_TYPE_OPEN: {
+          await this.getOpenDataOption()
+          break
+        }
       }
     }
     return this.text
@@ -48,6 +52,42 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
 
   async getRealDataOption () {
     this.text = await this.resourceConfig.fetch().then(data => _.get(data, '0.data', ''))
+  }
+  async getOpenDataOption () {
+    const { text } = this.dealOpen(await this.openConfig.fetch(), JSON.parse(this.openConfig.back))
+    this.text = text
+  }
+
+  dealOpen (data, lead) {
+    const dataSource = []
+    if (!lead) {
+      return { dataSource: data, columns: Object.keys(data) }
+    }
+    lead.key.forEach(k => {
+      data = data[k]
+    })
+    if (lead.target === 1) {
+      const obj = {}
+      obj[lead.alias[0]] = data[lead.index[0]]
+      return obj
+    } else {
+      data.forEach(d => {
+        const obj = {}
+        for (let i = 0; i < lead.index.length; i++) {
+          let value = d[lead.index[i]]
+          if (lead.mapping.length) {
+            lead.mapping.forEach(m => {
+              if (value in m) {
+                value = m[value]
+              }
+            })
+          }
+          obj[lead.alias[i]] = value
+        }
+        dataSource.push(obj)
+      })
+      return { dataSource, columns: lead.alias }
+    }
   }
 
   async getSqlDataOption () {

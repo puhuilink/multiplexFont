@@ -28,8 +28,8 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
       lead = null
     }
     const result = this.dealOpen(dataList, lead)
-    columns = result[columns]
-    dataSource = result[dataSource]
+    columns = result.columns
+    dataSource = result.dataSource
     return { columns, dataSource }
   }
   generateStaticData (dataList = [], reverse = false) {
@@ -274,7 +274,6 @@ export default class TabDynamicDataConfig extends DynamicDataConfig {
    * @returns {Promise<any>}
    */
   async getOption (loadingDynamicData, sourceType) {
-    console.log(sourceType)
     if (loadingDynamicData) {
       switch (sourceType) {
         case SOURCE_TYPE_REAL: {

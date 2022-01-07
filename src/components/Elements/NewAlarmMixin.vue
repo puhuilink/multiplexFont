@@ -10,7 +10,24 @@ import { levelColorMapping } from '~~~/Alarm/color.config'
 export default {
   name: 'NewAlarmMixin',
   components: {},
-  props: {},
+  props: {
+    col: {
+      type: Array,
+      default: () => []
+    },
+    propsData: {
+      type: Array,
+      default: () => []
+    },
+    isComponents: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     elementProps: {
       styleConfig: _.cloneDeep(defaultListProprietaryConfig),
@@ -23,6 +40,34 @@ export default {
       y: '100%'
     }
   }),
+  watch: {
+    'propsData': {
+      immediate: true,
+      handler (value) {
+        if (value) {
+          this.elementProps.styleConfig = {
+            'header': {
+              'backgroundColor': 'transparent',
+              'color': '#7b9bc6',
+              'fontSize': '12px',
+              'fontWeight': 'normal'
+            },
+            'rows': {
+              'backgroundColor': {
+                'odd': '#0b0b0c',
+                'even': '#0b0b0c'
+              },
+              'color': '#7b9bc6',
+              'fontSize': '10px',
+              'fontWeight': 'lighter'
+            },
+            'align': 'center'
+          }
+          this.elementProps.dataSource = value
+        }
+      }
+    }
+  },
   computed: {
     align () {
       const { elementProps } = this
@@ -33,7 +78,7 @@ export default {
       return [{
         title: '告警级别',
         dataIndex: 'alarm_level',
-        width: '20%',
+        width: '10%',
         align,
         show: true,
         customRender: (alarmLevel) => (
@@ -77,7 +122,7 @@ export default {
       {
         title: '告警详细信息',
         dataIndex: 'detail',
-        width: '45%',
+        width: '55%',
         show: true,
         align,
         ellipsis: true
@@ -85,7 +130,7 @@ export default {
     },
     dataSource () {
       const { elementProps } = this
-      return elementProps.dataSource.map(data => Object.assign({}, data, { uuid: uuid() }))
+      return this.isComponents ? this.propsData : elementProps.dataSource.map(data => Object.assign({}, data, { uuid: uuid() }))
     },
     headerRowStyle () {
       const { elementProps } = this

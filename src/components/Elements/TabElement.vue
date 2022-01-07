@@ -1,7 +1,7 @@
 <template>
   <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts">
-    <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e.title">
-      <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }" ></div>
+    <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e">
+      <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }"></div>
     </a-tab-pane>
   </a-tabs>
 </template>
@@ -12,17 +12,35 @@
 import _ from 'lodash'
 import echarts from 'echarts'
 import uuid from 'uuid/v4'
+
 export default {
   name: 'TabElement',
+  components: {
+    cols: {
+      type: Array,
+      default: () => []
+    },
+    pd: {
+      type: Object,
+      default: () => {
+      }
+    },
+    is_components: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       // styleConfig: new MoreProprietaryConfig({}),
       elementProps: {
-        styleConfig: {
-        }
+        styleConfig: {}
       },
-      styleConfig: {
-      },
+      styleConfig: {},
       fatherStyle: {},
       columns: ['空'],
       dataSource: [],
@@ -50,12 +68,11 @@ export default {
       handler (value) {
         if (value) {
           if (value.length < 1) {
-            this.columns = [ 'text' ]
+            this.columns = ['text']
           } else {
             const t = []
             for (let i = 0; i < value.length; i++) {
-              const s = { 'title': value[i] }
-              t.push(s)
+              t.push(value[i])
             }
             this.columns = t
           }
@@ -85,6 +102,190 @@ export default {
           this.reloadEcharts(this.activeKey)
         }
       }
+    },
+    '$attrs.show': {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (value) {
+          this.columns = this.$attrs.cols
+          this.dataSource = this.$attrs.pd
+          this.styleConfig = {
+            'barType': 'single',
+            'legend': {
+              'show': true,
+              'orient': 'horizontal',
+              'top': 'auto',
+              'right': '15',
+              'bottom': 'auto',
+              'left': 'auto',
+              'icon': 'circle',
+              'textStyle': {
+                'color': 'rgba(255, 255, 255, 1)',
+                'fontStyle': 'normal',
+                'fontSize': 12,
+                'fontWeight': 'normal'
+              },
+              'type': 'plain'
+            },
+            'barItemStyle': {
+              'type': 'combination',
+              'colorType': 'default',
+              'colorScheme': 'default',
+              'color': [
+                '#c23531',
+                '#2f4554',
+                '#61a0a8',
+                '#d48265',
+                '#91c7ae',
+                '#749f83',
+                '#ca8622',
+                '#bda29a',
+                '#6e7074',
+                '#546570',
+                '#c4ccd3'
+              ],
+              'barBorderRadius': [
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            'barWidthType': 'custom',
+            'barWidth': 12,
+            'xAxis': {
+              'show': false,
+              'type': 'value',
+              'boundaryGap': true,
+              'showName': false,
+              'name': '',
+              'nameLocation': 'end',
+              'nameTextStyle': {
+                'color': 'rgba(0, 0, 0, 1)',
+                'fontStyle': 'normal',
+                'fontSize': 12,
+                'fontWeight': 'normal'
+              },
+              'nameGap': 15,
+              'gridIndex': 1,
+              'axisLine': {
+                'show': true,
+                'lineStyle': {
+                  'color': 'rgba(0,0,0,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisTick': {
+                'show': true,
+                'length': 5,
+                'lineStyle': {
+                  'color': 'rgba(0,0,0,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisLabel': {
+                'color': 'rgba(0, 0, 0, 1)',
+                'fontStyle': 'normal',
+                'fontSize': 12,
+                'fontWeight': 'normal',
+                'show': true,
+                'rotate': 0,
+                'margin': 8
+              },
+              'splitLine': {
+                'show': false,
+                'lineStyle': {
+                  'color': 'rgba(30,30,30,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisName': 'x',
+              'position': 'bottom'
+            },
+            'yAxis': {
+              'show': true,
+              'type': 'category',
+              'boundaryGap': true,
+              'showName': false,
+              'name': '',
+              'nameLocation': 'end',
+              'nameTextStyle': {
+                'color': 'rgba(0, 0, 0, 1)',
+                'fontStyle': 'normal',
+                'fontSize': 12,
+                'fontWeight': 'normal'
+              },
+              'nameGap': 15,
+              'gridIndex': 1,
+              'axisLine': {
+                'show': false,
+                'lineStyle': {
+                  'color': 'rgba(0,0,0,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisTick': {
+                'show': false,
+                'length': 5,
+                'lineStyle': {
+                  'color': 'rgba(0,0,0,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisLabel': {
+                'color': 'rgba(0, 0, 0, 1)',
+                'fontStyle': 'normal',
+                'fontSize': 12,
+                'fontWeight': 'normal',
+                'show': true,
+                'rotate': 0,
+                'margin': 8
+              },
+              'splitLine': {
+                'show': false,
+                'lineStyle': {
+                  'color': 'rgba(0,0,0,1)',
+                  'width': 2,
+                  'type': 'solid'
+                }
+              },
+              'axisName': 'y',
+              'position': 'left'
+            },
+            'reverse': true,
+            'decimalPoint': -1
+          }
+          this.grid = [
+            {
+              'show': true,
+              'top': 0,
+              'right': 0,
+              'bottom': 0,
+              'left': 0,
+              'backgroundColor': 'transparent',
+              'borderWidth': 0
+            },
+            {
+              'show': true,
+              'top': 30,
+              'right': 45,
+              'bottom': 55,
+              'left': 200,
+              'borderWidth': 0,
+              'backgroundColor': 'transparent'
+            }
+          ]
+          this.width = 1080
+          this.height = 550
+          this.reloadEcharts(this.activeKey)
+        }
+      }
     }
   },
   methods: {
@@ -108,7 +309,9 @@ export default {
         }
       ]
       if (!this.styleConfig.barType) {
-        return
+        if (!this.$attrs.is_components) {
+          return
+        }
       }
       const {
         barType, legend, barWidth,
@@ -118,7 +321,9 @@ export default {
         YData = []
         XData = []
         const tempObj = {}
-        this.dataSource[this.columns[key].title].forEach((e) => {
+        const tempData = _.cloneDeep(this.dataSource)
+        tempData[this.columns[key]] = tempData[this.columns[key]].slice(0, this.$attrs.is_components ? 15 : 8)
+        tempData[this.columns[key]].forEach((e) => {
           const name = e.originSiteName + '-' + e.peerSiteName
           delete e.originSiteName
           delete e.peerSiteName

@@ -3,13 +3,26 @@
     <h1 @click="openModal" :style="styleConfig.textStyle">
       {{ styleConfig.text }}</h1>
     <a-modal
+      width="1080px"
       :visible="visible"
       v-if="visible"
       @ok="closeModal"
       @cancel="closeModal"
       @close="closeModal"
     >
-      <a-table :columns="columns" :dataSource="dataSource"></a-table>
+      <NewAlarmElement
+        style="width: 100%;height: 550px"
+        v-if="styleConfig.type === 'alarm'"
+        :show.sync="visible"
+        :is-components="true"
+        :props-data="dataSource"/>
+      <TabElement
+        style="width: 100%;height: 550px"
+        v-else
+        :show.sync="visible"
+        :is_components="true"
+        :cols="columns"
+        :pd="dataSource"/>
     </a-modal>
   </div>
 </template>
@@ -18,9 +31,15 @@
 // import MoreProprietaryConfig from '@/model/config/proprietaryConfigs/MoreProprietaryConfig'
 
 import _ from 'lodash'
+import NewAlarmElement from '~~~/Elements/NewAlarmElement'
+import TabElement from '~~~/Elements/TabElement'
 
 export default {
   name: 'MoreElement',
+  components: {
+    NewAlarmElement,
+    TabElement
+  },
   data () {
     return {
       // styleConfig: new MoreProprietaryConfig({}),
@@ -153,6 +172,7 @@ export default {
       immediate: true,
       deep: true,
       handler (value) {
+        console.log('props', value)
         if (value) {
           this.dataSource = value
         }
@@ -162,6 +182,7 @@ export default {
   methods: {
     openModal () {
       this.visible = true
+      console.log(this.dataSource)
     },
     closeModal () {
       this.visible = false

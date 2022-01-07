@@ -3,6 +3,7 @@
 
     <!-- S 列表 -->
     <a-table
+      size="small"
       :customHeaderRow="() => ({ style: headerRowStyle })"
       :customRow="customRow"
       :columns="columns"

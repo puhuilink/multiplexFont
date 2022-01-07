@@ -103,7 +103,6 @@ export default class Chart {
    */
   async mergeOption (config, loadingDynamicData = false) {
     // 向外暴露 echarts 配置
-    console.log('merge', config)
     this.chartConfig = await this.mappingOption(config, loadingDynamicData)
     // 如果数据为空则清空图表
     if (_.isEmpty(this.chartConfig.series)) {

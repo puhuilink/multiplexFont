@@ -101,6 +101,21 @@
               <!-- / 居下 -->
 
             </a-collapse-panel>
+            <a-collapse-panel header="弹窗内容" key="2">
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">类型</p>
+                <div class="comment-template__inner">
+                  <a-select
+                    type="text"
+                    v-model="config.proprietaryConfig.props.styleConfig.type"
+                    @change="change" >
+                    <a-select-option value="alarm">告警列表</a-select-option>
+                    <a-select-option value="tab">标签列表</a-select-option>
+                  </a-select>
+                </div>
+              </div>
+            </a-collapse-panel>
             <!-- E 文本样式 -->
 
           </a-collapse>

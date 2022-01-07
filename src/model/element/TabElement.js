@@ -67,7 +67,6 @@ export default class TabElement extends Element {
   }
 
   async mergeOption (config, loadingDynamicData = false) {
-    console.log(config)
     await super.mergeOption(config, loadingDynamicData)
     // this.$EventBus.$emit('merge', null)
   }

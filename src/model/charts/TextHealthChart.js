@@ -10,7 +10,7 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
-  SOURCE_TYPE_SQL
+  SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { formatFloat } from '@/utils/util'
 
@@ -41,7 +41,14 @@ export default class TextsChart extends Chart {
       case SOURCE_TYPE_SQL:
       case SOURCE_TYPE_REAL: {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
-        console.log('fetch', dynamicData)
+        // 无数据时使用缺省值
+        if (!['', null, undefined].includes(dynamicData)) {
+          title.text = `${dynamicData}`
+        }
+        break
+      }
+      case SOURCE_TYPE_OPEN: {
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
         // 无数据时使用缺省值
         if (!['', null, undefined].includes(dynamicData)) {
           title.text = `${dynamicData}`

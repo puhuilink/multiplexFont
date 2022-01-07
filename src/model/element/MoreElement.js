@@ -12,9 +12,9 @@
 import _ from 'lodash'
 import Element from '@/model/element/index'
 import {
-  SOURCE_TYPE_COMBO, SOURCE_TYPE_NULL,
+  SOURCE_TYPE_COMBO, SOURCE_TYPE_NULL, SOURCE_TYPE_OPEN,
   SOURCE_TYPE_OVERVIEW,
-  SOURCE_TYPE_REAL, SOURCE_TYPE_SQL, SOURCE_TYPE_STATIC
+  SOURCE_TYPE_REAL, SOURCE_TYPE_SQL, SOURCE_TYPE_STATIC, SOURCE_TYPE_STATIC_TRAFFIC
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default class MoreElement extends Element {
@@ -49,7 +49,18 @@ export default class MoreElement extends Element {
         Object.assign(props, { dataSource, columns })
         break
       }
+      case SOURCE_TYPE_OPEN: {
+        const { dataSource } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource })
+        break
+      }
+      case SOURCE_TYPE_STATIC_TRAFFIC: {
+        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns })
+        break
+      }
     }
+    console.log(props)
     return _.cloneDeep({
       ...props,
       ...proprietaryConfig.getOption()
