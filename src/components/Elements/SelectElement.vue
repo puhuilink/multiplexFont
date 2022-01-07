@@ -27,14 +27,13 @@ export default {
     }
   },
   methods: {
-    handleChange (value) {
-    },
     displayRender ({ labels }) {
       return labels[labels.length - 1]
     },
-    onChange (value) {
+    onChange (value, option) {
+      const real = _.get(option, '[1]', {})
       this.selectValue = value
-      this.$emit('selectChange', value)
+      this.$emit('selectChange', real)
       store.commit(CacheMutationTypes.setORM, value)
     },
     async fetch () {

@@ -29,7 +29,6 @@ export default class DynamicDataFactory {
     ['Polar', PolarDynamicDataConfig],
     ['TextHealth', TextHealthDynamicDataConfig],
     ['Global', GlobalDynamicDataConfig],
-    ['TextHealth', TextHealthDynamicDataConfig],
     ['More', MoreDynamicDataConfig],
     ['NewAlarm', ListDynamicDataConfig],
     ['Tab', TabDynamicDataConfig]
@@ -40,7 +39,6 @@ export default class DynamicDataFactory {
     if (targetClass) {
       return Reflect.construct(targetClass, [dbDataConfig])
     } else {
-      // console.log(type)
     }
   }
 }

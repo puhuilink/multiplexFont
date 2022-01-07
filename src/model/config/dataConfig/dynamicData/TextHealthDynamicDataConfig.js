@@ -10,7 +10,9 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO,
   SOURCE_TYPE_DH,
-  SOURCE_TYPE_SQL, SOURCE_TYPE_OPEN
+  SOURCE_TYPE_SQL,
+  SOURCE_TYPE_STATIC_TRAFFIC,
+  SOURCE_TYPE_OPEN
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -39,6 +41,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
         }
         case SOURCE_TYPE_SQL: {
           await this.getSqlDataOption()
+          break
+        }
+        case SOURCE_TYPE_STATIC_TRAFFIC: {
+          await this.getSiteTraffic()
           break
         }
         case SOURCE_TYPE_OPEN: {
@@ -117,6 +123,13 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
 
   async getDhDataOption () {
     this.text = await this.dhConfig.fetch()
-    console.log('option', this.text)
+  }
+
+  async getCpeStatus () {
+    this.text = await this.siteCpeStatusConfig.fetch()
+  }
+
+  async getSiteTraffic () {
+    this.text = await this.siteTrafficConfig.fetchText()
   }
 }

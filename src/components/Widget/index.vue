@@ -165,6 +165,7 @@ export default {
       element: this.$refs.element,
       onlyShow: this.onlyShow
     })
+    Object.assign(this.widget, { render: this.render })
     if (this.onlyShow) {
       // 如果在视图展示状态下，组件（轮询）动态加载数据
       this.render.intervalRefresh && this.render.intervalRefresh()
