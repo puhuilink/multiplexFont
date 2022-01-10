@@ -95,6 +95,33 @@ const responseInterceptor = (response) => {
   return response.data
 }
 
+const secondResponseInterceptor = (response) => {
+  // const { data: { msg } } = response
+  // hack: 30 代表查询到未匹配内容
+  // if (code && code !== 200) {
+  //   switch (code) {
+  //     case 401: {
+  //       notification.error({
+  //         message: '登录已过期',
+  //         description: '请重新登录'
+  //       })
+  //       break
+  //     }
+  //     case 30: {
+  //       throw new Error(msg)
+  //     }
+  //     default: {
+  //       notification.error({
+  //         message: '操作失败',
+  //         description: msg
+  //       })
+  //     }
+  //   }
+  //   return Promise.reject(new Error(msg))
+  // }
+  return response.data
+}
+
 const xungengresponseInterceptor = (response) => {
   const { data: { code, msg } } = response
   // hack: 30 代表查询到未匹配内容
@@ -125,7 +152,7 @@ service.interceptors.response.use(responseInterceptor)
 
 serviceZhenhua.interceptors.request.use(requestInterceptor)
 
-serviceZhenhua.interceptors.response.use(responseInterceptor)
+serviceZhenhua.interceptors.response.use(secondResponseInterceptor)
 
 serviceSdwan.interceptors.request.use(requestInterceptor)
 
