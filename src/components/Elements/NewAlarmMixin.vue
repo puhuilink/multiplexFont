@@ -54,10 +54,10 @@ export default {
             },
             'rows': {
               'backgroundColor': {
-                'odd': '#0b0b0c',
-                'even': '#0b0b0c'
+                'odd': '#Fbfbfc',
+                'even': '#Fbfbfc'
               },
-              'color': '#7b9bc6',
+              'color': '#0b0b06',
               'fontSize': '10px',
               'fontWeight': 'lighter'
             },
@@ -114,7 +114,7 @@ export default {
       {
         title: '告警类型',
         dataIndex: `alarm_type`,
-        width: '25%',
+        width: '15%',
         align,
         show: true,
         ellipsis: true
@@ -122,10 +122,9 @@ export default {
       {
         title: '告警详细信息',
         dataIndex: 'detail',
-        width: '55%',
+        width: '65%',
         show: true,
-        align,
-        ellipsis: true
+        align
       }]
     },
     dataSource () {

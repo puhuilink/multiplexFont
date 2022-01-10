@@ -47,6 +47,14 @@ export default {
           arr[index].config.dataConfig.dbDataConfig.siteCpeConfig.siteId = value
           arr[index].config.dataConfig.dbDataConfig.siteTrafficConfig.cache = value
         }
+        if (el.config.type === 'Tab') {
+          indexArr.push(index)
+          arr[index].config.dataConfig.dbDataConfig.siteTrafficConfig.siteId = value
+        }
+        if (el.config.type === 'More') {
+          indexArr.push(index)
+          arr[index].config.dataConfig.dbDataConfig.siteTrafficConfig.siteId = value
+        }
       })
       this.$nextTick()
       await Promise.all(indexArr.map(async el => {
