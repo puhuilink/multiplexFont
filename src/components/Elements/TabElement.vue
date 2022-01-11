@@ -325,11 +325,14 @@ export default {
         tempData[this.columns[key]] = tempData[this.columns[key]].slice(0, this.$attrs.is_components ? 15 : 8)
         tempData[this.columns[key]].forEach((e) => {
           const name = e.originSiteName + '-' + e.peerSiteName
+          const unit = e.unit
+          console.log(unit)
           delete e.originSiteName
           delete e.peerSiteName
           delete e.unit
           YData.push(name)
           Object.keys(e).forEach((k) => {
+            k = k + '(' + unit + ')'
             if (!(k in tempObj)) {
               tempObj[k] = []
             }
