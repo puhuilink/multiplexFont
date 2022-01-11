@@ -116,7 +116,7 @@ export default {
               'show': true,
               'orient': 'horizontal',
               'top': 'auto',
-              'right': '15',
+              'right': '25',
               'bottom': 'auto',
               'left': 'auto',
               'icon': 'circle',

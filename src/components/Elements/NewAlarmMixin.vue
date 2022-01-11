@@ -58,7 +58,7 @@ export default {
                 'even': '#Fbfbfc'
               },
               'color': '#0b0b06',
-              'fontSize': '10px',
+              'fontSize': '5px',
               'fontWeight': 'lighter'
             },
             'align': 'center'
@@ -69,6 +69,9 @@ export default {
     }
   },
   computed: {
+    pagination () {
+      return this.isComponents ? { pageSize: 5 } : false
+    },
     align () {
       const { elementProps } = this
       return elementProps.styleConfig.align
@@ -124,7 +127,11 @@ export default {
         dataIndex: 'detail',
         width: '65%',
         show: true,
-        align
+        align,
+        customRender: (text) => {
+          const result = this.splitDetail(text)
+          return <div>{ result }</div>
+        }
       }]
     },
     dataSource () {
@@ -161,6 +168,14 @@ export default {
           ...rest
         }
       }
+    },
+    splitDetail (text) {
+      const ts = _.split(text, ',')
+      const str = []
+      ts.forEach(t => {
+        str.push(<li>{ t }</li>)
+      })
+      return str
     }
   },
   mounted () {

@@ -8,10 +8,10 @@
       :customRow="customRow"
       :columns="columns"
       :dataSource="dataSource"
-      :pagination="false"
       rowKey="uuid"
       ref="table"
       :scroll="scroll"
+      :pagination="pagination"
     >
     </a-table>
     <!-- E 列表 -->

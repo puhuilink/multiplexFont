@@ -3,7 +3,8 @@
     <h1 @click="openModal" :style="styleConfig.textStyle">
       {{ styleConfig.text }}</h1>
     <a-modal
-      width="1080px"
+      width="100%"
+      centered
       :visible="visible"
       v-if="visible"
       @ok="closeModal"
@@ -11,13 +12,13 @@
       @close="closeModal"
     >
       <NewAlarmElement
-        style="width: 100%;height: 550px"
+        style="width: 90%;height: 50%"
         v-if="styleConfig.type === 'alarm'"
         :show.sync="visible"
         :is-components="true"
         :props-data="dataSource"/>
       <TabElement
-        style="width: 100%;height: 550px"
+        style="width: 90%;height: 50%"
         v-else
         :show.sync="visible"
         :is_components="true"
