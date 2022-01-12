@@ -11,7 +11,7 @@
       rowKey="uuid"
       ref="table"
       :scroll="scroll"
-      :pagination="pagination"
+      :pagination="false"
     >
     </a-table>
     <!-- E 列表 -->

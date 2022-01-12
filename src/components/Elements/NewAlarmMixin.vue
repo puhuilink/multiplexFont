@@ -34,11 +34,7 @@ export default {
       columns: [],
       dataSource: []
     },
-    isSubscribed: true,
-    scroll: {
-      x: false,
-      y: '100%'
-    }
+    isSubscribed: true
   }),
   watch: {
     'propsData': {
@@ -69,6 +65,12 @@ export default {
     }
   },
   computed: {
+    scroll () {
+      return {
+        x: false,
+        y: 550
+      }
+    },
     pagination () {
       return this.isComponents ? { pageSize: 5 } : false
     },
@@ -127,10 +129,11 @@ export default {
         dataIndex: 'detail',
         width: '65%',
         show: true,
+        ellipsis: !this.isComponents,
         align,
         customRender: (text) => {
           const result = this.splitDetail(text)
-          return <div>{ result }</div>
+          return this.isComponents ? <div>{ result }</div> : text
         }
       }]
     },

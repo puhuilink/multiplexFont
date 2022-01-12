@@ -10,13 +10,15 @@
       @ok="closeModal"
       @cancel="closeModal"
       @close="closeModal"
+      style="display: flex;align-items: center;justify-content: center;"
     >
       <NewAlarmElement
-        style="width: 90%;height: 50%"
+        style="width: 100%;height: 550px"
         v-if="styleConfig.type === 'alarm'"
         :show.sync="visible"
         :is-components="true"
-        :props-data="dataSource"/>
+        :props-data="dataSource"
+      />
       <TabElement
         style="width: 90%;height: 50%"
         v-else
@@ -183,7 +185,6 @@ export default {
   methods: {
     openModal () {
       this.visible = true
-      console.log(this.dataSource)
     },
     closeModal () {
       this.visible = false
@@ -192,6 +193,29 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less">
+.list-element {
+  height: 100%;
+  overflow: hidden;
 
+.ant-table td { white-space: nowrap; }
+
+.ant-table-thead > tr > th {
+  color:inherit !important;
+  font-weight: inherit !important;
+  background-color: inherit !important;
+}
+
+.ant-table-header {
+  background-color: transparent;
+  overflow: hidden !important;
+}
+
+.ant-table-scroll {
+.ant-table-body {
+// 隐藏右侧滚动条
+width: 100%;
+}
+}
+}
 </style>
