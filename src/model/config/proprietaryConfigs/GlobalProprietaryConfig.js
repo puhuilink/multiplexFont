@@ -1,5 +1,5 @@
 import { allData } from '../../data/map'
-import 'echarts/map/js/china.js'
+import 'echarts/map/js/world.js'
 import echarts from 'echarts'
 
 export default class GlobalProprietaryConfig {
@@ -50,7 +50,7 @@ export default class GlobalProprietaryConfig {
         }
       },
       geo: {
-        map: 'china',
+        map: 'world',
         label: {
           color: this.fontColor,
           emphasis: {
@@ -58,6 +58,8 @@ export default class GlobalProprietaryConfig {
           }
         },
         roam: true,
+        center: [115.7, 39.4],
+        zoom: 5,
         itemStyle: {
           normal: {
             areaColor: this.areaColor,
@@ -74,14 +76,40 @@ export default class GlobalProprietaryConfig {
         coordinateSystem: 'geo',
         zlevel: 2,
         rippleEffect: {
-          brushType: 'stroke'
+          brushType: 'fill'
         },
         label: {
           emphasis: {
             show: true,
-            position: 'right',
+            position: 'left',
             formatter: '{b}'
           }
+        },
+        symbolSize: 2,
+        showEffectOn: 'render',
+        itemStyle: {
+          normal: {
+            color: '#46bee9'
+          }
+        },
+        data: allData.citys
+      }, {
+        name: '省份',
+        type: 'effectScatter',
+        coordinateSystem: 'geo',
+        zlevel: 2,
+        rippleEffect: {
+          brushType: 'fill'
+        },
+        label: {
+          // emphasis: {
+          //   show: true,
+          //   position: 'left',
+          //   formatter: '{b}'
+          // }
+          show: true,
+          position: 'right',
+          formatter: '{b}'
         },
         symbolSize: 2,
         showEffectOn: 'render',

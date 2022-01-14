@@ -11,6 +11,7 @@ export default class Global extends Chart {
     const allData = {}
     const node = []
     const moveLine = []
+    const citys = []
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
         break
@@ -23,6 +24,7 @@ export default class Global extends Chart {
         const originLat = _.get(connection, ['0', 'originLat'])
         const originLng = _.get(connection, ['0', 'originLng'])
         const originName = _.get(connection, ['0', 'originName'])
+        const city = _.get(connection, ['0', 'city'])
         node.push({
           name: originName,
           value: [Number(originLng), Number(originLat), 2],
@@ -33,17 +35,37 @@ export default class Global extends Chart {
             }
           }
         })
+        citys.push({
+          name: city.split('/')[0],
+          value: [Number(originLng), Number(originLat), 2],
+          symbolSize: 0.1,
+          itemStyle: {
+            'normal': {
+              'color': '#FFBF31'
+            }
+          }
+        })
         connection.map(el => {
           // let { peer: { originLat, originLng, originName } } = el
           if (el.peerNode) {
-            const { peerNode: { peerName: { name, lat, lng } } } = el
+            const { peerNode: { peerName: { name, lat, lng, city } } } = el
             node.push({
               name: name,
               value: [Number(lng), Number(lat), 2],
-              symbolSize: 2,
+              symbolSize: 4,
               itemStyle: {
                 'normal': {
                   'color': '#58B3CC'
+                }
+              }
+            })
+            citys.push({
+              name: city.split('/')[0],
+              value: [Number(lng), Number(lat), 2],
+              symbolSize: 0.1,
+              itemStyle: {
+                'normal': {
+                  'color': '#FFBF31'
                 }
               }
             })
@@ -59,7 +81,8 @@ export default class Global extends Chart {
     }
     const option = proprietaryConfig.getOption()
     option.series[0].data = node
-    option.series[1].data = moveLine
+    option.series[1].data = citys
+    option.series[2].data = moveLine
     return option
   }
 }

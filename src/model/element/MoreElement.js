@@ -19,7 +19,6 @@ import {
 
 export default class MoreElement extends Element {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
-    console.log('mapping', commonConfig.getOption())
     const { sourceType, staticDataConfig = {}, dbDataConfig } = dataConfig
     const { staticData } = staticDataConfig || {}
     const props = {
@@ -60,7 +59,6 @@ export default class MoreElement extends Element {
         break
       }
     }
-    console.log(props)
     return _.cloneDeep({
       ...props,
       ...proprietaryConfig.getOption()

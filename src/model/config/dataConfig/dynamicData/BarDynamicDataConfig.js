@@ -163,7 +163,7 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
     const { data: { top } } = await this.siteTrafficConfig.fetchBar()
     const option = {
       legend: {
-        data: [ '重要告警', '一般告警', '次要告警' ]
+        data: [ '紧急告警', '重要告警', '一般告警' ]
       },
       xAxis: {
         type: 'category',
@@ -174,15 +174,15 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
       },
       series: [
         {
-          name: '重要告警',
+          name: '紧急告警',
           data: top.map(({ critical }) => critical)
         },
         {
-          name: '一般告警',
+          name: '重要告警',
           data: top.map(({ major }) => major)
         },
         {
-          name: '次要告警',
+          name: '一般告警',
           data: top.map(({ trivial }) => trivial)
         }
       ]

@@ -36,7 +36,8 @@ class AdaptorOrmConfig {
         'originName: name',
         'originLat: lat',
         'originLng: lng',
-        'peerNode: connectionName { peerName { lat, lng, name } }'
+        'city',
+        'peerNode: connectionName { peerName { lat, lng, name, city } }'
       ],
       alias: 'connection'
     }).then(({ data }) => data || [])

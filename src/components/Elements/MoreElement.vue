@@ -175,7 +175,6 @@ export default {
       immediate: true,
       deep: true,
       handler (value) {
-        console.log('props', value)
         if (value) {
           this.dataSource = value
         }
