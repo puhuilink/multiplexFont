@@ -38,11 +38,20 @@ class SdwanSiteService extends BaseService {
   // 显示site站点所关联的cpe站点状态
   static async getSiteStatus (param = {}) {
     const { siteId, status } = param
-    const q = `select count(1) from t_sdwan_cpe where site_id in
-    (select peer_site_id from t_sdwan_connection where origin_site_id = '${siteId}')
-    and status in (${status.map(el => '\'' + el + '\'').join()});`
+    const q = `select sum(total) total from (
+    select 
+    count(1) total
+    from t_sdwan_cpe where site_id = '${siteId}'
+    and status in (${status.map(el => '\'' + el + '\'').join()})
+    union all
+    select 
+    count(1)  total
+    from t_sdwan_cpe where site_id in (
+    select peer_site_id from t_sdwan_connection  where origin_site_id = '${siteId}'
+    and status in (${status.map(el => '\'' + el + '\'').join()}))
+) as table1;`
     const res = await sql(q)
-    return _.get(sqlResultDealer(res), '0.count', '暂无数据')
+    return _.get(sqlResultDealer(res), '0.total', '暂无数据')
   }
 }
 export {
