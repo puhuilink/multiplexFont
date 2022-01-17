@@ -117,6 +117,22 @@ export default {
         )
       },
       {
+        title: '告警状态',
+        dataIndex: `status`,
+        width: '10%',
+        align,
+        show: true,
+        ellipsis: true
+      },
+      {
+        title: '告警对象',
+        dataIndex: `target`,
+        width: '10%',
+        align,
+        show: true,
+        ellipsis: true
+      },
+      {
         title: '告警类型',
         dataIndex: `alarm_type`,
         width: '15%',
@@ -127,7 +143,7 @@ export default {
       {
         title: '告警详细信息',
         dataIndex: 'detail',
-        width: '65%',
+        width: '35%',
         show: true,
         ellipsis: !this.isComponents,
         align,

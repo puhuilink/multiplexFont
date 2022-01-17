@@ -326,17 +326,16 @@ export default {
         tempData[this.columns[key]].forEach((e) => {
           const name = e.originSiteName + '-' + e.peerSiteName
           const unit = e.unit
-          console.log(unit)
           delete e.originSiteName
           delete e.peerSiteName
           delete e.unit
           YData.push(name)
           Object.keys(e).forEach((k) => {
-            k = k + '(' + unit + ')'
-            if (!(k in tempObj)) {
-              tempObj[k] = []
+            const ks = k + '(' + unit + ')'
+            if (!(ks in tempObj)) {
+              tempObj[ks] = []
             }
-            tempObj[k].push(e[k])
+            tempObj[ks].push(e[k])
           })
         })
         Object.keys(tempObj).forEach(key => {

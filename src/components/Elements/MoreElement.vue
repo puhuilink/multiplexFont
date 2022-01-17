@@ -214,7 +214,7 @@ export default {
 .ant-table-body {
 // 隐藏右侧滚动条
 width: 100%;
-}
-}
+    }
+  }
 }
 </style>
