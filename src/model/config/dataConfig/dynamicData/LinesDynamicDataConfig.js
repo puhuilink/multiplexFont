@@ -105,7 +105,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     const { data: { throughput } } = await this.siteTrafficConfig.fetch()
     const option = {
       legend: {
-        data: ['rx', 'tx']
+        data: ['rx(Mbps)', 'tx(Mbps)']
       },
       xAxis: {
         type: 'category',
@@ -118,10 +118,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         type: 'value'
       },
       series: [{
-        name: 'rx',
+        name: 'rx(mbps)',
         data: throughput.map(({ rx }) => rx)
       }, {
-        name: 'tx',
+        name: 'tx(mbps)',
         data: throughput.map(({ tx }) => tx)
       }
       ]
@@ -133,7 +133,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
     const { data: { cpu, mem } } = await this.siteCpeConfig.fetch()
     const option = {
       legend: {
-        data: ['cpu利用率', '内存利用率']
+        data: ['cpu利用率(%)', '内存利用率(%)']
       },
       xAxis: {
         type: 'category',
@@ -146,10 +146,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         type: 'value'
       },
       series: [{
-        name: 'cpu利用率',
+        name: 'cpu利用率(%)',
         data: cpu.map(({ usage }) => usage)
       }, {
-        name: '内存利用率',
+        name: '内存利用率(%)',
         data: mem.map(({ usage }) => usage)
       }
       ]
