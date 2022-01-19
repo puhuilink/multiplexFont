@@ -227,7 +227,10 @@ export default {
           }
         }
       }
-    ])
+    ]),
+    queryParams: {
+      actual_end_time: [moment().add(-3, 'days'), moment()]
+    }
   }),
   methods: {
     moment,
@@ -299,7 +302,6 @@ export default {
           } else {
             suffix = this.getFormatDate()
           }
-          console.log(suffix)
           if (content.byteLength > 0) {
             await downloadExcel('巡更记录单-' + suffix + '.xls', content)
           } else {

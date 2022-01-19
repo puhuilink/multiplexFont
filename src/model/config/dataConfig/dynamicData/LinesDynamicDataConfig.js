@@ -118,10 +118,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         type: 'value'
       },
       series: [{
-        name: 'rx(mbps)',
+        name: 'rx(Mbps)',
         data: throughput.map(({ rx }) => rx)
       }, {
-        name: 'tx(mbps)',
+        name: 'tx(Mbps)',
         data: throughput.map(({ tx }) => tx)
       }
       ]

@@ -184,7 +184,7 @@ export default {
     ]),
     queryParams: {
       review: '',
-      create_time: []
+      create_time: [moment().add(-3, 'days'), moment()]
     },
     selectedEvents: {}
   }),
