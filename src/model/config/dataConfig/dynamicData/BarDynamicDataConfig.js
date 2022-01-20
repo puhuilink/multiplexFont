@@ -160,7 +160,8 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getSiteTrafficOption () {
-    const { data: { top } } = await this.siteTrafficConfig.fetchBar()
+    let { data: { top } } = await this.siteTrafficConfig.fetchBar()
+    top = top.reverse()
     const option = {
       legend: {
         data: [ '紧急告警', '重要告警', '一般告警' ]

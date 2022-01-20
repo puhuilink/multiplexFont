@@ -34,7 +34,10 @@ export default {
       columns: [],
       dataSource: []
     },
-    isSubscribed: true
+    isSubscribed: true,
+    searchText: '',
+    searchInput: null,
+    searchedColumn: ''
   }),
   watch: {
     'propsData': {
@@ -86,6 +89,22 @@ export default {
         width: '10%',
         align,
         show: true,
+        sorter: (a, b) => a.alarm_level - b.alarm_level,
+        filters: this.isComponents ? [
+          {
+            text: '严重',
+            value: 1
+          },
+          {
+            text: '重要',
+            value: 2
+          },
+          {
+            text: '一般',
+            value: 3
+          }
+        ] : false,
+        onFilter: (value, record) => record.alarm_level.indexOf(value) === 0,
         customRender: (alarmLevel) => (
           <div
             style={{
@@ -113,7 +132,6 @@ export default {
                 p-id="1115" fill={`${levelColorMapping.get(Number(alarmLevel))}`}></path>
             </svg>}
           </div>
-
         )
       },
       {
@@ -122,6 +140,22 @@ export default {
         width: '10%',
         align,
         show: true,
+        sorter: (a, b) => a.status.length - b.status.length,
+        filters: this.isComponents ? [
+          {
+            text: 'firing',
+            value: 'firing'
+          },
+          {
+            text: 'closed',
+            value: 'closed'
+          },
+          {
+            text: 'acknowledged',
+            value: 'acknowledged'
+          }
+        ] : false,
+        onFilter: (value, record) => record.status.indexOf(value) === 0,
         ellipsis: true
       },
       {
@@ -130,6 +164,26 @@ export default {
         width: '10%',
         align,
         show: true,
+        sorter: (a, b) => a.target.length - b.target.length,
+        filters: this.isComponents ? [
+          {
+            text: 'CPE',
+            value: 'CPE'
+          },
+          {
+            text: 'Site',
+            value: 'Site'
+          },
+          {
+            text: 'Policy',
+            value: 'Policy'
+          },
+          {
+            text: 'Subscription',
+            value: 'Subscription'
+          }
+        ] : false,
+        onFilter: (value, record) => record.target.indexOf(value) === 0,
         ellipsis: true
       },
       {
@@ -138,6 +192,23 @@ export default {
         width: '15%',
         align,
         show: true,
+        sorter: (a, b) => a.alarm_type.length - b.alarm_type.length,
+        scopedSlots: this.isComponents ? {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'customRender'
+        } : false,
+        onFilter: (value, record) => record.alarm_type
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => {
+              this.searchInput.focus()
+            })
+          }
+        },
         ellipsis: true
       },
       {
@@ -167,6 +238,16 @@ export default {
     }
   },
   methods: {
+    handleSearch (selectedKeys, confirm, dataIndex) {
+      confirm()
+      this.searchText = selectedKeys[0]
+      this.searchedColumn = dataIndex
+    },
+
+    handleReset (clearFilters) {
+      clearFilters()
+      this.searchText = ''
+    },
     // 实时计算 scroll
     calScroll () {
       this.$table = this.$table || this.$el.getElementsByClassName('ant-table')[0]
