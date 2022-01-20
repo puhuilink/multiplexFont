@@ -164,7 +164,7 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
     top = top.reverse()
     const option = {
       legend: {
-        data: [ '紧急告警', '重要告警', '一般告警' ]
+        data: [ '紧急', '重要', '一般' ]
       },
       xAxis: {
         type: 'category',
@@ -175,15 +175,15 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
       },
       series: [
         {
-          name: '紧急告警',
+          name: '紧急',
           data: top.map(({ critical }) => critical)
         },
         {
-          name: '重要告警',
+          name: '重要',
           data: top.map(({ major }) => major)
         },
         {
-          name: '一般告警',
+          name: '一般',
           data: top.map(({ trivial }) => trivial)
         }
       ]

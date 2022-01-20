@@ -119,10 +119,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       },
       series: [{
         name: 'rx(Mbps)',
-        data: throughput.map(({ rx }) => rx)
+        data: throughput.map(({ rx }) => rx.toFixed(2))
       }, {
         name: 'tx(Mbps)',
-        data: throughput.map(({ tx }) => tx)
+        data: throughput.map(({ tx }) => tx.toFixed(2))
       }
       ]
     }
@@ -147,10 +147,10 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       },
       series: [{
         name: 'cpu利用率(%)',
-        data: cpu.map(({ usage }) => usage)
+        data: cpu.map(({ usage }) => usage.toFixed(2))
       }, {
         name: '内存利用率(%)',
-        data: mem.map(({ usage }) => usage)
+        data: mem.map(({ usage }) => usage.toFixed(2))
       }
       ]
     }

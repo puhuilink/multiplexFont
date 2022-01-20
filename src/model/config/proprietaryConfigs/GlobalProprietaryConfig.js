@@ -44,7 +44,7 @@ export default class GlobalProprietaryConfig {
         orient: 'vertical',
         top: 'bottom',
         left: 'right',
-        data: ['地区', '线路'],
+        data: ['地区'],
         textStyle: {
           color: '#fff'
         }
