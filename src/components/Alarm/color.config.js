@@ -11,6 +11,11 @@ export const levelColorMapping = new Map([
   [10, '#CCCC00'] // 动环告警 低告警
   // [4, '#06c357'] // 5级告警
 ])
+export const newLevelColorMapping = new Map([
+  [1, '#ff0202'], // 1级告警
+  [2, '#ffdb00'], // 3级告警
+  [3, '#2d97ff'] // 4级告警
+])
 
 export const pureLevelColorMapping = new Map([
   [1, '#ff0202'], // 1级告警
