@@ -68,7 +68,7 @@ export default {
       handler (value) {
         if (value) {
           if (value.length < 1) {
-            this.columns = ['text']
+            this.columns = ['']
           } else {
             const t = []
             for (let i = 0; i < value.length; i++) {
@@ -77,7 +77,7 @@ export default {
             this.columns = t
           }
         } else {
-          this.columns = ['text']
+          this.columns = ['']
         }
       }
     },
@@ -296,18 +296,8 @@ export default {
         this.myChart.dispose()
       }
       this.myChart = echarts.init(document.getElementById(this.widgetId + key.toString()))
-      let YData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      let XData = [
-        {
-          name: 'Direct',
-          type: 'bar',
-          stack: 'total',
-          label: {
-            show: true
-          },
-          data: [320, 302, 301, 334, 390, 330, 320]
-        }
-      ]
+      let YData = []
+      let XData = []
       if (!this.styleConfig.barType) {
         if (!this.$attrs.is_components) {
           return
