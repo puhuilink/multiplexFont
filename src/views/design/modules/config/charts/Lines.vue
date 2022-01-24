@@ -49,7 +49,7 @@
                 <div class="comment-template__item">
                   <p class="comment-template__leading">粗细:</p>
                   <div class="comment-template__inner">
-                    <a-slider v-model="config.proprietaryConfig.lineStyle.width" @change="change" :min="1" :max="10" />
+                    <a-slider v-model="config.proprietaryConfig.testLint.width" @change="change" :min="1" :max="10" />
                   </div>
                 </div>
                 <!-- / 粗细 -->
