@@ -30,9 +30,9 @@ class AdaptorStaticSiteConfig {
     const { siteId, type, isCache, cache } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
     if (isCache && cache.length > 0) {
-      return SdwanSiteService.getWanTraffic({ siteId: cache, type: type })
+      return SdwanSiteService.getWanTraffic({ siteId: cache.split(','), type: type })
     }
-    return SdwanSiteService.getWanTraffic({ siteId: siteId, type: type })
+    return SdwanSiteService.getWanTraffic({ siteId: siteId.split(','), type: type })
     // return SdwanSiteService.getAlert()
   }
   fetchConnection () {
