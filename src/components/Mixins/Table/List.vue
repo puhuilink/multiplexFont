@@ -31,7 +31,7 @@ export default {
       labelCol: {
         sm: { span: 8 },
         md: { span: 8 },
-        xl: { span: 4 }
+        xl: { span: 6 }
       },
       wrapperCol: {
         sm: { span: 14, offset: 2 },

@@ -21,7 +21,7 @@
         <a-form layout="inline" class="form">
           <div :class="{ fold: !advanced }">
             <a-row>
-              <a-col :md="8" :sm="24">
+              <a-col :md="8" :sm="24" :xl="8">
                 <a-form-item
                   label="视图ID"
                   v-bind="formItemLayout"
@@ -31,7 +31,7 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="8" :sm="24">
+              <a-col :md="8" :sm="24" :xl="8">
                 <a-form-item
                   label="视图标题"
                   v-bind="formItemLayout"
@@ -41,7 +41,7 @@
                 </a-form-item>
               </a-col>
 
-              <a-col :md="8" :sm="24">
+              <a-col :md="8" :sm="24" :xl="8">
                 <a-form-item
                   label="视图类型"
                   v-bind="formItemLayout"

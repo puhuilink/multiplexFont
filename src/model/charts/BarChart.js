@@ -108,7 +108,11 @@ export default class BarChart extends Chart {
             ...item,
             ...bar,
             barWidth,
-            stack: barType === 'single'
+            stack: barType === 'single',
+            label: {
+              show: true,
+              distance: 60
+            }
           }
         })
 
@@ -126,7 +130,7 @@ export default class BarChart extends Chart {
             return el
           })
         }
-
+        console.log('series', series)
         Object.assign(option, {
           dataset,
           legend: Object.assign(legend, dynamicLegend),
