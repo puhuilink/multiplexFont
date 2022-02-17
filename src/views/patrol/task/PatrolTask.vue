@@ -126,6 +126,7 @@ import {
 } from '../typing'
 import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
+import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 
 export default {
   name: 'PatrolTask',
@@ -162,9 +163,8 @@ export default {
       },
       {
         title: '巡更组',
-        dataIndex: 'group { group_name }',
-        width: 220,
-        customRender: (__, { group: { group_name } }) => group_name
+        dataIndex: 'group_name',
+        width: 220
       },
       {
         title: '巡更实际开始时间',
@@ -207,11 +207,8 @@ export default {
       },
       {
         title: '异常数量',
-        dataIndex: 'events_aggregate{aggregate{count}}',
-        width: 80,
-        customRender: (errorCount, record) => {
-          return record.events_aggregate.aggregate.count
-        }
+        dataIndex: 'total',
+        width: 80
       },
       {
         title: '巡更人员',
@@ -229,7 +226,7 @@ export default {
       }
     ]),
     queryParams: {
-      actual_end_time: [moment().add(-3, 'days'), moment()]
+      actual_end_time: ''
     }
   }),
   methods: {
@@ -251,7 +248,7 @@ export default {
     },
     loadData (parameter) {
       const { status, ...rest } = this.queryParams
-      return PatrolService.taskFind({
+      return PatrolTaskListService.find({
         where: {
           ...status ? { status: { _eq: status } } : {},
           ...generateQuery(rest)

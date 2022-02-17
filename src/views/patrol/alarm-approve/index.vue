@@ -92,6 +92,7 @@ import ApproveSchema from './modules/ApproveSchema/index'
 import EventList from './modules/EventList'
 import moment from 'moment'
 import { TASK_REVIEW_ACCOMPLISHED, TASK_REVIEW_MAPPING, ALL_TASK_REVIEW_LIST } from '../typing'
+import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 
 export default {
   name: 'AlarmApprove',
@@ -125,9 +126,8 @@ export default {
       },
       {
         title: '巡更组',
-        dataIndex: 'group { group_name }',
-        width: 180,
-        customRender: (__, { group }) => _.get(group, 'group_name')
+        dataIndex: 'group_name',
+        width: 180
       },
       {
         title: '告警提交时间',
@@ -160,9 +160,8 @@ export default {
       },
       {
         title: '审批人员',
-        dataIndex: 'reviewUser { staff_name }',
-        width: 130,
-        customRender: (__, { reviewUser }) => _.get(reviewUser, 'staff_name')
+        dataIndex: 'reviewer',
+        width: 130
       },
       {
         title: '审批时间',
@@ -173,18 +172,13 @@ export default {
       },
       {
         title: '异常数量',
-        dataIndex: 'events_aggregate(where: {status: {_eq: "0"}}) {\n' +
-          '      aggregate {\n' +
-          '        count\n' +
-          '      }\n' +
-          '    }',
-        width: 180,
-        customRender: (_events_aggregate, { events_aggregate }) => events_aggregate.aggregate.count
+        dataIndex: 'total',
+        width: 180
       }
     ]),
     queryParams: {
       review: '',
-      create_time: [moment().add(-3, 'days'), moment()]
+      create_time: ''
     },
     selectedEvents: {}
   }),
@@ -215,7 +209,7 @@ export default {
   methods: {
     loadData (parameter) {
       // TODO: 重置 expandedRowKeys，可以在 CTable 组件对 dataSource 的 key 进行判断
-      return PatrolService.eventTaskFind({
+      return PatrolTaskListService.find({
         where: {
           ...generateQuery(this.queryParams)
         },
