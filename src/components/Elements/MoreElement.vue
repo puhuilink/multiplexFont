@@ -23,9 +23,11 @@
         style="width: 90%;height: 50%"
         v-else
         :show.sync="visible"
-        :is_components="true"
+        :component="true"
         :cols="columns"
-        :pd="dataSource"/>
+        :pd="dataSource"
+        :args="args"
+      />
     </a-modal>
   </div>
 </template>
@@ -69,7 +71,12 @@ export default {
       fatherStyle: {},
       columns: [],
       dataSource: [],
-      visible: false
+      visible: false,
+      args: {
+        siteId: '',
+        type: 'hour',
+        cache: ''
+      }
     }
   },
   watch: {
@@ -177,6 +184,42 @@ export default {
       handler (value) {
         if (value) {
           this.dataSource = value
+        }
+      }
+    },
+    'elementProps.siteId': {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (value) {
+          this.args.siteId = value
+        }
+      }
+    },
+    'elementProps.type': {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (value) {
+          this.args.type = value
+        }
+      }
+    },
+    'elementProps.cache': {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (value) {
+          this.args.cache = value
+        }
+      }
+    },
+    'elementProps.size': {
+      immediate: true,
+      deep: true,
+      handler (value) {
+        if (value) {
+          this.args.size = value
         }
       }
     }

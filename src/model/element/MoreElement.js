@@ -54,8 +54,8 @@ export default class MoreElement extends Element {
         break
       }
       case SOURCE_TYPE_STATIC_TRAFFIC: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const { dataSource, columns, siteId, type, cache, size } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns, siteId, type, cache, size })
         break
       }
     }

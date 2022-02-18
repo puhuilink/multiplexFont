@@ -178,8 +178,8 @@ export default class MoreDynamicDataConfig extends DynamicDataConfig {
         }
       }
     }
-    const { dataSource = [], columns = [] } = this
-    return { dataSource, columns }
+    const { dataSource = [], columns = [], siteId, type, cache, size } = this
+    return { dataSource, columns, siteId, type, cache, size }
   }
 
   generateOpenData (dataList = [], reverse = false) {
@@ -287,10 +287,16 @@ export default class MoreDynamicDataConfig extends DynamicDataConfig {
   }
   async getSiteTrafficDataOption () {
     const dataList = await this.siteTrafficConfig.fetchConnection()
+    const { size } = dataList
+    const { siteId, type, cache } = this.siteTrafficConfig.getOption()
     const { columns, dataSource } = this.generateStaticData(dataList, false)
     Object.assign(this, {
       columns,
-      dataSource
+      dataSource,
+      siteId,
+      type,
+      cache,
+      size
     })
   }
 }

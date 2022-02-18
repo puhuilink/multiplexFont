@@ -1,9 +1,25 @@
 <template>
-  <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts">
-    <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e">
-      <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }"></div>
-    </a-tab-pane>
-  </a-tabs>
+  <div>
+    <div v-if="component">
+      切换目标站点：<a-select style="width: 300px;margin-bottom: 40px" @change="onSelectChange" :value="peerSiteId">
+        <a-select-option v-for="(site,index) in siteList" :value="site.id" :key="index">{{ site.name }}</a-select-option>
+      </a-select>
+    </div>
+    <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts">
+      <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e">
+        <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }"></div>
+        <a-pagination
+          v-if="component"
+          v-model="current"
+          :total="args.size"
+          show-size-changer
+          :pageSize="pageSize"
+          @showSizeChange="onShowSizeChange"
+          @change="onChange"
+        />
+      </a-tab-pane>
+    </a-tabs>
+  </div>
 </template>
 
 <script>
@@ -12,26 +28,30 @@
 import _ from 'lodash'
 import echarts from 'echarts'
 import uuid from 'uuid/v4'
+import { SdwanSiteService } from '@/api'
 
 export default {
   name: 'TabElement',
-  components: {
+  props: {
     cols: {
       type: Array,
       default: () => []
     },
     pd: {
       type: Object,
-      default: () => {
-      }
+      default: () => ({})
     },
-    is_components: {
+    component: {
       type: Boolean,
       default: false
     },
     show: {
       type: Boolean,
       default: false
+    },
+    args: {
+      type: Object,
+      default: () => ({})
     }
   },
   data () {
@@ -50,7 +70,11 @@ export default {
       width: 100,
       height: 100,
       widgetId: null,
-      grid: null
+      grid: null,
+      peerSiteId: null,
+      current: 1,
+      pageSize: 5,
+      siteList: []
     }
   },
   watch: {
@@ -103,13 +127,13 @@ export default {
         }
       }
     },
-    '$attrs.show': {
+    'show': {
       immediate: true,
       deep: true,
-      handler (value) {
+      async handler (value) {
         if (value) {
-          this.columns = this.$attrs.cols
-          this.dataSource = this.$attrs.pd
+          this.peerSiteId = null
+          await this.reloadData(this.args.siteId, this.peerSiteId, this.args.type)
           this.styleConfig = {
             'barType': 'single',
             'legend': {
@@ -282,13 +306,54 @@ export default {
             }
           ]
           this.width = 1080
-          this.height = 550
-          this.reloadEcharts(this.activeKey)
+          this.height = 450
+          await this.reloadEcharts(this.activeKey)
+        }
+      }
+    },
+    'args.siteId': {
+      immediate: true,
+      deep: true,
+      async handler (value) {
+        if (value) {
+          this.siteList = await SdwanSiteService.getPeerSite(value)
         }
       }
     }
   },
   methods: {
+    async onShowSizeChange (current, pageSize) {
+      this.current = 1
+      this.pageSize = pageSize
+      await this.reloadData(this.args.siteId, this.peerSiteId, this.args.type, this.pageSize, 0)
+      await this.reloadEcharts(this.activeKey)
+    },
+    async onChange (current) {
+      this.current = current
+      await this.reloadData(this.args.siteId, this.peerSiteId, this.args.type, this.pageSize, (this.current - 1) * this.pageSize)
+      await this.reloadEcharts(this.activeKey)
+    },
+    async onSelectChange (value) {
+      this.peerSiteId = value
+      await this.reloadData(this.args.siteId, this.peerSiteId, this.args.type)
+      await this.reloadEcharts(this.activeKey)
+    },
+    async reloadData (siteId, peerSiteId, type, limit, offset) {
+      const result = await SdwanSiteService.getConnection({ siteId, peerSiteId, type, limit, offset })
+      this.args.size = result.size
+      Object.assign(this, this.generateStaticData(result))
+    },
+    generateStaticData (dataList = [], reverse = false) {
+      let columns = []
+      let dataSource = []
+      if (_.isEmpty(dataList)) {
+        return { columns, dataSource }
+      }
+      const { data } = dataList
+      columns = Object.keys(data)
+      dataSource = data
+      return { columns, dataSource }
+    },
     async reloadEcharts (key) {
       await this.$nextTick()
       this.activeKey = key
