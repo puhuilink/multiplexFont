@@ -4,7 +4,7 @@
     :display-render="displayRender"
     expand-trigger="hover"
     placeholder="选择地区"
-    :defaultValue="['13.15.四公局八公司-厦门','5ef07a9f4904421679b743d3']"
+    :defaultValue="['13.四公局','5f34d35396b1f125918db25e']"
     :size="size"
     @change="onChange"
     :allowClear="false"
