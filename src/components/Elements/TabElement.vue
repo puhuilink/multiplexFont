@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="component">
-      切换目标站点：<a-select style="width: 300px;margin-bottom: 40px" @change="onSelectChange" :value="peerSiteId">
+      切换目标站点：<a-select show-search :filter-option="filterOption" style="width: 300px;margin-bottom: 40px" @change="onSelectChange" :value="peerSiteId">
         <a-select-option v-for="(site,index) in siteList" :value="site.id" :key="index">{{ site.name }}</a-select-option>
       </a-select>
     </div>
@@ -145,7 +145,7 @@ export default {
               'left': 'auto',
               'icon': 'circle',
               'textStyle': {
-                'color': 'rgba(255, 255, 255, 1)',
+                'color': 'rgba(0, 0, 0, 1)',
                 'fontStyle': 'normal',
                 'fontSize': 12,
                 'fontWeight': 'normal'
@@ -322,6 +322,11 @@ export default {
     }
   },
   methods: {
+    filterOption (input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
     async onShowSizeChange (current, pageSize) {
       this.current = 1
       this.pageSize = pageSize
@@ -398,7 +403,14 @@ export default {
             name: key,
             type: 'bar',
             label: {
-              show: true
+              show: true,
+              formatter: function (params) {
+                if (params.value > 0) {
+                  return params.value
+                } else {
+                  return ''
+                }
+              }
             },
             data: tempObj[key]
           })
