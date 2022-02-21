@@ -2,7 +2,7 @@ import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
 import { SdwanSiteDao } from '../dao/index'
 import { axios, sql } from '@/utils/request'
-import { sqlResultDealer } from '@/utils/util'
+import { dealQuery, sqlResultDealer } from '@/utils/util'
 import _ from 'lodash'
 
 class SdwanSiteService extends BaseService {
@@ -33,6 +33,11 @@ class SdwanSiteService extends BaseService {
   static async getCommon (param = {}) {
     const { addr, ...rest } = param
     return axios.post(`${addr}`, { ...rest })
+  }
+  static async getPeerSite (id = '') {
+    const str = `select DISTINCT(peer_site_id) as id,name from t_sdwan_connection c left join t_sdwan_site s on c.peer_site_id = s.id where c.origin_site_id = '${id}' `
+    const res = await sql(str)
+    return dealQuery(res)
   }
 
   // 显示site站点所关联的cpe站点状态
