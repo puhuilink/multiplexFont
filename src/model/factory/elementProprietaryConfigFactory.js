@@ -12,6 +12,7 @@ import UpsProprietaryConfig from '@/model/config/proprietaryConfigs/UpsProprieta
 import MoreProprietaryConfig from '@/model/config/proprietaryConfigs/MoreProprietaryConfig'
 import TabProprietaryConfig from '@/model/config/proprietaryConfigs/TabProprietaryConfig'
 import SelectProprietaryConfig from '@/model/config/proprietaryConfigs/SelectProprietaryConfig'
+import TimeSelectProprietaryConfig from '@/model/config/proprietaryConfigs/TimeSelectProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -30,6 +31,8 @@ export default class ElementProprietaryConfigFactory {
         return new MoreProprietaryConfig(proprietaryConfig)
       case 'Tab':
         return new TabProprietaryConfig(proprietaryConfig)
+      case 'TimeSelector':
+        return new TimeSelectProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

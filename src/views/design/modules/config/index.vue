@@ -75,7 +75,8 @@ export default {
       ['UPS', 'UpsConfig'],
       ['Tab', 'TabConfig'],
       ['NewAlarm', 'NewAlarmConfig'],
-      ['More', 'MoreConfig']
+      ['More', 'MoreConfig'],
+      ['TimeSelector', 'TimeSelectorConfig']
     ])
   }),
   computed: {

@@ -27,6 +27,7 @@
       :is="elementName"
       v-if="useComponent"
       @selectChange="(value) => $emit('selectChange', value)"
+      @timeChange="(value) => $emit('timeChange', value)"
     />
 
     <AlarmPopupDetails ref="alarmSchema" ></AlarmPopupDetails>

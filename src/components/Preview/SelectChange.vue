@@ -60,6 +60,27 @@ export default {
       await Promise.all(indexArr.map(async el => {
         await this.view.widgets[el].render.refresh()
       }))
+    },
+    async timeChanged (event) {
+      const indexArr = []
+      console.log('event', event)
+      this.view.widgets.map((el, index, arr) => {
+        if (el.config.type === 'Lines') {
+          console.log('lines', arr[index].config.dataConfig.dbDataConfig)
+          indexArr.push(index)
+          const config = _.clone(arr[index].config.dataConfig.dbDataConfig)
+          if (config.siteCpeConfig.type.length > 0) {
+            config.siteCpeConfig.type = event
+          }
+          if (config.siteTrafficConfig.type.length > 0) {
+            config.siteTrafficConfig.type = event
+          }
+        }
+      })
+      this.$nextTick()
+      await Promise.all(indexArr.map(async el => {
+        await this.view.widgets[el].render.refresh()
+      }))
     }
   }
 }

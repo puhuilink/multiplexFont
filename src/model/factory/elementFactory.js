@@ -12,6 +12,7 @@ import SelectElement from '@/model/element/SelectElement'
 import MoreElement from '@/model/element/MoreElement'
 import TabElement from '@/model/element/TabElement'
 import NewAlarmElement from '@/model/element/NewAlarmElement'
+import TimeSelectElement from '@/model/element/TimeSelectElement'
 
 export default class ElementFactory {
   static create (type, { widget, element, onlyShow = false }) {
@@ -30,6 +31,8 @@ export default class ElementFactory {
         return new MoreElement({ widget, element, onlyShow })
       case 'Tab':
         return new TabElement({ widget, element, onlyShow })
+      case 'TimeSelector':
+        return new TimeSelectElement({ widget, element, onlyShow })
       default:
         return null
     }

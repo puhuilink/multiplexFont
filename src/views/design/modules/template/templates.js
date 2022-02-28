@@ -80,6 +80,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'NewAlarm', name: '新告警列表', icon: 'exclamation', width: 200, height: 100
+  },
+  {
+    category: 'ELEMENT', type: 'TimeSelector', name: '时间选择器', icon: 'align-center', width: 200, height: 100
   }
 ]
 

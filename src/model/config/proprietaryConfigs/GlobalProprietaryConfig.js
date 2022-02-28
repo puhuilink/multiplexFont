@@ -1,5 +1,5 @@
 import { allData } from '../../data/map'
-import 'echarts/map/js/world.js'
+import 'echarts/map/js/china.js'
 import echarts from 'echarts'
 
 export default class GlobalProprietaryConfig {
@@ -50,7 +50,7 @@ export default class GlobalProprietaryConfig {
         }
       },
       geo: {
-        map: 'world',
+        map: 'china',
         label: {
           color: this.fontColor,
           emphasis: {
@@ -68,6 +68,10 @@ export default class GlobalProprietaryConfig {
           emphasis: {
             areaColor: this.hoverColor
           }
+        },
+        formatter: function (tipData) {
+          return '</br>' +
+            '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + 1234 + '"></span>' + 12356 + ':' + '&nbsp' + '&nbsp' + 12355 + '</br>'
         }
       },
       series: [{
@@ -146,7 +150,14 @@ export default class GlobalProprietaryConfig {
             curveness: 0.1
           }
         }
-      }]
+      }],
+      tooltip: {
+        trigger: '',
+        formatter: function (params, ticket, callback) {
+          return '<div>' + params + ticket + '</div>' + '自定义好的html字符串即可自定义tooltip'
+        },
+        enterable: false
+      }
     }
   }
 }

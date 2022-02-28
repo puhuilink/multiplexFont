@@ -25,6 +25,7 @@
             :timeRange="timeRange"
             ref="renderer"
             @selectChange="selectChanged"
+            @timeChange="timeChanged"
             @drill="onDrill" />
 
         </div>

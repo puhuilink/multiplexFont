@@ -36,7 +36,7 @@ export default class Global extends Chart {
           }
         })
         citys.push({
-          name: city.split('/')[0],
+          name: city ? city.split('/')[0] : city,
           value: [Number(originLng), Number(originLat), 2],
           symbolSize: 0.1,
           itemStyle: {
@@ -84,5 +84,21 @@ export default class Global extends Chart {
     option.series[1].data = citys
     option.series[2].data = moveLine
     return option
+  }
+
+  async mergeOption (config, loadingDynamicData = false) {
+    // 向外暴露 echarts 配置
+    this.chartConfig = await this.mappingOption(config, loadingDynamicData)
+    // 如果数据为空则清空图表
+    if (_.isEmpty(this.chartConfig.series)) {
+      this.chart.clear()
+    }
+    // this.chartConfig.on('click', function (param) {
+    //   console.log(param.name)
+    //   return <div>span</div>
+    // })
+    // 重新配置图表
+    // https://github.com/apache/incubator-echarts/issues/3976
+    this.chart.setOption(this.chartConfig)
   }
 }
