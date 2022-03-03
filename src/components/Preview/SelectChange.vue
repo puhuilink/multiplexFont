@@ -63,10 +63,8 @@ export default {
     },
     async timeChanged (event) {
       const indexArr = []
-      console.log('event', event)
       this.view.widgets.map((el, index, arr) => {
         if (el.config.type === 'Lines') {
-          console.log('lines', arr[index].config.dataConfig.dbDataConfig)
           indexArr.push(index)
           const config = _.clone(arr[index].config.dataConfig.dbDataConfig)
           if (config.siteCpeConfig.type.length > 0) {
