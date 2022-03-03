@@ -3,7 +3,7 @@
     <h1 @click="openModal" :style="styleConfig.textStyle">
       {{ styleConfig.text }}</h1>
     <a-modal
-      width="100%"
+      width="80%"
       centered
       :visible="visible"
       v-if="visible"
