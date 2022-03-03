@@ -1,7 +1,7 @@
 <template>
   <div :style="{ width: '100%', height: '100%' }">
     <a-select v-model="timeType" style="width: 120px" @change="handleChange">
-      <a-select-option value="minute15">最近15分钟</a-select-option>
+      <a-select-option value="minute30">最近半小时</a-select-option>
       <a-select-option value="hour">最近一小时</a-select-option>
       <a-select-option value="hour6">最近六小时</a-select-option>
       <a-select-option value="hour12">最近十二小时</a-select-option>
