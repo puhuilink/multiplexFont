@@ -5,7 +5,7 @@
         <a-select-option v-for="(site,index) in siteList" :value="site.id" :key="index">{{ site.name }}</a-select-option>
       </a-select>
     </div>
-    <a-tabs type="card" :style="{ width: '100%'}" @change="reloadEcharts">
+    <a-tabs type="card" :style="{ width: '100%'}" tab-bar-style="color: #545454" style="color: #545454" @change="reloadEcharts">
       <a-tab-pane v-for="(e,index) in columns" :key="index" :tab="e">
         <div :id="getId()+index.toString()" :style="{ width: width+'px', height: height+'px' }"></div>
         <a-pagination
@@ -13,6 +13,7 @@
           v-model="current"
           :total="args.size"
           show-size-changer
+          :pageSizeOptions="['5','8']"
           :pageSize="pageSize"
           @showSizeChange="onShowSizeChange"
           @change="onChange"
@@ -348,7 +349,7 @@ export default {
       this.args.size = result.size
       Object.assign(this, this.generateStaticData(result))
     },
-    generateStaticData (dataList = [], reverse = false) {
+    generateStaticData (dataList = []) {
       let columns = []
       let dataSource = []
       if (_.isEmpty(dataList)) {
@@ -466,7 +467,6 @@ export default {
   },
   mounted () {
     this.reloadEcharts(0)
-    // this.$EventBus.$on('merge', () => this.reloadEcharts(this.activeKey))
   }
 }
 </script>
