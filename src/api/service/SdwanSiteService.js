@@ -39,6 +39,16 @@ class SdwanSiteService extends BaseService {
     const res = await sql(str)
     return dealQuery(res)
   }
+  static async getCityConnection () {
+    const str = `select ocity,s1.lat olat,s1.lng olng,pcity, s2.lat plat,s2.lng plng from v_sdwan_city_connect c left join v_sdwan_site s1 on c.ocity = s1.city left join v_sdwan_site s2 on c.pcity = s2.city`
+    const res = await sql(str)
+    return dealQuery(res)
+  }
+  static async getSiteList (city) {
+    const str = `select id,name from t_sdwan_site where city = '${city}'`
+    const res = await sql(str)
+    return dealQuery(res)
+  }
 
   // 显示site站点所关联的cpe站点状态
   static async getSiteStatus (param = {}) {

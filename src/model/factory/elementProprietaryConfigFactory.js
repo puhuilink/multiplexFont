@@ -13,6 +13,7 @@ import MoreProprietaryConfig from '@/model/config/proprietaryConfigs/MoreProprie
 import TabProprietaryConfig from '@/model/config/proprietaryConfigs/TabProprietaryConfig'
 import SelectProprietaryConfig from '@/model/config/proprietaryConfigs/SelectProprietaryConfig'
 import TimeSelectProprietaryConfig from '@/model/config/proprietaryConfigs/TimeSelectProprietaryConfig'
+import SDMapProprietaryConfig from '@/model/config/proprietaryConfigs/SDMapProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -33,6 +34,8 @@ export default class ElementProprietaryConfigFactory {
         return new TabProprietaryConfig(proprietaryConfig)
       case 'TimeSelector':
         return new TimeSelectProprietaryConfig(proprietaryConfig)
+      case 'SDMap':
+        return new SDMapProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

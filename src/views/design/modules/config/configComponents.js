@@ -29,6 +29,7 @@ import MoreConfig from '@/views/design/modules/config/elements/MoreConfig'
 import TabConfig from '@/views/design/modules/config/elements/TabConfig'
 import NewAlarmConfig from '@/views/design/modules/config/elements/NewAlarmConfig'
 import TimeSelectorConfig from '@/views/design/modules/config/elements/TimeSelectorConfig'
+import SDMapConfig from '@/views/design/modules/config/elements/SDMap'
 
 // 图表模板配置
 const charts = {
@@ -58,6 +59,7 @@ const elements = {
   MoreConfig,
   SelectConfig,
   NewAlarmConfig,
+  SDMapConfig,
   TimeSelectorConfig
 }
 

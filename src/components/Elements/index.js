@@ -14,6 +14,7 @@ import TabElement from '~~~/Elements/TabElement'
 import SelectElement from '~~~/Elements/SelectElement'
 import NewAlarmElement from '~~~/Elements/NewAlarmElement'
 import TimeSelectorElement from '~~~/Elements/TimeSelectorElement'
+import SDMapElement from '~~~/Elements/SDMap/SDMapElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
@@ -24,7 +25,8 @@ const ELEMENT_MAPPING = new Map([
   ['Tab', 'TabElement'],
   ['NewAlarm', 'NewAlarmElement'],
   ['UPS', 'UpsElement'],
-  ['TimeSelector', 'TimeSelectorElement']
+  ['TimeSelector', 'TimeSelectorElement'],
+  ['SDMap', 'SDMapElement']
 ])
 
 const ELEMENTS = {
@@ -35,7 +37,8 @@ const ELEMENTS = {
   MoreElement,
   NewAlarmElement,
   TabElement,
-  TimeSelectorElement
+  TimeSelectorElement,
+  SDMapElement
 }
 
 export {

@@ -1,6 +1,5 @@
 import { UpsProps } from './index'
 import _ from 'lodash'
-import TimeSelectElement from '@/model/element/TimeSelectElement'
 
 export const defaultTimeSelectProprietaryConfig = {
   styleConfig: {

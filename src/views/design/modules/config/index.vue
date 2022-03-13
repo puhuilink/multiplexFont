@@ -76,6 +76,7 @@ export default {
       ['Tab', 'TabConfig'],
       ['NewAlarm', 'NewAlarmConfig'],
       ['More', 'MoreConfig'],
+      ['SDMap', 'SDMapConfig'],
       ['TimeSelector', 'TimeSelectorConfig']
     ])
   }),

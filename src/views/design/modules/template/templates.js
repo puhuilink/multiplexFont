@@ -83,6 +83,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'TimeSelector', name: '时间选择器', icon: 'align-center', width: 200, height: 100
+  },
+  {
+    category: 'ELEMENT', type: 'SDMap', name: 'SD-Wan地图', icon: 'aliwangwang', width: 800, height: 600
   }
 ]
 
