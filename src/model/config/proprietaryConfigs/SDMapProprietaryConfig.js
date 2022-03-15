@@ -123,9 +123,9 @@ export default class SDMapProprietaryConfig {
         large: true,
         effect: {
           show: true,
-          constantSpeed: 30,
+          constantSpeed: 20,
           symbol: 'pin',
-          symbolSize: 3,
+          symbolSize: 5,
           trailLength: 0
         },
         lineStyle: {
@@ -137,9 +137,9 @@ export default class SDMapProprietaryConfig {
               offset: 1,
               color: this.lineColor[1]
             }], false),
-            width: 1,
-            opacity: 0.3,
-            curveness: 0.1
+            width: 3,
+            opacity: 0.7,
+            curveness: 0.2
           }
         }
       }]

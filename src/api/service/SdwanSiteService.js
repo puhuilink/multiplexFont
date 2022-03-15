@@ -39,8 +39,13 @@ class SdwanSiteService extends BaseService {
     const res = await sql(str)
     return dealQuery(res)
   }
-  static async getCityConnection () {
-    const str = `select ocity,s1.lat olat,s1.lng olng,pcity, s2.lat plat,s2.lng plng from v_sdwan_city_connect c left join v_sdwan_site s1 on c.ocity = s1.city left join v_sdwan_site s2 on c.pcity = s2.city`
+  static async getCityConnection (id = '5f34d35396b1f125918db25e') {
+    const str = `select distinct s.city,vsc.lat,vsc.lng from t_sdwan_connection c left join t_sdwan_site s on c.peer_site_id = s.id  left join v_sdwan_site vsc on s.city = vsc.city where origin_site_id = '${id}'`
+    const res = await sql(str)
+    return dealQuery(res)
+  }
+  static async getCityList () {
+    const str = `select * from v_sdwan_site`
     const res = await sql(str)
     return dealQuery(res)
   }

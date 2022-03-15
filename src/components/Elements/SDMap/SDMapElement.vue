@@ -56,9 +56,14 @@ export default {
       width: 880,
       height: 600,
       loading: false,
+      city: [],
       data: [
         { name: { last: 1 } }
-      ]
+      ],
+      dataIndex: 0,
+      lng: 0,
+      lat: 0,
+      site: ''
     }
   },
   watch: {
@@ -71,20 +76,24 @@ export default {
             if (!this.dataSource.length) {
               return
             }
-            this.reloadEcharts(this.drawLine(this.dataSource, _.cloneDeep(value)))
+            this.reloadEcharts(this.drawAll(this.dataSource, _.cloneDeep(value)))
           }
         }
       }
     }
   },
   methods: {
-    globalChange (value) {
+    async globalChange (value) {
       const real = {
         label: value.name,
         value: value.id
       }
       this.$emit('selectChange', real)
       this.visible = false
+      this.dataSource = await SdwanSiteService.getCityConnection(value.id)
+      this.site = value.name
+      await this.reloadEcharts(_.cloneDeep(this.drawLine(this.dataSource, this.elementProps, this.dataIndex)))
+      await this.$nextTick()
     },
     afterVisibleChange (val) {
       console.log('visible', val)
@@ -96,26 +105,47 @@ export default {
     onClose () {
       this.visible = false
     },
-    drawLine: function (data, option) {
-      const allData = {}
-      const node = []
+    drawLine (data, op, index) {
       const moveLine = []
-      const citys = []
-      const cs = {}
       data.forEach(d => {
-        cs[d.ocity] = { name: d.ocity, lat: d.olat, lng: d.olng }
-        cs[d.pcity] = { name: d.pcity, lat: d.plat, lng: d.plng }
+        const { city, lat, lng } = d
         moveLine.push({
-          fromName: d.ocity,
-          toName: d.pcity,
-          coords: [[Number(d.olng), Number(d.olat)], [Number(d.plng), Number(d.plat)]]
+          fromName: this.site,
+          toName: city,
+          coords: [[Number(this.lng), Number(this.lat)], [Number(lng), Number(lat)]]
         })
       })
-      Object.values(cs).forEach(el => {
-        const { name, lat, lng } = el
+      const option = _.cloneDeep(op)
+      option.series[0].data[index].itemStyle = {
+        'normal': {
+          color: new echarts.graphic.RadialGradient(
+            0.5, 0.5, 0.5,
+            [
+              { offset: 0.3, color: 'blue' },
+              { offset: 1, color: 'transparent' }
+            ]
+          )
+        }
+      }
+      option.series[2].data = moveLine
+      return option
+    },
+    drawAll: function (data, option) {
+      const node = []
+      const moveLine = []
+      data.forEach(d => {
+        const { city, lat, lng } = d
+        moveLine.push({
+          fromName: '13.四公局',
+          toName: city,
+          coords: [[116.41, 39.91], [Number(lng), Number(lat)]]
+        })
+      })
+      this.city.forEach(el => {
+        const { city, lat, lng } = el
         node.push({
-          name: name.split('/')[0],
-          city: name,
+          name: city.split('/')[0],
+          city: city,
           value: [Number(lng), Number(lat), 2],
           symbolSize: 10,
           itemStyle: {
@@ -123,7 +153,7 @@ export default {
               color: new echarts.graphic.RadialGradient(
                 0.5, 0.5, 0.5,
                 [
-                  { offset: 0.5, color: '#ffbf31' },
+                  { offset: 0.5, color: '#59b269' },
                   { offset: 1, color: 'transparent' }
                 ]
               )
@@ -131,9 +161,8 @@ export default {
           }
         })
       })
-      Object.assign(allData, { 'city': node })
       option.series[0].data = node
-      option.series[1].data = citys
+      option.series[1].data = []
       option.series[2].data = moveLine
       return option
     },
@@ -146,6 +175,21 @@ export default {
       this.myChart.setOption(option)
       const that = this
       this.myChart.on('click', 'series.effectScatter', function (params) {
+        option.series[0].data[that.dataIndex].itemStyle = {
+          'normal': {
+            color: new echarts.graphic.RadialGradient(
+              0.5, 0.5, 0.5,
+              [
+                { offset: 0.5, color: '#59b269' },
+                { offset: 1, color: 'transparent' }
+              ]
+            )
+          }
+        }
+        const { value } = params
+        that.lng = value[0]
+        that.lat = value[1]
+        that.dataIndex = params.dataIndex
         that.showDrawer()
         SdwanSiteService.getSiteList(params.data.city).then(info => {
           that.data = info
@@ -163,8 +207,9 @@ export default {
       return this.widgetId
     },
     async getNodeData () {
+      this.city = await SdwanSiteService.getCityList()
       this.dataSource = await SdwanSiteService.getCityConnection()
-      await this.reloadEcharts(this.drawLine(this.dataSource, this.elementProps))
+      await this.reloadEcharts(this.drawAll(this.dataSource, this.elementProps))
     }
   },
   mounted () {
