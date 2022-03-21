@@ -7,6 +7,7 @@ class AdaptorStaticSiteConfig {
     type = '',
     status = [],
     isCache = false,
+    apiType = 'sdwan',
     cache = ''
   }) {
     this.siteId = siteId
@@ -14,6 +15,7 @@ class AdaptorStaticSiteConfig {
     this.cache = cache
     this.status = status
     this.isCache = isCache
+    this.apiType = apiType
   }
 
   getOption () {
@@ -27,13 +29,28 @@ class AdaptorStaticSiteConfig {
   }
 
   fetch () {
-    const { siteId, type, isCache, cache } = this.getOption()
+    const { apiType } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
+    switch (apiType) {
+      case 'sdwan':
+        return this.fetchSDWan()
+      case 'mv':
+        return this.fetchMV()
+    }
+  }
+  fetchSDWan () {
+    const { siteId, type, isCache, cache } = this.getOption()
     if (isCache && cache.length > 0) {
       return SdwanSiteService.getWanTraffic({ siteId: cache.split(','), type: type })
     }
     return SdwanSiteService.getWanTraffic({ siteId: siteId.split(','), type: type })
-    // return SdwanSiteService.getAlert()
+  }
+  fetchMV () {
+    const { siteId, type, isCache, cache } = this.getOption()
+    if (isCache && cache.length > 0) {
+      return SdwanSiteService.getWanTraffic({ siteId: cache.split(','), type: type })
+    }
+    return SdwanSiteService.getWanTraffic({ siteId: siteId.split(','), type: type })
   }
   fetchConnection () {
     const { siteId, type, cache } = this.getOption()

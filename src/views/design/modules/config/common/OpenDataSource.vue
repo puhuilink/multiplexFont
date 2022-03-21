@@ -2,22 +2,10 @@
   <a-form-model v-bind="formItemLayout">
     <PreviewButton :preview="preview" />
     <a-form-model-item label="接口地址" require>
-      <a-select
+      <a-input
         v-model="openConfig.address"
       >
-        <a-select-option value="/sdwan/getAlert">
-          告警
-        </a-select-option>
-        <a-select-option value="/sdwan/getCPE">
-          CPE
-        </a-select-option>
-        <a-select-option value="/sdwan/getWan">
-          流量
-        </a-select-option>
-        <a-select-option value="/sdwan/getConnection">
-          通道
-        </a-select-option>
-      </a-select>
+      </a-input>
     </a-form-model-item>
     <a-form-model-item label="接口参数" require>
       <a-textarea

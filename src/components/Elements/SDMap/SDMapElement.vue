@@ -24,7 +24,7 @@
         item-layout="horizontal"
         :data-source="data"
       >
-        <a-list-item slot="renderItem" slot-scope="item">
+        <a-list-item slot="renderItem" slot-scope="item" @click="globalChange(item)">
           <a slot="actions"><a-icon type="right" @click="globalChange(item)" /></a>
           <div>{{ item.name }}</div>
         </a-list-item>
@@ -138,25 +138,32 @@ export default {
         moveLine.push({
           fromName: '13.四公局',
           toName: city,
-          coords: [[116.41, 39.91], [Number(lng), Number(lat)]]
+          coords: [[116.39, 39.93], [Number(lng), Number(lat)]]
         })
       })
       this.city.forEach(el => {
-        const { city, lat, lng } = el
+        const { city, lat, lng, total } = el
         node.push({
-          name: city.split('/')[0],
+          name: city.split('/')[0] + '(' + total + ')',
           city: city,
           value: [Number(lng), Number(lat), 2],
           symbolSize: 10,
           itemStyle: {
             'normal': {
-              color: new echarts.graphic.RadialGradient(
-                0.5, 0.5, 0.5,
-                [
-                  { offset: 0.5, color: '#59b269' },
-                  { offset: 1, color: 'transparent' }
-                ]
-              )
+              color: {
+                type: 'linear ', // linear 线性渐变  radial径向渐变
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: 'rgba(0,255,255,0.3)' // 0% 处的颜色
+                }, {
+                  offset: 1, color: 'rgba(10,215,125,1)' // 100% 处的颜色
+                }],
+                global: false // 缺省为 false
+              },
+              opacity: 0.7
             }
           }
         })
