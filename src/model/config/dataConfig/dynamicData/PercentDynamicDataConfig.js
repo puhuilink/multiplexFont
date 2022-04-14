@@ -15,7 +15,7 @@ import {
   SOURCE_TYPE_OPEN
 } from './types/sourceType'
 
-export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
+export default class PercentDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData, sourceType) {
     if (loadingDynamicData) {
       switch (sourceType) {
@@ -61,7 +61,6 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
   async getOpenDataOption () {
     const { dataSource } = this.dealOpen(await this.openConfig.fetch(), this.openConfig.back ? JSON.parse(this.openConfig.back) : null)
-    console.log(dataSource)
     this.text = dataSource
   }
 

@@ -14,6 +14,8 @@ import TabProprietaryConfig from '@/model/config/proprietaryConfigs/TabProprieta
 import SelectProprietaryConfig from '@/model/config/proprietaryConfigs/SelectProprietaryConfig'
 import TimeSelectProprietaryConfig from '@/model/config/proprietaryConfigs/TimeSelectProprietaryConfig'
 import SDMapProprietaryConfig from '@/model/config/proprietaryConfigs/SDMapProprietaryConfig'
+import PercentProprietaryConfig from '@/model/config/proprietaryConfigs/PercentProprietaryConfig'
+import ToLineProprietaryConfig from '@/model/config/proprietaryConfigs/ToLineProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -36,6 +38,10 @@ export default class ElementProprietaryConfigFactory {
         return new TimeSelectProprietaryConfig(proprietaryConfig)
       case 'SDMap':
         return new SDMapProprietaryConfig(proprietaryConfig)
+      case 'ToLine':
+        return new ToLineProprietaryConfig(proprietaryConfig)
+      case 'Percent':
+        return new PercentProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

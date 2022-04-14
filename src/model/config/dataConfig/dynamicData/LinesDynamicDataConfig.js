@@ -102,27 +102,96 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getSiteTrafficOption () {
-    const { data: { throughput } } = await this.siteTrafficConfig.fetch()
+    switch (this.siteTrafficConfig.requestType) {
+      case 'wan':
+        await this.generateWanData()
+        break
+      case 'delay':
+        await this.generateDelayData()
+        break
+      case 'packet':
+        await this.generatePacketData()
+        break
+      default:
+        await this.generateWanData()
+    }
+  }
+  async generateWanData () {
+    const { data: { throughput } } = await this.siteTrafficConfig.requestData()
     const option = {
       legend: {
-        data: ['rx(Mbps)', 'tx(Mbps)']
+        data: throughput ? [Object.keys(throughput[0])[0] + '(' + throughput[0].unit + ')', Object.keys(throughput[0])[1] + '(' + throughput[0].unit + ')'] : []
       },
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: _.uniq(
+        data: throughput ? _.uniq(
           throughput.map(({ time }) => time)
-        )
+        ) : []
       },
       yAxis: {
         type: 'value'
       },
       series: [{
-        name: 'rx(Mbps)',
+        name: Object.keys(throughput[0])[0] + '(' + throughput[0].unit + ')',
         data: throughput.map(({ rx }) => rx.toFixed(2))
       }, {
-        name: 'tx(Mbps)',
+        name: Object.keys(throughput[0])[1] + '(' + throughput[0].unit + ')',
         data: throughput.map(({ tx }) => tx.toFixed(2))
+      }
+      ]
+    }
+    Object.assign(this, option)
+  }
+  async generateDelayData () {
+    const { data: { loss } } = await this.siteTrafficConfig.requestData()
+    const option = {
+      legend: {
+        data: ['loss', 'latency']
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: loss ? _.uniq(
+          loss.map(({ time }) => time)
+        ) : []
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        name: 'loss',
+        data: loss.map(({ loss }) => loss.toFixed(2))
+      }, {
+        name: 'latency',
+        data: loss.map(({ latency }) => latency.toFixed(2))
+      }
+      ]
+    }
+    Object.assign(this, option)
+  }
+  async generatePacketData () {
+    const { data: { packet } } = await this.siteTrafficConfig.requestData()
+    const option = {
+      legend: {
+        data: ['rxPacket', 'txPacket']
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: packet ? _.uniq(
+          packet.map(({ time }) => time)
+        ) : []
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        name: 'rxPacket',
+        data: packet.map(({ rxPacket }) => rxPacket.toFixed(2))
+      }, {
+        name: 'txPacket',
+        data: packet.map(({ txPacket }) => txPacket.toFixed(2))
       }
       ]
     }

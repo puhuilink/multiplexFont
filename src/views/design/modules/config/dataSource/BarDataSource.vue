@@ -29,6 +29,11 @@
         :key="SOURCE_TYPE_STATIC_TRAFFIC"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_CPE]>
+      <CpeDataSource
+        :key="SOURCE_TYPE_CPE"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -39,7 +44,8 @@ import ComboDataSource from '../common/ComboDataSource'
 import AlarmDataSource from '../common/AlarmDataSource.vue'
 import NumberDataSource from '../common/NumberDataSource'
 import StaticTrafficDataSource from '../common/StaticTrafficDataSource'
-import { SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import { SOURCE_TYPE_REAL, SOURCE_TYPE_CPE, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC } from '@/model/config/dataConfig/dynamicData/types/sourceType'
+import CpeDataSource from '@/views/design/modules/config/common/CpeDataSource'
 
 export default {
   name: 'BarDataSource',
@@ -49,10 +55,11 @@ export default {
     AlarmDataSource,
     ComboDataSource,
     NumberDataSource,
-    StaticTrafficDataSource
+    StaticTrafficDataSource,
+    CpeDataSource
   },
   data: () => ({
-    SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC
+    SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_COMBO, SOURCE_TYPE_NUMBER, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE
   })
 }
 </script>

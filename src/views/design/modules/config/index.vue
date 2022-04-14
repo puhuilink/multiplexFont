@@ -77,6 +77,8 @@ export default {
       ['NewAlarm', 'NewAlarmConfig'],
       ['More', 'MoreConfig'],
       ['SDMap', 'SDMapConfig'],
+      ['Percent', 'PercentConfig'],
+      ['ToLine', 'ToLineConfig'],
       ['TimeSelector', 'TimeSelectorConfig']
     ])
   }),

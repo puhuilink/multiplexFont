@@ -12,6 +12,7 @@ import {
 } from './types/sourceType'
 import _ from 'lodash'
 import { STATUS_MAPPING } from '@/views/patrol/typing'
+import { notification } from 'ant-design-vue'
 
 export default class ListDynamicDataConfig extends DynamicDataConfig {
   /**
@@ -151,11 +152,12 @@ export default class ListDynamicDataConfig extends DynamicDataConfig {
       return { columns, dataSource }
     }
     let lead = null
-    try {
-      lead = JSON.parse(this.openConfig.back)
-    } catch (e) {
-      this.$message.error('返回值填写错误，请检查是否为正确的JSON格式！')
-      return
+    if (this.openConfig.back) {
+      try {
+        lead = JSON.parse(this.openConfig.back)
+      } catch (e) {
+        notification.error('返回值填写错误，请检查是否为正确的JSON格式！')
+      }
     }
     dataSource = this.dealOpen(dataList, lead)
     return { columns, dataSource }

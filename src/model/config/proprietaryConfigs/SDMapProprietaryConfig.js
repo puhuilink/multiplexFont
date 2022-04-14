@@ -1,5 +1,5 @@
 import { allData } from '../../data/map'
-import 'echarts/map/js/china.js'
+import './china.js'
 import echarts from 'echarts'
 
 export default class SDMapProprietaryConfig {
@@ -142,7 +142,30 @@ export default class SDMapProprietaryConfig {
             curveness: 0.2
           }
         }
-      }]
+      },
+      {
+        name: '告警线路',
+        type: 'lines',
+        coordinateSystem: 'geo',
+        zlevel: 2,
+        large: true,
+        effect: {
+          show: true,
+          constantSpeed: 20,
+          symbol: 'pin',
+          symbolSize: 5,
+          trailLength: 0
+        },
+        lineStyle: {
+          normal: {
+            color: 'rgb(255,0,0)',
+            width: 3,
+            opacity: 0.7,
+            curveness: 0.2
+          }
+        }
+      }
+      ]
     }
   }
 }

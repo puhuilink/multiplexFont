@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { SdwanSiteDao } from '../dao/index'
+import { SdwanSiteDao, MvSiteDao } from '../dao/index'
 import { axios, sql } from '@/utils/request'
 import { dealQuery, sqlResultDealer } from '@/utils/util'
 import _ from 'lodash'
@@ -20,6 +20,9 @@ class SdwanSiteService extends BaseService {
 
   static async getAlert (param = {}) {
     return axios.post('/sdwan/getAlert', param)
+  }
+  static async getErrorConnection (param = {}) {
+    return axios.post('/sdwan/getErrorConnection', param)
   }
 
   // 获取站点的CPU和内存利用率
@@ -74,6 +77,34 @@ class SdwanSiteService extends BaseService {
     return _.get(sqlResultDealer(res), '0.total', '暂无数据')
   }
 }
+class MVSiteService extends BaseService {
+  // 地图专用查询
+  static async find (argus = {}) {
+    return query(
+      MvSiteDao.find(argus)
+    )
+  }
+  // 站点传输速率查询
+  static async getWanTraffic (param = {}) {
+    return axios.post('/mv/getWan', param)
+  }
+
+  static async getAlert (param = {}) {
+    return axios.post('/mv/getAlarmTop', param)
+  }
+
+  // 获取站点的CPU和内存利用率
+  static async getCpuTraffic (param = {}) {
+    return axios.post('/mv/getSiteTop', param)
+  }
+  static async getWanDelay (param = {}) {
+    return axios.post('/mv/getMonitorLoss', param)
+  }
+  static async getWanPacket (param = {}) {
+    return axios.post('/mv/getPacket', param)
+  }
+}
 export {
-  SdwanSiteService
+  SdwanSiteService,
+  MVSiteService
 }

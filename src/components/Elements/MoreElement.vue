@@ -13,14 +13,15 @@
       style="display: flex;align-items: center;justify-content: center;"
     >
       <NewAlarmElement
-        style="width: 100%;height: 550px"
+        style="width: 100%;height: 550px;padding-top:10px"
         v-if="styleConfig.type === 'alarm'"
         :show.sync="visible"
         :is-components="true"
         :props-data="dataSource"
+        :api-type="api"
       />
       <TabElement
-        style="width: 90%;height: 50%"
+        style="width: 90%;height: 50%;padding-bottom: 20px"
         v-else
         :show.sync="visible"
         :component="true"
@@ -230,6 +231,11 @@ export default {
     },
     closeModal () {
       this.visible = false
+    }
+  },
+  computed: {
+    api () {
+      return this.elementProps.api
     }
   }
 }

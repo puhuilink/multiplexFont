@@ -17,7 +17,7 @@ import {
   SOURCE_TYPE_REAL, SOURCE_TYPE_SQL, SOURCE_TYPE_STATIC, SOURCE_TYPE_STATIC_TRAFFIC
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
-export default class MoreElement extends Element {
+export default class PercentElement extends Element {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { sourceType, staticDataConfig = {}, dbDataConfig } = dataConfig
     const { staticData } = staticDataConfig || {}
@@ -44,25 +44,39 @@ export default class MoreElement extends Element {
         break
       }
       case SOURCE_TYPE_SQL: {
+        const text = Number(await dbDataConfig.getOption(loadingDynamicData, sourceType)) / 100
+        Object.assign(props, { text })
+        break
+      }
+      case SOURCE_TYPE_OPEN: {
         const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
         Object.assign(props, { dataSource, columns })
         break
       }
-      case SOURCE_TYPE_OPEN: {
-        const { dataSource } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { api: (dbDataConfig.openConfig.address.split('/')[1]) })
-        Object.assign(props, { dataSource })
-        break
-      }
       case SOURCE_TYPE_STATIC_TRAFFIC: {
-        const { dataSource, columns, siteId, type, cache, size } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns, siteId, type, cache, size })
+        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { dataSource, columns })
         break
       }
     }
+    console.log(proprietaryConfig.getOption())
     return _.cloneDeep({
-      ...props,
-      ...proprietaryConfig.getOption()
+      data: props,
+      ...proprietaryConfig.getOption(),
+      common: commonConfig
     })
+  }
+
+  async mergeOption (config, loadingDynamicData = false) {
+    await super.mergeOption(config, loadingDynamicData)
+    // this.$EventBus.$emit('merge', null)
+  }
+  resize (config) {
+    super.resize()
+    this.mergeOption(config)
+  }
+  setStyle (config) {
+    super.setStyle(config)
+    this.resize(config)
   }
 }

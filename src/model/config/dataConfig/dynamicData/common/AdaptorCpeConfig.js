@@ -1,4 +1,5 @@
 import { SdwanSiteService } from '@/api'
+import { MVSiteService } from '@/api/service/SdwanSiteService'
 
 export default class AdaptorCpeConfig {
   constructor ({
@@ -45,7 +46,7 @@ export default class AdaptorCpeConfig {
     const { siteId, type, cache } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
     if (cache.length) {}
-    return SdwanSiteService.getCpuTraffic({ siteId: siteId, type: type })
+    return MVSiteService.getCpuTraffic({ siteId: siteId, type: type })
     // return SdwanSiteService.getAlert()
   }
 }

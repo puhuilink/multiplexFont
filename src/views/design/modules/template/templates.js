@@ -86,6 +86,12 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'SDMap', name: 'SD-Wan地图', icon: 'aliwangwang', width: 800, height: 600
+  },
+  {
+    category: 'ELEMENT', type: 'ToLine', name: '目标向折线图', icon: 'link', width: 800, height: 600
+  },
+  {
+    category: 'ELEMENT', type: 'Percent', name: '百分比仪表盘', icon: 'history', width: 800, height: 600
   }
 ]
 

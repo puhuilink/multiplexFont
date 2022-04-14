@@ -30,6 +30,8 @@ import TabConfig from '@/views/design/modules/config/elements/TabConfig'
 import NewAlarmConfig from '@/views/design/modules/config/elements/NewAlarmConfig'
 import TimeSelectorConfig from '@/views/design/modules/config/elements/TimeSelectorConfig'
 import SDMapConfig from '@/views/design/modules/config/elements/SDMap'
+import PercentConfig from '@/views/design/modules/config/elements/Percent'
+import ToLineConfig from '@/views/design/modules/config/elements/ToLine'
 
 // 图表模板配置
 const charts = {
@@ -60,6 +62,8 @@ const elements = {
   SelectConfig,
   NewAlarmConfig,
   SDMapConfig,
+  PercentConfig,
+  ToLineConfig,
   TimeSelectorConfig
 }
 

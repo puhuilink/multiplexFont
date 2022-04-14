@@ -3,6 +3,7 @@
 
     <!-- S 列表 -->
     <a-table
+      style="height: 100%"
       size="small"
       :customHeaderRow="() => ({ style: headerRowStyle })"
       :customRow="customRow"

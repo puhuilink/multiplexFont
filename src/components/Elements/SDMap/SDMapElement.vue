@@ -3,7 +3,7 @@
     :style="{
       overflow: 'hidden',
       position: 'relative',
-      borderRadius: '2px',
+      borderRadius: '0',
       textAlign: 'center',
     }"
   >
@@ -18,13 +18,14 @@
       :after-visible-change="afterVisibleChange"
       @close="onClose"
     >
+      <a-button @click="getNodeData">默认</a-button>
       <a-list
         class="demo-loadmore-list"
         :loading="loading"
         item-layout="horizontal"
         :data-source="data"
       >
-        <a-list-item slot="renderItem" slot-scope="item" @click="globalChange(item)">
+        <a-list-item slot="renderItem" slot-scope="item,index" @click="globalChange(item)" :style="listColor(index)">
           <a slot="actions"><a-icon type="right" @click="globalChange(item)" /></a>
           <div>{{ item.name }}</div>
         </a-list-item>
@@ -63,20 +64,26 @@ export default {
       dataIndex: 0,
       lng: 0,
       lat: 0,
-      site: ''
+      site: '',
+      errorIds: {},
+      errorCitys: [],
+      errorNodes: [],
+      moveLines: [],
+      lastPoint: {}
     }
   },
   watch: {
     'elementProps': {
       immediate: true,
       deep: true,
-      handler (value) {
+      async handler (value) {
         if (value) {
           if (value.series) {
             if (!this.dataSource.length) {
               return
             }
-            this.reloadEcharts(this.drawAll(this.dataSource, _.cloneDeep(value)))
+            const op = await this.drawAll(this.dataSource, _.cloneDeep(value))
+            await this.reloadEcharts(op)
           }
         }
       }
@@ -88,9 +95,11 @@ export default {
         label: value.name,
         value: value.id
       }
+      Object.assign(this.lastPoint, real)
       this.$emit('selectChange', real)
       this.visible = false
       this.dataSource = await SdwanSiteService.getCityConnection(value.id)
+      await this.getExceptions(true)
       this.site = value.name
       await this.reloadEcharts(_.cloneDeep(this.drawLine(this.dataSource, this.elementProps, this.dataIndex)))
       await this.$nextTick()
@@ -110,37 +119,109 @@ export default {
       data.forEach(d => {
         const { city, lat, lng } = d
         moveLine.push({
-          fromName: this.site,
-          toName: city,
+          fromName: this.lastPoint.city,
+          toName: city.split('/')[0],
           coords: [[Number(this.lng), Number(this.lat)], [Number(lng), Number(lat)]]
         })
       })
       const option = _.cloneDeep(op)
-      option.series[0].data[index].itemStyle = {
-        'normal': {
-          color: new echarts.graphic.RadialGradient(
-            0.5, 0.5, 0.5,
-            [
-              { offset: 0.3, color: 'blue' },
-              { offset: 1, color: 'transparent' }
-            ]
-          )
+      if (this.errorNodes.includes(this.lastPoint.city)) {
+        option.series[0].data[index].itemStyle = {
+          'normal': {
+            color: new echarts.graphic.RadialGradient(
+              0.5, 0.5, 0.5,
+              [
+                { offset: 0.3, color: 'rgba(255,0,0,1)' },
+                { offset: 1, color: 'rgba(255,0,0,0.3)' }
+              ]
+            )
+          }
+        }
+      } else {
+        option.series[0].data[index].itemStyle = {
+          'normal': {
+            color: new echarts.graphic.RadialGradient(
+              0.5, 0.5, 0.5,
+              [
+                { offset: 0.3, color: 'rgba(10,215,125,1)' },
+                { offset: 1, color: 'rgba(100,165,225,1)' }
+              ]
+            )
+          }
         }
       }
+      const warningLines = this.getWarningLines(moveLine)
       option.series[2].data = moveLine
+      option.series[3].data = warningLines
       return option
     },
-    drawAll: function (data, option) {
-      const node = []
+    initMoveLines () {
       const moveLine = []
-      data.forEach(d => {
-        const { city, lat, lng } = d
-        moveLine.push({
-          fromName: '13.四公局',
-          toName: city,
-          coords: [[116.39, 39.93], [Number(lng), Number(lat)]]
+      const center = [
+        {
+          id: '5ea7c500bd20c06533e6278b',
+          name: '北京',
+          lat: 39.938884,
+          lng: 116.397459
+        },
+        {
+          id: '5eaab7aebd20c06533e62984',
+          name: '厦门',
+          lat: 24.4854066051763,
+          lng: 118.096435499767
+        },
+        {
+          id: '5ee222c90ab5d602ce18098a',
+          name: '北京',
+          lat: 39.938884,
+          lng: 116.397459
+        },
+        {
+          id: '5ef07a9f4904421679b743d3',
+          name: '厦门',
+          lat: 24.4854066051763,
+          lng: 118.096435499767
+        }
+      ]
+      center.forEach(async c => {
+        const arr = await SdwanSiteService.getCityConnection(c.id)
+        arr.forEach(d => {
+          const { city, lat, lng } = d
+          moveLine.push({
+            fromName: c.name,
+            toName: city.split('/')[0],
+            coords: [[Number(c.lng), Number(c.lat)], [Number(lng), Number(lat)]]
+          })
         })
       })
+      this.moveLines = moveLine
+    },
+    getWarningLines (lines) {
+      if (!this.errorCitys.length) {
+        return []
+      }
+      if (!lines.length) {
+        return []
+      }
+      const arr = []
+      lines.forEach(line => {
+        const { fromName, toName } = line
+        let flag = false
+        this.errorCitys.forEach(ec => {
+          if (ec.includes(fromName)) {
+            if (ec.includes(toName)) {
+              flag = true
+            }
+          }
+        })
+        if (flag) {
+          arr.push(line)
+        }
+      })
+      return arr
+    },
+    drawAll (data, option) {
+      const node = []
       this.city.forEach(el => {
         const { city, lat, lng, total } = el
         node.push({
@@ -168,9 +249,11 @@ export default {
           }
         })
       })
+      const warningLines = this.getWarningLines(this.moveLines)
       option.series[0].data = node
       option.series[1].data = []
-      option.series[2].data = moveLine
+      option.series[2].data = _.cloneDeep(this.moveLines)
+      option.series[3].data = warningLines || []
       return option
     },
     async reloadEcharts (option) {
@@ -186,10 +269,11 @@ export default {
           'normal': {
             color: new echarts.graphic.RadialGradient(
               0.5, 0.5, 0.5,
-              [
-                { offset: 0.5, color: '#59b269' },
-                { offset: 1, color: 'transparent' }
-              ]
+              [{
+                offset: 0, color: 'rgba(0,255,255,0.3)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(10,215,125,1)' // 100% 处的颜色
+              }]
             )
           }
         }
@@ -198,6 +282,8 @@ export default {
         that.lat = value[1]
         that.dataIndex = params.dataIndex
         that.showDrawer()
+        const city = params.data.city.split('/')[0]
+        Object.assign(that.lastPoint, { city })
         SdwanSiteService.getSiteList(params.data.city).then(info => {
           that.data = info
           that.loading = false
@@ -213,10 +299,92 @@ export default {
       }
       return this.widgetId
     },
+    async getExceptions (flag = false) {
+      let exception
+      this.errorIds = {}
+      this.errorCitys = []
+      if (flag) {
+        const ex = await SdwanSiteService.getErrorConnection({ siteId: this.lastPoint.value })
+        exception = ex.data.exception
+      } else {
+        const d = await SdwanSiteService.getAlert({ type: 'day' })
+        exception = d.data.exception
+      }
+      const a = {}
+      const ar = []
+      const arr = [] // 城市
+      if (exception && exception.length) {
+        exception.forEach(e => {
+          const { originSiteId, originCity,
+            peerSiteId, peerCity } = e
+          if (!originCity || !peerCity) {
+            return
+          }
+          arr.push(originCity.split('/')[0] + '-' + peerCity.split('/')[0])
+          if (originCity === peerCity) {
+            ar.push(originCity.split('/')[0])
+          }
+          if (originSiteId.toString() in a) {
+            a[originSiteId.toString()].push(peerSiteId.toString())
+          } else {
+            a[originSiteId.toString()] = [peerSiteId.toString()]
+          }
+          if (peerSiteId.toString() in a) {
+            a[peerSiteId.toString()].push(originSiteId.toString())
+          } else {
+            a[peerSiteId.toString()] = [originSiteId.toString()]
+          }
+        })
+        this.errorIds = a
+        this.errorCitys = arr
+        this.errorNodes = ar
+      }
+    },
     async getNodeData () {
+      this.visible = false
+      this.initMoveLines()
+      this.lastPoint = {}
       this.city = await SdwanSiteService.getCityList()
       this.dataSource = await SdwanSiteService.getCityConnection()
-      await this.reloadEcharts(this.drawAll(this.dataSource, this.elementProps))
+      await this.getExceptions()
+      const op = this.drawAll(this.dataSource, this.elementProps)
+      await this.reloadEcharts(op)
+      await this.$nextTick()
+    },
+    listColor (num) {
+      const item = this.data[num]
+      if (!item) {
+        return {}
+      } else if (!item.id) {
+        return {}
+      }
+      if (this.lastPoint.value) {
+        if (!this.errorIds[this.lastPoint.value.toString()]) {
+          return {
+            color: 'green'
+          }
+        }
+        // 上次有点击过站点
+        if (this.errorIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+          return {
+            color: 'red'
+          }
+        } else {
+          return {
+            color: 'green'
+          }
+        }
+      } else {
+        if (item.id.toString() in this.errorIds) {
+          return {
+            color: 'red'
+          }
+        } else {
+          return {
+            color: 'green'
+          }
+        }
+      }
     }
   },
   mounted () {

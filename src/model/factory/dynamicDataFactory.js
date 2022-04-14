@@ -16,6 +16,7 @@ import TextHealthDynamicDataConfig from '../config/dataConfig/dynamicData/TextHe
 import { GlobalDynamicDataConfig } from '../config/dataConfig/dynamicData/GlobalDynamicDataConfig'
 import MoreDynamicDataConfig from '@/model/config/dataConfig/dynamicData/MoreDynamicDataConfig'
 import TabDynamicDataConfig from '@/model/config/dataConfig/dynamicData/TabDynamicDataConfig'
+import PercentDynamicDataConfig from '@/model/config/dataConfig/dynamicData/PercentDynamicDataConfig'
 
 export default class DynamicDataFactory {
   static map = new Map([
@@ -30,6 +31,8 @@ export default class DynamicDataFactory {
     ['TextHealth', TextHealthDynamicDataConfig],
     ['Global', GlobalDynamicDataConfig],
     ['More', MoreDynamicDataConfig],
+    ['Percent', PercentDynamicDataConfig],
+    ['ToLine', LinesDynamicDataConfig],
     ['NewAlarm', ListDynamicDataConfig],
     ['Tab', TabDynamicDataConfig]
   ])

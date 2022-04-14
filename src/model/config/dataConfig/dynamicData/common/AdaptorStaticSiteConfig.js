@@ -1,4 +1,5 @@
 import { SdwanSiteService } from '@/api'
+import { MVSiteService as MvSiteService } from '@/api/service/SdwanSiteService'
 
 class AdaptorStaticSiteConfig {
   constructor ({
@@ -8,7 +9,8 @@ class AdaptorStaticSiteConfig {
     status = [],
     isCache = false,
     apiType = 'sdwan',
-    cache = ''
+    cache = '',
+    requestType = 'wan'
   }) {
     this.siteId = siteId
     this.type = type
@@ -16,6 +18,7 @@ class AdaptorStaticSiteConfig {
     this.status = status
     this.isCache = isCache
     this.apiType = apiType
+    this.requestType = requestType
   }
 
   getOption () {
@@ -28,48 +31,70 @@ class AdaptorStaticSiteConfig {
     return true
   }
 
-  fetch () {
+  api () {
     const { apiType } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
     switch (apiType) {
       case 'sdwan':
-        return this.fetchSDWan()
+        return SdwanSiteService
       case 'mv':
-        return this.fetchMV()
+        return MvSiteService
     }
   }
-  fetchSDWan () {
-    const { siteId, type, isCache, cache } = this.getOption()
-    if (isCache && cache.length > 0) {
-      return SdwanSiteService.getWanTraffic({ siteId: cache.split(','), type: type })
+
+  requestData () {
+    const { requestType } = this.getOption()
+    switch (requestType) {
+      case 'wan':
+        return this.fetch()
+      case 'delay':
+        return this.fetchDelay()
+      case 'packet':
+        return this.fetchPacket()
+      default:
+        return this.fetch()
     }
-    return SdwanSiteService.getWanTraffic({ siteId: siteId.split(','), type: type })
   }
-  fetchMV () {
+
+  fetch () {
     const { siteId, type, isCache, cache } = this.getOption()
     if (isCache && cache.length > 0) {
-      return SdwanSiteService.getWanTraffic({ siteId: cache.split(','), type: type })
+      return this.api().getWanTraffic({ siteId: cache.split(','), type: type })
     }
-    return SdwanSiteService.getWanTraffic({ siteId: siteId.split(','), type: type })
+    return this.api().getWanTraffic({ siteId: siteId.split(','), type: type })
+  }
+  fetchDelay () {
+    const { siteId, type, isCache, cache } = this.getOption()
+    if (isCache && cache.length > 0) {
+      return this.api().getWanDelay({ siteId: cache.split(','), type: type })
+    }
+    return this.api().getWanDelay({ siteId: siteId.split(','), type: type })
+  }
+  fetchPacket () {
+    const { siteId, type, isCache, cache } = this.getOption()
+    if (isCache && cache.length > 0) {
+      return this.api().getWanPacket({ siteId: cache, type: type })
+    }
+    return this.api().getWanPacket({ siteId: siteId, type: type })
   }
   fetchConnection () {
     const { siteId, type, cache } = this.getOption()
     // TODO:从缓存中读取时忽略siteId值
     if (cache.length) {}
-    return SdwanSiteService.getConnection({ siteId: siteId, type: type })
-    // return SdwanSiteService.getAlert()
+    return this.api().getConnection({ siteId: siteId, type: type })
+    // return this.api().getAlert()
   }
 
   // 更新柱状图数据
   fetchBar () {
     const { type } = this.getOption()
-    return SdwanSiteService.getAlert({ type: type })
+    return this.api().getAlert({ type: type })
   }
 
   // 更新文本健康度数据
   fetchText () {
     const { siteId, status } = this.getOption()
-    return SdwanSiteService.getSiteStatus({ siteId: siteId, status: status })
+    return this.api().getSiteStatus({ siteId: siteId, status: status })
   }
 }
 

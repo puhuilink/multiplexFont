@@ -52,6 +52,7 @@ export default class NewAlarmElement extends Element {
       }
       case SOURCE_TYPE_OPEN: {
         const { dataSource } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { api: (dbDataConfig.openConfig.address.split('/')[1]) })
         Object.assign(props, { dataSource })
         break
       }
