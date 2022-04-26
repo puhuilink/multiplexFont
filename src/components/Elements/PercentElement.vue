@@ -120,11 +120,14 @@ export default {
     option () {
       const { style } = this
       return {
+        style: {
+          fill: 'transparent'
+        },
         series: [
           {
             type: 'gauge',
             data: [
-              { name: 'itemA', value: this.value, gradient: style.isOneColor ? [style.lineOneColor] : style.lineGradColor }
+              { name: 'itemA', value: Number(this.value), gradient: style.isOneColor ? [style.lineOneColor] : style.lineGradColor }
             ],
             axisLabel: {
               show: false,
@@ -139,8 +142,9 @@ export default {
               formatter: '{value}%',
               style: {
                 fill: '#1ed3e5',
-                fontSize: 25
-              }
+                fontSize: 15
+              },
+              valueToFixed: 2
             }
           }
         ]

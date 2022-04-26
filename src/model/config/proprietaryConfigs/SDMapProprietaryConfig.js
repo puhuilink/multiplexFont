@@ -144,7 +144,7 @@ export default class SDMapProprietaryConfig {
         }
       },
       {
-        name: '告警线路',
+        name: '严重告警线路',
         type: 'lines',
         coordinateSystem: 'geo',
         zlevel: 2,
@@ -159,6 +159,50 @@ export default class SDMapProprietaryConfig {
         lineStyle: {
           normal: {
             color: 'rgb(255,0,0)',
+            width: 3,
+            opacity: 0.7,
+            curveness: 0.2
+          }
+        }
+      },
+      {
+        name: '警告告警线路',
+        type: 'lines',
+        coordinateSystem: 'geo',
+        zlevel: 2,
+        large: true,
+        effect: {
+          show: true,
+          constantSpeed: 20,
+          symbol: 'pin',
+          symbolSize: 5,
+          trailLength: 0
+        },
+        lineStyle: {
+          normal: {
+            color: 'rgb(200,150,0)',
+            width: 3,
+            opacity: 0.7,
+            curveness: 0.2
+          }
+        }
+      },
+      {
+        name: '一般告警线路',
+        type: 'lines',
+        coordinateSystem: 'geo',
+        zlevel: 2,
+        large: true,
+        effect: {
+          show: true,
+          constantSpeed: 20,
+          symbol: 'pin',
+          symbolSize: 5,
+          trailLength: 0
+        },
+        lineStyle: {
+          normal: {
+            color: 'rgb(0,150,130)',
             width: 3,
             opacity: 0.7,
             curveness: 0.2

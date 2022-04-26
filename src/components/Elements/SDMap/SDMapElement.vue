@@ -68,6 +68,12 @@ export default {
       errorIds: {},
       errorCitys: [],
       errorNodes: [],
+      warnIds: {},
+      warnCitys: [],
+      warnNodes: [],
+      normalIds: {},
+      normalCitys: [],
+      normalNodes: [],
       moveLines: [],
       lastPoint: {}
     }
@@ -105,7 +111,6 @@ export default {
       await this.$nextTick()
     },
     afterVisibleChange (val) {
-      console.log('visible', val)
     },
     showDrawer () {
       this.visible = true
@@ -137,6 +142,30 @@ export default {
             )
           }
         }
+      } else if (this.warnNodes.includes(this.lastPoint.city)) {
+        option.series[0].data[index].itemStyle = {
+          'normal': {
+            color: new echarts.graphic.RadialGradient(
+              0.5, 0.5, 0.5,
+              [
+                { offset: 0.3, color: 'rgba(255,200,0,1)' },
+                { offset: 1, color: 'rgba(255,200,0,0.7)' }
+              ]
+            )
+          }
+        }
+      } else if (this.normalNodes.includes(this.lastPoint.city)) {
+        option.series[0].data[index].itemStyle = {
+          'normal': {
+            color: new echarts.graphic.RadialGradient(
+              0.5, 0.5, 0.5,
+              [
+                { offset: 0.3, color: 'rgba(0,255,200,1)' },
+                { offset: 1, color: 'rgba(0,255,200,0.3)' }
+              ]
+            )
+          }
+        }
       } else {
         option.series[0].data[index].itemStyle = {
           'normal': {
@@ -152,7 +181,9 @@ export default {
       }
       const warningLines = this.getWarningLines(moveLine)
       option.series[2].data = moveLine
-      option.series[3].data = warningLines
+      option.series[3].data = warningLines[0]
+      option.series[4].data = warningLines[1]
+      option.series[5].data = warningLines[2]
       return option
     },
     initMoveLines () {
@@ -203,19 +234,41 @@ export default {
       if (!lines.length) {
         return []
       }
-      const arr = []
+      const arr = [[], [], []]
       lines.forEach(line => {
         const { fromName, toName } = line
-        let flag = false
+        let error = false
+        let warning = false
+        let normal = false
         this.errorCitys.forEach(ec => {
           if (ec.includes(fromName)) {
             if (ec.includes(toName)) {
-              flag = true
+              error = true
             }
           }
         })
-        if (flag) {
-          arr.push(line)
+        this.warnCitys.forEach(ec => {
+          if (ec.includes(fromName)) {
+            if (ec.includes(toName)) {
+              warning = true
+            }
+          }
+        })
+        this.normalCitys.forEach(ec => {
+          if (ec.includes(fromName)) {
+            if (ec.includes(toName)) {
+              normal = true
+            }
+          }
+        })
+        if (error) {
+          arr[0].push(line)
+        }
+        if (warning) {
+          arr[1].push(line)
+        }
+        if (normal) {
+          arr[2].push(line)
         }
       })
       return arr
@@ -253,7 +306,9 @@ export default {
       option.series[0].data = node
       option.series[1].data = []
       option.series[2].data = _.cloneDeep(this.moveLines)
-      option.series[3].data = warningLines || []
+      option.series[3].data = warningLines[0] || []
+      option.series[4].data = warningLines[1] || []
+      option.series[5].data = warningLines[2] || []
       return option
     },
     async reloadEcharts (option) {
@@ -310,34 +365,69 @@ export default {
         const d = await SdwanSiteService.getAlert({ type: 'day' })
         exception = d.data.exception
       }
-      const a = {}
-      const ar = []
-      const arr = [] // 城市
+      this.errorIds = {}
+      this.errorNodes = []
+      this.errorCitys = [] // 城市
+      this.warnIds = {}
+      this.warnNodes = []
+      this.warnCitys = [] // 城市
+      this.normalIds = {}
+      this.normalNodes = []
+      this.normalCitys = [] // 城市
       if (exception && exception.length) {
         exception.forEach(e => {
           const { originSiteId, originCity,
-            peerSiteId, peerCity } = e
+            peerSiteId, peerCity, level } = e
           if (!originCity || !peerCity) {
             return
           }
-          arr.push(originCity.split('/')[0] + '-' + peerCity.split('/')[0])
-          if (originCity === peerCity) {
-            ar.push(originCity.split('/')[0])
-          }
-          if (originSiteId.toString() in a) {
-            a[originSiteId.toString()].push(peerSiteId.toString())
+          if (level === 'critical') {
+            this.errorCitys.push(originCity.split('/')[0] + '-' + peerCity.split('/')[0])
+            if (originCity === peerCity) {
+              this.errorNodes.push(originCity.split('/')[0])
+            }
+            if (originSiteId.toString() in this.errorIds) {
+              this.errorIds[originSiteId.toString()].push(peerSiteId.toString())
+            } else {
+              this.errorIds[originSiteId.toString()] = [peerSiteId.toString()]
+            }
+            if (peerSiteId.toString() in this.errorIds) {
+              this.errorIds[peerSiteId.toString()].push(originSiteId.toString())
+            } else {
+              this.errorIds[peerSiteId.toString()] = [originSiteId.toString()]
+            }
+          } else if (level === 'major') {
+            this.warnCitys.push(originCity.split('/')[0] + '-' + peerCity.split('/')[0])
+            if (originCity === peerCity) {
+              this.warnNodes.push(originCity.split('/')[0])
+            }
+            if (originSiteId.toString() in this.warnIds) {
+              this.warnIds[originSiteId.toString()].push(peerSiteId.toString())
+            } else {
+              this.warnIds[originSiteId.toString()] = [peerSiteId.toString()]
+            }
+            if (peerSiteId.toString() in this.warnIds) {
+              this.warnIds[peerSiteId.toString()].push(originSiteId.toString())
+            } else {
+              this.warnIds[peerSiteId.toString()] = [originSiteId.toString()]
+            }
           } else {
-            a[originSiteId.toString()] = [peerSiteId.toString()]
-          }
-          if (peerSiteId.toString() in a) {
-            a[peerSiteId.toString()].push(originSiteId.toString())
-          } else {
-            a[peerSiteId.toString()] = [originSiteId.toString()]
+            this.normalCitys.push(originCity.split('/')[0] + '-' + peerCity.split('/')[0])
+            if (originCity === peerCity) {
+              this.normalNodes.push(originCity.split('/')[0])
+            }
+            if (originSiteId.toString() in this.normalIds) {
+              this.normalIds[originSiteId.toString()].push(peerSiteId.toString())
+            } else {
+              this.normalIds[originSiteId.toString()] = [peerSiteId.toString()]
+            }
+            if (peerSiteId.toString() in this.normalIds) {
+              this.normalIds[peerSiteId.toString()].push(originSiteId.toString())
+            } else {
+              this.normalIds[peerSiteId.toString()] = [originSiteId.toString()]
+            }
           }
         })
-        this.errorIds = a
-        this.errorCitys = arr
-        this.errorNodes = ar
       }
     },
     async getNodeData () {

@@ -20,12 +20,13 @@ import _ from 'lodash'
 import store from '@/store/'
 import { CacheMutationTypes } from '@/store/modules/cache'
 import { defaultSelectProprietaryConfig } from '@/model/config/proprietaryConfigs/SelectProprietaryConfig'
+import { MVSiteService } from '@/api/service/SdwanSiteService'
 export default {
   name: 'SelectElement',
   data () {
     return {
       selectValue: '',
-      elementProp: _.clone(defaultSelectProprietaryConfig),
+      elementProps: _.cloneDeep(defaultSelectProprietaryConfig),
       options: []
     }
   },
@@ -34,12 +35,13 @@ export default {
       return labels[labels.length - 1]
     },
     onChange (value, option) {
-      const real = _.get(option, '[1]', {})
-      this.selectValue = value
+      const real = this.type === 'sdwan' ? _.get(option, '[1]', {}) : _.get(option, '[0]', {})
+      // this.selectValue = value
       this.$emit('selectChange', real)
       store.commit(CacheMutationTypes.setORM, value)
     },
     async fetch () {
+      this.options = []
       const { data: { data } } = await SdwanSiteService.find({
         distinct: 'name',
         fields: ['city', 'name', 'id'],
@@ -75,18 +77,55 @@ export default {
         }
       }
       this.options = arr
-      return data
+    },
+    async fetchMv () {
+      this.options = []
+      const { data: { data } } = await MVSiteService.find({
+        distinct: 'name',
+        fields: ['name', 'id'],
+        alias: 'data'
+      })
+      const arr = []
+      const ids = new Set()
+      for (let i = 0; i < data.length; i++) {
+        const old = data[i]
+        if (!ids.has(old.id)) {
+          arr.push({
+            value: old.id,
+            label: old.name
+          })
+          ids.add(old.id)
+        }
+      }
+      this.options = arr
+    },
+    requestData () {
+      switch (this.type) {
+        case 'sdwan':
+          this.fetch()
+          break
+        case 'mv':
+          this.fetchMv()
+          break
+      }
     }
   },
   computed: {
     size () {
-      return this.elementProp.styleConfig.size
+      return this.elementProps.styleConfig.size
+    },
+    type () {
+      return this.elementProps.styleConfig.type
     }
   },
   watch: {
-    selectValue: {
+    'elementProps.styleConfig': {
       immediate: true,
+      deep: true,
       handler (value) {
+        if (value) {
+          this.requestData()
+        }
       }
     }
   },
@@ -95,7 +134,7 @@ export default {
     Vue.ls.remove(DEFAILT_SELECT_VALUE_ID)
   },
   created () {
-    this.fetch()
+    this.requestData()
     store.commit(CacheMutationTypes.setORM, ['', ''])
   }
 }

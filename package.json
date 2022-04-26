@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@antv/g6": "3.2.9",
+    "@jiaminghi/data-view": "^2.10.0",
     "animejs": "^3.1.0",
     "ant-design-vue": "^1.6.3",
     "antd-vue-table-saveas-excel": "^1.0.15",
@@ -31,7 +32,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.1.2",
     "crypto-js": "^4.0.0",
-    "echarts": "4.5.0",
+    "echarts": "^4.5.3",
     "echarts-liquidfill": "^2.0.5",
     "enquire.js": "^2.1.6",
     "graphql": "^14.6.0",

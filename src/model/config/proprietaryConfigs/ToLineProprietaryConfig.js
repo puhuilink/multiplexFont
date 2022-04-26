@@ -25,6 +25,7 @@ export default class ToLineProprietaryConfig {
     legend = {},
     xAxis = {},
     yAxis = {},
+    selectOptions = {},
     decimalPoint = -1
   }) {
     // 是否平滑曲线显示
@@ -43,6 +44,7 @@ export default class ToLineProprietaryConfig {
     this.barType = barType
     this.barItemStyle = new BarItemStyle(barItemStyle)
     this.decimalPoint = decimalPoint
+    this.selectOptions = selectOptions
   }
 
   /**

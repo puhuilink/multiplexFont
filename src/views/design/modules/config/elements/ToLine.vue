@@ -16,6 +16,24 @@
 
       <a-tab-pane tab="属性" key="2">
         <!-- S 专有配置模板 -->
+        <div class="comment-template__item">
+          <p class="comment-template__leading">选择框:</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-switch
+              checkedChildren="使用"
+              unCheckedChildren="不使用"
+              v-model="config.proprietaryConfig.selectOptions.show"
+              @change="change" />
+          </div>
+        </div>
+        <div class="comment-template__item" v-if="config.proprietaryConfig.selectOptions.show">
+          <p class="comment-template__leading">sql:</p>
+          <div class="comment-template__inner comment-template__end">
+            <a-textarea
+              v-model="config.proprietaryConfig.selectOptions.sqlString"
+              @change="change" />
+          </div>
+        </div>
         <ChartProprietaryTemplate show-x-axis show-y-axis>
           <template v-slot:header>
             <!-- S 折线图专有配置 -->

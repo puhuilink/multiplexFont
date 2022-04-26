@@ -284,9 +284,6 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
   generateMVSiteOption (top) {
     top = top.reverse()
     return {
-      legend: {
-        show: false
-      },
       xAxis: {
         type: 'category',
         data: top.map(({ originSiteName, peerSiteName }) => originSiteName + ' to ' + peerSiteName)

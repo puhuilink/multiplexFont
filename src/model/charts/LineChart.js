@@ -93,13 +93,6 @@ export default class LineChart extends Chart {
         ...rest
       }))
     }
-    console.log(Object.assign({}, option, {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' },
-        position: autoTooltipPosition
-      }
-    }))
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',

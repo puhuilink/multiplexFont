@@ -18,6 +18,7 @@ export default class MoreDynamicDataConfig extends DynamicDataConfig {
   /**
    * 生成表格行与列
    * @param {Array} dataList 原始数据
+   * @param reverse
    */
   generate (dataList = [], reverse = false) {
     const columns = []
@@ -238,7 +239,6 @@ export default class MoreDynamicDataConfig extends DynamicDataConfig {
       }
       dataSource.push(obj)
     })
-    console.log(dataSource)
     return { dataSource, columns: lead.alias }
   }
   async getOverviewDataOption () {

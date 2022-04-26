@@ -55,6 +55,10 @@ export default {
           indexArr.push(index)
           arr[index].config.dataConfig.dbDataConfig.siteTrafficConfig.siteId = value
         }
+        if (el.config.type === 'ToLine') {
+          indexArr.push(index)
+          arr[index].config.dataConfig.dbDataConfig.siteTrafficConfig.siteId = value
+        }
       })
       this.$nextTick()
       await Promise.all(indexArr.map(async el => {

@@ -5,15 +5,19 @@ class AdaptorStaticSiteConfig {
   constructor ({
     // 筛选site区域名称
     siteId = '',
+    peerId = '',
     type = '',
     status = [],
     isCache = false,
     apiType = 'sdwan',
     cache = '',
+    unit = 'Kbps',
     requestType = 'wan'
   }) {
     this.siteId = siteId
+    this.peerId = peerId
     this.type = type
+    this.unit = unit
     this.cache = cache
     this.status = status
     this.isCache = isCache
@@ -49,6 +53,8 @@ class AdaptorStaticSiteConfig {
         return this.fetch()
       case 'delay':
         return this.fetchDelay()
+      case 'netDelay':
+        return this.fetchNetworkDelay()
       case 'packet':
         return this.fetchPacket()
       default:
@@ -64,11 +70,12 @@ class AdaptorStaticSiteConfig {
     return this.api().getWanTraffic({ siteId: siteId.split(','), type: type })
   }
   fetchDelay () {
-    const { siteId, type, isCache, cache } = this.getOption()
-    if (isCache && cache.length > 0) {
-      return this.api().getWanDelay({ siteId: cache.split(','), type: type })
-    }
-    return this.api().getWanDelay({ siteId: siteId.split(','), type: type })
+    const { peerId, type } = this.getOption()
+    return this.api().getWanDelay({ monitorId: peerId, type: type })
+  }
+  fetchNetworkDelay () {
+    const { siteId, peerId, type } = this.getOption()
+    return this.api().getNetworkDelay({ siteId: siteId, peerSiteId: peerId, type: type })
   }
   fetchPacket () {
     const { siteId, type, isCache, cache } = this.getOption()

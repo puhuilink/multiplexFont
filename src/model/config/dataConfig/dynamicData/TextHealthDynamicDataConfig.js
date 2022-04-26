@@ -61,7 +61,6 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
   async getOpenDataOption () {
     const { dataSource } = this.dealOpen(await this.openConfig.fetch(), this.openConfig.back ? JSON.parse(this.openConfig.back) : null)
-    console.log(dataSource)
     this.text = dataSource
   }
 

@@ -21,7 +21,7 @@
               <a-select
                 v-model="config.proprietaryConfig.props.styleConfig.size"
                 style="width: 100%"
-                @change="change()">
+                @change="change">
                 <a-select-option value="large">
                   大
                 </a-select-option>
@@ -32,6 +32,16 @@
                   小
                 </a-select-option>
               </a-select>
+            </div>
+          </div>
+          <div class="comment-template__item">
+            <p class="comment-template__leading">类型:</p>
+            <div class="comment-template__inner">
+              <a-input
+                v-model="config.proprietaryConfig.props.styleConfig.type"
+                style="width: 100%"
+                @change="change">
+              </a-input>
             </div>
           </div>
         </div>

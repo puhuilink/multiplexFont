@@ -1,20 +1,6 @@
 <template>
   <a-form-model class="ormDataSource" v-bind="formItemLayout">
     <PreviewButton :preview="() => change(true)" />
-    <a-form-model-item
-      label="接口类型"
-    >
-      <a-input
-        v-model="siteTrafficConfig.apiType"
-        @change="change()"
-      />
-    </a-form-model-item><a-form-model-item
-      label="请求类型"
-    >
-      <a-input
-        v-model="siteTrafficConfig.requestType"
-        @change="change()"
-      /></a-form-model-item>
     <SiteTypeSelect
       :model.sync="siteTrafficConfig"
       :stateSwitch="switchSt"

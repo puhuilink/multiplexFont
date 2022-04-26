@@ -60,8 +60,9 @@ export default class PercentDynamicDataConfig extends DynamicDataConfig {
     this.text = await this.resourceConfig.fetch().then(data => _.get(data, '0.data', ''))
   }
   async getOpenDataOption () {
-    const { dataSource } = this.dealOpen(await this.openConfig.fetch(), this.openConfig.back ? JSON.parse(this.openConfig.back) : null)
-    this.text = dataSource
+    const result = this.dealOpen(await this.openConfig.fetch(), this.openConfig.back ? JSON.parse(this.openConfig.back) : null)
+    const { dataSource } = result
+    this.text = dataSource.split('%')[0]
   }
 
   dealOpen (data, lead) {

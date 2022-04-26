@@ -17,6 +17,7 @@ import { GlobalDynamicDataConfig } from '../config/dataConfig/dynamicData/Global
 import MoreDynamicDataConfig from '@/model/config/dataConfig/dynamicData/MoreDynamicDataConfig'
 import TabDynamicDataConfig from '@/model/config/dataConfig/dynamicData/TabDynamicDataConfig'
 import PercentDynamicDataConfig from '@/model/config/dataConfig/dynamicData/PercentDynamicDataConfig'
+import ToLineDynamicDataConfig from '@/model/config/dataConfig/dynamicData/ToLineDynamicDataConfig'
 
 export default class DynamicDataFactory {
   static map = new Map([
@@ -32,7 +33,7 @@ export default class DynamicDataFactory {
     ['Global', GlobalDynamicDataConfig],
     ['More', MoreDynamicDataConfig],
     ['Percent', PercentDynamicDataConfig],
-    ['ToLine', LinesDynamicDataConfig],
+    ['ToLine', ToLineDynamicDataConfig],
     ['NewAlarm', ListDynamicDataConfig],
     ['Tab', TabDynamicDataConfig]
   ])

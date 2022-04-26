@@ -9,6 +9,7 @@ import {
   SOURCE_TYPE_OVERVIEW,
   SOURCE_TYPE_COMBO, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE
 } from './types/sourceType'
+import LinesDynamicDataConfig from '@/model/config/dataConfig/dynamicData/LinesDynamicDataConfig'
 
 const initialOption = {
   legend: {},
@@ -17,7 +18,7 @@ const initialOption = {
   series: []
 }
 
-export default class LinesDynamicDataConfig extends DynamicDataConfig {
+export default class ToLineDynamicDataConfig extends DynamicDataConfig {
   async getOption (loadingDynamicData, sourceType) {
     if (loadingDynamicData) {
       switch (sourceType) {
@@ -43,8 +44,8 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         }
       }
     }
-    const { legend, xAxis, yAxis, series } = this
-    return { legend, xAxis, yAxis, series }
+    const { option, siteTrafficConfig } = this
+    return { option, siteTrafficConfig }
   }
 
   async getRealDataOption () {
@@ -72,7 +73,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         data: aggregate[category].map(({ data }) => data)
       }))
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
 
   async getOverviewDataOption () {
@@ -98,7 +99,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
         data: groupByLegend[legend].map(({ data }) => data)
       }))
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
 
   async getSiteTrafficOption () {
@@ -174,7 +175,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       }
       ]
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
   async generateDelayData () {
     const { data: { loss } } = await this.siteTrafficConfig.requestData()
@@ -204,7 +205,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       }
       ]
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
   async generatePacketData () {
     const { data: { packet } } = await this.siteTrafficConfig.requestData()
@@ -234,7 +235,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       }
       ]
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
 
   async getSiteCpeOption () {
@@ -265,7 +266,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
       }
       ]
     }
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
 
   // 对外数据转换接口，支持直接以数据生成柱形图配置
@@ -302,7 +303,7 @@ export default class LinesDynamicDataConfig extends DynamicDataConfig {
   async getComboDataOption () {
     const dataList = await this.comboConfig.fetch()
     const option = LinesDynamicDataConfig.transferComboDataOption(dataList)
-    Object.assign(this, option)
+    Object.assign(this, { option })
   }
 
   resetData () {

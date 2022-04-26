@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
-import { SdwanSiteDao, MvSiteDao } from '../dao/index'
+import { SdwanSiteDao, MvSiteInfoDao } from '../dao/index'
 import { axios, sql } from '@/utils/request'
 import { dealQuery, sqlResultDealer } from '@/utils/util'
 import _ from 'lodash'
@@ -81,7 +81,7 @@ class MVSiteService extends BaseService {
   // 地图专用查询
   static async find (argus = {}) {
     return query(
-      MvSiteDao.find(argus)
+      MvSiteInfoDao.find(argus)
     )
   }
   // 站点传输速率查询
@@ -99,6 +99,8 @@ class MVSiteService extends BaseService {
   }
   static async getWanDelay (param = {}) {
     return axios.post('/mv/getMonitorLoss', param)
+  }static async getNetworkDelay (param = {}) {
+    return axios.post('/mv/getSiteLoss', param)
   }
   static async getWanPacket (param = {}) {
     return axios.post('/mv/getPacket', param)

@@ -30,8 +30,8 @@ export default class ToLineElement extends Element {
       case SOURCE_TYPE_OVERVIEW:
       case SOURCE_TYPE_COMBO:
       case SOURCE_TYPE_REAL: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const { option } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { option })
         break
       }
       case SOURCE_TYPE_STATIC: {
@@ -44,18 +44,18 @@ export default class ToLineElement extends Element {
         break
       }
       case SOURCE_TYPE_SQL: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const { option } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { option })
         break
       }
       case SOURCE_TYPE_OPEN: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const { option } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { option })
         break
       }
       case SOURCE_TYPE_STATIC_TRAFFIC: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const { option, siteTrafficConfig } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { option, siteTrafficConfig })
         break
       }
     }

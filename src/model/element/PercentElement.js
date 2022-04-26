@@ -49,8 +49,8 @@ export default class PercentElement extends Element {
         break
       }
       case SOURCE_TYPE_OPEN: {
-        const { dataSource, columns } = await dbDataConfig.getOption(loadingDynamicData, sourceType)
-        Object.assign(props, { dataSource, columns })
+        const text = await dbDataConfig.getOption(loadingDynamicData, sourceType)
+        Object.assign(props, { text })
         break
       }
       case SOURCE_TYPE_STATIC_TRAFFIC: {
@@ -59,7 +59,6 @@ export default class PercentElement extends Element {
         break
       }
     }
-    console.log(proprietaryConfig.getOption())
     return _.cloneDeep({
       data: props,
       ...proprietaryConfig.getOption(),

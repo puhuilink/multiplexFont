@@ -39,6 +39,9 @@ export default class BarChart extends Chart {
 
   /**
    * 映射成 echarts 配置项
+   * @param commonConfig
+   * @param proprietaryConfig
+   * @param dataConfig
    * @param {Boolean} loadingDynamicData 是否请求动态数据
    * @return {Promise<any>}
    */
@@ -49,6 +52,7 @@ export default class BarChart extends Chart {
       itemStyle: { color, ...otherItemStyle }
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig, dbDataConfig } = dataConfig
+    console.log('show', legend.show)
 
     let series = []
     // 总体配置
@@ -125,7 +129,7 @@ export default class BarChart extends Chart {
         })
 
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
-
+        console.log('dy', dynamicLegend)
         if (dataset) {
           dataset.source = dataset.source.map((el) => {
             Object

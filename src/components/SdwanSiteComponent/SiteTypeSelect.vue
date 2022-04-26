@@ -1,8 +1,31 @@
 <template>
   <div>
+    <a-form-model-item
+      label="接口类型"
+    >
+      <a-input
+        v-model="model.apiType"
+        @change="change()"
+      />
+    </a-form-model-item>
+    <a-form-model-item
+      label="请求类型"
+    >
+      <a-input
+        v-model="model.requestType"
+        @change="change()"
+      />
+    </a-form-model-item>
     <a-form-model-item label="站点ID" require>
       <a-input
         v-model="model.siteId"
+        @change="change()"
+      ></a-input>
+    </a-form-model-item>
+    <a-form-model-item label="目标站点ID">
+      <a-input
+        v-model="model.peerId"
+        @change="change()"
       ></a-input>
     </a-form-model-item>
     <a-form-model-item label="选择时间类型" require>
@@ -15,6 +38,12 @@
         <a-select-option value="week">一周</a-select-option>
         <a-select-option value="month">一月</a-select-option>
       </a-select>
+    </a-form-model-item>
+    <a-form-model-item label="单位">
+      <a-input
+        v-model="model.unit"
+        @change="change()"
+      ></a-input>
     </a-form-model-item>
     <a-form-model-item
       label="选择状态类型"
