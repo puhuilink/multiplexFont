@@ -16,7 +16,7 @@
       <a-tab-pane tab="属性" key="2">
         <div class="texts-config__template">
           <div class="comment-template__item">
-            <p class="comment-template__leading">背景颜色:</p>
+            <p class="comment-template__leading">框体大小:</p>
             <div class="comment-template__inner">
               <a-select
                 v-model="config.proprietaryConfig.props.styleConfig.size"
@@ -39,6 +39,16 @@
             <div class="comment-template__inner">
               <a-input
                 v-model="config.proprietaryConfig.props.styleConfig.type"
+                style="width: 100%"
+                @change="change">
+              </a-input>
+            </div>
+          </div>
+          <div class="comment-template__item">
+            <p class="comment-template__leading">默认值:</p>
+            <div class="comment-template__inner">
+              <a-input
+                v-model="config.proprietaryConfig.props.styleConfig.defaultValue"
                 style="width: 100%"
                 @change="change">
               </a-input>

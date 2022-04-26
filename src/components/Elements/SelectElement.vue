@@ -4,7 +4,7 @@
     :display-render="displayRender"
     expand-trigger="hover"
     placeholder="选择地区"
-    :defaultValue="['11.10北京设计分公司','5f34d35396b1f125918db25e']"
+    :defaultValue="['4db6c4d65c054325a0e05fca7bb324f7']"
     :size="size"
     @change="onChange"
     :allowClear="false"

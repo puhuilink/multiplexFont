@@ -4,7 +4,8 @@ import _ from 'lodash'
 export const defaultSelectProprietaryConfig = {
   styleConfig: {
     size: 'default',
-    type: 'sdwan'
+    type: 'sdwan',
+    defaultValue: ''
   }
 }
 export default class SelectProprietaryConfig {
