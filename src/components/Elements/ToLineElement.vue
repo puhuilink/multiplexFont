@@ -107,7 +107,6 @@ export default {
       this.selectedValue = value
       this.siteTrafficConfig.peerSiteId = value
       await this.getSiteTrafficOption(this.siteTrafficConfig.requestType)
-      console.log('after')
       this.chartConfig = _.cloneDeep(this.initOption())
       await this.reloadEcharts()
     },
@@ -207,6 +206,7 @@ export default {
     async generateDelayData () {
       const { data: { loss } } = await this.siteTrafficConfig.requestData()
       if (!loss) {
+        this.dataOption.series = []
         return
       }
       const option = {

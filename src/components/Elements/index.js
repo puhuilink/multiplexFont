@@ -17,6 +17,7 @@ import TimeSelectorElement from '~~~/Elements/TimeSelectorElement'
 import SDMapElement from '~~~/Elements/SDMap/SDMapElement'
 import ToLineElement from '~~~/Elements/ToLineElement'
 import PercentElement from '~~~/Elements/PercentElement'
+import MVMapElement from '~~~/Elements/SDMap/MVMapElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
@@ -30,6 +31,7 @@ const ELEMENT_MAPPING = new Map([
   ['TimeSelector', 'TimeSelectorElement'],
   ['ToLine', 'ToLineElement'],
   ['Percent', 'PercentElement'],
+  ['MMp', 'MVMapElement'],
   ['SDMap', 'SDMapElement']
 ])
 
@@ -44,6 +46,7 @@ const ELEMENTS = {
   TimeSelectorElement,
   ToLineElement,
   PercentElement,
+  MVMapElement,
   SDMapElement
 }
 

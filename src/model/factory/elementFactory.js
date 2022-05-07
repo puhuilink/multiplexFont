@@ -16,6 +16,7 @@ import TimeSelectElement from '@/model/element/TimeSelectElement'
 import SDMapElement from '@/model/element/SDMapElement'
 import ToLineElement from '@/model/element/ToLineElement'
 import PercentElement from '@/model/element/PercentElement'
+import MVMapElement from '@/model/element/MVMapElement'
 
 export default class ElementFactory {
   static create (type, { widget, element, onlyShow = false }) {
@@ -38,6 +39,8 @@ export default class ElementFactory {
         return new TimeSelectElement({ widget, element, onlyShow })
       case 'SDMap':
         return new SDMapElement({ widget, element, onlyShow })
+      case 'MMp':
+        return new MVMapElement({ widget, element, onlyShow })
       case 'ToLine':
         return new ToLineElement({ widget, element, onlyShow })
       case 'Percent':

@@ -92,7 +92,7 @@ export default {
     scroll () {
       return {
         x: false,
-        y: 550
+        y: 500
       }
     },
     pagination () {
