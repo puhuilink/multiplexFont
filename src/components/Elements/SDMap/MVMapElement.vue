@@ -27,7 +27,7 @@
         item-layout="horizontal"
         :data-source="data"
       >
-        <a-list-item slot="renderItem" slot-scope="item,index" @click="globalChange(item)" :style="listColor(index)">
+        <a-list-item slot="renderItem" slot-scope="item,index" @click="changeSite(item)" :style="listColor(index)">
           <a slot="actions"><a-icon type="right" /></a>
           <div>{{ item.name }}</div>
         </a-list-item>

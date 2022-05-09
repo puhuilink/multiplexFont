@@ -152,14 +152,18 @@ export default {
               width: '20%',
               align,
               show: true,
-              sorter: (a, b) => Date(a.alarmTime) - Date(b.alarmTime)
+              sorter: (a, b) => new Date(a.alarmTime).getTime() - new Date(b.alarmTime).getTime()
             },
             {
               title: '持续时间(s)',
               width: '15%',
               align,
               show: true,
-              sorter: (a, b) => Date(a.recoverTime) - Date(a.alarmTime) - Date(b.recoverTime) + Date(b.alarmTime),
+              sorter: (a, b) => {
+                const aTime = this.translateTimeNumber(a)
+                const bTime = this.translateTimeNumber(b)
+                return aTime - bTime
+              },
               customRender: (value, record) => {
                 let endTime = new Date(record.recoverTime).getTime()
                 if (!endTime) {
@@ -175,7 +179,7 @@ export default {
               width: '20%',
               align,
               show: true,
-              sorter: (a, b) => Date(a.recoverTime) - Date(b.recoverTime)
+              sorter: (a, b) => new Date(a.recoverTime).getTime() - new Date(b.recoverTime).getTime()
             },
             {
               title: '告警详细信息',
@@ -406,6 +410,14 @@ export default {
         str.push(<li>{ t }</li>)
       })
       return str
+    },
+    translateTimeNumber (record) {
+      let endTime = new Date(record.recoverTime).getTime()
+      if (!endTime) {
+        endTime = new Date().getTime()
+      }
+      const result = endTime - new Date(record.alarmTime).getTime()
+      return (result - result % 1000) / 1000
     }
   },
   mounted () {

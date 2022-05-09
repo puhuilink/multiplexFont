@@ -54,7 +54,8 @@ export default {
         color: 'white',
         zIndex: 1
       },
-      selectWidth: 100
+      selectWidth: 100,
+      siteTrafficConfig: undefined
     }
   },
   watch: {
@@ -105,7 +106,8 @@ export default {
   methods: {
     async handleChange (value) {
       this.selectedValue = value
-      this.siteTrafficConfig.peerSiteId = value
+      this.siteTrafficConfig.peerId = value
+      await this.getSiteTrafficOption(this.siteTrafficConfig.requestType)
       await this.getSiteTrafficOption(this.siteTrafficConfig.requestType)
       this.chartConfig = _.cloneDeep(this.initOption())
       await this.reloadEcharts()
@@ -300,7 +302,7 @@ export default {
         return {}
       }
       const { legend, xAxis, yAxis, decimalPoint, testLint: { type, width }, itemStyle: { color }, selectOptions, data, common, ...options } = this.elementProps
-      this.siteTrafficConfig = _.cloneDeep(data.siteTrafficConfig)
+      this.siteTrafficConfig = this.siteTrafficConfig ? this.siteTrafficConfig : _.cloneDeep(data.siteTrafficConfig)
       this.siteTrafficConfig.peerId = this.selectedValue
       const { grid } = this.gridConfig(this.elementProps.common)
       const option = { grid, legend, xAxis: [xAxis], yAxis: [yAxis] }
