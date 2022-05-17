@@ -69,6 +69,7 @@ export default {
       height: 1080,
       loading: false,
       cityInfo: new Map(),
+      cityCount: new Map(),
       preData: [],
       errorData: [],
       siteList: [],
@@ -176,7 +177,7 @@ export default {
       const temp = this.cityInfo
       nodes.forEach(el => {
         node.push({
-          name: el.split('/')[0],
+          name: el.split('/')[0] + '(' + this.cityCount.get(el) + ')',
           city: el,
           value: [...temp.get(el), 2],
           symbolSize: 20,
@@ -246,7 +247,7 @@ export default {
       const node = []
       nodes.forEach(el => {
         node.push({
-          name: el.split('/')[0],
+          name: el.split('/')[0] + '(' + this.cityCount.get(el) + ')',
           city: el,
           value: [...temp.get(el), 2],
           symbolSize: 20,
@@ -271,13 +272,16 @@ export default {
       this.reloadEcharts(this.chartConfig)
     },
     async getCityInfo () {
-      const str = 'select distinct city,lat,lng from v_mv_map;'
+      const str = 'select distinct v.city,lat,lng,count from v_mv_map v left join (select city,count(1) as count from v_mv_map group by city) s on v.city=s.city'
       const cityMap = new Map()
+      const cityCount = new Map()
       const result = dealQuery(await sql(str))
       result.forEach((entity) => {
         cityMap.set(entity.city, [Number(entity.lng), Number(entity.lat)])
+        cityCount.set(entity.city, Number(entity.count))
       })
       this.cityInfo = cityMap
+      this.cityCount = cityCount
     },
     async getCitySite (city) {
       const str = `select id,name from v_mv_map where city = '${city}'`
