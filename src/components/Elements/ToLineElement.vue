@@ -23,6 +23,7 @@ import uuid from 'uuid/v4'
 import _ from 'lodash'
 import { dealQuery } from '@/utils/util'
 import { sql } from '@/utils/request'
+import { MVSiteService } from '@/api/service/SdwanSiteService'
 
 export default {
   name: 'ToLineElement',
@@ -67,7 +68,6 @@ export default {
           this.dataOption = value.data.option ? value.data.option : {}
           this.chartConfig = this.initOption()
           if (value.data && value.data.siteTrafficConfig) {
-            console.log(value.data)
             this.selectedValue = value.data.siteTrafficConfig.peerId
           }
           this.reloadEcharts()
@@ -81,7 +81,7 @@ export default {
         if (value) {
           const { show, sqlString } = value
           if (show && sqlString) {
-            this.selectData = dealQuery(await sql(sqlString))
+            this.selectData = sqlString === 'api' ? (await MVSiteService.getRelationSiteById({ siteId: this.elementProps.data.siteTrafficConfig.siteId })).data : dealQuery(await sql(sqlString))
           }
         }
       }
@@ -321,6 +321,7 @@ export default {
       if (this.dataOption.series) {
         series = this.dataOption.series.map((item, index) => ({ ...item, ...line(index) }))
         Object.assign(option, {
+          tooltip: { 'trigger': 'axis', 'axisPointer': { 'type': 'shadow' }, 'position': { '_custom': { 'type': 'function', 'display': '<span>f</span> autoTooltipPosition(point, params, dom, rect, size)', '_reviveId': 5 } } },
           legend: Object.assign(legend, this.dataOption.legend),
           xAxis: Object.assign(xAxis, this.dataOption.xAxis),
           yAxis: Object.assign(yAxis, this.dataOption.yAxis),

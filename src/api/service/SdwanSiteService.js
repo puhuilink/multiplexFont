@@ -105,6 +105,15 @@ class MVSiteService extends BaseService {
   static async getWanPacket (param = {}) {
     return axios.post('/mv/getPacket', param)
   }
+  static async getAllError (param = {}) {
+    return axios.post('/mv/getAllConnection', param)
+  }
+  static async getErrorById (param = {}) {
+    return axios.post('/mv/getSiteConnection', param)
+  }
+  static async getRelationSiteById (param = {}) {
+    return axios.post('/mv/getSiteRelation', param)
+  }
 }
 export {
   SdwanSiteService,
