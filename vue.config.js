@@ -31,7 +31,8 @@ const {
   VUE_APP_VIEW_THUMBNAIL_ORIGINAL_URL,
   VUE_APP_ENABLED_CDN,
   VUE_APP_API_ORIGINAL_ZHENHUA_BASE_URL,
-  VUE_APP_SDWAN_ORIGINAL_URL
+  VUE_APP_SDWAN_ORIGINAL_URL,
+  VUE_APP_MV_API_BASE_URL
 } = process.env
 
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
@@ -181,6 +182,14 @@ const vueConfig = {
   devServer: {
     port: 8080,
     proxy: {
+      [VUE_APP_MV_API_BASE_URL]: {
+        target: VUE_APP_MV_API_BASE_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_MV_API_BASE_URL]: ''
+        }
+      },
       [VUE_APP_SDWAN_ORIGINAL_URL]: {
         target: VUE_APP_SDWAN_ORIGINAL_URL,
         ws: false,

@@ -247,6 +247,12 @@ export const asyncRouterMap = [
             name: 'Audit',
             component: () => import('@/views/system/audit/index'),
             meta: { title: '审计管理', keepAlive: true, permission: [ 'F001003' ] }
+          },
+          {
+            path: '/system/unitManage',
+            name: 'Unit',
+            component: () => import('@/views/system/unitManage/index'),
+            meta: { title: '单位管理', keepAlive: true }
           }
         ]
       },

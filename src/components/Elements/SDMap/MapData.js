@@ -1,4 +1,3 @@
-import { allData } from '@/model/data/map'
 import echarts from 'echarts'
 
 const backgroundColor = 'rgba(2,2,1)'

@@ -11,11 +11,11 @@ import MultiTab from '@/components/MultiTab'
 import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/utils/helper/permission'
 import './directives/action'
-import dataV from '@jiaminghi/data-view'
+// import dataV from '@jiaminghi/data-view'
 
 VueClipboard.config.autoSetContainer = true
 
-Vue.use(dataV)
+// Vue.use(dataV)
 Vue.use(MultiTab)
 Vue.use(PageLoading)
 Vue.use(VueStorage, config.storageOptions)

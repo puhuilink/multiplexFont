@@ -22,6 +22,10 @@ const serviceSdwan = axios.create({
   baseURL: process.env.VUE_APP_SDWAN_ORIGINAL_URL
 })
 
+const serviceCorp = axios.create({
+  baseURL: process.env.VUE_APP_MV_API_BASE_URL
+})
+
 const sql = async (s) => {
   const payload = {
     type: 'bulk',
@@ -150,6 +154,10 @@ service.interceptors.request.use(requestInterceptor)
 
 service.interceptors.response.use(responseInterceptor)
 
+serviceCorp.interceptors.request.use(requestInterceptor)
+
+serviceCorp.interceptors.response.use(responseInterceptor)
+
 serviceZhenhua.interceptors.request.use(requestInterceptor)
 
 serviceZhenhua.interceptors.response.use(secondResponseInterceptor)
@@ -176,5 +184,6 @@ export {
   serviceXungeng as xungeng,
   serviceZhenhua as zhenhua,
   serviceSdwan as sdwan,
+  serviceCorp as crop,
   sql
 }

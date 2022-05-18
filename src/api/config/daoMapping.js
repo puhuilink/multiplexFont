@@ -60,7 +60,8 @@ const IMP_TABLE_LIST = [
   { schema: 't_mv_site_info' },
   { schema: 't_sdwan_connection' },
   { schema: 't_sdwan_cpe' },
-  { schema: 't_sdwan_wan' }
+  { schema: 't_sdwan_wan' },
+  { schema: 't_corp_map_value' }
 
 ]
 
