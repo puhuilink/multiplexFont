@@ -142,7 +142,7 @@ export default {
               formatter: '{value}%',
               style: {
                 fill: '#1ed3e5',
-                fontSize: 15
+                fontSize: 12
               },
               valueToFixed: 2
             }
