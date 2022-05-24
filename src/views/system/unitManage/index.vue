@@ -4,7 +4,7 @@
       :columns="columns"
       :data="loadData"
       ref="table"
-      rowKey="user_id"
+      rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
@@ -19,15 +19,20 @@
                 </a-form-item>
               </a-col>
               <a-col :lg="36" :md="8" :sm="24">
-                <a-form-item label="经度" v-bind="formItemLayout" class="fw">
-                  <a-input allowClear v-model.trim="queryParams.lng" />
+                <a-form-item label="单位名称" v-bind="formItemLayout" class="fw">
+                  <a-input allowClear v-model.trim="queryParams.name" />
                 </a-form-item>
               </a-col>
-              <a-col :lg="36" :md="8" :sm="24">
-                <a-form-item label="纬度" v-bind="formItemLayout" class="fw">
-                  <a-input allowClear v-model.trim="queryParams.lat" />
-                </a-form-item>
-              </a-col>
+              <!--              <a-col :lg="36" :md="8" :sm="24">-->
+              <!--                <a-form-item label="经度" v-bind="formItemLayout" class="fw">-->
+              <!--                  <a-input allowClear v-model.trim="queryParams.lng" />-->
+              <!--                </a-form-item>-->
+              <!--              </a-col>-->
+              <!--              <a-col :lg="36" :md="8" :sm="24">-->
+              <!--                <a-form-item label="纬度" v-bind="formItemLayout" class="fw">-->
+              <!--                  <a-input allowClear v-model.trim="queryParams.lat" />-->
+              <!--                </a-form-item>-->
+              <!--              </a-col>-->
             </a-row>
           </div>
 
@@ -43,7 +48,7 @@
       <template #operation>
         <a-button @click="onAdd" v-action:M0101>新增</a-button>
         <a-button @click="onEdit" v-action:M0101 :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="onDelete" v-action:M0101 :disabled="!hasSelectedOne">删除</a-button>
+        <a-button @click="onDelete" v-action:M0101 :disabled="!hasSelected">删除</a-button>
       </template>
     </CTable>
     <UnitSchema
@@ -62,6 +67,7 @@ import { generateQuery } from '@/utils/graphql'
 import UnitSchema from '@/views/system/unitManage/modules/unitSchema'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
+import moment from 'moment'
 
 export default {
   name: 'Index',
@@ -112,11 +118,19 @@ export default {
             return (
               <div>{
                 label.map((el, index) => {
-                  return <a-tag key= { index }>{_.toUpper(el.split('_')[0])}</a-tag>
+                  return <a-tag key={index}>{_.toUpper(el.split('_')[0])}</a-tag>
                 })
               }</div>
             )
           }
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'create_time',
+          show: false,
+          sortOrder: 'descend',
+          width: 200,
+          customRender: (value) => value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'
         }
       ]),
       selectedRows: []
@@ -129,6 +143,7 @@ export default {
           ...this.where,
           ...generateQuery(this.queryParams)
         },
+        orderBy: { create_time: 'desc_nulls_last' },
         fields: [
           'id',
           'city',
@@ -137,7 +152,8 @@ export default {
           'name',
           'enabled',
           'address',
-          'relation'
+          'relation',
+          'create_time'
         ],
         ...parameter,
         alias: 'data'
@@ -158,14 +174,19 @@ export default {
       this.$refs['schema'].edit(values)
     },
     onDelete () {
-      const [record] = this.selectedRows
       const title = '删除'
       const content = '确定要删除选中的记录吗？'
       this.$promiseConfirmDelete({
         title,
         content,
-        onOk: () => {
-          axios.post('/corp/delete', _.pick(record, ['id']))
+        onOk: async () => {
+          const formData = new FormData()
+          formData.append('corpIds', this.selectedRowKeys.map(el => Number(el)))
+          axios.post('/corp/delete', formData, {
+            headers: {
+              'Content-type': 'application/x-www-form-urlencoded'
+            }
+          })
             .then(() => {
               this.$notifyDeleteSuccess()
               this.query(false)
