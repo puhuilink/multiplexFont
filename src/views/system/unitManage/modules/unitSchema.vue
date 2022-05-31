@@ -116,7 +116,9 @@
             <!--              multiple-->
             <!--            >-->
             <!--            </a-cascader>-->
-            <a-select mode="multiple" v-model="formModel.relation">
+            <a-select
+              mode="multiple"
+              v-model="formModel.relation">
               <a-select-opt-group
                 v-for="(item) in relation"
                 :key="item.value">

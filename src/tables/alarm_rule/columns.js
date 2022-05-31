@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { AlarmRuleService } from '@/api'
 import moment from 'moment'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 export const ruleTypeMapping = new Map([
   ['merge', '告警合并'],
@@ -42,6 +43,69 @@ export function enabledColumn () {
                 btnProps.loading = true
                 await AlarmRuleService.batchToggleEnabled([id], !enabled)
                 record.enabled = enabled
+                this.query(false)
+              } catch (e) {
+                this.$notifyError(e)
+                throw e
+              } finally {
+                btnProps.loading = false
+              }
+            }}
+          >
+            <a-button { ...{ props: btnProps } } type={!enabled ? 'primary' : 'default'}>
+              {!enabled ? '启用' : '停用'}
+            </a-button>
+          </a-popconfirm>
+        )
+      }
+    }
+  }
+
+  // runtime
+  column.customRender = column.customRender.bind(this)
+  return column
+}
+
+export function unitEnabledColumn () {
+  // 使用闭包为每行记录维护各自状态
+  const btnPropsList = Vue.observable([])
+
+  const column = {
+    title: '启用状态',
+    dataIndex: 'enabled',
+    width: 100,
+    sorter: true,
+    customRender (__, record, index) {
+      {
+        const { enabled } = record
+        // TODO 启用权限位
+        // const directives = [
+        //   { name: 'v-action', value: 'M0304', modifiers: { abc: true } }
+        // ]
+        // {...{ directives }}
+
+        // 默认配置
+        if (!btnPropsList[index]) this.$set(btnPropsList, `${index}`, { loading: false })
+        const btnProps = btnPropsList[index]
+
+        return (
+          <a-popconfirm
+            title={`确定要${!enabled ? '启用' : '停用'}吗？`}
+            okText="确定"
+            cancelText="取消"
+            onconfirm={async () => {
+              try {
+                btnProps.loading = true
+                const values = _.cloneDeep(record)
+                values.enabled = !values.enabled
+                values.lat = Number(values.lat)
+                values.lng = Number(values.lng)
+                await axios.post('/corp/update', values)
+                record.enabled = enabled
+                this.$notification.success({
+                  message: '系统提示',
+                  description: '操作成功'
+                })
                 this.query(false)
               } catch (e) {
                 this.$notifyError(e)

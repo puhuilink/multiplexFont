@@ -68,6 +68,7 @@ import UnitSchema from '@/views/system/unitManage/modules/unitSchema'
 import _ from 'lodash'
 import { axios } from '@/utils/request'
 import moment from 'moment'
+import { unitEnabledColumn } from '@/tables/alarm_rule/columns'
 
 export default {
   name: 'Index',
@@ -82,24 +83,19 @@ export default {
           title: '城市',
           dataIndex: 'city',
           sorter: true,
-          width: 180,
-          customRender: (value) => {
-            if (value) {
-              return value.split('/')[0]
-            }
-          }
+          width: 180
         },
         {
           title: '经度',
           dataIndex: 'lng',
-          width: 150,
+          width: 100,
           sorter: true,
           customRender: value => Number(value).toFixed(4)
         },
         {
           title: '纬度',
           dataIndex: 'lat',
-          width: 170,
+          width: 100,
           tooltip: true,
           customRender: value => Number(value).toFixed(4)
         },
@@ -112,7 +108,7 @@ export default {
         {
           title: '对接系统',
           dataIndex: 'relation',
-          width: 100,
+          width: 200,
           customRender: (value) => {
             const label = _.keys(value)
             return (
@@ -129,9 +125,10 @@ export default {
           dataIndex: 'create_time',
           show: false,
           sortOrder: 'descend',
-          width: 200,
+          width: 150,
           customRender: (value) => value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'
-        }
+        },
+        ...[unitEnabledColumn].map(fn => fn.call(this))
       ]),
       selectedRows: []
     }
