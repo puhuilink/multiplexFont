@@ -58,6 +58,7 @@
         <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M0104>分配工作组</a-button>
         <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0111>更改状态</a-button>
         <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M0110>分配权限</a-button>
+        <a-button @click="onClearError" :disabled="!hasSelectedOne" v-action:M0110>解除限制</a-button>
       </template>
     </CTable>
 
@@ -259,6 +260,24 @@ export default {
           UserService.toggleFlag(user_id, flag === USER_FLAG.enabled ? USER_FLAG.disabled : USER_FLAG.enabled)
             .then(() => {
               this.$notifyToggleFlagSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
+      })
+    },
+    /**
+     * 清除用户错误次数
+     * @event
+     */
+    async onClearError () {
+      const [{ user_id }] = this.selectedRows
+      this.$promiseConfirm({
+        title: '系统提示',
+        content: '确认解除用户限制？',
+        onOk: () =>
+          UserService.clearError(user_id)
+            .then(() => {
+              this.$notifyClearErrorSuccess()
               this.query(false)
             })
             .catch(this.$notifyError)

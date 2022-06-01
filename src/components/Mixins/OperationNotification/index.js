@@ -19,6 +19,12 @@ export default {
         description: '更改状态成功'
       })
     },
+    $notifyClearErrorSuccess () {
+      this.$notification.success({
+        message: '系统提示',
+        description: '解除限制成功'
+      })
+    },
     $notifyDeleteSuccess () {
       this.$notification.success({
         message: '系统提示',

@@ -96,6 +96,13 @@ class UserService extends BaseService {
     await this.hasuraTransfer({ query: q })
   }
 
+  static async clearError (user_id) {
+    const q = await generateMutation(
+      UserDao.update({ error_times: 0 }, { user_id })
+    )
+    await this.hasuraTransfer({ query: q })
+  }
+
   static async getAllPermission () {
     // 当前用户信息
     const { groupIdList, userId } = store.getters
