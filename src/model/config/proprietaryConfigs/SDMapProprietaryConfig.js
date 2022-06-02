@@ -180,7 +180,7 @@ export default class SDMapProprietaryConfig {
         },
         lineStyle: {
           normal: {
-            color: 'rgb(200,150,0)',
+            color: '#ffdb00',
             width: 3,
             opacity: 0.7,
             curveness: 0.2
