@@ -190,9 +190,9 @@ export default {
                 x2: 0,
                 y2: 1,
                 colorStops: [{
-                  offset: 0, color: 'rgba(0,255,255,0.3)' // 0% 处的颜色
+                  offset: 0, color: 'rgba(35,200,155, 1)' // 0% 处的颜色
                 }, {
-                  offset: 1, color: 'rgba(10,215,125,1)' // 100% 处的颜色
+                  offset: 1, color: 'rgba(35,200,155, 1)' // 100% 处的颜色
                 }],
                 global: false // 缺省为 false
               },
@@ -228,7 +228,7 @@ export default {
           coords: [temp.get(record.originCity), temp.get(record.peerCity)],
           lineStyle: {
             normal: {
-              color: 'rgb(255,0,0)',
+              color: '#ff4949',
               width: 5,
               opacity: 0.7,
               curveness: 0.5
@@ -253,7 +253,7 @@ export default {
           symbolSize: 20,
           itemStyle: {
             'normal': {
-              color: 'red',
+              color: '#ff4949',
               opacity: 0.7
             }
           }

@@ -449,7 +449,7 @@ export default {
         return {}
       }
       if (this.lastPoint.value) {
-        if (!this.errorIds[this.lastPoint.value.toString()]) {
+        if (!this.errorIds[this.lastPoint.value.toString()] && !this.warnIds[this.lastPoint.value.toString()] && !this.normalIds[this.lastPoint.value.toString()]) {
           return {
             color: 'green'
           }
@@ -459,6 +459,14 @@ export default {
           return {
             color: 'red'
           }
+        } else if (this.warnIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+          return {
+            color: '#ffdb00'
+          }
+        } else if (this.normalIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+          return {
+            color: '#2d97ff'
+          }
         } else {
           return {
             color: 'green'
@@ -466,6 +474,14 @@ export default {
         }
       } else {
         if (item.id.toString() in this.errorIds) {
+          return {
+            color: 'red'
+          }
+        } else if (item.id.toString() in this.warnIds) {
+          return {
+            color: 'red'
+          }
+        } else if (item.id.toString() in this.normalIds) {
           return {
             color: 'red'
           }

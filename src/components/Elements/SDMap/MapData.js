@@ -8,7 +8,7 @@ const hoverColor = '#98B3CC'
 // 版图边缘颜色
 const borderColor = '#aaaaaa'
 // 连线颜色渐变始
-const lineColor = ['#07B5A2', '#07B5A2']
+const lineColor = ['rgba(35,200,155, 1)', 'rgba(35,200,155, 1)']
 // 连线颜色渐变终
 // 版图文字颜色
 const fontColor = '#666'
@@ -135,8 +135,8 @@ export const defaultOption = {
     },
     lineStyle: {
       normal: {
-        color: 'rgb(255,0,0)',
-        width: 3,
+        color: '#f35555',
+        width: 6,
         opacity: 0.7,
         curveness: 0.5
       }
