@@ -479,11 +479,11 @@ export default {
           }
         } else if (item.id.toString() in this.warnIds) {
           return {
-            color: 'red'
+            color: '#ffdb00'
           }
         } else if (item.id.toString() in this.normalIds) {
           return {
-            color: 'red'
+            color: '#2d97ff'
           }
         } else {
           return {

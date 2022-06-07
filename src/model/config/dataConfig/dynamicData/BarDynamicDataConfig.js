@@ -332,7 +332,7 @@ export default class BarDynamicDataConfig extends DynamicDataConfig {
           data: top.map(({ loss }) => loss)
         },
         {
-          name: '抖动',
+          name: '延迟',
           data: top.map(({ latency }) => latency)
         }
       ]
