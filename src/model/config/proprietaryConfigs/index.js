@@ -1095,6 +1095,7 @@ class CircleGraphic extends Graphic {
     super(graphicOption)
     this.type = 'circle'
     this.shape = new CircleShape(shape)
+    this.cursor = 'auto'
   }
 
   /**

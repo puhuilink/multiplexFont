@@ -96,6 +96,7 @@ export default {
         this.styleConfig = _.cloneDeep(value)
         if (this.styleConfig.textStyle) {
           this.styleConfig.textStyle.fontSize += 'px'
+          this.styleConfig.textStyle.cursor = 'pointer'
           switch (this.styleConfig.position.mode) {
             case 'center':
               this.fatherStyle = {
