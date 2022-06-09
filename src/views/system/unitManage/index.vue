@@ -23,6 +23,19 @@
                   <a-input allowClear v-model.trim="queryParams.name" />
                 </a-form-item>
               </a-col>
+              <a-col :lg="36" :md="8" :sm="24">
+                <a-form-item label="关系" v-bind="formItemLayout" class="fw">
+                  <a-select
+                    v-model.trim="jsonb"
+                  >
+                    <a-select-option
+                      :key="index"
+                      v-for="(item, index) in relationList"
+                    >{{ item }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
               <!--              <a-col :lg="36" :md="8" :sm="24">-->
               <!--                <a-form-item label="经度" v-bind="formItemLayout" class="fw">-->
               <!--                  <a-input allowClear v-model.trim="queryParams.lng" />-->
@@ -130,7 +143,9 @@ export default {
         },
         ...[unitEnabledColumn].map(fn => fn.call(this))
       ]),
-      selectedRows: []
+      selectedRows: [],
+      jsonb: '',
+      relationList: []
     }
   },
   methods: {
@@ -138,7 +153,8 @@ export default {
       return CorpMapValueService.find({
         where: {
           ...this.where,
-          ...generateQuery(this.queryParams)
+          ...generateQuery(this.queryParams),
+          ...(_.isEmpty(this.jsonb) ? {} : { relation: { _has_key: this.jsonb } })
         },
         orderBy: { create_time: 'desc_nulls_last' },
         fields: [
@@ -154,7 +170,16 @@ export default {
         ],
         ...parameter,
         alias: 'data'
-      }).then((r) => r.data)
+      }).then((r) => {
+        console.log('this', this, r.data.data)
+        let set = []
+        r.data.data.map(el => {
+          set = _.union(set, _.keys(el.relation))
+          console.log(set, el.relation, _.keys(el.relation))
+        })
+        this.relationList = set
+        return r.data
+      })
     },
     onAdd () {
       this.$refs['schema'].add()

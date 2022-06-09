@@ -92,6 +92,7 @@ export default class Hasura {
       }
     })
     this._where = Object.assign(this._where, condition)
+    console.log('where', this._where)
     this._schemaArguments = Object.assign(this._schemaArguments, { where: this._where })
     return this
   }
