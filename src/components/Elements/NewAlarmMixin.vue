@@ -195,7 +195,14 @@ export default {
               onFilter: (value, record) => record.details
                 .toString()
                 .toLowerCase()
-                .includes(value.toLowerCase())
+                .includes(value.toLowerCase()),
+              onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                  setTimeout(() => {
+                    this.searchInput.focus()
+                  })
+                }
+              }
             },
             {
               title: '告警状态',
@@ -222,7 +229,7 @@ export default {
               sorter: (a, b) => a.alarm_level - b.alarm_level,
               filters: this.isComponents ? [
                 {
-                  text: '严重',
+                  text: '紧急',
                   value: 1
                 },
                 {
@@ -343,7 +350,7 @@ export default {
             },
             {
               title: '告警详细信息',
-              dataIndex: 'detail',
+              dataIndex: '',
               width: '35%',
               show: true,
               ellipsis: !this.isComponents,
@@ -351,6 +358,17 @@ export default {
               customRender: (text) => {
                 const result = this.splitDetail(text)
                 return this.isComponents ? <div>{ result }</div> : text
+              },
+              onFilter: (value, record) => record.detail
+                .toString()
+                .toLowerCase()
+                .includes(value.toLowerCase()),
+              onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                  setTimeout(() => {
+                    this.searchInput.focus()
+                  })
+                }
               }
             }]
         default:
