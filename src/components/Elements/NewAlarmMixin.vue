@@ -117,6 +117,7 @@ export default {
               width: '35%',
               align,
               show: true,
+              ellipsis: true,
               scopedSlots: this.isComponents ? {
                 filterDropdown: 'filterDropdown',
                 filterIcon: 'filterIcon',
@@ -350,7 +351,7 @@ export default {
             },
             {
               title: '告警详细信息',
-              dataIndex: '',
+              dataIndex: 'detail',
               width: '35%',
               show: true,
               ellipsis: !this.isComponents,
@@ -359,6 +360,11 @@ export default {
                 const result = this.splitDetail(text)
                 return this.isComponents ? <div>{ result }</div> : text
               },
+              scopedSlots: this.isComponents ? {
+                filterDropdown: 'filterDropdown',
+                filterIcon: 'filterIcon',
+                customRender: 'customRender'
+              } : false,
               onFilter: (value, record) => record.detail
                 .toString()
                 .toLowerCase()

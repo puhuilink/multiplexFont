@@ -13,7 +13,7 @@
       style="display: flex;align-items: center;justify-content: center;"
     >
       <NewAlarmElement
-        style="width: 100%;height: 550px;padding-top:10px;padding-bottom:10px"
+        style="width: 100%;height: 550px;padding-top:30px;padding-bottom:10px"
         v-if="styleConfig.type === 'alarm'"
         :show.sync="visible"
         :is-components="true"
