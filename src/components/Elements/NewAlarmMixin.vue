@@ -30,6 +30,10 @@ export default {
     apiType: {
       type: String,
       default: 'sdwan'
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -58,7 +62,8 @@ export default {
         'PROBLEM': '报警',
         'L3NETWORK': '云网络',
         'ENDPOINT': '延伸监控'
-      }
+      },
+    locale: { emptyText: '暂无数据' }
   }),
   watch: {
     'propsData': {
@@ -128,12 +133,11 @@ export default {
                 .toLowerCase()
                 .includes(value.toLowerCase())
             },
-            {
+            ...this.isComponents ? [{
               title: '资源类型',
               dataIndex: 'type',
-              width: '10%',
+              width: '13%',
               align,
-              show: true,
               filters: this.isComponents ? [
                 {
                   text: '云网络',
@@ -146,20 +150,21 @@ export default {
               ] : false,
               onFilter: (value, record) => record.type.indexOf(value) === 0,
               customRender: (value) => this.status_mapping[value]
-            },
+            }] : [],
             {
               title: '告警时间',
               dataIndex: 'alarmTime',
               width: '20%',
               align,
               show: true,
+              ellipsis: true,
               sorter: (a, b) => new Date(a.alarmTime).getTime() - new Date(b.alarmTime).getTime()
             },
-            {
+            ...this.isComponents ? [{
               title: '持续时间(s)',
-              width: '15%',
+              width: '12%',
               align,
-              show: true,
+              show: this.isComponents,
               sorter: (a, b) => {
                 const aTime = this.translateTimeNumber(a)
                 const bTime = this.translateTimeNumber(b)
@@ -173,13 +178,14 @@ export default {
                 const result = endTime - new Date(record.alarmTime).getTime()
                 return (result - result % 1000) / 1000
               }
-            },
+            }] : [],
             {
               title: '恢复时间',
               dataIndex: 'recoverTime',
               width: '20%',
               align,
               show: true,
+              ellipsis: true,
               sorter: (a, b) => new Date(a.recoverTime).getTime() - new Date(b.recoverTime).getTime()
             },
             {
@@ -208,7 +214,7 @@ export default {
             {
               title: '告警状态',
               dataIndex: 'status',
-              width: '10%',
+              width: '15%',
               align,
               show: true,
               filters: this.isComponents ? this.status_list : false,
@@ -423,7 +429,8 @@ export default {
       return {
         style: {
           backgroundColor: index % 2 === 0 ? backgroundColor.odd : backgroundColor.even,
-          ...rest
+          ...rest,
+          cursor: 'default'
         }
       }
     },

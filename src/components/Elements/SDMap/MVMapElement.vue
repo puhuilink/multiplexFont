@@ -8,7 +8,7 @@
     }"
   >
     <div :id="getId()" :style="{ width: width+'px', height: height+'px', ZIndex: -1 }"></div>
-    <div :style="{ZIndex: 1, color: 'white', position: 'absolute', right: '20px', top: '50px', width: '100px',height: '80px'}">
+    <div :style="{ZIndex: 1, color: 'white', position: 'absolute', right: '20px', top: '30px', width: '100px',height: '80px'}">
       <a-button block="true" size="large" ghost @click="returnToDefault">恢复默认</a-button>
     </div>
     <a-drawer
@@ -26,6 +26,7 @@
         :loading="loading"
         item-layout="horizontal"
         :data-source="siteList"
+        style="cursor: pointer"
       >
         <a-list-item slot="renderItem" slot-scope="item" @click="changeSite(item)" :style="listColor(item)">
           <a slot="actions"><a-icon type="right" /></a>
@@ -65,8 +66,8 @@ export default {
       chartConfig: undefined,
       visible: false,
       myChart: null,
-      width: 1920,
-      height: 1080,
+      width: 920,
+      height: 630,
       loading: false,
       cityInfo: new Map(),
       cityCount: new Map(),

@@ -3,9 +3,10 @@
 
     <!-- S 列表 -->
     <a-table
+      :loading="loading"
       style="height: 100%"
       size="small"
-      :customHeaderRow="() => ({ style: headerRowStyle })"
+      :customHeaderRow="() => ({ style: headerRowStyle ,cursor: 'default'})"
       :customRow="customRow"
       :columns="columns"
       :dataSource="dataSource"
@@ -13,6 +14,7 @@
       ref="table"
       :scroll="scroll"
       :pagination="false"
+      :locale="locale"
     >
       <div
         slot="filterDropdown"

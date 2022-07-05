@@ -25,12 +25,30 @@
         item-layout="horizontal"
         :data-source="data"
       >
-        <a-list-item slot="renderItem" slot-scope="item,index" @click="globalChange(item)" :style="listColor(index)">
+        <a-list-item slot="renderItem" slot-scope="item,index" @click="globalChange(item)" :style="{...listColor(index),cursor:'pointer'}">
           <a slot="actions"><a-icon type="right" @click="globalChange(item)" /></a>
           <div>{{ item.name }}</div>
         </a-list-item>
       </a-list>
     </a-drawer>
+    <a-modal
+      width="80%"
+      centered
+      :visible="modalVisible"
+      @ok="closeModal"
+      @cancel="closeModal"
+      @close="closeModal"
+      style="display: flex;align-items: center;justify-content: center;"
+    >
+      <NewAlarmElement
+        style="width: 100%;height: 580px;padding-top:30px;padding-bottom:0px"
+        :loading="loading"
+        :show.sync="modalVisible"
+        :is-components="true"
+        :props-data="alert"
+        :api-type="api"
+      />
+    </a-modal>
   </div>
 </template>
 
@@ -40,22 +58,27 @@ import echarts from 'echarts'
 import uuid from 'uuid/v4'
 import _ from 'lodash'
 import { SdwanSiteService } from '@/api'
+import NewAlarmElement from '@/components/Elements/NewAlarmElement'
 
 export default {
   name: 'SDMapElement',
+  components: { NewAlarmElement },
   data () {
     return {
       elementProps: {
         styleConfig: {}
       },
+      api: 'sdwan',
       styleConfig: {},
       fatherStyle: {},
       columns: ['空'],
       dataSource: [],
+      modalDataSource: [],
       visible: false,
+      modalVisible: false,
       myChart: null,
       width: 880,
-      height: 600,
+      height: 630,
       loading: false,
       city: [],
       data: [
@@ -75,7 +98,13 @@ export default {
       normalCitys: [],
       normalNodes: [],
       moveLines: [],
-      lastPoint: {}
+      lastPoint: {},
+      alert: [],
+      levelMap: {
+        critical: 1,
+        major: 2,
+        normal: 3
+      }
     }
   },
   watch: {
@@ -96,6 +125,14 @@ export default {
     }
   },
   methods: {
+    closeModal () {
+      this.modalVisible = false
+      this.visible = false
+    },
+    openModal () {
+      this.modalVisible = true
+      this.loading = true
+    },
     async globalChange (value) {
       const real = {
         label: value.name,
@@ -104,6 +141,7 @@ export default {
       Object.assign(this.lastPoint, real)
       this.$emit('selectChange', real)
       this.visible = false
+      this.openModal()
       this.dataSource = await SdwanSiteService.getCityConnection(value.id)
       await this.getExceptions(true)
       this.site = value.name
@@ -228,7 +266,7 @@ export default {
       this.moveLines = moveLine
     },
     getWarningLines (lines) {
-      if (!this.errorCitys.length) {
+      if (!this.errorCitys.length && !this.warnCitys.length && !this.normalCitys.length) {
         return []
       }
       if (!lines.length) {
@@ -361,9 +399,23 @@ export default {
       if (flag) {
         const ex = await SdwanSiteService.getErrorConnection({ siteId: this.lastPoint.value })
         exception = ex.data.exception
+        this.alert = ex.data.alert ? ex.data.alert.map(a => ({
+          alarm_type: a.type,
+          alarm_level: this.levelMap[a.level],
+          detail: a.details,
+          target: a.targetType,
+          status: a.status
+        })) : []
+        this.alert = ex.data.alert ? this.alert : []
+        this.loading = false
       } else {
         const d = await SdwanSiteService.getAlert({ type: 'day' })
         exception = d.data.exception
+      }
+      if (!exception) {
+        this.$message.error('未查询到站点关系！')
+        this.closeModal()
+        return
       }
       this.errorIds = {}
       this.errorNodes = []
@@ -454,16 +506,16 @@ export default {
             color: 'green'
           }
         }
-        // 上次有点击过站点
-        if (this.errorIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+        if (this.errorIds[this.lastPoint.value.toString()] && this.errorIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+          // 上次有点击过站点
           return {
             color: 'red'
           }
-        } else if (this.warnIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+        } else if (this.warnIds[this.lastPoint.value.toString()] && this.warnIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
           return {
             color: '#ffdb00'
           }
-        } else if (this.normalIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
+        } else if (this.normalIds[this.lastPoint.value.toString()] && this.normalIds[this.lastPoint.value.toString()].includes(item.id.toString())) {
           return {
             color: '#2d97ff'
           }
