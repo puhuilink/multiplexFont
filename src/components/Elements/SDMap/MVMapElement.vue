@@ -9,7 +9,7 @@
   >
     <div :id="getId()" :style="{ width: width+'px', height: height+'px', ZIndex: -1 }"></div>
     <div :style="{ZIndex: 1, color: 'white', position: 'absolute', right: '20px', top: '30px', width: '100px',height: '80px'}">
-      <a-button block="true" size="large" ghost @click="returnToDefault">恢复默认</a-button>
+      <a-button :block="true" size="large" ghost @click="returnToDefault">恢复默认</a-button>
     </div>
     <a-drawer
       :title="'该城市共有'+siteList.length+'个站点'"
@@ -35,17 +35,22 @@
       </a-list>
     </a-drawer>
     <a-modal
-      :visible="showModal"
-      @close="onModalClose"
-      @cancel="onModalClose"
+      width="80%"
+      centered
+      :visible="modalVisible"
+      @ok="closeModal"
+      @cancel="closeModal"
+      @close="closeModal"
+      style="display: flex;align-items: center;justify-content: center;"
     >
-      <a-table
-        :columns="columns"
-        :data-source="errorDetails"
-        :pagination="false"
-        size="small"
-      >
-      </a-table>
+      <NewAlarmElement
+        style="width: 100%;height: 580px;padding-top:30px;padding-bottom:0px"
+        :loading="loading"
+        :show.sync="modalVisible"
+        :is-components="true"
+        :props-data="alert"
+        :api-type="api"
+      />
     </a-modal>
   </div>
 </template>
@@ -58,9 +63,11 @@ import { defaultOption } from '~~~/Elements/SDMap/MapData'
 import { sql } from '@/utils/request'
 import { dealQuery } from '@/utils/util'
 import { MVSiteService } from '@/api/service/SdwanSiteService'
+import NewAlarmElement from '~~~/Elements/NewAlarmElement'
 
 export default {
   name: 'MvMapElement',
+  components: { NewAlarmElement },
   data () {
     return {
       chartConfig: undefined,
@@ -75,24 +82,39 @@ export default {
       errorData: [],
       siteList: [],
       lastPoint: {},
-      showModal: false,
-      columns: [
-        { title: '起始站点', dataIndex: 'originSiteName' },
-        { title: '目标站点', dataIndex: 'peerName' },
-        { title: '告警详情', dataIndex: 'alarmDetail' }
-      ],
-      errorDetails: []
+      errorDetails: [],
+      modalVisible: false,
+      levelMap: {
+        critical: 1,
+        major: 2,
+        normal: 3
+      },
+      api: 'mv',
+      alert: []
     }
   },
   watch: {
   },
   methods: {
     async changeSite (item) {
+      const real = {
+        label: item.name,
+        value: item.id
+      }
       Object.assign(this.lastPoint, { id: item.id, name: item.name })
+      console.log(real)
+      this.$emit('selectChange', real)
+      this.openModal()
       const { data } = await MVSiteService.getErrorById({ siteId: item.id })
-      this.errorData = data
+      this.errorData = data.exception
+      this.alert = data.alert ? data.alert : []
+      if (!this.alert.length) {
+        this.$message.warn('该站点无告警信息')
+        this.closeModal()
+      }
       await this.getSiteRelation(item.id)
       this.visible = false
+      this.loading = false
       this.draw()
     },
     listColor (item) {
@@ -114,8 +136,13 @@ export default {
     onClose () {
       this.visible = false
     },
-    onModalClose () {
-      this.showModal = false
+    closeModal () {
+      this.modalVisible = false
+      this.visible = false
+    },
+    openModal () {
+      this.modalVisible = true
+      this.loading = true
     },
     async returnToDefault () {
       await this.getDefaultRelation()

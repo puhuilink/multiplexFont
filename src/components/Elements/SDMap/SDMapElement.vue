@@ -26,7 +26,6 @@
         :data-source="data"
       >
         <a-list-item slot="renderItem" slot-scope="item,index" @click="globalChange(item)" :style="{...listColor(index),cursor:'pointer'}">
-          <a slot="actions"><a-icon type="right" @click="globalChange(item)" /></a>
           <div>{{ item.name }}</div>
         </a-list-item>
       </a-list>
@@ -406,14 +405,13 @@ export default {
           target: a.targetType,
           status: a.status
         })) : []
-        this.alert = ex.data.alert ? this.alert : []
         this.loading = false
       } else {
         const d = await SdwanSiteService.getAlert({ type: 'day' })
         exception = d.data.exception
       }
       if (!exception) {
-        this.$message.error('未查询到站点关系！')
+        this.$message.warn('未查询到告警信息！')
         this.closeModal()
         return
       }
