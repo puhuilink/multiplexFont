@@ -487,6 +487,7 @@ export default {
   .ant-table-header {
     background-color: transparent;
     overflow: hidden !important;
+    margin-bottom: 0 !important;
   }
 
   .ant-table-scroll {

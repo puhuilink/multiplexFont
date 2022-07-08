@@ -34,6 +34,16 @@
                 </div>
               </div>
               <!-- / 文本 -->
+              <div class="comment-template__item">
+                <p class="comment-template__leading">特殊样式:</p>
+                <div class="comment-template__inner">
+                  <a-input
+                    type="text"
+                    v-model="config.proprietaryConfig.type"
+                    @change="change" />
+                </div>
+              </div>
+              <!-- / 文本 -->
 
               <div class="comment-template__item">
                 <p class="comment-template__leading">小数位数:</p>

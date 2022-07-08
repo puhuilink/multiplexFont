@@ -14,12 +14,14 @@ export default class TextsProprietaryConfig {
     title = {
       text: 'N/A'
     },
+    type = 'default',
     xAxis = defaultAxis,
     yAxis = defaultAxis,
     thresholdColorRule = {},
     decimalPoint = 0
   }) {
     this.title = new Title(title)
+    this.type = type
     this.xAxis = xAxis
     this.yAxis = yAxis
     this.thresholdColorRule = new ThresholdColorRule(thresholdColorRule)

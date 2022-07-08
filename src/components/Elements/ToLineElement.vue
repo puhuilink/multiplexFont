@@ -2,7 +2,7 @@
   <div
   >
     <div :style="selectStyle" v-if="visible">
-      To:
+      方向:
       <a-select
         :style="{width: selectWidth+'px'}"
         show-search
@@ -51,8 +51,8 @@ export default {
         position: 'absolute',
         right: '100px',
         bottom: '500px',
-        fontSize: '30px',
-        color: 'white',
+        fontSize: '24px',
+        color: 'grey',
         zIndex: 1
       },
       selectWidth: 100,

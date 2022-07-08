@@ -26,7 +26,8 @@ export default class TextsChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid, backgroundColor } = commonConfig.getOption()
-    const { title, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
+    const { title, type, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
+    console.log('title', title)
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {
@@ -69,6 +70,21 @@ export default class TextsChart extends Chart {
       title.textStyle.color = thresholdColor || title.textStyle.color
       backgroundColor.backgroundColor = thresBgColor || backgroundColor
     }
+    title.text = this.formatText(type, title.text)
     return { grid, title, ...backgroundColor }
+  }
+  formatText (type = 'default', originText = '') {
+    switch (type) {
+      case 'quote':
+        return '"' + originText + '"'
+      case 'parenthesis':
+        return '(' + originText + ')'
+      case 'curly':
+        return '{' + originText + '}'
+      case 'bracket':
+        return '[' + originText + ']'
+      default:
+        return originText
+    }
   }
 }
