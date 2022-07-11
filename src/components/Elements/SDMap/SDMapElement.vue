@@ -40,7 +40,7 @@
       style="display: flex;align-items: center;justify-content: center;"
     >
       <NewAlarmElement
-        style="width: 100%;height: 580px;padding-top:30px;padding-bottom:0px"
+        style="width: 100%;height: 580px;padding-top:30px;padding-bottom:0"
         :loading="loading"
         :show.sync="modalVisible"
         :is-components="true"
@@ -103,12 +103,34 @@ export default {
         critical: 1,
         major: 2,
         normal: 3
+      },
+      colorMap: {
+        0:
+            [
+              { offset: 0.3, color: 'rgba(10,215,125,1)' },
+              { offset: 1, color: 'rgba(100,165,225,1)' }
+            ],
+        1:
+            [
+              { offset: 0.3, color: 'rgba(255,0,0,1)' },
+              { offset: 1, color: 'rgba(255,0,0,0.3)' }
+            ],
+        2:
+            [
+              { offset: 0.3, color: 'rgba(255,200,0,1)' },
+              { offset: 1, color: 'rgba(255,200,0,0.7)' }
+            ],
+
+        3:
+            [
+              { offset: 0.3, color: '#2d97ff' },
+              { offset: 1, color: '#2d97ff' }
+            ]
       }
     }
   },
   watch: {
     'elementProps': {
-      immediate: true,
       deep: true,
       async handler (value) {
         if (value) {
@@ -123,7 +145,34 @@ export default {
       }
     }
   },
+  computed: {
+    alertLevel () {
+      if (this.errorNodes.includes(this.lastPoint.city)) {
+        return 1
+      }
+      if (this.warnNodes.includes(this.lastPoint.city)) {
+        return 2
+      }
+      if (this.warnNodes.includes(this.lastPoint.city)) {
+        return 3
+      }
+      return 0
+    }
+  },
   methods: {
+    alertLevelFun (city) {
+      city = city.split('/')[0]
+      if (this.errorNodes.includes(city)) {
+        return 1
+      }
+      if (this.warnNodes.includes(city)) {
+        return 2
+      }
+      if (this.warnNodes.includes(city)) {
+        return 3
+      }
+      return 0
+    },
     closeModal () {
       this.modalVisible = false
       this.visible = false
@@ -167,54 +216,28 @@ export default {
         })
       })
       const option = _.cloneDeep(op)
-      if (this.errorNodes.includes(this.lastPoint.city)) {
-        option.series[0].data[index].itemStyle = {
-          'normal': {
-            color: new echarts.graphic.RadialGradient(
-              0.5, 0.5, 0.5,
-              [
-                { offset: 0.3, color: 'rgba(255,0,0,1)' },
-                { offset: 1, color: 'rgba(255,0,0,0.3)' }
-              ]
-            )
+      const l = this.alertLevel
+
+      switch (l) {
+        case 1:
+          option.series[0].data[index].itemStyle = {
+            'normal': this.colorMap[1]
           }
-        }
-      } else if (this.warnNodes.includes(this.lastPoint.city)) {
-        option.series[0].data[index].itemStyle = {
-          'normal': {
-            color: new echarts.graphic.RadialGradient(
-              0.5, 0.5, 0.5,
-              [
-                { offset: 0.3, color: 'rgba(255,200,0,1)' },
-                { offset: 1, color: 'rgba(255,200,0,0.7)' }
-              ]
-            )
+          break
+        case 2:
+          option.series[0].data[index].itemStyle = {
+            'normal': this.colorMap[2]
           }
-        }
-      } else if (this.normalNodes.includes(this.lastPoint.city)) {
-        option.series[0].data[index].itemStyle = {
-          'normal': {
-            color: new echarts.graphic.RadialGradient(
-              0.5, 0.5, 0.5,
-              [
-                { offset: 0.3, color: 'rgba(0,255,200,1)' },
-                { offset: 1, color: 'rgba(0,255,200,0.3)' }
-              ]
-            )
+          break
+        case 3:
+          option.series[0].data[index].itemStyle = {
+            'normal': this.colorMap[3]
           }
-        }
-      } else {
-        option.series[0].data[index].itemStyle = {
-          'normal': {
-            color: new echarts.graphic.RadialGradient(
-              0.5, 0.5, 0.5,
-              [
-                { offset: 0.3, color: 'rgba(10,215,125,1)' },
-                { offset: 1, color: 'rgba(100,165,225,1)' }
-              ]
-            )
+          break
+        default:
+          option.series[0].data[index].itemStyle = {
+            'normal': this.colorMap[0]
           }
-        }
       }
       const warningLines = this.getWarningLines(moveLine)
       option.series[2].data = moveLine
@@ -314,6 +337,7 @@ export default {
       const node = []
       this.city.forEach(el => {
         const { city, lat, lng, total } = el
+        const color = this.colorMap[this.alertLevelFun(city)]
         node.push({
           name: city.split('/')[0] + '(' + total + ')',
           city: city,
@@ -321,20 +345,8 @@ export default {
           symbolSize: 10,
           itemStyle: {
             'normal': {
-              color: {
-                type: 'linear ', // linear 线性渐变  radial径向渐变
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(0,255,255,0.3)' // 0% 处的颜色
-                }, {
-                  offset: 1, color: 'rgba(10,215,125,1)' // 100% 处的颜色
-                }],
-                global: false // 缺省为 false
-              },
-              opacity: 0.7
+              color: new echarts.graphic.RadialGradient(
+                0.5, 0.5, 0.5, color)
             }
           }
         })
@@ -349,6 +361,7 @@ export default {
       return option
     },
     async reloadEcharts (option) {
+      console.log(option)
       await this.$nextTick()
       if (this.myChart) {
         this.myChart.dispose()
@@ -411,7 +424,7 @@ export default {
         exception = d.data.exception
       }
       if (!exception) {
-        this.$message.warn('未查询到告警信息！')
+        this.$message.warn('当前站点无告警！')
         this.closeModal()
         return
       }

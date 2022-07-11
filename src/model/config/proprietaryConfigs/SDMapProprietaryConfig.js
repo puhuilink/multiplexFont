@@ -159,7 +159,7 @@ export default class SDMapProprietaryConfig {
         lineStyle: {
           normal: {
             color: 'rgb(255,0,0)',
-            width: 3,
+            width: 5,
             opacity: 0.7,
             curveness: 0.2
           }
@@ -181,7 +181,7 @@ export default class SDMapProprietaryConfig {
         lineStyle: {
           normal: {
             color: '#ffdb00',
-            width: 3,
+            width: 5,
             opacity: 0.7,
             curveness: 0.2
           }
@@ -202,8 +202,8 @@ export default class SDMapProprietaryConfig {
         },
         lineStyle: {
           normal: {
-            color: 'rgb(0,150,130)',
-            width: 3,
+            color: '#2d97ff',
+            width: 5,
             opacity: 0.7,
             curveness: 0.2
           }
