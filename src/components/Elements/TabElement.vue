@@ -403,17 +403,11 @@ export default {
           XData.push({
             name: key,
             type: 'bar',
+            barMinHeight: 5,
             label: {
-              show: true,
-              formatter: function (params) {
-                if (params.value > 0) {
-                  return params.value
-                } else {
-                  return ''
-                }
-              }
+              show: true
             },
-            data: tempObj[key]
+            data: tempObj[key] ? tempObj[key] : null
           })
         })
       }
@@ -445,7 +439,11 @@ export default {
           //   // Use axis to trigger tooltip
           //   type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
           // }
-          show: false
+          show: false,
+          formatter: function (params) {
+
+          }
+
         },
         legend,
         grid: this.grid,

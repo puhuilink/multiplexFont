@@ -3,7 +3,6 @@
 
     <!-- S 列表 -->
     <a-table
-      class="alarmTable"
       :loading="loading"
       style="height: 100%"
       size="small"

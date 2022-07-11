@@ -162,7 +162,7 @@ export default {
             },
             ...this.isComponents ? [{
               title: '持续时间(s)',
-              width: '12%',
+              width: '15%',
               align,
               show: this.isComponents,
               sorter: (a, b) => {
@@ -482,6 +482,9 @@ export default {
     color:inherit !important;
     font-weight: inherit !important;
     background-color: inherit !important;
+  }
+  .ant-table-column-title{
+    cursor: default;
   }
 
   .ant-table-header {

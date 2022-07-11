@@ -308,6 +308,7 @@ export default {
       const option = { grid, legend, xAxis: [xAxis], yAxis: [yAxis] }
       const line = (index) => ({
         type: 'line',
+        cursor: 'default',
         itemStyle: {
           color: Array.isArray(color) ? color[index] : color
         },
