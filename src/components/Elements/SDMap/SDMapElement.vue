@@ -102,7 +102,7 @@ export default {
       levelMap: {
         critical: 1,
         major: 2,
-        normal: 3
+        trivial: 3
       },
       colorMap: {
         0:
