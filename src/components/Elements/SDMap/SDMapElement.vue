@@ -410,6 +410,9 @@ export default {
       this.errorCitys = []
       if (flag) {
         const ex = await SdwanSiteService.getErrorConnection({ siteId: this.lastPoint.value })
+        if (!ex.data) {
+          ex.data = {}
+        }
         exception = ex.data.exception
         this.alert = ex.data.alert ? ex.data.alert.map(a => ({
           alarm_type: a.type,
@@ -421,6 +424,9 @@ export default {
         this.loading = false
       } else {
         const d = await SdwanSiteService.getAlert({ type: 'day' })
+        if (!d.data) {
+          d.data = {}
+        }
         exception = d.data.exception
       }
       if (!exception) {
