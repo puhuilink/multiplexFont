@@ -208,7 +208,7 @@ export default {
           name: el.split('/')[0] + '(' + this.cityCount.get(el) + ')',
           city: el,
           value: [...temp.get(el), 2],
-          symbolSize: 20,
+          symbolSize: 10,
           itemStyle: {
             'normal': {
               color: {
@@ -278,7 +278,7 @@ export default {
           name: el.split('/')[0] + '(' + this.cityCount.get(el) + ')',
           city: el,
           value: [...temp.get(el), 2],
-          symbolSize: 20,
+          symbolSize: 10,
           itemStyle: {
             'normal': {
               color: '#ff4949',

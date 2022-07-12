@@ -60,8 +60,7 @@ export const defaultOption = {
       show: true,
       position: 'top',
       formatter: '{b}',
-      color: '#fff',
-      fontSize: 24
+      color: '#fff'
     },
     symbolSize: 3,
     showEffectOn: 'render',
@@ -102,7 +101,7 @@ export const defaultOption = {
       show: true,
       constantSpeed: 20,
       symbol: 'pin',
-      symbolSize: 5,
+      symbolSize: 3,
       trailLength: 0
     },
     lineStyle: {
@@ -130,13 +129,13 @@ export const defaultOption = {
       show: true,
       constantSpeed: 20,
       symbol: 'pin',
-      symbolSize: 5,
+      symbolSize: 3,
       trailLength: 0
     },
     lineStyle: {
       normal: {
         color: '#f35555',
-        width: 6,
+        width: 5,
         opacity: 0.7,
         curveness: 0.5
       }
