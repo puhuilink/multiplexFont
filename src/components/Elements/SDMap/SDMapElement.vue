@@ -7,7 +7,10 @@
       textAlign: 'center',
     }"
   >
-    <div :id="getId()" :style="{ width: width+'px', height: height+'px' }"></div>
+    <div :id="getId()" :style="{ width: width+'px', height: height+'px', ZIndex: -1 }"></div>
+    <div :style="{ZIndex: 1, color: 'white', position: 'absolute', right: '20px', top: '30px', width: '100px',height: '80px'}">
+      <a-button :block="true" size="large" ghost @click="getNodeData">恢复默认</a-button>
+    </div>
     <a-drawer
       :title="'该城市共有'+data.length+'个站点'"
       placement="right"
@@ -18,7 +21,6 @@
       :after-visible-change="afterVisibleChange"
       @close="onClose"
     >
-      <a-button @click="getNodeData">默认</a-button>
       <a-list
         class="demo-loadmore-list"
         :loading="loading"
@@ -361,7 +363,6 @@ export default {
       return option
     },
     async reloadEcharts (option) {
-      console.log(option)
       await this.$nextTick()
       if (this.myChart) {
         this.myChart.dispose()
