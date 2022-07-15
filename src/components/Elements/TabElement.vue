@@ -63,7 +63,7 @@ export default {
       },
       styleConfig: {},
       fatherStyle: {},
-      columns: ['空'],
+      columns: ['loss', 'jitter', 'latency', 'throughput'],
       dataSource: [],
       visible: false,
       myChart: null,
@@ -93,7 +93,7 @@ export default {
       handler (value) {
         if (value) {
           if (value.length < 1) {
-            this.columns = ['']
+            this.columns = ['loss', 'jitter', 'latency', 'throughput']
           } else {
             const t = []
             for (let i = 0; i < value.length; i++) {
@@ -102,7 +102,7 @@ export default {
             this.columns = t
           }
         } else {
-          this.columns = ['']
+          this.columns = ['loss', 'jitter', 'latency', 'throughput']
         }
       }
     },
