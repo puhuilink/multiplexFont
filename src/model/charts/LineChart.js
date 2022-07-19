@@ -32,9 +32,15 @@ export default class LineChart extends Chart {
    */
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid } = commonConfig.getOption()
-
+    this.chart.showLoading({
+      text: '数据装填中 请稍后…',
+      textStyle: {
+        fontSize: 20
+      },
+      textColor: 'white',
+      maskColor: 'transparent'
+    })
     const { legend, xAxis, yAxis, decimalPoint, testLint: { type, width }, itemStyle: { color }, ...options } = proprietaryConfig.getOption()
-
     const { sourceType, staticDataConfig: { staticData }, dbDataConfig } = dataConfig
     const line = (index) => ({
       type: 'line',
@@ -93,11 +99,43 @@ export default class LineChart extends Chart {
         ...rest
       }))
     }
+    let titleShow = true
+    series.forEach(s => {
+      if (s.data.length) {
+        titleShow = false
+      }
+    })
+    if (titleShow) {
+      this.chart.showLoading({
+        text: '暂无数据',
+        textStyle: {
+          fontSize: 20
+        },
+        showSpinner: false,
+        textColor: 'white',
+        maskColor: 'transparent'
+      })
+    } else {
+      this.chart.hideLoading()
+    }
     return Object.assign({}, option, {
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
         position: autoTooltipPosition
+      },
+      graphic: {
+        type: 'text',
+        left: 'center',
+        top: 'middle',
+        silent: true,
+        invisible: titleShow,
+        style: {
+          fill: 'black',
+          fontWeight: 'bold',
+          text: '暂无数据',
+          fontSize: '26px'
+        }
       }
     })
   }

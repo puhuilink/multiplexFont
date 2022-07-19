@@ -369,6 +369,14 @@ export default {
       this.myChart = echarts.init(document.getElementById(this.widgetId + key.toString()))
       let YData = []
       let XData = []
+      this.myChart.showLoading({
+        text: '数据装填中 请稍后…',
+        textStyle: {
+          fontSize: 20
+        },
+        textColor: 'white',
+        maskColor: 'transparent'
+      })
       if (!this.styleConfig.barType) {
         if (!this.$attrs.is_components) {
           return
@@ -450,6 +458,25 @@ export default {
         xAxis: x,
         yAxis: y,
         series: XData
+      }
+      let titleShow = true
+      XData.forEach(s => {
+        if (s.data.length) {
+          titleShow = false
+        }
+      })
+      if (titleShow) {
+        this.myChart.showLoading({
+          text: '暂无数据',
+          textStyle: {
+            fontSize: 20
+          },
+          showSpinner: false,
+          textColor: 'white',
+          maskColor: 'transparent'
+        })
+      } else {
+        this.myChart.hideLoading()
       }
       this.myChart.setOption(option)
       this.$nextTick(() => {
