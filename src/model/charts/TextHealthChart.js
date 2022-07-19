@@ -27,7 +27,6 @@ export default class TextsChart extends Chart {
   async mappingOption ({ commonConfig, proprietaryConfig, dataConfig }, loadingDynamicData = false) {
     const { grid, backgroundColor } = commonConfig.getOption()
     const { title, type, thresholdColorRule, decimalPoint = 0 } = proprietaryConfig.getOption()
-    console.log('title', title)
     const { sourceType, staticDataConfig: { staticData } } = dataConfig
     switch (sourceType) {
       case SOURCE_TYPE_STATIC: {

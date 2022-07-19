@@ -52,7 +52,6 @@ export default class BarChart extends Chart {
       itemStyle: { color, ...otherItemStyle }
     } = proprietaryConfig.getOption()
     const { sourceType, staticDataConfig, dbDataConfig } = dataConfig
-    console.log('show', legend.show)
 
     let series = []
     // 总体配置
@@ -129,7 +128,6 @@ export default class BarChart extends Chart {
         })
 
         const { legend: dynamicLegend, xAxis: dynamicXAxis, yAxis: dynamicYAxis, dataset } = dynamicData
-        console.log('dy', dynamicLegend)
         if (dataset) {
           dataset.source = dataset.source.map((el) => {
             Object
@@ -142,17 +140,45 @@ export default class BarChart extends Chart {
             return el
           })
         }
+        const xData =
+          {
+            type: dynamicXAxis.type,
+            data: dynamicXAxis.data ? dynamicXAxis.data.map(d => {
+              return {
+                value: d,
+                textStyle: {
+                  width: 10,
+                  overflow: 'truncate'
+                }
+              }
+            }) : null
+          }
+        const yData = {
+          type: dynamicYAxis.type,
+          data: dynamicYAxis.data ? dynamicYAxis.data.map(d => {
+            if (d.length > 20) {
+              const arr = d.split('')
+              const count = d.length / 20
+              for (let i = 0; i < count; i++) {
+                arr.splice(19 + i * 20, 0, '\n')
+              }
+              return { value: arr.join(''), lineHeight: 10 }
+            } else {
+              return d
+            }
+          }) : null,
+          axisLabel: { interval: 0 }
+        }
         Object.assign(option, {
           dataset,
           legend: Object.assign(legend, dynamicLegend),
-          xAxis: Object.assign(xAxis, dynamicXAxis),
-          yAxis: Object.assign(yAxis, dynamicYAxis),
+          xAxis: Object.assign(xAxis, xData),
+          yAxis: Object.assign(yAxis, yData),
           series
         })
         break
       }
     }
-
     return Object.assign({}, option, {
       tooltip: {
         position: autoTooltipPosition
