@@ -147,7 +147,8 @@ export default class ToLineDynamicDataConfig extends DynamicDataConfig {
 
   async generateWanData () {
     const { data: { throughput } } = await this.siteTrafficConfig.requestData()
-    if (!throughput) {
+    if (!throughput || !throughput.length) {
+      Object.assign(this, { series: [] })
       return
     }
     const subMultiple = this.getSubMultiple(this.siteTrafficConfig.unit, throughput[0].unit)

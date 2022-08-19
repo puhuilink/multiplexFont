@@ -102,6 +102,7 @@ export default class Chart {
    * @param {Boolean} loadingDynamicData 是否同时绘制动态数据
    */
   async mergeOption (config, loadingDynamicData = false) {
+    this.chart.clear()
     // 向外暴露 echarts 配置
     this.chartConfig = await this.mappingOption(config, loadingDynamicData)
     // 如果数据为空则清空图表

@@ -175,7 +175,8 @@ export default {
 
     async generateWanData () {
       const { data: { throughput } } = await this.siteTrafficConfig.requestData()
-      if (!throughput) {
+      if (!throughput || !throughput.length) {
+        Object.assign(this, { dataOption: { series: [] } })
         return
       }
       const subMultiple = this.getSubMultiple(this.siteTrafficConfig.unit, throughput[0].unit)
