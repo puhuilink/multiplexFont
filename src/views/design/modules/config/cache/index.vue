@@ -13,7 +13,7 @@ export default {
   computed: {
     ...mapState('screen', ['activeWidget']),
     config () {
-      // 保证 keep-alive deactivated 期间组件数据依旧正常绑定
+      // 保证  deactivated 期间组件数据依旧正常绑定
       return this.isFrozen ? this.cloneConfig : this.activeWidget.config
     },
     isFrozen () {

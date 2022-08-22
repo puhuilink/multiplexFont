@@ -492,6 +492,9 @@ export default {
   },
   mounted () {
     this.reloadEcharts(0)
+  },
+  beforeDestroy () {
+    this.myChart.dispose()
   }
 }
 </script>

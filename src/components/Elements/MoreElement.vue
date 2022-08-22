@@ -237,6 +237,9 @@ export default {
     api () {
       return this.elementProps.api
     }
+  },
+  beforeDestroy () {
+    this.elementProps = null
   }
 }
 </script>

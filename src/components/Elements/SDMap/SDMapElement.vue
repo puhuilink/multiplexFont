@@ -565,6 +565,9 @@ export default {
   },
   mounted () {
     this.getNodeData()
+  },
+  beforeDestroy () {
+    this.myChart.dispose()
   }
 }
 </script>

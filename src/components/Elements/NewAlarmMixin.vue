@@ -389,7 +389,7 @@ export default {
     },
     dataSource () {
       const { elementProps } = this
-      return this.isComponents ? this.propsData : elementProps.dataSource.map(data => Object.assign({}, data, { uuid: uuid() }))
+      return this.isComponents ? this.propsData : elementProps.dataSource.slice(0, 20).map(data => Object.assign({}, data, { uuid: uuid() }))
     },
     headerRowStyle () {
       const { elementProps } = this
@@ -465,6 +465,7 @@ export default {
       })
   },
   beforeDestroy () {
+    this.elementProps = null
     this.isSubscribed = false
   }
 
