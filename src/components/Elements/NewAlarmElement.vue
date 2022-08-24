@@ -13,8 +13,10 @@
       rowKey="uuid"
       ref="table"
       :scroll="scroll"
-      :pagination="false"
+      :pagination="pagination"
+      :sorter="sorter"
       :locale="locale"
+      @change="handleTableChange"
     >
       <div
         slot="filterDropdown"
@@ -69,6 +71,7 @@
         </template>
       </template>
     </a-table>
+    <a-pagination v-show="isComponents"/>
     <!-- E 列表 -->
   </div>
 </template>

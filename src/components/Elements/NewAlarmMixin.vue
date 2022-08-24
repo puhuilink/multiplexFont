@@ -63,7 +63,10 @@ export default {
         'L3NETWORK': '云网络',
         'ENDPOINT': '延伸监控'
       },
-    locale: { emptyText: '暂无数据' }
+    locale: { emptyText: '暂无数据' },
+    current: 1,
+    tempDataSource: [],
+    sorter: {}
   }),
   watch: {
     'propsData': {
@@ -89,6 +92,7 @@ export default {
             'align': 'center'
           }
           this.elementProps.dataSource = value
+          this.tempDataSource = value
         }
       }
     }
@@ -101,7 +105,7 @@ export default {
       }
     },
     pagination () {
-      return this.isComponents ? { pageSize: 5 } : false
+      return this.isComponents ? { pageSize: 20, current: this.current, total: this.tempDataSource.length } : false
     },
     align () {
       const { elementProps } = this
@@ -388,8 +392,9 @@ export default {
       }
     },
     dataSource () {
-      const { elementProps } = this
-      return this.isComponents ? this.propsData : elementProps.dataSource.slice(0, 20).map(data => Object.assign({}, data, { uuid: uuid() }))
+      const { elementProps, current } = this
+      const idx = (current - 1) * 20
+      return this.isComponents ? this.tempDataSource.slice(idx, idx + 20) : elementProps.dataSource.slice(0, 20).map(data => Object.assign({}, data, { uuid: uuid() }))
     },
     headerRowStyle () {
       const { elementProps } = this
@@ -402,17 +407,29 @@ export default {
   },
   methods: {
     handleSearch (selectedKeys, confirm, dataIndex) {
+      this.current = 1
       confirm()
       this.searchText = selectedKeys[0]
       this.searchedColumn = dataIndex
+      const searchData = []
+      this.propsData.forEach(e => {
+        if (e[dataIndex].indexOf(selectedKeys[0]) !== -1) {
+          searchData.push(e)
+        }
+      })
+      this.tempDataSource = searchData
     },
 
     handleReset (clearFilters) {
       clearFilters()
       this.searchText = ''
+      this.tempDataSource = this.propsData
     },
     // 实时计算 scroll
     calScroll () {
+      if (this.isComponents) {
+        return
+      }
       this.$table = this.$table || this.$el.getElementsByClassName('ant-table')[0]
       this.$thead = this.$thead || this.$el.getElementsByClassName('ant-table-thead')[0]
       const { height: elHeight } = window.getComputedStyle(this.$el)
@@ -423,6 +440,36 @@ export default {
       const yLength = elH - elH % thH - thH
 
       Object.assign(this.scroll, { y: yLength })
+    },
+    handleTableChange (pagination, filters, sorter) {
+      this.current = pagination.current
+      if (Object.keys(filters).length > 0) {
+        const temp = []
+        this.propsData.forEach(data => {
+          let flag = true
+          Object.keys(filters).forEach(f => {
+            if (!filters[f].length) {
+              return
+            }
+            if (!filters[f].includes(data[f])) {
+              flag = false
+            }
+          })
+          if (flag) {
+            temp.push(data)
+          }
+        })
+        this.tempDataSource = temp
+      }
+      // TODO 排序仍需解决
+      if (!this.sorter.field || this.sorter.field !== sorter.field) {
+        this.sorter = sorter
+        if (sorter.column) {
+          this.tempDataSource = this.tempDataSource.sort((a, b) => a[sorter.field] - b[sorter.field])
+        }
+      } else {
+        this.tempDataSource = this.tempDataSource.sort((b, a) => a[sorter.field] - b[sorter.field])
+      }
     },
     customRow (record, index) {
       const { backgroundColor = {}, ...rest } = this.rowStyle
