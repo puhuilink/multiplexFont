@@ -123,19 +123,6 @@ export default class LineChart extends Chart {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
         position: autoTooltipPosition
-      },
-      graphic: {
-        type: 'text',
-        left: 'center',
-        top: 'middle',
-        silent: true,
-        invisible: titleShow,
-        style: {
-          fill: 'black',
-          fontWeight: 'bold',
-          text: '暂无数据',
-          fontSize: '26px'
-        }
       }
     })
   }

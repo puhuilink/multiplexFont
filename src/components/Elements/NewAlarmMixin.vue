@@ -237,7 +237,7 @@ export default {
               width: '10%',
               align,
               show: true,
-              sorter: (a, b) => a.alarm_level - b.alarm_level,
+              // sorter: (a, b) => a.alarm_level - b.alarm_level,
               filters: this.isComponents ? [
                 {
                   text: '紧急',
@@ -288,7 +288,7 @@ export default {
               width: '10%',
               align,
               show: true,
-              sorter: (a, b) => a.status.length - b.status.length,
+              // sorter: (a, b) => a.status.length - b.status.length,
               filters: this.isComponents ? [
                 {
                   text: 'firing',
@@ -312,7 +312,7 @@ export default {
               width: '10%',
               align,
               show: true,
-              sorter: (a, b) => a.target.length - b.target.length,
+              // sorter: (a, b) => a.target.length - b.target.length,
               filters: this.isComponents ? [
                 {
                   text: 'CPE',
@@ -340,7 +340,7 @@ export default {
               width: '15%',
               align,
               show: true,
-              sorter: (a, b) => a.alarm_type.length - b.alarm_type.length,
+              // sorter: (a, b) => a.alarm_type.length - b.alarm_type.length,
               scopedSlots: this.isComponents ? {
                 filterDropdown: 'filterDropdown',
                 filterIcon: 'filterIcon',
