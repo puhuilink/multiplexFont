@@ -375,7 +375,10 @@ export default {
                 filterIcon: 'filterIcon',
                 customRender: 'customRender'
               } : false,
-              onFilter: (value, record) => true,
+              onFilter: (value, record) => record.detail
+                .toString()
+                .toLowerCase()
+                .includes(value.toLowerCase()),
               onFilterDropdownVisibleChange: visible => {
                 if (visible) {
                   setTimeout(() => {
