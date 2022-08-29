@@ -375,10 +375,7 @@ export default {
                 filterIcon: 'filterIcon',
                 customRender: 'customRender'
               } : false,
-              onFilter: (value, record) => record.detail
-                .toString()
-                .toLowerCase()
-                .includes(value.toLowerCase()),
+              onFilter: (value, record) => true,
               onFilterDropdownVisibleChange: visible => {
                 if (visible) {
                   setTimeout(() => {
@@ -407,17 +404,9 @@ export default {
   },
   methods: {
     handleSearch (selectedKeys, confirm, dataIndex) {
-      this.current = 1
       confirm()
       this.searchText = selectedKeys[0]
       this.searchedColumn = dataIndex
-      const searchData = []
-      this.propsData.forEach(e => {
-        if (e[dataIndex].indexOf(selectedKeys[0]) !== -1) {
-          searchData.push(e)
-        }
-      })
-      this.tempDataSource = searchData
     },
 
     handleReset (clearFilters) {
@@ -451,7 +440,11 @@ export default {
             if (!filters[f].length) {
               return
             }
-            if (!filters[f].includes(data[f])) {
+            if (f === 'detail' || f === 'alarm_type') {
+              flag = data[f].toString()
+                .toLowerCase()
+                .includes(filters[f][0].toLowerCase())
+            } else if (!filters[f].includes(data[f])) {
               flag = false
             }
           })
@@ -470,6 +463,7 @@ export default {
       } else {
         this.tempDataSource = this.tempDataSource.sort((b, a) => a[sorter.field] - b[sorter.field])
       }
+      console.log(this.dataSource)
     },
     customRow (record, index) {
       const { backgroundColor = {}, ...rest } = this.rowStyle
