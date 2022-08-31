@@ -424,7 +424,7 @@ export default {
         })) : []
         this.loading = false
       } else {
-        const d = await SdwanSiteService.getAlert({ type: 'day' })
+        const d = await SdwanSiteService.getAlertException({ type: 'day' })
         if (!d.data) {
           d.data = {}
         }

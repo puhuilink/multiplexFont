@@ -95,7 +95,7 @@ class AdaptorStaticSiteConfig {
   // 更新柱状图数据
   fetchBar () {
     const { type } = this.getOption()
-    return this.api().getAlert({ type: type })
+    return this.api().getAlertTop({ type: type })
   }
 
   // 更新文本健康度数据

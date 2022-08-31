@@ -20,6 +20,11 @@ class SdwanSiteService extends BaseService {
 
   static async getAlert (param = {}) {
     return axios.post('/sdwan/getAlert', param)
+  }static async getAlertException (param = {}) {
+    return axios.post('/sdwan/getAlertException', param)
+  }
+  static async getAlertTop (param = {}) {
+    return axios.post('/sdwan/getAlertTop', param)
   }
   static async getErrorConnection (param = {}) {
     return axios.post('/sdwan/getErrorConnection', param)

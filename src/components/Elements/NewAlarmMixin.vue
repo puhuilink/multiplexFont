@@ -443,7 +443,7 @@ export default {
             if (!filters[f].length) {
               return
             }
-            if (f === 'detail' || f === 'alarm_type') {
+            if (f === 'detail' || f === 'alarm_type' || f === 'details' || f === 'targetName') {
               flag = data[f].toString()
                 .toLowerCase()
                 .includes(filters[f][0].toLowerCase())
