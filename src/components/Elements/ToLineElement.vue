@@ -108,7 +108,6 @@ export default {
       this.selectedValue = value
       this.siteTrafficConfig.peerId = value
       await this.getSiteTrafficOption(this.siteTrafficConfig.requestType)
-      await this.getSiteTrafficOption(this.siteTrafficConfig.requestType)
       this.chartConfig = _.cloneDeep(this.initOption())
       await this.reloadEcharts()
     },
@@ -119,11 +118,41 @@ export default {
       }
       this.myChart = echarts.init(document.getElementById(this.widgetId))
       if (this.chartConfig) {
+        this.myChart.hideLoading()
         this.myChart.setOption(this.chartConfig)
+        if (this.judgeSeries(this.chartConfig)) {
+          this.myChart.showLoading(
+            {
+              text: '暂无数据',
+              textStyle: {
+                fontSize: 20
+              },
+              showSpinner: false,
+              textColor: 'white',
+              maskColor: 'transparent'
+            }
+          )
+        }
       }
       this.$nextTick(() => {
         this.myChart.resize()
       })
+    },
+    judgeSeries (config) {
+      if (!config) {
+        return true
+      }
+      const { series } = config
+      if (!series || !series.length) {
+        return true
+      }
+      let flag = true
+      series.forEach(s => {
+        if (s.data && s.data.length) {
+          flag = false
+        }
+      })
+      return flag
     },
     getId () {
       if (!this.widgetId) {

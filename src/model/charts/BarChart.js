@@ -174,6 +174,7 @@ export default class BarChart extends Chart {
           legend: Object.assign(legend, dynamicLegend),
           xAxis: Object.assign(xAxis, xData),
           yAxis: Object.assign(yAxis, yData),
+          cursor: 'auto',
           series
         })
         break

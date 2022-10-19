@@ -26,6 +26,7 @@ import PolarConfig from './charts/PolarConfig'
 import UpsConfig from '@/views/design/modules/config/elements/UpsConfig'
 import SelectConfig from '@/views/design/modules/config/elements/SelectConfig'
 import MoreConfig from '@/views/design/modules/config/elements/MoreConfig'
+import DepartmentConfig from '@/views/design/modules/config/elements/DepartmentConfig'
 import TabConfig from '@/views/design/modules/config/elements/TabConfig'
 import NewAlarmConfig from '@/views/design/modules/config/elements/NewAlarmConfig'
 import TimeSelectorConfig from '@/views/design/modules/config/elements/TimeSelectorConfig'
@@ -62,6 +63,7 @@ const elements = {
   SelectConfig,
   NewAlarmConfig,
   SDMapConfig,
+  DepartmentConfig,
   PercentConfig,
   ToLineConfig,
   TimeSelectorConfig

@@ -16,6 +16,7 @@ import TimeSelectProprietaryConfig from '@/model/config/proprietaryConfigs/TimeS
 import SDMapProprietaryConfig from '@/model/config/proprietaryConfigs/SDMapProprietaryConfig'
 import PercentProprietaryConfig from '@/model/config/proprietaryConfigs/PercentProprietaryConfig'
 import ToLineProprietaryConfig from '@/model/config/proprietaryConfigs/ToLineProprietaryConfig'
+import DepartmentProprietaryConfig from '@/model/config/proprietaryConfigs/DepartmentProprietaryConfig'
 
 export default class ElementProprietaryConfigFactory {
   static create ({ type, proprietaryConfig = {} }) {
@@ -42,6 +43,8 @@ export default class ElementProprietaryConfigFactory {
         return new ToLineProprietaryConfig(proprietaryConfig)
       case 'Percent':
         return new PercentProprietaryConfig(proprietaryConfig)
+      case 'Department':
+        return new DepartmentProprietaryConfig(proprietaryConfig)
       default:
         return null
     }

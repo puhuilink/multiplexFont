@@ -42,6 +42,11 @@ export default {
             arr[index].config.proprietaryConfig.title.text = label
           }
         }
+        if (el.config.type === 'Department') {
+          indexArr.push(index)
+          console.log(arr[index])
+          arr[index].config.proprietaryConfig.props.styleConfig.text = label
+        }
         if (el.config.type === 'Lines') {
           indexArr.push(index)
           arr[index].config.dataConfig.dbDataConfig.siteCpeConfig.siteId = value

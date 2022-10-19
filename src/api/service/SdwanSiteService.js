@@ -94,7 +94,7 @@ class MVSiteService extends BaseService {
     return axios.post('/mv/getWan', param)
   }
 
-  static async getAlert (param = {}) {
+  static async getAlertTop (param = {}) {
     return axios.post('/mv/getAlarmTop', param)
   }
 

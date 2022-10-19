@@ -79,6 +79,7 @@ export default {
       ['SDMap', 'SDMapConfig'],
       ['Percent', 'PercentConfig'],
       ['ToLine', 'ToLineConfig'],
+      ['Department', 'DepartmentConfig'],
       ['TimeSelector', 'TimeSelectorConfig']
     ])
   }),

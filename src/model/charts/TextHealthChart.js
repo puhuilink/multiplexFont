@@ -69,8 +69,16 @@ export default class TextsChart extends Chart {
       title.textStyle.color = thresholdColor || title.textStyle.color
       backgroundColor.backgroundColor = thresBgColor || backgroundColor
     }
+    const tooltip = {
+      show: true,
+      trigger: 'item',
+      formatter: (parms) => {
+        return title.text
+      }
+    }
     title.text = this.formatText(type, title.text)
-    return { grid, title, ...backgroundColor }
+    console.log('textHealth', title.text, { grid, title, ...backgroundColor })
+    return { grid, title, tooltip, ...backgroundColor }
   }
   formatText (type = 'default', originText = '') {
     switch (type) {

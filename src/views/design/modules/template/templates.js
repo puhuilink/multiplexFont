@@ -95,6 +95,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'Percent', name: '百分比仪表盘', icon: 'history', width: 800, height: 600
+  },
+  {
+    category: 'ELEMENT', type: 'Department', name: '单位名称', icon: 'title', width: 100, height: 40
   }
 ]
 
