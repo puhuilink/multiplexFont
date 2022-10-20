@@ -64,6 +64,17 @@
                   </a-select>
                 </div>
               </div>
+              <!-- / 大小 -->
+
+              <div class="comment-template__item">
+                <p class="comment-template__leading">长度:</p>
+                <div class="comment-template__inner comment-template__end">
+                  <a-input
+                    v-model="config.proprietaryConfig.props.styleConfig.textStyle.width"
+                    @change="change">
+                  </a-input>
+                </div>
+              </div>
               <!-- / 粗细 -->
 
               <div class="comment-template__item">

@@ -1,6 +1,6 @@
 <template>
   <div :style="{ width: '100%', height: '100%', ...fatherStyle}">
-    <h1 :style="styleConfig.textStyle" v-show="styleConfig.text">
+    <h1 class="departmentTitle" :title="styleConfig.text" :style="styleConfig.textStyle" v-show="styleConfig.text">
       ({{ styleConfig.text }})</h1>
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
           textStyle: {
             fontSize: 18,
             fontWeight: 'normal',
+            width: 50,
             fontStyle: 'normal'
           },
           // defaultColor = '',
@@ -36,7 +37,8 @@ export default {
       styleConfig: {
         text: '文本',
         textStyle: {
-          fontSize: '18px'
+          fontSize: '18px',
+          width: 50
         },
         // defaultColor = '',
         position: {}
@@ -145,5 +147,10 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+.departmentTitle{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 </style>
