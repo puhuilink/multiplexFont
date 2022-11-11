@@ -41,7 +41,7 @@ export default {
       default: 'default'
     },
     /**
-     * alert: {
+     * alert-manager: {
      *   show: true,
      *   clear: Function
      * }
@@ -253,7 +253,7 @@ export default {
         this.renderClear(this.alert.clear)
       ) : null
 
-      // 绘制 alert 组件
+      // 绘制 alert-manager 组件
       return (
         <a-alert showIcon={true} style="margin-bottom: 16px">
           <template slot="message">

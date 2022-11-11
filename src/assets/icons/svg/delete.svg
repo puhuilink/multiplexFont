@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_uploading@1.5x</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="集成" transform="translate(-1840.000000, -214.000000)">
+            <g id="table备份" transform="translate(400.000000, 149.000000)">
+                <g id="编组-8" transform="translate(1380.000000, 65.000000)">
+                    <g id="编组" transform="translate(60.000000, 0.000000)">
+                        <path d="M14,16 L2.00576853,16 C1.45348378,16 1.00576853,15.5522847 1.00576853,15 C1.00576853,14.4477153 1.45348378,14 2.00576853,14 L14,14 C14.5522847,14 15,14.4477153 15,15 C15,15.5522847 14.5522847,16 14,16 Z" id="路径" fill="#0975D1" fill-rule="nonzero"></path>
+                        <polygon id="路径备份-2" fill="#0975D1" fill-rule="nonzero" points="12.0028843 1 4.00288427 1 5.00128174 0 11.0088501 0"></polygon>
+                        <path d="M14,3 L2.00576853,3 C1.45348378,3 1.00576853,2.55228475 1.00576853,2 C1.00576853,1.44771525 1.45348378,1 2.00576853,1 L14,1 C14.5522847,1 15,1.44771525 15,2 C15,2.55228475 14.5522847,3 14,3 Z" id="路径备份" fill="#0975D1"></path>
+                        <polyline id="路径-3" stroke="#0975D1" stroke-width="2" points="5.68434189e-14 2 2 2 2 15"></polyline>
+                        <line x1="6" y1="5.00640869" x2="6" y2="12.0016479" id="路径-3备份-2" stroke="#0975D1" stroke-width="2" stroke-linecap="round"></line>
+                        <line x1="10" y1="5.00640869" x2="10" y2="12.0016479" id="路径-3备份-3" stroke="#0975D1" stroke-width="2" stroke-linecap="round" transform="translate(10.000000, 8.504028) scale(-1, 1) translate(-10.000000, -8.504028) "></line>
+                        <polyline id="路径-3备份" stroke="#0975D1" stroke-width="2" transform="translate(14.997116, 8.500000) scale(-1, 1) translate(-14.997116, -8.500000) " points="14 2 15.9942315 2 15.9942315 15"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -353,6 +353,30 @@ export const asyncRouterMap = [
           }
         ]
       },
+      {
+        path: '/integration',
+        name: 'Integration',
+        hidden: false,
+        component: RouteView,
+        redirect: '/integration/platform',
+        meta: { title: '集成', keepAlive: true, icon: 'user', permission: ['F002002'] },
+        children: [
+          {
+            path: '/integration/newAlertSource',
+            name: 'NewAlertSource',
+            component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+            meta: { title: '新建数据源' },
+            hidden: true,
+            props: route => route.query
+          },
+          {
+            path: '/integration/platform',
+            name: 'platform',
+            component: () => import('@/views/alert-manager/integration/index'),
+            meta: { title: '集成' }
+          }
+        ]
+      },
       // capacity
       {
         path: '/prediction',
@@ -606,7 +630,6 @@ export const asyncRouterMap = [
     meta: { title: '视图设计', permission: ['F002002'] },
     props: route => route.query
   },
-
   // 数据管理平台
   {
     path: '*', redirect: '/404', hidden: true
