@@ -1,32 +1,37 @@
 <template>
-  <a-row>
-    <a-col flex="7" style="background: white; height: 1060px">
-      <a-row style="margin-top: 20px; margin-left: 20px; margin-right: 20px">
-        <a-col flex="auto" style="font-size: 20px">
-          <a @click="back"><a-icon type="left-outlined"/>&nbsp;新建告警源&nbsp;/&nbsp;{{ type }}</a>
-
-        </a-col>
-        <a-col flex="100px">
-          <a-button>取消</a-button>
-        </a-col>
+  <div class="container">
+    <div class="item" style="background: white; height: 1060px">
+      <div style="margin-top: 20px; margin-left: 20px; margin-right: 20px">
+        <div class="fakeContainer">
+          <div style="grid-column-start:1;grid-column-end:3;font-size: 20px">
+            <a @click="back"><a-icon type="left"/>&nbsp;新建告警源&nbsp;/&nbsp;{{ type }}</a>
+          </div>
+          <div style="grid-column: 8/9;place-self:end;width: 100px;">
+            <a-button>取消</a-button>
+          </div>
+        </div>
         <a-divider style="background: rgb(236,236,236)" />
-        <a-col span="24"><AlertSourceForm /></a-col>
-      </a-row>
-    </a-col>
-    <a-col flex="20px"></a-col>
-    <a-col flex="2" style="background: white;padding: 20px">
-      <a-row justify="center">
-        <SvgIcon :name="'svg-'+type" width="100px" height="100px"/>
-      </a-row>
-      <a-typography-paragraph style="margin-top: 30px">
+        <div><AlertSourceForm /></div>
+      </div>
+    </div>
+    <div class="item"/>
+    <div class="item rightContainer" style="background: white;padding: 20px;place-content: space-between">
+      <center style='grid-row: 1/2'>
+        <img :src="require(`@/assets/icons/svg/${type}.svg`)" width="100px" height="100px"/>
+      </center>
+      <p style='grid-row: 2/3'>
         Pigoss 提供了一个网络和告警源监控的开源解决方案，它支持数百万的监控指标。安装Pigoss 告警源可以将 Pigoss中的告警接入到 Cloud Alert 中来，自动帮您压缩冗余告警，避免告警风暴，让您更快定位和解决问题。
-      </a-typography-paragraph>
-      <a-typography-title :level="4" style="margin-top: 30px">监控级别对应关系</a-typography-title>
-      <a-table :columns="platformMapping"></a-table>
-      <a-typography-title :level="4" style="margin-top: 30px">EventId对应关系</a-typography-title>
-      <a-table :columns="platformMapping1"></a-table>
-    </a-col>
-  </a-row>
+      </p>
+      <div style='grid-row: 3/5'>
+        <h4 name="mapping1" style="margin-top: 30px">监控级别对应关系</h4>
+        <a-table :columns="platformMapping" :data-source="data1" :pagination='false'></a-table>
+      </div>
+      <div style='grid-row: 5/6'>
+        <h4>EventId对应关系</h4>
+        <a-table :columns="platformMapping1" :data-source="data2" :pagination='false'></a-table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -72,12 +77,47 @@ export default {
   },
   data () {
     const type = this.$route.query.platType
-
     return {
-      type
+      type,
+      data1: [
+        { here: 'p1', there: '5' },
+        { here: 'p2', there: '4' },
+        { here: 'p3', there: '2,3' },
+        { here: 'p4', there: '1' },
+        { here: 'p5', there: '0' }
+      ],
+      data2: [
+        { here: '告警ID\n （eventId）', there: 'eventId' }
+      ]
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.container{
+  display:grid;
+  background-color: #F2f3f3;
+  border: 1px solid #F2f3f3;
+  grid-template-columns: 2fr 30px 1fr;
+  grid-template-rows: repeat(1, 1fr) ;
+  }
+.fakeContainer{
+  display:grid;
+  grid-auto-columns: 1fr;
+  grid-template-columns: 220px;
+  grid-auto-rows: 1fr;
+  /*grid-template-rows: repeat(1, 1fr) ;*/
+  /*place-content: space-between;*/
+}
+.rightContainer{
+  display:grid;
+  /*grid-gap: 30px;*/
+  grid-template-rows: repeat(4, 1fr) ;
+  /*grid-auto-rows: 1fr;*/
+  /*grid-template-columns: 220px;*/
+}
+.item{
+  /*border: 1px solid #6E2D9F;*/
+}
+</style>

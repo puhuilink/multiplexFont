@@ -5,7 +5,7 @@
     :wrapper-col="{ span: 20 }"
     autocomplete="off"
     name="basic"
-    style="width: 1200px; margin-top: 30px"
+    style="margin-top: 30px"
     @finish="onFinish"
     @finishFailed="onFinishFailed"
   >
@@ -40,7 +40,7 @@
       <a-input v-show="formState.autoClose" :value="formState.timeout" style="width: 200px">
         <template #suffix> 分钟</template>
       </a-input>
-      <a-switch :checked="formState.autoClose"/>
+      <a-switch :checked="formState.autoClose" @change="onAutoCloseChange"/>
     </a-form-item>
     <a-form-item
       :rules="[{ required: true, message: 'Please input your password!' }]"
@@ -48,7 +48,7 @@
       label="开启自动去重"
       name="password"
     >
-      <a-switch :checked="formState.dedup"/>
+      <a-switch :checked="formState.dedup" @change='onDedupChange'/>
     </a-form-item>
     <a-form-item
       :rules="[{ required: true, message: 'Please input your password!' }]"
@@ -56,7 +56,7 @@
       label="开启认领"
       name="password"
     >
-      <a-switch :checked="formState.reclaim"/>
+      <a-switch :checked="formState.reclaim" @change='onReclaimChange'/>
     </a-form-item>
     <a-form-item
       :rules="[{ required: true, message: 'Please input your password!' }]"
@@ -67,7 +67,7 @@
       <a-input v-show="formState.noneConfig.state" :value="formState.noneConfig.timeout" style="width: 200px">
         <template #suffix> 小时</template>
       </a-input>
-      <a-switch :checked="formState.noneConfig.state"/>
+      <a-switch :checked="formState.noneConfig.state" @change='onSelfChange'/>
     </a-form-item>
     <a-form-item
       :rules="[{ required: true, message: 'Please input your password!' }]"
@@ -75,14 +75,6 @@
       name="password"
     >
       <a-input :value="formState.url" style="width: 300px" />
-    </a-form-item
-    >
-    <a-form-item
-      :rules="[{ required: true, message: 'Please input your password!' }]"
-      label="通知组"
-      name="password"
-    >
-      <a-select :value="formState.groupId" style="width: 300px" />
     </a-form-item>
     <a-form-item :wrapper-col="{ offset: 4, span: 20 }">
       <a-button html-type="submit" type="primary">保存</a-button>
@@ -122,6 +114,22 @@ export default {
 
     onFinishFailed (errorInfo) {
       console.log('Failed:', errorInfo)
+    },
+    onAutoCloseChange (flag) {
+      this.formState.autoClose = flag
+      // console.log('Failed:', flag)
+    },
+    onReclaimChange (flag) {
+      this.formState.reclaim = flag
+      // console.log('Failed:', flag)
+    },
+    onDedupChange (flag) {
+      this.formState.dedup = flag
+      // console.log('Failed:', flag)
+    },
+    onSelfChange (flag) {
+      this.formState.noneConfig.state = flag
+      // console.log('Failed:', flag)
     }
   }
 }
