@@ -125,7 +125,7 @@ export default {
         dataIndex: 'flag',
         width: 90,
         sorter: true,
-        customRender: (flag) => (flag === USER_FLAG.enabled ? '有效' : '无效')
+        customRender: (flag) => (flag.toString() === USER_FLAG.enabled ? '有效' : '无效')
       },
       {
         title: '备注',
