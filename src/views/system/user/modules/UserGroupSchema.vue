@@ -61,7 +61,7 @@ export default {
         })
         this.groupList = groupList.map((el) => ({
           ...el,
-          disabled: el.flag !== GROUP_FLAG.enabled
+          disabled: el.flag.toString() !== GROUP_FLAG.enabled
         }))
       } catch (e) {
         this.groupList = []

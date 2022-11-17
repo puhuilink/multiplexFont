@@ -31,6 +31,7 @@
 import { filterTransferOption } from '@/utils/util'
 import { UserService, UserGroupService } from '@/api'
 import { Schema } from '@/components/Mixins'
+import { USER_FLAG } from '@/tables/user/enum'
 
 export default {
   name: 'GroupUserSchema',
@@ -58,7 +59,7 @@ export default {
         })
         this.userList = userList.map((el) => ({
           ...el,
-          disabled: el.flag === 1
+          disabled: el.flag === USER_FLAG.enabled
         }))
       } catch (e) {
         this.userList = []

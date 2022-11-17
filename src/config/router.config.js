@@ -17,7 +17,12 @@ export const asyncRouterMap = [
           name: 'devTest'
         }
       ],
-
+      {
+        path: '/union-alarm',
+        component: () => import('@/views/union-alaram/index'),
+        meta: { title: '统一告警', keepAlive: true, icon: 'alert' },
+        name: 'devTest'
+      },
       // view
       {
         path: '/view',

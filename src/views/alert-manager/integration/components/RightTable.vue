@@ -5,34 +5,30 @@
     :data-source="data"
     :row-key="(record) => record.id"
   >
-    <template #bodyCell="{ column, text }">
-      <template v-if="column.key === 'detail'">
-        <a>查看详情</a>
-      </template>
-      <template v-if="column.key === 'autoClose'"> {{ text }}分钟 </template>
-      <template v-if="column.key === 'action'">
-        <SvgIcon
-          name="svg-编辑"
-          width="20px"
-          height="20px"
-          style="margin-bottom: -5px"
-          title="编辑应用"
-        />
-        <a-divider type="vertical" />
-        <a-switch :checked="text.status" size="small" />
-        <a-divider type="vertical" />
-        <SvgIcon
-          name="svg-删除"
-          width="20px"
-          height="20px"
-          style="margin-bottom: -5px"
-          title="删除应用"
-        />
-      </template>
-      <template v-if="column.key === 'status'">
-        <SvgIcon v-show="text.status" name="svg-绿@1.5x" />
-        <SvgIcon v-show="!text.status" name="svg-红@1.5x" />
-      </template>
+    <template :slot="'detail'">
+      <a>查看详情</a>
+    </template>
+    <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
+    <template :slot="'action'" slot-scope="text,record">
+      <img
+        :src="require(`@/assets/icons/svg/编辑.svg`)"
+        width="20px"
+        height="20px"
+        title="编辑应用"
+      />
+      <a-divider type="vertical" />
+      <a-switch :checked="record.status" size="small" />
+      <a-divider type="vertical" />
+      <img
+        :src="require(`@/assets/icons/svg/删除.svg`)"
+        width="20px"
+        height="20px"
+        title="删除应用"
+      />
+    </template>
+    <template :slot="'status'" slot-scope="text, record">
+      <img v-show="record.status" :src="require(`@/assets/icons/svg/绿.svg`)" />
+      <img v-show="!record.status" :src="require(`@/assets/icons/svg/红.svg`)" />
     </template>
   </a-table>
 </template>
@@ -65,6 +61,7 @@ const columns = [
   {
     title: '状态',
     key: 'status',
+    scopedSlots: { customRender: 'status' },
     width: '30px',
     align: 'center'
   },
@@ -115,12 +112,14 @@ const columns = [
   {
     title: '关联信息',
     key: 'detail',
+    scopedSlots: { customRender: 'detail' },
     width: '40px',
     align: 'center'
   },
   {
     title: '操作',
     key: 'action',
+    scopedSlots: { customRender: 'action' },
     width: '80px',
     align: 'center'
   }
