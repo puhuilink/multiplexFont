@@ -382,6 +382,22 @@ export const asyncRouterMap = [
           }
         ]
       },
+      {
+        path: '/alertConfig',
+        name: 'AlertConfig',
+        hidden: false,
+        component: RouteView,
+        redirect: '/alertConfig/deliver',
+        meta: { title: '告警配置', keepAlive: true, icon: 'user', permission: ['F002002'] },
+        children: [
+          {
+            path: '/alertConfig/deliver',
+            name: 'Deliver',
+            component: () => import('@/views/alert-manager/config/index'),
+            meta: { title: '分派策略' }
+          }
+        ]
+      },
       // capacity
       {
         path: '/prediction',

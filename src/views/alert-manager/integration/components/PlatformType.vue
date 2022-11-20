@@ -22,10 +22,10 @@
             <a-input v-model="formState.name" />
           </a-form-model-item>
           <a-form-model-item label="接入平台描述">
-            <a-input v-model="formState.description" />
+            <a-textarea v-model="formState.description" />
           </a-form-model-item>
           <a-form-model-item label="监控级别对应关系">
-            <a-table :columns="mappingColumns" :data-source="formState.mapping" :pagination="false" :rowKey="(record,index)=>index">
+            <a-table :columns="mappingColumns" :data-source="formState.mapping" :pagination="false" :row-key="(record,index)=>index">
               <template
                 v-for="col in ['here', 'there']"
                 :slot="col"
@@ -46,7 +46,7 @@
               <template slot="operation" slot-scope="text, record">
                 <div class="editable-row-operations">
                   <span v-if="record.editable">
-                    <a @click="() => save(record.key)">保存</a>
+                    <a @click="save(record.key)">保存</a>
                     <a-divider type="vertical" />
                     <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
                       <a>取消</a>
@@ -111,7 +111,8 @@ export default {
         mapping: [
           {
             here: 'p1',
-            there: '1'
+            there: '1',
+            key: 0
           }
         ]
       },
@@ -142,7 +143,8 @@ export default {
       this.formState.mapping.push(
         {
           here: 'p1',
-          there: '1'
+          there: '1',
+          key: this.formState.mapping.length
         }
       )
       this.$forceUpdate()
@@ -160,8 +162,8 @@ export default {
       }
     },
     edit (key) {
-      console.log(111)
       const newData = [...this.formState.mapping]
+      this.cacheData = _.cloneDeep(newData)
       const target = newData[key]
       this.editingKey = key
       if (target) {
@@ -184,7 +186,7 @@ export default {
     },
     cancel (key) {
       const newData = [...this.formState.mapping]
-      const target = newData.find(item => key === item.key)
+      const target = newData[key]
       this.editingKey = ''
       if (target) {
         Object.assign(target, this.cacheData[key])
@@ -212,9 +214,6 @@ export default {
           scopedSlots: { customRender: 'operation' }
         }
       ]
-    },
-    cacheData () {
-      return _.cloneDeep(this.formState.mapping)
     }
   }
 }

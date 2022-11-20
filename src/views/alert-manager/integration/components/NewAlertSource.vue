@@ -16,17 +16,17 @@
     </div>
     <div class="item"/>
     <div class="item rightContainer" style="background: white;padding: 20px;place-content: space-between">
-      <center style="grid-row: 1/2">
+      <center style="">
         <img :src="require(`@/assets/icons/svg/${type}.svg`)" width="100px" height="100px"/>
       </center>
-      <p style="grid-row: 2/3;margin: 0px 50px 0px 50px">
+      <p style="margin: 0px 50px 0px 50px">
         Pigoss 提供了一个网络和告警源监控的开源解决方案，它支持数百万的监控指标。安装Pigoss 告警源可以将 Pigoss中的告警接入到 Cloud Alert 中来，自动帮您压缩冗余告警，避免告警风暴，让您更快定位和解决问题。
       </p>
-      <div style="grid-row: 3/5">
+      <div style="">
         <h4 name="mapping1" style="margin-top: 30px">监控级别对应关系</h4>
         <a-table :columns="platformMapping" :data-source="data1" :pagination="false" bordered></a-table>
       </div>
-      <div style="grid-row: 5/6">
+      <div style="">
         <h4>EventId对应关系</h4>
         <a-table :columns="platformMapping1" :data-source="data2" :pagination="false" bordered></a-table>
       </div>
@@ -115,9 +115,9 @@ export default {
   /*place-content: space-between;*/
 }
 .rightContainer{
-  display:grid;
+  /*display:grid;*/
   /*grid-gap: 30px;*/
-  grid-template-rows: repeat(4, 1fr) ;
+  /*grid-template-rows: repeat(4, 1fr) ;*/
   /*grid-auto-rows: 1fr;*/
   /*grid-template-columns: 220px;*/
 }
