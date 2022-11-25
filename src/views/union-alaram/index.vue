@@ -87,7 +87,7 @@
     <a-button icon="export" :disabled="!hasSelected">导出</a-button>
     <!--        关闭按钮-->
     <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)" >
-      <a-button icon="check" :disabled="!hasSelected">关闭</a-button>
+      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
     <a-table
       bordered
@@ -219,8 +219,7 @@ export default {
       pagination,
       a: 0,
       visible: false,
-      selectedRowKeys: [],
-      title: '压缩告警详情'
+      selectedRowKeys: []
     }
   },
   mixins: [List],
@@ -271,7 +270,6 @@ export default {
       // TODO 交互详情内容
     },
     onClose () {
-      console.log('关闭')
       this.visible = false
     }
   },

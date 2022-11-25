@@ -21,8 +21,25 @@ export const asyncRouterMap = [
         path: '/union-alarm',
         component: () => import('@/views/union-alaram/index'),
         meta: { title: '统一告警', keepAlive: true, icon: 'alert' },
-        name: 'devTest'
+        name: 'union'
       },
+
+      // 通知组页
+      {
+        path: '/notified-group',
+        component: () => import('@/views/notificationGroup/index'),
+        meta: { title: '通知组管理', keepAlive: true },
+        name: 'notice-group'
+      },
+
+      // 通知组页
+      {
+        path: '/notice-template',
+        component: () => import('@/views/alert-manager/noticeTemplate/index'),
+        meta: { title: '模板管理', keepAlive: true },
+        name: 'notice-template'
+      },
+
       // view
       {
         path: '/view',
@@ -35,13 +52,13 @@ export const asyncRouterMap = [
             path: '/view/display',
             name: 'ViewDisplay',
             component: () => import('@/views/view/display/index'),
-            meta: { title: '视图展示', keepAlive: true, permission: [ 'F002001', 'F002003' ] }
+            meta: { title: '视图展示', keepAlive: true, permission: ['F002001', 'F002003'] }
           },
           {
             path: '/view/list',
             name: 'ViewList',
             component: () => import('@/views/view/list/index'),
-            meta: { title: '视图定制', keepAlive: true, permission: [ 'F002002' ] }
+            meta: { title: '视图定制', keepAlive: true, permission: ['F002002'] }
           }
         ]
       },
@@ -52,31 +69,31 @@ export const asyncRouterMap = [
         name: 'alarm',
         redirect: '/alarm/monitor',
         component: RouteView,
-        meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: [ 'F003' ] },
+        meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F003'] },
         children: [
           {
             path: '/alarm/monitor',
             name: 'AlarmMonitor',
             component: () => import('@/views/alarm/monitor/index'),
-            meta: { title: '告警监控', keepAlive: true, permission: [ 'F003001' ] }
+            meta: { title: '告警监控', keepAlive: true, permission: ['F003001'] }
           },
           {
             path: '/alarm/log',
             component: RouteView,
-            meta: { title: '告警记录', keepAlive: true, permission: [ 'F003002' ] },
+            meta: { title: '告警记录', keepAlive: true, permission: ['F003002'] },
             redirect: '/alarm/log/alarm',
             children: [
               {
                 path: '/alarm/log/history',
                 name: 'AlarmLogHistory',
                 component: () => import('@/views/alarm/log/history/index'),
-                meta: { title: '历史告警', keepAlive: true, permission: [ 'F003002001' ] }
+                meta: { title: '历史告警', keepAlive: true, permission: ['F003002001'] }
               },
               {
                 path: '/alarm/log/forward',
                 name: 'AlarmLogForward',
                 component: () => import('@/views/alarm/log/forward/index'),
-                meta: { title: '通知记录', keepAlive: true, permission: [ 'F003002002' ] }
+                meta: { title: '通知记录', keepAlive: true, permission: ['F003002002'] }
               }
             ]
           },
@@ -84,13 +101,13 @@ export const asyncRouterMap = [
             path: '/alarm/config',
             name: 'AlarmConfig',
             component: RouteView,
-            meta: { title: '告警配置', keepAlive: true, permission: [ 'F003003' ] },
+            meta: { title: '告警配置', keepAlive: true, permission: ['F003003'] },
             children: [
               {
                 path: '/alarm/config/strategy',
                 name: 'AlarmStrategy',
                 component: () => import('@/views/alarm/config/strategy/index'),
-                meta: { title: '阈值规则', keepAlive: true, permission: [ 'F003003001' ] }
+                meta: { title: '阈值规则', keepAlive: true, permission: ['F003003001'] }
               },
               // {
               //   path: '/alarm/config/describe-temp',
@@ -115,7 +132,7 @@ export const asyncRouterMap = [
                 path: '/alarm/config/rules',
                 name: 'AlarmRules',
                 component: () => import('@/views/alarm/config/rules/index'),
-                meta: { title: '告警规则', keepAlive: true, permission: [ 'F003003004' ] }
+                meta: { title: '告警规则', keepAlive: true, permission: ['F003003004'] }
               },
               {
                 path: '/alarm/config/forward-bind',
@@ -135,13 +152,13 @@ export const asyncRouterMap = [
         name: 'performance',
         redirect: '/performance/tree-navigation',
         component: RouteView,
-        meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt', permission: [ 'F004' ] },
+        meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt', permission: ['F004'] },
         children: [
           {
             path: '/performance/tree-navigation',
             name: 'TreeNavigation',
             component: () => import('@/views/performance/tree-navigation/index'),
-            meta: { title: '树形导航图', keepAlive: true, permission: [ 'F004001' ] }
+            meta: { title: '树形导航图', keepAlive: true, permission: ['F004001'] }
           },
           // {
           //   path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
@@ -156,22 +173,22 @@ export const asyncRouterMap = [
           {
             path: 'http://10.1.19.15/#/login',
             name: '北京Pigoss1',
-            meta: { title: '北京Pigoss1', target: '_blank', permission: [ 'F004004' ] }
+            meta: { title: '北京Pigoss1', target: '_blank', permission: ['F004004'] }
           },
           {
             path: 'http://10.1.19.16/#/login',
             name: '北京Pigoss2',
-            meta: { title: '北京Pigoss2', target: '_blank', permission: [ 'F004004' ] }
+            meta: { title: '北京Pigoss2', target: '_blank', permission: ['F004004'] }
           },
           {
             path: 'http://10.201.22.38/#/login',
             name: '厦门Pigoss1',
-            meta: { title: '厦门Pigoss1', target: '_blank', permission: [ 'F004008' ] }
+            meta: { title: '厦门Pigoss1', target: '_blank', permission: ['F004008'] }
           },
           {
             path: 'http://10.201.22.39/#/login',
             name: '厦门Pigoss2',
-            meta: { title: '厦门Pigoss2', target: '_blank', permission: [ 'F004008' ] }
+            meta: { title: '厦门Pigoss2', target: '_blank', permission: ['F004008'] }
           },
           // {
           //   path: 'http://10.1.1.10/',
@@ -183,7 +200,7 @@ export const asyncRouterMap = [
             path: 'http://10.201.52.2/',
             name: '厦门动环',
             // 东环不存在权限配置项，则和主视图同等权重
-            meta: { title: '厦门动环', target: '_blank', permission: [ 'F004010' ] }
+            meta: { title: '厦门动环', target: '_blank', permission: ['F004010'] }
           },
           // {
           //   path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
@@ -193,12 +210,12 @@ export const asyncRouterMap = [
           {
             path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
-            meta: { title: '4A告警监控', target: '_blank', permission: [ 'F004006' ] }
+            meta: { title: '4A告警监控', target: '_blank', permission: ['F004006'] }
           },
           {
             path: 'http://10.1.13.34/#/login',
             name: 'AWX',
-            meta: { title: 'AWX', target: '_blank', permission: [ 'F004005' ] }
+            meta: { title: 'AWX', target: '_blank', permission: ['F004005'] }
           }
         ]
       },
@@ -233,25 +250,25 @@ export const asyncRouterMap = [
         name: 'system',
         redirect: '/system/user',
         component: RouteView,
-        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: [ 'F001' ] },
+        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['F001'] },
         children: [
           {
             path: '/system/user',
             name: 'User',
             component: () => import('@/views/system/user/index'),
-            meta: { title: '用户管理', keepAlive: true, permission: [ 'F001001' ] }
+            meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
           },
           {
             path: '/system/group',
             name: 'Group',
             component: () => import('@/views/system/group/index'),
-            meta: { title: '工作组管理', keepAlive: true, permission: [ 'F001002' ] }
+            meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
           },
           {
             path: '/system/audit',
             name: 'Audit',
             component: () => import('@/views/system/audit/index'),
-            meta: { title: '审计管理', keepAlive: true, permission: [ 'F001003' ] }
+            meta: { title: '审计管理', keepAlive: true, permission: ['F001003'] }
           },
           {
             path: '/system/unitManage',
@@ -268,14 +285,14 @@ export const asyncRouterMap = [
         name: 'patrol',
         redirect: '/patrol/calendar',
         component: RouteView,
-        meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: [ 'F010' ] },
+        meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: ['F010'] },
         children: [
           {
             path: '/patrol/config',
             name: 'PatrolConfig',
             redirect: '/patrol/config/path',
             component: RouteView,
-            meta: { title: '巡更配置', keepAlive: true, permission: [ 'F010' ] },
+            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
@@ -299,8 +316,7 @@ export const asyncRouterMap = [
               name: 'PatrolConfigThreshold',
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
               meta: { title: '阈值管理', keepAlive: true, permission: ['F010'] }
-            }
-            ]
+            }]
           },
           // {
           //   path: '/patrol/calendar',
@@ -318,19 +334,19 @@ export const asyncRouterMap = [
             path: '/patrol/plan',
             name: 'Plan',
             component: () => import('@/views/patrol/plan/index'),
-            meta: { title: '计划管理', keepAlive: true, permission: [ 'F010002' ] }
+            meta: { title: '计划管理', keepAlive: true, permission: ['F010002'] }
           },
           {
             path: '/patrol/change-shift',
             name: 'ChangeShift',
             component: () => import('@/views/patrol/ChangeShift'),
-            meta: { title: '交接班查询', keepAlive: true, permission: [ 'F010003' ] }
+            meta: { title: '交接班查询', keepAlive: true, permission: ['F010003'] }
           },
           {
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡更记录单', keepAlive: true, permission: [ 'F010004' ] }
+            meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
           },
           // {
           //   path: '/patrol/object',
@@ -342,7 +358,7 @@ export const asyncRouterMap = [
             path: '/patrol/alarm-approve',
             name: 'AlarmApprove',
             component: () => import('@/views/patrol/alarm-approve/index'),
-            meta: { title: '告警审批', keepAlive: true, permission: [ 'F010005' ] }
+            meta: { title: '告警审批', keepAlive: true, permission: ['F010005'] }
           },
           {
             path: '/patrol/NoticeTemp',
@@ -651,6 +667,7 @@ export const asyncRouterMap = [
     meta: { title: '视图设计', permission: ['F002002'] },
     props: route => route.query
   },
+
   // 数据管理平台
   {
     path: '*', redirect: '/404', hidden: true

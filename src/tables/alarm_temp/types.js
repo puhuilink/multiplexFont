@@ -33,6 +33,20 @@ export const PATROL_ANSWER = '{ANSWER_ALIAS}' // 指标状态/数值
 export const PATROL_EXECUTOR = '{EXECUTOR}' // 巡更人员
 export const PATROL_TIME = '{TIME}' // 告警时间
 
+export const UNION_KEYWORD_ID = '@{alarmId}' // 告警编号
+export const UNION_KEYWORD_NAME = '@{name}' // 告警名称
+export const UNION_KEYWORD_CONTENT = '@{content}' // 告警内容
+export const UNION_KEYWORD_OBJECT = '@{object}' // 告警对象
+export const UNION_KEYWORD_APP_KEY = '@{appKey}' // 接入应用Key
+export const UNION_KEYWORD_SEND_TIME = '@{sendTime}' // 发送次数
+export const UNION_KEYWORD_LAST_TIME = '@{lastTime}' // 最后发生时间
+export const UNION_KEYWORD_LEVEL = '@{LEVEL}' // 告警级别
+export const UNION_KEYWORD_STATUS = '@{status}' // 告警状态
+export const UNION_KEYWORD_MEMBERS = '@{members}' // 已分配成员
+export const UNION_KEYWORD_ACK_TIME = '@{ackTime}' // 确认时间
+export const UNION_KEYWORD_CLOSE_TIME = '@{closeTime}' // 关闭时间
+export const UNION_KEYWORD_ACK_ID = '@{ackUser}' // 确认ID
+
 export const TEMP_PATROL_LIST = [
   [PATROL_LEVEL, '告警等级'],
   [PATROL_LEVEL_ALIAS, '告警等级描述'],
@@ -58,6 +72,24 @@ export const TEMP_KEYWORD_LIST = [
   [TEMP_KEYWORD_DETAIL, '详情']
 ]
 
+export const UNION_KEYWORD_LIST = [
+  [UNION_KEYWORD_ID, '告警编号'],
+  [UNION_KEYWORD_NAME, '告警名称'],
+  [UNION_KEYWORD_CONTENT, '告警内容'],
+  [UNION_KEYWORD_OBJECT, '告警对象'],
+  [UNION_KEYWORD_APP_KEY, '接入应用KEY'],
+  [UNION_KEYWORD_SEND_TIME, '告警发送次数'],
+  [UNION_KEYWORD_LAST_TIME, '最后一次发生时间'],
+  [UNION_KEYWORD_LEVEL, '告警级别'],
+  [UNION_KEYWORD_STATUS, '告警状态'],
+  [UNION_KEYWORD_MEMBERS, '已分配的成员'],
+  [UNION_KEYWORD_ACK_TIME, '确认时间'],
+  [UNION_KEYWORD_CLOSE_TIME, '关闭时间'],
+  [UNION_KEYWORD_ACK_ID, '确认ID']
+]
+
 export const TEMP_KEYWORD_MAPPING = new Map(TEMP_KEYWORD_LIST)
 
 export const TEMP_PATROL_MAPPING = new Map(TEMP_PATROL_LIST)
+
+export const TEMP_UNION_MAPPING = new Map(UNION_KEYWORD_LIST)

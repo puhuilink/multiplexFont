@@ -105,7 +105,7 @@ export default {
         dataIndex: 'flag',
         width: 50,
         sorter: true,
-        customRender: (flag) => (flag === GROUP_FLAG.enabled ? '有效' : '无效')
+        customRender: (flag) => (flag.toString() === GROUP_FLAG.enabled ? '有效' : '无效')
       },
       {
         title: '备注',

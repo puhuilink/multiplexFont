@@ -14,11 +14,24 @@ import {
   PATROL_HOST,
   PATROL_ZONE,
   PATROL_ENDPOINT,
-  PATROL_METRIC, PATROL_ANSWER, PATROL_EXECUTOR, PATROL_TIME,
-  TEMP_PATROL_MAPPING
+  PATROL_METRIC,
+  PATROL_ANSWER,
+  PATROL_EXECUTOR,
+  PATROL_TIME,
+  TEMP_PATROL_MAPPING,
+  UNION_KEYWORD_ID,
+  UNION_KEYWORD_NAME,
+  UNION_KEYWORD_CONTENT,
+  UNION_KEYWORD_OBJECT,
+  UNION_KEYWORD_APP_KEY,
+  UNION_KEYWORD_SEND_TIME,
+  UNION_KEYWORD_LAST_TIME,
+  UNION_KEYWORD_LEVEL,
+  UNION_KEYWORD_STATUS,
+  UNION_KEYWORD_MEMBERS, UNION_KEYWORD_ACK_TIME, UNION_KEYWORD_CLOSE_TIME, UNION_KEYWORD_ACK_ID, TEMP_UNION_MAPPING
 } from '@/tables/alarm_temp/types'
 
-const TEMP_MAPPING = new Map([...TEMP_KEYWORD_MAPPING, ...TEMP_PATROL_MAPPING])
+const TEMP_MAPPING = new Map([...TEMP_KEYWORD_MAPPING, ...TEMP_PATROL_MAPPING, ...TEMP_UNION_MAPPING])
 
 class Tiptap {
   static createTextNode (text) {
@@ -60,7 +73,20 @@ export class MessageModel {
       [PATROL_METRIC]: '设备温湿度',
       [PATROL_ANSWER]: '23℃',
       [PATROL_EXECUTOR]: '张三',
-      [PATROL_TIME]: moment().format('YYYY-MM-DD HH:mm:ss')
+      [PATROL_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+      [UNION_KEYWORD_ID]: '001',
+      [UNION_KEYWORD_NAME]: 'CPU温度异常',
+      [UNION_KEYWORD_CONTENT]: 'CPU温度超过90°持续1小时',
+      [UNION_KEYWORD_OBJECT]: '10.201.1.92服务器',
+      [UNION_KEYWORD_APP_KEY]: '6D8GF9G0VI0ZA8X',
+      [UNION_KEYWORD_SEND_TIME]: '10次',
+      [UNION_KEYWORD_LAST_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+      [UNION_KEYWORD_LEVEL]: 'P1级',
+      [UNION_KEYWORD_STATUS]: '待处理',
+      [UNION_KEYWORD_MEMBERS]: '[张三, 李四, 王五]',
+      [UNION_KEYWORD_ACK_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+      [UNION_KEYWORD_CLOSE_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
+      [UNION_KEYWORD_ACK_ID]: '9I90AHD91JA0'
     }
     Object
       .entries(data)
@@ -74,6 +100,7 @@ export class MessageModel {
    * tiptap content object => string
    */
   static serialize (contentObj = {}, singleLine = false) {
+    console.log(contentObj)
     const rootContent = []
     // 根节点按行遍历
     for (const { content = [] } of contentObj.content) {
@@ -116,7 +143,7 @@ export class MessageModel {
       // 允许空行
       rootContent.push(createParagraphNode(content))
     })
-
+    console.log('cont', rootContent)
     return { type: 'doc', content: rootContent }
   }
 }

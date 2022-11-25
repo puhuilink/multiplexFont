@@ -4,6 +4,7 @@
     <editor-menu-bar :editor="editor" v-slot="{ commands }" :disable="!disabled">
       <div class="menubar">
         <a-button :disabled="disabled" class="menubar__btn" @click="togglePreview" type="primary">{{ preview ? '取消预览' : '预览' }}</a-button>
+        <a-button v-if="initBtn" :disabled="disabled" class="menubar__btn" @click="toggleInit" type="primary">恢复默认模板</a-button>
         <a-button
           class="menubar__btn"
           :disabled="disabled"
@@ -46,6 +47,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    initBtn: {
+      type: Boolean,
+      default: false
     }
   },
   data (vm) {
@@ -75,6 +80,7 @@ export default {
     preview (preview) {
       if (preview) {
         this.editor.setOptions({ editable: false })
+        console.log('preview', this.value)
         this.setContent(
           MessageModel.mockContent(this.value)
         )
@@ -86,6 +92,7 @@ export default {
       }
     },
     value (value) {
+      console.log('value', value)
       this.setContent(
         MessageModel.deSerialize(value)
       )
@@ -96,13 +103,16 @@ export default {
   },
   methods: {
     resetContent () {
-      this.setContent('')
+      this.editor.setContent('')
     },
     setContent (content = '') {
       this.editor.setContent(content)
     },
     togglePreview () {
       this.preview = !this.preview
+    },
+    toggleInit () {
+      this.$emit('init')
     }
   },
   beforeDestroy () {
