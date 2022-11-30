@@ -411,6 +411,12 @@ export const asyncRouterMap = [
             name: 'Deliver',
             component: () => import('@/views/alert-manager/config/index'),
             meta: { title: '分派策略' }
+          },
+          {
+            path: '/alertConfig/notifyRule',
+            name: 'NotifyRule',
+            component: () => import('@/views/alert-manager/config/notifyRule'),
+            meta: { title: '通知策略' }
           }
         ]
       },
