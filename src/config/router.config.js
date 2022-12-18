@@ -17,29 +17,6 @@ export const asyncRouterMap = [
           name: 'devTest'
         }
       ],
-      {
-        path: '/union-alarm',
-        component: () => import('@/views/union-alaram/index'),
-        meta: { title: '统一告警', keepAlive: true, icon: 'alert' },
-        name: 'union'
-      },
-
-      // 通知组页
-      {
-        path: '/notified-group',
-        component: () => import('@/views/notificationGroup/index'),
-        meta: { title: '通知组管理', keepAlive: true },
-        name: 'notice-group'
-      },
-
-      // 通知组页
-      {
-        path: '/notice-template',
-        component: () => import('@/views/alert-manager/noticeTemplate/index'),
-        meta: { title: '模板管理', keepAlive: true },
-        name: 'notice-template'
-      },
-
       // view
       {
         path: '/view',
@@ -375,48 +352,95 @@ export const asyncRouterMap = [
         ]
       },
       {
-        path: '/integration',
-        name: 'Integration',
+        path: '/alertManagerPlatform',
+        name: 'AlertManagerPlatform',
         hidden: false,
         component: RouteView,
-        redirect: '/integration/platform',
-        meta: { title: '集成', keepAlive: true, icon: 'user', permission: ['F002002'] },
+        redirect: '/alertManagerPlatform/config',
+        meta: { title: '统一告警平台', keepAlive: true, icon: 'bug', permission: ['F002002'] },
         children: [
           {
-            path: '/integration/newAlertSource',
-            name: 'NewAlertSource',
-            component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-            meta: { title: '新建数据源' },
-            hidden: true,
-            props: route => route.query
+            path: '/alertManagerPlatform/config',
+            name: 'AlertConfig',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/config/deliver',
+            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F002002'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/config/deliver',
+                name: 'Deliver',
+                component: () => import('@/views/alert-manager/config/index'),
+                meta: { title: '分派策略' }
+              },
+              {
+                path: '/alertManagerPlatform/config/notifyRule',
+                name: 'NotifyRule',
+                component: () => import('@/views/alert-manager/config/notifyRule'),
+                meta: { title: '通知策略' }
+              },
+              {
+                path: '/alertManagerPlatform/config/shieldRule',
+                name: 'ShieldRule',
+                component: () => import('@/views/alert-manager/config/shieldRule'),
+                meta: { title: '屏蔽规则' }
+              },
+              // 通知组页
+              {
+                path: '/alertManagerPlatform/config/notified-group',
+                component: () => import('@/views/notificationGroup/index'),
+                meta: { title: '通知组管理', keepAlive: true },
+                name: 'notice-group'
+              },
+
+              // 模板管理
+              {
+                path: '/alertManagerPlatform/config/notice-template',
+                component: () => import('@/views/alert-manager/noticeTemplate/index'),
+                meta: { title: '模板管理', keepAlive: true },
+                name: 'notice-template'
+              }
+            ]
           },
           {
-            path: '/integration/platform',
-            name: 'platform',
-            component: () => import('@/views/alert-manager/integration/index'),
-            meta: { title: '集成' }
-          }
-        ]
-      },
-      {
-        path: '/alertConfig',
-        name: 'AlertConfig',
-        hidden: false,
-        component: RouteView,
-        redirect: '/alertConfig/deliver',
-        meta: { title: '告警配置', keepAlive: true, icon: 'user', permission: ['F002002'] },
-        children: [
-          {
-            path: '/alertConfig/deliver',
-            name: 'Deliver',
-            component: () => import('@/views/alert-manager/config/index'),
-            meta: { title: '分派策略' }
+            path: '/alertManagerPlatform/integration',
+            name: 'Integration',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/integration/platform',
+            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F002002'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/integration/newAlertSource',
+                name: 'NewAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '新建数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
+                path: '/alertManagerPlatform/integration/platform',
+                name: 'platform',
+                component: () => import('@/views/alert-manager/integration/index'),
+                meta: { title: '集成' }
+              }
+            ]
           },
           {
-            path: '/alertConfig/notifyRule',
-            name: 'NotifyRule',
-            component: () => import('@/views/alert-manager/config/notifyRule'),
-            meta: { title: '通知策略' }
+            path: '/alertManagerPlatform/alarm',
+            name: 'UnionAlarm',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/alarm/index',
+            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F002002'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/alarm/index',
+                component: () => import('@/views/union-alaram/index'),
+                meta: { title: '统一告警', keepAlive: true },
+                name: 'union'
+              }
+            ]
           }
         ]
       },
