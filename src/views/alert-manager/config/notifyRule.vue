@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex;background: #edf0f4">
+  <div class="notifyRulesBasic">
     <div class="unionAlarm" style="background: white">
       <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal">新建通知策略</a-button></div>
       <a-modal
@@ -12,7 +12,6 @@
       >
         <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-model-item label="告警状态">
-            <a-input v-model="formState.name" />
             <a-checkbox @change="onChange">
               发生时
             </a-checkbox>
@@ -42,19 +41,19 @@
           </a-form-model-item>
           <a-form-model-item label="通知方式">
             <a-checkbox @change="onChange">
-              发生时
+              短信
             </a-checkbox>
             <a-checkbox @change="onChange">
-              发生时
+              交建通
             </a-checkbox>
             <a-checkbox @change="onChange">
-              发生时
+              企业微信
             </a-checkbox>
             <a-checkbox @change="onChange">
-              发生时
+              邮件
             </a-checkbox>
             <a-checkbox @change="onChange">
-              发生时
+              工单
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="时间设置">
@@ -69,15 +68,21 @@
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="延迟策略">
-            <a-select v-model="formState.name" />
+            <a-select style="width: 200px" v-model="formState.name" :options="delayOptions"/>
           </a-form-model-item>
           <a-form-model-item label="通知对象" style="display: flex;justify-content: space-between">
-            <a-select v-model="formState.name" style="width: 35%"/><a-select style="width: 35%" v-model="formState.name" />
+            <a-select
+              v-model="formState.name"
+              style="width: 200px"
+              :options="[
+                {label:'组', value: 'group'},
+                {label:'人', value: 'user'}
+              ]"/>
+            <a-select style="width: 200px" v-model="formState.name" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
       <a-table
-        bordered
         :columns="columns"
         :pagination="pagination"
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -89,45 +94,53 @@
           :data-source="innerData"
           :pagination="false"
         >
-          <span slot="status"> <a-badge status="success" />Finished </span>
+          <span slot="status" slot-scope="text"> <a-badge :status="text?'success' : 'error'" /> </span>
+          <span slot="gateway" slot-scope="text">
+            <span v-for="(t,index) in text" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ t }}</span>
+          </span>
           <span slot="operation" class="table-operation">
+            <img
+              :src="require(`@/assets/icons/svg/编辑.svg`)"
+              width="20px"
+              height="20px"
+              title="编辑应用"
+            />
+            <a-divider type="vertical" />
+            <img
+              :src="require(`@/assets/icons/svg/删除.svg`)"
+              width="20px"
+              height="20px"
+              title="删除应用"
+            />
           </span>
         </a-table>
         <template :slot="'action'" slot-scope="text,record">
-          <img
-            :src="require(`@/assets/icons/svg/编辑.svg`)"
-            width="20px"
-            height="20px"
-            title="编辑应用"
-          />
-          <a-divider type="vertical" />
-          <a-switch :checked="record.status" size="small" />
-          <a-divider type="vertical" />
           <img
             :src="require(`@/assets/icons/svg/删除.svg`)"
             width="20px"
             height="20px"
             title="删除应用"
+            @click="()=>deleteId(record)"
           />
         </template>
       </a-table>
     <!--    <DetailSchema ref="schema" @close="onClose"></DetailSchema>-->
     </div>
-    <div style="margin-left: 10px">
+    <div >
       <div style="height: 80px;background: white;border-radius: 2px;">
-        <div style="display:flex;justify-content: space-between;width: 300px">
+        <div style="display:flex;justify-content: space-between;width: 400px">
           <div style="font-size: 18px">工作时间</div> <a-button style="background: #58bb72;color: white">编辑</a-button>
         </div>
         <div style="display: flex;justify-content: space-between;margin-top: 10px">
           <div>
-            <a-select v-model="a" style="width: 65px"/>～<a-select v-model="a" style="width: 65px"/>
+            <a-select v-model="workTime.startDay" style="width: 80px"/>～<a-select v-model="workTime.endDay" style="width: 80px"/>
           </div>
           <div>
-            <a-select v-model="a" style="width: 65px"/>～<a-select v-model="a" style="width: 65px"/></div>
+            <a-select v-model="workTime.startTime" style="width: 90px"/>～<a-select v-model="workTime.endTime" style="width: 90px"/></div>
         </div>
       </div>
-      <div style="margin-top: 20px;height: 35px;background: white;border-radius: 2px;">
-        <div style="display:flex;justify-content: space-between;align-items: center;width: 300px">
+      <div style="margin-top: 20px;height: 40px;background: white;border-radius: 2px; padding: 2px">
+        <div style="display:flex;justify-content: space-between;align-items: center;width: 400px">
           <div style="font-size: 18px">通知模板</div> <a-button style="background: #58bb72;color: white">前往配置</a-button>
         </div>
       </div>
@@ -140,11 +153,11 @@ import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 const innerColumns = [
-  { title: '序号', dataIndex: 'date', key: 'date' },
-  { title: '状态', dataIndex: 'name', key: 'name' },
-  { title: '告警状态', key: 'state', scopedSlots: { customRender: 'status' } },
-  { title: '通知条件', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-  { title: '通知方式', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+  { title: '序号', dataIndex: 'index', key: 'date' },
+  { title: '状态', dataIndex: 'status', scopedSlots: { customRender: 'status' } },
+  { title: '告警状态', dataIndex: 'state' },
+  { title: '通知条件', dataIndex: 'rule', key: 'upgradeNum' },
+  { title: '通知方式', dataIndex: 'gateway', scopedSlots: { customRender: 'gateway' } },
   {
     title: '操作',
     dataIndex: 'operation',
@@ -161,8 +174,8 @@ const columns = [
   },
   {
     title: '通知对象',
-    align: 'center',
-    width: '400px',
+    align: 'left',
+    width: '70%',
     dataIndex: 'name'
   },
   {
@@ -214,40 +227,46 @@ const data = [
 const innerData = [
   {
     index: '1',
-    name: '分派策略001',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '北京pigoss001'
+    status: true,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
   },
   {
-    index: '2',
-    name: '分派策略002',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门pigoss001'
+    index: '1',
+    status: false,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
   },
   {
-    index: '3',
-    name: '分派策略003',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '北京pigoss002'
+    index: '1',
+    status: true,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
   },
   {
-    index: '4',
-    name: '分派策略004',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门共济-01 '
+    index: '1',
+    status: true,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
   },
   {
-    index: '5',
-    name: '分派策略005',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '智慧云'
+    index: '1',
+    status: true,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
+  },
+  {
+    index: '1',
+    status: true,
+    state: '发生时',
+    rule: '任何时间/所有告警/立刻',
+    gateway: ['交建通', '短信']
   }
-
 ]
 const pagination = {
   pageSizeOptions: ['25', '30', '50', '100'],
@@ -260,7 +279,7 @@ const pagination = {
   showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
 }
 export default {
-  name: 'DeliverRules',
+  name: 'NotifyRule',
   data () {
     return {
       innerColumns,
@@ -282,7 +301,6 @@ export default {
       data,
       columns,
       pagination,
-      a: 0,
       visible: false,
       confirmLoading: false,
       selectedRowKeys: [],
@@ -290,6 +308,15 @@ export default {
       options: [
         { label: '或', value: '或' },
         { label: '且', value: '且' }
+      ],
+      delayOptions: [
+        { label: '立刻', value: 0 },
+        { label: '1分钟', value: 1 },
+        { label: '2分钟', value: 2 },
+        { label: '5分钟', value: 5 },
+        { label: '10分钟', value: 10 },
+        { label: '20分钟', value: 20 },
+        { label: '30分钟', value: 30 }
       ],
       formState: {
         name: '',
@@ -325,7 +352,31 @@ export default {
             user: '王某某'
           }
         ]
-      }
+      },
+      workTime: {
+        startDay: '周一',
+        endDay: '周五',
+        startTime: '08：30',
+        endTime: '17：30 '
+      },
+      days: [
+        '周一',
+        '周二',
+        '周三',
+        '周四',
+        '周五',
+        '周六',
+        '周天'
+      ],
+      times: [
+        '周一',
+        '周二',
+        '周三',
+        '周四',
+        '周五',
+        '周六',
+        '周天'
+      ]
     }
   },
   mixins: [List],
@@ -443,6 +494,14 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.notifyRulesBasic{
+  display: grid;
+  background: #edf0f4;
+  grid-template-columns: auto 400px;
+  grid-gap: 30px;
+  height: 100%;
+  padding: 3px;
+}
 .circle{
   background: #208DFF;
   width: 50px;

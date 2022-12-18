@@ -1,82 +1,69 @@
 <template>
-  <div class="deliverRules">
-    <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal">新建分派策略</a-button></div>
+  <div class="shieldRule" style="background: white">
+    <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal">新建屏蔽规则</a-button></div>
     <a-modal
-      title="新建分派策略"
+      title="新建屏蔽规则"
       :visible="visible"
       :confirm-loading="confirmLoading"
-      width="1200px"
+      width="50%"
       @ok="handleOk"
       @cancel="closeModal"
     >
       <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-        <a-form-model-item label="分派策略名称">
+        <a-form-model-item label="规则名称">
           <a-input v-model="formState.name" />
         </a-form-model-item>
-        <a-form-model-item label="告警源">
+        <a-form-model-item label="关联告警源">
           <a-select v-model="formState.name" />
         </a-form-model-item>
-        <a-form-model-item label="分派条件">
+        <a-form-model-item label="规则内容">
           <div
             style="display: grid;
-            grid-template-columns: 220px 1fr;
+            grid-template-columns:1fr;
             grid-auto-columns: 1fr;"
             v-for="(map,index) in formState.strategy"
             :key="index">
-            <a-avatar :size="64" class="circle"> {{ index+1 }}</a-avatar >
             <div>
               <div style="display: flex;align-items: center;">
                 规则之间的条件：<a-radio-group :options="options" v-model="map.relation" :default-value="1" />
-                <div style="display: flex;flex-direction: revert">
-                  <a-icon type="delete" v-if="index !== 0" @click="deleteStrategyByIndex(index)"/>
-                </div>
+                <div style="display: flex;flex-direction: revert"><a-icon type="delete" v-if="index !== 0"></a-icon></div>
               </div>
               <div v-for="(m,i) in map.rules" :key="i">
                 <a-select v-model="m.column" style="width: 30%;margin-right: 5px"/>
                 <a-select v-model="m.symbol" style="width: 30%;margin-right: 5px"/>
                 <a-select v-model="m.trigger" style="width: 30%;margin-right: 5px"/>
                 <div :style="{visibility: i>0?'default':'hidden',display: 'inline'}">
-                  <a-icon type="delete" @click="deleteRuleByIndex(index,i)"/>
+                  <a-icon type="delete" @click="deleteRuleByIndex(i)"></a-icon>
                   <a-divider type="vertical"/>
                 </div>
-                <a-icon type="plus" @click="addRule(index)"/>
+                <a-icon type="plus" @click="addRule()"></a-icon>
               </div>
             </div>
           </div>
-          <a-button style="width: 100px;background-color: #2BBC13;color: white" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="分派人">
-          <div
-            style="display: grid;
-            grid-template-columns: 220px 1fr;
-            grid-auto-columns: 1fr;"
-            v-for="(notice,index) in formState.notify"
-            :key="index">
-            <a-avatar :size="64" class="circle">{{ notice.type }}</a-avatar>
-            <div v-if="index===0">
-              <div>通知组或人 <a-select v-model="notice.user" style="width: 100px"/></div>
-            </div>
-            <div v-else style="display: flex;align-items: center">
-              <div>
-                <div>如果告警升级后 <a-input-number></a-input-number>分钟无人处理，则告警自动升级通知以下用户</div>
-                <div>通知人 <a-select v-model="notice.user" style="width: 100px"/></div>
-              </div>
-              <a-icon type="delete" @click="notifyLevelDownByIndex(index)"></a-icon>
-            </div>
-          </div>
-          <a-button style="width: 100px;background-color: #2BBC13;color: white" @click="notifyLevelUp"> 升级</a-button>
+        <a-form-model-item label="生效时间">
+          <a-date-picker v-model="formState.name" />
+        </a-form-model-item>
+        <a-form-model-item label="失效时间">
+          <a-date-picker v-model="formState.name" />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
     <a-table
-      bordered
       :columns="columns"
       :pagination="pagination"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
-      <template :slot="'levelUp'" slot-scope="text,record">
-        {{ record.levelUp?'是':'否' }}
+      <template :slot="'content'" slot-scope="text,record">
+        <div v-for="(ct,index) in record.content.content" :key="ct" style="margin-top: 5px" >
+          <a-avatar class="gridContent" size="small" :style="{visibility:index !== 0?'none':'hidden'}" style="color: white; backgroundColor: rgb(44,139,240)">
+            {{ record.content.relation }}
+          </a-avatar>
+          <a-select class="gridContent" :style="{width: 30+ct.column.length * 18 +'px'}" disabled v-model="ct.column"/>
+          <a-select class="gridContent" :style="{width: 30+ct.symbol.length * 18 +'px'}" disabled v-model="ct.symbol"/>
+          <a-select class="gridContent" :style="{width: 30+ct.trigger.length * 18 +'px'}" disabled v-model="ct.trigger"/>
+        </div>
       </template>
       <template :slot="'action'" slot-scope="text,record">
         <img
@@ -105,6 +92,7 @@ import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import _ from 'lodash'
+
 const columns = [
   {
     title: '序号',
@@ -113,25 +101,30 @@ const columns = [
     width: '100px'
   },
   {
-    title: '分派名称',
+    title: '规则名称',
     align: 'center',
     dataIndex: 'name'
   },
   {
-    title: '关联数据源',
+    title: '关联告警源',
     align: 'center',
     dataIndex: 'dataSource'
   },
   {
-    title: '分派人',
+    title: '规则内容',
     align: 'center',
-    dataIndex: 'notify'
+    dataIndex: 'content',
+    scopedSlots: { customRender: 'content' }
   },
   {
-    title: '是否升级',
+    title: '生效时间',
     align: 'center',
-    dataIndex: 'levelUp',
-    scopedSlots: { customRender: 'levelUp' }
+    dataIndex: 'startTime'
+  },
+  {
+    title: '失效时间',
+    align: 'center',
+    dataIndex: 'endTime'
   },
   {
     title: '操作',
@@ -143,41 +136,70 @@ const columns = [
 const data = [
   {
     index: '1',
-    name: '分派策略001',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '北京pigoss001'
+    name: '屏蔽规则001',
+    content: {
+      relation: '且',
+      content: [
+        {
+          column: '告警级别',
+          symbol: '等于',
+          trigger: 'P1',
+          useRegexp: true
+        },
+        {
+          column: '告警级别',
+          symbol: '等于',
+          trigger: 'P1',
+          useRegexp: true
+        }
+      ]
+    },
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
   },
   {
     index: '2',
-    name: '分派策略002',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门pigoss001'
+    name: '屏蔽规则001',
+    content: [],
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
   },
   {
     index: '3',
-    name: '分派策略003',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '北京pigoss002'
+    name: '屏蔽规则001',
+    content: [],
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
   },
   {
     index: '4',
-    name: '分派策略004',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门共济-01 '
+    name: '屏蔽规则001',
+    content: [],
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
   },
   {
     index: '5',
-    name: '分派策略005',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '智慧云'
+    name: '屏蔽规则001',
+    content: [],
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
+  },
+  {
+    index: '6',
+    name: '屏蔽规则001',
+    content: [],
+    dataSource: '北京pigoss001',
+    startTime: '2022-08-01 10:16:12',
+    endTime: '2023-08-01 10:16:12'
   }
-
 ]
+
 const pagination = {
   pageSizeOptions: ['25', '30', '50', '100'],
   defaultCurrent: 1,
@@ -188,7 +210,7 @@ const pagination = {
   showSizeChanger: true,
   showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
 }
-const originalData = {
+const originData = {
   name: '',
   strategy: [
     {
@@ -200,42 +222,11 @@ const originalData = {
           trigger: []
         }
       ]
-    },
-    {
-      relation: '且',
-      rules: [
-        {
-          column: '',
-          symbol: '',
-          trigger: []
-        }
-      ]
     }
-  ],
-  notify: [
-    {
-      type: '立即',
-      user: ''
-    },
-    {
-      type: '升级',
-      user: ''
-    }
-  ]
-}
-const originalRule = {
-  column: '',
-  symbol: '',
-  trigger: []
-}
-const originalStrategy = {
-  relation: '且',
-  rules: [
-    _.cloneDeep(originalRule)
   ]
 }
 export default {
-  name: 'DeliverRules',
+  name: 'ShieldRule',
   data () {
     return {
       colLayout: {
@@ -255,7 +246,6 @@ export default {
       data,
       columns,
       pagination,
-      a: 0,
       visible: false,
       confirmLoading: false,
       selectedRowKeys: [],
@@ -264,7 +254,41 @@ export default {
         { label: '或', value: '或' },
         { label: '且', value: '且' }
       ],
-      formState: _.cloneDeep(originalData)
+      selectedColumns: [
+        '告警标题',
+        '告警内容',
+        '告警级别',
+        '主机',
+        '告警对象',
+        '服务',
+        '上下文',
+        '细节'
+      ],
+      formState: _.cloneDeep(originData),
+      workTime: {
+        startDay: '周一',
+        endDay: '周五',
+        startTime: '08：30',
+        endTime: '17：30 '
+      },
+      days: [
+        '周一',
+        '周二',
+        '周三',
+        '周四',
+        '周五',
+        '周六',
+        '周天'
+      ],
+      times: [
+        '周一',
+        '周二',
+        '周三',
+        '周四',
+        '周五',
+        '周六',
+        '周天'
+      ]
     }
   },
   mixins: [List],
@@ -277,32 +301,18 @@ export default {
     },
     closeModal () {
       this.visible = false
-      this.formState = _.cloneDeep(originalData)
+      this.formState = _.cloneDeep(originData)
     },
-    addStrategy () {
-      this.formState.strategy.push(
-        _.cloneDeep(originalStrategy)
-      )
-    },
-    deleteStrategyByIndex (index) {
-      this.formState.strategy.splice(index, 1)
-    },
-    notifyLevelDownByIndex (index) {
-      this.formState.notify.splice(index, 1)
-    },
-    deleteRuleByIndex (index, i) {
-      this.formState.strategy[index].rules.splice(i, 1)
-    },
-    addRule (index) {
-      this.formState.strategy[index].rules.push(
-        _.cloneDeep(originalRule)
-      )
-    },
-    notifyLevelUp () {
-      this.formState.notify.push({
-        type: '升级',
-        user: ''
+    addRule () {
+      this.formState.strategy[0].rules.push({
+        column: '',
+        symbol: '',
+        trigger: []
       })
+      this.$forceUpdate()
+    },
+    deleteRuleByIndex (index) {
+      this.formState.strategy[0].rules.splice(index, 1)
     },
     handleOk () {
       this.$message.success('新建成功！')
@@ -377,9 +387,28 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.recordContent{
+  width: 100px;
+}
+.gridContent{
+  margin-right: 5px;
+}
+.notifyRulesBasic{
+  display: grid;
+  background: #edf0f4;
+  grid-template-columns: auto 400px;
+  grid-gap: 30px;
+  height: 100%;
+  padding: 3px;
+}
 .circle{
   background: #208DFF;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
   color: white;
+  border-radius: 50%;
+  grid-column: 1/2;
 }
 * {
   marigin: 0px;

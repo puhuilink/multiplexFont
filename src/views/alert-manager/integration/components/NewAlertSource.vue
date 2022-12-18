@@ -24,11 +24,11 @@
       </p>
       <div style="">
         <h4 name="mapping1" style="margin-top: 30px">监控级别对应关系</h4>
-        <a-table :columns="platformMapping" :data-source="data1" :pagination="false" bordered></a-table>
+        <a-table :columns="platformMapping" :data-source="data1" :pagination="false" :row-key="(record,index)=>index" bordered></a-table>
       </div>
       <div style="">
         <h4>EventId对应关系</h4>
-        <a-table :columns="platformMapping1" :data-source="data2" :pagination="false" bordered></a-table>
+        <a-table :columns="platformMapping1" :data-source="data2" :pagination="false" :row-key="(record,index)=>index" bordered></a-table>
       </div>
     </div>
   </div>
