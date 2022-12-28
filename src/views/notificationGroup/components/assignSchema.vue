@@ -97,7 +97,6 @@ export default {
       }
     },
     handleChange (targetKeys, direction, moveKeys) {
-      console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys
     },
     filterOption (inputValue, option) {
@@ -113,6 +112,6 @@ export default {
 }
 </script>
 
-<style lan='less' scoped>
+<style lang='less' scoped>
 
 </style>

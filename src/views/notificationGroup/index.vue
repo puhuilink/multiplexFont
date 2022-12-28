@@ -60,6 +60,7 @@
 import List from '~~~/Mixins/Table/List'
 import schema from './components/assignSchema'
 import GroupSchema from './components/groupSchema'
+import { NotificationGroupService } from '@/api/service/index'
 const columns = [
   {
     title: '通知组名称',
@@ -155,6 +156,9 @@ export default {
     },
     deleteGroup (record) {
       // TODO 删除对应的通知组
+    },
+    async fetch () {
+      const { data: { data } } = await NotificationGroupService.getGroup()
     }
   }
 }

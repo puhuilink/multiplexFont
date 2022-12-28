@@ -124,7 +124,7 @@
 
 <script>
 import Schema from '~~~/Mixins/Modal/Schema'
-import { UserService } from '@/api'
+import { NotificationGroupService } from '@/api'
 
 export default {
   name: 'GroupSchema',
@@ -184,17 +184,7 @@ export default {
       this.submit = this.edit()
     },
     async fillUser () {
-      const { data: { User } } = await UserService.find({
-        where: {
-          flag: 1
-        },
-        fields: [
-          'value:user_id',
-          'label:staff_name'
-        ],
-        alias: 'User'
-      })
-      console.log('mounted', User)
+      const { data: { User } } = await NotificationGroupService.getUser()
       this.options.user = User
     }
   },

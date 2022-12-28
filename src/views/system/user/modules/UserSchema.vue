@@ -160,6 +160,36 @@
           </a-form-item>
         </a-col>
 
+        <!--       接入交建通&ndash;&gt;-->
+        <!--        <a-col :md="12" :span="24">-->
+        <!--          <a-form-item-->
+        <!--            label="交建通"-->
+        <!--            v-bind="formItemLayout"-->
+        <!--          >-->
+        <!--            <a-input-->
+        <!--              v-decorator="[-->
+        <!--                'jjtong',-->
+        <!--                {-->
+        <!--                  rules: [-->
+        <!--                    // {-->
+        <!--                    //   required: true,-->
+        <!--                    //   message: '交建通必填'-->
+        <!--                    // },-->
+        <!--                    // {-->
+        <!--                    //   type: 'email',-->
+        <!--                    //   message: '请输入正确的Email'-->
+        <!--                    // },-->
+        <!--                    {-->
+        <!--                      max: 32,-->
+        <!--                      message: '最多输入32个字符'-->
+        <!--                    }-->
+        <!--                  ]-->
+        <!--                }-->
+        <!--              ]"-->
+        <!--            />-->
+        <!--          </a-form-item>-->
+        <!--        </a-col>-->
+
         <a-col :md="12" :span="24">
           <a-form-item
             label="备注"

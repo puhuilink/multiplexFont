@@ -32,6 +32,7 @@ import { ViewDataService } from './ViewDataService.js'
 import { ViewDesignService } from './ViewDesignService.js'
 import { ViewDesktopService } from './ViewDesktopService.js'
 import { ViewListService } from './ViewListService.js'
+import { NotificationGroupService } from './NotificationGroupService'
 
 export {
   AlarmForwardService,
@@ -67,5 +68,6 @@ export {
   ViewDataService,
   ViewDesignService,
   ViewDesktopService,
-  ViewListService
+  ViewListService,
+  NotificationGroupService
 }
