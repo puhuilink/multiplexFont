@@ -5,7 +5,7 @@
         <div style="width: 100%">
           <a-tabs :activeKey="state" @change="onChangeState">
             <a-tab-pane :key="NOTICETYPE.tele" tab="电话"></a-tab-pane>
-            <a-tab-pane :key="NOTICETYPE.jjz" tab="交建通"></a-tab-pane>
+            <a-tab-pane :key="NOTICETYPE.jjt" tab="交建通"></a-tab-pane>
             <a-tab-pane :key="NOTICETYPE.mail" tab="邮箱"></a-tab-pane>
           </a-tabs>
         </div>
@@ -21,7 +21,7 @@
               v-model="form.message"
               :init-btn="form.initBtn"
               :disabled="disabled"
-              @init="onInitMes"
+              ref="mes"
               :mapping="TEMP_UNION_MAPPING"></TempEditor>
           </a-form-model-item>
           <a-form-model-item prop="claimed">
@@ -35,7 +35,7 @@
               v-model="form.claimed"
               :init-btn="form.initBtn"
               :disabled="disabled"
-              @init="onInitCli"
+              ref="cli"
               :mapping="TEMP_UNION_MAPPING"></TempEditor>
           </a-form-model-item>
           <a-form-model-item prop="recovery">
@@ -49,7 +49,7 @@
               v-model="form.recovery"
               :init-btn="form.initBtn"
               :disabled="disabled"
-              @init="onInitRes"
+              ref="res"
               :mapping="TEMP_UNION_MAPPING"></TempEditor>
           </a-form-model-item>
           <a-form-model-item :wrapper-col="{ span: 14, offset:10 }">
@@ -144,15 +144,14 @@ export default {
       this.form.claimed = args
     },
     initALL () {
-      this.onInitMes()
-      this.onInitRes()
-      this.onInitCli()
+      this.$refs.res.toggleInit()
+      this.$refs.cli.toggleInit()
+      this.$refs.mes.toggleInit()
     },
     onSubmit () {
       // TODO 提交模板
     },
     changeStatus () {
-      console.log('触发')
       this.mode = 'edit'
       this.disabled = false
     }

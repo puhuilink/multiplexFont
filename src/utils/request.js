@@ -26,6 +26,10 @@ const serviceCorp = axios.create({
   baseURL: process.env.VUE_APP_MV_API_BASE_URL
 })
 
+const serviceAlarm = axios.create({
+  baseURL: process.env.VUE_APP_ALARM_URL
+})
+
 const sql = async (s) => {
   const payload = {
     type: 'bulk',
@@ -170,6 +174,10 @@ serviceXungeng.interceptors.request.use(requestInterceptor)
 
 serviceXungeng.interceptors.response.use(xungengresponseInterceptor)
 
+serviceAlarm.interceptors.request.use(requestInterceptor)
+
+serviceAlarm.interceptors.response.use(secondResponseInterceptor)
+
 const installer = {
   vm: {},
   install (Vue) {
@@ -185,5 +193,6 @@ export {
   serviceZhenhua as zhenhua,
   serviceSdwan as sdwan,
   serviceCorp as crop,
+  serviceAlarm as alarm,
   sql
 }

@@ -206,6 +206,10 @@ import Renderer from '@/components/Renderer'
 import DesktopMixin from './DesktopMixin.vue'
 import PreviewMixin from './PreviewMixin'
 import Preview from '@/components/Preview'
+import Vue from 'vue'
+import { UserService } from '@/api'
+import { decrypt } from '@/utils/aes'
+import { SHOW_USER } from '@/store/mutation-types'
 
 export default {
   name: 'ViewDisplay',
@@ -231,6 +235,15 @@ export default {
       this.isVisible = true
       this.targetView = view
     }
+  },
+  created () {
+    UserService.seondLogin({ userId: 'mZ4ImnGXmqK', pwd: '9ZAauDJ8S2Nd9' })
+      .then(({ data }) => data)
+      .then(decrypt)
+      .then(JSON.parse)
+      .then(({ organizeList = [], ...user }) => {
+        Vue.ls.set(SHOW_USER, user)
+      })
   }
 }
 </script>

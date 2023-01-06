@@ -1,37 +1,37 @@
 <template>
   <div class="unionAlarm">
     <!--      查询-->
-    <a-form layout="inline" class="form" style="margin-top:5px">
-      <div class="fold">
-        <a-row :gutter="[8,8]">
-          <a-col v-bind="colLayout">
-            <!--            工作组名称-->
-            <a-form-item label="工作组" v-bind="formItemLayout" class="wd">
-              <a-input placeholder="填写通知组名称"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col v-bind="colLayout">
-            <!--            管理员名称-->
-            <a-form-item label="管理员" v-bind="formItemLayout" class="wd">
-              <a-input placeholder="填写管理员名称"></a-input>
-            </a-form-item>
-          </a-col>
-          <!--          有效标识-->
-          <a-col v-bind="colLayout">
-            <a-form-item label="有效标识" v-bind="formItemLayout" class="wd">
-              <a-select allowClear placeholder="请选择">
-                <a-select-option :value="1">有效</a-select-option>
-                <a-select-option :value="0">无效</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </div>
-      <span class="collapse">
-        <QueryBtn @click="query" />
-        <ResetBtn @click="resetQueryParams" />
-      </span>
-    </a-form>
+    <!--    <a-form layout="inline" class="form" style="margin-top:5px">-->
+    <!--      <div class="fold">-->
+    <!--        <a-row :gutter="[8,8]">-->
+    <!--          <a-col v-bind="colLayout">-->
+    <!--            &lt;!&ndash;            工作组名称&ndash;&gt;-->
+    <!--            <a-form-item label="工作组" v-bind="formItemLayout" class="wd">-->
+    <!--              <a-input placeholder="填写通知组名称"></a-input>-->
+    <!--            </a-form-item>-->
+    <!--          </a-col>-->
+    <!--          <a-col v-bind="colLayout">-->
+    <!--            &lt;!&ndash;            管理员名称&ndash;&gt;-->
+    <!--            <a-form-item label="管理员" v-bind="formItemLayout" class="wd">-->
+    <!--              <a-input placeholder="填写管理员名称"></a-input>-->
+    <!--            </a-form-item>-->
+    <!--          </a-col>-->
+    <!--          &lt;!&ndash;          有效标识&ndash;&gt;-->
+    <!--          <a-col v-bind="colLayout">-->
+    <!--            <a-form-item label="有效标识" v-bind="formItemLayout" class="wd">-->
+    <!--              <a-select allowClear placeholder="请选择">-->
+    <!--                <a-select-option :value="1">有效</a-select-option>-->
+    <!--                <a-select-option :value="0">无效</a-select-option>-->
+    <!--              </a-select>-->
+    <!--            </a-form-item>-->
+    <!--          </a-col>-->
+    <!--        </a-row>-->
+    <!--      </div>-->
+    <!--      <span class="collapse">-->
+    <!--        <QueryBtn @click="query" />-->
+    <!--        <ResetBtn @click="resetQueryParams" />-->
+    <!--      </span>-->
+    <!--    </a-form>-->
 
     <!--    按钮-->
     <a-button class="marginLeft" @click="addGroup">新建</a-button>
@@ -39,17 +39,17 @@
     <popover title="是否要删除这些用户组？" @confirm="() => deleteGroup(record)">
       <a-button class="marginLeft" :disabled="!hasSelected">删除</a-button>
     </popover>
-    <a-button class="marginLeft" @click="onShow">分配用户</a-button>
+    <!--    <a-button class="marginLeft" @click="onShow">分配用户</a-button>-->
     <a-table
       :columns="columns"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :pagination="pagination"
       :data-source="data"
     ></a-table>
-    <schema
-      ref="schema"
-      @close="onClose"
-    ></schema>
+    <!--    <schema-->
+    <!--      ref="schema"-->
+    <!--      @close="onClose"-->
+    <!--    ></schema>-->
     <GroupSchema
       ref="group"
     ></GroupSchema>
@@ -71,20 +71,10 @@ const columns = [
     dataIndex: 'admin_name'
   },
   {
-    title: '启用状态',
-    dataIndex: 'enabled'
-  },
-  {
     title: '备注',
     dataIndex: 'remarks',
     width: 280,
     tooltip: true
-  },
-  {
-    title: '操作',
-    key: 'action',
-    align: 'center',
-    scopedSlots: { customRender: 'action' }
   }
 ]
 const data = [
@@ -158,6 +148,7 @@ export default {
       // TODO 删除对应的通知组
     },
     async fetch () {
+      // TODO 对接通知组请求
       const { data: { data } } = await NotificationGroupService.getGroup()
     }
   }

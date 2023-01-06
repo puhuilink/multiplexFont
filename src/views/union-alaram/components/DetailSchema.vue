@@ -5,13 +5,28 @@
     :visible="visible"
     :width="820"
     :afterClose="reset"
+    :destroyOnClose="true"
     centered>
     <template slot="footer">
       <a-button key="back" @click="handleCancel">
         关闭
       </a-button>
     </template>
-    <a-table :columns="columns" :data-source="data" bordered>
+    <a-table
+      :columns="columns"
+      :data-source="dataSource"
+      bordered
+      :loading="loading"
+      :pagination="{
+        current: this.current,
+        pageSize: 10,
+        total: this.total,
+        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onChange:(page) =>{
+          this.current = page
+          handleSearch(page, pageSize)
+        },
+      }">
       <template slot="title">
         <table width="100%">
           <tr align="center">
@@ -22,24 +37,24 @@
             <td>
               <a-row type="flex" justify="space-between">
                 <a-col :span="8">
-                  告警对象：192.168.2.4
+                  告警对象：{{ main.device }}
                 </a-col>
                 <a-col :span="8">
-                  告警标题：内存利用率 > 60%
+                  告警标题：{{ main.title }}
                 </a-col>
                 <a-col :span="8">
-                  告警级别：P1
+                  告警级别：P{{ main.level }}
                 </a-col>
               </a-row>
               <a-row type="flex" justify="space-between">
                 <a-col :span="8">
-                  告警编号：10209766
+                  告警编号：{{ main.event_id }}
                 </a-col>
                 <a-col :span="8">
-                  告警发生时间：08-18 10:16
+                  告警发生时间：{{ main.last_time }}
                 </a-col>
                 <a-col :span="8">
-                  告警源：Pigoss-001
+                  告警源：{{ main.source_name }}
                 </a-col>
               </a-row>
             </td>
@@ -56,49 +71,57 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
+import { alarm } from '@/utils/request'
+import moment from 'moment'
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
-    scopedSlots: { customRender: 'name' }
+    title: '级别',
+    dataIndex: 'level',
+    customRender: (text) => `P${text}`
   },
   {
-    title: 'Cash Assets',
-    className: 'column-money',
-    dataIndex: 'money'
+    title: '告警编号',
+    dataIndex: 'ID'
   },
   {
-    title: 'Address',
-    dataIndex: 'address'
+    title: '告警标题',
+    dataIndex: 'title'
+  },
+  {
+    title: '告警对象',
+    dataIndex: 'device'
+  },
+  {
+    title: '发生时间',
+    dataIndex: 'start_time',
+    customRender: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'last_time',
+    customRender: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+  },
+  {
+    title: '告警详情',
+    dataIndex: 'content'
+  },
+  {
+    title: '告警源',
+    dataIndex: 'source_name'
   }
 ]
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    money: '￥300,000.00',
-    address: 'New York No. 1 Lake Park'
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    money: '￥1,256,000.00',
-    address: 'London No. 1 Lake Park'
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    money: '￥120,000.00',
-    address: 'Sidney No. 1 Lake Park'
-  }
-]
+const data = []
 export default {
   name: 'DetailSchema',
   data () {
     return {
       data,
-      columns
+      columns,
+      main: {},
+      total: 1,
+      current: 1,
+      loading: false
     }
   },
   mixins: [Schema],
@@ -106,9 +129,25 @@ export default {
     handleCancel () {
       this.visible = false
     },
-    show (title) {
+    show (title, text) {
+      this.main = text
       this.visible = true
       this.title = title
+      this.loadData()
+    },
+    async loadData (limit = 10, offset = 1) {
+      this.loading = true
+      const { data, page } = await alarm.post('/alert/find/sub',
+        { master_id: this.main.ID,
+          limit: limit,
+          offset: offset }
+      )
+      this.dataSource = data
+      this.total = page.total
+      this.loading = false
+    },
+    handleSearch (page, size) {
+      this.loadData(page, size)
     }
   }
 }

@@ -117,6 +117,7 @@ export default {
       this.editor.setContent(MessageModel.deSerialize(this.args))
       // 通知value初始化
       this.$emit('input', MessageModel.serialize(MessageModel.deSerialize(this.args), this.singleLine))
+      this.preview = false
     }
   },
   beforeDestroy () {

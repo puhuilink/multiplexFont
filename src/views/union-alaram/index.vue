@@ -16,64 +16,66 @@
               <a-select
                 show-search
                 placeholder="选择告警级别"
-                option-filter-prop="children"
-                :filter-option="filterOption"
-                @focus="handleFocus"
-                @blur="handleBlur"
-                @change="handleChange"
+                v-model="queryParams.level"
               >
-                <a-select-option value="jack">
-                  Jack
+                <a-select-option value="1">
+                  P1
                 </a-select-option>
-                <a-select-option value="lucy">
-                  Lucy
+                <a-select-option value="2">
+                  P2
                 </a-select-option>
-                <a-select-option value="tom">
-                  Tom
+                <a-select-option value="3">
+                  P3
+                </a-select-option>
+                <a-select-option value="4">
+                  P4
+                </a-select-option>
+                <a-select-option value="5">
+                  P5
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col v-bind="colLayout">
-            <!--            告警来源-->
-            <a-form-item :label="ALARM_QUERY_LABEL.source" v-bind="formItemLayout" class="wd">
-              <a-select
-                show-search
-                placeholder="选择告警来源"
-                option-filter-prop="children"
-                :filter-option="filterOption"
-                @focus="handleFocus"
-                @blur="handleBlur"
-                @change="handleChange"
-              >
-                <a-select-option value="jack">
-                  Jack
-                </a-select-option>
-                <a-select-option value="lucy">
-                  Lucy
-                </a-select-option>
-                <a-select-option value="tom">
-                  Tom
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
+          <!--          <a-col v-bind="colLayout">-->
+          <!--            &lt;!&ndash;            告警来源&ndash;&gt;-->
+          <!--            <a-form-item :label="ALARM_QUERY_LABEL.source" v-bind="formItemLayout" class="wd">-->
+          <!--              <a-select-->
+          <!--                show-search-->
+          <!--                placeholder="选择告警来源"-->
+          <!--                option-filter-prop="children"-->
+          <!--                :filter-option="filterOption"-->
+          <!--                @focus="handleFocus"-->
+          <!--                @blur="handleBlur"-->
+          <!--                @change="handleChange"-->
+          <!--              >-->
+          <!--                <a-select-option value="jack">-->
+          <!--                  Jack-->
+          <!--                </a-select-option>-->
+          <!--                <a-select-option value="lucy">-->
+          <!--                  Lucy-->
+          <!--                </a-select-option>-->
+          <!--                <a-select-option value="tom">-->
+          <!--                  Tom-->
+          <!--                </a-select-option>-->
+          <!--              </a-select>-->
+          <!--            </a-form-item>-->
+          <!--          </a-col>-->
           <!--          告警类型-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.type" v-bind="formItemLayout" class="wd">
-              <a-input placeholder="请输入告警类型" allowclear></a-input>
+              <a-input placeholder="请输入告警类型" v-model="queryParams.deviceType" allowClear></a-input>
             </a-form-item>
           </a-col>
           <!--          告警对象-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.object" v-bind="formItemLayout" class="wd">
-              <a-input placeholder="请输入告警对象" allowclear></a-input>
+              <a-input placeholder="请输入告警对象" v-model="queryParams.device" allowClear></a-input>
             </a-form-item>
           </a-col>
           <!--          时间范围-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.range" v-bind="formItemLayout" class="wd">
-              <a-range-picker @change="onChange" />
+              <a-range-picker @change="onChange" v-model="queryParams.timeList" format="YYYY-MM-DD HH:mm:ss" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -86,24 +88,42 @@
     <!--        导出-->
     <a-button icon="export" :disabled="!hasSelected">导出</a-button>
     <!--        关闭按钮-->
-    <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)" >
+    <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
     <a-table
       bordered
       :columns="columns"
-      :pagination="pagination"
+      :pagination="{
+        current: this.current,
+        pageSize: this.pageSize,
+        pageSizeOptions: ['10', '20'],
+        showSizeChanger: true,
+        showQuickJumper: true,
+        total: this.total,
+        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onChange:(page, pageSize) =>{
+          this.current = page
+          this.pageSize = pageSize
+          handleSearch(page, pageSize)
+        },
+        showSizeChange: (current, size) => {
+          this.current = current
+          this.pageSize = size
+          handleSearch(current, pageSize)
+        }
+      }"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :data-source="data">
+      :data-source="dataSource">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <span slot="action" slot-scope="text, record" class="center">
-        <a-button @click="showDetail">详情</a-button>
-        <a-divider type="vertical" />
-        <a-popconfirm title="是否要认领这条告警？" @confirm="() => claimAlarm(record)" >
+        <a-button @click="showDetail(text, record)">详情</a-button>
+        <a-divider v-if="record.claim_status === '0'" type="vertical" />
+        <a-popconfirm v-if="record.claim_status === '0'" title="是否要认领这条告警？" @confirm="() => claimAlarm(record)">
           <a-button>认领</a-button>
         </a-popconfirm>
         <a-divider type="vertical" />
-        <a-popconfirm title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)" >
+        <a-popconfirm title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)">
           <a-button>关闭</a-button>
         </a-popconfirm>
       </span>
@@ -117,6 +137,10 @@ import { ALARM_QUERY_LABEL, ALARM_STATE } from '@/tables/unionAlarm/enum'
 import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
+import _ from 'lodash'
+import { alarm } from '@/utils/request'
+import moment from 'moment'
+
 const columns = [
   {
     title: '告警级别',
@@ -124,75 +148,42 @@ const columns = [
   },
   {
     title: '告警ID',
-    dataIndex: 'id'
+    dataIndex: 'ID'
   },
   {
     title: '告警标题',
-    dataIndex: 'label'
+    dataIndex: 'title'
   },
   {
     title: '告警对象',
-    dataIndex: 'object'
+    dataIndex: 'device'
   },
   {
     title: '告警类型',
-    dataIndex: 'type'
+    dataIndex: 'device_type'
   },
   {
     title: '告警时间',
-    dataIndex: 'alarm_time'
+    dataIndex: 'last_time',
+    customRender: (record) => moment(record).format('YYYY-MM-DD hh:mm:ss')
   },
   {
     title: '告警内容',
     dataIndex: 'content'
   },
-  {
-    title: '告警源',
-    dataIndex: 'source'
-  },
+  // {
+  //   title: '告警源',
+  //   dataIndex: 'source'
+  // },
   {
     title: '操作',
     key: 'action',
     align: 'center',
+    width: 300,
     scopedSlots: { customRender: 'action' }
   }
 ]
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park'
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park'
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park'
-  },
-  {
-    key: '4',
-    name: 'Disabled User',
-    age: 99,
-    address: 'Sidney No. 1 Lake Park'
-  }
-]
-const pagination = {
-  pageSizeOptions: ['25', '30', '50', '100'],
-  defaultCurrent: 1,
-  pageSize: 25,
-  defaultPageSize: 25,
-  hideOnSinglePage: false,
-  showQuickJumper: true,
-  showSizeChanger: true,
-  showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
-}
+const dataSource = []
 export default {
   name: 'UnionAlarm',
   data () {
@@ -205,6 +196,11 @@ export default {
         md: 12,
         sm: 24
       },
+      queryParams: {
+        process_status: '1',
+        limit: 10,
+        offset: 1
+      },
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
         wrapperCol: {
@@ -214,9 +210,10 @@ export default {
           xxl: { span: 20, offset: 0 }
         }
       },
-      data,
+      dataSource,
       columns,
-      pagination,
+      current: 1,
+      pageSize: 10,
       a: 0,
       visible: false,
       selectedRowKeys: []
@@ -228,45 +225,63 @@ export default {
   },
   methods: {
     onSelectChange (selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
-    handleChange (value) {
-      console.log(`selected ${value}`)
-    },
-    handleBlur () {
-      console.log('blur')
-    },
-    handleFocus () {
-      console.log('focus')
-    },
-    filterOption (input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      )
-    },
     onChange (date, dateString) {
-      console.log(date, dateString)
+    },
+    handleSearch (page, size) {
+      this.queryParams.limit = size
+      this.queryParams.offset = page
+      this.query()
     },
     onChangeState (activeKey) {
       this.state = activeKey
+      this.queryParams = {}
+      this.current = 1
+      this.pageSize = 10
+      this.queryParams.offset = 1
+      this.queryParams.limit = 10
+      switch (this.state) {
+        case ALARM_STATE.unSolved:
+          this.queryParams.process_status = '1'
+          break
+        case ALARM_STATE.closed:
+          this.queryParams.process_status = '0'
+          break
+        case ALARM_STATE.unclaimed:
+          this.queryParams.claim_status = '0'
+          break
+        case ALARM_STATE.claimed:
+          this.queryParams.claim_status = '1'
+          break
+      }
+      this.query()
     },
-    query () {
+    async query () {
       // TODO 查询
+      if (this.queryParams.timeList) {
+        this.queryParams.start_time = this.queryParams.timeList[0]
+        this.queryParams.end_time = this.queryParams.timeList[1]
+      }
+      const { data, page } = await alarm.post('/alert/find/main', {
+        ...this.queryParams
+      })
+      this.dataSource = data
+      this.total = page.total
     },
     resetQueryParams () {
       // TODO 重置查询
+      this.queryParams = _.omit(this.queryParams, ['level', 'deviceType', 'device', 'timeList'])
     },
     // 认领告警
     claimAlarm (record) {
-      console.log('认领', record)
     },
     // 关闭或批量关闭告警
     closeAlarm (record) {
 
     },
-    showDetail () {
-      this.$refs.schema.show('压缩告警详情')
+    showDetail (text, record) {
+      this.$refs.schema.show('压缩告警详情', text)
       // TODO 交互详情内容
     },
     onClose () {
@@ -277,7 +292,6 @@ export default {
     rowSelection () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
         },
         getCheckboxProps: record => ({
           props: {
@@ -290,6 +304,9 @@ export default {
     hasSelected () {
       return this.selectedRowKeys.length > 0
     }
+  },
+  created () {
+    this.query()
   }
 }
 </script>
@@ -320,11 +337,13 @@ export default {
 
 .form {
   margin-right: 10px;
+
   .fold {
     flex: 1;
     display: inline-block;
     width: calc(100% - 216px);
   }
+
   .collapse {
     float: right;
     overflow: hidden;
