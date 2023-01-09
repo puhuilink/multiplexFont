@@ -5,8 +5,8 @@
     :data-source="data"
     :row-key="(record) => record.id"
   >
-    <template :slot="'detail'">
-      <a>查看详情</a>
+    <template :slot="'detail'" slot-scope="text,record">
+      <a @click="showDetail(record.id)">查看详情</a>
     </template>
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
     <template :slot="'action'" slot-scope="text,record">
@@ -36,6 +36,8 @@
 <script>
 
 import SvgIcon from '@/components/SvgIcon/index.vue'
+import axios from 'axios'
+
 // type Key = string | number
 //
 // interface DataType {
@@ -159,6 +161,10 @@ export default {
     onSelectChange (selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.state.selectedRowKeys = selectedRowKeys
+    },
+    showDetail (id) {
+      axios.get('http://127.0.0.1:3000/mock/11/knowledge/query/getAllRelationRule')
+      console.log(id)
     }
   },
   data () {

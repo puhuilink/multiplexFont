@@ -35,7 +35,7 @@ export default {
   },
   data () {
     const name = 'svg-' + this.svgName
-    const count = this.count
+    const count = this.alertSourceCount
 
     return {
       name,

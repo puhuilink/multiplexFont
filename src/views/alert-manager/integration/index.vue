@@ -15,9 +15,23 @@
 import TopGuide from './components/TopGuide.vue'
 import LeftList from './components/LeftList.vue'
 import RightTable from './components/RightTable.vue'
+import { getPlatformList } from '@/api/alertMockApi'
+import store from '@/store'
+import { AlertMutationTypes } from '@/store/modules/alert'
+
 export default {
   name: 'Integration',
-  components: { RightTable, LeftList, TopGuide }
+  components: { RightTable, LeftList, TopGuide },
+  methods: {
+    async requestPlatformList () {
+      const { data } = await getPlatformList()
+      const obj = { platformList: data.data }
+      store.commit(AlertMutationTypes.setPlatformList, obj)
+    }
+  },
+  mounted () {
+    this.requestPlatformList()
+  }
   // TODO 将style样式全写在下边 以class的形式
 }
 </script>

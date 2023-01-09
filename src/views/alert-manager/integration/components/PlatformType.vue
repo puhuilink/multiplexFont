@@ -16,16 +16,16 @@
       >
         <a-form-model :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="接入平台标识">
-            <a-input style="width: 80%" v-model="formState.img" /> <a-button style="margin-left:5px "> <a-icon type="upload"/>上传</a-button>
+            <a-input style="width: 80%" v-model="formState.file" /> <a-button style="margin-left:5px "> <a-icon type="upload"/>上传</a-button>
           </a-form-model-item>
           <a-form-model-item label="接入平台名称">
             <a-input v-model="formState.name" />
           </a-form-model-item>
           <a-form-model-item label="接入平台描述">
-            <a-textarea v-model="formState.description" />
+            <a-textarea v-model="formState.remark" />
           </a-form-model-item>
           <a-form-model-item label="监控级别对应关系">
-            <a-table :columns="mappingColumns" :data-source="formState.mapping" :pagination="false" :row-key="(record,index)=>index">
+            <a-table :columns="mappingColumns" :data-source="formState.levelRelation" :pagination="false" :row-key="(record,index)=>index">
               <template
                 v-for="col in ['here', 'there']"
                 :slot="col"
@@ -86,7 +86,19 @@
 <script>
 import PlatformImg from './PlatformImg.vue'
 import _ from 'lodash'
-
+import { addPlatform } from '@/api/alertMockApi'
+const original = {
+  file: '',
+  name: '',
+  remark: '',
+  levelRelation: [
+    {
+      P1: 'p1',
+      P2: '1',
+      key: 0
+    }
+  ]
+}
 export default {
   name: 'PlatformType',
   components: { PlatformImg },
@@ -104,18 +116,7 @@ export default {
     return {
       visible: false,
       confirmLoading: false,
-      formState: {
-        img: '',
-        name: '',
-        description: '',
-        mapping: [
-          {
-            here: 'p1',
-            there: '1',
-            key: 0
-          }
-        ]
-      },
+      formState: _.cloneDeep(original),
       labelCol: { span: 6 },
       wrapperCol: { span: 12 }
     }
@@ -126,31 +127,26 @@ export default {
     },
     closeModal () {
       this.visible = false
-      this.formState = {
-        img: '',
-        name: '',
-        description: '',
-        mapping: [
-          {
-            here: 'p1',
-            there: '1'
-          }
-        ]
-
-      }
+      this.formState = _.cloneDeep(original)
     },
     addRecord () {
       this.formState.mapping.push(
         {
-          here: 'p1',
-          there: '1',
+          P1: 'p1',
+          P2: '1',
           key: this.formState.mapping.length
         }
       )
       this.$forceUpdate()
     },
-    handleOk () {
-      this.$message.success('新建成功！')
+    async handleOk () {
+      this.confirmLoading = true
+      const res = await addPlatform(this.formState)
+      if (res.data.code === 200) {
+        this.$message.success('新建成功！')
+      } else {
+        this.$message.error('新建失败！请检查环境！')
+      }
       this.closeModal()
     },
     handleChange (value, key, column) {
@@ -200,12 +196,12 @@ export default {
       return [
         {
           title: '统一监控平台',
-          dataIndex: 'here',
+          dataIndex: 'P1',
           scopedSlots: { customRender: 'here' }
         },
         {
           title: this.formState.name,
-          dataIndex: 'there',
+          dataIndex: 'P2',
           scopedSlots: { customRender: 'there' }
         },
         {

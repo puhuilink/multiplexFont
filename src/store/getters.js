@@ -15,7 +15,8 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab,
   lang: state => _.get(state, 'i18n.lang'),
-  orm: state => state.cache.orm
+  orm: state => state.cache.orm,
+  platformList: state => state.alert.platformList
 }
 
 export default getters
