@@ -24,6 +24,7 @@ import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Mention } from 'tiptap-extensions'
 import { MessageModel } from './model'
 import { TEMP_KEYWORD_MAPPING } from '@/tables/alarm_temp/types'
+const args = '@{members}于@{ackTime}认领@{LEVEL}级别告警，告警对象:@{object}, 告警编号@{alarmId}，主机：@{object}，告警发生时间：@{closeTime}，告警标题：@{name}告警内容：@{content}'
 
 export default {
   name: 'TempEditor',
@@ -64,12 +65,14 @@ export default {
         ],
         content: '',
         onUpdate: ({ getJSON }) => {
+          console.log('更新节点', getJSON(), MessageModel.serialize(getJSON()))
           vm.$emit('input', MessageModel.serialize(getJSON()), vm.singleLine)
           // TODO: trigger input event and validator
           // TODO: singleLine 禁止换行
         }
       }),
       insertMention: () => {},
+      args,
       preview: false,
       tempKeywordList: Object.freeze(
         Object.fromEntries(this.mapping)
@@ -92,7 +95,6 @@ export default {
       }
     },
     value (value) {
-      console.log('value', value)
       this.setContent(
         MessageModel.deSerialize(value)
       )
@@ -112,7 +114,10 @@ export default {
       this.preview = !this.preview
     },
     toggleInit () {
-      this.$emit('init')
+      this.editor.setContent(MessageModel.deSerialize(this.args))
+      // 通知value初始化
+      this.$emit('input', MessageModel.serialize(MessageModel.deSerialize(this.args), this.singleLine))
+      this.preview = false
     }
   },
   beforeDestroy () {

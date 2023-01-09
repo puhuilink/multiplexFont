@@ -1,30 +1,19 @@
 <template>
-  <a-modal
-    @cancel="cancel"
-    :title="title"
-    :visible="visible"
-    :width="700"
-    :afterClose="reset"
-    :confirmLoading="loading"
-    okText="提交"
-    @ok="submit"
-    centered>
-    <a-transfer
-      :titles="['未分配', '已分配']"
-      :data-source="mockData"
-      :list-style="{
-        width: '300px',
-        height: '300px',
-      }"
-      :target-keys="targetKeys"
-      :render="renderItem"
-      :disabled="disabled"
-      @change="handleChange"
-      @search="handleSearch"
-      show-search
-      :filter-option="filterOption"
-    />
-  </a-modal>
+  <a-transfer
+    :titles="['未分配', '已分配']"
+    :data-source="mockData"
+    :list-style="{
+      width: '300px',
+      height: '300px',
+    }"
+    :target-keys="targetKeys"
+    :render="renderItem"
+    :disabled="disabled"
+    @change="handleChange"
+    @search="handleSearch"
+    show-search
+    :filter-option="filterOption"
+  />
 </template>
 
 <script>
@@ -97,7 +86,6 @@ export default {
       }
     },
     handleChange (targetKeys, direction, moveKeys) {
-      console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys
     },
     filterOption (inputValue, option) {
@@ -113,6 +101,6 @@ export default {
 }
 </script>
 
-<style lan='less' scoped>
+<style lang='less' scoped>
 
 </style>

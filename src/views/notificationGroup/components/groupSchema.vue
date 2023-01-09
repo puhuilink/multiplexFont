@@ -6,11 +6,18 @@
     :width="800"
     :afterClose="reset"
     :confirmLoading="loading"
-    okText="提交"
-    @ok="submit"
     centered>
+    <template slot="footer">
+      <a-button @click="prev" v-if="current === 1">上一步</a-button>
+      <a-button @click="next" v-if="current < 1">下一步</a-button>
+      <a-button type="primary" @click="submit" v-if="current === 1">提交</a-button>
+    </template>
     <a-form :form="form">
-      <a-row>
+      <a-steps :current="current">
+        <a-step key="1" title="编辑基本信息"></a-step>
+        <a-step key="1" title="分配用户"></a-step>
+      </a-steps>
+      <a-row v-show="onStep">
         <a-col :md="12" :span="24">
           <a-form-item
             label="通知组名称"
@@ -68,35 +75,8 @@
           </a-form-item>
         </a-col>
       </a-row>
-      <a-row>
-        <a-col :md="12" :span="24">
-          <a-form-item
-            label="有效标志"
-            v-bind="formItemLayout"
-          >
-            <a-select
-              v-decorator="[
-                'flag',
-                {
-                  initialValue: 1,
-                  rules: [
-                    {
-                      required: true,
-                      message: '有效标志必填'
-                    }
-                  ]
-                }
-              ]"
-            >
-              <a-select-option
-                v-for="item in options.flag"
-                :key="item.value"
-                :value="item.value"
-              >{{ item.name }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :md="12" :span="24">
+      <a-row v-show="onStep">
+        <a-col :md="24" :span="24">
           <a-form-item
             label="备注"
             v-bind="formItemLayout"
@@ -118,33 +98,31 @@
           </a-form-item>
         </a-col>
       </a-row>
+      <a-row v-show="!onStep" type="flex" justify="center">
+        <assign style="margin-top: 10px"></assign>
+      </a-row>
     </a-form>
   </a-modal>
 </template>
 
 <script>
 import Schema from '~~~/Mixins/Modal/Schema'
-import { UserService } from '@/api'
+import { NotificationGroupService } from '@/api'
+import assign from './assignSchema'
 
 export default {
   name: 'GroupSchema',
   mixins: [Schema],
+  components: { assign },
   data: () => {
     return {
       options: {
         flag: [
-          {
-            name: '有效',
-            value: 1
-          },
-          {
-            name: '无效',
-            value: 0
-          }
         ],
         disabled: false,
         loading: false
-      }
+      },
+      current: 0
     }
   },
   methods: {
@@ -184,18 +162,19 @@ export default {
       this.submit = this.edit()
     },
     async fillUser () {
-      const { data: { User } } = await UserService.find({
-        where: {
-          flag: 1
-        },
-        fields: [
-          'value:user_id',
-          'label:staff_name'
-        ],
-        alias: 'User'
-      })
-      console.log('mounted', User)
+      const { data: { User } } = await NotificationGroupService.getUser()
       this.options.user = User
+    },
+    next () {
+      this.current++
+    },
+    prev () {
+      this.current--
+    }
+  },
+  computed: {
+    onStep () {
+      return this.current === 0
     }
   },
   mounted () {
