@@ -123,9 +123,9 @@
       <a-button
         v-if="current === 2"
         type="primary"
-        @click="$message.success('Processing complete!')"
+        @click="onSubmit"
       >
-        完成
+        提交
       </a-button>
     </div>
   </div>
@@ -133,6 +133,8 @@
 </template>
 
 <script>
+
+import { addAlertSource } from '@/api/alertMockApi'
 
 export default {
   name: 'AlertSourceForm',
@@ -223,6 +225,10 @@ export default {
     onSelfChange (flag) {
       this.formState.noneConfig.state = flag
       // console.log('Failed:', flag)
+    },
+    onSubmit () {
+      addAlertSource()
+      console.log('')
     }
   },
   computed: {

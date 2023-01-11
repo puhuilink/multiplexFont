@@ -98,25 +98,27 @@
           <span slot="gateway" slot-scope="text">
             <span v-for="(t,index) in text" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ t }}</span>
           </span>
-          <span slot="operation" class="table-operation">
+          <span slot="operation" class="table-operation" slot-scope="text,record">
             <img
-              :src="require(`@/assets/icons/svg/编辑.svg`)"
+              :src="require(`@/assets/icons/svg/edit_icon.svg`)"
               width="20px"
               height="20px"
               title="编辑应用"
+              @click="openModal(record)"
             />
             <a-divider type="vertical" />
             <img
-              :src="require(`@/assets/icons/svg/删除.svg`)"
+              :src="require(`@/assets/icons/svg/delete_icon.svg`)"
               width="20px"
               height="20px"
               title="删除应用"
+              @click="deleteNotifyRule(record.id)"
             />
           </span>
         </a-table>
         <template :slot="'action'" slot-scope="text,record">
           <img
-            :src="require(`@/assets/icons/svg/删除.svg`)"
+            :src="require(`@/assets/icons/svg/delete_icon.svg`)"
             width="20px"
             height="20px"
             title="删除应用"
@@ -189,35 +191,35 @@ const columns = [
 const data = [
   {
     index: '1',
-    name: '分派策略001',
+    name: '运维一组',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '北京pigoss001'
   },
   {
     index: '2',
-    name: '分派策略002',
+    name: '运维二组',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '厦门pigoss001'
   },
   {
     index: '3',
-    name: '分派策略003',
+    name: '动环运维',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '北京pigoss002'
   },
   {
     index: '4',
-    name: '分派策略004',
+    name: 'ph-test',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '厦门共济-01 '
   },
   {
     index: '5',
-    name: '分派策略005',
+    name: 'cloud',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '智慧云'

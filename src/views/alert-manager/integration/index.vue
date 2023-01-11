@@ -15,18 +15,19 @@
 import TopGuide from './components/TopGuide.vue'
 import LeftList from './components/LeftList.vue'
 import RightTable from './components/RightTable.vue'
-import { getPlatformList } from '@/api/alertMockApi'
-import store from '@/store'
-import { AlertMutationTypes } from '@/store/modules/alert'
+import { alarm } from '@/utils/request'
 
 export default {
   name: 'Integration',
   components: { RightTable, LeftList, TopGuide },
   methods: {
     async requestPlatformList () {
-      const { data } = await getPlatformList()
-      const obj = { platformList: data.data }
-      store.commit(AlertMutationTypes.setPlatformList, obj)
+      // await alarm.get('/api/integration/platform/list')
+      await alarm.post('/api/integration/platform/find', {
+        'platformId': '282145905669443584'
+      })
+      await alarm.get('/api/integration/source/preadd')
+      await alarm.get('/api/configuration/group/list')
     }
   },
   mounted () {

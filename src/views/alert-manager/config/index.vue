@@ -80,7 +80,7 @@
       </template>
       <template :slot="'action'" slot-scope="text,record">
         <img
-          :src="require(`@/assets/icons/svg/编辑.svg`)"
+          :src="require(`@/assets/icons/svg/edit_icon.svg`)"
           width="20px"
           height="20px"
           title="编辑应用"
@@ -89,7 +89,7 @@
         <a-switch :checked="record.status" size="small" />
         <a-divider type="vertical" />
         <img
-          :src="require(`@/assets/icons/svg/删除.svg`)"
+          :src="require(`@/assets/icons/svg/delete_icon.svg`)"
           width="20px"
           height="20px"
           title="删除应用"
