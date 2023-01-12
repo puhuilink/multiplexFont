@@ -88,7 +88,7 @@
     </a-form>
     <!--        导出-->
     <a-button icon="export" :disabled="!hasSelected" style="margin-bottom: 10px">导出</a-button>
-<!--            关闭按钮-->
+    <!--            关闭按钮-->
     <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
