@@ -4,14 +4,14 @@
       <div style="margin-top: 20px; margin-left: 20px; margin-right: 20px">
         <div class="fakeContainer">
           <div style="grid-column-start:1;grid-column-end:3;font-size: 20px">
-            <a @click="back"><a-icon type="left"/>&nbsp;新建告警源&nbsp;/&nbsp;{{ type }}</a>
+            <a @click="back"><a-icon type="left"/>&nbsp;{{ record.id !== null?'修改':'新增' }}新建告警源&nbsp;/&nbsp;{{ type }}</a>
           </div>
           <div style="grid-column: 8/9;place-self:end;width: 100px;">
             <a-button>取消</a-button>
           </div>
         </div>
         <a-divider style="background: rgb(236,236,236)" />
-        <div><AlertSourceForm /></div>
+        <div><AlertSourceForm :record="record"/></div>
       </div>
     </div>
     <div class="item"/>
@@ -20,7 +20,7 @@
         <img :src="require(`@/assets/icons/svg/${type}.svg`)" width="100px" height="100px"/>
       </center>
       <p style="margin: 0px 50px 0px 50px">
-        Pigoss 提供了一个网络和告警源监控的开源解决方案，它支持数百万的监控指标。安装Pigoss 告警源可以将 Pigoss中的告警接入到 Cloud Alert 中来，自动帮您压缩冗余告警，避免告警风暴，让您更快定位和解决问题。
+        {{ this.platform.remark?this.platform.remark:defaultRemark }}
       </p>
       <div style="">
         <h4 name="mapping1" style="margin-top: 30px">监控级别对应关系</h4>
@@ -38,11 +38,13 @@
 
 import AlertSourceForm from '../components/AlertSourceForm'
 import SvgIcon from '@/components/SvgIcon/index'
-
+import store from '@/store/index'
+const defaultRemark = 'Pigoss 提供了一个网络和告警源监控的开源解决方案，它支持数百万的监控指标。安装Pigoss 告警源可以将 Pigoss中的告警接入到 Cloud Alert 中来，自动帮您压缩冗余告警，避免告警风暴，让您更快定位和解决问题。'
 export default {
   name: 'NewAlertSource',
   components: { SvgIcon, AlertSourceForm },
-  props: {},
+  props: {
+  },
   computed: {
     platformMapping () {
       return [
@@ -77,11 +79,32 @@ export default {
 
     back () {
       this.$router.push('platform')
+    },
+    loadPlatformList () {
+      const platformList = store.getters.platformList
+      platformList.forEach(plat => {
+        if (plat.platName === this.type) {
+          this.platform = plat
+          if (plat.levelRelation !== null && plat.levelRelation !== {}) {
+            const dataList = []
+            Object.keys(plat.levelRelation).forEach(level => {
+              dataList.push({
+                here: level,
+                there: plat.levelRelation[level]
+              })
+            })
+          }
+        }
+      })
     }
   },
   data () {
     const type = this.$route.query.platType
+    const record = this.$route.query.record
     return {
+      platform: {},
+      record,
+      defaultRemark,
       type,
       data1: [
         { here: 'p1', there: '5' },
@@ -94,6 +117,9 @@ export default {
         { here: '告警ID\n （eventId）', there: 'eventId' }
       ]
     }
+  },
+  mounted () {
+    this.loadPlatformList()
   }
 }
 </script>

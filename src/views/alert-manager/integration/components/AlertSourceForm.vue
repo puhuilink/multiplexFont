@@ -61,7 +61,7 @@
           label="开启认领"
           name="reclaim"
         >
-          <a-switch :checked="formState.reclaim" @change="onReclaimChange"/>
+          <a-switch :checked="formState.claim" @change="onReclaimChange"/>
         </a-form-item>
         <a-form-item
           extra="默认关闭，开启后需要配置监控时长，间隔时间内没有告警接入，将提醒选择的用户。时间范围：1~24小时，建议设置5小时以上更为合适"
@@ -139,7 +139,12 @@ import { addAlertSource } from '@/api/alertMockApi'
 export default {
   name: 'AlertSourceForm',
   components: {},
-  props: {},
+  props: {
+    record: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data () {
     return {
       formState: {
@@ -148,7 +153,7 @@ export default {
         port: 3000,
         autoClose: false,
         timeout: 0,
-        reclaim: false,
+        claim: false,
         dedup: true,
         noneConfig: {
           state: false,
@@ -215,7 +220,7 @@ export default {
       // console.log('Failed:', flag)
     },
     onReclaimChange (flag) {
-      this.formState.reclaim = flag
+      this.formState.claim = flag
       // console.log('Failed:', flag)
     },
     onDedupChange (flag) {
@@ -229,6 +234,25 @@ export default {
     onSubmit () {
       addAlertSource()
       console.log('')
+    },
+    initialData () {
+      if (this.record !== {}) {
+        this.formState = {
+          name: this.record.sourceName ? this.record.sourceName : '',
+          ip: this.record.sourceIp ? this.record.sourceIp : '',
+          port: this.record.sourcePort ? this.record.sourcePort : 3000,
+          autoClose: this.record.autoClose ? this.record.autoClose : false,
+          timeout: 0,
+          claim: false,
+          dedup: true,
+          noneConfig: {
+            state: false,
+            timeout: 0
+          },
+          url: '',
+          groupId: ''
+        }
+      }
     }
   },
   computed: {

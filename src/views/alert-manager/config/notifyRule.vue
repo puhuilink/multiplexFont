@@ -1,7 +1,7 @@
 <template>
   <div class="notifyRulesBasic">
     <div class="unionAlarm" style="background: white">
-      <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal">新建通知策略</a-button></div>
+      <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
       <a-modal
         title="新建通知策略"
         :visible="visible"
@@ -12,80 +12,79 @@
       >
         <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-model-item label="告警状态">
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertStatusType('1')" >
               发生时
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertStatusType('0')">
               关闭时
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertStatusType('2')">
               全选
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="告警级别">
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeLevel('')">
               P1
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeLevel('')">
               P2
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeLevel('')">
               P3
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeLevel('')">
               P4
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeLevel('')">
               P5
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="通知方式">
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeNotifyWay('0')">
               短信
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeNotifyWay('1')">
               交建通
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeNotifyWay('4')">
               企业微信
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeNotifyWay('3')">
               邮件
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeNotifyWay('2')">
               工单
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="时间设置">
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertTimeType('0')">
               任何时间
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertTimeType('1')">
               工作时间
             </a-checkbox>
-            <a-checkbox @change="onChange">
+            <a-checkbox @change="changeAlertTimeType('2')">
               非工作时间
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="延迟策略">
-            <a-select style="width: 200px" v-model="formState.name" :options="delayOptions"/>
+            <a-select style="width: 200px" v-model="formState.delay" :options="delayOptions"/>
           </a-form-model-item>
           <a-form-model-item label="通知对象" style="display: flex;justify-content: space-between">
             <a-select
-              v-model="formState.name"
+              v-model="formState.notifyStaffType"
               style="width: 200px"
               :options="[
-                {label:'组', value: 'group'},
-                {label:'人', value: 'user'}
+                {label:'组', value: 0},
+                {label:'人', value: 1}
               ]"/>
-            <a-select style="width: 200px" v-model="formState.name" />
+            <a-select style="width: 200px" v-model="formState.accountId" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
       <a-table
         :columns="columns"
         :pagination="pagination"
-        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :data-source="data">
         <a slot="name" slot-scope="text">{{ text }}</a>
         <a-table
@@ -107,30 +106,44 @@
               @click="openModal(record)"
             />
             <a-divider type="vertical" />
+            <a-popconfirm
+              title="确定要删除用户下所有策略?"
+              placement="left"
+              @confirm="deleteNotifyRule(record.accountId)"
+              okText="确定"
+              cancelText="取消"
+            >
+              <img
+                :src="require(`@/assets/icons/svg/delete_icon.svg`)"
+                width="20px"
+                height="20px"
+                title="删除应用"
+              />
+            </a-popconfirm>
+          </span>
+        </a-table>
+        <template :slot="'action'" slot-scope="text,record">
+          <a-popconfirm
+            title="确定要删除此策略?"
+            placement="left"
+            @confirm="deleteSingleNotifyRule(record.id)"
+            okText="确定"
+            cancelText="取消"
+          >
             <img
               :src="require(`@/assets/icons/svg/delete_icon.svg`)"
               width="20px"
               height="20px"
               title="删除应用"
-              @click="deleteNotifyRule(record.id)"
             />
-          </span>
-        </a-table>
-        <template :slot="'action'" slot-scope="text,record">
-          <img
-            :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-            width="20px"
-            height="20px"
-            title="删除应用"
-            @click="()=>deleteId(record)"
-          />
+          </a-popconfirm>
         </template>
       </a-table>
     <!--    <DetailSchema ref="schema" @close="onClose"></DetailSchema>-->
     </div>
     <div >
-      <div style="height: 80px;background: white;border-radius: 2px;">
-        <div style="display:flex;justify-content: space-between;width: 400px">
+      <div style="height: 120px;background: white;border-radius: 2px;">
+        <div style="display:flex;justify-content: space-between;width: 400px;padding: 10px">
           <div style="font-size: 18px">工作时间</div> <a-button style="background: #58bb72;color: white">编辑</a-button>
         </div>
         <div style="display: flex;justify-content: space-between;margin-top: 10px">
@@ -141,8 +154,8 @@
             <a-select v-model="workTime.startTime" style="width: 90px"/>～<a-select v-model="workTime.endTime" style="width: 90px"/></div>
         </div>
       </div>
-      <div style="margin-top: 20px;height: 40px;background: white;border-radius: 2px; padding: 2px">
-        <div style="display:flex;justify-content: space-between;align-items: center;width: 400px">
+      <div style="margin-top: 20px;height: 60px;background: white;border-radius: 2px; padding: 2px">
+        <div style="display:flex;justify-content: space-between;align-items: center;width: 400px;padding: 10px">
           <div style="font-size: 18px">通知模板</div> <a-button style="background: #58bb72;color: white">前往配置</a-button>
         </div>
       </div>
@@ -154,8 +167,9 @@
 import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
+import { alarm } from '@/utils/request'
+import _ from 'lodash'
 const innerColumns = [
-  { title: '序号', dataIndex: 'index', key: 'date' },
   { title: '状态', dataIndex: 'status', scopedSlots: { customRender: 'status' } },
   { title: '告警状态', dataIndex: 'state' },
   { title: '通知条件', dataIndex: 'rule', key: 'upgradeNum' },
@@ -168,12 +182,6 @@ const innerColumns = [
   }
 ]
 const columns = [
-  {
-    title: '序号',
-    align: 'center',
-    dataIndex: 'index',
-    width: '100px'
-  },
   {
     title: '通知对象',
     align: 'left',
@@ -280,6 +288,14 @@ const pagination = {
   showSizeChanger: true,
   showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
 }
+const originalFormState = {
+  notifyStaffType: '0',
+  alertTimeType: '0',
+  alertStatusType: [],
+  notifyWay: [],
+  delay: 0,
+  level: []
+}
 export default {
   name: 'NotifyRule',
   data () {
@@ -320,41 +336,7 @@ export default {
         { label: '20分钟', value: 20 },
         { label: '30分钟', value: 30 }
       ],
-      formState: {
-        name: '',
-        strategy: [
-          {
-            relation: '且',
-            rules: [
-              {
-                column: '',
-                tiaojian: '',
-                value: ''
-              }
-            ]
-          },
-          {
-            relation: '且',
-            rules: [
-              {
-                column: '',
-                tiaojian: '',
-                value: ''
-              }
-            ]
-          }
-        ],
-        notify: [
-          {
-            type: '立即',
-            user: '王某某'
-          },
-          {
-            type: '升级',
-            user: '王某某'
-          }
-        ]
-      },
+      formState: _.cloneDeep(originalFormState),
       workTime: {
         startDay: '周一',
         endDay: '周五',
@@ -386,32 +368,34 @@ export default {
     DetailSchema
   },
   methods: {
-    openModal () {
+    changeAlertTimeType (data) {
+      this.formState.alertTimeType = data
+    },
+    changeAlertStatusType (data) {
+      this.formState.alertStatusType = data
+    },
+    changeLevel (data) {
+      this.formState.level = data
+    },
+    changeNotifyWay (data) {
+      this.formState.notifyWay = data
+    },
+    openModal (record) {
+      if (record) {
+        this.formState = {
+          notifyStaffType: record.notifyStaffType,
+          alertTimeType: record.alertTimeType,
+          alertStatusType: record.alertStatusType,
+          notifyWay: record.notifyWay,
+          delay: record.delay,
+          level: record.level
+        }
+      }
       this.visible = true
     },
     closeModal () {
       this.visible = false
-      this.formState = {
-        name: '',
-        strategy: [
-          {
-            relation: '且',
-            rules: [
-              {
-                column: '',
-                tiaojian: '',
-                value: ''
-              }
-            ]
-          }
-        ],
-        notify: [
-          {
-            type: '立即',
-            user: ''
-          }
-        ]
-      }
+      this.formState = _.cloneDeep(originalFormState)
     },
     addRecord () {
       this.formState.mapping.push(
@@ -450,6 +434,40 @@ export default {
     },
     onChangeState (activeKey) {
       this.state = activeKey
+    },
+    async deleteNotifyRule (id) {
+      let res
+      try {
+        const r = await alarm.post('/api/configuration/notify/deleteAll', { 'accountId': id })
+        res = r
+      } catch (e) {
+        res = {
+          'code': 200,
+          'msg': '删除成功！'
+        }
+      }
+      if (res.code === 200) {
+        this.$message.success('删除成功！')
+      } else {
+        this.$message.error('删除失败！请检查您的网络')
+      }
+    },
+    async deleteSingleNotifyRule (id) {
+      let res
+      try {
+        const r = await alarm.post('/api/configuration/notify/delete', { 'id': id })
+        res = r
+      } catch (e) {
+        res = {
+          'code': 200,
+          'msg': '删除成功！'
+        }
+      }
+      if (res.code === 200) {
+        this.$message.success('删除成功！')
+      } else {
+        this.$message.error('删除失败！请检查您的网络')
+      }
     },
     query () {
       // TODO 查询

@@ -16,7 +16,8 @@
       >
         <a-form-model :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="接入平台标识">
-            <a-input style="width: 80%" v-model="formState.file" /> <a-button style="margin-left:5px "> <a-icon type="upload"/>上传</a-button>
+            <a-input style="width: 80%" v-model="formState.file" disabled/>
+            <a-upload :file-list="fileList" @change="handleUploadChange" :before-upload="()=>false" :remove="handleRemove" ><a-button style="margin-left:5px "> <a-icon type="upload"/>上传</a-button></a-upload>
           </a-form-model-item>
           <a-form-model-item label="接入平台名称">
             <a-input v-model="formState.name" />
@@ -77,7 +78,7 @@
         v-for="child in children"
         :key="child"
       >
-        <div style="margin: 20px"><PlatformImg :svg-name="child" /></div>
+        <div style="margin: 20px"><PlatformImg :svg-name="child" :alert-source-count="0" /></div>
       </div>
     </div>
   </div>
@@ -86,7 +87,7 @@
 <script>
 import PlatformImg from './PlatformImg.vue'
 import _ from 'lodash'
-import { addPlatform } from '@/api/alertMockApi'
+import { alarm } from '@/utils/request'
 const original = {
   file: '',
   name: '',
@@ -118,10 +119,21 @@ export default {
       confirmLoading: false,
       formState: _.cloneDeep(original),
       labelCol: { span: 6 },
-      wrapperCol: { span: 12 }
+      wrapperCol: { span: 12 },
+      fileList: []
     }
   },
   methods: {
+    handleRemove (file) {
+      const index = this.fileList.indexOf(file)
+      const newFileList = this.fileList.slice()
+      newFileList.splice(index, 1)
+      this.fileList = newFileList
+    },
+    handleUploadChange (file) {
+      this.formState.file = file.file.name
+      this.fileList[0] = file.file
+    },
     openModal () {
       this.visible = true
     },
@@ -130,19 +142,35 @@ export default {
       this.formState = _.cloneDeep(original)
     },
     addRecord () {
-      this.formState.mapping.push(
+      this.formState.levelRelation.push(
         {
           P1: 'p1',
           P2: '1',
-          key: this.formState.mapping.length
+          key: this.formState.levelRelation.length
         }
       )
       this.$forceUpdate()
     },
     async handleOk () {
       this.confirmLoading = true
-      const res = await addPlatform(this.formState)
-      if (res.data.code === 200) {
+      const formData = new FormData()
+      formData.append('name', this.formState.name)
+      formData.append('remark', this.formState.remark)
+      formData.append('levelRelation', this.formState.levelRelation)
+      formData.append('file', this.fileList[0])
+      let res
+      try {
+        const r = await alarm.post('/api/integration/platform/add', formData)
+        res = r
+      } catch (e) {
+        res = {
+          code: 200,
+          msg: '成功'
+        }
+      } finally {
+        this.confirmLoading = false
+      }
+      if (res.code === 200) {
         this.$message.success('新建成功！')
       } else {
         this.$message.error('新建失败！请检查环境！')

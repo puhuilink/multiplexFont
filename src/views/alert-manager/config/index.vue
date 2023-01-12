@@ -14,7 +14,7 @@
           <a-input v-model="formState.name" />
         </a-form-model-item>
         <a-form-model-item label="告警源">
-          <a-select v-model="formState.name" />
+          <a-select v-model="formState.source" />
         </a-form-model-item>
         <a-form-model-item label="分派条件">
           <div
@@ -23,7 +23,7 @@
             grid-auto-columns: 1fr;"
             v-for="(map,index) in formState.strategy"
             :key="index">
-            <a-avatar :size="64" class="circle"> {{ index+1 }}</a-avatar >
+            <a-avatar :size="32" class="circle"> {{ index+1 }}</a-avatar >
             <div>
               <div style="display: flex;align-items: center;">
                 规则之间的条件：<a-radio-group :options="options" v-model="map.relation" :default-value="1" />
@@ -49,10 +49,10 @@
           <div
             style="display: grid;
             grid-template-columns: 220px 1fr;
-            grid-auto-columns: 1fr;"
+            grid-auto-columns: 1fr;margin-top: 2px"
             v-for="(notice,index) in formState.notify"
             :key="index">
-            <a-avatar :size="64" class="circle">{{ notice.type }}</a-avatar>
+            <a-avatar :size="32" class="circle">{{ notice.type }}</a-avatar>
             <div v-if="index===0">
               <div>通知组或人 <a-select v-model="notice.user" style="width: 100px"/></div>
             </div>
@@ -72,7 +72,6 @@
       bordered
       :columns="columns"
       :pagination="pagination"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <template :slot="'levelUp'" slot-scope="text,record">
@@ -84,16 +83,25 @@
           width="20px"
           height="20px"
           title="编辑应用"
+          @click="notifyLevelUp(record)"
         />
         <a-divider type="vertical" />
-        <a-switch :checked="record.status" size="small" />
-        <a-divider type="vertical" />
-        <img
-          :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-          width="20px"
-          height="20px"
-          title="删除应用"
-        />
+        <!--        <a-switch :checked="record.status" size="small" />-->
+        <!--        <a-divider type="vertical" />-->
+        <a-popconfirm
+          title="确定要删除此策略?"
+          placement="left"
+          @confirm="deleteStrategy(record.id)"
+          okText="确定"
+          cancelText="取消"
+        >
+          <img
+            :src="require(`@/assets/icons/svg/delete_icon.svg`)"
+            width="20px"
+            height="20px"
+            title="删除应用"
+          />
+        </a-popconfirm>
       </template>
     </a-table>
     <!--    <DetailSchema ref="schema" @close="onClose"></DetailSchema>-->
@@ -106,12 +114,6 @@ import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import _ from 'lodash'
 const columns = [
-  {
-    title: '序号',
-    align: 'center',
-    dataIndex: 'index',
-    width: '100px'
-  },
   {
     title: '分派名称',
     align: 'center',
@@ -190,6 +192,7 @@ const pagination = {
 }
 const originalData = {
   name: '',
+  source: '',
   strategy: [
     {
       relation: '且',
@@ -280,6 +283,10 @@ export default {
       this.formState = _.cloneDeep(originalData)
     },
     addStrategy () {
+      if (this.formState.strategy.length > 8) {
+        this.$message.warn('最多只能有9条策略！')
+        return
+      }
       this.formState.strategy.push(
         _.cloneDeep(originalStrategy)
       )
@@ -294,11 +301,19 @@ export default {
       this.formState.strategy[index].rules.splice(i, 1)
     },
     addRule (index) {
+      if (this.formState.strategy[index].rules.length > 4) {
+        this.$message.warn('最多只能有五条规则！')
+        return
+      }
       this.formState.strategy[index].rules.push(
         _.cloneDeep(originalRule)
       )
     },
     notifyLevelUp () {
+      if (this.formState.notify.length > 3) {
+        this.$message.warn('通知最多只能升级三次！')
+        return
+      }
       this.formState.notify.push({
         type: '升级',
         user: ''

@@ -52,7 +52,6 @@
     <a-table
       :columns="columns"
       :pagination="pagination"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <template :slot="'content'" slot-scope="text,record">
@@ -71,16 +70,25 @@
           width="20px"
           height="20px"
           title="编辑应用"
+          @click="openModal(record)"
         />
         <a-divider type="vertical" />
         <a-switch :checked="record.status" size="small" />
         <a-divider type="vertical" />
-        <img
-          :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-          width="20px"
-          height="20px"
-          title="删除应用"
-        />
+        <a-popconfirm
+          title="确定要删除此规则?"
+          placement="left"
+          @confirm="deleteShieldRule(record.accountId)"
+          okText="确定"
+          cancelText="取消"
+        >
+          <img
+            :src="require(`@/assets/icons/svg/delete_icon.svg`)"
+            width="20px"
+            height="20px"
+            title="删除应用"
+          />
+        </a-popconfirm>
       </template>
     </a-table>
     <!--    <DetailSchema ref="schema" @close="onClose"></DetailSchema>-->
@@ -94,12 +102,6 @@ import '@/utils/utils.less'
 import _ from 'lodash'
 
 const columns = [
-  {
-    title: '序号',
-    align: 'center',
-    dataIndex: 'index',
-    width: '100px'
-  },
   {
     title: '规则名称',
     align: 'center',
@@ -296,7 +298,10 @@ export default {
     DetailSchema
   },
   methods: {
-    openModal () {
+    openModal (record) {
+      if (record) {
+        this.formState = {}
+      }
       this.visible = true
     },
     closeModal () {
@@ -304,6 +309,10 @@ export default {
       this.formState = _.cloneDeep(originData)
     },
     addRule () {
+      if (this.formState.strategy[0].rules.length > 4) {
+        this.$message.warn('最多只能添加5条！')
+        return
+      }
       this.formState.strategy[0].rules.push({
         column: '',
         symbol: '',

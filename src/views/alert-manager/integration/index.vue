@@ -4,9 +4,9 @@
       <TopGuide />
     </div>
     <div style="display: flex;margin-left: 20px; margin-right: 20px;">
-      <div style="height: 100%;width: 700px; background: #ffffff"><LeftList /></div>
+      <div style="height: 100%;width: 400px; background: #ffffff"><LeftList /></div>
       <div style="width: 20px"></div>
-      <div style="height: 100%;width: 1455px; background: #ffffff"><RightTable /></div>
+      <div style="height: 100%;min-width: 1455px;margin-left: 20px; background: #ffffff"><RightTable /></div>
     </div>
   </div>
 </template>
@@ -16,24 +16,43 @@ import TopGuide from './components/TopGuide.vue'
 import LeftList from './components/LeftList.vue'
 import RightTable from './components/RightTable.vue'
 import { alarm } from '@/utils/request'
+import store from '@/store/index'
+import { AlertMutationTypes } from '@/store/modules/alert'
 
 export default {
   name: 'Integration',
   components: { RightTable, LeftList, TopGuide },
   methods: {
     async requestPlatformList () {
-      // await alarm.get('/api/integration/platform/list')
-      await alarm.post('/api/integration/platform/find', {
-        'platformId': '282145905669443584'
-      })
-      await alarm.get('/api/integration/source/preadd')
-      await alarm.get('/api/configuration/group/list')
+      let platformList
+      try {
+        const { data } = await alarm.get('/api/integration/platform/list')
+        platformList = data
+      } catch (e) {
+        platformList = [
+          {
+            'platformId': '123',
+            'platName': 'test_platform',
+            'platUrl': '/systemfile/2022/11/17/123.jpg',
+            'platType': '1',
+            'total': 1
+          },
+          {
+            'platformId': '124',
+            'platName': 'test_platform1',
+            'platUrl': '/systemfile/2022/11/17/124.jpg',
+            'platType': '2',
+            'total': 1
+          }
+        ]
+      }
+      store.commit(AlertMutationTypes.setPlatformList, { platformList })
+    },
+    mounted () {
+      this.requestPlatformList()
     }
-  },
-  mounted () {
-    this.requestPlatformList()
-  }
   // TODO 将style样式全写在下边 以class的形式
+  }
 }
 </script>
 

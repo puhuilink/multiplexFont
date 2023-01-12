@@ -1,13 +1,9 @@
 <template>
   <a-table
-    :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
     :columns="columns"
     :data-source="data"
     :row-key="(record) => record.id"
   >
-    <template :slot="'detail'" slot-scope="text,record">
-      <a @click="showDetail(record.id)">查看详情</a>
-    </template>
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
     <template :slot="'action'" slot-scope="text,record">
       <img
@@ -15,15 +11,17 @@
         width="20px"
         height="20px"
         title="编辑应用"
+        @click="updateAlertSource(record)"
       />
       <a-divider type="vertical" />
-      <a-switch :checked="record.status" size="small" />
-      <a-divider type="vertical" />
+      <!--      <a-switch :checked="record.status" size="small" />-->
+      <!--      <a-divider type="vertical" />-->
       <img
         :src="require(`@/assets/icons/svg/delete_icon.svg`)"
         width="20px"
         height="20px"
         title="删除应用"
+        @click="deleteAlertSource(record.id)"
       />
     </template>
     <template :slot="'status'" slot-scope="text, record">
@@ -36,7 +34,7 @@
 <script>
 
 import SvgIcon from '@/components/SvgIcon/index.vue'
-import axios from 'axios'
+import { alarm } from '@/utils/request'
 
 // type Key = string | number
 //
@@ -53,13 +51,6 @@ import axios from 'axios'
 // }
 
 const columns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    width: '30px',
-    align: 'center'
-  },
   {
     title: '状态',
     key: 'status',
@@ -97,10 +88,10 @@ const columns = [
     align: 'center'
   },
   {
-    title: 'AppKey',
+    title: '所属用户组',
     key: 'appKey',
-    dataIndex: 'appKey',
-    width: '150px',
+    dataIndex: 'group',
+    width: '100px',
     ellipsis: true,
     align: 'center'
   },
@@ -108,13 +99,6 @@ const columns = [
     title: '自动关闭',
     key: 'autoClose',
     dataIndex: 'autoClose',
-    width: '40px',
-    align: 'center'
-  },
-  {
-    title: '关联信息',
-    key: 'detail',
-    scopedSlots: { customRender: 'detail' },
     width: '40px',
     align: 'center'
   },
@@ -130,12 +114,12 @@ const columns = [
 const data = []
 for (let i = 0; i < 46; i++) {
   data.push({
-    id: i,
+    id: i.toString(),
     name: `Pigoss ${i}`,
     port: 3000,
     ip: `192.168.1.${i}`,
     platform: 'pigoss',
-    appKey: '951ffcf82a2342c09571f567e2fd47a6',
+    group: `运维${i}组`,
     autoClose: 30,
     status: i % 2 === 0,
     ruleIds: []
@@ -163,8 +147,41 @@ export default {
       this.state.selectedRowKeys = selectedRowKeys
     },
     showDetail (id) {
-      axios.get('http://127.0.0.1:3000/mock/11/knowledge/query/getAllRelationRule')
       console.log(id)
+    },
+    updateAlertSource (record) {
+      this.$router.push({ name: 'updateAlertSource', query: { platType: record.platType, record: record } })
+    },
+    async deleteAlertSource (id) {
+      let res
+      try {
+        const r = await alarm.post('/api/integration/source/delete', { 'sourceId': id })
+        res = r
+      } catch (e) {
+        res = {
+          'code': 200,
+          'msg': '删除成功！'
+        }
+      }
+      if (res.code === 200) {
+        this.$message.success('删除成功！')
+      } else {
+        this.$message.error('删除失败！请检查您的网络')
+      }
+    },
+    async initialData () {
+      let res
+      try {
+        const r = await alarm.post('/api/integration/source/delete', { params: { platformId: '' }, paging: { limit: 10, offset: 0 } })
+        res = r
+      } catch (e) {
+        res = {
+          code: 200,
+          msg: 'success',
+          data: this.data
+        }
+      }
+      this.data = res.data
     }
   },
   data () {

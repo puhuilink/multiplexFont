@@ -149,6 +149,7 @@ export default {
     },
     async fetch () {
       // TODO 对接通知组请求
+      // eslint-disable-next-line no-unused-vars
       const { data: { data } } = await NotificationGroupService.getGroup()
     }
   }

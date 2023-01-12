@@ -419,6 +419,14 @@ export const asyncRouterMap = [
                 props: route => route.query
               },
               {
+                path: '/alertManagerPlatform/integration/updateAlertSource',
+                name: 'UpdateAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '修改数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
                 path: '/alertManagerPlatform/integration/platform',
                 name: 'platform',
                 component: () => import('@/views/alert-manager/integration/index'),
