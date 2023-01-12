@@ -14,6 +14,7 @@
             <!--            告警级别-->
             <a-form-item :label="ALARM_QUERY_LABEL.level" v-bind="formItemLayout" class="wd">
               <a-select
+                mode="multiple"
                 show-search
                 placeholder="选择告警级别"
                 v-model="queryParams.level"
@@ -63,7 +64,7 @@
           <!--          告警类型-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.type" v-bind="formItemLayout" class="wd">
-              <a-input placeholder="请输入告警类型" v-model="queryParams.deviceType" allowClear></a-input>
+              <a-input placeholder="请输入告警类型" v-model="queryParams.device_type" allowClear></a-input>
             </a-form-item>
           </a-col>
           <!--          告警对象-->
@@ -86,8 +87,8 @@
       </span>
     </a-form>
     <!--        导出-->
-    <a-button icon="export" :disabled="!hasSelected">导出</a-button>
-    <!--        关闭按钮-->
+    <a-button icon="export" :disabled="!hasSelected" style="margin-bottom: 10px">导出</a-button>
+<!--            关闭按钮-->
     <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
@@ -138,17 +139,20 @@ import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import _ from 'lodash'
-import { alarm } from '@/utils/request'
+import { alarm, axios } from '@/utils/request'
 import moment from 'moment'
 
 const columns = [
   {
     title: '告警级别',
-    dataIndex: 'level'
+    dataIndex: 'level',
+    width: 90,
+    align: 'center',
+    customRender: record => `P${record}`
   },
   {
     title: '告警ID',
-    dataIndex: 'ID'
+    dataIndex: 'event_id'
   },
   {
     title: '告警标题',
@@ -160,6 +164,7 @@ const columns = [
   },
   {
     title: '告警类型',
+    width: 90,
     dataIndex: 'device_type'
   },
   {
@@ -179,7 +184,7 @@ const columns = [
     title: '操作',
     key: 'action',
     align: 'center',
-    width: 300,
+    width: 150,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -192,21 +197,21 @@ export default {
       ALARM_STATE,
       ALARM_QUERY_LABEL,
       colLayout: {
-        xl: 8,
+        xl: 12,
         md: 12,
         sm: 24
       },
       queryParams: {
-        process_status: '1',
+        process_status: '0',
         limit: 10,
         offset: 1
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 6 }, xxl: { span: 4 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
           md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 2 },
+          xl: { span: 16, offset: 2 },
           xxl: { span: 20, offset: 0 }
         }
       },
@@ -243,10 +248,10 @@ export default {
       this.queryParams.limit = 10
       switch (this.state) {
         case ALARM_STATE.unSolved:
-          this.queryParams.process_status = '1'
+          this.queryParams.process_status = '0'
           break
         case ALARM_STATE.closed:
-          this.queryParams.process_status = '0'
+          this.queryParams.process_status = '1'
           break
         case ALARM_STATE.unclaimed:
           this.queryParams.claim_status = '0'
@@ -263,7 +268,7 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.end_time = this.queryParams.timeList[1]
       }
-      const { data, page } = await alarm.post('/alert/find/main', {
+      const { data, page } = await alarm.post('/platform/alert/main/list', {
         ...this.queryParams
       })
       this.dataSource = data

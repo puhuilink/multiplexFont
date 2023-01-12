@@ -137,7 +137,7 @@ export default {
     },
     async loadData (limit = 10, offset = 1) {
       this.loading = true
-      const { data, page } = await alarm.post('/alert/find/sub',
+      const { data, page } = await alarm.post('/platform/alert/sub/list',
         { master_id: this.main.ID,
           limit: limit,
           offset: offset }
@@ -147,7 +147,7 @@ export default {
       this.loading = false
     },
     handleSearch (page, size) {
-      this.loadData(page, size)
+      this.loadData(10, page)
     }
   }
 }

@@ -12,22 +12,35 @@
     @change="handleChange"
     @search="handleSearch"
     show-search
-    :filter-option="filterOption"
-  />
+  >
+  </a-transfer>
 </template>
 
 <script>
 import Schema from '~~~/Mixins/Modal/Schema'
+import _ from 'lodash'
 
 export default {
   name: 'AssignUser',
   mixins: [Schema],
+  props: {
+    unassignedUser: {
+      required: true,
+      type: Array,
+      default: () => []
+    },
+    value: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
       mockData: [],
       targetKeys: [],
       disabled: false,
-      loading: false
+      loading: false,
+      admin: ''
     }
   },
   methods: {
@@ -58,43 +71,57 @@ export default {
     getMock () {
       const targetKeys = []
       const mockData = []
-      for (let i = 0; i < 20; i++) {
+      this.mockData = this.unassignedUser
+      for (const unassignedUserKey of this.unassignedUser) {
+        console.log(unassignedUserKey)
         const data = {
-          key: i.toString(),
-          title: `content${i + 1}`,
-          description: `description of content${i + 1}`,
-          chosen: Math.random() * 2 > 1
-        }
-        if (data.chosen) {
-          targetKeys.push(data.key)
+          key: unassignedUserKey.value,
+          title: unassignedUserKey.label,
+          disabled: false
         }
         mockData.push(data)
       }
+      this.targetKeys.push(this.admin)
       this.mockData = mockData
       this.targetKeys = targetKeys
+      console.log('mock', this.targetKeys, this.admin)
+      this.dealValue()
+    },
+    setAdmin (value) {
+      this.targetKeys.push(value)
+      this.mockData[_.findIndex(this.mockData, el => el.key === value)].disabled = true
+    },
+    setSelected (value = []) {
+      this.targetKeys.push(...value)
     },
     renderItem (item) {
       const customLabel = (
         <span class='custom-item'>
-          {item.title} - {item.description}
+          {item.title}
         </span>
       )
 
       return {
         label: customLabel, // for displayed item
-        value: item.title // for title and filter matching
+        value: item.key // for title and filter matching
       }
     },
     handleChange (targetKeys, direction, moveKeys) {
       this.targetKeys = targetKeys
-    },
-    filterOption (inputValue, option) {
-      return option.description.indexOf(inputValue) > -1
+      this.dealValue()
     },
     handleSearch (dir, value) {
       console.log('search:', dir, value)
+    },
+    dealValue () {
+      this.$emit('updated', this.targetKeys.map(el => (el === this.admin ? { account_id: el, leader: true } : { account_id: el, leader: false })))
     }
   },
+  // watch () {
+  //   targetKeys: () {
+  //
+  //   }
+  // },
   mounted () {
     this.getMock()
   }

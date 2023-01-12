@@ -36,14 +36,13 @@
     <!--    按钮-->
     <a-button class="marginLeft" @click="addGroup">新建</a-button>
     <a-button class="marginLeft" :disabled="!hasSelected" @click="editGroup">编辑</a-button>
-    <popover title="是否要删除这些用户组？" @confirm="() => deleteGroup(record)">
+    <a-popover title="是否要删除这些用户组？" @confirm="() => deleteGroup(record)">
       <a-button class="marginLeft" :disabled="!hasSelected">删除</a-button>
-    </popover>
+    </a-popover>
     <!--    <a-button class="marginLeft" @click="onShow">分配用户</a-button>-->
     <a-table
       :columns="columns"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :pagination="pagination"
       :data-source="data"
     ></a-table>
     <!--    <schema-->
@@ -150,6 +149,9 @@ export default {
     async fetch () {
       // TODO 对接通知组请求
       const { data: { data } } = await NotificationGroupService.getGroup()
+    },
+    created () {
+      this.fetch()
     }
   }
 }
