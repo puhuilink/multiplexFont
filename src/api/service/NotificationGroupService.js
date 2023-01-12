@@ -1,14 +1,20 @@
-import { axios } from '@/utils/request'
+import { alarm, axios } from '@/utils/request'
+import _ from 'lodash'
 
 class NotificationGroupService {
   static async getGroup () {
     // 获取通知组信息
-    await axios.get('/configuration/group/list')
+    await alarm.get('/api/configuration/group/list')
   }
 
   static async getUser (param = {}) {
     // 获取通知组信息
-    await axios.post('/configuration/group/listUser', param)
+    await alarm.post('/api/configuration/group/listUser', param)
+  }
+
+  static async getUnassignedUser () {
+    const { data } = await alarm.get('/api/configuration/group/getUser')
+    return data.map(el => ({ value: el.accountId, label: el.accountName }))
   }
 }
 

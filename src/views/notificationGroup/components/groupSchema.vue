@@ -5,7 +5,8 @@
     :visible="visible"
     :width="800"
     :afterClose="reset"
-    :confirmLoading="loading"
+    :destroyOnClose="true"
+    :confirmLoading="options.loading"
     centered>
     <template slot="footer">
       <a-button @click="prev" v-if="current === 1">上一步</a-button>
@@ -15,7 +16,7 @@
     <a-form :form="form">
       <a-steps :current="current">
         <a-step key="1" title="编辑基本信息"></a-step>
-        <a-step key="1" title="分配用户"></a-step>
+        <a-step key="2" title="分配用户"></a-step>
       </a-steps>
       <a-row v-show="onStep">
         <a-col :md="12" :span="24">
@@ -99,7 +100,7 @@
         </a-col>
       </a-row>
       <a-row v-show="!onStep" type="flex" justify="center">
-        <assign style="margin-top: 10px"></assign>
+        <assign ref="assign" :unassigned-user="options.user" style="margin-top: 10px" @updated="assUpdate"></assign>
       </a-row>
     </a-form>
   </a-modal>
@@ -122,11 +123,14 @@ export default {
         disabled: false,
         loading: false
       },
-      current: 0
+      current: 0,
+      assigned: [],
+      testValue: ''
     }
   },
   methods: {
-    show (title) {
+    async show (title) {
+      await this.fillUser()
       this.visible = true
       this.title = title
     },
@@ -162,23 +166,40 @@ export default {
       this.submit = this.edit()
     },
     async fillUser () {
-      const { data: { User } } = await NotificationGroupService.getUser()
-      this.options.user = User
+      const user = await NotificationGroupService.getUnassignedUser()
+      this.options.user = user
     },
     next () {
-      this.current++
+      this.form.validateFields(async (err, values) => {
+        if (err) return
+        // return Service.add(values)
+        //   .then(res => {
+        //     this.$emit('addSuccess')
+        //     this.$notifyAddSuccess()
+        //     this.cancel()
+        //   })
+        //   .catch(e => {
+        //     this.$notifyError(e)
+        //     throw e
+        //   })
+        //   .finally(() => {
+        //     this.confirmLoading = false
+        //   })
+        this.$nextTick(() => this.$refs.assign.setAdmin(values.group_admin))
+        this.current++
+      })
     },
     prev () {
       this.current--
+    },
+    assUpdate (value) {
+      this.assigned = value
     }
   },
   computed: {
     onStep () {
       return this.current === 0
     }
-  },
-  mounted () {
-    this.fillUser()
   }
 }
 </script>
