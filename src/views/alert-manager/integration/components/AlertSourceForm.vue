@@ -263,6 +263,9 @@ export default {
       })
       return content
     }
+  },
+  mounted () {
+    this.initialData()
   }
 }
 </script>

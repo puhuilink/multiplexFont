@@ -157,6 +157,7 @@ export default {
       formData.append('name', this.formState.name)
       formData.append('remark', this.formState.remark)
       formData.append('levelRelation', this.formState.levelRelation)
+      formData.append('platType', '1')
       formData.append('file', this.fileList[0])
       let res
       try {

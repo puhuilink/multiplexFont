@@ -61,7 +61,7 @@ const columns = [
   {
     title: '告警源名称',
     key: 'name',
-    dataIndex: 'name',
+    dataIndex: 'sourceName',
     ellipsis: true,
     width: '50px',
     align: 'center'
@@ -69,14 +69,14 @@ const columns = [
   {
     title: '告警源IP',
     key: 'ip',
-    dataIndex: 'ip',
+    dataIndex: 'sourceIp',
     width: '60px',
     align: 'center'
   },
   {
     title: '告警源端口',
     key: 'port',
-    dataIndex: 'port',
+    dataIndex: 'sourcePort',
     width: '48px',
     align: 'center'
   },
@@ -115,9 +115,10 @@ const data = []
 for (let i = 0; i < 46; i++) {
   data.push({
     id: i.toString(),
-    name: `Pigoss ${i}`,
-    port: 3000,
-    ip: `192.168.1.${i}`,
+    sourceName: `Pigoss ${i}`,
+    sourcePort: 3000,
+    platType: 'pigoss',
+    sourceIp: `192.168.1.${i}`,
     platform: 'pigoss',
     group: `运维${i}组`,
     autoClose: 30,
@@ -150,13 +151,12 @@ export default {
       console.log(id)
     },
     updateAlertSource (record) {
-      this.$router.push({ name: 'updateAlertSource', query: { platType: record.platType, record: record } })
+      this.$router.push({ name: 'UpdateAlertSource', query: { platType: record.platType, record: record } })
     },
     async deleteAlertSource (id) {
       let res
       try {
-        const r = await alarm.post('/api/integration/source/delete', { 'sourceId': id })
-        res = r
+        res = await alarm.post('/api/integration/source/delete', { 'sourceId': id })
       } catch (e) {
         res = {
           'code': 200,
@@ -172,16 +172,22 @@ export default {
     async initialData () {
       let res
       try {
-        const r = await alarm.post('/api/integration/source/delete', { params: { platformId: '' }, paging: { limit: 10, offset: 0 } })
-        res = r
+        res = await alarm.post('/api/integration/source/list', {
+          params: { platformId: '' },
+          paging: { limit: 10, offset: 0 }
+        })
       } catch (e) {
+        console.log(e)
         res = {
           code: 200,
           msg: 'success',
-          data: this.data
+          data: {
+            total: 0,
+            values: this.data
+          }
         }
       }
-      this.data = res.data
+      this.data = res.data.values
     }
   },
   data () {
@@ -193,6 +199,9 @@ export default {
         loading: false
       }
     }
+  },
+  mounted () {
+    this.initialData()
   }
 }
 </script>

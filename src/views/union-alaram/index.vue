@@ -139,7 +139,7 @@ import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import _ from 'lodash'
-import { alarm, axios } from '@/utils/request'
+import { alarm } from '@/utils/request'
 import moment from 'moment'
 
 const columns = [

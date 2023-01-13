@@ -1,5 +1,4 @@
-import { alarm, axios } from '@/utils/request'
-import _ from 'lodash'
+import { alarm } from '@/utils/request'
 
 class NotificationGroupService {
   static async getGroup () {

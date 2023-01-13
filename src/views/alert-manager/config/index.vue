@@ -83,7 +83,7 @@
           width="20px"
           height="20px"
           title="编辑应用"
-          @click="notifyLevelUp(record)"
+          @click="openModal(record)"
         />
         <a-divider type="vertical" />
         <!--        <a-switch :checked="record.status" size="small" />-->

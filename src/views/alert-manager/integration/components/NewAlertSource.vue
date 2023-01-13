@@ -4,7 +4,7 @@
       <div style="margin-top: 20px; margin-left: 20px; margin-right: 20px">
         <div class="fakeContainer">
           <div style="grid-column-start:1;grid-column-end:3;font-size: 20px">
-            <a @click="back"><a-icon type="left"/>&nbsp;{{ record.id !== null?'修改':'新增' }}新建告警源&nbsp;/&nbsp;{{ type }}</a>
+            <a @click="back"><a-icon type="left"/>&nbsp;{{ record!==undefined&&record.id !== null?'修改':'新建' }}告警源&nbsp;/&nbsp;{{ type }}</a>
           </div>
           <div style="grid-column: 8/9;place-self:end;width: 100px;">
             <a-button>取消</a-button>
