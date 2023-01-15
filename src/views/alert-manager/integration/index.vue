@@ -1,12 +1,12 @@
 <template>
   <div style="margin-left: 20px; margin-right: 20px;background: #f7f8f8;height: 100%;width: 100%" >
     <div style="background: #ffffff; margin-bottom: 10px">
-      <TopGuide />
+      <TopGuide @platformChange="changeSelectedId" />
     </div>
     <div style="display: flex;margin-left: 20px; margin-right: 20px;">
       <div style="height: 100%;width: 400px; background: #ffffff"><LeftList /></div>
       <div style="width: 20px"></div>
-      <div style="height: 100%;min-width: 1455px;margin-left: 20px; background: #ffffff"><RightTable /></div>
+      <div style="height: 100%;min-width: 1455px;margin-left: 20px; background: #ffffff"><RightTable :platform-id="selectedId" /></div>
     </div>
   </div>
 </template>
@@ -22,6 +22,11 @@ import { AlertMutationTypes } from '@/store/modules/alert'
 export default {
   name: 'Integration',
   components: { RightTable, LeftList, TopGuide },
+  data () {
+    return {
+      selectedId: ''
+    }
+  },
   methods: {
     async requestPlatformList () {
       let platformList
@@ -48,10 +53,13 @@ export default {
       }
       store.commit(AlertMutationTypes.setPlatformList, { platformList })
     },
-    mounted () {
-      this.requestPlatformList()
+    changeSelectedId (e) {
+      this.selectedId = e
     }
   // TODO 将style样式全写在下边 以class的形式
+  },
+  mounted () {
+    this.requestPlatformList()
   }
 }
 </script>

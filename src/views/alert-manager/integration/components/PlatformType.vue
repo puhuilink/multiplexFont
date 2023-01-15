@@ -28,33 +28,35 @@
           <a-form-model-item label="监控级别对应关系">
             <a-table :columns="mappingColumns" :data-source="formState.levelRelation" :pagination="false" :row-key="(record,index)=>index">
               <template
-                v-for="col in ['here', 'there']"
+                v-for="col in ['P1', 'P2']"
                 :slot="col"
-                slot-scope="text, record"
+                slot-scope="text,record,index"
               >
                 <div :key="col">
                   <a-input
-                    v-if="record.editable"
+                    v-if="compareKey(record.P1)"
                     style="margin: -5px 0"
                     :value="text"
-                    @change="e => handleChange(e.target.value, record.key, col)"
+                    @change="e => handleChange(e.target.value, index, col)"
                   />
                   <template v-else>
                     {{ text }}
                   </template>
                 </div>
               </template>
-              <template slot="operation" slot-scope="text, record">
+              <template slot="operation" slot-scope="text, record,index">
                 <div class="editable-row-operations">
                   <span v-if="record.editable">
-                    <a @click="save(record.key)">保存</a>
+                    <a @click="save(index)">保存</a>
                     <a-divider type="vertical" />
-                    <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
+                    <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(index)">
                       <a>取消</a>
                     </a-popconfirm>
                   </span>
                   <span v-else>
-                    <a @click="() => edit(record.key)">Edit</a>
+                    <a @click="() => edit(index)">编辑</a>
+                    <a-divider type="vertical" />
+                    <a @click="() => removeOne(index)">删除</a>
                   </span>
                 </div>
               </template>
@@ -95,8 +97,7 @@ const original = {
   levelRelation: [
     {
       P1: 'p1',
-      P2: '1',
-      key: 0
+      P2: '1'
     }
   ]
 }
@@ -139,24 +140,35 @@ export default {
     },
     closeModal () {
       this.visible = false
+      this.fileList = []
       this.formState = _.cloneDeep(original)
     },
     addRecord () {
       this.formState.levelRelation.push(
         {
-          P1: 'p1',
-          P2: '1',
-          key: this.formState.levelRelation.length
+          P1: '等级',
+          P2: '值'
         }
       )
+      this.$forceUpdate()
+    },
+    removeOne (index) {
+      if (this.editingKey !== '') {
+        return
+      }
+      this.formState.levelRelation.splice(index, 1)
       this.$forceUpdate()
     },
     async handleOk () {
       this.confirmLoading = true
       const formData = new FormData()
+      const relation = {}
+      this.formState.levelRelation.forEach(level => {
+        relation[level.P1] = level.P2
+      })
       formData.append('name', this.formState.name)
       formData.append('remark', this.formState.remark)
-      formData.append('levelRelation', this.formState.levelRelation)
+      formData.append('levelRelation', JSON.stringify(relation))
       formData.append('platType', '1')
       formData.append('file', this.fileList[0])
       let res
@@ -179,48 +191,59 @@ export default {
       this.closeModal()
     },
     handleChange (value, key, column) {
-      const newData = [...this.formState.mapping]
+      const newData = [...this.formState.levelRelation]
       const target = newData[key]
+      console.log(target)
       if (target) {
         target[column] = value
-        this.formState.mapping = newData
+        this.formState.levelRelation = newData
       }
     },
     edit (key) {
-      const newData = [...this.formState.mapping]
+      if (this.editingKey) {
+        this.$message.warn('先将其他行数据保存再编辑！')
+        return
+      }
+      const newData = [...this.formState.levelRelation]
       this.cacheData = _.cloneDeep(newData)
       const target = newData[key]
-      this.editingKey = key
+      this.editingKey = target.P1
+      console.log(this.editingKey)
+      console.log(target)
       if (target) {
         target.editable = true
-        this.formState.mapping = newData
+        this.formState.levelRelation = newData
       }
+      this.$forceUpdate()
     },
     save (key) {
-      const newData = [...this.formState.mapping]
+      const newData = [...this.formState.levelRelation]
       const newCacheData = [...this.cacheData]
       const target = newData[key]
       const targetCache = newCacheData[key]
       if (target && targetCache) {
         delete target.editable
-        this.formState.mapping = newData
+        this.formState.levelRelation = newData
         Object.assign(targetCache, target)
         this.cacheData = newCacheData
       }
       this.editingKey = ''
     },
     cancel (key) {
-      const newData = [...this.formState.mapping]
+      const newData = [...this.formState.levelRelation]
       const target = newData[key]
       this.editingKey = ''
       if (target) {
         Object.assign(target, this.cacheData[key])
         delete target.editable
-        this.formState.mapping = newData
+        this.formState.levelRelation = newData
       }
     }
   },
   computed: {
+    compareKey (key) {
+      return this.editingKey === key
+    },
     mappingColumns () {
       return [
         {

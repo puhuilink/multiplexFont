@@ -25,8 +25,11 @@
       />
     </template>
     <template :slot="'status'" slot-scope="text, record">
-      <img v-show="record.status" :src="require(`@/assets/icons/svg/successLight.svg`)" />
-      <img v-show="!record.status" :src="require(`@/assets/icons/svg/errorLight.svg`)" />
+      <img v-show="record.sourceStatus" :src="require(`@/assets/icons/svg/successLight.svg`)" />
+      <img v-show="!record.sourceStatus" :src="require(`@/assets/icons/svg/errorLight.svg`)" />
+    </template>
+    <template :slot="'autoClose'" slot-scope="text, record">
+      {{ record.autoClose?record.autoCloseInterval+'分钟自动关闭':'否' }}
     </template>
   </a-table>
 </template>
@@ -83,7 +86,7 @@ const columns = [
   {
     title: '告警源平台',
     key: 'platform',
-    dataIndex: 'platform',
+    dataIndex: 'platName',
     width: '50px',
     align: 'center'
   },
@@ -99,6 +102,7 @@ const columns = [
     title: '自动关闭',
     key: 'autoClose',
     dataIndex: 'autoClose',
+    scopedSlots: { customRender: 'autoClose' },
     width: '40px',
     align: 'center'
   },
@@ -122,13 +126,19 @@ for (let i = 0; i < 46; i++) {
     platform: 'pigoss',
     group: `运维${i}组`,
     autoClose: 30,
-    status: i % 2 === 0,
+    sourceStatus: i % 2 === 0,
     ruleIds: []
   })
 }
 export default {
   name: 'RightTable',
   components: { SvgIcon },
+  props: {
+    platformId: {
+      type: String,
+      default: '123'
+    }
+  },
   computed: {
     hasSelected () {
       return this.state.selectedRowKeys.length > 0
@@ -150,8 +160,12 @@ export default {
     showDetail (id) {
       console.log(id)
     },
-    updateAlertSource (record) {
-      this.$router.push({ name: 'UpdateAlertSource', query: { platType: record.platType, record: record } })
+    async updateAlertSource (record) {
+      const res = await alarm.post('/api/integration/source/find', { sourceId: record.sourceId })
+      await this.$router.push({
+        name: 'UpdateAlertSource',
+        query: { platType: record.platName, record: res.data.source }
+      })
     },
     async deleteAlertSource (id) {
       let res
@@ -173,7 +187,7 @@ export default {
       let res
       try {
         res = await alarm.post('/api/integration/source/list', {
-          params: { platformId: '' },
+          params: { platformId: this.platformId },
           paging: { limit: 10, offset: 0 }
         })
       } catch (e) {
@@ -183,11 +197,18 @@ export default {
           msg: 'success',
           data: {
             total: 0,
-            values: this.data
+            value: this.data
           }
         }
       }
-      this.data = res.data.values
+      this.data = res.data.value
+    }
+  },
+  watch: {
+    'platformId': {
+      handler (e) {
+        this.initialData()
+      }
     }
   },
   data () {

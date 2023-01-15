@@ -22,14 +22,14 @@
           label="告警源名称"
           name="username"
         >
-          <a-input :value="formState.name" style="width: 200px" />
+          <a-input v-model="formState.name" style="width: 200px" />
         </a-form-item>
         <a-form-item
           :rules="[{ required: true, message: '请输入告警源IP！' }]"
           label="告警源IP"
           name="username"
         >
-          <a-input :value="formState.ip" style="width: 200px" />
+          <a-input v-model="formState.ip" style="width: 200px" />
         </a-form-item>
 
         <a-form-item
@@ -37,16 +37,16 @@
           label="告警源端口"
           name="port"
         >
-          <a-input-number :value="formState.port" style="width: 200px" />
+          <a-input-number v-model="formState.port" style="width: 200px" />
         </a-form-item>
         <a-form-item
           extra="针对未关闭的告警，以监控工具最后一次发出告警事件为准，如果设定的时间内未进行手动关闭告警，系统将自动为您关闭告警；自定义区间范围：0-1440分钟，0表示永不关闭，1440分钟即为24小时。"
-          label="自动关闭时间"
+          label="自动关闭"
           name="password"
         >
-          <a-input v-show="formState.autoClose" :value="formState.timeout" style="width: 200px">
-            <template #suffix> 分钟</template>
-          </a-input>
+          <a-input-number v-show="formState.autoClose" v-model="formState.autoCloseInterval" style="width: 100px">
+          </a-input-number>
+          <span v-show="formState.autoClose">分钟后自动关闭</span>
           <a-switch :checked="formState.autoClose" @change="onAutoCloseChange"/>
         </a-form-item>
         <a-form-item
@@ -54,13 +54,15 @@
           label="开启自动去重"
           name="dedup"
         >
-          <a-switch :checked="formState.dedup" @change="onDedupChange"/>
+          <a-switch :checked="formState.autoGroup" @change="onDedupChange"/>
         </a-form-item>
         <a-form-item
           extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
           label="开启认领"
           name="reclaim"
         >
+          <a-select v-show="formState.claim" v-model="formState.claimLevel" style="width: 200px" :options="options">
+          </a-select>
           <a-switch :checked="formState.claim" @change="onReclaimChange"/>
         </a-form-item>
         <a-form-item
@@ -68,17 +70,17 @@
           label="开启自监控"
           name="self"
         >
-          <a-input v-show="formState.noneConfig.state" :value="formState.noneConfig.timeout" style="width: 200px">
-            <template #suffix> 小时</template>
-          </a-input>
-          <a-switch :checked="formState.noneConfig.state" @change="onSelfChange"/>
+          <a-input-number v-show="formState.monitor" v-model="formState.monitorInterval" style="width: 180px">
+          </a-input-number>
+          <span v-show="formState.monitor">小时</span>
+          <a-switch :checked="formState.monitor" @change="onSelfChange"/>
         </a-form-item>
         <a-form-item
           :rules="[{ required: true, message: '请输入告警源URL！' }]"
           label="告警URL"
           name="url"
         >
-          <a-input :value="formState.url" style="width: 300px" />
+          <a-input v-model="formState.url" style="width: 300px" />
         </a-form-item>
       </a-form>
       <div class="jsonContent" v-if="current === 1">
@@ -108,7 +110,7 @@
             :label="mappingTitle[index]"
             :key="index"
           >
-            <a-select :value="mappingForm[item]" style="width: 200px" />
+            <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions"/>
           </a-form-item>
         </a-form>
       </div>
@@ -134,8 +136,18 @@
 
 <script>
 
-import { addAlertSource } from '@/api/alertMockApi'
+import { alarm } from '@/utils/request'
 
+const typeObj = {
+  'uniqueKey': 'string',
+  'device': 'string',
+  'title': 'string',
+  'content': 'string',
+  'level': 'string',
+  'startTime': 'struct',
+  'lastTime': 'struct',
+  'deviceType': 'string'
+}
 export default {
   name: 'AlertSourceForm',
   components: {},
@@ -143,6 +155,10 @@ export default {
     record: {
       type: Object,
       default: () => {}
+    },
+    platformId: {
+      type: String,
+      default: '302455444528566272'
     }
   },
   data () {
@@ -152,38 +168,60 @@ export default {
         ip: '',
         port: 3000,
         autoClose: false,
-        timeout: 0,
+        autoCloseInterval: 0,
         claim: false,
-        dedup: true,
-        noneConfig: {
-          state: false,
-          timeout: 0
-        },
-        url: '',
-        groupId: ''
+        claimLevel: '',
+        autoGroup: true,
+        monitor: false,
+        monitorInterval: 0,
+        url: ''
       },
       current: 0,
       jsonContent: '',
       data: [],
+      jsonOptions: [],
+      options: [
+        {
+          value: '1',
+          label: 'p1'
+        },
+        {
+          value: '2',
+          label: 'p2'
+        },
+        {
+          value: '3',
+          label: 'p3'
+        },
+        {
+          value: '4',
+          label: 'p4'
+        },
+        {
+          value: '5',
+          label: 'p5'
+        }
+      ],
       mappingForm: {
-        id: '',
+        uniqueKey: '',
         level: '',
         content: '',
         title: '',
-        target: '',
-        happenedTime: '',
-        alertSource: '',
-        Key: ''
+        device: '',
+        startTime: '',
+        lastTime: '',
+        deviceType: ''
       },
+      jb: null,
       mappingTitle: [
-        '告警ID',
-        '告警级别',
-        '告警内容',
-        '告警标题',
-        '告警对象',
-        '发生时间',
-        '告警源',
-        'Key'
+        'UniqueKey',
+        'Level',
+        'Content',
+        'Title',
+        'Device',
+        'StartTime',
+        'LastTime',
+        'DeviceType'
       ]
     }
   },
@@ -193,16 +231,39 @@ export default {
         this.$message.warn('请输入JSON数据！')
         return
       }
-      let JsonBody
+      let JsonBody = null
       try {
         JsonBody = JSON.parse(this.jsonContent)
       } catch (e) {
         this.$message.warn('输入的JSON数据有误！请检查后再试！')
       }
+      this.jb = JsonBody
       console.log(JsonBody)
       this.data = Object.keys(JsonBody)
+      this.jsonOptions = []
+      this.data.forEach(j => {
+        this.jsonOptions.push({
+          value: j,
+          label: j
+        })
+      })
     },
     next () {
+      const judgeColumns = ['name', 'ip', 'port', 'url']
+      let isEmpty = false
+      judgeColumns.forEach(c => {
+        if (this.formState[c] === null || this.formState[c] === undefined || this.formState[c] === '') {
+          isEmpty = true
+        }
+      })
+      if (this.current === 0 && isEmpty) {
+        this.$message.warn('有输入项未填！请检查您的操作是否有误！')
+        return
+      }
+      if (this.current === 1 && this.data.length < 1) {
+        this.$message.warn('解析结果为空！请检查您的操作是否有误！')
+        return
+      }
       this.current++
     },
     prev () {
@@ -224,35 +285,58 @@ export default {
       // console.log('Failed:', flag)
     },
     onDedupChange (flag) {
-      this.formState.dedup = flag
+      this.formState.autoGroup = flag
       // console.log('Failed:', flag)
     },
     onSelfChange (flag) {
-      this.formState.noneConfig.state = flag
+      this.formState.monitor = flag
       // console.log('Failed:', flag)
     },
-    onSubmit () {
-      addAlertSource()
-      console.log('')
+    async onSubmit () {
+      const uk = this.mappingForm.uniqueKey
+      if (uk === null || uk === '') {
+        this.$message.warn('唯一标识符必须匹配！')
+        return
+      }
+      const alertMapping = []
+      Object.keys(this.mappingForm).forEach(m => {
+        if (this.mappingForm[m] && this.mappingForm[m] !== '') {
+          if (m === 'uniqueKey') {
+            alertMapping.push({
+              'sourceField': this.mappingForm[m],
+              'targetField': m,
+              'targetType': typeObj[m],
+              remark: this.jb[this.mappingForm[m]]
+            })
+          } else {
+            alertMapping.push({
+              'sourceField': this.mappingForm[m],
+              'targetField': m,
+              'targetType': typeObj[m]
+            })
+          }
+        }
+      })
+      this.formState.port = this.formState.port.toString()
+      this.formState.autoCloseInterval = this.formState.autoCloseInterval.toString()
+      this.formState.monitorInterval = this.formState.monitorInterval.toString()
+      const sourceData = { ...this.formState, platformId: this.platformId }
+      try {
+        const res = await alarm.post('/api/integration/source/add', { sourceData, alertMapping })
+        if (res.code === 200) {
+          this.$message.success(res.msg)
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (e) {
+        console.log()
+      }
     },
     initialData () {
-      if (this.record !== {}) {
-        this.formState = {
-          name: this.record.sourceName ? this.record.sourceName : '',
-          ip: this.record.sourceIp ? this.record.sourceIp : '',
-          port: this.record.sourcePort ? this.record.sourcePort : 3000,
-          autoClose: this.record.autoClose ? this.record.autoClose : false,
-          timeout: 0,
-          claim: false,
-          dedup: true,
-          noneConfig: {
-            state: false,
-            timeout: 0
-          },
-          url: '',
-          groupId: ''
-        }
+      if (this.record && this.record !== {}) {
+        this.formState = { ...this.record }
       }
+      console.log(this.formState)
     }
   },
   computed: {
