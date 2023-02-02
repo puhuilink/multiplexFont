@@ -238,7 +238,6 @@ export default {
         this.$message.warn('输入的JSON数据有误！请检查后再试！')
       }
       this.jb = JsonBody
-      console.log(JsonBody)
       this.data = Object.keys(JsonBody)
       this.jsonOptions = []
       this.data.forEach(j => {
@@ -318,13 +317,22 @@ export default {
         }
       })
       this.formState.port = this.formState.port.toString()
-      this.formState.autoCloseInterval = this.formState.autoCloseInterval.toString()
-      this.formState.monitorInterval = this.formState.monitorInterval.toString()
+      if (this.formState.monitor) {
+        this.formState.monitorInterval = this.formState.monitorInterval.toString()
+      }
+      if (this.formState.autoClose) {
+        this.formState.autoCloseInterval = this.formState.autoCloseInterval.toString()
+      }
       const sourceData = { ...this.formState, platformId: this.platformId }
+      let requestAddress = '/api/integration/source/add'
+      if (this.record && this.record !== {}) {
+        requestAddress = '/api/integration/source/update'
+      }
       try {
-        const res = await alarm.post('/api/integration/source/add', { sourceData, alertMapping })
+        const res = await alarm.post(requestAddress, { sourceData, alertMapping })
         if (res.code === 200) {
           this.$message.success(res.msg)
+          await this.$router.push('platform')
         } else {
           this.$message.error(res.msg)
         }

@@ -4,7 +4,7 @@
       <span style="width: 10px;margin-left: 20px">
         <div style="background-color: #5b8ff9; width: 5px; height: 16px;display: inline-block;margin-bottom: -3px"></div>
       </span>
-      <span :style="{width:title.length * 15 + 16 + 'px'}"><div style="display: inline-block;margin-left: 10px">{{ title }}</div></span>
+      <span :style="{width:title.length * 15 + 16 + 'px'}"><div style="display: inline-block;margin-left: 10px">{{ titleMap[title] }}</div></span>
       <span style=""><a-icon type="plus-square" style="font-size: 18px;margin-top: 15px;margin-left: 15px" @click="openModal()"/></span>
       <a-modal
         title="新建接入平台"
@@ -80,7 +80,7 @@
         v-for="child in children"
         :key="child"
       >
-        <div style="margin: 20px"><PlatformImg :svg-name="child" :alert-source-count="0" /></div>
+        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :img="child.url" :alert-source-count="0" /></div>
       </div>
     </div>
   </div>
@@ -121,7 +121,13 @@ export default {
       formState: _.cloneDeep(original),
       labelCol: { span: 6 },
       wrapperCol: { span: 12 },
-      fileList: []
+      fileList: [],
+      titleMap: {
+        '1': '基础资源监控',
+        '2': '应用性能监控',
+        '3': '机房监控',
+        '4': '网络性能监控'
+      }
     }
   },
   methods: {
@@ -169,7 +175,7 @@ export default {
       formData.append('name', this.formState.name)
       formData.append('remark', this.formState.remark)
       formData.append('levelRelation', JSON.stringify(relation))
-      formData.append('platType', '1')
+      formData.append('platType', this.title)
       formData.append('file', this.fileList[0])
       let res
       try {

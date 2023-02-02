@@ -2,7 +2,7 @@
   <a-badge :count="count" color="#01d7b0">
     <a-card hoverable style="width: 150px" :bordered="false">
       <template #cover>
-        <img :src="require(`@/assets/icons/svg/${svgName}.svg`)" width="60px" height="60px" style="margin: 5px" alt=""/>
+        <img :src="img" width="60px" height="60px" style="margin: 5px" alt=""/>
       </template>
       <template #actions>
         <a-icon type="plus" key="edit" style="color: #3c9be8" @click="toCreateAlertSource(svgName)" />
@@ -22,6 +22,10 @@ export default {
     svgName: {
       type: String,
       default: 'pigoss'
+    },
+    img: {
+      type: String,
+      default: ''
     },
     alertSourceCount: {
       type: Number,
