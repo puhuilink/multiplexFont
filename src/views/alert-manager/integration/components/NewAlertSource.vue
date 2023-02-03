@@ -4,7 +4,7 @@
       <div style="margin-top: 20px; margin-left: 20px; margin-right: 20px">
         <div class="fakeContainer">
           <div style="grid-column-start:1;grid-column-end:3;font-size: 20px">
-            <a @click="back"><a-icon type="left"/>&nbsp;{{ record!==undefined&&record.id !== null?'修改':'新建' }}告警源&nbsp;/&nbsp;{{ type }}</a>
+            <a @click="back"><a-icon type="left"/>&nbsp;{{ record!==undefined&&record.id !== null?'修改':'新建' }}告警源&nbsp;/&nbsp;{{ platform.name }}</a>
           </div>
           <div style="grid-column: 8/9;place-self:end;width: 100px;">
             <a-button>取消</a-button>
@@ -17,7 +17,7 @@
     <div class="item"/>
     <div class="item rightContainer" style="background: white;padding: 20px;place-content: space-between">
       <center style="">
-        <img :src="require(`@/assets/icons/svg/${type}.svg`)" width="100px" height="100px"/>
+        <img :src="platform.url" width="100px" height="100px"/>
       </center>
       <p style="margin: 0px 50px 0px 50px">
         {{ this.platform.remark?this.platform.remark:defaultRemark }}
@@ -54,7 +54,7 @@ export default {
           align: 'center'
         },
         {
-          title: this.type + '(Priority)',
+          title: this.platform.name + '(Priority)',
           dataIndex: 'there',
           align: 'center'
         }
@@ -68,7 +68,7 @@ export default {
           align: 'center'
         },
         {
-          title: this.type,
+          title: this.platform.name,
           dataIndex: 'there',
           align: 'center'
         }
@@ -76,36 +76,29 @@ export default {
     }
   },
   methods: {
-
     back () {
       this.$router.push('platform')
     },
     loadPlatformList () {
-      const platformList = store.getters.platformList
-      platformList.forEach(plat => {
-        if (plat.platName === this.type) {
-          this.platform = plat
-          if (plat.levelRelation !== null && plat.levelRelation !== {}) {
-            const dataList = []
-            Object.keys(plat.levelRelation).forEach(level => {
-              dataList.push({
-                here: level,
-                there: plat.levelRelation[level]
-              })
-            })
-          }
-        }
-      })
+      const plat = this.platform
+      if (plat.levelRelation !== null && plat.levelRelation !== {}) {
+        const dataList = []
+        Object.keys(plat.levelRelation).forEach(level => {
+          dataList.push({
+            here: level,
+            there: plat.levelRelation[level]
+          })
+        })
+      }
     }
   },
   data () {
-    const type = this.$route.query.platType
+    const platform = this.$route.query.plat
     const record = this.$route.query.record
     return {
-      platform: {},
+      platform,
       record,
       defaultRemark,
-      type,
       data1: [
         { here: 'p1', there: '5' },
         { here: 'p2', there: '4' },

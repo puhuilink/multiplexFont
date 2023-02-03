@@ -9,19 +9,19 @@ import store from '@/store/index'
 import PlatformType from './PlatformType.vue'
 const data = [
   {
-    title: '基础资源监控',
+    title: '1',
     children: ['pigoss', 'H3C']
   },
   {
-    title: '应用性能监控',
+    title: '2',
     children: ['bonree', 'cloudwise']
   },
   {
-    title: '机房监控',
+    title: '3',
     children: ['xbro']
   },
   {
-    title: '网络性能监控',
+    title: '4',
     children: ['netis']
   }
 ]
@@ -86,7 +86,7 @@ export default {
     }
   },
   mounted () {
-    setTimeout(this.initialChildren, 2000)
+    setTimeout(this.initialChildren, 500)
   }
 }
 </script>

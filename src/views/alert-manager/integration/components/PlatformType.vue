@@ -215,8 +215,6 @@ export default {
       this.cacheData = _.cloneDeep(newData)
       const target = newData[key]
       this.editingKey = target.P1
-      console.log(this.editingKey)
-      console.log(target)
       if (target) {
         target.editable = true
         this.formState.levelRelation = newData

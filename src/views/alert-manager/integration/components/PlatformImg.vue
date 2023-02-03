@@ -13,6 +13,8 @@
 
 <script>
 import SvgIcon from '@/components/SvgIcon/index.vue'
+import store from '@/store'
+import { alarm } from '@/utils/request'
 
 export default {
   name: 'PlatformImg',
@@ -32,8 +34,25 @@ export default {
     }
   },
   methods: {
-    toCreateAlertSource (type) {
-      this.$router.push({ name: 'NewAlertSource', query: { platType: type } })
+    async toCreateAlertSource (type) {
+      const platformList = store.getters.platformList
+      let platform
+      platformList.forEach(plat => {
+        if (plat.platName === type) {
+          platform = plat
+        }
+      })
+      let pp
+      try {
+        const { data } = await alarm.post('/api/integration/platform/find', { platformId: platform.platformId })
+        pp = data
+      } catch (e) {
+        console.log(e)
+        this.$message.error('请求失败！请检查网络连接！')
+        return
+      }
+      pp.url += this.baseUrl
+      await this.$router.push({ name: 'NewAlertSource', query: { plat: pp } })
     }
   },
   data () {
