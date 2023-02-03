@@ -38,7 +38,6 @@
 
 import AlertSourceForm from '../components/AlertSourceForm'
 import SvgIcon from '@/components/SvgIcon/index'
-import store from '@/store/index'
 const defaultRemark = 'Pigoss 提供了一个网络和告警源监控的开源解决方案，它支持数百万的监控指标。安装Pigoss 告警源可以将 Pigoss中的告警接入到 Cloud Alert 中来，自动帮您压缩冗余告警，避免告警风暴，让您更快定位和解决问题。'
 export default {
   name: 'NewAlertSource',
@@ -89,6 +88,7 @@ export default {
             there: plat.levelRelation[level]
           })
         })
+        this.data1 = dataList
       }
     }
   },

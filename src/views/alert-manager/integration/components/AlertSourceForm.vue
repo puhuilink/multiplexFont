@@ -319,9 +319,13 @@ export default {
       this.formState.port = this.formState.port.toString()
       if (this.formState.monitor) {
         this.formState.monitorInterval = this.formState.monitorInterval.toString()
+      } else {
+        delete this.formState.monitorInterval
       }
       if (this.formState.autoClose) {
         this.formState.autoCloseInterval = this.formState.autoCloseInterval.toString()
+      } else {
+        delete this.formState.autoCloseInterval
       }
       const sourceData = { ...this.formState, platformId: this.platformId }
       let requestAddress = '/api/integration/source/add'

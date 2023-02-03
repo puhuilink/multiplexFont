@@ -163,9 +163,18 @@ export default {
     },
     async updateAlertSource (record) {
       const res = await alarm.post('/api/integration/source/find', { sourceId: record.sourceId })
+      let pp
+      try {
+        const { data } = await alarm.post('/api/integration/platform/find', { platformId: record.platformId })
+        pp = data
+      } catch (e) {
+        this.$message.error('请求失败！请检查网络连接！')
+        return
+      }
+      pp.url += this.baseUrl
       await this.$router.push({
         name: 'UpdateAlertSource',
-        query: { platType: record.platName, record: res.data.source }
+        query: { plat: pp, record: res.data.source }
       })
     },
     async deleteAlertSource (id) {
