@@ -3,7 +3,7 @@
     @cancel="cancel"
     :title="title"
     :visible="visible"
-    :width="820"
+    :width="1160"
     :afterClose="reset"
     :destroyOnClose="true"
     centered>

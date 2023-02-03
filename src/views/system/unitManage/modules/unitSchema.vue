@@ -328,7 +328,7 @@ export default {
           this.confirmLoading = true
           await axios.post('/corp/update', values)
           this.$emit('editSuccess')
-          this.$notifyAddSuccess()
+          this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
           this.$notifyError(e)
