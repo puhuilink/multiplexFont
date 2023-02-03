@@ -2,7 +2,7 @@
   <a-badge :count="count" color="#01d7b0">
     <a-card hoverable style="width: 150px" :bordered="false">
       <template #cover>
-        <img :src="img" width="60px" height="60px" style="margin: 5px" alt=""/>
+        <img :src="baseUrl+img" width="60px" height="60px" style="margin: 5px" alt=""/>
       </template>
       <template #actions>
         <a-icon type="plus" key="edit" style="color: #3c9be8" @click="toCreateAlertSource(svgName)" />
@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
 import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default {
@@ -40,9 +39,10 @@ export default {
   data () {
     const name = 'svg-' + this.svgName
     const count = this.alertSourceCount
-
+    const baseUrl = process.env.VUE_APP_VIEW_THUMBNAIL_URI
     return {
       name,
+      baseUrl,
       count
     }
   }

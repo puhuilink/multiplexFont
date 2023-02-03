@@ -148,6 +148,7 @@ export default {
       this.visible = false
       this.fileList = []
       this.formState = _.cloneDeep(original)
+      this.$router.push('platform')
     },
     addRecord () {
       this.formState.levelRelation.push(
