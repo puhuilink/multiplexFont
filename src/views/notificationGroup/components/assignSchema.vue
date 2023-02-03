@@ -8,9 +8,9 @@
     }"
     :target-keys="targetKeys"
     :render="renderItem"
+    :filterOption="filter"
     :disabled="disabled"
     @change="handleChange"
-    @search="handleSearch"
     show-search
   >
   </a-transfer>
@@ -69,11 +69,9 @@ export default {
       this.submit = this.assign
     },
     getMock () {
-      const targetKeys = []
       const mockData = []
       this.mockData = this.unassignedUser
       for (const unassignedUserKey of this.unassignedUser) {
-        console.log(unassignedUserKey)
         const data = {
           key: unassignedUserKey.value,
           title: unassignedUserKey.label,
@@ -81,15 +79,20 @@ export default {
         }
         mockData.push(data)
       }
-      this.targetKeys.push(this.admin)
       this.mockData = mockData
-      this.targetKeys = targetKeys
-      console.log('mock', this.targetKeys, this.admin)
       this.dealValue()
     },
     setAdmin (value) {
+      this.getMock()
       this.targetKeys.push(value)
       this.mockData[_.findIndex(this.mockData, el => el.key === value)].disabled = true
+      this.admin = value
+      this.dealValue()
+    },
+    setCommon (values = []) {
+      this.getMock()
+      this.mockData.push(...values)
+      this.targetKeys.push(...values.map(el => el.key))
     },
     setSelected (value = []) {
       this.targetKeys.push(...value)
@@ -100,7 +103,6 @@ export default {
           {item.title}
         </span>
       )
-
       return {
         label: customLabel, // for displayed item
         value: item.key // for title and filter matching
@@ -110,18 +112,16 @@ export default {
       this.targetKeys = targetKeys
       this.dealValue()
     },
-    handleSearch (dir, value) {
-      console.log('search:', dir, value)
+    filter (inputValue, options) {
+      const value = _.get(options, 'title', '')
+      return value.toLowerCase().indexOf(
+        inputValue.trim().toLowerCase()
+      ) > -1
     },
     dealValue () {
-      this.$emit('updated', this.targetKeys.map(el => (el === this.admin ? { account_id: el, leader: true } : { account_id: el, leader: false })))
+      this.$emit('updated', this.targetKeys.map(el => (el === this.admin ? { accountId: el, leader: true } : { accountId: el, leader: false })))
     }
   },
-  // watch () {
-  //   targetKeys: () {
-  //
-  //   }
-  // },
   mounted () {
     this.getMock()
   }

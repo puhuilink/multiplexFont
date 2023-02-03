@@ -1,5 +1,6 @@
 export const NOTICETYPE = {
-  'tele': 'telephone',
-  'jjt': 'jiaojiantong',
-  'mail': 'mail'
+  'tele': '0',
+  'jjt': '1',
+  'mail': '3',
+  'gongdan': '2'
 }

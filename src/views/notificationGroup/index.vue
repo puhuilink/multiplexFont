@@ -35,22 +35,20 @@
 
     <!--    按钮-->
     <a-button class="marginLeft" @click="addGroup">新建</a-button>
-    <a-button class="marginLeft" :disabled="!hasSelected" @click="editGroup">编辑</a-button>
-    <a-popover title="是否要删除这些用户组？" @confirm="() => deleteGroup(record)">
+    <a-button class="marginLeft" :disabled="!hasSelectedOne" @click="editGroup">编辑</a-button>
+    <a-popconfirm title="是否要删除这些用户组？" @confirm="() => deleteGroup(selectedRows)">
       <a-button class="marginLeft" :disabled="!hasSelected">删除</a-button>
-    </a-popover>
-    <!--    <a-button class="marginLeft" @click="onShow">分配用户</a-button>-->
+    </a-popconfirm>
     <a-table
       :columns="columns"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :data-source="data"
+      :rowSelection="rowSelection"
+      :loading="loading"
+      rowKey="id"
+      :data-source="dataSource"
     ></a-table>
-    <!--    <schema-->
-    <!--      ref="schema"-->
-    <!--      @close="onClose"-->
-    <!--    ></schema>-->
     <GroupSchema
       ref="group"
+      @success="() => fetch()"
     ></GroupSchema>
   </div>
 </template>
@@ -60,48 +58,27 @@ import List from '~~~/Mixins/Table/List'
 import schema from './components/assignSchema'
 import GroupSchema from './components/groupSchema'
 import { NotificationGroupService } from '@/api/service/index'
+import _ from 'lodash'
 const columns = [
   {
     title: '通知组名称',
-    dataIndex: 'group_name'
+    key: 'groupName',
+    dataIndex: 'groupName'
   },
   {
     title: '管理员',
-    dataIndex: 'admin_name'
+    key: 'accountName',
+    dataIndex: 'accountName'
   },
   {
     title: '备注',
     dataIndex: 'remarks',
+    key: 'remarks',
     width: 280,
     tooltip: true
   }
 ]
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park'
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park'
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park'
-  },
-  {
-    key: '4',
-    name: 'Disabled User',
-    age: 99,
-    address: 'Sidney No. 1 Lake Park'
-  }
-]
+const data = []
 export default {
   name: 'Notification',
   mixins: [List],
@@ -123,7 +100,9 @@ export default {
         }
       },
       columns,
-      data
+      dataSource: data,
+      selectedKey: '',
+      loading: false
     }
   },
   methods: {
@@ -131,29 +110,65 @@ export default {
       this.$refs.group.onAdd('新建')
     },
     editGroup () {
-      this.$refs.group.onEdit('编辑')
-    },
-    onShow () {
-      this.$refs.schema.show('分配用户')
-    },
-    onClose () {
-
+      this.$refs.group.onEdit('编辑', this.selectedRows)
     },
     onSelectChange (selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
-    deleteGroup (record) {
-      // TODO 删除对应的通知组
+    async deleteGroup (record) {
+      try {
+        this.loading = true
+        await NotificationGroupService.deleteGroup(record.map(el => _.get(el, 'groupId')))
+        await this.fetch()
+        this.$notification.success({
+          message: '系统提示',
+          description: '删除成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '删除失败'
+        })
+      } finally {
+        this.loading = false
+      }
     },
     async fetch () {
       // TODO 对接通知组请求
       // eslint-disable-next-line no-unused-vars
-      const { data: { data } } = await NotificationGroupService.getGroup()
-    },
-    created () {
-      this.fetch()
+      let data = []
+      try {
+        this.loading = true
+        data = await NotificationGroupService.getGroup()
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+        this.dataSource = data
+      }
     }
+  },
+  computed: {
+    rowSelection () {
+      return {
+        onChange: (selectedRowKeys, selectedRows) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.selectedRowKeys = selectedRowKeys
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.selectedRows = selectedRows
+        },
+        getCheckboxProps: record => ({
+          props: {
+            disabled: record.name === 'Disabled User', // Column configuration not to be checked
+            name: record.name
+          }
+        })
+      }
+    }
+  },
+  created () {
+    this.fetch()
   }
 }
 </script>

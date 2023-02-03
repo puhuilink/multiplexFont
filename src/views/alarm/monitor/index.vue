@@ -16,6 +16,7 @@
       ref="table"
       rowKey="id"
       :rowSelection="showSelectRow ? rowSelection : undefined"
+      :pagination="defaultPagination"
       :scroll="scroll"
       :show-pagination="showPagin"
     >
@@ -123,7 +124,8 @@
       <div class="operation" slot="operation">
         <div class="AlarmMonitor__operation">
           <div>
-            <a-button :disabled="!hasSelected" :loading="exportLoading" v-if="showHistory" @click="onExportExcel()">导出</a-button>
+            <a-button :disabled="!hasSelected" :loading="exportLoading" v-if="showHistory" @click="onExportExcel()">导出
+            </a-button>
 
             <a-button v-if="showBtn" v-bind="btnProps" @click="onDetail()" :disabled="!hasSelectedOne">查看</a-button>
 
@@ -133,7 +135,8 @@
               v-show="state !== ALARM_STATE.solved"
               @click="onComfirm"
               :disabled="hasAck"
-            >确定告警</a-button>
+            >确定告警
+            </a-button>
 
             <a-button
               v-bind="btnProps"
@@ -141,7 +144,8 @@
               v-show="state !== ALARM_STATE.solved"
               @click="onSolve()"
               :disabled="!hasSolve"
-            >解决</a-button>
+            >解决
+            </a-button>
           </div>
 
           <div class="AlarmMonitor__operation-badge-group" v-if="showAlarmSelection">
@@ -174,7 +178,9 @@
           </div>
 
           <div style="height: 40px;line-height: 40px; margin-right: 30px;border-radius: 10px;" v-if="showTimer">
-            页面刷新时间<a-input-number v-model="fetchTime" :min="1" :max="10"/>分钟
+            页面刷新时间
+            <a-input-number v-model="fetchTime" :min="1" :max="10" />
+            分钟
           </div>
 
           <a-popover title="表格列设置" placement="leftBottom" v-if="showSetting">
@@ -213,6 +219,16 @@ import AlarmSolve from '../modules/AlarmSolve'
 import { ALARM_STATE, ALARM_ACK_STATUS, ALARM_ACK_MAP } from '@/tables/alarm/enum'
 import { levelColorMapping, fontLevelColorMapping, partLevelColorMapping } from '~~~/Alarm/color.config'
 import { removeEmpty } from '@/utils/util'
+const defaultPagination = {
+  pageSizeOptions: ['25', '30', '50', '100'],
+  defaultCurrent: 1,
+  pageSize: 50,
+  defaultPageSize: 50,
+  hideOnSinglePage: false,
+  showQuickJumper: true,
+  showSizeChanger: true,
+  showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+}
 const concatFields = ['hostAlias: host_alias', 'endpointAlias: endpoint_alias', 'endpointModelAlias: endpoint_model_alias', 'metricAlias: metric_alias', 'metricModelAlias: metric_model_alias', 'metric_id', 'device_model_value_code', 'brand_value_code', 'ip', 'type_model_name', 'device_model_name']
 export default {
   name: 'AlarmMonitor',
@@ -315,6 +331,7 @@ export default {
       ALARM_ACK_MAP,
       alarmSearchTime: [moment().add(-1, 'days'), moment()],
       colors: [...partLevelColorMapping.values()],
+      defaultPagination,
       columns: [
         {
           title: '告警级别',
@@ -669,10 +686,22 @@ export default {
         ]
         let hostList = await this.aliasList(hostCondition, fields, { distinct: 'host_id' })
         hostList = hostList.map(el => el.host_id)
-        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, 'host_id': { _in: hostList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
+        alarmList = await this.alarmList({
+          alarm_level: { _in: alarmLevelList },
+          'host_id': { _in: hostList },
+          ...middleCondition
+        }, alarmFields, { limit, offset, orderBy })
       } else {
-        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...middleCondition }, alarmFields, { limit, offset, orderBy })
+        alarmList = await this.alarmList({ alarm_level: { _in: alarmLevelList }, ...middleCondition }, alarmFields, {
+          limit,
+          offset,
+          orderBy
+        })
       }
+      // 临时处理历史告警筛掉无数据的指标
+      alarmList.data = alarmList.data.filter(el => {
+        return _.has(el, 'metricAlias')
+      })
       return alarmList
     },
     onChangDictValue (dictValue) {
@@ -769,7 +798,8 @@ export default {
               }
             })
         },
-        onCancel () {}
+        onCancel () {
+        }
       })
     },
     /**
@@ -830,7 +860,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang='less'>
 .AlarmMonitor {
   &__operation {
     display: flex;

@@ -84,7 +84,8 @@ export default {
     // 告警点击查看当前所在数据的内容详情
     async  alarmSingleDetails (record) {
       if (record !== '') {
-        this.endpointId = record
+        this.endpointId = record.endpointId
+        this.endpointModelId = record.endpointModelId
         if (!_.includes(this.panes.map(el => el.key), this.endpointId)) {
           this.panes.push({
             key: this.endpointId,
@@ -99,9 +100,9 @@ export default {
               alias: 'data'
             }).then(r => {
               const data = _.first(r.data.data)
-              if (data.endpointModelId) {
-                this.endpointModelId = data.endpointModelId
-              }
+              // if (data.endpointModelId) {
+              //   this.endpointModelId = data.endpointModelId
+              // }
               return data.alias
             })
           })
