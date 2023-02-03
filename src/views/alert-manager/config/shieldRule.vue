@@ -59,9 +59,9 @@
           <a-avatar class="gridContent" size="small" :style="{visibility:index !== 0?'none':'hidden'}" style="color: white; backgroundColor: rgb(44,139,240)">
             {{ record.content.relation }}
           </a-avatar>
-          <a-select class="gridContent" :style="{width: 30+ct.column.length * 18 +'px'}" disabled v-model="ct.column"/>
-          <a-select class="gridContent" :style="{width: 30+ct.symbol.length * 18 +'px'}" disabled v-model="ct.symbol"/>
-          <a-select class="gridContent" :style="{width: 30+ct.trigger.length * 18 +'px'}" disabled v-model="ct.trigger"/>
+          <a-select class="gridContent" :style="{width: 30+ct.column.length * 18 +'px'}" disabled v-model="ct.column" :show-arrow="false"/>
+          <a-select class="gridContent" :style="{width: 30+ct.symbol.length * 18 +'px'}" disabled v-model="ct.symbol" :show-arrow="false"/>
+          <a-select class="gridContent" :style="{width: 30+ct.trigger.length * 18 +'px'}" disabled v-model="ct.trigger" :show-arrow="false"/>
         </div>
       </template>
       <template :slot="'action'" slot-scope="text,record">

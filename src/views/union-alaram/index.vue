@@ -256,6 +256,7 @@ export default {
     async claimAlarm (record) {
       try {
         this.loading = true
+        // eslint-disable-next-line no-unused-vars
         const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, claim_status: '1' }])
         if (code === 200) {
           this.$notification.success({
@@ -274,6 +275,7 @@ export default {
     async closeAlarm (record) {
       try {
         this.loading = true
+        // eslint-disable-next-line no-unused-vars
         const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, process_status: '1' }])
         if (code === 200) {
           this.$notification.success({
