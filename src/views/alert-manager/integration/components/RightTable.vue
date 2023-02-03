@@ -109,8 +109,9 @@ const columns = [
   {
     title: '操作',
     key: 'action',
+    fixed: 'right',
     scopedSlots: { customRender: 'action' },
-    width: '80px',
+    width: '120px',
     align: 'center'
   }
 ]
