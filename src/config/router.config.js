@@ -357,7 +357,7 @@ export const asyncRouterMap = [
         hidden: false,
         component: RouteView,
         redirect: '/alertManagerPlatform/config',
-        meta: { title: '统一告警平台', keepAlive: true, icon: 'bug', permission: ['F002002'] },
+        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F002002'] },
         children: [
           {
             path: '/alertManagerPlatform/config',
@@ -445,7 +445,7 @@ export const asyncRouterMap = [
               {
                 path: '/alertManagerPlatform/alarm/index',
                 component: () => import('@/views/union-alaram/index'),
-                meta: { title: '统一告警', keepAlive: true },
+                meta: { title: '告警信息', keepAlive: true },
                 name: 'union'
               }
             ]

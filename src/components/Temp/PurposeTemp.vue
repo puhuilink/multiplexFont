@@ -27,7 +27,7 @@ import { TEMP_KEYWORD_MAPPING } from '@/tables/alarm_temp/types'
 const args = '@{members}于@{ackTime}认领@{LEVEL}级别告警，告警对象:@{object}, 告警编号@{alarmId}，主机：@{object}，告警发生时间：@{closeTime}，告警标题：@{name}告警内容：@{content}'
 
 export default {
-  name: 'TempEditor',
+  name: 'PurposeTemp',
   components: {
     EditorContent,
     EditorMenuBar

@@ -37,31 +37,6 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <!--          <a-col v-bind="colLayout">-->
-          <!--            &lt;!&ndash;            告警来源&ndash;&gt;-->
-          <!--            <a-form-item :label="ALARM_QUERY_LABEL.source" v-bind="formItemLayout" class="wd">-->
-          <!--              <a-select-->
-          <!--                show-search-->
-          <!--                placeholder="选择告警来源"-->
-          <!--                option-filter-prop="children"-->
-          <!--                :filter-option="filterOption"-->
-          <!--                @focus="handleFocus"-->
-          <!--                @blur="handleBlur"-->
-          <!--                @change="handleChange"-->
-          <!--              >-->
-          <!--                <a-select-option value="jack">-->
-          <!--                  Jack-->
-          <!--                </a-select-option>-->
-          <!--                <a-select-option value="lucy">-->
-          <!--                  Lucy-->
-          <!--                </a-select-option>-->
-          <!--                <a-select-option value="tom">-->
-          <!--                  Tom-->
-          <!--                </a-select-option>-->
-          <!--              </a-select>-->
-          <!--            </a-form-item>-->
-          <!--          </a-col>-->
-          <!--          告警类型-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.type" v-bind="formItemLayout" class="wd">
               <a-input placeholder="请输入告警类型" v-model="queryParams.device_type" allowClear></a-input>
@@ -87,12 +62,17 @@
       </span>
     </a-form>
     <!--        导出-->
-    <a-button icon="export" :disabled="!hasSelected" style="margin-bottom: 10px">导出</a-button>
+    <a-button icon="export" :disabled="false" style="margin-bottom: 10px">导出</a-button>
     <!--            关闭按钮-->
-    <a-popconfirm title="是否要关闭这些告警？" @confirm="() => closeAlarm(record)">
+    <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
+
+    <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这些告警？" :disabled="!hasSelected" @confirm="() => batchClaimedAlarm()">
+      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">认领</a-button>
+    </a-popconfirm>
     <a-table
+      :loading="loading"
       bordered
       :columns="columns"
       :pagination="{
@@ -119,12 +99,12 @@
       <a slot="name" slot-scope="text">{{ text }}</a>
       <span slot="action" slot-scope="text, record" class="center">
         <a-button @click="showDetail(text, record)">详情</a-button>
-        <a-divider v-if="record.claim_status === '0'" type="vertical" />
-        <a-popconfirm v-if="record.claim_status === '0'" title="是否要认领这条告警？" @confirm="() => claimAlarm(record)">
+        <a-divider v-if="state === ALARM_STATE.unclaimed" type="vertical" />
+        <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这条告警？" @confirm="() => claimAlarm(record)">
           <a-button>认领</a-button>
         </a-popconfirm>
-        <a-divider type="vertical" />
-        <a-popconfirm title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)">
+        <a-divider v-if="state === ALARM_STATE.unSolved" type="vertical" />
+        <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)">
           <a-button>关闭</a-button>
         </a-popconfirm>
       </span>
@@ -151,10 +131,6 @@ const columns = [
     customRender: record => `P${record}`
   },
   {
-    title: '告警ID',
-    dataIndex: 'event_id'
-  },
-  {
     title: '告警标题',
     dataIndex: 'title'
   },
@@ -176,10 +152,6 @@ const columns = [
     title: '告警内容',
     dataIndex: 'content'
   },
-  // {
-  //   title: '告警源',
-  //   dataIndex: 'source'
-  // },
   {
     title: '操作',
     key: 'action',
@@ -193,6 +165,7 @@ export default {
   name: 'UnionAlarm',
   data () {
     return {
+      loading: false,
       state: ALARM_STATE.unSolved,
       ALARM_STATE,
       ALARM_QUERY_LABEL,
@@ -229,8 +202,9 @@ export default {
     DetailSchema
   },
   methods: {
-    onSelectChange (selectedRowKeys) {
+    onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
     onChange (date, dateString) {
     },
@@ -266,7 +240,7 @@ export default {
       // TODO 查询
       if (this.queryParams.timeList) {
         this.queryParams.start_time = this.queryParams.timeList[0]
-        this.queryParams.end_time = this.queryParams.timeList[1]
+        this.queryParams.last_time = this.queryParams.timeList[1]
       }
       const { data, page } = await alarm.post('/platform/alert/main/list', {
         ...this.queryParams
@@ -276,14 +250,97 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['level', 'deviceType', 'device', 'timeList'])
+      this.queryParams = _.omit(this.queryParams, ['level', 'deviceType', 'device', 'timeList', 'start_time', 'last_time'])
     },
     // 认领告警
-    claimAlarm (record) {
+    async claimAlarm (record) {
+      try {
+        this.loading = true
+        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, claim_status: '1' }])
+        if (code === 200) {
+          this.$notification.success({
+            message: '系统提示',
+            description: '认领成功'
+          })
+          this.query()
+        }
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
-    // 关闭或批量关闭告警
-    closeAlarm (record) {
-
+    // 关闭告警
+    async closeAlarm (record) {
+      try {
+        this.loading = true
+        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, process_status: '1' }])
+        if (code === 200) {
+          this.$notification.success({
+            message: '系统提示',
+            description: '关闭成功'
+          })
+          this.query()
+        }
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '关闭失败'
+        })
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async batchClaimedAlarm () {
+      const parmas = this.selectedRows.map(el => ({ id: el.ID, claim_status: '1' }))
+      try {
+        this.loading = true
+        const { code } = await alarm.post('/platform/alert/main/updates ', parmas)
+        if (code === 200) {
+          this.$notification.success({
+            message: '系统提示',
+            description: '认领成功'
+          })
+          this.query()
+        }
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '认领失败'
+        })
+        throw e
+      } finally {
+        this.loading = false
+        this.resetSelect()
+      }
+    },
+    async batchCloseAlarm () {
+      const parmas = this.selectedRows.map(el => ({ id: el.ID, process_status: '1', claim_status: '1' }))
+      try {
+        this.loading = true
+        const { code } = await alarm.post('/platform/alert/main/updates ', parmas)
+        if (code === 200) {
+          this.$notification.success({
+            message: '系统提示',
+            description: '关闭成功'
+          })
+          this.query()
+        }
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: '关闭失败'
+        })
+        throw e
+      } finally {
+        this.loading = false
+        this.resetSelect()
+      }
+    },
+    resetSelect () {
+      this.selectedRows = []
+      this.selectedRowKeys = []
     },
     showDetail (text, record) {
       this.$refs.schema.show('压缩告警详情', text)
@@ -294,16 +351,14 @@ export default {
     }
   },
   computed: {
-    rowSelection () {
+    rowSelection: function () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-        },
-        getCheckboxProps: record => ({
-          props: {
-            disabled: record.name === 'Disabled User', // Column configuration not to be checked
-            name: record.name
-          }
-        })
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.selectedRowKeys = selectedRowKeys
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.selectedRows = selectedRows
+        }
       }
     },
     hasSelected () {

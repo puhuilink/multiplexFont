@@ -105,7 +105,7 @@ export default {
             return (
               <a-button
                 type="link"
-                onClick = {() => { record.endpointId ? this.$emit('pointCheckout', record.endpointId) : alert('无有效检查项') }}
+                onClick = {() => { record.endpointId ? this.$emit('pointCheckout', record) : alert('无有效检查项') }}
               >查看</a-button>
             )
           }
@@ -115,7 +115,8 @@ export default {
   },
   methods: {
     async loadData (index) {
-      return AlarmRuleService.hostPerformanceDetail(this.id, index, this.alarmList)
+      const data = AlarmRuleService.hostPerformanceDetail(this.id, index, this.alarmList)
+      return data
     },
     alarmChange (data) {
       this.alarmList = data

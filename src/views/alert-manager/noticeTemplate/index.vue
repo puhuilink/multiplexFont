@@ -4,9 +4,10 @@
       <a-col :span="24">
         <div style="width: 100%">
           <a-tabs :activeKey="state" @change="onChangeState">
-            <a-tab-pane :key="NOTICETYPE.tele" tab="电话"></a-tab-pane>
+            <a-tab-pane :key="NOTICETYPE.tele" tab="短信"></a-tab-pane>
             <a-tab-pane :key="NOTICETYPE.jjt" tab="交建通"></a-tab-pane>
             <a-tab-pane :key="NOTICETYPE.mail" tab="邮箱"></a-tab-pane>
+            <a-tab-pane :key="NOTICETYPE.gongdan" tab="工单"></a-tab-pane>
           </a-tabs>
         </div>
         <a-form-model :rules="rules" :model="form" @submit="onSubmit" layout="vertical">
@@ -69,7 +70,8 @@
 <script>
 import { NOTICETYPE } from '@/tables/noticeTemp/enum'
 import { TEMP_UNION_MAPPING } from '@/tables/alarm_temp/types'
-import TempEditor from '@/components/Temp/TempEditor'
+import TempEditor from '@/components/Temp/PurposeTemp'
+import { alarm } from '@/utils/request'
 const columns = [{
   title: '标签名',
   dataIndex: 'label'
@@ -119,7 +121,10 @@ export default {
       rules,
       state: NOTICETYPE.tele,
       form: {
-        initBtn: true
+        initBtn: true,
+        message: '',
+        claimed: '',
+        recovery: ''
       },
       mode: 'detail',
       disabled: true,
@@ -133,15 +138,12 @@ export default {
     onChangeState (key) {
       // TODO 切换不同的模板触发器
       this.state = key
+      this.fetch()
     },
-    onInitMes () {
-      this.form.message = args
-    },
-    onInitRes () {
-      this.form.recovery = args
-    },
-    onInitCli () {
-      this.form.claimed = args
+    async fetch () {
+      const a = await alarm.post('/api/configuration/template/list', { notifyWay: this.state })
+      console.log('fetch', a)
+      a.map()
     },
     initALL () {
       this.$refs.res.toggleInit()
@@ -150,11 +152,15 @@ export default {
     },
     onSubmit () {
       // TODO 提交模板
+      console.log('提交', this.form)
     },
     changeStatus () {
       this.mode = 'edit'
       this.disabled = false
     }
+  },
+  mounted () {
+    this.fetch()
   }
 }
 </script>

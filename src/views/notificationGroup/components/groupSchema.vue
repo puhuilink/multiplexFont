@@ -11,59 +11,33 @@
     <template slot="footer">
       <a-button @click="prev" v-if="current === 1">上一步</a-button>
       <a-button @click="next" v-if="current < 1">下一步</a-button>
-      <a-button type="primary" @click="submit" v-if="current === 1">提交</a-button>
+      <a-button type="primary" @click="submit" v-if="current === 1" :loading="submitSta">提交</a-button>
     </template>
-    <a-form :form="form">
+    <a-form-model :model="formModel" :rules="rules" ref="form">
       <a-steps :current="current">
         <a-step key="1" title="编辑基本信息"></a-step>
         <a-step key="2" title="分配用户"></a-step>
       </a-steps>
       <a-row v-show="onStep">
         <a-col :md="12" :span="24">
-          <a-form-item
+          <a-form-model-item
             label="通知组名称"
             v-bind="formItemLayout"
+            prop="group_name"
           >
             <a-input
-              v-decorator="[
-                'group_name',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: '通知组名称'
-                    },
-                    {
-                      pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/,
-                      message: '仅支持中英文与数字'
-                    },
-                    {
-                      max: 30,
-                      message: '最多输入30个字符'
-                    }
-                  ]
-                }
-              ]"
+              v-model="formModel.group_name"
             />
-          </a-form-item>
+          </a-form-model-item>
         </a-col>
         <a-col :md="12" :span="24">
-          <a-form-item
+          <a-form-model-item
             label="管理员"
             v-bind="formItemLayout"
+            prop="group_admin"
           >
             <a-select
-              v-decorator="[
-                'group_admin',
-                {
-                  rules: [
-                    {
-                      required: true,
-                      message: '管理员必填'
-                    }
-                  ]
-                }
-              ]"
+              v-model="formModel.group_admin"
             >
               <a-select-option
                 v-for="item in options.user"
@@ -73,36 +47,26 @@
                 {{ item.label }}
               </a-select-option>
             </a-select>
-          </a-form-item>
+          </a-form-model-item>
         </a-col>
       </a-row>
       <a-row v-show="onStep">
         <a-col :md="24" :span="24">
-          <a-form-item
+          <a-form-model-item
             label="备注"
             v-bind="formItemLayout"
+            prop="remarks"
           >
             <a-textarea
-              v-decorator="[
-                'remarks',
-                {
-                  initialValue: '',
-                  rules: [
-                    {
-                      max: 128,
-                      message: '最多输入128个字符'
-                    }
-                  ]
-                }
-              ]"
+              v-model="formModel.remarks"
             ></a-textarea>
-          </a-form-item>
+          </a-form-model-item>
         </a-col>
       </a-row>
       <a-row v-show="!onStep" type="flex" justify="center">
         <assign ref="assign" :unassigned-user="options.user" style="margin-top: 10px" @updated="assUpdate"></assign>
       </a-row>
-    </a-form>
+    </a-form-model>
   </a-modal>
 </template>
 
@@ -110,6 +74,40 @@
 import Schema from '~~~/Mixins/Modal/Schema'
 import { NotificationGroupService } from '@/api'
 import assign from './assignSchema'
+import { alarm } from '@/utils/request'
+import _ from 'lodash'
+const rules = {
+  group_name: [
+    {
+      required: true,
+      message: '通知组名称',
+      trigger: 'blur'
+    },
+    {
+      pattern: /^[\\Sa-zA-Z0-9\u4e00-\u9fa5]+$/,
+      message: '仅支持中英文与数字',
+      trigger: 'blur'
+    },
+    {
+      max: 30,
+      message: '最多输入30个字符',
+      trigger: 'change'
+    }
+  ],
+  group_admin: [
+    {
+      required: true,
+      message: '管理员必填',
+      trigger: 'change'
+    }
+  ],
+  remarks: [
+    {
+      max: 128,
+      message: '最多输入128个字符'
+    }
+  ]
+}
 
 export default {
   name: 'GroupSchema',
@@ -121,11 +119,21 @@ export default {
         flag: [
         ],
         disabled: false,
-        loading: false
+        loading: false,
+        user: []
+      },
+      formModel: {
+        remarks: '',
+        group_admin: '',
+        group_name: '',
+        user: []
       },
       current: 0,
       assigned: [],
-      testValue: ''
+      unassigned: [],
+      testValue: '',
+      rules,
+      submitSta: false
     }
   },
   methods: {
@@ -136,22 +144,35 @@ export default {
     },
     add () {
       // TODO 校验表单并提交新增接口
-      this.form.validateFields(async (err, values) => {
-        if (err) return
+      this.$refs.form.validate(async isValid => {
+        if (!isValid) return
         this.confirmLoading = true
-        // return Service.add(values)
-        //   .then(res => {
-        //     this.$emit('addSuccess')
-        //     this.$notifyAddSuccess()
-        //     this.cancel()
-        //   })
-        //   .catch(e => {
-        //     this.$notifyError(e)
-        //     throw e
-        //   })
-        //   .finally(() => {
-        //     this.confirmLoading = false
-        //   })
+        try {
+          this.submitSta = true
+          const query = {
+            group: {
+              name: this.formModel.group_name,
+              remark: this.formModel.remark
+            },
+            users: this.assigned
+          }
+          const { code } = await alarm.post('/api/configuration/group/add', query)
+          if (code === 200) {
+            this.$notification.success({
+              message: '系统提示',
+              description: '添加成功'
+            })
+            this.cancel()
+            this.$emit('success')
+          }
+        } catch (e) {
+          this.$notification.error({
+            message: '参数不正确'
+          })
+          throw e
+        } finally {
+          this.submitSta = false
+        }
       })
     },
     onAdd (title) {
@@ -160,32 +181,72 @@ export default {
     },
     edit () {
       // TODO 校验表单并提交编辑接口
+      this.$refs.form.validate(async isValid => {
+        if (!isValid) return
+        this.confirmLoading = true
+        try {
+          this.submitSta = true
+          const query = {
+            group: {
+              id: this.formModel.id,
+              name: this.formModel.group_name,
+              remark: this.formModel.remark
+            },
+            users: this.assigned
+          }
+          console.log('参数', query)
+          const { code } = await alarm.post('/api/configuration/group/update', query)
+          if (code === 200) {
+            this.$notification.success({
+              message: '系统提示',
+              description: '修改成功'
+            })
+            this.cancel()
+            this.$emit('success')
+          }
+        } catch (e) {
+          this.$notification.error({
+            message: '参数不正确'
+          })
+          throw e
+        } finally {
+          this.submitSta = false
+        }
+      })
     },
-    onEdit (title) {
-      this.show(title)
-      this.submit = this.edit()
+    async onEdit (title, params = {}) {
+      await this.show(title)
+      Object.assign(this.formModel, { 'group_name': params[0].groupName, 'remarks': params[0].remarks })
+      console.log('findById1', this.formModel, params)
+      const id = _.get(params, '0.groupId', '')
+      this.formModel.id = id
+      this.findById(params)
+      this.submit = this.edit
     },
     async fillUser () {
       const user = await NotificationGroupService.getUnassignedUser()
       this.options.user = user
     },
+    async findById (id) {
+      NotificationGroupService.findUser(id).then(r => {
+        const index = _.findIndex(r, (el) => el.leader === true)
+        const val = _.cloneDeep(r)
+        console.log('val', val)
+        this.$nextTick(() => {
+          r.map(el => this.options.user.push({ label: _.get(el, 'accountName', ''), value: _.get(el, 'accountId', '') }))
+          this.unassigned = _.remove(val, (n) => n.leader !== true).map(el => ({ key: el.accountId, title: el.accountName, disabled: false }))
+          this.$refs.assign.setCommon(this.unassigned)
+          Object.assign(this.formModel, { 'group_admin': r[index].accountId })
+        }
+        )
+      })
+    },
     next () {
-      this.form.validateFields(async (err, values) => {
-        if (err) return
-        // return Service.add(values)
-        //   .then(res => {
-        //     this.$emit('addSuccess')
-        //     this.$notifyAddSuccess()
-        //     this.cancel()
-        //   })
-        //   .catch(e => {
-        //     this.$notifyError(e)
-        //     throw e
-        //   })
-        //   .finally(() => {
-        //     this.confirmLoading = false
-        //   })
-        this.$nextTick(() => this.$refs.assign.setAdmin(values.group_admin))
+      this.$refs.form.validate(async err => {
+        if (!err) return
+        this.$nextTick(() => {
+          this.$refs.assign.setAdmin(this.formModel.group_admin)
+        })
         this.current++
       })
     },
@@ -194,6 +255,10 @@ export default {
     },
     assUpdate (value) {
       this.assigned = value
+    },
+    reset () {
+      this.$refs.form.resetFields()
+      Object.assign(this.$data, this.$options.data.apply(this))
     }
   },
   computed: {

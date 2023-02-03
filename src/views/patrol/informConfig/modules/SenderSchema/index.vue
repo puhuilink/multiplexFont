@@ -292,6 +292,7 @@ export default {
     },
 
     async fetch (id) {
+      console.log('id', id)
       try {
         const { data: { model } } = await PatrolSenderService.find({
           where: { id: { _in: id } },
