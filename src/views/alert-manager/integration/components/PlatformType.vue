@@ -26,18 +26,18 @@
             <a-textarea v-model="formState.remark" />
           </a-form-model-item>
           <a-form-model-item label="监控级别对应关系">
-            <a-table :columns="mappingColumns" :data-source="formState.levelRelation" :pagination="false" :row-key="(record,index)=>index">
+            <a-table :columns="mappingColumns" :data-source="formState.levelRelation" bordered>
               <template
                 v-for="col in ['P1', 'P2']"
                 :slot="col"
-                slot-scope="text,record,index"
+                slot-scope="text,record"
               >
                 <div :key="col">
                   <a-input
-                    v-if="compareKey(record.P1)"
+                    v-if="record.editable"
                     style="margin: -5px 0"
                     :value="text"
-                    @change="e => handleChange(e.target.value, index, col)"
+                    @change="e => handleChange(e.target.value, record.key, col)"
                   />
                   <template v-else>
                     {{ text }}
@@ -47,14 +47,14 @@
               <template slot="operation" slot-scope="text, record,index">
                 <div class="editable-row-operations">
                   <span v-if="record.editable">
-                    <a @click="save(index)">保存</a>
+                    <a @click="save(record.key)">保存</a>
                     <a-divider type="vertical" />
-                    <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(index)">
+                    <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
                       <a>取消</a>
                     </a-popconfirm>
                   </span>
                   <span v-else>
-                    <a @click="() => edit(index)">编辑</a>
+                    <a @click="() => edit(record.key)">编辑</a>
                     <a-divider type="vertical" />
                     <a @click="() => removeOne(index)">删除</a>
                   </span>
@@ -97,7 +97,8 @@ const original = {
   levelRelation: [
     {
       P1: 'p1',
-      P2: '1'
+      P2: '1',
+      key: Math.random().toString()
     }
   ]
 }
@@ -120,6 +121,7 @@ export default {
       confirmLoading: false,
       formState: _.cloneDeep(original),
       labelCol: { span: 6 },
+      cacheData: _.cloneDeep(original).levelRelation.map(item => ({ ...item })),
       wrapperCol: { span: 12 },
       fileList: [],
       titleMap: {
@@ -154,7 +156,8 @@ export default {
       this.formState.levelRelation.push(
         {
           P1: '等级',
-          P2: '值'
+          P2: '值',
+          key: (Math.random() * this.formState.levelRelation.length).toString()
         }
       )
       this.$forceUpdate()
@@ -172,6 +175,7 @@ export default {
       const relation = {}
       this.formState.levelRelation.forEach(level => {
         relation[level.P1] = level.P2
+        delete level.key
       })
       formData.append('name', this.formState.name)
       formData.append('remark', this.formState.remark)
@@ -199,22 +203,17 @@ export default {
     },
     handleChange (value, key, column) {
       const newData = [...this.formState.levelRelation]
-      const target = newData[key]
-      console.log(target)
+      const target = newData.find(item => key === item.key)
       if (target) {
         target[column] = value
         this.formState.levelRelation = newData
       }
     },
     edit (key) {
-      if (this.editingKey) {
-        this.$message.warn('先将其他行数据保存再编辑！')
-        return
-      }
       const newData = [...this.formState.levelRelation]
-      this.cacheData = _.cloneDeep(newData)
-      const target = newData[key]
-      this.editingKey = target.P1
+      const target = newData.find(item => key === item.key)
+      console.log(target)
+      this.editingKey = key
       if (target) {
         target.editable = true
         this.formState.levelRelation = newData
@@ -224,8 +223,9 @@ export default {
     save (key) {
       const newData = [...this.formState.levelRelation]
       const newCacheData = [...this.cacheData]
-      const target = newData[key]
-      const targetCache = newCacheData[key]
+      const target = newData.find(item => key === item.key)
+      console.log(target)
+      const targetCache = newCacheData.find(item => key === item.key)
       if (target && targetCache) {
         delete target.editable
         this.formState.levelRelation = newData
@@ -236,30 +236,28 @@ export default {
     },
     cancel (key) {
       const newData = [...this.formState.levelRelation]
-      const target = newData[key]
+      const target = newData.find(item => key === item.key)
+      console.log(target)
       this.editingKey = ''
       if (target) {
-        Object.assign(target, this.cacheData[key])
+        Object.assign(target, this.cacheData.find(item => key === item.key))
         delete target.editable
         this.formState.levelRelation = newData
       }
     }
   },
   computed: {
-    compareKey (key) {
-      return this.editingKey === key
-    },
     mappingColumns () {
       return [
         {
           title: '统一监控平台',
           dataIndex: 'P1',
-          scopedSlots: { customRender: 'here' }
+          scopedSlots: { customRender: 'P1' }
         },
         {
           title: this.formState.name,
           dataIndex: 'P2',
-          scopedSlots: { customRender: 'there' }
+          scopedSlots: { customRender: 'P2' }
         },
         {
           title: '操作',
