@@ -65,7 +65,6 @@ export default {
         ],
         content: '',
         onUpdate: ({ getJSON }) => {
-          console.log('更新节点', getJSON(), MessageModel.serialize(getJSON()))
           vm.$emit('input', MessageModel.serialize(getJSON()), vm.singleLine)
           // TODO: trigger input event and validator
           // TODO: singleLine 禁止换行
@@ -83,7 +82,6 @@ export default {
     preview (preview) {
       if (preview) {
         this.editor.setOptions({ editable: false })
-        console.log('preview', this.value)
         this.setContent(
           MessageModel.mockContent(this.value)
         )
@@ -113,12 +111,14 @@ export default {
     togglePreview () {
       this.preview = !this.preview
     },
-    toggleInit (param = '') {
-      const content = param === '' ? this.args : param
-      this.editor.setContent(MessageModel.deSerialize(content))
+    toggleInit () {
+      this.editor.setContent(MessageModel.deSerialize(this.args))
       // 通知value初始化
-      this.$emit('input', MessageModel.serialize(MessageModel.deSerialize(content), this.singleLine))
+      this.$emit('input', MessageModel.serialize(MessageModel.deSerialize(this.args), this.singleLine))
       this.preview = false
+    },
+    setDefaultTemp (value) {
+      this.args = value
     }
   },
   beforeDestroy () {

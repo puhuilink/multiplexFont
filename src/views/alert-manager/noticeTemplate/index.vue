@@ -19,7 +19,7 @@
               触发通知模版
             </span>
             <TempEditor
-              v-model="form.message"
+              v-model="form.message.customizeContent"
               :init-btn="form.initBtn"
               :disabled="disabled"
               ref="mes"
@@ -33,7 +33,7 @@
               认领通知模版
             </span>
             <TempEditor
-              v-model="form.claimed"
+              v-model="form.claimed.customizeContent"
               :init-btn="form.initBtn"
               :disabled="disabled"
               ref="cli"
@@ -47,14 +47,14 @@
               恢复通知模版
             </span>
             <TempEditor
-              v-model="form.recovery"
+              v-model="form.recovery.customizeContent"
               :init-btn="form.initBtn"
               :disabled="disabled"
               ref="res"
               :mapping="TEMP_UNION_MAPPING"></TempEditor>
           </a-form-model-item>
           <a-form-model-item :wrapper-col="{ span: 14, offset:10 }">
-            <a-button type="primary" @click="mode === 'detail' ? changeStatus() : onSubmit()">
+            <a-button :loading="loading" type="primary" @click="mode === 'detail' ? changeStatus() : onSubmit()">
               {{ mode === 'detail' ? '编辑' : '保存' }}
             </a-button>
             <a-button style="margin-left: 10px;" :disabled="disabled" @click="initALL">
@@ -68,10 +68,11 @@
 </template>
 
 <script>
-import { NOTICETYPE } from '@/tables/noticeTemp/enum'
+import { ALARMSTATUS, NOTICETYPE } from '@/tables/noticeTemp/enum'
 import { TEMP_UNION_MAPPING } from '@/tables/alarm_temp/types'
 import TempEditor from '@/components/Temp/PurposeTemp'
 import { alarm } from '@/utils/request'
+import _ from 'lodash'
 const columns = [{
   title: '标签名',
   dataIndex: 'label'
@@ -122,11 +123,30 @@ export default {
       state: NOTICETYPE.tele,
       form: {
         initBtn: true,
-        message: '',
-        claimed: '',
-        recovery: ''
+        // 触发模板
+        message: {
+          id: '',
+          type: '',
+          customizeContent: '',
+          defaultContent: ''
+        },
+        // 认领模板
+        claimed: {
+          id: '',
+          type: '',
+          customizeContent: '',
+          defaultContent: ''
+        },
+        // 恢复模板
+        recovery: {
+          id: '',
+          type: '',
+          customizeContent: '',
+          defaultContent: ''
+        }
       },
       mode: 'detail',
+      loading: false,
       disabled: true,
       args
     }
@@ -141,18 +161,50 @@ export default {
       this.fetch()
     },
     async fetch () {
+      // 切换重置按钮状态
+      Object.assign(this.$data.form, this.$options.data.apply(this).form)
+      this.mode = 'detail'
+      this.disabled = true
       const a = await alarm.post('/api/configuration/template/list', { notifyWay: this.state })
-      console.log('fetch', a)
-      a.map()
+      const list = _.get(a, 'data')
+      for (const item of list) {
+        if (item.alertStatusType === ALARMSTATUS.chufa) {
+          // 触发模板
+          this.form.message = item
+          this.$refs.mes.setDefaultTemp(this.form.message.defaultContent)
+        }
+        if (item.alertStatusType === ALARMSTATUS.renling) {
+          // 认领模板
+          this.form.claimed = item
+          this.$refs.cli.setDefaultTemp(this.form.message.defaultContent)
+        }
+        if (item.alertStatusType === ALARMSTATUS.huifu) {
+          // 恢复模板
+          this.form.recovery = item
+          this.$refs.res.setDefaultTemp(this.form.message.defaultContent)
+        }
+      }
     },
     initALL () {
       this.$refs.res.toggleInit()
       this.$refs.cli.toggleInit()
       this.$refs.mes.toggleInit()
     },
-    onSubmit () {
+    async onSubmit () {
       // TODO 提交模板
-      console.log('提交', this.form)
+      try {
+        this.loading = true
+        const params = [_.pick(this.form.message, ['id', 'customizeContent']), _.pick(this.form.recovery, ['id', 'customizeContent']), _.pick(this.form.claimed, ['id', 'customizeContent'])]
+        await alarm.post('/api/configuration/template/update', { templates: params.filter(el => el.id !== '') })
+        this.$notification.success({
+          message: '系统提示',
+          description: '修改成功'
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
     changeStatus () {
       this.mode = 'edit'
