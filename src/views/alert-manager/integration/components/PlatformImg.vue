@@ -5,7 +5,7 @@
         <img :src="baseUrl+img" width="60px" height="60px" style="margin: 5px" alt=""/>
       </template>
       <template #actions>
-        <a-icon type="plus" key="edit" style="color: #3c9be8" @click="toCreateAlertSource(svgName)" />
+        <a-icon type="plus" key="edit" style="color: #3c9be8" @click="toCreateAlertSource(id)" />
       </template>
     </a-card>
   </a-badge>
@@ -13,7 +13,6 @@
 
 <script>
 import SvgIcon from '@/components/SvgIcon/index.vue'
-import store from '@/store'
 import { alarm } from '@/utils/request'
 
 export default {
@@ -23,6 +22,10 @@ export default {
     svgName: {
       type: String,
       default: 'pigoss'
+    },
+    id: {
+      type: String,
+      default: ''
     },
     img: {
       type: String,
@@ -34,17 +37,10 @@ export default {
     }
   },
   methods: {
-    async toCreateAlertSource (type) {
-      const platformList = store.getters.platformList
-      let platform
-      platformList.forEach(plat => {
-        if (plat.platName === type) {
-          platform = plat
-        }
-      })
+    async toCreateAlertSource (id) {
       let pp
       try {
-        const { data } = await alarm.post('/api/integration/platform/find', { platformId: platform.platformId })
+        const { data } = await alarm.post('/api/integration/platform/find', { platformId: id })
         pp = data
       } catch (e) {
         console.log(e)

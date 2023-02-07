@@ -7,7 +7,7 @@
             <a @click="back"><a-icon type="left"/>&nbsp;{{ record!==undefined&&record.id !== null?'修改':'新建' }}告警源&nbsp;/&nbsp;{{ platform.name }}</a>
           </div>
           <div style="grid-column: 8/9;place-self:end;width: 100px;">
-            <a-button>取消</a-button>
+            <a-button @click="back">取消</a-button>
           </div>
         </div>
         <a-divider style="background: rgb(236,236,236)" />

@@ -49,7 +49,7 @@
                   <span v-if="record.editable">
                     <a @click="save(record.key)">保存</a>
                     <a-divider type="vertical" />
-                    <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
+                    <a-popconfirm title="确定取消吗?" @confirm="() => cancel(record.key)">
                       <a>取消</a>
                     </a-popconfirm>
                   </span>
@@ -80,7 +80,7 @@
         v-for="child in children"
         :key="child"
       >
-        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :img="child.url" :alert-source-count="0" /></div>
+        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :id="child.id" :img="child.url" :alert-source-count="0" /></div>
       </div>
     </div>
   </div>
@@ -90,6 +90,7 @@
 import PlatformImg from './PlatformImg.vue'
 import _ from 'lodash'
 import { alarm } from '@/utils/request'
+
 const original = {
   file: '',
   name: '',
@@ -163,7 +164,7 @@ export default {
       this.$forceUpdate()
     },
     removeOne (index) {
-      if (this.editingKey !== '') {
+      if (this.editingKey !== '' || this.formState.levelRelation.length < 2) {
         return
       }
       this.formState.levelRelation.splice(index, 1)
@@ -182,22 +183,21 @@ export default {
       formData.append('levelRelation', JSON.stringify(relation))
       formData.append('platType', this.title)
       formData.append('file', this.fileList[0])
+
       let res
       try {
-        const r = await alarm.post('/api/integration/platform/add', formData)
-        res = r
+        res = await alarm.post('/api/integration/platform/add', formData)
       } catch (e) {
-        res = {
-          code: 200,
-          msg: '成功'
-        }
+        console.log(e)
+        res = e.response.data
       } finally {
         this.confirmLoading = false
       }
+      console.log(res)
       if (res.code === 200) {
         this.$message.success('新建成功！')
       } else {
-        this.$message.error('新建失败！请检查环境！')
+        this.$message.error(res.data)
       }
       this.closeModal()
     },

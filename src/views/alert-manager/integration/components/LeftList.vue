@@ -59,24 +59,28 @@ export default {
           case '1':
             baseArray[0].children.push({
               name: p.platName,
+              id: p.platformId,
               url: p.platUrl
             })
             break
           case '2':
             baseArray[1].children.push({
               name: p.platName,
+              id: p.platformId,
               url: p.platUrl
             })
             break
           case '3':
             baseArray[2].children.push({
               name: p.platName,
+              id: p.platformId,
               url: p.platUrl
             })
             break
           case '4':
             baseArray[3].children.push({
               name: p.platName,
+              id: p.platformId,
               url: p.platUrl
             })
             break
