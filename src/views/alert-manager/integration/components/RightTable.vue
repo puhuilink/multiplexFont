@@ -137,7 +137,7 @@ export default {
   props: {
     platformId: {
       type: String,
-      default: '123'
+      default: ''
     }
   },
   computed: {
@@ -207,7 +207,7 @@ export default {
           msg: 'success',
           data: {
             total: 0,
-            value: this.data
+            value: []
           }
         }
       }

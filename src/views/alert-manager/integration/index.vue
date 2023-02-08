@@ -4,9 +4,9 @@
       <TopGuide @platformChange="changeSelectedId" />
     </div>
     <div style="display: flex;margin-left: 20px; margin-right: 20px;">
-      <div style="height: 100%;width: 400px; background: #ffffff"><LeftList /></div>
+      <div style="height: 100%;width: 300px; background: #ffffff"><LeftList /></div>
       <div style="width: 20px"></div>
-      <div style="height: 100%;min-width: 1055px;margin-left: 20px; background: #ffffff"><RightTable :platform-id="selectedId" /></div>
+      <div style="height: 100%;min-width: 800px;margin-left: 20px; background: #ffffff"><RightTable :platform-id="selectedId" /></div>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <a-badge :count="count" color="#01d7b0">
-    <a-card hoverable style="width: 150px" :bordered="false">
+    <a-card hoverable style="width: 100px" :bordered="false">
       <template #cover>
         <img :src="baseUrl+img" width="60px" height="60px" style="margin: 5px" alt=""/>
       </template>
@@ -47,8 +47,7 @@ export default {
         this.$message.error('请求失败！请检查网络连接！')
         return
       }
-      console.log('plat', pp)
-      pp.url += this.baseUrl
+      pp.url = this.baseUrl + pp.url
       await this.$router.push({ name: 'NewAlertSource', query: { plat: pp } })
     }
   },

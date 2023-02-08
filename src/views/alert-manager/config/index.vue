@@ -5,7 +5,7 @@
       title="新建分派策略"
       :visible="visible"
       :confirm-loading="confirmLoading"
-      width="1200px"
+      width="1100px"
       @ok="handleOk"
       @cancel="closeModal"
     >
@@ -19,7 +19,7 @@
         <a-form-model-item label="分派条件">
           <div
             style="display: grid;
-            grid-template-columns: 220px 1fr;
+            grid-template-columns: 60px 1fr;
             grid-auto-columns: 1fr;"
             v-for="(map,index) in formState.strategy"
             :key="index">
@@ -43,12 +43,12 @@
               </div>
             </div>
           </div>
-          <a-button style="width: 100px;background-color: #2BBC13;color: white" @click="addStrategy"> 增加</a-button>
+          <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
         <a-form-model-item label="分派人">
           <div
             style="display: grid;
-            grid-template-columns: 220px 1fr;
+            grid-template-columns: 60px 1fr;
             grid-auto-columns: 1fr;margin-top: 2px"
             v-for="(notice,index) in formState.notify"
             :key="index">
@@ -56,15 +56,15 @@
             <div v-if="index===0">
               <div>通知组或人 <a-select v-model="notice.user" style="width: 100px"/></div>
             </div>
-            <div v-else style="display: flex;align-items: center">
-              <div>
+            <div v-else >
+              <div style="display: flex;align-items: center">
                 <div>如果告警升级后 <a-input-number></a-input-number>分钟无人处理，则告警自动升级通知以下用户</div>
                 <div>通知人 <a-select v-model="notice.user" style="width: 100px"/></div>
               </div>
               <a-icon type="delete" @click="notifyLevelDownByIndex(index)"></a-icon>
             </div>
           </div>
-          <a-button style="width: 100px;background-color: #2BBC13;color: white" @click="notifyLevelUp"> 升级</a-button>
+          <a-button class="add_button" @click="notifyLevelUp"> 升级</a-button>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -393,8 +393,13 @@ export default {
 
 <style lang='less' scoped>
 .circle{
-  background: #208DFF;
-  color: white;
+  background: rgba(9, 117, 209, 0.10) ;
+  color: #0975D1;
+}
+.add_button{
+  width: 100px;
+  background-color: rgba(34, 127, 230, 1);
+  color: white
 }
 * {
   marigin: 0px;
