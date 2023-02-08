@@ -11,7 +11,7 @@
           </div>
         </div>
         <a-divider style="background: rgb(236,236,236)" />
-        <div><AlertSourceForm :record="record" :platform-id="platform.platformId"/></div>
+        <div><AlertSourceForm :record="record" :platform-id="platform.id"/></div>
       </div>
     </div>
     <div class="item"/>

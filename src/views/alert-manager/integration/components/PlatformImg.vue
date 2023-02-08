@@ -47,6 +47,7 @@ export default {
         this.$message.error('请求失败！请检查网络连接！')
         return
       }
+      console.log('plat', pp)
       pp.url += this.baseUrl
       await this.$router.push({ name: 'NewAlertSource', query: { plat: pp } })
     }
