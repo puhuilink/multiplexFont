@@ -152,7 +152,6 @@ export default {
     rowSelection () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties
           this.selectedRowKeys = selectedRowKeys
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties

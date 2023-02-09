@@ -3,65 +3,39 @@
     @cancel="cancel"
     :title="title"
     :visible="visible"
-    :width="1680"
+    :width="1500"
     :afterClose="reset"
+    okText="提交"
+    @ok="submit"
     centered>
     <template slot="footer">
+      <a-button type="primary">提交</a-button>
       <a-button key="back" @click="handleCancel">
         关闭
       </a-button>
     </template>
     <a-row :gutter="8">
-      <a-col span="6">
+      <a-col span="8">
+        <a-input placeholder="请输入排班名称"></a-input>
+        <a-divider />
         <a-collapse v-model="activeKey">
-          <a-collapse-panel key="1" header="分组1">
-            <a-form-model :model="form">
-              <a-form-model-item label="选择值班组">
-                <a-input v-model="form.name" />
-              </a-form-model-item>
-              <a-checkbox @change="onChange">
-                设置轮询时间
-              </a-checkbox>
-              <a-form-model-item label="设置排班日期和值班人">
-                <a-select v-model="form.region" placeholder="选择值班人">
-                  <a-select-option value="shanghai">
-                    Zone one
-                  </a-select-option>
-                  <a-select-option value="beijing">
-                    Zone two
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item label="Activity time">
-                <a-date-picker
-                  v-model="form.date1"
-                  show-time
-                  type="date"
-                  placeholder="Pick a date"
-                  style="width: 100%;"
-                />
-              </a-form-model-item>
-              <a-form-model-item label="设置开始时间">
-                <a-date-picker
-                  v-model="form.date1"
-                  show-time
-                  type="date"
-                  placeholder="请选择开始时间"
-                  style="width: 100%;"
-                />
-              </a-form-model-item>
-            </a-form-model>
+          <a-collapse-panel key="1" header="设置排班时间＆排版人">
+            <div
+              v-for="(item, index) in plan"
+              :key="index"
+            >
+              从<a-time-picker :default-open-value="moment('00:00', 'HH:mm')" style="width: 20%;margin-left: 2%;"></a-time-picker>   到<a-time-picker :default-open-value="moment('00:00', 'HH:mm')" style="width: 20%;margin-left: 2%;"></a-time-picker>
+              <a-select placeholder="请选择值班人" style="width: 20%;margin-left: 2%;"><a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
+                {{ (i + 9).toString(36) + i }}
+              </a-select-option></a-select> <a-icon @click="deleteItem(index)" type="delete" v-if="index!==0"/><a-divider type="vertical" v-if="index!==0"/><a-icon type="plus" @click="addItem"/>
+            </div>
           </a-collapse-panel>
-          <a-collapse-panel key="2" header="分组2" :disabled="false">
-            <p>{{ text }}</p>
-          </a-collapse-panel>
-          <a-collapse-panel key="3" header="分组3" disabled>
-            <p>{{ text }}</p>
+          <a-collapse-panel key="2" header="设置生效开始时间" :disabled="false">
+            <a-date-picker /> <a-time-picker :default-open-value="moment('00:00:00', 'HH:mm:ss')"/>
           </a-collapse-panel>
         </a-collapse>
-        <a-button type="primary" style="margin-left: 35%; margin-top: 5%">添加分组</a-button>
       </a-col>
-      <a-col span="18">
+      <a-col span="16">
         <a-calendar>
           <ul slot="dateCellRender" slot-scope="value" class="events">
             <li v-for="item in getListData(value)" :key="item.content">
@@ -82,52 +56,16 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    scopedSlots: { customRender: 'name' }
-  },
-  {
-    title: 'Cash Assets',
-    className: 'column-money',
-    dataIndex: 'money'
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address'
-  }
-]
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    money: '￥300,000.00',
-    address: 'New York No. 1 Lake Park'
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    money: '￥1,256,000.00',
-    address: 'London No. 1 Lake Park'
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    money: '￥120,000.00',
-    address: 'Sidney No. 1 Lake Park'
-  }
-]
+import moment from 'moment'
+import singleDate from '@/views/work-manage/components/singleDate'
+import _ from 'lodash'
 export default {
   name: 'Schema',
   data () {
     return {
-      data,
-      columns,
-      text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-      activeKey: ['1'],
+      activeKey: ['1', '2'],
       labelCol: { span: 8 },
+      plan: ['0'],
       wrapperCol: { span: 8 },
       form: {
         name: '',
@@ -141,7 +79,11 @@ export default {
     }
   },
   mixins: [Schema],
+  components: {
+    singleDate
+  },
   methods: {
+    moment,
     handleCancel () {
       this.visible = false
     },
@@ -179,6 +121,15 @@ export default {
       if (value.month() === 8) {
         return 1394
       }
+    },
+    submit () {
+      // TODO 提交表单
+    },
+    addItem () {
+      this.plan.push('1')
+    },
+    deleteItem (index) {
+      this.plan.splice(index, 1)
     }
   }
 }

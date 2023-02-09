@@ -1,6 +1,6 @@
 <template>
   <div class="border">
-    <a-row type="flex" justify="center" align="bottom">
+    <a-row type="flex" justify="center" align="center">
       <a-col :span="4">{{ source.label }}</a-col>
       <a-col :span="10">
         <a-icon type="schedule" style="color: green"></a-icon>当前值班人员: {{ source.currentCharger }} ({{ source.currentTime }})
@@ -32,8 +32,10 @@ export default {
 
 <style scoped>
   .border {
-    width: 90%;
+    width: 95%;
     height: 40px;
-    background-color: #F9F9F9;
+    background-color: #F8F8F8;
+    padding: 2px;
+    border-radius: 10px;
   }
 </style>

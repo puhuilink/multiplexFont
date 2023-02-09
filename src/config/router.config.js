@@ -399,6 +399,14 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alert-manager/noticeTemplate/index'),
                 meta: { title: '模板管理', keepAlive: true },
                 name: 'notice-template'
+              },
+
+              // 排班
+              {
+                path: '/alertManagerPlatform/work-manage',
+                component: () => import('@/views/work-manage/index'),
+                meta: { title: '排班管理', keepAlive: true },
+                name: 'work-manage'
               }
             ]
           },

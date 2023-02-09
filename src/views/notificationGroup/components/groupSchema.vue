@@ -194,7 +194,6 @@ export default {
             },
             users: this.assigned
           }
-          console.log('参数', query)
           const { code } = await alarm.post('/api/configuration/group/update', query)
           if (code === 200) {
             this.$notification.success({
@@ -217,7 +216,6 @@ export default {
     async onEdit (title, params = {}) {
       await this.show(title)
       Object.assign(this.formModel, { 'group_name': params[0].groupName, 'remarks': params[0].remarks })
-      console.log('findById1', this.formModel, params)
       const id = _.get(params, '0.groupId', '')
       this.formModel.id = id
       this.findById(params)
@@ -231,7 +229,6 @@ export default {
       NotificationGroupService.findUser(id).then(r => {
         const index = _.findIndex(r, (el) => el.leader === true)
         const val = _.cloneDeep(r)
-        console.log('val', val)
         this.$nextTick(() => {
           r.map(el => this.options.user.push({ label: _.get(el, 'accountName', ''), value: _.get(el, 'accountId', '') }))
           this.unassigned = _.remove(val, (n) => n.leader !== true).map(el => ({ key: el.accountId, title: el.accountName, disabled: false }))

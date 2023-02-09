@@ -57,6 +57,7 @@ export default {
   data (vm) {
     return {
       editor: new Editor({
+        editable: false,
         extensions: [
           new Mention({
             // TODO: label @ 符号
@@ -80,6 +81,7 @@ export default {
   },
   watch: {
     preview (preview) {
+      console.log(preview)
       if (preview) {
         this.editor.setOptions({ editable: false })
         this.setContent(
@@ -99,6 +101,13 @@ export default {
     },
     'mapping': function (val) {
       this.mapping = val
+    },
+    disabled (value) {
+      if (value) {
+        this.editor.setOptions({ editable: false })
+      } else {
+        this.editor.setOptions({ editable: true })
+      }
     }
   },
   methods: {

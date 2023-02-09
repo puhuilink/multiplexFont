@@ -58,7 +58,7 @@
               {{ mode === 'detail' ? '编辑' : '保存' }}
             </a-button>
             <a-button style="margin-left: 10px;" :disabled="disabled" @click="initALL">
-              一键恢复默认设置
+              一键恢复默认模板
             </a-button>
           </a-form-model-item>
         </a-form-model>
@@ -176,12 +176,12 @@ export default {
         if (item.alertStatusType === ALARMSTATUS.renling) {
           // 认领模板
           this.form.claimed = item
-          this.$refs.cli.setDefaultTemp(this.form.message.defaultContent)
+          this.$refs.cli.setDefaultTemp(this.form.claimed.defaultContent)
         }
         if (item.alertStatusType === ALARMSTATUS.huifu) {
           // 恢复模板
           this.form.recovery = item
-          this.$refs.res.setDefaultTemp(this.form.message.defaultContent)
+          this.$refs.res.setDefaultTemp(this.form.recovery.defaultContent)
         }
       }
     },
@@ -200,6 +200,8 @@ export default {
           message: '系统提示',
           description: '修改成功'
         })
+        this.mode = 'detail'
+        this.disabled = true
       } catch (e) {
         throw e
       } finally {

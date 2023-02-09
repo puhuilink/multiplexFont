@@ -83,7 +83,7 @@ export class MessageModel {
       [UNION_KEYWORD_LAST_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
       [UNION_KEYWORD_LEVEL]: 'P1级',
       [UNION_KEYWORD_STATUS]: '待处理',
-      [UNION_KEYWORD_MEMBERS]: '[张三, 李四, 王五]',
+      [UNION_KEYWORD_MEMBERS]: '张三, 李四, 王五',
       [UNION_KEYWORD_ACK_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
       [UNION_KEYWORD_CLOSE_TIME]: moment().format('YYYY-MM-DD HH:mm:ss'),
       [UNION_KEYWORD_ACK_ID]: '9I90AHD91JA0'
