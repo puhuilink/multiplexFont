@@ -58,7 +58,6 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import moment from 'moment'
 import singleDate from '@/views/work-manage/components/singleDate'
-import _ from 'lodash'
 export default {
   name: 'Schema',
   data () {
@@ -126,7 +125,12 @@ export default {
       // TODO 提交表单
     },
     addItem () {
-      this.plan.push('1')
+      if (this.plan.length < 10) {
+        // TODO 添加一组
+        this.plan.push('1')
+      } else {
+        this.$message.warn('最多只能有十条排班！')
+      }
     },
     deleteItem (index) {
       this.plan.splice(index, 1)

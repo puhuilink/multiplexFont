@@ -7,12 +7,15 @@
     <a-table :columns="columns" :data-source="data">
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action">
+        <a @click="onDetail"><a-tooltip title="查看"><a-icon type="info-circle" /></a-tooltip></a>
+        <a-divider type="vertical" />
         <a @click="onEdit"><a-tooltip title="编辑"><a-icon type="edit" /></a-tooltip></a>
         <a-divider type="vertical" />
         <a><a-tooltip title="删除"><a-icon type="delete" /></a-tooltip></a>
       </span>
     </a-table>
     <schema ref="schema" ></schema>
+    <detail ref="detail"></detail>
   </div>
 </template>
 
@@ -20,6 +23,7 @@
 import single from './components/singlePlan'
 import toggleBtn from '@/components/Mixins/Table/Button/ToggleBtn'
 import schema from './components/schema'
+import detail from './components/detailSchema'
 const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
   { title: '成效时间', dataIndex: 'age', key: 'age' },
@@ -54,7 +58,7 @@ const data = [
 ]
 export default {
   name: 'Index',
-  components: { single, toggleBtn, schema },
+  components: { single, toggleBtn, schema, detail },
   data () {
     return {
       advanced: false,
@@ -68,6 +72,9 @@ export default {
     },
     onEdit () {
       this.$refs.schema.show('编辑')
+    },
+    onDetail () {
+      this.$refs.detail.onShow()
     }
   }
 }
