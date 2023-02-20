@@ -62,7 +62,7 @@
       </span>
     </a-form>
     <!--        导出-->
-    <a-button icon="export" :disabled="false" style="margin-bottom: 10px">导出</a-button>
+    <a-button icon="export" :disabled="false" style="margin-bottom: 10px" type="primary">导出</a-button>
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
@@ -86,12 +86,12 @@
         onChange:(page, pageSize) =>{
           this.current = page
           this.pageSize = pageSize
-          handleSearch(page, pageSize)
+          this.handleSearch(page, pageSize)
         },
         showSizeChange: (current, size) => {
           this.current = current
           this.pageSize = size
-          handleSearch(current, pageSize)
+          this.handleSearch(current, pageSize)
         }
       }"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"

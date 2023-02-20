@@ -51,7 +51,7 @@
                   告警编号：{{ main.event_id }}
                 </a-col>
                 <a-col :span="8">
-                  告警发生时间：{{ main.last_time }}
+                  告警发生时间：{{ moment(main.last_time) }}
                 </a-col>
                 <a-col :span="8">
                   告警源：{{ main.source_name }}
@@ -117,6 +117,7 @@ export default {
   data () {
     return {
       data,
+      dataSource: [],
       columns,
       main: {},
       total: 1,
@@ -126,6 +127,9 @@ export default {
   },
   mixins: [Schema],
   methods: {
+    moment (value) {
+      return moment(value).format('YYYY-MM-DD HH:mm:ss')
+    },
     handleCancel () {
       this.visible = false
     },

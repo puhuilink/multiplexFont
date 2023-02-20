@@ -84,7 +84,9 @@ export default {
     },
     setAdmin (value) {
       this.getMock()
-      this.targetKeys.push(value)
+      if (_.indexOf(this.targetKeys, value) === -1) {
+        this.targetKeys.push(value)
+      }
       this.mockData[_.findIndex(this.mockData, el => el.key === value)].disabled = true
       this.admin = value
       this.dealValue()

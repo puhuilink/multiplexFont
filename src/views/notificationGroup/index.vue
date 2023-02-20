@@ -45,6 +45,7 @@
       :loading="loading"
       rowKey="id"
       :data-source="dataSource"
+      :pagination="defaultPagination"
     ></a-table>
     <GroupSchema
       ref="group"
@@ -79,12 +80,23 @@ const columns = [
   }
 ]
 const data = []
+const defaultPagination = {
+  pageSizeOptions: ['10', '25', '30', '50', '100'],
+  defaultCurrent: 1,
+  pageSize: 10,
+  defaultPageSize: 10,
+  hideOnSinglePage: false,
+  showQuickJumper: true,
+  showSizeChanger: true,
+  showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+}
 export default {
   name: 'Notification',
   mixins: [List],
   components: { schema, GroupSchema },
   data () {
     return {
+      defaultPagination,
       colLayout: {
         xl: 8,
         md: 12,
@@ -152,7 +164,6 @@ export default {
     rowSelection () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties
           this.selectedRowKeys = selectedRowKeys
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties

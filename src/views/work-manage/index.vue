@@ -5,19 +5,17 @@
       <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #ffffff"></toggleBtn>
     </div>
     <a-table :columns="columns" :data-source="data">
-      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>
+      <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action">
+        <a @click="onDetail"><a-tooltip title="查看"><a-icon type="info-circle" /></a-tooltip></a>
+        <a-divider type="vertical" />
         <a @click="onEdit"><a-tooltip title="编辑"><a-icon type="edit" /></a-tooltip></a>
         <a-divider type="vertical" />
         <a><a-tooltip title="删除"><a-icon type="delete" /></a-tooltip></a>
-        <a-divider type="vertical" />
-        <a-switch default-checked="true"></a-switch>
       </span>
-      <p slot="expandedRowRender" slot-scope="record" style="margin: 0">
-        {{ record.description }}
-      </p>
     </a-table>
     <schema ref="schema" ></schema>
+    <detail ref="detail"></detail>
   </div>
 </template>
 
@@ -25,11 +23,12 @@
 import single from './components/singlePlan'
 import toggleBtn from '@/components/Mixins/Table/Button/ToggleBtn'
 import schema from './components/schema'
+import detail from './components/detailSchema'
 const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
   { title: '成效时间', dataIndex: 'age', key: 'age' },
   { title: '最后一次编辑时间', dataIndex: 'address', key: 'address' },
-  { title: '排版人员', dataIndex: 'people', key: 'x' },
+  { title: '排班人员', dataIndex: 'people', key: 'x' },
   { slots: { title: 'customTitle' }, dataIndex: '', key: 'x' },
   { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } }
 ]
@@ -59,7 +58,7 @@ const data = [
 ]
 export default {
   name: 'Index',
-  components: { single, toggleBtn, schema },
+  components: { single, toggleBtn, schema, detail },
   data () {
     return {
       advanced: false,
@@ -73,6 +72,9 @@ export default {
     },
     onEdit () {
       this.$refs.schema.show('编辑')
+    },
+    onDetail () {
+      this.$refs.detail.onShow()
     }
   }
 }
@@ -88,7 +90,7 @@ export default {
     align-content: center;
     justify-content: center;
     background-color: grey;
-    opacity: 0.6;
+    opacity: 0.5;
     padding: 20px;
     overflow: hidden;
   }
