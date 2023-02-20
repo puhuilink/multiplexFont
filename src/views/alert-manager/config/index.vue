@@ -102,21 +102,9 @@
         {{ notifyContent(record.policy_account) }}
       </template>
       <template :slot="'action'" slot-scope="text,record">
-        <img
-          :src="require(`@/assets/icons/svg/edit_icon.svg`)"
-          width="20px"
-          height="20px"
-          title="编辑应用"
-          @click="showModal(record)"
-        />
+        <a-button @click="showModal(record)">查看</a-button>
         <a-divider type="vertical" />
-        <img
-          :src="require(`@/assets/icons/svg/edit_icon.svg`)"
-          width="20px"
-          height="20px"
-          title="编辑应用"
-          @click="openModal(record)"
-        />
+        <a-button @click="openModal(record)">编辑</a-button>
         <a-divider type="vertical" />
         <!--        <a-switch :checked="record.status" size="small" />-->
         <!--        <a-divider type="vertical" />-->
@@ -127,12 +115,7 @@
           okText="确定"
           cancelText="取消"
         >
-          <img
-            :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-            width="20px"
-            height="20px"
-            title="删除应用"
-          />
+          <a-button>删除</a-button>
         </a-popconfirm>
       </template>
     </a-table>
@@ -281,6 +264,14 @@ export default {
     DetailSchema
   },
   methods: {
+    async deleteStrategy (id) {
+      const res = await alarm.post('/platform/policy/delete', { id })
+      if (res.code === 200) {
+        this.$message.success('删除成功！')
+      } else {
+        this.$message.error(res.msg)
+      }
+    },
     async fetchList () {
       const { data } = await alarm.post('/platform/policy/find', {
         limit: 25,
