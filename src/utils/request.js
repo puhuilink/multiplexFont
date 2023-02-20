@@ -48,7 +48,7 @@ const sql = async (s) => {
   const formData = new FormData()
   formData.append('body', encrypt(JSON.stringify(payload)))
 
-  const { data: { data } } = await axios.create().post('/api/Hasura/query', formData, {
+  const { data } = await service.post('/Hasura/query', formData, {
     headers: {
       'Content-type': 'application/x-www-form-urlencoded'
     }
@@ -57,6 +57,7 @@ const sql = async (s) => {
     if (decrypt(data) === '') {
       return []
     }
+    console.log(decrypt(data))
     const list = JSON.parse(decrypt(data))
     if (list.length) {
       const [{ result }] = list
