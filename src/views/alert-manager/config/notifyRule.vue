@@ -1,7 +1,7 @@
 <template>
   <div class="notifyRulesBasic">
     <div class="unionAlarm" style="background: white">
-      <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
+      <div style="display: flex;flex-direction: row-reverse;margin-top: 10px;margin-right: 10px"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
       <a-modal
         title="新建通知策略"
         :visible="visible"
@@ -9,61 +9,62 @@
         width="50%"
         @ok="handleOk"
         @cancel="closeModal"
+        @close="closeModal"
       >
         <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-model-item label="告警状态">
-            <a-checkbox @change="changeAlertStatusType('1')" >
+            <a-checkbox :checked="statusChecked('1')" @change="changeAlertStatusType('1')" >
               发生时
             </a-checkbox>
-            <a-checkbox @change="changeAlertStatusType('0')">
+            <a-checkbox :checked="statusChecked('0')" @change="changeAlertStatusType('0')">
               关闭时
             </a-checkbox>
-            <a-checkbox @change="changeAlertStatusType('2')">
+            <a-checkbox :indeterminate="notAll" :checked="notAll" @change="changeAlertStatusType('2')">
               全选
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="告警级别">
-            <a-checkbox @change="changeLevel('')">
+            <a-checkbox :checked="levelChecked('1')" @change="changeLevel('1')">
               P1
             </a-checkbox>
-            <a-checkbox @change="changeLevel('')">
+            <a-checkbox :checked="levelChecked('2')" @change="changeLevel('2')">
               P2
             </a-checkbox>
-            <a-checkbox @change="changeLevel('')">
+            <a-checkbox :checked="levelChecked('3')" @change="changeLevel('3')">
               P3
             </a-checkbox>
-            <a-checkbox @change="changeLevel('')">
+            <a-checkbox :checked="levelChecked('4')" @change="changeLevel('4')">
               P4
             </a-checkbox>
-            <a-checkbox @change="changeLevel('')">
+            <a-checkbox :checked="levelChecked('5')" @change="changeLevel('5')">
               P5
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="通知方式">
-            <a-checkbox @change="changeNotifyWay('0')">
+            <a-checkbox :checked="notifyWayChecked('0')" @change="changeNotifyWay('0')">
               短信
             </a-checkbox>
-            <a-checkbox @change="changeNotifyWay('1')">
+            <a-checkbox :checked="notifyWayChecked('1')" @change="changeNotifyWay('1')">
               交建通
             </a-checkbox>
-            <a-checkbox @change="changeNotifyWay('4')">
+            <a-checkbox :checked="notifyWayChecked('4')" @change="changeNotifyWay('4')">
               企业微信
             </a-checkbox>
-            <a-checkbox @change="changeNotifyWay('3')">
+            <a-checkbox :checked="notifyWayChecked('3')" @change="changeNotifyWay('3')">
               邮件
             </a-checkbox>
-            <a-checkbox @change="changeNotifyWay('2')">
+            <a-checkbox :checked="notifyWayChecked('2')" @change="changeNotifyWay('2')">
               工单
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="时间设置">
-            <a-checkbox @change="changeAlertTimeType('0')">
+            <a-checkbox :indeterminate="indeterminate" :checked="checkAllTime" @change="changeAlertTimeType('0')">
               任何时间
             </a-checkbox>
-            <a-checkbox @change="changeAlertTimeType('1')">
+            <a-checkbox :checked="checkWorkTime" @change="changeAlertTimeType('1')">
               工作时间
             </a-checkbox>
-            <a-checkbox @change="changeAlertTimeType('2')">
+            <a-checkbox :checked="checkUnWorkTime" @change="changeAlertTimeType('2')">
               非工作时间
             </a-checkbox>
           </a-form-model-item>
@@ -75,27 +76,33 @@
               v-model="formState.notifyStaffType"
               style="width: 200px"
               :options="[
-                {label:'组', value: 0},
-                {label:'人', value: 1}
-              ]"/>
-            <a-select style="width: 200px" v-model="formState.accountId" />
+                {label:'通知组', value: '0'},
+                {label:'通知人', value: '1'}
+              ]"
+            />
+            <span>
+              <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="formState.userId" :options="user"/>
+              <a-select v-else style="width: 200px" v-model="formState.groupId" :options="group"/>
+            </span>
           </a-form-model-item>
         </a-form-model>
       </a-modal>
       <a-table
+        style="margin-top: 10px"
         :columns="columns"
         :pagination="pagination"
         :data-source="data">
-        <a slot="name" slot-scope="text">{{ text }}</a>
+        <a slot="accountId" slot-scope="text,record">{{ record.staffName }}</a>
         <a-table
           slot="expandedRowRender"
           :columns="innerColumns"
           :data-source="innerData"
           :pagination="false"
         >
-          <span slot="status" slot-scope="text"> <a-badge :status="text?'success' : 'error'" /> </span>
-          <span slot="gateway" slot-scope="text">
-            <span v-for="(t,index) in text" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ t }}</span>
+          <span slot="rule" slot-scope="text,record"> {{ notifyRuleMapping(record) }} </span>
+          <span slot="state" slot-scope="text,record"> {{ alertStatusTypeMapping(record.alertStatusType) }} </span>
+          <span slot="gateway" slot-scope="text,record">
+            <span v-for="(t,index) in record.notifyWay" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ notifyWayMapping(t) }}</span>
           </span>
           <span slot="operation" class="table-operation" slot-scope="text,record">
             <img
@@ -144,19 +151,36 @@
     <div >
       <div style="height: 120px;background: white;border-radius: 2px;">
         <div style="display:flex;justify-content: space-between;width: 400px;padding: 10px">
-          <div style="font-size: 18px">工作时间</div> <a-button style="background: #58bb72;color: white">编辑</a-button>
+          <div style="font-size: 18px">工作时间</div>
+          <span>
+            <a-button v-if="watchFlag" style="background: #58bb72;color: white" @click="()=>{this.watchFlag = false}">编辑</a-button>
+            <a-button v-else pirmary @click="saveTimeUpdate">保存</a-button>
+          </span>
         </div>
         <div style="display: flex;justify-content: space-between;margin-top: 10px">
           <div>
-            <a-select v-model="workTime.startDay" style="width: 80px"/>～<a-select v-model="workTime.endDay" style="width: 80px"/>
+            <a-select :disabled="watchFlag" v-model="workTime.weekStart" style="width: 80px" :options="days"/>
+            ～
+            <a-select :disabled="watchFlag" v-model="workTime.weekEnd" style="width: 80px" :options="days"/>
           </div>
           <div>
-            <a-select v-model="workTime.startTime" style="width: 90px"/>～<a-select v-model="workTime.endTime" style="width: 90px"/></div>
+            <a-time-picker :disabled="watchFlag" v-model=" workTime.timeStart" style="width: 90px" format="HH:mm"/>
+            ～
+            <a-time-picker :disabled="watchFlag" v-model="workTime.timeEnd" style="width: 90px" format="HH:mm"/>
+          </div>
         </div>
       </div>
       <div style="margin-top: 20px;height: 60px;background: white;border-radius: 2px; padding: 2px">
         <div style="display:flex;justify-content: space-between;align-items: center;width: 400px;padding: 10px">
-          <div style="font-size: 18px">通知模板</div> <a-button style="background: #58bb72;color: white">前往配置</a-button>
+          <div style="font-size: 18px">通知模板</div>  <a-popconfirm
+            title="确定要前往模板配置页面？?"
+            placement="left"
+            @confirm="navigateToTemplate"
+            okText="确定"
+            cancelText="取消"
+          >
+            <a-button style="background: #58bb72;color: white">前往配置</a-button>
+          </a-popconfirm>
         </div>
       </div>
     </div>
@@ -164,15 +188,17 @@
 </template>
 
 <script>
+import moment from 'moment'
 import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import { alarm } from '@/utils/request'
 import _ from 'lodash'
+import { ApSourceService } from '@/api/service/ApSourceService'
+import { decrypt, encrypt } from '@/utils/aes'
 const innerColumns = [
-  { title: '状态', dataIndex: 'status', scopedSlots: { customRender: 'status' } },
-  { title: '告警状态', dataIndex: 'state' },
-  { title: '通知条件', dataIndex: 'rule', key: 'upgradeNum' },
+  { title: '告警状态', dataIndex: 'state', scopedSlots: { customRender: 'state' } },
+  { title: '通知条件', dataIndex: 'rule', scopedSlots: { customRender: 'rule' } },
   { title: '通知方式', dataIndex: 'gateway', scopedSlots: { customRender: 'gateway' } },
   {
     title: '操作',
@@ -186,7 +212,8 @@ const columns = [
     title: '通知对象',
     align: 'left',
     width: '70%',
-    dataIndex: 'name'
+    dataIndex: 'accountId',
+    scopedSlots: { customRender: 'accountId' }
   },
   {
     title: '操作',
@@ -199,83 +226,23 @@ const columns = [
 const data = [
   {
     index: '1',
-    name: '运维一组',
+    accountId: '运维一组',
     notify: '分派人  ：user01    升级给：admin',
     levelUp: true,
     dataSource: '北京pigoss001'
-  },
-  {
-    index: '2',
-    name: '运维二组',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门pigoss001'
-  },
-  {
-    index: '3',
-    name: '动环运维',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '北京pigoss002'
-  },
-  {
-    index: '4',
-    name: 'ph-test',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '厦门共济-01 '
-  },
-  {
-    index: '5',
-    name: 'cloud',
-    notify: '分派人  ：user01    升级给：admin',
-    levelUp: true,
-    dataSource: '智慧云'
   }
 
 ]
 const innerData = [
   {
-    index: '1',
-    status: true,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
-  },
-  {
-    index: '1',
-    status: false,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
-  },
-  {
-    index: '1',
-    status: true,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
-  },
-  {
-    index: '1',
-    status: true,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
-  },
-  {
-    index: '1',
-    status: true,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
-  },
-  {
-    index: '1',
-    status: true,
-    state: '发生时',
-    rule: '任何时间/所有告警/立刻',
-    gateway: ['交建通', '短信']
+    id: '',
+    'accountId': 'jsHtO0h1lRqGoJxjYHeGBQ==',
+    'alertStatusType': ['0', '1'],
+    'notifyWay': ['0', '1', '2', '3'],
+    'level': ['1', '2', '3'],
+    'notifyStaffType': '0',
+    'alertTimeType': '1',
+    'delay': '0'
   }
 ]
 const pagination = {
@@ -302,6 +269,12 @@ export default {
     return {
       innerColumns,
       innerData,
+      groupId: '',
+      userId: '',
+      group: [],
+      user: [],
+      updateFlag: false,
+      watchFlag: true,
       colLayout: {
         xl: 8,
         md: 12,
@@ -338,28 +311,22 @@ export default {
       ],
       formState: _.cloneDeep(originalFormState),
       workTime: {
-        startDay: '周一',
-        endDay: '周五',
-        startTime: '08：30',
-        endTime: '17：30 '
+        weekStart: '1',
+        weekEnd: '5',
+        timeStart: moment('08：30', 'HH:mm'),
+        timeEnd: moment('17：30 ', 'HH:mm')
       },
       days: [
-        '周一',
-        '周二',
-        '周三',
-        '周四',
-        '周五',
-        '周六',
-        '周天'
+        { label: '周一', value: '1' },
+        { label: '周二', value: '2' },
+        { label: '周三', value: '3' },
+        { label: '周四', value: '4' },
+        { label: '周五', value: '5' },
+        { label: '周六', value: '6' },
+        { label: '周天', value: '7' }
       ],
       times: [
-        '周一',
-        '周二',
-        '周三',
-        '周四',
-        '周五',
-        '周六',
-        '周天'
+
       ]
     }
   },
@@ -368,34 +335,154 @@ export default {
     DetailSchema
   },
   methods: {
+    async saveTimeUpdate () {
+      this.watchFlag = true
+      const {
+        timeStart
+        , timeEnd
+      } = this.workTime
+      this.workTime.timeStart = timeStart.format('HH:mm')
+      this.workTime.timeEnd = timeEnd.format('HH:mm')
+      const res = await alarm.post('/api/configuration/worktime/update', this.workTime)
+      if (res.code === 200) {
+        this.$message.success('修改成功！')
+      } else {
+        this.$message.error(res.msg)
+      }
+      await this.fetchWorkTime()
+    },
+    alertStatusTypeMapping (content) {
+      const mapping = ['发生时', '关闭时', '任何情况']
+      if (content.includes('0')) {
+        if (content.includes('1')) {
+          return mapping[2]
+        } else {
+          return mapping[0]
+        }
+      } else if (content.includes('1')) {
+        return mapping[1]
+      }
+    },
+    notifyWayMapping (key) {
+      const mapping = {
+        '0': '短信',
+        '1': '交建通',
+        '2': '工单',
+        '3': '邮件',
+        '4': '企业微信'
+      }
+      return mapping[key]
+    },
+    notifyRuleMapping (record) {
+      const timing = {
+        '0': '任何时间',
+        '1': '工作时间',
+        '2': '非工作时间'
+      }
+      const levels = {
+        '1': 'P1',
+        '2': 'P2',
+        '3': 'P3',
+        '4': 'P4',
+        '5': 'P5'
+      }
+      let l = ''
+      record.level.forEach((ll, index) => {
+        if (index === 0) {
+          l += levels[ll]
+        } else {
+          l += '、' + levels[ll]
+        }
+      })
+      let d
+      if (record.delay === '0') {
+        d = '立刻'
+      } else {
+        d = '延迟' + record.delay + '分钟'
+      }
+      return timing[record.alertTimeType] + '/' + l + '/' + d
+    },
+    async fetchNotifyList () {
+      const { data } = await alarm.get('/api/configuration/notify/list')
+      this.data = data
+    },
+    async fetchWorkTime () {
+      const { data } = await alarm.get('/api/configuration/worktime/find')
+      const { weekStart, weekEnd, timeStart, timeEnd } = data
+      this.workTime = {
+        weekStart,
+        weekEnd,
+        timeStart: moment(timeStart, 'HH:mm'),
+        timeEnd: moment(timeEnd, 'HH:mm')
+      }
+    },
+    async fetchGroup () {
+      const res = await ApSourceService.fetchGroupList()
+      this.group = []
+      res.forEach(r => {
+        this.group.push(
+          {
+            label: r.name,
+            value: r.id
+          }
+        )
+      })
+    },
+    async fetchUser () {
+      const res = await ApSourceService.fetchUserList()
+      this.user = []
+      res.forEach(r => {
+        this.user.push(
+          {
+            label: r.staff_name,
+            value: r.user_id
+          }
+        )
+      })
+    },
     changeAlertTimeType (data) {
-      this.formState.alertTimeType = data
+      if (this.formState.alertTimeType === data) {
+        this.formState.alertTimeType = ''
+      } else {
+        this.formState.alertTimeType = data
+      }
     },
     changeAlertStatusType (data) {
-      this.formState.alertStatusType = data
+      if (data === '2') {
+        this.formState.alertStatusType = this.checkedAllStatus ? [] : ['0', '1']
+      } else {
+        this.isSelectedEntity(data, this.formState.alertStatusType)
+      }
     },
     changeLevel (data) {
-      this.formState.level = data
+      this.isSelectedEntity(data, this.formState.level)
+    },
+    isSelectedEntity (data, arr) {
+      const isin = arr.indexOf(data)
+      if (isin === -1) {
+        arr.push(data)
+      } else {
+        arr.splice(isin, 1)
+      }
     },
     changeNotifyWay (data) {
-      this.formState.notifyWay = data
+      this.isSelectedEntity(data, this.formState.notifyWay)
     },
     openModal (record) {
       if (record) {
-        this.formState = {
-          notifyStaffType: record.notifyStaffType,
-          alertTimeType: record.alertTimeType,
-          alertStatusType: record.alertStatusType,
-          notifyWay: record.notifyWay,
-          delay: record.delay,
-          level: record.level
-        }
+        this.formState = { ..._.cloneDeep(record) }
+        this.formState.accountId = decrypt(this.formState.accountId)
+        this.updateFlag = true
       }
       this.visible = true
     },
     closeModal () {
+      console.log(this.formState)
       this.visible = false
-      this.formState = _.cloneDeep(originalFormState)
+      this.updateFlag = false
+      this.groupId = ''
+      this.userId = ''
+      this.formState = { ..._.cloneDeep(originalFormState) }
     },
     addRecord () {
       this.formState.mapping.push(
@@ -407,9 +494,33 @@ export default {
       )
       this.$forceUpdate()
     },
-    handleOk () {
-      this.$message.success('新建成功！')
-      this.closeModal()
+    async handleOk () {
+      if (this.formState.alertTimeType === '') {
+        this.$message.warn('请选择告警时间！')
+        return
+      }
+      let url
+      const backup = _.cloneDeep(this.formState)
+      if (this.updateFlag) {
+        url = '/api/configuration/notify/update'
+        if (this.groupId === '' && this.userId === '') {
+          backup.accountId = encrypt(this.formState.accountId)
+        } else {
+          backup.accountId = encrypt(this.formState.notifyStaffType === '0' ? this.groupId : this.userId)
+        }
+      } else {
+        url = '/api/configuration/notify/add'
+        backup.accountId = encrypt(this.formState.notifyStaffType === '0' ? this.groupId : this.userId)
+      }
+      backup.delay = backup.delay.toString()
+      const res = await alarm.post(url, { ...backup })
+      if (res.code === 200) {
+        this.$message.success('新建成功！')
+        this.closeModal()
+        await this.fetchNotifyList()
+      } else {
+        this.$message.error(res.msg)
+      }
     },
     onSelectChange (selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
@@ -490,9 +601,40 @@ export default {
     onClose () {
       console.log('关闭')
       this.visible = false
+    },
+    notifyWayChecked (value) {
+      return this.formState.notifyWay.includes(value)
+    },
+    levelChecked (value) {
+      return this.formState.level.includes(value)
+    },
+    statusChecked (value) {
+      return this.formState.alertStatusType.includes(value)
+    },
+    async navigateToTemplate () {
+      await this.$router.push({ name: 'notice-template' })
     }
   },
   computed: {
+    checkedAllStatus () {
+      const { alertStatusType } = this.formState
+      return alertStatusType.includes('1') && alertStatusType.includes('0')
+    },
+    notAll () {
+      return this.formState.alertStatusType.length !== 0 && !this.checkedAllStatus
+    },
+    indeterminate () {
+      return this.formState.alertTimeType !== '' && this.formState.alertTimeType !== '0'
+    },
+    checkAllTime () {
+      return this.formState.alertTimeType === '0'
+    },
+    checkWorkTime () {
+      return this.formState.alertTimeType === '0' || this.formState.alertTimeType === '1'
+    },
+    checkUnWorkTime () {
+      return this.formState.alertTimeType === '0' || this.formState.alertTimeType === '2'
+    },
     rowSelection () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -509,6 +651,12 @@ export default {
     hasSelected () {
       return this.selectedRowKeys.length > 0
     }
+  },
+  mounted () {
+    this.fetchNotifyList()
+    this.fetchWorkTime()
+    this.fetchUser()
+    this.fetchGroup()
   }
 }
 </script>

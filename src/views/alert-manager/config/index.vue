@@ -275,7 +275,7 @@ export default {
     async fetchList () {
       const { data } = await alarm.post('/platform/policy/find', {
         limit: 25,
-        offset: 0,
+        offset: 1,
         account_id: store.getters.userId
       })
       console.log(data)
@@ -399,7 +399,8 @@ export default {
         source.source_name = this.formState.source_name
         source.group_sequence = index + 1
         source.group_condition.forEach((condition, i) => {
-          condition.condition_sequence = index + 1
+          condition.condition_sequence = i + 1
+          condition.condition_value = JSON.stringify(condition.condition_value)
         })
       })
       this.formState.policy_account.forEach((account, index) => {

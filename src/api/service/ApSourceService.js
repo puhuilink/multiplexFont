@@ -10,7 +10,6 @@ import {
   ApDictDao
 } from '../dao/ApDictDao'
 import { UserDao } from '@/api/dao/UserDao'
-import { ALARM_STATE } from '@/tables/alarm/enum'
 
 class ApSourceService extends BaseService {
   static async sourceFind (argus = {}) {
