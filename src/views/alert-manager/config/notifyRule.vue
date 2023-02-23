@@ -23,23 +23,6 @@
               全选
             </a-checkbox>
           </a-form-model-item>
-          <a-form-model-item label="告警级别">
-            <a-checkbox :checked="levelChecked('1')" @change="changeLevel('1')">
-              P1
-            </a-checkbox>
-            <a-checkbox :checked="levelChecked('2')" @change="changeLevel('2')">
-              P2
-            </a-checkbox>
-            <a-checkbox :checked="levelChecked('3')" @change="changeLevel('3')">
-              P3
-            </a-checkbox>
-            <a-checkbox :checked="levelChecked('4')" @change="changeLevel('4')">
-              P4
-            </a-checkbox>
-            <a-checkbox :checked="levelChecked('5')" @change="changeLevel('5')">
-              P5
-            </a-checkbox>
-          </a-form-model-item>
           <a-form-model-item label="通知方式">
             <a-checkbox :checked="notifyWayChecked('0')" @change="changeNotifyWay('0')">
               短信
@@ -58,15 +41,11 @@
             </a-checkbox>
           </a-form-model-item>
           <a-form-model-item label="时间设置">
-            <a-checkbox :indeterminate="indeterminate" :checked="checkAllTime" @change="changeAlertTimeType('0')">
-              任何时间
-            </a-checkbox>
-            <a-checkbox :checked="checkWorkTime" @change="changeAlertTimeType('1')">
-              工作时间
-            </a-checkbox>
-            <a-checkbox :checked="checkUnWorkTime" @change="changeAlertTimeType('2')">
-              非工作时间
-            </a-checkbox>
+            <a-radio-group v-model="formState.alertTimeType">
+              <a-radio :value="'0'">任何时间</a-radio>
+              <a-radio :value="'1'">工作时间</a-radio>
+              <a-radio :value="'2'">非工作时间</a-radio>
+            </a-radio-group>
           </a-form-model-item>
           <a-form-model-item label="延迟策略">
             <a-select style="width: 200px" v-model="formState.delay" :options="delayOptions"/>
@@ -81,8 +60,60 @@
               ]"
             />
             <span>
-              <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="formState.userId" :options="user"/>
-              <a-select v-else style="width: 200px" v-model="formState.groupId" :options="group"/>
+              <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user"/>
+              <a-select v-else style="width: 200px" v-model="groupId" :options="group"/>
+            </span>
+          </a-form-model-item>
+        </a-form-model>
+      </a-modal>
+      <a-modal
+        title="修改通知策略"
+        :visible="updateVisible"
+        :confirm-loading="confirmLoading"
+        width="50%"
+        @ok="handleUpdate"
+        @cancel="closeUpdateModal"
+        @close="closeUpdateModal"
+      >
+        <a-form-model :model="updateFormState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-form-model-item label="告警状态">
+            <a-select style="width: 200px" v-model="updateFormState.alertStatusType" >
+              <a-select-option :value="'0'">发生时</a-select-option>
+              <a-select-option :value="'1'">关闭时</a-select-option>
+              <a-select-option :value="'2'">任何情况</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="通知方式">
+            <a-select style="width: 200px" v-model="updateFormState.notifyWay">
+              <a-select-option :value="'0'">短信</a-select-option>
+              <a-select-option :value="'1'">交建通</a-select-option>
+              <a-select-option :value="'2'">工单</a-select-option>
+              <a-select-option :value="'3'">邮件</a-select-option>
+              <a-select-option :value="'4'">企业微信</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="时间设置">
+            <a-select style="width: 200px" v-model="updateFormState.alertTimeType">
+              <a-select-option :value="'0'">任何时间</a-select-option>
+              <a-select-option :value="'1'">工作时间</a-select-option>
+              <a-select-option :value="'2'">非工作时间</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="延迟策略">
+            <a-select style="width: 200px" v-model="updateFormState.delay" :options="delayOptions"/>
+          </a-form-model-item>
+          <a-form-model-item label="通知对象" style="display: flex;justify-content: space-between">
+            <a-select
+              v-model="updateFormState.notifyStaffType"
+              style="width: 200px"
+              :options="[
+                {label:'通知组', value: '0'},
+                {label:'通知人', value: '1'}
+              ]"
+            />
+            <span>
+              <a-select v-if="updateFormState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user"/>
+              <a-select v-else style="width: 200px" v-model="groupId" :options="group"/>
             </span>
           </a-form-model-item>
         </a-form-model>
@@ -91,7 +122,11 @@
         style="margin-top: 10px"
         :columns="columns"
         :pagination="pagination"
-        :data-source="data">
+        :data-source="data"
+        :expanded-row-keys="expandedRowKeys"
+        @expandedRowsChange="expandRowEvent"
+        @expand="expandEvent"
+      >
         <a slot="accountId" slot-scope="text,record">{{ record.staffName }}</a>
         <a-table
           slot="expandedRowRender"
@@ -105,13 +140,7 @@
             <span v-for="(t,index) in record.notifyWay" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ notifyWayMapping(t) }}</span>
           </span>
           <span slot="operation" class="table-operation" slot-scope="text,record">
-            <img
-              :src="require(`@/assets/icons/svg/edit_icon.svg`)"
-              width="20px"
-              height="20px"
-              title="编辑应用"
-              @click="openModal(record)"
-            />
+            <a-button @click="openUpdateModal(record)">修改</a-button>
             <a-divider type="vertical" />
             <a-popconfirm
               title="确定要删除用户下所有策略?"
@@ -120,16 +149,15 @@
               okText="确定"
               cancelText="取消"
             >
-              <img
-                :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-                width="20px"
-                height="20px"
-                title="删除应用"
-              />
+              <a-button>删除</a-button>
             </a-popconfirm>
           </span>
         </a-table>
         <template :slot="'action'" slot-scope="text,record">
+          <span style="visibility: hidden">
+            <a-button>修改</a-button>
+            <a-divider type="vertical" />
+          </span>
           <a-popconfirm
             title="确定要删除此策略?"
             placement="left"
@@ -137,12 +165,7 @@
             okText="确定"
             cancelText="取消"
           >
-            <img
-              :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-              width="20px"
-              height="20px"
-              title="删除应用"
-            />
+            <a-button>删除</a-button>
           </a-popconfirm>
         </template>
       </a-table>
@@ -203,6 +226,9 @@ const innerColumns = [
   {
     title: '操作',
     dataIndex: 'operation',
+    fixed: 'right',
+    align: 'right',
+    width: '200px',
     key: 'operation',
     scopedSlots: { customRender: 'operation' }
   }
@@ -218,8 +244,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    align: 'center',
-    width: '150px',
+    align: 'right',
+    width: '200px',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -260,8 +286,14 @@ const originalFormState = {
   alertTimeType: '0',
   alertStatusType: [],
   notifyWay: [],
-  delay: 0,
-  level: []
+  delay: '0'
+}
+const originalUpdateFormState = {
+  notifyStaffType: '0',
+  alertTimeType: '0',
+  alertStatusType: '',
+  notifyWay: '',
+  delay: '0'
 }
 export default {
   name: 'NotifyRule',
@@ -271,6 +303,7 @@ export default {
       innerData,
       groupId: '',
       userId: '',
+      expandedRowKeys: [],
       group: [],
       user: [],
       updateFlag: false,
@@ -294,36 +327,39 @@ export default {
       pagination,
       visible: false,
       confirmLoading: false,
+      updateVisible: false,
       selectedRowKeys: [],
+      updateFormState: {},
       title: '压缩告警详情',
       options: [
         { label: '或', value: '或' },
         { label: '且', value: '且' }
       ],
       delayOptions: [
-        { label: '立刻', value: 0 },
-        { label: '1分钟', value: 1 },
-        { label: '2分钟', value: 2 },
-        { label: '5分钟', value: 5 },
-        { label: '10分钟', value: 10 },
-        { label: '20分钟', value: 20 },
-        { label: '30分钟', value: 30 }
+        { label: '立刻', value: '0' },
+        { label: '1分钟', value: '1' },
+        { label: '2分钟', value: '2' },
+        { label: '5分钟', value: '5' },
+        { label: '10分钟', value: '10' },
+        { label: '20分钟', value: '20' },
+        { label: '30分钟', value: '30' }
       ],
       formState: _.cloneDeep(originalFormState),
       workTime: {
-        weekStart: '1',
-        weekEnd: '5',
+        id: '',
+        weekStart: 1,
+        weekEnd: 5,
         timeStart: moment('08：30', 'HH:mm'),
         timeEnd: moment('17：30 ', 'HH:mm')
       },
       days: [
-        { label: '周一', value: '1' },
-        { label: '周二', value: '2' },
-        { label: '周三', value: '3' },
-        { label: '周四', value: '4' },
-        { label: '周五', value: '5' },
-        { label: '周六', value: '6' },
-        { label: '周天', value: '7' }
+        { label: '周一', value: 1 },
+        { label: '周二', value: 2 },
+        { label: '周三', value: 3 },
+        { label: '周四', value: 4 },
+        { label: '周五', value: 5 },
+        { label: '周六', value: 6 },
+        { label: '周天', value: 7 }
       ],
       times: [
 
@@ -373,43 +409,43 @@ export default {
       }
       return mapping[key]
     },
+    async expandEvent (expanded, record) {
+      this.innerData = []
+      const { accountId } = record
+      const { data } = await alarm.post('/api/configuration/notify/listWay', { accountId })
+      this.innerData = data
+    },
+    expandRowEvent (expandedRowKeys) {
+      if (this.expandedRowKeys.length < 1) {
+        this.expandedRowKeys = expandedRowKeys
+      } else {
+        this.expandedRowKeys = expandedRowKeys.filter((x) => !this.expandedRowKeys.some((item) => x === item))
+      }
+    },
     notifyRuleMapping (record) {
       const timing = {
         '0': '任何时间',
         '1': '工作时间',
         '2': '非工作时间'
       }
-      const levels = {
-        '1': 'P1',
-        '2': 'P2',
-        '3': 'P3',
-        '4': 'P4',
-        '5': 'P5'
-      }
-      let l = ''
-      record.level.forEach((ll, index) => {
-        if (index === 0) {
-          l += levels[ll]
-        } else {
-          l += '、' + levels[ll]
-        }
-      })
       let d
       if (record.delay === '0') {
         d = '立刻'
       } else {
         d = '延迟' + record.delay + '分钟'
       }
-      return timing[record.alertTimeType] + '/' + l + '/' + d
+      return timing[record.alertTimeType] + '/' + d
     },
     async fetchNotifyList () {
+      this.expandedRowKeys = []
       const { data } = await alarm.get('/api/configuration/notify/list')
       this.data = data
     },
     async fetchWorkTime () {
       const { data } = await alarm.get('/api/configuration/worktime/find')
-      const { weekStart, weekEnd, timeStart, timeEnd } = data
+      const { weekStart, weekEnd, timeStart, timeEnd, id } = data
       this.workTime = {
+        id,
         weekStart,
         weekEnd,
         timeStart: moment(timeStart, 'HH:mm'),
@@ -440,22 +476,12 @@ export default {
         )
       })
     },
-    changeAlertTimeType (data) {
-      if (this.formState.alertTimeType === data) {
-        this.formState.alertTimeType = ''
-      } else {
-        this.formState.alertTimeType = data
-      }
-    },
     changeAlertStatusType (data) {
       if (data === '2') {
         this.formState.alertStatusType = this.checkedAllStatus ? [] : ['0', '1']
       } else {
         this.isSelectedEntity(data, this.formState.alertStatusType)
       }
-    },
-    changeLevel (data) {
-      this.isSelectedEntity(data, this.formState.level)
     },
     isSelectedEntity (data, arr) {
       const isin = arr.indexOf(data)
@@ -476,13 +502,26 @@ export default {
       }
       this.visible = true
     },
+    openUpdateModal (record) {
+      if (record) {
+        this.updateFormState = { ..._.cloneDeep(record) }
+        this.updateFormState.accountId = decrypt(this.updateFormState.accountId)
+        this.updateFlag = true
+      }
+      this.updateVisible = true
+    },
     closeModal () {
-      console.log(this.formState)
       this.visible = false
       this.updateFlag = false
       this.groupId = ''
       this.userId = ''
-      this.formState = { ..._.cloneDeep(originalFormState) }
+      this.formState = { ..._.cloneDeep(originalUpdateFormState) }
+    },
+    closeUpdateModal () {
+      this.updateVisible = false
+      this.groupId = ''
+      this.userId = ''
+      this.updateFormState = { ..._.cloneDeep(originalFormState) }
     },
     addRecord () {
       this.formState.mapping.push(
@@ -495,28 +534,32 @@ export default {
       this.$forceUpdate()
     },
     async handleOk () {
-      if (this.formState.alertTimeType === '') {
-        this.$message.warn('请选择告警时间！')
-        return
-      }
-      let url
       const backup = _.cloneDeep(this.formState)
-      if (this.updateFlag) {
-        url = '/api/configuration/notify/update'
-        if (this.groupId === '' && this.userId === '') {
-          backup.accountId = encrypt(this.formState.accountId)
-        } else {
-          backup.accountId = encrypt(this.formState.notifyStaffType === '0' ? this.groupId : this.userId)
-        }
-      } else {
-        url = '/api/configuration/notify/add'
-        backup.accountId = encrypt(this.formState.notifyStaffType === '0' ? this.groupId : this.userId)
-      }
+      const url = '/api/configuration/notify/add'
+      backup.accountId = encrypt(this.formState.notifyStaffType === '0' ? this.groupId : this.userId)
       backup.delay = backup.delay.toString()
       const res = await alarm.post(url, { ...backup })
       if (res.code === 200) {
         this.$message.success('新建成功！')
         this.closeModal()
+        await this.fetchNotifyList()
+      } else {
+        this.$message.error(res.msg)
+      }
+    },
+    async handleUpdate () {
+      const backup = _.cloneDeep(this.updateFormState)
+      const url = '/api/configuration/notify/update'
+      if (this.groupId === '' && this.userId === '') {
+        backup.accountId = encrypt(this.updateFormState.accountId)
+      } else {
+        backup.accountId = encrypt(this.updateFormState.notifyStaffType === '0' ? this.groupId : this.userId)
+      }
+      backup.delay = backup.delay.toString()
+      const res = await alarm.post(url, { ...backup })
+      if (res.code === 200) {
+        this.$message.success('修改成功！')
+        this.closeUpdateModal()
         await this.fetchNotifyList()
       } else {
         this.$message.error(res.msg)
@@ -625,15 +668,6 @@ export default {
     },
     indeterminate () {
       return this.formState.alertTimeType !== '' && this.formState.alertTimeType !== '0'
-    },
-    checkAllTime () {
-      return this.formState.alertTimeType === '0'
-    },
-    checkWorkTime () {
-      return this.formState.alertTimeType === '0' || this.formState.alertTimeType === '1'
-    },
-    checkUnWorkTime () {
-      return this.formState.alertTimeType === '0' || this.formState.alertTimeType === '2'
     },
     rowSelection () {
       return {

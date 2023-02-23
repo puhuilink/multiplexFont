@@ -93,7 +93,7 @@ const columns = [
   {
     title: '所属用户组',
     key: 'appKey',
-    dataIndex: 'group',
+    dataIndex: 'groupName',
     width: '100px',
     ellipsis: true,
     align: 'center'

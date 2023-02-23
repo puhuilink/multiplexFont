@@ -8,6 +8,7 @@
       width="1100px"
       @ok="handleOk"
       @cancel="closeModal"
+      @close="closeModal"
     >
       <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
         <a-form-model-item label="分派策略名称">
@@ -88,6 +89,16 @@
           <a-button class="add_button" @click="notifyLevelUp"> 升级</a-button>
         </a-form-model-item>
       </a-form-model>
+    </a-modal>
+    <a-modal
+      title="分派策略详情"
+      :visible="show"
+      width="1100px"
+      @ok="closeShow"
+      @cancel="closeShow"
+      @close="closeShow"
+    >
+      详情
     </a-modal>
     <a-table
       bordered
@@ -223,6 +234,7 @@ export default {
   name: 'DeliverRules',
   data () {
     return {
+      show: false,
       updateFlag: false,
       conditions: [
         [], [], []
@@ -338,6 +350,12 @@ export default {
         this.updateFlag = false
       }
       this.visible = true
+    },
+    showModal (record) {
+      this.visible = true
+    },
+    closeShow () {
+      this.visible = false
     },
     closeModal () {
       this.visible = false
