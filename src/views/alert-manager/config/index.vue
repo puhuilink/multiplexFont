@@ -15,7 +15,7 @@
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
         <a-form-model-item label="告警源">
-          <a-select label-in-value :options="alertSource" @change="sourceChange"/>
+          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
         </a-form-model-item>
         <a-form-model-item label="分派条件">
           <div
@@ -122,7 +122,7 @@
         <a-popconfirm
           title="确定要删除此策略?"
           placement="left"
-          @confirm="deleteStrategy(record.id)"
+          @confirm="deleteStrategy(record.ID)"
           okText="确定"
           cancelText="取消"
         >
@@ -277,9 +277,11 @@ export default {
   },
   methods: {
     async deleteStrategy (id) {
+      console.log(id)
       const res = await alarm.post('/platform/policy/delete', { id })
       if (res.code === 200) {
         this.$message.success('删除成功！')
+        await this.fetchList()
       } else {
         this.$message.error(res.msg)
       }
@@ -346,6 +348,15 @@ export default {
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = record
+        this.formState.policy_source.forEach(source => {
+          source.group_condition.forEach(condition => {
+            try {
+              condition.condition_value = JSON.parse(condition.condition_value)
+            } catch (e) {
+              console.log(e)
+            }
+          })
+        })
       } else {
         this.updateFlag = false
       }
@@ -353,6 +364,7 @@ export default {
     },
     showModal (record) {
       this.visible = true
+      console.log(this.formState)
     },
     closeShow () {
       this.visible = false
@@ -409,34 +421,38 @@ export default {
     sourceChange (e) {
       this.formState.source_id = e.key
       this.formState.source_name = e.label
-      console.log(this.formState)
+      console.log('111')
     },
     async handleOk () {
-      this.formState.policy_source.forEach((source, index) => {
+      const backup = { ..._.cloneDeep(this.formState) }
+      backup.policy_source.forEach((source, index) => {
         source.source_id = this.formState.source_id
         source.source_name = this.formState.source_name
         source.group_sequence = index + 1
         source.group_condition.forEach((condition, i) => {
           condition.condition_sequence = i + 1
-          condition.condition_value = JSON.stringify(condition.condition_value)
+          if (Array.isArray(condition.condition_value)) {
+            condition.condition_value = JSON.stringify(condition.condition_value)
+          }
         })
       })
-      this.formState.policy_account.forEach((account, index) => {
+      backup.policy_account.forEach((account, index) => {
         account.upgrade_count = index
       })
       let url = ''
       if (this.updateFlag) {
-        this.formState.updator = store.getters.userId
+        backup.updator = store.getters.userId
         url = '/platform/policy/update'
       } else {
-        this.formState.creator = store.getters.userId
+        backup.creator = store.getters.userId
         url = '/platform/policy/add'
       }
 
-      const res = await alarm.post(url, this.formState)
+      const res = await alarm.post(url, backup)
       if (res.code === 200) {
         this.$message.success('新建成功！')
         this.closeModal()
+        console.log('关闭弹窗', this.formState)
         await this.fetchList()
       } else {
         this.$message.error(res.msg)

@@ -214,14 +214,14 @@ export default {
       },
       jb: null,
       mappingTitle: [
-        'UniqueKey',
-        'Level',
-        'Content',
-        'Title',
-        'Device',
-        'StartTime',
-        'LastTime',
-        'DeviceType'
+        'uniqueKey',
+        'level',
+        'content',
+        'title',
+        'device',
+        'startTime',
+        'lastTime',
+        'deviceType'
       ]
     }
   },
