@@ -1,10 +1,11 @@
 <template>
   <a-modal
     title="查看排班"
-    width="700"
+    :width="1200"
     :visible="visible"
     :loading="loading"
     centered
+    @cancel="onCancel"
   >
     <template #footer>
       <a-button @click="onCancel">取消</a-button>
