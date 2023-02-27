@@ -8,6 +8,7 @@ export default {
   components: {},
   props: {},
   data: (vm) => ({
+    formatDate: 'YYYY-MM-dd HH:mm:ss',
     // model confirm btn loading
     confirmLoading: false,
     // nested form

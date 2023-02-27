@@ -1,20 +1,62 @@
 <template>
   <div class="wd">
+    <div style="display: flex;flex-direction: row-reverse;height: 3rem;">
+      <a-button @click="onAdd" type="primary" size="large">新建排班</a-button>
+    </div>
+
     <div :class="[advanced ? 'upper-fix' : 'upper-flex', 'upper-common']">
-      <single></single>
+      <li v-for="(item, index) in title" style="list-style: none" :key="index">
+        <single :source="item"></single>
+      </li>
       <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #ffffff"></toggleBtn>
     </div>
-    <a-table :columns="columns" :data-source="data">
+
+    <a-table
+      :columns="columns"
+      :data-source="dataSource"
+      :loading="loading"
+      :pagination="{
+        current: this.current,
+        pageSize: this.pageSize,
+        pageSizeOptions: ['10', '20'],
+        showSizeChanger: true,
+        showQuickJumper: true,
+        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onChange:(page, pageSize) =>{
+          this.current = page
+          this.pageSize = pageSize
+          this.fetch(page, pageSize)
+        },
+        showSizeChange: (current, size) => {
+          this.current = current
+          this.pageSize = size
+          this.fetch(current, pageSize)
+        }
+      }"
+    >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
-      <span slot="action">
-        <a @click="onDetail"><a-tooltip title="查看"><a-icon type="info-circle" /></a-tooltip></a>
+      <span slot="action" slot-scope="text, { id }">
+        <a @click="onDetail(id)"><a-tooltip title="查看"><a-icon type="info-circle" /></a-tooltip></a>
         <a-divider type="vertical" />
-        <a @click="onEdit"><a-tooltip title="编辑"><a-icon type="edit" /></a-tooltip></a>
+        <a @click="onEdit(id)"><a-tooltip title="编辑"><a-icon type="edit" /></a-tooltip></a>
         <a-divider type="vertical" />
-        <a><a-tooltip title="删除"><a-icon type="delete" /></a-tooltip></a>
+        <a-popconfirm
+          title="确定要删除此排班?"
+          placement="left"
+          @confirm="onDelete(id)"
+          okText="确定"
+          cancelText="取消"
+        >
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>删除</span>
+            </template>
+            <a><a-icon type="delete" /></a>
+          </a-tooltip>
+        </a-popconfirm>
       </span>
     </a-table>
-    <schema ref="schema" ></schema>
+    <schema ref="schema" @addSuccess="fetch(10,0)" @editSuccess="fetch(10, 0)"></schema>
     <detail ref="detail"></detail>
   </div>
 </template>
@@ -24,58 +66,99 @@ import single from './components/singlePlan'
 import toggleBtn from '@/components/Mixins/Table/Button/ToggleBtn'
 import schema from './components/schema'
 import detail from './components/detailSchema'
+import { alarm } from '@/utils/request'
+import moment from 'moment'
+const format = 'YYYY-MM-DD hh:mm:ss'
 const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
-  { title: '成效时间', dataIndex: 'age', key: 'age' },
-  { title: '最后一次编辑时间', dataIndex: 'address', key: 'address' },
-  { title: '排班人员', dataIndex: 'people', key: 'x' },
-  { slots: { title: 'customTitle' }, dataIndex: '', key: 'x' },
+  { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
+  { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ | el.createTime },
+  { title: '排班人员', dataIndex: 'creator', key: 'Tags' },
   { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } }
 ]
 
-const data = [
-  {
-    key: 1,
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.'
-  },
-  {
-    key: 2,
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.'
-  },
-  {
-    key: 3,
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.'
-  }
-]
+const dataSource = []
+
 export default {
   name: 'Index',
   components: { single, toggleBtn, schema, detail },
   data () {
     return {
       advanced: false,
-      data,
-      columns
+      dataSource,
+      columns,
+      current: 0,
+      pageSize: 10,
+      loading: false,
+      title: []
     }
   },
   methods: {
     changeBtn () {
       this.advanced = !this.advanced
     },
-    onEdit () {
-      this.$refs.schema.show('编辑')
+    onEdit (id) {
+      this.$refs.schema.edit(id)
     },
-    onDetail () {
-      this.$refs.detail.onShow()
+    onAdd () {
+      this.$refs.schema.add()
+    },
+    onDetail (id) {
+      this.$refs.detail.onShow(id)
+    },
+    async onDelete (id) {
+      try {
+        const { msg, code } = await alarm.post('/api/configuration/schedule/delete', { id: id })
+        alert(`${msg}, ${code}`)
+        if (code === 200) {
+          this.$notification.success({
+            message: '系统提示',
+            description: '删除成功'
+          })
+          await this.fetch(10, 0)
+        } else {
+          this.$notifyError(msg)
+        }
+      } catch (e) {
+        throw e
+      }
+    },
+    async fetchTitle () {
+      try {
+        const { code, msg, data } = alarm.get('/api/configuration/schedule/title')
+        if (code === 200) {
+          this.title = data
+        } else {
+          this.$notifyError(msg)
+        }
+      } catch (e) {
+        throw e
+      }
+    },
+    async fetch (page, size) {
+      this.loading = true
+      try {
+        const { code, msg, data: { value, total } } = await alarm.post('/api/configuration/schedule/list', {
+          paging: {
+            limit: page,
+            offset: size
+          }
+        })
+        if (code === 200) {
+          this.dataSource = value
+          await this.fetchTitle()
+        } else {
+          this.$notifyError(msg)
+        }
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
+      }
     }
+  },
+  mounted () {
+    this.fetch(this.pageSize, this.current)
   }
 }
 </script>
@@ -93,6 +176,7 @@ export default {
     opacity: 0.5;
     padding: 20px;
     overflow: hidden;
+    margin-bottom: 1rem;
   }
   &-fix {
     height: 80px;

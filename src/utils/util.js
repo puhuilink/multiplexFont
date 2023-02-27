@@ -338,3 +338,46 @@ export const formatFloat = function (value, n = 0) {
 export const removeEmpty = function (arr) {
   return arr.filter(el => !_.isEmpty(el))
 }
+
+/**
+ * 检索一个对象中每个属性是否为空
+ */
+export const checkEmpty = function (array) {
+  for (let i = 0; i < array.length; i++) {
+    const obj = array[i]
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && (obj[key] === null || obj[key] === undefined || obj[key] === '' || obj[key].length === 0)) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+/**
+ *  删除一个对象数组的属性
+ */
+export const deletePropertyFromArrayObjects = function (arr, prop) {
+  return arr.map(({ [prop]: _, ...rest }) => rest)
+}
+
+/**
+ * 添加一个对象数组的属性并赋初值
+ * @param arr
+ * @param prop
+ * @param value
+ * @returns {*}
+ */
+export const addPropertyToArrayObjects = function (arr, prop, value) {
+  return arr.map(obj => ({ ...obj, [prop]: value }))
+}
+
+/**
+ * 检查一个数组中是否有数据重复
+ * @param arr
+ * @param val
+ * @returns {boolean}
+ */
+export const checkDuplicate = function (arr, val) {
+  return arr.filter((x) => x === val).length > 1
+}

@@ -121,6 +121,9 @@ import '@/utils/utils.less'
 import _ from 'lodash'
 import { alarm } from '@/utils/request'
 import moment from 'moment'
+import Vue from 'vue'
+import user from '@/store/modules/user'
+import { USER } from '@/store/mutation-types'
 
 const columns = [
   {
@@ -243,6 +246,7 @@ export default {
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
       const { data, page } = await alarm.post('/platform/alert/main/list', {
+        account_id: Vue.ls.get(USER).userId,
         ...this.queryParams
       })
       this.dataSource = data
@@ -257,7 +261,7 @@ export default {
       try {
         this.loading = true
         // eslint-disable-next-line no-unused-vars
-        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, claim_status: '1' }])
+        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, claim_status: '1', account_id: Vue.ls.get(USER).userId }])
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -276,7 +280,7 @@ export default {
       try {
         this.loading = true
         // eslint-disable-next-line no-unused-vars
-        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, process_status: '1' }])
+        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, process_status: '1', account_id: Vue.ls.get(USER).userId }])
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -295,7 +299,7 @@ export default {
       }
     },
     async batchClaimedAlarm () {
-      const parmas = this.selectedRows.map(el => ({ id: el.ID, claim_status: '1' }))
+      const parmas = this.selectedRows.map(el => ({ id: el.ID, claim_status: '1', account_id: Vue.ls.get(USER).userId }))
       try {
         this.loading = true
         const { code } = await alarm.post('/platform/alert/main/updates ', parmas)
@@ -318,7 +322,7 @@ export default {
       }
     },
     async batchCloseAlarm () {
-      const parmas = this.selectedRows.map(el => ({ id: el.ID, process_status: '1', claim_status: '1' }))
+      const parmas = this.selectedRows.map(el => ({ id: el.ID, process_status: '1', claim_status: '1', account_id: Vue.ls.get(USER).userId }))
       try {
         this.loading = true
         const { code } = await alarm.post('/platform/alert/main/updates ', parmas)

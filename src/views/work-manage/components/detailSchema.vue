@@ -3,67 +3,91 @@
     title="查看排班"
     width="800"
     :visible="visible"
+    :loading="loading"
     centered
     @cancel="onCancel"
   >
-    <a-calendar>
+    <a-calendar
+      :validRange="[startTime, endTime]"
+    >
       <ul slot="dateCellRender" slot-scope="value" class="events">
         <li v-for="item in getListData(value)" :key="item.content">
-          <a-badge :status="item.type" :text="item.content" />
+          <a-popover trigger="hover">
+            <a-badge :status="item.type" :text="item.content" />
+            <template #content>
+              {{ item.title }}
+            </template>
+          </a-popover>
         </li>
       </ul>
-      <template slot="monthCellRender" slot-scope="value">
-        <div v-if="getMonthData(value)" class="notes-month">
-          <section>{{ getMonthData(value) }}</section>
-          <span>Backlog number</span>
-        </div>
-      </template>
     </a-calendar>
   </a-modal>
 </template>
 
 <script>
 import Schema from '~~~/Mixins/Modal/Schema'
+import moment from 'moment'
+import { alarm } from '@/utils/request'
+import _ from 'lodash'
 
 export default {
   name: 'DetailSchema',
   mixins: [Schema],
+  data () {
+    return {
+      loading: false,
+      startTime: moment().startOf('month'),
+      endTime: moment().endOf('month'),
+      task: [],
+      schedule: {}
+    }
+  },
   methods: {
+    moment,
     getListData (value) {
-      let listData
-      switch (value.date()) {
-        case 8:
-          listData = [
-            { type: 'warning', content: '张三' },
-            { type: 'success', content: '张三' }
-          ]
-          break
-        case 10:
-          listData = [
-            { type: 'warning', content: '张三' },
-            { type: 'success', content: '张三' }
-          ]
-          break
-        case 15:
-          listData = [
-            { type: 'warning', content: '张三' },
-            { type: 'success', content: '张三' }
-          ]
-          break
-        default:
+      const arr = []
+      if (this.judgeTime(value, this.startTime, this.endTime)) {
+        if (this.schedule.dataType === 'day') {
+          this.schedule.remarks.map(el => arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('hh:mm')}~${moment(el.endTime).format('hh:mm')}` }))
+        } else {
+          this.schedule.remarks.map(el => {
+            if (el.weekNumber.includes(Number(value.format('d')))) {
+              // console.log(el.weekNumber, Number(value.format('d')))
+              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('hh:mm')}~${moment(el.endTime).format('hh:mm')}` })
+            }
+          })
+        }
       }
-      return listData || []
+      return arr
     },
-    getMonthData (value) {
-      if (value.month() === 8) {
-        return 1394
+    async onShow (id) {
+      try {
+        this.loading = true
+        const { data: { task, schedule } } = await alarm.post('/api/configuration/schedule/detail', { id: id })
+        if (task === null) {
+          this.$message.error('该计划下无可排班日期')
+        } else {
+          this.visible = true
+          this.startTime = moment(_.get(schedule, 'effectiveTime', ''))
+          this.endTime = moment(_.get(schedule, 'expireTime', ''))
+          this.task = task
+          this.schedule = schedule
+        }
+      } catch (e) {
+        throw e
+      } finally {
+        this.loading = false
       }
-    },
-    onShow () {
-      this.visible = true
     },
     onCancel () {
       this.visible = false
+    },
+    judgeTime (time, front, back) {
+      if (moment.isMoment(time)) {
+        return time.diff(front, 'second') >= 0 && back.diff(time, 'second') >= 0
+      } else {
+        return false
+      }
     }
   }
 }
