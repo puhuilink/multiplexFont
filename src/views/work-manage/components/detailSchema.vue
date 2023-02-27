@@ -1,17 +1,19 @@
 <template>
   <a-modal
     title="查看排班"
-    width="800"
+    width="700"
     :visible="visible"
     :loading="loading"
     centered
-    @cancel="onCancel"
   >
+    <template #footer>
+      <a-button @click="onCancel">取消</a-button>
+    </template>
     <a-calendar
       :validRange="[startTime, endTime]"
     >
       <ul slot="dateCellRender" slot-scope="value" class="events">
-        <li v-for="item in getListData(value)" :key="item.content">
+        <li v-for="item in getListData(value)" :key="item.content" style="list-style: none">
           <a-popover trigger="hover">
             <a-badge :status="item.type" :text="item.content" />
             <template #content>
@@ -84,7 +86,7 @@ export default {
     },
     judgeTime (time, front, back) {
       if (moment.isMoment(time)) {
-        return time.diff(front, 'second') >= 0 && back.diff(time, 'second') >= 0
+        return time.diff(front, 'hour') >= 0 && back.diff(time, 'day') >= 0
       } else {
         return false
       }

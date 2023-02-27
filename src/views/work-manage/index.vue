@@ -109,7 +109,6 @@ export default {
     async onDelete (id) {
       try {
         const { msg, code } = await alarm.post('/api/configuration/schedule/delete', { id: id })
-        alert(`${msg}, ${code}`)
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
