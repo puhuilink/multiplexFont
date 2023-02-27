@@ -359,6 +359,12 @@ export const asyncRouterMap = [
         redirect: '/alertManagerPlatform/config',
         meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F002002'] },
         children: [
+          // {
+          //   path: '/alarm/profile',
+          //   name: 'profile',
+          //   component: () => import('@/views/profile/index'),
+          //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
+          // },
           {
             path: '/alertManagerPlatform/config',
             name: 'AlertConfig',
