@@ -98,7 +98,93 @@
       @cancel="closeShow"
       @close="closeShow"
     >
-      详情
+      <div>策略名称：{{ watchForm.policy_name }}</div>
+      <div>告警源：{{ watchForm.source_name }}</div>
+      <div>分派条件：
+        <div
+          style="display: grid;
+            grid-template-columns: 40px 1fr;
+            grid-auto-columns: 1fr;"
+          v-for="(map,index) in watchForm.policy_source"
+          :key="index">
+          <a-avatar :size="24" class="circle"> {{ map.group_relation === '1'?'或':'且' }}</a-avatar >
+          <div
+            style="display: grid;
+            grid-template-rows: 50px 50px;
+            grid-auto-rows: 50px;">
+            <div v-for="(m,i) in map.group_condition" :key="i">
+              <a-select
+                disabled
+                v-model="m.condition_name"
+                style="width: 25%;margin-right: 5px"
+                :options="conditions[0]"
+                :show-arrow="false"
+              />
+              <a-select
+                disabled
+                v-model="m.condition_symbol"
+                style="width: 25%;margin-right: 5px"
+                :options="conditions[1]"
+                :show-arrow="false"
+              />
+              <span>
+                <a-select
+                  disabled
+                  mode="multiple"
+                  v-model="m.condition_value"
+                  style="width: 40%;margin-right: 5px"
+                  :options="conditions[2]"
+                  v-if="m.condition_name === '294504721270575106'"
+                  :show-arrow="false"
+                />
+                <a-input disabled v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>分派人：<div
+        style="display: grid;
+            grid-template-columns: 60px 1fr;
+            grid-auto-columns: 1fr;margin-top: 10px"
+        v-for="(notice,index) in watchForm.policy_account"
+        :key="index">
+        <a-avatar :size="32" class="circle">{{ index === 0?'立即':'升级' }}</a-avatar>
+        <div v-if="index===0">
+          <div>
+            <a-select v-model="notice.account_type" style="width: 100px" placeholder="通知组或人" disabled :show-arrow="false">
+              <a-select-option value="1">
+                通知人
+              </a-select-option>
+              <a-select-option value="0">
+                通知组
+              </a-select-option>
+            </a-select>
+            <span>
+              <a-select
+                v-if="notice.account_type === '1'"
+                v-model="notice.account_id"
+                style="width: 100px"
+                :options="user"
+                disabled
+                :show-arrow="false"/>
+              <a-select
+                v-else
+                v-model="notice.group_id"
+                style="width: 100px"
+                :options="group"
+                disabled
+                :show-arrow="false"/>
+            </span>
+          </div>
+        </div>
+        <div v-else >
+          <div style="display: flex;align-items: center">
+            <div>如果告警升级后 <a-input-number v-model="notice.upgrade_interval" disabled/>分钟无人处理，则告警自动升级通知以下用户</div>
+            <div>通知人 <a-select v-model="notice.account_id" style="width: 100px" :options="user" disabled :show-arrow="false"/></div>
+          </div>
+        </div>
+      </div></div>
     </a-modal>
     <a-table
       bordered
@@ -268,7 +354,8 @@ export default {
         { label: '或', value: '1' },
         { label: '且', value: '0' }
       ],
-      formState: _.cloneDeep(originalData)
+      formState: _.cloneDeep(originalData),
+      watchForm: _.cloneDeep(originalData)
     }
   },
   mixins: [List],
@@ -363,11 +450,12 @@ export default {
       this.visible = true
     },
     showModal (record) {
-      this.visible = true
-      console.log(this.formState)
+      this.watchForm = { ..._.cloneDeep(record) }
+      this.show = true
     },
     closeShow () {
-      this.visible = false
+      this.show = false
+      this.watchForm = { ..._.cloneDeep(originalData) }
     },
     closeModal () {
       this.visible = false
