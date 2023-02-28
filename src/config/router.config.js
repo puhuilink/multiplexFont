@@ -385,12 +385,12 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alert-manager/config/notifyRule'),
                 meta: { title: '通知策略' }
               },
-              {
-                path: '/alertManagerPlatform/config/shieldRule',
-                name: 'ShieldRule',
-                component: () => import('@/views/alert-manager/config/shieldRule'),
-                meta: { title: '屏蔽规则' }
-              },
+              // {
+              //   path: '/alertManagerPlatform/config/shieldRule',
+              //   name: 'ShieldRule',
+              //   component: () => import('@/views/alert-manager/config/shieldRule'),
+              //   meta: { title: '屏蔽规则' }
+              // },
               // 通知组页
               {
                 path: '/alertManagerPlatform/config/notified-group',
