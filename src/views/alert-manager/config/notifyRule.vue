@@ -506,6 +506,8 @@ export default {
       if (record) {
         this.updateFormState = { ..._.cloneDeep(record) }
         this.updateFormState.accountId = decrypt(this.updateFormState.accountId)
+        this.groupId = this.updateFormState.accountId
+        this.userId = this.updateFormState.accountId
         this.updateFlag = true
       }
       this.updateVisible = true

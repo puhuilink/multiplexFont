@@ -519,6 +519,7 @@ export default {
         source.group_sequence = index + 1
         source.group_condition.forEach((condition, i) => {
           condition.condition_sequence = i + 1
+          condition.condition_value = condition.condition_value.toString()
           if (Array.isArray(condition.condition_value)) {
             condition.condition_value = JSON.stringify(condition.condition_value)
           }
@@ -540,7 +541,6 @@ export default {
       if (res.code === 200) {
         this.$message.success('新建成功！')
         this.closeModal()
-        console.log('关闭弹窗', this.formState)
         await this.fetchList()
       } else {
         this.$message.error(res.msg)
