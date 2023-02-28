@@ -16,7 +16,7 @@
         </a-col>
       </a-row>
     </div>
-    <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #000"></toggleBtn>
+<!--    <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #000"></toggleBtn>-->
 
     <a-table
       :columns="columns"
