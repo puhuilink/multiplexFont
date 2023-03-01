@@ -1,8 +1,8 @@
 <template>
   <div class="border">
-    <a-row type="flex" justify="center" align="center">
-      <a-col :span="4">{{ source.label }}</a-col>
-      <a-col :span="10">
+    <a-row type="flex" justify="center">
+      <a-col :span="2">排班名称: {{ source.label }}</a-col>
+      <a-col :span="8">
         <a-icon type="schedule" style="color: green"></a-icon>当前值班人员: {{ source.currentCharger }} ({{ source.currentTime }})
       </a-col>
       <a-col :span="10">
@@ -33,9 +33,11 @@ export default {
 <style scoped>
   .border {
     width: 95%;
-    height: 40px;
+    height: 60px;
+    line-height: 60px;
     background-color: #F8F8F8;
     padding: 2px;
     border-radius: 10px;
+    margin: 0 auto;
   }
 </style>

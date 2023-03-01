@@ -5,11 +5,18 @@
     </div>
 
     <div :class="[advanced ? 'upper-fix' : 'upper-flex', 'upper-common']">
-      <li v-for="(item, index) in title" style="list-style: none" :key="index">
-        <single :source="item"></single>
-      </li>
-      <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #ffffff"></toggleBtn>
+      <a-row
+        v-for="(item, index) in title"
+        :key="index"
+        type="flex"
+        justify="center"
+        :class="index === title.length - 1 ? '' : 'upper-fix'">
+        <a-col :span="24">
+          <single :source="item"></single>
+        </a-col>
+      </a-row>
     </div>
+<!--    <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #000"></toggleBtn>-->
 
     <a-table
       :columns="columns"
@@ -124,9 +131,15 @@ export default {
     },
     async fetchTitle () {
       try {
-        const { code, msg, data } = alarm.get('/api/configuration/schedule/title')
+        const { code, msg, data } = await alarm.get('/api/configuration/schedule/title')
         if (code === 200) {
-          this.title = data
+          this.title = data.map(el => ({
+            label: el.current.name,
+            currentCharger: el.current.staffName,
+            currentTime: `从${moment(el.current.startTime).format('YYYY-MM-DD hh:mm')}至${moment(el.current.endTime).format('YYYY-MM-DD hh:mm')}`,
+            nextCharger: el.next.staffName,
+            nextTime: `从${moment(el.next.startTime).format('YYYY-MM-DD hh:mm')}至${moment(el.next.endTime).format('YYYY-MM-DD hh:mm')}`
+          }))
         } else {
           this.$notifyError(msg)
         }
@@ -171,6 +184,7 @@ export default {
     display: flex;
     align-content: center;
     justify-content: center;
+    flex-direction: column;
     background-color: grey;
     opacity: 0.5;
     padding: 20px;
