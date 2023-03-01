@@ -62,8 +62,7 @@ class ApSourceService extends BaseService {
   static async fetchGroupList () {
     const { data } = await alarm.post('/api/configuration/notify/listUser', { 'notifyStaffType': '0' })
     data.forEach(d => {
-      d.id = decrypt(d.ID)
-      d.name = d.Name
+      d.id = decrypt(d.id)
     })
     return data
   }
@@ -73,8 +72,8 @@ class ApSourceService extends BaseService {
     const list = []
     data.forEach(d => {
       list.push({
-        user_id: decrypt(d.ID),
-        staff_name: d.Name
+        user_id: decrypt(d.id),
+        staff_name: d.name
       })
     })
     return list
