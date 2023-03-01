@@ -10,6 +10,8 @@ import {
   ApDictDao
 } from '../dao/ApDictDao'
 import { UserDao } from '@/api/dao/UserDao'
+import { alarm } from '@/utils/request'
+import { decrypt } from '@/utils/aes'
 
 class ApSourceService extends BaseService {
   static async sourceFind (argus = {}) {
@@ -58,23 +60,22 @@ class ApSourceService extends BaseService {
   }
   // 告警源列表
   static async fetchGroupList () {
-    const { data: { list } } = await this.groupFind({
-      alias: 'list',
-      fields: [
-        'id',
-        'name'
-      ]
+    const { data } = await alarm.post('/api/configuration/notify/listUser', { 'notifyStaffType': '0' })
+    data.forEach(d => {
+      d.id = decrypt(d.ID)
+      d.name = d.Name
     })
-    return list
+    return data
   }
   // 告警源列表
   static async fetchUserList () {
-    const { data: { list } } = await this.userFind({
-      alias: 'list',
-      fields: [
-        'user_id',
-        'staff_name'
-      ]
+    const { data } = await alarm.post('/api/configuration/notify/listUser', { 'notifyStaffType': '1' })
+    const list = []
+    data.forEach(d => {
+      list.push({
+        user_id: decrypt(d.ID),
+        staff_name: d.Name
+      })
     })
     return list
   }

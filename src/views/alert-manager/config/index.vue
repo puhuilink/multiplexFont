@@ -364,7 +364,6 @@ export default {
   },
   methods: {
     async deleteStrategy (id) {
-      console.log(id)
       const res = await alarm.post('/platform/policy/delete', { id })
       if (res.code === 200) {
         this.$message.success('删除成功！')
@@ -569,12 +568,12 @@ export default {
       arr.forEach((a, index) => {
         if (index === 0) {
           if (a.account_type === '0') {
-            str += '分派组:' + a.group_id
+            str += '分派组:' + this.group.find(g => g.value === a.group_id).label
           } else {
-            str += '分派人:' + a.account_id
+            str += '分派人:' + this.user.find(g => g.value === a.account_id).label
           }
         } else {
-          str += ' 升级给:' + a.account_id
+          str += ' 升级给:' + this.user.find(g => g.value === a.account_id).label
         }
       })
       return str
