@@ -386,6 +386,7 @@ export default {
     async fetchSource () {
       const res = await ApSourceService.fetchSourceList()
       this.alertSource = []
+      console.log('res', res)
       res.forEach(r => {
         this.alertSource.push(
           {

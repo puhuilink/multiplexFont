@@ -145,7 +145,7 @@
             <a-popconfirm
               title="确定要删除用户下所有策略?"
               placement="left"
-              @confirm="deleteNotifyRule(record.accountId)"
+              @confirm="deleteSingleNotifyRule(record.id)"
               okText="确定"
               cancelText="取消"
             >
@@ -161,7 +161,7 @@
           <a-popconfirm
             title="确定要删除此策略?"
             placement="left"
-            @confirm="deleteSingleNotifyRule(record.id)"
+            @confirm="deleteNotifyRule(record.accountId)"
             okText="确定"
             cancelText="取消"
           >
@@ -219,6 +219,7 @@ import { alarm } from '@/utils/request'
 import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import { decrypt, encrypt } from '@/utils/aes'
+
 const innerColumns = [
   { title: '告警状态', dataIndex: 'state', scopedSlots: { customRender: 'state' } },
   { title: '通知条件', dataIndex: 'rule', scopedSlots: { customRender: 'rule' } },
@@ -594,16 +595,16 @@ export default {
     async deleteNotifyRule (id) {
       let res
       try {
-        const r = await alarm.post('/api/configuration/notify/deleteAll', { 'accountId': id })
-        res = r
+        res = await alarm.post('/api/configuration/notify/deleteAll', { 'accountId': id })
       } catch (e) {
-        res = {
-          'code': 200,
-          'msg': '删除成功！'
-        }
+        // res = {
+        //   'code': 200,
+        //   'msg': '删除成功！'
+        // }
       }
       if (res.code === 200) {
         this.$message.success('删除成功！')
+        await this.fetchNotifyList()
       } else {
         this.$message.error('删除失败！请检查您的网络')
       }
@@ -611,16 +612,16 @@ export default {
     async deleteSingleNotifyRule (id) {
       let res
       try {
-        const r = await alarm.post('/api/configuration/notify/delete', { 'id': id })
-        res = r
+        res = await alarm.post('/api/configuration/notify/delete', { 'id': id })
       } catch (e) {
-        res = {
-          'code': 200,
-          'msg': '删除成功！'
-        }
+        // res = {
+        //   'code': 200,
+        //   'msg': '删除成功！'
+        // }
       }
       if (res.code === 200) {
         this.$message.success('删除成功！')
+        await this.fetchNotifyList()
       } else {
         this.$message.error('删除失败！请检查您的网络')
       }

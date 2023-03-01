@@ -36,13 +36,13 @@ class ApSourceService extends BaseService {
   }
   // 告警源列表
   static async fetchSourceList () {
-    const { data: { list } } = await this.sourceFind({
-      where: { enabled: true },
-      alias: 'list',
-      fields: [
-        'id',
-        'name'
-      ]
+    const { data } = await alarm.get('/api/integration/source/get')
+    const list = []
+    data.forEach(d => {
+      list.push({
+        id: d.SourceId,
+        name: d.sourceName
+      })
     })
     return list
   }
