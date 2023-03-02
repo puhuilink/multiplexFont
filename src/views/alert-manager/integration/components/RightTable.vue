@@ -6,23 +6,19 @@
   >
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
     <template :slot="'action'" slot-scope="text,record">
-      <img
-        :src="require(`@/assets/icons/svg/edit_icon.svg`)"
-        width="20px"
-        height="20px"
-        title="编辑应用"
-        @click="updateAlertSource(record)"
-      />
+      <a-button @click="updateAlertSource(record)">编辑</a-button>
       <a-divider type="vertical" />
       <!--      <a-switch :checked="record.status" size="small" />-->
       <!--      <a-divider type="vertical" />-->
-      <img
-        :src="require(`@/assets/icons/svg/delete_icon.svg`)"
-        width="20px"
-        height="20px"
-        title="删除应用"
-        @click="deleteAlertSource(record.id)"
-      />
+      <a-popconfirm
+        title="确定要删除该数据源?"
+        placement="left"
+        @confirm="deleteAlertSource(record.sourceId)"
+        okText="确定"
+        cancelText="取消"
+      >
+        <a-button>删除</a-button>
+      </a-popconfirm>
     </template>
     <template :slot="'status'" slot-scope="text, record">
       <img v-show="record.sourceStatus" :src="require(`@/assets/icons/svg/successLight.svg`)" />
@@ -111,7 +107,7 @@ const columns = [
     key: 'action',
     fixed: 'right',
     scopedSlots: { customRender: 'action' },
-    width: '120px',
+    width: '180px',
     align: 'center'
   }
 ]
@@ -182,13 +178,14 @@ export default {
       try {
         res = await alarm.post('/api/integration/source/delete', { 'sourceId': id })
       } catch (e) {
-        res = {
-          'code': 200,
-          'msg': '删除成功！'
-        }
+        // res = {
+        //   'code': 200,
+        //   'msg': '删除成功！'
+        // }
       }
       if (res.code === 200) {
         this.$message.success('删除成功！')
+        await this.initialData()
       } else {
         this.$message.error('删除失败！请检查您的网络')
       }

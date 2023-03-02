@@ -394,10 +394,10 @@ export default {
         if (content.includes('1')) {
           return mapping[2]
         } else {
-          return mapping[0]
+          return mapping[1]
         }
       } else if (content.includes('1')) {
-        return mapping[1]
+        return mapping[0]
       }
     },
     notifyWayMapping (key) {
