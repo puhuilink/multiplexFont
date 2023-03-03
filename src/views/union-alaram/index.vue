@@ -51,7 +51,7 @@
           <!--          时间范围-->
           <a-col v-bind="colLayout">
             <a-form-item :label="ALARM_QUERY_LABEL.range" v-bind="formItemLayout" class="wd">
-              <a-range-picker @change="onChange" v-model="queryParams.timeList" format="YYYY-MM-DD HH:mm:ss" />
+              <a-range-picker v-model="queryParams.timeList" format="YYYY-MM-DD HH:mm:ss" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -74,28 +74,31 @@
     <a-table
       :loading="loading"
       bordered
+      rowKey="ID"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :columns="columns"
-      :pagination="{
-        current: this.current,
-        pageSize: this.pageSize,
-        pageSizeOptions: ['10', '20'],
-        showSizeChanger: true,
-        showQuickJumper: true,
-        total: this.total,
-        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
-        onChange:(page, pageSize) =>{
-          this.current = page
-          this.pageSize = pageSize
-          this.handleSearch(page, pageSize)
-        },
-        showSizeChange: (current, size) => {
-          this.current = current
-          this.pageSize = size
-          this.handleSearch(current, pageSize)
-        }
-      }"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :data-source="dataSource">
+      :data-source="dataSource"
+      :pagination="paginationOpt"
+    >
+<!--      :pagination="{-->
+<!--        current: this.current,-->
+<!--        pageSizeOptions: ['10', '20'],-->
+<!--        pageSize: this.pageSize,-->
+<!--        showQuickJumper: true,-->
+<!--        showSizeChanger: true,-->
+<!--        total: this.total,-->
+<!--        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,-->
+<!--        onChange: (page, size) =>{-->
+<!--          this.current = page-->
+<!--          this.pageSize = size-->
+<!--          this.handleSearch(page, size)-->
+<!--        },-->
+<!--        showSizeChange: (current, size) => {-->
+<!--          this.current = current-->
+<!--          this.pageSize = size-->
+<!--          this.handleSearch(current, pageSize)-->
+<!--        }-->
+<!--      }"-->
       <a slot="name" slot-scope="text">{{ text }}</a>
       <span slot="action" slot-scope="text, record" class="center">
         <a-button @click="showDetail(text, record)">详情</a-button>
@@ -128,30 +131,36 @@ const columns = [
   {
     title: '告警级别',
     dataIndex: 'level',
+    key: 'level',
     width: 90,
     align: 'center',
     customRender: record => `P${record}`
   },
   {
     title: '告警标题',
+    key: 'title',
     dataIndex: 'title'
   },
   {
     title: '告警对象',
+    key: 'device',
     dataIndex: 'device'
   },
   {
     title: '告警类型',
     width: 90,
+    key: 'device_type',
     dataIndex: 'device_type'
   },
   {
     title: '告警时间',
+    key: 'last_time',
     dataIndex: 'last_time',
     customRender: (record) => moment(record).format('YYYY-MM-DD hh:mm:ss')
   },
   {
     title: '告警内容',
+    key: 'content',
     dataIndex: 'content'
   },
   {
@@ -177,9 +186,7 @@ export default {
         sm: 24
       },
       queryParams: {
-        process_status: '0',
-        limit: 10,
-        offset: 1
+        process_status: '0'
       },
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 6 }, xxl: { span: 4 } },
@@ -196,7 +203,27 @@ export default {
       pageSize: 10,
       a: 0,
       visible: false,
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = 1
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
     }
   },
   mixins: [List],
@@ -208,11 +235,10 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    onChange (date, dateString) {
-    },
     handleSearch (page, size) {
       this.queryParams.limit = size
       this.queryParams.offset = page
+      this.resetSelect()
       this.query()
     },
     onChangeState (activeKey) {
@@ -244,16 +270,19 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
+      const { defaultCurrent, defaultPageSize, total } = this.paginationOpt
       const { data, page } = await alarm.post('/platform/alert/main/list', {
         account_id: Vue.ls.get(USER).userId,
+        limit: defaultPageSize,
+        offset: defaultCurrent,
         ...this.queryParams
       })
       this.dataSource = data
-      this.total = page.total
+      this.paginationOpt.total = page.total
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['level', 'deviceType', 'device', 'timeList', 'start_time', 'last_time'])
+      this.queryParams = _.omit(this.queryParams, ['level', 'device_type', 'device', 'timeList', 'start_time', 'last_time'])
     },
     // 认领告警
     async claimAlarm (record) {
@@ -356,16 +385,6 @@ export default {
     }
   },
   computed: {
-    rowSelection: function () {
-      return {
-        onChange: (selectedRowKeys, selectedRows) => {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.selectedRowKeys = selectedRowKeys
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.selectedRows = selectedRows
-        }
-      }
-    },
     hasSelected () {
       return this.selectedRowKeys.length > 0
     }
