@@ -106,9 +106,10 @@
                       wrapperCol: { span: 24 }
                     }"
                   >
-                    <a-select v-model="item.weekNumber" mode="multiple" placeholder="请选择工作日期" :style="{'width': '430px', 'margin-left': '2%', 'margin-top': '2%' }"><a-select-option v-for="(item) in weekMap" :key="item[0]">
-                      {{ weekMap.get(item[0]) }}
-                    </a-select-option></a-select>
+                    <a-select v-model="item.weekNumber" mode="multiple" placeholder="请选择工作日期" :style="{'width': '430px', 'margin-left': '2%', 'margin-top': '2%' }">
+                      <a-select-option v-for="(item1) in weekMap" :key="item1[0]">
+                        {{ weekMap.get(item1[0]) }}
+                      </a-select-option></a-select>
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -153,9 +154,8 @@ import singleDate from '@/views/work-manage/components/singleDate'
 import { alarm } from '@/utils/request'
 import { dealObject, weekMap } from './enum.js'
 import _ from 'lodash'
-import { addPropertyToArrayObjects, checkDuplicate, checkEmpty, deletePropertyFromArrayObjects } from '@/utils/util'
+import { addPropertyToArrayObjects, checkDuplicate, deletePropertyFromArrayObjects } from '@/utils/util'
 import uuid from 'uuid/v4'
-import { message } from 'ant-design-vue'
 export default {
   name: 'Schema',
   data () {
@@ -194,6 +194,7 @@ export default {
     async queryCurrent (id) {
       try {
         this.loading = true
+        // eslint-disable-next-line no-unused-vars
         const { data: { task, schedule } } = await alarm.post('/api/configuration/schedule/detail', { id: id })
         this.visible = true
         this.formData.name = schedule.name

@@ -2,7 +2,7 @@
   <div class="deliverRules">
     <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal(null)">新建分派策略</a-button></div>
     <a-modal
-      title="新建分派策略"
+      :title="updateFlag?'修改分派策略':'新建分派策略'"
       :visible="visible"
       :confirm-loading="confirmLoading"
       width="1100px"
@@ -11,13 +11,17 @@
       @close="closeModal"
     >
       <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-        <a-form-model-item label="分派策略名称">
+        <a-form-model-item
+          label="分派策略名称"
+          :rules="[{ required: true, message: '分派策略名称必填', trigger: 'change' }]"
+          prop="policy_name"
+        >
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
-        <a-form-model-item label="告警源">
+        <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]">
           <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
         </a-form-model-item>
-        <a-form-model-item label="分派条件">
+        <a-form-model-item label="分派条件" :rules="[{ required: true, message: '分派条件必填', trigger: 'change' }]">
           <div
             style="display: grid;
             grid-template-columns: 60px 1fr;
@@ -33,7 +37,7 @@
                 </div>
               </div>
               <div v-for="(m,i) in map.group_condition" :key="i">
-                <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]"/>
+                <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]" @change="nameChange(m)"/>
                 <a-select v-model="m.condition_symbol" style="width: 25%;margin-right: 5px" :options="conditions[1]"/>
                 <span>
                   <a-select
@@ -54,7 +58,7 @@
           </div>
           <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="分派人">
+        <a-form-model-item label="分派人" :rules="[{ required: true, message: '分派人信息必填', trigger: 'change' }]">
           <div
             style="display: grid;
             grid-template-columns: 60px 1fr;
@@ -383,6 +387,11 @@ export default {
         this.data = data
       }
     },
+    nameChange (entity) {
+      if (entity.condition_name === '294504721270575106') {
+        entity.condition_value = []
+      }
+    },
     async fetchSource () {
       const res = await ApSourceService.fetchSourceList()
       this.alertSource = []
@@ -434,7 +443,7 @@ export default {
     openModal (record) {
       if (record !== null && record !== {}) {
         this.updateFlag = true
-        this.formState = record
+        this.formState = { ..._.cloneDeep(record) }
         this.formState.policy_source.forEach(source => {
           source.group_condition.forEach(condition => {
             try {
@@ -539,7 +548,7 @@ export default {
 
       const res = await alarm.post(url, backup)
       if (res.code === 200) {
-        this.$message.success('新建成功！')
+        this.$message.success(this.updateFlag ? '修改成功' : '新建成功！')
         this.closeModal()
         await this.fetchList()
       } else {

@@ -122,7 +122,6 @@ import _ from 'lodash'
 import { alarm } from '@/utils/request'
 import moment from 'moment'
 import Vue from 'vue'
-import user from '@/store/modules/user'
 import { USER } from '@/store/mutation-types'
 
 const columns = [

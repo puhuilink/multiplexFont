@@ -250,14 +250,14 @@ export default {
     mappingColumns () {
       return [
         {
-          title: '统一监控平台',
-          dataIndex: 'P1',
-          scopedSlots: { customRender: 'P1' }
-        },
-        {
           title: this.formState.name,
           dataIndex: 'P2',
           scopedSlots: { customRender: 'P2' }
+        },
+        {
+          title: '统一监控平台',
+          dataIndex: 'P1',
+          scopedSlots: { customRender: 'P1' }
         },
         {
           title: '操作',

@@ -16,7 +16,7 @@
         </a-col>
       </a-row>
     </div>
-<!--    <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #000"></toggleBtn>-->
+    <!--    <toggleBtn :advanced="advanced" @click="changeBtn" class="upper-btn" style="color: #000"></toggleBtn>-->
 
     <a-table
       :columns="columns"
@@ -69,6 +69,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import single from './components/singlePlan'
 import toggleBtn from '@/components/Mixins/Table/Button/ToggleBtn'
 import schema from './components/schema'

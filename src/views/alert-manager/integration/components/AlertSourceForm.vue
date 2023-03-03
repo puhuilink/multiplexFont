@@ -341,7 +341,7 @@ export default {
           this.$message.error(res.msg)
         }
       } catch (e) {
-        console.log()
+        this.$message.error(e.response.data.msg)
       }
     },
     initialData () {
