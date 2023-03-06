@@ -43,9 +43,9 @@
     >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action" slot-scope="text, { id }">
-        <a @click="onDetail(id)"><a-tooltip title="查看"><a-icon type="info-circle" /></a-tooltip></a>
+        <a-button @click="onDetail(id)">查看</a-button>
         <a-divider type="vertical" />
-        <a @click="onEdit(id)"><a-tooltip title="编辑"><a-icon type="edit" /></a-tooltip></a>
+        <a-button @click="onEdit(id)">编辑</a-button>
         <a-divider type="vertical" />
         <a-popconfirm
           title="确定要删除此排班?"
@@ -58,7 +58,7 @@
             <template slot="title">
               <span>删除</span>
             </template>
-            <a><a-icon type="delete" /></a>
+            <a-button>删除</a-button>
           </a-tooltip>
         </a-popconfirm>
       </span>
@@ -80,9 +80,9 @@ const format = 'YYYY-MM-DD hh:mm:ss'
 const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
   { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
-  { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ | el.createTime },
+  { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
   { title: '排班人员', dataIndex: 'creator', key: 'Tags' },
-  { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } }
+  { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '400', scopedSlots: { customRender: 'action' } }
 ]
 
 const dataSource = []
