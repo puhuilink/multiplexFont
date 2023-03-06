@@ -382,7 +382,6 @@ export default {
         offset: 1,
         account_id: store.getters.userId
       })
-      console.log(data)
       if (data) {
         this.data = data
       }
@@ -395,7 +394,7 @@ export default {
     async fetchSource () {
       const res = await ApSourceService.fetchSourceList()
       this.alertSource = []
-      console.log('res', res)
+      // console.log('res', res)
       res.forEach(r => {
         this.alertSource.push(
           {
@@ -447,7 +446,8 @@ export default {
         this.formState.policy_source.forEach(source => {
           source.group_condition.forEach(condition => {
             try {
-              condition.condition_value = JSON.parse(condition.condition_value)
+              // condition.condition_value = JSON.parse(condition.condition_value)
+              condition.condition_value = condition.condition_value.split(',')
             } catch (e) {
               console.log(e)
             }
