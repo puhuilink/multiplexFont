@@ -122,8 +122,9 @@ export default {
     editGroup () {
       this.$refs.group.onEdit('编辑', this.selectedRows)
     },
-    onSelectChange (selectedRowKeys) {
+    onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
     async deleteGroup (record) {
       try {

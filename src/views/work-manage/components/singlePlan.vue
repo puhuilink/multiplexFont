@@ -39,5 +39,7 @@ export default {
     padding: 2px;
     border-radius: 10px;
     margin: 0 auto;
+    color: 	#000;
+    font-size: 16px;
   }
 </style>

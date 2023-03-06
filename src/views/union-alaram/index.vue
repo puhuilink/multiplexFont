@@ -80,25 +80,25 @@
       :data-source="dataSource"
       :pagination="paginationOpt"
     >
-<!--      :pagination="{-->
-<!--        current: this.current,-->
-<!--        pageSizeOptions: ['10', '20'],-->
-<!--        pageSize: this.pageSize,-->
-<!--        showQuickJumper: true,-->
-<!--        showSizeChanger: true,-->
-<!--        total: this.total,-->
-<!--        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,-->
-<!--        onChange: (page, size) =>{-->
-<!--          this.current = page-->
-<!--          this.pageSize = size-->
-<!--          this.handleSearch(page, size)-->
-<!--        },-->
-<!--        showSizeChange: (current, size) => {-->
-<!--          this.current = current-->
-<!--          this.pageSize = size-->
-<!--          this.handleSearch(current, pageSize)-->
-<!--        }-->
-<!--      }"-->
+      <!--      :pagination="{-->
+      <!--        current: this.current,-->
+      <!--        pageSizeOptions: ['10', '20'],-->
+      <!--        pageSize: this.pageSize,-->
+      <!--        showQuickJumper: true,-->
+      <!--        showSizeChanger: true,-->
+      <!--        total: this.total,-->
+      <!--        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,-->
+      <!--        onChange: (page, size) =>{-->
+      <!--          this.current = page-->
+      <!--          this.pageSize = size-->
+      <!--          this.handleSearch(page, size)-->
+      <!--        },-->
+      <!--        showSizeChange: (current, size) => {-->
+      <!--          this.current = current-->
+      <!--          this.pageSize = size-->
+      <!--          this.handleSearch(current, pageSize)-->
+      <!--        }-->
+      <!--      }"-->
       <a slot="name" slot-scope="text">{{ text }}</a>
       <span slot="action" slot-scope="text, record" class="center">
         <a-button @click="showDetail(text, record)">详情</a-button>
@@ -270,7 +270,7 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
-      const { defaultCurrent, defaultPageSize, total } = this.paginationOpt
+      const { defaultCurrent, defaultPageSize } = this.paginationOpt
       const { data, page } = await alarm.post('/platform/alert/main/list', {
         account_id: Vue.ls.get(USER).userId,
         limit: defaultPageSize,
