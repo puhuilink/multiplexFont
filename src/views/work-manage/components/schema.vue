@@ -26,7 +26,7 @@
           </a-form-model-item>
           <a-divider />
           <a-collapse v-model="activeKey">
-            <a-collapse-panel key="1" header="设置排班时间＆排版人">
+            <a-collapse-panel key="1" header="设置排班时间＆排班人">
               <template #extra>
                 <a-form-model-item
                   prop="sendType"
