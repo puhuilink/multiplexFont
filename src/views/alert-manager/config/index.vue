@@ -10,7 +10,7 @@
       @cancel="closeModal"
       @close="closeModal"
     >
-      <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+      <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
         <a-form-model-item
           label="分派策略名称"
           :rules="[{ required: true, message: '分派策略名称必填', trigger: 'change' }]"
@@ -18,47 +18,49 @@
         >
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
-        <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]">
+        <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
           <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
         </a-form-model-item>
-        <a-form-model-item label="分派条件" :rules="[{ required: true, message: '分派条件必填', trigger: 'change' }]">
-          <div
-            style="display: grid;
+        <a-form-model-item label="分派条件" :rules="[{ type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
+          <div style="">
+            <div
+              style="display: grid;
             grid-template-columns: 60px 1fr;
             grid-auto-columns: 1fr;"
-            v-for="(map,index) in formState.policy_source"
-            :key="index">
-            <a-avatar :size="32" class="circle"> {{ index+1 }}</a-avatar >
-            <div>
-              <div style="display: flex;align-items: center;">
-                规则之间的条件：<a-radio-group :options="options" v-model="map.group_relation" :default-value="1" />
-                <div style="display: flex;flex-direction: revert">
-                  <a-icon type="delete" v-if="formState.policy_source.length !== 1" @click="deleteStrategyByIndex(index)"/>
+              v-for="(map,index) in formState.policy_source"
+              :key="index">
+              <a-avatar :size="32" class="circle"> {{ index+1 }}</a-avatar >
+              <div>
+                <div style="display: flex;align-items: center;">
+                  规则之间的条件：<a-radio-group :options="options" v-model="map.group_relation" :default-value="1" />
+                  <div style="display: flex;flex-direction: revert">
+                    <a-icon type="delete" v-if="formState.policy_source.length !== 1" @click="deleteStrategyByIndex(index)"/>
+                  </div>
+                </div>
+                <div v-for="(m,i) in map.group_condition" :key="i">
+                  <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]" @change="nameChange(m)"/>
+                  <a-select v-model="m.condition_symbol" style="width: 25%;margin-right: 5px" :options="conditions[1]"/>
+                  <span>
+                    <a-select
+                      mode="multiple"
+                      v-model="m.condition_value"
+                      style="width: 40%;margin-right: 5px"
+                      :options="conditions[2]"
+                      v-if="m.condition_name === '294504721270575106'"/>
+                    <a-input v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
+                  </span>
+                  <div :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }">
+                    <a-icon type="delete" @click="deleteRuleByIndex(index,i)"/>
+                    <a-divider type="vertical"/>
+                  </div>
+                  <a-icon type="plus" @click="addRule(index)"/>
                 </div>
               </div>
-              <div v-for="(m,i) in map.group_condition" :key="i">
-                <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]" @change="nameChange(m)"/>
-                <a-select v-model="m.condition_symbol" style="width: 25%;margin-right: 5px" :options="conditions[1]"/>
-                <span>
-                  <a-select
-                    mode="multiple"
-                    v-model="m.condition_value"
-                    style="width: 40%;margin-right: 5px"
-                    :options="conditions[2]"
-                    v-if="m.condition_name === '294504721270575106'"/>
-                  <a-input v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
-                </span>
-                <div :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }">
-                  <a-icon type="delete" @click="deleteRuleByIndex(index,i)"/>
-                  <a-divider type="vertical"/>
-                </div>
-                <a-icon type="plus" @click="addRule(index)"/>
-              </div>
-            </div>
-          </div>
+            </div></div>
+
           <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="分派人" :rules="[{ required: true, message: '分派人信息必填', trigger: 'change' }]">
+        <a-form-model-item label="分派人" :rules="[{ validator: accountPass, trigger: 'change' }]" prop="policy_account">
           <div
             style="display: grid;
             grid-template-columns: 60px 1fr;
@@ -320,6 +322,7 @@ const originalData = {
     }
   ]
 }
+
 export default {
   name: 'DeliverRules',
   data () {
@@ -403,6 +406,34 @@ export default {
           }
         )
       })
+    },
+    sourcePass (rule, value, callback) {
+      let flag = false
+      value.forEach(v => {
+        v.group_condition.forEach(condition => {
+          flag = condition.condition_name === '' || condition.condition_symbol === '' || condition.condition_value === ''
+        })
+      })
+      if (flag) {
+        callback(new Error('请检查分派条件是否填写正确！'))
+      } else {
+        callback()
+      }
+    },
+    accountPass (rule, value, callback) {
+      let flag = false
+      value.forEach(v => {
+        if (v.policy_account === '') {
+          flag = true
+        } else {
+          flag = v.policy_account === '1' ? v.account_id === '' : v.group_id === ''
+        }
+      })
+      if (flag) {
+        callback(new Error('请检查分派人信息是否填写正确！'))
+      } else {
+        callback()
+      }
     },
     async fetchGroup () {
       const res = await ApSourceService.fetchGroupList()
@@ -518,9 +549,19 @@ export default {
     sourceChange (e) {
       this.formState.source_id = e.key
       this.formState.source_name = e.label
-      console.log('111')
+      // console.log('111')
     },
     async handleOk () {
+      let flag = false
+      this.$refs.ruleForm.validate(valid => {
+        if (!valid) {
+          this.$message.error('请检查您的表单项是否都填写完毕！')
+          flag = true
+        }
+      })
+      if (flag) {
+        return
+      }
       const backup = { ..._.cloneDeep(this.formState) }
       backup.policy_source.forEach((source, index) => {
         source.source_id = this.formState.source_id
