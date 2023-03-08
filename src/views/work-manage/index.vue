@@ -81,7 +81,7 @@ const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
   { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
   { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
-  { title: '排班人员', dataIndex: 'creator', key: 'Tags' },
+  { title: '排班人员', dataIndex: 'tags', key: 'tags' },
   { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '400', scopedSlots: { customRender: 'action' } }
 ]
 
