@@ -270,8 +270,7 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
-      // eslint-disable-next-line no-unused-vars
-      const { defaultCurrent, defaultPageSize, total } = this.paginationOpt
+      const { defaultCurrent, defaultPageSize } = this.paginationOpt
       const { data, page } = await alarm.post('/platform/alert/main/list', {
         account_id: Vue.ls.get(USER).userId,
         limit: defaultPageSize,

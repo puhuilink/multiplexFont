@@ -81,7 +81,7 @@ const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
   { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
   { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
-  { title: '排班人员', dataIndex: 'creator', key: 'Tags' },
+  { title: '排班人员', dataIndex: 'tags', key: 'tags' },
   { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '400', scopedSlots: { customRender: 'action' } }
 ]
 
@@ -137,9 +137,9 @@ export default {
           this.title = data.map(el => ({
             label: el.current.name,
             currentCharger: el.current.staffName,
-            currentTime: `从${moment(el.current.startTime).format('YYYY-MM-DD hh:mm')}至${moment(el.current.endTime).format('YYYY-MM-DD hh:mm')}`,
+            currentTime: `${moment(el.current.startTime).format('YYYY-MM-DD hh:mm')}~${moment(el.current.endTime).format('YYYY-MM-DD hh:mm')}`,
             nextCharger: el.next.staffName,
-            nextTime: `从${moment(el.next.startTime).format('YYYY-MM-DD hh:mm')}至${moment(el.next.endTime).format('YYYY-MM-DD hh:mm')}`
+            nextTime: `${moment(el.next.startTime).format('YYYY-MM-DD hh:mm')}~${moment(el.next.endTime).format('YYYY-MM-DD hh:mm')}`
           }))
         } else {
           this.$notifyError(msg)

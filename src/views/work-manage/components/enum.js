@@ -16,14 +16,13 @@ export const dealObject = (clone) => {
     task: []
   }
   const obj = _.cloneDeep(clone)
-  console.log(obj)
   params.schedule.name = obj.name
   params.schedule.effectiveTime = obj.rangeTime[0].format('YYYY-MM-DD')
   params.schedule.expireTime = obj.rangeTime[1].format('YYYY-MM-DD')
   params.schedule.dataType = obj.sendType
   params.schedule.remarks = obj.plan
   obj.plan.map(el => {
-    for (let time = moment(params.schedule.effectiveTime); Number(obj.rangeTime[1].diff(time, 'day')) >= 0; time.add(1, 'day')) {
+    for (let time = moment(params.schedule.effectiveTime); Number(obj.rangeTime[1].diff(time, 'hour')) >= 0; time.add(1, 'day')) {
       if (obj.sendType === 'day') {
         params.task.push({
           startTime: time.format('YYYY-MM-DD') + ' ' + el.startTime.format('HH:mm'),
@@ -32,6 +31,7 @@ export const dealObject = (clone) => {
         })
       } else {
         if (el.weekNumber.includes(Number(time.format('d')))) {
+          console.log('range', obj.rangeTime[1].format('YYYY-MM-DD'), time.format('YYYY-MM-DD'), obj.rangeTime[1].diff(time, 'day'), obj.rangeTime[1].diff(time, 'hour'))
           params.task.push({
             startTime: time.format('YYYY-MM-DD') + ' ' + el.startTime.format('HH:mm'),
             endTime: time.format('YYYY-MM-DD') + ' ' + el.endTime.format('HH:mm'),

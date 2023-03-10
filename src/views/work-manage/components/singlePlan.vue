@@ -1,12 +1,39 @@
 <template>
   <div class="border">
     <a-row type="flex" justify="center">
-      <a-col :span="2">排班名称: {{ source.label }}</a-col>
-      <a-col :span="8">
-        <a-icon type="schedule" style="color: green"></a-icon>当前值班人员: {{ source.currentCharger }} ({{ source.currentTime }})
+      <a-col :span="2">
+        <a-tooltip>
+          <template slot="title">{{ source.label }}</template>
+          {{ source.label }}
+        </a-tooltip>
       </a-col>
       <a-col :span="10">
-        <a-icon type="schedule" style="color: red"></a-icon>下次值班人员: {{ source.nextCharger }} ({{ source.nextTime }})
+        <a-tooltip>
+          <template #title>当前值班人员</template>
+          <a-icon type="schedule" style="color: green"></a-icon>
+        </a-tooltip>
+        <a-tooltip>
+          <template #title>{{ source.currentCharger }}</template>
+          {{ source.currentCharger }}
+        </a-tooltip>
+        <a-tooltip>
+          <template slot="title">({{ source.currentTime }})</template>
+          ({{ source.currentTime }})
+        </a-tooltip>
+      </a-col>
+      <a-col :span="10">
+        <a-tooltip>
+          <template #title>下次值班人员</template>
+          <a-icon type="schedule" style="color: red"></a-icon>
+        </a-tooltip>
+        <a-tooltip>
+          <template #title>{{ source.nextCharger }}</template>
+          {{ source.nextCharger }}
+        </a-tooltip>
+        <a-tooltip>
+          <template slot="title">({{ source.nextTime }})</template>
+          ({{ source.nextTime }})
+        </a-tooltip>
       </a-col>
     </a-row>
   </div>

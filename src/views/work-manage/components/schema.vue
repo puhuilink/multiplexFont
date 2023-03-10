@@ -26,7 +26,7 @@
           </a-form-model-item>
           <a-divider />
           <a-collapse v-model="activeKey">
-            <a-collapse-panel key="1" header="设置排班时间＆排版人">
+            <a-collapse-panel key="1" header="设置排班时间＆排班人">
               <template #extra>
                 <a-form-model-item
                   prop="sendType"
@@ -312,20 +312,19 @@ export default {
       this.formData.plan.splice(index, 1)
     },
     frontTime (time, change, index) {
-      if (this.formData.plan[index].endTime !== '' && moment(this.formData.plan[index].endTime).diff(time, 'second') < 0) {
-        this.$message.warning('开始时间低于结束时间，请重新填写')
+      if (this.formData.plan[index].endTime !== '' && moment(this.formData.plan[index].endTime).diff(time, 'second') <= 0) {
+        this.$message.warning('开始时间超过结束时间，请重新填写')
         this.formData.plan[index].startTime = ''
       }
     },
     backTime (time, change, index) {
-      if (this.formData.plan[index].startTime !== '' && time.diff(moment(this.formData.plan[index].startTime), 'second') < 0) {
-        this.$message.warning('结束时间超过开始时间，请重新填写')
+      if (this.formData.plan[index].startTime !== '' && time.diff(moment(this.formData.plan[index].startTime), 'second') <= 0) {
+        this.$message.warning('结束时间低于开始时间，请重新填写')
         this.formData.plan[index].endTime = ''
       }
     },
     checkAccount (value, index) {
       this.formData.plan.map(el => el.account)
-      console.log(index, this.formData.plan.map(el => el.account), value)
       if (checkDuplicate(this.formData.plan.map(el => el.account), value)) {
         this.$message.warning('排版人已存在，请重新填写')
         this.formData.plan[index].account = null
