@@ -410,7 +410,13 @@ export default {
     sourcePass (rule, value, callback) {
       let flag = false
       value.forEach(v => {
+        if (flag) {
+          return false
+        }
         v.group_condition.forEach(condition => {
+          if (flag) {
+            return false
+          }
           flag = condition.condition_name === '' || condition.condition_symbol === '' || condition.condition_value === ''
         })
       })
@@ -423,6 +429,9 @@ export default {
     accountPass (rule, value, callback) {
       let flag = false
       value.forEach(v => {
+        if (flag) {
+          return false
+        }
         if (v.policy_account === '') {
           flag = true
         } else {

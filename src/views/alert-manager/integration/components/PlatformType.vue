@@ -14,19 +14,33 @@
         @ok="handleOk"
         @cancel="closeModal"
       >
-        <a-form-model :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="接入平台标识">
+        <a-form-model ref="ruleForm" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item
+            label="接入平台标识"
+            :rules="[{ required: true, message: '请上传图片！', trigger: 'change' }]"
+            prop="file">
             <a-input style="width: 80%" v-model="formState.file" disabled/>
             <a-upload :file-list="fileList" @change="handleUploadChange" :before-upload="()=>false" :remove="handleRemove" ><a-button style="margin-left:5px "> <a-icon type="upload"/>上传</a-button></a-upload>
           </a-form-model-item>
-          <a-form-model-item label="接入平台名称">
+          <a-form-model-item
+            label="接入平台名称"
+            :rules="[{ required: true, message: '请输入接入平台名称！', trigger: 'change' }]"
+            prop="name">
             <a-input v-model="formState.name" />
           </a-form-model-item>
           <a-form-model-item label="接入平台描述">
             <a-textarea v-model="formState.remark" />
           </a-form-model-item>
-          <a-form-model-item label="监控级别对应关系">
-            <a-table :columns="mappingColumns" :data-source="formState.levelRelation" bordered>
+          <a-form-model-item
+            label="监控级别对应关系"
+            :rules="[{ required: true, validator: relationPass, trigger: 'change' }]"
+            prop="levelRelation">
+            <a-table
+              :columns="mappingColumns"
+              :data-source="formState.levelRelation"
+              :pagination="false"
+              bordered
+              :row-key="(record)=>record.key">
               <template
                 v-for="col in ['P1', 'P2']"
                 :slot="col"
@@ -95,13 +109,7 @@ const original = {
   file: '',
   name: '',
   remark: '',
-  levelRelation: [
-    {
-      P1: 'p1',
-      P2: '1',
-      key: Math.random().toString()
-    }
-  ]
+  levelRelation: []
 }
 export default {
   name: 'PlatformType',
@@ -122,7 +130,6 @@ export default {
       confirmLoading: false,
       formState: _.cloneDeep(original),
       labelCol: { span: 6 },
-      cacheData: _.cloneDeep(original).levelRelation.map(item => ({ ...item })),
       wrapperCol: { span: 12 },
       fileList: [],
       titleMap: {
@@ -134,6 +141,20 @@ export default {
     }
   },
   methods: {
+    relationPass (rule, value, callback) {
+      let flag = value.length < 1
+      value.forEach(va => {
+        if (flag) {
+          return false
+        }
+        flag = va.P1 === '' || va.P2 === ''
+      })
+      if (flag) {
+        callback(new Error('请检查您填写的监控级别对应关系！'))
+      } else {
+        callback()
+      }
+    },
     handleRemove (file) {
       const index = this.fileList.indexOf(file)
       const newFileList = this.fileList.slice()
@@ -158,19 +179,32 @@ export default {
         {
           P1: '等级',
           P2: '值',
-          key: (Math.random() * this.formState.levelRelation.length).toString()
+          key: (Math.random() * this.formState.levelRelation.length + 1).toString()
         }
       )
       this.$forceUpdate()
     },
     removeOne (index) {
-      if (this.editingKey !== '' || this.formState.levelRelation.length < 2) {
+      // console.log(this.editingKey)
+      if (this.editingKey !== '' && this.editingKey) {
         return
       }
+      // console.log('prv', this.formState.levelRelation)
       this.formState.levelRelation.splice(index, 1)
+      // console.log('suf', this.formState.levelRelation)
       this.$forceUpdate()
     },
     async handleOk () {
+      let flag = false
+      this.$refs.ruleForm.validate(valid => {
+        if (!valid) {
+          this.$message.error('请检查您的表单项是否都填写完毕！')
+          flag = true
+        }
+      })
+      if (flag) {
+        return
+      }
       this.confirmLoading = true
       const formData = new FormData()
       const relation = {}
@@ -188,12 +222,10 @@ export default {
       try {
         res = await alarm.post('/api/integration/platform/add', formData)
       } catch (e) {
-        console.log(e)
         res = e.response.data
       } finally {
         this.confirmLoading = false
       }
-      console.log(res)
       if (res.code === 200) {
         this.$message.success('新建成功！')
       } else {
@@ -212,7 +244,6 @@ export default {
     edit (key) {
       const newData = [...this.formState.levelRelation]
       const target = newData.find(item => key === item.key)
-      console.log(target)
       this.editingKey = key
       if (target) {
         target.editable = true
@@ -221,11 +252,13 @@ export default {
       this.$forceUpdate()
     },
     save (key) {
+      console.log(key)
       const newData = [...this.formState.levelRelation]
       const newCacheData = [...this.cacheData]
       const target = newData.find(item => key === item.key)
-      console.log(target)
+      console.log('target', target)
       const targetCache = newCacheData.find(item => key === item.key)
+      console.log('cache', targetCache)
       if (target && targetCache) {
         delete target.editable
         this.formState.levelRelation = newData
@@ -237,7 +270,6 @@ export default {
     cancel (key) {
       const newData = [...this.formState.levelRelation]
       const target = newData.find(item => key === item.key)
-      console.log(target)
       this.editingKey = ''
       if (target) {
         Object.assign(target, this.cacheData.find(item => key === item.key))
@@ -247,21 +279,27 @@ export default {
     }
   },
   computed: {
+    cacheData () {
+      return this.formState.levelRelation.map(item => ({ ...item }))
+    },
     mappingColumns () {
       return [
         {
           title: this.formState.name,
           dataIndex: 'P2',
+          width: '30%',
           scopedSlots: { customRender: 'P2' }
         },
         {
           title: '统一监控平台',
           dataIndex: 'P1',
+          width: '30%',
           scopedSlots: { customRender: 'P1' }
         },
         {
           title: '操作',
           width: '120px',
+          align: 'center',
           scopedSlots: { customRender: 'operation' }
         }
       ]

@@ -6,83 +6,85 @@
       <a-step :key="'mapping'" title="关系映射" />
     </a-steps>
     <div class="steps-content">
-      <a-form
+      <a-form-model
         v-if="current === 0"
         :label-col="{ span: 4 }"
         :model="formState"
         :wrapper-col="{ span: 20 }"
         autocomplete="off"
-        name="basic"
+        ref="ruleForm"
         style="margin-top: 30px"
         @finish="onFinish"
         @finishFailed="onFinishFailed"
       >
-        <a-form-item
-          :rules="[{ required: true, message: '请输入告警源名称！' }]"
+        <a-form-model-item
+          :rules="[{ required: true, message: '请输入告警源名称！', trigger: 'change' }]"
           label="告警源名称"
-          name="username"
+          prop="name"
         >
           <a-input v-model="formState.name" style="width: 200px" />
-        </a-form-item>
-        <a-form-item
-          :rules="[{ required: true, message: '请输入告警源IP！' }]"
+        </a-form-model-item>
+        <a-form-model-item
+          :rules="[{ required: true, message: '请输入告警源IP！', trigger: 'change' }]"
           label="告警源IP"
-          name="username"
+          prop="ip"
         >
           <a-input v-model="formState.ip" style="width: 200px" />
-        </a-form-item>
+        </a-form-model-item>
 
-        <a-form-item
-          :rules="[{ required: true, message: '请输入告警源端口！' }]"
+        <a-form-model-item
+          :rules="[{ required: true, message: '请输入告警源端口！', trigger: 'change' }]"
           label="告警源端口"
-          name="port"
+          prop="port"
         >
           <a-input-number v-model="formState.port" style="width: 200px" />
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           extra="针对未关闭的告警，以监控工具最后一次发出告警事件为准，如果设定的时间内未进行手动关闭告警，系统将自动为您关闭告警；自定义区间范围：0-1440分钟，0表示永不关闭，1440分钟即为24小时。"
           label="自动关闭"
-          name="password"
+          :rules="[{ required: formState.autoClose, message: '请配置自动关闭时间！', trigger: 'change' }]"
+          prop="autoCloseInterval"
         >
           <a-input-number v-show="formState.autoClose" v-model="formState.autoCloseInterval" style="width: 100px">
           </a-input-number>
           <span v-show="formState.autoClose">分钟后自动关闭</span>
           <a-switch :checked="formState.autoClose" @change="onAutoCloseChange"/>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
           label="开启自动去重"
-          name="dedup"
         >
           <a-switch :checked="formState.autoGroup" @change="onDedupChange"/>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
           label="开启认领"
-          name="reclaim"
+          :rules="[{ required: formState.claim, message: '请配置认领级别！', trigger: 'change' }]"
+          prop="claimLevel"
         >
           <a-select v-show="formState.claim" v-model="formState.claimLevel" style="width: 200px" :options="options">
           </a-select>
           <a-switch :checked="formState.claim" @change="onReclaimChange"/>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           extra="默认关闭，开启后需要配置监控时长，间隔时间内没有告警接入，将提醒选择的用户。时间范围：1~24小时，建议设置5小时以上更为合适"
           label="开启自监控"
-          name="self"
+          :rules="[{ required: formState.monitor, message: '请配置监控时长！', trigger: 'change' }]"
+          prop="monitorInterval"
         >
           <a-input-number v-show="formState.monitor" v-model="formState.monitorInterval" style="width: 180px">
           </a-input-number>
           <span v-show="formState.monitor">小时</span>
           <a-switch :checked="formState.monitor" @change="onSelfChange"/>
-        </a-form-item>
-        <a-form-item
-          :rules="[{ required: true, message: '请输入告警源URL！' }]"
+        </a-form-model-item>
+        <a-form-model-item
+          :rules="[{ required: true, message: '请输入告警源URL！', trigger: 'change' }]"
           label="告警URL"
-          name="url"
+          prop="url"
         >
           <a-input v-model="formState.url" style="width: 300px" />
-        </a-form-item>
-      </a-form>
+        </a-form-model-item>
+      </a-form-model>
       <div class="jsonContent" v-if="current === 1">
         <div class="originalJson">
           <h3>请输入JSON数据</h3>
@@ -97,7 +99,7 @@
         </div>
       </div>
       <div class="jsonMapping" v-if="current === 2">
-        <a-form
+        <a-form-model
           :label-col="{ span: 4 }"
           :model="mappingForm"
           :wrapper-col="{ span: 20 }"
@@ -105,14 +107,14 @@
           name="basic"
           style="margin-top: 30px"
         >
-          <a-form-item
+          <a-form-model-item
             v-for="(item,index) in Object.keys(mappingForm)"
             :label="mappingTitle[index]"
             :key="index"
           >
             <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions"/>
-          </a-form-item>
-        </a-form>
+          </a-form-model-item>
+        </a-form-model>
       </div>
     </div>
     <div class="steps-action">
@@ -138,16 +140,6 @@
 
 import { alarm } from '@/utils/request'
 
-const typeObj = {
-  'uniqueKey': 'string',
-  'device': 'string',
-  'title': 'string',
-  'content': 'string',
-  'level': 'string',
-  'startTime': 'struct',
-  'lastTime': 'struct',
-  'deviceType': 'string'
-}
 export default {
   name: 'AlertSourceForm',
   components: {},
@@ -163,6 +155,16 @@ export default {
   },
   data () {
     return {
+      typeObj: {
+        'uniqueKey': 'string',
+        'device': 'string',
+        'title': 'string',
+        'content': 'string',
+        'level': 'string',
+        'startTime': 'struct',
+        'lastTime': 'struct',
+        'deviceType': 'string'
+      },
       formState: {
         name: '',
         ip: '',
@@ -214,14 +216,15 @@ export default {
       },
       jb: null,
       mappingTitle: [
-        'uniqueKey',
-        'level',
-        'content',
-        'title',
-        'device',
-        'startTime',
-        'lastTime',
-        'deviceType'
+        '标识唯一值',
+        '告警设备',
+        '告警标题',
+        '告警内容',
+        '事件Id',
+        '告警级别',
+        '开始报警时间',
+        '最近报警时间',
+        '设备类别'
       ]
     }
   },
@@ -248,18 +251,18 @@ export default {
       })
     },
     next () {
-      const judgeColumns = ['name', 'ip', 'port', 'url']
-      let isEmpty = false
-      judgeColumns.forEach(c => {
-        if (this.formState[c] === null || this.formState[c] === undefined || this.formState[c] === '') {
-          isEmpty = true
+      if (this.current === 0) {
+        let flag = false
+        this.$refs.ruleForm.validate(valid => {
+          if (!valid) {
+            this.$message.error('请检查您的表单项是否都填写完毕！')
+            flag = true
+          }
+        })
+        if (flag) {
+          return
         }
-      })
-      if (this.current === 0 && isEmpty) {
-        this.$message.warn('有输入项未填！请检查您的操作是否有误！')
-        return
-      }
-      if (this.current === 1 && this.data.length < 1) {
+      } else if (this.current === 1 && this.data.length < 1) {
         this.$message.warn('解析结果为空！请检查您的操作是否有误！')
         return
       }
@@ -304,14 +307,14 @@ export default {
             alertMapping.push({
               'sourceField': this.mappingForm[m],
               'targetField': m,
-              'targetType': typeObj[m],
+              'targetType': this.typeObj[m],
               remark: this.jb[this.mappingForm[m]]
             })
           } else {
             alertMapping.push({
               'sourceField': this.mappingForm[m],
               'targetField': m,
-              'targetType': typeObj[m]
+              'targetType': this.typeObj[m]
             })
           }
         }
@@ -344,11 +347,26 @@ export default {
         this.$message.error(e.response.data.msg)
       }
     },
+    async getMappingData () {
+      try {
+        const { data } = await alarm.get('/api/integration/source/preadd')
+        const Obj = {}
+        const form = {}
+        data.forEach(d => {
+          Obj[d.fieldName] = d.fieldType
+          form[d.fieldName] = ''
+        })
+        this.typeObj = Obj
+        this.mappingForm = form
+      } catch (e) {
+        this.$message.error(e.response.data.msg)
+      }
+    },
     initialData () {
       if (this.record && this.record !== {}) {
         this.formState = { ...this.record }
       }
-      console.log(this.formState)
+      this.getMappingData()
     }
   },
   computed: {

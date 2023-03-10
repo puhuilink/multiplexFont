@@ -11,11 +11,11 @@
         @cancel="closeModal"
         @close="closeModal"
       >
-        <a-form-model :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+        <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-model-item
             label="告警状态"
             :prop="`alertStatusType`"
-            :rules="[{ required: true, message: '告警状态必填', trigger: 'change' }]">
+            :rules="[{ type:'array',required: true, message: '告警状态必填', trigger: 'change' }]">
             <a-checkbox :checked="statusChecked('1')" @change="changeAlertStatusType('1')" >
               发生时
             </a-checkbox>
@@ -28,8 +28,8 @@
           </a-form-model-item>
           <a-form-model-item
             label="通知方式"
-            :rules="[{ required: true, message: '通知方式必填', trigger: 'change' }]"
-            :prop="`notifyWay.length`">
+            :rules="[{ type:'array',required: true, message: '通知方式必填', trigger: 'change' }]"
+            :prop="`notifyWay`">
             <a-checkbox :checked="notifyWayChecked('0')" @change="changeNotifyWay('0')">
               短信
             </a-checkbox>
@@ -65,7 +65,8 @@
           <a-form-model-item
             label="通知对象"
             style="display: flex;justify-content: space-between"
-            :rules="[{ required: true, message: '通知对象必选', trigger: 'change' }]"
+            :rules="[{ validator: notifyAccountPass, trigger: 'change' }]"
+            prop="notifyStaffType"
           >
             <a-select
               v-model="formState.notifyStaffType"
@@ -134,6 +135,7 @@
             label="通知对象"
             style="display: flex;justify-content: space-between"
             :rules="[{ required: true, trigger: 'change' }]"
+            prop="notifyStaffType"
           >
             <a-select
               v-model="updateFormState.notifyStaffType"
@@ -406,6 +408,14 @@ export default {
     DetailSchema
   },
   methods: {
+    notifyAccountPass (rule, value, callback) {
+      const flag = value === '1' ? this.userId === '' : this.groupId === ''
+      if (flag) {
+        callback(new Error('必须选择通知对象！'))
+      } else {
+        callback()
+      }
+    },
     async saveTimeUpdate () {
       this.watchFlag = true
       const {
@@ -572,16 +582,14 @@ export default {
       this.$forceUpdate()
     },
     async handleOk () {
-      if (!this.formState.alertStatusType.length) {
-        this.$message.warn('必须选择告警状态！')
-        return
-      }
-      if (this.formState.notifyWay.length < 1) {
-        this.$message.warn('必须选择通知方式！')
-        return
-      }
-      if (this.userId === '' && this.groupId === '') {
-        this.$message.warn('必须选择通知对象！')
+      let flag = false
+      this.$refs.ruleForm.validate(valid => {
+        if (!valid) {
+          this.$message.error('请检查您的表单项是否都填写完毕！')
+          flag = true
+        }
+      })
+      if (flag) {
         return
       }
       const backup = _.cloneDeep(this.formState)
