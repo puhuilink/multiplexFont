@@ -172,7 +172,7 @@
                 {
                   rules: [
                     {
-                      require: true,
+                      required: true,
                       message: '交建通信息必填'
                     },
                     {
