@@ -31,6 +31,7 @@
                 <a-form-model-item
                   prop="sendType"
                   :rules="[{ required: true, message: '排班方式必填', trigger: 'blur' }]"
+                  style="margin-top: -8px"
                 >
                   <a-radio-group v-model="formData.sendType" @change="changeSendWay">
                     <a-radio value="day">天</a-radio>
@@ -368,6 +369,8 @@ export default {
       } else {
         this.formData.plan = deletePropertyFromArrayObjects(this.formData.plan, 'weekNumber')
       }
+      this.activeKey.push('1')
+      this.activeKey = _.uniq(this.activeKey)
     },
     reset () {
       this.$refs.form.resetFields()

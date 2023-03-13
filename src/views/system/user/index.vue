@@ -121,6 +121,11 @@ export default {
         sorter: true
       },
       {
+        title: '交建通',
+        dataIndex: 'jjt',
+        width: 200
+      },
+      {
         title: '有效标志',
         dataIndex: 'flag',
         width: 90,

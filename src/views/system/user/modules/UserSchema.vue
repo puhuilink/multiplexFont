@@ -160,28 +160,31 @@
           </a-form-item>
         </a-col>
 
-        <!--       接入交建通&ndash;&gt;-->
-        <!--        <a-col :md="12" :span="24">-->
-        <!--          <a-form-item-->
-        <!--            label="交建通"-->
-        <!--            v-bind="formItemLayout"-->
-        <!--          >-->
-        <!--            <a-input-->
-        <!--              v-decorator="[-->
-        <!--                'jjt',-->
-        <!--                {-->
-        <!--                  rules: [-->
-        <!--                    // {-->
-        <!--                    {-->
-        <!--                      max: 32,-->
-        <!--                      message: '最多输入32个字符'-->
-        <!--                    }-->
-        <!--                  ]-->
-        <!--                }-->
-        <!--              ]"-->
-        <!--            />-->
-        <!--          </a-form-item>-->
-        <!--        </a-col>-->
+        <!--               接入交建通&ndash;&gt;-->
+        <a-col :md="12" :span="24">
+          <a-form-item
+            label="交建通"
+            v-bind="formItemLayout"
+          >
+            <a-input
+              v-decorator="[
+                'jjt',
+                {
+                  rules: [
+                    {
+                      require: true,
+                      message: '交建通信息必填'
+                    },
+                    {
+                      max: 32,
+                      message: '最多输入32个字符'
+                    }
+                  ]
+                }
+              ]"
+            />
+          </a-form-item>
+        </a-col>
 
         <a-col :md="12" :span="24">
           <a-form-item
@@ -204,9 +207,7 @@
             />
           </a-form-item>
         </a-col>
-      </a-row>
 
-      <a-row>
         <a-col :md="12" :span="24">
           <a-form-item
             label="有效标志"
