@@ -104,13 +104,15 @@
           :model="mappingForm"
           :wrapper-col="{ span: 20 }"
           autocomplete="off"
-          name="basic"
+          ref="basic"
           style="margin-top: 30px"
         >
           <a-form-model-item
             v-for="(item,index) in Object.keys(mappingForm)"
             :label="mappingTitle[index]"
             :key="index"
+            :rules="[{ required: item === 'uniqueKey' || item === 'event_id', message: '该项必须配置！', trigger: 'change' }]"
+            :prop="item"
           >
             <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions"/>
           </a-form-model-item>
@@ -215,6 +217,15 @@ export default {
         deviceType: ''
       },
       jb: null,
+      titleMapping: {
+        'uniqueKey': '唯一标识符',
+        'device': '告警设备',
+        'title': '告警标题',
+        'content': '告警内容',
+        'level': '告警级别',
+        'event_id': '事件id',
+        'device_type': '设备类别'
+      },
       mappingTitle: [
         '标识唯一值',
         '告警设备',
@@ -295,9 +306,14 @@ export default {
       // console.log('Failed:', flag)
     },
     async onSubmit () {
-      const uk = this.mappingForm.uniqueKey
-      if (uk === null || uk === '') {
-        this.$message.warn('唯一标识符必须匹配！')
+      let flag = false
+      this.$refs.basic.validate(valid => {
+        if (!valid) {
+          this.$message.error('请检查您的表单项是否都填写完毕！')
+          flag = true
+        }
+      })
+      if (flag) {
         return
       }
       const alertMapping = []
@@ -352,12 +368,15 @@ export default {
         const { data } = await alarm.get('/api/integration/source/preadd')
         const Obj = {}
         const form = {}
+        const titles = []
         data.forEach(d => {
           Obj[d.fieldName] = d.fieldType
           form[d.fieldName] = ''
+          titles.push(this.titleMapping[d.fieldName])
         })
         this.typeObj = Obj
         this.mappingForm = form
+        this.mappingTitle = titles
       } catch (e) {
         this.$message.error(e.response.data.msg)
       }
