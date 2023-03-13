@@ -428,6 +428,7 @@ export default {
     },
     accountPass (rule, value, callback) {
       let flag = false
+      const that = this
       value.forEach(v => {
         if (flag) {
           return false
@@ -435,7 +436,7 @@ export default {
         if (v.policy_account === '') {
           flag = true
         } else {
-          flag = v.policy_account === '1' ? v.account_id === '' : v.group_id === ''
+          flag = v.policy_account === '1' ? that.account_id === '' : that.group_id === ''
         }
       })
       if (flag) {
