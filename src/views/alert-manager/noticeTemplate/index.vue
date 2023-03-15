@@ -73,6 +73,7 @@ import { TEMP_UNION_MAPPING } from '@/tables/alarm_temp/types'
 import TempEditor from '@/components/Temp/PurposeTemp'
 import { alarm } from '@/utils/request'
 import _ from 'lodash'
+import { judgeRoleToAlertView } from '@/utils/util'
 const columns = [{
   title: '标签名',
   dataIndex: 'label'
@@ -214,6 +215,7 @@ export default {
     }
   },
   mounted () {
+    judgeRoleToAlertView()
     this.fetch()
   }
 }

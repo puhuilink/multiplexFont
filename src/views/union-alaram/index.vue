@@ -126,6 +126,7 @@ import { alarm } from '@/utils/request'
 import moment from 'moment'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
+import { judgeRoleToAlertView } from '@/utils/util'
 
 const columns = [
   {
@@ -390,6 +391,7 @@ export default {
     }
   },
   created () {
+    judgeRoleToAlertView()
     this.query()
   }
 }

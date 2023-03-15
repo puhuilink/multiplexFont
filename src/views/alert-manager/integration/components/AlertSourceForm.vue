@@ -84,6 +84,14 @@
         >
           <a-input v-model="formState.url" style="width: 300px" />
         </a-form-model-item>
+        <a-form-model-item
+          v-if="isAdmin"
+          :rules="[{ required: isAdmin, message: '请选择通知组！', trigger: 'change' }]"
+          label="通知组"
+          prop="groupId"
+        >
+          <a-select v-model="formState.groupId" style="width: 200px" :options="groupData"/>
+        </a-form-model-item>
       </a-form-model>
       <div class="jsonContent" v-if="current === 1">
         <div class="originalJson">
@@ -139,7 +147,7 @@
 </template>
 
 <script>
-
+import store from '@/store/index'
 import { alarm } from '@/utils/request'
 
 export default {
@@ -168,6 +176,7 @@ export default {
         'deviceType': 'string'
       },
       formState: {
+        groupId: '',
         name: '',
         ip: '',
         port: 3000,
@@ -217,6 +226,7 @@ export default {
         deviceType: ''
       },
       jb: null,
+      isAdmin: false,
       titleMapping: {
         'uniqueKey': '唯一标识符',
         'device': '告警设备',
@@ -236,7 +246,8 @@ export default {
         '开始报警时间',
         '最近报警时间',
         '设备类别'
-      ]
+      ],
+      groupData: []
     }
   },
   methods: {
@@ -381,11 +392,29 @@ export default {
         this.$message.error(e.response.data.msg)
       }
     },
+    async getGroupData () {
+      try {
+        const { data } = await alarm.get('/api/configuration/group/getUnbindSourceGroup')
+        const arr = []
+        data.forEach(d => {
+          arr.push({
+            label: d.groupName,
+            value: d.groupId
+          })
+        })
+        this.groupData = arr
+      } catch (e) {
+        this.$message.error(e.response.data.msg)
+      }
+    },
     initialData () {
+      const user = store.getters.userId
+      this.isAdmin = user === 'administrator'
       if (this.record && this.record !== {}) {
         this.formState = { ...this.record }
       }
       this.getMappingData()
+      this.getGroupData()
     }
   },
   computed: {

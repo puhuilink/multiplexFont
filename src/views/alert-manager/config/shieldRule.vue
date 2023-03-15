@@ -100,6 +100,7 @@ import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
 import _ from 'lodash'
+import { judgeRoleToAlertView } from '@/utils/util'
 
 const columns = [
   {
@@ -391,6 +392,9 @@ export default {
     hasSelected () {
       return this.selectedRowKeys.length > 0
     }
+  },
+  mounted () {
+    judgeRoleToAlertView()
   }
 }
 </script>

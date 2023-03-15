@@ -19,7 +19,7 @@
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
         <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
-          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
+          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange" :disabled="!isAdmin"/>
         </a-form-model-item>
         <a-form-model-item label="分派条件" :rules="[{ type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
           <div style="">
@@ -234,6 +234,7 @@ import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
 import { alarm } from '@/utils/request'
+import { judgeRoleToAlertView } from '@/utils/util'
 
 const columns = [
   {
@@ -362,7 +363,8 @@ export default {
         { label: '且', value: '0' }
       ],
       formState: _.cloneDeep(originalData),
-      watchForm: _.cloneDeep(originalData)
+      watchForm: _.cloneDeep(originalData),
+      isAdmin: false
     }
   },
   mixins: [List],
@@ -481,6 +483,8 @@ export default {
       this.conditions[Number(condition_type) - 1] = arr
     },
     openModal (record) {
+      const user = store.getters.userId
+      this.isAdmin = user === 'administrator'
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = { ..._.cloneDeep(record) }
@@ -495,6 +499,7 @@ export default {
           })
         })
       } else {
+        setTimeout(() => { this.sourceChange(this.alertSource[0]) }, 1000)
         this.updateFlag = false
       }
       this.visible = true
@@ -557,6 +562,9 @@ export default {
       )
     },
     sourceChange (e) {
+      if (!e) {
+        this.$message.error('找不到正确的告警源！')
+      }
       this.formState.source_id = e.key
       this.formState.source_name = e.label
       // console.log('111')
@@ -687,6 +695,7 @@ export default {
     }
   },
   mounted () {
+    judgeRoleToAlertView()
     this.fetchList()
     this.fetchSource()
     this.fetchGroup()

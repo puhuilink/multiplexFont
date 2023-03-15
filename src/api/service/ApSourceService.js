@@ -40,7 +40,7 @@ class ApSourceService extends BaseService {
     const list = []
     data.forEach(d => {
       list.push({
-        id: d.SourceId,
+        id: d.sourceId,
         name: d.sourceName
       })
     })

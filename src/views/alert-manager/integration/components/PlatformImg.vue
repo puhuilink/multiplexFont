@@ -40,10 +40,9 @@ export default {
     async toCreateAlertSource (id) {
       let pp
       try {
-        const { data } = await alarm.post('/api/integration/platform/find', { platformId: id })
+        const { data } = await alarm.post('/api/integration/platform/display', { platformId: id })
         pp = data
       } catch (e) {
-        console.log(e)
         this.$message.error('请求失败！请检查网络连接！')
         return
       }

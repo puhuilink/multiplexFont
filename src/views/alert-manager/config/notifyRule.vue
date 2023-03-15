@@ -98,8 +98,8 @@
             :rules="[{ required: true, trigger: 'change' }]"
           >
             <a-select style="width: 200px" v-model="updateFormState.alertStatusType" >
-              <a-select-option :value="'0'">发生时</a-select-option>
-              <a-select-option :value="'1'">关闭时</a-select-option>
+              <a-select-option :value="'1'">发生时</a-select-option>
+              <a-select-option :value="'0'">关闭时</a-select-option>
               <a-select-option :value="'2'">任何情况</a-select-option>
             </a-select>
           </a-form-model-item>
@@ -254,6 +254,7 @@ import { alarm } from '@/utils/request'
 import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import { decrypt, encrypt } from '@/utils/aes'
+import { judgeRoleToAlertView } from '@/utils/util'
 
 const innerColumns = [
   { title: '序号', scopedSlots: { customRender: 'No' } },
@@ -529,7 +530,6 @@ export default {
       }
     },
     isSelectedEntity (data, arr) {
-      console.log(data)
       const isin = arr.indexOf(data)
       if (isin === -1) {
         arr.push(data)
@@ -755,6 +755,7 @@ export default {
     }
   },
   mounted () {
+    judgeRoleToAlertView()
     this.fetchNotifyList()
     this.fetchWorkTime()
     this.fetchUser()

@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import scrollTo from 'ant-design-vue/lib/_util/scrollTo'
+import { alarm } from '@/utils/request'
+import { decrypt } from '@/utils/aes'
 
 export {
   scrollTo
@@ -15,6 +17,17 @@ export function welcome () {
   const arr = ['欢迎词', '欢迎词', '欢迎词', '欢迎词']
   const index = Math.floor(Math.random() * arr.length)
   return arr[index]
+}
+export async function judgeRoleToAlertView () {
+  try {
+    const { data } = await alarm.get('/api/authentication/auth/get')
+    const deData = decrypt(data)
+    if (deData === '2') {
+      await this.$router.push('/600')
+    }
+  } catch (e) {
+    await this.$router.push('/600')
+  }
 }
 export function sqlResultDealer (list) {
   if (list == null) {

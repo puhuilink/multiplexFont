@@ -766,10 +766,21 @@ export const constantRouterMap = [
       id: decrypt(route.params.id)
     })
   },
-
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+  },
+  {
+    path: '/403',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403')
+  },
+  {
+    path: '/500',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500')
+  },
+  {
+    path: '/600',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600')
   }
 
 ]
