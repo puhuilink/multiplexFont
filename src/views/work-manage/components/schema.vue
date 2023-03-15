@@ -155,7 +155,12 @@ import singleDate from '@/views/work-manage/components/singleDate'
 import { alarm } from '@/utils/request'
 import { dealObject, weekMap } from './enum.js'
 import _ from 'lodash'
-import { addPropertyToArrayObjects, checkDuplicate, deletePropertyFromArrayObjects } from '@/utils/util'
+import {
+  addPropertyToArrayObjects,
+  checkDuplicate,
+  deletePropertyFromArrayObjects,
+  judgeRoleToAlertView
+} from '@/utils/util'
 import uuid from 'uuid/v4'
 export default {
   name: 'Schema',
@@ -348,14 +353,14 @@ export default {
         if (this.formData.sendType === 'day') {
           this.formData.plan.map(el => {
             if (el.account !== null) {
-              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${el.startTime.format('hh:mm')}~${el.endTime.format('hh:mm')}` })
+              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${el.startTime.format('HH:mm')}~${el.endTime.format('HH:mm')}` })
             }
           })
         } else {
           this.formData.plan.map(el => {
             if (el.account !== null && el.weekNumber.includes(Number(value.format('d')))) {
               // console.log(el.weekNumber, Number(value.format('d')))
-              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${el.startTime.format('hh:mm')}~${el.endTime.format('hh:mm')}` })
+              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${el.startTime.format('HH:mm')}~${el.endTime.format('HH:mm')}` })
             }
           })
         }
@@ -376,6 +381,9 @@ export default {
       this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     }
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>

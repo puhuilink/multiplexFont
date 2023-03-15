@@ -69,6 +69,8 @@ import schema from './components/assignSchema'
 import GroupSchema from './components/groupSchema'
 import { NotificationGroupService } from '@/api/service/index'
 import _ from 'lodash'
+import { alarm } from '@/utils/request'
+import { decrypt } from '@/utils/aes'
 const columns = [
   {
     title: '通知组名称',
@@ -161,6 +163,17 @@ export default {
   },
   created () {
     this.fetch()
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

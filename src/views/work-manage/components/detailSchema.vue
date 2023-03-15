@@ -51,12 +51,12 @@ export default {
       const arr = []
       if (this.judgeTime(value, this.startTime, this.endTime)) {
         if (this.schedule.dataType === 'day') {
-          this.schedule.remarks.map(el => arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('hh:mm')}~${moment(el.endTime).format('hh:mm')}` }))
+          this.schedule.remarks.map(el => arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('HH:mm')}~${moment(el.endTime).format('HH:mm')}` }))
         } else {
           this.schedule.remarks.map(el => {
             if (el.weekNumber.includes(Number(value.format('d')))) {
               // console.log(el.weekNumber, Number(value.format('d')))
-              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('hh:mm')}~${moment(el.endTime).format('hh:mm')}` })
+              arr.push({ type: 'success', content: el.account.split('|||||||||')[0], title: `${moment(el.startTime).format('HH:mm')}~${moment(el.endTime).format('HH:mm')}` })
             }
           })
         }

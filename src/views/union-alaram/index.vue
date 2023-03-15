@@ -20,19 +20,19 @@
                 v-model="queryParams.level"
               >
                 <a-select-option value="1">
-                  P1
+                  L1
                 </a-select-option>
                 <a-select-option value="2">
-                  P2
+                  L2
                 </a-select-option>
                 <a-select-option value="3">
-                  P3
+                  L3
                 </a-select-option>
                 <a-select-option value="4">
-                  P4
+                  L4
                 </a-select-option>
                 <a-select-option value="5">
-                  P5
+                  L5
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -126,7 +126,7 @@ import { alarm } from '@/utils/request'
 import moment from 'moment'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
-import { judgeRoleToAlertView } from '@/utils/util'
+import { decrypt } from '@/utils/aes'
 
 const columns = [
   {
@@ -135,7 +135,7 @@ const columns = [
     key: 'level',
     width: 90,
     align: 'center',
-    customRender: record => `P${record}`
+    customRender: record => `L${record}`
   },
   {
     title: '告警标题',
@@ -391,8 +391,18 @@ export default {
     }
   },
   created () {
-    judgeRoleToAlertView()
     this.query()
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

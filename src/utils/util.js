@@ -22,11 +22,12 @@ export async function judgeRoleToAlertView () {
   try {
     const { data } = await alarm.get('/api/authentication/auth/get')
     const deData = decrypt(data)
+    console.log('ceshi', deData, typeof deData)
     if (deData === '2') {
-      await this.$router.push('/600')
+      await this.$router.push({ name: '600' })
     }
   } catch (e) {
-    await this.$router.push('/600')
+    await this.$router.push({ name: '600' })
   }
 }
 export function sqlResultDealer (list) {
@@ -393,4 +394,23 @@ export const addPropertyToArrayObjects = function (arr, prop, value) {
  */
 export const checkDuplicate = function (arr, val) {
   return arr.filter((x) => x === val).length > 1
+}
+
+/**
+ * 深克隆一个Map对象
+ * @param map
+ * @returns {Map<any, any>}
+ */
+export const cloneMap = function deepCloneMap (map) {
+  const clonedMap = new Map()
+
+  for (const [key, value] of map) {
+    if (typeof value === 'object' && value !== null) {
+      clonedMap.set(key, deepCloneMap(value))
+    } else {
+      clonedMap.set(key, value)
+    }
+  }
+
+  return clonedMap
 }

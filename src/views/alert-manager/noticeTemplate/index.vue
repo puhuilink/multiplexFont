@@ -23,7 +23,7 @@
               :init-btn="form.initBtn"
               :disabled="disabled"
               ref="mes"
-              :mapping="TEMP_UNION_MAPPING"></TempEditor>
+              :mapping="customize"></TempEditor>
           </a-form-model-item>
           <a-form-model-item prop="claimed">
             <span slot="label">
@@ -37,7 +37,7 @@
               :init-btn="form.initBtn"
               :disabled="disabled"
               ref="cli"
-              :mapping="TEMP_UNION_MAPPING"></TempEditor>
+              :mapping="claimed"></TempEditor>
           </a-form-model-item>
           <a-form-model-item prop="recovery">
             <span slot="label">
@@ -69,11 +69,12 @@
 
 <script>
 import { ALARMSTATUS, NOTICETYPE } from '@/tables/noticeTemp/enum'
-import { TEMP_UNION_MAPPING } from '@/tables/alarm_temp/types'
+import { TEMP_UNION_MAPPING, UNION_KEYWORD_ACK_TIME, UNION_KEYWORD_CLOSE_TIME } from '@/tables/alarm_temp/types'
 import TempEditor from '@/components/Temp/PurposeTemp'
 import { alarm } from '@/utils/request'
 import _ from 'lodash'
-import { judgeRoleToAlertView } from '@/utils/util'
+import { decrypt } from '@/utils/aes'
+import { cloneMap } from '@/utils/util'
 const columns = [{
   title: '标签名',
   dataIndex: 'label'
@@ -214,9 +215,32 @@ export default {
       this.disabled = false
     }
   },
+  computed: {
+    customize: function () {
+      const a = cloneMap(this.TEMP_UNION_MAPPING)
+      a.delete(UNION_KEYWORD_ACK_TIME)
+      a.delete(UNION_KEYWORD_CLOSE_TIME)
+      return a
+    },
+    claimed: function () {
+      const a = cloneMap(this.TEMP_UNION_MAPPING)
+      a.delete(UNION_KEYWORD_CLOSE_TIME)
+      return a
+    }
+  },
   mounted () {
-    judgeRoleToAlertView()
     this.fetch()
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

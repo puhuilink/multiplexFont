@@ -78,12 +78,12 @@ export const UNION_KEYWORD_LIST = [
   [UNION_KEYWORD_CONTENT, '告警内容'],
   [UNION_KEYWORD_OBJECT, '告警对象'],
   // [UNION_KEYWORD_APP_KEY, '接入应用KEY'],
-  [UNION_KEYWORD_SEND_TIME, '告警发送次数'],
+  // [UNION_KEYWORD_SEND_TIME, '告警发送次数'],
   [UNION_KEYWORD_LAST_TIME, '最后一次发生时间'],
   [UNION_KEYWORD_LEVEL, '告警级别'],
   [UNION_KEYWORD_STATUS, '告警状态'],
   [UNION_KEYWORD_MEMBERS, '已分配的成员'],
-  [UNION_KEYWORD_ACK_TIME, '确认时间'],
+  [UNION_KEYWORD_ACK_TIME, '认领时间'],
   [UNION_KEYWORD_CLOSE_TIME, '关闭时间']
   // [UNION_KEYWORD_ACK_ID, '确认ID']
 ]
