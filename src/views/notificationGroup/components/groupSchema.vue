@@ -32,7 +32,7 @@
         </a-col>
         <a-col :md="12" :span="24">
           <a-form-model-item
-            label="管理员"
+            label="组长"
             v-bind="formItemLayout"
             prop="group_admin"
           >
@@ -97,7 +97,7 @@ const rules = {
   group_admin: [
     {
       required: true,
-      message: '管理员必填',
+      message: '组长必填',
       trigger: 'change'
     }
   ],

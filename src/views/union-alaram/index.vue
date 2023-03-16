@@ -62,7 +62,13 @@
       </span>
     </a-form>
     <!--        导出-->
-    <a-button icon="export" :disabled="false" style="margin-bottom: 10px" type="primary">导出</a-button>
+<!--    <a-button-->
+<!--      @click="downLoad"-->
+<!--      icon="export"-->
+<!--      :disabled="false"-->
+<!--      style="margin-bottom: 10px"-->
+<!--      type="primary"-->
+<!--      :loading="exportLoading">导出</a-button>-->
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
@@ -127,6 +133,8 @@ import moment from 'moment'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
 import { decrypt } from '@/utils/aes'
+import { PatrolService } from '@/api'
+import { downloadExcel } from '@/utils/util'
 
 const columns = [
   {
@@ -180,6 +188,7 @@ export default {
   data () {
     return {
       loading: false,
+      exportLoading: false,
       state: ALARM_STATE.unSolved,
       ALARM_STATE,
       ALARM_QUERY_LABEL,
@@ -385,6 +394,26 @@ export default {
     },
     onClose () {
       this.visible = false
+    },
+    // 导出
+    async downLoad () {
+      try {
+        this.exportLoading = true
+        const data = await alarm.post('', this.queryParams)
+        downloadExcel('交接班记录', data)
+        this.$notification.success({
+          message: '系统提示',
+          description: '导出交接班记录成功'
+        })
+      } catch (e) {
+        this.$notification.error({
+          message: '系统提示',
+          description: h => h('p', { domProps: { innerHTML: `导出告警记录失败${e}` } })
+        })
+        throw e
+      } finally {
+        this.exportLoading = false
+      }
     }
   },
   computed: {
