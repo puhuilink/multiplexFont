@@ -157,7 +157,9 @@ const columns = [
     title: '告警时间',
     key: 'last_time',
     dataIndex: 'last_time',
-    customRender: (record) => moment(record).format('YYYY-MM-DD hh:mm:ss')
+    customRender: (record) => {
+      return moment(record).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   {
     title: '告警内容',
