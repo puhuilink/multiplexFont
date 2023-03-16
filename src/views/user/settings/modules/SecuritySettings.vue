@@ -24,7 +24,9 @@
           </template>
         </a-list-item>
       </template>
+      <schema ref="schema"></schema>
     </a-list>
+
   </a-spin>
 </template>
 
@@ -33,9 +35,13 @@ import { UserService } from '@/api'
 import { generateQuery } from '@/utils/graphql'
 import { mapGetters } from 'vuex'
 import { List } from '@/components/Mixins'
+import schema from './Schema'
 export default {
   name: 'SecuritySettings',
   mixins: [List],
+  components: {
+    schema
+  },
   data () {
     return {
       currentUserData: [
@@ -54,7 +60,10 @@ export default {
           value: '',
           actions: {
             title: '修改',
-            callback: () => { this.$message.info('功能正在开发中请等待...') }
+            callback: () => {
+              this.$message.info('功能正在开发中请等待...')
+              // this.reviseTele()
+            }
           }
         },
         {
@@ -65,9 +74,20 @@ export default {
             title: '修改',
             callback: () => { this.$message.info('功能正在开发中请等待...') }
           }
+        },
+        {
+          title: '交建通',
+          description: '已绑定交建通',
+          value: '',
+          actions: {
+            title: '修改',
+            callback: () => { this.$message.info('功能正在开发中请等待...') }
+          }
         }
       ],
-      loading: false
+      loading: false,
+      rule: [{ required: true, message: '排班条件必填' }],
+      field: 'mobile_phone'
     }
   },
   computed: {
@@ -84,20 +104,30 @@ export default {
         where: {
           ...generateQuery({ user_id: this.userId })
         },
-        fields: ['mobile_phone', 'email'],
+        fields: ['mobile_phone', 'email', 'jjt'],
         alias: 'userList'
       }).then((r) => {
         const [userInfo] = r.data.userList
         this.currentUserData[1].value = userInfo.mobile_phone
         this.currentUserData[2].value = userInfo.email
+        this.currentUserData[3].value = userInfo.jjt
       }).catch((e) => {
         this.currentUserData[1].value = ''
         this.currentUserData[2].value = ''
+        this.currentUserData[3].value = ''
         this.$notifyError(e)
         throw e
       }).finally(() => {
         this.loading = false
       })
+    },
+    /**
+     * 修改电话
+     */
+    reviseTele () {
+      this.rule = [{ required: true, message: '排班条件必填', trigger: 'blur' }]
+      this.field = 'mobile_phone'
+      this.$refs.schema.onTele()
     }
   },
   created () {

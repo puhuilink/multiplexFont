@@ -76,6 +76,7 @@ import schema from './components/schema'
 import detail from './components/detailSchema'
 import { alarm } from '@/utils/request'
 import moment from 'moment'
+import { decrypt } from '@/utils/aes'
 const format = 'YYYY-MM-DD hh:mm:ss'
 const columns = [
   { title: '排班名称', dataIndex: 'name', key: 'name' },
@@ -172,6 +173,17 @@ export default {
   },
   mounted () {
     this.fetch(this.pageSize, this.current)
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

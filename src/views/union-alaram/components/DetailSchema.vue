@@ -43,7 +43,7 @@
                   告警标题：{{ main.title }}
                 </a-col>
                 <a-col :span="8">
-                  告警级别：P{{ main.level }}
+                  告警级别：L{{ main.level }}
                 </a-col>
               </a-row>
               <a-row type="flex" justify="space-between">
@@ -77,7 +77,7 @@ const columns = [
   {
     title: '级别',
     dataIndex: 'level',
-    customRender: (text) => `P${text}`
+    customRender: (text) => `L${text}`
   },
   {
     title: '告警编号',
