@@ -695,7 +695,6 @@ export default {
     }
   },
   mounted () {
-    judgeRoleToAlertView()
     this.fetchList()
     this.fetchSource()
     this.fetchGroup()
@@ -703,6 +702,9 @@ export default {
     this.fetchCondition('1')
     this.fetchCondition('2')
     this.fetchCondition('3')
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>

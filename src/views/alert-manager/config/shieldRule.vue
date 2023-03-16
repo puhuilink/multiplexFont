@@ -393,7 +393,7 @@ export default {
       return this.selectedRowKeys.length > 0
     }
   },
-  mounted () {
+  beforeCreate () {
     judgeRoleToAlertView()
   }
 }

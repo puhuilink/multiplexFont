@@ -215,8 +215,10 @@ export default {
     }
   },
   mounted () {
-    judgeRoleToAlertView()
     this.fetch()
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>

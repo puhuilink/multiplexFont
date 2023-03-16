@@ -755,11 +755,13 @@ export default {
     }
   },
   mounted () {
-    judgeRoleToAlertView()
     this.fetchNotifyList()
     this.fetchWorkTime()
     this.fetchUser()
     this.fetchGroup()
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>

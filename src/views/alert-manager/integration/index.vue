@@ -60,8 +60,10 @@ export default {
   // TODO 将style样式全写在下边 以class的形式
   },
   mounted () {
-    judgeRoleToAlertView()
     this.requestPlatformList()
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>

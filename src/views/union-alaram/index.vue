@@ -391,8 +391,10 @@ export default {
     }
   },
   created () {
-    judgeRoleToAlertView()
     this.query()
+  },
+  beforeCreate () {
+    judgeRoleToAlertView()
   }
 }
 </script>
