@@ -393,6 +393,9 @@ export default {
       }
     },
     async getGroupData () {
+      if (!this.isAdmin) {
+        return
+      }
       try {
         const { data } = await alarm.get('/api/configuration/group/getUnbindSourceGroup')
         const arr = []
