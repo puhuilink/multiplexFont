@@ -357,7 +357,7 @@ export const asyncRouterMap = [
         hidden: false,
         component: RouteView,
         redirect: '/alertManagerPlatform/config',
-        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F002002'] },
+        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F013'] },
         children: [
           // {
           //   path: '/alarm/profile',
@@ -366,63 +366,12 @@ export const asyncRouterMap = [
           //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
           // },
           {
-            path: '/alertManagerPlatform/config',
-            name: 'AlertConfig',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/config/deliver',
-            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F002002'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/config/deliver',
-                name: 'Deliver',
-                component: () => import('@/views/alert-manager/config/index'),
-                meta: { title: '分派策略' }
-              },
-              {
-                path: '/alertManagerPlatform/config/notifyRule',
-                name: 'NotifyRule',
-                component: () => import('@/views/alert-manager/config/notifyRule'),
-                meta: { title: '通知策略' }
-              },
-              // {
-              //   path: '/alertManagerPlatform/config/shieldRule',
-              //   name: 'ShieldRule',
-              //   component: () => import('@/views/alert-manager/config/shieldRule'),
-              //   meta: { title: '屏蔽规则' }
-              // },
-              // 通知组页
-              {
-                path: '/alertManagerPlatform/config/notified-group',
-                component: () => import('@/views/notificationGroup/index'),
-                meta: { title: '通知组管理', keepAlive: true },
-                name: 'notice-group'
-              },
-
-              // 模板管理
-              {
-                path: '/alertManagerPlatform/config/notice-template',
-                component: () => import('@/views/alert-manager/noticeTemplate/index'),
-                meta: { title: '模板管理', keepAlive: true },
-                name: 'notice-template'
-              },
-
-              // 排班
-              {
-                path: '/alertManagerPlatform/work-manage',
-                component: () => import('@/views/work-manage/index'),
-                meta: { title: '排班管理', keepAlive: true },
-                name: 'work-manage'
-              }
-            ]
-          },
-          {
             path: '/alertManagerPlatform/integration',
             name: 'Integration',
             hidden: false,
             component: RouteView,
             redirect: '/alertManagerPlatform/integration/platform',
-            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F002002'] },
+            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F013002'] },
             children: [
               {
                 path: '/alertManagerPlatform/integration/newAlertSource',
@@ -449,12 +398,63 @@ export const asyncRouterMap = [
             ]
           },
           {
+            path: '/alertManagerPlatform/config',
+            name: 'AlertConfig',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/config/deliver',
+            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F013001'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/config/deliver',
+                name: 'Deliver',
+                component: () => import('@/views/alert-manager/config/index'),
+                meta: { title: '分派策略', permission: ['F013001001'] }
+              },
+              {
+                path: '/alertManagerPlatform/config/notifyRule',
+                name: 'NotifyRule',
+                component: () => import('@/views/alert-manager/config/notifyRule'),
+                meta: { title: '通知策略', permission: ['F013001002'] }
+              },
+              // {
+              //   path: '/alertManagerPlatform/config/shieldRule',
+              //   name: 'ShieldRule',
+              //   component: () => import('@/views/alert-manager/config/shieldRule'),
+              //   meta: { title: '屏蔽规则' }
+              // },
+              // 通知组页
+              {
+                path: '/alertManagerPlatform/config/notified-group',
+                component: () => import('@/views/notificationGroup/index'),
+                meta: { title: '通知组管理', keepAlive: true, permission: ['F013001003'] },
+                name: 'notice-group'
+              },
+
+              // 模板管理
+              {
+                path: '/alertManagerPlatform/config/notice-template',
+                component: () => import('@/views/alert-manager/noticeTemplate/index'),
+                meta: { title: '模板管理', keepAlive: true, permission: ['F013001004'] },
+                name: 'notice-template'
+              },
+
+              // 排班
+              {
+                path: '/alertManagerPlatform/work-manage',
+                component: () => import('@/views/work-manage/index'),
+                meta: { title: '排班管理', keepAlive: true, permission: ['F013001005'] },
+                name: 'work-manage'
+              }
+            ]
+          },
+          {
             path: '/alertManagerPlatform/alarm',
             name: 'UnionAlarm',
             hidden: false,
             component: RouteView,
             redirect: '/alertManagerPlatform/alarm/index',
-            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F002002'] },
+            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F013003'] },
             children: [
               {
                 path: '/alertManagerPlatform/alarm/index',

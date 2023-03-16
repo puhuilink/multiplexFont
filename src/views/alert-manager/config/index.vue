@@ -234,7 +234,7 @@ import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
 import { alarm } from '@/utils/request'
-import { judgeRoleToAlertView } from '@/utils/util'
+import { decrypt } from '@/utils/aes'
 
 const columns = [
   {
@@ -695,7 +695,6 @@ export default {
     }
   },
   mounted () {
-    judgeRoleToAlertView()
     this.fetchList()
     this.fetchSource()
     this.fetchGroup()
@@ -703,6 +702,17 @@ export default {
     this.fetchCondition('1')
     this.fetchCondition('2')
     this.fetchCondition('3')
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

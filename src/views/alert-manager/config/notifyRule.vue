@@ -254,7 +254,6 @@ import { alarm } from '@/utils/request'
 import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import { decrypt, encrypt } from '@/utils/aes'
-import { judgeRoleToAlertView } from '@/utils/util'
 
 const innerColumns = [
   { title: '序号', scopedSlots: { customRender: 'No' } },
@@ -755,11 +754,21 @@ export default {
     }
   },
   mounted () {
-    judgeRoleToAlertView()
     this.fetchNotifyList()
     this.fetchWorkTime()
     this.fetchUser()
     this.fetchGroup()
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

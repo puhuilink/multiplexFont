@@ -18,7 +18,7 @@ import RightTable from './components/RightTable.vue'
 import { alarm } from '@/utils/request'
 import store from '@/store/index'
 import { AlertMutationTypes } from '@/store/modules/alert'
-import { judgeRoleToAlertView } from '@/utils/util'
+import { decrypt } from '@/utils/aes'
 
 export default {
   name: 'Integration',
@@ -60,8 +60,18 @@ export default {
   // TODO 将style样式全写在下边 以class的形式
   },
   mounted () {
-    judgeRoleToAlertView()
     this.requestPlatformList()
+  },
+  async beforeCreate () {
+    try {
+      const { data } = await alarm.get('/api/authentication/auth/get')
+      const deData = decrypt(data)
+      if (deData === '2') {
+        await this.$router.push({ name: '600' })
+      }
+    } catch (e) {
+      await this.$router.push({ name: '600' })
+    }
   }
 }
 </script>

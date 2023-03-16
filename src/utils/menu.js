@@ -881,6 +881,119 @@ const MENU = [
         updator: '',
         key: 'F012',
         title: '二级单位'
+      },
+      {
+        objectType: '5',
+        domainName: null,
+        code: 'F013',
+        name: '统一告警',
+        parentCode: 'F',
+        module: '',
+        functionType: '5',
+        functionOrder: 2,
+        interfaceAuth: '',
+        key: 'F013',
+        title: '统一告警',
+        children: [
+          {
+            objectType: '5',
+            domainName: null,
+            code: 'F013002',
+            name: '集成',
+            parentCode: 'F013',
+            functionType: '5',
+            functionOrder: 1,
+            interfaceAuth: '',
+            key: 'F013002',
+            title: '集成'
+          },
+          {
+            objectType: '5',
+            domainName: null,
+            code: 'F013003',
+            name: '告警管理',
+            parentCode: 'F013',
+            functionType: '5',
+            functionOrder: 1,
+            interfaceAuth: '',
+            key: 'F013003',
+            title: '告警管理'
+          },
+          {
+            objectType: '5',
+            domainName: null,
+            code: 'F013001',
+            name: '告警配置',
+            parentCode: 'F013',
+            functionType: '5',
+            functionOrder: 1,
+            interfaceAuth: '',
+            key: 'F013001',
+            title: '告警配置',
+            children: [
+              {
+                objectType: '5',
+                domainName: null,
+                code: 'F013001001',
+                name: '分派策略',
+                parentCode: 'F013001',
+                functionType: '5',
+                functionOrder: 1,
+                interfaceAuth: '',
+                key: 'F013001001',
+                title: '分派策略'
+              },
+              {
+                objectType: '5',
+                domainName: null,
+                code: 'F013001002',
+                name: '通知策略',
+                parentCode: 'F013001',
+                functionType: '5',
+                functionOrder: 1,
+                interfaceAuth: '',
+                key: 'F013001002',
+                title: '通知策略'
+              },
+              {
+                objectType: '5',
+                domainName: null,
+                code: 'F013001003',
+                name: '通知组管理',
+                parentCode: 'F013001',
+                functionType: '5',
+                functionOrder: 1,
+                interfaceAuth: '',
+                key: 'F013001003',
+                title: '通知组管理'
+              },
+              {
+                objectType: '5',
+                domainName: null,
+                code: 'F013001004',
+                name: '模块管理',
+                parentCode: 'F013001',
+                functionType: '5',
+                functionOrder: 1,
+                interfaceAuth: '',
+                key: 'F013001004',
+                title: '模块管理'
+              },
+              {
+                objectType: '5',
+                domainName: null,
+                code: 'F013001005',
+                name: '排班管理',
+                parentCode: 'F013001',
+                functionType: '5',
+                functionOrder: 1,
+                interfaceAuth: '',
+                key: 'F013001005',
+                title: '排班管理'
+              }
+            ]
+          }
+        ]
       }
     ]
   }
