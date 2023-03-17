@@ -633,19 +633,23 @@ export default {
       )
     },
     notifyContent (arr) {
-      let str = ''
-      arr.forEach((a, index) => {
-        if (index === 0) {
-          if (a.account_type === '0') {
-            str += '分派组:' + this.group.find(g => g.value === a.group_id).label
+      try {
+        let str = ''
+        arr.forEach((a, index) => {
+          if (index === 0) {
+            if (a.account_type === '0') {
+              str += '分派组:' + this.group.find(g => g.value === a.group_id).label
+            } else {
+              str += '分派人:' + this.user.find(g => g.value === a.account_id).label
+            }
           } else {
-            str += '分派人:' + this.user.find(g => g.value === a.account_id).label
+            str += ' 升级给:' + this.user.find(g => g.value === a.account_id).label
           }
-        } else {
-          str += ' 升级给:' + this.user.find(g => g.value === a.account_id).label
-        }
-      })
-      return str
+        })
+        return str
+      } catch (e) {
+        return '无分派人信息'
+      }
     },
     onChange (date, dateString) {
       console.log(date, dateString)
