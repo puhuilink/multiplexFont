@@ -78,7 +78,7 @@ const columns = [
     dataIndex: 'groupName'
   },
   {
-    title: '管理员',
+    title: '组长',
     key: 'accountName',
     dataIndex: 'accountName'
   },

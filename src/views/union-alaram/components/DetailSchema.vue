@@ -16,6 +16,7 @@
       :columns="columns"
       :data-source="dataSource"
       bordered
+      rowKey="ID"
       :loading="loading"
       :pagination="{
         current: this.current,
@@ -94,12 +95,12 @@ const columns = [
   {
     title: '发生时间',
     dataIndex: 'start_time',
-    customRender: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+    customRender: (text) => moment(text).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
   },
   {
     title: '更新时间',
     dataIndex: 'last_time',
-    customRender: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+    customRender: (text) => moment(text).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
   },
   {
     title: '告警详情',
@@ -128,7 +129,7 @@ export default {
   mixins: [Schema],
   methods: {
     moment (value) {
-      return moment(value).format('YYYY-MM-DD HH:mm:ss')
+      return moment(value).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
     },
     handleCancel () {
       this.visible = false
