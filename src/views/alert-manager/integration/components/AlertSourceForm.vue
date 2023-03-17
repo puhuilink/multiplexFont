@@ -196,23 +196,23 @@ export default {
       options: [
         {
           value: '1',
-          label: 'p1'
+          label: 'L1'
         },
         {
           value: '2',
-          label: 'p2'
+          label: 'L2'
         },
         {
           value: '3',
-          label: 'p3'
+          label: 'L3'
         },
         {
           value: '4',
-          label: 'p4'
+          label: 'L4'
         },
         {
           value: '5',
-          label: 'p5'
+          label: 'L5'
         }
       ],
       mappingForm: {

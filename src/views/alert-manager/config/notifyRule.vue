@@ -574,8 +574,8 @@ export default {
     addRecord () {
       this.formState.mapping.push(
         {
-          here: 'p1',
-          there: '1',
+          here: '1',
+          there: 'L1',
           key: this.formState.mapping.length
         }
       )
