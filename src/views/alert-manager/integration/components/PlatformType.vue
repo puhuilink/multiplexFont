@@ -94,7 +94,7 @@
         v-for="child in children"
         :key="child"
       >
-        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :id="child.id" :img="child.url" :alert-source-count="0" /></div>
+        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :id="child.id" :img="child.url" :alert-source-count="child.total" :plat-type="title"/></div>
       </div>
     </div>
   </div>
