@@ -62,13 +62,13 @@
       </span>
     </a-form>
     <!--        导出-->
-<!--    <a-button-->
-<!--      @click="downLoad"-->
-<!--      icon="export"-->
-<!--      :disabled="false"-->
-<!--      style="margin-bottom: 10px"-->
-<!--      type="primary"-->
-<!--      :loading="exportLoading">导出</a-button>-->
+    <!--    <a-button-->
+    <!--      @click="downLoad"-->
+    <!--      icon="export"-->
+    <!--      :disabled="false"-->
+    <!--      style="margin-bottom: 10px"-->
+    <!--      type="primary"-->
+    <!--      :loading="exportLoading">导出</a-button>-->
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
       <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
@@ -133,7 +133,6 @@ import moment from 'moment'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
 import { decrypt } from '@/utils/aes'
-import { PatrolService } from '@/api'
 import { downloadExcel } from '@/utils/util'
 
 const columns = [
@@ -166,7 +165,7 @@ const columns = [
     key: 'last_time',
     dataIndex: 'last_time',
     customRender: (record) => {
-      return moment(record).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
+      return moment(record).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   {
