@@ -165,7 +165,7 @@ const columns = [
     key: 'last_time',
     dataIndex: 'last_time',
     customRender: (record) => {
-      return moment(record).subtract(8, 'hour').format('YYYY-MM-DD HH:mm:ss')
+      return moment(record).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   {
