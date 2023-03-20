@@ -71,7 +71,7 @@
     <!--      :loading="exportLoading">导出</a-button>-->
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
-      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
+      <a-button icon="check" :disabled="!hasSelected">关闭</a-button>
     </a-popconfirm>
 
     <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这些告警？" :disabled="!hasSelected" @confirm="() => batchClaimedAlarm()">
