@@ -81,7 +81,7 @@ const columns = [
     customRender: (text) => `L${text}`
   },
   {
-    title: '告警编号',
+    title: '告警ID',
     dataIndex: 'ID'
   },
   {
