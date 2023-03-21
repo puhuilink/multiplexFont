@@ -499,7 +499,11 @@ export default {
           })
         })
       } else {
-        setTimeout(() => { this.sourceChange(this.alertSource[0]) }, 1000)
+        if (this.alertSource.length) {
+          setTimeout(() => { this.sourceChange(this.alertSource[0]) }, 1000)
+        } else {
+          this.$message.error('该通知组为创建数据源或已存在分派策略！')
+        }
         this.updateFlag = false
       }
       this.visible = true
@@ -514,6 +518,7 @@ export default {
     },
     closeModal () {
       this.visible = false
+      this.$refs.ruleForm.resetFields()
       this.formState = { ..._.cloneDeep(originalData) }
     },
     addStrategy () {

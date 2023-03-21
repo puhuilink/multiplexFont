@@ -201,6 +201,7 @@ export default {
     closeModal () {
       this.visible = false
       this.fileList = []
+      this.$refs.ruleForm.resetFields()
       this.formState = _.cloneDeep(original)
       this.$router.push('platform')
     },

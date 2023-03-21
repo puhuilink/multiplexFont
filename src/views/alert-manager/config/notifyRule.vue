@@ -563,6 +563,7 @@ export default {
       this.updateFlag = false
       this.groupId = ''
       this.userId = ''
+      this.$refs.ruleForm.resetFields()
       this.formState = { ..._.cloneDeep(originalFormState) }
     },
     closeUpdateModal () {
