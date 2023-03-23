@@ -280,7 +280,7 @@ export default {
       formData.append('remark', this.formState.remark)
       formData.append('levelRelation', JSON.stringify(relation))
       formData.append('platType', this.platType)
-      formData.append('file', this.fileList[0])
+      formData.append('file', this.fileList[0], 'old.png')
 
       let res
       try {

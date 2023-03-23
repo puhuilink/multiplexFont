@@ -60,7 +60,7 @@
 
           <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="分派人" :rules="[{ validator: accountPass, trigger: 'change' }]" prop="policy_account">
+        <a-form-model-item label="分派人" :rules="[{ type: 'array',validator: accountPass, trigger: 'change' }]" prop="policy_account">
           <div
             style="display: grid;
             grid-template-columns: 60px 1fr;
@@ -430,15 +430,14 @@ export default {
     },
     accountPass (rule, value, callback) {
       let flag = false
-      const that = this
       value.forEach(v => {
         if (flag) {
           return false
         }
-        if (v.policy_account === '') {
+        if (v.account_type === '' || !v.account_type) {
           flag = true
         } else {
-          flag = v.policy_account === '1' ? that.account_id === '' : that.group_id === ''
+          flag = v.account_type === '1' ? v.account_id === '' : v.group_id === ''
         }
       })
       if (flag) {
