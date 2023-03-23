@@ -171,9 +171,8 @@ export default {
     },
     async openModal (id) {
       try {
-        const { data } = await alarm.post('/api/integration/platform/display', { platformId: id })
+        const { data } = await alarm.post('/api/integration/platform/find', { platformId: id })
         this.getFile(this.baseUrl + data.url, (res) => {
-          console.log(res)
           this.handleUploadChange({ file: res })
         })
         this.formState.id = id
