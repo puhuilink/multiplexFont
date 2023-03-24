@@ -204,10 +204,10 @@ const data = [
 ]
 
 const pagination = {
-  pageSizeOptions: ['25', '30', '50', '100'],
+  pageSizeOptions: [ '5', '10', '20', '30' ],
   defaultCurrent: 1,
-  pageSize: 25,
-  defaultPageSize: 25,
+  pageSize: 10,
+  defaultPageSize: 10,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,

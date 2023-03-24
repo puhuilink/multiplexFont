@@ -1,7 +1,7 @@
 <template>
   <div class="notifyRulesBasic">
     <div class="unionAlarm" style="background: white">
-      <div style="display: flex;flex-direction: row-reverse;margin-top: 10px;margin-right: 10px"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
+      <div style="margin-bottom:10px;display: flex;flex-direction: row-reverse;margin-top: 10px;margin-right: 10px"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
       <a-modal
         title="新建通知策略"
         :visible="visible"
@@ -65,7 +65,7 @@
           <a-form-model-item
             label="通知对象"
             style="display: flex;justify-content: space-between"
-            :rules="[{ validator: notifyAccountPass, trigger: 'change' }]"
+            :rules="[{required:true, validator: notifyAccountPass, trigger: 'change' }]"
             prop="notifyStaffType"
           >
             <a-select
@@ -310,10 +310,10 @@ const innerData = [
   }
 ]
 const pagination = {
-  pageSizeOptions: ['25', '30', '50', '100'],
+  pageSizeOptions: [ '5', '10', '20', '30' ],
   defaultCurrent: 1,
-  pageSize: 25,
-  defaultPageSize: 25,
+  pageSize: 10,
+  defaultPageSize: 10,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,

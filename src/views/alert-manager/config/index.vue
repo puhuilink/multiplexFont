@@ -1,6 +1,6 @@
 <template>
   <div class="deliverRules">
-    <div style="display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal(null)">新建分派策略</a-button></div>
+    <div style="margin-bottom:10px;display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal(null)">新建分派策略</a-button></div>
     <a-modal
       :title="updateFlag?'修改分派策略':'新建分派策略'"
       :visible="visible"
@@ -21,7 +21,7 @@
         <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
           <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange" :disabled="!isAdmin"/>
         </a-form-model-item>
-        <a-form-model-item label="分派条件" :rules="[{ type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
+        <a-form-model-item label="分派条件" :rules="[{ required:true, type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
           <div style="">
             <div
               style="display: grid;
@@ -60,7 +60,7 @@
 
           <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="分派人" :rules="[{ type: 'array',validator: accountPass, trigger: 'change' }]" prop="policy_account">
+        <a-form-model-item label="分派人" :rules="[{ required:true, type: 'array',validator: accountPass, trigger: 'change' }]" prop="policy_account">
           <div
             style="display: grid;
             grid-template-columns: 60px 1fr;
@@ -70,7 +70,10 @@
             <a-avatar :size="32" class="circle">{{ index === 0?'立即':'升级' }}</a-avatar>
             <div v-if="index===0">
               <div>
-                <a-select v-model="notice.account_type" style="width: 100px" placeholder="通知组或人" >
+                <a-select
+                  v-model="notice.account_type"
+                  style="width: 100px"
+                  placeholder="通知组或人" >
                   <a-select-option value="1">
                     通知人
                   </a-select-option>
@@ -268,10 +271,10 @@ const columns = [
 ]
 const data = []
 const pagination = {
-  pageSizeOptions: ['25', '30', '50', '100'],
+  pageSizeOptions: [ '5', '10', '20', '30' ],
   defaultCurrent: 1,
-  pageSize: 25,
-  defaultPageSize: 25,
+  pageSize: 10,
+  defaultPageSize: 10,
   hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,

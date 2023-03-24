@@ -3,6 +3,16 @@
     :columns="columns"
     :data-source="data"
     :row-key="(record) => record.id"
+    :pagination="{
+      pageSizeOptions: [ '5', '10', '20', '30' ],
+      defaultCurrent: 1,
+      pageSize: 10,
+      defaultPageSize: 10,
+      hideOnSinglePage: false,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+    }"
   >
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
     <template :slot="'action'" slot-scope="text,record">
