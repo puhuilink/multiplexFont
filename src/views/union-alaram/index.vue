@@ -62,13 +62,13 @@
       </span>
     </a-form>
     <!--        导出-->
-    <!--    <a-button-->
-    <!--      @click="downLoad"-->
-    <!--      icon="export"-->
-    <!--      :disabled="false"-->
-    <!--      style="margin-bottom: 10px"-->
-    <!--      type="primary"-->
-    <!--      :loading="exportLoading">导出</a-button>-->
+    <a-button
+      @click="downLoad"
+      icon="export"
+      :disabled="false"
+      style="margin-bottom: 10px"
+      type="primary"
+      :loading="exportLoading">导出</a-button>
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
       <a-button icon="check" :disabled="!hasSelected" style="margin-bottom: 1rem;">关闭</a-button>
@@ -398,11 +398,13 @@ export default {
     async downLoad () {
       try {
         this.exportLoading = true
-        const data = await alarm.post('', this.queryParams)
-        downloadExcel('交接班记录', data)
+        const data = await alarm.post('/platform/alert/download', {
+          alert_id: this.selectedRows.map(el => el.ID)
+        })
+        downloadExcel('alert', data)
         this.$notification.success({
           message: '系统提示',
-          description: '导出交接班记录成功'
+          description: '导出告警记录成功'
         })
       } catch (e) {
         this.$notification.error({
@@ -422,18 +424,18 @@ export default {
   },
   created () {
     this.query()
-  },
-  async beforeCreate () {
-    try {
-      const { data } = await alarm.get('/api/authentication/auth/get')
-      const deData = decrypt(data)
-      if (deData === '2') {
-        await this.$router.push({ name: '600' })
-      }
-    } catch (e) {
-      await this.$router.push({ name: '600' })
-    }
   }
+  // async beforeCreate () {
+  //   try {
+  //     const { data } = await alarm.get('/api/authentication/auth/get')
+  //     const deData = decrypt(data)
+  //     if (deData === '2') {
+  //       await this.$router.push({ name: '600' })
+  //     }
+  //   } catch (e) {
+  //     await this.$router.push({ name: '600' })
+  //   }
+  // }
 }
 </script>
 
