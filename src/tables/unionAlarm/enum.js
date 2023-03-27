@@ -7,6 +7,13 @@ export const ALARM_STATE = {
   claimed: '3'
 }
 
+export const ALARM_MAP = new Map([
+  ['0', '待处理'],
+  ['1', '已处理'],
+  ['2', '未认领'],
+  ['3', '已认领']
+])
+
 export const ALARM_QUERY_LABEL = {
   level: '告警级别',
   source: '告警源',
