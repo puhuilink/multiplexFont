@@ -504,7 +504,7 @@ export default {
         if (this.alertSource.length) {
           setTimeout(() => { this.sourceChange(this.alertSource[0]) }, 1000)
         } else {
-          this.$message.error('该通知组为创建数据源或已存在分派策略！')
+          this.$message.error('该通知组未创建数据源或已存在分派策略！')
         }
         this.updateFlag = false
       }
@@ -512,6 +512,16 @@ export default {
     },
     showModal (record) {
       this.watchForm = { ..._.cloneDeep(record) }
+      this.watchForm.policy_source.forEach(source => {
+        source.group_condition.forEach(condition => {
+          try {
+            // condition.condition_value = JSON.parse(condition.condition_value)
+            condition.condition_value = condition.condition_value.split(',')
+          } catch (e) {
+            console.log(e)
+          }
+        })
+      })
       this.show = true
     },
     closeShow () {
@@ -572,11 +582,12 @@ export default {
       if (!e) {
         this.$message.error('找不到正确的告警源！')
       }
-      this.formState.source_id = e.key
+      this.formState.source_id = e.value
       this.formState.source_name = e.label
       // console.log('111')
     },
     async handleOk () {
+      console.log(this.formState)
       let flag = false
       this.$refs.ruleForm.validate(valid => {
         if (!valid) {

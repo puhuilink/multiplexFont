@@ -202,7 +202,6 @@ export default {
       this.fileList = []
       this.$refs.ruleForm.resetFields()
       this.formState = _.cloneDeep(original)
-      this.$router.push('platform')
     },
     getFile (url, cb) {
       const imgEntity = new Image()
@@ -291,6 +290,7 @@ export default {
       }
       if (res.code === 200) {
         this.$message.success('修改成功！')
+        this.$emit('refresh')
       } else {
         this.$message.error(res.data)
       }

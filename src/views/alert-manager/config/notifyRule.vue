@@ -77,8 +77,8 @@
               ]"
             />
             <span>
-              <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user"/>
-              <a-select v-else style="width: 200px" v-model="groupId" :options="group"/>
+              <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user" @change="clearV"/>
+              <a-select v-else style="width: 200px" v-model="groupId" :options="group" @change="clearV"/>
             </span>
           </a-form-model-item>
         </a-form-model>
@@ -146,8 +146,8 @@
               ]"
             />
             <span>
-              <a-select v-if="updateFormState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user"/>
-              <a-select v-else style="width: 200px" v-model="groupId" :options="group"/>
+              <a-select v-if="updateFormState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user" />
+              <a-select v-else style="width: 200px" v-model="groupId" :options="group" />
             </span>
           </a-form-model-item>
         </a-form-model>
@@ -409,8 +409,18 @@ export default {
     DetailSchema
   },
   methods: {
+    clearV (value) {
+      if (!value) {
+        return
+      }
+      this.$refs.ruleForm.clearValidate('notifyStaffType')
+    },
     notifyAccountPass (rule, value, callback) {
       const flag = value === '1' ? this.userId === '' : this.groupId === ''
+      console.log(value)
+      console.log(this.userId)
+      console.log(this.groupId)
+      console.log(flag)
       if (flag) {
         callback(new Error('必须选择通知对象！'))
       } else {
@@ -552,8 +562,8 @@ export default {
       if (record) {
         this.updateFormState = { ..._.cloneDeep(record) }
         this.updateFormState.accountId = decrypt(this.updateFormState.accountId)
-        this.groupId = this.updateFormState.accountId
-        this.userId = this.updateFormState.accountId
+        this.groupId = this.updateFormState.notifyStaffType === '0' ? this.updateFormState.accountId : ''
+        this.userId = this.updateFormState.notifyStaffType === '1' ? this.updateFormState.accountId : ''
         this.updateFlag = true
       }
       this.updateVisible = true
@@ -584,6 +594,7 @@ export default {
     },
     async handleOk () {
       let flag = false
+      this.$refs.ruleForm.clearValidate()
       this.$refs.ruleForm.validate(valid => {
         if (!valid) {
           this.$message.error('请检查您的表单项是否都填写完毕！')

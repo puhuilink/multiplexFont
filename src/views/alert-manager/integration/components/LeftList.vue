@@ -1,12 +1,14 @@
 <template>
   <div style="margin-top: 20px">
-    <PlatformType v-for="d in data" :key="d.index" :title="d.index" :children="d.children" />
+    <PlatformType @refresh="refresh" v-for="d in data" :key="d.index" :title="d.index" :children="d.children" />
   </div>
 </template>
 
 <script>
 import store from '@/store/index'
 import PlatformType from './PlatformType.vue'
+import { alarm } from '@/utils/request'
+import { AlertMutationTypes } from '@/store/modules/alert'
 const data = [
   {
     title: '1',
@@ -34,8 +36,27 @@ export default {
     }
   },
   methods: {
-    initialChildren () {
-      const pl = store.getters.platformList
+    async refresh () {
+      console.log('listRefresh')
+      await this.requestPlatformList()
+      await this.initialChildren()
+    },
+    async requestPlatformList () {
+      let platformList
+      try {
+        const { data } = await alarm.get('/api/integration/platform/list')
+        platformList = data
+      } catch (e) {
+        console.log(e)
+      }
+      store.commit(AlertMutationTypes.setPlatformList, { platformList })
+    },
+    async initialChildren () {
+      let pl = store.getters.platformList
+      if (!pl.length) {
+        await this.requestPlatformList()
+      }
+      pl = store.getters.platformList
       const baseArray = [
         {
           index: '1',

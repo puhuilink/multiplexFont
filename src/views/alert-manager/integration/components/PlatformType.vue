@@ -28,7 +28,7 @@
             prop="name">
             <a-input v-model="formState.name" />
           </a-form-model-item>
-          <a-form-model-item label="接入平台描述">
+          <a-form-model-item :rules="[{ required: true, message: '请输入接入平台描述！', trigger: 'change' }]" label="接入平台描述" prop="remark">
             <a-textarea v-model="formState.remark" />
           </a-form-model-item>
           <a-form-model-item
@@ -94,7 +94,13 @@
         v-for="child in children"
         :key="child"
       >
-        <div style="margin: 20px"><PlatformImg :svg-name="child.name" :id="child.id" :img="child.url" :alert-source-count="child.total" :plat-type="title"/></div>
+        <div style="margin: 20px"><PlatformImg
+          @refresh="refresh"
+          :svg-name="child.name"
+          :id="child.id"
+          :img="child.url"
+          :alert-source-count="child.total"
+          :plat-type="title"/></div>
       </div>
     </div>
   </div>
@@ -141,6 +147,10 @@ export default {
     }
   },
   methods: {
+    refresh () {
+      console.log('imgRefresh')
+      this.$emit('refresh')
+    },
     relationPass (rule, value, callback) {
       let flag = value.length < 1
       value.forEach(va => {
@@ -229,6 +239,7 @@ export default {
       }
       if (res.code === 200) {
         this.$message.success('新建成功！')
+        this.$emit('refresh')
       } else {
         this.$message.error(res.data)
       }
