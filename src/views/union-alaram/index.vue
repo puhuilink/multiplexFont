@@ -71,7 +71,7 @@
       :loading="exportLoading">导出</a-button>
     <!--            关闭按钮-->
     <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
-      <a-button icon="check" :disabled="!hasSelected" style="margin-bottom: 1rem;">关闭</a-button>
+      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
     </a-popconfirm>
 
     <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这些告警？" :disabled="!hasSelected" @confirm="() => batchClaimedAlarm()">
@@ -86,25 +86,6 @@
       :data-source="dataSource"
       :pagination="paginationOpt"
     >
-      <!--      :pagination="{-->
-      <!--        current: this.current,-->
-      <!--        pageSizeOptions: ['10', '20'],-->
-      <!--        pageSize: this.pageSize,-->
-      <!--        showQuickJumper: true,-->
-      <!--        showSizeChanger: true,-->
-      <!--        total: this.total,-->
-      <!--        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,-->
-      <!--        onChange: (page, size) =>{-->
-      <!--          this.current = page-->
-      <!--          this.pageSize = size-->
-      <!--          this.handleSearch(page, size)-->
-      <!--        },-->
-      <!--        showSizeChange: (current, size) => {-->
-      <!--          this.current = current-->
-      <!--          this.pageSize = size-->
-      <!--          this.handleSearch(current, pageSize)-->
-      <!--        }-->
-      <!--      }"-->
       <a slot="name" slot-scope="text">{{ text }}</a>
       <span slot="action" slot-scope="text, record" class="center">
         <a-button @click="showDetail(text, record)">详情</a-button>
@@ -123,7 +104,7 @@
 </template>
 
 <script>
-import { ALARM_QUERY_LABEL, ALARM_STATE } from '@/tables/unionAlarm/enum'
+import { ALARM_MAP, ALARM_QUERY_LABEL, ALARM_STATE } from '@/tables/unionAlarm/enum'
 import List from '~~~/Mixins/Table/List'
 import DetailSchema from './components/DetailSchema'
 import '@/utils/utils.less'
@@ -188,6 +169,7 @@ export default {
     return {
       loading: false,
       exportLoading: false,
+      ALARM_MAP,
       state: ALARM_STATE.unSolved,
       ALARM_STATE,
       ALARM_QUERY_LABEL,
@@ -398,10 +380,15 @@ export default {
     async downLoad () {
       try {
         this.exportLoading = true
-        const data = await alarm.post('/platform/alert/download', {
-          alert_id: this.selectedRows.map(el => el.ID)
+        const data = await alarm({
+          url: '/platform/alert/download',
+          method: 'post',
+          data: {
+            alert_id: this.selectedRows.map(el => el.ID)
+          },
+          responseType: 'arraybuffer'
         })
-        downloadExcel('alert', data)
+        downloadExcel(`${ALARM_MAP.get(this.state)}` + '告警' + moment().format('YYYY-MM-DD HH:mm:ss') + '.xlsx', data)
         this.$notification.success({
           message: '系统提示',
           description: '导出告警记录成功'

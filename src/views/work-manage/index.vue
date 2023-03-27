@@ -28,16 +28,17 @@
         pageSizeOptions: ['10', '20'],
         showSizeChanger: true,
         showQuickJumper: true,
-        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
-        onChange:(page, pageSize) =>{
-          this.current = page
-          this.pageSize = pageSize
-          this.fetch(page, pageSize)
+        total: this.total,
+        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${this.total} 条记录`,
+        onChange:(current, size) =>{
+          this.current = current
+          this.pageSize = size
+          this.fetch(size, (current - 1) * size)
         },
         showSizeChange: (current, size) => {
           this.current = current
           this.pageSize = size
-          this.fetch(current, pageSize)
+          this.fetch(size, (current - 1) * size)
         }
       }"
     >
@@ -160,6 +161,7 @@ export default {
         })
         if (code === 200) {
           this.dataSource = value
+          this.total = total
           await this.fetchTitle()
         } else {
           this.$notifyError(msg)
