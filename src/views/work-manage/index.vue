@@ -25,7 +25,7 @@
       :pagination="{
         current: this.current,
         pageSize: this.pageSize,
-        pageSizeOptions: ['10', '20'],
+        pageSizeOptions: ['5', '10', '20', '30'],
         showSizeChanger: true,
         showQuickJumper: true,
         total: this.total,

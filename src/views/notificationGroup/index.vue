@@ -46,7 +46,7 @@
       rowKey="groupId"
       :data-source="dataSource"
       :pagination="{
-        pageSizeOptions: ['10', '25', '30', '50', '100'],
+        pageSizeOptions: ['5', '10', '20', '30'],
         defaultCurrent: 1,
         pageSize: 10,
         defaultPageSize: 10,
