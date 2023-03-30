@@ -22,7 +22,6 @@ export async function judgeRoleToAlertView () {
   try {
     const { data } = await alarm.get('/api/authentication/auth/get')
     const deData = decrypt(data)
-    console.log('ceshi', deData, typeof deData)
     if (deData === '2') {
       await this.$router.push({ name: '600' })
     }

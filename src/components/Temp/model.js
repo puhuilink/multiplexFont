@@ -143,7 +143,6 @@ export class MessageModel {
       // 允许空行
       rootContent.push(createParagraphNode(content))
     })
-    console.log('cont', rootContent)
     return { type: 'doc', content: rootContent }
   }
 }

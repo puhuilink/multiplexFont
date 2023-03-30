@@ -44,6 +44,7 @@
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :loading="loading"
       rowKey="groupId"
+      :scroll="{y: scrollY}"
       :data-source="dataSource"
       :pagination="{
         pageSizeOptions: ['5', '10', '20', '30'],

@@ -22,25 +22,10 @@
       :columns="columns"
       :data-source="dataSource"
       :loading="loading"
-      :pagination="{
-        current: this.current,
-        pageSize: this.pageSize,
-        pageSizeOptions: ['5', '10', '20', '30'],
-        showSizeChanger: true,
-        showQuickJumper: true,
-        total: this.total,
-        showTotal: (total,[start, end])=> `显示 ${start} ~ ${end} 条记录，共 ${this.total} 条记录`,
-        onChange:(current, size) =>{
-          this.current = current
-          this.pageSize = size
-          this.fetch(size, (current - 1) * size)
-        },
-        showSizeChange: (current, size) => {
-          this.current = current
-          this.pageSize = size
-          this.fetch(size, (current - 1) * size)
-        }
-      }"
+      bordered
+      rowKey="id"
+      :scroll="{y: scrollY}"
+      :pagination="paginationOpt"
     >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action" slot-scope="text, { id }">
@@ -72,6 +57,7 @@
 <script>
 /* eslint-disable */
 import single from './components/singlePlan'
+import List from '~~~/Mixins/Table/List'
 import toggleBtn from '@/components/Mixins/Table/Button/ToggleBtn'
 import schema from './components/schema'
 import detail from './components/detailSchema'
@@ -80,11 +66,11 @@ import moment from 'moment'
 import { decrypt } from '@/utils/aes'
 const format = 'YYYY-MM-DD hh:mm:ss'
 const columns = [
-  { title: '排班名称', dataIndex: 'name', key: 'name' },
+  { title: '排班名称', align: 'center', dataIndex: 'name', key: 'name' },
   { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
   { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
-  { title: '排班人员', dataIndex: 'tags', key: 'tags' },
-  { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '400', scopedSlots: { customRender: 'action' } }
+  { title: '排班人员', width: 200, align: 'center', dataIndex: 'tags', key: 'tags' },
+  { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '500', scopedSlots: { customRender: 'action' } }
 ]
 
 const dataSource = []
@@ -92,21 +78,36 @@ const dataSource = []
 export default {
   name: 'Index',
   components: { single, toggleBtn, schema, detail },
+  mixins: [List],
   data () {
     return {
       advanced: false,
       dataSource,
       columns,
-      current: 0,
-      pageSize: 10,
       loading: false,
-      title: []
+      title: [],
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['5', '10', '20', '30'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = 1
+          this.paginationOpt.defaultPageSize  = pageSize
+          this.fetch()
+        },
+        onChange:(current, pageSize) =>{
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.fetch()
+        }
+      }
     }
   },
   methods: {
-    changeBtn () {
-      this.advanced = !this.advanced
-    },
     onEdit (id) {
       this.$refs.schema.edit(id)
     },
@@ -140,8 +141,8 @@ export default {
             label: el.current.name,
             currentCharger: el.current.staffName,
             currentTime: `${moment(el.current.startTime).format('YYYY-MM-DD hh:mm')}~${moment(el.current.endTime).format('YYYY-MM-DD hh:mm')}`,
-            nextCharger: el.next.staffName,
-            nextTime: `${moment(el.next.startTime).format('YYYY-MM-DD hh:mm')}~${moment(el.next.endTime).format('YYYY-MM-DD hh:mm')}`
+            nextCharger: _.get(el, 'next.staffName', ''),
+            nextTime: _.get(el, 'next.startTime', '').length ? `${moment(el.next.startTime).format('YYYY-MM-DD hh:mm')}~${moment(el.next.endTime).format('YYYY-MM-DD hh:mm')}` : '暂无'
           }))
         } else {
           this.$notifyError(msg)
@@ -150,18 +151,19 @@ export default {
         throw e
       }
     },
-    async fetch (page, size) {
+    async fetch () {
       this.loading = true
       try {
+        const { defaultCurrent, defaultPageSize } = this.paginationOpt
         const { code, msg, data: { value, total } } = await alarm.post('/api/configuration/schedule/list', {
           paging: {
-            limit: page,
-            offset: size
+            limit: defaultPageSize,
+            offset: defaultPageSize * ( defaultCurrent - 1 ),
           }
         })
         if (code === 200) {
           this.dataSource = value
-          this.total = total
+          this.paginationOpt.total = total
           await this.fetchTitle()
         } else {
           this.$notifyError(msg)
@@ -174,7 +176,7 @@ export default {
     }
   },
   mounted () {
-    this.fetch(this.pageSize, this.current)
+    this.fetch()
   },
   async beforeCreate () {
     try {

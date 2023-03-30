@@ -81,6 +81,7 @@
       :loading="loading"
       bordered
       rowKey="ID"
+      :scroll="{y: scrollY}"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :columns="columns"
       :data-source="dataSource"
@@ -113,7 +114,6 @@ import { alarm } from '@/utils/request'
 import moment from 'moment'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
-import { decrypt } from '@/utils/aes'
 import { downloadExcel } from '@/utils/util'
 
 const columns = [
