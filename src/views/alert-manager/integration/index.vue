@@ -30,27 +30,11 @@ export default {
   },
   methods: {
     async requestPlatformList () {
-      let platformList
+      let platformList = []
       try {
         const { data } = await alarm.get('/api/integration/platform/list')
         platformList = data
       } catch (e) {
-        platformList = [
-          {
-            'platformId': '123',
-            'platName': 'test_platform',
-            'platUrl': '/systemfile/2022/11/17/123.jpg',
-            'platType': '1',
-            'total': 1
-          },
-          {
-            'platformId': '124',
-            'platName': 'test_platform1',
-            'platUrl': '/systemfile/2022/11/17/124.jpg',
-            'platType': '2',
-            'total': 1
-          }
-        ]
       }
       store.commit(AlertMutationTypes.setPlatformList, { platformList })
     },
