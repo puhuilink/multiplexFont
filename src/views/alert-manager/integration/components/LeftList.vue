@@ -9,24 +9,7 @@ import store from '@/store/index'
 import PlatformType from './PlatformType.vue'
 import { alarm } from '@/utils/request'
 import { AlertMutationTypes } from '@/store/modules/alert'
-const data = [
-  {
-    title: '1',
-    children: ['pigoss', 'H3C']
-  },
-  {
-    title: '2',
-    children: ['bonree', 'cloudwise']
-  },
-  {
-    title: '3',
-    children: ['xbro']
-  },
-  {
-    title: '4',
-    children: ['netis']
-  }
-]
+const data = []
 export default {
   name: 'LeftList',
   components: { PlatformType },
