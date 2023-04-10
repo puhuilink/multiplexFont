@@ -152,7 +152,7 @@ export default {
           const query = {
             group: {
               name: this.formModel.group_name,
-              remark: this.formModel.remark
+              remarks: this.formModel.remarks
             },
             users: this.assigned
           }
@@ -190,7 +190,7 @@ export default {
             group: {
               id: this.formModel.id,
               name: this.formModel.group_name,
-              remark: this.formModel.remark
+              remarks: this.formModel.remarks
             },
             users: this.assigned
           }

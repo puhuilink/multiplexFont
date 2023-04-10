@@ -36,8 +36,8 @@
     <!--    按钮-->
     <a-button class="marginLeft" @click="addGroup">新建</a-button>
     <a-button class="marginLeft" :disabled="!hasSelectedOne" @click="editGroup">编辑</a-button>
-    <a-popconfirm title="是否要删除这些用户组？" @confirm="() => deleteGroup(selectedRows)">
-      <a-button class="marginLeft" :disabled="!hasSelected">删除</a-button>
+    <a-popconfirm title="是否要删除该用户组？" @confirm="() => deleteGroup(selectedRows)">
+      <a-button class="marginLeft" :disabled="!hasSelectedOne">删除</a-button>
     </a-popconfirm>
     <a-table
       :columns="columns"
