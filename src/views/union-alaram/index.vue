@@ -380,11 +380,16 @@ export default {
     async downLoad () {
       try {
         this.exportLoading = true
+        if (this.queryParams.timeList) {
+          this.queryParams.start_time = this.queryParams.timeList[0]
+          this.queryParams.last_time = this.queryParams.timeList[1]
+        }
         const data = await alarm({
           url: '/platform/alert/download',
           method: 'post',
           data: {
-            alert_id: this.selectedRows.map(el => el.ID)
+            alert_id: this.selectedRows.map(el => el.ID),
+            ...this.queryParams
           },
           responseType: 'arraybuffer'
         })
