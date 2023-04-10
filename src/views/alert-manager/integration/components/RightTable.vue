@@ -177,7 +177,7 @@ export default {
         this.$message.error('请求失败！请检查网络连接！')
         return
       }
-      pp.url += this.baseUrl
+      pp.url = '/view_thumbnail' + pp.url
       await this.$router.push({
         name: 'UpdateAlertSource',
         query: { plat: pp, record: res.data.source }

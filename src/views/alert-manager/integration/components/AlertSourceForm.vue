@@ -45,7 +45,12 @@
           :rules="[{ required: formState.autoClose, message: '请配置自动关闭时间！', trigger: 'change' }]"
           prop="autoCloseInterval"
         >
-          <a-input-number v-show="formState.autoClose" v-model="formState.autoCloseInterval" style="width: 100px">
+          <a-input-number
+            :min="0"
+            :max="1440"
+            v-show="formState.autoClose"
+            v-model="formState.autoCloseInterval"
+            style="width: 100px">
           </a-input-number>
           <span v-show="formState.autoClose">分钟后自动关闭</span>
           <a-switch :checked="formState.autoClose" @change="onAutoCloseChange"/>
@@ -72,7 +77,12 @@
           :rules="[{ required: formState.monitor, message: '请配置监控时长！', trigger: 'change' }]"
           prop="monitorInterval"
         >
-          <a-input-number v-show="formState.monitor" v-model="formState.monitorInterval" style="width: 180px">
+          <a-input-number
+            :min="1"
+            :max="24"
+            v-show="formState.monitor"
+            v-model="formState.monitorInterval"
+            style="width: 180px">
           </a-input-number>
           <span v-show="formState.monitor">小时</span>
           <a-switch :checked="formState.monitor" @change="onSelfChange"/>
