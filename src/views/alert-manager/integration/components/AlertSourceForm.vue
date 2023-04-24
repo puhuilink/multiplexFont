@@ -62,6 +62,21 @@
           <a-switch :checked="formState.autoGroup" @change="onDedupChange"/>
         </a-form-model-item>
         <a-form-model-item
+          extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
+          label="压缩告警"
+          :rules="[{ required: formState.compress, message: '请配置压缩告警范围！', trigger: 'change' }]"
+          prop="compressDuration"
+        >
+          <a-select
+            v-show="formState.compress"
+            v-model="formState.compressDuration"
+            style="width: 200px">
+            <a-select-option :value="'5'">压缩5分钟告警</a-select-option>
+            <a-select-option :value="'10'">压缩10分钟告警</a-select-option>
+          </a-select>
+          <a-switch :checked="formState.compress" @change="onCompressChange"/>
+        </a-form-model-item>
+        <a-form-model-item
           extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
           label="开启认领"
           :rules="[{ required: formState.claim, message: '请配置认领级别！', trigger: 'change' }]"
@@ -133,6 +148,12 @@
             :prop="item"
           >
             <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions"/>
+            <span v-show="formState.compress && (compressFlags[index] || !compressFlags.includes(true))">
+              <a-divider type="vertical"/>
+              <a-checkbox @change="compressChange(index)">
+                作为压缩依据
+              </a-checkbox>
+            </span>
           </a-form-model-item>
         </a-form-model>
       </div>
@@ -175,6 +196,7 @@ export default {
   },
   data () {
     return {
+      compressFlags: [],
       typeObj: {
         'uniqueKey': 'string',
         'device': 'string',
@@ -195,6 +217,8 @@ export default {
         claim: false,
         claimLevel: '',
         autoGroup: true,
+        compress: false,
+        compressDuration: true,
         monitor: false,
         monitorInterval: 0,
         url: ''
@@ -322,23 +346,37 @@ export default {
       this.formState.autoGroup = flag
       // console.log('Failed:', flag)
     },
+    onCompressChange (flag) {
+      this.formState.compress = flag
+      this.$forceUpdate()
+      // console.log('Failed:', flag)
+    },
     onSelfChange (flag) {
       this.formState.monitor = flag
       // console.log('Failed:', flag)
+    },
+    compressChange (index) {
+      console.log(index)
+      console.log(this.compressFlags[index])
+      this.compressFlags[index] = !this.compressFlags[index]
+      this.$forceUpdate()
     },
     async onSubmit () {
       let flag = false
       this.$refs.basic.validate(valid => {
         if (!valid) {
-          this.$message.error('请检查您的表单项是否都填写完毕！')
           flag = true
+          this.$message.error('请检查您的表单项是否都填写完毕！')
         }
       })
+      if (this.formState.compress && !this.compressItem) {
+        this.$message.error('压缩依据必选！')
+      }
       if (flag) {
         return
       }
       const alertMapping = []
-      Object.keys(this.mappingForm).forEach(m => {
+      Object.keys(this.mappingForm).forEach((m, index) => {
         if (this.mappingForm[m] && this.mappingForm[m] !== '') {
           if (m === 'uniqueKey') {
             alertMapping.push({
@@ -346,6 +384,14 @@ export default {
               'targetField': m,
               'targetType': this.typeObj[m],
               remark: this.jb[this.mappingForm[m]]
+            })
+          } else if (this.formState.compress && index === this.compressFlags.indexOf(true)) {
+            alertMapping.push({
+              'sourceField': this.mappingForm[m],
+              'targetField': m,
+              'targetType': this.typeObj[m],
+              'compressCondition': true,
+              'compressSequence': 1
             })
           } else {
             alertMapping.push({
@@ -390,14 +436,17 @@ export default {
         const Obj = {}
         const form = {}
         const titles = []
+        const compressFlags = []
         data.forEach(d => {
           Obj[d.fieldName] = d.fieldType
           form[d.fieldName] = ''
           titles.push(this.titleMapping[d.fieldName])
+          compressFlags.push(false)
         })
         this.typeObj = Obj
         this.mappingForm = form
         this.mappingTitle = titles
+        this.compressFlags = compressFlags
       } catch (e) {
         this.$message.error(e.response.data.msg)
       }
@@ -424,13 +473,22 @@ export default {
       const user = store.getters.userId
       this.isAdmin = user === 'administrator'
       if (this.record && this.record !== {}) {
-        this.formState = { ...this.record }
+        const { sampleData, ...states } = this.record
+        this.formState = { ...states }
+        this.jsonContent = sampleData
       }
       this.getMappingData()
       this.getGroupData()
     }
   },
   computed: {
+    compressOne: {
+      get (index) {
+        return function () {
+          return this.formState.compress && (this.compressFlags[index] || !this.compressFlags.includes(true))
+        }
+      }
+    },
     jsonResult () {
       let content = ''
       this.data.forEach(element => {

@@ -138,6 +138,8 @@ export default {
           message: '系统提示',
           description: '删除成功'
         })
+        this.selectedRowKeys = []
+        this.selectedRows = []
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
