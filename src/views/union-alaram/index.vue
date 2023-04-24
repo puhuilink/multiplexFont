@@ -388,7 +388,8 @@ export default {
           url: '/platform/alert/download',
           method: 'post',
           data: {
-            alert_id: this.selectedRows.map(el => el.ID),
+            account_id: Vue.ls.get(USER).userId,
+            // alert_id: this.selectedRows.map(el => el.ID),
             ...this.queryParams
           },
           responseType: 'arraybuffer'
