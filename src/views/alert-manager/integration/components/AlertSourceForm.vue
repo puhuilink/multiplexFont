@@ -413,7 +413,12 @@ export default {
       } else {
         delete this.formState.autoCloseInterval
       }
-      const sourceData = { ...this.formState, platformId: this.platformId }
+      if (this.formState.compress) {
+        this.formState.compressDuration = this.formState.compressDuration.toString()
+      } else {
+        delete this.formState.compressDuration
+      }
+      const sourceData = { ...this.formState, platformId: this.platformId, sampleData: this.jsonContent }
       let requestAddress = '/api/integration/source/add'
       if (this.record && this.record !== {}) {
         requestAddress = '/api/integration/source/update'
@@ -476,6 +481,7 @@ export default {
         const { sampleData, ...states } = this.record
         this.formState = { ...states }
         this.jsonContent = sampleData
+        this.isAdmin = false
       }
       this.getMappingData()
       this.getGroupData()
