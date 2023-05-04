@@ -189,7 +189,7 @@
         </div>
         <div v-else >
           <div style="display: flex;align-items: center">
-            <div>如果告警升级后 <a-input-number v-model="notice.upgrade_interval" disabled/>分钟无人处理，则告警自动升级通知以下用户</div>
+            <div>如果告警升级后 <a-input-number :min="0" v-model="notice.upgrade_interval" disabled/>分钟无人处理，则告警自动升级通知以下用户</div>
             <div>通知人 <a-select v-model="notice.account_id" style="width: 100px" :options="user" disabled :show-arrow="false"/></div>
           </div>
         </div>

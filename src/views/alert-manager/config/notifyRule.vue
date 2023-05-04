@@ -211,7 +211,7 @@
         <div style="display:flex;justify-content: space-between;width: 400px;padding: 10px">
           <div style="font-size: 18px">工作时间</div>
           <span>
-            <a-button v-if="watchFlag" style="background: #58bb72;color: white" @click="()=>{this.watchFlag = false}">编辑</a-button>
+            <a-button v-if="watchFlag" type="primary" @click="()=>{this.watchFlag = false}">编辑</a-button>
             <a-button v-else pirmary @click="saveTimeUpdate">保存</a-button>
           </span>
         </div>
@@ -237,7 +237,7 @@
             okText="确定"
             cancelText="取消"
           >
-            <a-button style="background: #58bb72;color: white">前往配置</a-button>
+            <a-button type="primary">前往配置</a-button>
           </a-popconfirm>
         </div>
       </div>
