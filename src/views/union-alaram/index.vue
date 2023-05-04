@@ -206,7 +206,7 @@ export default {
         pageSizeOptions: ['10', '20', '50', '100'],
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
-          this.paginationOpt.defaultCurrent = 1
+          this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = pageSize
           this.query()
         },
@@ -237,10 +237,7 @@ export default {
     onChangeState (activeKey) {
       this.state = activeKey
       this.queryParams = {}
-      this.current = 1
-      this.pageSize = 10
-      this.queryParams.offset = 1
-      this.queryParams.limit = 10
+      this.paginationOpt.defaultCurrent = 1
       switch (this.state) {
         case ALARM_STATE.unSolved:
           this.queryParams.process_status = '0'
@@ -263,11 +260,10 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
-      const { defaultCurrent, defaultPageSize } = this.paginationOpt
       const { data, page } = await alarm.post('/platform/alert/main/list', {
         account_id: Vue.ls.get(USER).userId,
-        limit: defaultPageSize,
-        offset: defaultCurrent,
+        limit: this.paginationOpt.defaultPageSize,
+        offset: this.paginationOpt.defaultCurrent,
         ...this.queryParams
       })
       this.dataSource = data
