@@ -417,12 +417,12 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alert-manager/config/notifyRule'),
                 meta: { title: '通知策略', permission: ['F013001002'] }
               },
-              // {
-              //   path: '/alertManagerPlatform/config/shieldRule',
-              //   name: 'ShieldRule',
-              //   component: () => import('@/views/alert-manager/config/shieldRule'),
-              //   meta: { title: '屏蔽规则' }
-              // },
+              {
+                path: '/alertManagerPlatform/config/shieldRule',
+                name: 'ShieldRule',
+                component: () => import('@/views/alert-manager/config/shieldRule'),
+                meta: { title: '屏蔽规则' }
+              },
               // 通知组页
               {
                 path: '/alertManagerPlatform/config/notified-group',
@@ -445,6 +445,14 @@ export const asyncRouterMap = [
                 component: () => import('@/views/work-manage/index'),
                 meta: { title: '排班管理', keepAlive: true, permission: ['F013001005'] },
                 name: 'work-manage'
+              },
+
+              // 自定义标签
+              {
+                path: '/alertManagerPlatform/self-Defining',
+                component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
+                meta: { title: '自定义标签', keepAlive: true, permission: ['F013001005'] },
+                name: 'self-Tag'
               }
             ]
           },

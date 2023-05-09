@@ -46,6 +46,16 @@ class ApSourceService extends BaseService {
     })
     return list
   }
+  static async fetchAllSourceList () {
+    const { data: { list } } = await this.sourceFind({
+      alias: 'list',
+      fields: [
+        'id',
+        'name'
+      ]
+    })
+    return list
+  }
   // 告警源列表
   static async fetchDictList (type) {
     const { data: { list } } = await this.dictFind({
@@ -76,6 +86,7 @@ class ApSourceService extends BaseService {
         staff_name: d.name
       })
     })
+    console.log(list)
     return list
   }
 }
