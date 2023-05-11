@@ -7,10 +7,7 @@
     <div class="mainBody" ref="mainBody">
       <div class="leftList">
         <a-collapse v-model="activeKey" accordion>
-          <a-collapse-panel key="1" header="全局" @click="fetchSourceTags(null)">
-            <p @click="fetchSourceTags(null)">全局</p>
-          </a-collapse-panel>
-          <a-collapse-panel key="2" header="告警源">
+          <a-collapse-panel key="1" header="告警源">
             <p
               v-for="source in sourceList"
               :key="source.sourceId"
@@ -28,7 +25,7 @@
           :pagination="pagination"
           :data-source="data">
           <span slot="sourceName">{{ getSourceName(activeSourceId) }}</span>
-          <span slot="type">{{ activeKey === '2'?'告警源':"全局" }}</span>
+          <span slot="type">告警源</span>
           <template :slot="'action'" slot-scope="text,record">
             <a-button @click="openModal(record)">编辑</a-button>
             <a-divider type="vertical" />
@@ -57,10 +54,10 @@
       @close="closeModal"
     >
       <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-        <a-form-model-item label="告警源字段" :rules="[{ required: true, message: '告警源字段必填', trigger: 'change' }]" prop="sourceField">
-          <a-input v-model="formState.sourceField"/>
+        <a-form-model-item label="告警源字段" :rules="[{ required: true, message: '告警源字段必选', trigger: 'change' }]" prop="sourceField">
+          <a-select v-model="formState.sourceField" :options="mappingOptions"/>
         </a-form-model-item>
-        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="sourceField">
+        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="sourceField" :disabled="targetFlag">
           <a-select v-model="formState.targetField" :options="mappingOptions" @change="targetChange"/>
         </a-form-model-item>
         <a-form-model-item label="说明" v-if="formState.targetField === 'uniqueKey'" :rules="[{ required: formState.targetField === 'uniqueKey', message: '告警源字段必填', trigger: 'change' }]" prop="sourceField">
@@ -146,8 +143,10 @@ export default {
       activeSourceId: '',
       mappingList: [],
       mappingOptions: [],
+      sourceOptions: [],
       visible: false,
       updateFlag: false,
+      targetFlag: false,
       formState: _.cloneDeep(originalFormData),
       colLayout: {
         xl: 8,
@@ -175,6 +174,7 @@ export default {
         this.formState.remark = record.remark
         delete this.formState.sourceId
         delete this.formState.targetType
+        this.targetFlag = !record.updateFlag
       } else {
         this.formState.sourceId = this.activeSourceId
         delete this.formState.mappingId
@@ -218,9 +218,15 @@ export default {
         } else {
           this.$message.error(res.msg)
         }
+        this.closeModal()
       } catch (e) {
         this.$message.error('网络请求错误！')
       }
+    },
+    sourceChange (e) {
+      const entity = this.mappingList.find(m => m.fieldName === e)
+      this.formState.targetField = entity.fieldName
+      this.formState.targetType = entity.fieldType
     },
     targetChange (e) {
       const entity = this.mappingList.find(m => m.fieldName === e)
@@ -230,6 +236,7 @@ export default {
     closeModal () {
       this.visible = false
       this.updateFlag = false
+      this.targetFlag = false
       this.$refs.ruleForm.resetFields()
       this.formState = _.cloneDeep(originalFormData)
     },
@@ -263,7 +270,7 @@ export default {
             label: d.fieldName
           })
         })
-        this.mappingoptions = op
+        this.mappingOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.mappingList = []
@@ -275,6 +282,14 @@ export default {
         this.activeSourceId = sourceId
         const { data } = await alarm.post('/api/configuration/mapping/find', { sourceId })
         this.data = data.mapping
+        const op = []
+        Object.keys(data.sampleData).forEach(s => {
+          op.push({
+            key: s,
+            label: s
+          })
+        })
+        this.sourceOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.data = []
