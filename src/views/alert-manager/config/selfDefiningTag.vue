@@ -138,7 +138,16 @@ export default {
         'deleteFlag': false,
         'updateFlag': false
       }],
-      pagination: {},
+      pagination: {
+        pageSizeOptions: [ '5', '10', '20', '30' ],
+        defaultCurrent: 1,
+        pageSize: 10,
+        defaultPageSize: 10,
+        hideOnSinglePage: false,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+      },
       sourceList: [],
       activeSourceId: '',
       mappingList: [],
@@ -330,13 +339,13 @@ export default {
 }
 .leftList{
   height: 100%;
-  width: 37%;
+  width: 27%;
   margin-right: 2%;
   border: 1px solid grey;
 }
 .rightTable{
   height: 100%;
-  width: 67%;
+  width: 77%;
   margin-right: 2%;
   border: grey solid 1px;
 }
