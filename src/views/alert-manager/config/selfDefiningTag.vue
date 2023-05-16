@@ -24,6 +24,7 @@
           :columns="columns"
           :pagination="pagination"
           :data-source="data">
+          <span :slot="'index'" slot-scope="text,record,index" >{{ index }}</span>
           <span slot="sourceName">{{ getSourceName(activeSourceId) }}</span>
           <span slot="type">告警源</span>
           <template :slot="'action'" slot-scope="text,record">
@@ -55,9 +56,9 @@
     >
       <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
         <a-form-model-item label="告警源字段" :rules="[{ required: true, message: '告警源字段必选', trigger: 'change' }]" prop="sourceField">
-          <a-select v-model="formState.sourceField" :options="mappingOptions"/>
+          <a-select v-model="formState.sourceField" :options="sourceOptions"/>
         </a-form-model-item>
-        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="sourceField" :disabled="targetFlag">
+        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="targetField" :disabled="targetFlag">
           <a-select v-model="formState.targetField" :options="mappingOptions" @change="targetChange"/>
         </a-form-model-item>
         <a-form-model-item label="说明" v-if="formState.targetField === 'uniqueKey'" :rules="[{ required: formState.targetField === 'uniqueKey', message: '告警源字段必填', trigger: 'change' }]" prop="sourceField">
@@ -88,7 +89,7 @@ export default {
         {
           title: '序号',
           align: 'center',
-          dataIndex: 'id'
+          scopedSlots: { customRender: 'index' }
         },
         {
           title: '级别',
@@ -129,6 +130,15 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
+      mappingLabels: {
+        'uniqueKey': '唯一标识符',
+        'device': '告警设备',
+        'title': '告警标题',
+        'content': '告警内容',
+        'level': '告警级别',
+        'event_id': '事件id',
+        'device_type': '设备类别'
+      },
       data: [{
         'id': '328829073625321472',
         'sourceField': 'source',
@@ -241,6 +251,7 @@ export default {
       const entity = this.mappingList.find(m => m.fieldName === e)
       this.formState.targetField = entity.fieldName
       this.formState.targetType = entity.fieldType
+      // this.$refs.ruleForm.clearValidate('targetField')
     },
     closeModal () {
       this.visible = false
@@ -262,6 +273,7 @@ export default {
       try {
         const { data } = await alarm.get('/api/configuration/mapping/getSource')
         this.sourceList = data
+        await this.fetchSourceTags(data[0].sourceId)
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.sourceList = []
@@ -276,7 +288,7 @@ export default {
         data.forEach(d => {
           op.push({
             key: d.fieldName,
-            label: d.fieldName
+            label: this.mappingLabels[d.fieldName]
           })
         })
         this.mappingOptions = op
@@ -292,12 +304,14 @@ export default {
         const { data } = await alarm.post('/api/configuration/mapping/find', { sourceId })
         this.data = data.mapping
         const op = []
-        Object.keys(data.sampleData).forEach(s => {
+        const sample = JSON.parse(data.sampleData.sampleData)
+        Object.keys(sample).forEach(s => {
           op.push({
             key: s,
             label: s
           })
         })
+        console.log(op)
         this.sourceOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
