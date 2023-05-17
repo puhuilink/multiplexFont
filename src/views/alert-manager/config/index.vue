@@ -388,7 +388,8 @@ export default {
       const { data } = await alarm.post('/platform/policy/find', {
         limit: 25,
         offset: 1,
-        account_id: store.getters.userId
+        account_id: store.getters.userId,
+        policy_type: '0'
       })
       if (data) {
         this.data = data

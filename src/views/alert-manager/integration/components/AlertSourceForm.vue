@@ -62,7 +62,7 @@
           <a-switch :checked="formState.autoGroup" @change="onDedupChange"/>
         </a-form-model-item>
         <a-form-model-item
-          extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
+          extra="同一告警源在选定时间内将压缩依据内容相同的告警数据压缩成一条数据"
           label="压缩告警"
           :rules="[{ required: formState.compress, message: '请配置压缩告警范围！', trigger: 'change' }]"
           prop="compressDuration"
