@@ -5,8 +5,8 @@
     <span class="font_blue abs">基础资源监控</span>
     <span class="font_white abs" style="left: 77px;top: 81px;">云上UC-Center</span>
     <span class="font_white abs" style="left: 219px; top: 81px;">云下Pigoss</span>
-    <a href="www.baidu.com" target="_blank"><img src="img/pigoss.png" style="left: 84px;top: 35px;" class="abs sign"></a>
-    <a href="www.baidu.com" target="_blank"><img src="img/pigoss.png" style="left: 225px;top: 35px;" class="abs sign"></a>
+    <a href="www.baidu.com" target="_blank"><img src="./img/pigoss.png" style="left: 84px;top: 35px;" class="abs sign"></a>
+    <a href="www.baidu.com" target="_blank"><img src="./img/pigoss.png" style="left: 225px;top: 35px;" class="abs sign"></a>
   </div>
 </template>
 

@@ -3,7 +3,7 @@
     <span class="size-white">{{ number }}</span>
     <span :class="[type === 'main' ? 'blue' : 'red', 'size']">今日主告警</span>
     <img :src="type === 'main' ? require('./img/告警.png') : require('./img/告警2.png')" class="photo_alarm">
-    <img src="img/bk_circle.png" class="photo_deformation">
+    <img src="./img/bk_circle.png" class="photo_deformation">
   </div>
 </template>
 

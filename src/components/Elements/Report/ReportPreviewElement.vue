@@ -2,7 +2,7 @@
   <div class="border">
     <a-row :gutter="[24,16]">
       <a-col :span="24">
-        <img src="img/大标题.png" class="biaoti">
+        <img src="./img/大标题.png" class="biaoti">
       </a-col>
     </a-row>
     <div class="abs" style="top: 90px;left: 20px;">

@@ -5,7 +5,7 @@
     <span class="abs span_7">{{ title }}</span>
     <span class="abs span_6">合计</span>
     <span class="abs span_5" :style="{'color': (type === 'main' ? '#00EDFF': '#FFDA00')}">{{ number }}</span>
-    <img src="img/35.png" class="abs block_image">
+    <img src="./img/35.png" class="abs block_image">
     <div class="abs chart_color" ref="chart"></div>
   </div>
 </template>
