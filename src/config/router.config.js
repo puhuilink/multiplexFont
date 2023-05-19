@@ -12,7 +12,8 @@ export const asyncRouterMap = [
       ...process.env.NODE_ENV === 'production' ? [] : [
         {
           path: '/dev-debug',
-          component: () => import('@/views/dev-debug'),
+          // component: () => import('@/views/dev-debug'),
+          component: () => import('@/components/Elements/Report/ReportPreviewElement'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }

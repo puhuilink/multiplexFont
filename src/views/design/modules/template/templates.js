@@ -98,6 +98,9 @@ const elements = [
   },
   {
     category: 'ELEMENT', type: 'Department', name: '单位名称', icon: 'title', width: 100, height: 40
+  },
+  {
+    category: 'ELEMENT', type: 'ReportPreview', name: '报表预览', icon: 'title', width: 1920, height: 1080
   }
 ]
 

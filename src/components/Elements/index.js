@@ -19,6 +19,7 @@ import ToLineElement from '~~~/Elements/ToLineElement'
 import PercentElement from '~~~/Elements/PercentElement'
 import DepartmentElement from '~~~/Elements/DepartmentElement'
 import MVMapElement from '~~~/Elements/SDMap/MVMapElement'
+import ReportPreviewElement from '~~~/Elements/Report/ReportPreviewElement'
 
 const ELEMENT_MAPPING = new Map([
   ['AlarmList', 'LatestAlarmElement'],
@@ -34,7 +35,8 @@ const ELEMENT_MAPPING = new Map([
   ['Percent', 'PercentElement'],
   ['MMp', 'MVMapElement'],
   ['Department', 'DepartmentElement'],
-  ['SDMap', 'SDMapElement']
+  ['SDMap', 'SDMapElement'],
+  ['ReportPreview', 'ReportPreviewElement']
 ])
 
 const ELEMENTS = {
@@ -50,7 +52,8 @@ const ELEMENTS = {
   PercentElement,
   MVMapElement,
   DepartmentElement,
-  SDMapElement
+  SDMapElement,
+  ReportPreviewElement
 }
 
 export {

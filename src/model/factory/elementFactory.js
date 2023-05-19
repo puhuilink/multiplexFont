@@ -18,6 +18,7 @@ import ToLineElement from '@/model/element/ToLineElement'
 import PercentElement from '@/model/element/PercentElement'
 import DepartmentElement from '@/model/element/DepartmentElement'
 import MVMapElement from '@/model/element/MVMapElement'
+import ReportPreviewElement from '@/model/element/ReportPreviewElement'
 
 export default class ElementFactory {
   static create (type, { widget, element, onlyShow = false }) {
@@ -48,6 +49,8 @@ export default class ElementFactory {
         return new PercentElement({ widget, element, onlyShow })
       case 'Department':
         return new DepartmentElement({ widget, element, onlyShow })
+      case 'ReportPreview':
+        return new ReportPreviewElement({ widget, element, onlyShow })
       default:
         return null
     }

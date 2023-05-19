@@ -183,6 +183,7 @@ export default {
      */
     onAllocateUserAuth () {
       const [record] = this.selectedRows
+      console.log('auth', record)
       this.$refs['auth'].edit(record)
     },
     /**

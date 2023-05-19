@@ -3,10 +3,12 @@
     <div class="auth-menu">
       <a-tree
         checkable
-        checkStrictly
         defaultExpandAll
         :autoExpandParent="true"
         v-model="checkedKeys"
+        @select="onSelect"
+        @expand="onExpand"
+        @check="onCheck"
         :treeData="menu">
       </a-tree>
     </div>
@@ -50,9 +52,12 @@ export default {
         }
         const menuOriginalPermission = this.menuPermission.data.filter(item => /^F/.test(item.code))
         const buttonOriginalPermission = this.menuPermission.data.filter(item => !/^F/.test(item.code))
+        console.log('权限', menuOriginalPermission, buttonOriginalPermission)
         if (menuOriginalPermission.length > 0) {
           const menuTree = getMenuTree(null, menuOriginalPermission)
+          console.log('menu', menuTree)
           this.setCheckedKeys(menuTree)
+          // this.setCheckedKeys([{code: 'F002003', key: 'F002003'})
         }
         if (buttonOriginalPermission.length > 0) {
           const buttonTree = getButtonTree(null, buttonOriginalPermission)
@@ -97,6 +102,19 @@ export default {
         objectType: functionType,
         domainName: null
       }))
+    },
+    onSelect (selectedKeys, info) {
+      console.log('onSelect', selectedKeys, info)
+    },
+    onExpand (expandedKeys) {
+      console.log('onExpand', expandedKeys)
+      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+      // or, you can remove all expanded children keys.
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    onCheck (checkedKeys, info) {
+      console.log(checkedKeys, info)
     }
   }
 }
