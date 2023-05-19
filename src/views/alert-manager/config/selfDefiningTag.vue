@@ -56,10 +56,10 @@
     >
       <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
         <a-form-model-item label="告警源字段" :rules="[{ required: true, message: '告警源字段必选', trigger: 'change' }]" prop="sourceField">
-          <a-select v-model="formState.sourceField" :options="sourceOptions"/>
+          <a-select v-model="formState.sourceField" :options="sourceOptions" @change="sourceChange"/>
         </a-form-model-item>
-        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="targetField" :disabled="targetFlag">
-          <a-select v-model="formState.targetField" :options="mappingOptions" @change="targetChange"/>
+        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="targetField" >
+          <a-select v-model="formState.targetField" :options="mappingOptions" @change="targetChange" :disabled="targetFlag"/>
         </a-form-model-item>
         <a-form-model-item label="说明" v-if="formState.targetField === 'uniqueKey'" :rules="[{ required: formState.targetField === 'uniqueKey', message: '告警源字段必填', trigger: 'change' }]" prop="sourceField">
           <a-input v-model="formState.remark"/>
@@ -85,6 +85,7 @@ export default {
   data () {
     return {
       activeKey: ['1'],
+      sampleData: {},
       columns: [
         {
           title: '序号',
@@ -243,9 +244,9 @@ export default {
       }
     },
     sourceChange (e) {
-      const entity = this.mappingList.find(m => m.fieldName === e)
-      this.formState.targetField = entity.fieldName
-      this.formState.targetType = entity.fieldType
+      if (this.formState.targetField === 'uniqueKey') {
+        this.formState.remark = this.sampleData[e]
+      }
     },
     targetChange (e) {
       const entity = this.mappingList.find(m => m.fieldName === e)
@@ -305,13 +306,13 @@ export default {
         this.data = data.mapping
         const op = []
         const sample = JSON.parse(data.sampleData.sampleData)
+        this.sampleData = sample
         Object.keys(sample).forEach(s => {
           op.push({
             key: s,
             label: s
           })
         })
-        console.log(op)
         this.sourceOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
