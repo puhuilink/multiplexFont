@@ -223,41 +223,6 @@ export const asyncRouterMap = [
       //   ]
       // },
 
-      // system
-      {
-        path: '/system',
-        name: 'system',
-        redirect: '/system/user',
-        component: RouteView,
-        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['F001'] },
-        children: [
-          {
-            path: '/system/user',
-            name: 'User',
-            component: () => import('@/views/system/user/index'),
-            meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
-          },
-          {
-            path: '/system/group',
-            name: 'Group',
-            component: () => import('@/views/system/group/index'),
-            meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
-          },
-          {
-            path: '/system/audit',
-            name: 'Audit',
-            component: () => import('@/views/system/audit/index'),
-            meta: { title: '审计管理', keepAlive: true, permission: ['F001003'] }
-          },
-          {
-            path: '/system/unitManage',
-            name: 'Unit',
-            component: () => import('@/views/system/unitManage/index'),
-            meta: { title: '单位管理', keepAlive: true }
-          }
-        ]
-      },
-
       // patrol
       {
         path: '/patrol',
@@ -702,14 +667,14 @@ export const asyncRouterMap = [
         name: 'SecurityMonitoring',
         redirect: '/SecurityMonitoring/BanList',
         component: RouteView,
-        meta: { title: '安全监控', keepAlive: true, icon: 'monitor' },
+        meta: { title: '安全监控', keepAlive: true, icon: 'monitor', permission: 'F020' },
         children: [
           {
             path: '/BanList',
             name: 'BanList',
             component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
             // component: () => import('@/views/user/PwdChange'),
-            meta: { title: '一键封禁列表' }
+            meta: { title: '一键封禁列表', permission: 'F020001' }
           }
           // {
           //   path: '/SecurityMonitoring/LeakSummary',
@@ -738,6 +703,40 @@ export const asyncRouterMap = [
           //     }
           //   ]
           // }
+        ]
+      },
+      // system
+      {
+        path: '/system',
+        name: 'system',
+        redirect: '/system/user',
+        component: RouteView,
+        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['F001'] },
+        children: [
+          {
+            path: '/system/user',
+            name: 'User',
+            component: () => import('@/views/system/user/index'),
+            meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+          },
+          {
+            path: '/system/group',
+            name: 'Group',
+            component: () => import('@/views/system/group/index'),
+            meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
+          },
+          {
+            path: '/system/audit',
+            name: 'Audit',
+            component: () => import('@/views/system/audit/index'),
+            meta: { title: '审计管理', keepAlive: true, permission: ['F001003'] }
+          },
+          {
+            path: '/system/unitManage',
+            name: 'Unit',
+            component: () => import('@/views/system/unitManage/index'),
+            meta: { title: '单位管理', keepAlive: true }
+          }
         ]
       },
       // 个人设置

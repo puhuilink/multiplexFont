@@ -4,6 +4,7 @@
       <a-tree
         checkable
         defaultExpandAll
+        :checkStrictly="true"
         :autoExpandParent="true"
         v-model="checkedKeys"
         @select="onSelect"
