@@ -7,6 +7,7 @@
       rowKey="id"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      show-pagination
     >
       <!-- / 查询区域 -->
       <template #query>

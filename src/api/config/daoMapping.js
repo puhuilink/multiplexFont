@@ -49,6 +49,7 @@ const IMP_TABLE_LIST = [
   { schema: 't_patrol_task_status' },
   { schema: 't_xj_change_shift' },
   { schema: 'v_patrol_task_list' },
+  { schema: 'patrol_access_ban' },
   // 告警发送记录
   { schema: 't_send_record' },
   // 主题

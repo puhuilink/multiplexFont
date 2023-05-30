@@ -13,7 +13,8 @@ export const asyncRouterMap = [
         {
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
-          component: () => import('@/components/Elements/Report/ReportPreviewElement'),
+          // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
+          component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
@@ -693,6 +694,50 @@ export const asyncRouterMap = [
             component: () => import('@/views/secondSys/ergongju'),
             meta: { title: '二公局' }
           }
+        ]
+      },
+      // 安全监控
+      {
+        path: '/SecurityMonitoring',
+        name: 'SecurityMonitoring',
+        redirect: '/SecurityMonitoring/BanList',
+        component: RouteView,
+        meta: { title: '安全监控', keepAlive: true, icon: 'monitor' },
+        children: [
+          {
+            path: '/BanList',
+            name: 'BanList',
+            component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+            // component: () => import('@/views/user/PwdChange'),
+            meta: { title: '一键封禁列表' }
+          }
+          // {
+          //   path: '/SecurityMonitoring/LeakSummary',
+          //   name: 'LeakSummary',
+          //   // component: () => import('@/views/user/PwdChange'),
+          //   meta: { title: '漏洞统计' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/SituationalAwareness',
+          //   name: 'SituationalAwareness',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '态势感知' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/EmergencyManagement',
+          //   name: 'EmergencyManagement',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '应急处理' },
+          //   children: [
+          //     {
+          //       path: '/SecurityMonitoring/EmergencyManagement/BanList',
+          //       name: 'BanList',
+          //       // component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+          //       component: () => import('@/views/user/PwdChange'),
+          //       meta: { title: '一键封禁列表' }
+          //     }
+          //   ]
+          // }
         ]
       },
       // 个人设置
