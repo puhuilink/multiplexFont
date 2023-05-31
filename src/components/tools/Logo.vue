@@ -2,7 +2,7 @@
   <div class="logo">
     <router-link :to="{ name: 'view' }">
       <img :src="logo" alt="" />
-      <h1 v-if="showTitle" class="logo__title">{{ titleName }}</h1>
+      <h1 v-if="showTitle" class="logo__title">机房运维安全管控系统</h1>
     </router-link>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '中国交建· 统一监控管理平台',
+      default: '机房运维安全管控系统',
       required: false
     },
     showTitle: {
@@ -26,7 +26,7 @@ export default {
   },
   data () {
     return {
-      logo: require('@/assets/logo.png'),
+      logo: require('@/assets/images/title.png'),
       titleName: ''
     }
   },

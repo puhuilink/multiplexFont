@@ -5,9 +5,9 @@
     <div class="container">
       <div class="top">
         <div class="header">
-          <img class="logo" alt="logo" ref="imgLogo"/>
-          <span class="title">{{ title }}</span>
-          <p class="small">Visualization and Insight for Your Business and Environment</p>
+          <img class="logo" alt="logo" src='@/assets/images/title.png'/>
+          <span class="title">机房运维安全管控系统</span>
+<!--          <p class="small">Visualization and Insight for Your Business and Environment</p>-->
         </div>
         <div class="desc"></div>
       </div>
