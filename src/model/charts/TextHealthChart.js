@@ -12,7 +12,7 @@ import {
   SOURCE_TYPE_DH,
   SOURCE_TYPE_SQL,
   SOURCE_TYPE_STATIC_TRAFFIC
-  , SOURCE_TYPE_OPEN
+  , SOURCE_TYPE_OPEN, SOURCE_TYPE_PLUS
 } from '../config/dataConfig/dynamicData/types/sourceType'
 import { formatFloat } from '@/utils/util'
 
@@ -51,6 +51,14 @@ export default class TextsChart extends Chart {
         break
       }
       case SOURCE_TYPE_OPEN: {
+        const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
+        // 无数据时使用缺省值
+        if (!['', null, undefined].includes(dynamicData)) {
+          title.text = `${dynamicData}`
+        }
+        break
+      }
+      case SOURCE_TYPE_PLUS: {
         const dynamicData = await dataConfig.dbDataConfig.getOption(loadingDynamicData, sourceType)
         // 无数据时使用缺省值
         if (!['', null, undefined].includes(dynamicData)) {

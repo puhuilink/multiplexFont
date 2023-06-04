@@ -104,6 +104,15 @@ export default {
         this.change()
       }
     },
+    plusConfig: {
+      get () {
+        return this.config.dataConfig.dbDataConfig.plusConfig
+      },
+      set (v) {
+        Object.assign(this.config.dataConfig.dbDataConfig.plusConfig, v)
+        this.change()
+      }
+    },
     openConfig: {
       get () {
         return this.config.dataConfig.dbDataConfig.openConfig
@@ -128,6 +137,7 @@ export default {
       activateWidget: ScreenMutations.ACTIVATE_WIDGET
     }),
     async change (loadingDynamicData = false) {
+      console.log('预览')
       try {
         if (loadingDynamicData) {
           this.btnLoading = true

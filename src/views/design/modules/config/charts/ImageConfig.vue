@@ -105,6 +105,7 @@ export default {
   methods: {
     iconChoose (index) {
       const { img } = this.icons[index]
+      console.log('img', img)
       this.config.proprietaryConfig.graphic.style.image = img
       this.imageChange()
     },

@@ -12,7 +12,7 @@ import {
   SOURCE_TYPE_DH,
   SOURCE_TYPE_SQL,
   SOURCE_TYPE_STATIC_TRAFFIC,
-  SOURCE_TYPE_OPEN
+  SOURCE_TYPE_OPEN, SOURCE_TYPE_PLUS
 } from './types/sourceType'
 
 export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
@@ -51,6 +51,10 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
           await this.getOpenDataOption()
           break
         }
+        case SOURCE_TYPE_PLUS: {
+          await this.getPlusDataOption()
+          break
+        }
       }
     }
     return this.text
@@ -61,6 +65,11 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
   async getOpenDataOption () {
     const { dataSource } = this.dealOpen(await this.openConfig.fetch(), this.openConfig.back ? JSON.parse(this.openConfig.back) : null)
+    this.text = dataSource
+  }
+
+  async getPlusDataOption () {
+    const dataSource = await this.plusConfig.fetch()
     this.text = dataSource
   }
 

@@ -151,6 +151,7 @@ import WirelessControl from '@/assets/network-icons/WirelessControl.png'
 import CloudSpec from '@/assets/network-icons/CloudSpec.png'
 import FirewallSpec from '@/assets/network-icons/FirewallSpec.png'
 import SwitchSpec from '@/assets/network-icons/SwitchSpec.png'
+import Xiamen from '@/assets/厦门动环.png'
 
 export default {
   name: 'IconPicker',
@@ -163,6 +164,7 @@ export default {
   data: () => ({
     defaultIcon: { name: 'Others', img: Others },
     icons: [
+      { name: 'Xiamen', img: Xiamen },
       { name: 'CloudSpec', img: CloudSpec },
       { name: 'FirewallSpec', img: FirewallSpec },
       { name: 'SwitchSpec', img: SwitchSpec },

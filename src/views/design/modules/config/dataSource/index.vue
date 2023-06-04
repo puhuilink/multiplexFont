@@ -34,6 +34,7 @@
               <a-select-option :value="SOURCE_TYPE_STATIC_TRAFFIC" v-if="getSlot(SOURCE_TYPE_STATIC_TRAFFIC)">Traffic数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_CPE" v-if="getSlot(SOURCE_TYPE_CPE)">Cpe数据</a-select-option>
               <a-select-option :value="SOURCE_TYPE_OPEN" v-if="getSlot(SOURCE_TYPE_OPEN)">OPEN接口</a-select-option>
+              <a-select-option :value="SOURCE_TYPE_PLUS" v-if="getSlot(SOURCE_TYPE_PLUS)">加强接口</a-select-option>
             </a-select>
           </div>
 
@@ -43,9 +44,9 @@
       </a-collapse-panel>
       <!-- E 数据源 -->
 
-      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN].includes(sourceType)">
+      <a-collapse-panel header="数据源配置" key="2" v-show="[SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN, SOURCE_TYPE_PLUS].includes(sourceType)">
         <div
-          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN]"
+          v-for="type in [SOURCE_TYPE_REAL, SOURCE_TYPE_ALARM, SOURCE_TYPE_OVERVIEW, SOURCE_TYPE_COMBO, SOURCE_TYPE_DH, SOURCE_TYPE_NUMBER, SOURCE_TYPE_SQL, SOURCE_TYPE_ORM, SOURCE_TYPE_STATIC_TRAFFIC, SOURCE_TYPE_CPE, SOURCE_TYPE_OPEN, SOURCE_TYPE_PLUS]"
           :key="type"
           class="data-source__wrap"
           v-show="sourceType === type"
@@ -113,7 +114,8 @@ import {
   SOURCE_TYPE_ORM,
   SOURCE_TYPE_STATIC_TRAFFIC,
   SOURCE_TYPE_CPE,
-  SOURCE_TYPE_OPEN
+  SOURCE_TYPE_OPEN,
+  SOURCE_TYPE_PLUS
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 
 export default {
@@ -135,6 +137,7 @@ export default {
     SOURCE_TYPE_STATIC_TRAFFIC,
     SOURCE_TYPE_CPE,
     SOURCE_TYPE_OPEN,
+    SOURCE_TYPE_PLUS,
     cacheStatus: false,
     cacheValue: ''
   }),

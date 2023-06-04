@@ -53,6 +53,12 @@
         :useCalculateType="false"
       />
     </template>
+    <template v-slot:[SOURCE_TYPE_PLUS]>
+      <PlusDataSource
+        :key="SOURCE_TYPE_OPEN"
+        :useCalculateType="false"
+      />
+    </template>
   </DataSourceTemplate>
 </template>
 
@@ -75,9 +81,11 @@ import {
   SOURCE_TYPE_DH,
   SOURCE_TYPE_SQL,
   SOURCE_TYPE_OPEN,
-  SOURCE_TYPE_STATIC_TRAFFIC
+  SOURCE_TYPE_STATIC_TRAFFIC,
+  SOURCE_TYPE_PLUS
 } from '@/model/config/dataConfig/dynamicData/types/sourceType'
 import OpenDataSource from '@/views/design/modules/config/common/OpenDataSource'
+import PlusDataSource from '@/views/design/modules/config/common/PlusDataSource'
 
 export default {
   name: 'TextHealthDataSource',
@@ -92,7 +100,8 @@ export default {
     CpeStatusDataSource,
     StaticTrafficDataSource,
     OpenDataSource,
-    SQLDataSource
+    SQLDataSource,
+    PlusDataSource
   },
   data: () => ({
     SOURCE_TYPE_ALARM,
@@ -102,7 +111,8 @@ export default {
     SOURCE_TYPE_DH,
     SOURCE_TYPE_STATIC_TRAFFIC,
     SOURCE_TYPE_OPEN,
-    SOURCE_TYPE_SQL
+    SOURCE_TYPE_SQL,
+    SOURCE_TYPE_PLUS
   })
 }
 </script>

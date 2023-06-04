@@ -22,9 +22,11 @@ import {
   SOURCE_TYPE_STATIC_TRAFFIC,
   SOURCE_TYPE_CPE,
   SOURCE_TYPE_OPEN,
-  SOURCE_TYPE_CPE_STATUS
+  SOURCE_TYPE_CPE_STATUS,
+  SOURCE_TYPE_PLUS
 } from '../types/sourceType'
 import { AdaptorOpenConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorOpenConfig'
+import { AdaptorPlusConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorPlusConfig'
 import { AdaptorStaticSiteConfig } from '@/model/config/dataConfig/dynamicData/common/AdaptorStaticSiteConfig'
 import AdaptorCpeConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeConfig'
 import AdaptorCpeStatusConfig from '@/model/config/dataConfig/dynamicData/common/AdaptorCpeStatusConfig'
@@ -54,7 +56,10 @@ export class DynamicDataConfig {
     // 站点CPE数据
     siteCpeConfig = {},
     // 站点CPE状态
-    siteCpeStatusConfig = {}
+    siteCpeStatusConfig = {},
+    // 自定义加强版
+    plusConfig = {}
+
   }) {
     this.resourceConfig = new AdaptorResourceConfig(resourceConfig)
     this.alarmConfig = new AdaptorAlarmConfig(alarmConfig)
@@ -67,6 +72,7 @@ export class DynamicDataConfig {
     this.siteTrafficConfig = new AdaptorStaticSiteConfig(siteTrafficConfig)
     this.siteCpeConfig = new AdaptorCpeConfig(siteCpeConfig)
     this.siteCpeStatusConfig = new AdaptorCpeStatusConfig(siteCpeStatusConfig)
+    this.plusConfig = new AdaptorPlusConfig(plusConfig)
     this.openConfig = new AdaptorOpenConfig(openConfig)
     this.resetData()
   }
@@ -84,7 +90,8 @@ export class DynamicDataConfig {
       ormConfig: this.ormConfig.getOption(),
       siteTrafficConfig: this.siteTrafficConfig.getOption(),
       siteCpeConfig: this.siteCpeConfig.getOption(),
-      siteCpeStatusConfig: this.siteCpeStatusConfig.getOption()
+      siteCpeStatusConfig: this.siteCpeStatusConfig.getOption(),
+      plusConfig: this.plusConfig.getOption()
     }
   }
 
@@ -102,6 +109,7 @@ export class DynamicDataConfig {
       case SOURCE_TYPE_CPE: return this.siteCpeConfig
       case SOURCE_TYPE_OPEN: return this.openConfig
       case SOURCE_TYPE_CPE_STATUS: return this.siteCpeStatusConfig
+      case SOURCE_TYPE_PLUS: return this.plusConfig
       default: throw new Error(`Unknown dbDataConfig sourceType: ${sourceType}`)
     }
   }

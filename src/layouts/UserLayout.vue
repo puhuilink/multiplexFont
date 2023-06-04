@@ -5,9 +5,9 @@
     <div class="container">
       <div class="top">
         <div class="header">
-          <img class="logo" alt="logo" src='@/assets/images/title.png'/>
+          <img class="logo" alt="logo" src="@/assets/images/title.png"/>
           <span class="title">机房运维安全管控系统</span>
-<!--          <p class="small">Visualization and Insight for Your Business and Environment</p>-->
+          <!--          <p class="small">Visualization and Insight for Your Business and Environment</p>-->
         </div>
         <div class="desc"></div>
       </div>
@@ -39,7 +39,7 @@ export default {
   },
   mounted () {
     document.body.classList.add('userLayout')
-    this.getTheme()
+    // this.getTheme()
   },
   methods: {
     async getTheme () {
