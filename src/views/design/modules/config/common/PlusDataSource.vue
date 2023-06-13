@@ -13,11 +13,6 @@
       >
       </a-input>
     </a-form-model-item>
-    <a-form-model-item label="接口参数" require>
-      <a-textarea
-        v-model="plusConfig.args"
-      ></a-textarea>
-    </a-form-model-item>
     <a-form-model-item label="返回值" require>
       <!--      <AceEditor-->
       <!--        class="editor"-->
@@ -30,7 +25,7 @@
       <!--        }"-->
       <!--      ></AceEditor>-->
       <a-textarea
-        v-model="openConfig.back"
+        v-model="plusConfig.back"
       ></a-textarea>
     </a-form-model-item>
     <RefreshTime @change="change()" />

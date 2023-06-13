@@ -7,18 +7,24 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: '首页' },
-    redirect: '/OperationMonitoring/Device',
+    redirect: '/first',
     children: [
       ...process.env.NODE_ENV === 'production' ? [] : [
         {
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
-          component: () => import('@/views/SecurityMonitoring/view/safeTouch'),
+          component: () => import('@/views/titlePage/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
       ],
+      {
+        path: '/first',
+        name: 'first',
+        component: () => import('@/views/titlePage/index'),
+        meta: { title: '首页', keepAlive: true, icon: 'home' }
+      },
       // view
       {
         path: '/view',
@@ -51,32 +57,14 @@ export const asyncRouterMap = [
           {
             path: '/OperationMonitoring/Device',
             name: 'Operation',
-            redirect: '/OperationMonitoring/Device',
-            component: RouteView,
-            children: [
-              {
-                path: '/OperationMonitoring/Device/DataCenter',
-                name: 'DataCenter',
-                component: () => import('@/views/SecurityMonitoring/view/datacenter'),
-                meta: { title: '数据中心管理' }
-              }
-            ],
-            meta: { title: '设备监控' }
+            component: () => import('@/views/SecurityMonitoring/view/dataCenterView'),
+            meta: { title: 'IT设备监控管理' }
           },
           {
             path: '/OperationMonitoring/DH',
             name: 'DH',
-            redirect: '/OperationMonitoring/DH',
-            component: RouteView,
-            children: [
-              {
-                path: '/OperationMonitoring/DH/DhMange',
-                name: 'DhMange',
-                component: () => import('@/views/SecurityMonitoring/view/xungeng'),
-                meta: { title: '动环监控管理' }
-              }
-            ],
-            meta: { title: '动环监控' }
+            component: () => import('@/views/SecurityMonitoring/view/xungeng'),
+            meta: { title: '动环监控管理' }
           }
         ],
         meta: { title: '运维监控', icon: 'laptop' }
@@ -263,6 +251,71 @@ export const asyncRouterMap = [
       //   ]
       // },
 
+      // 安全监控
+      {
+        path: '/SecurityMonitoring',
+        name: 'SecurityMonitoring',
+        redirect: '/SecurityMonitoring/EmergencyManagement',
+        component: RouteView,
+        meta: { title: '安全监控', keepAlive: true, icon: 'monitor', permission: 'F020' },
+        children: [
+          {
+            path: '/SecurityMonitoring/LeakSummary',
+            name: 'LeakSummary',
+            component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '漏洞统计管理' }
+          },
+          {
+            path: '/SecurityMonitoring/SituationalAwareness',
+            name: 'SituationalAwareness',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '安全态势感知管理' },
+            component: () => import('@/views/SecurityMonitoring/view/safeTouch')
+          },
+          {
+            path: '/SecurityMonitoring/EmergencyManagement',
+            name: 'Emergency',
+            redirect: '/SecurityMonitoring/EmergencyManagement/BanList',
+            component: RouteView,
+            children: [{
+              path: '/SecurityMonitoring/EmergencyManagement/BanList',
+              name: 'BanList',
+              component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+              meta: { title: '一键封禁' }
+            }],
+            meta: { title: '应急处理', permission: 'F020001' }
+          }
+          // {
+          //   path: '/SecurityMonitoring/LeakSummary',
+          //   name: 'LeakSummary',
+          //   // component: () => import('@/views/user/PwdChange'),
+          //   meta: { title: '漏洞统计' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/SituationalAwareness',
+          //   name: 'SituationalAwareness',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '态势感知' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/EmergencyManagement',
+          //   name: 'EmergencyManagement',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '应急处理' },
+          //   children: [
+          //     {
+          //       path: '/SecurityMonitoring/EmergencyManagement/BanList',
+          //       name: 'BanList',
+          //       // component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+          //       component: () => import('@/views/user/PwdChange'),
+          //       meta: { title: '一键封禁' }
+          //     }
+          //   ]
+          // }
+        ]
+      },
+
       // patrol
       {
         path: '/patrol',
@@ -331,19 +384,19 @@ export const asyncRouterMap = [
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
             meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
-          },
+          }
           // {
           //   path: '/patrol/object',
           //   name: 'PatrolObject',
           //   component: () => import('@/views/patrol/object/PatrolObject'),
           //   meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
           // },
-          {
-            path: '/patrol/alarm-approve',
-            name: 'AlarmApprove',
-            component: () => import('@/views/patrol/alarm-approve/index'),
-            meta: { title: '告警审批', keepAlive: true, permission: ['F010005'] }
-          }
+          // {
+          //   path: '/patrol/alarm-approve',
+          //   name: 'AlarmApprove',
+          //   component: () => import('@/views/patrol/alarm-approve/index'),
+          //   meta: { title: '告警审批', keepAlive: true, permission: ['F010005'] }
+          // }
           // {
           //   path: '/patrol/NoticeTemp',
           //   name: 'NoticeTemp',
@@ -356,6 +409,21 @@ export const asyncRouterMap = [
           //   component: () => import('@/views/patrol/informConfig/index'),
           //   meta: { title: '巡更通知配置', keepAlive: true }
           // }
+        ]
+      },
+      {
+        path: '/machineRoom',
+        name: 'machineRoom',
+        redirect: '/machineRoom/room',
+        component: RouteView,
+        meta: { title: '机房监控', keepAlive: true, icon: 'line-chart' },
+        children: [
+          {
+            path: '/machineRoom/room',
+            name: 'room',
+            component: () => import('@/views/SecurityMonitoring/view/monitorPage'),
+            meta: { title: '机房监控管理', keepAlive: true, icon: 'line-chart' }
+          }
         ]
       },
       {
@@ -701,84 +769,6 @@ export const asyncRouterMap = [
           }
         ]
       },
-      // 安全监控
-      {
-        path: '/SecurityMonitoring',
-        name: 'SecurityMonitoring',
-        redirect: '/SecurityMonitoring/EmergencyManagement',
-        component: RouteView,
-        meta: { title: '安全监控', keepAlive: true, icon: 'monitor', permission: 'F020' },
-        children: [
-          {
-            path: '/SecurityMonitoring/SituationalAwareness',
-            name: 'SituationalAwareness',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '安全态势感知' },
-            component: RouteView,
-            redirect: '/SecurityMonitoring/SituationalAwareness/Manage',
-            children: [{
-              path: '/SecurityMonitoring/SituationalAwareness/Manage',
-              name: 'Weakness',
-              component: () => import('@/views/SecurityMonitoring/view/safeTouch'),
-              meta: { title: '安全态势感知管理' }
-            }]
-          },
-          {
-            path: '/SecurityMonitoring/LeakSummary',
-            name: 'LeakSummary',
-            redirect: '/SecurityMonitoring/LeakSummary/Manage',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '漏洞统计' },
-            component: RouteView,
-            children: [{
-              path: '/SecurityMonitoring/LeakSummary/Manage',
-              name: 'Manage',
-              component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
-              meta: { title: '漏洞统计管理' }
-            }]
-          },
-          {
-            path: '/SecurityMonitoring/EmergencyManagement',
-            name: 'Emergency',
-            redirect: '/SecurityMonitoring/EmergencyManagement/BanList',
-            component: RouteView,
-            children: [{
-              path: '/SecurityMonitoring/EmergencyManagement/BanList',
-              name: 'BanList',
-              component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
-              meta: { title: '一键封禁列表' }
-            }],
-            meta: { title: '应急处理', permission: 'F020001' }
-          }
-          // {
-          //   path: '/SecurityMonitoring/LeakSummary',
-          //   name: 'LeakSummary',
-          //   // component: () => import('@/views/user/PwdChange'),
-          //   meta: { title: '漏洞统计' }
-          // },
-          // {
-          //   path: '/SecurityMonitoring/SituationalAwareness',
-          //   name: 'SituationalAwareness',
-          //   // component: () => import('@/views/user/settings/index'),
-          //   meta: { title: '态势感知' }
-          // },
-          // {
-          //   path: '/SecurityMonitoring/EmergencyManagement',
-          //   name: 'EmergencyManagement',
-          //   // component: () => import('@/views/user/settings/index'),
-          //   meta: { title: '应急处理' },
-          //   children: [
-          //     {
-          //       path: '/SecurityMonitoring/EmergencyManagement/BanList',
-          //       name: 'BanList',
-          //       // component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
-          //       component: () => import('@/views/user/PwdChange'),
-          //       meta: { title: '一键封禁列表' }
-          //     }
-          //   ]
-          // }
-        ]
-      },
       // system
       {
         path: '/system',
@@ -798,19 +788,19 @@ export const asyncRouterMap = [
             name: 'Group',
             component: () => import('@/views/system/group/index'),
             meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
-          },
+          }
           // {
           //   path: '/system/audit',
           //   name: 'Audit',
           //   component: () => import('@/views/system/audit/index'),
           //   meta: { title: '审计管理', keepAlive: true, permission: ['F001003'] }
           // },
-          {
-            path: '/system/unitManage',
-            name: 'Unit',
-            component: () => import('@/views/system/unitManage/index'),
-            meta: { title: '单位管理', keepAlive: true }
-          }
+          // {
+          //   path: '/system/unitManage',
+          //   name: 'Unit',
+          //   component: () => import('@/views/system/unitManage/index'),
+          //   meta: { title: '单位管理', keepAlive: true }
+          // }
         ]
       },
       // 个人设置

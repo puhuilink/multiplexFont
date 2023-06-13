@@ -69,6 +69,7 @@ export default class TextHealthDynamicDataConfig extends DynamicDataConfig {
   }
 
   async getPlusDataOption () {
+    console.log('getPlusDataOption')
     const dataSource = await this.plusConfig.fetch()
     this.text = dataSource
   }

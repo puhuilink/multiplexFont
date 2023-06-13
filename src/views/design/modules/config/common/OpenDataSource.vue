@@ -12,11 +12,6 @@
         v-model="openConfig.args"
       ></a-textarea>
     </a-form-model-item>
-    <a-form-model-item label="返回值" require>
-      <a-textarea
-        v-model="openConfig.back"
-      ></a-textarea>
-    </a-form-model-item>
     <RefreshTime @change="change()" />
   </a-form-model>
 </template>

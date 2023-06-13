@@ -92,6 +92,9 @@ export default {
           case 'fullscreen':
             this.scale = [scaleX, scaleY]
             break
+          // case 'fullscreen':
+          //   this.scale = [scaleX, scaleX]
+          //   break
           case 'fullWidth':
             this.scale = [scaleX, scaleX]
             break

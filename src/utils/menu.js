@@ -194,14 +194,14 @@ const MENU = [
             functionType: '5',
             icon: '',
             module: '',
-            name: '一键封禁列表',
+            name: '一键封禁',
             note: '',
             order: 1,
             parentCode: 'F020',
             updateDate: null,
             updator: '',
             key: 'F020001',
-            title: '一键封禁列表'
+            title: '一键封禁'
           }
         ],
         title: '安全监控'
@@ -1009,14 +1009,14 @@ const ALLPERMISSION = [
         functionType: '5',
         icon: '',
         module: '',
-        name: '一键封禁列表',
+        name: '一键封禁',
         note: '',
         order: 1,
         parentCode: 'F020',
         updateDate: null,
         updator: '',
         key: 'F020001',
-        title: '一键封禁列表'
+        title: '一键封禁'
       }
     ],
     title: '安全监控'

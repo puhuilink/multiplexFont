@@ -20,6 +20,22 @@
       <a-tab-pane tab="菜单模块" forceRender key="2">
         <AuthMenu :record="authView.record" ref="menu" />
       </a-tab-pane>
+      <a-tab-pane tab="巡更平板端角色" forceRender key="3">
+        角色选择:<a-select v-model="patrolPermission.code" style="width: 80%;margin-left: 2%">
+          <a-select-option value="P1">
+            管理员
+          </a-select-option>
+          <a-select-option value="P2">
+            运维角色
+          </a-select-option>
+          <a-select-option value="P3">
+            管理角色
+          </a-select-option>
+          <a-select-option value="P4">
+            监控角色
+          </a-select-option>
+        </a-select>
+      </a-tab-pane>
     </a-tabs>
   </a-modal>
 </template>
@@ -28,6 +44,7 @@
 import AuthView from './AuthView'
 import AuthMenu from './AuthMenu'
 import { AuthorizeObjectService } from '@/api'
+import _ from 'lodash'
 
 const formItemLayout = {
   labelCol: {
@@ -59,7 +76,16 @@ export default {
         viewIds: [],
         record: null
       },
-      userId: ''
+      patrolPermissionMap: new Map([
+        ['P1', '管理员'],
+        ['P2', '运维角色'],
+        ['P3', '管理角色'],
+        ['P4', '监控角色']
+      ]),
+      userId: '',
+      patrolPermission: {
+        code: ''
+      }
     }
   },
   methods: {
@@ -69,6 +95,20 @@ export default {
       this.userId = record.user_id
       this.record = { ...record }
       this.authView.record = { ...record }
+      console.log('record', record)
+      this.getPatrolPermission(record)
+    },
+    async getPatrolPermission (record) {
+      this.patrolPermission = { code: '' }
+      const { user_id: userId, group_id: groupId } = record
+      if (userId) {
+        this.menuPermission = await AuthorizeObjectService.getUserPermission(userId)
+      }
+      if (groupId) {
+        this.menuPermission = await AuthorizeObjectService.getGroupPermission(groupId)
+      }
+      const patrolPermission = this.menuPermission.data.filter(item => /^P/.test(item.code))
+      this.patrolPermission = _.get(patrolPermission, '0', { code: '' })
     },
     cancel () {
       this.visible = false
@@ -85,6 +125,13 @@ export default {
           authView: { viewIds },
           record: { user_id, group_id }
         } = this
+        if (this.patrolPermission.code) {
+          menu.push({
+            objectId: this.patrolPermission.code,
+            objectType: '7',
+            domainName: null
+          })
+        }
         if (user_id) {
           await AuthorizeObjectService.allocateUserView(user_id, viewIds)
           await AuthorizeObjectService.modifyUserPermission(user_id, menu)

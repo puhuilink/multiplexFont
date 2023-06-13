@@ -32,7 +32,7 @@ export default {
   mixins: [mixinDevice],
   data () {
     return {
-      bgImage: require('@/assets/images/bg-login-compress.jpg'),
+      bgImage: require('@/assets/login_bk.png'),
       title: '',
       logoIndex: ''
     }
@@ -99,6 +99,7 @@ export default {
       .header {
         // height: 44px;
         line-height: 44px;
+        margin-top: 5%;
 
         .badge {
           position: absolute;
