@@ -3,7 +3,7 @@ import { mutate, query } from '../utils/hasura-orm/index'
 import { AuthorizeObjectDao, ViewDao, ViewDesktopDao, UserDao, GroupDao } from '../dao/index'
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import _ from 'lodash'
-import { axios } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 class AuthorizeObjectService extends BaseService {
   static async find (argus = {}) {
@@ -121,6 +121,25 @@ class AuthorizeObjectService extends BaseService {
       // 删除曾经已分配到视图桌面上但现在无权限的视图
       ViewDesktopDao.batchDelete({ user_id, view_id: { _in: abandonViewIdList } })
     )
+  }
+
+  static async getPatrolRoles () {
+    const { data } = await xungeng.get('/role/get')
+    return _.get(data, 'code', '')
+  }
+
+  static async getPatrolRolesList () {
+    const { data } = await xungeng.get('/role/list')
+    return data.map(el => ({
+      label: _.get(el, 'name', ''),
+      value: _.get(el, 'code', '') })
+    )
+  }
+
+  static async savePatrolRoles (param) {
+    if (param) {
+      return xungeng.post('/role/save', { ...param })
+    }
   }
 
   /**

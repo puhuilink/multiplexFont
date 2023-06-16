@@ -32,19 +32,29 @@
     <!--    告警处置统计-->
     <div class="abs" style="top: 687px;left: 20px;">
       <tit name="告警处置统计"></tit>
-      <a-range-picker format="YYYY/MM/DD HH:mm" @change="levelAlarm" class="abs rangePickerIceGai" style="width: 234px;height: 28px;left: 684px;top: 5px;">
-        <a-icon slot="suffixIcon" type="calendar"/>
+      <a-range-picker
+        v-model="dealTime"
+        format="YYYY/MM/DD HH:mm"
+        @change="dealAlarm"
+        class="abs rangePickerIceGai"
+        style="width: 234px;height: 28px;left: 684px;top: 5px;">
+        <a-icon slot="suffixIcon" type="calendar" />
       </a-range-picker>
-      <AlarmStatistics></AlarmStatistics>
+      <AlarmStatistics ref="tongji"></AlarmStatistics>
     </div>
 
     <!--    告警分级统计-->
     <div class="abs" style="top: 687px;left: 970px;">
       <tit name="告警分级统计"></tit>
-      <a-range-picker format="YYYY/MM/DD HH:mm" @change="levelAlarm" class="abs rangePickerIceGai" style="width: 234px;height: 28px;left: 684px;top: 5px;">
-        <a-icon slot="suffixIcon" type="calendar"/>
+      <a-range-picker
+        v-model="levelTime"
+        format="YYYY/MM/DD HH:mm"
+        @change="levelAlarm"
+        class="abs rangePickerIceGai"
+        style="width: 234px;height: 28px;left: 684px;top: 5px;">
+        <a-icon slot="suffixIcon" type="calendar" />
       </a-range-picker>
-      <AlarmStatistics :option="peizhi"></AlarmStatistics>
+      <AlarmStatistics ref="level" :option="peizhi"></AlarmStatistics>
     </div>
   </div>
 </template>
@@ -59,12 +69,14 @@ import AlarmStatistics from '~~~/Elements/Report/AlarmStatistics'
 import { sql } from '@/utils/request'
 import {
   currentAlarm,
-  currentMainAlarm, handlingAlarm, handlingAvgClaimTime, handlingAvgTime, past7DaysAllAlarm,
+  currentMainAlarm, handingLevel, handlingAlarm, handlingAvgClaimTime, handlingAvgTime, past7DaysAllAlarm,
   past7DaysMainAlarm,
   pastAllSevenDayAlarm,
   pastSevenDayAlarm
 } from '~~~/Elements/Report/sql'
 import { dealQuery, sqlResultDealer } from '@/utils/util'
+import moment from 'moment'
+
 const peizhi = {
   tooltip: {
     trigger: 'axis',
@@ -87,7 +99,8 @@ const peizhi = {
     width: '830px',
     height: '250px',
     top: 'middle',
-    right: '5%'
+    right: '5%',
+    left: '10%'
   },
   xAxis: {
     type: 'value',
@@ -148,7 +161,7 @@ const peizhi = {
       emphasis: {
         focus: 'series'
       },
-      data: [120, 132, 101, 134, 90, 230, 210]
+      data: [120, undefined, 101, 134, 90, 230, 210]
     },
     {
       name: 'Affiliate Ad',
@@ -199,10 +212,14 @@ export default {
       past7Alarm: 0,
       post7AllAlarm: 0,
       past7MainList: [],
-      past7AllList: []
+      past7AllList: [],
+      dealTime: [moment().add(-7, 'd').format('YYYY/MM/DD HH:mm'), moment().format('YYYY/MM/DD HH:mm')],
+      levelTime: [moment().add(-7, 'd').format('YYYY/MM/DD HH:mm'), moment().format('YYYY/MM/DD HH:mm')]
     }
   },
   methods: {
+    moment,
+    handingLevel,
     async loadTodayMain () {
       const res = dealQuery(await sql(currentAlarm))
       this.mainAlarm = _.get(res, '0.total', 0)
@@ -217,16 +234,132 @@ export default {
       const res_7_all_list = dealQuery(await sql(past7DaysAllAlarm))
       this.past7AllList = res_7_all_list
     },
+    mergeArrays (arrays, key) {
+      return arrays.reduce((mergedArray, currentArray) => {
+        currentArray.forEach((obj) => {
+          const existingObj = mergedArray.find((item) => item[key] === obj[key])
+          if (existingObj) {
+            Object.assign(existingObj, obj)
+          } else {
+            mergedArray.push(obj)
+          }
+        })
+        return mergedArray
+      }, [])
+    },
+    async dealAlarm (dates, dateStrings) {
+      const date = dateStrings || this.dealTime
+      const handingTime = dealQuery(await sql(handlingAvgTime(date)))
+      const claimHour = dealQuery(await sql(handlingAvgClaimTime(date)))
+      const handingRate = dealQuery(await sql(handlingAlarm(date)))
+      const arr = this.mergeArrays([handingTime, claimHour, handingRate], 'name')
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          orient: 'horizontal',
+          textStyle: {
+            color: '#B0BDCD'
+          }
+        },
+        grid: {
+          width: '800px',
+          height: '250px',
+          top: 'middle',
+          right: '5%'
+        },
+        xAxis: {
+          type: 'category',
+          data: ['avg_claim_time', 'avg_process_rate', 'avg_process_time'],
+          axisLabel: {
+            fontSize: '12px',
+            fontWeight: '400',
+            color: '#A9B7C8'
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#FFF'
+            }
+          }
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: {
+            show: false
+          },
+          axisLabel: {
+            fontSize: '12px',
+            fontWeight: '400',
+            color: '#A9B7C8'
+          },
+          lineStyle: {
+            color: '#fff'
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#FFF'
+            }
+          }
+        },
+        series: [
+          {
+            name: '平均告警时间',
+            type: 'bar',
+            emphasis: {
+              focus: 'series'
+            },
+            data: arr.map(el => _.get(el, 'avg_claim_time', undefined))
+          },
+          {
+            name: '平均审核时间',
+            type: 'bar',
+            emphasis: {
+              focus: 'series'
+            },
+            data: arr.map(el => _.get(el, 'avg_process_time', undefined))
+          },
+          {
+            name: '平均审核率',
+            type: 'bar',
+            emphasis: {
+              focus: 'series'
+            },
+            data: arr.map(el => _.get(el, 'avg_process_rate', undefined))
+          }
+        ]
+      }
+      this.$refs.tongji.mergeOption(option)
+    },
     async levelAlarm (dates, dateStrings) {
-      console.log(dates, dateStrings)
-      const hanglingRate = dealQuery(await sql(handlingAvgTime(dateStrings)))
-      const claimHour = dealQuery(await sql(handlingAvgClaimTime(dateStrings)))
-      const handingHour = dealQuery(await sql(handlingAlarm(dateStrings)))
-      console.log(hanglingRate, claimHour, handingHour)
+      const date = dateStrings || this.levelTime
+      const handingLevel = dealQuery(await sql(this.handingLevel(date)))
+      this.peizhi.yAxis.data = handingLevel ? handingLevel.map(el => el.collect) : []
+      this.peizhi.series = [1, 2, 3, 4, 5].map(el => {
+        return {
+          name: `Level${el}`,
+          type: 'bar',
+          stack: 'total',
+          // label: {
+          //   show: true
+          // },
+          emphasis: {
+            focus: 'series'
+          },
+          data: handingLevel.map(el => _.get(el, `level${el}`, 0))
+        }
+      })
+      this.$refs.level.mergeOption(this.peizhi)
+      // this.$refs.tongji.mergeOption(option)
     }
   },
   mounted () {
     this.loadTodayMain()
+    this.levelAlarm()
+    this.dealAlarm()
   }
 }
 </script>
@@ -236,6 +369,7 @@ export default {
   background: #2877BF;
   color: #B0C9E8;
 }
+
 .border {
   background-color: #152F57;
   height: 1080px;
@@ -243,6 +377,7 @@ export default {
   opacity: 100%;
   position: relative;
 }
+
 .abs {
   position: absolute;
 }
