@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;width: 100%;">
     <!--    <div class="block"></div>-->
-    <Iframe width="100%" height="100%" src="http://10.1.13.17/xungeng/#/pages/computerRoomMonitoring/index?pcShow=false" style="border: none"></Iframe>
+    <Iframe width="100%" height="100%" src="http://10.1.13.17/xunh5/#/pages/computerRoomMonitoring/index?pcShow=false" style="border: none"></Iframe>
   </div>
 </template>
 <script>

@@ -10,117 +10,48 @@
   >
     <a-spin :spinning="spinning">
       <div class="ChangeShiftSchema__block">
-        <h2>交班</h2>
+        <div class="font_head">交班</div>
         <a-row>
-          <a-col :span="8">
-            <span>交班人：{{ record.hand_name }}</span>
+          <a-col :span="8" style="text-align: left">
+            <span>交班人：{{ record.handName }}</span>
           </a-col>
 
-          <!--          <a-col :span="8">-->
-          <!--            <span>状态：{{ record.status | status }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: center">
+            <span>交班时间：{{ record.handTime | timeFormat }}</span>
+          </a-col>
 
-          <a-col :span="8">
-            <span>交班时间：{{ record.hand_time | timeFormat }}</span>
+          <a-col :span="8" style="text-align: right">
+            <span>交班状态：{{ record.status | status }}</span>
           </a-col>
 
         </a-row>
 
         <a-row>
-          <a-col :span="8">
-            <span>工具仪表、钥匙：{{ record.tool | tool }}</span>
-          </a-col>
-          <a-col :span="8">
-            <span>图纸资料：{{ record.data | data }}</span>
-          </a-col>
-          <a-col :span="8">
-            <span>监控平台运行状态：{{ record.monitor_status | monitorStatus }}</span>
-          </a-col>
+          <a-divider />
+
+          <a-table
+            :rowKey="(record, index) => index + 1"
+            :columns="columns"
+            bordered
+            size="middle"
+            :locale="locale"
+            :dataSource="record.event"
+            :pagination="false"
+          ></a-table>
+
+          <a-divider />
 
         </a-row>
 
+        <div class="font_head">接班</div>
         <a-row>
           <a-col :span="8">
-            <span>机房温度（℃）：{{ record.temperature }}</span>
+            <span>接班人：{{ record.receiveName }}</span>
+          </a-col>
+          <a-col :span="8" style="text-align: center">
+            <span>接班时间：{{ record.handTime | timeFormat }}</span>
           </a-col>
 
-          <a-col :span="8">
-            <span>机房湿度（%rH）：{{ record.humidity }}</span>
-          </a-col>
-
-          <a-col :span="8">
-            <span>机房整洁度：{{ record.sanitary | sanitary }}</span>
-          </a-col>
-        </a-row>
-
-        <h3>遗留事项</h3>
-        <a-row>
-          <a-col :span="12">
-            <span>告警信息：{{ record.alarm_info }}</span>
-          </a-col>
-
-          <a-col :span="12">
-            <span>故障情况：{{ record.fault_conditions }}</span>
-          </a-col>
-
-        </a-row>
-
-        <a-row>
-          <a-col :span="12">
-            <span>配合工作：{{ record.cooperation }}</span>
-          </a-col>
-
-          <a-col :span="12">
-            <span>其他： {{ record.other }}</span>
-          </a-col>
-        </a-row>
-
-        <a-row>
-          <a-col :span="24">
-            <span>其他事项：{{ record.other_matter }}</span>
-          </a-col>
-        </a-row>
-      </div>
-
-      <a-divider />
-
-      <div class="ChangeShiftSchema__block">
-        <h2>接班</h2>
-        <a-row>
-          <a-col :span="8">
-            <span>接班人：{{ record.receive_name }}</span>
-          </a-col>
-
-          <!--          <a-col :span="8">-->
-          <!--            <span>状态：{{ record.status | status }}</span>-->
-          <!--          </a-col>-->
-
-          <a-col :span="8">
-            <span>接班时间：{{ record.receive_time | timeFormat }}</span>
-          </a-col>
-
-        </a-row>
-
-        <h3>交接文档</h3>
-        <a-row>
-          <a-col :span="8">
-            <span>设备日常巡检表：{{ record.inspection_list | list }}</span>
-          </a-col>
-
-          <a-col :span="8">
-            <span>监控值班记录表：{{ record.log_list | list }}</span>
-          </a-col>
-
-          <a-col :span="8">
-            <span>运维日志表：{{ record.inspection_list | list }}</span>
-          </a-col>
-
-        </a-row>
-
-        <a-row>
-          <a-col :span="24">
-            <span>详细描述：{{ record.detail_description }}</span>
-          </a-col>
         </a-row>
       </div>
     </a-spin>
@@ -131,23 +62,58 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import moment from 'moment'
 import { PatrolService } from '@/api'
+import { camelExchange } from '@/utils/util'
 
 export default {
   name: 'ChangeShiftSchema',
   mixins: [Schema],
   components: {},
   props: {},
-  data: () => ({
-    record: {},
-    spinning: false
-  }),
+  data () {
+    return {
+      record: {},
+      spinning: false,
+      columns: [{
+        title: '遗留事项',
+        align: 'left',
+        className: 'biaoTou',
+        children: [
+          {
+            title: '序号',
+            align: 'center',
+            width: 50,
+            customRender: (text, record, index) => index + 1
+          },
+          {
+            title: '遗留内容',
+            align: 'center',
+            dataIndex: 'remark',
+            key: 'remark'
+          },
+          {
+            title: '状态',
+            align: 'center',
+            width: 150,
+            dataIndex: 'eventstatus',
+            customRender: (text) => {
+              console.log('text', text)
+              return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === 0 ? '已完成' : '未完成'}</span>)
+            }
+          }
+        ]
+      }],
+      locale: {
+        emptyText: '暂无遗留事项'
+      }
+    }
+  },
   filters: {
     data (data = '') {
       switch (data) {
         case '0':
-          return '异常'
+          return '已完成'
         case '1':
-          return '正常'
+          return '未完成'
         default:
           return ''
       }
@@ -186,14 +152,16 @@ export default {
     },
     status (status = '') {
       switch (status) {
-        case '0':
-          return '已关闭'
-        case '1':
-          return '已交班'
-        case '2':
-          return '已接班'
+        case 0:
+          return '交接正常'
+        case 1:
+          return '交班正常'
+        case 10:
+          return '交班异常'
+        case 20:
+          return '接班异常'
         default:
-          return ''
+          return '接口异常'
       }
     },
     tool (tool = '') {
@@ -219,7 +187,8 @@ export default {
     async fetch (id) {
       try {
         this.spinning = true
-        this.record = await PatrolService.changeShiftDetail(id)
+        this.record = camelExchange(await PatrolService.changeShiftDetail(id))
+        console.log('record', this.record)
       } catch (e) {
         this.record = {}
         throw e
@@ -235,6 +204,24 @@ export default {
 .ChangeShiftSchema {
   &__block {
     margin-bottom: 10px;
+    padding: 10px 40px;
   }
+}
+
+.event_danger {
+  color: red;
+}
+
+.event_normal {
+  color: blue;
+}
+.biaoTou {
+  background-color: rgba(249, 251,255) !important;
+}
+
+.font_head {
+  font: 16px black;
+  font-weight: bold;
+  padding-bottom: 5px;
 }
 </style>

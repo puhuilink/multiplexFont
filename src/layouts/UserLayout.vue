@@ -6,7 +6,7 @@
       <div class="top">
         <div class="header">
           <img class="logo" alt="logo" src="@/assets/images/title.png"/>
-          <span class="title">机房运维安全管控系统</span>
+          <span class="title">机房运维安全管控系统V1.0</span>
           <!--          <p class="small">Visualization and Insight for Your Business and Environment</p>-->
         </div>
         <div class="desc"></div>
@@ -98,8 +98,9 @@ export default {
 
       .header {
         // height: 44px;
+        position: absolute;
+        top: 5px;
         line-height: 44px;
-        margin-top: 5%;
 
         .badge {
           position: absolute;
@@ -112,19 +113,23 @@ export default {
         }
 
         .logo {
-          height: 44px;
+          height: 78px;
           vertical-align: top;
-          margin-right: 16px;
+          margin-right: 21px;
+          margin-left: 14px;
           border-style: none;
         }
 
         .title {
-          font-size: 33px;
+          font-size: 21px;
+          line-height: 40px;
+          width: 138px;
           color: white;
           font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
           font-weight: 600;
           position: relative;
           top: 2px;
+          display: inline-block;
         }
 
         .small {

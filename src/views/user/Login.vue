@@ -102,6 +102,27 @@
         </a-col>
       </a-row>
 
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="14">
+          <a-form-item>
+            <a-input
+              size="large"
+              autocomplete="off"
+              placeholder="验证码"
+              v-decorator="[
+                'verifCode',
+                {
+                  rules: [{ validator: handleCode}],
+                  validateTrigger: 'change'
+                }
+              ]"/>
+            <div @click="refreshCode">
+              <identify :identify-code="identifyCode" :contentWidth="120" :contentHeight="38" class="verify"></identify>
+            </div>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
       <!-- / 提交 -->
       <a-form-item style="margin-top:24px">
         <a-button
@@ -122,11 +143,12 @@
 <script>
 import { mapActions } from 'vuex'
 import { UserService } from '@/api'
+import identify from '@/components/identify/index'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
   name: 'Login',
-  components: {},
+  components: { identify },
   data () {
     return {
       VUE_APP_SMS_ENABLED,
@@ -147,7 +169,9 @@ export default {
         captchaLoading: false,
         loginType: 0,
         captchaDisabled: false
-      }
+      },
+      identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
+      identifyCode: ''
     }
   },
   computed: {
@@ -214,6 +238,11 @@ export default {
         state.loginType = 1
       }
       callback()
+    },
+    handleCode (rule, value, callback) {
+      if (value === this.identifyCode) {
+        callback()
+      } else callback(new Error('验证码不对'))
     },
     handleSubmit (e) {
       e.preventDefault()
@@ -305,7 +334,22 @@ export default {
     requestFailed (err) {
       this.isLoginError = true
       throw err
+    },
+    refreshCode () {
+      this.identifyCode = ''
+      this.makeCode(this.identifyCodes, 4)
+    },
+    makeCode (o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
+      }
+    },
+    randomNum (min, max) {
+      return Math.floor(Math.random() * (max - min) + min)
     }
+  },
+  mounted () {
+    this.refreshCode()
   }
 }
 </script>
@@ -360,5 +404,18 @@ export default {
       float: right;
     }
   }
+
+  .code{
+    width: 500px;
+    height: 31.25rem;
+    border: 1px solid #ddd;
+  }
+}
+
+.verify {
+  width: 65px;
+  position: absolute;
+  right: -83px;
+  top: -11px;
 }
 </style>

@@ -2,10 +2,12 @@
   <Iframe
     width="100%"
     height="100%"
-    src="http://10.1.13.17/xungeng/#/pages/safeView/index"
+    src="http://10.1.13.17/xunh5/#/pages/safeView/index?pcShow=false"
     style="border: none"
     ref="childIframe"
-    name="childIframe"></Iframe>
+    name="childIframe">
+    <!--    src="http://10.201.229.62/xunh5/#/pages/safeView/index"-->
+  </Iframe>
 </template>
 
 <script>

@@ -1,10 +1,10 @@
 <template>
   <div>
     <a-row :gutter="[16,16]" justify="center" height type="flex" >
-      <a-col :span="6"><titleColor></titleColor></a-col>
-      <a-col :span="6"><titleColor img="1" icon="2" font="漏洞列表"></titleColor></a-col>
-      <a-col :span="6"><titleColor img="2" icon="1" font="威胁漏洞报告"></titleColor></a-col>
-      <a-col :span="6"><a @click="tiaozhuan"><titleColor img="3" icon="0" font="一键封禁"></titleColor></a></a-col>
+      <a-col :span="6"><a @click="tiaozhuan('/OperationMonitoring/Device')"><titleColor font="IT设备监控"></titleColor></a></a-col>
+      <a-col :span="6"><a @click="tiaozhuan('/SecurityMonitoring/LeakSummary')"><titleColor img="1" icon="2" font="漏洞统计"></titleColor></a></a-col>
+      <a-col :span="6"><a @click="tiaozhuan('/SecurityMonitoring/SituationalAwareness')"><titleColor img="2" icon="1" font="安全态势"></titleColor></a></a-col>
+      <a-col :span="6"><a @click="tiaozhuan('/SecurityMonitoring/EmergencyManagement/BanList')"><titleColor img="3" icon="0" font="一键封禁"></titleColor></a></a-col>
       <a-col :span="24" style="margin-top: 140px;font-size: 28px">机房导览</a-col>
       <a-col v-bind="wrapperCol"><blockImg></blockImg></a-col>
       <a-col v-bind="wrapperCol"><blockImg floor="19F" title="屋面" img-url="2"></blockImg></a-col>
@@ -34,8 +34,8 @@ export default {
     }
   },
   methods: {
-    tiaozhuan () {
-      this.$router.push('/SecurityMonitoring/EmergencyManagement/BanList')
+    tiaozhuan (path) {
+      this.$router.push(path)
     }
   }
 }

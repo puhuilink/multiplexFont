@@ -1,5 +1,6 @@
 <template>
-  <Iframe width="100%" ref="childIframe" height="100%" src="http://10.1.13.17/xungeng/#/pages/vulnerabilityMonitoring/index/index" style="border: none"></Iframe>
+  <Iframe width="100%" ref="childIframe" height="100%" src="http://10.1.13.17/xunh5/#/pages/vulnerabilityMonitoring/index/index?pcShow=false" style="border: none"></Iframe>
+<!--  <Iframe width="100%" ref="childIframe" height="100%" src="http://10.201.229.62/xunh5/#/pages/vulnerabilityMonitoring/index/index" style="border: none"></Iframe>-->
 </template>
 
 <script>

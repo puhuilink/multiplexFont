@@ -4,6 +4,7 @@ import { AuthorizeObjectDao, ViewDao, ViewDesktopDao, UserDao, GroupDao } from '
 import { OBJECT_TYPE } from '@/tables/authorize_object/enum'
 import _ from 'lodash'
 import { axios, xungeng } from '@/utils/request'
+import { encrypt } from '@/utils/aes'
 
 class AuthorizeObjectService extends BaseService {
   static async find (argus = {}) {
@@ -123,8 +124,8 @@ class AuthorizeObjectService extends BaseService {
     )
   }
 
-  static async getPatrolRoles () {
-    const { data } = await xungeng.get('/role/get')
+  static async getPatrolRoles (id) {
+    const { data } = await xungeng.post('/role/get', { userId: encrypt(id) })
     return _.get(data, 'code', '')
   }
 

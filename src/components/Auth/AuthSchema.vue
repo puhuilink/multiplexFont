@@ -87,7 +87,7 @@ export default {
     },
     async getPatrolPermission (record) {
       this.patrolPermission = { code: '' }
-      this.patrolPermission.code = await AuthorizeObjectService.getPatrolRoles()
+      this.patrolPermission.code = await AuthorizeObjectService.getPatrolRoles(record.user_id)
       this.patrolPermissionMap = await AuthorizeObjectService.getPatrolRolesList()
     },
     cancel () {

@@ -6,11 +6,12 @@ import {
   PatrolTaskStatusDao, PatrolTaskReportViewDao
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
+import { PatrolChangeShiftEventDao } from '../dao/PatrolChangeShiftEventDao'
 import _ from 'lodash'
 import { axios, sql, xungeng } from '@/utils/request'
 import { decrypt } from '@/utils/aes'
 import moment from 'moment-timezone'
-import { sqlResultDealer } from '@/utils/util'
+import { dealQuery, sqlResultDealer } from '@/utils/util'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -19,6 +20,7 @@ class PatrolService extends BaseService {
       PatrolChangeShiftDao.find(argus)
     )
   }
+
   // 交接班详情
   static async changeShiftDetail (id) {
     const { data: { changeShiftList } } = await this.changeShiftFind({
@@ -27,29 +29,47 @@ class PatrolService extends BaseService {
       fields: [
         'hand_name',
         'hand_time',
-        'tool',
-        'data',
-        'monitor_status',
-        'temperature',
-        'humidity',
-        'sanitary',
-        'alarm_info',
-        'fault_conditions',
-        'other',
-        'other_matter',
         'receive_name',
         'receive_time',
-        'inspection_list',
-        'record_list',
-        'log_list',
-        'status',
-        'effective',
-        'create_time',
-        'detail_description'
+        'status'
       ]
     })
-    return _.first(changeShiftList)
+    const res = dealQuery(await sql(`select pcse.remark remark, pcse.status eventStatus from patrol_change_shift_event pcse
+    where pcse.change_shift_id = '${id}';`))
+    Object.assign(changeShiftList, { event: res })
+    console.log('res', changeShiftList[0], res)
+    return Object.assign(_.first(changeShiftList), { event: res })
   }
+
+  // 遗留事项详情
+  static async changeShiftDefect (id) {
+    const { data: { data } } = await xungeng.post('/changeShifts/detail', { id: id })
+    return {
+      id: '360027098783416320',
+      handAccount: 'nl3uoMkuIH3lNZ4q2aRYaQ==',
+      handName: '动环巡更公共账号',
+      handTime: '2023-06-21 11:39:09',
+      status: 0,
+      taskId: '8026',
+      groupId: '234567890098788',
+      events: [
+        {
+          id: '360027098783416321',
+          changeShiftId: '360027098783416320',
+          parentId: '360026797443645441',
+          remark: '233',
+          status: 0
+        },
+        {
+          id: '360027098783416322',
+          changeShiftId: '360027098783416320',
+          remark: '遗留事项2',
+          status: 1
+        }
+      ]
+    }
+  }
+
   static async taskReportDetail (task_id, zone_id = '1267708678362894336') {
     let baseSql = `select 
     point_alias,
@@ -84,6 +104,7 @@ class PatrolService extends BaseService {
       PatrolTaskEventHistoryDao.find(argus)
     )
   }
+
   static async reportFind (argus = {}) {
     return query(PatrolTaskReportViewDao.find(argus))
   }
@@ -114,15 +135,19 @@ class PatrolService extends BaseService {
   static async hostFind () {
     return this.hasuraQuery('select id,alias,content from t_patrol_host')
   }
+
   static async endpointFind () {
     return this.hasuraQuery('select id,alias,content from t_patrol_endpoint')
   }
+
   static async metricFind () {
     return this.hasuraQuery('select id,alias,answer_id from t_patrol_metric')
   }
+
   static async answerFind () {
     return this.hasuraQuery('select id,alias,type,format from t_patrol_answer')
   }
+
   static async thresholdFind () {
     return this.hasuraQuery('select host_id,endpoint_id,metric_id,answer_id,condition,lower_threshold,' +
       'upper_threshold,severity from t_patrol_threshold')
@@ -387,7 +412,8 @@ class PatrolService extends BaseService {
   }
 
   // 告警审批
-  static async approveSend () { }
+  static async approveSend () {
+  }
 
   static async getHistoryExcel (data) {
     return axios({

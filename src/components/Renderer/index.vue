@@ -90,11 +90,8 @@ export default {
             this.scale = [1, 1]
             break
           case 'fullscreen':
-            this.scale = [scaleX, scaleY]
+            this.scale = [scaleX, scaleX]
             break
-          // case 'fullscreen':
-          //   this.scale = [scaleX, scaleX]
-          //   break
           case 'fullWidth':
             this.scale = [scaleX, scaleX]
             break

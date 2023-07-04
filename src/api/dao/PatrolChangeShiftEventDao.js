@@ -1,9 +1,9 @@
 import { BaseDao } from '@/api/dao/BaseDao'
 import { imp } from '@/utils/clientConfig'
 
-export class PatrolChangeShiftDao extends BaseDao {
+export class PatrolChangeShiftEventDao extends BaseDao {
   // 对应 hasura schema
-  static SCHEMA = 'patrol_change_shift'
+  static SCHEMA = 'patrol_change_shift_event'
 
   // 对应 vue-apollo
   static PROVIDER = imp

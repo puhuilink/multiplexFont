@@ -57,9 +57,11 @@ export default {
           fields: ['key: user_id', 'title: staff_name', 'flag'],
           alias: 'userList'
         })
+
+        console.log('userList', userList)
         this.userList = userList.map((el) => ({
           ...el,
-          disabled: el.flag === USER_FLAG.enabled
+          disabled: el.flag === USER_FLAG.disabled
         }))
       } catch (e) {
         this.userList = []
