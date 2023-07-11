@@ -165,7 +165,8 @@
             v-for="viewConfig in filterViewList"
             :key="viewConfig.view_id"
             :tab="viewConfig.view_title"
-          ></a-tab-pane>
+          >
+          </a-tab-pane>
         </a-tabs>
         <a-spin :spinning="isLoadingViewConfig">
           <div class="ViewDisplay-tab-content" :class="[isFullScreen && 'fullscreen']">
@@ -251,6 +252,12 @@ export default {
 <style lang="less">
 .ViewDisplay {
   position: relative;
+
+  &-tab-content {
+    width: 100%;
+    height: calc(100vh - 230px);
+    overflow: auto;
+  }
 
   &-header {
     padding: 12px 22px 14px 22px;
@@ -373,6 +380,7 @@ export default {
         color: rgb(51, 51, 51);
         overflow: hidden;
         margin: 0px 0px 8px;
+
       }
 
       &_creator {

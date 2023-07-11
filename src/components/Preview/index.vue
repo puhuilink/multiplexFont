@@ -10,10 +10,10 @@
   <transition name="preview">
     <div class="Preview" v-if="visible">
 
-      <p class="Preview__title">
-        <!-- <a-icon type="left" /> -->
-        {{ title }}
-      </p>
+      <!--      <p class="Preview__title">-->
+      <!--        &lt;!&ndash; <a-icon type="left" /> &ndash;&gt;-->
+      <!--        {{ title }}-->
+      <!--      </p>-->
 
       <a-spin :spinning="isViewConfigLoading">
         <a-icon slot="indicator" type="loading" style="font-size: 32px" />
@@ -309,7 +309,7 @@ export default {
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: stretch;
-    height: calc(100vh - 45px);
+    height: calc(100vh);
     width: 100vw;
     overflow: auto;
   }

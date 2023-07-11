@@ -1,5 +1,5 @@
 <template>
-  <Iframe width="100%" ref="childIframe" height="100%" src="http://10.1.13.17/preview/jGfhLgmwRKBSgs0EJDIWug==" style="border: none"></Iframe>
+  <Iframe width="100%" ref="childIframe" height="100%" :src="`${url}/preview/5VAU6HEAtObgpZ0doH80jQ==`" style="border: none"></Iframe>
 </template>
 
 <script>
@@ -8,6 +8,11 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 export default {
   name: 'Xungeng',
+  data () {
+    return {
+      url: process.env.VUE_APP_QUOTE_URL
+    }
+  },
   mounted () {
     const mapFrame = this.$refs['childIframe']
     console.log('mapFrame', Vue.ls.get(ACCESS_TOKEN))

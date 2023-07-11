@@ -358,6 +358,10 @@ export default {
 .main{
   padding:30px 40px;
   background: rgba(0,0,0, 0.5);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
 }
 
 .user-layout-login {

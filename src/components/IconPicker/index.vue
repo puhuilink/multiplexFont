@@ -151,7 +151,7 @@ import WirelessControl from '@/assets/network-icons/WirelessControl.png'
 import CloudSpec from '@/assets/network-icons/CloudSpec.png'
 import FirewallSpec from '@/assets/network-icons/FirewallSpec.png'
 import SwitchSpec from '@/assets/network-icons/SwitchSpec.png'
-import Xiamen from '@/assets/xiamendonghuan.png'
+import Xiamen from '@/assets/xiamenwhite.png'
 
 export default {
   name: 'IconPicker',

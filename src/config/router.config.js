@@ -264,7 +264,8 @@ export const asyncRouterMap = [
           {
             path: '/SecurityMonitoring/LeakSummary',
             name: 'LeakSummary',
-            component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
+            component: () => import('@/views/SecurityMonitoring/view/testLeak'),
+            // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
             meta: { title: '漏洞统计管理' }
           },
@@ -844,6 +845,13 @@ export const asyncRouterMap = [
   // 数据管理平台
   {
     path: '*', redirect: '/404', hidden: true
+  },
+
+  {
+    path: '/player',
+    name: 'player',
+    hidden: true,
+    component: () => import('@/views/SecurityMonitoring/view/player')
   }
 ]
 
@@ -903,6 +911,11 @@ export const constantRouterMap = [
     path: '/600',
     name: '600',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600')
+  },
+  {
+    path: '/player',
+    name: 'player',
+    component: () => import('@/views/SecurityMonitoring/view/player')
   }
 
 ]
