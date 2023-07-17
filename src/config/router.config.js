@@ -13,8 +13,8 @@ export const asyncRouterMap = [
         {
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
-          // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
-          component: () => import('@/views/titlePage/index'),
+          component: () => import('@/components/Elements/Report/ReportPreviewElement'),
+          // component: () => import('@/views/SecurityMonitoring/view/SIP'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
@@ -284,7 +284,7 @@ export const asyncRouterMap = [
             children: [{
               path: '/SecurityMonitoring/EmergencyManagement/BanList',
               name: 'BanList',
-              component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+              component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
               meta: { title: '一键封禁' }
             }],
             meta: { title: '应急处理'

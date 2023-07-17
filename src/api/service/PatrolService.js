@@ -32,6 +32,12 @@ class PatrolService extends BaseService {
         'receive_name',
         'receive_time',
         'status'
+        // 'tool',
+        // 'data',
+        // 'monitor_status',
+        // 'temperature',
+        // 'humidity',
+        // 'sanitary'
       ]
     })
     const res = dealQuery(await sql(`select pcse.remark remark, pcse.status eventStatus from patrol_change_shift_event pcse
