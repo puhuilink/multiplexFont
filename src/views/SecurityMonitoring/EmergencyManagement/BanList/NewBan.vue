@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-    <a href="https://10.201.30.40/app-banned/banned?ngsoc_token=845ea89bfb24b8a224e0623268002171ed504d3efec3a33d97be00bf2a8bbc82"  target="_blank">
+    <a href="https://10.201.30.40/app-banned/banned?ngsoc_token=845ea89bfb24b8a224e0623268002171ed504d3efec3a33d97be00bf2a8bbc82" target="_blank">
       <div class="wrapper_item">
         <div class="wrapper_item_img1"></div>
         <span>北京防火墙</span>
       </div>
     </a>
-    <a href="https://10.201.30.40/devlink?ngsoc_token=845ea89bfb24b8a224e0623268002171ed504d3efec3a33d97be00bf2a8bbc82"  target="_blank">
+    <a href="https://10.201.30.40/devlink?ngsoc_token=845ea89bfb24b8a224e0623268002171ed504d3efec3a33d97be00bf2a8bbc82" target="_blank">
       <div class="wrapper_item">
         <div class="wrapper_item_img2"></div>
         <span>厦门防火墙</span>
