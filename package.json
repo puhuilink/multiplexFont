@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
     "lint": "vue-cli-service lint",
-
+    "lint:noFix": "vue-cli-service lint --no-fix",
     "test:unit": "vue-cli-service test:unit"
   },
   "husky": {

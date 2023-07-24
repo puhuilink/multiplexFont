@@ -1,17 +1,23 @@
 <template>
   <div class="topbigBox">
     <!-- 下拉 -->
-    <!-- <div class="select-container" v-if="routerbox">
-      <div class="input-container">
-        <input class="input" v-model="searchValue" type="text" :readonly="!isSearch" @focus="inputFocus" @blur="inputBlur" />
+    <div style="margin-left: 37px">
+      <a-select
+        show-search
+        placeholder="请选择组织单位"
+        option-filter-prop="children"
+        style="width: 300px"
+        :filter-option="filterOption"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        @change="handleChange"
+      >
+        <a-select-option :value="item.label" v-for="(item, index) in list" :key="index">
+          {{ item.label }}
+        </a-select-option>
+      </a-select>
+    </div>
 
-      </div>
-      <div class="select-content" :class="{ active: showSelect }">
-        <div v-for="(item, index) in list" class="select-line" @click="select(item)" :key="'select_' + index">
-          <label>{{ item.label }}</label>
-        </div>
-      </div>
-    </div> -->
     <!--  -->
     <div class="bigflexBox">
       <div class="EacherLeft">
@@ -30,6 +36,17 @@
                 <div class="start_end">-</div>
                 <div @click="openDateTimePicker('end')" class="endTimeBOX">{{ endTime }}</div>
               </div> -->
+              <a-range-picker
+                size="small"
+                :disabled-date="disabledDate"
+                :disabled-time="disabledRangeTime"
+                :show-time="{
+                  hideDisabledOptions: true,
+                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                }"
+                format="YYYY-MM-DD HH:mm:ss"
+                style="width: 330px"
+              />
             </div>
             <div ref="eacherbox22" class="eacherBox echarts" id="eacherBoxid"></div>
           </div>
@@ -48,8 +65,8 @@
 </template>
 
 <script>
-// import bk_wx from '@/assets/images/security/img/bk_wx.png';
-// import { DatetimePicker } from 'mint-ui';
+import moment from 'moment'
+import 'moment/locale/zh-cn'
 import echarts from 'echarts'
 export default {
   name: 'SecondaryUnits',
@@ -58,31 +75,18 @@ export default {
   },
   data() {
     return {
-      routerbox: true,
-      showSelect: false,
-      searchValue: '',
       list: [
         { label: '一公局', value: 1 },
         { label: '二公局', value: 2 },
         { label: '三公局', value: 3 },
       ],
-      // value: 1,
-      isSearch: false,
-      // 时间选择
-      selectedTime: '', // 选择的时间将保存在selectedTime中
-      // startDate: new Date(2020, 0, 1), // 最小可选日期
-      // endDate: new Date(2100, 11, 31), // 最大可选日期
-      // dateFormat: 'YYYY.MM.DD HH:mm:ss', // 时间格式
-      // startTime: '2023.06.09 00:00:00',
-      // endTime: '2023.06.09 00:00:00',
     }
   },
 
   mounted() {
-    // this.routerpanduan();
-    if (this.list.length > 0) {
-      this.searchValue = this.list[0].label
-    }
+    // if (this.list.length > 0) {
+    //   this.searchValue = this.list[0].label
+    // }
     this.gettime()
     this.drawPolicitalStatus()
     this.drawPolicitalStatus2()
@@ -92,44 +96,20 @@ export default {
 
     // this.getNowTime(); //获取现在时间
   },
-  watch: {
-    searchValue: {
-      immediate: true,
-      handler: function (newVal) {
-        this.$emit('searchChange', newVal)
-      },
-    },
-    value: {
-      immediate: true,
-      handler: function (newVal) {
-        let item = this.list.find((it) => it.value == newVal)
-        if (item) this.searchValue = item.label
-      },
-    },
-  },
+  watch: {},
   methods: {
-    // routerpanduan() {
-    //   if (this.$route.path === '/safeSoruce/safeSoruceSmall') {
-    //     this.routerbox = false;
-    //   } else {
-    //     this.routerbox = true;
-    //   }
-    // },
     //下拉菜单
-    selectOption(value) {
-      // 处理选项点击事件的逻辑
+    handleChange(value) {
+      console.log(`selected ${value}`)
     },
-    inputFocus() {
-      this.showSelect = true
+    handleBlur() {
+      console.log('blur	失去焦点的时回调')
     },
-    inputBlur() {
-      setTimeout(() => {
-        this.showSelect = false
-      }, 100)
+    handleFocus() {
+      console.log('focus获得焦点时回调')
     },
-    select(item) {
-      this.searchValue = item.label
-      this.$emit('input', item.value)
+    filterOption(input, option) {
+      return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
 
     // -----------------------------
@@ -200,6 +180,7 @@ export default {
             },
             axisLabel: {
               //坐标轴刻度标签的相关设置
+              margin: 13.5,
               textStyle: {
                 color: '#81BAE5',
                 fontSize: 12,
@@ -485,6 +466,34 @@ export default {
       })
     },
     // ---时间选择区间
+    moment,
+    range(start, end) {
+      const result = []
+      for (let i = start; i < end; i++) {
+        result.push(i)
+      }
+      return result
+    },
+
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current >= moment().endOf('day')
+    },
+
+    disabledRangeTime(_, type) {
+      if (type === 'start') {
+        return {
+          disabledHours: () => this.range(0, 60).splice(4, 20),
+          disabledMinutes: () => this.range(30, 60),
+          disabledSeconds: () => [55, 56],
+        }
+      }
+      return {
+        disabledHours: () => this.range(0, 60).splice(20, 4),
+        disabledMinutes: () => this.range(0, 31),
+        disabledSeconds: () => [55, 56],
+      }
+    },
 
     //处理时间数据格式为2021.01.01 00:00:00
     timeformat(mytime) {
@@ -582,7 +591,7 @@ export default {
             } else if (point[0] > size.contentSize[0]) {
               x = point[0] - size.contentSize[0]
             } else {
-              x = '30%'
+              x = '-100%'
             }
             if (point[1] > size.contentSize[1]) {
               y = point[1] - size.contentSize[1]
@@ -794,7 +803,8 @@ export default {
         legend: {
           //上面的点
           top: '6%',
-          left: 37,
+          left: 140,
+          // align: 'center', // 将图例水平居中
           // left:37,
           icon: 'circle',
           textStyle: {
@@ -802,6 +812,7 @@ export default {
             color: '#81BAE5', //字体颜色
           },
           itemWidth: 25,
+          itemGap: 20, // 设置数据之间的间距为 10px
           selectedMode: false,
           formatter: function (name) {
             let value = 0
@@ -815,7 +826,6 @@ export default {
             return name + ' ' + value // 添加间距
           },
           data: ['危急', '高危', '中危', '低危'],
-          // width: 160,
         },
 
         dataZoom: [
@@ -826,8 +836,8 @@ export default {
             bottom: 6,
             start: 0,
             end: 100,
-            handleIcon:
-              'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+            // handleIcon:
+            // 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '100%',
             handleStyle: {
               color: 'rgba(255, 255, 255,0.5)',
@@ -935,17 +945,26 @@ export default {
             name: '危急',
             type: 'bar',
             barWidth: '9px',
+            barGap: 0.7, //柱子之间间距
             itemStyle: {
               normal: {
                 color: '#DC5656',
               },
             },
-            label: {
+            /*  label: {
               show: true,
               rotate: 0,
               color: '#29acff',
               position: 'top',
               fontSize: 12,
+            }, */
+            label: {
+              normal: {
+                show: false,
+                // fontSize: 13,
+                // color: '#14B6F3',
+                // position: 'top',
+              },
             },
             data: [40, 30, 30, 30, 40, 40, 40, 30],
           },
@@ -953,35 +972,30 @@ export default {
             name: '高危',
             type: 'bar',
             barWidth: '9px',
+            barGap: 0.7, //柱子之间间距
             itemStyle: {
               normal: {
                 color: '#FFA044',
               },
             },
             label: {
-              show: true,
-              rotate: 0,
-              color: '#3d93f2',
-              position: 'top',
-              fontSize: 12,
+              //柱子上的文字
+              show: false,
             },
-            data: [50, 50, 50, 50, 40, 40, 50, 50],
+            data: [50, 50, 50, 50, 80, 40, 50, 50],
           },
           {
             name: '中危',
             type: 'bar',
             barWidth: '9px',
+            barGap: 0.7, //柱子之间间距
             itemStyle: {
               normal: {
                 color: '#EAE174',
               },
             },
             label: {
-              show: true,
-              rotate: 0,
-              color: '#01c871',
-              position: 'top',
-              fontSize: 12,
+              show: false,
             },
             data: [60, 70, 70, 10, 40, 40, 60, 70],
           },
@@ -989,17 +1003,14 @@ export default {
             name: '低危',
             type: 'bar',
             barWidth: '9px',
+            barGap: 0.7, //柱子之间间距
             itemStyle: {
               normal: {
                 color: '#3CA6FF',
               },
             },
             label: {
-              show: true,
-              rotate: 0,
-              color: '#01c871',
-              position: 'top',
-              fontSize: 12,
+              show: false,
             },
             data: [60, 70, 70, 10, 4, 40, 60, 30],
           },
@@ -1013,7 +1024,7 @@ export default {
     drawPolicitalStatus4() {
       // 基于准备好的dom，初始化echarts实例
       const myChart4 = echarts.init(this.$refs.eacherbox4)
-      let data = [
+      let dataList = [
         {
           value: 17,
           name: '信息泄漏',
@@ -1084,8 +1095,8 @@ export default {
         legend: {
           //上面的点
           top: '6%',
-          left: 37,
-          // left:37,
+          left: 100,
+
           icon: 'circle',
           textStyle: {
             fontSize: 12, //字体大小
@@ -1095,9 +1106,9 @@ export default {
           selectedMode: false,
           formatter: function (name) {
             let value = 0
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].name === name) {
-                value = data[i].value
+            for (let i = 0; i < dataList.length; i++) {
+              if (dataList[i].name === name) {
+                value = dataList[i].value
                 break
               }
             }
@@ -1125,6 +1136,8 @@ export default {
             },
           },
           axisLabel: {
+            //文字于x轴间距
+            margin: 13.5,
             fontFamily: 'ArialMT',
             color: '#81BAE5',
             lineHeight: 12,
@@ -1135,6 +1148,7 @@ export default {
           splitLine: {
             show: false,
           },
+
           data: ['2023-07-13', '2023-07-14', '2023-07-15', '2023-07-16', '2023-07-17', '2023-07-18', '2023-07-19'],
         },
         yAxis: {
@@ -1187,7 +1201,8 @@ export default {
               //线条的样式
               width: 4,
             },
-            symbol: 'emptyCircle', // 圆环
+            // symbol: null, // 实心圆,圆环emptyCircle
+            symbol: 'none', // 不显示连接点
             symbolSize: 8, // 根据需要设置圆环的大小
           },
           {
@@ -1212,7 +1227,8 @@ export default {
               //线条的样式
               width: 4,
             },
-            symbol: 'emptyCircle', // 圆环
+            // symbol: 'emptyCircle', // 圆环
+            symbol: 'none', // 不显示连接点
             symbolSize: 8, // 根据需要设置圆环的大小
           },
           {
@@ -1237,7 +1253,8 @@ export default {
               //线条的样式
               width: 4,
             },
-            symbol: 'emptyCircle', // 圆环
+            // symbol: 'emptyCircle', // 圆环
+            symbol: 'none', // 不显示连接点
             symbolSize: 8, // 根据需要设置圆环的大小
           },
           {
@@ -1262,7 +1279,8 @@ export default {
               //线条的样式
               width: 4,
             },
-            symbol: 'emptyCircle', // 圆环
+            // symbol: 'emptyCircle', // 圆环
+            symbol: 'none', // 不显示连接点
             symbolSize: 8, // 根据需要设置圆环的大小
           },
           {
@@ -1287,128 +1305,31 @@ export default {
               //线条的样式
               width: 4,
             },
-            symbol: 'emptyCircle', // 圆环
+            // symbol: 'emptyCircle', // 圆环
+            symbol: 'none', // 不显示连接点
             symbolSize: 8, // 根据需要设置圆环的大小
-          }
-        ]
+          },
+        ],
       })
       window.addEventListener('resize', function () {
         myChart4.resize()
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="less" scoped>
-.topbigBox {
-  // height: 660.8px;
-  margin-top: 20px;
-}
-// -----下拉
-.select-container {
-  width: 300px;
-  height: 32px;
-  background: #041729;
-  border: 1px solid #2c5882;
-  margin-left: 37px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-  font-size: 18px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #ffffff;
-  line-height: 32px;
-  position: relative;
-  .input-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .input {
-      width: 100%;
-      flex: 1;
-      border: 0;
-      background-color: transparent;
-      padding: 0px 10px;
-      height: 32px;
-      font-size: 18px;
-      line-height: 32px;
-      color: #ffffff;
-    }
-    // .input-icon {
-    //   width: 40px;
-    //   height: 40px;
-    //   text-align: center;
-    //   .iconfont {
-    //     font-size: 24px;
-    //     color: #999999;
-    //   }
-    // }
-  }
-  .select-content {
-    position: absolute;
-    width: 100%;
-    top: 42px;
-    left: 0;
-    background: #041729;
-    z-index: 999999;
-    border-radius: 6px;
-    max-height: 200px;
-    overflow: auto;
-    border: 1px solid #f2f2f2;
-    display: none;
-    &.active {
-      display: block;
-      animation: selectanim 0.25s;
-      -webkit-animation: selectanim 0.25s;
-    }
-    .select-line {
-      width: 100%;
-      // line-height: 40px;
-      display: flex;
-      box-sizing: border-box;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0px 10px;
-      border-bottom: 1px solid #f2f2f2;
-      &:last-child {
-        border-bottom: 0;
-      }
-      // .selected {
-      //   flex-shrink: 0;
-      //   .iconfont {
-      //     font-size: 24px;
-      //     color: var(--theme);
-      //   }
-      // }
-    }
-    @keyframes selectanim {
-      from {
-        opacity: 0;
-        top: 60px;
-      }
-      to {
-        opacity: 1;
-        top: 42px;
-      }
-    }
-    @-webkit-keyframes selectanim {
-      from {
-        opacity: 0;
-        top: 60px;
-      }
-      to {
-        opacity: 1;
-        top: 42px;
-      }
-    }
-  }
-}
+// .topbigBox {
+//   // height: 660.8px;
+//   // margin-top: 20px;
+// }
+
 .bigflexBox {
   width: 100%;
   // height: 612px;
   // overflow: hidden;
+  margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
   .TextEacherbox1 {
@@ -1455,7 +1376,7 @@ export default {
         color: #81bae5;
         line-height: 12px;
       }
-      .textTime_2 {
+      /* .textTime_2 {
         width: 288px;
         height: 22px;
         // box-sizing: border-box;
@@ -1478,7 +1399,7 @@ export default {
         .start_end {
           margin: 0 8px;
         }
-      }
+      } */
     }
   }
 }
