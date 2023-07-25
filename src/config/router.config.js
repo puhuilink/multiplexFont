@@ -274,7 +274,7 @@ export const asyncRouterMap = [
             name: 'SituationalAwareness',
             // component: () => import('@/views/user/settings/index'),
             meta: { title: '安全态势感知管理' },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouch')
+            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
           },
           {
             path: '/SecurityMonitoring/EmergencyManagement',
