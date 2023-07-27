@@ -33,6 +33,7 @@ import { ViewDesignService } from './ViewDesignService.js'
 import { ViewDesktopService } from './ViewDesktopService.js'
 import { ViewListService } from './ViewListService.js'
 import { NotificationGroupService } from './NotificationGroupService'
+import { RoleService } from './RoleService'
 
 export {
   AlarmForwardService,
@@ -59,6 +60,7 @@ export {
   PatrolService,
   PatrolSenderService,
   PatrolTemplateService,
+  RoleService,
   SdwanSiteService,
   StrategyService,
   TempService,

@@ -397,6 +397,12 @@ export const asyncRouterMap = [
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
             meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
+          },
+          {
+            path: '/patrol/group',
+            name: 'PatrolGroup',
+            component: () => import('@/views/patrol/groupManagement/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010004'] }
           }
           // {
           //   path: '/patrol/object',
@@ -795,6 +801,12 @@ export const asyncRouterMap = [
             name: 'User',
             component: () => import('@/views/system/user/index'),
             meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+          },
+          {
+            path: '/system/role',
+            name: 'Role',
+            component: () => import('@/views/system/role/index'),
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001001'] }
           },
           {
             path: '/system/group',
