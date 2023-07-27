@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  name: 'assignModal',
+  name: 'AssignModal',
   props: {
     id: {
       type: String,

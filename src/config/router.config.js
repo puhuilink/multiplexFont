@@ -272,10 +272,16 @@ export const asyncRouterMap = [
             meta: { title: '漏洞统计管理' }
           },
           {
+            path: '/SecurityMonitoring/SituationalAwarenessSecond',
+            name: 'SituationalAwarenessSecond',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '安全态势感知管理(二级单位)' },
+            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+          },
+          {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '安全态势感知管理' },
+            meta: { title: '安全态势感知管理（集团）' },
             component: () => import('@/views/SecurityMonitoring/view/safeTouch')
           },
           {

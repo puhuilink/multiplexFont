@@ -141,7 +141,7 @@
             <a-switch default-checked />
           </template>
           <template #operation="text">
-            <a><a-icon type='edit'/>修改</a>
+            <a><a-icon type="edit"/>修改</a>
             <a-divider type="vertical" />
             <a-dropdown>
               <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
