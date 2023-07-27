@@ -52,8 +52,8 @@ router.beforeEach((to, from, next) => {
         message: '页面跳转异常',
         description: err.message
       })
-      store
-        .dispatch('Logout')
+      // store
+      //   .dispatch('Logout')
       throw err
     })
 })

@@ -88,6 +88,8 @@
 <script>
 import { removeArrayValue } from '@/utils/util'
 import schema from '@/views/system/apartment/modules/schema'
+import { axios } from '@/utils/request'
+import { Confirm } from '~~~/Mixins'
 
 const columns = [
   { title: '部门名称', dataIndex: 'name', key: 'name' },
@@ -146,6 +148,7 @@ export default {
       expandedRowKeys: []
     }
   },
+  mixins: [ Confirm ],
   components: { schema },
   methods: {
     handleSearch () {},
@@ -159,7 +162,26 @@ export default {
       this.$refs.schema.edit()
     },
     onDelete (text, record) {
-      console.log(text, record)
+      const title = '删除'
+      const content = '确定要删除当前部门吗？'
+      this.$promiseConfirmDelete({
+        title,
+        content,
+        onOk: async () => {
+          // const formData = new FormData()
+          // formData.append('corpIds', this.selectedRowKeys.map(el => Number(el)))
+          // axios.post('/corp/delete', formData, {
+          //   headers: {
+          //     'Content-type': 'application/x-www-form-urlencoded'
+          //   }
+          // })
+          //   .then(() => {
+          //     this.$notifyDeleteSuccess()
+          //     this.query(false)
+          //   })
+          //   .catch(this.$notifyError)
+        }
+      })
     },
     open () {
       if (this.spread) {

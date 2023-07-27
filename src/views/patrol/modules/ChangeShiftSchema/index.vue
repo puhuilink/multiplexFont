@@ -117,10 +117,14 @@ export default {
             title: '状态',
             align: 'center',
             width: 150,
+            sorter: (a, b) => {
+              console.log('ab', a, b)
+              return Number(a.eventstatus) - Number(b.eventstatus)
+            },
             dataIndex: 'eventstatus',
             customRender: (text) => {
               console.log('text', text)
-              return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === 0 ? '已完成' : '未完成'}</span>)
+              return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === '0' ? '已完成' : '未完成'}</span>)
             }
           }
         ]
