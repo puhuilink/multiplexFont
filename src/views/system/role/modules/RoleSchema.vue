@@ -10,42 +10,42 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
-    @ok="submit"
+    :footer="null"
   >
     <a-steps :current="current">
       <a-step v-for="item in steps" :key="item.title" :title="item.title" />
     </a-steps>
     <div class="steps-content">
       <div v-if="current===0">
-        <a-form-model ref="ruleForm" :rules="rules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="角色名称" prop="role_name">
-            <a-input v-model="form.role_name"/>
+        <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item label="角色名称" prop="name">
+            <a-input v-model="originalForm.name"/>
           </a-form-model-item>
           <a-form-model-item label="备注" prop="remark">
-            <a-input v-model="form.remark" type="textarea" />
+            <a-input v-model="originalForm.remark" type="textarea" />
           </a-form-model-item>
         </a-form-model>
       </div>
       <div v-if="current===1">
-        <a-form-model ref="dataForm" :rules="dataRules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="选择菜单权限" prop="role_name">
-            <AuthMenu :record="null" ref="menu" />
+        <a-form-model ref="dataForm" :rules="dataRules" :model="menuForm" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item label="选择菜单权限">
+            <AuthMenu :record="{data:menuForm.menuCodes}" :is-role="true" ref="menu" @menuChange="logSth"/>
           </a-form-model-item>
           <a-form-model-item label="选择移动端角色" prop="role_mobile">
-            <a-radio-group v-model="form.role_mobile" @change="onChange" default-value="1">
-              <a-radio :value="1">
+            <a-radio-group v-model="menuForm.appCode" :default-value="'none'">
+              <a-radio :value="'none'">
                 无
               </a-radio>
-              <a-radio :value="2">
+              <a-radio :value="'patrol'">
                 运维角色
               </a-radio>
-              <a-radio :value="3">
+              <a-radio :value="'monitor'">
                 监控角色
               </a-radio>
-              <a-radio :value="4">
+              <a-radio :value="'manager'">
                 管理角色
               </a-radio>
-              <a-radio :value="4">
+              <a-radio :value="'admin'">
                 超级管理员
               </a-radio>
             </a-radio-group>
@@ -54,9 +54,9 @@
 
       </div>
       <div v-if="current===2">
-        <a-form-model ref="dataForm" :rules="dataRules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="权限范围" prop="role_name">
-            <a-select v-model="form.dataType" default-value="ALL">
+        <a-form-model ref="dataForm" :rules="dataRules" :model="dataForm" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item label="权限范围" prop="dataType">
+            <a-select v-model="dataForm.dataType" :default-value="'ALL'">
               <a-select-option :value="'ALL'">
                 全部数据权限
               </a-select-option>
@@ -67,6 +67,15 @@
                 本部门数据权限
               </a-select-option>
             </a-select>
+            <a-tree
+              v-if="dataForm.dataType === 'CUSTOM'"
+              checkable
+              defaultExpandAll
+              :checkStrictly="true"
+              :autoExpandParent="true"
+              v-model="dataForm.dataIds"
+              :treeData="Depts">
+            </a-tree>
           </a-form-model-item>
         </a-form-model>
       </div>
@@ -78,7 +87,7 @@
       <a-button
         v-if="current === steps.length - 1"
         type="primary"
-        @click="$message.success('Processing complete!')"
+        @click="submit"
       >
         完成
       </a-button>
@@ -94,6 +103,7 @@ import { UserService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
+import { dataFilter } from 'echarts/lib/component/marker/markerHelper'
 
 export default {
   name: 'RoleSchema',
@@ -111,19 +121,81 @@ export default {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
     rules: {
-      role_name: [
+      name: [
         { required: true, message: '角色名称必填', trigger: 'blur' }
       ]
     },
-    form: {
-      role_name: '',
-      region: undefined,
-      date1: undefined,
-      delivery: false,
-      type: [],
-      resource: '',
-      desc: ''
+    dataRules: {
+      dataType: [
+        { required: true, message: '数据权限必选！', trigger: 'blur' }
+      ]
     },
+    originalForm: {
+      name: '',
+      remark: '',
+      operateType: ''
+    },
+    menuForm: {
+      appCode: 'none',
+      menuCodes: []
+    },
+    dataForm: {
+      dataType: 'ALL',
+      dataIds: []
+    },
+    Depts: [{
+      childs: [],
+      code: 'F002',
+      createDate: null,
+      creator: '',
+      functionType: '5',
+      icon: '',
+      module: '',
+      name: '视图管理',
+      note: '',
+      order: 1,
+      parentCode: 'F',
+      updateDate: null,
+      updator: '',
+      key: 'F002',
+      children: [
+        {
+          childs: [],
+          code: 'F002001',
+          createDate: null,
+          creator: '',
+          functionType: '5',
+          icon: '',
+          module: '',
+          name: '视图展示（缩略图模式）',
+          note: '',
+          order: 1,
+          parentCode: 'F002',
+          updateDate: null,
+          updator: '',
+          key: 'F002001',
+          title: '视图展示（缩略图模式）'
+        },
+        {
+          childs: [],
+          code: 'F002003',
+          createDate: null,
+          creator: '',
+          functionType: '5',
+          icon: '',
+          module: '',
+          name: '视图展示（页签模式）',
+          note: '',
+          order: 2,
+          parentCode: 'F002',
+          updateDate: null,
+          updator: '',
+          key: 'F002003',
+          title: '视图展示（页签模式）'
+        }
+      ],
+      title: '视图管理'
+    }],
     options: {
       flag: [
         {
@@ -141,10 +213,23 @@ export default {
   }),
   computed: {},
   methods: {
+    dataFilter,
+    logSth (el) {
+      this.menuForm.menuCodes = [...el]
+    },
     // 步骤条向下逻辑
     next () {
       if (this.current === 2) {
         return
+      }
+      if (this.current === 0) {
+        this.$refs.ruleForm.validateField('name', (valid) => {
+          if (valid) {
+            this.current = -1
+          } else {
+            this.$refs.ruleForm.clearValidate('name')
+          }
+        })
       }
       this.current++
     },

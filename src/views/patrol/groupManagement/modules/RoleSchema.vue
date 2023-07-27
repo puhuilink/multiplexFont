@@ -16,33 +16,33 @@
     <a-form-model ref="ruleForm" :rules="rules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-row>
         <a-col :md="12" :sm="24">
-          <a-form-model-item label="巡更组名称" prop="role_name">
-            <a-input v-model="form.role_name"/>
+          <a-form-model-item label="巡更组名称" prop="name">
+            <a-input v-model="form.name"/>
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
-          <a-form-model-item label="巡更组编号" prop="role_name">
-            <a-input v-model="form.role_name"/>
+          <a-form-model-item label="巡更组编号" prop="code">
+            <a-input v-model="form.code"/>
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
-          <a-form-model-item label="巡更路径" prop="role_name">
-            <a-select v-model="form.role_name"/>
+          <a-form-model-item label="巡更路径" prop="path">
+            <a-select v-model="form.path"/>
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
-          <a-form-model-item label="用户" prop="role_name">
-            <a-select v-model="form.role_name"/>
+          <a-form-model-item label="用户" prop="user">
+            <a-select v-model="form.user"/>
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
-          <a-form-model-item label="有效标识" prop="role_name">
-            <a-select v-model="form.role_name"/>
+          <a-form-model-item label="有效标识" prop="isOpen">
+            <a-select v-model="form.isOpen"/>
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
           <a-form-model-item label="备注" prop="remark">
-            <a-input v-model="form.role_name" type="textarea"/>
+            <a-input v-model="form.remark" type="textarea"/>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -65,16 +65,23 @@ export default {
   data: (vm) => ({
     current: 0,
     confirmLoading: false,
-    steps: [
-      { title: '填写基本信息' },
-      { title: '配置菜单权限' },
-      { title: '配置数据权限' }
-    ],
     labelCol: { span: 24 },
     wrapperCol: { span: 20 },
     rules: {
-      role_name: [
-        { required: true, message: '角色名称必填', trigger: 'blur' }
+      name: [
+        { required: true, message: '巡更组名称必填', trigger: 'blur' }
+      ],
+      code: [
+        { required: true, message: '巡更组编号必填', trigger: 'blur' }
+      ],
+      path: [
+        { required: true, message: '巡更组路径必选', trigger: 'blur' }
+      ],
+      user: [
+        { required: true, message: '巡更组用户必选', trigger: 'blur' }
+      ],
+      isOpen: [
+        { required: true, message: '有效标识必选', trigger: 'blur' }
       ]
     },
     form: {
@@ -103,6 +110,9 @@ export default {
   }),
   computed: {},
   methods: {
+    reset () {
+      this.$refs.ruleForm.resetFields()
+    },
     // 步骤条向下逻辑
     next () {
       if (this.current === 2) {

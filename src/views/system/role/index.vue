@@ -6,19 +6,19 @@
         <a-row>
           <a-col :md="8" :sm="24">
             <a-form-item label="角色名" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.user_name" />
+              <a-input allowClear v-model.trim="queryParams.name" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.user_status" />
+              <a-input allowClear v-model.trim="queryParams.isOpen" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.create_time" placeholder="开始时间" />
+              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.createTimeStart" placeholder="创建时间--起" />
               ----
-              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.end_time" placeholder="结束时间"/>
+              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.createTimeEnd" placeholder="创建时间--止"/>
             </a-form-item>
           </a-col>
         </a-row>
@@ -41,22 +41,23 @@
       :scroll="scroll"
     >
       <template #status="text,record">
-        <a-switch :checked="text" @change="onStatusChange" />
+        <a-switch :checked="text" @change="onStatusChange(record)" />
       </template>
       <template #action="text,record">
-        <a @click="loadData(record)">编辑</a>
+        <a @click="onEditUser(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="loadData(record)">菜单权限</a>
+        <a @click="onUpdateMenu(record)">菜单权限</a>
         <a-divider type="vertical" />
-        <a @click="loadData(record)">数据权限</a>
+        <a @click="onUpdateData(record)">数据权限</a>
         <a-divider type="vertical" />
         <a @click="onAllocateUserGroup(record)">分配用户</a>
         <a-divider type="vertical" />
-        <a @click="loadData(record)">删除</a>
+        <a @click="deleteRole(record)">删除</a>
       </template>
     </a-table>
 
     <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
@@ -72,6 +73,7 @@ import { RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
+import RoleSingleSchema from '@/views/system/role/modules/RoleSingleSchema.vue'
 
 export default {
   name: 'Role',
@@ -79,7 +81,8 @@ export default {
   components: {
     RoleSchema,
     AuthSchema,
-    UserGroupSchema
+    UserGroupSchema,
+    RoleSingleSchema
   },
   data: () => ({
     columns: Object.freeze([
@@ -139,6 +142,9 @@ export default {
     }
   },
   methods: {
+    query () {
+      this.loadData(this.queryParams)
+    },
     /**
      * 加载表格数据回调
      */
@@ -187,15 +193,20 @@ export default {
           remark: '巡更管理，机房视频监控',
           createTime: '2023-11-21  08:50:08'
         }]
-      // return RoleService.find({
-      //   where: {
-      //     ...this.where,
-      //     ...generateQuery(this.queryParams)
-      //   },
-      //   fields: this.columns.map(({ dataIndex }) => dataIndex),
-      //   ...parameter,
-      //   alias: 'data'
-      // }).then((r) => r.data)
+    },
+    /**
+     * 编辑菜单权限
+     * @event
+     */
+    onUpdateMenu (record) {
+      this.$refs['singleSchema'].updateMenu(record)
+    },
+    /**
+     * 编辑数据权限
+     * @event
+     */
+    onUpdateData (record) {
+      this.$refs['singleSchema'].updateData(record)
     },
     /**
      * 新增用户
@@ -250,6 +261,47 @@ export default {
               .catch(this.$notifyError)
           }
         }
+      })
+    },
+    /**
+     * 停用/启用角色
+     * @event
+     */
+    async onStatusChange (record) {
+      const title = !record.isOpen ? '启用' : '停用'
+      const content = !record.isOpen ? '确定要启用角色吗？' : '确定要停用角色吗？'
+      this.$promiseConfirmDelete({
+        title,
+        content,
+        okType: 'primary',
+        onOk: () => {
+          RoleService.batchDelete(this.selectedRowKeys)
+            .then(() => {
+              this.$notifyDeleteSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
+        }
+
+      })
+    },
+    /**
+     * 删除用户
+     * @event
+     */
+    async deleteRole (record) {
+      this.$promiseConfirmDelete({
+        title: '删除',
+        content: '确定要删除选中的记录吗',
+        onOk: () => {
+          RoleService.batchDelete([record.id])
+            .then(() => {
+              this.$notifyDeleteSuccess()
+              this.query(false)
+            })
+            .catch(this.$notifyError)
+        }
+
       })
     },
 
