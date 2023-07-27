@@ -13,7 +13,9 @@ export const asyncRouterMap = [
         {
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
-          component: () => import('@/components/Elements/Report/ReportPreviewElement'),
+          // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
+          component: () => import('@/views/system/userManage/index'),
+          // component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/SecurityMonitoring/view/SIP'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
@@ -270,11 +272,17 @@ export const asyncRouterMap = [
             meta: { title: '漏洞统计管理' }
           },
           {
+            path: '/SecurityMonitoring/SituationalAwarenessSecond',
+            name: 'SituationalAwarenessSecond',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '安全态势感知管理(二级单位)' },
+            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+          },
+          {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '安全态势感知管理' },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+            meta: { title: '安全态势感知管理（集团）' },
+            component: () => import('@/views/SecurityMonitoring/view/safeTouch')
           },
           {
             path: '/SecurityMonitoring/EmergencyManagement',
@@ -389,6 +397,12 @@ export const asyncRouterMap = [
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
             meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
+          },
+          {
+            path: '/patrol/group',
+            name: 'PatrolGroup',
+            component: () => import('@/views/patrol/groupManagement/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010004'] }
           }
           // {
           //   path: '/patrol/object',
@@ -431,349 +445,349 @@ export const asyncRouterMap = [
           }
         ]
       },
-      {
-        path: '/alertManagerPlatform',
-        name: 'AlertManagerPlatform',
-        hidden: false,
-        component: RouteView,
-        redirect: '/alertManagerPlatform/config',
-        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F013'] },
-        children: [
-          // {
-          //   path: '/alarm/profile',
-          //   name: 'profile',
-          //   component: () => import('@/views/profile/index'),
-          //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
-          // },
-          {
-            path: '/alertManagerPlatform/integration',
-            name: 'Integration',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/integration/platform',
-            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F013002'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/integration/newAlertSource',
-                name: 'NewAlertSource',
-                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-                meta: { title: '新建数据源' },
-                hidden: true,
-                props: route => route.query
-              },
-              {
-                path: '/alertManagerPlatform/integration/updateAlertSource',
-                name: 'UpdateAlertSource',
-                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-                meta: { title: '修改数据源' },
-                hidden: true,
-                props: route => route.query
-              },
-              {
-                path: '/alertManagerPlatform/integration/platform',
-                name: 'platform',
-                component: () => import('@/views/alert-manager/integration/index'),
-                meta: { title: '集成' }
-              }
-            ]
-          },
-          {
-            path: '/alertManagerPlatform/config',
-            name: 'AlertConfig',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/config/deliver',
-            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F013001'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/config/deliver',
-                name: 'Deliver',
-                component: () => import('@/views/alert-manager/config/index'),
-                meta: { title: '分派策略', permission: ['F013001001'] }
-              },
-              {
-                path: '/alertManagerPlatform/config/notifyRule',
-                name: 'NotifyRule',
-                component: () => import('@/views/alert-manager/config/notifyRule'),
-                meta: { title: '通知策略', permission: ['F013001002'] }
-              },
-              {
-                path: '/alertManagerPlatform/config/shieldRule',
-                name: 'ShieldRule',
-                component: () => import('@/views/alert-manager/config/shieldRule'),
-                meta: { title: '屏蔽规则' }
-              },
-              // 通知组页
-              {
-                path: '/alertManagerPlatform/config/notified-group',
-                component: () => import('@/views/notificationGroup/index'),
-                meta: { title: '通知组管理', keepAlive: true, permission: ['F013001003'] },
-                name: 'notice-group'
-              },
-
-              // 模板管理
-              {
-                path: '/alertManagerPlatform/config/notice-template',
-                component: () => import('@/views/alert-manager/noticeTemplate/index'),
-                meta: { title: '模板管理', keepAlive: true, permission: ['F013001004'] },
-                name: 'notice-template'
-              },
-
-              // 排班
-              {
-                path: '/alertManagerPlatform/work-manage',
-                component: () => import('@/views/work-manage/index'),
-                meta: { title: '排班管理', keepAlive: true, permission: ['F013001005'] },
-                name: 'work-manage'
-              },
-
-              // 自定义标签
-              {
-                path: '/alertManagerPlatform/self-Defining',
-                component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
-                meta: { title: '自定义标签', keepAlive: true, permission: ['F013001005'] },
-                name: 'self-Tag'
-              }
-            ]
-          },
-          {
-            path: '/alertManagerPlatform/alarm',
-            name: 'UnionAlarm',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/alarm/index',
-            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F013003'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/alarm/index',
-                component: () => import('@/views/union-alaram/index'),
-                meta: { title: '告警信息', keepAlive: true },
-                name: 'union'
-              }
-            ]
-          }
-        ]
-      },
+      // {
+      //   path: '/alertManagerPlatform',
+      //   name: 'AlertManagerPlatform',
+      //   hidden: false,
+      //   component: RouteView,
+      //   redirect: '/alertManagerPlatform/config',
+      //   meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F013'] },
+      //   children: [
+      //     // {
+      //     //   path: '/alarm/profile',
+      //     //   name: 'profile',
+      //     //   component: () => import('@/views/profile/index'),
+      //     //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
+      //     // },
+      //     {
+      //       path: '/alertManagerPlatform/integration',
+      //       name: 'Integration',
+      //       hidden: false,
+      //       component: RouteView,
+      //       redirect: '/alertManagerPlatform/integration/platform',
+      //       meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F013002'] },
+      //       children: [
+      //         {
+      //           path: '/alertManagerPlatform/integration/newAlertSource',
+      //           name: 'NewAlertSource',
+      //           component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+      //           meta: { title: '新建数据源' },
+      //           hidden: true,
+      //           props: route => route.query
+      //         },
+      //         {
+      //           path: '/alertManagerPlatform/integration/updateAlertSource',
+      //           name: 'UpdateAlertSource',
+      //           component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+      //           meta: { title: '修改数据源' },
+      //           hidden: true,
+      //           props: route => route.query
+      //         },
+      //         {
+      //           path: '/alertManagerPlatform/integration/platform',
+      //           name: 'platform',
+      //           component: () => import('@/views/alert-manager/integration/index'),
+      //           meta: { title: '集成' }
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       path: '/alertManagerPlatform/config',
+      //       name: 'AlertConfig',
+      //       hidden: false,
+      //       component: RouteView,
+      //       redirect: '/alertManagerPlatform/config/deliver',
+      //       meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F013001'] },
+      //       children: [
+      //         {
+      //           path: '/alertManagerPlatform/config/deliver',
+      //           name: 'Deliver',
+      //           component: () => import('@/views/alert-manager/config/index'),
+      //           meta: { title: '分派策略', permission: ['F013001001'] }
+      //         },
+      //         {
+      //           path: '/alertManagerPlatform/config/notifyRule',
+      //           name: 'NotifyRule',
+      //           component: () => import('@/views/alert-manager/config/notifyRule'),
+      //           meta: { title: '通知策略', permission: ['F013001002'] }
+      //         },
+      //         {
+      //           path: '/alertManagerPlatform/config/shieldRule',
+      //           name: 'ShieldRule',
+      //           component: () => import('@/views/alert-manager/config/shieldRule'),
+      //           meta: { title: '屏蔽规则' }
+      //         },
+      //         // 通知组页
+      //         {
+      //           path: '/alertManagerPlatform/config/notified-group',
+      //           component: () => import('@/views/notificationGroup/index'),
+      //           meta: { title: '通知组管理', keepAlive: true, permission: ['F013001003'] },
+      //           name: 'notice-group'
+      //         },
+      //
+      //         // 模板管理
+      //         {
+      //           path: '/alertManagerPlatform/config/notice-template',
+      //           component: () => import('@/views/alert-manager/noticeTemplate/index'),
+      //           meta: { title: '模板管理', keepAlive: true, permission: ['F013001004'] },
+      //           name: 'notice-template'
+      //         },
+      //
+      //         // 排班
+      //         {
+      //           path: '/alertManagerPlatform/work-manage',
+      //           component: () => import('@/views/work-manage/index'),
+      //           meta: { title: '排班管理', keepAlive: true, permission: ['F013001005'] },
+      //           name: 'work-manage'
+      //         },
+      //
+      //         // 自定义标签
+      //         {
+      //           path: '/alertManagerPlatform/self-Defining',
+      //           component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
+      //           meta: { title: '自定义标签', keepAlive: true, permission: ['F013001005'] },
+      //           name: 'self-Tag'
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       path: '/alertManagerPlatform/alarm',
+      //       name: 'UnionAlarm',
+      //       hidden: false,
+      //       component: RouteView,
+      //       redirect: '/alertManagerPlatform/alarm/index',
+      //       meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F013003'] },
+      //       children: [
+      //         {
+      //           path: '/alertManagerPlatform/alarm/index',
+      //           component: () => import('@/views/union-alaram/index'),
+      //           meta: { title: '告警信息', keepAlive: true },
+      //           name: 'union'
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
       // capacity
-      {
-        path: '/prediction',
-        name: 'prediction',
-        redirect: '/prediction/capacity',
-        component: RouteView,
-        meta: { title: '数据管理', keepAlive: true, icon: 'line-chart', permission: 'F011' },
-        children: [
-          {
-            path: '/prediction/capacity',
-            name: 'capacity',
-            redirect: '/prediction/capacity/Summary',
-            component: RouteView,
-            meta: { title: '指标视图', keepAlive: true },
-            children: [
-              {
-                path: '/prediction/capacity/Summary',
-                name: 'Summary',
-                component: () => import('@/views/prediction/capacity/Summary'),
-                meta: { title: '指标总览', keepAlive: true }
-              },
-              {
-                path: '/prediction/capacity/EchartsView',
-                name: '容量预测',
-                component: RouteView,
-                meta: { title: '容量预测', keepAlive: true },
-                redirect: '/prediction/capacity/EchartsView',
-                // hideChildrenInMenu: 'MetadataBasic',
-                children: [
-                  {
-                    path: '/prediction/capacity/capacityForcastBusinessSystem',
-                    name: '业务系统容量预测',
-                    component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastBusinessSystem'),
-                    meta: { title: '业务系统容量预测', keepAlive: true }
-                  },
-                  {
-                    path: '/prediction/capacity/capacityForcastFileSystem',
-                    name: '文件系统容量预测',
-                    component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastFileSystem'),
-                    meta: { title: '文件系统容量预测', keepAlive: true }
-                  }]
-              }
-            ]
-          },
-          {
-            path: '/prediction/report',
-            name: 'report',
-            redirect: '/prediction/report/sql',
-            component: RouteView,
-            meta: { title: '报表管理', keepAlive: true },
-            children: [
-              {
-                path: '/report/NEW',
-                name: 'NEW',
-                component: () => import('@/views/prediction/report/new'),
-                meta: { title: '报表生成', keepAlive: true }
-              },
-              {
-                path: '/report/sql',
-                name: 'sql',
-                component: () => import('@/views/prediction/report/sql'),
-                meta: { title: '子表数据源管理', keepAlive: true }
-              }
-            ]
-          },
-          {
-            path: '/prediction/metadata',
-            name: 'metadataPage',
-            component: RouteView,
-            meta: { title: '数据管理' },
-            redirect: '/prediction/metadata/source',
-            children: [
-              {
-                path: '/prediction/metadata/Information',
-                name: 'Information',
-                component: () => import('@/views/prediction/metadata/InformationList'),
-                meta: { title: '容量管理', keepAlive: true }
-              },
-              {
-                path: '/metadata/source',
-                name: 'SourceList',
-                component: () => import('@/views/prediction/metadata/SourceList'),
-                meta: { title: '数据源管理', keepAlive: true }
-              },
-              {
-                path: '/metadata/Label',
-                name: 'LabelList',
-                component: () => import('@/views/prediction/metadata/LabelList'),
-                meta: { title: '标签列表', keepAlive: true },
-                hidden: true
-              },
-              {
-                path: '/metadata/Dimension',
-                name: 'DimensionList',
-                component: () => import('@/views/prediction/metadata/DimensionList'),
-                meta: { title: '维度列表', keepAlive: true },
-                hidden: true
-              },
-              {
-                path: '/prediction/metadata/metadataModel',
-                name: 'MetadataModelList',
-                component: RouteView,
-                meta: { title: '元模型', keepAlive: true },
-                redirect: '/prediction/metadata/MetadataModel',
-                // hideChildrenInMenu: 'MetadataBasic',
-                children: [
-                  {
-                    path: '/prediction/metadata/MetadataModel',
-                    name: 'metamodelModelList',
-                    component: () => import('@/views/prediction/metadata/MetadataModelList'),
-                    meta: { title: '元模型列表', keepAlive: true }
-                  }
-                  // {
-                  //   hidden: true,
-                  //   path: '/prediction/metadata/metadataModel/create',
-                  //   name: 'metamodelCreate',
-                  //   component: () => import('@/views/prediction/metadata/modules/CreateMetadataModel/stepForm/StepForm'),
-                  //   meta: { title: '元模型新建', keepAlive: true }
-                  // },
-                  // {
-                  //   hidden: true,
-                  //   path: '/prediction/metadata/metadataModel/graph/:id',
-                  //   name: 'metamodelGraph',
-                  //   component: () => import('@/views/prediction/metadata/modules/MetadataModelGraph'),
-                  //   meta: { title: '元模型关系图', keepAlive: true }
-                  // },
-                  // {
-                  //   hidden: true,
-                  //   path: '/prediction/metadata/modules/MetadataBasic/:id',
-                  //   name: 'MetadataBasic',
-                  //   component: () => import('@/views/prediction/metadata/modules/MetadataBasic'),
-                  //   meta: { title: '基础详情页', permission: ['profile'] }
-                  // },
-                  // {
-                  //   hidden: true,
-                  //   path: '/metadata/modules/QueryData/:sourceId/:dbName/:tableName',
-                  //   name: 'QueryData',
-                  //   component: () => import('@/views/metadata/modules/QueryData'),
-                  //   meta: { title: '模型数据', permission: ['profile'] }
-                  // }
-                ]
-              }
-              // {
-              //   hidden: true,
-              //   path: '/metadata/MetadataModel1/:id',
-              //   name: 'metamodelModelList1',
-              //   component: () => import('@/views/metadata/MetadataModelList1'),
-              //   meta: { title: '主题域元模型列表', keepAlive: true, permission: ['profile'] }
-              // }
-            ]
-          }
-          // {
-          //   path: '/prediction/serverauth',
-          //   name: 'serverAuth',
-          //   redirect: '/prediction/serverAuth/managment',
-          //   component: RouteView,
-          //   meta: { title: '服务授权', keepAlive: true },
-          //   children: [
-          //     {
-          //       path: '/prediction/serverAuth/managment',
-          //       name: 'serverAuthMg',
-          //       component: () => import('@/views/prediction/serverAuth/serverAuth'),
-          //       meta: { title: '服务注册', keepAlive: true }
-          //     }
-          //   ]
-          // }
-        ]
-      },
+      // {
+      //   path: '/prediction',
+      //   name: 'prediction',
+      //   redirect: '/prediction/capacity',
+      //   component: RouteView,
+      //   meta: { title: '数据管理', keepAlive: true, icon: 'line-chart', permission: 'F011' },
+      //   children: [
+      //     {
+      //       path: '/prediction/capacity',
+      //       name: 'capacity',
+      //       redirect: '/prediction/capacity/Summary',
+      //       component: RouteView,
+      //       meta: { title: '指标视图', keepAlive: true },
+      //       children: [
+      //         {
+      //           path: '/prediction/capacity/Summary',
+      //           name: 'Summary',
+      //           component: () => import('@/views/prediction/capacity/Summary'),
+      //           meta: { title: '指标总览', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/prediction/capacity/EchartsView',
+      //           name: '容量预测',
+      //           component: RouteView,
+      //           meta: { title: '容量预测', keepAlive: true },
+      //           redirect: '/prediction/capacity/EchartsView',
+      //           // hideChildrenInMenu: 'MetadataBasic',
+      //           children: [
+      //             {
+      //               path: '/prediction/capacity/capacityForcastBusinessSystem',
+      //               name: '业务系统容量预测',
+      //               component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastBusinessSystem'),
+      //               meta: { title: '业务系统容量预测', keepAlive: true }
+      //             },
+      //             {
+      //               path: '/prediction/capacity/capacityForcastFileSystem',
+      //               name: '文件系统容量预测',
+      //               component: () => import('@/views/prediction/capacity/EchartsView/capacityForcastFileSystem'),
+      //               meta: { title: '文件系统容量预测', keepAlive: true }
+      //             }]
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       path: '/prediction/report',
+      //       name: 'report',
+      //       redirect: '/prediction/report/sql',
+      //       component: RouteView,
+      //       meta: { title: '报表管理', keepAlive: true },
+      //       children: [
+      //         {
+      //           path: '/report/NEW',
+      //           name: 'NEW',
+      //           component: () => import('@/views/prediction/report/new'),
+      //           meta: { title: '报表生成', keepAlive: true }
+      //         },
+      //         {
+      //           path: '/report/sql',
+      //           name: 'sql',
+      //           component: () => import('@/views/prediction/report/sql'),
+      //           meta: { title: '子表数据源管理', keepAlive: true }
+      //         }
+      //       ]
+      //     },
+      //     // {
+      //     //   path: '/prediction/metadata',
+      //     //   name: 'metadataPage',
+      //     //   component: RouteView,
+      //     //   meta: { title: '数据管理' },
+      //     //   redirect: '/prediction/metadata/source',
+      //     //   children: [
+      //     //     {
+      //     //       path: '/prediction/metadata/Information',
+      //     //       name: 'Information',
+      //     //       component: () => import('@/views/prediction/metadata/InformationList'),
+      //     //       meta: { title: '容量管理', keepAlive: true }
+      //     //     },
+      //     //     {
+      //     //       path: '/metadata/source',
+      //     //       name: 'SourceList',
+      //     //       component: () => import('@/views/prediction/metadata/SourceList'),
+      //     //       meta: { title: '数据源管理', keepAlive: true }
+      //     //     },
+      //     //     {
+      //     //       path: '/metadata/Label',
+      //     //       name: 'LabelList',
+      //     //       component: () => import('@/views/prediction/metadata/LabelList'),
+      //     //       meta: { title: '标签列表', keepAlive: true },
+      //     //       hidden: true
+      //     //     },
+      //     //     {
+      //     //       path: '/metadata/Dimension',
+      //     //       name: 'DimensionList',
+      //     //       component: () => import('@/views/prediction/metadata/DimensionList'),
+      //     //       meta: { title: '维度列表', keepAlive: true },
+      //     //       hidden: true
+      //     //     },
+      //     //     {
+      //     //       path: '/prediction/metadata/metadataModel',
+      //     //       name: 'MetadataModelList',
+      //     //       component: RouteView,
+      //     //       meta: { title: '元模型', keepAlive: true },
+      //     //       redirect: '/prediction/metadata/MetadataModel',
+      //     //       // hideChildrenInMenu: 'MetadataBasic',
+      //     //       children: [
+      //     //         {
+      //     //           path: '/prediction/metadata/MetadataModel',
+      //     //           name: 'metamodelModelList',
+      //     //           component: () => import('@/views/prediction/metadata/MetadataModelList'),
+      //     //           meta: { title: '元模型列表', keepAlive: true }
+      //     //         }
+      //     //         // {
+      //     //         //   hidden: true,
+      //     //         //   path: '/prediction/metadata/metadataModel/create',
+      //     //         //   name: 'metamodelCreate',
+      //     //         //   component: () => import('@/views/prediction/metadata/modules/CreateMetadataModel/stepForm/StepForm'),
+      //     //         //   meta: { title: '元模型新建', keepAlive: true }
+      //     //         // },
+      //     //         // {
+      //     //         //   hidden: true,
+      //     //         //   path: '/prediction/metadata/metadataModel/graph/:id',
+      //     //         //   name: 'metamodelGraph',
+      //     //         //   component: () => import('@/views/prediction/metadata/modules/MetadataModelGraph'),
+      //     //         //   meta: { title: '元模型关系图', keepAlive: true }
+      //     //         // },
+      //     //         // {
+      //     //         //   hidden: true,
+      //     //         //   path: '/prediction/metadata/modules/MetadataBasic/:id',
+      //     //         //   name: 'MetadataBasic',
+      //     //         //   component: () => import('@/views/prediction/metadata/modules/MetadataBasic'),
+      //     //         //   meta: { title: '基础详情页', permission: ['profile'] }
+      //     //         // },
+      //     //         // {
+      //     //         //   hidden: true,
+      //     //         //   path: '/metadata/modules/QueryData/:sourceId/:dbName/:tableName',
+      //     //         //   name: 'QueryData',
+      //     //         //   component: () => import('@/views/metadata/modules/QueryData'),
+      //     //         //   meta: { title: '模型数据', permission: ['profile'] }
+      //     //         // }
+      //     //       ]
+      //     //     }
+      //     //     // {
+      //     //     //   hidden: true,
+      //     //     //   path: '/metadata/MetadataModel1/:id',
+      //     //     //   name: 'metamodelModelList1',
+      //     //     //   component: () => import('@/views/metadata/MetadataModelList1'),
+      //     //     //   meta: { title: '主题域元模型列表', keepAlive: true, permission: ['profile'] }
+      //     //     // }
+      //     //   ]
+      //     // }
+      //     // {
+      //     //   path: '/prediction/serverauth',
+      //     //   name: 'serverAuth',
+      //     //   redirect: '/prediction/serverAuth/managment',
+      //     //   component: RouteView,
+      //     //   meta: { title: '服务授权', keepAlive: true },
+      //     //   children: [
+      //     //     {
+      //     //       path: '/prediction/serverAuth/managment',
+      //     //       name: 'serverAuthMg',
+      //     //       component: () => import('@/views/prediction/serverAuth/serverAuth'),
+      //     //       meta: { title: '服务注册', keepAlive: true }
+      //     //     }
+      //     //   ]
+      //     // }
+      //   ]
+      // },
       // 二级单位
-      {
-        path: '/secondSys',
-        name: 'secondSys',
-        redirect: 'secondSys/Zhenhua',
-        component: RouteView,
-        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
-        children: [
-          {
-            path: '/secondSys/zhenhua',
-            name: '振华重工',
-            component: () => import('@/views/secondSys/zhenhua'),
-            meta: { title: '振华重工' }
-          },
-          {
-            path: '/secondSys/lujian',
-            name: '路建',
-            component: () => import('@/views/secondSys/lujian'),
-            meta: { title: '路建' }
-          },
-          {
-            path: '/secondSys/erhangju',
-            name: '二航局',
-            component: () => import('@/views/secondSys/erhangju'),
-            meta: { title: '二航局' }
-          },
-          {
-            path: '/secondSys/gangwan',
-            name: '港湾',
-            component: () => import('@/views/secondSys/gangwan'),
-            meta: { title: '港湾' }
-          },
-          {
-            path: '/secondSys/yigongju',
-            name: '一公局',
-            component: () => import('@/views/secondSys/yigongju'),
-            meta: { title: '一公局' }
-          },
-          {
-            path: '/secondSys/luqiao',
-            name: 'luqiao',
-            component: () => import('@/views/secondSys/luqiao'),
-            meta: { title: '路桥' }
-          },
-          {
-            path: '/secondSys/ergongju',
-            name: '二公局',
-            component: () => import('@/views/secondSys/ergongju'),
-            meta: { title: '二公局' }
-          }
-        ]
-      },
+      // {
+      //   path: '/secondSys',
+      //   name: 'secondSys',
+      //   redirect: 'secondSys/Zhenhua',
+      //   component: RouteView,
+      //   meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
+      //   children: [
+      //     {
+      //       path: '/secondSys/zhenhua',
+      //       name: '振华重工',
+      //       component: () => import('@/views/secondSys/zhenhua'),
+      //       meta: { title: '振华重工' }
+      //     },
+      //     {
+      //       path: '/secondSys/lujian',
+      //       name: '路建',
+      //       component: () => import('@/views/secondSys/lujian'),
+      //       meta: { title: '路建' }
+      //     },
+      //     {
+      //       path: '/secondSys/erhangju',
+      //       name: '二航局',
+      //       component: () => import('@/views/secondSys/erhangju'),
+      //       meta: { title: '二航局' }
+      //     },
+      //     {
+      //       path: '/secondSys/gangwan',
+      //       name: '港湾',
+      //       component: () => import('@/views/secondSys/gangwan'),
+      //       meta: { title: '港湾' }
+      //     },
+      //     {
+      //       path: '/secondSys/yigongju',
+      //       name: '一公局',
+      //       component: () => import('@/views/secondSys/yigongju'),
+      //       meta: { title: '一公局' }
+      //     },
+      //     {
+      //       path: '/secondSys/luqiao',
+      //       name: 'luqiao',
+      //       component: () => import('@/views/secondSys/luqiao'),
+      //       meta: { title: '路桥' }
+      //     },
+      //     {
+      //       path: '/secondSys/ergongju',
+      //       name: '二公局',
+      //       component: () => import('@/views/secondSys/ergongju'),
+      //       meta: { title: '二公局' }
+      //     }
+      //   ]
+      // },
       // system
       {
         path: '/system',
@@ -787,6 +801,12 @@ export const asyncRouterMap = [
             name: 'User',
             component: () => import('@/views/system/user/index'),
             meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+          },
+          {
+            path: '/system/role',
+            name: 'Role',
+            component: () => import('@/views/system/role/index'),
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001001'] }
           },
           {
             path: '/system/group',
@@ -845,13 +865,6 @@ export const asyncRouterMap = [
   // 数据管理平台
   {
     path: '*', redirect: '/404', hidden: true
-  },
-
-  {
-    path: '/player',
-    name: 'player',
-    hidden: true,
-    component: () => import('@/views/SecurityMonitoring/view/player')
   }
 ]
 

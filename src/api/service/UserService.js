@@ -168,12 +168,20 @@ class UserService extends BaseService {
 
   static async login ({ userId, pwd, verifCode }) {
     return axios.post('/user/login', {
-      userId: encrypt(userId),
-      encryptedPwd: encrypt(pwd),
+      // 新版登录接口传参
+      userName: encrypt(userId),
+      pwd: encrypt(pwd),
+      // 旧版登录接口
+      // userId: encrypt(userId),
+      // encryptedPwd: encrypt(pwd),
       ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
         verifCode: encrypt(verifCode)
       } : {}
     })
+  }
+
+  static async getDetail () {
+    return axios.get('/remote/getPatrolUserInfo')
   }
 
   static async seondLogin ({ userId, pwd }) {

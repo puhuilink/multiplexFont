@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
+import { USER } from '@/store/mutation-types'
 // import { ALLPERMISSION } from '@/utils/menu'
 
 /**
@@ -18,7 +19,8 @@ import store from '@/store'
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
     // const actionName = binding.arg || binding.value
-    const roles = store.getters.roles
+    // const roles = store.getters.roles
+    const roles = Vue.ls.get(USER)
     const elVal = vnode.context.$route.meta.permission
     if (!elVal || !elVal.length) {
       return
@@ -27,7 +29,7 @@ const action = Vue.directive('action', {
     // const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
     // const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
     // TODO 还有些按钮权限未添加，后续优化
-    roles.permissions.forEach(p => {
+    roles.menuCodes.forEach(p => {
       if (!roles.allPermission.includes(permissionId)) {
         return
       }
@@ -38,7 +40,7 @@ const action = Vue.directive('action', {
       //     el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
       //   }
       // }
-      if (!roles.allPermission.includes(binding.arg)) {
+      if (!roles.menuCodes.includes(binding.arg)) {
         el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
       }
       // if (!permissionId.includes(p.permissionId)) {

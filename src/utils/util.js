@@ -413,3 +413,12 @@ export const cloneMap = function deepCloneMap (map) {
 
   return clonedMap
 }
+
+export const removeArrayValue = function (arr = [], value) {
+  if (arr.length === 0) {
+    return arr
+  } else {
+    arr.splice(arr.indexOf(value), 1)
+    return arr
+  }
+}

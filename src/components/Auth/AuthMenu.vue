@@ -28,6 +28,10 @@ export default {
     record: {
       type: Object,
       default: () => ({})
+    },
+    isRole: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -42,6 +46,11 @@ export default {
   methods: {
     // 获取已选择的菜单
     async getInitMenu () {
+      if (this.isRole) {
+        const { data } = this.record
+        this.checkedKeys.push(...data)
+        return
+      }
       try {
         this.loading = true
         const { user_id: userId, group_id: groupId } = this.record
@@ -63,8 +72,6 @@ export default {
           this.setCheckedKeys(buttonTree)
         }
       } catch (error) {
-        throw error
-      } finally {
         this.loading = false
       }
     },
@@ -113,7 +120,7 @@ export default {
       this.autoExpandParent = false
     },
     onCheck (checkedKeys, info) {
-      console.log(checkedKeys, info)
+      this.$emit('menuChange', checkedKeys.checked)
     }
   }
 }
