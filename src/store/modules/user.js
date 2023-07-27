@@ -4,28 +4,30 @@ import { decrypt } from '@/utils/aes'
 import { ACCESS_TOKEN, USER, ROLES } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
 import router from '@/router'
+import _ from 'lodash'
 
 function generatePermission (user) {
   return new Promise(async (resolve, reject) => {
-    const originalPermission = []
-    const organizeList = (user.organizeList || []).filter(v => !!v)
+    // const originalPermission = []
+    // const organizeList = (user.organizeList || []).filter(v => !!v)
 
     // 获取用户所属工作组的权限 、并合并
     // const permissionList = await UserService.getAllPermission()
-    const results = await Promise.all([
-      ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
-      AuthorizeObjectService.getUserPermission(user.userId)
-    ])
-    const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
-    const permissionList = results.flatMap(item => item.data)
-    if (!status) {
-      reject(new Error('用户权限数据获取失败，请稍后尝试！'))
-    }
-    permissionList.forEach(permission => {
-      if (!originalPermission.some(item => item.code === permission.code)) {
-        originalPermission.push(permission)
-      }
-    })
+    // const results = await Promise.all([
+    //   ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
+    //   AuthorizeObjectService.getUserPermission(user.userId)
+    // ])
+    const results = Vue.ls.get(USER).menuCodes
+    // const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
+    // const permissionList = results.flatMap(item => item.data)
+    // if (!status) {
+    //   reject(new Error('用户权限数据获取失败，请稍后尝试！'))
+    // }
+    // permissionList.forEach(permission => {
+    //   if (!originalPermission.some(item => item.code === permission.code)) {
+    //     originalPermission.push(permission)
+    //   }
+    // })
     // 菜单权限列表
     const menuOriginalPermission = []
     // const menuOriginalPermission = originalPermission.filter(item => /^F/.test(item.code))
@@ -33,7 +35,7 @@ function generatePermission (user) {
     const buttonOriginalPermission = []
     // const buttonOriginalPermission = originalPermission.filter(item => /^M/.test(item.code))
 
-    originalPermission.forEach(item => {
+    results.forEach(item => {
       if (/^F/.test(item.code)) {
         menuOriginalPermission.push(item)
       } else if (/^M/.test(item.code)) {
@@ -44,7 +46,7 @@ function generatePermission (user) {
     const buttonTree = getButtonTree(null, buttonOriginalPermission)
     const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
     buttonOriginalPermission.forEach(el => permissionTree.allPermission.push(el.code))
-    const userPermission = Object.assign({}, user, permissionTree)
+    const userPermission = Object.assign({}, user, { allPermission: results })
     resolve(userPermission)
   })
 }
@@ -96,14 +98,16 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           const roles = Vue.ls.get(ROLES) || {}
+          console.log(user, roles)
           let userPermission
           // 同一用户可直接使用上次配置
-          if (user.userId === roles.userId && user.token === roles.token) {
+          if (_.get(user, 'userId', '') === roles.userId && user.token === roles.token) {
             userPermission = roles
           } else {
             userPermission = await generatePermission(user)
           }
-          if (userPermission.permissions && userPermission.permissions.length > 0) {
+          // if (userPermission.permissions && userPermission.permissions.length > 0) {
+          if (userPermission.allPermission && userPermission.allPermission.length > 0) {
             commit('SET_ROLES', userPermission)
             commit('SET_INFO', {
               ...userPermission,
@@ -134,19 +138,32 @@ const user = {
       //   .then(({ organizeList = [], ...user }) => {
       //     Vue.ls.set(SHOW_USER, user)
       //   })
+      // return UserService.login(userInfo)
+      //   .then(({ data }) => data)
+      //   .then(decrypt)
+      //   .then(JSON.parse)
+      //   .then(({ organizeList = [], ...user }) => {
+      //     // 后端接口工作组 bug 兼容
+      //     user.organizeList = organizeList.filter(group => group && group.groupId)
+      //     Vue.ls.set(ACCESS_TOKEN, user.token, 7 * 24 * 60 * 60 * 1000)
+      //     Vue.ls.set(USER, user)
+      //     commit('SET_TOKEN', user.token)
+      //     commit('SET_ID', user)
+      //     commit('SET_NAME', { name: user.staffName })
+      //     commit('SET_AVATAR', '/avatar.jpg')
+      //   })
       return UserService.login(userInfo)
-        .then(({ data }) => data)
-        .then(decrypt)
-        .then(JSON.parse)
-        .then(({ organizeList = [], ...user }) => {
-          // 后端接口工作组 bug 兼容
-          user.organizeList = organizeList.filter(group => group && group.groupId)
-          Vue.ls.set(ACCESS_TOKEN, user.token, 7 * 24 * 60 * 60 * 1000)
-          Vue.ls.set(USER, user)
-          commit('SET_TOKEN', user.token)
-          commit('SET_ID', user)
-          commit('SET_NAME', { name: user.staffName })
-          commit('SET_AVATAR', '/avatar.jpg')
+        .then(({ data }) => {
+          Vue.ls.set(ACCESS_TOKEN, data, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', data)
+        }).then(() => {
+          UserService.getDetail().then(({ data }) => {
+            Vue.ls.set(USER, data)
+            commit('SET_ID', data.userId)
+            commit('SET_NAME', { name: data.staffName })
+            commit('SET_AVATAR', '/avatar.jpg')
+            commit('SET_ROLES', data)
+          })
         })
     },
 

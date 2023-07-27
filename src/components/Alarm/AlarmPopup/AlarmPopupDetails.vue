@@ -1,4 +1,3 @@
-
 <template>
   <a-modal
     :afterClose="reset"
