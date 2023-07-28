@@ -44,7 +44,7 @@
 
 <script>
 import PathSchema from './modules/PathSchema.vue'
-import { PathService } from '@/api'
+import { PathService, RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'

@@ -5,6 +5,7 @@ import { ACCESS_TOKEN, USER, ROLES } from '@/store/mutation-types'
 import { getTree, getButtonTree } from '@/utils/util'
 import router from '@/router'
 import _ from 'lodash'
+import Promise from 'lodash/_Promise'
 
 function generatePermission (user) {
   return new Promise(async (resolve, reject) => {
@@ -42,8 +43,7 @@ function generatePermission (user) {
         buttonOriginalPermission.push(item)
       }
     })
-    console.log('menuOriginalPermission', menuOriginalPermission)
-    console.log('buttonOriginalPermission', buttonOriginalPermission)
+
     const buttonTree = getButtonTree(null, buttonOriginalPermission)
     const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
     buttonOriginalPermission.forEach(el => permissionTree.allPermission.push(el.code))
@@ -99,7 +99,6 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           const roles = Vue.ls.get(ROLES) || {}
-          console.log('getInfo', user, roles)
           let userPermission
           // 同一用户可直接使用上次配置
           if (_.get(user, 'userId', '') === roles.userId && user.token === roles.token) {
@@ -122,7 +121,7 @@ const user = {
           commit('SET_ID', user)
           commit('SET_NAME', { name: user.staffName })
           commit('SET_AVATAR', '/avatar.jpg')
-          console.log('userPermission', userPermission)
+
           resolve(userPermission)
         } catch (e) {
           reject(e)
