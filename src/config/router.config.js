@@ -16,7 +16,7 @@ export const asyncRouterMap = [
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
           component: () => import('@/views/system/userManage/index'),
           // component: () => import('@/views/system/apartment/index'),
-          // component: () => import('@/views/SecurityMonitoring/view/SIP'),
+          // component: () => import('@/views/patrol/plan/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
@@ -790,17 +790,29 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['F001'] },
         children: [
+          // {
+          //   path: '/system/user',
+          //   name: 'User',
+          //   component: () => import('@/views/system/user/index'),
+          //   meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+          // },
           {
             path: '/system/user',
             name: 'User',
-            component: () => import('@/views/system/user/index'),
+            component: () => import('@/views/system/userManage/index'),
             meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
           },
+          // {
+          //   path: '/system/group',
+          //   name: 'Group',
+          //   component: () => import('@/views/system/group/index'),
+          //   meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
+          // },
           {
             path: '/system/group',
             name: 'Group',
-            component: () => import('@/views/system/group/index'),
-            meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
+            component: () => import('@/views/system/apartment/index'),
+            meta: { title: '部门管理', keepAlive: true, permission: ['F001002'] }
           }
           // {
           //   path: '/system/audit',

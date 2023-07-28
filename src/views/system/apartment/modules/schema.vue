@@ -1,24 +1,31 @@
 <template>
   <a-modal
     :afterClose="reset"
-    cancelText="取消"
     centered
     :confirmLoading="confirmLoading"
     :title="title"
     :width="700"
     v-model="visible"
     wrapClassName="AlarmPopupDetail__modal"
-    @cancel="cancel"
+    @cancel="onCancel"
+    destroyOnClose
     @ok="submit">
     <a-form-model ref="ruleForm" :model="formModel">
       <a-form-model-item
         label="上级部门"
         v-bind="formItemLayout"
-        prop="name"
-        v-if="mode === 'personal'"
+        prop="apartmentId"
         :rules="[{ required: true, message: '请选择上级部门' }]"
       >
-        <a-input :disabled="isDetail" v-model.trim="formModel.name" />
+        <a-tree-select
+          v-model="formModel.apartmentId"
+          placeholder="选择上级部门"
+          allow-clear
+          tree-default-expand-all
+          :treeData="treeData"
+        >
+
+        </a-tree-select>
       </a-form-model-item>
 
       <a-row :gutter="[5, 8]" type="flex" align="middle">
@@ -39,9 +46,10 @@
             v-bind="{
               labelCol: { span: 10, offset: 14 },
             }"
+            prop="name"
             :rules="[{ required: true, message: '请输入部门名称' }]"
           >
-            <a-input :disabled="isDetail"/>
+            <a-input v-model="formModel.name"/>
           </a-form-model-item>
         </a-col>
 
@@ -64,7 +72,7 @@
             }"
             :rules="[{ required: true, message: '请输入显示排序' }]"
           >
-            <a-input :disabled="isDetail"/>
+            <a-input-number :min="minOrder" v-model="formModel.order"></a-input-number>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -75,11 +83,16 @@
           labelCol: { span: 4 },
           wrapperCol: { span: 6, offset: 1 },
         }"
-        prop="name"
+        prop="leader"
         v-if="mode === 'personal'"
-        :rules="[{ required: true, message: '请选择负责人' }]"
       >
-        <a-input :disabled="isDetail" v-model.trim="formModel.name" />
+        <a-select
+          v-model="formModel.leader"
+          placeholder="选择负责人"
+          allow-clear
+        >
+          <a-select-option :key="item.id" v-for="item in userList" :value="item.id">{{ item.staffName }}</a-select-option>
+        </a-select>
       </a-form-model-item>
     </a-form-model>
     <!-- / 底部按钮 -->
@@ -100,7 +113,6 @@
         <a-select
           class="enabled"
           :style="{ width: '100px' }"
-          :disabled="isDetail"
           :value="~~formModel.enabled"
           v-if="mode === 'personal'"
           @select="formModel.enabled = !!$event"
@@ -110,7 +122,7 @@
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="submit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
+      <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
     </template>
 
   </a-modal>
@@ -120,6 +132,8 @@
 
 import Schema from '~~~/Mixins/Modal/Schema'
 import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
+import _ from 'lodash'
+import { axios } from '@/utils/request'
 
 export default {
   name: 'Schema',
@@ -128,14 +142,39 @@ export default {
     mode: {
       type: String,
       default: STRATEGY_MODE.personal
+    },
+    apartmentId: {
+      type: String,
+      default: ''
+    },
+    treeData: {
+      type: Array,
+      default: () => [
+        {
+          value: '1',
+          label: '集团',
+          children: [
+            {
+              value: '2',
+              label: '测试单位',
+              parentId: '1'
+            }
+          ]
+        }
+      ]
+    },
+    userList: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
     return {
-      isDetail: false,
+      isEdit: false,
       submitLoading: false,
       formModel: {
-        enabled: 1
+        enabled: 1,
+        apartmentId: ''
       },
       formItemLayout: {
         labelCol: { span: 4 },
@@ -144,12 +183,68 @@ export default {
     }
   },
   methods: {
-    add () {
-      console.log(123)
+    add (text = null) {
       this.show('添加部门')
+      this.formModel.apartmentId = text
     },
-    edit () {
+    onSubmit () {
+      this.$refs.ruleForm.validate(validate => {
+        if (!validate) {
+          throw new Error('参数不正确')
+        }
+        try {
+          this.submitLoading = true
+          axios.post('/organize/save', {
+            name: this.formModel.name,
+            parentId: this.formModel.apartmentId,
+            isOpen: !!this.formModel.enabled,
+            sortIndex: this.formModel.order,
+            leaderId: this.formModel.leader,
+            ...this.isEdit ? { id: this.formModel.id } : {}
+          })
+          this.$notifyAddSuccess()
+          this.$emit('operateSuccess')
+        } catch (e) {
+          throw e
+        } finally {
+          this.submitLoading = false
+        }
+      })
+    },
+    edit (user) {
       this.show('编辑部门')
+      this.formModel = {
+        name: user.name,
+        apartmentId: user.parentId,
+        isOpen: !!user.isOpen,
+        order: user.sortIndex,
+        leaderId: user.leaderId,
+        id: user.id
+      }
+    },
+    // 递归函数，用于遍历树形结构数组并找出所有节点值的最大值
+    findMaxValueInTreeArray (treeArray) {
+      let maxValue = -1 // 初始化为负无穷大
+      for (const node of treeArray) {
+        if (node.sortIndex > maxValue) {
+          maxValue = node.sortIndex
+        }
+        if (node.children && node.children.length > 0) {
+          const childMaxValue = this.findMaxValueInTreeArray(node.children)
+          if (childMaxValue > maxValue) {
+            maxValue = childMaxValue
+          }
+        }
+      }
+      return maxValue + 1
+    },
+    onCancel () {
+      this.visible = false
+    }
+  },
+  computed: {
+    minOrder: function () {
+      return this.findMaxValueInTreeArray(this.treeData)
     }
   }
 }

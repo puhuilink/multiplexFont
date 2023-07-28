@@ -204,7 +204,7 @@ export default {
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: ['10', '20', '50', '100'],
-        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        showTotal: (total) => `共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = pageSize
