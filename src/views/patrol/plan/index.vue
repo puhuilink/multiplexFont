@@ -1,44 +1,38 @@
 <template>
   <div class="plan-management">
-    <CTable
+    <a-form layout="inline" class="form">
+      <div :class="{ fold: !advanced }">
+        <a-row>
+          <a-col :md="12" :sm="24">
+            <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
+              <a-select allowClear v-model="queryParams.groupId">
+                <a-select-option
+                  v-for="{ label, value } in patrolGroupList"
+                  :key="value"
+                  :value="value"
+                >{{ label }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </div>
+
+      <span :class="advanced ? 'expand' : 'collapse'">
+        <QueryBtn @click="query" />
+        <ResetBtn @click="resetQueryParams" />
+      </span>
+    </a-form>
+    <a-button @click="onAdd">新增</a-button>
+    <a-button :disabled="!hasSelectedOne" @click="onEdit">编辑</a-button>
+    <a-button :disabled="!hasSelectedOne" @click="onBatchDelete">删除</a-button>
+    <a-table
       :columns="columns"
-      :data="loadData"
-      ref="table"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
       :scroll="scroll"
-    >
-      <template #query>
-        <a-form layout="inline" class="form">
-          <div :class="{ fold: !advanced }">
-            <a-row>
-              <a-col :md="12" :sm="24">
-                <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
-                  <a-select allowClear v-model="queryParams.group_id">
-                    <a-select-option
-                      v-for="{ groupId, group_name } in patrolGroupList"
-                      :key="groupId"
-                      :value="groupId"
-                    >{{ group_name }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </div>
-
-          <span :class="advanced ? 'expand' : 'collapse'">
-            <QueryBtn @click="query" />
-            <ResetBtn @click="resetQueryParams" />
-          </span>
-        </a-form>
-      </template>
-
-      <template #operation>
-        <a-button @click="onAdd">新增</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="onEdit">编辑</a-button>
-        <a-button :disabled="!hasSelected" @click="onBatchDelete">删除</a-button>
-      </template>
-    </CTable>
+      :data-source="dataSource"
+      :loading="pageLoading"
+    ></a-table>
 
     <PlanSchema ref="schema" @addSuccess="query" @editSuccess="query" />
   </div>
@@ -47,12 +41,12 @@
 <script>
 import PlanSchema from './modules/PlanSchema/index'
 import { Confirm, List } from '@/components/Mixins'
-import { generateQuery } from '@/utils/graphql'
 import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING, PLAN_STATUS_ENABLED, PLAN_STATUS_DISABLED } from '../typing'
 import moment from 'moment'
 import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
 import _ from 'lodash'
+import { xungeng } from '@/utils/request'
 
 const timeColumnSnippet = {
   width: 130,
@@ -69,6 +63,8 @@ export default {
   computed: {},
   data () {
     return {
+      pageLoading: false,
+      dataSource: [],
       ASCRIPTION_LIST,
       columns: [
         {
@@ -79,13 +75,12 @@ export default {
         },
         {
           title: '巡更组',
-          dataIndex: 'group { group_name }',
-          width: 160,
-          customRender: (__, { group }) => _.get(group, 'group_name')
+          dataIndex: 'groupId',
+          width: 160
         },
         {
           title: '更新时间',
-          dataIndex: 'create_time',
+          dataIndex: 'createTime',
           ...timeColumnSnippet
         },
         {
@@ -95,14 +90,14 @@ export default {
         },
         {
           title: '生效时间',
-          dataIndex: 'effect_time',
+          dataIndex: 'effectTime',
           width: 130,
           sorter: true,
           ...timeColumnSnippet
         },
         {
           title: '失效时间',
-          dataIndex: 'expire_time',
+          dataIndex: 'expireTime',
           width: 130,
           sorter: true,
           ...timeColumnSnippet
@@ -117,19 +112,49 @@ export default {
           )
         }
       ],
-      userGroupList: []
+      userGroupList: [],
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      },
+      queryParams: {
+        groupId: null
+      }
     }
   },
   methods: {
-    loadData (parameter) {
-      return PatrolService.planFind({
-        where: {
-          ...generateQuery(this.queryParams)
-        },
-        fields: _.uniq(['id', ...this.columns.map(({ dataIndex }) => dataIndex)]),
-        ...parameter,
-        alias: 'data'
-      }).then((r) => r.data)
+    async query () {
+      try {
+        this.pageLoading = true
+        const { data: { list } } = await xungeng.get('/plan/list', {
+          params: {
+            pageSize: this.paginationOpt.defaultPageSize,
+            pageNum: this.paginationOpt.defaultCurrent,
+            ...this.queryParams
+          }
+        })
+        this.dataSource = list
+      } catch (e) {
+        throw e
+      } finally {
+        this.pageLoading = false
+      }
     },
     onAdd () {
       this.$refs['schema'].add()
@@ -146,9 +171,8 @@ export default {
       })
     },
     onEdit () {
-      const [id] = this.selectedRowKeys
-      const tmpid = id.replace(/[^0-9]/gi, '')
-      this.$refs['schema'].edit(tmpid)
+      // const tmpid = id.replace(/[^0-9]/gi, '')
+      this.$refs['schema'].edit(this.selectedRows[0])
     },
 
     // 启用状态
@@ -191,6 +215,9 @@ export default {
   },
   created () {
     this.fetchPatrolGroupList()
+  },
+  mounted () {
+    this.query()
   }
 }
 </script>

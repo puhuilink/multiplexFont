@@ -23,12 +23,27 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item prop="groupId">
-          <a-select v-model="_value.groupId" style="min-width: 120px">
+          <a-select v-model="_value.groupName" style="min-width: 120px">
             <a-select-option
-              v-for="{ groupId, group_name } in patrolGroupList"
-              :key="groupId"
-              :value="groupId"
-            >{{ group_name }}</a-select-option>
+              v-for="{ label, value } in patrolGroupList"
+              :key="value"
+              :value="value"
+            >{{ label }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+
+      <a-col :span="6" v-show="_value.groupId && _value.groupId > 0">
+        <span class="ant-form-item-label">
+          <label title="路线ID">路线ID</label>
+        </span>
+        <a-form-model-item prop="pathId">
+          <a-select v-model="_value.pathId" style="min-width: 120px">
+            <a-select-option
+              v-for="{ label, value } in patrolGroupList"
+              :key="value"
+              :value="value"
+            >{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
@@ -59,6 +74,9 @@ export const basicInfoRule = {
   groupId: [
     { required: true, message: '请选择巡更组' }
   ],
+  pathId: [
+    { required: true, message: '请选择路线' }
+  ],
   status: [
     { required: true, message: '选择启用' }
   ]
@@ -84,6 +102,27 @@ export default {
   computed: {
     userInfo () {
       return this.$store.getters.userInfo
+    },
+    pathVisible () {
+      return this.plan.groupId && this.plan.groupId.length > 0
+    }
+  },
+  watch: {
+    'plan.groupId': {
+      immediate: true,
+      deep: true,
+      async handler (parentId) {
+        await this.$nextTick()
+        parentId && await this.fetchPathListList(parentId)
+      }
+    },
+    'plan.pathId': {
+      immediate: true,
+      deep: true,
+      async handler (parentId) {
+        await this.$nextTick()
+        parentId && await this.fetchPathListList(this.plan.groupId, parentId)
+      }
     }
   },
   methods: {},

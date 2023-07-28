@@ -112,21 +112,22 @@ export default {
       this.submit = this.insert
       this.show('新增巡更计划')
     },
-    edit (id) {
+    edit (plan) {
       this.submit = this.update
       this.show('编辑巡更计划')
-      this.fetchPlanDetail(id)
+      this.fetchPlanDetail(plan)
     },
-    async fetchPlanDetail (id) {
-      try {
-        const plan = await PatrolService.planDetail(id)
-        this.plan = new PlanModel(plan)
-      } catch (e) {
-        this.plan = {}
-        throw e
-      } finally {
-        this.spinning = false
-      }
+    async fetchPlanDetail (plan) {
+      // try {
+      //   const plan = await PatrolService.planDetail(id)
+      //   this.plan = new PlanModel(plan)
+      // } catch (e) {
+      //   this.plan = {}
+      //   throw e
+      // } finally {
+      //   this.spinning = false
+      // }
+      this.plan = new PlanModel(plan)
     },
     /**
      * 调取新增接口
