@@ -35,7 +35,7 @@
     <div class="onAddUserBox">
       <a-button @click="onAddUser" v-action:M0101>新增巡更组</a-button>
       <a-button
-        @click="onAddUseredit"
+        @click="onEditUser"
         v-action:M0101
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
       >编辑巡更组</a-button
@@ -55,7 +55,7 @@
       </template>
     </a-table>
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :selectedRowsDate="selectedRowsDate" />
+    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
@@ -129,8 +129,6 @@ export default {
     }
   },
   mounted () {
-    this.getfindUnbind()
-
     this.getList()
   },
   methods: {
@@ -154,11 +152,6 @@ export default {
       console.log(data)
       this.dataList = data.list
     },
-    // 1.获取当前未绑定的路径(无效)
-    async getfindUnbind () {
-      const { data } = await xungeng.get('/path/findUnBind')
-      console.log(data)
-    },
 
     // 4.工作组列表
     async getList () {
@@ -171,11 +164,17 @@ export default {
 
     // 7.工作组删除(DELETE)
     async DeleteGroup () {
-      const id = this.selectedRowKeys
-      console.log(id)
-      // return
-      let res = await xungeng.delete('/xunjian/group', { params: { id: id } })
-      console.log(res)
+      const idArr = this.selectedRowKeys
+      console.log(idArr)
+
+      for (const id of idArr) {
+        // console.log(id);
+
+        const res = await xungeng.delete('/xunjian/group', { params: { id: id } })
+        // 执行你的操作，使用id和res
+        console.log(res)
+      }
+      this.getList()
     },
     onStatusChange () {},
     onSelectChange (selectedRowKeys, selectedRows) {
@@ -192,30 +191,31 @@ export default {
     onAddUser () {
       this.$refs['schema'].add()
     },
-    onAddUseredit () {
-      this.$refs['schema'].edit()
-    },
+    // onAddUseredit () {
+    //   this.$refs['schema'].edit()
+    // },
     /**
      * 为用户分配权限
      * @event
      */
-    onAllocateUserAuth () {
-      const [record] = this.selectedRows
-      this.$refs['auth'].edit(record)
-    },
+    // onAllocateUserAuth () {
+    //   const [record] = this.selectedRows
+    //   this.$refs['auth'].edit(record)
+    // },
     /**
      * 为用户分配工作组
      * @event
      */
-    onAllocateUserGroup (record) {
-      this.$refs['group'].edit(record)
-    },
+    // onAllocateUserGroup (record) {
+    //   this.$refs['group'].edit(record)
+    // },
     /**
      * 编辑用户
      * @event
      */
     onEditUser () {
-      const [record] = this.selectedRows
+      const record = this.selectedRowsDate
+      // console.log(record);
       this.$refs['schema'].edit(record)
     },
     /**
