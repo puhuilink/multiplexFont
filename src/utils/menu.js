@@ -166,6 +166,23 @@ const MENU = [
             updator: '',
             key: 'F010005',
             title: '告警审批'
+          },
+          {
+            childs: [],
+            code: 'F010006',
+            createDate: null,
+            creator: '',
+            functionType: '5',
+            icon: '',
+            module: '',
+            name: '巡更组管理',
+            note: '',
+            order: 6,
+            parentCode: 'F010',
+            updateDate: null,
+            updator: '',
+            key: 'F010006',
+            title: '巡更组管理'
           }
         ],
         title: '巡更管理'
@@ -247,14 +264,14 @@ const MENU = [
             functionType: '5',
             icon: '',
             module: '',
-            name: '工作组管理',
+            name: '部门管理',
             note: '',
             order: 2,
             parentCode: 'F001',
             updateDate: null,
             updator: '',
             key: 'F001002',
-            title: '工作组管理'
+            title: '部门管理'
           },
           {
             childs: [],
@@ -264,14 +281,14 @@ const MENU = [
             functionType: '5',
             icon: '',
             module: '',
-            name: '审计管理',
+            name: '角色管理',
             note: '',
             order: 3,
             parentCode: 'F001',
             updateDate: null,
             updator: '',
             key: 'F001003',
-            title: '审计管理'
+            title: '角色管理'
           }
         ],
         title: '系统设置'

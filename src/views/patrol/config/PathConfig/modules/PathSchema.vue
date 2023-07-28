@@ -110,7 +110,8 @@ export default {
      */
     async edit (record) {
       this.status = false
-      this.record = { ...record }
+      const { id, alias } = record
+      this.originalForm = { id, alias }
       this.submit = this.update
       this.show('编辑')
       await this.$nextTick()
@@ -141,12 +142,11 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      this.form.validateFields(async (err, values) => {
+      this.$refs.ruleForm.validateField('alias', async (err, values) => {
         if (err) return
         try {
           this.confirmLoading = true
-          const { user_id } = this.record
-          await UserService.update(values, { user_id })
+          await PathService.updatePath(this.originalForm.id, this.originalForm.alias)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()

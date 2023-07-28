@@ -346,7 +346,7 @@ export const asyncRouterMap = [
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
-              component: () => import('@/views/patrol/config/index'),
+              component: () => import('@/views/patrol/config/PathConfig/index'),
               meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
             },
             {
@@ -818,7 +818,7 @@ export const asyncRouterMap = [
             path: '/system/role',
             name: 'Role',
             component: () => import('@/views/system/role/index'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['F001001'] }
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001003'] }
           },
           {
             path: '/system/group',

@@ -181,8 +181,7 @@ export default {
      * 编辑用户
      * @event
      */
-    onEditUser () {
-      const [record] = this.selectedRows
+    onEditUser (record) {
       this.$refs['schema'].edit(record)
     },
     /**
