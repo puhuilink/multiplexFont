@@ -10,6 +10,7 @@ export default {
   name: 'AlarmStatistics',
   props: {
     option: {
+      type: Object,
       default: () => {
         return {
           tooltip: {

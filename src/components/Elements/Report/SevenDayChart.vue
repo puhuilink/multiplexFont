@@ -22,15 +22,19 @@ export default {
   },
   props: {
     title: {
+      type: String,
       default: '过去7天主告警'
     },
     type: {
+      type: String,
       default: 'main'
     },
     number: {
+      type: String,
       default: '0'
     },
     chartData: {
+      type: Array,
       default: () => []
     }
   },
