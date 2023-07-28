@@ -258,7 +258,6 @@ export default {
      * 打开编辑窗口
      */
     async edit (record) {
-      console.log(record)
       const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
       this.dataForm = { dataType, dataIds }
       this.menuForm = { appCode, menuCodes }
@@ -273,11 +272,13 @@ export default {
      * 调取新增接口
      */
     async insert () {
-      this.form.validateFields(async (err, values) => {
-        if (err) return
+      const ob = {}
+      Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
+      this.$refs.dataForm.validate(async (err) => {
+        if (!err) return
         try {
           this.confirmLoading = true
-          await UserService.add(values)
+          await RoleService.update(ob)
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
           this.cancel()
