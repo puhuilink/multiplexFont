@@ -123,8 +123,8 @@ export default {
 
       // 获取年、月、日
       const year = currentDate.getFullYear()
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-      const day = String(currentDate.getDate()).padStart(2, '0')
+      // const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+      // const day = String(currentDate.getDate()).padStart(2, '0')
 
       // 生成日期数组
       const data = []

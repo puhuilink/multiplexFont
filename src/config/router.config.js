@@ -15,8 +15,9 @@ export const asyncRouterMap = [
           // component: () => import('@/views/dev-debug'),
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
           // component: () => import('@/views/system/userManage/index'),
+          component: () => import('@/views/patrol/groupManagement copy/index.vue'),
           // component: () => import('@/views/system/apartment/index'),
-          component: () => import('@/views/patrol/plan/index'),
+          // component: () => import('@/views/patrol/plan/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
