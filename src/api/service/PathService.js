@@ -36,10 +36,10 @@ class PathService extends BaseService {
     }
   }
   // 分配用户给角色
-  static async getPathList (pathId) {
+  static async updatePath (pathId, alias) {
     try {
       const { code, data } =
-        await xungeng.get(`/path/find?pathId=${pathId}&pageNum=0&pageSize=1`)
+        await xungeng.get(`/path/update?pathId=${pathId}&alias=${alias}`)
       if (code === 200) {
         return data
       }
