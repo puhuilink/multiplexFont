@@ -401,8 +401,8 @@ export const asyncRouterMap = [
           {
             path: '/patrol/group',
             name: 'PatrolGroup',
-            component: () => import('@/views/patrol/groupManagement/index.vue'),
-            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010004'] }
+            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
           }
           // {
           //   path: '/patrol/object',
