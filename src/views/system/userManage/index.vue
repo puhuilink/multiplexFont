@@ -2,150 +2,131 @@
   <div class="wrapper">
     <!--      操作-->
     <div>
-      <a-form>
-        <a-row>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 10 }"
-              :wrapperCol="{ span: 14, offset: 1 }">
-              部门：
-              <a-input
-                :style="{width:'65%'}"
-                v-decorator="[
-                  `host_alias` ]"
-                placeholder="请输入部门名称"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 10 }"
-              :wrapperCol="{ span: 16, offset: 2 }">
-              登录名：
-              <a-input
-                :style="{width:'65%'}"
-                v-decorator="[
-                  `endpoint_alias` ]"
-                placeholder="请输入登录名"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 5 }"
-              :wrapperCol="{ span: 18, offset: 1 }">
-              用户名称：
-              <a-input
-                :style="{width:'62%'}"
-                v-decorator="[
-                  `metric_alias`
-                ]"
-                placeholder="请输入用户名称"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 5 }"
-              :wrapperCol="{ span: 18, offset: 1 }">
-              手机号码：
-              <a-input
-                :style="{width:'62%'}"
-                v-decorator="[
-                  `metric_alias`
-                ]"
-                placeholder="手机号码"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 8 }"
-              :wrapperCol="{ span: 15, offset: 1 }">
-              状态：
-              <a-select
-                :style="{width:'65%'}"
-                v-bind="formItemLayout"
-                v-decorator="[
-                  `level` ]"
-                placeholder="用户状态"
+      <a-form-model layout="inline" class="form">
+        <div class="fold">
+          <a-row :gutter="[8,8]">
+            <!--            <a-col-->
+            <!--              v-bind="colLayout"-->
+            <!--            >-->
+            <!--              <a-form-model-item-->
+            <!--                label="部门"-->
+            <!--                v-bind="formItemLayout">-->
+            <!--                <a-input-->
+            <!--                  v-model="queryParams.apartmentId"-->
+            <!--                  placeholder="请输入部门名称"-->
+            <!--                />-->
+            <!--              </a-form-model-item>-->
+            <!--            </a-col>-->
+            <a-col
+              v-bind="colLayout"
+            >
+              <a-form-item
+                label="登录名"
+                v-bind="formItemLayout">
+                <a-input
+                  v-model="queryParams.userName"
+                  placeholder="请输入登录名"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col
+              v-bind="colLayout"
+            >
+              <a-form-item
+                label="用户名称"
+                v-bind="formItemLayout">
+                <a-input
+                  v-model="queryParams.staffName"
+                  placeholder="请输入用户名称"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col
+              v-bind="colLayout"
+            >
+              <a-form-item
+                label="手机号码"
+                v-bind="formItemLayout">
+                <a-input
+                  v-model="queryParams.mobilePhone"
+                  placeholder="手机号码"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col
+              v-bind="colLayout"
+            >
+              <a-form-item
+                label="状态:"
+                :labelCol="{ span: 6, offset: 2}"
+                :wrapperCol="{ span: 11, offset: 5 }"
               >
-                <a-select-option value="1">开启</a-select-option>
-                <a-select-option value="2">关闭</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col
-            v-bind="directiveLayout"
-          >
-            <a-form-item
-              :labelCol="{ span: 5 }"
-              :wrapperCol="{ span: 18, offset: 1 }">
-              创建时间：
-              <a-range-picker
-                :style="{width:'61%'}"
-                v-bind="formItemLayout"
-                :show-time="{ format: 'HH:mm' }"
-                format="YYYY-MM-DD HH:mm"
-                :placeholder="['开始时间', '结束时间']"
-                v-decorator="[
-                  `level` ]"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :v-bind="directiveLayout" :style="{ textAlign: 'left' }">
-            <a-button type="primary" @click="()=>handleSearch()">
-              <a-icon type="search" />查询
-            </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              <a-icon type="sync" />重置
-            </a-button>
-          </a-col>
-        </a-row>
-      </a-form>
+                <a-select
+                  style="width: 100px"
+                  placeholder="用户状态"
+                  v-model="queryParams.isOpen"
+                >
+                  <a-select-option value="true">开启</a-select-option>
+                  <a-select-option value="false">关闭</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col
+              v-bind="colLayout"
+            >
+              <a-form-item
+                label="创建时间:"
+                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 5, offset: 0 }, xxl: { span: 5, offset: 0 }}"
+                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 17, offset: 2 }, xxl: { span: 15, offset: 1 } }">
+                <a-range-picker
+                  style="width: 70%"
+                  :show-time="{ format: 'HH:mm' }"
+                  format="YYYY-MM-DD HH:mm"
+                  :placeholder="['开始时间', '结束时间']"
+                  v-model="queryParams.timeList"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col v-bind="colLayout" :style="{ textAlign: 'left' }">
+              <a-button type="primary" @click="query">
+                <a-icon type="search" />查询
+              </a-button>
+              <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
+                <a-icon type="sync" />重置
+              </a-button>
+            </a-col>
+          </a-row>
+        </div>
+      </a-form-model>
     </div>
-    <a-button type="primary" style="margin-bottom: 5px">新建</a-button>
+    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd">新建</a-button>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
-        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
         <a-tree
           :expanded-keys="expandedKeys"
           :auto-expand-parent="autoExpandParent"
-          :tree-data="gData"
+          :tree-data="treeData"
           @expand="onExpand"
+          @select="onSelect"
         >
-          <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
-            </span>
-            <span v-else>{{ title }}</span>
-          </template>
         </a-tree>
       </div>
 
       <div class="wrapper_content_right">
-        <a-table :columns="columns" :data-source="data">
+        <a-table
+          :columns="columns"
+          :pagination="paginationOpt"
+          :loading="pageLoading"
+          :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
-          <template #address="text">
-            <a-switch default-checked />
+          <template #isOpen="text, record">
+            <a-switch :checked="text" @change="(status) => switchStatus(record, status)"/>
           </template>
-          <template #operation="text">
-            <a><a-icon type="edit"/>修改</a>
+          <template #operation="text, record">
+            <a @click="onEdit(record)"><a-icon type="edit"/>修改</a>
             <a-divider type="vertical" />
             <a-dropdown>
               <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-              <a-menu slot="overlay" @click="moreOption">
+              <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
                 <a-menu-item key="1">
                   删除
                 </a-menu-item>
@@ -160,7 +141,8 @@
           </template>
         </a-table>
       </div>
-      <assignModal ref="assign"></assignModal>
+      <assignModal ref="assign" :role="roleList"></assignModal>
+      <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
     </div>
   </div>
 </template>
@@ -169,108 +151,49 @@
 import { Confirm } from '~~~/Mixins'
 import { Modal } from 'ant-design-vue'
 import assignModal from '@/views/system/userManage/components/assignModal'
+import { alarm, axios } from '@/utils/request'
+import { buildTree } from '@/utils/util'
+import schema from './components/schema'
+import Vue from 'vue'
+import { USER } from '@/store/mutation-types'
+import _ from 'lodash'
 
-const x = 3
-const y = 2
-const z = 1
-const gData = []
-
-const generateData = (_level, _preKey, _tns) => {
-  const preKey = _preKey || '0'
-  const tns = _tns || gData
-
-  const children = []
-  for (let i = 0; i < x; i++) {
-    const key = `${preKey}-${i}`
-    tns.push({ title: key, key, scopedSlots: { title: 'title' } })
-    if (i < y) {
-      children.push(key)
-    }
-  }
-  if (_level < 0) {
-    return tns
-  }
-  const level = _level - 1
-  children.forEach((key, index) => {
-    tns[index].children = []
-    return generateData(level, key, tns[index].children)
-  })
-}
-generateData(z)
-
-const dataList = []
-const generateList = data => {
-  for (let i = 0; i < data.length; i++) {
-    const node = data[i]
-    const key = node.key
-    dataList.push({ key, title: key })
-    if (node.children) {
-      generateList(node.children)
-    }
-  }
-}
-generateList(gData)
-
-const getParentKey = (key, tree) => {
-  let parentKey
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i]
-    if (node.children) {
-      if (node.children.some(item => item.key === key)) {
-        parentKey = node.key
-      } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children)
-      }
-    }
-  }
-  return parentKey
-}
 const columns = [
   {
-    title: '用户编号',
-    dataIndex: 'name',
-    defaultFilteredValue: [1],
-    key: 'name',
-    scopedSlots: { customRender: 'name' }
-  },
-  {
     title: '登录名',
-    dataIndex: 'age',
-    key: 'age',
-    defaultFilteredValue: [1],
-    width: 65
+    dataIndex: 'userName',
+    key: 'userName',
+    width: 100
   },
   {
     title: '用户名称',
-    dataIndex: 'address',
-    key: 'address 1',
-    defaultFilteredValue: [1],
+    dataIndex: 'staffName',
+    key: 'staffName',
     ellipsis: true
   },
   {
     title: '部门',
-    dataIndex: 'abc',
-    key: 'abc',
-    defaultFilteredValue: [1],
+    dataIndex: 'orgName',
+    key: 'orgName',
     ellipsis: true
   },
   {
     title: '手机号码',
-    dataIndex: 'address',
-    key: 'address 2',
+    dataIndex: 'mobilePhone',
+    key: 'mobilePhone',
     ellipsis: true
   },
   {
     title: '状态',
-    dataIndex: 'address',
-    key: 'address 3',
+    dataIndex: 'isOpen',
+    key: 'isOpen',
     ellipsis: true,
-    scopedSlots: { customRender: 'address' }
+    scopedSlots: { customRender: 'isOpen' }
   },
   {
     title: '创建时间',
-    dataIndex: 'address',
-    key: 'address 4',
+    dataIndex: 'createTime',
+    key: 'createTime',
     ellipsis: true
   },
   {
@@ -290,76 +213,81 @@ const columns = [
   }
 ]
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park, New York No. 1 Lake Park',
-    tags: ['nice', 'developer']
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 2 Lake Park, London No. 2 Lake Park',
-    tags: ['loser']
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park, Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher']
-  }
-]
 export default {
   name: 'Index',
   mixins: [ Confirm ],
   components: {
-    assignModal
+    assignModal,
+    schema
   },
   data () {
     return {
-      data,
+      dataSource: [],
       columns,
       expandedKeys: [],
       searchValue: '',
       autoExpandParent: true,
-      gData,
+      treeData: [],
       formItemLayout: {
-        labelCol: { span: 8 },
-        wrapperCol: { span: 15, offset: 1 }
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 6 }, xxl: { span: 6 } },
+        wrapperCol: {
+          xs: { span: 10, offset: 0 },
+          md: { span: 14, offset: 0 },
+          xl: { span: 16, offset: 2 },
+          xxl: { span: 16, offset: 2 }
+        }
       },
-      directiveLayout: {
-        xs: 24,
-        md: 8,
-        xl: 6,
-        xxl: 6
+      colLayout: {
+        span: 6
       },
-      password: ''
+      password: '',
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      },
+      queryParams: {
+        isOpen: null
+      },
+      pageLoading: false,
+      roleList: [],
+      selectTreeData: []
     }
   },
   methods: {
+    onSelect (selectedKeys) {
+      // 响应当前部门下的用户
+      console.log('selectedKeys', selectedKeys)
+      this.queryParams.orgId = selectedKeys[0]
+      this.query()
+    },
+    async getRoles () {
+      const { data: { list } } = await axios.get('/role/list', {
+        params: {
+          pageNum: 1,
+          pageSize: 9999
+        }
+      })
+      this.roleList = list
+    },
     onExpand (expandedKeys) {
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
-    },
-    onChange (e) {
-      const value = e.target.value
-      const expandedKeys = dataList
-        .map(item => {
-          if (item.title.indexOf(value) > -1) {
-            return getParentKey(item.key, gData)
-          }
-          return null
-        })
-        .filter((item, i, self) => item && self.indexOf(item) === i)
-      Object.assign(this, {
-        expandedKeys,
-        searchValue: value,
-        autoExpandParent: true
-      })
     },
     change (value) {
       this.password = value.target.value
@@ -376,8 +304,7 @@ export default {
     renderIcon () {
       return <div></div>
     },
-    moreOption ({ key }) {
-      console.log(key)
+    moreOption (record, { key }) {
       switch (key) {
         case '1':
           const title = '删除'
@@ -399,6 +326,15 @@ export default {
               //     this.query(false)
               //   })
               //   .catch(this.$notifyError)
+              await axios.delete(`/user/${record.id}`, {
+                headers: {
+                  'Content-type': 'application/x-www-form-urlencoded'
+                }
+              })
+                .then(() => {
+                  this.$notifyDeleteSuccess()
+                })
+                .catch(this.$notifyError)
             }
           })
           break
@@ -409,16 +345,124 @@ export default {
             content: this.renderInput,
             centered: true,
             closable: true,
-            onOk: async () => {}
+            onOk: async () => {
+              await axios.post('/user/changeUserPwd', {
+                id: Number(record.id),
+                newPwd: this.password
+              }).then(() => {
+                this.$notification.success({
+                  message: '系统提示',
+                  description: '修改密码成功，下次登录生效'
+                })
+                this.password = ''
+              })
+                .catch(this.$notifyError)
+            }
           })
           break
         case '3':
-          this.$refs.assign.onShow()
+          this.$refs.assign.onShow(record)
           break
         default:
           return null
       }
+    },
+    async getData (params = { isOpen: true, orgName: '' }) {
+      const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+      this.treeData = buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        return el
+      }))
+      this.selectTreeData = this.buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        return el
+      }))
+    },
+    async query () {
+      // TODO 查询
+      if (this.queryParams.timeList) {
+        this.queryParams.createTimeStart = this.queryParams.timeList[0]
+        this.queryParams.createTimeEnd = this.queryParams.timeList[1]
+      }
+      const { data: { list, total } } = await axios.get('/user/list', {
+        params: {
+          pageSize: this.paginationOpt.defaultPageSize,
+          pageNum: this.paginationOpt.defaultCurrent,
+          ...this.queryParams
+        }
+      })
+      this.dataSource = list
+      this.paginationOpt.total = total
+    },
+    resetQueryParams () {
+      // TODO 重置查询
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'device_type', 'device', 'timeList', 'start_time', 'last_time'])
+    },
+    async switchStatus (record, text) {
+      console.log('record', record, text)
+      record.isOpen = text
+      try {
+        this.pageLoading = true
+        await axios.get('/user/switch', {
+          params: {
+            id: record.id,
+            isOpen: text
+          }
+        })
+        this.$notification.success({
+          message: '系统提示',
+          description: `${text ? '启用' : '停用'}成功`
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.pageLoading = false
+      }
+    },
+    onAdd () {
+      this.$refs.schema.add()
+    },
+    onEdit (record) {
+      this.$refs.schema.edit(record)
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      for (const item of data) {
+        if (item.parentId === parentId) {
+          const children = this.buildTree(data, item.id)
+          if (children.length > 0) {
+            item.children = children.map(el => {
+              return {
+                ...el,
+                label: el.name,
+                value: el.id
+              }
+            })
+          }
+          tree.push({
+            ...item,
+            label: item.name,
+            value: item.id
+          })
+        }
+      }
+      return tree
+    },
+    Success () {
+      this.$refs.schema.onCancel()
+      this.query()
     }
+  },
+  mounted () {
+    this.getData()
+    this.query()
+  },
+  beforeMount () {
+    this.getRoles()
   }
 }
 </script>
@@ -437,6 +481,7 @@ export default {
       border: rgb(232, 232, 232) 1px solid;
       border-radius: 5px;
       padding: 5px;
+      overflow: scroll;
     }
 
     &_right {
@@ -453,5 +498,21 @@ export default {
 .modal_input::before {
   content: '新密码：';
   font-size: 15px;
+}
+
+.form {
+  margin-right: 10px;
+
+  .fold {
+    flex: 1;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .collapse {
+    float: right;
+    overflow: hidden;
+    transform: translateY(3.5px);
+  }
 }
 </style>

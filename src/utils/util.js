@@ -422,3 +422,27 @@ export const removeArrayValue = function (arr = [], value) {
     return arr
   }
 }
+
+export const buildTree = function (data, parentId = null) {
+  const tree = []
+  for (const item of data) {
+    if (item.parentId === parentId) {
+      const children = buildTree(data, item.id)
+      if (children.length > 0) {
+        item.children = children.map(el => {
+          return {
+            ...el,
+            title: el.name,
+            key: el.id
+          }
+        })
+      }
+      tree.push({
+        ...item,
+        title: item.name,
+        key: item.id
+      })
+    }
+  }
+  return tree
+}
