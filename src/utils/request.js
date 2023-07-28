@@ -48,7 +48,7 @@ const sql = async (s) => {
   const formData = new FormData()
   formData.append('body', encrypt(JSON.stringify(payload)))
 
-  const { data } = await service.post('/Hasura/query', formData, {
+  const { data } = await serviceXungeng.post('/Hasura/query', formData, {
     headers: {
       'Content-type': 'application/x-www-form-urlencoded'
     }
@@ -64,7 +64,8 @@ const sql = async (s) => {
     }
     return []
   } catch (e) {
-    throw new Error(e)
+    // throw new Error(e)
+    return []
   }
 }
 

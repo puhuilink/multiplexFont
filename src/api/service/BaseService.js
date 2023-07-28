@@ -1,4 +1,4 @@
-import { axios } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 import { encrypt, decrypt } from '@/utils/aes'
 import { notifyGraphQLError } from '@/utils/clientConfig'
 import JSONBig from 'json-bigint'
@@ -18,7 +18,7 @@ class BaseService {
       formData.append('originalRequestBody', requestBodyStr)
     }
 
-    const response = await axios.post('/Hasura/transfer', formData, {
+    const response = await xungeng.post('/Hasura/transfer', formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
@@ -48,7 +48,7 @@ class BaseService {
     const formData = new FormData()
     formData.append('body', encrypt(JSON.stringify(payload)))
 
-    const { data } = await axios.post('/Hasura/query', formData, {
+    const { data } = await xungeng.post('/Hasura/query', formData, {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }

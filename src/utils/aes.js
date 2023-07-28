@@ -15,7 +15,6 @@ export function encrypt (message) {
 }
 
 export function decrypt (encryptMessage) {
-  console.log('encryptMessage', encryptMessage)
   if (encryptMessage) {
     return CryptoJS.AES.decrypt(encryptMessage, key, {
       iv: iv,

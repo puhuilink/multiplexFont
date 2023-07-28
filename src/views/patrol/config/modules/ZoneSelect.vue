@@ -1,3 +1,4 @@
+/* eslint-disable-next-line vue/no-template-shadow */
 <template>
   <div class="ZoneSelect">
     <div class="ZoneSelect__header">
@@ -30,14 +31,19 @@
 </template>
 
 <script>
-import { GroupService } from '@/api/index'
+import { PathService } from '@/api/index'
 import _ from 'lodash'
 
 export default {
   name: 'ZoneSelect',
   mixins: [],
   components: {},
-  props: {},
+  props: {
+    pathId: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       pathList: [],
@@ -66,49 +72,26 @@ export default {
       })
     },
     async fetch () {
-      return GroupService
-        .find({
-          where: {
-            is_patrol: true
-          },
-          fields: [
-            'groupName: group_name',
-            `patrolPath {
-              id
-              zoneRelationList {
-                zone {
-                  id
-                  alias
-                }
-              }
-            }`
-          ],
-          alias: 'groupList'
+      const { zones, list } = await PathService.getPathList(this.pathId)
+      console.log(list[0])
+      const path = {
+        pathName: list[0].pathAlias,
+        pathId: list[0].pathId,
+        zoneList: zones.map((z) => {
+          return {
+            id: z.zoneId,
+            alias: z.alias
+          }
         })
-        .then(({ data: { groupList } }) => {
-          // 一个工作组之多只能配置一条巡更路线
-          const pathList = groupList.map(({ groupName, patrolPath }) => {
-            return {
-              // 以工作组名称区分巡更路线
-              pathName: groupName,
-              pathId: _.get(patrolPath, ['id']),
-              zoneList: _.get(patrolPath, ['zoneRelationList'], []).map(({ zone }) => ({ ...zone }))
-            }
-          })
-
-          // 未配置路线的工作组置后
-          this.pathList = _.orderBy(pathList, (e) => e.zoneList.length, ['desc'])
-        })
-        .catch((err) => {
-          this.pathList = []
-          throw err
-        })
+      }
+      this.pathList = [path]
     }
   },
   async created () {
     await this.fetch()
     // 默认选中第一条路线第一个区域
     const { pathList, options } = this
+    console.log(this.pathList)
     Object.assign(options, {
       pathId: _.get(pathList, ['0', 'pathId']),
       zoneId: _.get(pathList, ['0', 'zoneList', '0', 'id'])

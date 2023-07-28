@@ -14,16 +14,16 @@
   >
     <a-form-model
       v-if="title==='编辑菜单权限'"
-      ref="dataForm"
+      ref="menuForm"
       :rules="dataRules"
-      :model="form"
+      :model="record"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="选择菜单权限">
-        <AuthMenu :record="{data:form.menuCodes}" :is-role="true" ref="menu" />
+        <AuthMenu :record="{data:record.menuCodes}" :is-role="true" ref="menu" @menuChange="updateMenuData" />
       </a-form-model-item>
       <a-form-model-item label="选择移动端角色" prop="role_mobile">
-        <a-radio-group v-model="form.appCode" default-value="1">
+        <a-radio-group v-model="record.appCode" default-value="1">
           <a-radio :value="'none'">
             无
           </a-radio>
@@ -46,11 +46,11 @@
       v-else
       ref="dataForm"
       :rules="dataRules"
-      :model="form"
+      :model="record"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="权限范围" prop="data_type">
-        <a-select v-model="form.dataType" default-value="ALL">
+        <a-select v-model="record.dataType" default-value="ALL">
           <a-select-option :value="'ALL'">
             全部数据权限
           </a-select-option>
@@ -61,13 +61,14 @@
             本部门数据权限
           </a-select-option>
         </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="请选择部门范围" v-if="record.dataType === 'CUSTOM'">
         <a-tree
-          v-if="form.dataType === 'CUSTOM'"
           checkable
           defaultExpandAll
           :checkStrictly="true"
           :autoExpandParent="true"
-          v-model="form.dataIds"
+          v-model="record.dataIds"
           :treeData="Depts">
         </a-tree>
       </a-form-model-item>
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-import { UserService } from '@/api'
+import { RoleService, UserService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
@@ -101,6 +102,12 @@ export default {
   }),
   computed: {},
   methods: {
+    /**
+     * 更新menuCodes
+     */
+    updateMenuData (keys) {
+      this.record.menuCodes = keys
+    },
     /**
      * 打开菜单权限窗口
      */
@@ -127,42 +134,39 @@ export default {
      * 调取新增接口
      */
     async insert () {
-      this.form.validateFields(async (err, values) => {
-        if (err) return
-        try {
-          this.confirmLoading = true
-          await UserService.add(values)
-          this.$emit('addSuccess')
-          this.$notifyAddSuccess()
-          this.cancel()
-        } catch (e) {
-          this.$notifyError(e)
-          throw e
-        } finally {
-          this.confirmLoading = false
-        }
-      })
+      const operateType = 'MENU'
+      Object.assign(this.record, { operateType })
+      try {
+        this.confirmLoading = true
+        await RoleService.update(this.record)
+        this.$emit('editSuccess')
+        this.$notifyEditSuccess()
+        this.cancel()
+      } catch (e) {
+        this.$notifyError(e)
+        throw e
+      } finally {
+        this.confirmLoading = false
+      }
     },
     /**
      * 调取编辑接口
      */
     async update () {
-      this.form.validateFields(async (err, values) => {
-        if (err) return
-        try {
-          this.confirmLoading = true
-          const { user_id } = this.record
-          await UserService.update(values, { user_id })
-          this.$emit('editSuccess')
-          this.$notifyEditSuccess()
-          this.cancel()
-        } catch (e) {
-          this.$notifyError(e)
-          throw e
-        } finally {
-          this.confirmLoading = false
-        }
-      })
+      const operateType = 'DATA'
+      Object.assign(this.record, { operateType })
+      try {
+        this.confirmLoading = true
+        await RoleService.update(this.record)
+        this.$emit('editSuccess')
+        this.$notifyEditSuccess()
+        this.cancel()
+      } catch (e) {
+        this.$notifyError(e)
+        throw e
+      } finally {
+        this.confirmLoading = false
+      }
     }
   }
 }
