@@ -47,6 +47,7 @@ export default {
     // 获取已选择的菜单
     async getInitMenu () {
       if (this.isRole) {
+        console.log(this.record)
         const { data } = this.record
         this.checkedKeys.push(...data)
         return

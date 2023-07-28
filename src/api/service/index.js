@@ -34,6 +34,7 @@ import { ViewDesktopService } from './ViewDesktopService.js'
 import { ViewListService } from './ViewListService.js'
 import { NotificationGroupService } from './NotificationGroupService'
 import { RoleService } from './RoleService'
+import { PathService } from './PathService'
 
 export {
   AlarmForwardService,
@@ -56,6 +57,7 @@ export {
   MetricService,
   ModelHistoryService,
   ModelService,
+  PathService,
   PatrolConfigService,
   PatrolService,
   PatrolSenderService,

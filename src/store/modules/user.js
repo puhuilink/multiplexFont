@@ -17,7 +17,7 @@ function generatePermission (user) {
     //   ...organizeList.map(organize => AuthorizeObjectService.getGroupPermission(organize.groupId)),
     //   AuthorizeObjectService.getUserPermission(user.userId)
     // ])
-    const results = Vue.ls.get(USER).menuCodes
+    const results = Vue.ls.get(USER).menuCodes || user.menuCodes
     // const status = results.map(result => result.code === 200).reduce((pre, cur) => pre && cur)
     // const permissionList = results.flatMap(item => item.data)
     // if (!status) {
@@ -42,7 +42,8 @@ function generatePermission (user) {
         buttonOriginalPermission.push(item)
       }
     })
-
+    console.log('menuOriginalPermission', menuOriginalPermission)
+    console.log('buttonOriginalPermission', buttonOriginalPermission)
     const buttonTree = getButtonTree(null, buttonOriginalPermission)
     const permissionTree = getTree(null, menuOriginalPermission, buttonTree)
     buttonOriginalPermission.forEach(el => permissionTree.allPermission.push(el.code))
@@ -98,7 +99,7 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           const roles = Vue.ls.get(ROLES) || {}
-          console.log(user, roles)
+          console.log('getInfo', user, roles)
           let userPermission
           // 同一用户可直接使用上次配置
           if (_.get(user, 'userId', '') === roles.userId && user.token === roles.token) {
@@ -121,7 +122,7 @@ const user = {
           commit('SET_ID', user)
           commit('SET_NAME', { name: user.staffName })
           commit('SET_AVATAR', '/avatar.jpg')
-
+          console.log('userPermission', userPermission)
           resolve(userPermission)
         } catch (e) {
           reject(e)
@@ -152,19 +153,23 @@ const user = {
       //     commit('SET_NAME', { name: user.staffName })
       //     commit('SET_AVATAR', '/avatar.jpg')
       //   })
-      return UserService.login(userInfo)
-        .then(({ data }) => {
-          Vue.ls.set(ACCESS_TOKEN, data, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', data)
-        }).then(() => {
-          UserService.getDetail().then(({ data }) => {
-            Vue.ls.set(USER, data)
-            commit('SET_ID', data.userId)
-            commit('SET_NAME', { name: data.staffName })
-            commit('SET_AVATAR', '/avatar.jpg')
-            commit('SET_ROLES', data)
+      return new Promise(async (resolve, reject) => {
+        UserService.login(userInfo)
+          .then(({ data }) => {
+            Vue.ls.set(ACCESS_TOKEN, data, 7 * 24 * 60 * 60 * 1000)
+            commit('SET_TOKEN', data)
+          }).then(() => {
+            UserService.getDetail().then(({ data }) => {
+              console.log('data', data)
+              Vue.ls.set(USER, data)
+              commit('SET_ID', data.userId)
+              commit('SET_NAME', { name: data.staffName })
+              commit('SET_AVATAR', '/avatar.jpg')
+              commit('SET_ROLES', data)
+              resolve(data)
+            })
           })
-        })
+      })
     },
 
     // 登出

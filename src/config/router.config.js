@@ -14,7 +14,7 @@ export const asyncRouterMap = [
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
-          component: () => import('@/views/system/userManage/index'),
+          component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/patrol/plan/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
@@ -346,8 +346,15 @@ export const asyncRouterMap = [
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
-              component: () => import('@/views/patrol/config/index'),
+              component: () => import('@/views/patrol/config/PathConfig/index'),
               meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+            },
+            {
+              path: '/patrol/config/pathConfig',
+              name: 'PatrolConfigPath',
+              hidden: true,
+              component: () => import('@/views/patrol/config/index'),
+              meta: { title: '巡更路径', permission: ['F010'] }
             },
             {
               path: '/patrol/config/metric',
@@ -818,7 +825,7 @@ export const asyncRouterMap = [
             path: '/system/role',
             name: 'Role',
             component: () => import('@/views/system/role/index'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['F001001'] }
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001004'] }
           },
           {
             path: '/system/group',

@@ -54,6 +54,9 @@ export function sqlResultDealer (list) {
 }
 
 export function dealQuery (result) {
+  if (!result.length) {
+    return []
+  }
   const keys = result[0]
   const data = []
   for (let i = 1; i < result.length; i++) {

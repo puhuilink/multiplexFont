@@ -1,7 +1,7 @@
 <template>
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
-      <ZoneSelect @change="changeZone">
+      <ZoneSelect @change="changeZone" :path-id="pathId">
         <div class="PatrolConfig__operation">
           <a-form class="d-flex flex-row">
             <a-input
@@ -26,7 +26,13 @@
             type="primary"
             @click="batchDownloadQrCode"
           >下载</a-button>
+          <a-button
+            type="primary"
+            @click="backToPath"
+          >返回
+          </a-button>
         </div>
+
       </ZoneSelect>
     </div>
     <a-table
@@ -617,6 +623,9 @@ export default {
         this.qcCodeGlobalLoading = false
       }
     },
+    backToPath () {
+      this.$router.push('/patrol/config/path')
+    },
 
     changePagination (pageNo, pageSize) {
       Object.assign(this.pagination, { pageNo, pageSize })
@@ -627,7 +636,6 @@ export default {
         selectedRows: []
       })
     },
-
     toggleSelect (checkpoint) {
       const { selectedRowKeys, selectedRows } = this
       const index = selectedRowKeys.indexOf(checkpoint.checkpointId)
@@ -638,9 +646,15 @@ export default {
         selectedRowKeys.push(checkpoint.checkpointId)
         selectedRows.push(checkpoint)
       }
+    },
+    dealRouter () {
+      const query = this.$route.query
+      this.pathId = query.pathId
+      this.zoneId = query.zoneId
     }
   },
   created () {
+    this.dealRouter()
     this.fetchHost()
     this.fetchEndpoint()
     this.fetchMetric()

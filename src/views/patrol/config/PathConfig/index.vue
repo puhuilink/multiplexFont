@@ -5,20 +5,8 @@
       <div :class="{ fold: !advanced }">
         <a-row>
           <a-col :md="8" :sm="24">
-            <a-form-item label="角色名" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.name" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.isOpen" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.createTimeStart" placeholder="创建时间--起" />
-              ----
-              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.createTimeEnd" placeholder="创建时间--止"/>
+            <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
+              <a-input allowClear v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -40,87 +28,63 @@
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-      <template #status="text,record">
-        <a-switch :checked="text" @change="onStatusChange(record)" />
-      </template>
+      <template #index="text,record,index">{{ index }}</template>
       <template #action="text,record">
         <a @click="onEditUser(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)">菜单权限</a>
-        <a-divider type="vertical" />
-        <a @click="onUpdateData(record)">数据权限</a>
-        <a-divider type="vertical" />
-        <a @click="onAllocateUserGroup(record)">分配用户</a>
+        <a @click="onUpdateMenu(record)">配置巡更路径</a>
         <a-divider type="vertical" />
         <a @click="deleteRole(record)">删除</a>
       </template>
     </a-table>
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
-    <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
-
-    <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
-
-    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
+    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
   </div>
 </template>
 
 <script>
-import RoleSchema from './modules/RoleSchema'
-import AuthSchema from '@/components/Auth/AuthSchema'
-import UserGroupSchema from './modules/RoleUsersSchema.vue'
-import { RoleService } from '@/api'
+import PathSchema from './modules/PathSchema.vue'
+import { PathService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
-import RoleSingleSchema from '@/views/system/role/modules/RoleSingleSchema.vue'
 
 export default {
-  name: 'Role',
+  name: 'Path',
   mixins: [Confirm, List],
   components: {
-    RoleSchema,
-    AuthSchema,
-    UserGroupSchema,
-    RoleSingleSchema
+    PathSchema
   },
   data: () => ({
     columns: Object.freeze([
       {
-        title: '角色编号',
-        dataIndex: 'code',
-        sorter: true,
-        width: '120px'
+        title: '序号',
+        dataIndex: 'index',
+        width: '120px',
+        scopedSlots: { customRender: 'index' }
       },
       {
-        title: '角色名称',
-        dataIndex: 'name',
+        title: '巡更路径名称',
+        dataIndex: 'alias',
         width: '150px',
         sorter: true
       },
       {
-        title: '状态',
-        dataIndex: 'isOpen',
+        title: '巡更组',
+        dataIndex: 'groupId',
         scopedSlots: { customRender: 'status' },
         width: '80px',
         sorter: true
       },
       {
-        title: '角色类型',
-        dataIndex: 'defaultRole',
-        customRender: (text) => text ? '内置角色' : '自定义',
+        title: '提交人',
+        dataIndex: 'updator',
         width: '120px',
         sorter: true
       },
       {
-        title: '备注',
-        dataIndex: 'remark',
-        'min-width': 300,
-        sorter: true
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime',
+        title: '提交时间',
+        dataIndex: 'updateTime',
         width: '200px'
       },
       {
@@ -132,10 +96,7 @@ export default {
     defaultData: [],
     selectedRows: [],
     queryParams: {
-      name: '',
-      isOpen: null,
-      createTimeStart: '',
-      createTimeEnd: ''
+      alias: null
     }
   }),
   mounted () {
@@ -154,76 +115,38 @@ export default {
   methods: {
     resetQueryParams () {
       this.queryParams = {
-        name: '',
-        isOpen: null,
-        createTimeStart: '',
-        createTimeEnd: ''
+        alias: null
       }
     },
     query () {
       this.loadData(this.queryParams)
+      setInterval(() => this.loadData(this.queryParams), 60000)
     },
     /**
      * 加载表格数据回调
      */
     async loadData (parameter) {
-      const { name, isOpen, createTimeStart, createTimeEnd } = parameter
-      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd)
+      const { alias } = parameter
+      const res = await PathService.find(alias)
       if (res) {
         this.defaultData = res.list
       } else {
-        this.defaultData = [
-          {
-            code: ' 080001',
-            name: 'IT巡更角色',
-            isOpen: false,
-            defaultRole: false,
-            remark: '机房IT巡更，运维角色，交接班，巡更。机房视频监控，仅IT...',
-            createTime: '2023-11-21  08:50:08'
-          }, {
-            code: ' 080002',
-            name: '动环巡更角色',
-            isOpen: true,
-            defaultRole: false,
-            remark: '机房动环巡更，运维角色，交接班，巡更。机房视频监控，仅....',
-            createTime: '2023-11-21  08:50:08'
-          }, {
-            code: ' 080003',
-            name: '超级管理员',
-            isOpen: true,
-            defaultRole: true,
-            remark: '所有权限',
-            createTime: '2023-11-21  08:50:08'
-          }, {
-            code: ' 080004',
-            name: '监控角色',
-            isOpen: true,
-            defaultRole: true,
-            remark: '机房监控、漏洞监控、安全态势感知；',
-            createTime: '2023-11-21  08:50:08'
-          }, {
-            code: ' 080005',
-            name: '管理角色',
-            isOpen: true,
-            defaultRole: false,
-            remark: '巡更管理、机房视频监控、机房监控、漏洞监控、安全态势感知；',
-            createTime: '2023-11-21  08:50:08'
-          }, {
-            code: ' 080006',
-            name: '运维角色',
-            isOpen: true,
-            defaultRole: false,
-            remark: '巡更管理，机房视频监控',
-            createTime: '2023-11-21  08:50:08'
-          }]
+        this.defaultData = []
       }
     },
     /**
      * 编辑菜单权限
      * @event
      */
-    onUpdateMenu (record) {
-      this.$refs['singleSchema'].updateMenu(record)
+    async onUpdateMenu (record) {
+      const res = await PathService.getPathList(record.id)
+      const {
+        zones
+      } = res
+      await this.$router.push({
+        path: '/patrol/config/pathConfig',
+        query: { pathId: record.id, zoneId: zones[0].zoneId }
+      })
     },
     /**
      * 编辑数据权限
@@ -258,7 +181,8 @@ export default {
      * 编辑用户
      * @event
      */
-    onEditUser (record) {
+    onEditUser () {
+      const [record] = this.selectedRows
       this.$refs['schema'].edit(record)
     },
     /**
@@ -287,37 +211,15 @@ export default {
       })
     },
     /**
-     * 停用/启用角色
-     * @event
-     */
-    async onStatusChange (record) {
-      const title = !record.isOpen ? '启用' : '停用'
-      const content = !record.isOpen ? '确定要启用角色吗？' : '确定要停用角色吗？'
-      this.$promiseConfirmDelete({
-        title,
-        content,
-        okType: 'primary',
-        onOk: () => {
-          RoleService.switchStatus(record.id, !record.isOpen)
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.query(false)
-            })
-            .catch(this.$notifyError)
-        }
-
-      })
-    },
-    /**
-     * 删除用户
+     * 删除路线
      * @event
      */
     async deleteRole (record) {
       this.$promiseConfirmDelete({
         title: '删除',
-        content: '确定要删除该角色吗',
+        content: '确定要删除该路线吗',
         onOk: () => {
-          RoleService.deleteRole(record.id)
+          PathService.deletePath(record.id)
             .then(() => {
               this.$notifyDeleteSuccess()
               this.query(false)

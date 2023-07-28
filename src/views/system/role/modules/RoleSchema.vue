@@ -67,8 +67,9 @@
                 本部门数据权限
               </a-select-option>
             </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="请选择部门范围" prop="dataType" v-if="dataForm.dataType === 'CUSTOM'">
             <a-tree
-              v-if="dataForm.dataType === 'CUSTOM'"
               checkable
               defaultExpandAll
               :checkStrictly="true"
@@ -99,11 +100,12 @@
 </template>
 
 <script>
-import { UserService } from '@/api'
+import { RoleService, UserService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
 import { dataFilter } from 'echarts/lib/component/marker/markerHelper'
+import { axios } from '@/utils/request'
 
 export default {
   name: 'RoleSchema',
@@ -133,7 +135,7 @@ export default {
     originalForm: {
       name: '',
       remark: '',
-      operateType: ''
+      operateType: 'ADD'
     },
     menuForm: {
       appCode: 'none',
@@ -144,52 +146,16 @@ export default {
       dataIds: []
     },
     Depts: [{
-      childs: [],
       code: 'F002',
-      createDate: null,
-      creator: '',
-      functionType: '5',
-      icon: '',
-      module: '',
-      name: '视图管理',
-      note: '',
-      order: 1,
-      parentCode: 'F',
-      updateDate: null,
-      updator: '',
       key: 'F002',
       children: [
         {
-          childs: [],
           code: 'F002001',
-          createDate: null,
-          creator: '',
-          functionType: '5',
-          icon: '',
-          module: '',
-          name: '视图展示（缩略图模式）',
-          note: '',
-          order: 1,
-          parentCode: 'F002',
-          updateDate: null,
-          updator: '',
           key: 'F002001',
           title: '视图展示（缩略图模式）'
         },
         {
-          childs: [],
           code: 'F002003',
-          createDate: null,
-          creator: '',
-          functionType: '5',
-          icon: '',
-          module: '',
-          name: '视图展示（页签模式）',
-          note: '',
-          order: 2,
-          parentCode: 'F002',
-          updateDate: null,
-          updator: '',
           key: 'F002003',
           title: '视图展示（页签模式）'
         }
@@ -211,8 +177,49 @@ export default {
     record: null,
     submit: () => {}
   }),
+  mounted () {
+    this.getData()
+  },
   computed: {},
   methods: {
+    async getData (params = { isOpen: true, orgName: '' }) {
+      try {
+        const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        console.log('getDataSuccess')
+        this.Depts = this.buildTree(list.map(el => {
+          if (el.parentId === undefined) {
+            el.parentId = null
+          }
+          return el
+        }))
+        console.log('buildTreeSuccess', this.Depts)
+      } catch (e) {
+        throw e
+      }
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      for (const item of data) {
+        if (item.parentId === parentId) {
+          const children = this.buildTree(data, item.id)
+          if (children.length > 0) {
+            item.children = children.map(el => {
+              return {
+                ...el,
+                title: el.name,
+                key: el.id
+              }
+            })
+          }
+          tree.push({
+            ...item,
+            title: item.name,
+            key: item.id
+          })
+        }
+      }
+      return tree
+    },
     dataFilter,
     logSth (el) {
       this.menuForm.menuCodes = [...el]
@@ -251,7 +258,11 @@ export default {
      * 打开编辑窗口
      */
     async edit (record) {
-      this.record = { ...record }
+      console.log(record)
+      const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
+      this.dataForm = { dataType, dataIds }
+      this.menuForm = { appCode, menuCodes }
+      this.originalForm = { id, name, remark, operateType: 'EDIT' }
       this.submit = this.update
       this.show('编辑')
       await this.$nextTick()
@@ -282,12 +293,13 @@ export default {
      * 调取编辑接口
      */
     async update () {
+      const ob = {}
+      Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
       this.form.validateFields(async (err, values) => {
         if (err) return
         try {
           this.confirmLoading = true
-          const { user_id } = this.record
-          await UserService.update(values, { user_id })
+          await RoleService.update(ob)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
