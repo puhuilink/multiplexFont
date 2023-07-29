@@ -297,7 +297,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -360,6 +360,8 @@ export default {
               } catch (e) {
                 this.$notifyError(e)
                 throw e
+              } finally {
+                this.query()
               }
             }
           })
@@ -371,8 +373,12 @@ export default {
           return null
       }
     },
-    async getData (params = { isOpen: true, orgName: '' }) {
-      const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+    async getData () {
+      const { data: { list } } = await axios.get('/organize/list', {
+        params: {
+          isOpen: true
+        }
+      })
       this.treeData = buildTree(list.map(el => {
         if (el.parentId === undefined) {
           el.parentId = null
