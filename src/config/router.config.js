@@ -350,6 +350,13 @@ export const asyncRouterMap = [
               meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
             },
             {
+              path: '/patrol/config/pathConfig',
+              name: 'PatrolConfigPathEdit',
+              hidden: true,
+              component: () => import('@/views/patrol/config/index'),
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+            },
+            {
               path: '/patrol/config/metric',
               name: 'PatrolConfigMetric',
               component: () => import('@/views/patrol/config/MetricTable/MetricTable'),

@@ -29,6 +29,7 @@
       :scroll="scroll"
     >
       <template #index="text,record,index">{{ index }}</template>
+      <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
         <a @click="onEditUser(record)">编辑</a>
         <a-divider type="vertical" />
@@ -48,6 +49,7 @@ import { PathService, RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'Path',
@@ -93,6 +95,7 @@ export default {
         scopedSlots: { customRender: 'action' }
       }
     ]),
+    dataList: [],
     defaultData: [],
     selectedRows: [],
     queryParams: {
@@ -113,12 +116,21 @@ export default {
     }
   },
   methods: {
+    replaceGroupName (text) {
+      const arr = this.dataList.filter(element => element.id === text)
+      console.log(text, arr)
+      if (arr && arr.length) {
+        return arr[0].name
+      }
+      return ''
+    },
     resetQueryParams () {
       this.queryParams = {
         alias: null
       }
     },
     query () {
+      this.getList()
       this.loadData(this.queryParams)
       setInterval(() => this.loadData(this.queryParams), 60000)
     },
@@ -133,6 +145,13 @@ export default {
       } else {
         this.defaultData = []
       }
+    },
+    // 4.工作组列表
+    async getList () {
+      const pageNum = 1
+      const pageSize = 9999
+      const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      this.dataList = data.list
     },
     /**
      * 编辑菜单权限

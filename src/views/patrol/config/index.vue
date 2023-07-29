@@ -63,6 +63,14 @@
           @change="onSelectGroupChange"
         />
       </template>
+      <template slot="checkpoint">
+        点位<a-row>
+          <a @click="infoEdit({checkpointId:''},4)">
+            <a-icon
+              type="plus"
+            /></a>
+        </a-row>
+      </template>
       <template slot="checkbox" slot-scope="value,row">
         <a-checkbox
           :checked="isChecked(row.checkpoint_id)"
@@ -210,7 +218,7 @@ export default {
           }
         },
         {
-          title: '点位',
+          slots: { title: 'checkpoint' },
           dataIndex: 'checkpoint_alias',
           align: 'center',
           scopedSlots: { customRender: 'checkpoint' },

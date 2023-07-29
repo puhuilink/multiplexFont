@@ -73,7 +73,6 @@ export default {
     },
     async fetch () {
       const { zones, list } = await PathService.getPathList(this.pathId)
-      console.log(list[0])
       const path = {
         pathName: list[0].pathAlias,
         pathId: list[0].pathId,
