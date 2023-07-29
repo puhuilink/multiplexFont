@@ -156,7 +156,6 @@ import { buildTree } from '@/utils/util'
 import schema from './components/schema'
 import _ from 'lodash'
 import moment from 'moment'
-import JSONBig from 'json-bigint'
 
 const columns = [
   {
@@ -298,7 +297,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
         </div>
       )
     },
