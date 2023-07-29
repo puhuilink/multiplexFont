@@ -72,7 +72,6 @@
             <a-tree
               checkable
               defaultExpandAll
-              :checkStrictly="true"
               :autoExpandParent="true"
               v-model="dataForm.dataIds"
               :treeData="Depts">
@@ -145,23 +144,7 @@ export default {
       dataType: 'ALL',
       dataIds: []
     },
-    Depts: [{
-      code: 'F002',
-      key: 'F002',
-      children: [
-        {
-          code: 'F002001',
-          key: 'F002001',
-          title: '视图展示（缩略图模式）'
-        },
-        {
-          code: 'F002003',
-          key: 'F002003',
-          title: '视图展示（页签模式）'
-        }
-      ],
-      title: '视图管理'
-    }],
+    Depts: [],
     options: {
       flag: [
         {
@@ -177,22 +160,17 @@ export default {
     record: null,
     submit: () => {}
   }),
-  mounted () {
-    this.getData()
-  },
   computed: {},
   methods: {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
-        console.log('getDataSuccess')
         this.Depts = this.buildTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
           }
           return el
         }))
-        console.log('buildTreeSuccess', this.Depts)
       } catch (e) {
         throw e
       }
@@ -253,6 +231,7 @@ export default {
     add () {
       this.submit = this.insert
       this.show('新增')
+      this.getData()
     },
     /**
      * 打开编辑窗口
@@ -264,6 +243,7 @@ export default {
       this.originalForm = { id, name, remark, operateType: 'EDIT' }
       this.submit = this.update
       this.show('编辑')
+      await this.getData()
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
       this.form.setFieldsValue(_.pick(record, keys))
@@ -272,6 +252,9 @@ export default {
      * 调取新增接口
      */
     async insert () {
+      if (this.dataForm.dataIds.checked) {
+        this.dataForm.dataIds = this.record.dataIds.checked
+      }
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
       this.$refs.dataForm.validate(async (err) => {
@@ -294,6 +277,9 @@ export default {
      * 调取编辑接口
      */
     async update () {
+      if (this.dataForm.dataIds.checked) {
+        this.dataForm.dataIds = this.record.dataIds.checked
+      }
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
       this.form.validateFields(async (err, values) => {

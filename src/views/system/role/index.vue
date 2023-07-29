@@ -11,14 +11,21 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.isOpen" />
+              <a-select allowClear v-model.trim="queryParams.isOpen" >
+                <a-select-option :value="true">
+                  启用
+                </a-select-option>
+                <a-select-option :value="false">
+                  停用
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.createTimeStart" placeholder="创建时间--起" />
+              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.createTimeStart" placeholder="开始时间" />
               ----
-              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.createTimeEnd" placeholder="创建时间--止"/>
+              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.createTimeEnd" placeholder="结束时间"/>
             </a-form-item>
           </a-col>
         </a-row>
@@ -37,6 +44,7 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="role_code"
+      :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
@@ -90,7 +98,7 @@ export default {
         title: '角色编号',
         dataIndex: 'code',
         sorter: true,
-        width: '120px'
+        width: '180px'
       },
       {
         title: '角色名称',
@@ -115,8 +123,7 @@ export default {
       {
         title: '备注',
         dataIndex: 'remark',
-        'min-width': 300,
-        sorter: true
+        'min-width': 300
       },
       {
         title: '创建时间',
@@ -149,6 +156,37 @@ export default {
       } else {
         return false
       }
+    },
+    paginationOpt: {
+      get () {
+        return {
+          defaultCurrent: 1, // 默认当前页数
+          defaultPageSize: 10, // 默认当前页显示数据的大小
+          total: 0, // 总数，必须先有
+          showSizeChanger: true,
+          showQuickJumper: true,
+          pageSizeOptions: ['10', '20', '50', '100'],
+          showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+          onShowSizeChange: (current, pageSize) => {
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+            this.paginationOpt.defaultCurrent = current
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+            this.paginationOpt.defaultPageSize = pageSize
+            this.query()
+          },
+          // 改变每页数量时更新显示
+          onChange: (current, size) => {
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+            this.paginationOpt.defaultCurrent = current
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+            this.paginationOpt.defaultPageSize = size
+            this.query()
+          }
+        }
+      },
+      set (value) {
+        this.paginationOpt = value
+      }
     }
   },
   methods: {
@@ -168,9 +206,10 @@ export default {
      */
     async loadData (parameter) {
       const { name, isOpen, createTimeStart, createTimeEnd } = parameter
-      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd)
+      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, this.paginationOpt.defaultCurrent - 1, this.paginationOpt.defaultPageSize)
       if (res) {
         this.defaultData = res.list
+        this.paginationOpt.total = res.total
       } else {
         this.defaultData = [
           {
@@ -300,7 +339,7 @@ export default {
         onOk: () => {
           RoleService.switchStatus(record.id, !record.isOpen)
             .then(() => {
-              this.$notifyDeleteSuccess()
+              this.$notifyToggleFlagSuccess()
               this.query(false)
             })
             .catch(this.$notifyError)
