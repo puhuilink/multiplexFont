@@ -75,8 +75,8 @@
             >
               <a-form-item
                 label="创建时间:"
-                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 5, offset: 0 }}"
-                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 1 } }">
+                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
+                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
                 <a-range-picker
                   style="width: 160px"
                   :show-time="{ format: 'HH:mm' }"
