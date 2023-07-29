@@ -23,7 +23,7 @@
       <a-form-model-item
         label="角色"
       >
-        <a-select v-model="record.role">
+        <a-select v-model="record.roleId">
           <a-select-option
             v-for="item in role"
             :key="item.id"
@@ -67,13 +67,14 @@ export default {
         this.btnLoading = true
         // TODO 分配角色
         await axios.post('/role/addUsers', {
-          userIds: [Number(this.record.id)],
-          roleId: Number(this.record.role)
+          userIds: [this.record.id],
+          roleId: this.record.roleId
         })
         this.$notification.success({
           message: '系统提示',
           description: '分配角色完成'
         })
+        this.$emit('operateSuccess')
       } catch (e) {
         // eslint-disable-next-line no-unused-expressions
         this.$notifyError
