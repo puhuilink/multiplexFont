@@ -19,6 +19,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="staffName"
             :rules="[{ required: true, message: '请填写用户名称' }]"
           >
             <a-input v-model="formModel.staffName"></a-input>
@@ -31,6 +32,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="orgId"
             :rules="[{ required: true, message: '请填写部门名称' }]"
           >
             <a-tree-select
@@ -50,6 +52,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="mobilePhone"
             :rules="[{ required: true, message: '请填写手机号码' }]"
           >
             <a-input v-model="formModel.mobilePhone"></a-input>
@@ -62,6 +65,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="email"
             :rules="[{ required: true, message: '请填写邮箱' }]"
           >
             <a-input v-model="formModel.email"></a-input>
@@ -74,6 +78,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="userName"
             :rules="[{ required: true, message: '请填写登录名' }]"
           >
             <a-input v-model="formModel.userName"></a-input>
@@ -86,6 +91,7 @@
               labelCol: { span: 6, offset: 0 },
               wrapperCol: { span: 18 },
             }"
+            prop="pwd"
             :rules="[{ required: true, message: '请填写登录密码' }]"
           >
             <a-input v-model="formModel.pwd"></a-input>
@@ -182,7 +188,7 @@ export default {
   },
   methods: {
     add (text = null) {
-      this.show('添加部门')
+      this.show('新建用户')
       this.isEdit = false
       this.formModel.apartmentId = text
     },
@@ -215,7 +221,7 @@ export default {
     },
     edit (user) {
       console.log('user', user)
-      this.show('编辑部门')
+      this.show('编辑用户')
       this.isEdit = true
       this.formModel = {
         userName: user.userName,

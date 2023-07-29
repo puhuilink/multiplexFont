@@ -75,10 +75,10 @@
             >
               <a-form-item
                 label="创建时间:"
-                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 5, offset: 0 }, xxl: { span: 5, offset: 0 }}"
-                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 17, offset: 2 }, xxl: { span: 15, offset: 1 } }">
+                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 5, offset: 0 }}"
+                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 1 } }">
                 <a-range-picker
-                  style="width: 70%"
+                  style="width: 160px"
                   :show-time="{ format: 'HH:mm' }"
                   format="YYYY-MM-DD HH:mm"
                   :placeholder="['开始时间', '结束时间']"
@@ -141,7 +141,7 @@
           </template>
         </a-table>
       </div>
-      <assignModal ref="assign" :role="roleList"></assignModal>
+      <assignModal ref="assign" :role="roleList" @operateSuccess="Success"></assignModal>
       <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
     </div>
   </div>
@@ -151,12 +151,12 @@
 import { Confirm } from '~~~/Mixins'
 import { Modal } from 'ant-design-vue'
 import assignModal from '@/views/system/userManage/components/assignModal'
-import { alarm, axios } from '@/utils/request'
+import { axios } from '@/utils/request'
 import { buildTree } from '@/utils/util'
 import schema from './components/schema'
-import Vue from 'vue'
-import { USER } from '@/store/mutation-types'
 import _ from 'lodash'
+import moment from 'moment'
+import JSONBig from 'json-bigint'
 
 const columns = [
   {
@@ -270,6 +270,7 @@ export default {
     }
   },
   methods: {
+    moment,
     onSelect (selectedKeys) {
       // 响应当前部门下的用户
       console.log('selectedKeys', selectedKeys)
@@ -297,7 +298,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
         </div>
       )
     },
@@ -334,7 +335,7 @@ export default {
                 .then(() => {
                   this.$notifyDeleteSuccess()
                 })
-                .catch(this.$notifyError)
+                .catch(this.$notifyError).finally(() => this.query())
             }
           })
           break
@@ -346,17 +347,21 @@ export default {
             centered: true,
             closable: true,
             onOk: async () => {
-              await axios.post('/user/changeUserPwd', {
-                id: Number(record.id),
-                newPwd: this.password
-              }).then(() => {
-                this.$notification.success({
-                  message: '系统提示',
-                  description: '修改密码成功，下次登录生效'
+              try {
+                await axios.post('/user/changeUserPwd', {
+                  id: record.id,
+                  newPwd: this.password
+                }).then(() => {
+                  this.$notification.success({
+                    message: '系统提示',
+                    description: '修改密码成功，下次登录生效'
+                  })
+                  this.password = ''
                 })
-                this.password = ''
-              })
-                .catch(this.$notifyError)
+              } catch (e) {
+                this.$notifyError(e)
+                throw e
+              }
             }
           })
           break
@@ -384,23 +389,31 @@ export default {
     },
     async query () {
       // TODO 查询
-      if (this.queryParams.timeList) {
-        this.queryParams.createTimeStart = this.queryParams.timeList[0]
-        this.queryParams.createTimeEnd = this.queryParams.timeList[1]
-      }
-      const { data: { list, total } } = await axios.get('/user/list', {
-        params: {
-          pageSize: this.paginationOpt.defaultPageSize,
-          pageNum: this.paginationOpt.defaultCurrent,
-          ...this.queryParams
+      try {
+        this.pageLoading = true
+        if (this.queryParams.timeList) {
+          this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
+          this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-      })
-      this.dataSource = list
-      this.paginationOpt.total = total
+        console.log(this.queryParams)
+        const { data: { list, total } } = await axios.get('/user/list', {
+          params: {
+            pageSize: this.paginationOpt.defaultPageSize,
+            pageNum: this.paginationOpt.defaultCurrent,
+            ..._.omit(this.queryParams, ['timeList'])
+          }
+        })
+        this.dataSource = list
+        this.paginationOpt.total = total
+      } catch (e) {
+        throw e
+      } finally {
+        this.pageLoading = false
+      }
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'device_type', 'device', 'timeList', 'start_time', 'last_time'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'userName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
     },
     async switchStatus (record, text) {
       console.log('record', record, text)
@@ -476,7 +489,7 @@ export default {
     justify-content: space-between;
 
     &_left {
-      width: 10vw;
+      width: 20vw;
       background-color: rgba(250, 250, 250);
       border: rgb(232, 232, 232) 1px solid;
       border-radius: 5px;
