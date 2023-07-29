@@ -1,6 +1,5 @@
 import { BaseService } from './BaseService'
 import { axios, xungeng } from '@/utils/request'
-import { decrypt } from '@/utils/aes'
 
 class PathService extends BaseService {
   // 路线列表

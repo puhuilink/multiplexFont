@@ -3,6 +3,7 @@
     centered
     :confirmLoading="confirmLoading"
     :title="title"
+    v-if="visible"
     v-model="visible"
     :width="940"
     wrapClassName="QuotaSchema__modal"
@@ -65,6 +66,7 @@
       <a-form-model-item label="请选择部门范围" v-if="record.dataType === 'CUSTOM'">
         <a-tree
           checkable
+          :selectable="false"
           defaultExpandAll
           :checkStrictly="true"
           :autoExpandParent="true"
@@ -77,10 +79,11 @@
 </template>
 
 <script>
-import { RoleService, UserService } from '@/api'
+import { RoleService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
+import { axios } from '@/utils/request'
 
 export default {
   name: 'RoleSingleSchema',
@@ -94,6 +97,8 @@ export default {
         { required: true, message: '数据权限必选！', trigger: 'blur' }
       ]
     },
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 },
     Depts: [
 
     ],
@@ -102,6 +107,42 @@ export default {
   }),
   computed: {},
   methods: {
+    async getData (params = { isOpen: true, orgName: '' }) {
+      try {
+        const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        this.Depts = this.buildTree(list.map(el => {
+          if (el.parentId === undefined) {
+            el.parentId = null
+          }
+          return el
+        }))
+      } catch (e) {
+        throw e
+      }
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      for (const item of data) {
+        if (item.parentId === parentId) {
+          const children = this.buildTree(data, item.id)
+          if (children.length > 0) {
+            item.children = children.map(el => {
+              return {
+                ...el,
+                title: el.name,
+                key: el.id
+              }
+            })
+          }
+          tree.push({
+            ...item,
+            title: item.name,
+            key: item.id
+          })
+        }
+      }
+      return tree
+    },
     /**
      * 更新menuCodes
      */
@@ -126,6 +167,7 @@ export default {
       this.record = { ...record }
       this.submit = this.update
       this.show('编辑数据权限')
+      await this.getData()
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
       this.form.setFieldsValue(_.pick(record, keys))
@@ -155,6 +197,9 @@ export default {
     async update () {
       const operateType = 'DATA'
       Object.assign(this.record, { operateType })
+      if (this.record.dataIds.checked) {
+        this.record.dataIds = this.record.dataIds.checked
+      }
       try {
         this.confirmLoading = true
         await RoleService.update(this.record)

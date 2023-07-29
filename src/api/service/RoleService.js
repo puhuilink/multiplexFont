@@ -1,6 +1,5 @@
 import { BaseService } from './BaseService'
-import { axios, xungeng } from '@/utils/request'
-import { decrypt } from '@/utils/aes'
+import { axios } from '@/utils/request'
 
 class RoleService extends BaseService {
   // 角色列表
@@ -65,7 +64,7 @@ class RoleService extends BaseService {
   static async switchStatus (roleCode, isOpen = true) {
     try {
       const { code, data } =
-        await axios.get(`/role/switch?roleId=${roleCode}&isOpen=${isOpen}`)
+        await axios.get(`/role/switch?id=${roleCode}&isOpen=${isOpen}`)
       if (code === 200) {
         return data
       }

@@ -13,7 +13,13 @@
     @ok="submit"
     cancelText="取消"
   >
-    <a-form-model ref="ruleForm" :rules="rules" :model="record" :label-col="labelCol" :wrapper-col="wrapperCol">
+    <a-form-model
+      ref="ruleForm"
+      :rules="rules"
+      :model="record"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+      v-if="record">
       <a-form-model-item label="角色名称" prop="name">
         <a-input style="width: 60%" v-model="record.name" disabled/>
       </a-form-model-item>
@@ -128,7 +134,7 @@ export default {
         await RoleService.assignment(roleId, this.targetKeys)
         this.$notification.success({
           message: '系统提示',
-          description: '分配工作组成功'
+          description: '分配用户成功'
         })
         this.$emit('editSuccess')
         this.cancel()
