@@ -122,9 +122,7 @@ class PatrolService extends BaseService {
   }
 
   static async planBatchDelete (idList = []) {
-    await xungeng.post('/plan/deleteJob', {
-      planId: idList[0]
-    })
+    await xungeng.post(`/plan/deleteJob?planId=${idList[0]}`)
   }
 
   // 任务单查询
