@@ -27,8 +27,10 @@
       rowKey="role_code"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :pagination="paginationOpt"
     >
       <template #index="text,record,index">{{ index }}</template>
+      <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
         <a @click="onEditUser(record)">编辑</a>
         <a-divider type="vertical" />
@@ -48,6 +50,7 @@ import { PathService, RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'Path',
@@ -93,13 +96,16 @@ export default {
         scopedSlots: { customRender: 'action' }
       }
     ]),
+    dataList: [],
     defaultData: [],
     selectedRows: [],
     queryParams: {
       alias: null
-    }
+    },
+    paginationOpt: {}
   }),
   mounted () {
+    this.initialPagination()
     this.query()
   },
   computed: {
@@ -113,26 +119,63 @@ export default {
     }
   },
   methods: {
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
+    },
+    replaceGroupName (text) {
+      const arr = this.dataList.filter(element => element.id === text)
+      if (arr && arr.length) {
+        return arr[0].name
+      }
+      return ''
+    },
     resetQueryParams () {
       this.queryParams = {
         alias: null
       }
     },
     query () {
-      this.loadData(this.queryParams)
-      setInterval(() => this.loadData(this.queryParams), 60000)
+      this.getList()
+      this.loadData({ ...this.queryParams })
     },
     /**
      * 加载表格数据回调
      */
     async loadData (parameter) {
       const { alias } = parameter
-      const res = await PathService.find(alias)
+      const res = await PathService.find(alias, this.paginationOpt.defaultCurrent - 1, this.paginationOpt.defaultPageSize)
       if (res) {
         this.defaultData = res.list
       } else {
         this.defaultData = []
       }
+    },
+    // 4.工作组列表
+    async getList () {
+      const pageNum = 1
+      const pageSize = 9999
+      const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      this.dataList = data.list
     },
     /**
      * 编辑菜单权限

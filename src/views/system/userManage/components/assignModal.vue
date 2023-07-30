@@ -68,7 +68,8 @@ export default {
         // TODO 分配角色
         await axios.post('/role/addUsers', {
           userIds: [this.record.id],
-          roleId: this.record.roleId
+          roleId: this.record.roleId,
+          opType: 'APPEND'
         })
         this.$notification.success({
           message: '系统提示',

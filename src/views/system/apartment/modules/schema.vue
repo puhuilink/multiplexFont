@@ -71,8 +71,9 @@
               labelCol: { span: 10, offset: 14 },
             }"
             :rules="[{ required: true, message: '请输入显示排序' }]"
+            prop="order"
           >
-            <a-input-number :min="minOrder" v-model="formModel.order"></a-input-number>
+            <a-input-number :min="0" v-model="formModel.order"></a-input-number>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -84,7 +85,6 @@
           wrapperCol: { span: 6, offset: 1 },
         }"
         prop="leader"
-        v-if="mode === 'personal'"
       >
         <a-select
           v-model="formModel.leader"
@@ -107,14 +107,12 @@
           float: 'left',
           width: '300px',
         }"
-        v-if="mode === 'personal'"
         class="AlarmStrategy__modal-footer-left"
       >
         <a-select
           class="enabled"
           :style="{ width: '100px' }"
           :value="~~formModel.enabled"
-          v-if="mode === 'personal'"
           @select="formModel.enabled = !!$event"
         >
           <a-select-option :value="1">是</a-select-option>
@@ -184,6 +182,7 @@ export default {
   },
   methods: {
     add (text = null) {
+      this.isEdit = false
       this.show('添加部门')
       this.formModel.apartmentId = text
     },
@@ -194,6 +193,14 @@ export default {
         }
         try {
           this.submitLoading = true
+          console.log('参数', {
+            name: this.formModel.name,
+            parentId: this.formModel.apartmentId,
+            isOpen: !!this.formModel.enabled,
+            sortIndex: this.formModel.order,
+            leaderId: this.formModel.leader,
+            ...this.isEdit ? { id: this.formModel.id } : {}
+          }, this.isEdit)
           axios.post('/organize/save', {
             name: this.formModel.name,
             parentId: this.formModel.apartmentId,
@@ -202,7 +209,11 @@ export default {
             leaderId: this.formModel.leader,
             ...this.isEdit ? { id: this.formModel.id } : {}
           })
-          this.$notifyAddSuccess()
+          if (this.isEdit) {
+            this.$notifyEditSuccess()
+          } else {
+            this.$notifyAddSuccess()
+          }
           this.$emit('operateSuccess')
         } catch (e) {
           throw e
@@ -213,10 +224,11 @@ export default {
     },
     edit (user) {
       this.show('编辑部门')
+      this.isEdit = true
       this.formModel = {
         name: user.name,
         apartmentId: user.parentId,
-        isOpen: !!user.isOpen,
+        enabled: user.isOpen,
         order: user.sortIndex,
         leaderId: user.leaderId,
         id: user.id

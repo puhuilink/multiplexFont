@@ -75,8 +75,8 @@
             >
               <a-form-item
                 label="创建时间:"
-                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 5, offset: 0 }}"
-                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 1 } }">
+                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
+                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
                 <a-range-picker
                   style="width: 160px"
                   :show-time="{ format: 'HH:mm' }"
@@ -156,7 +156,6 @@ import { buildTree } from '@/utils/util'
 import schema from './components/schema'
 import _ from 'lodash'
 import moment from 'moment'
-import JSONBig from 'json-bigint'
 
 const columns = [
   {
@@ -298,7 +297,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}></a-input>
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -361,6 +360,8 @@ export default {
               } catch (e) {
                 this.$notifyError(e)
                 throw e
+              } finally {
+                this.query()
               }
             }
           })
@@ -372,8 +373,12 @@ export default {
           return null
       }
     },
-    async getData (params = { isOpen: true, orgName: '' }) {
-      const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+    async getData () {
+      const { data: { list } } = await axios.get('/organize/list', {
+        params: {
+          isOpen: true
+        }
+      })
       this.treeData = buildTree(list.map(el => {
         if (el.parentId === undefined) {
           el.parentId = null
@@ -413,7 +418,7 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'userName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
     },
     async switchStatus (record, text) {
       console.log('record', record, text)

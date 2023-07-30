@@ -31,7 +31,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="8" :style="{ textAlign: 'left' }">
-            <a-button type="primary" @click="()=>handleSearch()">
+            <a-button type="primary" @click="handleSearch">
               <a-icon type="search" />
               查询
             </a-button>
@@ -44,7 +44,7 @@
       </a-form-model>
     </div>
     <div style="margin-bottom: 1%">
-      <a-button type="primary" @click="onAdd">
+      <a-button type="primary" @click="onAdd" @operateSuccess="Success">
         <a-icon type="plus" />
         新建
       </a-button>
@@ -126,6 +126,7 @@ export default {
   components: { schema },
   methods: {
     handleSearch () {
+      console.log(this.param)
       this.getData({
         isOpen: this.param.isOpen,
         orgName: this.param.orgName
@@ -138,7 +139,6 @@ export default {
       }
     },
     onAdd (text, record) {
-      console.log('record', text, text.id)
       this.$refs.schema.add(text.id)
     },
     onEdit (record) {
@@ -151,18 +151,25 @@ export default {
         title,
         content,
         onOk: async () => {
-          const formData = new FormData()
-          formData.append('id', record.id)
-          axios.delete(`/organize/${record.id}`, {
-            headers: {
-              'Content-type': 'application/x-www-form-urlencoded'
-            }
-          })
-            .then(() => {
-              this.$notifyDeleteSuccess()
-              this.getData()
+          try {
+            const formData = new FormData()
+            formData.append('id', record.id)
+            axios.delete(`/organize/${record.id}`, {
+              headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+              }
             })
-            .catch(this.$notifyError)
+            this.$notification.sucess({
+              message: '系统提示',
+              description: '刪除成功'
+            })
+            this.getData()
+          } catch (e) {
+            this.$notification.error({
+              message: '系统提示',
+              description: e
+            })
+          }
         }
       })
     },
@@ -210,7 +217,12 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        const { data: { list } } = await axios.get('/organize/list', {
+          params: {
+            ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
+            ...this.param.orgName ? { name: this.param.orgName } : {}
+          }
+        })
         this.treeData = this.buildTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null

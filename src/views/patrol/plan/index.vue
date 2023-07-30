@@ -32,6 +32,7 @@
       :scroll="scroll"
       :data-source="dataSource"
       :loading="pageLoading"
+      :pagination="paginationOpt"
     ></a-table>
 
     <PlanSchema ref="schema" @addSuccess="query" @editSuccess="query" />
@@ -45,12 +46,10 @@ import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING, PLAN_STATUS_ENABLED, PLAN_STATUS_
 import moment from 'moment'
 import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
-import _ from 'lodash'
 import { xungeng } from '@/utils/request'
 
 const timeColumnSnippet = {
   width: 130,
-  sorter: true,
   customRender: (time) => moment(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
@@ -70,8 +69,7 @@ export default {
         {
           title: '计划名称',
           dataIndex: 'alias',
-          width: 120,
-          sorter: true
+          width: 120
         },
         {
           title: '巡更组',
@@ -92,21 +90,18 @@ export default {
           title: '生效时间',
           dataIndex: 'effectTime',
           width: 130,
-          sorter: true,
           ...timeColumnSnippet
         },
         {
           title: '失效时间',
           dataIndex: 'expireTime',
           width: 130,
-          sorter: true,
           ...timeColumnSnippet
         },
         {
           title: '是否启用',
           dataIndex: 'status',
           width: 120,
-          sorter: true,
           customRender: (status, record) => (
             <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
           )

@@ -20,7 +20,7 @@
 
         <TimeRange v-if="plan.interval" :interval.sync="plan.interval" />
 
-        <PatrolPath :plan.sync="plan" />
+        <!-- <PatrolPath :plan.sync="plan" /> -->
 
         <TimePicker :plan.sync="plan"></TimePicker>
 

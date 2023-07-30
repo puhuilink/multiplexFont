@@ -138,6 +138,7 @@ export default {
     ]),
     defaultData: [],
     selectedRows: [],
+    paginationOpt:{},
     queryParams: {
       name: '',
       isOpen: null,
@@ -146,6 +147,7 @@ export default {
     }
   }),
   mounted () {
+    this.initialPagination()
     this.query()
   },
   computed: {
@@ -157,39 +159,31 @@ export default {
         return false
       }
     },
-    paginationOpt: {
-      get () {
-        return {
-          defaultCurrent: 1, // 默认当前页数
-          defaultPageSize: 10, // 默认当前页显示数据的大小
-          total: 0, // 总数，必须先有
-          showSizeChanger: true,
-          showQuickJumper: true,
-          pageSizeOptions: ['10', '20', '50', '100'],
-          showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
-          onShowSizeChange: (current, pageSize) => {
-            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-            this.paginationOpt.defaultCurrent = current
-            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-            this.paginationOpt.defaultPageSize = pageSize
-            this.query()
-          },
-          // 改变每页数量时更新显示
-          onChange: (current, size) => {
-            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-            this.paginationOpt.defaultCurrent = current
-            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-            this.paginationOpt.defaultPageSize = size
-            this.query()
-          }
-        }
-      },
-      set (value) {
-        this.paginationOpt = value
-      }
-    }
   },
   methods: {
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
+    },
     resetQueryParams () {
       this.queryParams = {
         name: '',

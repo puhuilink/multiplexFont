@@ -15,7 +15,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 添加路线
@@ -31,7 +31,21 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
+    }
+  }
+  // 分配用户给角色
+  static async getPathList (pathId) {
+    try {
+      const pageNum = 0
+      const pageSize = 9999
+      const { code, data } =
+        await xungeng.get(`/path/find?pathId=${pathId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+      if (code === 200) {
+        return data
+      }
+    } catch (e) {
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -43,7 +57,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -55,7 +69,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 更新角色信息

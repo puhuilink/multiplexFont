@@ -259,8 +259,10 @@ export const asyncRouterMap = [
         name: 'SecurityMonitoring',
         redirect: '/SecurityMonitoring/EmergencyManagement',
         component: RouteView,
-        meta: { title: '安全监控', keepAlive: true, icon: 'monitor'
-          // permission: 'F020'
+        meta: { title: '安全监控',
+          keepAlive: true,
+          icon: 'monitor',
+          permission: 'F020'
         },
         children: [
           {
@@ -295,8 +297,8 @@ export const asyncRouterMap = [
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
               meta: { title: '一键封禁' }
             }],
-            meta: { title: '应急处理'
-              // , permission: 'F020001'
+            meta: { title: '应急处理',
+              permission: 'F020001'
             }
           }
           // {
@@ -347,6 +349,13 @@ export const asyncRouterMap = [
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
               component: () => import('@/views/patrol/config/PathConfig/index'),
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+            },
+            {
+              path: '/patrol/config/pathConfig',
+              name: 'PatrolConfigPathEdit',
+              hidden: true,
+              component: () => import('@/views/patrol/config/index'),
               meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
             },
             {
