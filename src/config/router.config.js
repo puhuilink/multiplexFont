@@ -259,8 +259,7 @@ export const asyncRouterMap = [
         name: 'SecurityMonitoring',
         redirect: '/SecurityMonitoring/EmergencyManagement',
         component: RouteView,
-        meta: { title: '安全监控', keepAlive: true, icon: 'monitor'
-          // permission: 'F020'
+        meta: { title: '安全监控', keepAlive: true, icon: 'monitor', permission: 'F020'
         },
         children: [
           {
@@ -295,8 +294,7 @@ export const asyncRouterMap = [
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
               meta: { title: '一键封禁' }
             }],
-            meta: { title: '应急处理'
-              // , permission: 'F020001'
+            meta: { title: '应急处理', permission: 'F020001'
             }
           }
           // {

@@ -23,28 +23,34 @@ class PatrolService extends BaseService {
 
   // 交接班详情
   static async changeShiftDetail (id) {
-    const { data: { changeShiftList } } = await this.changeShiftFind({
-      where: { id },
-      alias: 'changeShiftList',
-      fields: [
-        'hand_name',
-        'hand_time',
-        'receive_name',
-        'receive_time',
-        'status'
-        // 'tool',
-        // 'data',
-        // 'monitor_status',
-        // 'temperature',
-        // 'humidity',
-        // 'sanitary'
-      ]
+    // const { data: { changeShiftList } } = await this.changeShiftFind({
+    //   where: { id },
+    //   alias: 'changeShiftList',
+    //   fields: [
+    //     'hand_name',
+    //     'hand_time',
+    //     'receive_name',
+    //     'receive_time',
+    //     'status'
+    //     // 'tool',
+    //     // 'data',
+    //     // 'monitor_status',
+    //     // 'temperature',
+    //     // 'humidity',
+    //     // 'sanitary'
+    //   ]
+    // })
+    // const res = dealQuery(await sql(`select pcse.remark remark, pcse.status eventStatus from patrol_change_shift_event pcse
+    // where pcse.change_shift_id = '${id}';`))
+    // Object.assign(changeShiftList, { event: res })
+    // console.log('res', changeShiftList[0], res)
+    // return Object.assign(_.first(changeShiftList), { event: res })
+    const { data } = await xungeng.get('/changeShifts/detail', {
+      params: {
+        changeShiftId: id
+      }
     })
-    const res = dealQuery(await sql(`select pcse.remark remark, pcse.status eventStatus from patrol_change_shift_event pcse
-    where pcse.change_shift_id = '${id}';`))
-    Object.assign(changeShiftList, { event: res })
-    console.log('res', changeShiftList[0], res)
-    return Object.assign(_.first(changeShiftList), { event: res })
+    return data
   }
 
   // 遗留事项详情

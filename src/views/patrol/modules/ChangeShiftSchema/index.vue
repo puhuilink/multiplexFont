@@ -17,36 +17,36 @@
           </a-col>
 
           <a-col :span="8" style="text-align: center">
-            <span>交班时间：{{ record.handTime | timeFormat }}</span>
+            <span>交班时间：{{ record.handTime }}</span>
           </a-col>
 
           <a-col :span="8" style="text-align: right">
             <span>交班状态：{{ record.status | status }}</span>
           </a-col>
 
-          <!--          <a-col :span="8" style="text-align: left">-->
-          <!--            <span>工具仪表、钥匙：{{ record.tool | tool }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: left">
+            <span>工具仪表、钥匙：{{ record.tool | tool }}</span>
+          </a-col>
 
-          <!--          <a-col :span="8" style="text-align: center">-->
-          <!--            <span>图表资料：{{ record.data | data }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: center">
+            <span>图表资料：{{ record.paper | data }}</span>
+          </a-col>
 
-          <!--          <a-col :span="8" style="text-align: right">-->
-          <!--            <span>监控平台运行状态：{{ record.monitorStatus | monitorStatus }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: right">
+            <span>监控平台运行状态：{{ record.monitorStatus | monitorStatus }}</span>
+          </a-col>
 
-          <!--          <a-col :span="8" style="text-align: left">-->
-          <!--            <span>机房温度（℃）：{{ record.temperature }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: left">
+            <span>机房温度（℃）：{{ record.temperature }}</span>
+          </a-col>
 
-          <!--          <a-col :span="8" style="text-align: center">-->
-          <!--            <span>机房湿度（%rH）：{{ record.humidity }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: center">
+            <span>机房湿度（%rH）：{{ record.humidity }}</span>
+          </a-col>
 
-          <!--          <a-col :span="8" style="text-align: right">-->
-          <!--            <span>机房整洁度：{{ record.sanitary  | sanitary  }}</span>-->
-          <!--          </a-col>-->
+          <a-col :span="8" style="text-align: right">
+            <span>机房整洁度：{{ record.sanitary | sanitary }}</span>
+          </a-col>
         </a-row>
 
         <a-row>
@@ -58,7 +58,7 @@
             bordered
             size="middle"
             :locale="locale"
-            :dataSource="record.event"
+            :dataSource="record.events"
             :pagination="false"
           ></a-table>
 
@@ -72,7 +72,7 @@
             <span>接班人：{{ record.receiveName }}</span>
           </a-col>
           <a-col :span="8" style="text-align: center">
-            <span>接班时间：{{ record.handTime | timeFormat }}</span>
+            <span>接班时间：{{ record.receiveTime }}</span>
           </a-col>
 
         </a-row>
@@ -121,7 +121,7 @@ export default {
               console.log('ab', a, b)
               return Number(a.eventstatus) - Number(b.eventstatus)
             },
-            dataIndex: 'eventstatus',
+            dataIndex: 'status',
             customRender: (text) => {
               console.log('text', text)
               return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === '0' ? '已完成' : '未完成'}</span>)
