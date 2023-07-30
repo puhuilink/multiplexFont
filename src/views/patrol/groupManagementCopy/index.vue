@@ -218,6 +218,7 @@ export default {
         }
       }
       if (A === true) {
+        this.selectedRowKeys = []
         this.getList()
       }
     },

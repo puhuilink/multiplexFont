@@ -34,29 +34,20 @@
             </a-select>
           </a-form-model-item> -->
           <a-form-model-item label="巡更路径" prop="pathIds">
-            <a-select mode="multiple" placeholder="请选择巡更路径" option-label-prop="label" @change="handlePathIdsChange">
+            <a-select mode="multiple" placeholder="请选择巡更路径" v-model="form.pathIds" @change="handlePathIdsChange">
               <!-- <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)" :label="item.alias"> -->
-              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="item.alias" :label="item.alias">
+              <a-select-option v-for="item in pathIdsApiData" :key="item.id.toString()" :value="item.id.toString()">
                 {{ item.alias }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
 
-          <!-- <a-form-model-item label="巡更路径" prop="pathIds">
-            <a-select  mode="default" placeholder="请选择巡更路径">
-              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="item.alias">
-                <a-checkbox  :value="item.alias" slot="option">
-                </a-checkbox>
-                {{ item.alias }}
-              </a-select-option>
-            </a-select>
-          </a-form-model-item> -->
         </a-col>
         <a-col :md="12" :sm="24">
           <a-form-model-item label="用户" prop="userIds">
-            <a-select placeholder="请点击选择用户" mode="multiple" @change="handlePathIdsChange2" >
+            <a-select placeholder="请点击选择用户" mode="multiple" v-model="form.userIds" @change="handlePathIdsChange2" >
               <!-- <a-select-option v-for="user in users" :key="user.userId" :value="JSON.stringify(user)"> -->
-              <a-select-option v-for="user in users" :key="user.userId" :value=" user.staffName">
+              <a-select-option v-for="user in users" :key="user.userId" :value="user.userId">
                 {{ user.staffName }}
               </a-select-option>
             </a-select>
@@ -129,13 +120,16 @@ export default {
         version: 0 // 路径的版本，不需要关注
       }
     ],
+    pathIdsApiDataAll: [],
     // pathIdsX: [],
     users: Object, // api获取新增的用户信息
+    usersAll: [],
     // selectedUser: [], // 选择的用户
     // remark: '',
     record: null,
-    submit: () => {}
-
+    submit: () => {},
+    staffName: [], // 回显数据用户id-用户名
+    alias: []// 回显数据路径id-路径名
   }),
   computed: {},
   mounted () {},
@@ -152,7 +146,7 @@ export default {
       }
     },
     handleChange (value) {
-      console.log(value)
+      // console.log(value)
       if (value === '1') {
         this.form.isOpen = true
       }
@@ -164,7 +158,7 @@ export default {
     async getFindUnBindAdd () {
       const data = await xungeng.get('/path/findUnBind')
       if (data.msg === '所有路线都已经被工作组使用') {
-        console.log(data)
+        // console.log(data)
         this.pathIdsApiData = []
       }
       if (data.msg === 'OK') {
@@ -180,41 +174,56 @@ export default {
     },
     // 3.新增工作组
     async getroupAdd () {
-      console.log(this.form)
-
-      const emptyFields = Object.entries(this.form).every(([key, value]) => {
+      try {
+      //  console.log(this.form)
+        const emptyFields = Object.entries(this.form).every(([key, value]) => {
         // 检查属性值是否为空字符串、null 或空数组
-        return value === '' || value === null || (Array.isArray(value) && value.length === 0)
-      })
-      console.log(emptyFields)
-      if (emptyFields) {
-        this.$notification.error({
-          message: '警告',
-          description: '文本待修改'
+          return value === '' || value === null || (Array.isArray(value) && value.length === 0)
         })
-      }
-
-      const data = await xungeng.post('/group/add',
-        { ...this.form }
-      )
-      console.log(data)
-      if (data.msg === 'OK') {
-        this.visible = false
-        this.$emit('get_list')
+        // console.log(emptyFields)
+        if (emptyFields) {
+          this.$notification.error({
+            message: '警告',
+            description: '文本待修改'
+          })
+        }
+        const data = await xungeng.post('/group/add',
+          { ...this.form }
+        )
+        // console.log(data)
+        if (data.msg === 'OK') {
+          this.visible = false
+          this.$emit('get_list')
+        }
+      } catch (error) {
+        // console.log(this.form);
+        if (this.form.isOpen === true) {
+          this.form.isOpen = 1
+        }
+        if (this.form.isOpen === false) {
+          this.form.isOpen = 0
+        }
       }
     },
     // 5.查询工作组下面已绑定的路径（编辑使用）
     async getBindPath (id) {
-      console.log('id' + id)
+      this.getFindUnBindAdd()
+      // console.log('id' + id)
       const data = await xungeng.get('/group/bindPath', { params: { id: id } })
       console.log(data)
-      this.pathIdsApiData = data.data
+      this.form.pathIds = data.data ? data.data.map(item => item.id) : []
+      console.log(this.form.pathIds)
+      this.pathIdsApiData = [...this.pathIdsApiData, ...data.data]
+      console.log(this.pathIdsApiData)
     },
     // 6.查询工作组下面已绑定的用户（编辑使用）
     async getBindUser (id) {
+      this.getfindAllUser()
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
-      this.users = JSON.parse(decrypt(data.data))
-      console.log(this.users)
+      const dataUsers = JSON.parse(decrypt(data.data))
+      console.log(dataUsers)
+      this.form.userIds = data.data ? dataUsers.map(item => item.userId) : []
+      // this.staffName = dataUsers.map(item => item.staffName);
     },
     // 7.修改
     async groupEdit () {
@@ -223,7 +232,7 @@ export default {
         const data = await xungeng.post('/group/edit',
           this.form
         )
-        console.log(data)
+        // console.log(data)
         if (data.msg === 'OK') {
           this.visible = false
           this.$emit('get_list')
@@ -241,56 +250,16 @@ export default {
 
     // 存数据
     handlePathIdsChange (value) {
-      /*  let selectedPaths = value.map(str => {
-        try {
-          const pathObj = JSON.parse(str)
-          return pathObj
-        } catch (error) {
-          console.error('Invalid JSON string:', str)
-          return str // 解析失败时返回字符串
-        }
-      }) */
-      // console.log(value);
-      const pathIds = []
-      for (let index = 0; index < value.length; index++) {
-        for (let i = 0; i < this.pathIdsApiData.length; i++) {
-        // console.log("循环"+this.pathIdsApiData[i].alias);
-          if (value[index] === this.pathIdsApiData[i].alias) {
-          //  console.log("判断");
-            pathIds.push(this.pathIdsApiData[i].organizeId)
-          }
-        }
-      }
-      this.form.pathIds = pathIds
-      console.log(this.form.pathIds)
+      console.log(value)
+
+      this.form.pathIds = value
     },
     handlePathIdsChange2 (value) {
+      console.log(this.users)
       console.log(value)
-      // this.formuserIds=value;
-      /*    const selectedPaths = value.map(str => {
-        try {
-          const pathObj = JSON.parse(str)
-          return pathObj
-        } catch (error) {
-          console.error('Invalid JSON string:', str)
-          return str // 解析失败时返回字符串
-        }
-      })
-      let pathIds = []
-      for (let i = 0; i < selectedPaths.length; i++) {
-        pathIds.push(selectedPaths[i].organizeId)
-      } */
-      const pathIds = []
-      for (let index = 0; index < value.length; index++) {
-        for (let i = 0; i < this.users.length; i++) {
-          if (value[index] === this.users[i].staffName) {
-            pathIds.push(this.users[i].organizeId)
-          }
-        }
-      }
 
-      this.form.userIds = pathIds
-      console.log(this.form.userIds)
+      this.form.userIds = value
+      // console.log(this.form.userIds)
     },
     reset () {
       this.$refs.ruleForm.resetFields()
@@ -321,27 +290,22 @@ export default {
         userIds: [],
         remark: '' // 备注''
       }
-      console.log(this.form)
+      // console.log(this.form)
       this.submit = this.insert
       this.modalKey++
       this.show('新增巡更组')
-      this.getfindAllUser()
-      this.getFindUnBindAdd()
+      this.getfindAllUser()// 用户
+      this.getFindUnBindAdd()// 路径
     },
     /**
      * 打开编辑窗口
      */
     async edit (record) {
-      console.log(record)
+      // console.log(record)
       // this.record = { ...record }
       this.submit = this.update
       this.show('编辑巡更组')
       this.modalKey++
-      // 调取编辑时表单可选数据
-      this.getBindPath(record[0].id)
-      this.getBindUser(record[0].id)
-      // console.log(this.form);
-      // this.form={...record[0]}
       this.form = {
         id: record[0].id,
         name: record[0].name,
@@ -350,6 +314,13 @@ export default {
         pathIds: [],
         userIds: []
       }
+      // 调取编辑时表单可选数据
+      this.getBindPath(record[0].id)
+      this.getBindUser(record[0].id)
+
+      console.log(this.form)
+      // this.form={...record[0]}
+
       // console.log(this.form);
       if (this.form.isOpen === true) {
         this.form.isOpen = 1
@@ -362,7 +333,7 @@ export default {
      * 调取新增接口
      */
     async insert () {
-      console.log(this.form.isOpen)
+      // console.log(this.form.isOpen)
       if (this.form.isOpen === 1) {
         this.form.isOpen = true
       }
@@ -375,7 +346,7 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      console.log(this.form.isOpen)
+      // console.log(this.form.isOpen)
       if (this.form.isOpen === 1) {
         this.form.isOpen = true
       }
