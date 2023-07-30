@@ -15,7 +15,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 添加路线
@@ -31,7 +31,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -45,7 +45,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -57,7 +57,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -69,7 +69,7 @@ class PathService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 更新角色信息
