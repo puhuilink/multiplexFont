@@ -42,10 +42,10 @@
       >
       <a-button @click="DeleteGroup" v-action:M0101 :disabled="!hasSelected">删除巡更组</a-button>
     </div>
-    <a-table
+    <!-- <a-table
       :columns="columns"
       :data-source="dataList"
-      :pagination="{ pageSize: 10 ,total:this.total,current:this.current,onChange: handlePageChange}"
+      :pagination="{ pageSize: 10 ,total:this.total,current:this.current,onChange: handlePageChange }"
       ref="table"
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -55,7 +55,27 @@
       <template #status="text, record">
         <a-switch :checked="text" @change="onStatusChange" />
       </template>
-    </a-table>
+    </a-table> -->
+    <a-table
+      :columns="columns"
+      :data-source="dataList"
+      :pagination="pagination"
+      ref="table"
+      :rowKey="(record) => record.id"
+      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :scroll="scroll"
+    ></a-table>
+
+    <!-- <a-pagination
+      :total="total"
+      :current="current"
+      :pageSize="pageSize"
+      :show-size-changer="true"
+      :show-total="total => `显示 ${pageSize} 条记录,共 ${total} 条记录`"
+      :on-page-change="handlePageChange"
+      :on-show-size-change="handlePageChange"
+
+    ></a-pagination> -->
 
     <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" @get_list="getList"/>
 
@@ -83,45 +103,60 @@ export default {
     AuthSchema,
     UserGroupSchema
   },
-  data: () => ({
-    isOpen: null,
-    columns: Object.freeze([
-      {
-        title: '巡更组编号',
-        dataIndex: 'id',
-        sorter: true,
-        width: '220px'
-      },
-      {
-        title: '巡更组名称',
-        dataIndex: 'name',
-        width: '220px',
-        sorter: true
-      },
-      {
-        title: '有效标识',
-        dataIndex: 'isOpen',
-        customRender: (text) => (text ? '有效' : '无效'),
-        width: '180px',
-        sorter: true
-      },
-      {
-        title: '备注',
-        dataIndex: 'remark',
-        'min-width': 300,
-        sorter: true
+  data () {
+    return {
+      isOpen: null,
+      columns: Object.freeze([
+        {
+          title: '巡更组编号',
+          dataIndex: 'id',
+          sorter: true,
+          width: '220px'
+        },
+        {
+          title: '巡更组名称',
+          dataIndex: 'name',
+          width: '220px',
+          sorter: true
+        },
+        {
+          title: '有效标识',
+          dataIndex: 'isOpen',
+          customRender: (text) => (text ? '有效' : '无效'),
+          width: '180px',
+          sorter: true
+        },
+        {
+          title: '备注',
+          dataIndex: 'remark',
+          'min-width': 300
+        // sorter: true
+        }
+      ]),
+      selectedRows: [],
+      Myid: '',
+      Myname: '',
+      dataList: [],
+      biaoshi: '',
+      selectedRowKeys: [],
+      selectedRowsDate: '', // 表格选中行数据
+      scroll: {}, // 设置表格的滚动属性
+      //
+      /*   total: Number, // 数据总数
+    current: 1,// 当前页
+      pageSize: 10, // 每页显示条数 */
+      pagination: {
+        total: 50,
+        current: 1, // 当前页
+        pageSize: 10, // 每页中显示10条数据
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '25', '50', '100'], // 每页中显示的数据
+        showTotal: (total, pageSize) => `显示${pageSize[0]}-${pageSize[1]}条记录,共 ${total} 条记录`, // 分页中显示总的数据
+        onChange: this.handlePageChange, // 页码改变时的回调函数
+        onShowSizeChange: this.handlePageSizeChange
       }
-    ]),
-    selectedRows: [],
-    Myid: '',
-    Myname: '',
-    dataList: [],
-    biaoshi: '',
-    selectedRowKeys: [],
-    selectedRowsDate: '', // 表格选中行数据
-    total: Number, // 数据总数
-    current: 1// 当前页
-  }),
+    }
+  },
 
   computed: {
     isSelectedValid () {
@@ -149,8 +184,8 @@ export default {
     },
     // 查询
     async queryList () {
-      const pageNum = 1
-      const pageSize = 10
+      const pageNum = this.pagination.current
+      const pageSize = this.pagination.pageSize
       const { data } = await xungeng.get('/group/list', {
         params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.biaoshi }
       })
@@ -161,11 +196,11 @@ export default {
     // 4.工作组列表
     async getList () {
       console.log(this.current)
-      const pageNum = this.current
-      const pageSize = 10
+      const pageNum = this.pagination.current
+      const pageSize = this.pagination.pageSize
       const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
       console.log(data)
-      this.total = Number(data.total)
+      // this.pagination.total = Number(data.total)
       this.dataList = data.list
       // console.log(this.dataList );
     },
@@ -189,12 +224,23 @@ export default {
     },
 
     onStatusChange () {},
-    // 换页
-    handlePageChange (page) {
+    // 换页+++++++++++++++++++++++++++
+    /*   handlePageChange (page) {
     // 在这里编写更换页面的逻辑
       console.log('切换到第', page, '页')
       this.current = page
+    }, */
+    handlePageChange (page, pageSize) {
+      console.log(page, pageSize)
+      this.pagination.current = page
+      this.pagination.pageSize = pageSize
+      this.getList()
     },
+    handlePageSizeChange () {
+      this.getList()
+    },
+
+    // ++++++++++++++++++++++++++++++++++
     // 获取选中行      括号数据为   id     全部数据
     onSelectChange (selectedRowKeys, selectedRows) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)

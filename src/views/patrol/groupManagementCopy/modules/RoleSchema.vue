@@ -166,6 +166,8 @@ export default {
       if (data.msg === 'OK') {
         this.visible = false
         this.$emit('get_list')
+
+        this.form.userIds = []
       }
     },
     // 5.查询工作组下面已绑定的路径（编辑使用）
@@ -259,7 +261,7 @@ export default {
         remark: '' // 备注''
       }
       this.submit = this.insert
-      this.show('新增')
+      this.show('新增巡更组')
       this.getfindAllUser()
       this.getFindUnBindAdd()
     },
@@ -270,7 +272,7 @@ export default {
       console.log(record)
       // this.record = { ...record }
       this.submit = this.update
-      this.show('编辑')
+      this.show('编辑巡更组')
       // 调取编辑时表单可选数据
       this.getBindPath(record[0].id)
       this.getBindUser(record[0].id)
