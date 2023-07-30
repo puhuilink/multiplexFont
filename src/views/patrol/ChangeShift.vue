@@ -149,7 +149,7 @@ export default {
     async query () {
       try {
         this.pageLoading = true
-        if(this.queryParams.receive_time) {
+        if (this.queryParams.receive_time) {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
