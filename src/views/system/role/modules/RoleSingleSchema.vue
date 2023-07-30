@@ -8,6 +8,7 @@
     :width="940"
     wrapClassName="QuotaSchema__modal"
     @cancel="cancel"
+    @colse="cancel"
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
@@ -107,6 +108,11 @@ export default {
   }),
   computed: {},
   methods: {
+    cancel () {
+      this.visible = false
+      this.$refs.menuForm.resetFields()
+      this.$refs.dataForm.resetFields()
+    },
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)

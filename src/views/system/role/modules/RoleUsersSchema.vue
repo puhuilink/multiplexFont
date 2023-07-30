@@ -70,6 +70,10 @@ export default {
     }
   }),
   methods: {
+    cancel () {
+      this.visible = false
+      this.$refs.ruleForm.resetFields()
+    },
     /**
      * 获取所有用户组
      * @return {Promise<Undefined>}
