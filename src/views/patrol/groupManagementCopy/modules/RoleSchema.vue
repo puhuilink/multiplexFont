@@ -166,8 +166,6 @@ export default {
       if (data.msg === 'OK') {
         this.visible = false
         this.$emit('get_list')
-
-        this.form.userIds = []
       }
     },
     // 5.查询工作组下面已绑定的路径（编辑使用）
@@ -207,11 +205,12 @@ export default {
           return str // 解析失败时返回字符串
         }
       })
-      const pathIds = []
+      let pathIds = []
       for (let i = 0; i < selectedPaths.length; i++) {
         pathIds.push(selectedPaths[i].organizeId)
       }
       this.form.pathIds = pathIds
+      pathIds = []
     },
     handlePathIdsChange2 (value) {
       // console.log(value);
@@ -225,11 +224,12 @@ export default {
           return str // 解析失败时返回字符串
         }
       })
-      const pathIds = []
+      let pathIds = []
       for (let i = 0; i < selectedPaths.length; i++) {
         pathIds.push(selectedPaths[i].organizeId)
       }
       this.form.userIds = pathIds
+      pathIds = []
     },
     reset () {
       this.$refs.ruleForm.resetFields()
