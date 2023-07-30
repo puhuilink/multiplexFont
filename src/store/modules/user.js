@@ -99,13 +99,13 @@ const user = {
         try {
           const user = Vue.ls.get(USER)
           const roles = Vue.ls.get(ROLES) || {}
-          let userPermission
+          const userPermission = await generatePermission(user)
           // 同一用户可直接使用上次配置
-          if (_.get(user, 'userId', '') === roles.userId && user.token === roles.token) {
-            userPermission = roles
-          } else {
-            userPermission = await generatePermission(user)
-          }
+          // if (_.get(user, 'userId', '') === roles.userId && user.token === roles.token) {
+          //   userPermission = roles
+          // } else {
+          //   userPermission = await generatePermission(user)
+          // }
           // if (userPermission.permissions && userPermission.permissions.length > 0) {
           if (userPermission.allPermission && userPermission.allPermission.length > 0) {
             commit('SET_ROLES', userPermission)
