@@ -128,6 +128,7 @@ export default {
       //   this.spinning = false
       // }
       this.plan = new PlanModel(plan)
+      console.log('plan', this.plan, plan)
     },
     /**
      * 调取新增接口

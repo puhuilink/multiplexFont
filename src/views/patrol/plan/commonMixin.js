@@ -29,13 +29,13 @@ export default {
     async fetchPathListList (value, plan = '') {
       try {
         this.patrolGroupLoading = true
-        const { data: { list } } = await xungeng.get('/path/listUnBind', {
+        const { data } = await xungeng.get('/path/listUnBind', {
           params: {
             groupId: value.toString(),
             ...(plan.length > 0 ? { planId: plan.toString() } : {})
           }
         })
-        this.pathList = list.map(el => ({ label: el.alias, value: el.id }))
+        this.pathList = data.map(el => ({ label: el.alias, value: el.id }))
       } catch (e) {
         this.pathList = []
         this.$message.warning('当前暂无可用巡更路线')

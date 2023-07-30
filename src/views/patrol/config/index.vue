@@ -63,9 +63,9 @@
           @change="onSelectGroupChange"
         />
       </template>
-            <template slot="checkpoint">
-              点位
-            </template>
+      <template slot="checkpoint">
+        点位
+      </template>
       <!--      <template slot="checkpoint">-->
       <!--        点位<a-row>-->
       <!--          <a @click="infoEdit({checkpointId:''},4)">-->

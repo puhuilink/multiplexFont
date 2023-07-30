@@ -138,7 +138,7 @@ export default {
     ]),
     defaultData: [],
     selectedRows: [],
-    paginationOpt:{},
+    paginationOpt: {},
     queryParams: {
       name: '',
       isOpen: null,
@@ -158,7 +158,7 @@ export default {
       } else {
         return false
       }
-    },
+    }
   },
   methods: {
     initialPagination () {
