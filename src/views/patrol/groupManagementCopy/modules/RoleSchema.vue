@@ -54,7 +54,7 @@
         </a-col>
         <a-col :md="12" :sm="24">
           <a-form-model-item label="用户" prop="userIds">
-            <a-select placeholder="请点击选择用户" mode="multiple" @change="handlePathIdsChange2">
+            <a-select placeholder="请点击选择用户" mode="multiple" @change="handlePathIdsChange2" >
               <!-- <a-select-option v-for="user in users" :key="user.userId" :value="JSON.stringify(user)"> -->
               <a-select-option v-for="user in users" :key="user.userId" :value=" user.staffName">
                 {{ user.staffName }}
@@ -66,7 +66,7 @@
           <a-form-model-item label="有效标识" prop="isOpen">
             <!-- <a-select :isOpen="form.isOpen" />
              -->
-            <a-select show-search placeholder="" v-model="form.isOpen" @change="handleChange" key="0">
+            <a-select show-search placeholder="" v-model="form.isOpen" @change="handleChange" key="0" >
               <a-select-option :value="1"> 有效 </a-select-option>
               <a-select-option :value="0"> 无效</a-select-option>
             </a-select>
@@ -89,7 +89,7 @@ import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
 import { xungeng } from '@/utils/request'
 import { encrypt, decrypt } from '@/utils/aes'
-
+import { notification } from 'ant-design-vue'
 export default {
   name: 'RoleSchema',
   mixins: [Schema],
@@ -145,7 +145,7 @@ export default {
       this.form = {
         id: '',
         name: '',
-        isOpen: null,
+        // isOpen: null,
         pathIds: [],
         userIds: [],
         remark: '' // 备注''
@@ -180,7 +180,20 @@ export default {
     },
     // 3.新增工作组
     async getroupAdd () {
-      // console.log(this.form)
+      console.log(this.form)
+
+      const emptyFields = Object.entries(this.form).every(([key, value]) => {
+        // 检查属性值是否为空字符串、null 或空数组
+        return value === '' || value === null || (Array.isArray(value) && value.length === 0)
+      })
+      console.log(emptyFields)
+      if (emptyFields) {
+        this.$notification.error({
+          message: '警告',
+          description: '文本待修改'
+        })
+      }
+
       const data = await xungeng.post('/group/add',
         { ...this.form }
       )
@@ -206,13 +219,23 @@ export default {
     // 7.修改
     async groupEdit () {
       // console.log(this.form)
-      const data = await xungeng.post('/group/edit',
-        this.form
-      )
-      console.log(data)
-      if (data.msg === 'OK') {
-        this.visible = false
-        this.$emit('get_list')
+      try {
+        const data = await xungeng.post('/group/edit',
+          this.form
+        )
+        console.log(data)
+        if (data.msg === 'OK') {
+          this.visible = false
+          this.$emit('get_list')
+        }
+      } catch (error) {
+        // 编辑失败数据在转换回来
+        if (this.form.isOpen === true) {
+          this.form.isOpen = 1
+        }
+        if (this.form.isOpen === false) {
+          this.form.isOpen = 0
+        }
       }
     },
 

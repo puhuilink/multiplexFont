@@ -17,8 +17,8 @@
           <a-col :md="12" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
               <a-select show-search placeholder="请选择" v-model="isOpen" @change="handleChange" key="0">
-                <a-select-option value="true"> 有效 </a-select-option>
-                <a-select-option value="false"> 无效</a-select-option>
+                <a-select-option :value="1"> 有效 </a-select-option>
+                <a-select-option :value="0"> 无效</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -109,21 +109,20 @@ export default {
         {
           title: '巡更组编号',
           dataIndex: 'id',
-          sorter: true,
-          width: '220px'
+          sorter: (a, b) => new Date(a.createTime) - new Date(b.createTime)
         },
         {
           title: '巡更组名称',
           dataIndex: 'name',
           width: '220px',
-          sorter: true
+          sorter: (a, b) => a.name.length - b.name.length
         },
         {
           title: '有效标识',
           dataIndex: 'isOpen',
           customRender: (text) => (text ? '有效' : '无效'),
           width: '180px',
-          sorter: true
+          sorter: (a, b) => a.name.localeCompare(b.name)
         },
         {
           title: '备注',
@@ -136,7 +135,7 @@ export default {
       Myid: '',
       Myname: '',
       dataList: [],
-      biaoshi: '',
+      // biaoshi: '',
       selectedRowKeys: [],
       selectedRowsDate: '', // 表格选中行数据
       scroll: {}, // 设置表格的滚动属性
@@ -173,12 +172,12 @@ export default {
   methods: {
     handleChange (value) {
       console.log(value)
-      if (value === 'true') {
-        this.biaoshi = true
-        console.log(typeof this.biaoshi)
+      if (value === '1') {
+        this.isOpen = true
+        console.log(this.isOpen)
       }
-      if (value === 'false') {
-        this.biaoshi = false
+      if (value === '0') {
+        this.isOpen = false
       }
     },
     // 查询
@@ -186,10 +185,11 @@ export default {
       const pageNum = this.pagination.current
       const pageSize = this.pagination.pageSize
       const { data } = await xungeng.get('/group/list', {
-        params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.biaoshi }
+        params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
       })
       console.log(data)
       this.dataList = data.list
+      this.pagination.total = Number(data.total)
     },
 
     // 4.工作组列表
