@@ -63,29 +63,32 @@
           @change="onSelectGroupChange"
         />
       </template>
-      <template slot="checkpoint">
-        点位<a-row>
-          <a @click="infoEdit({checkpointId:''},4)">
-            <a-icon
-              type="plus"
-            /></a>
-        </a-row>
-      </template>
-      <template slot="checkbox" slot-scope="value,row">
-        <a-checkbox
-          :checked="isChecked(row.checkpoint_id)"
-          @change="onSelectChange(row.checkpoint_id)"
-        />
-      </template>
-      <template slot="endpoint" slot-scope="value,row">
-        {{ value!=='NULL'?value:'虚拟实体' }}
-        <a-row>
-          <a @click="infoEdit(row,1)">
-            <a-icon
-              type="plus"
-            /></a>
-        </a-row>
-      </template>
+            <template slot="checkpoint">
+              点位
+            </template>
+      <!--      <template slot="checkpoint">-->
+      <!--        点位<a-row>-->
+      <!--          <a @click="infoEdit({checkpointId:''},4)">-->
+      <!--            <a-icon-->
+      <!--              type="plus"-->
+      <!--            /></a>-->
+      <!--        </a-row>-->
+      <!--      </template>-->
+      <!--      <template slot="checkbox" slot-scope="value,row">-->
+      <!--        <a-checkbox-->
+      <!--          :checked="isChecked(row.checkpoint_id)"-->
+      <!--          @change="onSelectChange(row.checkpoint_id)"-->
+      <!--        />-->
+      <!--      </template>-->
+      <!--      <template slot="endpoint" slot-scope="value,row">-->
+      <!--        {{ value!=='NULL'?value:'虚拟实体' }}-->
+      <!--        <a-row>-->
+      <!--          <a @click="infoEdit(row,1)">-->
+      <!--            <a-icon-->
+      <!--              type="plus"-->
+      <!--            /></a>-->
+      <!--        </a-row>-->
+      <!--      </template>-->
       <template slot="code" slot-scope="value,row">
         <a
           @click="downloadQrCode({ checkpointId: row.checkpoint_id, checkpointAlias: row.checkpoint_alias })"
@@ -108,25 +111,25 @@
           删除
         </a-button>
       </template>
-      <template slot="checkpoint" slot-scope="value,row">
-        {{ value }}
-        <a-row>
-          <a @click="infoEdit(row,3)">
-            <a-icon
-              type="plus"
-            >
-            </a-icon></a>
-        </a-row>
-      </template><template slot="host" slot-scope="value,row">
-        {{ value }}
-        <a-row>
-          <a
-            @click="infoEdit(row,2)"
-          >
-            <a-icon type="plus"/>
-          </a>
-        </a-row>
-      </template>
+      <!--      <template slot="checkpoint" slot-scope="value,row">-->
+      <!--        {{ value }}-->
+      <!--        <a-row>-->
+      <!--          <a @click="infoEdit(row,3)">-->
+      <!--            <a-icon-->
+      <!--              type="plus"-->
+      <!--            >-->
+      <!--            </a-icon></a>-->
+      <!--        </a-row>-->
+      <!--      </template><template slot="host" slot-scope="value,row">-->
+      <!--        {{ value }}-->
+      <!--        <a-row>-->
+      <!--          <a-->
+      <!--            @click="infoEdit(row,2)"-->
+      <!--          >-->
+      <!--            <a-icon type="plus"/>-->
+      <!--          </a>-->
+      <!--        </a-row>-->
+      <!--      </template>-->
     </a-table>
     <delete-warn
       :visible="deleteVisible"
