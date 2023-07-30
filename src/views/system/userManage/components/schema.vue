@@ -208,9 +208,14 @@ export default {
             orgId: this.formModel.orgId,
             pwd: this.formModel.pwd,
             email: this.formModel.email,
+            isOpen: this.formModel.enabled,
             ...this.isEdit ? { id: this.formModel.id } : {}
           })
-          this.$notifyAddSuccess()
+          if (this.isEdit) {
+            this.$notifyEditSuccess()
+          } else {
+            this.$notifyAddSuccess()
+          }
           this.$emit('operateSuccess')
         } catch (e) {
           throw e
@@ -232,7 +237,8 @@ export default {
         orgId: user.orgId,
         pwd: user.pwd,
         email: user.email,
-        id: user.id
+        id: user.id,
+        enabled: user.isOpen
       }
     },
     onCancel () {
