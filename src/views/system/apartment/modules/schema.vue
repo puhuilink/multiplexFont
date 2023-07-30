@@ -85,7 +85,6 @@
           wrapperCol: { span: 6, offset: 1 },
         }"
         prop="leader"
-        v-if="mode === 'personal'"
       >
         <a-select
           v-model="formModel.leader"
@@ -108,14 +107,12 @@
           float: 'left',
           width: '300px',
         }"
-        v-if="mode === 'personal'"
         class="AlarmStrategy__modal-footer-left"
       >
         <a-select
           class="enabled"
           :style="{ width: '100px' }"
           :value="~~formModel.enabled"
-          v-if="mode === 'personal'"
           @select="formModel.enabled = !!$event"
         >
           <a-select-option :value="1">是</a-select-option>
@@ -231,7 +228,7 @@ export default {
       this.formModel = {
         name: user.name,
         apartmentId: user.parentId,
-        isOpen: !!user.isOpen,
+        enabled: user.isOpen,
         order: user.sortIndex,
         leaderId: user.leaderId,
         id: user.id

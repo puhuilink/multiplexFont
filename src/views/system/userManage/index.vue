@@ -418,7 +418,7 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'userName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
     },
     async switchStatus (record, text) {
       console.log('record', record, text)
