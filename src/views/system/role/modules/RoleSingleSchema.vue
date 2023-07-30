@@ -110,8 +110,6 @@ export default {
   methods: {
     cancel () {
       this.visible = false
-      this.$refs.menuForm.resetFields()
-      this.$refs.dataForm.resetFields()
     },
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
