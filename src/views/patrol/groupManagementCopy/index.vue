@@ -199,7 +199,7 @@ export default {
       const pageSize = this.pagination.pageSize
       const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
       console.log(data)
-      // this.pagination.total = Number(data.total)
+      this.pagination.total = Number(data.total)
       this.dataList = data.list
       // console.log(this.dataList );
     },
