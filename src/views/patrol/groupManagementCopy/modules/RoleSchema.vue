@@ -11,6 +11,7 @@
     okText="保存"
     cancelText="取消"
     @ok="submit"
+    :key="modalKey"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-row>
@@ -25,9 +26,17 @@
           </a-form-model-item>
         </a-col>
         <a-col :md="12" :sm="24">
+          <!-- <a-form-model-item label="巡更路径" prop="pathIds">
+            <a-select mode="multiple" placeholder="请选择巡更路径" option-label-prop="label" @change="handlePathIdsChange">
+              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)" :label="item.alias">
+                {{ item.alias }}
+              </a-select-option>
+            </a-select>
+          </a-form-model-item> -->
           <a-form-model-item label="巡更路径" prop="pathIds">
-            <a-select mode="multiple" placeholder="请选择巡更路径" @change="handlePathIdsChange">
-              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)">
+            <a-select mode="multiple" placeholder="请选择巡更路径" option-label-prop="label" @change="handlePathIdsChange">
+              <!-- <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)" :label="item.alias"> -->
+              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="item.alias" :label="item.alias">
                 {{ item.alias }}
               </a-select-option>
             </a-select>
@@ -46,7 +55,8 @@
         <a-col :md="12" :sm="24">
           <a-form-model-item label="用户" prop="userIds">
             <a-select placeholder="请点击选择用户" mode="multiple" @change="handlePathIdsChange2">
-              <a-select-option v-for="user in users" :key="user.userId" :value="JSON.stringify(user)">
+              <!-- <a-select-option v-for="user in users" :key="user.userId" :value="JSON.stringify(user)"> -->
+              <a-select-option v-for="user in users" :key="user.userId" :value=" user.staffName">
                 {{ user.staffName }}
               </a-select-option>
             </a-select>
@@ -88,6 +98,7 @@ export default {
   //   type: [Object, Array, String, Number, Boolean, Function]
   // } },
   data: (vm) => ({
+    modalKey: 0, // 弹窗key值
     current: 0,
     confirmLoading: false,
     labelCol: { span: 24 },
@@ -129,6 +140,17 @@ export default {
   computed: {},
   mounted () {},
   methods: {
+    cancel () {
+    // 重置下拉选项的选择
+      this.form = {
+        id: '',
+        name: '',
+        isOpen: null,
+        pathIds: [],
+        userIds: [],
+        remark: '' // 备注''
+      }
+    },
     handleChange (value) {
       console.log(value)
       if (value === '1') {
@@ -196,7 +218,7 @@ export default {
 
     // 存数据
     handlePathIdsChange (value) {
-      const selectedPaths = value.map(str => {
+      /*  let selectedPaths = value.map(str => {
         try {
           const pathObj = JSON.parse(str)
           return pathObj
@@ -204,18 +226,25 @@ export default {
           console.error('Invalid JSON string:', str)
           return str // 解析失败时返回字符串
         }
-      })
-      let pathIds = []
-      for (let i = 0; i < selectedPaths.length; i++) {
-        pathIds.push(selectedPaths[i].organizeId)
+      }) */
+      // console.log(value);
+      const pathIds = []
+      for (let index = 0; index < value.length; index++) {
+        for (let i = 0; i < this.pathIdsApiData.length; i++) {
+        // console.log("循环"+this.pathIdsApiData[i].alias);
+          if (value[index] === this.pathIdsApiData[i].alias) {
+          //  console.log("判断");
+            pathIds.push(this.pathIdsApiData[i].organizeId)
+          }
+        }
       }
       this.form.pathIds = pathIds
-      pathIds = []
+      console.log(this.form.pathIds)
     },
     handlePathIdsChange2 (value) {
-      // console.log(value);
+      console.log(value)
       // this.formuserIds=value;
-      const selectedPaths = value.map(str => {
+      /*    const selectedPaths = value.map(str => {
         try {
           const pathObj = JSON.parse(str)
           return pathObj
@@ -227,9 +256,18 @@ export default {
       let pathIds = []
       for (let i = 0; i < selectedPaths.length; i++) {
         pathIds.push(selectedPaths[i].organizeId)
+      } */
+      const pathIds = []
+      for (let index = 0; index < value.length; index++) {
+        for (let i = 0; i < this.users.length; i++) {
+          if (value[index] === this.users[i].staffName) {
+            pathIds.push(this.users[i].organizeId)
+          }
+        }
       }
+
       this.form.userIds = pathIds
-      pathIds = []
+      console.log(this.form.userIds)
     },
     reset () {
       this.$refs.ruleForm.resetFields()
@@ -260,7 +298,9 @@ export default {
         userIds: [],
         remark: '' // 备注''
       }
+      console.log(this.form)
       this.submit = this.insert
+      this.modalKey++
       this.show('新增巡更组')
       this.getfindAllUser()
       this.getFindUnBindAdd()
@@ -273,6 +313,7 @@ export default {
       // this.record = { ...record }
       this.submit = this.update
       this.show('编辑巡更组')
+      this.modalKey++
       // 调取编辑时表单可选数据
       this.getBindPath(record[0].id)
       this.getBindUser(record[0].id)
