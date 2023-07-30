@@ -23,7 +23,7 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item prop="groupId">
-          <a-select v-model="_value.groupName" style="min-width: 120px">
+          <a-select v-model="_value.groupId" style="min-width: 120px">
             <a-select-option
               v-for="{ label, value } in patrolGroupList"
               :key="value"
@@ -40,7 +40,7 @@
         <a-form-model-item prop="pathId">
           <a-select v-model="_value.pathId" style="min-width: 120px">
             <a-select-option
-              v-for="{ label, value } in patrolGroupList"
+              v-for="{ label, value } in pathList"
               :key="value"
               :value="value"
             >{{ label }}</a-select-option>
@@ -113,15 +113,7 @@ export default {
       deep: true,
       async handler (parentId) {
         await this.$nextTick()
-        parentId && await this.fetchPathListList(parentId)
-      }
-    },
-    'plan.pathId': {
-      immediate: true,
-      deep: true,
-      async handler (parentId) {
-        await this.$nextTick()
-        parentId && await this.fetchPathListList(this.plan.groupId, parentId)
+        parentId && await this.fetchPathListList(parentId, this.plan.id)
       }
     }
   },

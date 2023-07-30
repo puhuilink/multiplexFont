@@ -15,10 +15,19 @@
         label="巡更点位"
         prop="checkpointId"
         :rules="[{ required: false, message: '请输入巡更点位' }]"
+        v-if="formStatus!==4"
       >
-        <a-select v-model="form.checkpointId" disabled>
+        <a-select v-model="form.checkpointId" :disabled="formStatus<4">
           <a-select-option :value="form.checkpointId">{{ xgModelPoint.alias }}</a-select-option>
         </a-select>
+      </a-form-model-item>
+      <a-form-model-item
+        label="巡更点位"
+        prop="checkpointAlias"
+        :rules="[{ required: true, message: '请输入巡更点位名称' }]"
+        v-if="formStatus===4"
+      >
+        <a-input v-model="form.checkpointAlias"/>
       </a-form-model-item>
       <a-form-model-item
         v-if="!hNew"

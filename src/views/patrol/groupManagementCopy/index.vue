@@ -94,7 +94,6 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
 import { xungeng } from '@/utils/request'
-import { encrypt, decrypt } from '@/utils/aes'
 export default {
   name: 'Role',
   mixins: [Confirm, List],
