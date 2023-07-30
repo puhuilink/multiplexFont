@@ -1,115 +1,113 @@
 <template>
   <div class="PatrolTask">
+    <!-- / 查询区域 -->
+    <a-form layout="inline" class="form">
+      <div :class="{ fold: !advanced }">
 
-    <CTable
+        <a-row>
+          <a-col :md="12" :sm="24">
+            <a-form-item
+              label="巡更组"
+              v-bind="formItemLayout"
+              class="fw"
+            >
+              <a-select allowClear v-model="queryParams.groupId">
+                <a-select-option
+                  v-for="{name, id} in groups"
+                  :key="id"
+                >{{ name }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="12" :sm="24">
+            <a-form-item
+              label="是否异常"
+              v-bind="formItemLayout"
+              class="fw"
+            >
+              <a-select allowClear v-model="queryParams.eventOccur">
+                <a-select-option
+                  v-for="[code, name] in ENABLE_LIST"
+                  :key="code"
+                >{{ name }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row v-show="advanced">
+          <a-col :md="12" :sm="24">
+            <a-form-item
+              label="任务单状态"
+              v-bind="formItemLayout"
+              class="fw"
+            >
+              <a-select
+                allowClear
+                v-model="queryParams.status"
+                placeholder="请选择"
+                default-value=""
+              >
+                <a-select-option
+                  v-for="[type, label] in STATUS_LIST"
+                  :key="type"
+                  :value="type"
+                >{{ label }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="12" :sm="24">
+            <a-form-item
+              label="巡更日期范围"
+              v-bind="formItemLayout"
+              class="fw"
+            >
+              <a-range-picker
+                allowClear
+                class="fw"
+                format="YYYY-MM-DD HH:mm"
+                :placeholder="['开始时间', '结束时间']"
+                :ranges="{
+                  '最近1天': [moment().add(-1, 'days'), moment(), moment()],
+                  '最近1周': [moment().add(-7, 'days'), moment()],
+                  '最近1月': [moment().add(-30, 'days'), moment()],
+                }"
+                :showTime="{ format: 'HH:mm' }"
+                v-model="queryParams.actualEndTime"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </div>
+
+      <span :class="advanced ? 'expand' : 'collapse'">
+        <QueryBtn @click="query" />
+        <ResetBtn @click="resetQueryParams" />
+        <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+      </span>
+    </a-form>
+
+    <!-- / 操作区域 -->
+
+    <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
+    <a-button disabled :loading="exportLoading" @click="exportExcel">导出</a-button>
+
+    <a-table
+      style="margin-top: 30px"
       :columns="columns"
-      :data="loadData"
+      :dataSource="defaultData"
       ref="table"
       rowKey="id"
+      :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
     >
-      <!-- / 查询区域 -->
-      <template #query>
-        <a-form layout="inline" class="form">
-          <div :class="{ fold: !advanced }">
-
-            <a-row>
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="巡更组"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-select allowClear v-model="queryParams.group_id">
-                    <a-select-option
-                      v-for="{label, value} in groups"
-                      :key="value"
-                    >{{ label }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="是否异常"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-select allowClear v-model="queryParams.event_occur">
-                    <a-select-option
-                      v-for="[code, name] in ENABLE_LIST"
-                      :key="code"
-                    >{{ name }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-
-            <a-row v-show="advanced">
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="任务单状态"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-select
-                    allowClear
-                    v-model="queryParams.status"
-                    placeholder="请选择"
-                    default-value=""
-                  >
-                    <a-select-option
-                      v-for="[type, label] in STATUS_LIST"
-                      :key="type"
-                      :value="type"
-                    >{{ label }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="12" :sm="24">
-                <a-form-item
-                  label="巡更日期范围"
-                  v-bind="formItemLayout"
-                  class="fw"
-                >
-                  <a-range-picker
-                    allowClear
-                    class="fw"
-                    format="YYYY-MM-DD HH:mm"
-                    :placeholder="['开始时间', '结束时间']"
-                    :ranges="{
-                      最近1天: [moment().add(-1, 'days'), moment(), moment()],
-                      最近1周: [moment().add(-7, 'days'), moment()],
-                      最近1月: [moment().add(-30, 'days'), moment()],
-                    }"
-                    :showTime="{ format: 'HH:mm' }"
-                    v-model="queryParams.actual_end_time"
-                  />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </div>
-
-          <span :class="advanced ? 'expand' : 'collapse'">
-            <QueryBtn @click="query" />
-            <ResetBtn @click="resetQueryParams" />
-            <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
-          </span>
-        </a-form>
-      </template>
-
-      <!-- / 操作区域 -->
-      <template #operation>
-        <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
-        <a-button :disabled="!hasSelected" :loading="exportLoading" @click="exportExcel">导出</a-button>
-      </template>
-
-    </CTable>
+    </a-table>
 
     <TaskDetailSchema ref="schema" />
   </div>
@@ -135,6 +133,8 @@ export default {
     TaskDetailSchema
   },
   data: () => ({
+    defaultData: [],
+    paginationOpt: {},
     groups: [],
     ENABLE_LIST,
     ENABLE_LIST_MAPPING,
@@ -144,31 +144,24 @@ export default {
       {
         title: '任务单号',
         dataIndex: 'id',
-        width: 100,
+        width: 150,
         fixed: 'left',
         sorter: true
       },
-      // {
-      //   title: '巡更区域',
-      //   dataIndex: 'zone { alias }',
-      //   width: 120,
-      //   customRender: (__, { zone: { alias } }) => alias
-      //   // customRender: ascription => ASCRIPTION_MAPPING.get(ascription)
-      // },
       {
         title: '计划名称',
-        dataIndex: 'alias',
+        dataIndex: 'planAlias',
         width: 220,
         sorter: true
       },
       {
         title: '巡更组',
-        dataIndex: 'group_name',
+        dataIndex: 'groupName',
         width: 220
       },
       {
         title: '巡更实际开始时间',
-        dataIndex: 'actual_start_time',
+        dataIndex: 'actualStartTime',
         width: 180,
         sorter: true,
         defaultSortOrder: 'descend',
@@ -176,21 +169,21 @@ export default {
       },
       {
         title: '延迟开始',
-        dataIndex: 'actual_start_late',
+        dataIndex: 'actualStartLate',
         width: 120,
         sorter: true,
         customRender: actual_start_late => actual_start_late ? '是' : '否'
       },
       {
         title: '巡更实际结束时间',
-        dataIndex: 'actual_end_time',
+        dataIndex: 'actualEndTime',
         width: 180,
         sorter: true,
         customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '超时完成',
-        dataIndex: 'actual_end_late',
+        dataIndex: 'actualStartLate',
         width: 120,
         sorter: true,
         // TODO: useMapping
@@ -207,7 +200,7 @@ export default {
       },
       {
         title: '异常数量',
-        dataIndex: 'total',
+        dataIndex: 'eventCount',
         width: 80
       },
       {
@@ -217,54 +210,83 @@ export default {
         customRender: (executor) => {
           if (!executor) {
             return ''
-          } else if (executor === executor.toString()) {
+          } else if (executor.toString().includes('[')) {
             return executor.toString().slice(1, executor.length - 1)
           } else {
-            return executor.executor
+            return JSON.parse(executor.toString()).executor
           }
         }
       }
     ]),
     queryParams: {
-      actual_end_time: ''
+      groupId: '',
+      status: '',
+      eventOccur: null,
+      actualTimeStart: '',
+      actualTimeEnd: ''
     }
   }),
   methods: {
+    resetQueryParams () {
+      this.queryParams = {
+        groupId: '',
+        status: '',
+        eventOccur: null,
+        actualTimeStart: '',
+        actualTimeEnd: ''
+      }
+    },
+    query () {
+      this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent - 1, pageSize: this.paginationOpt.defaultPageSize })
+    },
     moment,
-    handleTableChange (pagination, filters, sorter) {
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
+    },
+    reloadParams (params) {
+      const newObj = {}
+      Object.keys(params).forEach(key => {
+        if (params[key]) {
+          newObj[key] = params[key]
+        }
+      })
+      return newObj
     },
     async getGroup () {
-      const { data: { GroupList } } = await GroupService.find({
-        where: {
-          is_patrol: { _eq: true }
-        },
-        fields: [
-          'value: group_id',
-          'label: group_name'
-        ],
-        alias: 'GroupList'
-      })
-      this.groups = GroupList
+      const { list } = await PatrolTaskListService.getGroupList({ pageNum: 0, pageSize: 9999 })
+      this.groups = list
+      this.queryParams.groupId = list[0].id
     },
-    loadData (parameter) {
-      const { status, ...rest } = this.queryParams
-      return PatrolTaskListService.find({
-        where: {
-          ...status ? { status: { _eq: status } } : {},
-          ...generateQuery(rest)
-        },
-        fields: this.columns.map(({ dataIndex }) => dataIndex),
-        ...parameter.orderBy ? {} : { orderBy: { actual_start_time: 'desc_nulls_last' } },
-        ...parameter,
-        alias: 'data'
-      }).then(r => r.data)
+    async loadData (parameter) {
+      const { list, total } = await PatrolTaskListService.getTaskList(parameter)
+      this.defaultData = list
+      this.paginationOpt.total = total
     },
     seeDetail () {
-      const [id] = this.selectedRowKeys
       const [record] = this.selectedRows
       const status = parseInt(record.status)
       if (status < 30 && status > 2) {
-        this.$refs['schema'].detail(id)
+        this.$refs['schema'].detail(record)
       } else {
         this.$message.error('该任务单没有巡更记录可查看！')
       }
@@ -320,8 +342,10 @@ export default {
       }
     }
   },
-  mounted () {
-    this.getGroup()
+  async mounted () {
+    this.initialPagination()
+    await this.getGroup()
+    this.query()
   }
 }
 </script>

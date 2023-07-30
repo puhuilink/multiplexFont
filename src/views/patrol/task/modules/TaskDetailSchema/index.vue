@@ -31,9 +31,9 @@
           <a-col :span="6">
             <span v-if="basicInfo.executor!==null">
               执行人：{{ basicInfo.executor!=null ?
-                basicInfo.executor === basicInfo.executor.toString()?
+                basicInfo.executor !== basicInfo.executor.toString()?
                   basicInfo.executor.toString().replaceAll('\"','').replace('[','').replace(']',''):
-                  basicInfo.executor.executor:
+                  JSON.parse(basicInfo.executor).executor:
                 '' }}</span>
           </a-col>
           <a-col :span="6">
@@ -44,20 +44,17 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
-        <a-tabs default-active-key="id" @change="changeTitle">
-          <a-tab-pane v-for="{ alias, id } in switchCardList" :key="id" :tab="alias">
+        <a-tabs default-active-key="zoneId">
+          <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias" @click="changeZone(zoneId)">
             <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
-              <template slot="position" slot-scope="position">
-                {{ position!==null&&position!='NULL'?JSON.parse(position).group:'无柜位信息' }}
-              </template>
-              <template slot="value" slot-scope="text, record">
+              <template #value="text, record">
                 {{ valueMapping(record) }}
               </template>
-              <template slot="imgs" slot-scope="imgs,record">
-                <span v-if="JSON.parse(record.tags).imgs.length > 0">
-                  <viewer :images="JSON.parse(record.tags).imgs">
+              <template #imgs="imgs,record">
+                <span v-if="record.tags.imgs.length > 0">
+                  <viewer :images="record.tags.imgs">
                     <img
-                      v-for="(src,index) in JSON.parse(record.tags).imgs"
+                      v-for="(src,index) in record.tags.imgs"
                       :src="src"
                       :key="index"
                       style="width: 50px;height: 50px"
@@ -65,11 +62,11 @@
                   </viewer>
                 </span>
               </template>
-              <template slot="remark" slot-scope="remark">
-                {{ JSON.parse(remark).remarks }}
+              <template #remark="remark">
+                {{ remark.remarks }}
               </template>
-              <template slot="endpoint" slot-scope="endpoint">
-                {{ endpoint!==null&&endpoint!='NULL'?endpoint:'虚拟实体' }}
+              <template #endpoint="endpoint,record">
+                {{ record.endpointAlias&&endpoint!=='NULL'&&endpoint!==''?endpoint:'虚拟实体' }}
               </template>
             </a-table>
           </a-tab-pane>
@@ -97,30 +94,45 @@ export default {
     columns: Object.freeze([
       {
         title: '点位',
-        dataIndex: 'point_alias',
-        width: 180
+        dataIndex: 'checkpointAlias',
+        width: 180,
+        customRender: (text) => text || ''
       },
       {
         title: '柜位',
-        dataIndex: 'position',
+        dataIndex: 'container',
         width: 180,
-        scopedSlots: { customRender: 'position' }
+        customRender: (text) => text || ''
       },
       {
-        title: '设备',
-        dataIndex: 'host_alias',
-        width: 180
+        title: '设备名称',
+        dataIndex: 'hostAlias',
+        width: 180,
+        customRender: (text) => text || ''
+      },
+      {
+        title: 'IP地址',
+        dataIndex: 'hostBelong',
+        width: 180,
+        customRender: (text) => text || ''
+      },
+      {
+        title: '设备归属单位',
+        dataIndex: 'hostApartment',
+        width: 180,
+        customRender: (text) => text || ''
       },
       {
         title: '监控实体',
-        dataIndex: 'endpoint_alias',
+        dataIndex: 'endpointAlias',
         width: 180,
         scopedSlots: { customRender: 'endpoint' }
       },
       {
         title: '检查项',
-        dataIndex: 'metric_alias',
-        width: 180
+        dataIndex: 'metricAlias',
+        width: 180,
+        customRender: (text) => text || ''
       },
       {
         title: '值',
@@ -138,10 +150,35 @@ export default {
         title: '图片',
         width: 180,
         scopedSlots: { customRender: 'imgs' }
+      },
+      {
+        title: '设备位置',
+        dataIndex: 'devicePosition',
+        width: 180,
+        customRender: (text) => text || ''
+      },
+      {
+        title: '设备类型',
+        dataIndex: 'deviceType',
+        width: 180,
+        customRender: (text) => text || ''
+      },
+      {
+        title: '品牌',
+        dataIndex: 'deviceBrand',
+        width: 180,
+        customRender: (text) => text || ''
+      },
+      {
+        title: 'SN号',
+        width: 180,
+        dataIndex: 'sn',
+        customRender: (text) => text || ''
       }
     ]),
     dataSource: [],
     record: {},
+    parentData: null,
     spinning: false,
     switchCardList: [],
     taskDetail: [],
@@ -208,23 +245,18 @@ export default {
       })
       return this.details
     },
-    async fetch (task_id) {
+    async fetch (record, taskId, zoneId) {
       try {
         this.spinning = true
-        const v = await xungeng.post('/taskResultHistory/taskHistory', { 'taskId': task_id })
-        const content = await PatrolService.taskReportDetail(task_id)
+        const v = await xungeng.post('/taskResultHistory/taskHistory', { taskId, ...zoneId ? { zoneId } : {} })
         if (v.code !== 200) {
           this.$message.error('请求失败')
           return
         }
-        const resData = v.data.data
-        this.basicInfo = resData.taskData
-        this.switchCardList = resData.zoneData
-        if (content === null) {
-          this.$message.error('没有该条巡更记录')
-          return
-        }
-        this.dataSource = content
+        const resData = v.data
+        this.basicInfo = { ...record }
+        this.switchCardList = resData.zoneList
+        this.dataSource = resData.history
       } catch (e) {
         this.taskDetail = []
         this.record = {}
@@ -233,9 +265,10 @@ export default {
         this.spinning = false
       }
     },
-    detail (task_id) {
+    detail (record) {
       this.show('巡更记录单')
-      this.fetch(task_id)
+      this.parentData = record
+      this.fetch(this.parentData, record.id)
     },
 
     switchCardName (el) {
@@ -269,8 +302,9 @@ export default {
 
       return checkpointsList
     },
-    async changeTitle (key) {
-      this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, key)
+    async changeZone (key) {
+      console.log(key)
+      // this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, key)
     }
   }
 }

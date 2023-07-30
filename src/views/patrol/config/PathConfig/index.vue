@@ -27,6 +27,7 @@
       rowKey="role_code"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :pagination="paginationOpt"
     >
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
@@ -100,9 +101,11 @@ export default {
     selectedRows: [],
     queryParams: {
       alias: null
-    }
+    },
+    paginationOpt: {}
   }),
   mounted () {
+    this.initialPagination()
     this.query()
   },
   computed: {
@@ -116,9 +119,31 @@ export default {
     }
   },
   methods: {
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
+    },
     replaceGroupName (text) {
       const arr = this.dataList.filter(element => element.id === text)
-      console.log(text, arr)
       if (arr && arr.length) {
         return arr[0].name
       }
@@ -131,15 +156,14 @@ export default {
     },
     query () {
       this.getList()
-      this.loadData(this.queryParams)
-      setInterval(() => this.loadData(this.queryParams), 60000)
+      this.loadData({ ...this.queryParams })
     },
     /**
      * 加载表格数据回调
      */
     async loadData (parameter) {
       const { alias } = parameter
-      const res = await PathService.find(alias)
+      const res = await PathService.find(alias, this.paginationOpt.defaultCurrent - 1, this.paginationOpt.defaultPageSize)
       if (res) {
         this.defaultData = res.list
       } else {

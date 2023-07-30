@@ -29,7 +29,7 @@ class RoleService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   static async getUser (roleId) {
@@ -44,7 +44,7 @@ class RoleService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -52,12 +52,12 @@ class RoleService extends BaseService {
     try {
       const { code, data } =
         await axios.post('/role/addUsers',
-          { 'roleId': roleCode, 'userIds': userIds })
+          { 'roleId': roleCode, 'userIds': userIds, opType: 'UNIQUE' })
       if (code === 200) {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -69,7 +69,7 @@ class RoleService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 分配用户给角色
@@ -81,7 +81,7 @@ class RoleService extends BaseService {
         return data
       }
     } catch (e) {
-      this.$notifyError(e)
+      this.$message.error(e)
     }
   }
   // 更新角色信息
