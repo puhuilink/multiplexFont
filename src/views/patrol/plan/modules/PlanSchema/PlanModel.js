@@ -18,7 +18,7 @@ export class PlanModel {
     pathId = '',
     zoneId = '',
     exception = '',
-    status = ''
+    status = 'enabled'
   }) {
     this.alias = alias
     this.schedule = new CronModel(schedule)

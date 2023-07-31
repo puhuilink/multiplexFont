@@ -11,16 +11,16 @@
     <a-spin :spinning="spinning">
       <div class="ChangeShiftSchema__block">
         <div class="font_head">交班</div>
-        <a-row>
+        <a-row :gutter="[8,8]">
           <a-col :span="8" style="text-align: left">
             <span>交班人：{{ record.handName }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: center">
+          <a-col :span="9" style="text-align: left">
             <span>交班时间：{{ record.handTime }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: right">
+          <a-col :span="7" style="text-align: left">
             <span>交班状态：{{ record.status | status }}</span>
           </a-col>
 
@@ -28,11 +28,11 @@
             <span>工具仪表、钥匙：{{ record.tool | tool }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: center">
+          <a-col :span="9" style="text-align: left">
             <span>图表资料：{{ record.paper | data }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: right">
+          <a-col :span="7" style="text-align: left">
             <span>监控平台运行状态：{{ record.monitorStatus | monitorStatus }}</span>
           </a-col>
 
@@ -40,11 +40,11 @@
             <span>机房温度（℃）：{{ record.temperature }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: center">
+          <a-col :span="9" style="text-align: left">
             <span>机房湿度（%rH）：{{ record.humidity }}</span>
           </a-col>
 
-          <a-col :span="8" style="text-align: right">
+          <a-col :span="7" style="text-align: left">
             <span>机房整洁度：{{ record.sanitary | sanitary }}</span>
           </a-col>
         </a-row>
@@ -249,6 +249,6 @@ export default {
 .font_head {
   font: 16px black;
   font-weight: bold;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 </style>

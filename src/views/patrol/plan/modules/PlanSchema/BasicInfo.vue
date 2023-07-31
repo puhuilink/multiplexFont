@@ -2,7 +2,7 @@
   <div class="BasicInfo">
 
     <a-row>
-      <a-col :span="7">
+      <a-col :span="8">
         <span class="ant-form-item-label">
           <label title="计划名称">计划名称</label>
         </span>
@@ -11,14 +11,14 @@
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="5">
+      <a-col :span="8">
         <span class="ant-form-item-label">
           <label title="计划创建人">计划创建人</label>
           <span>{{ userInfo.staffName }}</span>
         </span>
       </a-col>
 
-      <a-col :span="6">
+      <a-col :span="8">
         <span class="ant-form-item-label">
           <label title="巡更组">巡更组</label>
         </span>
@@ -33,12 +33,12 @@
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="6" v-show="_value.groupId && _value.groupId > 0">
+      <a-col :span="8" v-show="_value.groupId && _value.groupId > 0">
         <span class="ant-form-item-label">
-          <label title="路线ID">路线ID</label>
+          <label title="巡更路径">巡更路径</label>
         </span>
         <a-form-model-item prop="pathId">
-          <a-select v-model="_value.pathId" style="min-width: 120px">
+          <a-select v-model="_value.pathId" style="min-width: 140px">
             <a-select-option
               v-for="{ label, value } in pathList"
               :key="value"
@@ -48,7 +48,7 @@
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="5">
+      <a-col :span="8">
         <span class="ant-form-item-label">
           <label title="是否启用">是否启用</label>
         </span>

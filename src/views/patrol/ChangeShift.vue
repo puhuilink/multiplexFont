@@ -50,7 +50,6 @@
 
     <ChangeShiftSchema ref="schema" @addSuccess="query" @editSuccess="query"/>
   </div>
-  </div>
 </template>
 
 <script>
