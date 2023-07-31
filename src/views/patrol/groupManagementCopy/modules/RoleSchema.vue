@@ -226,7 +226,7 @@ export default {
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
       const dataUsers = data.data ? JSON.parse(decrypt(data.data)) : []
       console.log(dataUsers)
-      this.form.userIds = data.data ? dataUsers.map(item => item.userName) : []
+      this.form.userIds = data.data ? dataUsers.map(item => item.staffName) : []
       // this.staffName = dataUsers.map(item => item.staffName);
       console.log(this.form.userIds)
     },
