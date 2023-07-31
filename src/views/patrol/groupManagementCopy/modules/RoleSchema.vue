@@ -81,6 +81,7 @@ import AuthMenu from '~~~/Auth/AuthMenu.vue'
 import { xungeng } from '@/utils/request'
 import { encrypt, decrypt } from '@/utils/aes'
 import { notification } from 'ant-design-vue'
+import JSONBig from 'json-bigint'
 export default {
   name: 'RoleSchema',
   mixins: [Schema],
@@ -163,14 +164,17 @@ export default {
       }
       if (data.msg === 'OK') {
         this.pathIdsApiData = data.data
-        console.log(data)
+        console.log(this.pathIdsApiData)
       }
     },
     // 2..新增 获取当前数据权限下的所有用户
     async getfindAllUser () {
       const data = await xungeng.get('/user/findAllUser')
-      this.users = JSON.parse(decrypt(data.data))
+      // this.users = JSON.parse(decrypt(data.data))
+      this.users = JSONBig.parse(decrypt(data.data))
+
       console.log(this.users)
+      // console.log(ss);
     },
     // 3.新增工作组
     async getroupAdd () {
@@ -220,10 +224,11 @@ export default {
     async getBindUser (id) {
       this.getfindAllUser()
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
-      const dataUsers = JSON.parse(decrypt(data.data))
+      const dataUsers = data.data ? JSON.parse(decrypt(data.data)) : []
       console.log(dataUsers)
-      this.form.userIds = data.data ? dataUsers.map(item => item.userId) : []
+      this.form.userIds = data.data ? dataUsers.map(item => item.userName) : []
       // this.staffName = dataUsers.map(item => item.staffName);
+      console.log(this.form.userIds)
     },
     // 7.修改
     async groupEdit () {
