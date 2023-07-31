@@ -271,19 +271,22 @@ export const asyncRouterMap = [
             component: () => import('@/views/SecurityMonitoring/view/testLeak'),
             // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
-            meta: { title: '漏洞统计管理' }
+            meta: { title: '漏洞统计管理',
+              permission: 'F020002' }
           },
           {
             path: '/SecurityMonitoring/SituationalAwarenessSecond',
             name: 'SituationalAwarenessSecond',
             // component: () => import('@/views/user/settings/index'),
-            meta: { title: '安全态势感知管理(二级单位)' },
+            meta: { title: '安全态势感知管理(二级单位)',
+              permission: 'F020003' },
             component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
           },
           {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            meta: { title: '安全态势感知管理（集团）' },
+            meta: { title: '安全态势感知管理（集团）',
+              permission: 'F020004' },
             component: () => import('@/views/SecurityMonitoring/view/safeTouch')
           },
           {
@@ -295,7 +298,8 @@ export const asyncRouterMap = [
               path: '/SecurityMonitoring/EmergencyManagement/BanList',
               name: 'BanList',
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
-              meta: { title: '一键封禁' }
+              meta: { title: '一键封禁',
+                permission: 'F020001001' }
             }],
             meta: { title: '应急处理',
               permission: 'F020001'

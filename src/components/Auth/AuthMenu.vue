@@ -4,7 +4,6 @@
       <a-tree
         checkable
         defaultExpandAll
-        :checkStrictly="true"
         :autoExpandParent="true"
         v-model="checkedKeys"
         @select="onSelect"
@@ -32,10 +31,14 @@ export default {
     isRole: {
       type: Boolean,
       default: false
+    },
+    menus: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: () => ({
-    menu: [...MENU, ...MODULE],
+    menu: [],
     checkedKeys: [],
     expandedKeys: [],
     loading: false
@@ -46,8 +49,10 @@ export default {
   methods: {
     // 获取已选择的菜单
     async getInitMenu () {
+      if (this.menus.length) {
+        this.menu = this.menus
+      }
       if (this.isRole) {
-        console.log(this.record)
         const { data } = this.record
         this.checkedKeys.push(...data)
         return

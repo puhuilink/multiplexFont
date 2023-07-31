@@ -205,7 +205,7 @@ export default {
      */
     async loadData (parameter) {
       const { name, isOpen, createTimeStart, createTimeEnd } = parameter
-      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, this.paginationOpt.defaultCurrent - 1, this.paginationOpt.defaultPageSize)
+      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
       if (res) {
         this.defaultData = res.list
         this.paginationOpt.total = res.total

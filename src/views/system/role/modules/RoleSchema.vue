@@ -29,7 +29,7 @@
       <div v-if="current===1">
         <a-form-model ref="dataForm" :rules="dataRules" :model="menuForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="选择菜单权限">
-            <AuthMenu :record="{data:menuForm.menuCodes}" :is-role="true" ref="menu" @menuChange="logSth"/>
+            <AuthMenu :record="{data:menuForm.menuCodes}" :menus.sync="menus" :is-role="true" ref="menu" @menuChange="logSth"/>
           </a-form-model-item>
           <a-form-model-item label="选择移动端角色" prop="role_mobile">
             <a-radio-group v-model="menuForm.appCode" :default-value="'none'">
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { RoleService, UserService } from '@/api'
+import { RoleService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
@@ -145,6 +145,7 @@ export default {
       dataIds: []
     },
     Depts: [],
+    menus: [],
     options: {
       flag: [
         {
@@ -161,11 +162,15 @@ export default {
     submit: () => {}
   }),
   computed: {},
+  async mounted () {
+    await this.getData()
+    await this.getMenu()
+  },
   methods: {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
-        this.Depts = this.buildTree(list.map(el => {
+        this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
           }
@@ -175,11 +180,11 @@ export default {
         throw e
       }
     },
-    buildTree (data, parentId = null) {
+    buildDeptsTree (data, parentId = null) {
       const tree = []
       for (const item of data) {
         if (item.parentId === parentId) {
-          const children = this.buildTree(data, item.id)
+          const children = this.buildDeptsTree(data, item.id)
           if (children.length > 0) {
             item.children = children.map(el => {
               return {
@@ -196,6 +201,55 @@ export default {
           })
         }
       }
+      return tree
+    },
+    async getMenu () {
+      try {
+        const result = await RoleService.findMenu()
+        const fList = result.map(el => {
+          if (el.parent_code === 'NULL') {
+            el.parent_code = null
+          }
+          if (el.menu_type === '1') {
+            return el
+          }
+        }).filter((f) => f)
+        const mList = result.map(el => {
+          if (el.parent_code === 'NULL') {
+            el.parent_code = null
+          }
+          if (el.menu_type === '2') {
+            return el
+          }
+        }).filter((f) => f)
+        console.log(fList)
+        console.log(mList)
+        const FF = this.buildTree(fList)
+        const MM = this.buildTree(mList)
+        this.menus = [...FF, ...MM]
+      } catch (e) {
+        throw e
+      }
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      data.forEach((item) => {
+        if (!item) {
+          return
+        }
+        if (item.parent_code === parentId) {
+          const children = this.buildTree(data, item.code)
+          console.log(children)
+          if (children.length > 0) {
+            item.children = children
+          }
+          tree.push({
+            ...item,
+            title: item.name,
+            key: item.code
+          })
+        }
+      })
       return tree
     },
     dataFilter,

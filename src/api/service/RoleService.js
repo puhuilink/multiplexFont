@@ -1,5 +1,6 @@
 import { BaseService } from './BaseService'
-import { axios } from '@/utils/request'
+import { axios, sql } from '@/utils/request'
+import { dealQuery } from '@/utils/util'
 
 class RoleService extends BaseService {
   // 角色列表
@@ -31,6 +32,10 @@ class RoleService extends BaseService {
     } catch (e) {
       this.$message.error(e)
     }
+  }
+  static async findMenu () {
+    const res = await sql('select code,name,menu_type,parent_code from om_menu')
+    return dealQuery(res)
   }
   static async getUser (orgId) {
     const base = 'user/listUnRoleUser'

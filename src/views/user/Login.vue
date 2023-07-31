@@ -329,6 +329,7 @@ export default {
     // },
     loginSuccess (res) {
       this.$router.push({ path: '/' })
+      location.reload()
       this.isLoginError = false
     },
     requestFailed (err) {
