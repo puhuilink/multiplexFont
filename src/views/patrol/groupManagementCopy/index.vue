@@ -213,6 +213,10 @@ export default {
         console.log(res)
         if (res.msg === 'OK') {
           A = true
+          this.$notification.success({
+            message: '提示',
+            description: '删除成功'
+          })
         } else {
           A = false
         }

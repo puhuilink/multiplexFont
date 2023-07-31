@@ -28,7 +28,7 @@
             v-for="item in role"
             :key="item.id"
             :value="item.id"
-          >{{ item.name }}</a-select-option>
+          >{{ item.roleName }}</a-select-option>
         </a-select>
       </a-form-model-item>
     </a-form-model>
@@ -40,16 +40,10 @@
 </template>
 
 <script>
-import { axios } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 export default {
   name: 'AssignModal',
-  props: {
-    role: {
-      type: Array,
-      default: () => []
-    }
-  },
   data () {
     return {
       visible: false,
@@ -58,7 +52,8 @@ export default {
         wrapperCol: { span: 12 }
       },
       record: {},
-      btnLoading: false
+      btnLoading: false,
+      role: []
     }
   },
   methods: {
@@ -66,10 +61,9 @@ export default {
       try {
         this.btnLoading = true
         // TODO 分配角色
-        await axios.post('/role/addUsers', {
-          userIds: [this.record.id],
-          roleId: this.record.roleId,
-          opType: 'APPEND'
+        await axios.post('/role/addRole ', {
+          userId: this.record.id,
+          roleId: this.record.roleId
         })
         this.$notification.success({
           message: '系统提示',
@@ -85,8 +79,14 @@ export default {
       }
       this.visible = false
     },
-    onShow (record) {
+    async onShow (record) {
       this.record = record
+      const { data } = await axios.get('/role/get', {
+        params: {
+          userId: this.record.id
+        }
+      })
+      this.role = data
       this.visible = true
     },
     cancel () {

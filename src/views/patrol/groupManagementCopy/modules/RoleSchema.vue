@@ -198,6 +198,10 @@ export default {
         if (data.msg === 'OK') {
           this.visible = false
           this.$emit('get_list')
+          this.$notification.success({
+            message: '提示',
+            description: '新增成功'
+          })
         }
       } catch (error) {
         // console.log(this.form);
@@ -222,17 +226,25 @@ export default {
     },
     // 6.查询工作组下面已绑定的用户（编辑使用）
     async getBindUser (id) {
-      this.getfindAllUser()
+      await this.getfindAllUser()
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
-      const dataUsers = data.data ? JSON.parse(decrypt(data.data)) : []
-      console.log(dataUsers)
-      this.form.userIds = data.data ? dataUsers.map(item => item.staffName) : []
+      const dataUsers = data.data ? JSONBig.parse(decrypt(data.data)) : []
+      console.log(dataUsers.userId)
+      this.form.userIds = data.data ? dataUsers.map(item => item.userId) : []
+      console.log(this.users)
+
+      this.users = [...this.users, ...dataUsers]
+      console.log(this.users)
       // this.staffName = dataUsers.map(item => item.staffName);
       console.log(this.form.userIds)
     },
     // 7.修改
     async groupEdit () {
       // console.log(this.form)
+      const formNumBer = this.form
+      console.log(formNumBer)
+      formNumBer.pathIds.map(Number)
+      // formNumBer
       try {
         const data = await xungeng.post('/group/edit',
           this.form
@@ -241,6 +253,10 @@ export default {
         if (data.msg === 'OK') {
           this.visible = false
           this.$emit('get_list')
+          this.$notification.success({
+            message: '提示',
+            description: '编辑成功'
+          })
         }
       } catch (error) {
         // 编辑失败数据在转换回来
