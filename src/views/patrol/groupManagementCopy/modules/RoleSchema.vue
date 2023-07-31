@@ -224,10 +224,11 @@ export default {
     async getBindUser (id) {
       this.getfindAllUser()
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
-      const dataUsers = JSON.parse(decrypt(data.data))
+      const dataUsers = data.data ? JSON.parse(decrypt(data.data)) : []
       console.log(dataUsers)
-      this.form.userIds = data.data ? dataUsers.map(item => item.userId) : []
+      this.form.userIds = data.data ? dataUsers.map(item => item.userName) : []
       // this.staffName = dataUsers.map(item => item.staffName);
+      console.log(this.form.userIds)
     },
     // 7.修改
     async groupEdit () {
