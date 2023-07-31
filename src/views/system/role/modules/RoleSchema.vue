@@ -266,7 +266,7 @@ export default {
           this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notifyError(e)
+          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -291,7 +291,7 @@ export default {
           this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$notifyError(e)
+          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false

@@ -10,7 +10,7 @@ class RoleService extends BaseService {
       if (name) {
         plus += `name=${name}&`
       }
-      if (isOpen) {
+      if (isOpen !== null && isOpen !== undefined) {
         plus += `isOpen=${isOpen}&`
       }
       if (createTimeStart) {
@@ -32,14 +32,23 @@ class RoleService extends BaseService {
       this.$message.error(e)
     }
   }
-  static async getUser (roleId) {
-    let base = '/user/list?pageNum=0&pageSize=9999'
-    if (roleId) {
-      base += `&roleId=${roleId}`
-    }
+  static async getUser (orgId) {
+    const base = 'user/listUnRoleUser'
     try {
       const { code, data } =
-        await axios.get(base)
+        await axios.get(base, { params: { orgId } })
+      if (code === 200) {
+        return data
+      }
+    } catch (e) {
+      this.$message.error(e)
+    }
+  }
+  static async getBindUser (roleId, orgId) {
+    const base = '/user/listUnRoleUser'
+    try {
+      const { code, data } =
+        await axios.get(base, { params: { roleId, orgId } })
       if (code === 200) {
         return data
       }

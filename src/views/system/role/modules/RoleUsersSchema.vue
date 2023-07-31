@@ -43,8 +43,7 @@
 
 <script>
 import { filterTransferOption } from '@/utils/util'
-import { GroupService, RoleService, UserGroupService } from '@/api'
-import { GROUP_FLAG } from '@/tables/group/enum'
+import { RoleService, UserGroupService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 
 export default {
@@ -77,15 +76,15 @@ export default {
      * 获取所有用户组
      * @return {Promise<Undefined>}
      */
-    async getAllUser () {
+    async getAllUser (orgId) {
       try {
-        const { list } = await RoleService.getUser()
-        this.groupList = list.map((el) => {
+        const list = await RoleService.getUser(orgId)
+        this.groupList = [...this.groupList, ...list.map((el) => {
           return {
-            key: el.id,
+            key: el.userId,
             title: el.staffName
           }
-        })
+        })]
       } catch (e) {
         this.groupList = []
         throw e
@@ -121,13 +120,18 @@ export default {
       this.show('分配用户')
       this.record = Object.assign({}, record)
       const that = this
-      RoleService.getUser(record.id).then((r) => {
-        const { list } = r
-        const arr = list.map(l => l.id)
-        that.targetKeys = arr
+      this.groupList = []
+      this.getAllUser(record.organizeId)
+      RoleService.getBindUser(record.id, record.organizeId).then((r) => {
+        that.groupList = [...that.groupList, ...r.map(el => {
+          return {
+            key: el.userId,
+            title: el.staffName
+          }
+        })]
+        that.targetKeys = r.map(l => l.userId)
       })
       this.submit = this.allocateUserGroups
-      this.getAllUser()
       // this.getCurrentGroupList(record.user_id)
     },
     async allocateUserGroups () {

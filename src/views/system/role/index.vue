@@ -12,10 +12,10 @@
           <a-col :md="8" :sm="24">
             <a-form-item label="状态" v-bind="formItemLayout" class="fw">
               <a-select allowClear v-model.trim="queryParams.isOpen" >
-                <a-select-option :value="true">
+                <a-select-option :value="'true'">
                   启用
                 </a-select-option>
-                <a-select-option :value="false">
+                <a-select-option :value="'false'">
                   停用
                 </a-select-option>
               </a-select>
@@ -23,9 +23,7 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-input style="width: 40%;margin-right: 15px" allowClear v-model.trim="queryParams.createTimeStart" placeholder="开始时间" />
-              ----
-              <a-input style="width: 40%;margin-left: 15px" allowClear v-model.trim="queryParams.createTimeEnd" placeholder="结束时间"/>
+              <a-range-picker :format="dateFormat" @change="onDateChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -97,28 +95,29 @@ export default {
       {
         title: '角色编号',
         dataIndex: 'code',
-        sorter: true,
         width: '180px'
       },
       {
         title: '角色名称',
         dataIndex: 'name',
-        width: '150px',
-        sorter: true
+        width: '150px'
+      },
+      {
+        title: '所属部门',
+        dataIndex: 'organizeName',
+        width: '150px'
       },
       {
         title: '状态',
         dataIndex: 'isOpen',
         scopedSlots: { customRender: 'status' },
-        width: '80px',
-        sorter: true
+        width: '80px'
       },
       {
         title: '角色类型',
         dataIndex: 'defaultRole',
         customRender: (text) => text ? '内置角色' : '自定义',
-        width: '120px',
-        sorter: true
+        width: '120px'
       },
       {
         title: '备注',
@@ -144,7 +143,8 @@ export default {
       isOpen: null,
       createTimeStart: '',
       createTimeEnd: ''
-    }
+    },
+    dateFormat: 'YYYY/MM/DD HH:mm:ss'
   }),
   mounted () {
     this.initialPagination()
@@ -161,6 +161,11 @@ export default {
     }
   },
   methods: {
+    onDateChange (date, dateString) {
+      console.log('dateString', dateString)
+      this.queryParams.createTimeStart = dateString[0]
+      this.queryParams.createTimeEnd = dateString[1]
+    },
     initialPagination () {
       this.paginationOpt = {
         defaultCurrent: 1, // 默认当前页数
@@ -314,7 +319,7 @@ export default {
                 this.$notifyDeleteSuccess()
                 this.query(false)
               })
-              .catch(this.$notifyError)
+              .catch(this.$message.error('操作出错！'))
           }
         }
       })
@@ -336,7 +341,7 @@ export default {
               this.$notifyToggleFlagSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError)
+            .catch(this.$message.error('操作出错！'))
         }
 
       })
@@ -355,7 +360,7 @@ export default {
               this.$notifyDeleteSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError)
+            .catch(this.$message.error('操作出错！'))
         }
 
       })
@@ -383,7 +388,7 @@ export default {
                 description: '密码已重置为初始化密码！'
               })
             })
-            .catch(this.$notifyError)
+            .catch(this.$message.error('操作出错！'))
       })
     },
     /**
@@ -401,7 +406,7 @@ export default {
               this.$notifyToggleFlagSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError)
+            .catch(this.$message.error('操作出错！'))
       })
     },
     /**
@@ -419,7 +424,7 @@ export default {
               this.$notifyClearErrorSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError)
+            .catch(this.$message.error('操作出错！'))
       })
     }
   }
