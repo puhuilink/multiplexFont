@@ -85,7 +85,7 @@ import { removeArrayValue } from '@/utils/util'
 import schema from '@/views/system/apartment/modules/schema'
 import { axios } from '@/utils/request'
 import { Confirm } from '~~~/Mixins'
-import { Form } from 'ant-design-vue'
+import { Form, Modal, notification } from 'ant-design-vue'
 import _ from 'lodash'
 const treeData = []
 
@@ -117,7 +117,7 @@ export default {
       spread: true,
       expandedRowKeys: [],
       param: {
-        isOpen: 'true'
+        isOpen: ''
       },
       userList: []
     }
@@ -126,7 +126,6 @@ export default {
   components: { schema },
   methods: {
     handleSearch () {
-      console.log(this.param)
       this.getData({
         isOpen: this.param.isOpen,
         orgName: this.param.orgName
@@ -134,7 +133,7 @@ export default {
     },
     handleReset () {
       this.param = {
-        isOpen: true,
+        isOpen: '',
         orgName: ''
       }
     },
@@ -147,28 +146,35 @@ export default {
     onDelete (record) {
       const title = '删除'
       const content = '确定要删除当前部门吗？'
-      this.$promiseConfirmDelete({
-        title,
-        content,
+      Modal.confirm({
+        title: title,
+        content: content,
+        centered: true,
+        closable: true,
         onOk: async () => {
-          try {
-            const formData = new FormData()
-            formData.append('id', record.id)
-            axios.delete(`/organize/${record.id}`, {
-              headers: {
-                'Content-type': 'application/x-www-form-urlencoded'
-              }
-            })
-            this.$notification.sucess({
-              message: '系统提示',
-              description: '刪除成功'
-            })
-            this.getData()
-          } catch (e) {
-            this.$notification.error({
-              message: '系统提示',
-              description: e
-            })
+          console.log('find', !this.findNodeAndCheckChildren(this.treeData[0], record.id))
+          if (!this.findNodeAndCheckChildren(this.treeData[0], record.id)) {
+            try {
+              const formData = new FormData()
+              formData.append('id', record.id)
+              await axios.delete(`/organize/${record.id}`, {
+                headers: {
+                  'Content-type': 'application/x-www-form-urlencoded'
+                }
+              })
+              await this.getData()
+              this.$notification.success({
+                message: '系统提示',
+                description: '删除成功'
+              })
+            } catch (e) {
+              this.$notification.error({
+                message: '系统提示',
+                description: e
+              })
+            }
+          } else {
+            this.$message.warning('节点不能删除！')
           }
         }
       })
@@ -262,6 +268,31 @@ export default {
       this.$refs.schema.onCancel()
       this.getData()
       this.getUserList()
+    },
+    // 递归查找树节点并判断是否有children
+    findNodeAndCheckChildren (node, targetValue) {
+      // 递归终止条件：如果当前节点为null或undefined，则返回null
+      if (!node) {
+        return null
+      }
+
+      // 检查当前节点是否是目标节点
+      if (node.value === targetValue) {
+        // 如果节点不存在children属性或者children为null或空数组，返回false
+        return node.children && node.children.length > 0
+      }
+
+      // 递归查找子节点
+      for (const child of node.children || []) {
+        // 递归调用函数，查找子树中是否有目标节点，并检查其children
+        const found = this.findNodeAndCheckChildren(child, targetValue)
+        if (found !== null) {
+          return found
+        }
+      }
+
+      // 若在当前子树中未找到目标节点，返回null
+      return null
     },
     // 递归函数，用于遍历树形结构并收集所有父节点的id
     // TODO:展开所有含有children得节点
