@@ -184,13 +184,14 @@ export default {
       const tree = []
       for (const item of data) {
         if (item.parentId === parentId) {
-          const children = this.buildDeptsTree(data, item.id)
+          const children = this.buildDeptsTree(data, item.id, dataIds)
           if (children.length > 0) {
             item.children = children.map(el => {
               return {
                 ...el,
                 title: el.name,
-                key: el.id
+                key: el.id,
+                ...dataIds.indexOf(item.id) ? { disableCheckbox: true } : {}
               }
             })
           }
