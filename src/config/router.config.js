@@ -394,6 +394,12 @@ export const asyncRouterMap = [
           //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
           // },
           {
+            path: '/patrol/group',
+            name: 'PatrolGroup',
+            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
+          },
+          {
             path: '/patrol/plan',
             name: 'Plan',
             component: () => import('@/views/patrol/plan/index'),
@@ -410,12 +416,6 @@ export const asyncRouterMap = [
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
             meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
-          },
-          {
-            path: '/patrol/group',
-            name: 'PatrolGroup',
-            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
-            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
           }
           // {
           //   path: '/patrol/object',
@@ -918,7 +918,7 @@ export const constantRouterMap = [
     name: 'Design',
     hidden: true,
     component: () => import('@/views/design/index'),
-    meta: { title: '视图设计', permission: ['F002002'] },
+    meta: { title: '视图设计', permission: ['F002002'], hidden: true },
     props: route => route.query
   },
 

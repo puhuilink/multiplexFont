@@ -191,7 +191,7 @@ export default {
                 ...el,
                 title: el.name,
                 key: el.id,
-                ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
+                ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
               }
             })
           }
@@ -199,7 +199,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
+            ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
           })
         }
       }
