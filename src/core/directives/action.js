@@ -40,7 +40,7 @@ const action = Vue.directive('action', {
       //     el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
       //   }
       // }
-      if (!roles.menuCodes.includes(binding.arg)) {
+      if (!roles.menuCodes.indexOf(binding.arg)) {
         el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
       }
       // if (!permissionId.includes(p.permissionId)) {
