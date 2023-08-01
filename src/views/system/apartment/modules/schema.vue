@@ -80,22 +80,22 @@
         </a-col>
       </a-row>
 
-      <a-form-model-item
-        label="负责人"
-        v-bind="{
-          labelCol: { span: 4 },
-          wrapperCol: { span: 6, offset: 1 },
-        }"
-        prop="leader"
-      >
-        <a-select
-          v-model="formModel.leaderId"
-          placeholder="选择负责人"
-          allow-clear
-        >
-          <a-select-option :key="item.id" v-for="item in userList" :value="item.id">{{ item.staffName }}</a-select-option>
-        </a-select>
-      </a-form-model-item>
+      <!--      <a-form-model-item-->
+      <!--        label="负责人"-->
+      <!--        v-bind="{-->
+      <!--          labelCol: { span: 4 },-->
+      <!--          wrapperCol: { span: 6, offset: 1 },-->
+      <!--        }"-->
+      <!--        prop="leader"-->
+      <!--      >-->
+      <!--        <a-select-->
+      <!--          v-model="formModel.leaderId"-->
+      <!--          placeholder="选择负责人"-->
+      <!--          allow-clear-->
+      <!--        >-->
+      <!--          <a-select-option :key="item.id" v-for="item in userList" :value="item.id">{{ item.staffName }}</a-select-option>-->
+      <!--        </a-select>-->
+      <!--      </a-form-model-item>-->
     </a-form-model>
     <!-- / 底部按钮 -->
     <template slot="footer">

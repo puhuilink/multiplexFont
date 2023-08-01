@@ -356,12 +356,6 @@ export const asyncRouterMap = [
               meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
             },
             {
-              path: '/patrol/group',
-              name: 'PatrolGroup',
-              component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
-              meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
-            },
-            {
               path: '/patrol/config/pathConfig',
               name: 'PatrolConfigPathEdit',
               hidden: true,
@@ -399,6 +393,12 @@ export const asyncRouterMap = [
           //   component: () => import('@/views/patrol/route/RouteManagement'),
           //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
           // },
+          {
+            path: '/patrol/group',
+            name: 'PatrolGroup',
+            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
+          },
           {
             path: '/patrol/plan',
             name: 'Plan',

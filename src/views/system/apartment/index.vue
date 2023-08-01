@@ -97,7 +97,7 @@ export default {
       treeData,
       columns: [
         { title: '部门名称', dataIndex: 'name', key: 'name' },
-        { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
+        // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
         // { title: '排序', dataIndex: 'sortIndex', key: 'sortIndex', customRender: (el) => Number(el) },
         {
           title: '状态',
