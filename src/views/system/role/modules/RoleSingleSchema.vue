@@ -69,6 +69,7 @@
           checkable
           :selectable="false"
           defaultExpandAll
+          :checkStrictly="true"
           :autoExpandParent="true"
           v-model="record.dataIds"
           :treeData="Depts">
@@ -190,7 +191,6 @@ export default {
         }
         if (item.parent_code === parentId) {
           const children = this.buildTree(data, item.code)
-          console.log(children)
           if (children.length > 0) {
             item.children = children
           }
