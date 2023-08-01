@@ -918,7 +918,7 @@ export const constantRouterMap = [
     name: 'Design',
     hidden: true,
     component: () => import('@/views/design/index'),
-    meta: { title: '视图设计', permission: ['F002002'] },
+    meta: { title: '视图设计', permission: ['F002002'], hidden: true },
     props: route => route.query
   },
 
