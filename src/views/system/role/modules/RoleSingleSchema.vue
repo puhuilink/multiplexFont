@@ -117,7 +117,7 @@ export default {
     },
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
-        const { data: { list, dataIds } } = await axios.get(`/role/get?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
