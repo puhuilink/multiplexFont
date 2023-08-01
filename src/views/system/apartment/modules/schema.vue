@@ -21,8 +21,10 @@
           v-model="formModel.apartmentId"
           placeholder="选择上级部门"
           allow-clear
-          tree-default-expand-all
           :treeData="treeData"
+          treeDefaultExpandAll
+          :maxTagCount="10"
+          :dropdown-style="{ maxHeight: '300px', overflow: 'auto' }"
         >
 
         </a-tree-select>
@@ -87,7 +89,7 @@
         prop="leader"
       >
         <a-select
-          v-model="formModel.leader"
+          v-model="formModel.leaderId"
           placeholder="选择负责人"
           allow-clear
         >
@@ -151,6 +153,7 @@ export default {
         {
           value: '1',
           label: '集团',
+          disabled: true,
           children: [
             {
               value: '2',

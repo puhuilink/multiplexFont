@@ -141,7 +141,7 @@
           </template>
         </a-table>
       </div>
-      <assignModal ref="assign" :role="roleList" @operateSuccess="Success"></assignModal>
+      <assignModal ref="assign" @operateSuccess="Success"></assignModal>
       <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
     </div>
   </div>
@@ -264,7 +264,7 @@ export default {
         isOpen: null
       },
       pageLoading: false,
-      roleList: [],
+      banList: [],
       selectTreeData: []
     }
   },
@@ -276,15 +276,15 @@ export default {
       this.queryParams.orgId = selectedKeys[0]
       this.query()
     },
-    async getRoles () {
-      const { data: { list } } = await axios.get('/role/list', {
-        params: {
-          pageNum: 1,
-          pageSize: 9999
-        }
-      })
-      this.roleList = list
-    },
+    // async getRoles () {
+    //   const { data: { list } } = await axios.get('/role/list', {
+    //     params: {
+    //       pageNum: 1,
+    //       pageSize: 9999
+    //     }
+    //   })
+    //   this.roleList = list
+    // },
     onExpand (expandedKeys) {
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
@@ -297,7 +297,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -314,18 +314,6 @@ export default {
             content,
             closable: true,
             onOk: async () => {
-              // const formData = new FormData()
-              // formData.append('corpIds', this.selectedRowKeys.map(el => Number(el)))
-              // axios.post('/corp/delete', formData, {
-              //   headers: {
-              //     'Content-type': 'application/x-www-form-urlencoded'
-              //   }
-              // })
-              //   .then(() => {
-              //     this.$notifyDeleteSuccess()
-              //     this.query(false)
-              //   })
-              //   .catch(this.$notifyError)
               await axios.delete(`/user/${record.id}`, {
                 headers: {
                   'Content-type': 'application/x-www-form-urlencoded'
@@ -374,14 +362,18 @@ export default {
       }
     },
     async getData () {
-      const { data: { list } } = await axios.get('/organize/list', {
+      const { data: { dataIds, list } } = await axios.get('/organize/list', {
         params: {
           isOpen: true
         }
       })
+      this.banList = dataIds
       this.treeData = buildTree(list.map(el => {
         if (el.parentId === undefined) {
           el.parentId = null
+        }
+        if (this.operationShow(this.banList, el.id)) {
+          el.disabled = true
         }
         return el
       }))
@@ -389,8 +381,14 @@ export default {
         if (el.parentId === undefined) {
           el.parentId = null
         }
+        if (this.operationShow(this.banList, el.id)) {
+          el.disabled = true
+        }
         return el
       }))
+    },
+    operationShow (List = [], id = '') {
+      return List.indexOf(id) === -1
     },
     async query () {
       // TODO 查询
@@ -478,9 +476,6 @@ export default {
   mounted () {
     this.getData()
     this.query()
-  },
-  beforeMount () {
-    this.getRoles()
   }
 }
 </script>

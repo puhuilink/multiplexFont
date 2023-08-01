@@ -64,13 +64,13 @@
         :loading="pageLoading"
         class="components-table-demo-nested">
         <template #operation="text, record">
-          <a class="operator" @click="onAdd(record)">
+          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)">
             <a-icon type="plus"></a-icon>
             新增</a>
-          <a class="operator" @click="onEdit(record)">
+          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)">
             <a-icon type="edit"></a-icon>
             编辑</a>
-          <a class="operator" @click="onDelete(text, record)" v-if="record.parentId">
+          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)">
             <a-icon type="delete"></a-icon>
             删除</a>
         </template>
@@ -119,7 +119,8 @@ export default {
       param: {
         isOpen: ''
       },
-      userList: []
+      userList: [],
+      banList: []
     }
   },
   mixins: [Confirm, Form],
@@ -130,6 +131,9 @@ export default {
         isOpen: this.param.isOpen,
         orgName: this.param.orgName
       })
+    },
+    operationShow (List = [], id = '') {
+      return List.indexOf(id) === -1
     },
     handleReset () {
       this.param = {
@@ -152,7 +156,6 @@ export default {
         centered: true,
         closable: true,
         onOk: async () => {
-          console.log('find', !this.findNodeAndCheckChildren(this.treeData[0], record.id))
           if (!this.findNodeAndCheckChildren(this.treeData[0], record.id)) {
             try {
               const formData = new FormData()
@@ -223,15 +226,19 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { list } } = await axios.get('/organize/list', {
+        const { data: { dataIds, list } } = await axios.get('/organize/list', {
           params: {
             ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
             ...this.param.orgName ? { name: this.param.orgName } : {}
           }
         })
+        this.banList = dataIds
         this.treeData = this.buildTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
+          }
+          if (this.operationShow(this.banList, el.id)) {
+            el.disabled = true
           }
           return el
         }))
