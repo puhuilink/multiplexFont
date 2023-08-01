@@ -107,6 +107,9 @@ export default {
     submit: () => {}
   }),
   computed: {},
+  async mounted () {
+    await this.initTreeData()
+  },
   methods: {
     cancel () {
       this.visible = false
@@ -139,7 +142,7 @@ export default {
                 ...el,
                 title: el.name,
                 key: el.id,
-                ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
+                ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
               }
             })
           }
@@ -147,7 +150,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
+            ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
           })
         }
       }
