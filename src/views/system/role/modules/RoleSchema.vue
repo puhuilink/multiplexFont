@@ -72,6 +72,8 @@
             <a-tree
               checkable
               defaultExpandAll
+              :selectable="false"
+              :checkStrictly="true"
               :autoExpandParent="true"
               v-model="dataForm.dataIds"
               :treeData="Depts">
@@ -239,7 +241,6 @@ export default {
         }
         if (item.parent_code === parentId) {
           const children = this.buildTree(data, item.code)
-          console.log(children)
           if (children.length > 0) {
             item.children = children
           }

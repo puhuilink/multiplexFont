@@ -4,6 +4,8 @@
       <a-tree
         checkable
         defaultExpandAll
+        :selectable="false"
+        :checkStrictly="true"
         :autoExpandParent="true"
         v-model="checkedKeys"
         @select="onSelect"
@@ -125,8 +127,46 @@ export default {
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
     },
-    onCheck (checkedKeys, info) {
-      this.$emit('menuChange', checkedKeys.checked)
+    onCheck (checkedKeys) {
+      const before = this.record.data
+      const after = checkedKeys.checked ? checkedKeys.checked : checkedKeys
+      let result
+      if (before.length > after.length) {
+        // 取消勾选了一个选项
+        const element = before.filter(el => !after.includes(el))[0]
+        const e = this.findChildren(element, this.menu)
+        result = after.filter(a => !e.includes(a))
+      } else if (before.length < after.length) {
+        // 勾选了一个选项
+        const element = after.filter(el => !before.includes(el))[0]
+        const e = this.findChildren(element, this.menu)
+        result = Array.from(new Set([...after, ...e]))
+      } else {
+        result = before
+      }
+      this.checkedKeys = result
+      this.$emit('menuChange', result)
+    },
+    findChildren (str, data) {
+      const count = (str.length - str.length % 3) / 3 + 1
+      const arr = []
+      let origin = data.filter(d => d.key === str.substring(0, 1))[0]
+      for (let i = 1; i < count; i++) {
+        origin = origin.children.filter(o => o.key === str.substring(0, 1 + 3 * i))[0]
+      }
+      arr.push(...this.findChildrenKeys(origin))
+      return arr
+    },
+    findChildrenKeys (data) {
+      const arr = []
+      if (data.children) {
+        data.children.forEach(child => {
+          arr.push(...this.findChildrenKeys(child))
+        })
+      } else {
+        arr.push(data.key)
+      }
+      return arr
     }
   }
 }

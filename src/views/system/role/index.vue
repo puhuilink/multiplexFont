@@ -41,7 +41,7 @@
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
-      rowKey="role_code"
+      rowKey="id"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
