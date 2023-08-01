@@ -107,13 +107,13 @@ export default {
     submit: () => {}
   }),
   computed: {},
-  async mounted () {
-    await this.getData()
-    await this.getMenu()
-  },
   methods: {
     cancel () {
       this.visible = false
+    },
+    async initTreeData () {
+      await this.getData()
+      await this.getMenu()
     },
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
@@ -139,7 +139,7 @@ export default {
                 ...el,
                 title: el.name,
                 key: el.id,
-                ...dataIds.indexOf(item.id) ? { disableCheckbox: true } : {}
+                ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
               }
             })
           }
@@ -147,7 +147,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...dataIds.indexOf(item.id) ? { disableCheckbox: true } : {}
+            ...dataIds.indexOf(item.id) ?{}: { disableCheckbox: true }
           })
         }
       }
@@ -172,8 +172,6 @@ export default {
             return el
           }
         }).filter((f) => f)
-        console.log(fList)
-        console.log(mList)
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
@@ -214,6 +212,7 @@ export default {
     async updateMenu (record) {
       this.record = { ...record }
       this.show('编辑菜单权限')
+      await this.initTreeData()
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
       this.form.setFieldsValue(_.pick(record, keys))
@@ -226,7 +225,7 @@ export default {
       this.record = { ...record }
       this.submit = this.update
       this.show('编辑数据权限')
-      await this.getData()
+      await this.initTreeData()
       await this.$nextTick()
       const keys = Object.keys(this.form.getFieldsValue())
       this.form.setFieldsValue(_.pick(record, keys))
