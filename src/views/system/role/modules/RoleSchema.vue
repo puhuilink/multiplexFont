@@ -169,18 +169,18 @@ export default {
   methods: {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
-        const { data: { list } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        const { data: { list, dataIds } } = await axios.get(`/role/get?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
           }
           return el
-        }))
+        }), null, dataIds)
       } catch (e) {
         throw e
       }
     },
-    buildDeptsTree (data, parentId = null) {
+    buildDeptsTree (data, parentId = null, dataIds) {
       const tree = []
       for (const item of data) {
         if (item.parentId === parentId) {
@@ -197,7 +197,8 @@ export default {
           tree.push({
             ...item,
             title: item.name,
-            key: item.id
+            key: item.id,
+            ...dataIds.includes(item.id) ? { disableCheckbox: true } : {}
           })
         }
       }
