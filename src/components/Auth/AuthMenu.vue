@@ -163,9 +163,8 @@ export default {
         data.children.forEach(child => {
           arr.push(...this.findChildrenKeys(child))
         })
-      } else {
-        arr.push(data.key)
       }
+      arr.push(data.key)
       return arr
     }
   }

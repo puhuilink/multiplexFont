@@ -23,7 +23,7 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-range-picker :format="dateFormat" @change="onDateChange" />
+              <a-range-picker :show-time="{ format: 'HH:mm:ss' }" :format="dateFormat" @change="onDateChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -144,7 +144,7 @@ export default {
       createTimeStart: '',
       createTimeEnd: ''
     },
-    dateFormat: 'YYYY/MM/DD HH:mm:ss'
+    dateFormat: 'YYYY-MM-DD HH:mm:ss'
   }),
   mounted () {
     this.initialPagination()
@@ -319,7 +319,7 @@ export default {
                 this.$notifyDeleteSuccess()
                 this.query(false)
               })
-              .catch(this.$message.error('操作出错！'))
+              .catch(e => this.$message.error(e))
           }
         }
       })
@@ -341,7 +341,7 @@ export default {
               this.$notifyToggleFlagSuccess()
               this.query(false)
             })
-            .catch(this.$message.error('操作出错！'))
+            .catch(e => this.$message.error(e))
         }
 
       })
@@ -360,7 +360,7 @@ export default {
               this.$notifyDeleteSuccess()
               this.query(false)
             })
-            .catch(this.$message.error('操作出错！'))
+            .catch(e => this.$message.error(e))
         }
 
       })
@@ -388,7 +388,7 @@ export default {
                 description: '密码已重置为初始化密码！'
               })
             })
-            .catch(this.$message.error('操作出错！'))
+            .catch(e => this.$message.error(e))
       })
     },
     /**
@@ -406,7 +406,7 @@ export default {
               this.$notifyToggleFlagSuccess()
               this.query(false)
             })
-            .catch(this.$message.error('操作出错！'))
+            .catch(e => this.$message.error(e))
       })
     },
     /**
@@ -424,7 +424,7 @@ export default {
               this.$notifyClearErrorSuccess()
               this.query(false)
             })
-            .catch(this.$message.error('操作出错！'))
+            .catch(e => this.$message.error(e))
       })
     }
   }
