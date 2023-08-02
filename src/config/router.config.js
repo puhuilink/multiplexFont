@@ -33,6 +33,7 @@ export const asyncRouterMap = [
         name: 'view',
         redirect: '/view/display',
         component: RouteView,
+        hidden: true,
         meta: { title: '视图管理', keepAlive: true, icon: 'home', permission: [ 'F002' ] },
         children: [
           {
@@ -852,29 +853,29 @@ export const asyncRouterMap = [
           //   meta: { title: '单位管理', keepAlive: true }
           // }
         ]
-      },
-      // 个人设置
-      {
-        path: '/user',
-        name: 'user',
-        redirect: '/user/pwd-change',
-        component: RouteView,
-        meta: { title: '个人中心', keepAlive: true, icon: 'user' },
-        children: [
-          {
-            path: '/pwd-change',
-            name: 'PwdChange',
-            component: () => import('@/views/user/PwdChange'),
-            meta: { title: '重置密码' }
-          },
-          {
-            path: '/settings',
-            name: 'settings',
-            component: () => import('@/views/user/settings/index'),
-            meta: { title: '个人设置', hideHeader: true }
-          }
-        ]
       }
+      // 个人设置
+      // {
+      //   path: '/user',
+      //   name: 'user',
+      //   redirect: '/user/pwd-change',
+      //   component: RouteView,
+      //   meta: { title: '个人中心', keepAlive: true, icon: 'user', hidden: true },
+      //   children: [
+      //     {
+      //       path: '/pwd-change',
+      //       name: 'PwdChange',
+      //       component: () => import('@/views/user/PwdChange'),
+      //       meta: { title: '重置密码' }
+      //     },
+      //     {
+      //       path: '/settings',
+      //       name: 'settings',
+      //       component: () => import('@/views/user/settings/index'),
+      //       meta: { title: '个人设置', hideHeader: true }
+      //     }
+      //   ]
+      // }
     ]
   },
   // 视图设计
