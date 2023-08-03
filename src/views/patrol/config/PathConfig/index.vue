@@ -69,21 +69,18 @@ export default {
       {
         title: '巡更路径名称',
         dataIndex: 'alias',
-        width: '150px',
-        sorter: true
+        width: '150px'
       },
       {
         title: '巡更组',
         dataIndex: 'groupId',
         scopedSlots: { customRender: 'status' },
-        width: '80px',
-        sorter: true
+        width: '80px'
       },
       {
         title: '提交人',
         dataIndex: 'updator',
-        width: '120px',
-        sorter: true
+        width: '120px'
       },
       {
         title: '提交时间',

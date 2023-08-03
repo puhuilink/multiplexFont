@@ -80,13 +80,11 @@ export default {
         {
           title: '交班人姓名',
           dataIndex: 'handName',
-          sorter: true,
           width: 180
         },
         {
           title: '交班时间',
           dataIndex: 'handTime',
-          sorter: true,
           width: 180,
           customRender: hand_time => moment(hand_time).format('YYYY-MM-DD HH:mm:ss')
         },
@@ -99,13 +97,11 @@ export default {
         {
           title: '接班人姓名',
           dataIndex: 'receiveName',
-          sorter: true,
           width: 180
         },
         {
           title: '接班时间',
           dataIndex: 'receiveTime',
-          sorter: true,
           defaultSortOrder: 'descend',
           width: 180,
           customRender: time => time ? moment(time).format() : ''
