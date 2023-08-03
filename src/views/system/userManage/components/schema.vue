@@ -92,7 +92,10 @@
               wrapperCol: { span: 18 },
             }"
             prop="pwd"
-            :rules="[{ required: true, message: '请填写登录密码' }]"
+            :rules="[
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { validator: validatePass, trigger: 'blur' }
+            ]"
           >
             <a-input v-model="formModel.pwd"></a-input>
           </a-form-model-item>
@@ -183,6 +186,35 @@ export default {
       formItemLayout: {
         labelCol: { span: 4 },
         wrapperCol: { span: 16, offset: 1 }
+      },
+      validatePass: (rule, value, callback) => {
+        let level = 0
+        // 判断这个字符串中有没有数字
+        if (/[0-9]/.test(value)) {
+          level++
+        }
+        // 判断字符串中有没有大写字母
+        if (/[A-Z]/.test(value)) {
+          level++
+        }
+
+        // 判断字符串中有没有小写字母
+        if (/[a-z]/.test(value)) {
+          level++
+        }
+        // // 判断字符串中有没有特殊符号
+        if (/[^0-9a-zA-Z_]/.test(value)) {
+          level++
+        }
+        if (value.length < 8) {
+          callback(new Error('密码至少8位'))
+        } else {
+          if (level >= 3) {
+            callback()
+          } else {
+            callback(new Error('英文字母区分大小写以及数字'))
+          }
+        }
       }
     }
   },
