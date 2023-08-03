@@ -145,14 +145,12 @@ export default {
         title: '任务单号',
         dataIndex: 'id',
         width: 150,
-        fixed: 'left',
-        sorter: true
+        fixed: 'left'
       },
       {
         title: '计划名称',
         dataIndex: 'planAlias',
-        width: 220,
-        sorter: true
+        width: 220
       },
       {
         title: '巡更组',
@@ -163,7 +161,6 @@ export default {
         title: '巡更实际开始时间',
         dataIndex: 'actualStartTime',
         width: 180,
-        sorter: true,
         defaultSortOrder: 'descend',
         customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
@@ -171,21 +168,18 @@ export default {
         title: '延迟开始',
         dataIndex: 'actualStartLate',
         width: 120,
-        sorter: true,
         customRender: actual_start_late => actual_start_late ? '是' : '否'
       },
       {
         title: '巡更实际结束时间',
         dataIndex: 'actualEndTime',
         width: 180,
-        sorter: true,
         customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
       {
         title: '超时完成',
         dataIndex: 'actualStartLate',
         width: 120,
-        sorter: true,
         // TODO: useMapping
         customRender: actual_end_late => actual_end_late ? '是' : '否'
       },
@@ -193,7 +187,6 @@ export default {
         title: '任务单状态',
         dataIndex: 'status',
         width: 120,
-        sorter: true,
         customRender: status => {
           return STATUS_MAPPING.get(status)
         }

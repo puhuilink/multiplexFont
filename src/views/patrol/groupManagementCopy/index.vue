@@ -108,21 +108,18 @@ export default {
       columns: Object.freeze([
         {
           title: '巡更组编号',
-          dataIndex: 'id',
-          sorter: (a, b) => new Date(a.createTime) - new Date(b.createTime)
+          dataIndex: 'id'
         },
         {
           title: '巡更组名称',
           dataIndex: 'name',
-          width: '220px',
-          sorter: (a, b) => a.name.length - b.name.length
+          width: '220px'
         },
         {
           title: '有效标识',
           dataIndex: 'isOpen',
           customRender: (text) => (text ? '有效' : '无效'),
-          width: '180px',
-          sorter: (a, b) => a.name.localeCompare(b.name)
+          width: '180px'
         },
         {
           title: '备注',
