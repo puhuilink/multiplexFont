@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import { MENU, MODULE } from '@/utils/menu'
 import { getMenuTree, getButtonTree } from '@/utils/util'
-import { AuthorizeObjectService, FunctionService } from '@/api/index'
+import { AuthorizeObjectService, FunctionService } from '@/api'
 
 export default {
   name: 'AuthMenu',

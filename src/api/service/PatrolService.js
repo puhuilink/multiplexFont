@@ -6,12 +6,12 @@ import {
   PatrolTaskStatusDao, PatrolTaskReportViewDao
 } from '../dao/index'
 import { PatrolChangeShiftDao } from '../dao/PatrolChangeShiftDao'
-import { PatrolChangeShiftEventDao } from '../dao/PatrolChangeShiftEventDao'
+
 import _ from 'lodash'
 import { axios, sql, xungeng } from '@/utils/request'
 import { decrypt } from '@/utils/aes'
 import moment from 'moment-timezone'
-import { dealQuery, sqlResultDealer } from '@/utils/util'
+import { sqlResultDealer } from '@/utils/util'
 
 class PatrolService extends BaseService {
   // 交接班查询
@@ -56,6 +56,7 @@ class PatrolService extends BaseService {
   // 遗留事项详情
   static async changeShiftDefect (id) {
     const { data: { data } } = await xungeng.post('/changeShifts/detail', { id: id })
+    console.log(data)
     return {
       id: '360027098783416320',
       handAccount: 'nl3uoMkuIH3lNZ4q2aRYaQ==',
@@ -409,7 +410,7 @@ class PatrolService extends BaseService {
   static async qrCode (qrId) {
     const formData = new FormData()
     formData.append('content', qrId)
-    return axios.post(`qrcode/create`, formData, {
+    return xungeng.post(`qrcode/create`, formData, {
       responseType: 'arraybuffer',
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
