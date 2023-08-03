@@ -333,7 +333,7 @@ export default {
      */
     async update () {
       if (this.dataForm.dataIds.checked) {
-        this.dataForm.dataIds = this.record.dataIds.checked
+        this.dataForm.dataIds = this.dataForm.dataIds.checked
       }
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
