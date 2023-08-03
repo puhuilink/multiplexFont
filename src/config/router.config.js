@@ -61,16 +61,16 @@ export const asyncRouterMap = [
             path: '/OperationMonitoring/Device',
             name: 'Operation',
             component: () => import('@/views/SecurityMonitoring/view/dataCenterView'),
-            meta: { title: 'IT设备监控管理' }
+            meta: { title: 'IT设备监控管理', permission: ['F022001'] }
           },
           {
             path: '/OperationMonitoring/DH',
             name: 'DH',
             component: () => import('@/views/SecurityMonitoring/view/xungeng'),
-            meta: { title: '动环监控管理' }
+            meta: { title: '动环监控管理', permission: ['F022002'] }
           }
         ],
-        meta: { title: '运维监控', icon: 'laptop' }
+        meta: { title: '运维监控', icon: 'laptop', permission: ['F022'] }
       },
 
       // alarm
@@ -449,7 +449,7 @@ export const asyncRouterMap = [
         name: 'machineRoom',
         redirect: '/machineRoom/room',
         component: RouteView,
-        meta: { title: '机房监控', keepAlive: true, icon: 'line-chart' },
+        meta: { title: '机房监控', keepAlive: true, icon: 'line-chart', permission: ['F022'] },
         children: [
           {
             path: '/machineRoom/room',
