@@ -449,7 +449,7 @@ export const asyncRouterMap = [
         name: 'machineRoom',
         redirect: '/machineRoom/room',
         component: RouteView,
-        meta: { title: '机房监控', keepAlive: true, icon: 'line-chart', permission: ['F022'] },
+        meta: { title: '机房监控', keepAlive: true, icon: 'line-chart', permission: ['F021'] },
         children: [
           {
             path: '/machineRoom/room',
