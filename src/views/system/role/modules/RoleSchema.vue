@@ -189,11 +189,13 @@ export default {
           const children = this.buildDeptsTree(data, item.id, dataIds)
           if (children.length > 0) {
             item.children = children.map(el => {
+              console.log(item.id)
+              console.log(dataIds.indexOf(item.id))
               return {
                 ...el,
                 title: el.name,
                 key: el.id,
-                ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
+                ...dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
               }
             })
           }
@@ -201,7 +203,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...dataIds.indexOf(item.id) ? {} : { disableCheckbox: true }
+            ...dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
           })
         }
       }
