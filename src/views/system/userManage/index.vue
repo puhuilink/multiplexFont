@@ -297,7 +297,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -372,7 +372,7 @@ export default {
         if (el.parentId === undefined) {
           el.parentId = null
         }
-        if (this.operationShow(this.banList, el.id)) {
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
           el.disabled = true
         }
         return el
@@ -381,7 +381,7 @@ export default {
         if (el.parentId === undefined) {
           el.parentId = null
         }
-        if (this.operationShow(this.banList, el.id)) {
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
           el.disabled = true
         }
         return el

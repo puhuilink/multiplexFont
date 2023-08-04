@@ -237,7 +237,7 @@ export default {
           if (el.parentId === undefined) {
             el.parentId = null
           }
-          if (this.operationShow(this.banList, el.id)) {
+          if (!el.isOpen || this.operationShow(this.banList, el.id)) {
             el.disabled = true
           }
           return el
