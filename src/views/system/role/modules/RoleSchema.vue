@@ -203,7 +203,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+            ...!item.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
           })
         }
       }
