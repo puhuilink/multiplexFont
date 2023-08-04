@@ -124,7 +124,7 @@ export default {
             dataIndex: 'status',
             customRender: (text) => {
               console.log('text', text)
-              return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === '0' ? '已完成' : '未完成'}</span>)
+              return (<span class={Number(text) === 0 ? 'event_normal' : 'event_danger'}>{Number(text) === 0 ? '已完成' : '未完成'}</span>)
             }
           }
         ]
@@ -137,10 +137,10 @@ export default {
   filters: {
     data (data = '') {
       switch (data) {
-        case '0':
-          return '已完成'
+        case '2':
+          return '异常'
         case '1':
-          return '未完成'
+          return '正常'
         default:
           return ''
       }
@@ -157,7 +157,7 @@ export default {
     },
     monitorStatus (monitorStatus = '') {
       switch (monitorStatus) {
-        case '0':
+        case '2':
           return '异常'
         case '1':
           return '正常'
@@ -167,11 +167,11 @@ export default {
     },
     sanitary (sanitary = '') {
       switch (sanitary) {
-        case '0':
+        case '3':
           return '较差'
-        case '1':
-          return '良好'
         case '2':
+          return '良好'
+        case '1':
           return '优秀'
         default:
           return ''
@@ -193,10 +193,10 @@ export default {
     },
     tool (tool = '') {
       switch (tool) {
-        case '0':
-          return '异常'
         case '1':
           return '正常'
+        case '2':
+          return '异常'
         default:
           return ''
       }
