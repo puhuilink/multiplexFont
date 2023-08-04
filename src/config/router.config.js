@@ -263,7 +263,7 @@ export const asyncRouterMap = [
         meta: { title: '安全监控',
           keepAlive: true,
           icon: 'monitor',
-          permission: 'F020'
+          permission: ['F020']
         },
         children: [
           {
@@ -273,13 +273,13 @@ export const asyncRouterMap = [
             // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
             meta: { title: '漏洞统计管理',
-              permission: 'F020002' }
+              permission: ['F020002'] }
           },
           {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
             meta: { title: '集团安全态势感知',
-              permission: 'F020004' },
+              permission: ['F020004'] },
             component: () => import('@/views/SecurityMonitoring/view/safeTouch')
           },
           {
@@ -287,7 +287,7 @@ export const asyncRouterMap = [
             name: 'SituationalAwarenessSecond',
             // component: () => import('@/views/user/settings/index'),
             meta: { title: '二级单位安全态势感知',
-              permission: 'F020003' },
+              permission: ['F020003'] },
             component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
           },
           {
@@ -300,10 +300,10 @@ export const asyncRouterMap = [
               name: 'BanList',
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
               meta: { title: '一键封禁',
-                permission: 'F020001001' }
+                permission: ['F020001001'] }
             }],
             meta: { title: '应急处理',
-              permission: 'F020001'
+              permission: ['F020001']
             }
           }
           // {
