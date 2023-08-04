@@ -75,7 +75,7 @@ export default {
         },
         {
           title: '巡更组',
-          dataIndex: 'groupId',
+          dataIndex: 'groupName',
           width: 160
         },
         {
