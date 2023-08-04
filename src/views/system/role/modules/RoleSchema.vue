@@ -195,7 +195,7 @@ export default {
                 ...el,
                 title: el.name,
                 key: el.id,
-                ...dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+                ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
               }
             })
           }
@@ -203,7 +203,7 @@ export default {
             ...item,
             title: item.name,
             key: item.id,
-            ...dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+            ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
           })
         }
       }
