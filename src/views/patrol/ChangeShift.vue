@@ -148,7 +148,7 @@ export default {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-        const { data: { list } } = await xungeng.get('/changeShifts/list', {
+        const { data: { list, total } } = await xungeng.get('/changeShifts/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
             pageNum: this.paginationOpt.defaultCurrent,
@@ -156,6 +156,7 @@ export default {
           }
         })
         this.dataSource = list
+        this.paginationOpt.total = total
       } catch (e) {
         throw e
       } finally {

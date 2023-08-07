@@ -226,7 +226,7 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { dataIds, list } } = await axios.get('/organize/list', {
+        const { data: { dataIds, list } } = await axios.get('/organize/table', {
           params: {
             ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
             ...this.param.orgName ? { name: this.param.orgName } : {}
@@ -237,7 +237,7 @@ export default {
           if (el.parentId === undefined) {
             el.parentId = null
           }
-          if (!el.isOpen || this.operationShow(this.banList, el.id)) {
+          if (this.operationShow(this.banList, el.id)) {
             el.disabled = true
           }
           return el

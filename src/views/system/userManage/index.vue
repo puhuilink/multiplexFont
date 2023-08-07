@@ -78,7 +78,7 @@
                 :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
                 :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
                 <a-range-picker
-                  style="width: 160px"
+                  style="width: 195px"
                   :show-time="{ format: 'HH:mm' }"
                   format="YYYY-MM-DD HH:mm"
                   :placeholder="['开始时间', '结束时间']"
@@ -86,11 +86,11 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col v-bind="colLayout" :style="{ textAlign: 'left' }">
+            <a-col :span="6" :offset="12">
               <a-button type="primary" @click="query">
                 <a-icon type="search" />查询
               </a-button>
-              <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
+              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
                 <a-icon type="sync" />重置
               </a-button>
             </a-col>
@@ -116,6 +116,7 @@
           :columns="columns"
           :pagination="paginationOpt"
           :loading="pageLoading"
+          rowKey="id"
           :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template #isOpen="text, record">
@@ -143,6 +144,7 @@
       </div>
       <assignModal ref="assign" @operateSuccess="Success"></assignModal>
       <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
+      <passwordSchema ref="deleteSchema" @operateSuccess="Success"></passwordSchema>
     </div>
   </div>
 </template>
@@ -154,6 +156,7 @@ import assignModal from '@/views/system/userManage/components/assignModal'
 import { axios } from '@/utils/request'
 import { buildTree } from '@/utils/util'
 import schema from './components/schema'
+import passwordSchema from './components/passwordSchema'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -197,7 +200,7 @@ const columns = [
   },
   {
     title: '备注',
-    dataIndex: 'remarks',
+    dataIndex: 'remark',
     key: 'remarks',
     ellipsis: true
   },
@@ -217,7 +220,8 @@ export default {
   mixins: [ Confirm ],
   components: {
     assignModal,
-    schema
+    schema,
+    passwordSchema
   },
   data () {
     return {
@@ -327,32 +331,7 @@ export default {
           })
           break
         case '2':
-          Modal.confirm({
-            icon: this.renderIcon,
-            title: '提示',
-            content: this.renderInput,
-            centered: true,
-            closable: true,
-            onOk: async () => {
-              try {
-                await axios.post('/user/changeUserPwd', {
-                  id: record.id,
-                  newPwd: this.password
-                }).then(() => {
-                  this.$notification.success({
-                    message: '系统提示',
-                    description: '修改密码成功，下次登录生效'
-                  })
-                  this.password = ''
-                })
-              } catch (e) {
-                this.$notifyError(e)
-                throw e
-              } finally {
-                this.query()
-              }
-            }
-          })
+          this.$refs.deleteSchema.onShow(record)
           break
         case '3':
           this.$refs.assign.onShow(record)
