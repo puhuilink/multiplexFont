@@ -118,7 +118,6 @@ export default {
             align: 'center',
             width: 150,
             sorter: (a, b) => {
-              console.log('ab', a, b)
               return Number(a.eventstatus) - Number(b.eventstatus)
             },
             dataIndex: 'status',

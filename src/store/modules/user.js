@@ -159,7 +159,6 @@ const user = {
             commit('SET_TOKEN', data)
           }).then(() => {
             UserService.getDetail().then(({ data }) => {
-              console.log('data', data)
               Vue.ls.set(USER, data)
               commit('SET_ID', data.userId)
               commit('SET_NAME', { name: data.staffName })

@@ -139,7 +139,7 @@ export default {
     async query () {
       try {
         this.pageLoading = true
-        const { data: { list } } = await xungeng.get('/plan/list', {
+        const { data: { list, total } } = await xungeng.get('/plan/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
             pageNum: this.paginationOpt.defaultCurrent,
@@ -147,6 +147,7 @@ export default {
           }
         })
         this.dataSource = list
+        this.paginationOpt.total = total
       } catch (e) {
         throw e
       } finally {
