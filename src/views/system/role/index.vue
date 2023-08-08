@@ -52,13 +52,23 @@
       <template #action="text,record">
         <a @click="onEditUser(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)">菜单权限</a>
-        <a-divider type="vertical" />
-        <a @click="onUpdateData(record)">数据权限</a>
-        <a-divider type="vertical" />
-        <a @click="onAllocateUserGroup(record)">分配用户</a>
-        <a-divider type="vertical" />
-        <a @click="deleteRole(record)">删除</a>
+        <a-dropdown>
+          <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
+          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+            <a-menu-item key="1">
+              菜单权限
+            </a-menu-item>
+            <a-menu-item key="2">
+              数据权限
+            </a-menu-item>
+            <a-menu-item key="3">
+              分配用户
+            </a-menu-item>
+            <a-menu-item key="4">
+              删除
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </template>
     </a-table>
 
@@ -122,7 +132,7 @@ export default {
       {
         title: '备注',
         dataIndex: 'remark',
-        'min-width': 300
+        width: 100
       },
       {
         title: '创建时间',
@@ -131,7 +141,9 @@ export default {
       },
       {
         title: '操作',
-        width: '400px',
+        width: 130,
+        align: 'center',
+        fixed: 'right',
         scopedSlots: { customRender: 'action' }
       }
     ]),
@@ -162,7 +174,6 @@ export default {
   },
   methods: {
     onDateChange (date, dateString) {
-      console.log('dateString', dateString)
       this.queryParams.createTimeStart = dateString[0]
       this.queryParams.createTimeEnd = dateString[1]
     },
@@ -426,6 +437,23 @@ export default {
             })
             .catch(e => this.$message.error(e))
       })
+    },
+    moreOption (record, key) {
+      switch (key) {
+        case 1:
+          this.onUpdateMenu(record)
+          break
+        case 2:
+          this.onUpdateData(record)
+          break
+        case 3:
+          this.onAllocateUserGroup(record)
+          break
+        case 4:
+          this.deleteRole(record)
+          break
+        default:
+      }
     }
   }
 }
