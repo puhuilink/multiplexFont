@@ -278,18 +278,18 @@ export const asyncRouterMap = [
           {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            meta: { title: '集团安全态势感知',
+            meta: { title: '安全态势感知',
               permission: ['F020004'] },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouch')
+            component: () => import('@/views/SecurityMonitoring/view/safeComb')
           },
-          {
-            path: '/SecurityMonitoring/SituationalAwarenessSecond',
-            name: 'SituationalAwarenessSecond',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '二级单位安全态势感知',
-              permission: ['F020003'] },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
-          },
+          // {
+          //   path: '/SecurityMonitoring/SituationalAwarenessSecond',
+          //   name: 'SituationalAwarenessSecond',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '二级单位安全态势感知',
+          //     permission: ['F020003'] },
+          //   component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+          // },
           {
             path: '/SecurityMonitoring/EmergencyManagement',
             name: 'Emergency',
