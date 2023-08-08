@@ -1,7 +1,6 @@
 <template>
   <Iframe
-    width="100%"
-    height="100%"
+    class="iframe"
     :src="`${url}/xunh5/#/pages/safeView/indexPC`"
     style="border: none"
     ref="childIframe"
@@ -45,5 +44,9 @@ export default {
 </script>
 
 <style scoped>
-
+.iframe {
+  height: calc(100vh - 100px);
+  width: calc(100vw - 276px);
+  margin: 0 auto;
+}
 </style>
