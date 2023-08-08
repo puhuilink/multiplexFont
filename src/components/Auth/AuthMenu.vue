@@ -52,6 +52,7 @@ export default {
     async getInitMenu () {
       if (this.menus.length) {
         this.menu = this.menus
+        console.log( this.menu);
       }
       if (this.isRole) {
         const { data } = this.record
@@ -74,6 +75,7 @@ export default {
           this.setCheckedKeys(menuTree)
           // this.setCheckedKeys([{code: 'F002003', key: 'F002003'})
         }
+        // 根据权限数据构建按钮树结构
         if (buttonOriginalPermission.length > 0) {
           const buttonTree = getButtonTree(null, buttonOriginalPermission)
           this.setCheckedKeys(buttonTree)
@@ -156,6 +158,7 @@ export default {
       arr.push(...this.findChildrenKeys(origin))
       return arr
     },
+    
     findChildrenKeys (data) {
       const arr = []
       if (data.children) {

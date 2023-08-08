@@ -261,6 +261,7 @@ export default {
      * @event
      */
     onUpdateMenu (record) {
+      console.log(record);
       this.$refs['singleSchema'].updateMenu(record)
     },
     /**

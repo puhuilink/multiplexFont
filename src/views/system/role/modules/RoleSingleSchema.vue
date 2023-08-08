@@ -52,7 +52,7 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="权限范围" prop="data_type">
-        <a-select v-model="record.dataType" default-value="ALL">
+        <a-select v-model="record.dataType" default-value="ALL" @change="dataTypeChange">
           <a-select-option :value="'ALL'">
             全部数据权限
           </a-select-option>
@@ -105,7 +105,8 @@ export default {
     ],
     menus: [],
     record: null,
-    submit: () => {}
+    submit: () => {},
+    dataIdsALL:[]
   }),
   computed: {},
   async mounted () {
@@ -122,6 +123,7 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        this.dataIdsALL=dataIds
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -142,8 +144,7 @@ export default {
               return {
                 ...el,
                 title: el.name,
-                key: el.id,
-                ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+                key: el.id
               }
             })
           }
@@ -221,6 +222,7 @@ export default {
       this.form.setFieldsValue(_.pick(record, keys))
       this.submit = this.insert
     },
+    
     /**
      * 打开数据权限窗口
      */
@@ -252,12 +254,28 @@ export default {
         this.confirmLoading = false
       }
     },
+     /* 判断数据类型 */
+     dataTypeChange(){
+      console.log(this.record);
+
+      if (this.record.dataType==="DEPT") {
+        this.record.dataIds = { checked:[this.record.organizeId]}
+        console.log(this.record.dataIds);
+        this.$forceUpdate
+      }
+      if (this.record.dataType==="ALL") {
+        this.record.dataIds = this.dataIdsALL
+        console.log(this.record.dataIds);
+        this.$forceUpdate
+      }
+    },
     /**
      * 调取编辑接口
      */
     async update () {
       const operateType = 'DATA'
       Object.assign(this.record, { operateType })
+      console.log(this.record);
       if (this.record.dataIds.checked) {
         this.record.dataIds = this.record.dataIds.checked
       }
