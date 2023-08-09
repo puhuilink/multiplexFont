@@ -439,7 +439,6 @@ export default {
       })
     },
     moreOption (record, { key }) {
-      console.log('record', record, key, typeof key)
       switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)

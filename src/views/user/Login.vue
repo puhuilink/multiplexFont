@@ -176,7 +176,8 @@ export default {
       },
       identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
       identifyCode: '',
-      loginParams: {}
+      loginParams: {},
+      otpName: process.env.VUE_APP_QUOTE_URL
     }
   },
   computed: {
@@ -280,7 +281,7 @@ export default {
         loginParams.pwd = values.pwd
         this.loginParams = loginParams
         axios.post('/otp/getStatus', {
-          appId: 'jfjk-62sc',
+          appId: this.otpName,
           userName: values.userId,
           transNo: 'transNo1'
         }, {
@@ -288,13 +289,13 @@ export default {
         }).then((res) => {
           if (res.data.statusCode === 1201) {
             this.$refs.reg.otpBind({
-              appId: 'jfjk-62sc',
+              appId: this.otpName,
               userName: values.userId,
               transNo: 'transNo1'
             })
           } else if (res.data.statusCode === 1200) {
             this.$refs.factory.onShow({
-              appId: 'jfjk-62sc',
+              appId: this.otpName,
               userName: values.userId,
               transNo: 'transNo1'
             })

@@ -17,7 +17,7 @@
         <a-input v-model="originalForm.alias"/>
       </a-form-model-item>
       <a-form-model-item label="点击下载巡更路径模板" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="status">
-        <a-button style="background-color: gray"><a-icon type="download" /> 下载模板 </a-button>
+        <a href="http://10.201.246.55/xunjian/export/pathTemplate"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
       <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M" v-if="status">
         <a-upload
@@ -39,6 +39,8 @@ import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'
 import { dataFilter } from 'echarts/lib/component/marker/markerHelper'
+import { xungeng } from '@/utils/request'
+import { downloadExcel } from '@/utils/util'
 
 export default {
   name: 'PathSchema',
@@ -156,6 +158,17 @@ export default {
         } finally {
           this.confirmLoading = false
         }
+      })
+    },
+    /*
+    * 下载模板
+    * */
+    async downloadTemp () {
+      const data = await xungeng.get('/export/pathTemplate')
+      downloadExcel('路线模板', data)
+      this.$notification.success({
+        message: '系统提示',
+        description: '导出路线模板成功'
       })
     }
   }
