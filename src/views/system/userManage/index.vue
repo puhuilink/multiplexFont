@@ -377,7 +377,6 @@ export default {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-        console.log(this.queryParams)
         const { data: { list, total } } = await axios.get('/user/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
@@ -395,7 +394,7 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
     async switchStatus (record, text) {
       console.log('record', record, text)
@@ -447,9 +446,11 @@ export default {
       }
       return tree
     },
-    Success () {
+    async Success () {
       this.$refs.schema.onCancel()
-      this.query()
+      this.$nextTick(() => {
+        this.query()
+      })
     }
   },
   mounted () {

@@ -136,7 +136,8 @@
       </a-form-item>
 
     </a-form>
-
+    <secondFactoryOTP ref="factory" @close="onClose" @loginSuccess="finalLogin"></secondFactoryOTP>
+    <RegOTP ref="reg" @close="onClose" @otpSuccess="finalLogin"></RegOTP>
   </div>
 </template>
 
@@ -144,11 +145,14 @@
 import { mapActions } from 'vuex'
 import { UserService } from '@/api'
 import identify from '@/components/identify/index'
+import axios from 'axios'
+import secondFactoryOTP from '@/components/otp/SecondFactorOTP'
+import RegOTP from '@/components/otp/RegOTP'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
   name: 'Login',
-  components: { identify },
+  components: { identify, secondFactoryOTP, RegOTP },
   data () {
     return {
       VUE_APP_SMS_ENABLED,
@@ -171,7 +175,8 @@ export default {
         captchaDisabled: false
       },
       identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
-      identifyCode: ''
+      identifyCode: '',
+      loginParams: {}
     }
   },
   computed: {
@@ -273,12 +278,34 @@ export default {
         Reflect.deleteProperty(loginParams, 'userId')
         loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
         loginParams.pwd = values.pwd
-        Login(loginParams)
-          .then((res) => this.loginSuccess(res))
-          .catch(err => this.requestFailed(err))
-          .finally(() => {
-            state.loginBtn = false
-          })
+        this.loginParams = loginParams
+        axios.post('/otp/getStatus', {
+          appId: 'jfjk-62sc',
+          userName: values.userId,
+          transNo: 'transNo1'
+        }, {
+          baseURL: process.env.VUE_APP_OTP_BASE_URL
+        }).then((res) => {
+          if (res.data.statusCode === 1201) {
+            this.$refs.reg.otpBind({
+              appId: 'jfjk-62sc',
+              userName: values.userId,
+              transNo: 'transNo1'
+            })
+          } else if (res.data.statusCode === 1200) {
+            this.$refs.factory.onShow({
+              appId: 'jfjk-62sc',
+              userName: values.userId,
+              transNo: 'transNo1'
+            })
+          }
+        })
+        // Login(loginParams)
+        //   .then((res) => this.loginSuccess(res))
+        //   .catch(err => this.requestFailed(err))
+        //   .finally(() => {
+        //     state.loginBtn = false
+        //   })
       })
     },
     // 获取验证码
@@ -327,6 +354,17 @@ export default {
     //     this.stepCaptchaVisible = false
     //   })
     // },
+    finalLogin () {
+      this.Login(this.loginParams)
+        .then((res) => this.loginSuccess(res))
+        .catch(err => this.requestFailed(err))
+        .finally(() => {
+          this.state.loginBtn = false
+        })
+    },
+    onClose () {
+      this.state.loginBtn = false
+    },
     loginSuccess (res) {
       this.$router.push({ path: '/' })
       location.reload()

@@ -438,8 +438,9 @@ export default {
             .catch(e => this.$message.error(e))
       })
     },
-    moreOption (record, key) {
-      switch (key) {
+    moreOption (record, { key }) {
+      console.log('record', record, key, typeof key)
+      switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)
           break
@@ -452,7 +453,6 @@ export default {
         case 4:
           this.deleteRole(record)
           break
-        default:
       }
     }
   }
