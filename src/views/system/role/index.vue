@@ -54,7 +54,7 @@
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+          <a-menu slot="overlay" @click="(record) => moreOption(record)">
             <a-menu-item key="1">
               菜单权限
             </a-menu-item>
@@ -439,18 +439,20 @@ export default {
             .catch(e => this.$message.error(e))
       })
     },
-    moreOption (record, key) {
+    moreOption (record) {
+      // console.log(record);
+      let key=record.key
       switch (key) {
-        case 1:
+        case '1':
           this.onUpdateMenu(record)
           break
-        case 2:
+        case '2':
           this.onUpdateData(record)
           break
-        case 3:
+        case '3':
           this.onAllocateUserGroup(record)
           break
-        case 4:
+        case '4':
           this.deleteRole(record)
           break
         default:
