@@ -106,7 +106,6 @@ export default {
     menus: [],
     record: null,
     submit: () => {},
-    dataIdsALL:[]
   }),
   computed: {},
   async mounted () {
@@ -123,7 +122,6 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
-        this.dataIdsALL=dataIds
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -161,6 +159,7 @@ export default {
     async getMenu () {
       try {
         const result = await RoleService.findMenu()
+        console.log(result);
         const fList = result.map(el => {
           if (el.parent_code === 'NULL') {
             el.parent_code = null
@@ -177,9 +176,11 @@ export default {
             return el
           }
         }).filter((f) => f)
+        console.log(mList);
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
+        console.log(this.menus);
       } catch (e) {
         throw e
       }
@@ -264,7 +265,7 @@ export default {
         this.$forceUpdate
       }
       if (this.record.dataType==="ALL") {
-        this.record.dataIds = this.dataIdsALL
+        this.record.dataIds =[]
         console.log(this.record.dataIds);
         this.$forceUpdate
       }

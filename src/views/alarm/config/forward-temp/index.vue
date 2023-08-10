@@ -22,7 +22,7 @@
               </a-col>
 
               <a-col :md="12" :sm="24">
-                <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M0310>
+                <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M003010>
                   <a-select allowClear v-model.number="queryParams.enabled" >
                     <a-select-option :value="1">启用</a-select-option>
                     <a-select-option :value="0">禁用</a-select-option>
@@ -50,9 +50,9 @@
           >{{ label }}</a-select-option>
         </a-select>
         <a-button :disabled="!hasSelectedOne" @click="onDetail">查看</a-button>
-        <a-button @click="onAdd" v-action:M0311>新增</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0312>编辑</a-button>
-        <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0313>删除</a-button>
+        <a-button @click="onAdd" v-action:M003011>新增</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M003012>编辑</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M003013>删除</a-button>
       </template>
     </CTable>
 

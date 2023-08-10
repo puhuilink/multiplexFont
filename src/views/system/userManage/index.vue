@@ -98,7 +98,7 @@
         </div>
       </a-form-model>
     </div>
-    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd">新建</a-button>
+    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd" v-action:M001001001>新建</a-button>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
         <a-tree
@@ -123,18 +123,18 @@
             <a-switch :checked="text" @change="(status) => switchStatus(record, status)"/>
           </template>
           <template #operation="text, record">
-            <a @click="onEdit(record)"><a-icon type="edit"/>修改</a>
+            <a @click="onEdit(record)" v-action:M001001002><a-icon type="edit"/>修改</a>
             <a-divider type="vertical" />
             <a-dropdown>
               <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
               <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                <a-menu-item key="1">
+                <a-menu-item key="1" v-action:M001001003>
                   删除
                 </a-menu-item>
-                <a-menu-item key="2">
+                <a-menu-item key="2"  v-action:M001001004>
                   修改密码
                 </a-menu-item>
-                <a-menu-item key="3">
+                <a-menu-item key="3" v-action:M001001005>
                   分配角色
                 </a-menu-item>
               </a-menu>
@@ -377,7 +377,6 @@ export default {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-        console.log(this.queryParams)
         const { data: { list, total } } = await axios.get('/user/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
@@ -395,7 +394,7 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
     async switchStatus (record, text) {
       console.log('record', record, text)
@@ -447,9 +446,11 @@ export default {
       }
       return tree
     },
-    Success () {
+    async Success () {
       this.$refs.schema.onCancel()
-      this.query()
+      this.$nextTick(() => {
+        this.query()
+      })
     }
   },
   mounted () {

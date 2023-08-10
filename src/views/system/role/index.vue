@@ -36,7 +36,7 @@
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:M0101>新增</a-button>
+    <a-button @click="onAddUser" v-action:F001003001>新增</a-button>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
@@ -54,8 +54,8 @@
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-          <a-menu slot="overlay" @click="(record) => moreOption(record)">
-            <a-menu-item key="1">
+          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+            <a-menu-item key="1"  v-action:M001003>
               菜单权限
             </a-menu-item>
             <a-menu-item key="2">
@@ -75,9 +75,9 @@
     <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
     <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
+    <!--    &lt;!&ndash;    <AuthSchema v-action:M001010 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
-    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
+    <UserGroupSchema v-action:M001004 ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -439,23 +439,21 @@ export default {
             .catch(e => this.$message.error(e))
       })
     },
-    moreOption (record) {
-      // console.log(record);
-      let key=record.key
-      switch (key) {
-        case '1':
+    moreOption (record, { key }) {
+      console.log('record', record, key, typeof key)
+      switch (Number(key)) {
+        case 1:
           this.onUpdateMenu(record)
           break
-        case '2':
+        case 2:
           this.onUpdateData(record)
           break
-        case '3':
+        case 3:
           this.onAllocateUserGroup(record)
           break
-        case '4':
+        case 4:
           this.deleteRole(record)
           break
-        default:
       }
     }
   }

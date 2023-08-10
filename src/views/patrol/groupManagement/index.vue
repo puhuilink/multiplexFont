@@ -30,9 +30,9 @@
 
     <!-- / 操作区域 -->
     <div>
-      <a-button @click="onAddUser" v-action:M0101>新增巡更组</a-button>
-      <a-button @click="onAddUser" v-action:M0101 :disabled="!hasSelected||selectedRowKeys.length!==1">编辑巡更组</a-button>
-      <a-button @click="onAddUser" v-action:M0101 :disabled="!hasSelected">删除巡更组</a-button>
+      <a-button @click="onAddUser" v-action:M001001>新增巡更组</a-button>
+      <a-button @click="onAddUser" v-action:M001001 :disabled="!hasSelected||selectedRowKeys.length!==1">编辑巡更组</a-button>
+      <a-button @click="onAddUser" v-action:M001001 :disabled="!hasSelected">删除巡更组</a-button>
     </div>
     <a-table
       :columns="columns"

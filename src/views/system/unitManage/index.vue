@@ -68,9 +68,9 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAdd" v-action:M0101>新增</a-button>
-        <a-button @click="onEdit" v-action:M0101 :disabled="!hasSelectedOne">编辑</a-button>
-        <a-button @click="onDelete" v-action:M0101 :disabled="!hasSelected">删除</a-button>
+        <a-button @click="onAdd" v-action:M001001>新增</a-button>
+        <a-button @click="onEdit" v-action:M001001 :disabled="!hasSelectedOne">编辑</a-button>
+        <a-button @click="onDelete" v-action:M001001 :disabled="!hasSelected">删除</a-button>
       </template>
     </CTable>
     <UnitSchema
