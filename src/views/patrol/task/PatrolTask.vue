@@ -132,92 +132,113 @@ export default {
   components: {
     TaskDetailSchema
   },
-  data: () => ({
-    defaultData: [],
-    paginationOpt: {},
-    groups: [],
-    ENABLE_LIST,
-    ENABLE_LIST_MAPPING,
-    STATUS_LIST,
-    exportLoading: false,
-    columns: Object.freeze([
-      {
-        title: '任务单号',
-        dataIndex: 'id',
-        width: 150,
-        fixed: 'left'
-      },
-      {
-        title: '计划名称',
-        dataIndex: 'planAlias',
-        width: 220
-      },
-      {
-        title: '巡更组',
-        dataIndex: 'groupName',
-        width: 220
-      },
-      {
-        title: '巡更实际开始时间',
-        dataIndex: 'actualStartTime',
-        width: 180,
-        defaultSortOrder: 'descend',
-        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
-      },
-      {
-        title: '延迟开始',
-        dataIndex: 'actualStartLate',
-        width: 120,
-        customRender: actual_start_late => actual_start_late ? '是' : '否'
-      },
-      {
-        title: '巡更实际结束时间',
-        dataIndex: 'actualEndTime',
-        width: 180,
-        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
-      },
-      // {
-      //   title: '超时完成',
-      //   dataIndex: 'actualStartLate',
-      //   width: 120,
-      //   customRender: actual_end_late => actual_end_late ? '是' : '否'
-      // },
-      {
-        title: '任务单状态',
-        dataIndex: 'status',
-        width: 120,
-        customRender: status => {
-          return STATUS_MAPPING.get(status)
-        }
-      },
-      {
-        title: '异常数量',
-        dataIndex: 'eventCount',
-        width: 80
-      },
-      {
-        title: '巡更人员',
-        dataIndex: 'executor',
-        width: 150,
-        customRender: (executor) => {
-          if (!executor) {
-            return ''
-          } else if (executor.toString().includes('[')) {
-            return executor.toString().slice(1, executor.length - 1)
-          } else {
-            return JSON.parse(executor.toString()).executor
+  data () {
+    return {
+      defaultData: [],
+      groups: [],
+      ENABLE_LIST,
+      ENABLE_LIST_MAPPING,
+      STATUS_LIST,
+      exportLoading: false,
+      columns: Object.freeze([
+        {
+          title: '任务单号',
+          dataIndex: 'id',
+          width: 150,
+          fixed: 'left'
+        },
+        {
+          title: '计划名称',
+          dataIndex: 'planAlias',
+          width: 220
+        },
+        {
+          title: '巡更组',
+          dataIndex: 'groupName',
+          width: 220
+        },
+        {
+          title: '巡更实际开始时间',
+          dataIndex: 'actualStartTime',
+          width: 180,
+          defaultSortOrder: 'descend',
+          customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
+        },
+        {
+          title: '延迟开始',
+          dataIndex: 'actualStartLate',
+          width: 120,
+          customRender: actual_start_late => actual_start_late ? '是' : '否'
+        },
+        {
+          title: '巡更实际结束时间',
+          dataIndex: 'actualEndTime',
+          width: 180,
+          customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
+        },
+        // {
+        //   title: '超时完成',
+        //   dataIndex: 'actualStartLate',
+        //   width: 120,
+        //   customRender: actual_end_late => actual_end_late ? '是' : '否'
+        // },
+        {
+          title: '任务单状态',
+          dataIndex: 'status',
+          width: 120,
+          customRender: status => {
+            return STATUS_MAPPING.get(status)
+          }
+        },
+        {
+          title: '异常数量',
+          dataIndex: 'eventCount',
+          width: 80
+        },
+        {
+          title: '巡更人员',
+          dataIndex: 'executor',
+          width: 150,
+          customRender: (executor) => {
+            if (!executor) {
+              return ''
+            } else if (executor.toString().includes('[')) {
+              return executor.toString().slice(1, executor.length - 1)
+            } else {
+              return JSON.parse(executor.toString()).executor
+            }
           }
         }
+      ]),
+      queryParams: {
+        groupId: '',
+        status: '',
+        eventOccur: null,
+        actualTimeStart: '',
+        actualTimeEnd: ''
+      },
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.query()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
       }
-    ]),
-    queryParams: {
-      groupId: '',
-      status: '',
-      eventOccur: null,
-      actualTimeStart: '',
-      actualTimeEnd: ''
     }
-  }),
+  },
   methods: {
     resetQueryParams () {
       this.queryParams = {
@@ -232,28 +253,6 @@ export default {
       this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
     },
     moment,
-    initialPagination () {
-      this.paginationOpt = {
-        defaultCurrent: 1, // 默认当前页数
-        defaultPageSize: 10, // 默认当前页显示数据的大小
-        total: 0, // 总数，必须先有
-        showSizeChanger: true,
-        showQuickJumper: true,
-        pageSizeOptions: ['1', '10', '20', '50', '100'],
-        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
-        onShowSizeChange: (current, pageSize) => {
-          this.paginationOpt.defaultCurrent = current
-          this.paginationOpt.defaultPageSize = pageSize
-          this.query()
-        },
-        // 改变每页数量时更新显示
-        onChange: (current, size) => {
-          this.paginationOpt.defaultCurrent = current
-          this.paginationOpt.defaultPageSize = size
-          this.query()
-        }
-      }
-    },
     reloadParams (params) {
       const newObj = {}
       Object.keys(params).forEach(key => {
@@ -334,7 +333,6 @@ export default {
     }
   },
   async mounted () {
-    this.initialPagination()
     await this.getGroup()
     this.query()
   }
