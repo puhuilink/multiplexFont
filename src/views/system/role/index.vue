@@ -36,7 +36,7 @@
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:F001003001>新增</a-button>
+    <a-button @click="onAddUser" v-action:M001002001>新增</a-button>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
@@ -50,21 +50,21 @@
         <a-switch :checked="text" @change="onStatusChange(record)" />
       </template>
       <template #action="text,record">
-        <a @click="onEditUser(record)">编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
           <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-            <a-menu-item key="1"  v-action:M001003>
+            <a-menu-item key="1"  v-action:M001002003>
               菜单权限
             </a-menu-item>
-            <a-menu-item key="2">
+            <a-menu-item key="2" v-action:M001002004>
               数据权限
             </a-menu-item>
-            <a-menu-item key="3">
+            <a-menu-item key="3" v-action:M001002005>
               分配用户
             </a-menu-item>
-            <a-menu-item key="4">
+            <a-menu-item key="4" v-action:M001002006>
               删除
             </a-menu-item>
           </a-menu>
@@ -440,7 +440,7 @@ export default {
       })
     },
     moreOption (record, { key }) {
-      console.log('record', record, key, typeof key)
+      // console.log('record', record, key, typeof key)
       switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)
