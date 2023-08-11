@@ -176,13 +176,12 @@ export default {
         width: 180,
         customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
       },
-      {
-        title: '超时完成',
-        dataIndex: 'actualStartLate',
-        width: 120,
-        // TODO: useMapping
-        customRender: actual_end_late => actual_end_late ? '是' : '否'
-      },
+      // {
+      //   title: '超时完成',
+      //   dataIndex: 'actualStartLate',
+      //   width: 120,
+      //   customRender: actual_end_late => actual_end_late ? '是' : '否'
+      // },
       {
         title: '任务单状态',
         dataIndex: 'status',
@@ -230,7 +229,7 @@ export default {
       }
     },
     query () {
-      this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent - 1, pageSize: this.paginationOpt.defaultPageSize })
+      this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
     },
     moment,
     initialPagination () {
@@ -240,7 +239,7 @@ export default {
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,
-        pageSizeOptions: ['10', '20', '50', '100'],
+        pageSizeOptions: ['1', '10', '20', '50', '100'],
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.defaultCurrent = current
@@ -250,7 +249,6 @@ export default {
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationOpt.defaultCurrent = current
-
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
