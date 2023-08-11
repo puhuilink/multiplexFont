@@ -56,7 +56,7 @@
       <div v-if="current===2">
         <a-form-model ref="dataForm" :rules="dataRules" :model="dataForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="权限范围" prop="dataType">
-            <a-select v-model="dataForm.dataType" :default-value="'ALL'">
+            <a-select v-model="dataForm.dataType" :default-value="'ALL'" @change="dataTypeChange">
               <a-select-option :value="'ALL'">
                 全部数据权限
               </a-select-option>
@@ -161,7 +161,9 @@ export default {
       ]
     },
     record: null,
-    submit: () => {}
+    submit: () => {},
+    dataIdsALL: [],
+    my_DataIds: []
   }),
   computed: {},
   methods: {
@@ -172,6 +174,8 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        this.dataIdsALL = dataIds
+        this.dataForm.dataIds = this.dataIdsALL// 默认值
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -189,13 +193,12 @@ export default {
           const children = this.buildDeptsTree(data, item.id, dataIds)
           if (children.length > 0) {
             item.children = children.map(el => {
-              console.log(item.id)
-              console.log(dataIds.indexOf(item.id))
+              // console.log(item.id)
+              // console.log(dataIds.indexOf(item.id))
               return {
                 ...el,
                 title: el.name,
-                key: el.id,
-                ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+                key: el.id
               }
             })
           }
@@ -286,6 +289,9 @@ export default {
      * 打开新增窗口
      */
     add () {
+      const roles = JSON.parse(localStorage.getItem('pro__User'))
+      this.my_DataIds = roles.value.organizeId
+      // console.log(this.my_DataIds);
       this.submit = this.insert
       this.show('新增')
       this.initTreeData()
@@ -296,6 +302,8 @@ export default {
     async edit (record) {
       const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
       this.dataForm = { dataType, dataIds }
+      this.my_DataIds = record.organizeId
+      // console.log(this.dataForm);
       this.menuForm = { appCode, menuCodes }
       this.originalForm = { id, name, remark, operateType: 'EDIT' }
       this.submit = this.update
@@ -309,6 +317,7 @@ export default {
      * 调取新增接口
      */
     async insert () {
+      // console.log(this.dataForm);
       if (this.dataForm.dataIds.checked) {
         this.dataForm.dataIds = this.dataForm.dataIds.checked
       }
@@ -330,13 +339,34 @@ export default {
         }
       })
     },
+    /* 判断数据类型 */
+    dataTypeChange () {
+      // console.log(this.dataForm);
+      if (this.dataForm.dataType === 'ALL') {
+        this.dataForm.dataIds = this.dataIdsALL
+        // console.log(this.dataForm.dataIds);
+        this.$forceUpdate()
+      }
+      // 本部门
+      if (this.dataForm.dataType === 'DEPT') {
+        this.dataForm.dataIds = [this.my_DataIds]
+        // console.log(this.dataForm.dataIds);
+        this.$forceUpdate()
+      }
+    },
     /**
      * 调取编辑接口
      */
     async update () {
-      if (this.dataForm.dataIds.checked) {
-        this.dataForm.dataIds = this.dataForm.dataIds.checked
+      // console.log(this.dataForm);
+      try {
+        if (this.dataForm.dataIds.checked) {
+          this.dataForm.dataIds = this.dataForm.dataIds.checked
+        }
+      } catch (error) {
+
       }
+
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
       this.form.validateFields(async (err, values) => {

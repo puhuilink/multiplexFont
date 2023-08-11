@@ -11,7 +11,7 @@
         @focus="handleFocus"
         @blur="handleBlur"
         @change="handleChange"
-        v-action:M0200
+        v-action:M002
       >
         <a-select-option :value="item.label" v-for="(item, index) in list" :key="index">
           {{ item.label }}
