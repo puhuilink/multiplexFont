@@ -44,7 +44,7 @@
       </a-form-model>
     </div>
     <div style="margin-bottom: 1%">
-      <a-button type="primary" @click="onAdd" @operateSuccess="Success">
+      <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
         <a-icon type="plus" />
         新建
       </a-button>
@@ -64,13 +64,13 @@
         :loading="pageLoading"
         class="components-table-demo-nested">
         <template #operation="text, record">
-          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>
             <a-icon type="plus"></a-icon>
             新增</a>
-          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)" v-action:M001003003>
             <a-icon type="edit"></a-icon>
             编辑</a>
-          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:M001003004>
             <a-icon type="delete"></a-icon>
             删除</a>
         </template>

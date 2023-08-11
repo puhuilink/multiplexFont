@@ -52,7 +52,7 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="权限范围" prop="data_type">
-        <a-select v-model="record.dataType" default-value="ALL">
+        <a-select v-model="record.dataType" default-value="ALL" @change="dataTypeChange">
           <a-select-option :value="'ALL'">
             全部数据权限
           </a-select-option>
@@ -142,8 +142,7 @@ export default {
               return {
                 ...el,
                 title: el.name,
-                key: el.id,
-                ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+                key: el.id
               }
             })
           }
@@ -160,6 +159,7 @@ export default {
     async getMenu () {
       try {
         const result = await RoleService.findMenu()
+        console.log(result)
         const fList = result.map(el => {
           if (el.parent_code === 'NULL') {
             el.parent_code = null
@@ -176,9 +176,11 @@ export default {
             return el
           }
         }).filter((f) => f)
+        console.log(mList)
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
+        console.log(this.menus)
       } catch (e) {
         throw e
       }
@@ -221,6 +223,7 @@ export default {
       this.form.setFieldsValue(_.pick(record, keys))
       this.submit = this.insert
     },
+
     /**
      * 打开数据权限窗口
      */
@@ -252,12 +255,24 @@ export default {
         this.confirmLoading = false
       }
     },
+    /* 判断数据类型 */
+    dataTypeChange () {
+      if (this.record.dataType === 'DEPT') {
+        this.record.dataIds = { checked: [this.record.organizeId] }
+        this.$forceUpdate()
+      }
+      if (this.record.dataType === 'ALL') {
+        this.record.dataIds = []
+        this.$forceUpdate()
+      }
+    },
     /**
      * 调取编辑接口
      */
     async update () {
       const operateType = 'DATA'
       Object.assign(this.record, { operateType })
+      console.log(this.record)
       if (this.record.dataIds.checked) {
         this.record.dataIds = this.record.dataIds.checked
       }

@@ -96,16 +96,16 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onDetail" :disabled="!hasSelectedOne" v-action:M0314>查看</a-button>
-        <a-button @click="onAdd" v-show="mode === STRATEGY_MODE.personal" v-action:M0315>新建</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="mode === STRATEGY_MODE.personal" v-action:M0316>编辑</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="mode === STRATEGY_MODE.personal" v-action:M0317>删除</a-button>
+        <a-button @click="onDetail" :disabled="!hasSelectedOne" v-action:M003014>查看</a-button>
+        <a-button @click="onAdd" v-show="mode === STRATEGY_MODE.personal" v-action:M003015>新建</a-button>
+        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-show="mode === STRATEGY_MODE.personal" v-action:M003016>编辑</a-button>
+        <a-button @click="onBatchDelete" :disabled="!hasSelected" v-show="mode === STRATEGY_MODE.personal" v-action:M003017>删除</a-button>
       </template>
 
       <template v-slot:enabled="enabled, { id }">
         <a-popconfirm
           v-if="mode === STRATEGY_MODE.personal"
-          v-action:M0304
+          v-action:M003004
           :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
           @confirm="onToggleEnabled(id, !enabled)"
           okText="确定"

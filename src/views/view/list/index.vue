@@ -65,17 +65,17 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button v-action:M0201 @click="handleAdd">新增</a-button>
-        <a-button :disabled="!hasSelectedOne" v-action:M0202 @click="handleEdit">编辑</a-button>
-        <a-button :disabled="!hasSelectedOne" :loading="copyLoading" v-action:M0205 @click="handleCopy">复制</a-button>
-        <a-button :disabled="!hasSelectedOne" v-action:M0203 @click="handleDesign">设计</a-button>
-        <a-button :disabled="!hasSelected" v-action:M0204 @click="handleDelete">删除</a-button>
+        <a-button v-action:M002001 @click="handleAdd">新增</a-button>
+        <a-button :disabled="!hasSelectedOne" v-action:M002002 @click="handleEdit">编辑</a-button>
+        <a-button :disabled="!hasSelectedOne" :loading="copyLoading" v-action:M002005 @click="handleCopy">复制</a-button>
+        <a-button :disabled="!hasSelectedOne" v-action:M002003 @click="handleDesign">设计</a-button>
+        <a-button :disabled="!hasSelected" v-action:M002004 @click="handleDelete">删除</a-button>
       </template>
     </CTable>
 
     <ViewSchema
       ref="title"
-      v-action:M0202
+      v-action:M002002
       @addSuccess="query"
       @editSuccess="query"
     />

@@ -349,37 +349,37 @@ export const asyncRouterMap = [
             name: 'PatrolConfig',
             redirect: '/patrol/config/path',
             component: RouteView,
-            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
+            meta: { title: '巡更配置', keepAlive: true, permission: ['F010001'] },
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
               component: () => import('@/views/patrol/config/PathConfig/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/pathConfig',
               name: 'PatrolConfigPathEdit',
               hidden: true,
               component: () => import('@/views/patrol/config/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/metric',
               name: 'PatrolConfigMetric',
               component: () => import('@/views/patrol/config/MetricTable/MetricTable'),
-              meta: { title: '检查项管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '检查项管理', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/answer',
               name: 'PatrolConfigAnswer',
               component: () => import('@/views/patrol/config/AnswerTable/index'),
-              meta: { title: '检查值管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/threshold',
               name: 'PatrolConfigThreshold',
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
-              meta: { title: '阈值管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001'] }
             }]
           },
           // {
