@@ -177,7 +177,7 @@ export default {
       identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
       identifyCode: '',
       loginParams: {},
-      otpName: process.env.VUE_APP_QUOTE_URL
+      otpName: process.env.VUE_APP_OTP_QUOTE_NAME
     }
   },
   computed: {

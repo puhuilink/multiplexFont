@@ -78,7 +78,6 @@
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
-import { PatrolService } from '@/api'
 import { DELAY_MAPPING } from '../../../typing'
 import moment from 'moment'
 import _ from 'lodash'
@@ -303,7 +302,6 @@ export default {
       return checkpointsList
     },
     async changeZone (key) {
-      console.log(key)
       // this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, key)
     }
   }
