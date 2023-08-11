@@ -18,11 +18,11 @@ import { USER } from '@/store/mutation-types'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
-    console.log(binding);
+    console.log(binding)
     // const actionName = binding.arg || binding.value
     // const roles = store.getters.roles
     const roles = Vue.ls.get(USER)
-    console.log(roles);
+    console.log(roles)
     const elVal = vnode.context.$route.meta.permission
     // console.log(elVal);
     if (!elVal || !elVal.length) {
@@ -35,16 +35,15 @@ const action = Vue.directive('action', {
     // console.log(permissionId);
     // console.log(roles.menuCodes.includes(permissionId));
     if (!roles.menuCodes.includes(permissionId)) {
-      return
-    }else{
+
+    } else {
       // console.log(roles.menuCodes.indexOf(binding.arg) > -1);
-      if (roles.menuCodes.indexOf(binding.arg) > -1===false) {
+      if (roles.menuCodes.indexOf(binding.arg) > -1 === false) {
         el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
       }
-     /*  roles.menuCodes.forEach(p => {
+      /*  roles.menuCodes.forEach(p => {
         console.log(p);
-        
-        
+
         // if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
         //   // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
         //   if (p.actionList && !p.actionList.includes(actionName)) {
@@ -63,7 +62,6 @@ const action = Vue.directive('action', {
         // }
       }) */
     }
-   
   }
 })
 

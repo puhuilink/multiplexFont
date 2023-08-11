@@ -55,7 +55,7 @@
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
           <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-            <a-menu-item key="1"  v-action:M001002003>
+            <a-menu-item key="1" v-action:M001002003>
               菜单权限
             </a-menu-item>
             <a-menu-item key="2" v-action:M001002004>
@@ -272,7 +272,7 @@ export default {
      * @event
      */
     onUpdateMenu (record) {
-      console.log(record);
+      console.log(record)
       this.$refs['singleSchema'].updateMenu(record)
     },
     /**

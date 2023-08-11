@@ -105,7 +105,7 @@ export default {
     ],
     menus: [],
     record: null,
-    submit: () => {},
+    submit: () => {}
   }),
   computed: {},
   async mounted () {
@@ -159,7 +159,7 @@ export default {
     async getMenu () {
       try {
         const result = await RoleService.findMenu()
-        console.log(result);
+        console.log(result)
         const fList = result.map(el => {
           if (el.parent_code === 'NULL') {
             el.parent_code = null
@@ -176,11 +176,11 @@ export default {
             return el
           }
         }).filter((f) => f)
-        console.log(mList);
+        console.log(mList)
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
-        console.log(this.menus);
+        console.log(this.menus)
       } catch (e) {
         throw e
       }
@@ -223,7 +223,7 @@ export default {
       this.form.setFieldsValue(_.pick(record, keys))
       this.submit = this.insert
     },
-    
+
     /**
      * 打开数据权限窗口
      */
@@ -255,19 +255,15 @@ export default {
         this.confirmLoading = false
       }
     },
-     /* 判断数据类型 */
-     dataTypeChange(){
-      console.log(this.record);
-
-      if (this.record.dataType==="DEPT") {
-        this.record.dataIds = { checked:[this.record.organizeId]}
-        console.log(this.record.dataIds);
-        this.$forceUpdate
+    /* 判断数据类型 */
+    dataTypeChange () {
+      if (this.record.dataType === 'DEPT') {
+        this.record.dataIds = { checked: [this.record.organizeId] }
+        this.$forceUpdate()
       }
-      if (this.record.dataType==="ALL") {
-        this.record.dataIds =[]
-        console.log(this.record.dataIds);
-        this.$forceUpdate
+      if (this.record.dataType === 'ALL') {
+        this.record.dataIds = []
+        this.$forceUpdate()
       }
     },
     /**
@@ -276,7 +272,7 @@ export default {
     async update () {
       const operateType = 'DATA'
       Object.assign(this.record, { operateType })
-      console.log(this.record);
+      console.log(this.record)
       if (this.record.dataIds.checked) {
         this.record.dataIds = this.record.dataIds.checked
       }

@@ -131,7 +131,7 @@
                 <a-menu-item key="1" v-action:M001001003>
                   删除
                 </a-menu-item>
-                <a-menu-item key="2"  v-action:M001001004>
+                <a-menu-item key="2" v-action:M001001004>
                   修改密码
                 </a-menu-item>
                 <a-menu-item key="3" v-action:M001001005>
@@ -301,7 +301,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },

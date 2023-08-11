@@ -52,7 +52,7 @@ export default {
     async getInitMenu () {
       if (this.menus.length) {
         this.menu = this.menus
-        console.log( this.menu);
+        console.log(this.menu)
       }
       if (this.isRole) {
         const { data } = this.record
@@ -88,7 +88,7 @@ export default {
      * 获取当前用户权限节点
      */
     setCheckedKeys (menuTree) {
-      console.log(menuTree);
+      console.log(menuTree)
       // 由于属性图特性，清除拥有children节点的key，
       if (menuTree.children && menuTree.children.length > 0) {
         menuTree.children.forEach(menu => {
@@ -143,9 +143,9 @@ export default {
       } else if (before.length < after.length) {
         // 勾选了一个选项
         const element = after.filter(el => !before.includes(el))[0]
-        console.log(element);//已经勾选的权限
+        console.log(element)// 已经勾选的权限
         const e = this.findChildren(element, this.menu)
-        console.log(e);
+        console.log(e)
         result = Array.from(new Set([...after, ...e]))
       } else {
         result = before
@@ -154,31 +154,31 @@ export default {
       this.$emit('menuChange', result)
     },
     findChildren (str, data) {
-      console.log(str);
+      console.log(str)
       const count = (str.length - str.length % 3) / 3 + 1
-      console.log(count);
+      console.log(count)
       const arr = []
       let origin = data.filter(d => d.key === str.substring(0, 1))[0]
-      console.log(origin);
+      console.log(origin)
       for (let i = 1; i < count; i++) {
-        console.log(origin.children);
-        console.log(str.substring(0, 1 + 3 * i));
+        console.log(origin.children)
+        console.log(str.substring(0, 1 + 3 * i))
         origin = origin.children.filter(o => o.key === str.substring(0, 1 + 3 * i))[0]
       }
       arr.push(...this.findChildrenKeys(origin))
       return arr
     },
-    
+
     findChildrenKeys (data) {
       const arr = []
-      console.log(data);
+      console.log(data)
       if (data.children) {
         data.children.forEach(child => {
           arr.push(...this.findChildrenKeys(child))
         })
       }
       arr.push(data.key)
-      console.log(arr);
+      console.log(arr)
       return arr
     }
   }

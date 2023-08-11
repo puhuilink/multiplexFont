@@ -32,11 +32,11 @@
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
-        <a @click="onEditUser(record)"  v-action:M001002>编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002>编辑</a>
         <a-divider type="vertical" />
         <a @click="onUpdateMenu(record)">配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)"  v-action:M001003>删除</a>
+        <a @click="deleteRole(record)" v-action:M001003>删除</a>
       </template>
     </a-table>
 
