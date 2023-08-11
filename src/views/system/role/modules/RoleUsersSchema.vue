@@ -119,6 +119,7 @@ export default {
     edit (record) {
       console.log(this.show)
       this.show('分配用户')
+      console.log('触发', this.visible, this.title)
       this.record = Object.assign({}, record)
       const that = this
       this.groupList = []

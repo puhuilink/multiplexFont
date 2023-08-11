@@ -50,7 +50,7 @@
         <a-switch :checked="text" @change="onStatusChange(record)" />
       </template>
       <template #action="text,record">
-        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002005>编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
@@ -75,9 +75,9 @@
     <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
     <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <!--    &lt;!&ndash;    <AuthSchema v-action:M001010 ref="auth" @success="query(false)" />&ndash;&gt;-->
+    <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
-    <UserGroupSchema v-action:M001004 ref="group" @editSuccess="query(false)" />
+    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -440,7 +440,6 @@ export default {
       })
     },
     moreOption (record, { key }) {
-      // console.log('record', record, key, typeof key)
       switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)
@@ -456,6 +455,7 @@ export default {
           break
       }
     }
+
   }
 }
 </script>
