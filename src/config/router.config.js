@@ -60,7 +60,7 @@ export const asyncRouterMap = [
           {
             path: '/OperationMonitoring/Device',
             name: 'Operation',
-            component: () => import('@/views/SecurityMonitoring/view/dataCenterView'),
+            component: () => import('@/views/SecurityMonitoring/view/dataCenter/index.vue'),
             meta: { title: 'IT设备监控管理', permission: ['F022001'] }
           },
           {

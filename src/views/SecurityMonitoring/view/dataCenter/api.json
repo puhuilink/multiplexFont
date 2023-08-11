@@ -1,0 +1,111 @@
+{
+	"overdiv": [{
+		"id": 1,
+		"title": "机柜数量",
+		"count": 126,
+		"unit": "个"
+	}, {
+		"id": 2,
+		"title": "在线设备数量",
+		"count": 317,
+		"unit": ""
+	}, {
+		"id": 3,
+		"title": "设备总数",
+		"count": 1070,
+		"unit": ""
+	}, {
+		"id": 4,
+		"title": "服务器",
+		"count": 145,
+		"unit": "台"
+	}, {
+		"id": 5,
+		"title": "CPU核数",
+		"count": 2794,
+		"unit": "个"
+	}, {
+		"id": 6,
+		"title": "内存总量",
+		"count": 26368,
+		"unit": "G"
+	}, {
+		"id": 7,
+		"title": "存储数量",
+		"count": 9,
+		"unit": "个"
+	}, {
+		"id": 8,
+		"title": "总空间",
+		"count": 944,
+		"unit": "T"
+	}, {
+		"id": 9,
+		"title": "已分配空间",
+		"count": 530,
+		"unit": "T"
+	}],
+	"total":[
+		{
+			"id":1,
+			"title":"巡更设备种类",
+			"count":"8"
+		},{
+			"id":2,
+			"title":"巡更设备总数",
+			"count":"604"
+		},{
+			"id":3,
+			"title":"当日巡更次数",
+			"count":"59/59"
+		},{
+			"id":4,
+			"title":"当日巡更发现问题数",
+			"count":"0"
+		}
+	],
+	"details":[
+		{
+			"id":1,
+			"title":"服务器",
+			"total":"28",
+			"warn":"1",
+			"error":"0"
+		},
+		{
+			"id":2,
+			"title":"交换机",
+			"total":"59",
+			"warn":"0",
+			"error":"1"
+		},
+		{
+			"id":13,
+			"title":"防火墙",
+			"total":"57",
+			"warn":"0",
+			"error":"0"
+		},
+		{
+			"id":4,
+			"title":"路由器",
+			"total":"8",
+			"warn":"0",
+			"error":"0"
+		},
+		{
+			"id":5,
+			"title":"数据库",
+			"total":"7",
+			"warn":"0",
+			"error":"0"
+		},
+		{
+			"id":6,
+			"title":"中间件",
+			"total":"10",
+			"warn":"0",
+			"error":"1"
+		}
+	]
+}
