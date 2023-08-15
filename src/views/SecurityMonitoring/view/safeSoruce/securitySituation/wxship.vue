@@ -8,15 +8,13 @@
           <!-- <div class="number">{{ content[0].number }}</div> -->
           <formatterNumber class="number" :number="content[0].number" />
         </div>
-        <div class="bottom">
+        <div class="bottom_top">
           <div class="bottom-content-left">
             <div class="text">{{ content[1].text }}</div>
-            <!-- <div class="number">{{ content[1].number }}</div> -->
             <formatterNumber class="number" :number="content[1].number" />
           </div>
           <div class="bottom-content-right">
             <div class="text">{{ content[2].text }}</div>
-            <!-- <div class="number">{{ content[2].number }}</div> -->
             <formatterNumber class="number" :number="content[2].number" />
           </div>
         </div>
@@ -24,17 +22,14 @@
     </div>
     <div class="contentX" v-else>
       <div class="img-two">
-        <!-- <div class="number">{{ content[0].number }}</div> -->
         <formatterNumber class="number" :number="content[0].number" />
         <div class="text">{{ content[0].text }}</div>
         <div class="bottom">
           <div class="bottom-content-left">
-            <!-- <div class="number">{{ content[1].number }}</div> -->
             <formatterNumber class="number" :number="content[1].number" />
             <div class="text">{{ content[1].text }}</div>
           </div>
           <div class="bottom-content-right">
-            <!-- <div class="number">{{ content[2].number }}</div> -->
             <formatterNumber class="number" :number="content[2].number" />
             <div class="text">{{ content[2].text }}</div>
           </div>
@@ -50,95 +45,49 @@
 
 <script>
 
-import formatterNumber from './formatterNumber.vue';
+import formatterNumber from './formatterNumber.vue'
 import * as echarts from 'echarts'
 export default {
-  name: 'wx-ship',
+  name: 'WxShip',
   components: {
-    formatterNumber,
+    formatterNumber
   },
   props: {
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     title1: {
       type: String,
-      default: '',
+      default: ''
     },
     type: {
       type: String,
-      default: '',
+      default: ''
     },
     content: {
       type: Array,
-      default: [],
+      default: () => []
     },
     data: {
       type: Array,
-      default: [],
-    },
+      default: () => []
+    }
   },
 
-  data() {
+  data () {
     return {
 
-    };
+    }
   },
-  mounted() {
-    this.drawPolicitalStatus();
+  mounted () {
+    this.drawPolicitalStatus()
   },
-  /* methods: {
-    drawPolicitalStatus() {
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = this.$echarts.init(this.$refs.canvas01);
-      // 绘制图表
-      myChart.setOption({
-        tooltip: {
-          show: true,
-          trigger: 'item',
-        },
-        legend: {
-          top: '5%',
-          icon: 'circle',
-          textStyle: {
-            fontSize: 11, //字体大小
-            color: 'rgba(255,255,255,0.7)', //字体颜色
-          },
-          left: 'left',
-          selectedMode: false,
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['30%', '50%'],
-            itemStyle: {
-              borderWidth: 10,
-              borderColor: '#0D253D',
-            },
-            label: {
-              formatter: '{d}%',
-              color: 'rgba(255,255,255,0.7)',
-              fontSize: 12, //字体大小
-            },
-            labelLine: {
-              length: 0, // 第一段引导线的长度
-              length2: 30, // 第二段引导线的长度
-              show: true,
-            },
-            data: this.data,
-          },
-        ],
-      });
-      window.addEventListener('resize', function () {
-        myChart.resize();
-      });
-    },
-  }, */
+
   methods: {
-    drawPolicitalStatus() {
+    drawPolicitalStatus () {
       // 基于准备好的dom，初始化echarts实例
-      const myChart = echarts.init(this.$refs.canvas01);
+      const myChart = echarts.init(this.$refs.canvas01)
       /* let data = this.content.bottomData;
       if (data.length !== undefined && data[0].hasOwnProperty('count')) {
         data.forEach((item) => {
@@ -153,57 +102,54 @@ export default {
         title: {
           subtext: '等级分布',
           left: 'center',
-          top: '48%',
+          top: '52%',
           subtextStyle: {
             fontFamily: '微软雅黑',
-            fontSize: 18,
-            color: '#fff',
-          },
+            fontSize: 24,
+            color: '#000'
+          }
         },
         tooltip: {
           show: true,
           //   trigger: 'item',
-          trigger: 'none',
+          trigger: 'none'
         },
         legend: {
           top: '5%',
-          icon: "circle",
+          icon: 'circle',
           textStyle: {
-            fontSize: 15, //字体大小
-            color: 'rgba(255,255,255,0.7)', //字体颜色
+            fontSize: 14, // 字体大小
+            color: '#000' // 字体颜色
           },
           left: 37,
           selectedMode: false,
-          data: ['紧急', '高危', '中危', '低危'],
+          data: ['紧急', '高危', '中危', '低危']
         },
         series: [
           {
             type: 'pie',
             center: ['50%', '58%'], // 将饼状图的中心位置调整为离左侧30%、垂直居中
             radius: ['44%', '65%'],
-            itemStyle: {
-              borderWidth: 10,
-              borderColor: '#0D253D',
-            },
             label: {
-              normal: {
-                formatter: '{d}%',
-                color: 'rgba(255,255,255,0.7)',
-                fontSize: 15, //字体大小
-              },
+              formatter: '{d}%',
+              color: '#000',
+              fontSize: 20 // 字体大小
             },
             labelLine: {
               normal: {
                 // show: false,
                 length: 0,
                 length2: 80,
-              },
+                lineStyle: {
+                  color: '#000' // 设置 labelLine 的颜色为黑色
+                }
+              }
             },
             itemStyle: {
               normal: {
-                borderWidth: 4, //设置border的宽度有多大
-                borderColor: '#0C233A',
-              },
+                borderWidth: 6, // 设置border的宽度有多大
+                borderColor: '#fff'
+              }
             },
             data: [
               {
@@ -211,59 +157,59 @@ export default {
                 name: '紧急',
                 itemStyle: {
                   normal: {
-                    color: '#DC5656',
+                    color: '#DC5656'
                   },
                   emphasis: {
-                    color: '#DC5656',
-                  },
-                },
+                    color: '#DC5656'
+                  }
+                }
               },
               {
                 value: 56,
                 name: '高危',
                 itemStyle: {
                   normal: {
-                    color: '#FFA044',
+                    color: '#FFA044'
                   },
                   emphasis: {
-                    color: '#FFA044',
-                  },
-                },
+                    color: '#FFA044'
+                  }
+                }
               },
               {
                 value: 9,
                 name: '中危',
                 itemStyle: {
                   normal: {
-                    color: '#EAE174',
+                    color: '#EAE174'
                   },
                   emphasis: {
-                    color: '#EAE174',
-                  },
-                },
+                    color: '#EAE174'
+                  }
+                }
               },
               {
                 value: 20,
                 name: '低危',
                 itemStyle: {
                   normal: {
-                    color: '#3CA6FF',
+                    color: '#3CA6FF'
                   },
                   emphasis: {
-                    color: '#3CA6FF',
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      });
+                    color: '#3CA6FF'
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      })
       window.addEventListener('resize', function () {
-        myChart.resize();
-      });
-    },
-  },
-};
+        myChart.resize()
+      })
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -281,8 +227,8 @@ export default {
   margin-bottom: 33px;
   .img-one {
     height: 272.5px;
-    width: 308px;
-    margin-left: 29.5px;
+    width: 295px;
+    margin-left: 35px;
     background: url('./img/bk_wx.png') no-repeat;
     background-size: contain;
     overflow: hidden;
@@ -293,29 +239,29 @@ export default {
       margin-top: 8.79px;
 
       .text {
-        margin-top: 89px;
+        margin-top: 70px;
         text-align: center;
         height: 15px;
-        font-size: 14px;
+        font-size: 18px;
         font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
-        color: #0ac6e0;
+        color: #fff;
         line-height: 15px;
       }
 
       .number {
         text-align: center;
-        margin-top: 9px;
-        height: 15px;
-        font-size: 24px;
+        margin-left: 20px;
+        height: 40px;
+        font-size: 40px;
         font-family: LetsgoDigital-Regular, LetsgoDigital;
         font-weight: 400;
         color: #ffffff;
-        line-height: 15px;
+        line-height: 40px;
       }
     }
 
-    .bottom {
+    .bottom_top {
       display: flex;
       border-radius: 50%;
       margin: auto;
@@ -323,37 +269,33 @@ export default {
       .bottom-content-left {
         width: 50%;
         height: 50%;
-        margin-left: 5px;
-        margin-top: -5px;
+
       }
 
       .bottom-content-right {
         width: 50%;
         height: 50%;
-        margin-left: -6px;
-        margin-top: -5px;
+        margin-left: 20px;
       }
 
       .text {
-        margin-top: 87.5px;
+        margin-top: 80px;
         text-align: center;
-        font-size: 14px;
+        font-size: 18px;
         font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #0ac6e0;
-        line-height: 9px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 18px;
       }
 
       .number {
-        margin-top: 9px;
-        text-align: center;
 
-        height: 15px;
+        text-align: center;
         font-size: 24px;
         font-family: LetsgoDigital-Regular, LetsgoDigital;
         font-weight: 400;
         color: #ffffff;
-        line-height: 15px;
+        line-height: 24px;
       }
     }
   }
@@ -396,13 +338,13 @@ export default {
       .bottom-content-left {
         width: 50%;
         height: 50%;
-        margin-right: 20px;
+        margin-right: 20px !important;
       }
 
       .bottom-content-right {
         width: 50%;
         height: 50%;
-        margin-left: 17px;
+        margin-left: 20px;
       }
 
       .number {
@@ -436,10 +378,10 @@ export default {
 
 .titleTop {
   height: 18px;
-  font-size: 18px;
+  font-size: 20px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
-  color: #5bbbff;
+  color: #0060A3;
   line-height: 18px;
   padding-left: 37px;
   // margin-top: 27px;

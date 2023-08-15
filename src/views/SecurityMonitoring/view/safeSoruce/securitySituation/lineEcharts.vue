@@ -10,44 +10,43 @@
 
 import * as echarts from 'echarts'
 export default {
-  name: 'lineEcharts',
-  data() {
+  name: 'LineEcharts',
+  data () {
     return {
       // wxImg: bk_wx,
-      datatime: [],
-    };
+      datatime: []
+    }
   },
-  mounted() {
+  mounted () {
     this.gettime()
-    this.drawPolicitalStatus();
-
+    this.drawPolicitalStatus()
   },
 
   methods: {
-    gettime() {
+    gettime () {
       // 获取当前日期
-      const currentDate = new Date();
+      const currentDate = new Date()
 
       // 获取年、月、日
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-      const day = String(currentDate.getDate()).padStart(2, '0');
+      const year = currentDate.getFullYear()
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+      const day = String(currentDate.getDate()).padStart(2, '0')
 
       // 生成日期数组
-      const data = [];
+      const data = []
       for (let i = 0; i < 10; i++) {
-        const date = new Date(year, currentDate.getMonth(), currentDate.getDate() - (9 - i));
-        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        data.push(formattedDate);
+        const date = new Date(year, currentDate.getMonth(), currentDate.getDate() - (9 - i))
+        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+        data.push(formattedDate)
       }
       this.datatime = data
-      console.log(this.datatime);
+      console.log(this.datatime)
     },
-    drawPolicitalStatus() {
-      let that = this
-      console.log(that.datatime);
+    drawPolicitalStatus () {
+      const that = this
+      console.log(that.datatime)
       // 基于准备好的dom，初始化echarts实例
-      const myChart03 = echarts.init(this.$refs.canvas03);
+      const myChart03 = echarts.init(this.$refs.canvas03)
       // 绘制图表
       myChart03.setOption({
         title: {
@@ -56,60 +55,60 @@ export default {
             fontWeight: '600',
             fontFamily: 'PingFangSC-Semibold, PingFang SC',
             fontSize: 18,
-            color: '#5BBBFF',
-          },
+            color: '#5BBBFF'
+          }
         },
         tooltip: {
-          trigger: 'axis',
+          trigger: 'axis'
         },
         legend: {
-          icon: "circle",
+          icon: 'circle',
           // icon: "path://M100,0c4.85,0,9.4,.92,13.63,2.75s7.93,4.34,11.11,7.51c3.17,3.17,5.68,6.89,7.51,11.15s2.75,8.82,2.75,13.67-.92,9.3-2.75,13.53c-1.84,4.23-4.34,7.93-7.51,11.11-3.17,3.17-6.88,5.68-11.11,7.51s-8.77,2.75-13.63,2.75-9.4-.92-13.63-2.75-7.93-4.34-11.11-7.51c-3.17-3.17-5.68-6.88-7.51-11.11s-2.75-8.74-2.75-13.53c0-4.85,.92-9.41,2.75-13.67s4.34-7.98,7.51-11.15c3.17-3.17,6.88-5.68,11.11-7.51C90.6,.92,95.15,0,100,0Z M0,29h200v12h-200",
           textStyle: {
-            fontSize: 15, //字体大小
-            color: 'rgba(255,255,255,0.7)', //字体颜色
+            fontSize: 15, // 字体大小
+            color: 'rgba(255,255,255,0.7)' // 字体颜色
           },
           right: 35,
           selectedMode: false,
-          data: ['紧急', '高危', '中危', '低危'],
+          data: ['紧急', '高危', '中危', '低危']
         },
         grid: {
           left: '1%',
           right: '3%',
           bottom: '3%',
-          containLabel: true,
+          containLabel: true
         },
         xAxis: {
           type: 'category',
           boundaryGap: false,
           axisLine: {
             lineStyle: {
-              color: '#3B6F9F', //x轴的颜色
-            },
+              color: '#3B6F9F' // x轴的颜色
+            }
           },
           axisLabel: {
-            color: '#81BAE5',
+            color: '#81BAE5'
           },
-          data: that.datatime,
+          data: that.datatime
         },
         yAxis: {
           type: 'value',
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#3B6F9F', //x轴的颜色
-            },
+              color: '#3B6F9F' // x轴的颜色
+            }
           },
           axisLabel: {
-            color: '#81BAE5',
+            color: '#81BAE5'
           },
           splitLine: {
             lineStyle: {
               // 设置背景横线
               color: '#3B6F9F',
-              type: 'dotted',
-            },
-          },
+              type: 'dotted'
+            }
+          }
         },
         series: [
           {
@@ -119,12 +118,12 @@ export default {
 
             itemStyle: {
               normal: {
-                color: '#DC5656',
+                color: '#DC5656'
               },
               emphasis: {
-                color: '#DC5656',
-              },
-            },
+                color: '#DC5656'
+              }
+            }
           },
           {
             name: '高危',
@@ -133,12 +132,12 @@ export default {
 
             itemStyle: {
               normal: {
-                color: '#FFA044',
+                color: '#FFA044'
               },
               emphasis: {
-                color: '#FFA044',
-              },
-            },
+                color: '#FFA044'
+              }
+            }
           },
           {
             name: '中危',
@@ -146,12 +145,12 @@ export default {
             data: [101, 831, 144, 52, 98, 139, 307, 1103, 85, 12],
             itemStyle: {
               normal: {
-                color: '#EAE174',
+                color: '#EAE174'
               },
               emphasis: {
-                color: '#EAE174',
-              },
-            },
+                color: '#EAE174'
+              }
+            }
           },
           {
             name: '低危',
@@ -159,21 +158,21 @@ export default {
             data: [174, 307, 121, 126, 587, 307, 4138, 4501, 240, 14],
             itemStyle: {
               normal: {
-                color: '#3CA6FF',
+                color: '#3CA6FF'
               },
               emphasis: {
-                color: '#3CA6FF',
-              },
-            },
-          },
-        ],
-      });
+                color: '#3CA6FF'
+              }
+            }
+          }
+        ]
+      })
       window.addEventListener('resize', function () {
-        myChart03.resize();
-      });
-    },
-  },
-};
+        myChart03.resize()
+      })
+    }
+  }
+}
 </script>
 
 <style lang="less" >

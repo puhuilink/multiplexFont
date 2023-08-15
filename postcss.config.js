@@ -1,5 +1,9 @@
 module.exports = {
   plugins: {
-    autoprefixer: {}
+    autoprefixer: {},
+    'postcss-pxtorem': {
+      'rootValue': 16,
+      'propList': ['*', '!border', '!font-size']
+    }
   }
 }

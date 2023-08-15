@@ -144,7 +144,6 @@ export default {
     this.total = total
     this.details = details
     this.getData()
-    
   },
 
   mounted () {
@@ -476,7 +475,7 @@ export default {
 
           .content_item_article {
             width: 100%;
-			      height: 100%;
+            height: 100%;
             // background: rgba(31, 60, 94, 0.4);
             box-sizing: border-box;
             padding-top: 34px;
@@ -502,7 +501,6 @@ export default {
           border-top:1px solid #dae1e9 ;
           border-bottom:1px solid #dae1e9 ;
 
-
           .overdiv_mini {
             display: flex;
             flex-wrap: wrap;
@@ -524,7 +522,6 @@ export default {
             :nth-child(9){
               margin-bottom: 0px;
             }
-            
 
             .overdiv_detail {
               flex: 1;
@@ -713,8 +710,6 @@ export default {
             &:nth-of-type(-n + 4) {
               margin-bottom: 55px;
             }
-
-           
 
             .count_wrapper {
               display: flex;

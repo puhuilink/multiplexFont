@@ -4,7 +4,7 @@
     </div>
     <div v-else-if="+number >= 10000">
       <div @click="test">{{ (+number / 10000).toFixed(1) }}
-        <div class="unit">万</div>
+        <div class="unit" :style="{ color: color }">万</div>
       </div>
     </div>
     <div class="style-fix" v-else @click="test">{{ number }}</div>
@@ -16,20 +16,24 @@
 
 <script>
 export default {
-  name: 'formatterNumber',
+  name: 'FormatterNumber',
   props: {
     number: {
       type: String,
       default: undefined
     },
-    //单位，可选
+    // 单位，可选
     unit: {
+      type: String,
+      default: ''
+    },
+    colors: {
       type: String,
       default: ''
     }
   },
   methods: {
-    test() {
+    test () {
       console.log(this.number, this.unit)
     }
   }
@@ -39,6 +43,13 @@ export default {
 <style lang="less" scoped>
 .style-fix {
   display: inline-block;
+
+height: 30px;
+font-size: 40px;
+font-family: LetsgoDigital-Regular, LetsgoDigital;
+font-weight: 400;
+color: #FFFFFF;
+line-height: 30px;
 }
 
 .fix-text-style {
@@ -47,13 +58,12 @@ export default {
 
 .unit {
   display: inline-block;
-  width: 5px;
-  height: 9px;
-  font-size: 6px;
+  height: 16px;
+  font-size: 16px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: rgba(255, 255, 255, .7);
-  line-height: 9px;
+  color: #fff;
+  line-height:16px;
   transform-origin: 0 0;
   transform: scale(0.6);
   margin-left: 2px;

@@ -48,7 +48,7 @@
             <div class="left-text">告警总数</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.totalNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'182000'" />
+              <formatterNumber class="number" :number="'182000'" :colors="color_black"/>
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -59,7 +59,7 @@
             <!-- <formatterNumber class="right-text" :number="content.centerData.disposedNum"/> -->
             <!-- <div class="right-text">8.8万</div> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'88000'" />
+              <formatterNumber class="number" :number="'88000'" :colors="color_black"/>
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -69,7 +69,7 @@
             <div class="left-text">未处置</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.notDisposedNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'950000'" />
+              <formatterNumber class="number" :number="'950000'" :colors="color_black"/>
             </div>
           </div>
           <div class="redBotton"></div>
@@ -111,33 +111,33 @@
 </template>
 
 <script>
-import bk_circle from './img/bk_circle.png';
+import bk_circle from './img/bk_circle.png'
 import formatterNumber from './formatterNumber.vue'
 export default {
-  name: 'overAll',
+  name: 'OverAll',
   components: { formatterNumber },
   props: {
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     content: {
       type: Array,
-      default: ()=>{},
-    },
+      default: () => {}
+    }
   },
 
-  data() {
+  data () {
     return {
       circleImg: bk_circle,
-
-    };
+      color_black: '#000'
+    }
   },
-  methods: {},
-};
+  methods: {}
+}
 </script>
 
-<style lang="less" >
+<style lang="less" scoped>
 .number {
   font-size: 27px;
   margin-right: 6px;
@@ -191,7 +191,7 @@ export default {
   height: 22.5px;
   // margin: 33.5px 28px 26.5px 28px;
   margin-left: 20px;
-  background: linear-gradient(270deg, rgba(0, 151, 255, 0.1) 0%, rgba(55, 140, 255, 0.31) 100%);
+  // background: linear-gradient(270deg, rgba(0, 151, 255, 0.1) 0%, rgba(55, 140, 255, 0.31) 100%);
   border-radius: 7px;
 
   .text {
@@ -201,21 +201,21 @@ export default {
     .left-text {
       margin-left: 16px;
       margin-top: -8px;
-      font-size: 14px;
+      font-size: 20px;
       font-family: PingFangSC-Semibold, PingFang SC;
       font-weight: 600;
-      color: #6cd5ff;
-      line-height: 14px;
+      color: rgba(0,0,0,0.5);
+      line-height: 20px;
     }
 
     .right-text {
       margin-top: -15px;
       margin-right: 16px;
-      font-size: 27px;
+      font-size: 36px;
       font-family: LetsgoDigital-Regular, LetsgoDigital;
       font-weight: 400;
-      color: #ffffff;
-      line-height: 27px;
+      color: #000;
+      line-height: 36px;
     }
 
     .line {
@@ -246,11 +246,12 @@ export default {
 }
 
 .number1 {
-  color: #eae174;
+  color: #FF9600;
+  font-size: 42px;
 }
 
 .text1 {
-  color: #eae174;
+  color: #FF9600;
 }
 
 .number2 {

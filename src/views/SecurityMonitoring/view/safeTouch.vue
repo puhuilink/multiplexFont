@@ -1,7 +1,7 @@
 <template>
   <Iframe
     class="iframe"
-    :src="`${url}/xunh5/#/pages/safeView/indexPC`"
+    :src="`${url}/xunh5/#/pages/safeView/index`"
     style="border: none"
     ref="childIframe"
     name="childIframe">
