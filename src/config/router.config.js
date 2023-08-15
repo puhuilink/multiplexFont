@@ -14,9 +14,9 @@ export const asyncRouterMap = [
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
-          component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/system/apartment/index'),
-          // component: () => import('@/views/patrol/plan/index'),
+          // component: () => import('@/views/system/apartment/index'),
+          component: () => import('@/views/SecurityMonitoring/view/DHMonitoring'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
@@ -66,7 +66,7 @@ export const asyncRouterMap = [
           {
             path: '/OperationMonitoring/DH',
             name: 'DH',
-            component: () => import('@/views/SecurityMonitoring/view/xungeng'),
+            component: () => import('@/views/SecurityMonitoring/view/DHMonitoring'),
             meta: { title: '动环监控管理', permission: ['F022002'] }
           }
         ],
@@ -269,9 +269,10 @@ export const asyncRouterMap = [
           {
             path: '/SecurityMonitoring/LeakSummary',
             name: 'LeakSummary',
-            component: () => import('@/views/SecurityMonitoring/view/testLeak'),
+            // component: () => import('@/views/SecurityMonitoring/view/testLeak'),
             // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
+            component: () => import('@/views/SecurityMonitoring/vulnerabilityMonitoring/index'),
             meta: { title: '漏洞统计管理',
               permission: ['F020002'] }
           },

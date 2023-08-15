@@ -1,5 +1,8 @@
 <template>
-  <Iframe width="100%" ref="childIframe" height="100%" :src="`${url}/xunh5/#/pages/vulnerabilityMonitoring/index/indexPC?pcShow=false`" style="border: none"></Iframe>
+  <!--  <Iframe width="100%" ref="childIframe" height="100%" :src="`${url}/unih5/#/pages/vulnerabilityMonitoring/index/indexPC`" style="border: none"></Iframe>-->
+  <div class="wrapper">
+
+  </div>
 </template>
 
 <script>
@@ -37,4 +40,10 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.wrapper {
+  padding: 10px 15px;
+  height: 87vh;
+  background-color: #fff;
+  border: 1px solid blue;
+}
 </style>
