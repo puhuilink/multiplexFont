@@ -99,6 +99,8 @@
 <script>
 import json from './api.json'
 import * as echarts from 'echarts'
+import Vue from 'vue'
+import { USER } from '@/store/mutation-types'
 // import Tabbar from '@/components/Tabbar.vue';
 import {
   title_option,
@@ -126,12 +128,25 @@ export default {
     }
   },
   created () {
+  //   const { organizeId } = Vue.ls.get(USER)
+  // switch (organizeId) {
+  //   case '77551146956226560':
+  //     break
+  //   case '77551230678728704':
+  //     break
+  //   default:
+  //     this.$router.push({
+  //       path: '/403'
+  //     })
+  // }
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total
     this.details = details
     this.getData()
+    
   },
+
   mounted () {
     // this.getJson();
     this.initEchart()
@@ -384,15 +399,17 @@ export default {
     background-size: 100%;
   }
   .wrapper {
-    width: calc(100vw - 240px);
+    width: 100%;
+    height: 99%;
     // height: calc(100vh -100px);
     // background: linear-gradient(180deg, #021629 0%, #17324e 100%);
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    padding: 31px 37px 55px 37px;
+    padding: 0px 0px 0px 37px;
     overflow: scroll;
+    border-bottom:1px solid #dae1e9 ;
 
     .icon_list {
       width: 30px;
@@ -433,75 +450,81 @@ export default {
     // }
 
     .wrapper_content {
-      height: 674.5px;
+      height: 100%;
       flex: 1;
       display: flex;
       justify-content: space-between;
-      margin-top: 9px;
 
       .content_left,
       .content_right {
         // height: 100%;
 
         .content_item {
-        //   margin-top: 9px;
           display: flex;
           flex-direction: column;
-          height: 380.5px;
+          // height: 380.5px;
 
           .content_item_title {
-            width: 108px;
-            height: 18px;
-            font-size: 18px;
+            height: 20px;
+            font-size: 20px;
             margin-bottom: 7.5px;
             font-family: PingFangSC-Semibold, PingFang SC;
             font-weight: 600;
-            color: #5bbbff;
-            line-height: 18px;
+            color: #0060A3;
+            line-height: 20px;
           }
 
           .content_item_article {
             width: 100%;
-			height: 100%;
+			      height: 100%;
             // background: rgba(31, 60, 94, 0.4);
             box-sizing: border-box;
-            padding-top: 25px;
-            padding-left: 32.5px;
+            padding-top: 34px;
+            padding-left: 42px;
           }
         }
       }
 
       .content_left {
-        width: 630px;
+        width: 49.47%;
+        height: 100%;
         display: flex;
-        height: 674.5px;
         flex-direction: column;
 
         .overdiv {
           //   height: 217px;
           display: flex;
           flex-direction: column;
-          width: 630px;
-          height: 355px;
+          width: 100%;
+          height: 448px !important;
           background: #edeff2;
           // opacity: 0.4;
+          border-top:1px solid #dae1e9 ;
+          border-bottom:1px solid #dae1e9 ;
+
 
           .overdiv_mini {
             display: flex;
             flex-wrap: wrap;
-            height: 210px;
+            height: 274px;
             width: 100%;
 
             .overdiv_item {
               flex: 1 1 33.33%;
               display: flex;
               align-items: center;
-              margin-bottom: 15px;
+              margin-bottom: 16px;
               img{
                 width: 100%;
                 height: 100%;
               }
             }
+            :nth-child(7),
+            :nth-child(8),
+            :nth-child(9){
+              margin-bottom: 0px;
+            }
+            
 
             .overdiv_detail {
               flex: 1;
@@ -511,12 +534,12 @@ export default {
 
             .detail_name {
               //   width: 64px;
-              height: 16px;
-              font-size: 16px;
+              height: 18px;
+              font-size: 18px;
               font-family: PingFangSC-Semibold, PingFang SC;
               font-weight: 600;
               color: rgba(0, 0, 0, 1);
-              line-height: 16px;
+              line-height: 18px;
             }
 
             .detail_bottom {
@@ -525,43 +548,45 @@ export default {
               padding-top: 8px;
 
               .detail_count {
-                // width: 34px;
-                height: 21px;
-                font-size: 21px;
+                min-width: 100px;
+                height: 32px;
+                font-size: 30px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #1BBF90;
-                line-height: 21px;
+                line-height: 32px;
               }
 
               .detail_unit {
-                width: 16px;
-                height: 21px;
-                font-size: 16px;
+                width: 18px;
+                height: 18px;
+                font-size: 18px;
+                margin-top: 10px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #9ac0f4;
-                line-height: 21px;
+                line-height: 18px;
+                text-align:unset;
               }
             }
           }
-        .overdiv_mini:nth-child(1) .detail_bottom,
-.overdiv_mini:nth-child(3) .detail_bottom,
-.overdiv_mini *:nth-child(9) .detail_bottom {
-  width: 64px;
-  justify-content: space-between;
-}
+           .overdiv_mini >:nth-child(1) .detail_bottom,
+          .overdiv_mini >:nth-child(4) .detail_bottom,
+            .overdiv_mini >:nth-child(7) .detail_bottom {
+              width: 85px;
+                  justify-content: space-between;
+            }
           .overdiv_icon {
-            width: 60px;
-            height: 60px;
+            width: 29.32%;
+            height: 100%;
             object-fit: cover;
-            margin-right: 7.8px;
+            margin-right: 12px;
 
           }
 
           .overdiv_total {
             display: flex;
-            height: 88px;
+            height: 112px;
             width: 100%;
             margin-top: 15px;
 
@@ -569,37 +594,37 @@ export default {
               flex: 1 1 25%;
 
               .bg_wrapper {
-                width: 120px;
-                height: 88px;
+                width: 95%;
+                height: 100%;
                 background: rgba(107, 179, 255, 0.12);
                 background: url('./img/txt_bk01.png') no-repeat center;
                 background-size: cover;
 
                 .total_title {
                   width: 100%;
-                  height: 17px;
+                  // height: 17px;
                   font-size: 12px;
                   // margin-top: 9.5px;
-                  padding-top: 9.5px;
+                  padding-top: 5px;
                   text-align: center;
                   font-family: PingFangSC-Semibold, PingFang SC;
                   font-weight: 600;
                   color: #000;
-                  line-height: 17px;
+                  line-height: 32px;
                   // text-shadow: 0px 0px 5px rgba(0, 88, 255, 0.66);
                 }
                 .total_count {
                   width: 100%;
-                  height: 61.54px;
+                  height: 62.5%;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   text-align: center;
-                  font-size: 21px;
+                  font-size: 30px;
                   font-family: PingFangSC-Light, PingFang SC;
                   font-weight: 400;
                   color: #017BFF;
-                  line-height: 22px;
+                  line-height: 30px;
                 }
               }
             }
@@ -607,9 +632,8 @@ export default {
         }
 
         .divs_wrapper {
-          width: 630px;
-          height: 66.5px !important;
-          margin-top: 18.5px;
+          width: 100%;
+          margin-top: 24px;
 
           flex: 1;
           display: flex;
@@ -618,8 +642,8 @@ export default {
           //   justify-content: space-around;
 
           .content_item_wrapper {
-            width: 302px;
-            height: 266.5px;
+            width: 48.125%;
+            height:100%;
             display: flex;
             flex-direction: column;
 
@@ -629,9 +653,10 @@ export default {
 
             .divs_item {
               flex: 1;
-              background-color: rgba(31, 60, 94, 1);
+              // background-color: rgba(31, 60, 94, 1);
               width: 100%;
               height: 100%;
+              border-top:1px solid #dae1e9 ;
             }
           }
         }
@@ -651,8 +676,8 @@ export default {
 
       .content_right {
         flex: 1;
-        height: 665.5px;
-        width: 550px;
+        height: 100%;
+        width: 44%;
         margin-left: 26px;
         overflow: hidden;
 
@@ -663,6 +688,7 @@ export default {
           //   padding-left: 25px !important;
             background: #edeff2;
           justify-content: space-around;
+          border-top:1px solid #dae1e9 ;
         }
 
         .content_item_article {
@@ -673,13 +699,14 @@ export default {
           flex-wrap: wrap;
 
           .details_wrapper {
-            flex: 1 1 45%;
+            flex: 1 1 40%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: 26px;
-            height: 145.66px;
-
+            margin-right: 52px;
+            height: 180px;
+            background: url('./img/tjBK_01.png') no-repeat bottom;
+            background-size: 100%;
             &:nth-child(2n) {
               margin-right: 0;
             }
@@ -687,7 +714,7 @@ export default {
               margin-bottom: 55px;
             }
 
-            background: url('./img/tjBK_01.png') no-repeat center;
+           
 
             .count_wrapper {
               display: flex;
@@ -696,30 +723,30 @@ export default {
 
               .count_laebl {
                 // padding-left: 31.5px;
-                margin-left: 31.5px;
-                margin-top: 5px;
+                margin-left: 27px;
+                // margin-top: 5px;
                 box-sizing: border-box;
-                width: 80px;
-                height: 23px;
-                font-size: 16px;
+                // width: 80px;
+                height: 28px;
+                font-size: 20px;
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
-                color: #63c1f1;
-                line-height: 23px;
+                color:rgba(0,0,0,0.5);
+                line-height: 28px;
               }
 
               .count_value {
-                margin-left: 37px;
+                // margin-left: 37px;
 
                 position: relative;
                 text-align: right;
-                width: 37px;
-                height: 32px;
-                font-size: 21px;
+                width: 45%;
+                height: 30px;
+                font-size: 30px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #017BFF;
-                line-height: 31px;
+                line-height: 30px;
 
                 &::after {
                   content: '台';
@@ -728,21 +755,21 @@ export default {
                   top: 0;
                   bottom: 0;
                   margin: auto;
-                  right: -26px;
-
-                  height: 22px;
-                  font-size: 16px;
+                  right: -40px;
+                  height: 28px;
+                  font-size: 20px;
                   font-family: PingFangSC-Semibold, PingFang SC;
                   font-weight: 600;
-                  color: #63c1f1;
-                  line-height: 22px;
-                  letter-spacing: 3px;
+                  color: rgba(0,0,0,0.5);
+                  line-height: 28px;
+                  letter-spacing: 2px;
+                  margin: 0 10px;
                 }
               }
 
               .warn_unit {
                 &::after {
-                  content: '个';
+                  content: '台';
                 }
               }
             }
