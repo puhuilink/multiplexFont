@@ -699,7 +699,7 @@ export default {
                 margin-left: 31.5px;
                 margin-top: 5px;
                 box-sizing: border-box;
-                width: 80px;
+                width: 100px;
                 height: 23px;
                 font-size: 16px;
                 font-family: PingFangSC-Semibold, PingFang SC;
