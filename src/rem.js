@@ -1,18 +1,23 @@
 // 基准大小
-const baseSize = 10
+let baseSize
 
 // 设置 rem 函数
 function setRem () {
   // 当前页面宽度相对于 1920 宽的缩放比例，可根据自己需要修改。
   const html = document.querySelector('html')
   const width = html.clientWidth
+  console.log(document.documentElement.clientWidth)
+  console.log(width)
   let scale = 0
   if (width >= 2560) {
     scale = document.documentElement.clientWidth / 2560
+    baseSize = 10
   } else if (width >= 1920) {
     scale = document.documentElement.clientWidth / 1920
+    baseSize = 21
   } else {
     scale = document.documentElement.clientWidth / 1024
+    baseSize = 12
   }
   // 设置页面根节点字体大小
   document.documentElement.style.fontSize =

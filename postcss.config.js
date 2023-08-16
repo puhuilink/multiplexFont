@@ -3,7 +3,7 @@ module.exports = {
     autoprefixer: {},
     'postcss-pxtorem': {
       'rootValue': 16,
-      'propList': ['*', '!border', '!font-size']
+      'propList': ['*']
     }
   }
 }
