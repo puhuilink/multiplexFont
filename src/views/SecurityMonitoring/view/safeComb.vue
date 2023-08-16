@@ -14,7 +14,7 @@
 <script>
 import safeTouchCopy from '@/views/SecurityMonitoring/view/safeTouchCopy'
 // import safeTouch from '@/views/SecurityMonitoring/view/safeTouch'
-import safeSoruce from "./safeSoruce/index.vue";
+import safeSoruce from './safeSoruce/index.vue'
 export default {
   name: 'SafeComb',
   components: {
