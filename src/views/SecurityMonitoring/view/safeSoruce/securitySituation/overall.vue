@@ -48,7 +48,7 @@
             <div class="left-text">告警总数</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.totalNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'182000'" :colors="color_black"/>
+              <formatterNumber class="number" :number="'182000'" :colors="color_black" :color_black04="color_black04"/>
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -59,7 +59,7 @@
             <!-- <formatterNumber class="right-text" :number="content.centerData.disposedNum"/> -->
             <!-- <div class="right-text">8.8万</div> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'88000'" :colors="color_black"/>
+              <formatterNumber class="number" :number="'88000'" :colors="color_black" :color_black04="color_black04"/>
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -69,10 +69,10 @@
             <div class="left-text">未处置</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.notDisposedNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'950000'" :colors="color_black"/>
+              <formatterNumber class="number" :number="'9500'" :colors="color_black" :color_black04="color_black04"/>
             </div>
           </div>
-          <div class="redBotton"></div>
+          <div class="bullBotton" ></div>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
             <div class="left-text">疑似失陷</div>
             <!-- <formatterNumber class="right-text" :number="content.bottomData.victimIpCounts" :unit="'个'" /> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'15'" :unit="'个'" />
+              <formatterNumber class="number" :number="'15'" :unit="'个'" :colors="color_black" :color_black04="color_black04"/>
             </div>
           </div>
           <div class="redBotton"></div>
@@ -96,11 +96,11 @@
           <div class="text">
             <div class="left-text">
               环比
-              <img style="margin-left: 2px" :src="upImg" />
+              <img style="margin-bottom: 5px;width: 13px;height: 20px;;" :src="upImg" />
             </div>
             <!-- <formatterNumber class="right-text" :number="content.bottomData.dayPercent" :unit="'%'" /> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'1'" :unit="'%'" />
+              <formatterNumber class="number" :number="'1'" :unit="'%'" :colors="color_black" :color_black04="color_black04"/>
             </div>
           </div>
           <div class="redBotton"></div>
@@ -113,6 +113,7 @@
 <script>
 import bk_circle from './img/bk_circle.png'
 import formatterNumber from './formatterNumber.vue'
+import bk_up from './img/icon_up.png'
 export default {
   name: 'OverAll',
   components: { formatterNumber },
@@ -129,8 +130,10 @@ export default {
 
   data () {
     return {
+      upImg: bk_up,
       circleImg: bk_circle,
-      color_black: '#000'
+      color_black: 'rgba(0,0,0)',
+      color_black04: 'rgba(0,0,0,0.4)'
     }
   },
   methods: {}

@@ -11,13 +11,22 @@ function setRem () {
   let scale = 0
   if (width >= 2560) {
     scale = document.documentElement.clientWidth / 2560
-    baseSize = 10
+    baseSize = 20
   } else if (width >= 1920) {
     scale = document.documentElement.clientWidth / 1920
-    baseSize = 21
+    baseSize = 18
+  } else if (width >= 1745) {
+    scale = document.documentElement.clientWidth / 1745
+    baseSize = 16
+  } else if (width >= 1536) {
+    scale = document.documentElement.clientWidth / 1536
+    baseSize = 14
+  } else if (width >= 1280) {
+    scale = document.documentElement.clientWidth / 1280
+    baseSize = 12
   } else {
     scale = document.documentElement.clientWidth / 1024
-    baseSize = 12
+    baseSize = 10
   }
   // 设置页面根节点字体大小
   document.documentElement.style.fontSize =

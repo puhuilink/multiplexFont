@@ -388,10 +388,8 @@ export default {
     background-size: 100%;
   }
   .wrapper {
-    max-width: 100%;
-
-    // height: calc(100vh -100px);
-    // background: linear-gradient(180deg, #021629 0%, #17324e 100%);
+    width: 100%;
+     height: calc(100vh - 100px);
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
     display: flex;

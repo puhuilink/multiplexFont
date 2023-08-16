@@ -3,11 +3,11 @@
     <div class="containerTOP">
 
       <div class="waiwang">
-        <div style="border-right:1px dashed rgba(47,108,169,0.34);">
+        <div class="flexBOX">
           <WxShip :title="'外网威胁情况'" :title1="'外网威胁等级分布'" :content="content" :data="data" :type="'1'" />
         </div>
 
-        <div style="border-right: 1px dashed rgba(47,108,169,0.34)">
+        <div class="flexBOX">
           <OverAll :title="'全局风险态势'" :content="content" />
         </div>
 
@@ -99,12 +99,20 @@ export default {
   },
   methods: {
     handleBack () {
+      // console.log('back');
+      // const str = { action: 'back' }
+      // const jsonString = JSON.stringify(str);
+      // console.log(window.$flutter_inappwebviewFn);
+      // window.$flutter_inappwebviewFn.callHandler('haha', jsonString);
+
       this.$router.back()
     },
     // 外网威胁
     async getPageData () {
       // 获取态势感知-外部危险总览
       const data = await getOuterThreatOverview()
+      console.log('外部危险总览')
+      console.log(data)
       if (data.data.data) {
         this.content[0].number = data.data.data.attackAssetNum
         this.content[1].number = data.data.data.threatNum
@@ -112,26 +120,40 @@ export default {
       }
       // 获取态势感知-外部威胁等级分布
       const OuterThreatLevelData = await getOuterThreatLevel()
+      console.log('外部威胁等级分布')
+      console.log(OuterThreatLevelData)
     },
     // 全网风险态势
     async getGlobalRiskAPI () {
       // 获取态势感知-危机数
       const GlobalRiskData = await getGlobalRisk()
+      console.log('危机数')
+      console.log(GlobalRiskData)
       // 获取态势感知-处置率
       const AlarmDisposeData = await getAlarmDispose()
+      console.log('处置率')
+      console.log(AlarmDisposeData)
       // 获取态势感知-失陷率
       const VictimSurveyData = await getVictimSurvey()
+      console.log('失陷率')
+      console.log(VictimSurveyData)
     },
     // 内网威胁
     async interiorAPI () {
       // 获取态势感知-内部危险总览
       const InnerThreatOverviewData = await getInnerThreatOverview()
+      console.log('内部危险总览')
+      console.log(InnerThreatOverviewData)
       // 获取态势感知-内部威胁等级分布
       const InnerThreatLevelData = await getInnerThreatLevel()
+      console.log('内部威胁等级分布')
+      console.log(InnerThreatLevelData)
     },
     // 获取态势感知-威胁告警趋势
     async ThreadTrendAPI () {
       const ThreadTrendwData = await getThreadTrend()
+      console.log('威胁告警趋势')
+      console.log(ThreadTrendwData)
     }
   }
 }
@@ -143,16 +165,16 @@ export default {
   src: url('./securitySituation/img/Let_s_go_Digital_Regular.ttf') format('truetype');
 }
 .containerTOP {
-  width: 100%;
+  max-width: calc(100vw - 10rem);
   height: 100%;
-  // background: linear-gradient(180deg, #021629 0%, #17324e 100%);
-  // border: 1px solid;
-  // border-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(76, 146, 212, 1)) 1 1;
   position: relative;
-
   .waiwang {
     display: flex;
-
+  justify-content:space-around;
   }
+}
+.flexBOX{
+  border-right: 1px dashed rgba(47,108,169,0.34);
+  padding-right: 20px;
 }
 </style>

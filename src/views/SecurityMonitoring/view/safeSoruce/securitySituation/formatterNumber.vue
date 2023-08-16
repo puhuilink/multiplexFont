@@ -3,12 +3,12 @@
     <div class="fix-text-style" v-if="number === undefined || number === '-'">-
     </div>
     <div v-else-if="+number >= 10000">
-      <div @click="test">{{ (+number / 10000).toFixed(1) }}
-        <div class="unit" :style="{ color: color }">万</div>
+      <div @click="test" class="textNumber" :style="{ color: colors }">{{ (+number / 10000).toFixed(1) }}
+        <div class="unit" :style="{ color: color_black04 }">万</div>
       </div>
     </div>
-    <div class="style-fix" v-else @click="test">{{ number }}</div>
-    <div class="unit" v-if="unit !== ''">
+    <div class="style-fix" v-else @click="test" :style="{ color: colors }">{{ number }}</div>
+    <div class="unit" v-if="unit !== ''" :style="{ color: color_black04 }">
       {{ unit }}
     </div>
   </div>
@@ -28,6 +28,14 @@ export default {
       default: ''
     },
     colors: {
+      type: String,
+      default: ''
+    },
+    colorBlack04: {
+      type: String,
+      default: ''
+    },
+    colorWhite: {
       type: String,
       default: ''
     }
@@ -55,14 +63,21 @@ line-height: 30px;
 .fix-text-style {
   display: inline-block;
 }
+.textNumber{
 
+font-size: 36px;
+font-family: LetsgoDigital-Regular, LetsgoDigital;
+font-weight: 400;
+color: #000000;
+line-height: 36px;
+}
 .unit {
   display: inline-block;
   height: 16px;
   font-size: 16px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.40);
+  color: #fff;
   line-height:16px;
   transform-origin: 0 0;
   transform: scale(0.6);

@@ -6,7 +6,7 @@
         <div class="top">
           <div class="text">{{ content[0].text }}</div>
           <!-- <div class="number">{{ content[0].number }}</div> -->
-          <formatterNumber class="number" :number="content[0].number" />
+          <formatterNumber class="number" :number="content[0].number" :colors="color_white"/>
         </div>
         <div class="bottom_top">
           <div class="bottom-content-left">
@@ -22,15 +22,15 @@
     </div>
     <div class="contentX" v-else>
       <div class="img-two">
-        <formatterNumber class="number" :number="content[0].number" />
+        <formatterNumber class="number" :number="content[0].number" :colors="color_black"/>
         <div class="text">{{ content[0].text }}</div>
         <div class="bottom">
           <div class="bottom-content-left">
-            <formatterNumber class="number" :number="content[1].number" />
+            <formatterNumber class="number" :number="content[1].number" :colors="color_black"/>
             <div class="text">{{ content[1].text }}</div>
           </div>
           <div class="bottom-content-right">
-            <formatterNumber class="number" :number="content[2].number" />
+            <formatterNumber class="number" :number="content[2].number" :colors="color_black"/>
             <div class="text">{{ content[2].text }}</div>
           </div>
         </div>
@@ -77,7 +77,8 @@ export default {
 
   data () {
     return {
-
+      color_black: '#000',
+      color_white: '#fff'
     }
   },
   mounted () {
@@ -102,10 +103,10 @@ export default {
         title: {
           subtext: '等级分布',
           left: 'center',
-          top: '52%',
+          top: '49%',
           subtextStyle: {
             fontFamily: '微软雅黑',
-            fontSize: 24,
+            fontSize: '150%',
             color: '#000'
           }
         },
@@ -118,10 +119,11 @@ export default {
           top: '5%',
           icon: 'circle',
           textStyle: {
-            fontSize: 14, // 字体大小
-            color: '#000' // 字体颜色
+            fontSize: '110%', // 字体大小
+            color: '#000', // 字体颜色
+            padding: [2, 15, 0, 0]
           },
-          left: 37,
+          left: '7%',
           selectedMode: false,
           data: ['紧急', '高危', '中危', '低危']
         },
@@ -133,13 +135,13 @@ export default {
             label: {
               formatter: '{d}%',
               color: '#000',
-              fontSize: 20 // 字体大小
+              fontSize: 18 // 字体大小
             },
             labelLine: {
               normal: {
                 // show: false,
                 length: 0,
-                length2: 40,
+                length2: '15%',
                 lineStyle: {
                   color: '#000' // 设置 labelLine 的颜色为黑色
                 }
@@ -214,7 +216,7 @@ export default {
 
 <style lang="less" scoped>
 .appContainer01 {
-  width: 340px;
+  width: 425px;
   height: 604px;
 }
 
@@ -228,7 +230,7 @@ export default {
   .img-one {
     height: 272.5px;
     width: 295px;
-    margin-left: 5px;
+    margin-left: 35px;
     background: url('./img/bk_wx.png') no-repeat;
     background-size: contain;
     overflow: hidden;
@@ -269,7 +271,6 @@ export default {
       .bottom-content-left {
         width: 50%;
         height: 50%;
-
       }
 
       .bottom-content-right {
@@ -289,7 +290,6 @@ export default {
       }
 
       .number {
-
         text-align: center;
         font-size: 24px;
         font-family: LetsgoDigital-Regular, LetsgoDigital;
@@ -302,21 +302,22 @@ export default {
 
   .img-two {
     height: 272.5px;
-    width: 308px;
-    background: url('./img/bk_wx1.png');
+    width: 295px;
+    background: url('./img/bk_wx1.png') no-repeat;
     background-size: contain;
     overflow: hidden;
     margin-left: 51px;
 
     .text {
-      margin-top: 31px;
+      margin-top: 10px;
+      margin-bottom: 40px;
       text-align: center;
-      height: 15px;
-      font-size: 14px;
+
+      font-size: 20px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #90c8f4;
-      line-height: 15px;
+      line-height: 20px;
     }
 
     .number {
@@ -337,36 +338,36 @@ export default {
       //   margin-top:63px;
       .bottom-content-left {
         width: 50%;
-        height: 50%;
-        margin-right: 20px !important;
+
       }
 
       .bottom-content-right {
         width: 50%;
-        height: 50%;
+
         margin-left: 20px;
       }
 
       .number {
-        margin-top: 69.5px;
-        height: 27px;
-        font-size: 27px;
-        font-family: LetsgoDigital-Regular, LetsgoDigital;
-        font-weight: 400;
-        color: #ffffff;
-        line-height: 27px;
-        text-align: center;
+      margin-top: 35px;
+      height: 27px;
+      font-size: 27px;
+      font-family: LetsgoDigital-Regular, LetsgoDigital;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 27px;
+      text-align: center;
       }
 
       .text {
-        margin-top: 31px;
-        text-align: center;
-        height: 15px;
-        font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #90c8f4;
-        line-height: 15px;
+      margin-top: 10px;
+      margin-bottom: 40px;
+      text-align: center;
+
+      font-size: 20px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #90c8f4;
+      line-height: 20px;
       }
     }
   }
@@ -385,7 +386,7 @@ export default {
   line-height: 18px;
   padding-left: 37px;
   // margin-top: 27px;
-  margin-bottom: 12;
+  // margin-bottom: 12;
 }
 
 .echarts {
