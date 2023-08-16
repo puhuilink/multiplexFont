@@ -1,5 +1,12 @@
 <template>
   <div class="wrapper">
+    <!-- flex布局 -->
+    <!-- <div class="wrapper_top">
+      <div class="icon_list" @click="handleBack"></div>
+      <div class="wrapper_title">数据中心综合视图</div>
+      <div class="back" @click="handleBack"></div>
+    </div> -->
+
     <!-- 视图主体 -->
     <div class="wrapper_content">
       <div class="content_left">
@@ -8,6 +15,8 @@
           <div class="content_item_article overdiv">
             <div class="overdiv_mini">
               <div class="overdiv_item" v-for="(item) in overdiv" :key="item.id">
+                <!-- background: 'url(' + item.img + ')', -->
+                <!-- <img :src="require(item.img)" alt=""> -->
                 <div :class="'overdiv_icon' + ' img' + item.id"></div>
                 <div class="overdiv_detail">
                   <div class="detail_name">
@@ -119,17 +128,6 @@ export default {
     }
   },
   created () {
-  //   const { organizeId } = Vue.ls.get(USER)
-  // switch (organizeId) {
-  //   case '77551146956226560':
-  //     break
-  //   case '77551230678728704':
-  //     break
-  //   default:
-  //     this.$router.push({
-  //       path: '/403'
-  //     })
-  // }
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total
@@ -389,12 +387,12 @@ export default {
   }
   .wrapper {
     width: 100%;
-     height: calc(100vh - 100px);
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    padding: 0px 0px 0px 37px;
+    justify-content: center;
+    padding: 0px 30px 55px 30px;
     overflow: scroll;
 
     .icon_list {
@@ -436,19 +434,18 @@ export default {
     // }
 
     .wrapper_content {
-      height: 100%;
       flex: 1;
       display: flex;
       justify-content: space-between;
+      margin-top: 9px;
 
       .content_left,
       .content_right {
-        // height: 100%;
 
         .content_item {
           display: flex;
           flex-direction: column;
-          // height: 380.5px;
+          height: 380.5px;
 
           .content_item_title {
             height: 20px;
@@ -461,29 +458,27 @@ export default {
           }
 
           .content_item_article {
-            width: 100%;
-            height: 100%;
+            width: 667px;
+            height: 380px;
             // background: rgba(31, 60, 94, 0.4);
             box-sizing: border-box;
-            // background: rgba(31, 60, 94, 0.4);
-            box-sizing: border-box;
-            padding: 25px 30px;
+            padding-top: 25px;
+            padding-left: 32.5px;
           }
         }
       }
 
       .content_left {
-        width: 580px;
+        width: 674.5px;
         display: flex;
-        height: 500px;
         flex-direction: column;
 
         .overdiv {
           //   height: 217px;
           display: flex;
           flex-direction: column;
-          width: 630px;
-          height: 355px;
+          width: 590px;
+          height: 400px !important;
           background: #edeff2;
           // opacity: 0.4;
 
@@ -517,8 +512,8 @@ export default {
 
             .detail_name {
               //   width: 64px;
-              height: 16px;
-              font-size: 16px;
+              height: 14px;
+              font-size: 14px;
               font-family: PingFangSC-Semibold, PingFang SC;
               font-weight: 600;
               color: rgba(0, 0, 0, 1);
@@ -531,10 +526,9 @@ export default {
               padding-top: 8px;
 
               .detail_count {
-                // width: 34px;
-                min-width: 80px;
-                height: 25px;
-                font-size: 20px;
+                width: 70px;
+                height: 21px;
+                font-size: 21px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #1BBF90;
@@ -542,13 +536,13 @@ export default {
               }
 
               .detail_unit {
-                width: 16px;
-                height: 21px;
+                width: 18px;
+                height: 18px;
                 font-size: 16px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #9ac0f4;
-                line-height: 18px;
+                line-height: 25px;
                 text-align:unset;
               }
             }
@@ -563,7 +557,7 @@ export default {
             width: 29.32%;
             height: 100%;
             object-fit: cover;
-            margin-right: 12px;
+            margin-right: 7.8px;
 
           }
 
@@ -577,8 +571,8 @@ export default {
               flex: 1 1 25%;
 
               .bg_wrapper {
-                width: 95%;
-                height: 100%;
+                width: 120px;
+                height: 88px;
                 background: rgba(107, 179, 255, 0.12);
                 background: url('./img/txt_bk01.png') no-repeat center;
                 background-size: cover;
@@ -626,22 +620,19 @@ export default {
           //   justify-content: space-around;
 
           .content_item_wrapper {
+            width: 300px;
+            height: 250px;
             display: flex;
             flex-direction: column;
-            width: 17.25rem;
-            height: 13.5rem;
+            border: none;
 
             &:nth-child(1) {
               margin-right: 34px;
             }
 
             .divs_item {
-              flex: 1;
-              background-color: rgba(31, 60, 94, 1);
-              //background-color: rgba(31, 60, 94, 1);
-              width: 17.25rem;
-              height: 13.5rem;
-              border-top:1px solid #dae1e9 ;
+              width: 300px;
+              height: 250px;
             }
           }
         }
@@ -661,10 +652,10 @@ export default {
 
       .content_right {
         flex: 1;
-        height: 100%;
-        width: 44%;
+        height: 675px;
+        width: 583px;
         margin-left: 26px;
-        overflow: scroll;
+        overflow: hidden;
 
         .details {
           flex: 1;
@@ -684,21 +675,20 @@ export default {
           flex-wrap: wrap;
 
           .details_wrapper {
-            flex: 1 1 40%;
+            width: 260px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: 26px;
+            margin-right: 52px;
             height: 150px;
             background: url('./img/tjBK_01.png') no-repeat bottom;
-            background-size: 100%;
+            background-size: 260px;
             &:nth-child(2n) {
               margin-right: 0;
             }
             &:nth-of-type(-n + 4) {
               margin-bottom: 55px;
             }
-
             .count_wrapper {
               display: flex;
               width: 100%;
@@ -706,7 +696,6 @@ export default {
 
               .count_laebl {
                 // padding-left: 31.5px;
-
                 margin-left: 1.5rem;
                 margin-top: 5px;
                 box-sizing: border-box;

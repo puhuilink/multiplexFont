@@ -56,7 +56,7 @@ export default {
         },
         {
           text: '受攻击资产数',
-          number: '143'
+          number: '10089'
         },
         {
           text: '受攻击IP资产数',
@@ -165,7 +165,7 @@ export default {
   src: url('./securitySituation/img/Let_s_go_Digital_Regular.ttf') format('truetype');
 }
 .containerTOP {
-  max-width: calc(100vw - 10rem);
+  width: 100%;
   height: 100%;
   position: relative;
   .waiwang {

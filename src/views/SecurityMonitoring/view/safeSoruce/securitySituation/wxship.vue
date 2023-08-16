@@ -385,8 +385,6 @@ export default {
   color: #0060A3;
   line-height: 18px;
   padding-left: 37px;
-  // margin-top: 27px;
-  // margin-bottom: 12;
 }
 
 .echarts {

@@ -359,7 +359,7 @@ export const status_option = {
     hoverAnimation: true,
     label: {
       normal: {
-        fontSize: 12,
+        fontSize: '80%',
         color: '#000',
         align: 'left',
         formatter: function (params) {
@@ -385,7 +385,7 @@ export const status_option = {
     emphasis: {
       label: {
         show: true,
-        fontSize: 12
+        fontSize: '80%'
         // fontWeight: 'bold',
       }
     },
