@@ -3,11 +3,11 @@
     <div class="containerTOP">
 
       <div class="waiwang">
-        <div style="border-right:1px dashed rgba(47,108,169,0.34)">
+        <div class="flexBOX">
           <WxShip :title="'外网威胁情况'" :title1="'外网威胁等级分布'" :content="content" :data="data" :type="'1'" />
         </div>
 
-        <div style="border-right: 1px dashed rgba(47,108,169,0.34)">
+        <div class="flexBOX">
           <OverAll :title="'全局风险态势'" :content="content" />
         </div>
 
@@ -167,14 +167,14 @@ export default {
 .containerTOP {
   width: 100%;
   height: 100%;
-  // background: linear-gradient(180deg, #021629 0%, #17324e 100%);
-  // border: 1px solid;
-  // border-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(76, 146, 212, 1)) 1 1;
   position: relative;
-
   .waiwang {
     display: flex;
-
+  justify-content:space-around;
   }
+}
+.flexBOX{
+  border-right: 1px dashed rgba(47,108,169,0.34);
+  padding-right: 20px;
 }
 </style>
