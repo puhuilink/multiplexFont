@@ -56,7 +56,7 @@ export default {
         },
         {
           text: '受攻击资产数',
-          number: '143'
+          number: '10089'
         },
         {
           text: '受攻击IP资产数',

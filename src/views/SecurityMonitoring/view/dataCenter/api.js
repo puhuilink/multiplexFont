@@ -213,7 +213,7 @@ where to_date(create_time::text, 'yyyy-mm-dd') = current_date
 and status in ('10','20')),(select count(1) from t_patrol_task_status 
 where to_date(create_time::text, 'yyyy-mm-dd') = current_date)) as metric_value;`
 }, {
-  title: '当日巡更发现问题数',
+  title: '当日巡更问题数',
   sql: `select count(1) as value
 from t_patrol_task_event_history 
 where task_id in (
@@ -240,7 +240,7 @@ export const title_option = {
     hoverAnimation: true,
     label: {
       normal: {
-        fontSize: 12,
+        fontSize: '80%',
         color: '#000',
         align: 'left',
         formatter: function (params) {
@@ -265,7 +265,7 @@ export const title_option = {
     emphasis: {
       label: {
         show: true,
-        fontSize: 12
+        fontSize: '80%'
         // fontWeight: 'bold'
       }
     },
@@ -359,7 +359,7 @@ export const status_option = {
     hoverAnimation: true,
     label: {
       normal: {
-        fontSize: 12,
+        fontSize: '80%',
         color: '#000',
         align: 'left',
         formatter: function (params) {
@@ -385,7 +385,7 @@ export const status_option = {
     emphasis: {
       label: {
         show: true,
-        fontSize: 12
+        fontSize: '80%'
         // fontWeight: 'bold',
       }
     },

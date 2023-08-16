@@ -128,24 +128,12 @@ export default {
     }
   },
   created () {
-  //   const { organizeId } = Vue.ls.get(USER)
-  // switch (organizeId) {
-  //   case '77551146956226560':
-  //     break
-  //   case '77551230678728704':
-  //     break
-  //   default:
-  //     this.$router.push({
-  //       path: '/403'
-  //     })
-  // }
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total
     this.details = details
     this.getData()
   },
-
   mounted () {
     // this.getJson();
     this.initEchart()
@@ -399,16 +387,13 @@ export default {
   }
   .wrapper {
     width: 100%;
-    height: 99%;
-    // height: calc(100vh -100px);
-    // background: linear-gradient(180deg, #021629 0%, #17324e 100%);
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    padding: 0px 0px 0px 37px;
+    justify-content: center;
+    padding: 0px 30px 55px 30px;
     overflow: scroll;
-    border-bottom:1px solid #dae1e9 ;
 
     .icon_list {
       width: 30px;
@@ -449,19 +434,18 @@ export default {
     // }
 
     .wrapper_content {
-      height: 100%;
       flex: 1;
       display: flex;
       justify-content: space-between;
+      margin-top: 9px;
 
       .content_left,
       .content_right {
-        // height: 100%;
 
         .content_item {
           display: flex;
           flex-direction: column;
-          // height: 380.5px;
+          height: 380.5px;
 
           .content_item_title {
             height: 20px;
@@ -474,19 +458,18 @@ export default {
           }
 
           .content_item_article {
-            width: 100%;
-            height: 100%;
+            width: 667px;
+            height: 380px;
             // background: rgba(31, 60, 94, 0.4);
             box-sizing: border-box;
-            padding-top: 34px;
-            padding-left: 42px;
+            padding-top: 25px;
+            padding-left: 32.5px;
           }
         }
       }
 
       .content_left {
-        width: 49.47%;
-        height: 100%;
+        width: 674.5px;
         display: flex;
         flex-direction: column;
 
@@ -494,12 +477,10 @@ export default {
           //   height: 217px;
           display: flex;
           flex-direction: column;
-          width: 100%;
-          height: 448px !important;
+          width: 590px;
+          height: 400px !important;
           background: #edeff2;
           // opacity: 0.4;
-          border-top:1px solid #dae1e9 ;
-          border-bottom:1px solid #dae1e9 ;
 
           .overdiv_mini {
             display: flex;
@@ -531,12 +512,12 @@ export default {
 
             .detail_name {
               //   width: 64px;
-              height: 18px;
-              font-size: 18px;
+              height: 14px;
+              font-size: 14px;
               font-family: PingFangSC-Semibold, PingFang SC;
               font-weight: 600;
               color: rgba(0, 0, 0, 1);
-              line-height: 18px;
+              line-height: 14px;
             }
 
             .detail_bottom {
@@ -545,24 +526,23 @@ export default {
               padding-top: 8px;
 
               .detail_count {
-                min-width: 100px;
-                height: 32px;
-                font-size: 30px;
+                width: 70px;
+                height: 21px;
+                font-size: 21px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #1BBF90;
-                line-height: 32px;
+                line-height: 25px;
               }
 
               .detail_unit {
                 width: 18px;
                 height: 18px;
-                font-size: 18px;
-                margin-top: 10px;
+                font-size: 16px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #9ac0f4;
-                line-height: 18px;
+                line-height: 25px;
                 text-align:unset;
               }
             }
@@ -577,7 +557,7 @@ export default {
             width: 29.32%;
             height: 100%;
             object-fit: cover;
-            margin-right: 12px;
+            margin-right: 7.8px;
 
           }
 
@@ -591,8 +571,8 @@ export default {
               flex: 1 1 25%;
 
               .bg_wrapper {
-                width: 95%;
-                height: 100%;
+                width: 120px;
+                height: 88px;
                 background: rgba(107, 179, 255, 0.12);
                 background: url('./img/txt_bk01.png') no-repeat center;
                 background-size: cover;
@@ -612,16 +592,16 @@ export default {
                 }
                 .total_count {
                   width: 100%;
-                  height: 62.5%;
+                  height: 40px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   text-align: center;
-                  font-size: 30px;
+                  font-size: 20px;
                   font-family: PingFangSC-Light, PingFang SC;
                   font-weight: 400;
                   color: #017BFF;
-                  line-height: 30px;
+                  line-height: 31px;
                 }
               }
             }
@@ -629,7 +609,8 @@ export default {
         }
 
         .divs_wrapper {
-          width: 100%;
+          width: 630px;
+          height: 66.5px !important;
           margin-top: 24px;
 
           flex: 1;
@@ -639,21 +620,19 @@ export default {
           //   justify-content: space-around;
 
           .content_item_wrapper {
-            width: 48.125%;
-            height:100%;
+            width: 300px;
+            height: 250px;
             display: flex;
             flex-direction: column;
+            border: none;
 
             &:nth-child(1) {
-              margin-right: 26px;
+              margin-right: 34px;
             }
 
             .divs_item {
-              flex: 1;
-              // background-color: rgba(31, 60, 94, 1);
-              width: 100%;
-              height: 100%;
-              border-top:1px solid #dae1e9 ;
+              width: 300px;
+              height: 250px;
             }
           }
         }
@@ -666,15 +645,15 @@ export default {
           background: transparent !important;
 
           .divs_item {
-            flex: 1 1 50%;
+            flex: 1 1 auto;
           }
         }
       }
 
       .content_right {
         flex: 1;
-        height: 100%;
-        width: 44%;
+        height: 675px;
+        width: 583px;
         margin-left: 26px;
         overflow: hidden;
 
@@ -696,21 +675,20 @@ export default {
           flex-wrap: wrap;
 
           .details_wrapper {
-            flex: 1 1 40%;
+            width: 260px;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-right: 52px;
-            height: 180px;
+            height: 150px;
             background: url('./img/tjBK_01.png') no-repeat bottom;
-            background-size: 100%;
+            background-size: 260px;
             &:nth-child(2n) {
               margin-right: 0;
             }
             &:nth-of-type(-n + 4) {
               margin-bottom: 55px;
             }
-
             .count_wrapper {
               display: flex;
               width: 100%;
@@ -718,12 +696,12 @@ export default {
 
               .count_laebl {
                 // padding-left: 31.5px;
-                margin-left: 27px;
-                // margin-top: 5px;
+                margin-left: 1.5rem;
+                margin-top: 5px;
                 box-sizing: border-box;
-                // width: 80px;
-                height: 28px;
-                font-size: 20px;
+                width: 80px;
+                height: 23px;
+                font-size: 16px;
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
                 color:rgba(0,0,0,0.5);
@@ -735,9 +713,9 @@ export default {
 
                 position: relative;
                 text-align: right;
-                width: 45%;
+                width: 4.5rem;
                 height: 30px;
-                font-size: 30px;
+                font-size: 25px;
                 font-family: PingFangSC-Regular, PingFang SC;
                 font-weight: 400;
                 color: #017BFF;
