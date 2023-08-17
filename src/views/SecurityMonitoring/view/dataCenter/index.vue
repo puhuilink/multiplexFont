@@ -1,11 +1,6 @@
 <template>
   <div class="wrapper">
     <!-- flex布局 -->
-    <!-- <div class="wrapper_top">
-      <div class="icon_list" @click="handleBack"></div>
-      <div class="wrapper_title">数据中心综合视图</div>
-      <div class="back" @click="handleBack"></div>
-    </div> -->
 
     <!-- 视图主体 -->
     <div class="wrapper_content">
@@ -351,87 +346,48 @@ export default {
 @media screen and (min-width: 128px) {
   .img1 {
     background: url('./img/icon_cabinet.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img2 {
     background: url('./img/icon_cabinet.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img3 {
     background: url('./img/icon_cabinet.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img4 {
     background: url('./img/icon_cabinet_fat.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img5 {
     background: url('./img/icon_cabinet_xp.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img6 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img7 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img8 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .img9 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
-    background-size: 100%;
+    background-size: 60px;
   }
   .wrapper {
-    width: 100%;
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     padding: 0px 30px 55px 30px;
-    overflow: scroll;
-
-    .icon_list {
-      width: 30px;
-      height: 30px;
-      background: url('./img/icon_exit.png') no-repeat center;
-      background-size: 100%;
-      margin-right: 10px;
-    }
-
-    .wrapper_top {
-      height: 30px;
-      width: 100%;
-      //   padding-left: 37px;
-      //   padding-top: 31px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-    }
-
-    .wrapper_title {
-      width: 334px;
-      height: 35px;
-      font-size: 23px;
-      font-family: PingFangSC-Semibold, PingFang SC;
-      font-weight: 600;
-      color: #ffffff;
-      line-height: 35px;
-    }
-
-    // .back {
-    //   width: 30px;
-    //   height: 30px;
-    //   background: url('./img/icon_exit.png') no-repeat center;
-    //   background-size: 100%;
-    //   //   float: right;
-    //   //   padding-left: 802px;
-    //   margin-left: 802px;
-    // }
+    width: 100%;
 
     .wrapper_content {
       flex: 1;
@@ -445,7 +401,6 @@ export default {
         .content_item {
           display: flex;
           flex-direction: column;
-          height: 380.5px;
 
           .content_item_title {
             height: 20px;
@@ -472,6 +427,7 @@ export default {
         width: 674.5px;
         display: flex;
         flex-direction: column;
+        justify-content: center;
 
         .overdiv {
           //   height: 217px;
@@ -611,7 +567,7 @@ export default {
         .divs_wrapper {
           width: 630px;
           height: 66.5px !important;
-          margin-top: 24px;
+          margin-top: 10px;
 
           flex: 1;
           display: flex;
@@ -620,10 +576,9 @@ export default {
           //   justify-content: space-around;
 
           .content_item_wrapper {
-            width: 300px;
-            height: 250px;
             display: flex;
             flex-direction: column;
+            flex: 1 1 auto;
             border: none;
 
             &:nth-child(1) {
@@ -631,8 +586,8 @@ export default {
             }
 
             .divs_item {
-              width: 300px;
-              height: 250px;
+              width: 315px;
+              height: 210px;
             }
           }
         }
@@ -675,14 +630,14 @@ export default {
           flex-wrap: wrap;
 
           .details_wrapper {
-            width: 260px;
+            width: 240px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: 52px;
+            margin-right: 40px;
             height: 150px;
             background: url('./img/tjBK_01.png') no-repeat bottom;
-            background-size: 260px;
+            background-size: 240px;
             &:nth-child(2n) {
               margin-right: 0;
             }
@@ -696,10 +651,10 @@ export default {
 
               .count_laebl {
                 // padding-left: 31.5px;
-                margin-left: 1.5rem;
+                margin-left: 6px;
                 margin-top: 5px;
                 box-sizing: border-box;
-                width: 80px;
+                width: 90px;
                 height: 23px;
                 font-size: 16px;
                 font-family: PingFangSC-Semibold, PingFang SC;
@@ -713,7 +668,7 @@ export default {
 
                 position: relative;
                 text-align: right;
-                width: 4.5rem;
+                width: 90px;
                 height: 30px;
                 font-size: 25px;
                 font-family: PingFangSC-Regular, PingFang SC;
