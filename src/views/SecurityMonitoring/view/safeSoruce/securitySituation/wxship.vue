@@ -11,11 +11,11 @@
         <div class="bottom_top">
           <div class="bottom-content-left">
             <div class="text">{{ content[1].text }}</div>
-            <formatterNumber class="number" :number="content[1].number" />
+            <formatterNumber class="number" :number="content[1].number" :colors="color_white"/>
           </div>
           <div class="bottom-content-right">
             <div class="text">{{ content[2].text }}</div>
-            <formatterNumber class="number" :number="content[2].number" />
+            <formatterNumber class="number" :number="content[2].number" :colors="color_white" />
           </div>
         </div>
       </div>

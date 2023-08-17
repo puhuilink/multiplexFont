@@ -53,7 +53,7 @@ export default {
   display: inline-block;
 
 height: 30px;
-font-size: 40px;
+font-size: 30px;
 font-family: LetsgoDigital-Regular, LetsgoDigital;
 font-weight: 400;
 color: #FFFFFF;
@@ -65,11 +65,11 @@ line-height: 30px;
 }
 .textNumber{
 
-font-size: 36px;
+font-size: 30px;
 font-family: LetsgoDigital-Regular, LetsgoDigital;
 font-weight: 400;
 color: #000000;
-line-height: 36px;
+line-height: 30px;
 }
 .unit {
   display: inline-block;
@@ -77,7 +77,7 @@ line-height: 36px;
   font-size: 16px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #fff;
+
   line-height:16px;
   transform-origin: 0 0;
   transform: scale(0.6);
