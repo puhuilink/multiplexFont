@@ -20,6 +20,7 @@ export default {
   created () {
     const { organizeId } = Vue.ls.get(USER)
     switch (organizeId) {
+      case '77550822937853952':
       case '77551146956226560':
         this.url = require('@/assets/images/厦门.png')
         break
