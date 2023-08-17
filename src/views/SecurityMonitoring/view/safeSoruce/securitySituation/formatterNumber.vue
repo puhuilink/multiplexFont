@@ -31,11 +31,11 @@ export default {
       type: String,
       default: ''
     },
-    color_black04: {
+    colorBlack04: {
       type: String,
       default: ''
     },
-    color_white: {
+    colorWhite: {
       type: String,
       default: ''
     }

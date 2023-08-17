@@ -41,7 +41,8 @@ import {
   getInnerThreatOverview,
   getInnerThreatLevel
 } from './api.js'
-
+import { USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   name: 'SafeSoruce',
   components: { WxShip, OverAll, LineEcharts },
@@ -97,6 +98,7 @@ export default {
     this.interiorAPI()
     this.ThreadTrendAPI()
   },
+
   methods: {
     handleBack () {
       // console.log('back');
@@ -156,6 +158,7 @@ export default {
       console.log(ThreadTrendwData)
     }
   }
+
 }
 </script>
 
