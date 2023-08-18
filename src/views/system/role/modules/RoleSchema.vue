@@ -83,6 +83,9 @@
       </div>
     </div>
     <div class="steps-action">
+      <a-button v-if="current > 0" style="margin-right: 8px" @click="prev">
+        上一步
+      </a-button>
       <a-button v-if="current < steps.length - 1" type="primary" @click="next">
         下一步
       </a-button>
@@ -93,9 +96,7 @@
       >
         完成
       </a-button>
-      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
-        上一步
-      </a-button>
+
     </div>
   </a-modal>
 </template>
@@ -332,7 +333,6 @@ export default {
           this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -378,7 +378,6 @@ export default {
           this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false

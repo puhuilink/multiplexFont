@@ -6,11 +6,7 @@
     v-model="visible"
     :width="940"
     wrapClassName="QuotaSchema__modal"
-    @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
-    cancelText="取消"
-    @ok="submit"
     :key="modalKey"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -70,6 +66,10 @@
         </a-col>
       </a-row>
     </a-form-model>
+    <template slot="footer">
+      <a-button @click="onCancel">取消</a-button>
+      <a-button @click="onSubmit" type="primary" :loading="submitLoading">保存</a-button>
+    </template>
   </a-modal>
 </template>
 
@@ -128,14 +128,14 @@ export default {
     // selectedUser: [], // 选择的用户
     // remark: '',
     record: null,
-    submit: () => {},
+    onSubmit: () => {},
     staffName: [], // 回显数据用户id-用户名
     alias: []// 回显数据路径id-路径名
   }),
   computed: {},
   mounted () {},
   methods: {
-    cancel () {
+    onCancel () {
     // 重置下拉选项的选择
       this.form = {
         id: '',
@@ -145,6 +145,7 @@ export default {
         userIds: [],
         remark: '' // 备注''
       }
+      this.visible = false
     },
     handleChange (value) {
       // console.log(value)
@@ -177,41 +178,49 @@ export default {
       // console.log(ss);
     },
     // 3.新增工作组
-    async getroupAdd () {
-      try {
-      //  console.log(this.form)
-        const emptyFields = Object.entries(this.form).every(([key, value]) => {
-        // 检查属性值是否为空字符串、null 或空数组
-          return value === '' || value === null || (Array.isArray(value) && value.length === 0)
-        })
-        // console.log(emptyFields)
-        if (emptyFields) {
-          this.$notification.error({
-            message: '警告',
-            description: '文本待修改'
-          })
+    getroupAdd () {
+      this.$refs.ruleForm.validate(async validate => {
+        if (!validate) {
+          throw new Error('参数不正确')
         }
-        const data = await xungeng.post('/group/add',
-          { ...this.form }
-        )
-        // console.log(data)
-        if (data.msg === 'OK') {
-          this.visible = false
-          this.$emit('get_list')
-          this.$notification.success({
-            message: '提示',
-            description: '新增成功'
+        try {
+          this.submitLoading = true
+          //  console.log(this.form)
+          const emptyFields = Object.entries(this.form).every(([key, value]) => {
+            // 检查属性值是否为空字符串、null 或空数组
+            return value === '' || value === null || (Array.isArray(value) && value.length === 0)
           })
-        }
-      } catch (error) {
+          // console.log(emptyFields)
+          if (emptyFields) {
+            this.$notification.error({
+              message: '警告',
+              description: '文本待修改'
+            })
+          }
+          const data = await xungeng.post('/group/add',
+            { ...this.form }
+          )
+          // console.log(data)
+          if (data.msg === 'OK') {
+            this.visible = false
+            this.$emit('get_list')
+            this.$notification.success({
+              message: '提示',
+              description: '新增成功'
+            })
+          }
+        } catch (error) {
         // console.log(this.form);
-        if (this.form.isOpen === true) {
-          this.form.isOpen = 1
+          if (this.form.isOpen === true) {
+            this.form.isOpen = 1
+          }
+          if (this.form.isOpen === false) {
+            this.form.isOpen = 0
+          }
+        } finally {
+          this.submitLoading = false
         }
-        if (this.form.isOpen === false) {
-          this.form.isOpen = 0
-        }
-      }
+      })
     },
     // 5.查询工作组下面已绑定的路径（编辑使用）
     async getBindPath (id) {
@@ -241,32 +250,40 @@ export default {
     // 7.修改
     async groupEdit () {
       // console.log(this.form)
-      const formNumBer = this.form
-      console.log(formNumBer)
-      formNumBer.pathIds.map(Number)
-      // formNumBer
-      try {
-        const data = await xungeng.post('/group/edit',
-          this.form
-        )
-        // console.log(data)
-        if (data.msg === 'OK') {
-          this.visible = false
-          this.$emit('get_list')
-          this.$notification.success({
-            message: '提示',
-            description: '编辑成功'
-          })
+      this.$refs.ruleForm.validate(async validate => {
+        if (!validate) {
+          throw new Error('参数不正确')
         }
-      } catch (error) {
+        const formNumBer = this.form
+        console.log(formNumBer)
+        formNumBer.pathIds.map(Number)
+        // formNumBer
+        try {
+          const data = await xungeng.post('/group/edit',
+            this.form
+          )
+          // console.log(data)
+          if (data.msg === 'OK') {
+            this.visible = false
+            this.$emit('get_list')
+            this.$notification.success({
+              message: '提示',
+              description: '编辑成功'
+            })
+          }
+        } catch (error) {
         // 编辑失败数据在转换回来
-        if (this.form.isOpen === true) {
-          this.form.isOpen = 1
+          this.$emit('get_list')
+          if (this.form.isOpen === true) {
+            this.form.isOpen = 1
+          }
+          if (this.form.isOpen === false) {
+            this.form.isOpen = 0
+          }
+        } finally {
+          this.submitLoading = false
         }
-        if (this.form.isOpen === false) {
-          this.form.isOpen = 0
-        }
-      }
+      })
     },
 
     // 存数据
@@ -312,7 +329,7 @@ export default {
         remark: '' // 备注''
       }
       // console.log(this.form)
-      this.submit = this.insert
+      this.onSubmit = this.insert
       this.modalKey++
       this.show('新增巡更组')
       this.getfindAllUser()// 用户
@@ -324,7 +341,7 @@ export default {
     async edit (record) {
       // console.log(record)
       // this.record = { ...record }
-      this.submit = this.update
+      this.onSubmit = this.update
       this.show('编辑巡更组')
       this.modalKey++
       this.form = {

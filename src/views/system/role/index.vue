@@ -23,7 +23,7 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-range-picker :show-time="{ format: 'HH:mm:ss' }" :format="dateFormat" @change="onDateChange" />
+              <a-range-picker :show-time="{ format: 'HH:mm:ss' }" :format="dateFormat" v-model="queryParams.timeList" @change="onDateChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -154,7 +154,8 @@ export default {
       name: '',
       isOpen: null,
       createTimeStart: '',
-      createTimeEnd: ''
+      createTimeEnd: '',
+      timeList: []
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss'
   }),
@@ -205,7 +206,8 @@ export default {
         name: '',
         isOpen: null,
         createTimeStart: '',
-        createTimeEnd: ''
+        createTimeEnd: '',
+        timeList: []
       }
     },
     query () {
