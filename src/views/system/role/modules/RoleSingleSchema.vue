@@ -159,7 +159,6 @@ export default {
     async getMenu () {
       try {
         const result = await RoleService.findMenu()
-        console.log(result)
         const fList = result.map(el => {
           if (el.parent_code === 'NULL') {
             el.parent_code = null
