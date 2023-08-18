@@ -18,13 +18,10 @@ import { USER } from '@/store/mutation-types'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
-    console.log(binding)
     // const actionName = binding.arg || binding.value
     // const roles = store.getters.roles
     const roles = Vue.ls.get(USER)
-    console.log(roles)
     const elVal = vnode.context.$route.meta.permission
-    // console.log(elVal);
     if (!elVal || !elVal.length) {
       return
     }

@@ -123,6 +123,12 @@ export default {
     }
   },
   created () {
+    const { organizeId } = Vue.ls.get(USER)
+    if (organizeId !== '77551146956226560' || organizeId !== '77551230678728704' || organizeId !== '77550822937853952') {
+      this.$router.push({
+        path: '/403'
+      })
+    }
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total
@@ -133,10 +139,6 @@ export default {
     // this.getJson();
     this.initEchart()
   },
-  onLoad (option) {
-    // const token = option.token;
-    // get();
-  },
   methods: {
     getData () {
       /* this.getService();
@@ -146,7 +148,6 @@ export default {
       this.getDataBase();
       this.getMiddleWare();
       this.getXg(); */
-      console.log(process.env.VUE_APP_SERVER_PATH)
     },
     // 服务器数据
     async getService () {
@@ -160,7 +161,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '服务器数据')
       this.details = this.details.map((v) => {
         if (v.title === '服务器') {
           return {
@@ -185,7 +185,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '交换机')
       this.details = this.details.map((v) => {
         if (v.title === '交换机') {
           return {
@@ -209,7 +208,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '防火墙')
       this.details = this.details.map((v) => {
         if (v.title === '防火墙') {
           return {
@@ -234,7 +232,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '路由器')
       this.details = this.details.map((v) => {
         if (v.title === '路由器') {
           return {
@@ -258,7 +255,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '数据库')
       this.details = this.details.map((v) => {
         if (v.title === '数据库') {
           return {
@@ -282,7 +278,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '中间件')
       this.details = this.details.map((v) => {
         if (v.title === '中间件') {
           return {
@@ -307,7 +302,6 @@ export default {
         }, [])
         return v[1]
       })
-      console.log(end, '巡更')
       this.total = this.total.map((v) => {
         title.forEach((s, si) => {
           if (s === v.title) {
@@ -315,7 +309,6 @@ export default {
               ...v,
               count: end[si]
             }
-            console.log(v, ',,,')
           }
         })
         return v
@@ -333,7 +326,6 @@ export default {
       chart_status.setOption(status_option)
     },
     handleBack () {
-      console.log('back')
       this.$router.go(-1)
       // const jsonString = JSON.stringify(str);
       // 	window.$flutter_inappwebviewFn.callHandler('haha', jsonString);

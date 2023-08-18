@@ -102,9 +102,8 @@
     <div class="wrapper_content">
       <div class="wrapper_content_left">
         <a-tree
-          :expanded-keys="expandedKeys"
-          :auto-expand-parent="autoExpandParent"
           :tree-data="treeData"
+          :defaultExpandAll="true"
           @expand="onExpand"
           @select="onSelect"
         >
@@ -276,7 +275,6 @@ export default {
     moment,
     onSelect (selectedKeys) {
       // 响应当前部门下的用户
-      console.log('selectedKeys', selectedKeys)
       this.queryParams.orgId = selectedKeys[0]
       this.query()
     },
@@ -295,13 +293,12 @@ export default {
     },
     change (value) {
       this.password = value.target.value
-      console.log('value', value.target.value, this.password)
     },
     renderInput () {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -397,7 +394,6 @@ export default {
       this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
     async switchStatus (record, text) {
-      console.log('record', record, text)
       record.isOpen = text
       try {
         this.pageLoading = true
