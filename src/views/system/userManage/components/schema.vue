@@ -79,7 +79,10 @@
               wrapperCol: { span: 18 },
             }"
             prop="userName"
-            :rules="[{ required: true, message: '请填写登录名' }]"
+            :rules="[
+              { required: true, message: '请填写登录名' },
+              { validator: validateUser, trigger: 'blur' }
+            ]"
           >
             <a-input v-model="formModel.userName"></a-input>
           </a-form-model-item>
@@ -214,6 +217,11 @@ export default {
           } else {
             callback(new Error('英文字母区分大小写以及数字'))
           }
+        }
+      },
+      validateUser: (rule, value, callback) => {
+        if (value.length < 3) {
+          callback(new Error('登录名至少3位'))
         }
       }
     }
