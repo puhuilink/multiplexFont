@@ -184,11 +184,10 @@ export default {
     },
     open () {
       if (this.spread) {
-        this.expandedRowKeys = [_.get(this.treeData, '0.id', '')]
+        this.expandedRowKeys = [_.get(this.treeData, '0.id', ''), ...this.findNonEmptyChildrenIdsInTrees(this.treeData)]
       } else {
         this.expandedRowKeys = []
       }
-      this.spread = !this.spread
       this.spread = !this.spread
     },
     expandIcon (props) {
@@ -315,6 +314,28 @@ export default {
         }
       }
       return parentIds
+    },
+    findNonEmptyChildrenIdsInTrees (trees) {
+      const result = []
+
+      function findNonEmptyChildrenIds (node) {
+        if (!node.children || node.children.length === 0) {
+          return []
+        }
+
+        const nonEmptyChildren = node.children.filter(child => child.children && child.children.length > 0)
+        const nonEmptyChildrenIds = nonEmptyChildren.map(child => child.id)
+
+        return nonEmptyChildrenIds.concat(
+          nonEmptyChildren.flatMap(child => findNonEmptyChildrenIds(child))
+        )
+      }
+
+      for (const tree of trees) {
+        result.push(...findNonEmptyChildrenIds(tree))
+      }
+
+      return result
     },
     async getUserList (orgId = '') {
       const { data: { list } } = await axios.get(`/user/list?pageSize=9999&pageNum=1${orgId === '' ? '' : '&orgId=' + orgId}`)
