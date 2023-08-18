@@ -6,7 +6,7 @@
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
         :style="{ padding: '0' }">
         <div v-if="mode === 'sidemenu'" class="header">
-          <Logo v-if="fixedHeader" class="header-logo" />
+          <!-- <Logo v-if="fixedHeader" class="header-logo" /> -->
           <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
           <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
           <user-menu></user-menu>
@@ -114,11 +114,23 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  left: 0;
+  // left: 0;
   height: 64px;
   z-index: 199;
 }
 
+.ant-header-side-opened{
+  // width: calc(100% - 210px) !important;
+  width: 100% !important;
+  padding-left: 210px !important;
+  box-sizing: border-box !important;
+}
+.ant-header-side-close{
+  // width: calc(100% - 80px) !important;
+  width: 100% !important;
+  padding-left: 80px !important;
+  box-sizing: border-box !important;
+}
 .header-logo {
   display: inline-block;
   padding: 12px 20px;
