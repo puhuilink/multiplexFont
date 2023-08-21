@@ -20,7 +20,7 @@
     </a-drawer>
 
     <!-- fixed header -->
-    <global-header
+    <!-- <global-header
       v-if="fixedHeader"
       :mode="layoutMode"
       :menus="menus"
@@ -28,7 +28,7 @@
       :collapsed="collapsed"
       :device="device"
       @toggle="toggle"
-    />
+    /> -->
 
     <!-- fixed menu -->
     <side-menu
@@ -45,7 +45,7 @@
 
       <!-- static header -->
       <global-header
-        v-if="!fixedHeader"
+        v-if="fixedHeader"
         :mode="layoutMode"
         :menus="menus"
         :theme="navTheme"
