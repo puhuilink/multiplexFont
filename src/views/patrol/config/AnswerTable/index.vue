@@ -53,19 +53,22 @@
         </a-col>
       </a-row>
     </a-form>
-    <a-button
-      @click="()=>{
-        this.visible = true
-        this.modalTitle = '新增检查项'
-        this.isNew = true
-        this.formatList = [
-          {
-            value: null,
-            alias:''
-          }
-        ]
-      }">新增
-    </a-button>
+    <div class="operation_box">
+      <a-button
+        type="primary"
+        @click="()=>{
+          this.visible = true
+          this.modalTitle = '新增检查项'
+          this.isNew = true
+          this.formatList = [
+            {
+              value: null,
+              alias:''
+            }
+          ]
+        }">新增
+      </a-button>
+    </div>
     <a-modal
       v-if="visible"
       :title="modalTitle"

@@ -89,12 +89,15 @@
           </a-col>
         </a-row>
       </a-form>
-      <a-button
-        @click="()=>{
-          this.visible=true
-          this.isNew=true
-          this.editForm = null
-        }">新增</a-button>
+      <div class="operation_box">
+        <a-button
+          type="primary"
+          @click="()=>{
+            this.visible=true
+            this.isNew=true
+            this.editForm = null
+          }">新增</a-button>
+      </div>
       <ThresholdSchema
         v-if="visible"
         :visible="visible"

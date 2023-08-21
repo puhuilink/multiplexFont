@@ -19,7 +19,9 @@
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:M001001>新增</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001001>新增</a-button>
+    </div>
     <a-table
       :columns="columns"
       :dataSource="defaultData"

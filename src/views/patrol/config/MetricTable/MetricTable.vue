@@ -29,11 +29,14 @@
         </a-col>
       </a-row>
     </a-form>
-    <a-button
-      @click="()=>{
-        this.visible = true
-        this.isNew = true
-      }">新增</a-button>
+    <div class="operation_box">
+      <a-button
+        type="primary"
+        @click="()=>{
+          this.visible = true
+          this.isNew = true
+        }">新增</a-button>
+    </div>
     <a-modal
       title="新增检查项"
       wrapClassName="MetricSchema"

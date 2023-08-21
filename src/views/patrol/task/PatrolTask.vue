@@ -93,9 +93,10 @@
     </a-form>
 
     <!-- / 操作区域 -->
-
-    <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
-    <a-button :loading="exportLoading" @click="exportExcel">导出</a-button>
+    <div class="operation_box">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
+      <a-button :loading="exportLoading" @click="exportExcel">导出</a-button>
+    </div>
 
     <a-table
       style="margin-top: 30px"

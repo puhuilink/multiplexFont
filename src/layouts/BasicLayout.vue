@@ -56,7 +56,7 @@
 
       <!-- layout content -->
       <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }">
-        <multi-tab v-if="multiTab"></multi-tab>
+        <multi-tab v-if="showTab"></multi-tab>
         <transition name="page-transition">
           <route-view />
         </transition>
@@ -110,12 +110,18 @@ export default {
       if (!this.fixSidebar || this.isMobile()) {
         return '0'
       }
-
       // SideMenu.width
       if (this.sidebarOpened) {
         return '210px'
       }
       return '80px'
+    },
+    showTab () {
+      const currentPath = this.$route.path
+      if (currentPath === '/SecurityMonitoring/SituationalAwareness' || currentPath === '/machineRoom/room') {
+        return false
+      }
+      return true
     }
   },
   watch: {
@@ -173,6 +179,49 @@ export default {
  * You can easily play with the page transition by editing
  * these styles.
  */
+.ant-layout{
+  background-color: #F4F4F4 !important;
+}
+
+.ant-layout-content{
+  padding-top: 66px !important;
+  &>:last-child{
+    background: #fff;
+    border-top: 1px solid #004FA5 !important;
+    border-bottom: 1px solid #004FA5 !important;
+  }
+  &::after{
+    display: block;
+    content: '';
+    height: 24px;
+    width: 100%;
+  }
+}
+.ant-table-wrapper{
+  padding: 0 23px;
+}
+.ant-table-header{
+  .ant-table-thead > tr > th{
+    background-color: #fff !important;
+    border-bottom: 1px solid #004FA5 !important;
+  }
+}
+
+.operation_box{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-end;
+  justify-content: flex-start;
+  height: 50px;
+  padding: 0 23px;
+  box-sizing: border-box;
+  background-clip: content-box;
+  background-color: #E5EBF3 !important;
+  &>:first-child{
+    margin-left: 10px;
+  }
+}
 
 .page-transition-enter {
   opacity: 0;

@@ -36,8 +36,10 @@
       </span>
     </a-form>
     <div style="margin-bottom: 10px;"></div>
-    <a-button type="primary" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px; margin-bottom: 10px;">查看</a-button>
-    <a-button @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
+    <div class="operation_box">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px; margin-bottom: 10px;">查看</a-button>
+      <a-button :type="hasSelected ? 'primary' : ''" @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
+    </div>
     <a-table
       :columns="columns"
       :scroll="scroll"

@@ -1,5 +1,5 @@
 <template>
-  <div class="logo">
+  <div class="logo" :class="showTitle?'detail_logo':'simple_logo'">
     <router-link :to="{ name: 'view' }">
       <div>
         <img :src="logo" alt="" />
@@ -57,36 +57,44 @@ export default {
   font-family: 'FZZZHUNHJW--GB1-0';
   src: url('../../assets/fonts/FZZZHUNHJW.ttf') format('truetype');
 }
+.detail_logo{
+  padding: 12px !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.simple_logo{
+  left:50% !important;
+  margin: 12px;
+  margin-left: -40px !important;
+}
 .logo {
-  transform: translateY(-2px);
+  background-color: transparent !important;
   div{
     display: flex;
     align-items: center;
-    height: 65px;
   }
 
   img {
-    height: 42px !important;
+    height: 40px !important;
   }
   span{
     display: flex;
     flex-direction: column;
+    white-space: nowrap;
   }
   &__title {
-    font-size: 16px !important;
-    line-height: 16px !important;
+    font-size: 18px !important;
+    line-height: 26px !important;
     font-family: FZZZHUNHJW--GB1-0, arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
     font-weight: normal !important;
-    margin: 0 0 0 12px !important;
   }
   &__subtitle{
-    font-size: 12px !important;
-    line-height: 16px !important;
-    letter-spacing: 2px;
+    font-size: 14px !important;
+    line-height: 14px !important;
+    letter-spacing: 1.1px;
     font-family: FZZZHUNHJW--GB1-0, FZZZHUNHJW--GB1 !important;
     font-weight: normal !important;
     color: #FFFFFF;
-    margin: 0 0 0 12px !important;
   }
 }
 </style>

@@ -22,10 +22,10 @@
         <ResetBtn @click="resetQueryParams" />
       </span>
     </a-form>
-    <div style="width: 100%">
-      <a-button @click="onAdd" style="margin-bottom: 10px;margin-right: 10px">新增</a-button>
-      <a-button :disabled="!hasSelectedOne" @click="onEdit" style="margin-bottom: 10px;margin-right: 10px">编辑</a-button>
-      <a-button :disabled="!hasSelectedOne" @click="onBatchDelete">删除</a-button>
+    <div style="width: 100%" class="operation_box">
+      <a-button type="primary" @click="onAdd" style="margin-bottom: 10px;margin-right: 10px">新增</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-bottom: 10px;margin-right: 10px">编辑</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete">删除</a-button>
     </div>
     <a-table
       :columns="columns"
