@@ -132,7 +132,11 @@ export default {
     staffName: [], // 回显数据用户id-用户名
     alias: []// 回显数据路径id-路径名
   }),
-  computed: {},
+  // computed: {
+  //   filteredOptions() {
+  //     return this.users.filter(o => !this.form.userIds.includes(o.userId));
+  //   },
+  // },
   mounted () {},
   methods: {
     onCancel () {
@@ -148,7 +152,6 @@ export default {
       this.visible = false
     },
     handleChange (value) {
-      // console.log(value)
       if (value === '1') {
         this.form.isOpen = true
       }
@@ -160,22 +163,17 @@ export default {
     async getFindUnBindAdd () {
       const data = await xungeng.get('/path/findUnBind')
       if (data.msg === '所有路线都已经被工作组使用') {
-        // console.log(data)
         this.pathIdsApiData = []
       }
       if (data.msg === 'OK') {
         this.pathIdsApiData = data.data
-        console.log(this.pathIdsApiData)
       }
     },
     // 2..新增 获取当前数据权限下的所有用户
     async getfindAllUser () {
       const data = await xungeng.get('/user/findAllUser')
-      // this.users = JSON.parse(decrypt(data.data))
-      this.users = JSONBig.parse(decrypt(data.data))
 
-      console.log(this.users)
-      // console.log(ss);
+      this.users = JSONBig.parse(decrypt(data.data))
     },
     // 3.新增工作组
     getroupAdd () {
@@ -185,12 +183,12 @@ export default {
         }
         try {
           this.submitLoading = true
-          //  console.log(this.form)
+
           const emptyFields = Object.entries(this.form).every(([key, value]) => {
             // 检查属性值是否为空字符串、null 或空数组
             return value === '' || value === null || (Array.isArray(value) && value.length === 0)
           })
-          // console.log(emptyFields)
+
           if (emptyFields) {
             this.$notification.error({
               message: '警告',
@@ -200,7 +198,7 @@ export default {
           const data = await xungeng.post('/group/add',
             { ...this.form }
           )
-          // console.log(data)
+
           if (data.msg === 'OK') {
             this.visible = false
             this.$emit('get_list')
@@ -210,7 +208,6 @@ export default {
             })
           }
         } catch (error) {
-        // console.log(this.form);
           if (this.form.isOpen === true) {
             this.form.isOpen = 1
           }
@@ -225,44 +222,55 @@ export default {
     // 5.查询工作组下面已绑定的路径（编辑使用）
     async getBindPath (id) {
       this.getFindUnBindAdd()
-      // console.log('id' + id)
+
       const data = await xungeng.get('/group/bindPath', { params: { id: id } })
-      console.log(data)
+
       this.form.pathIds = data.data ? data.data.map(item => item.id) : []
-      console.log(this.form.pathIds)
+
       this.pathIdsApiData = [...this.pathIdsApiData, ...data.data]
-      console.log(this.pathIdsApiData)
     },
     // 6.查询工作组下面已绑定的用户（编辑使用）
     async getBindUser (id) {
-      await this.getfindAllUser()
+      // await this.getfindAllUser()
+      const allUser = await xungeng.get('/user/findAllUser')
+      // this.users = JSON.parse(decrypt(data.data))
+      const pickUser = JSONBig.parse(decrypt(allUser.data)) ? JSONBig.parse(decrypt(allUser.data)).map(el => {
+        el.userId = el.userId.toString()
+        return _.pick(el, ['staffName', 'userId'])
+      }) : []
       const data = await xungeng.get('group/bindUser', { params: { id: id } })
-      const dataUsers = data.data ? JSONBig.parse(decrypt(data.data)) : []
-      console.log(dataUsers.userId)
-      this.form.userIds = data.data ? dataUsers.map(item => item.userId) : []
-      console.log(this.users)
+      const dataUsers = JSONBig.parse(decrypt(data.data)) ? JSONBig.parse(decrypt(data.data)).map(el => {
+        el.userId = el.userId.toString()
+        return _.pick(el, ['staffName', 'userId'])
+      }) : []
+      this.form.userIds = data.data ? dataUsers.map(item => item.userId.toString()) : []
 
-      this.users = [...this.users, ...dataUsers]
-      console.log(this.users)
-      // this.staffName = dataUsers.map(item => item.staffName);
-      console.log(this.form.userIds)
+      const dataArray = pickUser
+      const uniqueUserIds = new Set()
+      const deduplicatedArray = []
+
+      for (const obj of dataArray) {
+        if (!uniqueUserIds.has(obj.userId)) {
+          uniqueUserIds.add(obj.userId)
+          deduplicatedArray.push(obj)
+        }
+      }
+
+      this.users = deduplicatedArray
     },
     // 7.修改
     async groupEdit () {
-      // console.log(this.form)
       this.$refs.ruleForm.validate(async validate => {
         if (!validate) {
           throw new Error('参数不正确')
         }
         const formNumBer = this.form
-        console.log(formNumBer)
         formNumBer.pathIds.map(Number)
         // formNumBer
         try {
           const data = await xungeng.post('/group/edit',
             this.form
           )
-          // console.log(data)
           if (data.msg === 'OK') {
             this.visible = false
             this.$emit('get_list')
@@ -288,16 +296,10 @@ export default {
 
     // 存数据
     handlePathIdsChange (value) {
-      console.log(value)
-
       this.form.pathIds = value
     },
     handlePathIdsChange2 (value) {
-      console.log(this.users)
-      console.log(value)
-
       this.form.userIds = value
-      // console.log(this.form.userIds)
     },
     reset () {
       this.$refs.ruleForm.resetFields()
@@ -328,7 +330,6 @@ export default {
         userIds: [],
         remark: '' // 备注''
       }
-      // console.log(this.form)
       this.onSubmit = this.insert
       this.modalKey++
       this.show('新增巡更组')
@@ -339,8 +340,6 @@ export default {
      * 打开编辑窗口
      */
     async edit (record) {
-      // console.log(record)
-      // this.record = { ...record }
       this.onSubmit = this.update
       this.show('编辑巡更组')
       this.modalKey++
@@ -356,10 +355,6 @@ export default {
       this.getBindPath(record[0].id)
       this.getBindUser(record[0].id)
 
-      console.log(this.form)
-      // this.form={...record[0]}
-
-      // console.log(this.form);
       if (this.form.isOpen === true) {
         this.form.isOpen = 1
       }
@@ -371,7 +366,6 @@ export default {
      * 调取新增接口
      */
     async insert () {
-      // console.log(this.form.isOpen)
       if (this.form.isOpen === 1) {
         this.form.isOpen = true
       }
@@ -384,15 +378,13 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      // console.log(this.form.isOpen)
       if (this.form.isOpen === 1) {
         this.form.isOpen = true
       }
       if (this.form.isOpen === 0) {
         this.form.isOpen = false
       }
-      // this.form = { ...this.selectedRowsDate }
-      //  this.form.remark = this.remark
+
       this.groupEdit()
     }
   }
