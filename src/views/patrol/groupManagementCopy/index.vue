@@ -65,6 +65,7 @@
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <!-- <a-pagination

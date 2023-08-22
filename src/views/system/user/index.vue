@@ -51,14 +51,16 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAddUser" v-action:M001001>新增</a-button>
-        <a-button @click="onEditUser" :disabled="!hasSelectedOne" v-action:M001002>编辑</a-button>
-        <a-button @click="onBatchDeleteUser" :disabled="!hasSelectedOne" v-action:M001003>删除</a-button>
-        <a-button @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M001005>重置密码</a-button>
-        <a-button @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M001004>分配工作组</a-button>
-        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M001011>更改状态</a-button>
-        <a-button @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M001010>分配权限</a-button>
-        <a-button @click="onClearError" :disabled="!hasSelectedOne" v-action:M001010>解除限制</a-button>
+        <div class="operation_box">
+          <a-button :type="hasSelectedOne" @click="onAddUser" v-action:M001001>新增</a-button>
+          <a-button :type="hasSelectedOne" @click="onEditUser" :disabled="!hasSelectedOne" v-action:M001002>编辑</a-button>
+          <a-button :type="hasSelectedOne" @click="onBatchDeleteUser" :disabled="!hasSelectedOne" v-action:M001003>删除</a-button>
+          <a-button :type="hasSelectedOne" @click="onResetPwd" :disabled="!hasSelectedOne" v-action:M001005>重置密码</a-button>
+          <a-button :type="hasSelectedOne" @click="onAllocateUserGroup" :disabled="!hasSelectedOne" v-action:M001004>分配工作组</a-button>
+          <a-button :type="hasSelectedOne" @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M001011>更改状态</a-button>
+          <a-button :type="hasSelectedOne" @click="onAllocateUserAuth" :disabled="!hasSelectedOne" v-action:M001010>分配权限</a-button>
+          <a-button :type="hasSelectedOne" @click="onClearError" :disabled="!hasSelectedOne" v-action:M001010>解除限制</a-button>
+        </div>
       </template>
     </CTable>
 

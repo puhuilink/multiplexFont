@@ -197,9 +197,11 @@ export default {
     width: 100%;
   }
 }
+// 表格相关样式
 .ant-table-wrapper{
   padding: 0 23px;
 }
+
 .ant-table-header{
   .ant-table-thead > tr > th{
     background-color: #fff !important;
@@ -211,7 +213,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  align-content: flex-end;
+  align-content: space-around;
   justify-content: flex-start;
   height: 50px;
   padding: 0 23px;
@@ -220,6 +222,28 @@ export default {
   background-color: #E5EBF3 !important;
   &>:first-child{
     margin-left: 10px;
+  }
+}
+
+.table_bg{
+  background-color: #F9FBFF !important;
+}
+// 分页器相关
+.ant-table-pagination.ant-pagination{
+  display: flex;
+  margin-top: 0 !important;
+  margin-bottom: 23px !important;
+  width: 100%;
+  padding: 8px;
+  background: #E5EBF3;
+  justify-content: flex-end;
+}
+
+.ant-pagination-item-active{
+  border-color: #004FA5 !important;
+  background-color: #004FA5 !important;
+  a{
+    color: #FFF !important;
   }
 }
 

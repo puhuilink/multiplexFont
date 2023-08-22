@@ -98,7 +98,9 @@
         </div>
       </a-form-model>
     </div>
-    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd" v-action:M001001001>新建</a-button>
+    <div class="operation_box">
+      <a-button type="primary" style="margin-bottom: 5px" @click="onAdd" v-action:M001001001>新建</a-button>
+    </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
         <a-tree
@@ -116,6 +118,7 @@
           :pagination="paginationOpt"
           :loading="pageLoading"
           rowKey="id"
+          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
           :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template #isOpen="text, record">

@@ -35,6 +35,7 @@
       :data-source="dataSource"
       :loading="pageLoading"
       :pagination="paginationOpt"
+      :rowClassName="(record, index)=> index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <PlanSchema ref="schema" @addSuccess="query" @editSuccess="query" />

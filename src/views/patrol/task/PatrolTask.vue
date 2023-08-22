@@ -107,6 +107,7 @@
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
     </a-table>
 

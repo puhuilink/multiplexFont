@@ -48,6 +48,7 @@
       :loading="pageLoading"
       :pagination="paginationOpt"
       :data-source="dataSource"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <ChangeShiftSchema ref="schema" @addSuccess="query" @editSuccess="query"/>
@@ -195,5 +196,5 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 </style>

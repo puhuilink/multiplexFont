@@ -43,7 +43,7 @@
         </a-row>
       </a-form-model>
     </div>
-    <div style="margin-bottom: 1%">
+    <div style="margin-bottom: 1%" class="operation_box">
       <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
         <a-icon type="plus" />
         新建
@@ -62,6 +62,7 @@
         :pagination="false"
         @expand="expand"
         :loading="pageLoading"
+        :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
         class="components-table-demo-nested">
         <template #operation="text, record">
           <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>

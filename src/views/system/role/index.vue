@@ -36,7 +36,9 @@
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:M001002001>新增</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001002001>新增</a-button>
+    </div>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
@@ -45,6 +47,7 @@
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #status="text,record">
         <a-switch :checked="text" @change="onStatusChange(record)" />
