@@ -346,6 +346,7 @@ export default {
     // 获取当前表格信息
     this.getData()
     this.getUserList()
+    this.expandedRowKeys = ['1']
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'form' })
