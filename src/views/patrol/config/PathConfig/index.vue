@@ -82,7 +82,8 @@ export default {
       {
         title: '提交人',
         dataIndex: 'updator',
-        width: '120px'
+        width: '120px',
+        customRender: (text, el) => el.updator || el.creator
       },
       {
         title: '提交时间',

@@ -78,7 +78,7 @@
                   '最近1月': [moment().add(-30, 'days'), moment()],
                 }"
                 :showTime="{ format: 'HH:mm' }"
-                v-model="queryParams.actualEndTime"
+                v-model="queryParams.timeList"
               />
             </a-form-item>
           </a-col>
@@ -127,6 +127,7 @@ import {
 import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
+import _ from 'lodash'
 
 export default {
   name: 'PatrolTask',
@@ -252,7 +253,11 @@ export default {
       }
     },
     query () {
-      this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
+      if (this.queryParams.timeList) {
+        this.queryParams.actualTimeStart = moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.queryParams.actualTimeEnd = moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
+      }
+      this.loadData({ ...this.reloadParams({ ..._.omit(this.queryParams, ['timeList']) }), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
     },
     moment,
     reloadParams (params) {

@@ -27,6 +27,8 @@
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row>
+        </a-row>
       </div>
 
       <span :class="advanced ? 'expand' : 'collapse'">
@@ -138,7 +140,8 @@ export default {
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
-      }
+      },
+      queryParams: {}
     }
   },
   computed: {},
@@ -148,14 +151,15 @@ export default {
       try {
         this.pageLoading = true
         if (this.queryParams.receive_time) {
-          this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
-          this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
+          this.queryParams.createTimeStart = this.moment(this.queryParams.receive_time[0]).format('YYYY-MM-DD HH:mm:ss')
+          this.queryParams.createTimeEnd = this.moment(this.queryParams.receive_time[1]).format('YYYY-MM-DD HH:mm:ss')
         }
+        console.log('querty', _.omit(this.queryParams, ['receive_time']), this.queryParams)
         const { data: { list, total } } = await xungeng.get('/changeShifts/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
             pageNum: this.paginationOpt.defaultCurrent,
-            ..._.omit(this.queryParams, 'receive_time')
+            ..._.omit(this.queryParams, ['receive_time'])
           }
         })
         this.dataSource = list

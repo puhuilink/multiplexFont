@@ -149,6 +149,8 @@ export default {
         })
         this.dataSource = list
         this.paginationOpt.total = total
+        this.selectedRows = []
+        this.selectedRowKeys = []
       } catch (e) {
         throw e
       } finally {

@@ -53,7 +53,7 @@
         <a-switch :checked="text" @change="onStatusChange(record)" />
       </template>
       <template #action="text,record">
-        <a @click="onEditUser(record)" v-action:M001002005>编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
