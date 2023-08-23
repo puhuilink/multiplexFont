@@ -76,6 +76,17 @@
           </a-col>
 
         </a-row>
+
+        <div class="font_head" style="margin-top: 10px">交接文档</div>
+        <a-row>
+          <a-col :span="8">
+            <span>监控值班记录表：{{ record.monitorRecord | monitorStatus }}</span>
+          </a-col>
+          <a-col :span="8" style="text-align: center">
+            <span>运维日志表：{{ record.maintenanceLog | maintenanceLog }}</span>
+          </a-col>
+
+        </a-row>
       </div>
     </a-spin>
   </a-modal>
@@ -157,9 +168,19 @@ export default {
     monitorStatus (monitorStatus = '') {
       switch (monitorStatus) {
         case '2':
-          return '异常'
+          return '否'
         case '1':
-          return '正常'
+          return '是'
+        default:
+          return ''
+      }
+    },
+    maintenanceLog (maintenanceLog = '') {
+      switch (maintenanceLog) {
+        case '2':
+          return '否'
+        case '1':
+          return '是'
         default:
           return ''
       }
@@ -249,5 +270,8 @@ export default {
   font: 16px black;
   font-weight: bold;
   padding-bottom: 15px;
+  :nth-child(1) {
+    margin-top: 20px;
+  }
 }
 </style>
