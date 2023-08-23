@@ -2,99 +2,110 @@
   <div>
     <div>
       <a-form class="ant-advanced-search-form" :form="form">
-        <a-row :gutter="32">
-          <a-col
-            :span="8"
-          >
-            <a-form-item >
-              监控对象：
-              <a-input
-                :style="{width:'63%'}"
-                v-decorator="[
-                  `host_alias` ]"
-                placeholder="请输入关键字"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col
-            :span="8"
-          >
-            <a-form-item >
-              监控实体：
-              <a-input
-                :style="{width:'60%'}"
-                v-decorator="[
-                  `endpoint_alias` ]"
-                placeholder="请输入关键字"
-              />
-            </a-form-item>
-          </a-col><a-col
-            :span="8"
-          >
-            <a-form-item >
-              检查项：
-              <a-input
-                :style="{width:'60%'}"
-                v-decorator="[
-                  `metric_alias`
-                ]"
-                placeholder="请输入关键字"
-              />
-            </a-form-item>
-          </a-col><a-col
-            :span="8"
-          >
-            <a-form-item >
-              检查值类型：
-              <a-select
-                :style="{width:'60%'}"
-                v-decorator="[
-                  `answer_type` ]"
-                placeholder="请选择类型"
-              >
-                <a-select-option
-                  value="fill">
-                  填写
-                </a-select-option><a-select-option
-                  value="select">
-                  选择
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col><a-col
-            :span="8"
-          >
-            <a-form-item >
-              告警等级：
-              <a-select
-                :style="{width:'60%'}"
-                v-decorator="[
-                  `level` ]"
-                placeholder="请选择告警等级"
-              >
-                <a-select-option value="1">L1</a-select-option>
-                <a-select-option value="2">L2</a-select-option>
-                <a-select-option value="3">L3</a-select-option>
-                <a-select-option value="4">L4</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :span="4" :style="{ textAlign: 'left' }">
-            <a-button type="primary" @click="()=>handleSearch()">
-              查询
-            </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              重置
-            </a-button>
-          </a-col>
-        </a-row>
+        <div class="fold">
+          <a-row :gutter="[8,8]">
+            <a-col :style="{ textAlign: 'left' }" class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="() => handleSearch()">
+                查询
+              </a-button>
+              <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+                重置
+              </a-button>
+            </a-col>
+            <a-col
+              :md="6"
+              :sm="24"
+            >
+              <a-form-item >
+                监控对象：
+                <a-input
+                  :style="{width:'63%'}"
+                  v-decorator="[
+                    `host_alias` ]"
+                  placeholder="请输入关键字"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col
+              :md="6"
+              :sm="24"
+            >
+              <a-form-item >
+                监控实体：
+                <a-input
+                  :style="{width:'60%'}"
+                  v-decorator="[
+                    `endpoint_alias` ]"
+                  placeholder="请输入关键字"
+                />
+              </a-form-item>
+            </a-col><a-col
+              :md="6"
+              :sm="24"
+            >
+              <a-form-item >
+                检查项：
+                <a-input
+                  :style="{width:'60%'}"
+                  v-decorator="[
+                    `metric_alias`
+                  ]"
+                  placeholder="请输入关键字"
+                />
+              </a-form-item>
+            </a-col><a-col
+              :md="6"
+              :sm="24"
+            >
+              <a-form-item >
+                检查值类型：
+                <a-select
+                  :style="{width:'60%'}"
+                  v-decorator="[
+                    `answer_type` ]"
+                  placeholder="请选择类型"
+                >
+                  <a-select-option
+                    value="fill">
+                    填写
+                  </a-select-option><a-select-option
+                    value="select">
+                    选择
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col><a-col
+              :md="6"
+              :sm="24"
+            >
+              <a-form-item >
+                告警等级：
+                <a-select
+                  :style="{width:'60%'}"
+                  v-decorator="[
+                    `level` ]"
+                  placeholder="请选择告警等级"
+                >
+                  <a-select-option value="1">L1</a-select-option>
+                  <a-select-option value="2">L2</a-select-option>
+                  <a-select-option value="3">L3</a-select-option>
+                  <a-select-option value="4">L4</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
       </a-form>
-      <a-button
-        @click="()=>{
-          this.visible=true
-          this.isNew=true
-          this.editForm = null
-        }">新增</a-button>
+      <div class="operation_box">
+        <a-button
+          type="primary"
+          @click="()=>{
+            this.visible=true
+            this.isNew=true
+            this.editForm = null
+          }">新增</a-button>
+      </div>
       <ThresholdSchema
         v-if="visible"
         :visible="visible"

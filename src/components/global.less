@@ -662,3 +662,19 @@ body {
   white-space: pre-wrap !important;
   text-overflow: clip !important;
 }
+
+// 主题色
+@markColor: #004FA5;
+.ant-btn-primary, .ant-checkbox-checked .ant-checkbox-inner{
+  background-color: @markColor !important;
+  border-color: @markColor !important;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner::after{
+  background-color: @markColor !important;
+}
+
+.ant-btn{
+  width: 100px !important;
+  height: 26px !important;
+}

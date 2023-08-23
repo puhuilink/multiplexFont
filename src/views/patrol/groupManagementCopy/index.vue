@@ -3,18 +3,29 @@
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="12" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="queryList()">
+              <a-icon type="search" />
+              查询
+            </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
+              <a-icon type="sync" />
+              重置
+            </a-button>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组编号" v-bind="formItemLayout" class="fw">
               <a-input allowClear v-model.trim="Myid" />
             </a-form-item>
           </a-col>
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组名称" v-bind="formItemLayout" class="fw">
               <a-input allowClear v-model.trim="Myname" />
             </a-form-item>
           </a-col>
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
               <a-select show-search placeholder="请选择" v-model="isOpen" @change="handleChange" key="0">
                 <a-select-option :value="1"> 有效 </a-select-option>
@@ -25,22 +36,23 @@
         </a-row>
       </div>
 
-      <span class="collapse">
+      <!-- <span class="collapse">
         <a-button @click="queryList()" type="primary">查询</a-button>
         <a-button @click="resetQueryParams">重置</a-button>
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
-    <div class="onAddUserBox">
-      <a-button @click="onAddUser" v-action:M001001>新增巡更组</a-button>
+    <div class="onAddUserBox operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001001>新增巡更组</a-button>
       <a-button
+        :type="hasSelected && selectedRowKeys.length === 1 ? 'primary' :''"
         @click="onEditUser"
         v-action:M001001
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
       >编辑巡更组</a-button
       >
-      <a-button @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">删除巡更组</a-button>
+      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">删除巡更组</a-button>
     </div>
     <!-- <a-table
       :columns="columns"
@@ -64,6 +76,7 @@
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <!-- <a-pagination

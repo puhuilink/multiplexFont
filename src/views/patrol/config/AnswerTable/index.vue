@@ -2,70 +2,76 @@
 <template>
   <div>
     <a-form class="ant-advanced-search-form" :form="form">
-      <a-row :gutter="24">
-        <a-col
-          :span="10"
-          :style="{textAlign: 'right'}"
-        >
-          <a-form-model-item
-            prop="alias">
-            检查值名称:
-            <a-input
-              style="width: 70%"
-              v-decorator="[
-                `alias`
-              ]"
-              placeholder="请输入关键字"
-            />
-          </a-form-model-item>
-        </a-col>
-        <a-col :span="10">
-          <a-form-model-item
-            prop="alias">
-            类型:
-            <a-select
-              style="width: 80%"
-              v-decorator="[
-                `type`
-              ]"
-              placeholder="请选择类型"
-            >
-              <a-select-option
-                value="select"
+      <div class="fold">
+        <a-row :gutter="[8, 8]">
+          <a-col :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="handleSearch">
+              查询
+            </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+              重置
+            </a-button>
+          </a-col>
+          <a-col
+            :md="6"
+            :sm="24"
+          >
+            <a-form-model-item
+              prop="alias">
+              检查值名称:
+              <a-input
+                style="width: 70%"
+                v-decorator="[
+                  `alias`
+                ]"
+                placeholder="请输入关键字"
+              />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-model-item
+              prop="alias">
+              类型:
+              <a-select
+                style="width: 80%"
+                v-decorator="[
+                  `type`
+                ]"
+                placeholder="请选择类型"
               >
-                选择
-              </a-select-option>
-              <a-select-option
-                value="fill"
-              >
-                填写
-              </a-select-option>
-            </a-select>
-          </a-form-model-item>
-        </a-col>
-        <a-col :span="4" :style="{textAlign: 'left',marginLeft: '-10px'}">
-          <a-button type="primary" @click="handleSearch">
-            查询
-          </a-button>
-          <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-            重置
-          </a-button>
-        </a-col>
-      </a-row>
+                <a-select-option
+                  value="select"
+                >
+                  选择
+                </a-select-option>
+                <a-select-option
+                  value="fill"
+                >
+                  填写
+                </a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </div>
     </a-form>
-    <a-button
-      @click="()=>{
-        this.visible = true
-        this.modalTitle = '新增检查项'
-        this.isNew = true
-        this.formatList = [
-          {
-            value: null,
-            alias:''
-          }
-        ]
-      }">新增
-    </a-button>
+    <div class="operation_box">
+      <a-button
+        type="primary"
+        @click="()=>{
+          this.visible = true
+          this.modalTitle = '新增检查项'
+          this.isNew = true
+          this.formatList = [
+            {
+              value: null,
+              alias:''
+            }
+          ]
+        }">新增
+      </a-button>
+    </div>
     <a-modal
       v-if="visible"
       :title="modalTitle"

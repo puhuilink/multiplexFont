@@ -2,48 +2,50 @@
   <div class="wrapper">
     <div>
       <a-form-model :form="form">
-        <a-row type="flex">
-
-          <a-col
-            :span="6"
-          >
-            <a-form-model-item>
-              状态：
-              <a-select
-                :style="{width:'60%'}"
-                v-model="param.isOpen"
-                placeholder="状态"
-              >
-                <a-select-option value="true">开启</a-select-option>
-                <a-select-option value="false">关闭</a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-          <a-col
-            :span="6"
-          >
-            <a-form-model-item>
-              部门：
-              <a-input
-                :style="{width:'60%'}"
-                v-model="param.orgName"
-              ></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="8" :style="{ textAlign: 'left' }">
-            <a-button type="primary" @click="handleSearch">
-              <a-icon type="search" />
-              查询
-            </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              <a-icon type="sync" />
-              重置
-            </a-button>
-          </a-col>
-        </a-row>
+        <div class="fold">
+          <a-row type="flex" :gutter="[8, 8]">
+            <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="handleSearch">
+                <a-icon type="search" />
+                查询
+              </a-button>
+              <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+                <a-icon type="sync" />
+                重置
+              </a-button>
+            </a-col>
+            <a-col
+              :span="6"
+            >
+              <a-form-model-item>
+                状态：
+                <a-select
+                  :style="{width:'60%'}"
+                  v-model="param.isOpen"
+                  placeholder="状态"
+                >
+                  <a-select-option value="true">开启</a-select-option>
+                  <a-select-option value="false">关闭</a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-col>
+            <a-col
+              :span="6"
+            >
+              <a-form-model-item>
+                部门：
+                <a-input
+                  :style="{width:'60%'}"
+                  v-model="param.orgName"
+                ></a-input>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </div>
       </a-form-model>
     </div>
-    <div style="margin-bottom: 1%">
+    <div style="margin-bottom: 1%" class="operation_box">
       <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
         <a-icon type="plus" />
         新建
@@ -62,6 +64,7 @@
         :pagination="false"
         @expand="expand"
         :loading="pageLoading"
+        :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
         class="components-table-demo-nested">
         <template #operation="text, record">
           <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>
