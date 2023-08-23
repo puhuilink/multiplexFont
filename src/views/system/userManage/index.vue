@@ -5,6 +5,15 @@
       <a-form-model layout="inline" class="form">
         <div class="fold">
           <a-row :gutter="[8,8]">
+            <a-col class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="query">
+                <a-icon type="search" />查询
+              </a-button>
+              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+                <a-icon type="sync" />重置
+              </a-button>
+            </a-col>
             <!--            <a-col-->
             <!--              v-bind="colLayout"-->
             <!--            >-->
@@ -18,6 +27,8 @@
             <!--              </a-form-model-item>-->
             <!--            </a-col>-->
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -30,6 +41,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -42,6 +55,9 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="12"
+              :sm="24"
+              :offset="0"
               v-bind="colLayout"
             >
               <a-form-item
@@ -53,6 +69,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -71,6 +89,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -85,14 +105,6 @@
                   v-model="queryParams.timeList"
                 />
               </a-form-item>
-            </a-col>
-            <a-col :span="6" :offset="12">
-              <a-button type="primary" @click="query">
-                <a-icon type="search" />查询
-              </a-button>
-              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-                <a-icon type="sync" />重置
-              </a-button>
             </a-col>
           </a-row>
         </div>
@@ -461,7 +473,7 @@ export default {
 
 <style lang='less' scoped>
 .wrapper {
-  padding: 8px 0;
+  // padding: 8px 0;
   &_content {
     margin-top: 3px;
     display: flex;

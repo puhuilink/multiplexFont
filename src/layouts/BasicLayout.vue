@@ -189,6 +189,11 @@ export default {
     background: #fff;
     border-top: 1px solid #004FA5 !important;
     border-bottom: 1px solid #004FA5 !important;
+    padding-top: 8px !important;
+    >form>div{
+      width: 100% !important;
+      padding: 0px 23px 0px 23px;
+    }
   }
   &::after{
     display: block;
@@ -208,7 +213,30 @@ export default {
     border-bottom: 1px solid #004FA5 !important;
   }
 }
-
+// 头部搜索区域
+.search_box{
+  display: flex !important;
+  width: 100% !important;
+  .search_label{
+    font-size: 14px;
+    font-family: MicrosoftYaHei-Bold, MicrosoftYaHei;
+    font-weight: bold;
+    color: #333333;
+    margin-right: auto;
+    margin-left: 1px;
+  }
+}
+.fold{
+  width: 100% !important;
+  padding: 0px 23px 0px 23px;
+}
+.form{
+  margin: 0 !important;
+}
+.ant-form-item{
+  margin-bottom: 0 !important;
+}
+// 操作区域
 .operation_box{
   display: flex;
   flex-wrap: wrap;

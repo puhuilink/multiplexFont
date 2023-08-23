@@ -1,33 +1,35 @@
 <template>
   <div>
     <a-form class="ant-advanced-search-form" :form="form">
-      <a-row :gutter="24">
-        <a-col
-          :span="15"
-          offset="5"
-        >
-          <a-form-item>
-            检查项名称：
-            <a-input
-              :style="{width:'60%'}"
-              v-decorator="[
-                `alias`,
-                {
-                  rules: [ ],
-                },
-              ]"
-              placeholder="请输入关键字"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :span="4" :style="{ textAlign: 'left' }">
-          <a-button type="primary" @click="()=>handleSearch()">
-            查询
-          </a-button>
-          <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-            重置
-          </a-button>
-        </a-col>
-      </a-row>
+      <div class="fold">
+        <a-row :gutter="[8, 8]">
+          <a-col :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="()=>handleSearch()">
+              查询
+            </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+              重置
+            </a-button>
+          </a-col>
+          <a-col
+            :md="6"
+            :sm="24">
+            <a-form-item>
+              检查项名称：
+              <a-input
+                :style="{width:'60%'}"
+                v-decorator="[
+                  `alias`,
+                  {
+                    rules: [ ],
+                  },
+                ]"
+                placeholder="请输入关键字"></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </div>
     </a-form>
     <div class="operation_box">
       <a-button

@@ -2,10 +2,18 @@
   <div class="PatrolTask">
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
-      <div :class="{ fold: !advanced }">
-
-        <a-row>
-          <a-col :md="12" :sm="24">
+      <div :class="{ fold: true }">
+        <a-row :gutter="[8,8]">
+          <a-col :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件
+              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+            </label>
+            <span>
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+            </span>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="巡更组"
               v-bind="formItemLayout"
@@ -21,7 +29,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="是否异常"
               v-bind="formItemLayout"
@@ -37,9 +45,8 @@
             </a-form-item>
           </a-col>
         </a-row>
-
         <a-row v-show="advanced">
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="任务单状态"
               v-bind="formItemLayout"
@@ -61,7 +68,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="巡更日期范围"
               v-bind="formItemLayout"
@@ -85,11 +92,11 @@
         </a-row>
       </div>
 
-      <span :class="advanced ? 'expand' : 'collapse'">
+      <!-- <span :class="advanced ? 'expand' : 'collapse'">
         <QueryBtn @click="query" />
         <ResetBtn @click="resetQueryParams" />
         <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->

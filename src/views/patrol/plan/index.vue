@@ -2,8 +2,15 @@
   <div class="plan-management">
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="12" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <span :class="advanced ? 'expand' : 'collapse'">
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+            </span>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
               <a-select allowClear v-model="queryParams.groupId">
                 <a-select-option
@@ -17,10 +24,10 @@
         </a-row>
       </div>
 
-      <span :class="advanced ? 'expand' : 'collapse'">
+      <!-- <span :class="advanced ? 'expand' : 'collapse'">
         <QueryBtn @click="query" />
         <ResetBtn @click="resetQueryParams" />
-      </span>
+      </span> -->
     </a-form>
     <div style="width: 100%" class="operation_box">
       <a-button type="primary" @click="onAdd" style="margin-bottom: 10px;margin-right: 10px">新增</a-button>
