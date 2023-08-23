@@ -161,9 +161,10 @@ export default {
      */
     async loadData (parameter) {
       const { alias } = parameter
-      const res = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
-      if (res) {
-        this.defaultData = res.list
+      const { list, total } = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
+      if (list) {
+        this.defaultData = list
+        this.paginationOpt.total = total
       } else {
         this.defaultData = []
       }

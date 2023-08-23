@@ -160,7 +160,7 @@ export default {
           }
         })
         this.dataSource = list
-        this.paginationOpt.total = total
+        this.paginationOpt.total = Number(total)
       } catch (e) {
         throw e
       } finally {
