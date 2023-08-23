@@ -55,7 +55,7 @@
       />
 
       <!-- layout content -->
-      <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }">
+      <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }" :class="!showTab?'tab_fix':''">
         <multi-tab v-if="showTab"></multi-tab>
         <transition name="page-transition">
           <route-view />
@@ -274,7 +274,18 @@ export default {
     color: #FFF !important;
   }
 }
-
+// 树状控件相关
+.ant-tree.ant-tree-show-line li span.ant-tree-switcher{
+  background: #FAFAFA !important;
+}
+// 时间插件相关
+.ant-calendar-today .ant-calendar-date{
+  color: #004FA5 !important;
+  border-color: #004FA5 !important;
+}
+.ant-calendar .ant-calendar-ok-btn{
+  color: #FFF !important;
+}
 .page-transition-enter {
   opacity: 0;
 }
