@@ -19,7 +19,7 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="状态" v-bind="formItemLayout" class="fw">
+            <a-form-item label="是否启用" v-bind="formItemLayout" class="fw">
               <a-select allowClear v-model.trim="queryParams.isOpen">
                 <a-select-option :value="'true'">
                   启用

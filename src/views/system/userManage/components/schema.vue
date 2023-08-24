@@ -119,6 +119,26 @@
             </a-select>
           </a-form-model-item>
         </a-col>
+        <a-col :span="12">
+          <a-form-model-item
+            v-bind="{
+              labelCol: { span: 6, offset: 0 },
+              wrapperCol: { span: 18 },
+            }"
+            label="是否启用"
+            class="AlarmStrategy__modal-footer-left"
+          >
+            <a-select
+              class="enabled"
+              :style="{ width: '100px' }"
+              :value="~~formModel.enabled"
+              @select="formModel.enabled = !!$event"
+            >
+              <a-select-option :value="1">是</a-select-option>
+              <a-select-option :value="0">否</a-select-option>
+            </a-select>
+          </a-form-model-item>
+        </a-col>
         <a-col :span="24">
           <a-form-model-item
             label="备注"
@@ -137,29 +157,6 @@
       </a-row>
     </a-form-model>
     <template #footer>
-      <a-form-model-item
-        v-bind="{
-          labelCol: { span: 4 },
-          wrapperCol: { span: 1, offset: 1 },
-        }"
-        label="启用"
-        :style="{
-          float: 'left',
-          width: '300px',
-          marginTop: '-9px'
-        }"
-        class="AlarmStrategy__modal-footer-left"
-      >
-        <a-select
-          class="enabled"
-          :style="{ width: '100px' }"
-          :value="~~formModel.enabled"
-          @select="formModel.enabled = !!$event"
-        >
-          <a-select-option :value="1">是</a-select-option>
-          <a-select-option :value="0">否</a-select-option>
-        </a-select>
-      </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
       <a-button @click="onSubmit" :loading="submitLoading" type="primary">确定</a-button>
     </template>

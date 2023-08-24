@@ -61,7 +61,7 @@
                 <a-select-option
                   v-for="[type, label] in STATUS_LIST"
                   :key="type"
-                  :value="type"
+                  :value="!!type"
                 >{{ label }}
                 </a-select-option>
               </a-select>
@@ -268,13 +268,14 @@ export default {
         this.queryParams.actualTimeStart = moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
         this.queryParams.actualTimeEnd = moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
       }
-      this.loadData({ ...this.reloadParams({ ..._.omit(this.queryParams, ['timeList']) }), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
+      console.log('query', this.queryParams)
+      this.loadData(this.reloadParams({ ..._.omit(this.queryParams, ['timeList']), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize }))
     },
     moment,
     reloadParams (params) {
       const newObj = {}
       Object.keys(params).forEach(key => {
-        if (params[key]) {
+        if (params[key] !== '') {
           newObj[key] = params[key]
         }
       })
@@ -286,6 +287,7 @@ export default {
       this.queryParams.groupId = list[0].id
     },
     async loadData (parameter) {
+      console.log('par', parameter)
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
       this.defaultData = list
       this.paginationOpt.total = total

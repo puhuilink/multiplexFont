@@ -179,8 +179,8 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          // const { id, ...plan } = this.plan.serialize()
-          // await PatrolService.planUpdate(this.plan.serialize())
+          const { id, ...plan } = this.plan.serialize()
+          await PatrolService.planUpdate(this.plan.serialize())
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()
