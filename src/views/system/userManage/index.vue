@@ -111,15 +111,18 @@
       </a-form-model>
     </div>
     <div class="operation_box">
-      <a-button type="primary" style="margin-bottom: 5px" @click="onAdd" v-action:M001001001>新建</a-button>
+      <a-button type="primary" @click="onAdd" v-action:M001001001>新建</a-button>
     </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
+        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
         <a-tree
           :tree-data="treeData"
           :defaultExpandAll="true"
           @expand="onExpand"
           @select="onSelect"
+          :showIcon="true"
+          :showLine="true"
         >
         </a-tree>
       </div>

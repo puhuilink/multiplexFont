@@ -47,7 +47,7 @@
     </a-form>
     <div style="margin-bottom: 10px;"></div>
     <div class="operation_box">
-      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px; margin-bottom: 10px;">查看</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px;">查看</a-button>
       <a-button :type="hasSelected ? 'primary' : ''" @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
     </div>
     <a-table
