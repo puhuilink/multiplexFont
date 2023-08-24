@@ -233,9 +233,9 @@ export default {
 .form{
   margin: 0 !important;
 }
-.ant-form-item{
-  margin-bottom: 0 !important;
-}
+// .ant-form-item{
+//   margin-bottom: 0 !important;
+// }
 // 操作区域
 .operation_box{
   display: flex;
