@@ -12,17 +12,21 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
-    @ok="submit"
-  >
+    @ok="submit">
     <a-form-model
-      v-if="title==='编辑菜单权限'"
+      v-if="title === '编辑菜单权限'"
       ref="menuForm"
       :rules="dataRules"
       :model="record"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="选择菜单权限">
-        <AuthMenu :record="{data:record.menuCodes}" :menus.sync="menus" :is-role="true" ref="menu" @menuChange="updateMenuData" />
+        <AuthMenu
+          :record="{ data: record.menuCodes }"
+          :menus.sync="menus"
+          :is-role="true"
+          ref="menu"
+          @menuChange="updateMenuData" />
       </a-form-model-item>
       <a-form-model-item label="选择移动端角色" prop="role_mobile">
         <a-radio-group v-model="record.appCode" default-value="1">
@@ -105,7 +109,7 @@ export default {
     ],
     menus: [],
     record: null,
-    submit: () => {}
+    submit: () => { }
   }),
   computed: {},
   async mounted () {
@@ -175,11 +179,10 @@ export default {
             return el
           }
         }).filter((f) => f)
-        console.log(mList)
+
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
-        console.log(this.menus)
       } catch (e) {
         throw e
       }
@@ -261,7 +264,7 @@ export default {
         this.$forceUpdate()
       }
       if (this.record.dataType === 'ALL') {
-        this.record.dataIds = []
+        // this.record.dataIds = []
         this.$forceUpdate()
       }
     },
@@ -269,28 +272,35 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      const operateType = 'DATA'
-      Object.assign(this.record, { operateType })
-      console.log(this.record)
-      if (this.record.dataIds.checked) {
-        this.record.dataIds = this.record.dataIds.checked
-      }
-      try {
-        this.confirmLoading = true
-        await RoleService.update(this.record)
-        this.$emit('editSuccess')
-        this.$notifyEditSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.confirmLoading = false
+      this.record.dataIds = { checked: [this.record.organizeId] }
+      if (this.record.dataIds.checked.length ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length) {
+        this.$notification.warning({
+          message: '提示',
+          description: `请选择部门范围`
+        })
+      } else {
+        const operateType = 'DATA'
+        Object.assign(this.record, { operateType })
+        console.log(this.record)
+        if (this.record.dataIds.checked) {
+          this.record.dataIds = this.record.dataIds.checked
+        }
+        try {
+          this.confirmLoading = true
+          await RoleService.update(this.record)
+          this.$emit('editSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.confirmLoading = false
+        }
       }
     }
   }
 }
 </script>
 
-<style lang="less">
-</style>
+<style lang="less"></style>

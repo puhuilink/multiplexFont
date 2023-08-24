@@ -75,6 +75,7 @@
       ref="table"
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :loading="pageLoading"
       :scroll="scroll"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
@@ -90,7 +91,7 @@
 
     ></a-pagination> -->
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" @get_list="getList"/>
+    <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList"/>
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
@@ -117,6 +118,7 @@ export default {
   },
   data () {
     return {
+      pageLoading: false,
       isOpen: null,
       columns: Object.freeze([
         {
@@ -148,7 +150,7 @@ export default {
       // biaoshi: '',
       selectedRowKeys: [],
       selectedRowsDate: '', // 表格选中行数据
-      scroll: {}, // 设置表格的滚动属性
+      // scroll: {}, // 设置表格的滚动属性
       //
       /*   total: Number, // 数据总数
     current: 1,// 当前页
@@ -192,26 +194,42 @@ export default {
     },
     // 查询
     async queryList () {
-      const pageNum = this.pagination.current
-      const pageSize = this.pagination.pageSize
-      const { data } = await xungeng.get('/group/list', {
-        params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
-      })
-      console.log(data)
-      this.dataList = data.list
-      this.pagination.total = Number(data.total)
+      try {
+        this.pageLoading = true
+        const pageNum = this.pagination.current
+        const pageSize = this.pagination.pageSize
+        const { data } = await xungeng.get('/group/list', {
+          params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
+        })
+        console.log(data)
+        this.dataList = data.list
+        this.pagination.total = Number(data.total)
+        this.selectedRowKeys = []
+        this.selectedRowsDate = []
+      } catch (error) {
+        throw error
+      } finally {
+        this.pageLoading = false
+      }
     },
 
     // 4.工作组列表
     async getList () {
-      console.log(this.current)
-      const pageNum = this.pagination.current
-      const pageSize = this.pagination.pageSize
-      const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
-      console.log(data)
-      this.pagination.total = Number(data.total)
-      this.dataList = data.list
-      // console.log(this.dataList );
+      try {
+        this.pageLoading = true
+        const pageNum = this.pagination.current
+        const pageSize = this.pagination.pageSize
+        const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+        this.pagination.total = Number(data.total)
+        this.dataList = data.list
+        this.selectedRowKeys = []
+        this.selectedRowsDate = []
+      // console.log(this.dataList )
+      } catch (error) {
+        throw error
+      } finally {
+        this.pageLoading = false
+      }
     },
 
     // 7.工作组删除(DELETE)
