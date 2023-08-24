@@ -16,7 +16,7 @@ import PermissionHelper from '@/utils/helper/permission'
 import './directives/action'
 
 VueClipboard.config.autoSetContainer = true
-
+console.log(config.primaryColor, 'color')
 Vue.use(Antd)
 Vue.use(MultiTab)
 Vue.use(PageLoading)

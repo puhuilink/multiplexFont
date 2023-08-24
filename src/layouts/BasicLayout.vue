@@ -67,7 +67,7 @@
         <global-footer />
       </a-layout-footer> -->
 
-      <setting-drawer v-if="!production"></setting-drawer>
+      <setting-drawer v-if="true"></setting-drawer>
     </a-layout>
   </a-layout>
 </template>

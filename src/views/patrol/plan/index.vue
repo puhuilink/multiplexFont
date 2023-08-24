@@ -115,11 +115,14 @@ export default {
           ...timeColumnSnippet
         },
         {
-          title: '是否启用',
+          title: '是否开启',
           dataIndex: 'status',
           width: 120,
           customRender: (status, record) => (
-            <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
+            // <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
+            // <a-switch :checked="PLAN_STATUS_MAPPING.get(status)==='启用'?true:false"/>
+            <a-switch checked={status === 'enabled'} onClick={() => this.showModal(record)} />
+            // PLAN_STATUS_MAPPING.get(status)
           )
         }
       ],

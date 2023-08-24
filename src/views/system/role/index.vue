@@ -136,7 +136,7 @@ export default {
         width: '150px'
       },
       {
-        title: '状态',
+        title: '是否开启',
         dataIndex: 'isOpen',
         scopedSlots: { customRender: 'status' },
         width: '80px'

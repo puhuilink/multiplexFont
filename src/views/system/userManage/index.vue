@@ -205,7 +205,7 @@ const columns = [
     ellipsis: true
   },
   {
-    title: '状态',
+    title: '是否开启',
     dataIndex: 'isOpen',
     key: 'isOpen',
     ellipsis: true,
