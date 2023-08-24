@@ -19,11 +19,11 @@
               :span="6"
             >
               <a-form-model-item>
-                状态：
+                是否启用：
                 <a-select
                   :style="{width:'60%'}"
                   v-model="param.isOpen"
-                  placeholder="状态"
+                  placeholder="是否启用"
                 >
                   <a-select-option value="true">开启</a-select-option>
                   <a-select-option value="false">关闭</a-select-option>
@@ -104,7 +104,7 @@ export default {
         // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
         // { title: '排序', dataIndex: 'sortIndex', key: 'sortIndex', customRender: (el) => Number(el) },
         {
-          title: '状态',
+          title: '是否启用',
           dataIndex: 'isOpen',
           key: 'isOpen',
           customRender: (el) => {
