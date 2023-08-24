@@ -6,6 +6,7 @@ import { getTree, getButtonTree } from '@/utils/util'
 import router from '@/router'
 import _ from 'lodash'
 import Promise from 'lodash/_Promise'
+import notification from 'ant-design-vue/es/notification'
 
 function generatePermission (user) {
   return new Promise(async (resolve, reject) => {
@@ -154,7 +155,14 @@ const user = {
       //   })
       return new Promise(async (resolve, reject) => {
         UserService.login(userInfo)
-          .then(({ data }) => {
+          .then(({ code, data, msg }) => {
+            if (code === 30) {
+              this.$notification.error({
+                message: '系统提示',
+                description: msg
+              })
+              reject(msg)
+            }
             Vue.ls.set(ACCESS_TOKEN, data, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', data)
           }).then(() => {

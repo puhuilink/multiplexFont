@@ -90,6 +90,10 @@ const responseInterceptor = (response) => {
         break
       }
       case 30: {
+        notification.error({
+          message: msg,
+          description: '请重新登录'
+        })
         throw new Error(msg)
       }
       default: {

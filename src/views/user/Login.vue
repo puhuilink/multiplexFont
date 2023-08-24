@@ -142,12 +142,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapActions } from 'vuex'
 import { UserService } from '@/api'
 import identify from '@/components/identify/index'
 import axios from 'axios'
 import secondFactoryOTP from '@/components/otp/SecondFactorOTP'
 import RegOTP from '@/components/otp/RegOTP'
+import { ROLES } from '@/store/mutation-types'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
@@ -367,8 +369,17 @@ export default {
       this.state.loginBtn = false
     },
     loginSuccess (res) {
-      this.$router.push({ path: '/' })
-      location.reload()
+      if (res.menuCodes) {
+        this.$router.push({ path: '/' })
+        location.reload()
+      } else {
+        this.$router.push({ path: '/user/login' })
+        location.reload()
+        this.$notification.error({
+          message: '账号无效',
+          description: '请联系系统管理员'
+        })
+      }
       this.isLoginError = false
     },
     requestFailed (err) {
