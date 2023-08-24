@@ -80,7 +80,7 @@
             }"
             prop="userName"
             :rules="[
-              { required: true, message: '请填写登录名' },
+              { required: true, message: '请填写登录名', trigger: 'blur' },
               { validator: validateUser, trigger: 'blur' }
             ]"
           >
@@ -222,6 +222,8 @@ export default {
       validateUser: (rule, value, callback) => {
         if (value.length < 3) {
           callback(new Error('登录名至少3位'))
+        } else {
+          callback()
         }
       }
     }

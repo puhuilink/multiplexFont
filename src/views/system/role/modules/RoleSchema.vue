@@ -10,26 +10,30 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
-    :footer="null"
-  >
+    :footer="null">
     <a-steps :current="current">
       <a-step v-for="item in steps" :key="item.title" :title="item.title" />
     </a-steps>
     <div class="steps-content">
-      <div v-if="current===0">
+      <div v-if="current === 0">
         <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="角色名称" prop="name">
-            <a-input v-model="originalForm.name"/>
+            <a-input v-model="originalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="备注" prop="remark">
             <a-input v-model="originalForm.remark" type="textarea" />
           </a-form-model-item>
         </a-form-model>
       </div>
-      <div v-if="current===1">
+      <div v-if="current === 1">
         <a-form-model ref="dataForm" :rules="dataRules" :model="menuForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="选择菜单权限">
-            <AuthMenu :record="{data:menuForm.menuCodes}" :menus.sync="menus" :is-role="true" ref="menu" @menuChange="logSth"/>
+            <AuthMenu
+              :record="{ data: menuForm.menuCodes }"
+              :menus.sync="menus"
+              :is-role="true"
+              ref="menu"
+              @menuChange="logSth" />
           </a-form-model-item>
           <a-form-model-item label="选择移动端角色" prop="role_mobile">
             <a-radio-group v-model="menuForm.appCode" :default-value="'none'">
@@ -53,7 +57,7 @@
         </a-form-model>
 
       </div>
-      <div v-if="current===2">
+      <div v-if="current === 2">
         <a-form-model ref="dataForm" :rules="dataRules" :model="dataForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="权限范围" prop="dataType">
             <a-select v-model="dataForm.dataType" :default-value="'ALL'" @change="dataTypeChange">
@@ -89,11 +93,7 @@
       <a-button v-if="current < steps.length - 1" type="primary" @click="next">
         下一步
       </a-button>
-      <a-button
-        v-if="current === steps.length - 1"
-        type="primary"
-        @click="submit"
-      >
+      <a-button v-if="current === steps.length - 1" type="primary" @click="submit">
         完成
       </a-button>
 
@@ -162,7 +162,7 @@ export default {
       ]
     },
     record: null,
-    submit: () => {},
+    submit: () => { },
     dataIdsALL: [],
     my_DataIds: []
   }),
@@ -277,6 +277,18 @@ export default {
           }
         })
       }
+
+      if (this.current === 1) {
+        if (this.menuForm.menuCodes.length > 0) {
+          // this.current++
+        } else {
+          this.$notification.warning({
+            message: '提示',
+            description: `菜单权限必选`
+          })
+          return
+        }
+      }
       this.current++
     },
     // 步骤条向上逻辑
@@ -389,7 +401,7 @@ export default {
 </script>
 
 <style lang="less">
-.steps-content{
+.steps-content {
   height: 500px;
 }
 </style>
