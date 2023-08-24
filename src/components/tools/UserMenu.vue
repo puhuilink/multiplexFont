@@ -24,12 +24,12 @@
           <!--            <a-icon type="setting"/>-->
           <!--            <span>测试</span>-->
           <!--          </a-menu-item>-->
-          <a-menu-item key="1">
-            <a href="javascript:;" @click="handleChangePwd">
-              <a-icon type="setting"/>
-              <span>重置密码</span>
-            </a>
-          </a-menu-item>
+          <!--          <a-menu-item key="1">-->
+          <!--            <a href="javascript:;" @click="handleChangePwd">-->
+          <!--              <a-icon type="setting"/>-->
+          <!--              <span>重置密码</span>-->
+          <!--            </a>-->
+          <!--          </a-menu-item>-->
           <a-menu-divider/>
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">

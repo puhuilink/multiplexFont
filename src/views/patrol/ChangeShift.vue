@@ -2,14 +2,22 @@
   <div class="ChangeShift">
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="12" :sm="24">
+        <a-row :gutter="[8,8]">
+          <a-col :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件
+              <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
+            </label>
+            <span>
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+            </span>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="交班人姓名" v-bind="formItemLayout" class="fw">
               <a-input allowClear v-model.trim="queryParams.handName" />
             </a-form-item>
           </a-col>
-
-          <a-col :md="12" :sm="24">
+          <a-col :md="8" :sm="24">
             <a-form-item label="接班时间" v-bind="formItemLayout" class="fw">
               <a-range-picker
                 class="fw"
@@ -27,17 +35,21 @@
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row>
+        </a-row>
       </div>
 
-      <span :class="advanced ? 'expand' : 'collapse'">
+      <!-- <span :class="advanced ? 'expand' : 'collapse'">
         <QueryBtn @click="query" />
-        <ResetBtn @click="resetQueryParams" />
-        <!--              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />-->
-      </span>
+        <ResetBtn @click="resetQueryParams" /> -->
+      <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />-->
+      <!-- </span> -->
     </a-form>
     <div style="margin-bottom: 10px;"></div>
-    <a-button type="primary" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px; margin-bottom: 10px;">查看</a-button>
-    <a-button @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
+    <div class="operation_box">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px;">查看</a-button>
+      <a-button :type="hasSelected ? 'primary' : ''" @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
+    </div>
     <a-table
       :columns="columns"
       :scroll="scroll"
@@ -46,6 +58,7 @@
       :loading="pageLoading"
       :pagination="paginationOpt"
       :data-source="dataSource"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <ChangeShiftSchema ref="schema" @addSuccess="query" @editSuccess="query"/>
@@ -135,7 +148,8 @@ export default {
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
-      }
+      },
+      queryParams: {}
     }
   },
   computed: {},
@@ -145,18 +159,19 @@ export default {
       try {
         this.pageLoading = true
         if (this.queryParams.receive_time) {
-          this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
-          this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
+          this.queryParams.createTimeStart = this.moment(this.queryParams.receive_time[0]).format('YYYY-MM-DD HH:mm:ss')
+          this.queryParams.createTimeEnd = this.moment(this.queryParams.receive_time[1]).format('YYYY-MM-DD HH:mm:ss')
         }
+        console.log('querty', _.omit(this.queryParams, ['receive_time']), this.queryParams)
         const { data: { list, total } } = await xungeng.get('/changeShifts/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
             pageNum: this.paginationOpt.defaultCurrent,
-            ..._.omit(this.queryParams, 'receive_time')
+            ..._.omit(this.queryParams, ['receive_time'])
           }
         })
         this.dataSource = list
-        this.paginationOpt.total = total
+        this.paginationOpt.total = Number(total)
       } catch (e) {
         throw e
       } finally {
@@ -193,5 +208,5 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 </style>

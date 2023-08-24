@@ -15,6 +15,7 @@
         </a-tabs>
       </div>
     </a-spin>
+    <div style="overflow: hidden;"></div>
     <a-spin :spinning="isLoading">
       <transition-group name="flip-list" tag="div">
         <a-col

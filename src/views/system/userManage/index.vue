@@ -5,6 +5,15 @@
       <a-form-model layout="inline" class="form">
         <div class="fold">
           <a-row :gutter="[8,8]">
+            <a-col class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="query">
+                <a-icon type="search" />查询
+              </a-button>
+              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+                <a-icon type="sync" />重置
+              </a-button>
+            </a-col>
             <!--            <a-col-->
             <!--              v-bind="colLayout"-->
             <!--            >-->
@@ -18,6 +27,8 @@
             <!--              </a-form-model-item>-->
             <!--            </a-col>-->
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -30,6 +41,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -42,6 +55,9 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="12"
+              :sm="24"
+              :offset="0"
               v-bind="colLayout"
             >
               <a-form-item
@@ -53,6 +69,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -71,6 +89,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -86,26 +106,23 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :span="6" :offset="12">
-              <a-button type="primary" @click="query">
-                <a-icon type="search" />查询
-              </a-button>
-              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-                <a-icon type="sync" />重置
-              </a-button>
-            </a-col>
           </a-row>
         </div>
       </a-form-model>
     </div>
-    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd" v-action:M001001001>新建</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAdd" v-action:M001001001>新建</a-button>
+    </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
+        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
         <a-tree
           :tree-data="treeData"
           :defaultExpandAll="true"
           @expand="onExpand"
           @select="onSelect"
+          :showIcon="true"
+          :showLine="true"
         >
         </a-tree>
       </div>
@@ -116,6 +133,7 @@
           :pagination="paginationOpt"
           :loading="pageLoading"
           rowKey="id"
+          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
           :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template #isOpen="text, record">
@@ -470,7 +488,7 @@ export default {
 
 <style lang='less' scoped>
 .wrapper {
-  padding: 8px 0;
+  // padding: 8px 0;
   &_content {
     margin-top: 3px;
     display: flex;

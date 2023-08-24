@@ -55,29 +55,29 @@
           </a-form-model-item>
         </a-col>
 
-        <a-col :span="4" :offset="1">
-          <a-form-model-item
-            label="显示排序"
-            v-bind="{
-              labelCol: { span: 20, offset: 4 },
-              wrapperCol: { span: 0 },
-            }"
-            :rules="[{ required: true, message: '请填写部门名称' }]"
-          >
-          </a-form-model-item>
-        </a-col>
+        <!--        <a-col :span="4" :offset="1">-->
+        <!--          <a-form-model-item-->
+        <!--            label="显示排序"-->
+        <!--            v-bind="{-->
+        <!--              labelCol: { span: 20, offset: 4 },-->
+        <!--              wrapperCol: { span: 0 },-->
+        <!--            }"-->
+        <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
+        <!--          >-->
+        <!--          </a-form-model-item>-->
+        <!--        </a-col>-->
 
-        <a-col :span="5" :offset="1">
-          <a-form-model-item
-            v-bind="{
-              labelCol: { span: 10, offset: 14 },
-            }"
-            :rules="[{ required: true, message: '请输入显示排序' }]"
-            prop="order"
-          >
-            <a-input-number :min="0" v-model="formModel.order"></a-input-number>
-          </a-form-model-item>
-        </a-col>
+        <!--        <a-col :span="5" :offset="1">-->
+        <!--          <a-form-model-item-->
+        <!--            v-bind="{-->
+        <!--              labelCol: { span: 10, offset: 14 },-->
+        <!--            }"-->
+        <!--            :rules="[{ required: true, message: '请输入显示排序' }]"-->
+        <!--            prop="order"-->
+        <!--          >-->
+        <!--            <a-input-number :min="0" v-model="formModel.order"></a-input-number>-->
+        <!--          </a-form-model-item>-->
+        <!--        </a-col>-->
       </a-row>
 
       <!--      <a-form-model-item-->
@@ -196,19 +196,10 @@ export default {
         }
         try {
           this.submitLoading = true
-          console.log('参数', {
-            name: this.formModel.name,
-            parentId: this.formModel.apartmentId,
-            isOpen: !!this.formModel.enabled,
-            sortIndex: this.formModel.order,
-            leaderId: this.formModel.leader,
-            ...this.isEdit ? { id: this.formModel.id } : {}
-          }, this.isEdit)
           axios.post('/organize/save', {
             name: this.formModel.name,
             parentId: this.formModel.apartmentId,
             isOpen: !!this.formModel.enabled,
-            sortIndex: this.formModel.order,
             leaderId: this.formModel.leader,
             ...this.isEdit ? { id: this.formModel.id } : {}
           })
@@ -232,7 +223,6 @@ export default {
         name: user.name,
         apartmentId: user.parentId,
         enabled: user.isOpen,
-        order: user.sortIndex,
         leaderId: user.leaderId,
         id: user.id
       }

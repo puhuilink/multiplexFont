@@ -172,7 +172,9 @@ export default {
     }
   },
   watch: {},
-  mounted () {},
+  mounted () {
+    this.changeColor('#004FA5')
+  },
   methods: {
     showDrawer () {
       this.visible = true

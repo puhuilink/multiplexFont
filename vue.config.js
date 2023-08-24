@@ -176,7 +176,10 @@ const vueConfig = {
   css: {
     loaderOptions: {
       less: {
-        modifyVars: {},
+        modifyVars: {
+          'primary-color': '#004FA5',
+          'link-color': '#004FA5'
+        },
         javascriptEnabled: true
       }
     },

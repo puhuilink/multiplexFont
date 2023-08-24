@@ -133,7 +133,6 @@ export default {
           this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$notifyError(e)
           throw e
         } finally {
           this.confirmLoading = false

@@ -41,7 +41,9 @@ export default {
     handleToHome () {
       // 不同用户的路由权限不同，需要找出能访问到的第一个页面作为默认页面
       // 作为 fallback，每个用户至少都有一个重置密码的页面
+      console.log('path', 1)
       const { addRouters } = this
+      console.log(addRouters)
       const currentPathList = addRouters[0].children.map(({ path }) => path)
       const path = currentPathList.find(path => logicPathList.includes(path))
       this.$router.push(path)

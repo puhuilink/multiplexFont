@@ -1,8 +1,13 @@
 <template>
-  <div class="logo">
+  <div class="logo" :class="showTitle?'detail_logo':'simple_logo'">
     <router-link :to="{ name: 'view' }">
-      <img :src="logo" alt="" />
-      <h1 v-if="showTitle" class="logo__title">机房运维安全管控系统</h1>
+      <div>
+        <img :src="logo" alt="" />
+        <span>
+          <h1 v-show="showTitle" class="logo__title">机 房 运 维 安 全</h1>
+          <h1 v-show="showTitle" class="logo__subtitle">一 体 化 管 理 系 统</h1>
+        </span>
+      </div>
     </router-link>
   </div>
 </template>
@@ -48,21 +53,48 @@ export default {
 }
 </script>
 <style scoped lang="less">
+@font-face {
+  font-family: 'FZZZHUNHJW--GB1-0';
+  src: url('../../assets/fonts/FZZZHUNHJW.ttf') format('truetype');
+}
+.detail_logo{
+  padding: 12px !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.simple_logo{
+  left:50% !important;
+  margin: 12px;
+  margin-left: -40px !important;
+}
 .logo {
-  line-height: 1;
-  transform: translateY(-2px);
-
-  img {
-    width: 30px;
-    height: 30px;
+  background-color: transparent !important;
+  div{
+    display: flex;
+    align-items: center;
   }
 
+  img {
+    height: 40px !important;
+  }
+  span{
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+  }
   &__title {
-    margin: 0 0 0 6px !important;
-    font-family: arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
-    font-weight: 100;
-    font-size: 16px !important;
-    /*font-weight: normal !important;*/
+    font-size: 18px !important;
+    line-height: 26px !important;
+    font-family: FZZZHUNHJW--GB1-0, arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
+    font-weight: normal !important;
+  }
+  &__subtitle{
+    font-size: 14px !important;
+    line-height: 14px !important;
+    letter-spacing: 1.1px;
+    font-family: FZZZHUNHJW--GB1-0, FZZZHUNHJW--GB1 !important;
+    font-weight: normal !important;
+    color: #FFFFFF;
   }
 }
 </style>
