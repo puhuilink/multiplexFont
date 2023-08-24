@@ -205,7 +205,7 @@ const columns = [
     ellipsis: true
   },
   {
-    title: '状态',
+    title: '是否启用',
     dataIndex: 'isOpen',
     key: 'isOpen',
     ellipsis: true,
@@ -319,7 +319,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -477,7 +477,7 @@ export default {
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
       const menuCodes = JSON.parse(rolesData).value.menuCodes
-      const searchString = 'M001001006'// 角色管理状态开关
+      const searchString = 'M001001002'// 用户管理状态开关同修改
       if (menuCodes.indexOf(searchString) !== -1) {
         this.disabled = false
       } else {
