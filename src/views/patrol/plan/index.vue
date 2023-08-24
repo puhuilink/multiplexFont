@@ -12,7 +12,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model="queryParams.groupId">
+              <a-select allowClear v-model="queryParams.groupId" placeholder="请输入">
                 <a-select-option
                   v-for="{ label, value } in patrolGroupList"
                   :key="value"
@@ -30,9 +30,15 @@
       </span> -->
     </a-form>
     <div style="width: 100%" class="operation_box">
-      <a-button type="primary" @click="onAdd" style="margin-right: 10px">新增</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px">编辑</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete">删除</a-button>
+      <a-button type="primary" @click="onAdd" style="margin-right: 10px">
+        <a-icon type="plus-circle"/>
+        新增</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px">
+        <a-icon type="edit" />
+        编辑</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete">
+        <a-icon type="delete" />
+        删除</a-button>
     </div>
     <a-table
       :columns="columns"

@@ -37,7 +37,7 @@
         @click="()=>{
           this.visible = true
           this.isNew = true
-        }">新增</a-button>
+        }"><a-icon type="plus-circle"/>新增</a-button>
     </div>
     <a-modal
       title="新增检查项"

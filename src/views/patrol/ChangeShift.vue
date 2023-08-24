@@ -14,7 +14,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="交班人姓名" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.handName" />
+              <a-input placeholder="请输入交班人姓名" allowClear v-model.trim="queryParams.handName" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -47,8 +47,12 @@
     </a-form>
     <div style="margin-bottom: 10px;"></div>
     <div class="operation_box">
-      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px;">查看</a-button>
-      <a-button :type="hasSelected ? 'primary' : ''" @click="onExport" :loading="exportLoading" :disabled="!hasSelected">导出</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px;">
+        <a-icon type="search" />
+        查看</a-button>
+      <a-button :type="hasSelected ? 'primary' : ''" @click="onExport" :loading="exportLoading" :disabled="!hasSelected">
+        <a-icon type="upload" />
+        导出</a-button>
     </div>
     <a-table
       :columns="columns"

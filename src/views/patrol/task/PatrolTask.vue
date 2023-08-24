@@ -101,8 +101,12 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
-      <a-button :loading="exportLoading" @click="exportExcel">导出</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;">
+        <a-icon type="search" />
+        查看</a-button>
+      <a-button :loading="exportLoading" @click="exportExcel">
+        <a-icon type="upload" />
+        导出</a-button>
     </div>
 
     <a-table

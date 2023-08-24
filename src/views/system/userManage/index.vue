@@ -111,7 +111,9 @@
       </a-form-model>
     </div>
     <div class="operation_box">
-      <a-button type="primary" @click="onAdd" v-action:M001001001>新建</a-button>
+      <a-button type="primary" @click="onAdd" v-action:M001001001>
+        <a-icon type="plus-circle"/>
+        新建</a-button>
     </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
@@ -489,6 +491,7 @@ export default {
       border-radius: 5px;
       padding: 5px;
       overflow: scroll;
+      margin-left:23px;
     }
 
     &_right {

@@ -7,27 +7,25 @@
           <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
             <label class="search_label">搜索条件</label>
             <a-button type="primary" @click="queryList()">
-              <a-icon type="search" />
               查询
             </a-button>
             <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
-              <a-icon type="sync" />
               重置
             </a-button>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="巡更组编号" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="Myid" />
+              <a-input placeholder="请输入巡更组编号" allowClear v-model.trim="Myid" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="巡更组名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="Myname" />
+              <a-input placeholder="请输入巡更组名称" allowClear v-model.trim="Myname" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
-              <a-select show-search placeholder="请选择" v-model="isOpen" @change="handleChange" key="0">
+              <a-select show-search v-model="isOpen" @change="handleChange" key="0">
                 <a-select-option :value="1"> 有效 </a-select-option>
                 <a-select-option :value="0"> 无效</a-select-option>
               </a-select>
@@ -44,15 +42,21 @@
 
     <!-- / 操作区域 -->
     <div class="onAddUserBox operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001001>新增巡更组</a-button>
+      <a-button type="primary" @click="onAddUser" v-action:M001001>
+        <a-icon type="plus-circle"/>
+        新增巡更组</a-button>
       <a-button
         :type="hasSelected && selectedRowKeys.length === 1 ? 'primary' :''"
         @click="onEditUser"
         v-action:M001001
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
-      >编辑巡更组</a-button
       >
-      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">删除巡更组</a-button>
+        <a-icon type="edit" />
+        编辑巡更组</a-button
+      >
+      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">
+        <a-icon type="delete" />
+        删除巡更组</a-button>
     </div>
     <!-- <a-table
       :columns="columns"

@@ -108,6 +108,7 @@
         :style="{
           float: 'left',
           width: '300px',
+          marginTop: '-9px'
         }"
         class="AlarmStrategy__modal-footer-left"
       >
