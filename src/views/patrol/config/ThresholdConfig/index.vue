@@ -104,7 +104,7 @@
             this.visible=true
             this.isNew=true
             this.editForm = null
-          }">新增</a-button>
+          }"><a-icon type="plus-circle"/>新增</a-button>
       </div>
       <ThresholdSchema
         v-if="visible"

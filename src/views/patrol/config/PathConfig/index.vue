@@ -15,7 +15,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.alias" />
+              <a-input allowClear placeholder="请输入路径名称" v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -29,7 +29,7 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001001>新增</a-button>
+      <a-button type="primary" @click="onAddUser" v-action:M001001><a-icon type="plus-circle" />新增</a-button>
     </div>
     <a-table
       :columns="columns"

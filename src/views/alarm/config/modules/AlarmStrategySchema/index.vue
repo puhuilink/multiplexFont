@@ -18,6 +18,7 @@
         :style="{
           float: 'left',
           width: '300px',
+          marginTop:'-9px'
         }"
         v-if="mode === 'personal'"
         class="AlarmStrategy__modal-footer-left"

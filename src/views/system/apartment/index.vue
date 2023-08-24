@@ -36,6 +36,7 @@
               <a-form-model-item>
                 部门：
                 <a-input
+                  placeholder="请输入部门"
                   :style="{width:'60%'}"
                   v-model="param.orgName"
                 ></a-input>

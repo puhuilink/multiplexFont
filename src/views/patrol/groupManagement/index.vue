@@ -6,17 +6,17 @@
         <a-row>
           <a-col :md="12" :sm="24">
             <a-form-item label="巡更组编号" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.user_name" />
+              <a-input placeholder="请输入巡更组编号" allowClear v-model.trim="queryParams.user_name" />
             </a-form-item>
           </a-col>
           <a-col :md="12" :sm="24">
             <a-form-item label="巡更组名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.user_status" />
+              <a-input placeholder="请输入巡更组名称" allowClear v-model.trim="queryParams.user_status" />
             </a-form-item>
           </a-col>
           <a-col :md="12" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model.trim="queryParams.end_time" placeholder="请选择"/>
+              <a-select allowClear v-model.trim="queryParams.end_time"/>
             </a-form-item>
           </a-col>
         </a-row>

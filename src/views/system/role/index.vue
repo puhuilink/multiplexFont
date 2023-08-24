@@ -15,7 +15,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="角色名" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.name" />
+              <a-input placeholder="请输入角色名" allowClear v-model.trim="queryParams.name" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -50,7 +50,9 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001002001>新增</a-button>
+      <a-button type="primary" @click="onAddUser" v-action:M001002001>
+        <a-icon type="plus-circle"/>
+        新增</a-button>
     </div>
     <a-table
       :columns="columns"
