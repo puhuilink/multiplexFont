@@ -20,7 +20,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model.trim="queryParams.isOpen" >
+              <a-select allowClear v-model.trim="queryParams.isOpen">
                 <a-select-option :value="'true'">
                   启用
                 </a-select-option>
@@ -32,7 +32,11 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-range-picker :show-time="{ format: 'HH:mm:ss' }" :format="dateFormat" v-model="queryParams.timeList" @change="onDateChange" />
+              <a-range-picker
+                :show-time="{ format: 'HH:mm:ss' }"
+                :format="dateFormat"
+                v-model="queryParams.timeList"
+                @change="onDateChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -58,12 +62,11 @@
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
-      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
-    >
-      <template #status="text,record">
-        <a-switch :checked="text" @change="onStatusChange(record)" />
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
+      <template #status="text, record">
+        <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
       </template>
-      <template #action="text,record">
+      <template #action="text, record">
         <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
@@ -115,6 +118,7 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    disabled: true,
     columns: Object.freeze([
       {
         title: '角色编号',
@@ -176,6 +180,19 @@ export default {
   mounted () {
     this.initialPagination()
     this.query()
+  },
+  created () {
+    const rolesData = localStorage.getItem('pro__Roles')
+    if (rolesData) {
+      // 如果存在，将数据转换为对象或数组，具体情况取决于您存储的数据格式
+      const menuCodes = JSON.parse(rolesData).value.menuCodes
+      const searchString = 'M001002007'// 角色管理状态开关
+      if (menuCodes.indexOf(searchString) !== -1) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
   },
   computed: {
     isSelectedValid () {
@@ -288,7 +305,6 @@ export default {
      * @event
      */
     onUpdateMenu (record) {
-      console.log(record)
       this.$refs['singleSchema'].updateMenu(record)
     },
     /**
@@ -325,6 +341,7 @@ export default {
      * @event
      */
     onEditUser (record) {
+      console.log(record)
       this.$refs['schema'].edit(record)
     },
     /**
@@ -476,5 +493,4 @@ export default {
 }
 </script>
 
-<style lang='less'>
-</style>
+<style lang='less'></style>

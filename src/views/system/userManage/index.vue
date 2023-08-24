@@ -139,7 +139,7 @@
           :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template #isOpen="text, record">
-            <a-switch :checked="text" @change="(status) => switchStatus(record, status)"/>
+            <a-switch :checked="text" @change="(status) => switchStatus(record, status)" :disabled="disabled"/>
           </template>
           <template #operation="text, record">
             <a @click="onEdit(record)" v-action:M001001002><a-icon type="edit"/>修改</a>
@@ -244,6 +244,7 @@ export default {
   },
   data () {
     return {
+      disabled: false,
       dataSource: [],
       columns,
       expandedKeys: [],
@@ -472,6 +473,17 @@ export default {
   mounted () {
     this.getData()
     this.query()
+    // 角色管理状态
+    const rolesData = localStorage.getItem('pro__Roles')
+    if (rolesData) {
+      const menuCodes = JSON.parse(rolesData).value.menuCodes
+      const searchString = 'M001001006'// 角色管理状态开关
+      if (menuCodes.indexOf(searchString) !== -1) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
   }
 }
 </script>

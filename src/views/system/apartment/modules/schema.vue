@@ -30,55 +30,55 @@
         </a-tree-select>
       </a-form-model-item>
 
-      <a-row :gutter="[5, 8]" type="flex" align="middle">
-        <a-col :span="4">
-          <a-form-model-item
-            label="部门名称"
-            v-bind="{
-              labelCol: { span: 20, offset: 4 },
-              wrapperCol: { span: 0 },
-            }"
-            :rules="[{ required: true, message: '请填写部门名称' }]"
-          >
-          </a-form-model-item>
-        </a-col>
+      <a-form-model-item
+        label="部门名称"
+        v-bind="formItemLayout"
+        prop="name"
+        :rules="[{ required: true, message: '请输入部门名称' }]"
+      >
+        <a-input v-model="formModel.name"/>
+      </a-form-model-item>
 
-        <a-col :span="5" :offset="1">
-          <a-form-model-item
-            v-bind="{
-              labelCol: { span: 10, offset: 14 },
-            }"
-            prop="name"
-            :rules="[{ required: true, message: '请输入部门名称' }]"
-          >
-            <a-input v-model="formModel.name"/>
-          </a-form-model-item>
-        </a-col>
+      <!--      <a-row :gutter="[5, 8]" type="flex" align="middle">-->
+      <!--        <a-col :span="4">-->
+      <!--          <a-form-model-item-->
+      <!--            label="部门名称"-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 20, offset: 4 },-->
+      <!--              wrapperCol: { span: 0 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
+      <!--          >-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
 
-        <!--        <a-col :span="4" :offset="1">-->
-        <!--          <a-form-model-item-->
-        <!--            label="显示排序"-->
-        <!--            v-bind="{-->
-        <!--              labelCol: { span: 20, offset: 4 },-->
-        <!--              wrapperCol: { span: 0 },-->
-        <!--            }"-->
-        <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
-        <!--          >-->
-        <!--          </a-form-model-item>-->
-        <!--        </a-col>-->
+      <!--        <a-col :span="5" :offset="1">-->
+      <!--        </a-col>-->
 
-        <!--        <a-col :span="5" :offset="1">-->
-        <!--          <a-form-model-item-->
-        <!--            v-bind="{-->
-        <!--              labelCol: { span: 10, offset: 14 },-->
-        <!--            }"-->
-        <!--            :rules="[{ required: true, message: '请输入显示排序' }]"-->
-        <!--            prop="order"-->
-        <!--          >-->
-        <!--            <a-input-number :min="0" v-model="formModel.order"></a-input-number>-->
-        <!--          </a-form-model-item>-->
-        <!--        </a-col>-->
-      </a-row>
+      <!--        <a-col :span="4" :offset="1">-->
+      <!--          <a-form-model-item-->
+      <!--            label="显示排序"-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 20, offset: 4 },-->
+      <!--              wrapperCol: { span: 0 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
+      <!--          >-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
+
+      <!--        <a-col :span="5" :offset="1">-->
+      <!--          <a-form-model-item-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 10, offset: 14 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请输入显示排序' }]"-->
+      <!--            prop="order"-->
+      <!--          >-->
+      <!--            <a-input-number :min="0" v-model="formModel.order"></a-input-number>-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
+      <!--      </a-row>-->
 
       <!--      <a-form-model-item-->
       <!--        label="负责人"-->

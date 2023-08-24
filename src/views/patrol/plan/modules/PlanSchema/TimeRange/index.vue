@@ -22,19 +22,21 @@ import EditableRow from './EditableRow.vue'
 import { scrollTo } from '@/utils/util'
 
 export const timeRangeRule = {
-  range: [
+  interval: [
     {
       required: true,
       message: '请选择生效时间段',
       validator (rule, value, callback) {
-        if (value === '') {
-          callback(new Error('Please input the password again'))
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error("Two inputs don't match!"))
-        } else {
-          callback()
-        }
-      }
+        // if (value === '') {
+        //   callback(new Error('Please input the password again'))
+        // } else if (value !== this.ruleForm.pass) {
+        //   callback(new Error("Two inputs don't match!"))
+        // } else {
+        //   callback()
+        // }
+        callback()
+      },
+      trigger: 'change'
     }
   ]
 }
