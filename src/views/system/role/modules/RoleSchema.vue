@@ -176,7 +176,7 @@ export default {
       try {
         const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
         this.dataIdsALL = dataIds
-        this.dataForm.dataIds = this.dataIdsALL// 默认值
+        // this.dataForm.dataIds = this.dataIdsALL// 默认值
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -315,7 +315,8 @@ export default {
     async edit (record) {
       const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
       this.dataForm = { dataType, dataIds }
-      this.my_DataIds = record.organizeId
+      // this.my_DataIds ={ checked: [record.organizeId] }
+      console.log(record)
       // console.log(this.dataForm);
       this.menuForm = { appCode, menuCodes }
       this.originalForm = { id, name, remark, operateType: 'EDIT' }
@@ -331,6 +332,19 @@ export default {
      */
     async insert () {
       // console.log(this.dataForm);
+      if (this.dataForm.dataType === 'CUSTOM') {
+        if (
+          !this.dataForm.dataIds ||
+          (Array.isArray(this.dataForm.dataIds) && this.dataForm.dataIds.length === 0) ||
+          (this.dataForm.dataIds.checked !== undefined && Array.isArray(this.dataForm.dataIds.checked) && this.dataForm.dataIds.checked.length === 0)
+        ) {
+          this.$notification.warning({
+            message: '提示',
+            description: '请选择部门范围'
+          })
+          return
+        }
+      }
       if (this.dataForm.dataIds.checked) {
         this.dataForm.dataIds = this.dataForm.dataIds.checked
       }
@@ -355,14 +369,13 @@ export default {
     dataTypeChange () {
       // console.log(this.dataForm);
       if (this.dataForm.dataType === 'ALL') {
-        this.dataForm.dataIds = this.dataIdsALL
+        this.dataForm.dataIds = []
         // console.log(this.dataForm.dataIds);
         this.$forceUpdate()
       }
       // 本部门
       if (this.dataForm.dataType === 'DEPT') {
-        this.dataForm.dataIds = [this.my_DataIds]
-        // console.log(this.dataForm.dataIds);
+        this.dataForm.dataIds = []
         this.$forceUpdate()
       }
     },
@@ -371,12 +384,24 @@ export default {
      */
     async update () {
       // console.log(this.dataForm);
-      try {
-        if (this.dataForm.dataIds.checked) {
-          this.dataForm.dataIds = this.dataForm.dataIds.checked
+      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改
+      if (this.dataForm.dataType === 'CUSTOM') {
+        if (
+          !this.dataForm.dataIds ||
+          (Array.isArray(this.dataForm.dataIds) && this.dataForm.dataIds.length === 0) ||
+          (this.dataForm.dataIds.checked !== undefined && Array.isArray(this.dataForm.dataIds.checked) && this.dataForm.dataIds.checked.length === 0)
+        ) {
+          this.$notification.warning({
+            message: '提示',
+            description: '请选择部门范围'
+          })
+          return
         }
-      } catch (error) {
+      }
 
+      if (this.dataForm.dataIds.checked) {
+        this.dataForm.dataIds = [...this.dataForm.dataIds.checked]
+        console.log('xx', this.dataForm.dataIds)
       }
 
       const ob = {}

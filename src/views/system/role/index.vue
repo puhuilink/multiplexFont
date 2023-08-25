@@ -98,7 +98,7 @@
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
-    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
+    <UserGroupSchema ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
