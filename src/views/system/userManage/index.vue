@@ -205,7 +205,7 @@ const columns = [
     ellipsis: true
   },
   {
-    title: '是否启用',
+    title: '是否开启',
     dataIndex: 'isOpen',
     key: 'isOpen',
     ellipsis: true,
@@ -319,7 +319,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
