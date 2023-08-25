@@ -231,6 +231,7 @@ export default {
      */
     async updateData (record) {
       this.record = { ...record }
+      // this.record.dataIds = { checked: [this.record.organizeId] }
       this.submit = this.update
       this.show('编辑数据权限')
       await this.initTreeData()
@@ -260,11 +261,11 @@ export default {
     /* 判断数据类型 */
     dataTypeChange () {
       if (this.record.dataType === 'DEPT') {
-        this.record.dataIds = { checked: [this.record.organizeId] }
+        this.record.dataIds = []
         this.$forceUpdate()
       }
       if (this.record.dataType === 'ALL') {
-        // this.record.dataIds = []
+        this.record.dataIds = []
         this.$forceUpdate()
       }
     },
@@ -272,8 +273,8 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      this.record.dataIds = { checked: [this.record.organizeId] }
-      if (this.record.dataIds.checked.length ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length) {
+      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改
+      if (this.record.dataType === 'CUSTOM' && (this.record.dataIds.checked ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length)) {
         this.$notification.warning({
           message: '提示',
           description: `请选择部门范围`
@@ -281,8 +282,10 @@ export default {
       } else {
         const operateType = 'DATA'
         Object.assign(this.record, { operateType })
+        console.log(Object.assign(this.record, { operateType }))
         console.log(this.record)
         if (this.record.dataIds.checked) {
+          console.log(this.record)
           this.record.dataIds = this.record.dataIds.checked
         }
         try {
