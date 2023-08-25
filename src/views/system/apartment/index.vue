@@ -7,11 +7,9 @@
             <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
               <label class="search_label">搜索条件</label>
               <a-button type="primary" @click="handleSearch">
-                <a-icon type="search" />
                 查询
               </a-button>
               <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-                <a-icon type="sync" />
                 重置
               </a-button>
             </a-col>
@@ -48,7 +46,7 @@
     </div>
     <div style="margin-bottom: 1%" class="operation_box">
       <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
-        <a-icon type="plus" />
+        <a-icon type="plus-circle"/>
         新建
       </a-button>
       <a-button @click="open" style="margin-left: 10px">
@@ -69,13 +67,13 @@
         class="components-table-demo-nested">
         <template #operation="text, record">
           <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>
-            <a-icon type="plus"></a-icon>
+            <a-icon type="plus" />
             新增</a>
           <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)" v-action:M001003003>
-            <a-icon type="edit"></a-icon>
+            <a-icon type="form" />
             编辑</a>
           <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:M001003004>
-            <a-icon type="delete"></a-icon>
+            <a-icon type="delete" />
             删除</a>
         </template>
       </a-table>

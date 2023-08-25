@@ -136,9 +136,9 @@
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
       <template slot="action" slot-scope="value,record">
-        <a-button type="primary" @click="toUpdate(record)">编辑</a-button>
+        <a @click="toUpdate(record)"><a-icon type="form" />编辑</a>
         <a-divider type="vertical"/>
-        <a-button type="primary" @click="toRemove(record.id)">删除</a-button>
+        <a @click="toRemove(record.id)"><a-icon type="delete" />删除</a>
       </template>
     </a-table>
   </div>
