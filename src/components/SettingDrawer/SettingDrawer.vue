@@ -235,6 +235,7 @@ export default {
       if (this.primaryColor !== color) {
         this.$store.dispatch('ToggleColor', color)
         updateTheme(color)
+        console.log('主题样式')
       }
     },
     handleFixedHeader (fixed) {

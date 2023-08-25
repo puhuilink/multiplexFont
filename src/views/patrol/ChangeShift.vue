@@ -166,7 +166,6 @@ export default {
           this.queryParams.createTimeStart = this.moment(this.queryParams.receive_time[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.receive_time[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-        console.log('querty', _.omit(this.queryParams, ['receive_time']), this.queryParams)
         const { data: { list, total } } = await xungeng.get('/changeShifts/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
