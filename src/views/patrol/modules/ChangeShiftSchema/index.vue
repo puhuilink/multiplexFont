@@ -128,9 +128,8 @@ export default {
             title: '状态',
             align: 'center',
             width: 150,
-            sorter: (a, b) => {
-              return Number(a.eventstatus) - Number(b.eventstatus)
-            },
+            defaultSortOrder: 'ascend',
+            sorter: (a, b) => a.status - b.status,
             dataIndex: 'status',
             customRender: (text) => {
               console.log('text', text)

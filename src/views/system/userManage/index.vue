@@ -156,6 +156,12 @@
                 <a-menu-item key="3" v-action:M001001005>
                   分配角色
                 </a-menu-item>
+                <a-menu-item key="4" v-action:M001001006>
+                  账户解锁
+                </a-menu-item>
+                <a-menu-item key="5" v-action:M001001007>
+                  令牌重置
+                </a-menu-item>
               </a-menu>
             </a-dropdown>
           </template>
@@ -172,12 +178,13 @@
 import { Confirm } from '~~~/Mixins'
 import { Modal } from 'ant-design-vue'
 import assignModal from '@/views/system/userManage/components/assignModal'
-import { axios } from '@/utils/request'
 import { buildTree } from '@/utils/util'
 import schema from './components/schema'
 import passwordSchema from './components/passwordSchema'
 import _ from 'lodash'
 import moment from 'moment'
+import { axios } from '@/utils/request'
+import otp from 'axios'
 
 const columns = [
   {
@@ -353,6 +360,44 @@ export default {
           break
         case '3':
           this.$refs.assign.onShow(record)
+          break
+        case '4':
+          this.$promiseConfirmDelete({
+            title: '账户解锁',
+            content: '此操作将解锁该账号，是否继续？',
+            closable: true,
+            onOk: async () => {
+              await axios.get(`/user/unlock/${record.id}`)
+                .then(() => {
+                  this.$notification.success({
+                    message: '系统提示',
+                    description: '解锁成功'
+                  })
+                })
+                .catch(this.$notifyError).finally(() => this.query())
+            }
+          })
+          break
+        case '5':
+          this.$promiseConfirmDelete({
+            title: '令牌重置',
+            content: '此操作将重置该用户登录令牌（导致现有令牌失效）, 是否继续？',
+            closable: true,
+            onOk: async () => {
+              await otp.post(`/otp//dereg`, {
+                appId: process.env.VUE_APP_OTP_QUOTE_NAME,
+                userName: record.id,
+                transNo: 'transNo1'
+              })
+                .then(() => {
+                  this.$notification.success({
+                    message: '系统提示',
+                    description: '重置成功'
+                  })
+                })
+                .catch(this.$notifyError).finally(() => this.query())
+            }
+          })
           break
         default:
           return null
