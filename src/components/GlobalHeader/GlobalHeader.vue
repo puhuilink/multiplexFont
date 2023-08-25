@@ -79,7 +79,6 @@ export default {
   },
   mounted () {
     document.addEventListener('scroll', this.handleScroll, { passive: true })
-    console.log(this.$route.path)
   },
   methods: {
     handleScroll () {
