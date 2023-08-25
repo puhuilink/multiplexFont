@@ -70,9 +70,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login-button{
-  height: 42px !important;
-}
 #userLayout.user-layout-wrapper {
   height: 100%;
 
