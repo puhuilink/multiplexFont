@@ -20,6 +20,7 @@
 <script>
 import { getMenuTree, getButtonTree } from '@/utils/util'
 import { AuthorizeObjectService, FunctionService } from '@/api'
+import _ from 'lodash'
 
 export default {
   name: 'AuthMenu',
@@ -74,6 +75,7 @@ export default {
           this.setCheckedKeys(menuTree)
           // this.setCheckedKeys([{code: 'F002003', key: 'F002003'})
         }
+        // 根据权限数据构建按钮树结构
         if (buttonOriginalPermission.length > 0) {
           const buttonTree = getButtonTree(null, buttonOriginalPermission)
           this.setCheckedKeys(buttonTree)
@@ -117,33 +119,40 @@ export default {
       }))
     },
     onSelect (selectedKeys, info) {
-      console.log('onSelect', selectedKeys, info)
+
     },
     onExpand (expandedKeys) {
-      console.log('onExpand', expandedKeys)
       // if not set autoExpandParent to false, if children expanded, parent can not collapse.
       // or, you can remove all expanded children keys.
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
     },
-    onCheck (checkedKeys) {
+    onCheck (checkedKeys, { checked: bool, checkedNodes, node, event }) {
       const before = this.record.data
+
       const after = checkedKeys.checked ? checkedKeys.checked : checkedKeys
       let result
+      const element = after.filter(el => !before.includes(el))[0]
       if (before.length > after.length) {
         // 取消勾选了一个选项
         const element = before.filter(el => !after.includes(el))[0]
         const e = this.findChildren(element, this.menu)
-        result = after.filter(a => !e.includes(a))
+        const a = this.unParsePermissions(element, before)
+        const b = after.filter(a => !e.includes(a))
+        const unionSet = a.filter(function (v) { return b.indexOf(v) > -1 })
+
+        result = unionSet
       } else if (before.length < after.length) {
         // 勾选了一个选项
-        const element = after.filter(el => !before.includes(el))[0]
+
         const e = this.findChildren(element, this.menu)
+
+        e.push(...this.parsePermissions(e[0]))
         result = Array.from(new Set([...after, ...e]))
       } else {
         result = before
       }
-      this.checkedKeys = result
+      this.checkedKeys = _.uniq(result)
       this.$emit('menuChange', result)
     },
     findChildren (str, data) {
@@ -156,16 +165,54 @@ export default {
       arr.push(...this.findChildrenKeys(origin))
       return arr
     },
+
     findChildrenKeys (data) {
       const arr = []
+
       if (data.children) {
         data.children.forEach(child => {
           arr.push(...this.findChildrenKeys(child))
         })
       }
       arr.push(data.key)
+
       return arr
+    },
+    parsePermissions (datas) {
+      const permissions = []
+      for (let i = 0; i < datas.length; i += 3) {
+        permissions.push(datas.slice(0, i + 1))
+      }
+      return permissions
+    },
+    unParsePermissions (element, before) {
+      let permissions = []
+
+      const data = before.filter(el => {
+        return el.length === element.length && el.slice(0, el.length - 3) === element.slice(0, element.length - 3)
+      })// 判断取消选中的长度和选择前的树首字符和长度是否相同
+
+      let data_son
+      // 如果只有一个子元素且这个子元素的长度大于3
+      if (data.length === 1 && data[0].length > 3) {
+        data_son = data[0].slice(0, data[0].length - 3)
+        permissions = before.filter(el => {
+          // 排除子节点的父节点和子节点自身
+          if (el !== element) {
+            return el
+          }
+        })
+        permissions = this.unParsePermissions(data_son, permissions)
+      } else {
+        permissions = before.filter(el => {
+          if (el !== element) {
+            return el
+          }
+        })
+      }
+      return permissions
     }
+
   }
 }
 </script>

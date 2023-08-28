@@ -3,20 +3,29 @@
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="12" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="queryList()">
+              查询
+            </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
+              重置
+            </a-button>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组编号" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="Myid" />
+              <a-input placeholder="请输入巡更组编号" allowClear v-model.trim="Myid" />
             </a-form-item>
           </a-col>
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="Myname" />
+              <a-input placeholder="请输入巡更组名称" allowClear v-model.trim="Myname" />
             </a-form-item>
           </a-col>
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
-              <a-select show-search placeholder="请选择" v-model="isOpen" @change="handleChange" key="0">
+              <a-select show-search v-model="isOpen" @change="handleChange" key="0">
                 <a-select-option :value="1"> 有效 </a-select-option>
                 <a-select-option :value="0"> 无效</a-select-option>
               </a-select>
@@ -25,22 +34,29 @@
         </a-row>
       </div>
 
-      <span class="collapse">
+      <!-- <span class="collapse">
         <a-button @click="queryList()" type="primary">查询</a-button>
         <a-button @click="resetQueryParams">重置</a-button>
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
-    <div class="onAddUserBox">
-      <a-button @click="onAddUser" v-action:M0101>新增巡更组</a-button>
+    <div class="onAddUserBox operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001001>
+        <a-icon type="plus-circle"/>
+        新增巡更组</a-button>
       <a-button
+        :type="hasSelected && selectedRowKeys.length === 1 ? 'primary' :''"
         @click="onEditUser"
-        v-action:M0101
+        v-action:M001001
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
-      >编辑巡更组</a-button
       >
-      <a-button @click="DeleteGroup" v-action:M0101 :disabled="!hasSelected">删除巡更组</a-button>
+        <a-icon type="edit" />
+        编辑巡更组</a-button
+      >
+      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">
+        <a-icon type="delete" />
+        删除巡更组</a-button>
     </div>
     <!-- <a-table
       :columns="columns"
@@ -63,7 +79,9 @@
       ref="table"
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :loading="pageLoading"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <!-- <a-pagination
@@ -77,7 +95,7 @@
 
     ></a-pagination> -->
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" @get_list="getList"/>
+    <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList"/>
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
@@ -104,6 +122,7 @@ export default {
   },
   data () {
     return {
+      pageLoading: false,
       isOpen: null,
       columns: Object.freeze([
         {
@@ -135,7 +154,7 @@ export default {
       // biaoshi: '',
       selectedRowKeys: [],
       selectedRowsDate: '', // 表格选中行数据
-      scroll: {}, // 设置表格的滚动属性
+      // scroll: {}, // 设置表格的滚动属性
       //
       /*   total: Number, // 数据总数
     current: 1,// 当前页
@@ -179,26 +198,42 @@ export default {
     },
     // 查询
     async queryList () {
-      const pageNum = this.pagination.current
-      const pageSize = this.pagination.pageSize
-      const { data } = await xungeng.get('/group/list', {
-        params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
-      })
-      console.log(data)
-      this.dataList = data.list
-      this.pagination.total = Number(data.total)
+      try {
+        this.pageLoading = true
+        const pageNum = this.pagination.current
+        const pageSize = this.pagination.pageSize
+        const { data } = await xungeng.get('/group/list', {
+          params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
+        })
+        console.log(data)
+        this.dataList = data.list
+        this.pagination.total = Number(data.total)
+        this.selectedRowKeys = []
+        this.selectedRowsDate = []
+      } catch (error) {
+        throw error
+      } finally {
+        this.pageLoading = false
+      }
     },
 
     // 4.工作组列表
     async getList () {
-      console.log(this.current)
-      const pageNum = this.pagination.current
-      const pageSize = this.pagination.pageSize
-      const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
-      console.log(data)
-      this.pagination.total = Number(data.total)
-      this.dataList = data.list
-      // console.log(this.dataList );
+      try {
+        this.pageLoading = true
+        const pageNum = this.pagination.current
+        const pageSize = this.pagination.pageSize
+        const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+        this.pagination.total = Number(data.total)
+        this.dataList = data.list
+        this.selectedRowKeys = []
+        this.selectedRowsDate = []
+      // console.log(this.dataList )
+      } catch (error) {
+        throw error
+      } finally {
+        this.pageLoading = false
+      }
     },
 
     // 7.工作组删除(DELETE)

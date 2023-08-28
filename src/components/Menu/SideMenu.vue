@@ -1,19 +1,19 @@
 <template>
   <a-layout-sider
-    :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null, fixedHeader ? 'ant-fixed-sidemenu_fixed-header' : null ]"
+    :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null, fixedHeader ? '' : null ]"
     width="210px"
     :collapsible="collapsible"
     v-model="collapsed"
     :trigger="null">
     <!-- fixed header 时 Logo 放到 header 里 -->
-    <logo v-if="!fixedHeader" />
+    <logo :showTitle="!collapsed" />
     <s-menu
       :collapsed="collapsed"
       :menu="menus"
       :theme="theme"
       :mode="mode"
       @select="onSelect"
-      style="padding: 16px 0px;"></s-menu>
+      style=""></s-menu>
   </a-layout-sider>
 
 </template>
@@ -60,3 +60,5 @@ export default {
   }
 }
 </script>
+<style lang="less">
+</style>

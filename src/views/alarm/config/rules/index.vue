@@ -64,7 +64,7 @@
               </a-col>
 
               <a-col v-bind="colProps">
-                <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M0304>
+                <a-form-item label="启用状态" v-bind="formItemLayout" class="fw" v-action:M003004>
                   <a-select allowClear v-model.number="queryParams.enabled" >
                     <a-select-option :value="1">启用</a-select-option>
                     <a-select-option :value="0">禁用</a-select-option>
@@ -100,10 +100,10 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button :disabled="!hasSelectedOne" @click="onDetail" v-action:M0305>查看</a-button>
-        <a-button @click="onAdd" v-action:M0301>新增</a-button>
-        <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M0302>编辑</a-button>
-        <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M0303>删除</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="onDetail" v-action:M003005>查看</a-button>
+        <a-button @click="onAdd" v-action:M003001>新增</a-button>
+        <a-button :disabled="!hasSelectedOne" @click="onEdit" v-action:M003002>编辑</a-button>
+        <a-button :disabled="!hasSelected" @click="onBatchDelete" v-action:M003003>删除</a-button>
         <a-dropdown>
           <a-menu slot="overlay" @click="onEditGlobalRule">
             <a-menu-item key="merge">合并规则</a-menu-item>

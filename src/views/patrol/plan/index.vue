@@ -2,10 +2,17 @@
   <div class="plan-management">
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="12" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件</label>
+            <span :class="advanced ? 'expand' : 'collapse'">
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+            </span>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model="queryParams.groupId">
+              <a-select allowClear v-model="queryParams.groupId" placeholder="请输入">
                 <a-select-option
                   v-for="{ label, value } in patrolGroupList"
                   :key="value"
@@ -17,15 +24,21 @@
         </a-row>
       </div>
 
-      <span :class="advanced ? 'expand' : 'collapse'">
+      <!-- <span :class="advanced ? 'expand' : 'collapse'">
         <QueryBtn @click="query" />
         <ResetBtn @click="resetQueryParams" />
-      </span>
+      </span> -->
     </a-form>
-    <div style="width: 100%">
-      <a-button @click="onAdd" style="margin-bottom: 10px;margin-right: 10px">新增</a-button>
-      <a-button :disabled="!hasSelectedOne" @click="onEdit" style="margin-bottom: 10px;margin-right: 10px">编辑</a-button>
-      <a-button :disabled="!hasSelectedOne" @click="onBatchDelete">删除</a-button>
+    <div style="width: 100%" class="operation_box">
+      <a-button type="primary" @click="onAdd" style="margin-right: 10px">
+        <a-icon type="plus-circle"/>
+        新增</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px">
+        <a-icon type="edit" />
+        编辑</a-button>
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete">
+        <a-icon type="delete" />
+        删除</a-button>
     </div>
     <a-table
       :columns="columns"
@@ -35,6 +48,7 @@
       :data-source="dataSource"
       :loading="pageLoading"
       :pagination="paginationOpt"
+      :rowClassName="(record, index)=> index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 
     <PlanSchema ref="schema" @addSuccess="query" @editSuccess="query" />
@@ -75,7 +89,7 @@ export default {
         },
         {
           title: '巡更组',
-          dataIndex: 'groupId',
+          dataIndex: 'groupName',
           width: 160
         },
         {
@@ -101,11 +115,12 @@ export default {
           ...timeColumnSnippet
         },
         {
-          title: '是否启用',
+          title: '是否开启',
           dataIndex: 'status',
           width: 120,
           customRender: (status, record) => (
-            <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
+            // <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
+            <a-switch checked={status === 'enabled'} onClick={() => this.showModal(record)} />
           )
         }
       ],
@@ -139,7 +154,7 @@ export default {
     async query () {
       try {
         this.pageLoading = true
-        const { data: { list } } = await xungeng.get('/plan/list', {
+        const { data: { list, total } } = await xungeng.get('/plan/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
             pageNum: this.paginationOpt.defaultCurrent,
@@ -147,6 +162,9 @@ export default {
           }
         })
         this.dataSource = list
+        this.paginationOpt.total = total
+        this.selectedRows = []
+        this.selectedRowKeys = []
       } catch (e) {
         throw e
       } finally {

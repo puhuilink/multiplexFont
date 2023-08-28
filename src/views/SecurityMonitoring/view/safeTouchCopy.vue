@@ -11,7 +11,6 @@
         @focus="handleFocus"
         @blur="handleBlur"
         @change="handleChange"
-        v-action:M0200
       >
         <a-select-option :value="item.label" v-for="(item, index) in list" :key="index">
           {{ item.label }}
@@ -92,6 +91,7 @@ export default {
     // if (this.list.length > 0) {
     //   this.searchValue = this.list[0].label
     // }
+    this.ngsocGet()
     this.gettime()
     this.drawPolicitalStatus()
     this.drawPolicitalStatus2()
@@ -103,6 +103,9 @@ export default {
   },
   watch: {},
   methods: {
+    ngsocGet () {
+
+    },
     // 下拉菜单
     handleChange (value) {
       console.log(`selected ${value}`)

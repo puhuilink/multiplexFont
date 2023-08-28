@@ -18,7 +18,12 @@
 
         <Cron v-if="plan.schedule" :cron.sync="plan.schedule" />
 
-        <TimeRange v-if="plan.interval" :interval.sync="plan.interval" />
+        <a-form-model-item
+          prop="interval"
+          v-if="plan.interval"
+        >
+          <TimeRange :interval.sync="plan.interval" />
+        </a-form-model-item>
 
         <!-- <PatrolPath :plan.sync="plan" /> -->
 
@@ -63,9 +68,27 @@ export default {
       return {
         ...basicInfoRule,
         ...patrolPathRule,
-        ...timeRangeRule,
+        // ...timeRangeRule,
         ...cronRule,
         ...TimePickerRule,
+        interval: [
+          {
+            required: true,
+            validator (rule, value, callback) {
+              // if (value === '') {
+              //   callback(new Error('Please input the password again'))
+              // } else if (value !== this.ruleForm.pass) {
+              //   callback(new Error("Two inputs don't match!"))
+              // } else {
+              //   callback()
+              // }
+              if (value.dataSource.length === 0) {
+                callback(new Error('请填写巡更时间'))
+              }
+              callback()
+            }
+          }
+        ],
         effectTime: [
           {
             required: true,
@@ -128,7 +151,6 @@ export default {
       //   this.spinning = false
       // }
       this.plan = new PlanModel(plan)
-      console.log('plan', this.plan, plan)
     },
     /**
      * 调取新增接口
@@ -157,7 +179,7 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
-          // const { id, ...plan } = this.plan.serialize()
+          const { id, ...plan } = this.plan.serialize()
           await PatrolService.planUpdate(this.plan.serialize())
           this.$emit('editSuccess')
           this.$notifyEditSuccess()

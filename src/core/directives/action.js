@@ -28,27 +28,36 @@ const action = Vue.directive('action', {
     // const currentPermission = ALLPERMISSION.find(item => item.code === permissionId)
     // const permissionGroup = ALLPERMISSION.find(item => item.code === currentPermission.parentCode)
     // TODO 还有些按钮权限未添加，后续优化
-    roles.menuCodes.forEach(p => {
-      if (!roles.allPermission.includes(permissionId)) {
-        return
-      }
+    // console.log(permissionId);
+    // console.log(roles.menuCodes.includes(permissionId));
+    if (!roles.menuCodes.includes(permissionId)) {
 
-      // if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
-      //   // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
-      //   if (p.actionList && !p.actionList.includes(actionName)) {
-      //     el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
-      //   }
-      // }
-      if (!roles.menuCodes.indexOf(binding.arg) > -1) {
+    } else {
+      // console.log(roles.menuCodes.indexOf(binding.arg) > -1);
+      if (roles.menuCodes.indexOf(binding.arg) > -1 === false) {
         el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
       }
-      // if (!permissionId.includes(p.permissionId)) {
-      //   return
-      // }
-      // if (p.actionList && !p.actionList.includes(actionName)) {
-      //   el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
-      // }
-    })
+      /*  roles.menuCodes.forEach(p => {
+        console.log(p);
+
+        // if (p.code === permissionGroup.code || p.code === permissionGroup.parentCode) {
+        //   // console.log(p.actionEntitySet.map(item => ({ code: item.code, name: item.name })))
+        //   if (p.actionList && !p.actionList.includes(actionName)) {
+        //     el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+        //   }
+        // }
+        console.log(p.indexOf(binding.arg) > -1);
+        if (!roles.menuCodes.indexOf(binding.arg) > -1) {
+          el.style.display = 'none' || el.parentNode && el.parentNode.removeChild(el)
+        }
+        // if (!permissionId.includes(p.permissionId)) {
+        //   return
+        // }
+        // if (p.actionList && !p.actionList.includes(actionName)) {
+        //   el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+        // }
+      }) */
+    }
   }
 })
 

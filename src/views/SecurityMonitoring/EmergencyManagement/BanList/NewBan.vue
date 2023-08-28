@@ -38,13 +38,15 @@ export default {
     justify-content: center;
 
     &_img1 {
-      background-image: url("../../static/TBK_01.png");
+      background: url("../../static/TBK_01.png") no-repeat;
+      background-size:contain;
       width: 520px;
       height: 318px;
     }
 
     &_img2 {
-      background-image: url("../../static/TBK_04.png");
+      background: url("../../static/TBK_04.png") no-repeat;
+      background-size:contain;
       width: 520px;
       height: 318px;
     }
@@ -59,7 +61,8 @@ export default {
     }
 
     &::after {
-      background-image:url("../../static/icon_Firewall.png");
+      background:url("../../static/icon_Firewall.png") no-repeat;
+      background-size:contain;
       width: 120px;
       content: '';
       height: 132px;

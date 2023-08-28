@@ -47,23 +47,25 @@
 
       <!-- / 操作区域 -->
       <template #operation>
-        <a-button @click="onAdd" v-action:M0106>新增工作组</a-button>
-        <a-button @click="onEdit" :disabled="!hasSelectedOne" v-action:M0112>编辑工作组</a-button>
-        <a-button @click="onBatchDelete" :disabled="!hasSelectedOne" v-action:M0108>删除工作组</a-button>
-        <a-button @click="onAllocateUser" :disabled="!hasSelectedOne" v-action:M0109>分配用户</a-button>
-        <a-button @click="onAllocateAdmin" :disabled="!hasSelectedOne" v-action:M0115>分配管理员</a-button>
-        <a-button @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M0113>更改工作组状态</a-button>
-        <a-button @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M0114>分配工作组权限</a-button>
+        <div class="operation_box">
+          <a-button type="primary" @click="onAdd" v-action:M001006>新增工作组</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onEdit" :disabled="!hasSelectedOne" v-action:M001012>编辑工作组</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onBatchDelete" :disabled="!hasSelectedOne" v-action:M001008>删除工作组</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onAllocateUser" :disabled="!hasSelectedOne" v-action:M001009>分配用户</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onAllocateAdmin" :disabled="!hasSelectedOne" v-action:M001015>分配管理员</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onToggleFlag" :disabled="!hasSelectedOne" v-action:M001013>更改工作组状态</a-button>
+          <a-button :type="hasSelectedOne ? 'primary': ''" @click="onAllocateAuth" :disabled="!hasSelectedOne" v-action:M001014>分配工作组权限</a-button>
+        </div>
       </template>
     </CTable>
 
-    <GroupSchema v-action:M0106 ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <GroupSchema v-action:M001006 ref="schema" @addSuccess="query" @editSuccess="query(false)" />
 
-    <AuthSchema v-action:M0114 ref="auth" @success="query(false)" />
+    <AuthSchema v-action:M001014 ref="auth" @success="query(false)" />
 
-    <GroupAdministratorSchema v-action:M0115 ref="groupAdmin" @editSuccess="query(false)" />
+    <GroupAdministratorSchema v-action:M001015 ref="groupAdmin" @editSuccess="query(false)" />
 
-    <GroupUserSchema v-action:M0109 ref="groupUser" @editSuccess="query(false)" />
+    <GroupUserSchema v-action:M001009 ref="groupUser" @editSuccess="query(false)" />
   </div>
 </template>
 

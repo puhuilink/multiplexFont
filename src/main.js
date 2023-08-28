@@ -12,6 +12,7 @@ import './utils/filter'
 import './components/global.less'
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
+import './rem'
 import dataV from '@jiaminghi/data-view'
 Vue.use(dataV)
 Viewer.setDefaults({

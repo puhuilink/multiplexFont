@@ -10,26 +10,30 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
-    :footer="null"
-  >
+    :footer="null">
     <a-steps :current="current">
       <a-step v-for="item in steps" :key="item.title" :title="item.title" />
     </a-steps>
     <div class="steps-content">
-      <div v-if="current===0">
+      <div v-if="current === 0">
         <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="角色名称" prop="name">
-            <a-input v-model="originalForm.name"/>
+            <a-input v-model="originalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="备注" prop="remark">
             <a-input v-model="originalForm.remark" type="textarea" />
           </a-form-model-item>
         </a-form-model>
       </div>
-      <div v-if="current===1">
+      <div v-if="current === 1">
         <a-form-model ref="dataForm" :rules="dataRules" :model="menuForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="选择菜单权限">
-            <AuthMenu :record="{data:menuForm.menuCodes}" :menus.sync="menus" :is-role="true" ref="menu" @menuChange="logSth"/>
+            <AuthMenu
+              :record="{ data: menuForm.menuCodes }"
+              :menus.sync="menus"
+              :is-role="true"
+              ref="menu"
+              @menuChange="logSth" />
           </a-form-model-item>
           <a-form-model-item label="选择移动端角色" prop="role_mobile">
             <a-radio-group v-model="menuForm.appCode" :default-value="'none'">
@@ -53,10 +57,10 @@
         </a-form-model>
 
       </div>
-      <div v-if="current===2">
+      <div v-if="current === 2">
         <a-form-model ref="dataForm" :rules="dataRules" :model="dataForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="权限范围" prop="dataType">
-            <a-select v-model="dataForm.dataType" :default-value="'ALL'">
+            <a-select v-model="dataForm.dataType" :default-value="'ALL'" @change="dataTypeChange">
               <a-select-option :value="'ALL'">
                 全部数据权限
               </a-select-option>
@@ -83,19 +87,16 @@
       </div>
     </div>
     <div class="steps-action">
+      <a-button v-if="current > 0" style="margin-right: 8px" @click="prev">
+        上一步
+      </a-button>
       <a-button v-if="current < steps.length - 1" type="primary" @click="next">
         下一步
       </a-button>
-      <a-button
-        v-if="current === steps.length - 1"
-        type="primary"
-        @click="submit"
-      >
+      <a-button v-if="current === steps.length - 1" type="primary" @click="submit">
         完成
       </a-button>
-      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
-        上一步
-      </a-button>
+
     </div>
   </a-modal>
 </template>
@@ -161,7 +162,9 @@ export default {
       ]
     },
     record: null,
-    submit: () => {}
+    submit: () => { },
+    dataIdsALL: [],
+    my_DataIds: []
   }),
   computed: {},
   methods: {
@@ -172,6 +175,8 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        this.dataIdsALL = dataIds
+        // this.dataForm.dataIds = this.dataIdsALL// 默认值
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -189,8 +194,8 @@ export default {
           const children = this.buildDeptsTree(data, item.id, dataIds)
           if (children.length > 0) {
             item.children = children.map(el => {
-              console.log(item.id)
-              console.log(dataIds.indexOf(item.id))
+              // console.log(item.id)
+              // console.log(dataIds.indexOf(item.id))
               return {
                 ...el,
                 title: el.name,
@@ -272,6 +277,18 @@ export default {
           }
         })
       }
+
+      if (this.current === 1) {
+        if (this.menuForm.menuCodes.length > 0) {
+          // this.current++
+        } else {
+          this.$notification.warning({
+            message: '提示',
+            description: `菜单权限必选`
+          })
+          return
+        }
+      }
       this.current++
     },
     // 步骤条向上逻辑
@@ -285,6 +302,9 @@ export default {
      * 打开新增窗口
      */
     add () {
+      const roles = JSON.parse(localStorage.getItem('pro__User'))
+      this.my_DataIds = roles.value.organizeId
+      // console.log(this.my_DataIds);
       this.submit = this.insert
       this.show('新增')
       this.initTreeData()
@@ -295,6 +315,9 @@ export default {
     async edit (record) {
       const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
       this.dataForm = { dataType, dataIds }
+      // this.my_DataIds ={ checked: [record.organizeId] }
+      console.log(record)
+      // console.log(this.dataForm);
       this.menuForm = { appCode, menuCodes }
       this.originalForm = { id, name, remark, operateType: 'EDIT' }
       this.submit = this.update
@@ -308,6 +331,20 @@ export default {
      * 调取新增接口
      */
     async insert () {
+      // console.log(this.dataForm);
+      if (this.dataForm.dataType === 'CUSTOM') {
+        if (
+          !this.dataForm.dataIds ||
+          (Array.isArray(this.dataForm.dataIds) && this.dataForm.dataIds.length === 0) ||
+          (this.dataForm.dataIds.checked !== undefined && Array.isArray(this.dataForm.dataIds.checked) && this.dataForm.dataIds.checked.length === 0)
+        ) {
+          this.$notification.warning({
+            message: '提示',
+            description: '请选择部门范围'
+          })
+          return
+        }
+      }
       if (this.dataForm.dataIds.checked) {
         this.dataForm.dataIds = this.dataForm.dataIds.checked
       }
@@ -322,20 +359,51 @@ export default {
           this.$notifyAddSuccess()
           this.cancel()
         } catch (e) {
-          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false
         }
       })
     },
+    /* 判断数据类型 */
+    dataTypeChange () {
+      // console.log(this.dataForm);
+      if (this.dataForm.dataType === 'ALL') {
+        this.dataForm.dataIds = []
+        // console.log(this.dataForm.dataIds);
+        this.$forceUpdate()
+      }
+      // 本部门
+      if (this.dataForm.dataType === 'DEPT') {
+        this.dataForm.dataIds = []
+        this.$forceUpdate()
+      }
+    },
     /**
      * 调取编辑接口
      */
     async update () {
-      if (this.dataForm.dataIds.checked) {
-        this.dataForm.dataIds = this.dataForm.dataIds.checked
+      // console.log(this.dataForm);
+      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改
+      if (this.dataForm.dataType === 'CUSTOM') {
+        if (
+          !this.dataForm.dataIds ||
+          (Array.isArray(this.dataForm.dataIds) && this.dataForm.dataIds.length === 0) ||
+          (this.dataForm.dataIds.checked !== undefined && Array.isArray(this.dataForm.dataIds.checked) && this.dataForm.dataIds.checked.length === 0)
+        ) {
+          this.$notification.warning({
+            message: '提示',
+            description: '请选择部门范围'
+          })
+          return
+        }
       }
+
+      if (this.dataForm.dataIds.checked) {
+        this.dataForm.dataIds = [...this.dataForm.dataIds.checked]
+        console.log('xx', this.dataForm.dataIds)
+      }
+
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
       this.form.validateFields(async (err, values) => {
@@ -347,7 +415,6 @@ export default {
           this.$notifyEditSuccess()
           this.cancel()
         } catch (e) {
-          this.$message.error(e)
           throw e
         } finally {
           this.confirmLoading = false
@@ -359,7 +426,7 @@ export default {
 </script>
 
 <style lang="less">
-.steps-content{
+.steps-content {
   height: 500px;
 }
 </style>

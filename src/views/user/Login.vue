@@ -136,19 +136,25 @@
       </a-form-item>
 
     </a-form>
-
+    <secondFactoryOTP ref="factory" @close="onClose" @loginSuccess="finalLogin"></secondFactoryOTP>
+    <RegOTP ref="reg" @close="onClose" @otpSuccess="finalLogin"></RegOTP>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapActions } from 'vuex'
 import { UserService } from '@/api'
 import identify from '@/components/identify/index'
+import axios from 'axios'
+import secondFactoryOTP from '@/components/otp/SecondFactorOTP'
+import RegOTP from '@/components/otp/RegOTP'
+import { ROLES } from '@/store/mutation-types'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
   name: 'Login',
-  components: { identify },
+  components: { identify, secondFactoryOTP, RegOTP },
   data () {
     return {
       VUE_APP_SMS_ENABLED,
@@ -171,7 +177,9 @@ export default {
         captchaDisabled: false
       },
       identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
-      identifyCode: ''
+      identifyCode: '',
+      loginParams: {},
+      otpName: process.env.VUE_APP_OTP_QUOTE_NAME
     }
   },
   computed: {
@@ -273,12 +281,34 @@ export default {
         Reflect.deleteProperty(loginParams, 'userId')
         loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
         loginParams.pwd = values.pwd
-        Login(loginParams)
-          .then((res) => this.loginSuccess(res))
-          .catch(err => this.requestFailed(err))
-          .finally(() => {
-            state.loginBtn = false
-          })
+        this.loginParams = loginParams
+        axios.post('/otp/getStatus', {
+          appId: this.otpName,
+          userName: values.userId,
+          transNo: 'transNo1'
+        }, {
+          baseURL: process.env.VUE_APP_OTP_BASE_URL
+        }).then((res) => {
+          if (res.data.statusCode === 1201) {
+            this.$refs.reg.otpBind({
+              appId: this.otpName,
+              userName: values.userId,
+              transNo: 'transNo1'
+            })
+          } else if (res.data.statusCode === 1200) {
+            this.$refs.factory.onShow({
+              appId: this.otpName,
+              userName: values.userId,
+              transNo: 'transNo1'
+            })
+          }
+        })
+        // Login(loginParams)
+        //   .then((res) => this.loginSuccess(res))
+        //   .catch(err => this.requestFailed(err))
+        //   .finally(() => {
+        //     state.loginBtn = false
+        //   })
       })
     },
     // 获取验证码
@@ -327,9 +357,29 @@ export default {
     //     this.stepCaptchaVisible = false
     //   })
     // },
+    finalLogin () {
+      this.Login(this.loginParams)
+        .then((res) => this.loginSuccess(res))
+        .catch(err => this.requestFailed(err))
+        .finally(() => {
+          this.state.loginBtn = false
+        })
+    },
+    onClose () {
+      this.state.loginBtn = false
+    },
     loginSuccess (res) {
-      this.$router.push({ path: '/' })
-      location.reload()
+      if (res.menuCodes) {
+        this.$router.push({ path: '/' })
+        location.reload()
+      } else {
+        this.$router.push({ path: '/user/login' })
+        location.reload()
+        this.$notification.error({
+          message: '账号无效',
+          description: '请联系系统管理员'
+        })
+      }
       this.isLoginError = false
     },
     requestFailed (err) {

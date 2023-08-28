@@ -12,17 +12,21 @@
     :afterClose="reset"
     okText="保存"
     cancelText="取消"
-    @ok="submit"
-  >
+    @ok="submit">
     <a-form-model
-      v-if="title==='编辑菜单权限'"
+      v-if="title === '编辑菜单权限'"
       ref="menuForm"
       :rules="dataRules"
       :model="record"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="选择菜单权限">
-        <AuthMenu :record="{data:record.menuCodes}" :menus.sync="menus" :is-role="true" ref="menu" @menuChange="updateMenuData" />
+        <AuthMenu
+          :record="{ data: record.menuCodes }"
+          :menus.sync="menus"
+          :is-role="true"
+          ref="menu"
+          @menuChange="updateMenuData" />
       </a-form-model-item>
       <a-form-model-item label="选择移动端角色" prop="role_mobile">
         <a-radio-group v-model="record.appCode" default-value="1">
@@ -52,7 +56,7 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="权限范围" prop="data_type">
-        <a-select v-model="record.dataType" default-value="ALL">
+        <a-select v-model="record.dataType" default-value="ALL" @change="dataTypeChange">
           <a-select-option :value="'ALL'">
             全部数据权限
           </a-select-option>
@@ -105,7 +109,7 @@ export default {
     ],
     menus: [],
     record: null,
-    submit: () => {}
+    submit: () => { }
   }),
   computed: {},
   async mounted () {
@@ -175,6 +179,7 @@ export default {
             return el
           }
         }).filter((f) => f)
+
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
@@ -220,11 +225,13 @@ export default {
       this.form.setFieldsValue(_.pick(record, keys))
       this.submit = this.insert
     },
+
     /**
      * 打开数据权限窗口
      */
     async updateData (record) {
       this.record = { ...record }
+      // this.record.dataIds = { checked: [this.record.organizeId] }
       this.submit = this.update
       this.show('编辑数据权限')
       await this.initTreeData()
@@ -251,31 +258,52 @@ export default {
         this.confirmLoading = false
       }
     },
+    /* 判断数据类型 */
+    dataTypeChange () {
+      if (this.record.dataType === 'DEPT') {
+        this.record.dataIds = []
+        this.$forceUpdate()
+      }
+      if (this.record.dataType === 'ALL') {
+        this.record.dataIds = []
+        this.$forceUpdate()
+      }
+    },
     /**
      * 调取编辑接口
      */
     async update () {
-      const operateType = 'DATA'
-      Object.assign(this.record, { operateType })
-      if (this.record.dataIds.checked) {
-        this.record.dataIds = this.record.dataIds.checked
-      }
-      try {
-        this.confirmLoading = true
-        await RoleService.update(this.record)
-        this.$emit('editSuccess')
-        this.$notifyEditSuccess()
-        this.cancel()
-      } catch (e) {
-        this.$notifyError(e)
-        throw e
-      } finally {
-        this.confirmLoading = false
+      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改
+      if (this.record.dataType === 'CUSTOM' && (this.record.dataIds.checked ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length)) {
+        this.$notification.warning({
+          message: '提示',
+          description: `请选择部门范围`
+        })
+      } else {
+        const operateType = 'DATA'
+        Object.assign(this.record, { operateType })
+        console.log(Object.assign(this.record, { operateType }))
+        console.log(this.record)
+        if (this.record.dataIds.checked) {
+          console.log(this.record)
+          this.record.dataIds = this.record.dataIds.checked
+        }
+        try {
+          this.confirmLoading = true
+          await RoleService.update(this.record)
+          this.$emit('editSuccess')
+          this.$notifyEditSuccess()
+          this.cancel()
+        } catch (e) {
+          this.$notifyError(e)
+          throw e
+        } finally {
+          this.confirmLoading = false
+        }
       }
     }
   }
 }
 </script>
 
-<style lang="less">
-</style>
+<style lang="less"></style>

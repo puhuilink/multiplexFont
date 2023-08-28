@@ -3,15 +3,24 @@
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="8" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="query">
+              <a-icon type="search" />查询
+            </a-button>
+            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+              <a-icon type="sync" />重置
+            </a-button>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="角色名" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.name" />
+              <a-input placeholder="请输入角色名" allowClear v-model.trim="queryParams.name" />
             </a-form-item>
           </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="状态" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model.trim="queryParams.isOpen" >
+          <a-col :md="6" :sm="24">
+            <a-form-item label="是否启用" v-bind="formItemLayout" class="fw">
+              <a-select allowClear v-model.trim="queryParams.isOpen">
                 <a-select-option :value="'true'">
                   启用
                 </a-select-option>
@@ -23,20 +32,28 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="创建时间" v-bind="formItemLayout" class="fw">
-              <a-range-picker :show-time="{ format: 'HH:mm:ss' }" :format="dateFormat" @change="onDateChange" />
+              <a-range-picker
+                :show-time="{ format: 'HH:mm:ss' }"
+                :format="dateFormat"
+                v-model="queryParams.timeList"
+                @change="onDateChange" />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
 
-      <span class="collapse">
+      <!-- <span class="collapse">
         <a-button @click="query" type="primary">查询</a-button>
         <a-button @click="resetQueryParams" >重置</a-button>
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:M0101>新增</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001002001>
+        <a-icon type="plus-circle"/>
+        新增</a-button>
+    </div>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
@@ -45,20 +62,30 @@
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
-    >
-      <template #status="text,record">
-        <a-switch :checked="text" @change="onStatusChange(record)" />
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
+      <template #status="text, record">
+        <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
       </template>
-      <template #action="text,record">
-        <a @click="onEditUser(record)">编辑</a>
+      <template #action="text, record">
+        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)">菜单权限</a>
-        <a-divider type="vertical" />
-        <a @click="onUpdateData(record)">数据权限</a>
-        <a-divider type="vertical" />
-        <a @click="onAllocateUserGroup(record)">分配用户</a>
-        <a-divider type="vertical" />
-        <a @click="deleteRole(record)">删除</a>
+        <a-dropdown>
+          <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
+          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+            <a-menu-item key="1" v-action:M001002003>
+              菜单权限
+            </a-menu-item>
+            <a-menu-item key="2" v-action:M001002004>
+              数据权限
+            </a-menu-item>
+            <a-menu-item key="3" v-action:M001002005>
+              分配用户
+            </a-menu-item>
+            <a-menu-item key="4" v-action:M001002006>
+              删除
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </template>
     </a-table>
 
@@ -67,7 +94,7 @@
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
-    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
+    <UserGroupSchema ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
@@ -91,6 +118,7 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    disabled: true,
     columns: Object.freeze([
       {
         title: '角色编号',
@@ -108,7 +136,7 @@ export default {
         width: '150px'
       },
       {
-        title: '状态',
+        title: '是否开启',
         dataIndex: 'isOpen',
         scopedSlots: { customRender: 'status' },
         width: '80px'
@@ -122,7 +150,7 @@ export default {
       {
         title: '备注',
         dataIndex: 'remark',
-        'min-width': 300
+        width: 100
       },
       {
         title: '创建时间',
@@ -131,7 +159,9 @@ export default {
       },
       {
         title: '操作',
-        width: '400px',
+        width: 150,
+        align: 'center',
+        fixed: 'right',
         scopedSlots: { customRender: 'action' }
       }
     ]),
@@ -142,13 +172,27 @@ export default {
       name: '',
       isOpen: null,
       createTimeStart: '',
-      createTimeEnd: ''
+      createTimeEnd: '',
+      timeList: []
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss'
   }),
   mounted () {
     this.initialPagination()
     this.query()
+  },
+  created () {
+    const rolesData = localStorage.getItem('pro__Roles')
+    if (rolesData) {
+      // 如果存在，将数据转换为对象或数组，具体情况取决于您存储的数据格式
+      const menuCodes = JSON.parse(rolesData).value.menuCodes
+      const searchString = 'M001002007'// 角色管理状态开关
+      if (menuCodes.indexOf(searchString) !== -1) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
   },
   computed: {
     isSelectedValid () {
@@ -162,7 +206,6 @@ export default {
   },
   methods: {
     onDateChange (date, dateString) {
-      console.log('dateString', dateString)
       this.queryParams.createTimeStart = dateString[0]
       this.queryParams.createTimeEnd = dateString[1]
     },
@@ -194,7 +237,8 @@ export default {
         name: '',
         isOpen: null,
         createTimeStart: '',
-        createTimeEnd: ''
+        createTimeEnd: '',
+        timeList: []
       }
     },
     query () {
@@ -297,6 +341,7 @@ export default {
      * @event
      */
     onEditUser (record) {
+      console.log(record)
       this.$refs['schema'].edit(record)
     },
     /**
@@ -426,10 +471,26 @@ export default {
             })
             .catch(e => this.$message.error(e))
       })
+    },
+    moreOption (record, { key }) {
+      switch (Number(key)) {
+        case 1:
+          this.onUpdateMenu(record)
+          break
+        case 2:
+          this.onUpdateData(record)
+          break
+        case 3:
+          this.onAllocateUserGroup(record)
+          break
+        case 4:
+          this.deleteRole(record)
+          break
+      }
     }
+
   }
 }
 </script>
 
-<style lang='less'>
-</style>
+<style lang='less'></style>

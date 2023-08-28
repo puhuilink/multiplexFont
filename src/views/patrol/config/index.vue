@@ -625,8 +625,11 @@ export default {
     async batchDownloadQrCode () {
       try {
         this.qcCodeGlobalLoading = true
-        for (const checkpoint in this.selectedRowKeys) {
-          await this.downloadQrCode({ checkpointId: checkpoint, checkpointAlias: 'new' })
+        for (const checkpoint of this.data) {
+          await this.downloadQrCode({
+            checkpointId: checkpoint,
+            checkpointAlias: `${_.get(checkpoint, 'zone_alias', '当前楼层')}-${_.get(checkpoint, 'checkpoint_alias', '当前点位')}-${_.get(checkpoint, 'host_alias', '当前对象')}`
+          })
         }
       } finally {
         this.qcCodeGlobalLoading = false

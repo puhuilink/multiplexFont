@@ -5,6 +5,15 @@
       <a-form-model layout="inline" class="form">
         <div class="fold">
           <a-row :gutter="[8,8]">
+            <a-col class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="query">
+                <a-icon type="search" />查询
+              </a-button>
+              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+                <a-icon type="sync" />重置
+              </a-button>
+            </a-col>
             <!--            <a-col-->
             <!--              v-bind="colLayout"-->
             <!--            >-->
@@ -18,6 +27,8 @@
             <!--              </a-form-model-item>-->
             <!--            </a-col>-->
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -30,6 +41,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -42,6 +55,9 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="12"
+              :sm="24"
+              :offset="0"
               v-bind="colLayout"
             >
               <a-form-item
@@ -53,6 +69,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -71,6 +89,8 @@
               </a-form-item>
             </a-col>
             <a-col
+              :md="6"
+              :sm="24"
               v-bind="colLayout"
             >
               <a-form-item
@@ -78,7 +98,7 @@
                 :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
                 :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
                 <a-range-picker
-                  style="width: 160px"
+                  style="width: 195px"
                   :show-time="{ format: 'HH:mm' }"
                   format="YYYY-MM-DD HH:mm"
                   :placeholder="['开始时间', '结束时间']"
@@ -86,27 +106,25 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col v-bind="colLayout" :style="{ textAlign: 'left' }">
-              <a-button type="primary" @click="query">
-                <a-icon type="search" />查询
-              </a-button>
-              <a-button :style="{ marginLeft: '8px' }" @click="resetQueryParams">
-                <a-icon type="sync" />重置
-              </a-button>
-            </a-col>
           </a-row>
         </div>
       </a-form-model>
     </div>
-    <a-button type="primary" style="margin-bottom: 5px" @click="onAdd">新建</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAdd" v-action:M001001001>
+        <a-icon type="plus-circle"/>
+        新建</a-button>
+    </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
+        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
         <a-tree
-          :expanded-keys="expandedKeys"
-          :auto-expand-parent="autoExpandParent"
           :tree-data="treeData"
+          :defaultExpandAll="true"
           @expand="onExpand"
           @select="onSelect"
+          :showIcon="true"
+          :showLine="true"
         >
         </a-tree>
       </div>
@@ -116,25 +134,33 @@
           :columns="columns"
           :pagination="paginationOpt"
           :loading="pageLoading"
+          rowKey="id"
+          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
           :data-source="dataSource">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template #isOpen="text, record">
-            <a-switch :checked="text" @change="(status) => switchStatus(record, status)"/>
+            <a-switch :checked="text" @change="(status) => switchStatus(record, status)" :disabled="disabled"/>
           </template>
           <template #operation="text, record">
-            <a @click="onEdit(record)"><a-icon type="edit"/>修改</a>
+            <a @click="onEdit(record)" v-action:M001001002><a-icon type="edit"/>修改</a>
             <a-divider type="vertical" />
             <a-dropdown>
               <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
               <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                <a-menu-item key="1">
+                <a-menu-item key="1" v-action:M001001003>
                   删除
                 </a-menu-item>
-                <a-menu-item key="2">
+                <a-menu-item key="2" v-action:M001001004>
                   修改密码
                 </a-menu-item>
-                <a-menu-item key="3">
+                <a-menu-item key="3" v-action:M001001005>
                   分配角色
+                </a-menu-item>
+                <a-menu-item key="4" v-action:M001001006>
+                  账户解锁
+                </a-menu-item>
+                <a-menu-item key="5" v-action:M001001007>
+                  令牌重置
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
@@ -143,6 +169,7 @@
       </div>
       <assignModal ref="assign" @operateSuccess="Success"></assignModal>
       <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
+      <passwordSchema ref="deleteSchema" @operateSuccess="Success"></passwordSchema>
     </div>
   </div>
 </template>
@@ -151,11 +178,13 @@
 import { Confirm } from '~~~/Mixins'
 import { Modal } from 'ant-design-vue'
 import assignModal from '@/views/system/userManage/components/assignModal'
-import { axios } from '@/utils/request'
 import { buildTree } from '@/utils/util'
 import schema from './components/schema'
+import passwordSchema from './components/passwordSchema'
 import _ from 'lodash'
 import moment from 'moment'
+import { axios } from '@/utils/request'
+import otp from 'axios'
 
 const columns = [
   {
@@ -183,7 +212,7 @@ const columns = [
     ellipsis: true
   },
   {
-    title: '状态',
+    title: '是否开启',
     dataIndex: 'isOpen',
     key: 'isOpen',
     ellipsis: true,
@@ -197,7 +226,7 @@ const columns = [
   },
   {
     title: '备注',
-    dataIndex: 'remarks',
+    dataIndex: 'remark',
     key: 'remarks',
     ellipsis: true
   },
@@ -217,10 +246,12 @@ export default {
   mixins: [ Confirm ],
   components: {
     assignModal,
-    schema
+    schema,
+    passwordSchema
   },
   data () {
     return {
+      disabled: false,
       dataSource: [],
       columns,
       expandedKeys: [],
@@ -272,7 +303,6 @@ export default {
     moment,
     onSelect (selectedKeys) {
       // 响应当前部门下的用户
-      console.log('selectedKeys', selectedKeys)
       this.queryParams.orgId = selectedKeys[0]
       this.query()
     },
@@ -291,7 +321,6 @@ export default {
     },
     change (value) {
       this.password = value.target.value
-      console.log('value', value.target.value, this.password)
     },
     renderInput () {
       return (
@@ -327,35 +356,48 @@ export default {
           })
           break
         case '2':
-          Modal.confirm({
-            icon: this.renderIcon,
-            title: '提示',
-            content: this.renderInput,
-            centered: true,
-            closable: true,
-            onOk: async () => {
-              try {
-                await axios.post('/user/changeUserPwd', {
-                  id: record.id,
-                  newPwd: this.password
-                }).then(() => {
-                  this.$notification.success({
-                    message: '系统提示',
-                    description: '修改密码成功，下次登录生效'
-                  })
-                  this.password = ''
-                })
-              } catch (e) {
-                this.$notifyError(e)
-                throw e
-              } finally {
-                this.query()
-              }
-            }
-          })
+          this.$refs.deleteSchema.onShow(record)
           break
         case '3':
           this.$refs.assign.onShow(record)
+          break
+        case '4':
+          this.$promiseConfirmDelete({
+            title: '账户解锁',
+            content: '此操作将解锁该账号，是否继续？',
+            closable: true,
+            onOk: async () => {
+              await axios.get(`/user/unlock/${record.id}`)
+                .then(() => {
+                  this.$notification.success({
+                    message: '系统提示',
+                    description: '解锁成功'
+                  })
+                })
+                .catch(this.$notifyError).finally(() => this.query())
+            }
+          })
+          break
+        case '5':
+          this.$promiseConfirmDelete({
+            title: '令牌重置',
+            content: '此操作将重置该用户登录令牌（导致现有令牌失效）, 是否继续？',
+            closable: true,
+            onOk: async () => {
+              await otp.post(`/otp//dereg`, {
+                appId: process.env.VUE_APP_OTP_QUOTE_NAME,
+                userName: record.id,
+                transNo: 'transNo1'
+              })
+                .then(() => {
+                  this.$notification.success({
+                    message: '系统提示',
+                    description: '重置成功'
+                  })
+                })
+                .catch(this.$notifyError).finally(() => this.query())
+            }
+          })
           break
         default:
           return null
@@ -372,7 +414,7 @@ export default {
         if (el.parentId === undefined) {
           el.parentId = null
         }
-        if (this.operationShow(this.banList, el.id)) {
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
           el.disabled = true
         }
         return el
@@ -381,7 +423,7 @@ export default {
         if (el.parentId === undefined) {
           el.parentId = null
         }
-        if (this.operationShow(this.banList, el.id)) {
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
           el.disabled = true
         }
         return el
@@ -398,7 +440,6 @@ export default {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
         }
-        console.log(this.queryParams)
         const { data: { list, total } } = await axios.get('/user/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
@@ -416,10 +457,9 @@ export default {
     },
     resetQueryParams () {
       // TODO 重置查询
-      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd'])
+      this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
     async switchStatus (record, text) {
-      console.log('record', record, text)
       record.isOpen = text
       try {
         this.pageLoading = true
@@ -468,21 +508,34 @@ export default {
       }
       return tree
     },
-    Success () {
+    async Success () {
       this.$refs.schema.onCancel()
-      this.query()
+      this.$nextTick(() => {
+        this.query()
+      })
     }
   },
   mounted () {
     this.getData()
     this.query()
+    // 角色管理状态
+    const rolesData = localStorage.getItem('pro__Roles')
+    if (rolesData) {
+      const menuCodes = JSON.parse(rolesData).value.menuCodes
+      const searchString = 'M001001002'// 用户管理状态开关同修改
+      if (menuCodes.indexOf(searchString) !== -1) {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+    }
   }
 }
 </script>
 
 <style lang='less' scoped>
 .wrapper {
-  padding: 8px 0;
+  // padding: 8px 0;
   &_content {
     margin-top: 3px;
     display: flex;
@@ -495,6 +548,7 @@ export default {
       border-radius: 5px;
       padding: 5px;
       overflow: scroll;
+      margin-left:23px;
     }
 
     &_right {

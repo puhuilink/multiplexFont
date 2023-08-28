@@ -2,10 +2,18 @@
   <div class="PatrolTask">
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
-      <div :class="{ fold: !advanced }">
-
-        <a-row>
-          <a-col :md="12" :sm="24">
+      <div :class="{ fold: true }">
+        <a-row :gutter="[8,8]">
+          <a-col :style="{ textAlign: 'left' }" class="search_box">
+            <label class="search_label">搜索条件
+              <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
+            </label>
+            <span>
+              <QueryBtn @click="query" />
+              <ResetBtn @click="resetQueryParams" />
+            </span>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="巡更组"
               v-bind="formItemLayout"
@@ -21,7 +29,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="是否异常"
               v-bind="formItemLayout"
@@ -37,9 +45,8 @@
             </a-form-item>
           </a-col>
         </a-row>
-
         <a-row v-show="advanced">
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="任务单状态"
               v-bind="formItemLayout"
@@ -54,14 +61,14 @@
                 <a-select-option
                   v-for="[type, label] in STATUS_LIST"
                   :key="type"
-                  :value="type"
+                  :value="!!type"
                 >{{ label }}
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
 
-          <a-col :md="12" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item
               label="巡更日期范围"
               v-bind="formItemLayout"
@@ -78,24 +85,29 @@
                   '最近1月': [moment().add(-30, 'days'), moment()],
                 }"
                 :showTime="{ format: 'HH:mm' }"
-                v-model="queryParams.actualEndTime"
+                v-model="queryParams.timeList"
               />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
 
-      <span :class="advanced ? 'expand' : 'collapse'">
+      <!-- <span :class="advanced ? 'expand' : 'collapse'">
         <QueryBtn @click="query" />
         <ResetBtn @click="resetQueryParams" />
         <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
-
-    <a-button :disabled="!hasSelectedOne" @click="seeDetail">查看</a-button>
-    <a-button disabled :loading="exportLoading" @click="exportExcel">导出</a-button>
+    <div class="operation_box">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;">
+        <a-icon type="search" />
+        查看</a-button>
+      <a-button :loading="exportLoading" @click="exportExcel">
+        <a-icon type="upload" />
+        导出</a-button>
+    </div>
 
     <a-table
       style="margin-top: 30px"
@@ -106,6 +118,7 @@
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="scroll"
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
     </a-table>
 
@@ -125,6 +138,7 @@ import {
 import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
+import _ from 'lodash'
 
 export default {
   name: 'PatrolTask',
@@ -132,109 +146,92 @@ export default {
   components: {
     TaskDetailSchema
   },
-  data: () => ({
-    defaultData: [],
-    paginationOpt: {},
-    groups: [],
-    ENABLE_LIST,
-    ENABLE_LIST_MAPPING,
-    STATUS_LIST,
-    exportLoading: false,
-    columns: Object.freeze([
-      {
-        title: '任务单号',
-        dataIndex: 'id',
-        width: 150,
-        fixed: 'left'
-      },
-      {
-        title: '计划名称',
-        dataIndex: 'planAlias',
-        width: 220
-      },
-      {
-        title: '巡更组',
-        dataIndex: 'groupName',
-        width: 220
-      },
-      {
-        title: '巡更实际开始时间',
-        dataIndex: 'actualStartTime',
-        width: 180,
-        defaultSortOrder: 'descend',
-        customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
-      },
-      {
-        title: '延迟开始',
-        dataIndex: 'actualStartLate',
-        width: 120,
-        customRender: actual_start_late => actual_start_late ? '是' : '否'
-      },
-      {
-        title: '巡更实际结束时间',
-        dataIndex: 'actualEndTime',
-        width: 180,
-        customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
-      },
-      {
-        title: '超时完成',
-        dataIndex: 'actualStartLate',
-        width: 120,
-        // TODO: useMapping
-        customRender: actual_end_late => actual_end_late ? '是' : '否'
-      },
-      {
-        title: '任务单状态',
-        dataIndex: 'status',
-        width: 120,
-        customRender: status => {
-          return STATUS_MAPPING.get(status)
-        }
-      },
-      {
-        title: '异常数量',
-        dataIndex: 'eventCount',
-        width: 80
-      },
-      {
-        title: '巡更人员',
-        dataIndex: 'executor',
-        width: 150,
-        customRender: (executor) => {
-          if (!executor) {
-            return ''
-          } else if (executor.toString().includes('[')) {
-            return executor.toString().slice(1, executor.length - 1)
-          } else {
-            return JSON.parse(executor.toString()).executor
+  data () {
+    return {
+      defaultData: [],
+      groups: [],
+      ENABLE_LIST,
+      ENABLE_LIST_MAPPING,
+      STATUS_LIST,
+      exportLoading: false,
+      columns: Object.freeze([
+        {
+          title: '任务单号',
+          dataIndex: 'id',
+          width: 150,
+          fixed: 'left'
+        },
+        {
+          title: '计划名称',
+          dataIndex: 'planAlias',
+          width: 220
+        },
+        {
+          title: '巡更组',
+          dataIndex: 'groupName',
+          width: 220
+        },
+        {
+          title: '巡更实际开始时间',
+          dataIndex: 'actualStartTime',
+          width: 180,
+          defaultSortOrder: 'descend',
+          customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
+        },
+        {
+          title: '延迟开始',
+          dataIndex: 'actualStartLate',
+          width: 120,
+          customRender: actual_start_late => actual_start_late ? '是' : '否'
+        },
+        {
+          title: '巡更实际结束时间',
+          dataIndex: 'actualEndTime',
+          width: 180,
+          customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
+        },
+        // {
+        //   title: '超时完成',
+        //   dataIndex: 'actualStartLate',
+        //   width: 120,
+        //   customRender: actual_end_late => actual_end_late ? '是' : '否'
+        // },
+        {
+          title: '任务单状态',
+          dataIndex: 'status',
+          width: 120,
+          customRender: status => {
+            return STATUS_MAPPING.get(status)
+          }
+        },
+        {
+          title: '异常数量',
+          dataIndex: 'eventCount',
+          width: 80
+        },
+        {
+          title: '巡更人员',
+          dataIndex: 'executor',
+          width: 150,
+          customRender: (executor) => {
+            if (!executor) {
+              return ''
+            } else if (executor.toString().includes('[')) {
+              return executor.toString().slice(1, executor.length - 1)
+            } else {
+              return JSON.parse(executor.toString()).executor
+            }
           }
         }
-      }
-    ]),
-    queryParams: {
-      groupId: '',
-      status: '',
-      eventOccur: null,
-      actualTimeStart: '',
-      actualTimeEnd: ''
-    }
-  }),
-  methods: {
-    resetQueryParams () {
-      this.queryParams = {
+      ]),
+      queryParams: {
         groupId: '',
         status: '',
         eventOccur: null,
         actualTimeStart: '',
         actualTimeEnd: ''
-      }
-    },
-    query () {
-      this.loadData({ ...this.reloadParams({ ...this.queryParams }), pageNum: this.paginationOpt.defaultCurrent - 1, pageSize: this.paginationOpt.defaultPageSize })
-    },
-    moment,
-    initialPagination () {
-      this.paginationOpt = {
+      },
+      paginationOpt: {
         defaultCurrent: 1, // 默认当前页数
         defaultPageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数，必须先有
@@ -250,16 +247,35 @@ export default {
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationOpt.defaultCurrent = current
-
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
       }
+    }
+  },
+  methods: {
+    resetQueryParams () {
+      this.queryParams = {
+        groupId: '',
+        status: '',
+        eventOccur: null,
+        actualTimeStart: '',
+        actualTimeEnd: ''
+      }
     },
+    query () {
+      if (this.queryParams.timeList) {
+        this.queryParams.actualTimeStart = moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.queryParams.actualTimeEnd = moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
+      }
+      console.log('query', this.queryParams)
+      this.loadData(this.reloadParams({ ..._.omit(this.queryParams, ['timeList']), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize }))
+    },
+    moment,
     reloadParams (params) {
       const newObj = {}
       Object.keys(params).forEach(key => {
-        if (params[key]) {
+        if (params[key] !== '') {
           newObj[key] = params[key]
         }
       })
@@ -271,6 +287,7 @@ export default {
       this.queryParams.groupId = list[0].id
     },
     async loadData (parameter) {
+      console.log('par', parameter)
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
       this.defaultData = list
       this.paginationOpt.total = total
@@ -336,7 +353,6 @@ export default {
     }
   },
   async mounted () {
-    this.initialPagination()
     await this.getGroup()
     this.query()
   }

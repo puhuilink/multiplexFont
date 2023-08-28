@@ -4,7 +4,7 @@
     centered
     :confirmLoading="confirmLoading"
     :title="title"
-    :width="700"
+    :width="550"
     v-model="visible"
     wrapClassName="AlarmPopupDetail__modal"
     @cancel="onCancel"
@@ -30,55 +30,74 @@
         </a-tree-select>
       </a-form-model-item>
 
-      <a-row :gutter="[5, 8]" type="flex" align="middle">
-        <a-col :span="4">
-          <a-form-model-item
-            label="部门名称"
-            v-bind="{
-              labelCol: { span: 20, offset: 4 },
-              wrapperCol: { span: 0 },
-            }"
-            :rules="[{ required: true, message: '请填写部门名称' }]"
-          >
-          </a-form-model-item>
-        </a-col>
+      <a-form-model-item
+        label="部门名称"
+        v-bind="formItemLayout"
+        prop="name"
+        :rules="[{ required: true, message: '请输入部门名称' }]"
+      >
+        <a-input v-model="formModel.name"/>
+      </a-form-model-item>
 
-        <a-col :span="5" :offset="1">
-          <a-form-model-item
-            v-bind="{
-              labelCol: { span: 10, offset: 14 },
-            }"
-            prop="name"
-            :rules="[{ required: true, message: '请输入部门名称' }]"
-          >
-            <a-input v-model="formModel.name"/>
-          </a-form-model-item>
-        </a-col>
+      <a-form-model-item
+        v-bind="{
+          labelCol: { span: 4, offset: 0 },
+          wrapperCol: { span: 16, offset: 1 }
+        }"
+        label="是否启用"
+        class="AlarmStrategy__modal-footer-left"
+      >
+        <a-select
+          class="enabled"
+          :style="{ width: '100px' }"
+          :value="~~formModel.enabled"
+          @select="formModel.enabled = !!$event"
+        >
+          <a-select-option :value="1">是</a-select-option>
+          <a-select-option :value="0">否</a-select-option>
+        </a-select>
+      </a-form-model-item>
 
-        <a-col :span="4" :offset="1">
-          <a-form-model-item
-            label="显示排序"
-            v-bind="{
-              labelCol: { span: 20, offset: 4 },
-              wrapperCol: { span: 0 },
-            }"
-            :rules="[{ required: true, message: '请填写部门名称' }]"
-          >
-          </a-form-model-item>
-        </a-col>
+      <!--      <a-row :gutter="[5, 8]" type="flex" align="middle">-->
+      <!--        <a-col :span="4">-->
+      <!--          <a-form-model-item-->
+      <!--            label="部门名称"-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 20, offset: 4 },-->
+      <!--              wrapperCol: { span: 0 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
+      <!--          >-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
 
-        <a-col :span="5" :offset="1">
-          <a-form-model-item
-            v-bind="{
-              labelCol: { span: 10, offset: 14 },
-            }"
-            :rules="[{ required: true, message: '请输入显示排序' }]"
-            prop="order"
-          >
-            <a-input-number :min="0" v-model="formModel.order"></a-input-number>
-          </a-form-model-item>
-        </a-col>
-      </a-row>
+      <!--        <a-col :span="5" :offset="1">-->
+      <!--        </a-col>-->
+
+      <!--        <a-col :span="4" :offset="1">-->
+      <!--          <a-form-model-item-->
+      <!--            label="显示排序"-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 20, offset: 4 },-->
+      <!--              wrapperCol: { span: 0 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请填写部门名称' }]"-->
+      <!--          >-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
+
+      <!--        <a-col :span="5" :offset="1">-->
+      <!--          <a-form-model-item-->
+      <!--            v-bind="{-->
+      <!--              labelCol: { span: 10, offset: 14 },-->
+      <!--            }"-->
+      <!--            :rules="[{ required: true, message: '请输入显示排序' }]"-->
+      <!--            prop="order"-->
+      <!--          >-->
+      <!--            <a-input-number :min="0" v-model="formModel.order"></a-input-number>-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-col>-->
+      <!--      </a-row>-->
 
       <!--      <a-form-model-item-->
       <!--        label="负责人"-->
@@ -99,28 +118,6 @@
     </a-form-model>
     <!-- / 底部按钮 -->
     <template slot="footer">
-      <a-form-model-item
-        v-bind="{
-          labelCol: { span: 4 },
-          wrapperCol: { span: 1, offset: 1 },
-        }"
-        label="启用"
-        :style="{
-          float: 'left',
-          width: '300px',
-        }"
-        class="AlarmStrategy__modal-footer-left"
-      >
-        <a-select
-          class="enabled"
-          :style="{ width: '100px' }"
-          :value="~~formModel.enabled"
-          @select="formModel.enabled = !!$event"
-        >
-          <a-select-option :value="1">是</a-select-option>
-          <a-select-option :value="0">否</a-select-option>
-        </a-select>
-      </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
       <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
     </template>
@@ -196,19 +193,10 @@ export default {
         }
         try {
           this.submitLoading = true
-          console.log('参数', {
-            name: this.formModel.name,
-            parentId: this.formModel.apartmentId,
-            isOpen: !!this.formModel.enabled,
-            sortIndex: this.formModel.order,
-            leaderId: this.formModel.leader,
-            ...this.isEdit ? { id: this.formModel.id } : {}
-          }, this.isEdit)
           axios.post('/organize/save', {
             name: this.formModel.name,
             parentId: this.formModel.apartmentId,
             isOpen: !!this.formModel.enabled,
-            sortIndex: this.formModel.order,
             leaderId: this.formModel.leader,
             ...this.isEdit ? { id: this.formModel.id } : {}
           })
@@ -232,7 +220,6 @@ export default {
         name: user.name,
         apartmentId: user.parentId,
         enabled: user.isOpen,
-        order: user.sortIndex,
         leaderId: user.leaderId,
         id: user.id
       }

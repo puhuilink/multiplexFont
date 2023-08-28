@@ -1316,14 +1316,14 @@ const ALLPERMISSION = [
       {
         objectType: '2',
         domainName: null,
-        code: 'M0314',
+        code: 'M003014',
         name: '查看阈值规则',
         parentCode: 'M03',
         functionType: '2',
         functionmodule: '',
         functionOrder: null,
         interfaceAuth: '',
-        key: 'M0314',
+        key: 'M003014',
         title: '查看阈值规则'
       },
       {
@@ -1803,14 +1803,14 @@ const ALLPERMISSION = [
   {
     objectType: '2',
     domainName: null,
-    code: 'M0314',
+    code: 'M003014',
     name: '查看阈值规则',
     parentCode: 'M03',
     functionType: '2',
     functionmodule: '',
     functionOrder: null,
     interfaceAuth: '',
-    key: 'M0314',
+    key: 'M003014',
     title: '查看阈值规则'
   },
   {

@@ -76,6 +76,17 @@
           </a-col>
 
         </a-row>
+
+        <div class="font_head" style="margin-top: 10px">交接文档</div>
+        <a-row>
+          <a-col :span="8">
+            <span>监控值班记录表：{{ record.monitorRecord | monitorStatus }}</span>
+          </a-col>
+          <a-col :span="8" style="text-align: center">
+            <span>运维日志表：{{ record.maintenanceLog | maintenanceLog }}</span>
+          </a-col>
+
+        </a-row>
       </div>
     </a-spin>
   </a-modal>
@@ -117,14 +128,12 @@ export default {
             title: '状态',
             align: 'center',
             width: 150,
-            sorter: (a, b) => {
-              console.log('ab', a, b)
-              return Number(a.eventstatus) - Number(b.eventstatus)
-            },
+            defaultSortOrder: 'ascend',
+            sorter: (a, b) => a.status - b.status,
             dataIndex: 'status',
             customRender: (text) => {
               console.log('text', text)
-              return (<span class={text === '0' ? 'event_normal' : 'event_danger'}>{text === '0' ? '已完成' : '未完成'}</span>)
+              return (<span class={Number(text) === 0 ? 'event_normal' : 'event_danger'}>{Number(text) === 0 ? '已完成' : '未完成'}</span>)
             }
           }
         ]
@@ -137,10 +146,10 @@ export default {
   filters: {
     data (data = '') {
       switch (data) {
-        case '0':
-          return '已完成'
+        case '2':
+          return '异常'
         case '1':
-          return '未完成'
+          return '正常'
         default:
           return ''
       }
@@ -157,21 +166,31 @@ export default {
     },
     monitorStatus (monitorStatus = '') {
       switch (monitorStatus) {
-        case '0':
-          return '异常'
+        case '2':
+          return '否'
         case '1':
-          return '正常'
+          return '是'
+        default:
+          return ''
+      }
+    },
+    maintenanceLog (maintenanceLog = '') {
+      switch (maintenanceLog) {
+        case '2':
+          return '否'
+        case '1':
+          return '是'
         default:
           return ''
       }
     },
     sanitary (sanitary = '') {
       switch (sanitary) {
-        case '0':
+        case '3':
           return '较差'
-        case '1':
-          return '良好'
         case '2':
+          return '良好'
+        case '1':
           return '优秀'
         default:
           return ''
@@ -193,10 +212,10 @@ export default {
     },
     tool (tool = '') {
       switch (tool) {
-        case '0':
-          return '异常'
         case '1':
           return '正常'
+        case '2':
+          return '异常'
         default:
           return ''
       }
@@ -250,5 +269,8 @@ export default {
   font: 16px black;
   font-weight: bold;
   padding-bottom: 15px;
+  :nth-child(1) {
+    margin-top: 20px;
+  }
 }
 </style>

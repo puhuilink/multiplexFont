@@ -14,9 +14,9 @@ export const asyncRouterMap = [
           path: '/dev-debug',
           // component: () => import('@/views/dev-debug'),
           // component: () => import('@/components/Elements/Report/ReportPreviewElement'),
-          component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/system/apartment/index'),
-          // component: () => import('@/views/patrol/plan/index'),
+          // component: () => import('@/views/system/apartment/index'),
+          component: () => import('@/views/SecurityMonitoring/view/DHMonitoring'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
@@ -60,13 +60,13 @@ export const asyncRouterMap = [
           {
             path: '/OperationMonitoring/Device',
             name: 'Operation',
-            component: () => import('@/views/SecurityMonitoring/view/dataCenterView'),
+            component: () => import('@/views/SecurityMonitoring/view/dataCenter/index.vue'),
             meta: { title: 'IT设备监控管理', permission: ['F022001'] }
           },
           {
             path: '/OperationMonitoring/DH',
             name: 'DH',
-            component: () => import('@/views/SecurityMonitoring/view/xungeng'),
+            component: () => import('@/views/SecurityMonitoring/view/DHMonitoring'),
             meta: { title: '动环监控管理', permission: ['F022002'] }
           }
         ],
@@ -269,27 +269,30 @@ export const asyncRouterMap = [
           {
             path: '/SecurityMonitoring/LeakSummary',
             name: 'LeakSummary',
-            component: () => import('@/views/SecurityMonitoring/view/testLeak'),
+            // component: () => import('@/views/SecurityMonitoring/view/testLeak'),
             // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
+            component: () => import('@/views/SecurityMonitoring/vulnerabilityMonitoring/index'),
             meta: { title: '漏洞统计管理',
               permission: ['F020002'] }
           },
           {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            meta: { title: '集团安全态势感知',
+            meta: { title: '安全态势感知',
               permission: ['F020004'] },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouch')
+            component: () => import('@/views/SecurityMonitoring/view/safeComb')
+            // component: () => import('@/views/SecurityMonitoring/view/safeSoruce')
+
           },
-          {
-            path: '/SecurityMonitoring/SituationalAwarenessSecond',
-            name: 'SituationalAwarenessSecond',
-            // component: () => import('@/views/user/settings/index'),
-            meta: { title: '二级单位安全态势感知',
-              permission: ['F020003'] },
-            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
-          },
+          // {
+          //   path: '/SecurityMonitoring/SituationalAwarenessSecond',
+          //   name: 'SituationalAwarenessSecond',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '二级单位安全态势感知',
+          //     permission: ['F020003'] },
+          //   component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+          // },
           {
             path: '/SecurityMonitoring/EmergencyManagement',
             name: 'Emergency',
@@ -349,37 +352,37 @@ export const asyncRouterMap = [
             name: 'PatrolConfig',
             redirect: '/patrol/config/path',
             component: RouteView,
-            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
+            meta: { title: '巡更配置', keepAlive: true, permission: ['F010001'] },
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
               component: () => import('@/views/patrol/config/PathConfig/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/pathConfig',
               name: 'PatrolConfigPathEdit',
               hidden: true,
               component: () => import('@/views/patrol/config/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010'] }
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/metric',
               name: 'PatrolConfigMetric',
               component: () => import('@/views/patrol/config/MetricTable/MetricTable'),
-              meta: { title: '检查项管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '检查项管理', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/answer',
               name: 'PatrolConfigAnswer',
               component: () => import('@/views/patrol/config/AnswerTable/index'),
-              meta: { title: '检查值管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001'] }
             },
             {
               path: '/patrol/config/threshold',
               name: 'PatrolConfigThreshold',
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
-              meta: { title: '阈值管理', keepAlive: true, permission: ['F010'] }
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001'] }
             }]
           },
           // {

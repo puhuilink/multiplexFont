@@ -2,49 +2,52 @@
   <div class="wrapper">
     <div>
       <a-form-model :form="form">
-        <a-row type="flex">
-
-          <a-col
-            :span="6"
-          >
-            <a-form-model-item>
-              状态：
-              <a-select
-                :style="{width:'60%'}"
-                v-model="param.isOpen"
-                placeholder="状态"
-              >
-                <a-select-option value="true">开启</a-select-option>
-                <a-select-option value="false">关闭</a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-          <a-col
-            :span="6"
-          >
-            <a-form-model-item>
-              部门：
-              <a-input
-                :style="{width:'60%'}"
-                v-model="param.orgName"
-              ></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="8" :style="{ textAlign: 'left' }">
-            <a-button type="primary" @click="handleSearch">
-              <a-icon type="search" />
-              查询
-            </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              <a-icon type="sync" />
-              重置
-            </a-button>
-          </a-col>
-        </a-row>
+        <div class="fold">
+          <a-row type="flex" :gutter="[8, 8]">
+            <a-col :span="8" :style="{ textAlign: 'left' }" class="search_box">
+              <label class="search_label">搜索条件</label>
+              <a-button type="primary" @click="handleSearch">
+                <a-icon type="search" />
+                查询
+              </a-button>
+              <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+                <a-icon type="sync" />
+                重置
+              </a-button>
+            </a-col>
+            <a-col
+              :span="6"
+            >
+              <a-form-model-item>
+                是否启用：
+                <a-select
+                  :style="{width:'60%'}"
+                  v-model="param.isOpen"
+                  placeholder="是否启用"
+                >
+                  <a-select-option value="true">开启</a-select-option>
+                  <a-select-option value="false">关闭</a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-col>
+            <a-col
+              :span="6"
+            >
+              <a-form-model-item>
+                部门：
+                <a-input
+                  placeholder="请输入部门"
+                  :style="{width:'60%'}"
+                  v-model="param.orgName"
+                ></a-input>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </div>
       </a-form-model>
     </div>
-    <div style="margin-bottom: 1%">
-      <a-button type="primary" @click="onAdd" @operateSuccess="Success">
+    <div style="margin-bottom: 1%" class="operation_box">
+      <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
         <a-icon type="plus" />
         新建
       </a-button>
@@ -62,15 +65,16 @@
         :pagination="false"
         @expand="expand"
         :loading="pageLoading"
+        :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
         class="components-table-demo-nested">
         <template #operation="text, record">
-          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>
             <a-icon type="plus"></a-icon>
             新增</a>
-          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)" v-action:M001003003>
             <a-icon type="edit"></a-icon>
             编辑</a>
-          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)">
+          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:M001003004>
             <a-icon type="delete"></a-icon>
             删除</a>
         </template>
@@ -100,7 +104,7 @@ export default {
         // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
         // { title: '排序', dataIndex: 'sortIndex', key: 'sortIndex', customRender: (el) => Number(el) },
         {
-          title: '状态',
+          title: '是否启用',
           dataIndex: 'isOpen',
           key: 'isOpen',
           customRender: (el) => {
@@ -184,11 +188,10 @@ export default {
     },
     open () {
       if (this.spread) {
-        this.expandedRowKeys = [_.get(this.treeData, '0.id', '')]
+        this.expandedRowKeys = [_.get(this.treeData, '0.id', ''), ...this.findNonEmptyChildrenIdsInTrees(this.treeData)]
       } else {
         this.expandedRowKeys = []
       }
-      this.spread = !this.spread
       this.spread = !this.spread
     },
     expandIcon (props) {
@@ -226,7 +229,7 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { dataIds, list } } = await axios.get('/organize/list', {
+        const { data: { dataIds, list } } = await axios.get('/organize/table', {
           params: {
             ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
             ...this.param.orgName ? { name: this.param.orgName } : {}
@@ -316,6 +319,28 @@ export default {
       }
       return parentIds
     },
+    findNonEmptyChildrenIdsInTrees (trees) {
+      const result = []
+
+      function findNonEmptyChildrenIds (node) {
+        if (!node.children || node.children.length === 0) {
+          return []
+        }
+
+        const nonEmptyChildren = node.children.filter(child => child.children && child.children.length > 0)
+        const nonEmptyChildrenIds = nonEmptyChildren.map(child => child.id)
+
+        return nonEmptyChildrenIds.concat(
+          nonEmptyChildren.flatMap(child => findNonEmptyChildrenIds(child))
+        )
+      }
+
+      for (const tree of trees) {
+        result.push(...findNonEmptyChildrenIds(tree))
+      }
+
+      return result
+    },
     async getUserList (orgId = '') {
       const { data: { list } } = await axios.get(`/user/list?pageSize=9999&pageNum=1${orgId === '' ? '' : '&orgId=' + orgId}`)
       this.userList = list
@@ -325,6 +350,7 @@ export default {
     // 获取当前表格信息
     this.getData()
     this.getUserList()
+    this.expandedRowKeys = ['1']
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'form' })

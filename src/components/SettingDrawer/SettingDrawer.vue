@@ -172,7 +172,9 @@ export default {
     }
   },
   watch: {},
-  mounted () {},
+  mounted () {
+    this.changeColor('#004FA5')
+  },
   methods: {
     showDrawer () {
       this.visible = true
@@ -233,6 +235,7 @@ export default {
       if (this.primaryColor !== color) {
         this.$store.dispatch('ToggleColor', color)
         updateTheme(color)
+        console.log('主题样式')
       }
     },
     handleFixedHeader (fixed) {

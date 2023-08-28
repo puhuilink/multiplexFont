@@ -28,6 +28,9 @@ const colorList = [
   },
   {
     key: '酱紫', color: '#722ED1'
+  },
+  {
+    key: '默认蓝', color: '#004FA5'
   }
 ]
 

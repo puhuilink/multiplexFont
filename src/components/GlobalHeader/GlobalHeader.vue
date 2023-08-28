@@ -6,10 +6,15 @@
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
         :style="{ padding: '0' }">
         <div v-if="mode === 'sidemenu'" class="header">
-          <Logo v-if="fixedHeader" class="header-logo" />
+          <!-- <Logo v-if="fixedHeader" class="header-logo" /> -->
           <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
           <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
           <user-menu></user-menu>
+          <a-breadcrumb class="breadcrumb">
+            <a-breadcrumb-item v-for="(item, index) of $route.matched" :key="index">
+              <router-link v-if="index!==0 || $route.matched.length!==2" :to="item.path" >{{ item.meta.title }}</router-link>
+            </a-breadcrumb-item>
+          </a-breadcrumb>
         </div>
         <div v-else :class="['top-nav-header-index', theme]">
           <div class="header-index-wide">
@@ -109,16 +114,58 @@ export default {
 
 <style lang="less">
 @import '../index.less';
-
+.ant-layout-sider{
+  background-color: #0E283F !important;
+}
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub{
+  background-color: #153D60 !important;
+}
+.ant-menu{
+  background-color: #0E283F !important;
+}
+.ant-menu-item-selected{
+  background-color: #004FA5 !important;
+  &::before{
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    content: '';
+    background-color: #4A8BD2 !important;
+  }
+}
+.breadcrumb{
+  display: inline-block;
+  > span:last-child a{
+    color: #004FA5 !important;
+  }
+  a{
+    font-family: MicrosoftYaHei !important;
+    color: #333333 !important;
+  }
+  .ant-breadcrumb-separator {
+    margin: 0 4px;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 1) !important;
+}
+}
 .ant-header-fixedHeader {
   position: fixed;
   top: 0;
   right: 0;
-  left: 0;
+  // left: 0;
   height: 64px;
   z-index: 199;
+  background: transparent !important;
 }
 
+.ant-header-side-opened{
+  width: calc(100% - 210px) !important;
+}
+.ant-header-side-close{
+  width: calc(100% - 80px) !important;
+}
 .header-logo {
   display: inline-block;
   padding: 12px 20px;

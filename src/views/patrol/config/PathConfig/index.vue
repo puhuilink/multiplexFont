@@ -3,23 +3,34 @@
     <!-- / 查询区域 -->
     <a-form layout="inline" class="form">
       <div :class="{ fold: !advanced }">
-        <a-row>
-          <a-col :md="8" :sm="24">
+        <a-row :gutter="[8, 8]">
+          <a-col class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="query">
+              <a-icon type="search" />查询
+            </a-button>
+            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+              <a-icon type="sync" />重置
+            </a-button>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear v-model.trim="queryParams.alias" />
+              <a-input allowClear placeholder="请输入路径名称" v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
 
-      <span class="collapse">
+      <!-- <span class="collapse">
         <a-button @click="query" type="primary">查询</a-button>
         <a-button @click="resetQueryParams" >重置</a-button>
-      </span>
+      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
-    <a-button @click="onAddUser" v-action:M0101>新增</a-button>
+    <div class="operation_box">
+      <a-button type="primary" @click="onAddUser" v-action:M001001><a-icon type="plus-circle" />新增</a-button>
+    </div>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
@@ -32,11 +43,11 @@
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
-        <a @click="onEditUser(record)">编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002>编辑</a>
         <a-divider type="vertical" />
         <a @click="onUpdateMenu(record)">配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)">删除</a>
+        <a @click="deleteRole(record)" v-action:M001003>删除</a>
       </template>
     </a-table>
 
@@ -80,7 +91,8 @@ export default {
       {
         title: '提交人',
         dataIndex: 'updator',
-        width: '120px'
+        width: '120px',
+        customRender: (text, el) => el.updator || el.creator
       },
       {
         title: '提交时间',
@@ -160,9 +172,10 @@ export default {
      */
     async loadData (parameter) {
       const { alias } = parameter
-      const res = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
-      if (res) {
-        this.defaultData = res.list
+      const { list, total } = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
+      if (list) {
+        this.defaultData = list
+        this.paginationOpt.total = total
       } else {
         this.defaultData = []
       }
