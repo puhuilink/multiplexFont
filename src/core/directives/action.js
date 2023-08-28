@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import store from '@/store'
 import { USER } from '@/store/mutation-types'
 // import { ALLPERMISSION } from '@/utils/menu'
 

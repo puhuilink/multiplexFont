@@ -194,8 +194,7 @@ export default {
               return {
                 ...el,
                 title: el.name,
-                key: el.id,
-                ...!el.isOpen || dataIds.indexOf(item.id) > -1 ? {} : { disableCheckbox: true }
+                key: el.id
               }
             })
           }
