@@ -85,9 +85,10 @@
                 v-bind="colLayout"
               >
                 <a-form-item
-                  label="状态:"
-                  :labelCol="{ span: 6, offset: 2}"
-                  :wrapperCol="{ span: 11, offset: 5 }"
+                  label="状态"
+                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 6,offset:3 } }"
+                  :wrapperCol="{ span: 6, offset: 5 }"
+                  v-bind="formItemLayout"
                 >
                   <a-select
                     style="width: 100px"
@@ -100,16 +101,16 @@
                 </a-form-item>
               </a-col>
               <a-col
-                :md="6"
+                :md="10"
                 :sm="24"
                 v-bind="colLayout"
               >
                 <a-form-item
-                  label="创建时间:"
-                  :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
-                  :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
+                  label="创建时间"
+                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } }"
+                  :wrapperCol="{ span: 6, offset: 1 }"
+                  v-bind="formItemLayout">
                   <a-range-picker
-                    style="width: 195px"
                     :show-time="{ format: 'HH:mm' }"
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"

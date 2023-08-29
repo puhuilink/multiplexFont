@@ -110,7 +110,6 @@
     </div>
 
     <a-table
-      style="margin-top: 30px"
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
