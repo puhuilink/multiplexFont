@@ -129,13 +129,12 @@
 <script>
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
-import { generateQuery } from '@/utils/graphql'
 import { downloadExcel } from '@/utils/util'
 import {
   ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
-import { GroupService, PatrolService } from '@/api'
+import { PatrolService } from '@/api'
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 import _ from 'lodash'

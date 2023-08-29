@@ -89,7 +89,7 @@ import { removeArrayValue } from '@/utils/util'
 import schema from '@/views/system/apartment/modules/schema'
 import { axios } from '@/utils/request'
 import { Confirm } from '~~~/Mixins'
-import { Form, Modal, notification } from 'ant-design-vue'
+import { Form, Modal } from 'ant-design-vue'
 import _ from 'lodash'
 const treeData = []
 

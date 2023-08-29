@@ -1,6 +1,7 @@
-/* eslint-disable-next-line vue/no-template-shadow */
+
 <template>
   <div class="ZoneSelect">
+    <!-- eslint-disable -->
     <div class="ZoneSelect__header">
       <a-radio-group
         class="ZoneSelect__path"
@@ -8,7 +9,11 @@
         :value="options.pathId"
         @input="changePathId"
       >
-        <a-radio-button v-for="{ pathId, pathName } in pathList" :key="pathId" :value="pathId">
+        <a-radio-button
+          v-for="
+            { pathId, pathName } in pathList"
+          :key="pathId"
+          :value="pathId">
           {{ pathName }}
         </a-radio-button>
       </a-radio-group>
