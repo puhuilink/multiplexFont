@@ -6,12 +6,8 @@
         <a-row :gutter="[8, 8]">
           <a-col class="search_box">
             <label class="search_label">搜索条件</label>
-            <a-button type="primary" @click="query">
-              <a-icon type="search" />查询
-            </a-button>
-            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-              <a-icon type="sync" />重置
-            </a-button>
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
@@ -43,11 +39,11 @@
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
-        <a @click="onEditUser(record)" v-action:M001002>编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)">配置巡更路径</a>
+        <a @click="onUpdateMenu(record)"><a-icon type="control" style="margin-right: 3px;"/>配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)" v-action:M001003>删除</a>
+        <a @click="deleteRole(record)" v-action:M001003><a-icon type="delete" />删除</a>
       </template>
     </a-table>
 
