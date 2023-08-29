@@ -48,7 +48,7 @@
                 style="width: 330px"
               />
             </div>
-            <div ref="eacherbox22" class="eacherBox echarts" id="eacherBoxid"></div>
+            <div ref="eacherbox22" class="eacherBox" id="eacherBoxid"></div>
           </div>
         </div>
       </div>
@@ -1303,14 +1303,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// .topbigBox {
-//   // height: 660.8px;
-//   // margin-top: 20px;
-// }
+ //.topbigBox {
+ //   height: 100%;
+ //  // margin-top: 20px;
+ //}
 
 .bigflexBox {
   width: 100%;
-  // height: 612px;
+  height: 612px;
   // overflow: hidden;
   margin-top: 10px;
   display: flex;
@@ -1318,17 +1318,17 @@ export default {
   .TextEacherbox1 {
     // width: 88px;
     height: 18px;
-    font-size: 18px;
+    font-size: 14px;
     font-family: PingFangSC-Semibold, PingFang SC;
     font-weight: 600;
-    color: #5bbbff;
+    color: #000;
     line-height: 18px;
     // padding-left: 37px;
     margin-left: 37px;
   }
   .EacherLeft {
     width: 50%;
-    height: 278px;
+    height: 238px;
     .eacherBox {
       height: 260px;
     }
@@ -1392,11 +1392,11 @@ export default {
 //   // text-align: center;
 // }
 #eacherBoxid {
-  height: 215px;
+  height: 155px;
   width: 330px;
 }
 .echarts {
-  // height: 200px;
+  height: 200px !important;
   width: 640px;
 }
 .EacherBottonLeft {
