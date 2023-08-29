@@ -89,7 +89,7 @@
       </template>
     </a-table>
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :treeData="selectTreeData"/>
     <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
@@ -107,6 +107,8 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
 import RoleSingleSchema from '@/views/system/role/modules/RoleSingleSchema.vue'
+import { axios } from '@/utils/request'
+import { buildTree } from '@/utils/util'
 
 export default {
   name: 'Role',
@@ -118,6 +120,7 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    selectTreeData: [],
     disabled: true,
     columns: Object.freeze([
       {
@@ -180,6 +183,7 @@ export default {
   mounted () {
     this.initialPagination()
     this.query()
+    this.getData()
   },
   created () {
     const rolesData = localStorage.getItem('pro__Roles')
@@ -205,6 +209,61 @@ export default {
     }
   },
   methods: {
+    // 选择部门
+    async getData () {
+      const { data: { dataIds, list } } = await axios.get('/organize/list', {
+        params: {
+          isOpen: true
+        }
+      })
+      this.banList = dataIds
+      // console.log(this.banList);
+      this.treeData = buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
+          el.disabled = true
+        }
+        return el
+      }))
+      this.selectTreeData = this.buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
+          el.disabled = true
+        }
+        return el
+      }))
+    },
+    operationShow (List = [], id = '') {
+      return List.indexOf(id) === -1
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      for (const item of data) {
+        if (item.parentId === parentId) {
+          const children = this.buildTree(data, item.id)
+          if (children.length > 0) {
+            item.children = children.map(el => {
+              return {
+                ...el,
+                label: el.name,
+                value: el.id
+              }
+            })
+          }
+          tree.push({
+            ...item,
+            label: item.name,
+            value: item.id
+          })
+        }
+      }
+      return tree
+    },
+    // -----------------------------
     onDateChange (date, dateString) {
       this.queryParams.createTimeStart = dateString[0]
       this.queryParams.createTimeEnd = dateString[1]
