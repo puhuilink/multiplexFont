@@ -68,6 +68,7 @@ import Schema from '~~~/Mixins/Modal/Schema'
 import { SHIFT_SCHEMA_MAPPING } from '@/views/patrol/typing'
 import { xungeng } from '@/utils/request'
 import { downloadFile } from '@/utils/util'
+import moment from 'moment'
 
 export default {
   name: 'ExportSchema',
@@ -138,7 +139,7 @@ export default {
         //   description: '导出参数有误，请重试'
         // })
       } else {
-        downloadFile('巡更记录单', data, { type: 'application/zip;charset=UTF-8' })
+        downloadFile('巡更记录单' + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
         this.$notification.success({
           message: '系统提示',
           description: '导出成功'
