@@ -88,22 +88,55 @@ export default {
   },
   methods: {
     async onSubmit () {
-      console.log('已提交', { ...this.formData })
+      this.loading = true
       const data = await xungeng.request({
-        url: '/export/taskHistoryZip/dasd',
+        url: '/export/taskHistoryZip',
         responseType: 'blob',
         data: this.formData,
         method: 'post'
-      }).catch(function (error) {
-        // TODO:根据错误码提示错误信息
-        if (error.response) { console.log(error.response.status) }
+      }).catch((error) => {
+        if (error.response) {
+          console.log('error', error.response.status)
+          switch (error.response.status) {
+            case 501:
+              this.$notification.error({
+                message: '系统提示',
+                description: '没有任务单号，请重试'
+              })
+              break
+            case 502:
+              this.$notification.error({
+                message: '系统提示',
+                description: '没有导出列'
+              })
+              break
+            case 503:
+              this.$notification.error({
+                message: '系统提示',
+                description: '未找到数据'
+              })
+              break
+            case 504:
+              this.$notification.error({
+                message: '系统提示',
+                description: '未知原因的导出失败'
+              })
+              break
+            default:
+              this.$notification.error({
+                message: '系统提示',
+                description: '导出参数有误，请重试'
+              })
+              break
+          }
+          this.loading = false
+        }
       })
-      this.loading = true
       if (data.type === 'application/json') {
-        this.$notification.error({
-          message: '系统提示',
-          description: '导出参数有误，请重试'
-        })
+        // this.$notification.error({
+        //   message: '系统提示',
+        //   description: '导出参数有误，请重试'
+        // })
       } else {
         downloadFile('巡更记录单', data, { type: 'application/zip;charset=UTF-8' })
         this.$notification.success({
