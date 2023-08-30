@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { axios, xungeng } from '@/utils/request'
+import { axios } from '@/utils/request'
 
 export default {
   name: 'AssignModal',

@@ -258,9 +258,9 @@
         {{ text === 'select' ? '选择' : '填写' }}
       </template>
       <template slot="action" slot-scope="text,record">
-        <a-button type="primary" @click="() => edit(record)">编辑</a-button>
+        <a @click="() => edit(record)"><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
-        <a-button type="primary" @click="() => toRemove(record.id)">删除</a-button>
+        <a @click="() => toRemove(record.id)"><a-icon type="delete" />删除</a>
       </template>
       <template slot="threshold" slot-scope="text,record">
         {{ translateThreshold(record) }}

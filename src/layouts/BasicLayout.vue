@@ -229,6 +229,9 @@ export default {
 .fold{
   width: 100% !important;
   padding: 0px 23px 0px 23px;
+  .ant-form-item{
+  margin-bottom: 0 !important;
+}
 }
 .form{
   margin: 0 !important;

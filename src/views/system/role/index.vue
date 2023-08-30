@@ -67,21 +67,25 @@
         <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
       </template>
       <template #action="text, record">
-        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
+        <a @click="onEditUser(record)" v-action:M001002002><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
-          <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
+          <a class="ant-dropdown-link"><a-icon type="double-right" />更多</a>
           <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
             <a-menu-item key="1" v-action:M001002003>
+              <a-icon type="menu-fold" />
               菜单权限
             </a-menu-item>
             <a-menu-item key="2" v-action:M001002004>
+              <a-icon type="bar-chart" />
               数据权限
             </a-menu-item>
             <a-menu-item key="3" v-action:M001002005>
+              <a-icon type="idcard" />
               分配用户
             </a-menu-item>
             <a-menu-item key="4" v-action:M001002006>
+              <a-icon type="delete" />
               删除
             </a-menu-item>
           </a-menu>
@@ -94,7 +98,7 @@
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
-    <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)" />
+    <UserGroupSchema ref="group" @editSuccess="query(false)" />
   </div>
 </template>
 
