@@ -124,11 +124,12 @@ export default {
   },
   created () {
     const { organizeId } = Vue.ls.get(USER)
-    if (organizeId !== '77551146956226560' || organizeId !== '77551230678728704' || organizeId !== '77550822937853952') {
+    if (organizeId !== '77551146956226560' && organizeId !== '77551230678728704' && organizeId !== '77550822937853952') {
       this.$router.push({
         path: '/403'
       })
     }
+    console.log('organizeId', organizeId)
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total

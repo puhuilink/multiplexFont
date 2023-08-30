@@ -301,6 +301,13 @@ export default {
               userName: values.userId,
               transNo: 'transNo1'
             })
+            axios.post('/otp/msgOtp', {
+              appId: this.otpName,
+              userName: values.userId,
+              transNo: 'transNo1'
+            }, {
+              baseURL: process.env.VUE_APP_OTP_BASE_URL
+            })
           }
         })
         // Login(loginParams)
@@ -374,7 +381,7 @@ export default {
         location.reload()
       } else {
         this.$router.push({ path: '/user/login' })
-        location.reload()
+        // location.reload()
         this.$notification.error({
           message: '账号无效',
           description: '请联系系统管理员'

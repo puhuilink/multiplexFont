@@ -104,7 +104,7 @@
       <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;">
         <a-icon type="search" />
         查看</a-button>
-      <a-button :loading="exportLoading" @click="exportExcel">
+      <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel">
         <a-icon type="upload" />
         导出</a-button>
     </div>
@@ -123,19 +123,18 @@
     </a-table>
 
     <TaskDetailSchema ref="schema" />
+    <exportSchema ref="exportSchema"></exportSchema>
   </div>
 </template>
 
 <script>
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
-import { generateQuery } from '@/utils/graphql'
-import { downloadExcel } from '@/utils/util'
+import exportSchema from './modules/exportSchema'
 import {
   ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
-import { GroupService, PatrolService } from '@/api'
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 import _ from 'lodash'
@@ -144,7 +143,8 @@ export default {
   name: 'PatrolTask',
   mixins: [List],
   components: {
-    TaskDetailSchema
+    TaskDetailSchema,
+    exportSchema
   },
   data () {
     return {
@@ -287,7 +287,6 @@ export default {
       this.queryParams.groupId = list[0].id
     },
     async loadData (parameter) {
-      console.log('par', parameter)
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
       this.defaultData = list
       this.paginationOpt.total = total
@@ -319,37 +318,38 @@ export default {
      * 导出
      */
     async exportExcel () {
-      try {
-        this.exportLoading = true
-        for (let i = 0; i < this.selectedRowKeys.length; i++) {
-          const key = this.selectedRowKeys[i]
-          const record = this.selectedRows[i]
-          const content = await PatrolService.getPatrolTaskExcel(key)
-          let suffix
-          if (record.actual_end_time !== null) {
-            suffix = record.actual_end_time.toString().replaceAll('T', '_')
-          } else {
-            suffix = this.getFormatDate()
-          }
-          if (content.byteLength > 0) {
-            await downloadExcel('巡更记录单-' + suffix + '.xls', content)
-          } else {
-            throw Error('该任务单没有任务报告！无法导出！')
-          }
-        }
-        this.$notification.success({
-          message: '系统提示',
-          description: '导出巡更记录单成功'
-        })
-      } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e.message } })
-        })
-        throw e
-      } finally {
-        this.exportLoading = false
-      }
+      // try {
+      //   this.exportLoading = true
+      //   for (let i = 0; i < this.selectedRowKeys.length; i++) {
+      //     const key = this.selectedRowKeys[i]
+      //     const record = this.selectedRows[i]
+      //     const content = await PatrolService.getPatrolTaskExcel(key)
+      //     let suffix
+      //     if (record.actual_end_time !== null) {
+      //       suffix = record.actual_end_time.toString().replaceAll('T', '_')
+      //     } else {
+      //       suffix = this.getFormatDate()
+      //     }
+      //     if (content.byteLength > 0) {
+      //       await downloadExcel('巡更记录单-' + suffix + '.xls', content)
+      //     } else {
+      //       throw Error('该任务单没有任务报告！无法导出！')
+      //     }
+      //   }
+      //   this.$notification.success({
+      //     message: '系统提示',
+      //     description: '导出巡更记录单成功'
+      //   })
+      // } catch (e) {
+      //   this.$notification.error({
+      //     message: '系统提示',
+      //     description: h => h('p', { domProps: { innerHTML: e.message } })
+      //   })
+      //   throw e
+      // } finally {
+      //   this.exportLoading = false
+      // }
+      this.$refs.exportSchema.onShow(this.selectedRowKeys)
     }
   },
   async mounted () {
