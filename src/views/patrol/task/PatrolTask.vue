@@ -104,7 +104,7 @@
       <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;">
         <a-icon type="search" />
         查看</a-button>
-      <a-button :loading="exportLoading" @click="exportExcel">
+      <a-button type="primary" :loading="exportLoading" @click="exportExcel">
         <a-icon type="upload" />
         导出</a-button>
     </div>
@@ -157,7 +157,9 @@ export default {
           title: '任务单号',
           dataIndex: 'id',
           width: 150,
-          fixed: 'left'
+          fixed: 'left',
+          sorter: (a, b) => Number(a.id) - Number(b.id),
+          defaultSortOrder: 'descend'
         },
         {
           title: '计划名称',
@@ -173,13 +175,13 @@ export default {
           title: '巡更实际开始时间',
           dataIndex: 'actualStartTime',
           width: 180,
-          defaultSortOrder: 'descend',
+          // defaultSortOrder: 'descend',
           customRender: actual_start_time => actual_start_time ? moment(actual_start_time).format('YYYY-MM-DD HH:mm:ss') : ''
         },
         {
           title: '延迟开始',
           dataIndex: 'actualStartLate',
-          width: 120,
+          width: 100,
           customRender: actual_start_late => actual_start_late ? '是' : '否'
         },
         {
@@ -205,7 +207,7 @@ export default {
         {
           title: '异常数量',
           dataIndex: 'eventCount',
-          width: 80
+          width: 100
         },
         {
           title: '巡更人员',
@@ -268,6 +270,7 @@ export default {
       }
       console.log('query', this.queryParams)
       this.loadData(this.reloadParams({ ..._.omit(this.queryParams, ['timeList']), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize }))
+      this.selectedRowKeys = []
     },
     moment,
     reloadParams (params) {
