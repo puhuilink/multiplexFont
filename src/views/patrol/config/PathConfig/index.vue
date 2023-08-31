@@ -10,8 +10,8 @@
             <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear placeholder="请输入路径名称" v-model.trim="queryParams.alias" />
+            <a-form-item label="巡更路径名称" v-bind="formItemLayout" class="fw">
+              <a-input allowClear placeholder="请输入巡更路径名称" v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -41,7 +41,7 @@
       <template #action="text,record">
         <a @click="onEditUser(record)" v-action:M001002><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)"><a-icon type="control" style="margin-right: 3px;"/>配置巡更路径</a>
+        <a @click="onUpdateMenu(record)"><a-icon type="control" style="margin-right: 3px;"/>配置</a>
         <a-divider type="vertical" />
         <a @click="deleteRole(record)" v-action:M001003><a-icon type="delete" />删除</a>
       </template>
@@ -82,7 +82,7 @@ export default {
         title: '巡更组',
         dataIndex: 'groupId',
         scopedSlots: { customRender: 'status' },
-        width: '80px'
+        width: '120px'
       },
       {
         title: '提交人',

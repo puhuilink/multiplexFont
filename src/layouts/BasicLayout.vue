@@ -189,7 +189,7 @@ export default {
     background: #fff;
     border-top: 1px solid #004FA5 !important;
     border-bottom: 1px solid #004FA5 !important;
-    padding-top: 8px !important;
+    padding-top: 23px !important;
     >form>div{
       width: 100% !important;
       padding: 0px 23px 0px 23px;

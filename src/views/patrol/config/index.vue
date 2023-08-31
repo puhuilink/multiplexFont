@@ -2,38 +2,59 @@
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
       <ZoneSelect @change="changeZone" :path-id="pathId">
-        <div class="PatrolConfig__operation">
-          <a-form class="d-flex flex-row">
-            <a-input
-              allowClear
-              class="PatrolConfig__search"
-              placeholder="搜索点位名称"
-              :style="{
-                'margin-right': '12px'
-              }"
-              v-model.trim="alias"
-            ></a-input>
-            <a-button
-              type="primary"
-              @click="() => {
-                this.getPatrolPath(1, {checkpoint_alias:this.alias})
-              }"
-            >查询</a-button>
+        <div class="PatrolConfig__operation" style="width: 100%;">
+          <a-form class="d-flex flex-row" style="width: 100%;">
+            <div class="fold">
+              <a-row :gutter="[8, 8]">
+                <a-col class="search_box">
+                  <label class="search_label">搜索条件
+                    <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
+                  </label>
+                  <a-button
+                    type="primary"
+                    @click="() => {
+                      this.getPatrolPath(1, {checkpoint_alias:this.alias})
+                    }"
+                  >查询</a-button>
+                  <a-button
+                    style="margin-left: 8px;"
+                    type="primary"
+                    @click="backToPath"
+                  >返回
+                  </a-button>
+                </a-col>
+                <a-col :md="6" :sm="24">
+                  <a-form-item label="点位名称" v-bind="formItemLayout">
+                    <a-input
+                      allowClear
+                      class="PatrolConfig__search"
+                      placeholder="搜索点位名称"
+                      :style="{
+                        'margin-right': '12px'
+                      }"
+                      v-model.trim="alias"
+                    ></a-input>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
           </a-form>
-          <a-button
+          <!-- <a-button
             :disabled="!hasSelected"
             :loading="qcCodeGlobalLoading"
             type="primary"
             @click="batchDownloadQrCode"
-          >下载</a-button>
-          <a-button
-            type="primary"
-            @click="backToPath"
-          >返回
-          </a-button>
+          >下载</a-button> -->
         </div>
-
       </ZoneSelect>
+    </div>
+    <div class="operation_box">
+      <a-button
+        :disabled="!hasSelected"
+        :loading="qcCodeGlobalLoading"
+        :type="hasSelected?'primary':''"
+        @click="batchDownloadQrCode"
+      ><a-icon type="download" />下载</a-button>
     </div>
     <a-table
       ref="table"
@@ -63,7 +84,7 @@
           @change="onSelectGroupChange"
         />
       </template>
-      <!--      <template slot="checkpoint">-->
+      <!-- <template slot="checkpoint"> -->
       <!--        点位<a-row>-->
       <!--          <a @click="infoEdit({checkpointId:''},4)">-->
       <!--            <a-icon-->
@@ -84,7 +105,7 @@
       <!--            <a-icon-->
       <!--              type="plus"-->
       <!--            /></a>-->
-      <!--        </a-row>-->
+      <!--        </a-row> -->
       <!--      </template>-->
       <template slot="code" slot-scope="value,row">
         <a
@@ -94,19 +115,19 @@
         </a>
       </template>
       <template slot="action" slot-scope="value,row">
-        <a-button
+        <a
           type="primary"
           @click="infoEdit(row,0)"
-        >
+        ><a-icon type="form" />
           编辑
-        </a-button>
+        </a>
         <a-divider type="vertical"/>
-        <a-button
+        <a
           type="primary"
           @click="()=>toRemove(row)"
-        >
+        ><a-icon type="delete" />
           删除
-        </a-button>
+        </a>
       </template>
       <!--      <template slot="checkpoint" slot-scope="value,row">-->
       <!--        {{ value }}-->
@@ -583,6 +604,7 @@ export default {
       this.fetching = false
     },
     changeZone ({ pathId, zoneId }) {
+      console.log(233)
       this.table.pageNumber = 1
       this.pathId = pathId
       this.zoneId = zoneId

@@ -131,7 +131,7 @@
           <span v-else>
             <a :disabled="editingKey !== ''" @click="() => edit(record.id)"><a-icon type="form" />编辑</a>
             <a-divider type="vertical" />
-            <a :disabled="editingKey !== ''" @click="() => toRemove(record.id)"><a-icon type="delete" />删除</a>
+            <a :disabled="editingKey !== ''" @click="() => toRemove(record.id)"><a-icon type="form" />删除</a>
           </span>
         </div>
       </template>
