@@ -201,6 +201,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.ant-tabs-tab{
+  background-color: #004fa5 !important;
+}
 .ViewDisplay {
   position: relative;
 

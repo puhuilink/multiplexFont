@@ -167,9 +167,9 @@ export default {
     monitorStatus (monitorStatus = '') {
       switch (monitorStatus) {
         case '2':
-          return '否'
+          return '异常'
         case '1':
-          return '是'
+          return '正常'
         default:
           return ''
       }

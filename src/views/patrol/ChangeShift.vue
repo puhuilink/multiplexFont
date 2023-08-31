@@ -45,7 +45,6 @@
       <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" />-->
       <!-- </span> -->
     </a-form>
-    <div style="margin-bottom: 10px;"></div>
     <div class="operation_box">
       <a-button :type="hasSelectedOne ? 'primary' : ''" @click="onDetail" :disabled="!hasSelectedOne" style="margin-right: 10px;">
         <a-icon type="search" />

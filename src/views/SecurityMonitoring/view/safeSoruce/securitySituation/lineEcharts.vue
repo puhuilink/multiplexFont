@@ -29,7 +29,9 @@ export default {
 
       // 获取年、月、日
       const year = currentDate.getFullYear()
+      // eslint-disable-next-line no-unused-vars
       const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+      // eslint-disable-next-line no-unused-vars
       const day = String(currentDate.getDate()).padStart(2, '0')
 
       // 生成日期数组

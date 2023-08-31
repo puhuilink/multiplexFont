@@ -42,7 +42,7 @@ import { PlanModel } from './PlanModel'
 import BasicInfo, { basicInfoRule } from './BasicInfo.vue'
 import Cron, { cronRule } from './Cron/index.vue'
 import PatrolPath, { patrolPathRule } from './PatrolPath.vue'
-import TimeRange, { timeRangeRule } from './TimeRange/index.vue'
+import TimeRange from './TimeRange/index.vue'
 import TimeMultiPicker from './TimeMultiPicker/index'
 import TimePicker, { TimePickerRule } from './TimePicker/index'
 import moment from 'moment'
@@ -179,6 +179,7 @@ export default {
         if (!valid) return
         try {
           this.confirmLoading = true
+          // eslint-disable-next-line no-unused-vars
           const { id, ...plan } = this.plan.serialize()
           await PatrolService.planUpdate(this.plan.serialize())
           this.$emit('editSuccess')
