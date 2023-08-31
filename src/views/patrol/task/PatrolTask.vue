@@ -61,7 +61,7 @@
                 <a-select-option
                   v-for="[type, label] in STATUS_LIST"
                   :key="type"
-                  :value="!!type"
+                  :value="type"
                 >{{ label }}
                 </a-select-option>
               </a-select>

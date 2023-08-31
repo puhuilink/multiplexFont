@@ -33,7 +33,7 @@
         </a-form-model-item>
       </a-col>
 
-      <a-col :span="8" v-show="_value.groupId && _value.groupId > 0">
+      <a-col :span="8" v-show="_value.groupId && _value.groupId.length > 0">
         <span class="ant-form-item-label">
           <label title="巡更路径">巡更路径</label>
         </span>
