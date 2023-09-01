@@ -50,44 +50,59 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001002001>
+      <a-button type="primary" @click="onAddUser" v-action:F001002001>
         <a-icon type="plus-circle" />
         新增</a-button>
     </div>
-    <a-table
-      :columns="columns"
-      :dataSource="defaultData"
-      ref="table"
-      rowKey="id"
-      :pagination="paginationOpt"
-      :rowSelection="rowSelection"
-      :scroll="scroll"
-      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
-      <template #status="text, record">
-        <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
-      </template>
-      <template #action="text, record">
-        <a @click="onEditUser(record)" v-action:M001002002>编辑</a>
-        <a-divider type="vertical" />
-        <a-dropdown>
-          <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-            <a-menu-item key="1" v-action:M001002003>
-              菜单权限
-            </a-menu-item>
-            <a-menu-item key="2" v-action:M001002004>
-              数据权限
-            </a-menu-item>
-            <a-menu-item key="3" v-action:M001002005>
-              分配用户
-            </a-menu-item>
-            <a-menu-item key="4" v-action:M001002006>
-              删除
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
-      </template>
-    </a-table>
+    <div class="wrapper_content">
+      <div class="wrapper_content_left">
+        <!-- <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" /> -->
+        <a-tree
+          :tree-data="treeData"
+          :defaultExpandAll="true"
+          @expand="onExpand"
+          @select="onSelect"
+          :showIcon="true"
+          :showLine="true">
+        </a-tree>
+      </div>
+      <div class="wrapper_content_right">
+        <a-table
+          :columns="columns"
+          :dataSource="defaultData"
+          ref="table"
+          rowKey="id"
+          :pagination="paginationOpt"
+          :rowSelection="rowSelection"
+          :scroll="scroll"
+          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
+          <template #status="text, record">
+            <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
+          </template>
+          <template #action="text, record">
+            <a @click="onEditUser(record)" v-action:F001002002>编辑</a>
+            <a-divider type="vertical" />
+            <a-dropdown>
+              <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
+              <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+                <a-menu-item key="1" v-action:F001002003>
+                  菜单权限
+                </a-menu-item>
+                <a-menu-item key="2" v-action:F001002004>
+                  数据权限
+                </a-menu-item>
+                <a-menu-item key="3" v-action:F001002005>
+                  分配用户
+                </a-menu-item>
+                <a-menu-item key="4" v-action:F001002006>
+                  删除
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </template>
+        </a-table>
+      </div>
+    </div>
 
     <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :treeData="selectTreeData" />
     <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
@@ -193,7 +208,7 @@ export default {
     if (rolesData) {
       // 如果存在，将数据转换为对象或数组，具体情况取决于您存储的数据格式
       const menuCodes = JSON.parse(rolesData).value.menuCodes
-      const searchString = 'M001002007'// 角色管理状态开关
+      const searchString = 'F001002007'// 角色管理状态开关
       if (menuCodes.indexOf(searchString) !== -1) {
         this.disabled = false
       } else {

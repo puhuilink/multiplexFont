@@ -42,19 +42,19 @@
 
     <!-- / 操作区域 -->
     <div class="onAddUserBox operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001001>
+      <a-button type="primary" @click="onAddUser" v-action:F010002001>
         <a-icon type="plus-circle"/>
         新增巡更组</a-button>
       <a-button
         :type="hasSelected && selectedRowKeys.length === 1 ? 'primary' :''"
         @click="onEditUser"
-        v-action:M001001
+        v-action:F010002002
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
       >
         <a-icon type="edit" />
         编辑巡更组</a-button
       >
-      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:M001001 :disabled="!hasSelected">
+      <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:F010002003 :disabled="!hasSelected">
         <a-icon type="delete" />
         删除巡更组</a-button>
     </div>

@@ -30,13 +30,13 @@
       </span> -->
     </a-form>
     <div style="width: 100%" class="operation_box">
-      <a-button type="primary" @click="onAdd" style="margin-right: 10px">
+      <a-button type="primary" @click="onAdd" style="margin-right: 10px" v-action:F010003001>
         <a-icon type="plus-circle"/>
         新增</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px" v-action:F010003002>
         <a-icon type="edit" />
         编辑</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete" v-action:F010003003>
         <a-icon type="delete" />
         删除</a-button>
     </div>
