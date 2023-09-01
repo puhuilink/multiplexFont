@@ -123,7 +123,7 @@
         </a-form-model>
       </div>
       <div class="operation_box">
-        <a-button type="primary" @click="onAdd" v-action:M001001001>
+        <a-button type="primary" @click="onAdd" v-action:F001001001>
           <a-icon type="plus-circle"/>
           新建</a-button>
       </div>
@@ -141,20 +141,20 @@
               <a-switch :checked="text" @change="(status) => switchStatus(record, status)" :disabled="disabled"/>
             </template>
             <template #operation="text, record">
-              <a @click="onEdit(record)" v-action:M001001002><a-icon type="form" />修改</a>
+              <a @click="onEdit(record)" v-action:F001001002><a-icon type="form" />修改</a>
               <a-divider type="vertical" />
               <a-dropdown>
                 <a class="ant-dropdown-link"><a-icon type="double-right" />更多</a>
                 <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                  <a-menu-item key="1" v-action:M001001003 style="color: '#004FA5';">
+                  <a-menu-item key="1" v-action:F001001003 style="color: '#004FA5';">
                     <a-icon type="delete" />
                     删除
                   </a-menu-item>
-                  <a-menu-item key="2" v-action:M001001004>
+                  <a-menu-item key="2" v-action:F001001004>
                     <a-icon type="lock" />
                     修改密码
                   </a-menu-item>
-                  <a-menu-item key="3" v-action:M001001005>
+                  <a-menu-item key="3" v-action:F001001005>
                     <a-icon type="idcard" />
                     分配角色
                   </a-menu-item>
@@ -534,7 +534,7 @@ export default {
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
       const menuCodes = JSON.parse(rolesData).value.menuCodes
-      const searchString = 'M001001002'// 用户管理状态开关同修改
+      const searchString = 'F001001002'// 用户管理状态开关同修改
       if (menuCodes.indexOf(searchString) !== -1) {
         this.disabled = false
       } else {

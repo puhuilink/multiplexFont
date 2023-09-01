@@ -25,7 +25,7 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001001><a-icon type="plus-circle" />新增</a-button>
+      <a-button type="primary" @click="onAddUser" v-action:F010001001001><a-icon type="plus-circle" />新增</a-button>
     </div>
     <a-table
       :columns="columns"
@@ -39,11 +39,11 @@
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
-        <a @click="onEditUser(record)" v-action:M001002><a-icon type="form" />编辑</a>
+        <a @click="onEditUser(record)" v-action:F010001001002><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)"><a-icon type="control" style="margin-right: 3px;"/>配置巡更路径</a>
+        <a @click="onUpdateMenu(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)" v-action:M001003><a-icon type="delete" />删除</a>
+        <a @click="deleteRole(record)" v-action:F010001001004><a-icon type="delete" />删除</a>
       </template>
     </a-table>
 

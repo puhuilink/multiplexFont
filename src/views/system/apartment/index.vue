@@ -45,7 +45,7 @@
       </a-form-model>
     </div>
     <div style="margin-bottom: 1%" class="operation_box">
-      <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:M001003001>
+      <a-button type="primary" @click="onAdd" @operateSuccess="Success" v-action:F001003001>
         <a-icon type="plus-circle"/>
         新建
       </a-button>
@@ -66,13 +66,13 @@
         :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
         class="components-table-demo-nested">
         <template #operation="text, record">
-          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:M001003002>
+          <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:F001003002>
             <a-icon type="plus" />
             新增</a>
-          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)" v-action:M001003003>
+          <a class="operator" @click="onEdit(record)" :disabled="operationShow(banList, record.id)" v-action:F001003003>
             <a-icon type="form" />
             编辑</a>
-          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:M001003004>
+          <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>
             <a-icon type="delete" />
             删除</a>
         </template>

@@ -36,7 +36,9 @@ const {
   VUE_APP_ALARM_BASE_URL,
   VUE_APP_ALARM_ORIGINAL_URL,
   VUE_APP_OTP_BASE_URL,
-  VUE_APP_OTP_BASE_ORIGINAL_URL
+  VUE_APP_OTP_BASE_ORIGINAL_URL,
+  VUE_APP_ECHARTS_URL,
+  VUE_APP_ORIGINAL_ECHARTS_URL
 } = process.env
 
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
@@ -213,6 +215,12 @@ const vueConfig = {
           [VUE_APP_SDWAN_ORIGINAL_URL]: ''
         }
       },
+      // '/over': {
+      //   target: 'http://10.201.246.55', // 注意：这里不需要添加 /over，因为 Vue 项目会自动处理前缀
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/over': '/over'
+      //   }},
       // 后端接口
       [VUE_APP_API_ZHENHUA_BASE_URL]: {
         target: VUE_APP_API_ORIGINAL_ZHENHUA_BASE_URL,
@@ -265,6 +273,15 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_OTP_BASE_URL]: ''
+        }
+      },
+      // echarts图表
+      [VUE_APP_ECHARTS_URL]: {
+        target: VUE_APP_ORIGINAL_ECHARTS_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_ECHARTS_URL]: ''
         }
       }
     }

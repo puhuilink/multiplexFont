@@ -50,50 +50,61 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001002001>
-        <a-icon type="plus-circle"/>
+      <a-button type="primary" @click="onAddUser" v-action:F001002001>
+        <a-icon type="plus-circle" />
         新增</a-button>
     </div>
-    <a-table
-      :columns="columns"
-      :dataSource="defaultData"
-      ref="table"
-      rowKey="id"
-      :pagination="paginationOpt"
-      :rowSelection="rowSelection"
-      :scroll="scroll"
-      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
-      <template #status="text, record">
-        <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
-      </template>
-      <template #action="text, record">
-        <a @click="onEditUser(record)" v-action:M001002002><a-icon type="form" />编辑</a>
-        <a-divider type="vertical" />
-        <a-dropdown>
-          <a class="ant-dropdown-link"><a-icon type="double-right" />更多</a>
-          <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-            <a-menu-item key="1" v-action:M001002003>
-              <a-icon type="menu-fold" />
-              菜单权限
-            </a-menu-item>
-            <a-menu-item key="2" v-action:M001002004>
-              <a-icon type="bar-chart" />
-              数据权限
-            </a-menu-item>
-            <a-menu-item key="3" v-action:M001002005>
-              <a-icon type="idcard" />
-              分配用户
-            </a-menu-item>
-            <a-menu-item key="4" v-action:M001002006>
-              <a-icon type="delete" />
-              删除
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
-      </template>
-    </a-table>
+    <div class="wrapper_content">
+      <div class="wrapper_content_left">
+        <!-- <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" /> -->
+        <a-tree
+          :tree-data="treeData"
+          :defaultExpandAll="true"
+          @expand="onExpand"
+          @select="onSelect"
+          :showIcon="true"
+          :showLine="true">
+        </a-tree>
+      </div>
+      <div class="wrapper_content_right">
+        <a-table
+          :columns="columns"
+          :dataSource="defaultData"
+          ref="table"
+          rowKey="id"
+          :pagination="paginationOpt"
+          :rowSelection="rowSelection"
+          :scroll="scroll"
+          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
+          <template #status="text, record">
+            <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
+          </template>
+          <template #action="text, record">
+            <a @click="onEditUser(record)" v-action:F001002002>编辑</a>
+            <a-divider type="vertical" />
+            <a-dropdown>
+              <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
+              <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+                <a-menu-item key="1" v-action:F001002003>
+                  菜单权限
+                </a-menu-item>
+                <a-menu-item key="2" v-action:F001002004>
+                  数据权限
+                </a-menu-item>
+                <a-menu-item key="3" v-action:F001002005>
+                  分配用户
+                </a-menu-item>
+                <a-menu-item key="4" v-action:F001002006>
+                  删除
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </template>
+        </a-table>
+      </div>
+    </div>
 
-    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <RoleSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :treeData="selectTreeData" />
     <RoleSingleSchema ref="singleSchema" @addSuccess="query" @editSuccess="query(false)" />
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
@@ -111,7 +122,9 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
 import RoleSingleSchema from '@/views/system/role/modules/RoleSingleSchema.vue'
-
+import { axios } from '@/utils/request'
+import { buildTree } from '@/utils/util'
+import moment from 'moment'
 export default {
   name: 'Role',
   mixins: [Confirm, List],
@@ -122,6 +135,8 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    treeData: [],
+    selectTreeData: [],
     disabled: true,
     columns: Object.freeze([
       {
@@ -180,17 +195,20 @@ export default {
       timeList: []
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss'
+    // 左侧树
+
   }),
   mounted () {
     this.initialPagination()
     this.query()
+    this.getData()
   },
   created () {
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
       // 如果存在，将数据转换为对象或数组，具体情况取决于您存储的数据格式
       const menuCodes = JSON.parse(rolesData).value.menuCodes
-      const searchString = 'M001002007'// 角色管理状态开关
+      const searchString = 'F001002007'// 角色管理状态开关
       if (menuCodes.indexOf(searchString) !== -1) {
         this.disabled = false
       } else {
@@ -209,6 +227,83 @@ export default {
     }
   },
   methods: {
+    // 左侧树
+    moment,
+    onSelect (selectedKeys) {
+      // 节点被选择时 响应当前部门下的用户 到这
+      console.log(selectedKeys)
+      this.queryParams.organizeId = selectedKeys[0]
+      this.query()
+    },
+    // async getRoles () {
+    //   const { data: { list } } = await axios.get('/role/list', {
+    //     params: {
+    //       pageNum: 1,
+    //       pageSize: 9999
+    //     }
+    //   })
+    //   this.roleList = list
+    // },
+    onExpand (expandedKeys) { // 节点展开时
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+
+    // 选择部门
+    async getData () {
+      const { data: { dataIds, list } } = await axios.get('/organize/list', {
+        params: {
+          isOpen: true
+        }
+      })
+      this.banList = dataIds
+      // console.log(this.banList);
+      this.treeData = buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
+          el.disabled = true
+        }
+        return el
+      }))
+      this.selectTreeData = this.buildTree(list.map(el => {
+        if (el.parentId === undefined) {
+          el.parentId = null
+        }
+        if (!el.isOpen || this.operationShow(this.banList, el.id)) {
+          el.disabled = true
+        }
+        return el
+      }))
+    },
+    operationShow (List = [], id = '') {
+      return List.indexOf(id) === -1
+    },
+    buildTree (data, parentId = null) {
+      const tree = []
+      for (const item of data) {
+        if (item.parentId === parentId) {
+          const children = this.buildTree(data, item.id)
+          if (children.length > 0) {
+            item.children = children.map(el => {
+              return {
+                ...el,
+                label: el.name,
+                value: el.id
+              }
+            })
+          }
+          tree.push({
+            ...item,
+            label: item.name,
+            value: item.id
+          })
+        }
+      }
+      return tree
+    },
+    // -----------------------------
     onDateChange (date, dateString) {
       this.queryParams.createTimeStart = dateString[0]
       this.queryParams.createTimeEnd = dateString[1]
@@ -242,7 +337,8 @@ export default {
         isOpen: null,
         createTimeStart: '',
         createTimeEnd: '',
-        timeList: []
+        timeList: [],
+        organizeId: null
       }
     },
     query () {
@@ -252,9 +348,10 @@ export default {
      * 加载表格数据回调
      */
     async loadData (parameter) {
-      const { name, isOpen, createTimeStart, createTimeEnd } = parameter
+      const { name, isOpen, createTimeStart, createTimeEnd, organizeId } = parameter
       const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
       if (res) {
+        console.log(res)
         this.defaultData = res.list
         this.paginationOpt.total = res.total
       } else {
@@ -497,4 +594,28 @@ export default {
 }
 </script>
 
-<style lang='less'></style>
+<style lang='less'>
+.wrapper {
+  // padding: 8px 0;
+  &_content {
+    margin-top: 3px;
+    display: flex;
+    justify-content: space-between;
+
+    &_left {
+      width: 20vw;
+      background-color: rgba(250, 250, 250);
+      border: rgb(232, 232, 232) 1px solid;
+      border-radius: 5px;
+      padding: 5px;
+      overflow: scroll;
+      margin-left:23px;
+    }
+
+    &_right {
+      width: 70vw;
+      margin-left: .3vw;
+    }
+  }
+}
+</style>

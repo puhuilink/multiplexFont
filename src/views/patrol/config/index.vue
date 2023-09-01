@@ -97,6 +97,7 @@
         <a-button
           type="primary"
           @click="infoEdit(row,0)"
+          v-action:F010001001003001
         >
           编辑
         </a-button>
@@ -104,6 +105,7 @@
         <a-button
           type="primary"
           @click="()=>toRemove(row)"
+          v-action:F010001001003001
         >
           删除
         </a-button>

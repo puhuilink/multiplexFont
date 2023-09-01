@@ -20,6 +20,22 @@
           <a-form-model-item label="角色名称" prop="name">
             <a-input v-model="originalForm.name" />
           </a-form-model-item>
+          <a-form-model-item
+            label="归属部门"
+            prop="orgId"
+            :rules="[{ required: true, message: '请填写部门名称' }]"
+
+          >
+            <a-tree-select
+              v-model="originalForm.orgId"
+              placeholder="选择上级部门"
+              allow-clear
+              tree-default-expand-all
+              :treeData="treeData"
+              :disabled="disabled"
+            >
+            </a-tree-select>
+          </a-form-model-item>
           <a-form-model-item label="备注" prop="remark">
             <a-input v-model="originalForm.remark" type="textarea" />
           </a-form-model-item>
@@ -113,59 +129,68 @@ export default {
   name: 'RoleSchema',
   mixins: [Schema],
   components: { AuthMenu },
-  props: {},
-  data: (vm) => ({
-    current: 0,
-    confirmLoading: false,
-    steps: [
-      { title: '填写基本信息' },
-      { title: '配置菜单权限' },
-      { title: '配置数据权限' }
-    ],
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 },
-    rules: {
-      name: [
-        { required: true, message: '角色名称必填', trigger: 'blur' }
-      ]
-    },
-    dataRules: {
-      dataType: [
-        { required: true, message: '数据权限必选！', trigger: 'blur' }
-      ]
-    },
-    originalForm: {
-      name: '',
-      remark: '',
-      operateType: 'ADD'
-    },
-    menuForm: {
-      appCode: 'none',
-      menuCodes: []
-    },
-    dataForm: {
-      dataType: 'ALL',
-      dataIds: []
-    },
-    Depts: [],
-    menus: [],
-    options: {
-      flag: [
-        {
-          name: '有效',
-          value: '1'
-        },
-        {
-          name: '无效',
-          value: '0'
-        }
-      ]
-    },
-    record: null,
-    submit: () => { },
-    dataIdsALL: [],
-    my_DataIds: []
-  }),
+  props: {
+    treeData: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      disabled: false,
+      current: 0,
+      confirmLoading: false,
+      steps: [
+        { title: '填写基本信息' },
+        { title: '配置菜单权限' },
+        { title: '配置数据权限' }
+      ],
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      rules: {
+        name: [
+          { required: true, message: '角色名称必填', trigger: 'blur' }
+        ]
+      },
+      dataRules: {
+        dataType: [
+          { required: true, message: '数据权限必选！', trigger: 'blur' }
+        ]
+      },
+      originalForm: {
+        name: '',
+        remark: '',
+        orgId: '',
+        operateType: 'ADD'
+      },
+      menuForm: {
+        appCode: 'none',
+        menuCodes: []
+      },
+      dataForm: {
+        dataType: 'ALL',
+        dataIds: []
+      },
+      Depts: [],
+      menus: [],
+      options: {
+        flag: [
+          {
+            name: '有效',
+            value: '1'
+          },
+          {
+            name: '无效',
+            value: '0'
+          }
+        ]
+      },
+      record: null,
+      submit: () => { },
+      dataIdsALL: [],
+      my_DataIds: []
+    }
+  },
   computed: {},
   methods: {
     async initTreeData () {
@@ -302,6 +327,7 @@ export default {
      * 打开新增窗口
      */
     add () {
+      this.disabled = false
       const roles = JSON.parse(localStorage.getItem('pro__User'))
       this.my_DataIds = roles.value.organizeId
       // console.log(this.my_DataIds);
@@ -313,13 +339,17 @@ export default {
      * 打开编辑窗口
      */
     async edit (record) {
+      this.disabled = true
       const { name, remark, appCode, menuCodes, dataType, dataIds, id } = record
       this.dataForm = { dataType, dataIds }
-      // this.my_DataIds ={ checked: [record.organizeId] }
-      console.log(record)
+      this.my_DataIds = { checked: [record.organizeId] }
+      // this.originalForm.orgId=record.organizeId
+      // console.log(record)
       // console.log(this.dataForm);
+      // const orgId=record.organizeId
       this.menuForm = { appCode, menuCodes }
-      this.originalForm = { id, name, remark, operateType: 'EDIT' }
+      this.originalForm = { id, name, remark, orgId: record.organizeId, operateType: 'EDIT' }
+      console.log(this.originalForm)
       this.submit = this.update
       this.show('编辑')
       await this.initTreeData()
@@ -350,6 +380,7 @@ export default {
       }
       const ob = {}
       Object.assign(ob, this.dataForm, this.menuForm, this.originalForm)
+      console.log(ob)
       this.$refs.dataForm.validate(async (err) => {
         if (!err) return
         try {
@@ -397,11 +428,14 @@ export default {
           })
           return
         }
-      }
+        // 这里checked读不到
+        try {
+          if (this.dataForm.dataIds.checked) {
+            this.dataForm.dataIds = [...this.dataForm.dataIds.checked]
+          }
+        } catch (error) {
 
-      if (this.dataForm.dataIds.checked) {
-        this.dataForm.dataIds = [...this.dataForm.dataIds.checked]
-        console.log('xx', this.dataForm.dataIds)
+        }
       }
 
       const ob = {}
@@ -410,6 +444,7 @@ export default {
         if (err) return
         try {
           this.confirmLoading = true
+          console.log(ob)
           await RoleService.update(ob)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
