@@ -61,7 +61,7 @@
                 <a-select-option
                   v-for="[type, label] in STATUS_LIST"
                   :key="type"
-                  :value="!!type"
+                  :value="type"
                 >{{ label }}
                 </a-select-option>
               </a-select>
@@ -101,15 +101,16 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;">
+      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;" v-action:F010005001>
         <a-icon type="search" />
         查看</a-button>
-      <a-button type="primary" :loading="exportLoading" @click="exportExcel">
+      <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel" v-action:F010005002>
         <a-icon type="upload" />
         导出</a-button>
     </div>
 
     <a-table
+      style="margin-top: 30px"
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
@@ -122,18 +123,18 @@
     </a-table>
 
     <TaskDetailSchema ref="schema" />
+    <exportSchema ref="exportSchema"></exportSchema>
   </div>
 </template>
 
 <script>
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
-import { downloadExcel } from '@/utils/util'
+import exportSchema from './modules/exportSchema'
 import {
   ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING, ENABLE_LIST_MAPPING
 } from '../typing'
-import { PatrolService } from '@/api'
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 import _ from 'lodash'
@@ -142,7 +143,8 @@ export default {
   name: 'PatrolTask',
   mixins: [List],
   components: {
-    TaskDetailSchema
+    TaskDetailSchema,
+    exportSchema
   },
   data () {
     return {
@@ -320,37 +322,38 @@ export default {
      * 导出
      */
     async exportExcel () {
-      try {
-        this.exportLoading = true
-        for (let i = 0; i < this.selectedRowKeys.length; i++) {
-          const key = this.selectedRowKeys[i]
-          const record = this.selectedRows[i]
-          const content = await PatrolService.getPatrolTaskExcel(key)
-          let suffix
-          if (record.actual_end_time !== null) {
-            suffix = record.actual_end_time.toString().replaceAll('T', '_')
-          } else {
-            suffix = this.getFormatDate()
-          }
-          if (content.byteLength > 0) {
-            await downloadExcel('巡更记录单-' + suffix + '.xls', content)
-          } else {
-            throw Error('该任务单没有任务报告！无法导出！')
-          }
-        }
-        this.$notification.success({
-          message: '系统提示',
-          description: '导出巡更记录单成功'
-        })
-      } catch (e) {
-        this.$notification.error({
-          message: '系统提示',
-          description: h => h('p', { domProps: { innerHTML: e.message } })
-        })
-        throw e
-      } finally {
-        this.exportLoading = false
-      }
+      // try {
+      //   this.exportLoading = true
+      //   for (let i = 0; i < this.selectedRowKeys.length; i++) {
+      //     const key = this.selectedRowKeys[i]
+      //     const record = this.selectedRows[i]
+      //     const content = await PatrolService.getPatrolTaskExcel(key)
+      //     let suffix
+      //     if (record.actual_end_time !== null) {
+      //       suffix = record.actual_end_time.toString().replaceAll('T', '_')
+      //     } else {
+      //       suffix = this.getFormatDate()
+      //     }
+      //     if (content.byteLength > 0) {
+      //       await downloadExcel('巡更记录单-' + suffix + '.xls', content)
+      //     } else {
+      //       throw Error('该任务单没有任务报告！无法导出！')
+      //     }
+      //   }
+      //   this.$notification.success({
+      //     message: '系统提示',
+      //     description: '导出巡更记录单成功'
+      //   })
+      // } catch (e) {
+      //   this.$notification.error({
+      //     message: '系统提示',
+      //     description: h => h('p', { domProps: { innerHTML: e.message } })
+      //   })
+      //   throw e
+      // } finally {
+      //   this.exportLoading = false
+      // }
+      this.$refs.exportSchema.onShow(this.selectedRowKeys)
     }
   },
   async mounted () {

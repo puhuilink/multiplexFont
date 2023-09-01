@@ -34,7 +34,7 @@ export const asyncRouterMap = [
         redirect: '/view/display',
         component: RouteView,
         hidden: true,
-        meta: { title: '视图管理', keepAlive: true, icon: 'home', permission: [ 'F002' ] },
+        meta: { title: '视图管理', keepAlive: true, icon: 'home', permission: ['F002'] },
         children: [
           {
             path: '/view/display',
@@ -260,7 +260,8 @@ export const asyncRouterMap = [
         name: 'SecurityMonitoring',
         redirect: '/SecurityMonitoring/EmergencyManagement',
         component: RouteView,
-        meta: { title: '安全监控',
+        meta: {
+          title: '安全监控',
           keepAlive: true,
           icon: 'monitor',
           permission: ['F020']
@@ -273,26 +274,30 @@ export const asyncRouterMap = [
             // component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
             // component: () => import('@/views/user/settings/index'),
             component: () => import('@/views/SecurityMonitoring/vulnerabilityMonitoring/index'),
-            meta: { title: '漏洞统计管理',
-              permission: ['F020002'] }
+            meta: {
+              title: '漏洞统计管理',
+              permission: ['F020002']
+            }
           },
           {
             path: '/SecurityMonitoring/SituationalAwareness',
             name: 'SituationalAwareness',
-            meta: { title: '安全态势感知',
-              permission: ['F020004'] },
+            meta: {
+              title: '安全态势感知',
+              permission: ['F020004']
+            },
             component: () => import('@/views/SecurityMonitoring/view/safeComb')
             // component: () => import('@/views/SecurityMonitoring/view/safeSoruce')
 
           },
-          // {
-          //   path: '/SecurityMonitoring/SituationalAwarenessSecond',
-          //   name: 'SituationalAwarenessSecond',
-          //   // component: () => import('@/views/user/settings/index'),
-          //   meta: { title: '二级单位安全态势感知',
-          //     permission: ['F020003'] },
-          //   component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
-          // },
+          /* {
+            path: '/SecurityMonitoring/SituationalAwarenessSecond',
+            name: 'SituationalAwarenessSecond',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '二级单位安全态势感知',
+              permission: ['F020003'] },
+            component: () => import('@/views/SecurityMonitoring/view/safeTouchCopy')
+          }, */
           {
             path: '/SecurityMonitoring/EmergencyManagement',
             name: 'Emergency',
@@ -302,10 +307,13 @@ export const asyncRouterMap = [
               path: '/SecurityMonitoring/EmergencyManagement/BanList',
               name: 'BanList',
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
-              meta: { title: '一键封禁',
-                permission: ['F020001001'] }
+              meta: {
+                title: '一键封禁',
+                permission: ['F020001001']
+              }
             }],
-            meta: { title: '应急处理',
+            meta: {
+              title: '应急处理',
               permission: ['F020001']
             }
           }
@@ -357,32 +365,32 @@ export const asyncRouterMap = [
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
               component: () => import('@/views/patrol/config/PathConfig/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001001'] }
             },
             {
               path: '/patrol/config/pathConfig',
               name: 'PatrolConfigPathEdit',
               hidden: true,
               component: () => import('@/views/patrol/config/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001'] }
+              meta: { title: '配置巡更路径', keepAlive: true, permission: ['F010001001003'] }
             },
             {
               path: '/patrol/config/metric',
               name: 'PatrolConfigMetric',
               component: () => import('@/views/patrol/config/MetricTable/MetricTable'),
-              meta: { title: '检查项管理', keepAlive: true, permission: ['F010001'] }
+              meta: { title: '检查项管理', keepAlive: true, permission: ['F010001002'] }
             },
             {
               path: '/patrol/config/answer',
               name: 'PatrolConfigAnswer',
               component: () => import('@/views/patrol/config/AnswerTable/index'),
-              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001'] }
+              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001003'] }
             },
             {
               path: '/patrol/config/threshold',
               name: 'PatrolConfigThreshold',
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
-              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001'] }
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001004'] }
             }]
           },
           // {
@@ -401,25 +409,25 @@ export const asyncRouterMap = [
             path: '/patrol/group',
             name: 'PatrolGroup',
             component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
-            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010006'] }
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010002'] }
           },
           {
             path: '/patrol/plan',
             name: 'Plan',
             component: () => import('@/views/patrol/plan/index'),
-            meta: { title: '计划管理', keepAlive: true, permission: ['F010002'] }
+            meta: { title: '计划管理', keepAlive: true, permission: ['F010003'] }
           },
           {
             path: '/patrol/change-shift',
             name: 'ChangeShift',
             component: () => import('@/views/patrol/ChangeShift'),
-            meta: { title: '交接班查询', keepAlive: true, permission: ['F010003'] }
+            meta: { title: '交接班查询', keepAlive: true, permission: ['F010004'] }
           },
           {
             path: '/patrol/task',
             name: 'PatrolTask',
             component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡更记录单', keepAlive: true, permission: ['F010004'] }
+            meta: { title: '巡更记录单', keepAlive: true, permission: ['F010005'] }
           }
           // {
           //   path: '/patrol/object',
@@ -835,13 +843,13 @@ export const asyncRouterMap = [
             path: '/system/role',
             name: 'Role',
             component: () => import('@/views/system/role/index'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['F001003'] }
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001002'] }
           },
           {
             path: '/system/group',
             name: 'Group',
             component: () => import('@/views/system/apartment/index'),
-            meta: { title: '部门管理', keepAlive: true, permission: ['F001002'] }
+            meta: { title: '部门管理', keepAlive: true, permission: ['F001003'] }
           }
           // {
           //   path: '/system/audit',

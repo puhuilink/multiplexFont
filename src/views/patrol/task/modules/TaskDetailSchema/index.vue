@@ -151,12 +151,6 @@ export default {
         scopedSlots: { customRender: 'imgs' }
       },
       {
-        title: '设备位置',
-        dataIndex: 'devicePosition',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
         title: '设备类型',
         dataIndex: 'deviceType',
         width: 180,

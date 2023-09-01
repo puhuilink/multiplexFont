@@ -118,6 +118,7 @@
         <a
           type="primary"
           @click="infoEdit(row,0)"
+          v-action:F010001001003001
         ><a-icon type="form" />
           编辑
         </a>
@@ -125,6 +126,7 @@
         <a
           type="primary"
           @click="()=>toRemove(row)"
+          v-action:F010001001003001
         ><a-icon type="delete" />
           删除
         </a>

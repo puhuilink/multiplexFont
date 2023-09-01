@@ -8,59 +8,59 @@
         option-filter-prop="children"
         style="width: 300px"
         :filter-option="filterOption"
-        @focus="handleFocus"
-        @blur="handleBlur"
         @change="handleChange"
-      >
-        <a-select-option :value="item.label" v-for="(item, index) in list" :key="index">
-          {{ item.label }}
+        v-model="selectedOrganize">
+        <a-select-option :value="item.organizeId" v-for="(item, index) in list" :key="index">
+          {{ item.organizeName }}
         </a-select-option>
       </a-select>
     </div>
 
     <!--  -->
-    <div class="bigflexBox">
-      <div class="EacherLeft">
-        <div class="TextEacherbox1">综合风险趋势</div>
-        <div ref="eacherbox1" class="eacherBox echarts"></div>
-      </div>
-      <div class="EacherRight">
-        <div class="TextEacherbox1">未处置完成的告警</div>
-        <div class="twoEacherBox">
-          <div ref="eacherbox21" class="eacherBox echarts"></div>
-          <div class="eacherBoxfu">
-            <div class="textTime">
-              <div class="textTime_1">时间范围</div>
-              <!-- <div class="textTime_2">
+    <a-spin :spinning="loading">
+      <div class="bigflexBox">
+        <div class="EacherLeft">
+          <div class="TextEacherbox1">综合风险趋势</div>
+          <div ref="eacherbox1" class="eacherBox echarts"></div>
+        </div>
+        <div class="EacherRight">
+          <div class="TextEacherbox1">未处置完成的告警</div>
+          <div class="twoEacherBox">
+            <div ref="eacherbox21" class="eacherBox echarts"></div>
+            <div class="eacherBoxfu">
+              <div class="textTime">
+                <div class="textTime_1">时间范围</div>
+                <!-- <div class="textTime_2">
                 <div @click="openDateTimePicker('start')" class="startTimeBOX">{{ startTime }}</div>
                 <div class="start_end">-</div>
                 <div @click="openDateTimePicker('end')" class="endTimeBOX">{{ endTime }}</div>
               </div> -->
-              <a-range-picker
-                size="small"
-                :disabled-date="disabledDate"
-                :disabled-time="disabledRangeTime"
-                :show-time="{
-                  hideDisabledOptions: true,
-                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
-                }"
-                format="YYYY-MM-DD HH:mm:ss"
-                style="width: 330px"
-              />
+                <a-range-picker
+                  size="small"
+                  :disabled-date="disabledDate"
+                  :disabled-time="disabledRangeTime"
+                  :show-time="{
+                    hideDisabledOptions: true,
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                  }"
+                  format="YYYY-MM-DD HH:mm:ss"
+                  style="width: 330px" />
+              </div>
+              <div ref="eacherbox22" class="eacherBox echarts" id="eacherBoxid"></div>
             </div>
-            <div ref="eacherbox22" class="eacherBox" id="eacherBoxid"></div>
           </div>
         </div>
+        <div class="EacherBottonLeft">
+          <div class="TextEacherbox1">最近7天告警危害等级分布</div>
+          <div ref="eacherbox3" class="eacherBox echarts"></div>
+        </div>
+        <div class="EacherBottonLeft">
+          <div class="TextEacherbox1">最近7天威胁类型统计</div>
+          <div ref="eacherbox4" class="eacherBox echarts"></div>
+        </div>
       </div>
-      <div class="EacherBottonLeft">
-        <div class="TextEacherbox1">最近7天告警危害等级分布</div>
-        <div ref="eacherbox3" class="eacherBox echarts"></div>
-      </div>
-      <div class="EacherBottonLeft">
-        <div class="TextEacherbox1">最近7天威胁类型统计</div>
-        <div ref="eacherbox4" class="eacherBox echarts"></div>
-      </div>
-    </div>
+    </a-spin>
+
   </div>
 </template>
 
@@ -68,6 +68,9 @@
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 import echarts from 'echarts'
+import axios from 'axios'
+import _ from 'lodash'
+// import { over } from '@/utils/request'
 export default {
   name: 'SecondaryUnits',
   components: {
@@ -75,15 +78,14 @@ export default {
   },
   data () {
     return {
-      list: [
-        { label: '二公局', value: 1 },
-        { label: '路桥', value: 2 },
-        { label: '一公局', value: 3 },
-        { label: '港湾', value: 3 },
-        { label: '二航局', value: 3 },
-        { label: '路建', value: 3 },
-        { label: '振华重工', value: 3 }
-      ]
+      loading: false,
+      selectedOrganize: '',
+      list: [],
+      listData1: [],
+      listTime1: [],
+      listData2: [],
+      listData22: []
+
     }
   },
 
@@ -91,35 +93,138 @@ export default {
     // if (this.list.length > 0) {
     //   this.searchValue = this.list[0].label
     // }
-    this.ngsocGet()
     this.gettime()
-    this.drawPolicitalStatus()
-    this.drawPolicitalStatus2()
+    // this.drawPolicitalStatus()
+    // this.drawPolicitalStatus2()
     this.drawPolicitalStatus22()
     this.drawPolicitalStatus3()
     this.drawPolicitalStatus4()
-
+    this.ngsocGet()
+    // this.$nextTick()
     // this.getNowTime(); //获取现在时间
   },
-  watch: {},
-  methods: {
-    ngsocGet () {
 
+  watch: {},
+  // computed: {
+  //   selectedOrganize() {
+  //     console.log('this.list', this.list,);
+  //     return _.get(this.list, '0.organizeId', '')
+  //   }
+  // },
+  methods: {
+    async ngsocGet () {
+      this.loading = true
+      // const res = await axios.get(`/ngsoc/get`)
+      // this.list = res.data
+      this.list = [{
+        'organizeId': '74',
+        'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0xxxx',
+        'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45yyyy',
+        'organizeName': '公规院',
+        'parentId': '1',
+        'root': false
+      }, {
+        'organizeId': '75',
+        'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0aaaa',
+        'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45bbbb',
+        'organizeName': '一公局',
+        'parentId': '1',
+        'root': false
+      }]
+      if (this.list.length > 0) {
+        // console.log(this.list);
+        this.selectedOrganize = this.list[0].organizeId
+        // console.log(this.selectedOrganize);
+        this.handleChange(this.selectedOrganize)
+      }
     },
     // 下拉菜单
     handleChange (value) {
       console.log(`selected ${value}`)
-    },
-    handleBlur () {
-      console.log('blur	失去焦点的时回调')
-    },
-    handleFocus () {
-      console.log('focus获得焦点时回调')
+      // 根据valu查找list的单位
+      const foundData = this.list.find(item => item.organizeId === value)
+      // console.log(foundData)
+      this.customviewQuery(foundData)
     },
     filterOption (input, option) {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
+    async customviewQuery (foundData) {
+      const instance = axios.create({
+        baseURL: process.env.VUE_APP_ECHARTS_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          // "NGSOC-Access-Token": `${foundData.overviewToken}`
+          'NGSOC-Access-Token': `bfaab4f4d8704d99b04231ad26862f6d23673efa99bcf90914ccad2a9d3683e5`
+        }
+      })
+      // console.log(instance());
+      // 1.综合风险趋势
+      const comprehensive = await instance.get('/overviews/comprehensive-risk-trend')
+      const comprehensiveData = comprehensive.data.data
+      // 2.未处置完成的告警
+      const alarm = await instance.get('/overviews/alarm-stat')
+      console.log(alarm.data.data.errCode)
+      this.loading = false
 
+      // console.log('综合风险趋势', comprehensive)
+      // 到这给第一个图表数据
+      const echartsData = comprehensiveData.map(item => {
+        // console.log(item);
+        item.time = this.formatTimestamp(item.time)
+        this.listData1.push(item.risk)
+        this.listTime1.push(item.time)
+        return item
+      })
+      this.drawPolicitalStatus()
+      // this.datatime=listTime1
+      // this.datatime=listData1
+
+      // console.log(listData1,listTime1);
+      // console.log(this.formatTimestamp(1690905600000));
+      console.log('未处置完成的告警', alarm)
+      this.listData2 = alarm.data.data.alarmSeverityGroupStat
+      this.drawPolicitalStatus2()
+      this.listData22 = [alarm.data.data.outAttackAlarm,
+        alarm.data.data.movementAlarm,
+        alarm.data.data.assetOutreachAlarm,
+        alarm.data.data.iocAlarm,
+        alarm.data.data.maliciousFileAlarm]
+      this.drawPolicitalStatus22()
+      // 3.最近7天告警危害等级分布/4.最近7天威胁类型统计
+      /*  const instance7 = axios.create({
+         baseURL: 'https://10.201.30.40/api/v1', // 设置基本URL
+         headers: {
+           'Content-Type': 'application/json',
+           "NGSOC-Access-Token": `${foundData.dashboardToken}`
+         },
+       });
+       let Last7Alarm = {
+         type: 0,
+         name: 'SYS_最近7天告警危害等级分布',
+         stime: 1692067525248,
+         etime: 1692153925248,
+       };
+       let Last7Threat = {
+         type: 0,
+         name: "SYS_最近7天威胁类型统计",
+         stime: 1692067525248,
+         etime: 1692153925248,
+       }; */
+      // const query7Alarm = await instance7.post('/views/customview/query', Last7Alarm);
+      // const query7Threat = await instance7.post('/views/customview/query', Last7Threat);
+
+      // 到这给图标赋值
+      // this.=res.data
+    },
+    // 转换时间格式
+    formatTimestamp (timestamp) {
+      const date = new Date(timestamp)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
     // -----------------------------
     gettime () {
       // 获取当前日期
@@ -139,14 +244,15 @@ export default {
         ).padStart(2, '0')}`
         data.push(formattedDate)
       }
-      this.datatime = data
+      // this.datatime = data
       // console.log(this.datatime);
     },
 
     drawPolicitalStatus () {
       // 基于准备好的dom，初始化echarts实例
       const myChart = echarts.init(this.$refs.eacherbox1)
-      const xLabel = this.datatime
+      const listTime1 = this.listTime1
+      const listData1 = this.listData1
       // 绘制图表
       myChart.setOption({
         color: ['#ff974c', '#00eaff'],
@@ -203,7 +309,7 @@ export default {
             axisTick: {
               show: false
             },
-            data: xLabel
+            data: listTime1
           }
         ],
         yAxis: [
@@ -298,7 +404,7 @@ export default {
                 )
               }
             },
-            data: [40, 50, 70, 40, 50]
+            data: listData1
           }
         ]
       })
@@ -312,7 +418,7 @@ export default {
       const myChart2 = echarts.init(this.$refs.eacherbox21)
       const data = [
         {
-          value: 5,
+          value: this.listData2[3].alarmCount,
           name: '危急',
           itemStyle: {
             normal: {
@@ -324,7 +430,7 @@ export default {
           }
         },
         {
-          value: 21,
+          value: this.listData2[2].alarmCount,
           name: '高危',
           itemStyle: {
             normal: {
@@ -336,7 +442,7 @@ export default {
           }
         },
         {
-          value: 14,
+          value: this.listData2[1].alarmCount,
           name: '中危',
           itemStyle: {
             normal: {
@@ -348,7 +454,7 @@ export default {
           }
         },
         {
-          value: 17,
+          value: this.listData2[0].alarmCount,
           name: '低危',
           itemStyle: {
             normal: {
@@ -381,13 +487,13 @@ export default {
         tooltip: {
           // 下面的图标加文字
           show: true,
-          //   trigger: 'item',
-          trigger: 'none'
+          trigger: 'item'
+          // trigger: 'none'
         },
         legend: [
           {
             left: '20%',
-            bottom: '4%',
+            bottom: '10%',
             icon: 'circle',
             itemWidth: 20,
             itemGap: 15,
@@ -415,7 +521,7 @@ export default {
           },
           {
             left: '52%',
-            bottom: '4%',
+            bottom: '10%',
             icon: 'circle',
             itemWidth: 20,
             itemGap: 15,
@@ -447,7 +553,7 @@ export default {
           {
             type: 'pie',
             top: '0',
-            botton: '20',
+            botton: '0',
             center: ['50%', '40%'],
             radius: ['30%', '55%'],
             //  roseType:10,
@@ -534,23 +640,44 @@ export default {
       // 基于准备好的dom，初始化echarts实例
       const myChart22 = echarts.init(this.$refs.eacherbox22)
       const nameData = ['外部攻击告警', '横向移动告警', '资产外外连告警', '命中威胁告警', '恶意文件告警'] // 年份
-      const data1Arr = [5, 70, 21, 15, 0] // 危机
-      const data2Arr = [30, 70, 51, 85, 0] // 高危
-      const data3Arr = [20, 90, 42, 50, 0] // 中
-      const data4Arr = [20, 10, 31, 85, 0] // 低
+      // [outAttackAlarm,movementAlarm,assetOutreachAlarm,iocAlarm,maliciousFileAlarm]
 
-      // var defaultData = [500, 500, 500, 500, 500, 500];
+      const threatLevels = ['危急', '高危', '中危', '低危']
 
-      const dataName = ['2023-7-21 9:50:00', '2023-7-22 9:50:00'] // 时间区间
+      const threatData = threatLevels.map(threatLevel => {
+        return Object.keys(this.listData22).reduce((acc, alarmType) => {
+          const threatLevelData = this.listData22[alarmType].alarmSeverityGroupStat.find(item => item.severityString === threatLevel)
+          acc.push(threatLevelData ? threatLevelData.alarmCount : 0)
+          return acc
+        }, [])
+      })
+
+      console.log(threatData)
+      /*  const data1Arr = [80, 70, 21, 85, 0] // "危急"
+       const data2Arr = [30, 70, 51, 85, 0] // "高危"
+       const data3Arr = [20, 90, 42, 50, 0] // "中危"
+       const data4Arr = [20, 70, 31, 85, 0] // "低危" */
+      const data1Arr = threatData[0]// "危急"
+      const data2Arr = threatData[1] // "高危"
+      const data3Arr = threatData[2] // "中危"
+      const data4Arr = threatData[3] // "低危"
+
+      // var defaultData = [500, 500, 500, 500, 500]
+      // var defaultData=[]
+      // console.log(this.listData22);
+      // this.listData22.forEach(el => {
+      //   console.log(el);
+      //   defaultData.push(el.total)
+      // });
+      // console.log(defaultData);
+      // const dataName = ['2017-2018-1', '2017-2018-2',]; // 类型
       /* 整合 */
       const dataList = [data1Arr, data2Arr, data3Arr, data4Arr]
-      const colorList = ['#DC5656', '#FFA044', '#EAE174', '#3CA6FF']
+      const colorList = ['#DC5656', '#FFA044', '#EAE174', '#3CA6FF', '#002F54']
       const seriesList = []
-      // dataName.map((item, index) => {    });
-
       for (let index = 0; index < nameData.length; index++) {
         seriesList.push({
-          name: dataName[0] + '-' + dataName[1],
+          // name: dataName[0] + '-' + dataName[1],
           stack: 'bar',
           itemStyle: {
             normal: {
@@ -568,13 +695,16 @@ export default {
             focus: 'series'
           },
           showBackground: true,
-          backgroundStyle: {
-            color: '#f1f1f1'
-          },
+          /*   backgroundStyle: {单个柱形图背景色
+              normal: {
+                color: '#000',
+              }
+          }, */
+
           label: {
-            show: false,
-            position: 'left',
-            color: '#000',
+            show: false, // 图上的数据(例如柱形图最上面的展示数据)
+            position: 'right',
+            color: '#A0AEC0',
             fontFamily: 'HarmonyOS Sans-Regular'
           }
         })
@@ -582,32 +712,45 @@ export default {
 
       const option = {
         tooltip: {
-          trigger: 'axis',
+          trigger: 'axis', // 悬停
+          // trigger: 'item',//点击
+          // triggerOn: 'click',
           axisPointer: {
-            type: 'shadow',
-            shadowStyle: {
-              color: 'rgba(151, 30, 35, 0.1)'
-            }
+            type: 'shadow'
+          },
+          formatter: function (params) {
+            const dataName = params[0].name
+            let tooltipContent = dataName + ':'
+            // 拼接每个数据系列对应的具体数值和颜色
+            params.forEach((param) => {
+              const value = param.value
+              const color = param.color
+              // 排除背景数据值 500
+              if (value !== 500) {
+                // 使用 icon 标签显示颜色图标
+                tooltipContent += ` <span style="display:inline-block;margin-left:5px;width:10px;height:10px;background-color:${color};border-radius:50%"></span>&nbsp&nbsp${value} `
+              }
+            })
+            // 返回自定义的提示框内容
+            return tooltipContent
           },
           position: function (point, params, dom, rect, size) {
             // 提示框位置
-            let x = 0
+            const x = -size.contentSize[0]
             let y = 0
             // 提示框定位
-            if (point[0] + size.contentSize[0] < size.viewSize[0]) {
-              x = point[0]
-            } else if (point[0] > size.contentSize[0]) {
-              x = point[0] - size.contentSize[0]
-            } else {
-              x = '-100%'
-            }
+            /* if (point[0] + size.contentSize[0] < size.viewSize[0]) {
+              x = point[0];
+            }  else {
+              x = -size.contentSize[0]
+            } */
             if (point[1] > size.contentSize[1]) {
               y = point[1] - size.contentSize[1]
-            } else if (point[1] + size.contentSize[1] < size.viewSize[1]) {
-              y = point[1]
+            } /*  else if (point[1] + size.contentSize[1] < size.viewSize[1]) {
+              y = point[1];
             } else {
-              y = '30%'
-            }
+              y = '30%';
+            } */
             return [x, y]
           },
           textStyle: {
@@ -622,7 +765,7 @@ export default {
           left: '0',
           right: '37',
           bottom: '0%', // 下边距,
-          top: '6%',
+          top: '5%',
           containLabel: true
         },
         xAxis: [
@@ -650,35 +793,12 @@ export default {
         ],
         yAxis: [
           {
-            // 第一个个y轴显示右边的数据
-            position: 'right',
-            z: 3,
             type: 'category',
-
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            data: [20, 90, 42, 50, 0],
-            axisLabel: {
-              inside: true,
-              // align: 'right',
-              // verticalAlign: 'bottom',
-              padding: [0, -30, 0, 0],
-              textStyle: {
-                color: '#81BAE5',
-                fontSize: '12',
-                fontFamily: 'PingFangSC-Semibold, PingFang SC',
-                fonWeight: 600
-              }
-            }
-          },
-          {
-            // 第二个y轴显示nameData
-            z: 3,
-            type: 'category',
+            /* axisLabel: {
+              color: '#81BAE5',
+              fontSize: 12,
+              fontFamily: 'PingFangSC-Semibold, PingFang SC'
+            }, */
             axisTick: {
               show: false
             },
@@ -689,8 +809,8 @@ export default {
             axisLabel: {
               inside: true,
               align: 'left',
-              // verticalAlign: 'bottom',
-              padding: [0, 0, 25, -8],
+              verticalAlign: 'bottom',
+              padding: [0, 0, 12, -8],
               textStyle: {
                 color: '#81BAE5',
                 fontSize: '12',
@@ -712,6 +832,20 @@ export default {
       nameData.forEach((name, index) => {
         optionWithData.push(option.series[index])
         optionWithData.push(name)
+        /*  optionWithData.push({
+           name: '背景',
+           type: 'bar',
+           barWidth: 12,
+           barGap: '-100%', // 重合柱形图
+           z: -1, // 设置背景条形图的层叠顺序，使其在数据条形图下层显示
+           data: defaultData,
+           itemStyle: {
+             normal: {
+               color: '#002F54'
+               // barBorderRadius: 1,
+             }
+           }
+         }) */
       })
 
       myChart22.setOption({
@@ -1303,40 +1437,45 @@ export default {
 </script>
 
 <style lang="less" scoped>
- //.topbigBox {
- //   height: 100%;
- //  // margin-top: 20px;
- //}
+// .topbigBox {
+//   // height: 660.8px;
+//   // margin-top: 20px;
+// }
 
 .bigflexBox {
   width: 100%;
-  height: 612px;
+  // height: 612px;
   // overflow: hidden;
   margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
+
   .TextEacherbox1 {
     // width: 88px;
     height: 18px;
-    font-size: 14px;
+    font-size: 18px;
     font-family: PingFangSC-Semibold, PingFang SC;
     font-weight: 600;
-    color: #000;
+    color: #5bbbff;
     line-height: 18px;
     // padding-left: 37px;
     margin-left: 37px;
   }
+
   .EacherLeft {
     width: 50%;
-    height: 238px;
+    height: 278px;
+
     .eacherBox {
       height: 260px;
     }
   }
+
   .EacherRight {
     width: 50%;
     height: 278px;
   }
+
   .twoEacherBox {
     display: flex;
     width: 100%;
@@ -1346,12 +1485,15 @@ export default {
       //  flex-basis: 25%;
       width: 310px;
     }
+
     .eacherBoxfu {
       width: 330px;
     }
+
     .textTime {
       // width: 100px;
       height: 38px;
+
       .textTime_1 {
         font-size: 12px;
         font-family: PingFangSC-Semibold, PingFang SC;
@@ -1359,6 +1501,7 @@ export default {
         color: #81bae5;
         line-height: 12px;
       }
+
       /* .textTime_2 {
         width: 288px;
         height: 22px;
@@ -1386,23 +1529,27 @@ export default {
     }
   }
 }
+
 // .eacherBox {
 //   flex-basis: 50%;
 //   // height: 200px;
 //   // text-align: center;
 // }
 #eacherBoxid {
-  height: 155px;
+  height: 215px;
   width: 330px;
 }
+
 .echarts {
-  height: 200px !important;
+  // height: 200px;
   width: 640px;
 }
+
 .EacherBottonLeft {
   // display: flex;
   margin-top: 20px;
   width: 50%;
+
   .eacherBox {
     height: 278px;
   }
