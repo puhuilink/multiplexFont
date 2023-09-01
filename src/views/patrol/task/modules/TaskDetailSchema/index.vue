@@ -9,12 +9,12 @@
     @cancel="cancel"
     :afterClose="reset"
   >
-    <a-spin :spinning="spinning">
+    <a-spin :spinning="spinning" class="tab_fix">
       <!-- 基本信息 -->
       <div class="TaskDetailSchema__basicInfo">
         <a-row>
           <a-col :span="12">
-            <span>计划名称：{{ basicInfo.alias }}</span>
+            <span>计划名称：{{ basicInfo.planAlias }}</span>
           </a-col>
           <a-col :span="12">
             <span>任务单号：{{ basicInfo.id }}</span>
@@ -177,7 +177,7 @@ export default {
     taskDetail: [],
     basicInfo: {
       id: '723',
-      alias: '厦门数据中心 动环巡更计划',
+      planAlias: '厦门数据中心 动环巡更计划',
       status: '10',
       planId: '1267708679575048194',
       executor: { executor: '' },

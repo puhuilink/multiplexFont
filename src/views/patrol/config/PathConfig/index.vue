@@ -10,8 +10,8 @@
             <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear placeholder="请输入路径名称" v-model.trim="queryParams.alias" />
+            <a-form-item label="巡更路径名称" v-bind="formItemLayout" class="fw">
+              <a-input allowClear placeholder="请输入巡更路径名称" v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -82,7 +82,7 @@ export default {
         title: '巡更组',
         dataIndex: 'groupId',
         scopedSlots: { customRender: 'status' },
-        width: '80px'
+        width: '120px'
       },
       {
         title: '提交人',
