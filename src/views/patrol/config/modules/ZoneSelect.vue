@@ -129,7 +129,7 @@ export default {
     align-content: center;
     flex-wrap: wrap;
     .ant-radio-button-wrapper{
-      font-size: 20px;
+      font-size: 17px;
       color: #333 !important;
       border: 0 !important;
       background: transparent !important;
