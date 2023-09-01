@@ -843,13 +843,13 @@ export const asyncRouterMap = [
             path: '/system/role',
             name: 'Role',
             component: () => import('@/views/system/role/index'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['F001003'] }
+            meta: { title: '角色管理', keepAlive: true, permission: ['F001002'] }
           },
           {
             path: '/system/group',
             name: 'Group',
             component: () => import('@/views/system/apartment/index'),
-            meta: { title: '部门管理', keepAlive: true, permission: ['F001002'] }
+            meta: { title: '部门管理', keepAlive: true, permission: ['F001003'] }
           }
           // {
           //   path: '/system/audit',
