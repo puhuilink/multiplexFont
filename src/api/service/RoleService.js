@@ -4,9 +4,9 @@ import { dealQuery } from '@/utils/util'
 
 class RoleService extends BaseService {
   // 角色列表
-  static async find (name, isOpen, createTimeStart, createTimeEnd, pageNum = 0, pageSize = 10) {
+  static async find (name, isOpen, createTimeStart, createTimeEnd, orgId, pageNum = 0, pageSize = 10) {
     let base = `/role/list?pageNum=${pageNum}&pageSize=${pageSize}`
-    if (name || isOpen || createTimeEnd || createTimeStart) {
+    if (name || isOpen || createTimeEnd || createTimeStart || orgId) {
       let plus = '&'
       if (name) {
         plus += `name=${name}&`
@@ -19,6 +19,9 @@ class RoleService extends BaseService {
       }
       if (createTimeEnd) {
         plus += `createTimeEnd=${createTimeEnd}&`
+      }
+      if (orgId) {
+        plus += `orgId=${orgId}&`
       }
       plus = plus.substring(0, plus.length - 1)
       base += plus

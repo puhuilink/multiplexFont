@@ -58,6 +58,7 @@
       <div class="wrapper_content_left">
         <!-- <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" /> -->
         <a-tree
+          :selected-keys="selectedKeys"
           :tree-data="treeData"
           :defaultExpandAll="true"
           @expand="onExpand"
@@ -135,6 +136,7 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    selectedKeys: [], // 用于跟踪选中状态的数组
     treeData: [],
     selectTreeData: [],
     disabled: true,
@@ -192,7 +194,8 @@ export default {
       isOpen: null,
       createTimeStart: '',
       createTimeEnd: '',
-      timeList: []
+      timeList: [],
+      orgId: ''
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss'
     // 左侧树
@@ -231,8 +234,8 @@ export default {
     moment,
     onSelect (selectedKeys) {
       // 节点被选择时 响应当前部门下的用户 到这
-      console.log(selectedKeys)
-      this.queryParams.organizeId = selectedKeys[0]
+      this.queryParams.orgId = selectedKeys[0]
+      this.selectedKeys = selectedKeys
       this.query()
     },
     // async getRoles () {
@@ -338,8 +341,9 @@ export default {
         createTimeStart: '',
         createTimeEnd: '',
         timeList: [],
-        organizeId: null
+        orgId: ''
       }
+      this.selectedKeys = []
     },
     query () {
       this.loadData(this.queryParams)
@@ -348,8 +352,8 @@ export default {
      * 加载表格数据回调
      */
     async loadData (parameter) {
-      const { name, isOpen, createTimeStart, createTimeEnd, organizeId } = parameter
-      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
+      const { name, isOpen, createTimeStart, createTimeEnd, orgId } = parameter
+      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, orgId, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
       if (res) {
         console.log(res)
         this.defaultData = res.list
