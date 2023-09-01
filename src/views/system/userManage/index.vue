@@ -158,6 +158,14 @@
                     <a-icon type="idcard" />
                     分配角色
                   </a-menu-item>
+                  <a-menu-item key="4">
+                    <a-icon type="unlock" />
+                    解锁
+                  </a-menu-item>
+                  <a-menu-item key="5">
+                    <a-icon type="reload" />
+                    令牌重置
+                  </a-menu-item>
                 </a-menu>
               </a-dropdown>
             </template>

@@ -74,7 +74,7 @@ export default {
         scopedSlots: { customRender: 'index' }
       },
       {
-        title: '巡更路径名称',
+        title: '路径名称',
         dataIndex: 'alias',
         width: '150px'
       },

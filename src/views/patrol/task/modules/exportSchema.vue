@@ -19,7 +19,7 @@
             label="是否按照归属单位导出"
             prop="divOrg"
           >
-            <a-switch v-model="formData.divId"></a-switch>
+            <a-switch v-model="formData.divOrg"></a-switch>
           </a-form-model-item>
         </a-col>
 
@@ -28,13 +28,13 @@
             label="导出格式"
           >
             <a-checkbox
-              :checked="formData.excel"
-              @change="(value) => checkStatus('excel', value)"
-            >excel</a-checkbox>
-            <a-checkbox
               :checked="formData.pdf"
               @change="(value) => checkStatus('pdf', value)"
             >pdf</a-checkbox>
+            <a-checkbox
+              :checked="formData.excel"
+              @change="(value) => checkStatus('excel', value)"
+            >excel</a-checkbox>
           </a-form-model-item>
         </a-col>
 
@@ -78,7 +78,7 @@ export default {
       formData: {
         divOrg: false, // 是否按照归属单位导出
         excel: false,
-        pdf: false,
+        pdf: true,
         fields: [],
         ids: []
       },
@@ -139,7 +139,7 @@ export default {
         //   description: '导出参数有误，请重试'
         // })
       } else {
-        downloadFile('巡更记录单' + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
+        downloadFile('巡更报告' + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
         this.$notification.success({
           message: '系统提示',
           description: '导出成功'
@@ -164,7 +164,7 @@ export default {
         this.formData.excel = !!checked
       }
       if (status === 'pdf') {
-        this.formData.pdf = !!checked
+        this.formData.pdf = true
       }
     },
     handleChange (nextTargetKeys, direction, moveKeys) {
