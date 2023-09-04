@@ -138,7 +138,14 @@
             :data-source="dataSource">
             <a slot="name" slot-scope="text">{{ text }}</a>
             <template #isOpen="text, record">
-              <a-switch :checked="text" @change="(status) => switchStatus(record, status)" :disabled="disabled"/>
+              <a-popconfirm
+                :title="`确认要${record.isOpen ? '停用' : '启用'}用户吗？`"
+                ok-text="确认"
+                cancel-text="取消"
+                @confirm="switchStatus(record)"
+              >
+                <a-switch :checked="record.isOpen" :disabled="disabled"/>
+              </a-popconfirm>
             </template>
             <template #operation="text, record">
               <a @click="onEdit(record)" v-action:F001001002><a-icon type="form" />修改</a>
@@ -471,19 +478,19 @@ export default {
       // TODO 重置查询
       this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
-    async switchStatus (record, text) {
-      record.isOpen = text
+    async switchStatus (record) {
+      record.isOpen = !record.isOpen
       try {
         this.pageLoading = true
         await axios.get('/user/switch', {
           params: {
             id: record.id,
-            isOpen: text
+            isOpen: record.isOpen
           }
         })
         this.$notification.success({
           message: '系统提示',
-          description: `${text ? '启用' : '停用'}成功`
+          description: `${record.isOpen ? '启用' : '停用'}成功`
         })
       } catch (e) {
         throw e

@@ -47,42 +47,51 @@ export default {
   mixins: [Schema],
   components: { AuthMenu },
   props: {},
-  data: (vm) => ({
-    current: 0,
-    confirmLoading: false,
-    fileList: [],
-    steps: [
-      { title: '填写基本信息' },
-      { title: '配置菜单权限' },
-      { title: '配置数据权限' }
-    ],
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 },
-    rules: {
-      alias: [
-        { required: true, message: '路径名称必填', trigger: 'blur' }
+  data: function () {
+    return {
+      current: 0,
+      confirmLoading: false,
+      fileList: [],
+      steps: [
+        { title: '填写基本信息' },
+        { title: '配置菜单权限' },
+        { title: '配置数据权限' }
       ],
-      file: [
-        { required: true, message: '文件必须上传', trigger: 'blur' }
-      ]
-    },
-    originalForm: {
-      alias: '',
-      file: null
-    },
-    record: null,
-    status: true,
-    submit: () => {}
-  }),
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      rules: {
+        alias: [
+          { required: true, message: '路径名称必填', trigger: 'blur' }
+        ],
+        file: [
+          { required: true, message: '文件必须上传', trigger: 'change' },
+          { validator: this.excelRequire, trigger: 'change' }
+        ]
+      },
+      originalForm: {
+        alias: '',
+        file: null
+      },
+      record: null,
+      status: true,
+      submit: () => {}
+    }
+  },
   computed: {},
   methods: {
     dataFilter,
+    excelRequire (rule, value, callback) {
+      if (value.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        callback(new Error('文件类型为excel'))
+      }
+      callback()
+    },
     handleChange (fileObj) {
       const { file } = fileObj
       if (file.status === 'removed') {
         return
       }
-      this.$refs.ruleForm.clearValidate('file')
+      // this.$refs.ruleForm.clearValidate('file')
       this.fileList = [file]
       this.originalForm.file = file
     },

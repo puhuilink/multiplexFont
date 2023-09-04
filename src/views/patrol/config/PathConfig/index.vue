@@ -32,7 +32,6 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="role_code"
-      :rowSelection="rowSelection"
       :scroll="scroll"
       :pagination="paginationOpt"
     >
@@ -70,6 +69,7 @@ export default {
       {
         title: '序号',
         dataIndex: 'index',
+        align: 'center',
         width: '120px',
         scopedSlots: { customRender: 'index' }
       },

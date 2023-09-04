@@ -167,6 +167,17 @@ class UserService extends BaseService {
   }
 
   static async login ({ userId, pwd, verifCode }) {
+    console.log(axios.post('/user/login', {
+      // 新版登录接口传参
+      userName: encrypt(userId),
+      pwd: encrypt(pwd),
+      // 旧版登录接口
+      // userId: encrypt(userId),
+      // encryptedPwd: encrypt(pwd),
+      ...process.env.VUE_APP_SMS_ENABLED === 'true' ? {
+        verifCode: encrypt(verifCode)
+      } : {}
+    }))
     return axios.post('/user/login', {
       // 新版登录接口传参
       userName: encrypt(userId),
