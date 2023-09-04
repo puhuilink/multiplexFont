@@ -69,6 +69,7 @@ import { SHIFT_SCHEMA_MAPPING } from '@/views/patrol/typing'
 import { xungeng } from '@/utils/request'
 import { downloadFile } from '@/utils/util'
 import moment from 'moment'
+import _ from 'lodash'
 
 export default {
   name: 'ExportSchema',
@@ -90,65 +91,68 @@ export default {
   methods: {
     async onSubmit () {
       this.loading = true
-      const data = await xungeng.request({
-        url: '/export/taskHistoryZip',
-        responseType: 'blob',
-        data: this.formData,
-        method: 'post'
-      }).catch((error) => {
-        if (error.response) {
-          console.log('error', error.response.status)
-          switch (error.response.status) {
-            case 501:
-              this.$notification.error({
-                message: '系统提示',
-                description: '没有任务单号，请重试'
-              })
-              break
-            case 502:
-              this.$notification.error({
-                message: '系统提示',
-                description: '没有导出列'
-              })
-              break
-            case 503:
-              this.$notification.error({
-                message: '系统提示',
-                description: '未找到数据'
-              })
-              break
-            case 504:
-              this.$notification.error({
-                message: '系统提示',
-                description: '未知原因的导出失败'
-              })
-              break
-            default:
-              this.$notification.error({
-                message: '系统提示',
-                description: '导出参数有误，请重试'
-              })
-              break
+      Promise.all(this.formData.ids.map(async el => {
+        const data = await xungeng.request({
+          url: '/export/taskHistoryZip',
+          responseType: 'blob',
+          data: { ..._.omit(this.formData, 'ids'), ids: [el] },
+          method: 'post'
+        }).catch((error) => {
+          if (error.response) {
+            console.log('error', error.response.status)
+            switch (error.response.status) {
+              case 501:
+                this.$notification.error({
+                  message: '系统提示',
+                  description: '没有任务单号，请重试'
+                })
+                break
+              case 502:
+                this.$notification.error({
+                  message: '系统提示',
+                  description: '没有导出列'
+                })
+                break
+              case 503:
+                this.$notification.error({
+                  message: '系统提示',
+                  description: '未找到数据'
+                })
+                break
+              case 504:
+                this.$notification.error({
+                  message: '系统提示',
+                  description: '未知原因的导出失败'
+                })
+                break
+              default:
+                this.$notification.error({
+                  message: '系统提示',
+                  description: '导出参数有误，请重试'
+                })
+                break
+            }
+            this.loading = false
           }
-          this.loading = false
-        }
-      })
-      if (data.type === 'application/json') {
-        // this.$notification.error({
-        //   message: '系统提示',
-        //   description: '导出参数有误，请重试'
-        // })
-      } else {
-        downloadFile('巡更报告' + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
-        this.$notification.success({
-          message: '系统提示',
-          description: '导出成功'
         })
-        this.cancel()
-      }
-      this.loading = false
+        if (data.type === 'application/json') {
+          // this.$notification.error({
+          //   message: '系统提示',
+          //   description: '导出参数有误，请重试'
+          // })
+        } else {
+          downloadFile('巡更报告 ' + el + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
+          this.$notification.success({
+            message: '系统提示',
+            description: '导出成功'
+          })
+        }
+      })).then(() => this.cancel()).finally(el => {
+        this.loading = false
+      })
     },
-    onShow (ids) {
+    onShow (ids, rows) {
+      console.log(ids, rows)
       this.formData.ids = ids
       this.visible = true
       this.title = '导出'

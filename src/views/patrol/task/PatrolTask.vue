@@ -353,7 +353,7 @@ export default {
       // } finally {
       //   this.exportLoading = false
       // }
-      this.$refs.exportSchema.onShow(this.selectedRowKeys)
+      this.$refs.exportSchema.onShow(this.selectedRowKeys, this.selectedRows)
     }
   },
   async mounted () {
