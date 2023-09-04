@@ -84,8 +84,9 @@ export default {
       listData1: [],
       listTime1: [],
       listData2: [],
-      listData22: []
-
+      listData22: [],
+      listData3: [],
+      listData4: []
     }
   },
 
@@ -151,27 +152,29 @@ export default {
     },
     async customviewQuery (foundData) {
       const instance = axios.create({
-        baseURL: process.env.VUE_APP_ECHARTS_URL,
+        baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
           // "NGSOC-Access-Token": `${foundData.overviewToken}`
-          'NGSOC-Access-Token': `bfaab4f4d8704d99b04231ad26862f6d23673efa99bcf90914ccad2a9d3683e5`
+        },
+        params: {
+          token: '105474a6a3ba5181196c1c2dc723f3e0b8fbc732edbdfa0fb8ee69348fa7bfd2'
         }
       })
       // console.log(instance());
       // 1.综合风险趋势
-      const comprehensive = await instance.get('/overviews/comprehensive-risk-trend')
+      // const comprehensive = await instance.get('/overviews/comprehensive-risk-trend')
+      const comprehensive = await instance.get('/ngsoc/depart/comprehensive-risk-trend')
+
       const comprehensiveData = comprehensive.data.data
       // 2.未处置完成的告警
-      const alarm = await instance.get('/overviews/alarm-stat')
-      console.log(alarm.data.data.errCode)
-      this.loading = false
+      // const alarm = await instance.get('/overviews/alarm-stat')
+      const alarm = await instance.get('/ngsoc/depart/alarm-stat')
 
-      // console.log('综合风险趋势', comprehensive)
       // 到这给第一个图表数据
       const echartsData = comprehensiveData.map(item => {
         // console.log(item);
-        item.time = this.formatTimestamp(item.time)
+        item.time = this.formatTimestamp(parseInt(item.time))
         this.listData1.push(item.risk)
         this.listTime1.push(item.time)
         return item
@@ -180,9 +183,6 @@ export default {
       // this.datatime=listTime1
       // this.datatime=listData1
 
-      // console.log(listData1,listTime1);
-      // console.log(this.formatTimestamp(1690905600000));
-      console.log('未处置完成的告警', alarm)
       this.listData2 = alarm.data.data.alarmSeverityGroupStat
       this.drawPolicitalStatus2()
       this.listData22 = [alarm.data.data.outAttackAlarm,
@@ -191,28 +191,21 @@ export default {
         alarm.data.data.iocAlarm,
         alarm.data.data.maliciousFileAlarm]
       this.drawPolicitalStatus22()
-      // 3.最近7天告警危害等级分布/4.最近7天威胁类型统计
-      /*  const instance7 = axios.create({
-         baseURL: 'https://10.201.30.40/api/v1', // 设置基本URL
-         headers: {
-           'Content-Type': 'application/json',
-           "NGSOC-Access-Token": `${foundData.dashboardToken}`
-         },
-       });
-       let Last7Alarm = {
-         type: 0,
-         name: 'SYS_最近7天告警危害等级分布',
-         stime: 1692067525248,
-         etime: 1692153925248,
-       };
-       let Last7Threat = {
-         type: 0,
-         name: "SYS_最近7天威胁类型统计",
-         stime: 1692067525248,
-         etime: 1692153925248,
-       }; */
-      // const query7Alarm = await instance7.post('/views/customview/query', Last7Alarm);
-      // const query7Threat = await instance7.post('/views/customview/query', Last7Threat);
+      // 3.最近7天告警危害等级分布/
+      const Last7Alarm = await instance.get('/ngsoc/depart/severity')
+      console.log('告警危害等级分布', Last7Alarm)
+      if (Last7Alarm.data.code === 200) {
+        this.listData3 = Last7Alarm.data
+        this.drawPolicitalStatus3()
+      }
+      // 4.最近7天威胁类型统计
+      const Last7Threat = await instance.get('/ngsoc/depart/category')
+      if (Last7Threat.data.code === 200) {
+        this.listData4 = Last7Threat.data
+        this.drawPolicitalStatus4()
+      }
+      console.log('威胁类型统计', Last7Threat)
+      this.loading = false
 
       // 到这给图标赋值
       // this.=res.data
@@ -863,11 +856,53 @@ export default {
     },
     // 最近7天告警危害等级分布
     drawPolicitalStatus3 () {
+      const severity1 = []
+      let severity1Total = 0
+      const severity2 = []
+      let severity2Total = 0
+      const severity3 = []
+      let severity3Total = 0
+      const severity4 = []
+      let severity4Total = 0
+      const severityTime = []
+      try {
+        if (this.listData3.data.data.length > 0) {
+          this.listData3.data.data.map(item => {
+            switch (item.severity) {
+              case 1:
+                severity1.push(item['count(severity)'])
+                severity1Total += item['count(severity)']
+                break
+              case 2:
+                severity2.push(item['count(severity)'])
+                severity2Total += item['count(severity)']
+                break
+              case 3:
+                severity3.push(item['count(severity)'])
+                severity3Total += item['count(severity)']
+                break
+              case 4:
+                severity4.push(item['count(severity)'])
+                severity4Total += item['count(severity)']
+                break
+              default:
+                break
+            }
+            // 检查并添加唯一的时间戳值
+            if (!severityTime.includes(item['timestamp@day'])) {
+              severityTime.push(item['timestamp@day'])
+            }
+          })
+        }
+      } catch (error) {
+
+      }
+
       // 基于准备好的dom，初始化echarts实例
       const myChart3 = echarts.init(this.$refs.eacherbox3)
       const data = [
         {
-          value: 5,
+          value: severity4Total,
           name: '危急',
           itemStyle: {
             normal: {
@@ -879,7 +914,7 @@ export default {
           }
         },
         {
-          value: 21,
+          value: severity3Total,
           name: '高危',
           itemStyle: {
             normal: {
@@ -891,7 +926,7 @@ export default {
           }
         },
         {
-          value: 14,
+          value: severity2Total,
           name: '中危',
           itemStyle: {
             normal: {
@@ -903,7 +938,7 @@ export default {
           }
         },
         {
-          value: 17,
+          value: severity1Total,
           name: '低危',
           itemStyle: {
             normal: {
@@ -1044,7 +1079,7 @@ export default {
             fontSize: 12,
             color: '#81BAE5'
           },
-          data: ['2023-07-13', '2023-07-14', '2023-07-15', '2023-07-16', '2023-07-17', '2023-07-18', '2023-07-19']
+          data: severityTime
         },
         yAxis: [
           {
@@ -1108,7 +1143,7 @@ export default {
                 // position: 'top',
               }
             },
-            data: [40, 30, 30, 30, 40, 40, 40, 30]
+            data: severity4
           },
           {
             name: '高危',
@@ -1124,7 +1159,7 @@ export default {
               // 柱子上的文字
               show: false
             },
-            data: [50, 50, 50, 50, 80, 40, 50, 50]
+            data: severity3
           },
           {
             name: '中危',
@@ -1139,7 +1174,7 @@ export default {
             label: {
               show: false
             },
-            data: [60, 70, 70, 10, 40, 40, 60, 70]
+            data: severity2
           },
           {
             name: '低危',
@@ -1154,7 +1189,7 @@ export default {
             label: {
               show: false
             },
-            data: [60, 70, 70, 10, 4, 40, 60, 30]
+            data: severity1
           }
         ]
       })
@@ -1164,12 +1199,70 @@ export default {
     },
     // 最近7天威胁类型统计
     drawPolicitalStatus4 () {
+      const rule_category_id = []
+      const ruleName = []
+      const severityTime = []
+      let resultArray
+      try {
+        console.log(this.listData4.data.data)
+        if (this.listData4.data.data.length > 0) {
+          // 创建一个空对象，用于存储每个rule_category_id对应的count(rule_category_id)值的数组
+          const result = {}
+
+          // 遍历原始数据
+          this.listData4.data.data.forEach(item => {
+            const ruleCategoryId = item['rule_category_id']
+            const countValue = item['count(rule_category_id)']
+
+            // 如果rule_category_id已经在result对象中，将countValue添加到相应的数组中
+            if (result.hasOwnProperty(ruleCategoryId)) {
+              result[ruleCategoryId].count_values.push(countValue)
+            } else {
+              // 否则，创建一个新对象并添加count_values数组
+              result[ruleCategoryId] = {
+                rule_category_id: ruleCategoryId,
+                count_values: [countValue]
+              }
+            }
+
+            // 时间戳值
+            if (!severityTime.includes(item['timestamp@day'])) {
+              severityTime.push(item['timestamp@day'])
+            }
+            // 名字
+
+            if (!rule_category_id.includes(item['rule_category_id'])) {
+              rule_category_id.push(item['rule_category_id'])
+              this.listData4.data.dynamic[0].searchValueInfo.map(info => {
+                if (info.esValueName === item['rule_category_id']) {
+                  ruleName.push(info['chValueName'])
+                }
+              })
+            }
+          })
+          console.log(result)
+          // 将结果转换为数组形式
+          // 计算每个对象中count_values数组的和，并添加到对象中
+          Object.values(result).forEach(item => {
+            const sum = item.count_values.reduce((total, count) => total + count, 0)
+            item.total_count = sum
+          })
+          resultArray = Object.values(result)
+
+          console.log(resultArray, severityTime, ruleName)
+        }
+      } catch (error) {
+
+      }
+      if (ruleName.length <= 0) {
+        return
+      }
       // 基于准备好的dom，初始化echarts实例
       const myChart4 = echarts.init(this.$refs.eacherbox4)
       const dataList = [
         {
-          value: 17,
-          name: '信息泄漏',
+          value: resultArray[0].total_count,
+          name: ruleName[0],
           itemStyle: {
             normal: {
               color: '#3CA6FF'
@@ -1180,8 +1273,8 @@ export default {
           }
         },
         {
-          value: 14,
-          name: '敏感操作',
+          value: resultArray[1].total_count,
+          name: ruleName[1],
           itemStyle: {
             normal: {
               color: '#EAE174'
@@ -1192,8 +1285,8 @@ export default {
           }
         },
         {
-          value: 5,
-          name: '代码执行',
+          value: resultArray[2].total_count,
+          name: ruleName[2],
           itemStyle: {
             normal: {
               color: '#DC5656'
@@ -1204,8 +1297,8 @@ export default {
           }
         },
         {
-          value: 21,
-          name: '远控木马',
+          value: resultArray[3].total_count,
+          name: ruleName[3],
           itemStyle: {
             normal: {
               color: '#FFA044'
@@ -1216,8 +1309,8 @@ export default {
           }
         },
         {
-          value: 21,
-          name: '弱口令',
+          value: resultArray[4].total_count,
+          name: ruleName[4],
           itemStyle: {
             normal: {
               color: '#BF78C5'
@@ -1257,7 +1350,7 @@ export default {
 
             return name + ' ' + value // 添加间距
           },
-          data: ['信息泄漏', '敏感操作', '代码执行', '远控木马', '弱口令']
+          data: ruleName
           // width: 160,
         },
         grid: {
@@ -1291,7 +1384,7 @@ export default {
             show: false
           },
 
-          data: ['2023-07-13', '2023-07-14', '2023-07-15', '2023-07-16', '2023-07-17', '2023-07-18', '2023-07-19']
+          data: severityTime
         },
         yAxis: {
           type: 'value',
@@ -1322,9 +1415,9 @@ export default {
         },
         series: [
           {
-            name: '信息泄漏',
+            name: ruleName[0],
             type: 'line',
-            data: [200, 105, 135, 120, 175, 205, 185, 195, 208, 150, 170, 180],
+            data: resultArray[0].count_values,
             smooth: true, // 平滑曲线
             itemStyle: {
               normal: {
@@ -1343,9 +1436,9 @@ export default {
             symbolSize: 8 // 根据需要设置圆环的大小
           },
           {
-            name: '敏感操作',
+            name: ruleName[1],
             type: 'line',
-            data: [55, 135, 120, 175, 205, 185, 195, 208, 150, 170, 180, 150],
+            data: resultArray[1].count_values,
             smooth: true,
             itemStyle: {
               normal: {
@@ -1364,9 +1457,9 @@ export default {
             symbolSize: 8 // 根据需要设置圆环的大小
           },
           {
-            name: '代码执行',
+            name: ruleName[2],
             type: 'line',
-            data: [175, 120, 75, 205, 185, 195, 208, 150, 170, 80, 132, 80],
+            data: resultArray[2].count_values,
             smooth: true,
             itemStyle: {
               normal: {
@@ -1385,9 +1478,9 @@ export default {
             symbolSize: 8 // 根据需要设置圆环的大小
           },
           {
-            name: '远控木马',
+            name: ruleName[3],
             type: 'line',
-            data: [145, 80, 105, 95, 125, 95, 68, 130, 70, 80, 132, 180],
+            data: resultArray[3].count_values,
             smooth: true,
             itemStyle: {
               normal: {
@@ -1406,9 +1499,9 @@ export default {
             symbolSize: 8 // 根据需要设置圆环的大小
           },
           {
-            name: '弱口令',
+            name: ruleName[4],
             type: 'line',
-            data: [85, 140, 75, 105, 85, 95, 108, 50, 70, 80, 102, 80],
+            data: resultArray[4].count_values,
             smooth: true,
             itemStyle: {
               normal: {
