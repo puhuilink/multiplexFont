@@ -30,6 +30,12 @@
           <!--              <span>重置密码</span>-->
           <!--            </a>-->
           <!--          </a-menu-item>-->
+          <a-menu-item key="1">
+            <a href="javascript:;" @click="handleChangePwd">
+              <a-icon type="setting"/>
+              <span>修改密码</span>
+            </a>
+          </a-menu-item>
           <a-menu-divider/>
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">
@@ -39,6 +45,7 @@
           </a-menu-item>
         </a-menu>
       </a-dropdown>
+      <passwordSchema ref="schema" @operateSuccess="Success"></passwordSchema>
     </div>
   </div>
 </template>
@@ -46,12 +53,15 @@
 <script>
 // import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
+import passwordSchema from '@/views/system/userManage/components/passwordSchema'
+import Vue from 'vue'
+import { USER } from '@/store/mutation-types'
 
 export default {
   name: 'UserMenu',
-  // components: {
-  //   NoticeIcon
-  // },
+  components: {
+    passwordSchema
+  },
   computed: {
     ...mapGetters(['nickname', 'avatar'])
 
@@ -75,7 +85,16 @@ export default {
       })
     },
     handleChangePwd () {
-      this.$router.push({ name: 'PwdChange' })
+      this.$refs.schema.onShow({
+        id: Vue.ls.get(USER).userId,
+        password: ''
+      })
+    },
+    async Success () {
+      this.$refs.schema.onCancel()
+      this.$nextTick(() => {
+        this.query()
+      })
     }
   }
 }

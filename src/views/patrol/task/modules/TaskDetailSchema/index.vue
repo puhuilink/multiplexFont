@@ -111,13 +111,13 @@ export default {
       },
       {
         title: 'IP地址',
-        dataIndex: 'hostBelong',
+        dataIndex: 'hostApartment',
         width: 180,
         customRender: (text) => text || ''
       },
       {
         title: '设备归属单位',
-        dataIndex: 'hostApartment',
+        dataIndex: 'hostBelong',
         width: 180,
         customRender: (text) => text || ''
       },
