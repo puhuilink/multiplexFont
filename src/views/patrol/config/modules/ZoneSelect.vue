@@ -30,6 +30,10 @@
       v-model="options.zoneId"
     >
       <a-tab-pane v-for="({ id, alias }) in zoneList" :key="id" :tab="alias"></a-tab-pane>
+      <a-button slot="tabBarExtraContent" style='margin-right: 30px;margin-bottom: 5px' @click="createNewZone">
+        <a-icon type="plus" style='color: gray'/>
+        新建楼层
+      </a-button>
     </a-tabs>
 
   </div>
@@ -68,6 +72,9 @@ export default {
     }
   },
   methods: {
+    createNewZone () {
+      this.$emit('new')
+    },
     changePathId (pathId) {
       const { pathList, options } = this
       const path = pathList.find((path) => pathId === path.pathId)
