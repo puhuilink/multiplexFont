@@ -68,8 +68,9 @@
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 import echarts from 'echarts'
-import axios from 'axios'
+import ajax from 'axios'
 import _ from 'lodash'
+import { axios } from '@/utils/request'
 // import { over } from '@/utils/request'
 export default {
   name: 'SecondaryUnits',
@@ -115,23 +116,24 @@ export default {
   methods: {
     async ngsocGet () {
       this.loading = true
-      // const res = await axios.get(`/ngsoc/get`)
-      // this.list = res.data
-      this.list = [{
-        'organizeId': '74',
-        'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0xxxx',
-        'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45yyyy',
-        'organizeName': '公规院',
-        'parentId': '1',
-        'root': false
-      }, {
-        'organizeId': '75',
-        'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0aaaa',
-        'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45bbbb',
-        'organizeName': '一公局',
-        'parentId': '1',
-        'root': false
-      }]
+      const res = await axios.get(`/ngsoc/get`)
+      console.log(res)
+      this.list = res.data
+      // this.list = [{
+      //   'organizeId': '74',
+      //   'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0xxxx',
+      //   'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45yyyy',
+      //   'organizeName': '公规院',
+      //   'parentId': '1',
+      //   'root': false
+      // }, {
+      //   'organizeId': '75',
+      //   'overviewToken': 'dc722c526d4060061ab12bee19255bd0a794aeb31d1581b3e8a15760162788b0aaaa',
+      //   'dashboardToken': '354dea93adb52316dce58a56eaba47360f852f0eb9631628b29e73b3a390e45bbbb',
+      //   'organizeName': '一公局',
+      //   'parentId': '1',
+      //   'root': false
+      // }]
       if (this.list.length > 0) {
         // console.log(this.list);
         this.selectedOrganize = this.list[0].organizeId
@@ -141,6 +143,7 @@ export default {
     },
     // 下拉菜单
     handleChange (value) {
+      this.loading = true
       console.log(`selected ${value}`)
       // 根据valu查找list的单位
       const foundData = this.list.find(item => item.organizeId === value)
@@ -151,14 +154,14 @@ export default {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
     async customviewQuery (foundData) {
-      const instance = axios.create({
+      const instance = ajax.create({
         baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
         headers: {
           'Content-Type': 'application/json'
           // "NGSOC-Access-Token": `${foundData.overviewToken}`
         },
         params: {
-          token: '105474a6a3ba5181196c1c2dc723f3e0b8fbc732edbdfa0fb8ee69348fa7bfd2'
+          token: foundData.overviewToken
         }
       })
       // console.log(instance());
