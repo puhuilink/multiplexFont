@@ -4,21 +4,41 @@
     title="修改密码"
     ok-text="确认"
     cancel-text="取消"
-    centered="true"
+    :centered=true
     destroyOnClose>
     <a-form-model
       ref="model"
       :model="record"
       v-bind="formLayout">
       <a-form-model-item
+        prop="oldPassword"
+        :rules="[
+          { required: true, message: '请输入原始密码', trigger: 'blur' },
+          { validator: validateOldPassword, trigger: 'blur' }
+        ]"
+        label="原始密码"
+      >
+        <a-input type="password" v-model="record.oldPassword"></a-input>
+      </a-form-model-item>
+      <a-form-model-item
         prop="password"
         :rules="[
           { required: true, message: '请输入密码', trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
         ]"
-        label="修改密码为"
+        label="新密码"
       >
         <a-input type="password" v-model="record.password"></a-input>
+      </a-form-model-item>
+      <a-form-model-item
+        prop="ackPassword"
+        :rules="[
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { validator: validateAckPassword, trigger: 'blur' }
+        ]"
+        label="确认密码"
+      >
+        <a-input type="password" v-model="record.ackPassword"></a-input>
       </a-form-model-item>
     </a-form-model>
     <template slot="footer">
@@ -30,6 +50,8 @@
 
 <script>
 import { axios } from '@/utils/request'
+import Vue from 'vue'
+import { USER } from '@/store/mutation-types'
 
 export default {
   name: 'DeleteSchema',
@@ -71,6 +93,19 @@ export default {
             callback(new Error('英文字母区分大小写以及数字'))
           }
         }
+      },
+      validateOldPassword: (rule, value, callback) => {
+        if (value !== Vue.ls.get(USER).pwd) {
+          callback(new Error('跟原密码不符！'))
+        }
+        callback()
+      },
+      validateAckPassword: (rule, value, callback) => {
+        console.log('密码', this.record.password)
+        if (value !== this.record.password) {
+          callback(new Error('跟新密码不符！'))
+        }
+        callback()
       }
     }
   },

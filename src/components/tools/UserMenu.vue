@@ -53,7 +53,7 @@
 <script>
 // import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
-import passwordSchema from '@/views/system/userManage/components/passwordSchema'
+import passwordSchema from '@/components/ChangePassword/changePasswordSchema'
 import Vue from 'vue'
 import { USER } from '@/store/mutation-types'
 
