@@ -1,43 +1,64 @@
 <template>
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
-      <ZoneSelect @change="changeZone" :path-id="pathId" @new="editPatrolConfig('newZone',{})">
-        <div class="PatrolConfig__operation">
-          <a-form class="d-flex flex-row">
-            <a-input
-              allowClear
-              class="PatrolConfig__search"
-              placeholder="搜索点位名称"
-              :style="{
-                'margin-right': '12px'
-              }"
-              v-model.trim="alias"
-            ></a-input>
-            <a-button
-              type="primary"
-              @click="() => {
-                this.getPatrolPath(1, {checkpoint_alias:this.alias})
-              }"
-            >查询</a-button>
+      <ZoneSelect @change="changeZone" :path-id="pathId">
+        <div class="PatrolConfig__operation" style="width: 100%;">
+          <a-form class="d-flex flex-row" style="width: 100%;">
+            <div class="fold">
+              <a-row :gutter="[8, 8]">
+                <a-col class="search_box">
+                  <label class="search_label">搜索条件
+                    <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
+                  </label>
+                  <a-button
+                    type="primary"
+                    @click="() => {
+                      this.getPatrolPath(1, {checkpoint_alias:this.alias})
+                    }"
+                  >查询</a-button>
+                  <a-button
+                    style="margin-left: 8px;"
+                    type="primary"
+                    @click="backToPath"
+                  >返回
+                  </a-button>
+                </a-col>
+                <a-col :md="6" :sm="24">
+                  <a-form-item label="点位名称" v-bind="formItemLayout">
+                    <a-input
+                      allowClear
+                      class="PatrolConfig__search"
+                      placeholder="搜索点位名称"
+                      :style="{
+                        'margin-right': '12px'
+                      }"
+                      v-model.trim="alias"
+                    ></a-input>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
           </a-form>
-          <a-button
-            :disabled="!hasSelected"
-            :loading="qcCodeGlobalLoading"
-            type="primary"
-            @click="batchDownloadQrCode"
-          >下载</a-button>
-          <a-button
-            @click="backToPath"
-          >返回
-          </a-button>
         </div>
-
       </ZoneSelect>
+    </div>
+    <div class="operation_box">
+      <a-button
+        :disabled="!hasSelected"
+        :loading="qcCodeGlobalLoading"
+        :type="hasSelected?'primary':''"
+        @click="batchDownloadQrCode"
+      ><a-icon type="download" />下载</a-button>
+      <a-divider type="vertical"/>
+      <a-button @click="editPatrolConfig('newZone',{})">
+        <a-icon type="plus" style="color: gray"/>
+        新建楼层
+      </a-button>
     </div>
     <a-table
       ref="table"
-      :scroll="{ x: 1500 }"
       :columns="columns"
+      :scroll="{ x: 1500 }"
       :data-source="data"
       :row-key="(record,index) => index"
       bordered
@@ -63,29 +84,12 @@
           @change="onSelectGroupChange"
         />
       </template>
-      <!--      <template slot="checkpoint">-->
-      <!--        点位<a-row>-->
-      <!--          <a @click="infoEdit({checkpointId:''},4)">-->
-      <!--            <a-icon-->
-      <!--              type="plus"-->
-      <!--            /></a>-->
-      <!--        </a-row>-->
-      <!--      </template>-->
       <template slot="checkbox" slot-scope="value,row">
         <a-checkbox
           :checked="isChecked(row.checkpoint_id)"
           @change="onSelectChange(row.checkpoint_id)"
         />
       </template>
-      <!--      <template slot="endpoint" slot-scope="value,row">-->
-      <!--        {{ value!=='NULL'?value:'虚拟实体' }}-->
-      <!--        <a-row>-->
-      <!--          <a @click="infoEdit(row,1)">-->
-      <!--            <a-icon-->
-      <!--              type="plus"-->
-      <!--            /></a>-->
-      <!--        </a-row>-->
-      <!--      </template>-->
       <template slot="code" slot-scope="value,row">
         <a
           @click="downloadQrCode({ checkpointId: row.checkpoint_id, checkpointAlias: row.checkpoint_alias })"
@@ -95,6 +99,13 @@
       </template>
       <template slot="action" slot-scope="value,row">
         <a-dropdown>
+          <a
+            type="primary"
+            v-action:F010001001003001
+          ><a-icon type="form" />
+            路线变更
+            <a-icon type="down"/>
+          </a>
           <a-menu slot="overlay">
             <a-sub-menu key="edit" title="编辑">
               <a-menu-item key="editZone" @click="editPatrolConfig('editZone',row)">修改楼层名称</a-menu-item>
@@ -110,41 +121,17 @@
               <a-menu-item key="newPoint" @click="editPatrolConfig('newPoint',row)">新增点位及以下</a-menu-item>
             </a-sub-menu>
           </a-menu>
-          <a-button
-            style="margin-left: 8px"
-            type="primary"
-          >
-            路线编辑
-            <a-icon type="down" />
-          </a-button>
         </a-dropdown>
         <a-divider type="vertical"/>
-        <a-button
+        <a
           type="primary"
           @click="()=>toRemove(row)"
-        >
+          v-action:F010001001003001
+        ><a-icon type="delete" />
           删除
-        </a-button>
+        </a>
       </template>
-      <!--      <template slot="checkpoint" slot-scope="value,row">-->
-      <!--        {{ value }}-->
-      <!--        <a-row>-->
-      <!--          <a @click="infoEdit(row,3)">-->
-      <!--            <a-icon-->
-      <!--              type="plus"-->
-      <!--            >-->
-      <!--            </a-icon></a>-->
-      <!--        </a-row>-->
-      <!--      </template><template slot="host" slot-scope="value,row">-->
-      <!--        {{ value }}-->
-      <!--        <a-row>-->
-      <!--          <a-->
-      <!--            @click="infoEdit(row,2)"-->
-      <!--          >-->
-      <!--            <a-icon type="plus"/>-->
-      <!--          </a>-->
-      <!--        </a-row>-->
-      <!--      </template>-->
+
     </a-table>
     <HostSchema
       ref="configSchema"
@@ -474,7 +461,6 @@ export default {
       }
     },
     async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
-      console.log('11')
       this.spinning = true
       this.data = []
       this.checkpoints = []
@@ -496,113 +482,11 @@ export default {
       this.pagination.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
       this.spinning = false
     },
-    async fetchHost () {
-      this.fetching = true
-      const get = await PatrolService.hostFind()
-      if (get != null) {
-        this.hostList = { }
-        for (let i = 1; i < get.length; i++) {
-          this.hostList[get[i][0]] = {
-            id: get[i][0],
-            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
-            endpoints: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
-          }
-        }
-      }
-      this.fetching = false
-    },
-    async fetchEndpoint () {
-      this.fetching = true
-      const get = await PatrolService.endpointFind()
-      if (get != null) {
-        this.endpointList = { }
-        for (let i = 1; i < get.length; i++) {
-          this.endpointList[get[i][0]] = {
-            id: get[i][0],
-            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
-            metrics: get[i][2].replace('[', '').replace(']', '').replaceAll(' ', '').split(',')
-          }
-        }
-      }
-      this.fetching = false
-    },
-    async fetchMetric () {
-      this.fetching = true
-      const get = await PatrolService.metricFind()
-      if (get != null) {
-        this.metricList = { }
-        for (let i = 1; i < get.length; i++) {
-          this.metricList[get[i][0]] = {
-            id: get[i][0],
-            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
-            answer_id: get[i][2]
-          }
-        }
-      }
-      this.fetching = false
-    },
-    async fetchAnswer () {
-      this.fetching = true
-      const get = await PatrolService.answerFind()
-      if (get != null) {
-        this.answerList = {}
-        for (let i = 1; i < get.length; i++) {
-          this.answerList[get[i][0]] = {
-            id: get[i][0],
-            alias: get[i][1] !== 'NULL' ? get[i][1] : '',
-            type: get[i][2],
-            format: JSON.parse(get[i][3])
-          }
-        }
-      }
-      this.fetching = false
-    },
-    async fetchThreshold () {
-      this.fetching = true
-      const res = await PatrolService.thresholdFind()
-      if (res != null) {
-        this.thresholdList = []
-        for (let i = 1; i < res.length; i++) {
-          this.thresholdList.push({
-            host_id: res[i][0],
-            endpoint_id: res[i][1],
-            metric_id: res[i][2],
-            answer_id: res[i][3],
-            condition: res[i][4],
-            lower_threshold: res[i][5],
-            upper_threshold: res[i][6],
-            severity: res[i][7]
-          })
-        }
-      }
-      this.fetching = false
-    },
     changeZone ({ pathId, zoneId }) {
       this.table.pageNumber = 1
       this.pathId = pathId
       this.zoneId = zoneId
       this.getPatrolPath(1, {})
-    },
-    // 点击编辑
-    infoEdit (row, status) {
-      if (this.fetching) {
-        return
-      }
-      this.visible = true
-      this.formStatus = status
-      this.xgModelPoint = { alias: row.checkpoint_alias }
-      this.form = {
-        checkpointId: row.checkpoint_id,
-        pathId: this.pathId,
-        zoneId: this.zoneId,
-        hostId: status < 3 ? row.host_id : '',
-        ...status < 3 ? {} : { hostAlias: '' },
-        ...status === 0 ? {} : { originMetricId: row.metric_id, originAnswerId: row.answer_id },
-        endpointId: status < 2 ? row.endpoint_id : '',
-        ...status < 2 ? {} : { endpointAlias: '',
-          visible: true },
-        metricId: status < 1 ? row.metric_id : ''
-      }
     },
     downloadQrCode ({ checkpointId, checkpointAlias }) {
       this.$set(this.qcCodeLoading, checkpointId, true)
@@ -633,26 +517,11 @@ export default {
     backToPath () {
       this.$router.push('/patrol/config/path')
     },
-
-    changePagination (pageNo, pageSize) {
-      Object.assign(this.pagination, { pageNo, pageSize })
-    },
     resetSelect () {
       Object.assign(this, {
         selectedRowKeys: [],
         selectedRows: []
       })
-    },
-    toggleSelect (checkpoint) {
-      const { selectedRowKeys, selectedRows } = this
-      const index = selectedRowKeys.indexOf(checkpoint.checkpointId)
-      if (index !== -1) {
-        selectedRowKeys.splice(index, 1)
-        selectedRows.splice(index, 1)
-      } else {
-        selectedRowKeys.push(checkpoint.checkpointId)
-        selectedRows.push(checkpoint)
-      }
     },
     dealRouter () {
       const query = this.$route.query
@@ -662,18 +531,13 @@ export default {
   },
   created () {
     this.dealRouter()
-    this.fetchHost()
-    this.fetchEndpoint()
-    this.fetchMetric()
-    this.fetchAnswer()
-    this.fetchThreshold()
     this.getPatrolPath(1, {})
   }
 }
 </script>
 
 <style lang="less">
-  @import url('./index.less');
-  @import url('./utils.less');
-  @import url('./layout.less');
+@import url('./index.less');
+@import url('./utils.less');
+@import url('./layout.less');
 </style>
