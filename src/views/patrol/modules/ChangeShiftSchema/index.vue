@@ -29,7 +29,7 @@
           </a-col>
 
           <a-col :span="9" style="text-align: left">
-            <span>图表资料：{{ record.paper | data }}</span>
+            <span>图纸资料：{{ record.paper | data }}</span>
           </a-col>
 
           <a-col :span="7" style="text-align: left">

@@ -338,7 +338,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
         </div>
       )
     },
@@ -379,7 +379,7 @@ export default {
             content: '此操作将解锁该账号，是否继续？',
             closable: true,
             onOk: async () => {
-              await axios.get(`/user/unlock/${record.id}`)
+              await axios.get(`/user/unlock?id=${record.id}`)
                 .then(() => {
                   this.$notification.success({
                     message: '系统提示',

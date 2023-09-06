@@ -101,7 +101,7 @@ export default {
         title: '柜位',
         dataIndex: 'container',
         width: 180,
-        customRender: (text) => text || ''
+        customRender: (text) => text || '无柜位信息'
       },
       {
         title: '设备名称',
