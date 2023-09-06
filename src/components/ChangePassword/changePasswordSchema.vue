@@ -4,7 +4,7 @@
     title="修改密码"
     ok-text="确认"
     cancel-text="取消"
-    :centered=true
+    :centered="true"
     destroyOnClose>
     <a-form-model
       ref="model"
