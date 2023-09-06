@@ -153,10 +153,12 @@ export default {
       this.formData.ids = ids
       this.visible = true
       this.title = '导出'
+      let index = 0
       SHIFT_SCHEMA_MAPPING.forEach((key, value) => {
         this.dataSource.push({
           key: value,
-          title: key
+          title: key,
+          order: index++
         })
       })
     },
@@ -169,7 +171,7 @@ export default {
       }
     },
     handleChange (nextTargetKeys, direction, moveKeys) {
-      this.formData.fields = nextTargetKeys
+      this.formData.fields = _.filter(this.dataSource, el => nextTargetKeys.includes(el.key)).map(el => el.key)
     },
     handleSelectChange (sourceSelectedKeys, targetSelectedKeys) {
       this.selectedKeys = [...sourceSelectedKeys, ...targetSelectedKeys]
