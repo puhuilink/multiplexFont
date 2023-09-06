@@ -101,7 +101,7 @@ export default {
         title: '柜位',
         dataIndex: 'container',
         width: 180,
-        customRender: (text) => text || ''
+        customRender: (text) => text || '无柜位信息'
       },
       {
         title: '设备名称',
@@ -111,13 +111,13 @@ export default {
       },
       {
         title: 'IP地址',
-        dataIndex: 'hostBelong',
+        dataIndex: 'hostApartment',
         width: 180,
         customRender: (text) => text || ''
       },
       {
         title: '设备归属单位',
-        dataIndex: 'hostApartment',
+        dataIndex: 'hostBelong',
         width: 180,
         customRender: (text) => text || ''
       },

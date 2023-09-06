@@ -134,32 +134,31 @@ export default {
             }
             this.loading = false
           }
+        }).then(row => {
+          if (row.type === 'application/octet-stream') {
+            downloadFile('巡更报告-' + el + '-' + moment().format('YYYY-MM-DD HH:mm:ss'), row, { type: 'application/zip;charset=UTF-8' })
+            this.$notification.success({
+              message: '系统提示',
+              description: '导出成功'
+            })
+          }
         })
-        if (data.type === 'application/json') {
-          // this.$notification.error({
-          //   message: '系统提示',
-          //   description: '导出参数有误，请重试'
-          // })
-        } else {
-          downloadFile('巡更报告 ' + el + moment().format('YYYY-MM-DD HH:mm:ss'), data, { type: 'application/zip;charset=UTF-8' })
-          this.$notification.success({
-            message: '系统提示',
-            description: '导出成功'
-          })
-        }
-      })).then(() => this.cancel()).finally(el => {
+      })).then((data) => {
+        this.cancel()
+      }).finally(el => {
         this.loading = false
       })
     },
-    onShow (ids, rows) {
-      console.log(ids, rows)
+    onShow (ids) {
       this.formData.ids = ids
       this.visible = true
       this.title = '导出'
+      let index = 0
       SHIFT_SCHEMA_MAPPING.forEach((key, value) => {
         this.dataSource.push({
           key: value,
-          title: key
+          title: key,
+          order: index++
         })
       })
     },
@@ -172,7 +171,7 @@ export default {
       }
     },
     handleChange (nextTargetKeys, direction, moveKeys) {
-      this.formData.fields = nextTargetKeys
+      this.formData.fields = _.filter(this.dataSource, el => nextTargetKeys.includes(el.key)).map(el => el.key)
     },
     handleSelectChange (sourceSelectedKeys, targetSelectedKeys) {
       this.selectedKeys = [...sourceSelectedKeys, ...targetSelectedKeys]

@@ -90,17 +90,18 @@ export const SHIFT_STATUS_MAPPING = new Map(
 // 巡更记录单导出字段
 export const SHIFT_SCHEMA_MAPPING = new Map(
   [
-    ['ipAddress', 'IP地址'],
-    ['hostType', '设备类型'],
-    ['hostBrand', '品牌'],
-    ['sn', 'SN号'],
     ['zoneAlias', '楼层'],
     ['checkpointAlias', '点位'],
     ['container', '柜位'],
     ['hostAlias', '设备名称'],
+    ['endpointAlias', '监控实体'],
+    ['ipAddress', 'IP地址'],
+    ['hostType', '设备类型'],
     ['hostBelong', '设备归属单位'],
     ['metricAlias', '检查项'],
     ['answerAlias', '检查值'],
-    ['remarks', '备注']
+    ['remarks', '备注'],
+    ['hostBrand', '品牌'],
+    ['sn', 'SN号']
   ]
 )
