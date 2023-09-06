@@ -44,8 +44,8 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
-        <a-tabs default-active-key="zoneId">
-          <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias" @click="changeZone(zoneId)">
+        <a-tabs default-active-key="zoneId" @change="changeZone">
+          <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias">
             <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
               <template #value="text, record">
                 {{ valueMapping(record) }}
@@ -111,7 +111,7 @@ export default {
       },
       {
         title: 'IP地址',
-        dataIndex: 'hostApartment',
+        dataIndex: 'ipAddress',
         width: 180,
         customRender: (text) => text || ''
       },
@@ -295,8 +295,8 @@ export default {
 
       return checkpointsList
     },
-    async changeZone (key) {
-      // this.dataSource = await PatrolService.taskReportDetail(this.basicInfo.id, key)
+    changeZone (key) {
+      this.fetch(this.parentData, this.parentData.id, key)
     }
   }
 }

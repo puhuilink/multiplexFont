@@ -396,9 +396,9 @@ export default {
             content: '此操作将重置该用户登录令牌（导致现有令牌失效）, 是否继续？',
             closable: true,
             onOk: async () => {
-              await otp.post(`/otp//dereg`, {
+              await otp.post(`/otp/otp/dereg`, {
                 appId: process.env.VUE_APP_OTP_QUOTE_NAME,
-                userName: record.id,
+                userName: record.userName,
                 transNo: 'transNo1'
               })
                 .then(() => {
