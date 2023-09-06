@@ -6,16 +6,12 @@
         <a-row :gutter="[8, 8]">
           <a-col class="search_box">
             <label class="search_label">搜索条件</label>
-            <a-button type="primary" @click="query">
-              <a-icon type="search" />查询
-            </a-button>
-            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-              <a-icon type="sync" />重置
-            </a-button>
+            <a-button type="primary" @click="query">查询</a-button>
+            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="路线名称" v-bind="formItemLayout" class="fw">
-              <a-input allowClear placeholder="请输入路径名称" v-model.trim="queryParams.alias" />
+            <a-form-item label="巡更路径名称" v-bind="formItemLayout" class="fw">
+              <a-input allowClear placeholder="请输入巡更路径名称" v-model.trim="queryParams.alias" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -29,25 +25,24 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button type="primary" @click="onAddUser" v-action:M001001><a-icon type="plus-circle" />新增</a-button>
+      <a-button type="primary" @click="onAddUser" v-action:F010001001001><a-icon type="plus-circle" />新增</a-button>
     </div>
     <a-table
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
       rowKey="role_code"
-      :rowSelection="rowSelection"
       :scroll="scroll"
       :pagination="paginationOpt"
     >
       <template #index="text,record,index">{{ index }}</template>
       <template #status="text,record,index">{{ replaceGroupName(text) }}</template>
       <template #action="text,record">
-        <a @click="onEditUser(record)" v-action:M001002>编辑</a>
+        <a @click="onEditUser(record)" v-action:F010001001002><a-icon type="form" />编辑</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateMenu(record)">配置巡更路径</a>
+        <a @click="onUpdateMenu(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)" v-action:M001003>删除</a>
+        <a @click="deleteRole(record)" v-action:F010001001004><a-icon type="delete" />删除</a>
       </template>
     </a-table>
 
@@ -74,11 +69,12 @@ export default {
       {
         title: '序号',
         dataIndex: 'index',
+        align: 'center',
         width: '120px',
         scopedSlots: { customRender: 'index' }
       },
       {
-        title: '巡更路径名称',
+        title: '路径名称',
         dataIndex: 'alias',
         width: '150px'
       },
@@ -86,7 +82,7 @@ export default {
         title: '巡更组',
         dataIndex: 'groupId',
         scopedSlots: { customRender: 'status' },
-        width: '80px'
+        width: '120px'
       },
       {
         title: '提交人',

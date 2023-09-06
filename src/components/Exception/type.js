@@ -1,6 +1,7 @@
 const types = {
   403: {
-    img: 'https://gw.alipayobjects.com/zos/rmsportal/wZcnGqRDyhPOEYFcZDnb.svg',
+    // img: 'https://gw.alipayobjects.com/zos/rmsportal/wZcnGqRDyhPOEYFcZDnb.svg',
+    img: '../../assets/images/编组 4.jpg',
     title: '403',
     desc: '抱歉，你无权访问该页面'
   },

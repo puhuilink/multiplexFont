@@ -1,16 +1,20 @@
 <template>
   <div class="exception">
-    <div class="imgBlock">
-      <div class="imgEle" :style="{backgroundImage: `url(${config[type].img})`}">
+    <div>
+      <div class="imgBlock">
+        <div v-if="config[type].title==='403'" class="imgEle" :style="{ backgroundImage: `url(${require('@/assets/images/403.svg')})` }">
+        </div>
+        <div v-else class="imgEle" :style="{backgroundImage: `url(${config[type].img})`}">
+        </div>
       </div>
-    </div>
-    <div class="content">
-      <h1>{{ config[type].title }}</h1>
-      <div class="desc">{{ config[type].desc }}</div>
-      <div class="actions">
-        <slot name="actions">
-          <a-button type="primary" @click="handleToHome">返回首页</a-button>
-        </slot>
+      <div class="content" style="text-align: center;">
+        <!-- <h1>{{ config[type].title }}</h1> -->
+        <div class="desc">{{ config[type].desc }}</div>
+        <div class="actions">
+          <slot name="actions">
+            <a-button type="primary" @click="handleToHome">返回首页</a-button>
+          </slot>
+        </div>
       </div>
     </div>
   </div>
@@ -41,9 +45,7 @@ export default {
     handleToHome () {
       // 不同用户的路由权限不同，需要找出能访问到的第一个页面作为默认页面
       // 作为 fallback，每个用户至少都有一个重置密码的页面
-      console.log('path', 1)
       const { addRouters } = this
-      console.log(addRouters)
       const currentPathList = addRouters[0].children.map(({ path }) => path)
       const path = currentPathList.find(path => logicPathList.includes(path))
       this.$router.push(path)
@@ -57,14 +59,17 @@ export default {
 .exception {
   display: flex;
   align-items: center;
+  flex-direction: column;
+  justify-content: center;
   height: 80%;
   min-height: 500px;
 
   .imgBlock {
-    flex: 0 0 62.5%;
+    display: flex;
+    margin: 0 auto;
     width: 62.5%;
-    padding-right: 152px;
     zoom: 1;
+    margin-bottom: 20px;
     &::before,
     &::after {
       content: ' ';
@@ -79,17 +84,16 @@ export default {
   }
 
   .imgEle {
-    float: right;
-    width: 100%;
-    max-width: 430px;
-    height: 360px;
+    width: 835px;
+    max-width: 835px;
+    height: 300px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: contain;
   }
 
   .content {
-    flex: auto;
+    // flex: auto;
 
     h1 {
       margin-bottom: 24px;

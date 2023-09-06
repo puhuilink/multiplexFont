@@ -1,123 +1,9 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" style="display: flex;">
     <!--      操作-->
-    <div>
-      <a-form-model layout="inline" class="form">
-        <div class="fold">
-          <a-row :gutter="[8,8]">
-            <a-col class="search_box">
-              <label class="search_label">搜索条件</label>
-              <a-button type="primary" @click="query">
-                <a-icon type="search" />查询
-              </a-button>
-              <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-                <a-icon type="sync" />重置
-              </a-button>
-            </a-col>
-            <!--            <a-col-->
-            <!--              v-bind="colLayout"-->
-            <!--            >-->
-            <!--              <a-form-model-item-->
-            <!--                label="部门"-->
-            <!--                v-bind="formItemLayout">-->
-            <!--                <a-input-->
-            <!--                  v-model="queryParams.apartmentId"-->
-            <!--                  placeholder="请输入部门名称"-->
-            <!--                />-->
-            <!--              </a-form-model-item>-->
-            <!--            </a-col>-->
-            <a-col
-              :md="6"
-              :sm="24"
-              v-bind="colLayout"
-            >
-              <a-form-item
-                label="登录名"
-                v-bind="formItemLayout">
-                <a-input
-                  v-model="queryParams.userName"
-                  placeholder="请输入登录名"
-                />
-              </a-form-item>
-            </a-col>
-            <a-col
-              :md="6"
-              :sm="24"
-              v-bind="colLayout"
-            >
-              <a-form-item
-                label="用户名称"
-                v-bind="formItemLayout">
-                <a-input
-                  v-model="queryParams.staffName"
-                  placeholder="请输入用户名称"
-                />
-              </a-form-item>
-            </a-col>
-            <a-col
-              :md="12"
-              :sm="24"
-              :offset="0"
-              v-bind="colLayout"
-            >
-              <a-form-item
-                label="手机号码"
-                v-bind="formItemLayout">
-                <a-input
-                  v-model="queryParams.mobilePhone"
-                  placeholder="手机号码"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col
-              :md="6"
-              :sm="24"
-              v-bind="colLayout"
-            >
-              <a-form-item
-                label="状态:"
-                :labelCol="{ span: 6, offset: 2}"
-                :wrapperCol="{ span: 11, offset: 5 }"
-              >
-                <a-select
-                  style="width: 100px"
-                  placeholder="用户状态"
-                  v-model="queryParams.isOpen"
-                >
-                  <a-select-option value="true">开启</a-select-option>
-                  <a-select-option value="false">关闭</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col
-              :md="6"
-              :sm="24"
-              v-bind="colLayout"
-            >
-              <a-form-item
-                label="创建时间:"
-                :labelCol="{xs:{ span: 7, offset: 0}, md: { span: 6, offset: 0 },xl: { span: 6, offset: 0 }, xxl: { span: 6, offset: 0 }}"
-                :wrapperCol="{xs: { span: 16, offset: 2}, md: { span: 16, offset: 2}, xl: { span: 16, offset: 2 }, xxl: { span: 15, offset: 2 } }">
-                <a-range-picker
-                  style="width: 195px"
-                  :show-time="{ format: 'HH:mm' }"
-                  format="YYYY-MM-DD HH:mm"
-                  :placeholder="['开始时间', '结束时间']"
-                  v-model="queryParams.timeList"
-                />
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </div>
-      </a-form-model>
-    </div>
-    <div class="operation_box">
-      <a-button type="primary" @click="onAdd" v-action:M001001001>
-        <a-icon type="plus-circle"/>
-        新建</a-button>
-    </div>
-    <div class="wrapper_content">
-      <div class="wrapper_content_left">
-        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+    <div class="wrapper_content_left" style="overflow: hidden;margin-bottom: 23px; max-height: 1000px;">
+      <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+      <div style="overflow: auto;width: 100%;">
         <a-tree
           :tree-data="treeData"
           :defaultExpandAll="true"
@@ -128,48 +14,174 @@
         >
         </a-tree>
       </div>
-
-      <div class="wrapper_content_right">
-        <a-table
-          :columns="columns"
-          :pagination="paginationOpt"
-          :loading="pageLoading"
-          rowKey="id"
-          :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
-          :data-source="dataSource">
-          <a slot="name" slot-scope="text">{{ text }}</a>
-          <template #isOpen="text, record">
-            <a-switch :checked="text" @change="(status) => switchStatus(record, status)" :disabled="disabled"/>
-          </template>
-          <template #operation="text, record">
-            <a @click="onEdit(record)" v-action:M001001002><a-icon type="edit"/>修改</a>
-            <a-divider type="vertical" />
-            <a-dropdown>
-              <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-              <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                <a-menu-item key="1" v-action:M001001003>
-                  删除
-                </a-menu-item>
-                <a-menu-item key="2" v-action:M001001004>
-                  修改密码
-                </a-menu-item>
-                <a-menu-item key="3" v-action:M001001005>
-                  分配角色
-                </a-menu-item>
-                <a-menu-item key="4" v-action:M001001006>
-                  账户解锁
-                </a-menu-item>
-                <a-menu-item key="5" v-action:M001001007>
-                  令牌重置
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
-          </template>
-        </a-table>
+    </div>
+    <div style="width: 83%;">
+      <div>
+        <a-form-model layout="inline" class="form">
+          <div class="fold">
+            <a-row :gutter="[8,8]">
+              <a-col class="search_box">
+                <label class="search_label">搜索条件</label>
+                <a-button type="primary" @click="query">查询</a-button>
+                <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
+              </a-col>
+              <!--            <a-col-->
+              <!--              v-bind="colLayout"-->
+              <!--            >-->
+              <!--              <a-form-model-item-->
+              <!--                label="部门"-->
+              <!--                v-bind="formItemLayout">-->
+              <!--                <a-input-->
+              <!--                  v-model="queryParams.apartmentId"-->
+              <!--                  placeholder="请输入部门名称"-->
+              <!--                />-->
+              <!--              </a-form-model-item>-->
+              <!--            </a-col>-->
+              <a-col
+                :md="6"
+                :sm="24"
+                v-bind="colLayout"
+              >
+                <a-form-item
+                  label="登录名"
+                  v-bind="formItemLayout">
+                  <a-input
+                    v-model="queryParams.userName"
+                    placeholder="请输入登录名"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col
+                :md="6"
+                :sm="24"
+                v-bind="colLayout"
+              >
+                <a-form-item
+                  label="用户名称"
+                  v-bind="formItemLayout">
+                  <a-input
+                    v-model="queryParams.staffName"
+                    placeholder="请输入用户名称"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col
+                :md="12"
+                :sm="24"
+                :offset="0"
+                v-bind="colLayout"
+              >
+                <a-form-item
+                  label="手机号码"
+                  v-bind="formItemLayout">
+                  <a-input
+                    v-model="queryParams.mobilePhone"
+                    placeholder="手机号码"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col
+                :md="6"
+                :sm="24"
+                v-bind="colLayout"
+              >
+                <a-form-item
+                  label="状态"
+                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 6,offset:3 } }"
+                  :wrapperCol="{ span: 6, offset: 5 }"
+                  v-bind="formItemLayout"
+                >
+                  <a-select
+                    style="width: 100px"
+                    placeholder="用户状态"
+                    v-model="queryParams.isOpen"
+                  >
+                    <a-select-option value="true">开启</a-select-option>
+                    <a-select-option value="false">关闭</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col
+                :md="10"
+                :sm="24"
+                v-bind="colLayout"
+              >
+                <a-form-item
+                  label="创建时间"
+                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } }"
+                  :wrapperCol="{ span: 6, offset: 1 }"
+                  v-bind="formItemLayout">
+                  <a-range-picker
+                    :show-time="{ format: 'HH:mm' }"
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    v-model="queryParams.timeList"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+        </a-form-model>
       </div>
-      <assignModal ref="assign" @operateSuccess="Success"></assignModal>
-      <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
-      <passwordSchema ref="deleteSchema" @operateSuccess="Success"></passwordSchema>
+      <div class="operation_box">
+        <a-button type="primary" @click="onAdd" v-action:F001001001>
+          <a-icon type="plus-circle"/>
+          新建</a-button>
+      </div>
+      <div class="wrapper_content">
+        <div class="wrapper_content_right">
+          <a-table
+            :columns="columns"
+            :pagination="paginationOpt"
+            :loading="pageLoading"
+            rowKey="id"
+            :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
+            :data-source="dataSource">
+            <a slot="name" slot-scope="text">{{ text }}</a>
+            <template #isOpen="text, record">
+              <a-popconfirm
+                :title="`确认要${record.isOpen ? '停用' : '启用'}用户吗？`"
+                ok-text="确认"
+                cancel-text="取消"
+                @confirm="switchStatus(record)"
+              >
+                <a-switch :checked="record.isOpen" :disabled="disabled"/>
+              </a-popconfirm>
+            </template>
+            <template #operation="text, record">
+              <a @click="onEdit(record)" v-action:F001001002><a-icon type="form" />修改</a>
+              <a-divider type="vertical" />
+              <a-dropdown>
+                <a class="ant-dropdown-link"><a-icon type="double-right" />更多</a>
+                <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+                  <a-menu-item key="1" v-action:F001001003 style="color: '#004FA5';">
+                    <a-icon type="delete" />
+                    删除
+                  </a-menu-item>
+                  <a-menu-item key="2" v-action:F001001004>
+                    <a-icon type="lock" />
+                    修改密码
+                  </a-menu-item>
+                  <a-menu-item key="3" v-action:F001001005>
+                    <a-icon type="idcard" />
+                    分配角色
+                  </a-menu-item>
+                  <a-menu-item key="4">
+                    <a-icon type="unlock" />
+                    解锁
+                  </a-menu-item>
+                  <a-menu-item key="5">
+                    <a-icon type="reload" />
+                    令牌重置
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </template>
+          </a-table>
+        </div>
+        <assignModal ref="assign" @operateSuccess="Success"></assignModal>
+        <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
+        <passwordSchema ref="deleteSchema" @operateSuccess="Success"></passwordSchema>
+      </div>
     </div>
   </div>
 </template>
@@ -419,6 +431,13 @@ export default {
         }
         return el
       }))
+      // 调试tree高度
+      // const data = this.treeData[0].children[0]
+      // for (let i = 0; i <= 50; i++) {
+      //   this.treeData[0].children.push(data)
+      // }
+      // console.log(this.treeData[0].children[0], 'treeData')
+
       this.selectTreeData = this.buildTree(list.map(el => {
         if (el.parentId === undefined) {
           el.parentId = null
@@ -459,19 +478,19 @@ export default {
       // TODO 重置查询
       this.queryParams = _.omit(this.queryParams, ['apartmentId', 'staffName', 'mobilePhone', 'isOpen', 'timeList', 'createTimeStart', 'createTimeEnd', 'userName'])
     },
-    async switchStatus (record, text) {
-      record.isOpen = text
+    async switchStatus (record) {
+      record.isOpen = !record.isOpen
       try {
         this.pageLoading = true
         await axios.get('/user/switch', {
           params: {
             id: record.id,
-            isOpen: text
+            isOpen: record.isOpen
           }
         })
         this.$notification.success({
           message: '系统提示',
-          description: `${text ? '启用' : '停用'}成功`
+          description: `${record.isOpen ? '启用' : '停用'}成功`
         })
       } catch (e) {
         throw e
@@ -522,7 +541,7 @@ export default {
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
       const menuCodes = JSON.parse(rolesData).value.menuCodes
-      const searchString = 'M001001002'// 用户管理状态开关同修改
+      const searchString = 'F001001002'// 用户管理状态开关同修改
       if (menuCodes.indexOf(searchString) !== -1) {
         this.disabled = false
       } else {

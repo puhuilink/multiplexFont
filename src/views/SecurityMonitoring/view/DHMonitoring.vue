@@ -39,11 +39,11 @@ export default {
 <style lang="less" scoped>
 .wrapper {
   background-color: #FFFFFF;
-  width: calc(100vw - 200px);
   height: calc(100vh - 210px);
   position: relative;
   &_content {
     position: absolute;
+    width: 1400px;
     left: 50%;
     top: 50%;
     transform:translate(-50%,-50%);

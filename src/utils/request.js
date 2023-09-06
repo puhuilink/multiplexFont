@@ -30,6 +30,10 @@ const serviceAlarm = axios.create({
   baseURL: process.env.VUE_APP_ALARM_BASE_URL
 })
 
+const over = axios.create({
+  baseURL: process.env.VUE_APP_ECHARTS_URL
+})
+
 const sql = async (s) => {
   const payload = {
     type: 'bulk',
@@ -74,6 +78,12 @@ const requestInterceptor = config => {
   if (token) {
     config.headers[ACCESS_TOKEN] = 'Bearer ' + token
   }
+  return config
+}
+
+const requestOverInterceptor = config => {
+  config.headers['NGSOC-Access-Token'] = 'bfaab4f4d8704d99b04231ad26862f6d23673efa99bcf90914ccad2a9d3683e5'
+  console.log(config.headers)
   return config
 }
 
@@ -183,6 +193,8 @@ serviceAlarm.interceptors.request.use(requestInterceptor)
 
 serviceAlarm.interceptors.response.use(secondResponseInterceptor)
 
+over.interceptors.request.use(requestOverInterceptor)
+
 const installer = {
   vm: {},
   install (Vue) {
@@ -199,5 +211,6 @@ export {
   serviceSdwan as sdwan,
   serviceCorp as crop,
   serviceAlarm as alarm,
-  sql
+  sql,
+  over
 }

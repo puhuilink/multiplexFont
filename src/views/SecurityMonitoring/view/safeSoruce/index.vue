@@ -60,7 +60,7 @@ export default {
           number: '10089'
         },
         {
-          text: '受攻击IP资产数',
+          text: '受攻击IP总数',
           number: '382'
         }
       ],

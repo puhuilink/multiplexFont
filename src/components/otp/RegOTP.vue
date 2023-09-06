@@ -7,7 +7,7 @@
       @cancel="otpBindCancel"
       title="注册"
       :width="saoWidth">
-      <span style="display: block;font-size: 10px;font-size: 17px;font-weight: 600;">请使用微信小程序E登录扫码绑定用户，并输入OTP码</span>
+      <span style="display: block;font-size: 10px;font-size: 17px;font-weight: 600;">交建通或TOTP小程序扫码绑定用户，并输入OTP码</span>
       <div id="otpBindingQr" class="qrcode_img" :style="{'margin-top':'20px'}"/>
       <a-form-model
         ref="ruleForm"
