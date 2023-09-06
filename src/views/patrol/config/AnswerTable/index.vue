@@ -163,7 +163,10 @@
         >
           <a-select
             v-model="answerForm.defaultCondition"
-            @change="()=>this.$forceUpdate()"
+            @change="()=>{
+              this.$refs.answerForm.clearValidate('defaultCondition')
+              this.$forceUpdate()
+            }"
           >
             <a-select-option :value="'eq'">等于</a-select-option>
             <a-select-option :value="'ne'">不等于</a-select-option>
