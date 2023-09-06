@@ -1,7 +1,7 @@
 <template>
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
-      <ZoneSelect @change="changeZone" :path-id="pathId">
+      <ZoneSelect ref="zone" @change="changeZone" :path-id="pathId">
         <div class="PatrolConfig__operation" style="width: 100%;">
           <a-form class="d-flex flex-row" style="width: 100%;">
             <div class="fold">
@@ -135,9 +135,7 @@
     </a-table>
     <HostSchema
       ref="configSchema"
-      @refresh="() => {
-        this.getPatrolPath(1, {checkpoint_alias:this.alias})
-      }"
+      @refresh="onRefresh"
     />
   </div>
 
@@ -176,6 +174,7 @@ export default {
           slots: { title: 'checkboxes' },
           scopedSlots: { customRender: 'checkbox' },
           align: 'center',
+          width: '75px',
           customCell: (row, index) => {
             if (index !== this.checkpoints.indexOf(row.checkpoint_id)) {
               return {
@@ -398,8 +397,9 @@ export default {
     }
   },
   methods: {
-    onPaginationChange (pageNumber) {
-      this.$table.pageNumber = pageNumber
+    onRefresh () {
+      this.$refs.zone.fetch()
+      this.getPatrolPath(1, {})
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)

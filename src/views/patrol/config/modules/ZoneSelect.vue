@@ -3,6 +3,21 @@
   <div class="ZoneSelect">
     <!-- eslint-disable -->
     <div class="ZoneSelect__header">
+      <slot name="default"></slot>
+    </div>
+
+    <div class="pageMsg_box">
+      <a-tabs
+        class="ZoneSelect__zone"
+        :key="pathId"
+        type="card"
+        v-for="({ pathId, zoneList }) in pathList"
+        v-show="pathId === options.pathId"
+        v-model="options.zoneId"
+      >
+        <a-tab-pane v-for="({ id, alias }) in zoneList" :key="id" :tab="alias"></a-tab-pane>
+      </a-tabs>
+      <div class="divider"></div>
       <a-radio-group
         class="ZoneSelect__path"
         button-style="solid"
@@ -11,30 +26,14 @@
       >
         <a-radio-button
           v-for="
-            { pathId, pathName } in pathList"
+          { pathId, pathName } in pathList"
           :key="pathId"
           :value="pathId">
           {{ pathName }}
         </a-radio-button>
       </a-radio-group>
 
-      <slot name="default"></slot>
     </div>
-
-    <a-tabs
-      class="ZoneSelect__zone"
-      :key="pathId"
-      type="card"
-      v-for="({ pathId, zoneList }) in pathList"
-      v-show="pathId === options.pathId"
-      v-model="options.zoneId"
-    >
-      <a-tab-pane v-for="({ id, alias }) in zoneList" :key="id" :tab="alias"></a-tab-pane>
-      <a-button slot="tabBarExtraContent" style='margin-right: 30px;margin-bottom: 5px' @click="createNewZone">
-        <a-icon type="plus" style='color: gray'/>
-        新建楼层
-      </a-button>
-    </a-tabs>
 
   </div>
 </template>
@@ -72,9 +71,6 @@ export default {
     }
   },
   methods: {
-    createNewZone () {
-      this.$emit('new')
-    },
     changePathId (pathId) {
       const { pathList, options } = this
       const path = pathList.find((path) => pathId === path.pathId)
@@ -113,17 +109,56 @@ export default {
 
 <style lang="less">
 .ZoneSelect {
+  position: relative;
   &__header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding-right: 8px;
+    // padding-right: 8px;
   }
-
-  &__path {}
-
+  .pageMsg_box{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    height: 50px;
+    flex-direction: row-reverse;
+    padding: 0 23px;
+  }
+  &__path {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    .ant-radio-button-wrapper{
+      font-size: 17px;
+      color: #333 !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+  }
+  .divider{
+    width: 1px;
+    height: 100%;
+    background-color: #333;
+    background-clip: content-box;
+    padding: 10px 0;
+  }
   &__zone {
-    margin: 8px 0 -10px 0;
+    // margin: 8px 0 -10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    .ant-tabs-bar{
+      border: 0 !important;
+      margin: 0 !important;
+    }
+    .ant-tabs-tab{
+      border: 0 !important;
+      background-color: transparent !important;
+    }
+    .ant-tabs-nav-container .ant-tabs-nav-wrap .ant-tabs-tab-active{
+      color: #004FA5 !important;
+      background-color: transparent !important;
+    }
   }
 }
 </style>

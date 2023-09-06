@@ -161,7 +161,7 @@ export default {
       }
     },
     async requestNew () {
-      const result = xungeng.post('/path/saveOnePath', this.formState)
+      const result = await xungeng.post('/path/saveOnePath', this.formState)
       if (result.code === 200) {
         this.$notification.success({
           message: '系统提示',
@@ -177,7 +177,7 @@ export default {
       this.visible = false
     },
     async requestEdit () {
-      const result = xungeng.post('/path/editPath', this.formState)
+      const result = await xungeng.post('/path/editPath', this.formState)
       if (result.code === 200) {
         this.$notification.success({
           message: '系统提示',
