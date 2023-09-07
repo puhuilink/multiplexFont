@@ -102,6 +102,7 @@ export const SHIFT_SCHEMA_MAPPING = new Map(
     ['answerAlias', '检查值'],
     ['remarks', '备注'],
     ['hostBrand', '品牌'],
-    ['sn', 'SN号']
+    ['sn', 'SN号'],
+    ['imgs', '图片']
   ]
 )
