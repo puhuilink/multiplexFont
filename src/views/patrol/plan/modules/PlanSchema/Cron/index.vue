@@ -12,6 +12,9 @@
           <!-- / 每月 -->
           <a-radio value="dayOfMonth">每月</a-radio>
           <!-- <a-radio v-for="{ value, label } in typeList" :key="value" :value="value">{{ label }}</a-radio> -->
+
+          <!-- / 工作日 -->
+          <a-radio value="workDayOfMonth">工作日</a-radio>
         </a-radio-group>
       </a-form-model-item>
     </a-row>
@@ -34,6 +37,10 @@
           :value="value"
         >{{ label }}</a-checkbox>
       </a-checkbox-group>
+    </a-row>
+
+    <a-row class="Cron__paragraph" v-show="cron.isWorkDayOfMonth">
+      第<a-input-number :min="1" :max="30" v-model="cron.currentValue" style="width: 40px"></a-input-number>个工作日
     </a-row>
   </div>
 </template>
