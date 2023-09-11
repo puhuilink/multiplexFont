@@ -282,40 +282,43 @@ export default {
         loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
         loginParams.pwd = values.pwd
         this.loginParams = loginParams
-        axios.post('/otp/getStatus', {
-          appId: this.otpName,
-          userName: values.userId,
-          transNo: 'transNo1'
-        }, {
-          baseURL: process.env.VUE_APP_OTP_BASE_URL
-        }).then((res) => {
-          if (res.data.statusCode === 1201) {
-            this.$refs.reg.otpBind({
-              appId: this.otpName,
-              userName: values.userId,
-              transNo: 'transNo1'
+        if (JSON.parse(process.env.VUE_APP_OTP_SWITCH)) {
+          axios.post('/otp/getStatus', {
+            appId: this.otpName,
+            userName: values.userId,
+            transNo: 'transNo1'
+          }, {
+            baseURL: process.env.VUE_APP_OTP_BASE_URL
+          }).then((res) => {
+            if (res.data.statusCode === 1201) {
+              this.$refs.reg.otpBind({
+                appId: this.otpName,
+                userName: values.userId,
+                transNo: 'transNo1'
+              })
+            } else if (res.data.statusCode === 1200) {
+              this.$refs.factory.onShow({
+                appId: this.otpName,
+                userName: values.userId,
+                transNo: 'transNo1'
+              })
+              axios.post('/otp/msgOtp', {
+                appId: this.otpName,
+                userName: values.userId,
+                transNo: 'transNo1'
+              }, {
+                baseURL: process.env.VUE_APP_OTP_BASE_URL
+              })
+            }
+          })
+        } else {
+          Login(loginParams)
+            .then((res) => this.loginSuccess(res))
+            .catch(err => this.requestFailed(err))
+            .finally(() => {
+              state.loginBtn = false
             })
-          } else if (res.data.statusCode === 1200) {
-            this.$refs.factory.onShow({
-              appId: this.otpName,
-              userName: values.userId,
-              transNo: 'transNo1'
-            })
-            axios.post('/otp/msgOtp', {
-              appId: this.otpName,
-              userName: values.userId,
-              transNo: 'transNo1'
-            }, {
-              baseURL: process.env.VUE_APP_OTP_BASE_URL
-            })
-          }
-        })
-        // Login(loginParams)
-        //   .then((res) => this.loginSuccess(res))
-        //   .catch(err => this.requestFailed(err))
-        //   .finally(() => {
-        //     state.loginBtn = false
-        //   })
+        }
       })
     },
     // 获取验证码
