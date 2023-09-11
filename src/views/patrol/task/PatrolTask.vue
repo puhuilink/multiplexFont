@@ -107,7 +107,7 @@
       <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel" style="marginRight: 10px;" v-action:F010005002>
         <a-icon type="upload" />
         导出</a-button>
-      <a-button :loading="exportLoading" @click="exportExcelOnYear" v-action:F010005002>
+      <a-button v-show="false" :loading="exportLoading" @click="exportExcelOnYear" v-action:F010005002>
         <a-icon type="upload" />
         导出月/年计划</a-button>
     </div>
