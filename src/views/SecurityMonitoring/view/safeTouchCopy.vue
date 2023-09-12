@@ -163,13 +163,21 @@ export default {
       // console.log(instance());
       // 1.综合风险趋势
       // const comprehensive = await instance.get('/overviews/comprehensive-risk-trend')
-      const comprehensive = await instance.get('/ngsoc/depart/comprehensive-risk-trend')
+      /*  const comprehensive = await instance.get('/ngsoc/depart/comprehensive-risk-trend')
+        // 2.未处置完成的告警
+        const alarm = await instance.get('/ngsoc/depart/alarm-stat')
+        // 3.最近7天告警危害等级分布/
+        const Last7Alarm = await instance.get('/ngsoc/depart/severity')
+        // 4.最近7天威胁类型统计
+        const Last7Threat = await instance.get('/ngsoc/depart/category') */
 
+      const Promise1 = instance.get('/ngsoc/depart/comprehensive-risk-trend')
+      const Promise2 = instance.get('/ngsoc/depart/alarm-stat')
+      const Promise3 = instance.get('/ngsoc/depart/severity')
+      const Promise4 = instance.get('/ngsoc/depart/category')
+
+      const [comprehensive, alarm, Last7Alarm, Last7Threat] = await Promise.all([Promise1, Promise2, Promise3, Promise4])
       const comprehensiveData = comprehensive.data.data
-      // 2.未处置完成的告警
-      // const alarm = await instance.get('/overviews/alarm-stat')
-      const alarm = await instance.get('/ngsoc/depart/alarm-stat')
-
       // 到这给第一个图表数据
       const echartsData = comprehensiveData.map(item => {
         // console.log(item);
@@ -190,17 +198,15 @@ export default {
         alarm.data.data.iocAlarm,
         alarm.data.data.maliciousFileAlarm]
 
-      // 3.最近7天告警危害等级分布/
-      const Last7Alarm = await instance.get('/ngsoc/depart/severity')
       // console.log('告警危害等级分布', Last7Alarm)
       if (Last7Alarm.data.code === 200) {
         this.listData3 = Last7Alarm.data
       }
-      // 4.最近7天威胁类型统计
-      const Last7Threat = await instance.get('/ngsoc/depart/category')
+
       if (Last7Threat.data.code === 200) {
         this.listData4 = Last7Threat.data
       }
+
       this.drawPolicitalStatus()
       this.drawPolicitalStatus2()
       this.drawPolicitalStatus22()
@@ -1157,6 +1163,7 @@ export default {
       const ruleName = []
       const severityTime = []
       let resultArray
+      console.log(this.listData4)
       try {
         // console.log(this.listData4.data.data)
         if (this.listData4.data.data.length > 0) {
@@ -1208,6 +1215,7 @@ export default {
       } catch (error) {
 
       }
+      console.log(ruleName)
       if (ruleName.length <= 0) {
         // 没有数据，显示 "暂无数据"
         const myChart4 = echarts.init(this.$refs.eacherbox4)
