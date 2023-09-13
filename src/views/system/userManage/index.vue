@@ -188,7 +188,6 @@
 
 <script>
 import { Confirm } from '~~~/Mixins'
-import { Modal } from 'ant-design-vue'
 import assignModal from '@/views/system/userManage/components/assignModal'
 import { buildTree } from '@/utils/util'
 import schema from './components/schema'

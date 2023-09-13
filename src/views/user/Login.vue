@@ -142,14 +142,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapActions } from 'vuex'
 import { UserService } from '@/api'
 import identify from '@/components/identify/index'
 import axios from 'axios'
 import secondFactoryOTP from '@/components/otp/SecondFactorOTP'
 import RegOTP from '@/components/otp/RegOTP'
-import { ROLES } from '@/store/mutation-types'
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
