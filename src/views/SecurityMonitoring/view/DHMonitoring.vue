@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import { USER } from '@/store/mutation-types'
-import Vue from 'vue'
+import { axios } from '@/utils/request'
 
 export default {
   name: 'DHMonitoring',
@@ -17,21 +16,32 @@ export default {
       url: require('@/assets/images/厦门.png')
     }
   },
-  created () {
-    const { organizeId } = Vue.ls.get(USER)
-    switch (organizeId) {
-      case '77550822937853952':
-      case '77551146956226560':
-        this.url = require('@/assets/images/厦门.png')
-        break
-      case '77551230678728704':
-        this.url = require('@/assets/images/北京.png')
-        break
-      default:
-        this.$router.push({
-          path: '/403'
-        })
+  async created () {
+    const { data: { dataIds } } = await axios.get('/organize/list', {
+      params: {
+        isOpen: true
+      }
+    })
+    if (dataIds.some(el => ['77551146956226560', '77551230678728704', '77550822937853952'].includes(el))) {
+      this.url = require('@/assets/images/厦门.png')
+    } else {
+      this.$router.push({
+        path: '/403'
+      })
     }
+    // switch (organizeId) {
+    //   case '77550822937853952':
+    //   case '77551146956226560':
+    //     this.url = require('@/assets/images/厦门.png')
+    //     break
+    //   case '77551230678728704':
+    //     this.url = require('@/assets/images/北京.png')
+    //     break
+    //   default:
+    //     this.$router.push({
+    //       path: '/403'
+    //     })
+    // }
   }
 }
 </script>

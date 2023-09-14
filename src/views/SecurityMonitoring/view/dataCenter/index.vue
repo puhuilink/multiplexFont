@@ -94,9 +94,6 @@
 <script>
 import json from './api.json'
 import * as echarts from 'echarts'
-import Vue from 'vue'
-import { USER } from '@/store/mutation-types'
-// import Tabbar from '@/components/Tabbar.vue';
 import {
   title_option,
   status_option,
@@ -109,6 +106,7 @@ import {
   SqlTextMiddle,
   SqlTextXg
 } from './api.js'
+import { axios } from '@/utils/request'
 
 export default {
   //  components: {
@@ -122,14 +120,17 @@ export default {
 
     }
   },
-  created () {
-    const { organizeId } = Vue.ls.get(USER)
-    if (organizeId !== '77551146956226560' && organizeId !== '77551230678728704' && organizeId !== '77550822937853952') {
+  async created () {
+    const { data: { dataIds } } = await axios.get('/organize/list', {
+      params: {
+        isOpen: true
+      }
+    })
+    if (dataIds.some(el => ['77551146956226560', '77551230678728704', '77550822937853952'].includes(el))) {
       this.$router.push({
         path: '/403'
       })
     }
-    console.log('organizeId', organizeId)
     const { overdiv, total, details } = json
     this.overdiv = overdiv
     this.total = total
