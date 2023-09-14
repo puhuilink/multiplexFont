@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-tabs :default-active-key="disabled?'2':'1'">
-      <a-tab-pane key="1" tab="集团">
+      <a-tab-pane key="1" tab="集团" v-if="!disabled">
         <safeSoruce></safeSoruce>
       </a-tab-pane>
       <a-tab-pane key="2" tab="二级单位" force-render>
@@ -42,8 +42,9 @@ export default {
     const existsInOriginalArray = organizeIdList.some(id => dataIds.includes(id))
 
     if (existsInOriginalArray) {
-      console.log('organizeIdList中的至少一个元素存在于originalArray中')
+      console.log('显示集团')
     } else {
+      console.log('不显示集团')
       this.disabled = true
     }
   }
