@@ -4,7 +4,7 @@
     <div class="contentBox">
       <div class="img-one">
         <!-- <div class="number1 numAll">{{content.topData.risk?content.topData.risk:'-'}}</div> -->
-        <div class="number1 numAll">{{ 36 }}</div>
+        <div class="number1 numAll">{{ objList.GlobalData.risk ? objList.GlobalData.risk : 10 }}</div>
         <div class="text1 textAll">{{ '中危' }}</div>
       </div>
       <div class="chenterBoxRight">
@@ -12,14 +12,15 @@
           <div class="text">
             <div class="left-text">业务系统数</div>
             <!-- <formatterNumber class="right-text" :number="content.topData.systemNum"/> -->
-            <div class="right-text">486</div>
+            <div class="right-text">{{ objList.GlobalData.systemNum ? objList.GlobalData.systemNum : 10 }}</div>
           </div>
           <div class="yelloBotton"></div>
         </div>
         <div class="right">
           <div class="text">
             <div class="left-text">服务器数</div>
-            <div class="right-text">1013</div>
+            <div class="right-text">{{ objList.GlobalData.serverNum ? objList.GlobalData.serverNum : 1000 }}
+            </div>
             <!-- <formatterNumber class="right-text" :number="content.topData.serverNum"/> -->
           </div>
           <div class="yelloBotton"></div>
@@ -28,7 +29,7 @@
           <div class="text">
             <div class="left-text">漏洞数</div>
             <!-- <formatterNumber class="right-text" :number="content.topData.alarmNum"/> -->
-            <div class="right-text">0</div>
+            <div class="right-text">{{ objList.GlobalData.alarmNum ? objList.GlobalData.alarmNum : 10 }}</div>
           </div>
           <div class="yelloBotton"></div>
         </div>
@@ -37,7 +38,7 @@
     <div class="contentBox">
       <div class="img-one">
         <div class="number2 numAll">
-          {{ '48%' }}
+          {{ objList.AlarmData.percentage ? objList.AlarmData.percentage : '99%' }}
           <!-- {{content.centerData.percentage?content.centerData.percentage:'-'}} -->
         </div>
         <div class="text2 textAll">{{ '处置率' }}</div>
@@ -48,7 +49,11 @@
             <div class="left-text">告警总数</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.totalNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'182000'" :colors="color_black" :color_black04="color_black04"/>
+              <formatterNumber
+                class="number"
+                :number="objList.AlarmData.totalNum?objList.AlarmData.totalNum.toString():'182000'"
+                :colors="color_black"
+                :color_black04="color_black04" />
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -59,7 +64,11 @@
             <!-- <formatterNumber class="right-text" :number="content.centerData.disposedNum"/> -->
             <!-- <div class="right-text">8.8万</div> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'88000'" :colors="color_black" :color_black04="color_black04"/>
+              <formatterNumber
+                class="number"
+                :number="objList.AlarmData.disposedNum?objList.AlarmData.disposedNum.toString():'88000'"
+                :colors="color_black"
+                :color_black04="color_black04" />
             </div>
           </div>
           <div class="bullBotton"></div>
@@ -69,16 +78,20 @@
             <div class="left-text">未处置</div>
             <!-- <formatterNumber class="right-text" :number="content.centerData.notDisposedNum"/> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'9500'" :colors="color_black" :color_black04="color_black04"/>
+              <formatterNumber
+                class="number"
+                :number="objList.AlarmData.notDisposedNum?objList.AlarmData.notDisposedNum.toString():'9500'"
+                :colors="color_black"
+                :color_black04="color_black04" />
             </div>
           </div>
-          <div class="bullBotton" ></div>
+          <div class="bullBotton"></div>
         </div>
       </div>
     </div>
     <div class="contentBox">
       <div class="img-one">
-        <div class="number3 numAll">{{ '1%' }}</div>
+        <div class="number3 numAll">{{ objList.VictimData.fallpercent ? objList.VictimData.fallpercent : '1%' }}</div>
         <div class="text3 textAll">{{ '失败率' }}</div>
       </div>
       <div class="chenterBoxRight">
@@ -87,7 +100,12 @@
             <div class="left-text">疑似失陷</div>
             <!-- <formatterNumber class="right-text" :number="content.bottomData.victimIpCounts" :unit="'个'" /> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'15'" :unit="'个'" :colors="color_black" :color_black04="color_black04"/>
+              <formatterNumber
+                class="number"
+                :number="objList.VictimData.victimIpCounts?objList.VictimData.victimIpCounts:'15'"
+                :unit="'个'"
+                :colors="color_black"
+                :color_black04="color_black04" />
             </div>
           </div>
           <div class="redBotton"></div>
@@ -100,7 +118,12 @@
             </div>
             <!-- <formatterNumber class="right-text" :number="content.bottomData.dayPercent" :unit="'%'" /> -->
             <div class="right-text">
-              <formatterNumber class="number" :number="'1'" :unit="'%'" :colors="color_black" :color_black04="color_black04"/>
+              <formatterNumber
+                class="number"
+                :number="objList.VictimData.dayPercentTrend?objList.VictimData.dayPercentTrend:'1'"
+                :unit="'%'"
+                :colors="color_black"
+                :color_black04="color_black04" />
             </div>
           </div>
           <div class="redBotton"></div>
@@ -114,6 +137,7 @@
 import bk_circle from './img/bk_circle.png'
 import formatterNumber from './formatterNumber.vue'
 import bk_up from './img/icon_up.png'
+
 export default {
   name: 'OverAll',
   components: { formatterNumber },
@@ -122,9 +146,9 @@ export default {
       type: String,
       default: ''
     },
-    content: {
-      type: Array,
-      default: () => {}
+    objList: {
+      type: null,
+      default: () => ({})
     }
   },
 
@@ -180,15 +204,18 @@ export default {
   color: #5bbbff;
   line-height: 11px;
 }
+
 .chenterBoxRight {
   > :nth-child(1) {
     margin-top: 33.5px;
   }
+
   > :nth-child(2),
   > :nth-child(3) {
     margin-top: 26.5px;
   }
 }
+
 .right {
   width: 212px;
   height: 22.5px;
@@ -207,7 +234,7 @@ export default {
       font-size: 20px;
       font-family: PingFangSC-Semibold, PingFang SC;
       font-weight: 600;
-      color: rgba(0,0,0,0.5);
+      color: rgba(0, 0, 0, 0.5);
       line-height: 20px;
     }
 
@@ -284,6 +311,7 @@ export default {
   margin-left: 20.5px;
   margin-bottom: 13px;
 }
+
 .yelloBotton {
   margin: 0 16px 5px 16px;
   width: 180px;

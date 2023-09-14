@@ -4,11 +4,11 @@
     </div>
     <div v-else-if="+number >= 10000">
       <div @click="test" class="textNumber" :style="{ color: colors }">{{ (+number / 10000).toFixed(1) }}
-        <div class="unit" :style="{ color: color_black04 }">万</div>
+        <div class="unit" >万</div>
       </div>
     </div>
     <div class="style-fix" v-else @click="test" :style="{ color: colors }">{{ number }}</div>
-    <div class="unit" v-if="unit !== ''" :style="{ color: color_black04 }">
+    <div class="unit" v-if="unit !== ''" >
       {{ unit }}
     </div>
   </div>
@@ -19,24 +19,20 @@ export default {
   name: 'FormatterNumber',
   props: {
     number: {
-      type: String,
+      type: null,
       default: undefined
     },
     // 单位，可选
     unit: {
-      type: String,
+      type: null,
       default: ''
     },
     colors: {
-      type: String,
-      default: ''
-    },
-    colorBlack04: {
-      type: String,
+      type: null,
       default: ''
     },
     colorWhite: {
-      type: String,
+      type: null,
       default: ''
     }
   },
