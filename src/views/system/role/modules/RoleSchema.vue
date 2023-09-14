@@ -76,10 +76,10 @@
       <div v-if="current === 2">
         <a-form-model ref="dataForm" :rules="dataRules" :model="dataForm" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item label="权限范围" prop="dataType">
-            <a-select v-model="dataForm.dataType" :default-value="'ALL'" @change="dataTypeChange">
-              <a-select-option :value="'ALL'">
-                全部数据权限
-              </a-select-option>
+            <a-select v-model="dataForm.dataType" :default-value="'CUSTOM'" @change="dataTypeChange">
+              <!--              <a-select-option :value="'ALL'">-->
+              <!--                全部数据权限-->
+              <!--              </a-select-option>-->
               <a-select-option :value="'CUSTOM'">
                 指定部门数据权限
               </a-select-option>

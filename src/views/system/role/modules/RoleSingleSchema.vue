@@ -56,10 +56,10 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item label="权限范围" prop="data_type">
-        <a-select v-model="record.dataType" default-value="ALL" @change="dataTypeChange">
-          <a-select-option :value="'ALL'">
-            全部数据权限
-          </a-select-option>
+        <a-select v-model="record.dataType" default-value="CUSTOM" @change="dataTypeChange">
+          <!--          <a-select-option :value="'ALL'">-->
+          <!--            全部数据权限-->
+          <!--          </a-select-option>-->
           <a-select-option :value="'CUSTOM'">
             指定部门数据权限
           </a-select-option>

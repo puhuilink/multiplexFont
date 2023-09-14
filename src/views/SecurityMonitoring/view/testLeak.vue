@@ -7,12 +7,8 @@
 
 <script>
 import {
-  card, level_option, catogray_option, total_option, lines_option_month, getPatchStat,
-  getServerNum,
-  getWeekRender,
-  getMonthRender
+  card, level_option, catogray_option, total_option, lines_option_month
 } from '../api/api'
-import * as echarts from 'echarts'
 
 export default {
   data () {
