@@ -129,7 +129,6 @@
 
 import Schema from '~~~/Mixins/Modal/Schema'
 import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
-import _ from 'lodash'
 import { axios } from '@/utils/request'
 
 export default {
