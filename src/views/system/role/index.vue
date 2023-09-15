@@ -108,7 +108,6 @@
               </a-dropdown>
             </div>
             <div v-else>
-
               <a v-action:F001002005 @click="onAllocateUserGroup(record, key)">
                 分配用户
               </a>
