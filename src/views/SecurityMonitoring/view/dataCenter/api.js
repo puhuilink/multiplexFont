@@ -22,7 +22,7 @@ export const sql = async (s) => {
   const {
     data
   } = await request({
-    url: '/h5/api/Hasura/query',
+    url: '/api/Hasura/query',
     method: 'POST',
     data: formData,
     headers: {
