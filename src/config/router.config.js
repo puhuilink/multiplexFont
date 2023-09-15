@@ -375,12 +375,6 @@ export const asyncRouterMap = [
               meta: { title: '配置巡更路径', keepAlive: true, permission: ['F010001001003'] }
             },
             {
-              path: '/patrol/config/metric',
-              name: 'PatrolConfigMetric',
-              component: () => import('@/views/patrol/config/MetricTable/MetricTable'),
-              meta: { title: '检查项管理', keepAlive: true, permission: ['F010001002'] }
-            },
-            {
               path: '/patrol/config/answer',
               name: 'PatrolConfigAnswer',
               component: () => import('@/views/patrol/config/AnswerTable/index'),
@@ -389,6 +383,7 @@ export const asyncRouterMap = [
             {
               path: '/patrol/config/threshold',
               name: 'PatrolConfigThreshold',
+              hidden: true,
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
               meta: { title: '阈值管理', keepAlive: true, permission: ['F010001004'] }
             }]
