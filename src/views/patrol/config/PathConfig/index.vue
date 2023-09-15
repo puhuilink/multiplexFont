@@ -42,9 +42,9 @@
         <a-divider type="vertical" />
         <a @click="onUpdateMenu(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置巡更路径</a>
         <a-divider type="vertical" />
-        <a @click="onUpdateThreshold(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置阈值</a>
+        <a @click="onUpdateThreshold(record)"><a-icon type="control" v-action:F010001001004 style="margin-right: 3px;"/>配置阈值</a>
         <a-divider type="vertical" />
-        <a @click="deleteRole(record)" v-action:F010001001004><a-icon type="delete" />删除</a>
+        <a @click="deleteRole(record)" v-action:F010001001005><a-icon type="delete" />删除</a>
       </template>
     </a-table>
 

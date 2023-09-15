@@ -20,8 +20,7 @@ export default {
     }
   },
   mounted () {
-    console.log('接受到', this.$route.query.url)
-    this.url = `http://10.201.229.62/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
+    this.url = `${process.env.VUE_APP_QUOTE_URL}/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
   }
 }
 </script>
