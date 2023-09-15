@@ -97,7 +97,6 @@ import * as echarts from 'echarts'
 import {
   title_option,
   status_option,
-  sql,
   SqlTextService,
   SqlTextJhj,
   SqlTextFireWare,
@@ -106,7 +105,7 @@ import {
   SqlTextMiddle,
   SqlTextXg
 } from './api.js'
-import { axios } from '@/utils/request'
+import { axios, sql } from '@/utils/request'
 
 export default {
   //  components: {
@@ -142,13 +141,13 @@ export default {
   },
   methods: {
     getData () {
-      /* this.getService();
-      this.getJhj();
-      this.getFireWare();
-      this.getLyq();
-      this.getDataBase();
-      this.getMiddleWare();
-      this.getXg(); */
+      this.getService()
+      this.getJhj()
+      this.getFireWare()
+      this.getLyq()
+      this.getDataBase()
+      this.getMiddleWare()
+      this.getXg()
     },
     // 服务器数据
     async getService () {
@@ -341,38 +340,47 @@ export default {
     background: url('./img/icon_cabinet.png') no-repeat center;
     background-size: 60px;
   }
+
   .img2 {
     background: url('./img/icon_cabinet.png') no-repeat center;
     background-size: 60px;
   }
+
   .img3 {
     background: url('./img/icon_cabinet.png') no-repeat center;
     background-size: 60px;
   }
+
   .img4 {
     background: url('./img/icon_cabinet_fat.png') no-repeat center;
     background-size: 60px;
   }
+
   .img5 {
     background: url('./img/icon_cabinet_xp.png') no-repeat center;
     background-size: 60px;
   }
+
   .img6 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
     background-size: 60px;
   }
+
   .img7 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
     background-size: 60px;
   }
+
   .img8 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
     background-size: 60px;
   }
+
   .img9 {
     background: url('./img/icon_cabinet_nc.png') no-repeat center;
     background-size: 60px;
   }
+
   .wrapper {
     border-image: linear-gradient(180deg, rgba(131, 196, 236, 1), rgba(76, 146, 212, 1)) 1 1;
     box-sizing: border-box;
@@ -442,14 +450,16 @@ export default {
               display: flex;
               align-items: center;
               margin-bottom: 16px;
-              img{
+
+              img {
                 width: 100%;
                 height: 100%;
               }
             }
+
             :nth-child(7),
             :nth-child(8),
-            :nth-child(9){
+            :nth-child(9) {
               margin-bottom: 0px;
             }
 
@@ -492,16 +502,18 @@ export default {
                 font-weight: 400;
                 color: #9ac0f4;
                 line-height: 25px;
-                text-align:unset;
+                text-align: unset;
               }
             }
           }
-           .overdiv_mini >:nth-child(1) .detail_bottom,
-          .overdiv_mini >:nth-child(4) .detail_bottom,
-            .overdiv_mini >:nth-child(7) .detail_bottom {
-              width: 85px;
-                  justify-content: space-between;
-            }
+
+          .overdiv_mini > :nth-child(1) .detail_bottom,
+          .overdiv_mini > :nth-child(4) .detail_bottom,
+          .overdiv_mini > :nth-child(7) .detail_bottom {
+            width: 85px;
+            justify-content: space-between;
+          }
+
           .overdiv_icon {
             width: 29.32%;
             height: 100%;
@@ -539,6 +551,7 @@ export default {
                   line-height: 32px;
                   // text-shadow: 0px 0px 5px rgba(0, 88, 255, 0.66);
                 }
+
                 .total_count {
                   width: 100%;
                   height: 40px;
@@ -610,9 +623,9 @@ export default {
           padding: 41.5px 25px 43px 25px !important;
           //   padding-top: 41px !important;
           //   padding-left: 25px !important;
-            background: #edeff2;
+          background: #edeff2;
           justify-content: space-around;
-          border-top:1px solid #dae1e9 ;
+          border-top: 1px solid #dae1e9;
         }
 
         .content_item_article {
@@ -631,12 +644,15 @@ export default {
             height: 150px;
             background: url('./img/tjBK_01.png') no-repeat bottom;
             background-size: 240px;
+
             &:nth-child(2n) {
               margin-right: 0;
             }
+
             &:nth-of-type(-n + 4) {
               margin-bottom: 55px;
             }
+
             .count_wrapper {
               display: flex;
               width: 100%;
@@ -652,7 +668,7 @@ export default {
                 font-size: 16px;
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
-                color:rgba(0,0,0,0.5);
+                color: rgba(0, 0, 0, 0.5);
                 line-height: 28px;
               }
 
@@ -681,7 +697,7 @@ export default {
                   font-size: 20px;
                   font-family: PingFangSC-Semibold, PingFang SC;
                   font-weight: 600;
-                  color: rgba(0,0,0,0.5);
+                  color: rgba(0, 0, 0, 0.5);
                   line-height: 28px;
                   letter-spacing: 2px;
                   margin: 0 10px;
