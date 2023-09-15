@@ -117,7 +117,6 @@ export default {
       overdiv: [],
       total: [],
       details: []
-
     }
   },
   async created () {
@@ -126,7 +125,7 @@ export default {
         isOpen: true
       }
     })
-    if (dataIds.some(el => ['77551146956226560', '77551230678728704', '77550822937853952'].includes(el))) {
+    if (!dataIds.some(el => ['77551146956226560', '77551230678728704', '77550822937853952'].includes(el))) {
       this.$router.push({
         path: '/403'
       })
