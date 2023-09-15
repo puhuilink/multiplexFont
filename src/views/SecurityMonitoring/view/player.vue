@@ -11,7 +11,7 @@ export default {
   name: 'Player',
   data () {
     return {
-      url: 'http://10.201.229.62/static/h5player/webplayer.html?cameraUrl=ws://10.201.53.20:559/openUrl/RbHmFck'
+      url: process.env.VUE_APP_QUOTE_URL + '/static/h5player/webplayer.html?cameraUrl=ws://10.201.53.20:559/openUrl/RbHmFck'
     }
   },
   methods: {
