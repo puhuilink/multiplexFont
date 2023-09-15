@@ -42,6 +42,8 @@
         <a-divider type="vertical" />
         <a @click="onUpdateMenu(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置巡更路径</a>
         <a-divider type="vertical" />
+        <a @click="onUpdateThreshold(record)"><a-icon type="control" v-action:F010001001003 style="margin-right: 3px;"/>配置阈值</a>
+        <a-divider type="vertical" />
         <a @click="deleteRole(record)" v-action:F010001001004><a-icon type="delete" />删除</a>
       </template>
     </a-table>
@@ -171,7 +173,7 @@ export default {
       const { list, total } = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
       if (list) {
         this.defaultData = list
-        this.paginationOpt.total = total
+        this.paginationOpt.total = Number.parseInt(total.toString())
       } else {
         this.defaultData = []
       }
@@ -184,7 +186,7 @@ export default {
       this.dataList = data.list
     },
     /**
-     * 编辑菜单权限
+     * 跳转到配置路径界面
      * @event
      */
     async onUpdateMenu (record) {
@@ -194,6 +196,20 @@ export default {
       } = res
       await this.$router.push({
         path: '/patrol/config/pathConfig',
+        query: { pathId: record.id, zoneId: zones[0].zoneId }
+      })
+    },
+    /**
+     * 跳转到配置阈值界面
+     * @event
+     */
+    async onUpdateThreshold (record) {
+      const res = await PathService.getPathList(record.id)
+      const {
+        zones
+      } = res
+      await this.$router.push({
+        path: '/patrol/config/threshold',
         query: { pathId: record.id, zoneId: zones[0].zoneId }
       })
     },

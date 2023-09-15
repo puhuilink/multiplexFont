@@ -71,7 +71,7 @@ import { sql, xungeng } from '@/utils/request'
 import { dealQuery } from '@/utils/util'
 
 export default {
-  name: 'ThresholdSchema',
+  name: 'BatchThresholdSchema',
   components: {},
   props: {},
   data () {
@@ -83,7 +83,6 @@ export default {
       visible: false,
       parentData: {},
       editForm: {
-        id: '',
         condition: '',
         lowerThreshold: '',
         upperThreshold: '',
@@ -138,10 +137,25 @@ export default {
     }
   },
   methods: {
+    async batchEditNull (record) {
+      const { pathId, answerId, metricAlias } = record
+      const result = await xungeng.post('/threshold/batchEdit', { pathId, answerId, metricAlias })
+      if (result.code === 200) {
+        this.$notification.success({
+          message: '系统提示',
+          description: '阈值编辑成功'
+        })
+        this.closeModal()
+        this.$emit('refresh')
+      } else {
+        this.$notification.error({
+          message: '系统提示',
+          description: '操作失败：' + result.msg.toString()
+        })
+      }
+    },
     openModal (data) {
       this.parentData = data
-      const { id, condition, lowerThreshold, upperThreshold, severity } = data
-      Object.assign(this.editForm, { id, condition, lowerThreshold, upperThreshold, severity })
       this.visible = true
       this.handleOk = this.update
     },
@@ -150,7 +164,9 @@ export default {
         if (!valid) {
           return
         }
-        const result = await xungeng.post('/threshold/edit', this.editForm)
+        const { pathId, answerId, metricAlias } = this.parentData
+        Object.assign(this.editForm, { pathId, answerId, metricAlias })
+        const result = await xungeng.post('/threshold/batchEdit', this.editForm)
         if (result.code === 200) {
           this.$notification.success({
             message: '系统提示',

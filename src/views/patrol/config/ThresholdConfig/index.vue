@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <a-form class="ant-advanced-search-form" :form="form">
+      <a-form-model class="ant-advanced-search-form" :form="form">
         <div class="fold">
           <a-row :gutter="[8,8]">
             <a-col :style="{ textAlign: 'left' }" class="search_box">
@@ -17,53 +17,54 @@
               :md="6"
               :sm="24"
             >
-              <a-form-item >
-                监控对象：
+              <a-form-model-item
+                label="监控设备"
+                prop="hostAlias"
+              >
                 <a-input
                   :style="{width:'63%'}"
-                  v-decorator="[
-                    `host_alias` ]"
+                  v-model="form.hostAlias"
                   placeholder="请输入关键字"
                 />
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col
               :md="6"
               :sm="24"
             >
-              <a-form-item >
-                监控实体：
+              <a-form-model-item
+                label="监控实体"
+                prop="endpointAlias"
+              >
                 <a-input
                   :style="{width:'60%'}"
-                  v-decorator="[
-                    `endpoint_alias` ]"
+                  v-model="form.endpointAlias"
                   placeholder="请输入关键字"
                 />
-              </a-form-item>
+              </a-form-model-item>
             </a-col><a-col
               :md="6"
               :sm="24"
             >
-              <a-form-item >
-                检查项：
+              <a-form-model-item
+                label="检查项"
+                prop="metricAlias">
                 <a-input
                   :style="{width:'60%'}"
-                  v-decorator="[
-                    `metric_alias`
-                  ]"
+                  v-model="form.metricAlias"
                   placeholder="请输入关键字"
                 />
-              </a-form-item>
+              </a-form-model-item>
             </a-col><a-col
               :md="6"
               :sm="24"
             >
-              <a-form-item >
-                检查值类型：
+              <a-form-model-item
+                label="检查值类型"
+                prop="metricAlias">
                 <a-select
                   :style="{width:'60%'}"
-                  v-decorator="[
-                    `answer_type` ]"
+                  v-model="form.answerType"
                   placeholder="请选择类型"
                 >
                   <a-select-option
@@ -74,17 +75,18 @@
                     选择
                   </a-select-option>
                 </a-select>
-              </a-form-item>
+              </a-form-model-item>
             </a-col><a-col
               :md="6"
               :sm="24"
             >
-              <a-form-item >
-                告警等级：
+              <a-form-model-item
+                label="告警等级"
+                prop="severity">
+
                 <a-select
                   :style="{width:'60%'}"
-                  v-decorator="[
-                    `level` ]"
+                  v-model="form.severity"
                   placeholder="请选择告警等级"
                 >
                   <a-select-option value="1">L1</a-select-option>
@@ -92,27 +94,23 @@
                   <a-select-option value="3">L3</a-select-option>
                   <a-select-option value="4">L4</a-select-option>
                 </a-select>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
           </a-row>
         </div>
-      </a-form>
+      </a-form-model>
       <div class="operation_box">
         <a-button
           type="primary"
-          @click="()=>{
-            this.visible=true
-            this.isNew=true
-            this.editForm = null
-          }"><a-icon type="plus-circle"/>新增</a-button>
+          @click="toBitchUpdate"><a-icon type="unordered-list"/>批量编辑</a-button>
       </div>
       <ThresholdSchema
-        v-if="visible"
-        :visible="visible"
-        :data-form="editForm"
-        :is-new="isNew"
-        @cancel="()=>{this.visible=false}"
-        @ok="updateThreshold"
+        ref="editSchema"
+        @refresh="fetchThreshold"
+      />
+      <BatchThresholdTable
+        ref="batchTable"
+        @refresh="fetchThreshold"
       />
     </div>
     <a-table
@@ -134,24 +132,24 @@
       <template slot="host" slot-scope="value,record">{{ value }} <a-tag v-if="record.update_time =='NULL'" color="red">new</a-tag> </template>
       <template slot="endpoint" slot-scope="value,record">{{ record.visible==='t'?value:'虚拟实体' }}</template>
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
-      <template slot="severity" slot-scope="value">{{ 'L'+value }}</template>
+      <template slot="severity" slot-scope="value">{{ value?'L'+value:'无' }}</template>
       <template slot="action" slot-scope="value,record">
         <a @click="toUpdate(record)"><a-icon type="form" />编辑</a>
-        <a-divider type="vertical"/>
-        <a @click="toRemove(record.id)"><a-icon type="delete" />删除</a>
       </template>
     </a-table>
   </div>
 </template>
 
 <script>
-import { dealQuery } from '@/utils/util'
-import { sql, xungeng } from '@/utils/request'
+import { xungeng } from '@/utils/request'
 import ThresholdSchema from '@/views/patrol/config/ThresholdConfig/modules/ThresholdSchema'
+import _ from 'lodash'
+import BatchThresholdTable from '@/views/patrol/config/ThresholdConfig/modules/BatchThresholdTable.vue'
 
 export default {
   name: 'PatrolThreshold',
   components: {
+    BatchThresholdTable,
     ThresholdSchema
   },
   props: {},
@@ -168,22 +166,22 @@ export default {
       columns: [
         {
           title: '监控对象',
-          dataIndex: 'host_alias',
+          dataIndex: 'hostAlias',
           scopedSlots: { customRender: 'host' }
         },
         {
           title: '监控实体',
-          dataIndex: 'endpoint_alias',
+          dataIndex: 'endpointAlias',
           scopedSlots: { customRender: 'endpoint' }
         },
         {
           title: '检查项',
-          dataIndex: 'metric_alias',
+          dataIndex: 'metricAlias',
           scopedSlots: { customRender: 'metric' }
         },
         {
           title: '检查值',
-          dataIndex: 'answer_alias',
+          dataIndex: 'answerAlias',
           scopedSlots: { customRender: 'answer' }
         },
         {
@@ -203,11 +201,21 @@ export default {
       data: [],
       loading: false,
       expand: false,
-      form: this.$form.createForm(this, { name: 'advanced_search' }),
+      form: {
+        groupId: '',
+        pathId: '',
+        answerType: '',
+        severity: '',
+        hostAlias: '',
+        endpointAlias: '',
+        metricAlias: ''
+      },
       editForm: {},
       visible: false,
       total: 0,
-      isNew: false
+      isNew: false,
+      pathId: '',
+      zoneId: ''
     }
   },
   computed: {
@@ -217,11 +225,17 @@ export default {
   },
   watch: {},
   created () {
+    this.dealRouter()
     this.fetchThreshold({})
   },
   mounted () {
   },
   methods: {
+    dealRouter () {
+      const query = this.$route.query
+      this.pathId = query.pathId
+      this.zoneId = query.zoneId
+    },
     isBlank (element) {
       return element !== null && element !== undefined && element !== ''
     },
@@ -239,47 +253,23 @@ export default {
         onCancel () {}
       })
     },
-    handleSearch (pageNo = 1) {
-      this.form.validateFields((err, value) => {
-        if (!err) {
-          let where = ''
-          if (this.isBlank(value.host_alias)) {
-            where += ' and host_alias like \'%' + value.host_alias + '%\''
-          }
-          if (this.isBlank(value.endpoint_alias)) {
-            where += ' and endpoint_alias like \'%' + value.endpoint_alias + '%\''
-          }
-          if (this.isBlank(value.metric_alias)) {
-            where += ' and metric_alias like \'%' + value.metric_alias + '%\''
-          }
-          if (this.isBlank(value.answer_type)) {
-            where += ' and answer_type like \'%' + value.answer_type + '%\''
-          }
-          if (this.isBlank(value.level)) {
-            where += ' and severity =' + value.level
-          }
-          if (where !== '') {
-            this.fetchThreshold({ condition_sql: where, pageNo: pageNo })
-          } else {
-            this.fetchThreshold({ pageNo: pageNo })
-          }
-        }
-      })
+    handleSearch () {
+      this.fetchThreshold()
     },
-    async fetchThreshold ({ condition_sql = null, pageNo = 1 }) {
-      let base_sql = `select * from v_patrol_threshold where 1=1 `
-      let base = `select count(1) as total from v_patrol_threshold where 1=1 `
-      if (condition_sql !== null) {
-        base_sql += condition_sql
-        base += condition_sql
-      }
-      base_sql += ' order by create_time desc,update_time limit 10 offset ' + (pageNo - 1) * 10
+    async fetchThreshold () {
       this.loading = true
       this.data = []
-      const result = await sql(base_sql)
-      const results = await sql(base)
-      this.data = dealQuery(result)
-      this.total = parseInt(dealQuery(results)[0]['total'])
+      const obj = _.cloneDeep(this.form)
+      const { pathId, zoneId } = this
+      Object.assign(obj, { pathId, zoneId }, { pageNum: this.table.pageNumber, pageSize: 10 })
+      Object.keys(obj).forEach(key => {
+        if (!this.isBlank(obj[key])) {
+          delete obj[key]
+        }
+      })
+      const result = await xungeng.get('/threshold/list', { params: obj })
+      this.data = result.data.list
+      this.total = result.data.total
       this.loading = false
     },
     handleReset () {
@@ -292,29 +282,32 @@ export default {
     translateThreshold (record) {
       switch (record.condition) {
         case 'eq':
-          if (record.answer_type === 'fill') {
-            return '值为"' + record.lower_threshold + '"则异常'
+          if (record.answerType === 'fill') {
+            return '值为"' + record.lowerThreshold + '"则异常'
           } else {
-            return '值为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+            return '值为"' + JSON.parse(record.answerFormat)[record.lowerThreshold].alias + '"则异常'
           }
         case 'ne':
-          if (record.answer_type === 'fill') {
-            return '值不为"' + record.lower_threshold + '"则异常'
+          if (record.answerType === 'fill') {
+            return '值不为"' + record.lowerThreshold + '"则异常'
           } else {
-            return '值不为"' + JSON.parse(record.format)[record.lower_threshold].alias + '"则异常'
+            return '值不为"' + JSON.parse(record.answerFormat)[record.lowerThreshold].alias + '"则异常'
           }
         case 'out':
-          return '值超出"' + record.lower_threshold + '~' + record.upper_threshold + '"范围则异常'
+          return '值超出"' + record.lowerThreshold + '~' + record.upperThreshold + '"范围则异常'
         case 'gt':
-          return '值大于"' + record.upper_threshold + '"则异常'
+          return '值大于"' + record.upperThreshold + '"则异常'
         case 'lt':
-          return '值小于"' + record.lower_threshold + '"则异常'
+          return '值小于"' + record.lowerThreshold + '"则异常'
+        default:
+          return '无阈值'
       }
     },
     toUpdate (record) {
-      this.visible = true
-      this.isNew = false
-      this.editForm = { ...record }
+      this.$refs.editSchema.openModal(record)
+    },
+    toBitchUpdate () {
+      this.$refs.batchTable.openModal(this.pathId)
     },
     async updateThreshold (data) {
       let result

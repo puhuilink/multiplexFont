@@ -318,7 +318,7 @@ export default {
           title: '默认告警等级',
           dataIndex: 'default_severity',
           align: 'center',
-          customRender: (value) => 'L' + value
+          customRender: (value) => value !== 'NULL' ? 'L' + value : '无'
         },
         {
           title: '操作',
