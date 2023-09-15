@@ -104,9 +104,12 @@
       <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;" v-action:F010005001>
         <a-icon type="search" />
         查看</a-button>
-      <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel" v-action:F010005002>
+      <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel" style="marginRight: 10px;" v-action:F010005002>
         <a-icon type="upload" />
         导出</a-button>
+      <a-button v-show="false" :loading="exportLoading" @click="exportExcelOnYear" v-action:F010005002>
+        <a-icon type="upload" />
+        导出月/年计划</a-button>
     </div>
 
     <a-table
@@ -124,6 +127,7 @@
 
     <TaskDetailSchema ref="schema" />
     <exportSchema ref="exportSchema"></exportSchema>
+    <exportOnYearSchema ref="exportOnYearSchema" :plan="plans"></exportOnYearSchema>
   </div>
 </template>
 
@@ -131,6 +135,7 @@
 import TaskDetailSchema from './modules/TaskDetailSchema'
 import { List } from '@/components/Mixins'
 import exportSchema from './modules/exportSchema'
+import exportOnYearSchema from './modules/exportOnYearSchema'
 import {
   ENABLE_LIST, STATUS_LIST,
   STATUS_MAPPING, ENABLE_LIST_MAPPING
@@ -138,18 +143,21 @@ import {
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 import _ from 'lodash'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'PatrolTask',
   mixins: [List],
   components: {
     TaskDetailSchema,
-    exportSchema
+    exportSchema,
+    exportOnYearSchema
   },
   data () {
     return {
       defaultData: [],
       groups: [],
+      plans: [],
       ENABLE_LIST,
       ENABLE_LIST_MAPPING,
       STATUS_LIST,
@@ -270,7 +278,6 @@ export default {
         this.queryParams.actualTimeStart = moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
         this.queryParams.actualTimeEnd = moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
       }
-      console.log('query', this.queryParams)
       this.loadData(this.reloadParams({ ..._.omit(this.queryParams, ['timeList']), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize }))
       this.selectedRowKeys = []
     },
@@ -289,8 +296,16 @@ export default {
       this.groups = list
       this.queryParams.groupId = list[0].id
     },
+    async getPlan () {
+      const { data: { list } } = await xungeng.get('/plan/list', {
+        params: {
+          pageSize: 9999,
+          pageNum: 1
+        }
+      })
+      this.plans = list.map(el => ({ label: el.alias, value: el.id }))
+    },
     async loadData (parameter) {
-      console.log('par', parameter)
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
       this.defaultData = list
       this.paginationOpt.total = total
@@ -354,10 +369,17 @@ export default {
       //   this.exportLoading = false
       // }
       this.$refs.exportSchema.onShow(this.selectedRowKeys, this.selectedRows)
+    },
+    /**
+     * 导出月/年计划
+     */
+    exportExcelOnYear () {
+      this.$refs.exportOnYearSchema.onShow()
     }
   },
   async mounted () {
     await this.getGroup()
+    await this.getPlan()
     this.query()
   }
 }

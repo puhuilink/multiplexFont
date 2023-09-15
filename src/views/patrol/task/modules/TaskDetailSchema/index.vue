@@ -55,7 +55,7 @@
                   <viewer :images="record.tags.imgs">
                     <img
                       v-for="(src,index) in record.tags.imgs"
-                      :src="src"
+                      :src="`${baseURI}${src}`"
                       :key="index"
                       style="width: 50px;height: 50px"
                     >
@@ -88,111 +88,114 @@ export default {
   mixins: [Schema],
   components: {},
   props: {},
-  data: () => ({
-    details: [],
-    columns: Object.freeze([
-      {
-        title: '点位',
-        dataIndex: 'checkpointAlias',
-        width: 180,
-        customRender: (text) => text || ''
+  data () {
+    return {
+      baseURI: process.env.VUE_APP_VIEW_THUMBNAIL_URI,
+      details: [],
+      columns: Object.freeze([
+        {
+          title: '点位',
+          dataIndex: 'checkpointAlias',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: '柜位',
+          dataIndex: 'container',
+          width: 180,
+          customRender: (text) => text || '无柜位信息'
+        },
+        {
+          title: '设备名称',
+          dataIndex: 'hostAlias',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: 'IP地址',
+          dataIndex: 'ipAddress',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: '设备归属单位',
+          dataIndex: 'hostBelong',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: '监控实体',
+          dataIndex: 'endpointAlias',
+          width: 180,
+          scopedSlots: { customRender: 'endpoint' }
+        },
+        {
+          title: '检查项',
+          dataIndex: 'metricAlias',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: '值',
+          dataIndex: 'value',
+          width: 180,
+          scopedSlots: { customRender: 'value' }
+        },
+        {
+          title: '备注',
+          dataIndex: 'tags',
+          width: 180,
+          scopedSlots: { customRender: 'remark' }
+        },
+        {
+          title: '图片',
+          width: 180,
+          scopedSlots: { customRender: 'imgs' }
+        },
+        {
+          title: '设备类型',
+          dataIndex: 'deviceType',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: '品牌',
+          dataIndex: 'deviceBrand',
+          width: 180,
+          customRender: (text) => text || ''
+        },
+        {
+          title: 'SN号',
+          width: 180,
+          dataIndex: 'sn',
+          customRender: (text) => text || ''
+        }
+      ]),
+      dataSource: [],
+      record: {},
+      parentData: null,
+      spinning: false,
+      switchCardList: [],
+      taskDetail: [],
+      basicInfo: {
+        id: '723',
+        planAlias: '厦门数据中心 动环巡更计划',
+        status: '10',
+        planId: '1267708679575048194',
+        executor: { executor: '' },
+        actualStartTime: '2021-05-21 13:48:22',
+        actualEndTime: '2021-05-21 14:02:03'
       },
-      {
-        title: '柜位',
-        dataIndex: 'container',
-        width: 180,
-        customRender: (text) => text || '无柜位信息'
-      },
-      {
-        title: '设备名称',
-        dataIndex: 'hostAlias',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: 'IP地址',
-        dataIndex: 'ipAddress',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: '设备归属单位',
-        dataIndex: 'hostBelong',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: '监控实体',
-        dataIndex: 'endpointAlias',
-        width: 180,
-        scopedSlots: { customRender: 'endpoint' }
-      },
-      {
-        title: '检查项',
-        dataIndex: 'metricAlias',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: '值',
-        dataIndex: 'value',
-        width: 180,
-        scopedSlots: { customRender: 'value' }
-      },
-      {
-        title: '备注',
-        dataIndex: 'tags',
-        width: 180,
-        scopedSlots: { customRender: 'remark' }
-      },
-      {
-        title: '图片',
-        width: 180,
-        scopedSlots: { customRender: 'imgs' }
-      },
-      {
-        title: '设备类型',
-        dataIndex: 'deviceType',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: '品牌',
-        dataIndex: 'deviceBrand',
-        width: 180,
-        customRender: (text) => text || ''
-      },
-      {
-        title: 'SN号',
-        width: 180,
-        dataIndex: 'sn',
-        customRender: (text) => text || ''
+      statusMapping: {
+        '0': '未开始',
+        '1': '进行中',
+        '3': '超时完成',
+        '10': '告警完成',
+        '20': '无告警完成',
+        '30': '已过期'
       }
-    ]),
-    dataSource: [],
-    record: {},
-    parentData: null,
-    spinning: false,
-    switchCardList: [],
-    taskDetail: [],
-    basicInfo: {
-      id: '723',
-      planAlias: '厦门数据中心 动环巡更计划',
-      status: '10',
-      planId: '1267708679575048194',
-      executor: { executor: '' },
-      actualStartTime: '2021-05-21 13:48:22',
-      actualEndTime: '2021-05-21 14:02:03'
-    },
-    statusMapping: {
-      '0': '未开始',
-      '1': '进行中',
-      '3': '超时完成',
-      '10': '告警完成',
-      '20': '无告警完成',
-      '30': '已过期'
     }
-  }),
+  },
   filters: {
     delay (delay) {
       return DELAY_MAPPING.get(delay)

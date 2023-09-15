@@ -6,12 +6,12 @@
         <div class="top">
           <div class="text">{{ content[0].text }}</div>
           <!-- <div class="number">{{ content[0].number }}</div> -->
-          <formatterNumber class="number" :number="content[0].number" :colors="color_white"/>
+          <formatterNumber class="number" :number="content[0].number" :colors="color_white" />
         </div>
         <div class="bottom_top">
           <div class="bottom-content-left">
             <div class="text">{{ content[1].text }}</div>
-            <formatterNumber class="number" :number="content[1].number" :colors="color_white"/>
+            <formatterNumber class="number" :number="content[1].number" :colors="color_white" />
           </div>
           <div class="bottom-content-right">
             <div class="text">{{ content[2].text }}</div>
@@ -22,15 +22,15 @@
     </div>
     <div class="contentX" v-else>
       <div class="img-two">
-        <formatterNumber class="number" :number="content[0].number" :colors="color_black"/>
+        <formatterNumber class="number" :number="content[0].number" :colors="color_black" />
         <div class="text">{{ content[0].text }}</div>
         <div class="bottom">
           <div class="bottom-content-left">
-            <formatterNumber class="number" :number="content[1].number" :colors="color_black"/>
+            <formatterNumber class="number" :number="content[1].number" :colors="color_black" />
             <div class="text">{{ content[1].text }}</div>
           </div>
           <div class="bottom-content-right">
-            <formatterNumber class="number" :number="content[2].number" :colors="color_black"/>
+            <formatterNumber class="number" :number="content[2].number" :colors="color_black" />
             <div class="text">{{ content[2].text }}</div>
           </div>
         </div>
@@ -47,6 +47,7 @@
 
 import formatterNumber from './formatterNumber.vue'
 import * as echarts from 'echarts'
+
 export default {
   name: 'WxShip',
   components: {
@@ -54,24 +55,24 @@ export default {
   },
   props: {
     title: {
-      type: String,
+      type: null,
       default: ''
     },
     title1: {
-      type: String,
+      type: null,
       default: ''
     },
     type: {
-      type: String,
+      type: null,
       default: ''
     },
     content: {
-      type: Array,
-      default: () => []
+      type: null,
+      default: []
     },
     data: {
-      type: Array,
-      default: () => []
+      type: null,
+      default: []
     }
   },
 
@@ -84,20 +85,32 @@ export default {
   mounted () {
     this.drawPolicitalStatus()
   },
-
+  watch: {
+    data: function () {
+      // 在chartData变化时，手动重新渲染图表
+      this.drawPolicitalStatus()
+    }
+  },
   methods: {
     drawPolicitalStatus () {
       // 基于准备好的dom，初始化echarts实例
       const myChart = echarts.init(this.$refs.canvas01)
-      /* let data = this.content.bottomData;
-      if (data.length !== undefined && data[0].hasOwnProperty('count')) {
-        data.forEach((item) => {
-          return (item.threatNum = item.count);
-        });
-      }
-      if (data.length !== undefined) {
-        data = data.map((item) => item.threatNum);
-      } */
+      // 整理数据并写入示例的ECharts数据
+
+      const echartsData = this.data.map(item => ({
+        value: item.value,
+        name: item.name,
+        itemStyle: {
+          normal: {
+            color: item.itemStyle.color
+          },
+          emphasis: {
+            color: item.itemStyle.color
+          }
+        }
+      }))
+      const nameArray = this.data.map(item => item.name).reverse()
+
       // 绘制图表
       myChart.setOption({
         title: {
@@ -112,8 +125,8 @@ export default {
         },
         tooltip: {
           show: true,
-          //   trigger: 'item',
-          trigger: 'none'
+          trigger: 'item'
+          // trigger: 'none'
         },
         legend: {
           top: '5%',
@@ -125,7 +138,7 @@ export default {
           },
           left: '7%',
           selectedMode: false,
-          data: ['紧急', '高危', '中危', '低危']
+          data: nameArray.length > 0 ? nameArray : ['危急', '高危', '中危', '低危']
         },
         series: [
           {
@@ -153,56 +166,7 @@ export default {
                 borderColor: '#fff'
               }
             },
-            data: [
-              {
-                value: 15,
-                name: '紧急',
-                itemStyle: {
-                  normal: {
-                    color: '#DC5656'
-                  },
-                  emphasis: {
-                    color: '#DC5656'
-                  }
-                }
-              },
-              {
-                value: 56,
-                name: '高危',
-                itemStyle: {
-                  normal: {
-                    color: '#FFA044'
-                  },
-                  emphasis: {
-                    color: '#FFA044'
-                  }
-                }
-              },
-              {
-                value: 9,
-                name: '中危',
-                itemStyle: {
-                  normal: {
-                    color: '#EAE174'
-                  },
-                  emphasis: {
-                    color: '#EAE174'
-                  }
-                }
-              },
-              {
-                value: 20,
-                name: '低危',
-                itemStyle: {
-                  normal: {
-                    color: '#3CA6FF'
-                  },
-                  emphasis: {
-                    color: '#3CA6FF'
-                  }
-                }
-              }
-            ]
+            data: echartsData
           }
         ]
       })
@@ -227,6 +191,7 @@ export default {
 .contentX {
   margin-top: 13px;
   margin-bottom: 33px;
+
   .img-one {
     height: 272.5px;
     width: 295px;
@@ -253,7 +218,7 @@ export default {
 
       .number {
         text-align: center;
-        margin-left: 20px;
+        //margin-left: 20px;
         height: 40px;
         font-size: 40px;
         font-family: LetsgoDigital-Regular, LetsgoDigital;
@@ -348,26 +313,26 @@ export default {
       }
 
       .number {
-      margin-top: 35px;
-      height: 27px;
-      font-size: 27px;
-      font-family: LetsgoDigital-Regular, LetsgoDigital;
-      font-weight: 400;
-      color: #ffffff;
-      line-height: 27px;
-      text-align: center;
+        margin-top: 35px;
+        height: 27px;
+        font-size: 27px;
+        font-family: LetsgoDigital-Regular, LetsgoDigital;
+        font-weight: 400;
+        color: #ffffff;
+        line-height: 27px;
+        text-align: center;
       }
 
       .text {
-      margin-top: 10px;
-      margin-bottom: 40px;
-      text-align: center;
+        margin-top: 10px;
+        margin-bottom: 40px;
+        text-align: center;
 
-      font-size: 20px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #90c8f4;
-      line-height: 20px;
+        font-size: 20px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #90c8f4;
+        line-height: 20px;
       }
     }
   }

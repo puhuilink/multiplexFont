@@ -7,10 +7,12 @@
           <a-col class="search_box">
             <label class="search_label">搜索条件</label>
             <a-button type="primary" @click="query">
-              <a-icon type="search" />查询
+              <a-icon type="search" />
+              查询
             </a-button>
             <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
-              <a-icon type="sync" />重置
+              <a-icon type="sync" />
+              重置
             </a-button>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -52,7 +54,8 @@
     <div class="operation_box">
       <a-button type="primary" @click="onAddUser" v-action:F001002001>
         <a-icon type="plus-circle" />
-        新增</a-button>
+        新增
+      </a-button>
     </div>
     <div class="wrapper_content">
       <div class="wrapper_content_left">
@@ -78,28 +81,37 @@
           :scroll="scroll"
           :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
           <template #status="text, record">
-            <a-switch :checked="text" @change="onStatusChange(record)" :disabled="disabled" />
+            <a-switch :checked="text" @change="onStatusChange(record)" :disabled="record.id==='9527'?true:disabled" />
           </template>
           <template #action="text, record">
-            <a @click="onEditUser(record)" v-action:F001002002>编辑</a>
-            <a-divider type="vertical" />
-            <a-dropdown>
-              <a class="ant-dropdown-link"><a-icon type="down" />更多</a>
-              <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                <a-menu-item key="1" v-action:F001002003>
-                  菜单权限
-                </a-menu-item>
-                <a-menu-item key="2" v-action:F001002004>
-                  数据权限
-                </a-menu-item>
-                <a-menu-item key="3" v-action:F001002005>
-                  分配用户
-                </a-menu-item>
-                <a-menu-item key="4" v-action:F001002006>
-                  删除
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
+            <div v-if="record.id!=='9527'">
+              <a @click="onEditUser(record)" v-action:F001002002>编辑</a>
+              <a-divider type="vertical" />
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  <a-icon type="down" />
+                  更多</a>
+                <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+                  <a-menu-item key="1" v-action:F001002003 v-show="record.id!=='9527'">
+                    菜单权限
+                  </a-menu-item>
+                  <a-menu-item key="2" v-action:F001002004 v-show="record.id!=='9527'">
+                    数据权限
+                  </a-menu-item>
+                  <a-menu-item key="3" v-action:F001002005>
+                    分配用户
+                  </a-menu-item>
+                  <a-menu-item key="4" v-action:F001002006 v-show="record.id!=='9527'">
+                    删除
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </div>
+            <div v-else>
+              <a v-action:F001002005 @click="onAllocateUserGroup(record, key)">
+                分配用户
+              </a>
+            </div>
           </template>
         </a-table>
       </div>
@@ -126,6 +138,7 @@ import RoleSingleSchema from '@/views/system/role/modules/RoleSingleSchema.vue'
 import { axios } from '@/utils/request'
 import { buildTree } from '@/utils/util'
 import moment from 'moment'
+
 export default {
   name: 'Role',
   mixins: [Confirm, List],
@@ -578,6 +591,7 @@ export default {
       })
     },
     moreOption (record, { key }) {
+      console.log('rec', record)
       switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)
@@ -598,7 +612,7 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang="less">
 .wrapper {
   // padding: 8px 0;
   &_content {
@@ -613,7 +627,7 @@ export default {
       border-radius: 5px;
       padding: 5px;
       overflow: scroll;
-      margin-left:23px;
+      margin-left: 23px;
     }
 
     &_right {

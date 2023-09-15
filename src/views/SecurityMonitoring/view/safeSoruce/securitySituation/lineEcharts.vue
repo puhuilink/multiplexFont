@@ -9,8 +9,15 @@
 <script>
 
 import * as echarts from 'echarts'
+
 export default {
   name: 'LineEcharts',
+  props: {
+    threadData: {
+      type: null,
+      default: []
+    }
+  },
   data () {
     return {
       // wxImg: bk_wx,
@@ -18,35 +25,42 @@ export default {
     }
   },
   mounted () {
-    this.gettime()
     this.drawPolicitalStatus()
   },
-
+  watch: {
+    threadData: function () {
+      // 在chartData变化时，手动重新渲染图表
+      this.drawPolicitalStatus()
+    }
+  },
   methods: {
-    gettime () {
-      // 获取当前日期
-      const currentDate = new Date()
-
-      // 获取年、月、日
-      const year = currentDate.getFullYear()
-      // eslint-disable-next-line no-unused-vars
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-      // eslint-disable-next-line no-unused-vars
-      const day = String(currentDate.getDate()).padStart(2, '0')
-
-      // 生成日期数组
-      const data = []
-      for (let i = 0; i < 10; i++) {
-        const date = new Date(year, currentDate.getMonth(), currentDate.getDate() - (9 - i))
-        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-        data.push(formattedDate)
-      }
-      this.datatime = data
-      console.log(this.datatime)
+    formatTimestampToDateString (timestamp) {
+      const date = new Date(parseInt(timestamp))
+      const year = date.getFullYear()
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+      return `${year}-${month}-${day}`
     },
     drawPolicitalStatus () {
-      const that = this
-      console.log(that.datatime)
+      const formattedData = this.threadData.map(item => ({
+        ...item,
+        time: this.formatTimestampToDateString(item.time)
+      }))
+      const middleNumData = []
+      const highNumData = []
+      const crisisNumData = []
+      const lowNumData = []
+      const timeData = []
+
+      // 使用 forEach 循环处理数据
+      formattedData.forEach(item => {
+        middleNumData.push(item.middleNum)
+        highNumData.push(item.highNum)
+        crisisNumData.push(item.crisisNum)
+        lowNumData.push(item.lowNum)
+        timeData.push(item.time)
+      })
+      // console.log(middleNumData, highNumData, crisisNumData, lowNumData, timeData)
       // 基于准备好的dom，初始化echarts实例
       const myChart03 = echarts.init(this.$refs.canvas03)
       // 绘制图表
@@ -92,7 +106,7 @@ export default {
           axisLabel: {
             color: '#A6A6A6'
           },
-          data: that.datatime
+          data: timeData
         },
         yAxis: {
           type: 'value',
@@ -115,9 +129,9 @@ export default {
         },
         series: [
           {
-            name: '紧急',
+            name: '紧急', // crisisNum
             type: 'line',
-            data: [216, 389, 1990, 46, 140, 808, 1126, 2015, 586, 2],
+            data: crisisNumData,
 
             itemStyle: {
               normal: {
@@ -129,9 +143,9 @@ export default {
             }
           },
           {
-            name: '高危',
+            name: '高危', // highNum
             type: 'line',
-            data: [289, 1486, 2058, 167, 567, 799, 3419, 11392, 823, 56],
+            data: highNumData,
 
             itemStyle: {
               normal: {
@@ -143,9 +157,9 @@ export default {
             }
           },
           {
-            name: '中危',
+            name: '中危', // middleNum
             type: 'line',
-            data: [101, 831, 144, 52, 98, 139, 307, 1103, 85, 12],
+            data: middleNumData,
             itemStyle: {
               normal: {
                 color: '#EAE174'
@@ -156,9 +170,9 @@ export default {
             }
           },
           {
-            name: '低危',
+            name: '低危', // lowNum
             type: 'line',
-            data: [174, 307, 121, 126, 587, 307, 4138, 4501, 240, 14],
+            data: lowNumData,
             itemStyle: {
               normal: {
                 color: '#3CA6FF'
@@ -178,14 +192,15 @@ export default {
 }
 </script>
 
-<style lang="less" >
+<style lang="less">
 .contentEch {
   padding: 0 0px 0px 37px;
 }
 
-.appContainerbox{
+.appContainerbox {
   margin-top: 20px;
 }
+
 .echarts {
   height: 300px;
   width: 100%;

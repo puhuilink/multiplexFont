@@ -46,6 +46,9 @@ export default {
 <style lang='less' scoped>
 .shell {
   position: relative;
+  width: 100%;
+  height: 120px;
+  display: block;
 
   &_image {
     height: 120px;

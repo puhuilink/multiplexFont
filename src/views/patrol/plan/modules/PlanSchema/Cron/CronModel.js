@@ -59,6 +59,15 @@ export class CronModel {
     }
   }
 
+  get workDayOfMonth () {
+    const workDayOfMonth = this.cron.split(' ')[3].replace('W', '')
+    return workDayOfMonth
+  }
+
+  set workDayOfMonth (day) {
+    this.cron = `0 30 0 ${day}W * ?`
+  }
+
   get dayOfWeek () {
     const { dayOfWeek } = this._split()
     return dayOfWeek.split(',').sort().map(el => ~~el)
@@ -93,7 +102,17 @@ export class CronModel {
 
   get isDayOfMonth () {
     const { dayOfWeek, dayOfMonth } = this._split()
-    return dayOfMonth !== '?' && dayOfWeek === '?' && this.cron !== '0 30 0 * * ?'
+    return dayOfMonth !== '?' && dayOfWeek === '?' && this.cron !== '0 30 0 * * ?' && !dayOfMonth.includes('W')
+  }
+
+  get isWorkDayOfMonth () {
+    const { dayOfMonth } = this._split()
+    // 工作日cron表达式含W
+    return dayOfMonth.includes('W')
+  }
+
+  useWorkDayOfMonth () {
+    this.cron = '0 30 0 1W * ? *'
   }
 
   useDayOfMonth () {
@@ -101,10 +120,11 @@ export class CronModel {
   }
 
   get currentType () {
-    const { isDayOfWeek, isEveryDay, isDayOfMonth } = this
+    const { isDayOfWeek, isEveryDay, isDayOfMonth, isWorkDayOfMonth } = this
     if (isDayOfWeek) return 'dayOfWeek'
     if (isEveryDay) return 'everyDay'
     if (isDayOfMonth) return 'dayOfMonth'
+    if (isWorkDayOfMonth) return 'workDayOfMonth'
   }
 
   set currentType (currentType) {
@@ -115,6 +135,8 @@ export class CronModel {
         return this.useEveryDay()
       case 'dayOfMonth':
         return this.useDayOfMonth()
+      case 'workDayOfMonth':
+        return this.useWorkDayOfMonth()
       default:
         break
     }
@@ -127,12 +149,14 @@ export class CronModel {
         return this.dayOfWeek
       case 'dayOfMonth':
         return this.dayOfMonth
+      case 'workDayOfMonth':
+        return this.workDayOfMonth
       default:
         return []
     }
   }
 
-  set currentValue (currentValue = []) {
+  set currentValue (currentValue) {
     const { currentType } = this
     switch (currentType) {
       case 'dayOfWeek':
@@ -142,6 +166,9 @@ export class CronModel {
         return this.useEveryDay()
       case 'dayOfMonth':
         this.dayOfMonth = currentValue
+        break
+      case 'workDayOfMonth':
+        this.workDayOfMonth = currentValue
         break
       default:
         break

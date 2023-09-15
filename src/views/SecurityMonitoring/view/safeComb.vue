@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a-tabs :default-active-key="disabled?'1':'2'">
-      <a-tab-pane key="1" tab="集团" v-if="disabled">
+    <a-tabs :default-active-key="disabled?'2':'1'">
+      <a-tab-pane key="1" tab="集团" v-if="!disabled">
         <safeSoruce></safeSoruce>
       </a-tab-pane>
       <a-tab-pane key="2" tab="二级单位" force-render>
@@ -17,6 +17,8 @@ import safeTouchCopy from '@/views/SecurityMonitoring/view/safeTouchCopy'
 import safeSoruce from './safeSoruce/index.vue'
 import { USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import { axios } from '@/utils/request'
+
 export default {
   name: 'SafeComb',
   components: {
@@ -28,9 +30,21 @@ export default {
       disabled: false
     }
   },
-  created () {
-    const { organizeId } = Vue.ls.get(USER)
-    if (organizeId === '77551146956226560' && organizeId === '77551230678728704' && organizeId === '77550822937853952') {
+  async created () {
+    const { data: { dataIds } } = await axios.get('/organize/list', {
+      params: {
+        isOpen: true
+      }
+    })
+    console.log(dataIds)
+    const organizeIdList = ['77551146956226560', '77551230678728704', '77550822937853952']
+    // 检查organizeIdList中的任何一个元素是否存在于originalArray
+    const existsInOriginalArray = organizeIdList.some(id => dataIds.includes(id))
+
+    if (existsInOriginalArray) {
+      console.log('显示集团')
+    } else {
+      console.log('不显示集团')
       this.disabled = true
     }
   }

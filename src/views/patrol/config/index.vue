@@ -126,7 +126,7 @@
         <a
           type="primary"
           @click="()=>toRemove(row)"
-          v-action:F010001001003001
+          v-action:F010001001003002
         ><a-icon type="delete" />
           删除
         </a>
