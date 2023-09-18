@@ -48,9 +48,9 @@
         :loading="qcCodeGlobalLoading"
         :type="hasSelected?'primary':''"
         @click="batchDownloadQrCode"
+        style="margin-right: 13px;"
       ><a-icon type="download" />下载</a-button>
-      <a-divider type="vertical"/>
-      <a-button @click="editPatrolConfig('newZone',{})">
+      <a-button @click="editPatrolConfig('newZone',{})" v-action:F010001001003001>
         <a-icon type="plus" style="color: gray"/>
         新建楼层
       </a-button>
@@ -101,7 +101,7 @@
         <a-dropdown>
           <a
             type="primary"
-            v-action:F010001001003001
+            v-action:F010001001003002
           ><a-icon type="form" />
             路线变更
             <a-icon type="down"/>
@@ -126,7 +126,7 @@
         <a
           type="primary"
           @click="()=>toRemove(row)"
-          v-action:F010001001003002
+          v-action:F010001001003003
         ><a-icon type="delete" />
           删除
         </a>
