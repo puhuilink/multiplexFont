@@ -158,7 +158,8 @@ export default {
         },
         params: {
           token: foundData.overviewToken
-        }
+        },
+        timeout: 1000
       })
       // console.log(instance());
       // 1.综合风险趋势
@@ -176,35 +177,42 @@ export default {
       const Promise3 = instance.get('/ngsoc/depart/severity')
       const Promise4 = instance.get('/ngsoc/depart/category')
 
-      const [comprehensive, alarm, Last7Alarm, Last7Threat] = await Promise.all([Promise1, Promise2, Promise3, Promise4])
-      const comprehensiveData = comprehensive.data.data
-      // 到这给第一个图表数据
-      const echartsData = comprehensiveData.map(item => {
-        // console.log(item);
-        item.time = this.formatTimestamp(parseInt(item.time))
-        this.listData1.push(item.risk)
-        this.listTime1.push(item.time)
-        return item
-      })
+      try {
+        const [comprehensive, alarm, Last7Alarm, Last7Threat] = await Promise.all([Promise1, Promise2, Promise3, Promise4])
 
-      // this.datatime=listTime1
-      // this.datatime=listData1
+        const comprehensiveData = comprehensive.data.data
+        // 到这给第一个图表数据
+        const echartsData = comprehensiveData.map(item => {
+          // console.log(item);
+          item.time = this.formatTimestamp(parseInt(item.time))
+          this.listData1.push(item.risk)
+          this.listTime1.push(item.time)
+          return item
+        })
 
-      this.listData2 = alarm.data.data.alarmSeverityGroupStat
+        // this.datatime=listTime1
+        // this.datatime=listData1
 
-      this.listData22 = [alarm.data.data.outAttackAlarm,
-        alarm.data.data.movementAlarm,
-        alarm.data.data.assetOutreachAlarm,
-        alarm.data.data.iocAlarm,
-        alarm.data.data.maliciousFileAlarm]
+        this.listData2 = alarm.data.data.alarmSeverityGroupStat
 
-      // console.log('告警危害等级分布', Last7Alarm)
-      if (Last7Alarm.data.code === 200) {
-        this.listData3 = Last7Alarm.data
-      }
+        this.listData22 = [alarm.data.data.outAttackAlarm,
+          alarm.data.data.movementAlarm,
+          alarm.data.data.assetOutreachAlarm,
+          alarm.data.data.iocAlarm,
+          alarm.data.data.maliciousFileAlarm]
 
-      if (Last7Threat.data.code === 200) {
-        this.listData4 = Last7Threat.data
+        // console.log('告警危害等级分布', Last7Alarm)
+        if (Last7Alarm.data.code === 200) {
+          this.listData3 = Last7Alarm.data
+        }
+
+        if (Last7Threat.data.code === 200) {
+          this.listData4 = Last7Threat.data
+        }
+      } catch (e) {
+        this.loading = false
+      } finally {
+        this.loading = false
       }
 
       this.drawPolicitalStatus()
