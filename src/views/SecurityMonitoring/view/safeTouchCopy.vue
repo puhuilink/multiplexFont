@@ -158,8 +158,7 @@ export default {
         },
         params: {
           token: foundData.overviewToken
-        },
-        timeout: 1000
+        }
       })
       // console.log(instance());
       // 1.综合风险趋势
