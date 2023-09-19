@@ -24,6 +24,7 @@ class PathService extends BaseService {
       const formD = new FormData()
       formD.append('alias', form.alias)
       formD.append('file', form.file)
+      formD.append('ascription', form.ascription)
       const { code, data } =
         await xungeng.post('/path/add',
           formD, { header: { 'content-type': 'application/x-www-form-urlencoded' } })
@@ -49,10 +50,9 @@ class PathService extends BaseService {
     }
   }
   // 分配用户给角色
-  static async updatePath (pathId, alias) {
+  static async updatePath (arg) {
     try {
-      const { code, data } =
-        await xungeng.get(`/path/update?pathId=${pathId}&alias=${alias}`)
+      const { code, data } = await xungeng.get(`/path/update?pathId=${arg.id}&alias=${arg.alias}&ascription=${arg.ascription}`)
       if (code === 200) {
         return data
       }

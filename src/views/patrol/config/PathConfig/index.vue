@@ -90,6 +90,11 @@ export default {
         customRender: (text, el) => el.updator || el.creator
       },
       {
+        title: '路径图标识',
+        dataIndex: 'ascription',
+        width: '120px'
+      },
+      {
         title: '提交时间',
         dataIndex: 'updateTime',
         width: '200px'
