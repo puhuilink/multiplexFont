@@ -44,7 +44,7 @@
 </template>
 <script>
 import player from './player'
-import { xungeng } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 export default {
   name: 'MonitorPage',
@@ -193,7 +193,17 @@ export default {
       return src
     }
   },
-  created () {
+  async created () {
+    const { data: { dataIds } } = await axios.get('/organize/list', {
+      params: {
+        isOpen: true
+      }
+    })
+    if (!dataIds.some(el => ['77551146956226560', '77550822937853952'].includes(el))) {
+      this.$router.push({
+        path: '/403'
+      })
+    }
     this.activeKey = this.$route.query.active || '5F数据中心机房'
     this.currentFloor = this.indexFloor.filter(el => el.name === this.activeKey)[0].children.floor
   }
