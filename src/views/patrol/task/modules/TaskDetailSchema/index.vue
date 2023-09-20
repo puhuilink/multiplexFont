@@ -44,9 +44,15 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
+        <a-switch checked-children="异常" un-checked-children="无异常" v-model="switchStatus" class="occur" @change="fetchSwitch"/>
         <a-tabs default-active-key="zoneId" @change="changeZone">
           <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias">
-            <a-table bordered :columns="columns" :dataSource="dataSource" :scroll="scroll">
+            <a-table
+              bordered
+              :columns="columns"
+              :dataSource="dataSource"
+              :pagination="paginationOpt"
+              :scroll="scroll">
               <template #value="text, record">
                 {{ valueMapping(record) }}
               </template>
@@ -175,7 +181,9 @@ export default {
       record: {},
       parentData: null,
       spinning: false,
+      switchStatus: false,
       switchCardList: [],
+      tabsKey: '',
       taskDetail: [],
       basicInfo: {
         id: '723',
@@ -193,6 +201,26 @@ export default {
         '10': '告警完成',
         '20': '无告警完成',
         '30': '已过期'
+      },
+      paginationOpt: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.fetch(this.parentData, this.parentData.id, this.tabsKey)
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = size
+          this.fetch(this.parentData, this.parentData.id, this.tabsKey)
+        }
       }
     }
   },
@@ -241,10 +269,19 @@ export default {
       })
       return this.details
     },
+    fetchSwitch () {
+      this.fetch(this.parentData, this.parentData.id, this.tabsKey)
+    },
     async fetch (record, taskId, zoneId) {
       try {
         this.spinning = true
-        const v = await xungeng.post('/taskResultHistory/taskHistory', { taskId, ...zoneId ? { zoneId } : {} })
+        const v = await xungeng.post('/taskResultHistory/taskHistory', {
+          taskId,
+          ...zoneId ? { zoneId } : {},
+          eventFlag: this.switchStatus,
+          pageNum: this.paginationOpt.defaultCurrent,
+          pageSize: this.paginationOpt.defaultPageSize
+        })
         if (v.code !== 200) {
           this.$message.error('请求失败')
           return
@@ -253,6 +290,7 @@ export default {
         this.basicInfo = { ...record }
         this.switchCardList = resData.zoneList
         this.dataSource = resData.history
+        this.paginationOpt.total = v.data.total
       } catch (e) {
         this.taskDetail = []
         this.record = {}
@@ -299,6 +337,7 @@ export default {
       return checkpointsList
     },
     changeZone (key) {
+      this.tabsKey = key
       this.fetch(this.parentData, this.parentData.id, key)
     }
   }
@@ -306,4 +345,10 @@ export default {
 </script>
 
 <style lang="less">
+.occur {
+  z-index: 999;
+  position: absolute;
+  top: 60px;
+  left: 800px;
+}
 </style>
