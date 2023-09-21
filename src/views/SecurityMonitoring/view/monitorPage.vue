@@ -28,7 +28,7 @@
           :lg="8"
           :xxl="6"
         >
-          <div class="ViewDisplay-item" @click="preview(floorConfig.cameraIndexCode)">
+          <div class="ViewDisplay-item" @click="preview(floorConfig)">
             <img v-lazy="thumbnail(floorConfig.icon)" :alt="floorConfig.view_title" />
             <div class="ViewDisplay-item-info">
               <div class="ViewDisplay-item-info_title">
@@ -37,13 +37,16 @@
               </div>
             </div>
           </div>
+
         </a-col>
       </transition-group>
+      <player ref="childRef"></player>
     </a-spin>
   </div>
 </template>
 <script>
-import player from './player'
+// import player from './player'
+import player from './VideoPlayer'
 import { axios, xungeng } from '@/utils/request'
 
 export default {
@@ -53,6 +56,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       url: process.env.VUE_APP_QUOTE_URL,
       isLoading: false,
       activeKey: '5F数据中心机房',
@@ -177,16 +181,21 @@ export default {
     }
   },
   methods: {
+
     tabsChange (name) {
       this.activeKey = name
       this.isLoading = true
       this.currentFloor = this.indexFloor.filter(el => el.name === name)[0].children.floor
       this.isLoading = false
     },
-    async preview (id) {
+    async preview (fun) {
+      console.log(fun)
+      this.$refs.childRef.visible = true
+      console.log('refs', this.$refs.childRef)
       const { data: { data: { url } } } = await xungeng.post('/so/camera/getPreviewUrl', {
-        cameraIndexCode: id
+        cameraIndexCode: fun.cameraIndexCode
       })
+      // this.$refs.childRef.childMethod(url, fun.title)
       await this.$router.push({ path: '/player', query: { url: url, active: this.activeKey } })
     },
     thumbnail (src) {
@@ -210,10 +219,11 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-.ant-tabs-tab{
-  background-color: #004fa5 !important;
+<style lang="less" scoped>
+.ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0) !important;
 }
+
 .ViewDisplay {
   position: relative;
 
@@ -288,7 +298,6 @@ export default {
         color: rgb(51, 51, 51);
         overflow: hidden;
         margin: 0px 0px 8px;
-
         //img {
         //  width: 24px;
         //  height: 20px;
