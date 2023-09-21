@@ -11,7 +11,7 @@ export default {
   name: 'Player',
   data () {
     return {
-      url: process.env.VUE_APP_QUOTE_URL + '/static/h5player/webplayer.html?cameraUrl=ws://10.201.53.20:559/openUrl/RbHmFck'
+      url: process.env.VUE_APP_QUOTE_URL + '/static/h5player/webplayer.html?cameraUrl=ws://10.201.53.20:559/openUrl/6J4mUOk'
     }
   },
   methods: {
@@ -20,7 +20,7 @@ export default {
     }
   },
   mounted () {
-    this.url = `${process.env.VUE_APP_QUOTE_URL}/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
+    // this.url = `${process.env.VUE_APP_QUOTE_URL}/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
   }
 }
 </script>
