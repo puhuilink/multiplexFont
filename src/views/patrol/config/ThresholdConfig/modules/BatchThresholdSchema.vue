@@ -93,12 +93,12 @@ export default {
       modalTitle: '编辑阈值规则',
       fetching: false,
       rules: {
-        condition: [{ required: true, message: '阈值条件不能为空！', trigger: 'blur' }],
-        severity: [{ required: true, message: '阈值等级不能为空！', trigger: 'blur' }],
-        lowerThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'blur' },
+        condition: [{ required: true, message: '阈值条件不能为空！', trigger: 'change' }],
+        severity: [{ required: true, message: '阈值等级不能为空！', trigger: 'change' }],
+        lowerThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'change' },
           { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }
         ],
-        upperThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'blur' },
+        upperThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'change' },
           { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }]
       }
     }
@@ -115,7 +115,12 @@ export default {
     },
     isLowThresholdInput: {
       get () {
-        return this.parentData.answerType === 'fill' && (this.editForm.condition === 'lt' || this.editForm.condition === 'eq' || this.editForm.condition === 'ne')
+        return this.parentData.answerType === 'fill' &&
+          (this.editForm.condition === 'lt' ||
+            this.editForm.condition === 'eq' ||
+            this.editForm.condition === 'ne' ||
+            this.editForm.condition === 'in' ||
+            this.editForm.condition === 'out')
       }
     },
     isLowThresholdSelect: {

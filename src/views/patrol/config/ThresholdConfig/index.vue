@@ -12,13 +12,16 @@
               <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
                 重置
               </a-button>
+              <a-button :style="{ marginLeft: '8px' }" @click="handleBack">
+                返回
+              </a-button>
             </a-col>
             <a-col
               :md="6"
               :sm="24"
             >
               <a-form-model-item
-                label="监控设备"
+                label="监控对象"
                 prop="hostAlias"
               >
                 <a-input
@@ -274,7 +277,20 @@ export default {
       this.loading = false
     },
     handleReset () {
-      this.form.resetFields()
+      this.form = {
+        groupId: '',
+        pathId: '',
+        answerType: '',
+        severity: '',
+        hostAlias: '',
+        endpointAlias: '',
+        metricAlias: ''
+      }
+    },
+    async handleBack () {
+      await this.$router.push({
+        path: '/patrol/config/path'
+      })
     },
 
     toggle () {
