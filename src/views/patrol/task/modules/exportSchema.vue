@@ -30,11 +30,13 @@
             <a-checkbox
               :checked="formData.pdf"
               @change="(value) => checkStatus('pdf', value)"
-            >pdf</a-checkbox>
+            >pdf
+            </a-checkbox>
             <a-checkbox
               :checked="formData.excel"
               @change="(value) => checkStatus('excel', value)"
-            >excel</a-checkbox>
+            >excel
+            </a-checkbox>
           </a-form-model-item>
         </a-col>
 
@@ -70,6 +72,8 @@ import { xungeng } from '@/utils/request'
 import { downloadFile } from '@/utils/util'
 import moment from 'moment'
 import _ from 'lodash'
+import { DEFAILT_SELECTED_EXPORT_ROWS_KEY } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   name: 'ExportSchema',
@@ -80,7 +84,17 @@ export default {
         divOrg: false, // 是否按照归属单位导出
         excel: false,
         pdf: true,
-        fields: [],
+        fields: [
+          'zoneAlias',
+          'checkpointAlias',
+          'container',
+          'hostAlias',
+          'hostBelong',
+          'metricAlias',
+          'answerAlias',
+          'remarks',
+          'imgs'
+        ],
         ids: []
       },
       selectedKeys: [],
@@ -99,7 +113,6 @@ export default {
           method: 'post'
         }).catch((error) => {
           if (error.response) {
-            console.log('error', error.response.status)
             switch (error.response.status) {
               case 501:
                 this.$notification.error({
@@ -141,6 +154,8 @@ export default {
               message: '系统提示',
               description: '导出成功'
             })
+            Vue.ls.set(DEFAILT_SELECTED_EXPORT_ROWS_KEY, this.formData.fields)
+            this.loadExportRow()
           }
         })
       })).then((data) => {
@@ -175,7 +190,27 @@ export default {
     },
     handleSelectChange (sourceSelectedKeys, targetSelectedKeys) {
       this.selectedKeys = [...sourceSelectedKeys, ...targetSelectedKeys]
+    },
+    loadExportRow () {
+      if (Vue.ls.get(DEFAILT_SELECTED_EXPORT_ROWS_KEY)) {
+        this.formData.fields = Vue.ls.get(DEFAILT_SELECTED_EXPORT_ROWS_KEY)
+      } else {
+        this.formData.fields = [
+          'zoneAlias',
+          'checkpointAlias',
+          'container',
+          'hostAlias',
+          'hostBelong',
+          'metricAlias',
+          'answerAlias',
+          'remarks',
+          'imgs'
+        ]
+      }
     }
+  },
+  mounted () {
+    this.loadExportRow()
   }
 }
 </script>

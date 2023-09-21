@@ -101,6 +101,7 @@
       </a-form-model>
       <div class="operation_box">
         <a-button
+          v-action:F010001001004001
           type="primary"
           @click="toBitchUpdate"><a-icon type="unordered-list"/>批量编辑</a-button>
       </div>
@@ -134,7 +135,7 @@
       <template slot="value" slot-scope="value,record">{{ translateThreshold(record) }}</template>
       <template slot="severity" slot-scope="value">{{ value?'L'+value:'无' }}</template>
       <template slot="action" slot-scope="value,record">
-        <a @click="toUpdate(record)"><a-icon type="form" />编辑</a>
+        <a @click="toUpdate(record)"><a-icon type="form" v-action:F010001001004002/>编辑</a>
       </template>
     </a-table>
   </div>

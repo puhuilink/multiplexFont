@@ -16,6 +16,9 @@
       <a-form-model-item label="巡更路径名称" prop="alias">
         <a-input v-model="originalForm.alias"/>
       </a-form-model-item>
+      <a-form-model-item label="路径图标识" prop="ascription">
+        <a-input v-model="originalForm.ascription"/>
+      </a-form-model-item>
       <a-form-model-item label="点击下载巡更路径模板" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="status">
         <a href="http://10.201.246.55/xunjian/export/pathTemplate"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
@@ -66,11 +69,15 @@ export default {
         file: [
           { required: true, message: '文件必须上传', trigger: 'change' },
           { validator: this.excelRequire, trigger: 'change' }
+        ],
+        ascription: [
+          { max: 50, message: '最多50个字符', trigger: 'blur' }
         ]
       },
       originalForm: {
         alias: '',
-        file: null
+        file: null,
+        ascription: ''
       },
       record: null,
       status: true,
@@ -121,8 +128,8 @@ export default {
      */
     async edit (record) {
       this.status = false
-      const { id, alias } = record
-      this.originalForm = { id, alias }
+      const { id, alias, ascription } = record
+      this.originalForm = { id, alias, ascription }
       this.submit = this.update
       this.show('编辑')
       await this.$nextTick()
@@ -156,7 +163,7 @@ export default {
         if (err) return
         try {
           this.confirmLoading = true
-          await PathService.updatePath(this.originalForm.id, this.originalForm.alias)
+          await PathService.updatePath(this.originalForm)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
           this.cancel()

@@ -385,7 +385,7 @@ export const asyncRouterMap = [
               name: 'PatrolConfigThreshold',
               hidden: true,
               component: () => import('@/views/patrol/config/ThresholdConfig/index'),
-              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001004'] }
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001001004'] }
             }]
           },
           // {

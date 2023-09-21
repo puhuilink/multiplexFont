@@ -167,9 +167,9 @@ export default {
           title: '任务单号',
           dataIndex: 'id',
           width: 150,
-          fixed: 'left',
-          sorter: (a, b) => Number(a.id) - Number(b.id),
-          defaultSortOrder: 'descend'
+          fixed: 'left'
+          // sorter: (a, b) => Number(a.id) - Number(b.id),
+          // defaultSortOrder: 'descend'
         },
         {
           title: '计划名称',
