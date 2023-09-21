@@ -171,7 +171,7 @@ const operationMap = {
     // host
     { edit: false, required: false, show: false },
     // endpoint
-    { edit: true, required: true, show: false },
+    { edit: true, required: false, show: false },
     // metric
     { edit: false, required: false, show: false }
   ],
@@ -195,7 +195,7 @@ const operationMap = {
     // host
     { edit: true, required: true, show: false },
     // endpoint
-    { edit: true, required: true, show: false },
+    { edit: true, required: false, show: false },
     // metric
     { edit: true, required: true, show: false }
   ],
@@ -207,7 +207,7 @@ const operationMap = {
     // host
     { edit: true, required: true, show: false },
     // endpoint
-    { edit: true, required: true, show: false },
+    { edit: true, required: false, show: false },
     // metric
     { edit: true, required: true, show: false }
   ],
@@ -219,7 +219,7 @@ const operationMap = {
     // host
     { edit: true, required: true, show: false },
     // endpoint
-    { edit: true, required: true, show: false },
+    { edit: true, required: false, show: false },
     // metric
     { edit: true, required: true, show: false }
   ],
@@ -231,7 +231,7 @@ const operationMap = {
     // host
     { edit: false, required: false, show: true },
     // endpoint
-    { edit: true, required: true, show: false },
+    { edit: true, required: false, show: false },
     // metric
     { edit: true, required: true, show: false }
   ],

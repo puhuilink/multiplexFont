@@ -184,7 +184,7 @@
           <a-select
             v-if="(this.answerForm.defaultCondition === 'eq'||this.answerForm.defaultCondition === 'ne')&&this.answerForm.type === 'select'"
             v-model="answerForm.defaultLowerThreshold"
-            @change="()=>this.$forceUpdate()"
+            @change="force"
           >
             <a-select-option
               v-if="answerForm.type === 'select' && f.alias !==null && f.alias!==undefined && f.alias !== ''"
@@ -389,6 +389,15 @@ export default {
 
   },
   methods: {
+    isBlank(element) {
+      return element&&element!==''
+    },
+    force(){
+      if (this.isBlank(this.answerForm.defaultLowerThreshold)){
+        this.$refs.answerForm.clearValidate('defaultLowerThreshold')
+      }
+      this.$forceUpdate()
+    },
     toRemove (item) {
       const that = this
       this.$confirm({
