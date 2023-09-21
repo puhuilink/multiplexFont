@@ -4,6 +4,7 @@
     wrapClassName="HostSchema"
     :visible="visible"
     width="800px"
+    centered
     v-if="visible"
     @ok="handleOk"
     @cancel="handleCancel"
