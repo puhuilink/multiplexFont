@@ -104,12 +104,11 @@ export default {
     },
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
-    Depts: [
-
-    ],
+    Depts: [],
     menus: [],
     record: null,
-    submit: () => { }
+    submit: () => {
+    }
   }),
   computed: {},
   async mounted () {
@@ -125,7 +124,12 @@ export default {
     },
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
-        const { data: { list, dataIds } } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
+        const {
+          data: {
+            list,
+            dataIds
+          }
+        } = await axios.get(`/organize/list?isOpen=${params.isOpen}${params.orgName === '' ? '' : '&orgName=' + params.orgName}`)
         this.Depts = this.buildDeptsTree(list.map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -273,8 +277,9 @@ export default {
      * 调取编辑接口
      */
     async update () {
-      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改
-      if (this.record.dataType === 'CUSTOM' && (this.record.dataIds.checked ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length)) {
+      // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改或更换部门没选
+      // console.log( (!this.record?.dataIds.length))
+      if (this.record.dataType === 'CUSTOM' && ((this.record?.dataIds?.checked ? this.record?.dataIds.checked?.length === 0 : this.record?.dataIds?.length) || (!this.record?.dataIds) || this.record?.dataIds?.length === 0) && (!this.record?.dataIds?.length)) {
         this.$notification.warning({
           message: '提示',
           description: `请选择部门范围`
@@ -282,10 +287,8 @@ export default {
       } else {
         const operateType = 'DATA'
         Object.assign(this.record, { operateType })
-        console.log(Object.assign(this.record, { operateType }))
-        console.log(this.record)
-        if (this.record.dataIds.checked) {
-          console.log(this.record)
+
+        if (this.record?.dataIds?.checked) {
           this.record.dataIds = this.record.dataIds.checked
         }
         try {

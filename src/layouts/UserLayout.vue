@@ -6,7 +6,7 @@
       <div class="top">
         <div class="header">
           <img class="logo" alt="logo" src="@/assets/images/title.png"/>
-          <span class="title">机房运维安全管控系统V1.0</span>
+          <span class="title">机房运维安全管控系统</span>
           <!--          <p class="small">Visualization and Insight for Your Business and Environment</p>-->
         </div>
         <div class="desc"></div>
@@ -121,12 +121,12 @@ export default {
         }
 
         .title {
-          font-size: 21px;
-          line-height: 40px;
-          width: 138px;
+          font-size: 27px;
+          line-height: 73px;
+          width: 271px;
           color: white;
           font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
-          font-weight: 600;
+          font-weight: 1000;
           position: relative;
           top: 2px;
           display: inline-block;

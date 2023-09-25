@@ -60,15 +60,16 @@
     <div class="wrapper_content">
       <div class="wrapper_content_left">
         <!-- <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" /> -->
-        <a-tree
-          :selected-keys="selectedKeys"
-          :tree-data="treeData"
-          :defaultExpandAll="true"
-          @expand="onExpand"
-          @select="onSelect"
-          :showIcon="true"
-          :showLine="true">
-        </a-tree>
+        <div v-if="dataLoaded">
+          <a-tree
+            :selected-keys="selectedKeys"
+            :tree-data="treeData"
+            :defaultExpandAll="true"
+            @expand="onExpand"
+            @select="onSelect"
+            :showIcon="true"
+            :showLine="true">
+          </a-tree></div>
       </div>
       <div class="wrapper_content_right">
         <a-table
@@ -149,6 +150,7 @@ export default {
     RoleSingleSchema
   },
   data: () => ({
+    dataLoaded: false,
     selectedKeys: [], // 用于跟踪选中状态的数组
     treeData: [],
     selectTreeData: [],
@@ -292,6 +294,7 @@ export default {
         }
         return el
       }))
+      this.dataLoaded = true
     },
     operationShow (List = [], id = '') {
       return List.indexOf(id) === -1
