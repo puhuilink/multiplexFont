@@ -956,12 +956,12 @@ export const constantRouterMap = [
     path: '/600',
     name: '600',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600')
-  },
-  {
+  }
+  /* {
     path: '/player',
     name: 'player',
     component: () => import('@/views/SecurityMonitoring/view/player')
-  }
+  } */
 
 ]
 

@@ -189,14 +189,11 @@ export default {
       this.isLoading = false
     },
     async preview (fun) {
-      console.log(fun)
       this.$refs.childRef.visible = true
-      console.log('refs', this.$refs.childRef)
       const { data: { data: { url } } } = await xungeng.post('/so/camera/getPreviewUrl', {
         cameraIndexCode: fun.cameraIndexCode
       })
-      // this.$refs.childRef.childMethod(url, fun.title)
-      await this.$router.push({ path: '/player', query: { url: url, active: this.activeKey } })
+      this.$refs.childRef.childMethod(url, fun.title)
     },
     thumbnail (src) {
       return src

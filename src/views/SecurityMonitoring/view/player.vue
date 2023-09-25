@@ -20,7 +20,7 @@ export default {
     }
   },
   mounted () {
-    // this.url = `${process.env.VUE_APP_QUOTE_URL}/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
+    this.url = `${process.env.VUE_APP_QUOTE_URL}/static/h5player/webplayer.html?cameraUrl=${this.$route.query.url}`
   }
 }
 </script>

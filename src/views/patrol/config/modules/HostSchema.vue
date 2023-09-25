@@ -4,6 +4,7 @@
     wrapClassName="HostSchema"
     :visible="visible"
     width="800px"
+    centered
     v-if="visible"
     @ok="handleOk"
     @cancel="handleCancel"
@@ -174,7 +175,7 @@ export default {
           description: '操作失败：' + result.msg.toString()
         })
       }
-      this.visible = false
+      this.handleCancel()
     },
     async requestEdit () {
       const result = await xungeng.post('/path/editPath', this.formState)
