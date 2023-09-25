@@ -420,7 +420,7 @@ export default {
         if (
           !this.dataForm.dataIds ||
           (Array.isArray(this.dataForm.dataIds) && this.dataForm.dataIds.length === 0) ||
-          (this.dataForm.dataIds.checked !== undefined && Array.isArray(this.dataForm.dataIds.checked) && this.dataForm.dataIds.checked.length === 0)
+          (this.dataForm.dataIds?.checked !== undefined && Array.isArray(this.dataForm.dataIds?.checked) && this.dataForm.dataIds?.checked.length === 0)
         ) {
           this.$notification.warning({
             message: '提示',
@@ -430,7 +430,7 @@ export default {
         }
         // 这里checked读不到
         try {
-          if (this.dataForm.dataIds.checked) {
+          if (this.dataForm.dataIds?.checked) {
             this.dataForm.dataIds = [...this.dataForm.dataIds.checked]
           }
         } catch (error) {

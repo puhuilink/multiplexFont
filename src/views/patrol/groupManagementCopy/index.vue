@@ -26,7 +26,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="有效标识" v-bind="formItemLayout" class="fw">
               <a-select show-search v-model="isOpen" @change="handleChange" key="0">
-                <a-select-option :value="1"> 有效 </a-select-option>
+                <a-select-option :value="1"> 有效</a-select-option>
                 <a-select-option :value="0"> 无效</a-select-option>
               </a-select>
             </a-form-item>
@@ -43,8 +43,9 @@
     <!-- / 操作区域 -->
     <div class="onAddUserBox operation_box">
       <a-button type="primary" @click="onAddUser" v-action:F010002001>
-        <a-icon type="plus-circle"/>
-        新增巡更组</a-button>
+        <a-icon type="plus-circle" />
+        新增巡更组
+      </a-button>
       <a-button
         :type="hasSelected && selectedRowKeys.length === 1 ? 'primary' :''"
         @click="onEditUser"
@@ -52,11 +53,13 @@
         :disabled="!hasSelected || selectedRowKeys.length !== 1"
       >
         <a-icon type="edit" />
-        编辑巡更组</a-button
+        编辑巡更组
+      </a-button
       >
       <a-button :type="hasSelected ? 'primary' : ''" @click="DeleteGroup" v-action:F010002003 :disabled="!hasSelected">
         <a-icon type="delete" />
-        删除巡更组</a-button>
+        删除巡更组
+      </a-button>
     </div>
     <!-- <a-table
       :columns="columns"
@@ -95,7 +98,7 @@
 
     ></a-pagination> -->
 
-    <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList"/>
+    <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList" />
 
     <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
 
@@ -107,11 +110,12 @@
 import RoleSchema from './modules/RoleSchema'
 import AuthSchema from '@/components/Auth/AuthSchema'
 import UserGroupSchema from './modules/RoleUsersSchema.vue'
-import { RoleService } from '@/api'
+import { PathService, RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
 import { xungeng } from '@/utils/request'
+
 export default {
   name: 'Role',
   mixins: [Confirm, List],
@@ -144,7 +148,7 @@ export default {
           title: '备注',
           dataIndex: 'remark',
           'min-width': 300
-        // sorter: true
+          // sorter: true
         }
       ]),
       selectedRows: [],
@@ -228,7 +232,7 @@ export default {
         this.dataList = data.list
         this.selectedRowKeys = []
         this.selectedRowsDate = []
-      // console.log(this.dataList )
+        // console.log(this.dataList )
       } catch (error) {
         throw error
       } finally {
@@ -237,29 +241,37 @@ export default {
     },
 
     // 7.工作组删除(DELETE)
-    async DeleteGroup () {
-      let A = false
-      for (const id of this.selectedRowKeys) {
-        // 调用删除接口
-        const res = await xungeng.delete(`/group/${id}`)
-        console.log(res)
-        if (res.msg === 'OK') {
-          A = true
-          this.$notification.success({
-            message: '提示',
-            description: '删除成功'
-          })
-        } else {
-          A = false
+    DeleteGroup () {
+      this.$promiseConfirmDelete({
+        title: '删除',
+        content: '确定要删除吗',
+        onOk: async () => {
+          let A = false
+          for (const id of this.selectedRowKeys) {
+            // 调用删除接口
+            const res = await xungeng.delete(`/group/${id}`)
+            console.log(res)
+            if (res.msg === 'OK') {
+              A = true
+              this.$notification.success({
+                message: '提示',
+                description: '删除成功'
+              })
+            } else {
+              A = false
+            }
+          }
+          if (A === true) {
+            this.selectedRowKeys = []
+            this.getList()
+          }
         }
-      }
-      if (A === true) {
-        this.selectedRowKeys = []
-        this.getList()
-      }
+
+      })
     },
 
-    onStatusChange () {},
+    onStatusChange () {
+    },
     // 换页+++++++++++++++++++++++++++
     /*   handlePageChange (page) {
     // 在这里编写更换页面的逻辑
@@ -272,7 +284,9 @@ export default {
       this.pagination.pageSize = pageSize
       this.getList()
     },
-    handlePageSizeChange () {
+    handlePageSizeChange (page, pageSize) {
+      this.pagination.current = page
+      this.pagination.pageSize = pageSize
       this.getList()
     },
 
@@ -417,9 +431,10 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang="less">
 .onAddUserBox {
   margin-bottom: 15px;
+
   button {
     margin-right: 10px;
   }

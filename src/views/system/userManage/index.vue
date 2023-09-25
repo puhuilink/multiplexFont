@@ -4,15 +4,18 @@
     <div class="wrapper_content_left" style="overflow: hidden;margin-bottom: 23px; max-height: 1000px;">
       <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
       <div style="overflow: auto;width: 100%;">
-        <a-tree
-          :tree-data="treeData"
-          :defaultExpandAll="true"
-          @expand="onExpand"
-          @select="onSelect"
-          :showIcon="true"
-          :showLine="true"
-        >
-        </a-tree>
+        <div v-if="dataLoaded">
+          <a-tree
+            :tree-data="treeData"
+            :defaultExpandAll="expandAll"
+            @expand="onExpand"
+            @select="onSelect"
+            :showIcon="true"
+            :showLine="true"
+          >
+          </a-tree>
+        </div>
+
       </div>
     </div>
     <div style="width: 83%;">
@@ -124,8 +127,9 @@
       </div>
       <div class="operation_box">
         <a-button type="primary" @click="onAdd" v-action:F001001001>
-          <a-icon type="plus-circle"/>
-          新建</a-button>
+          <a-icon type="plus-circle" />
+          新建
+        </a-button>
       </div>
       <div class="wrapper_content">
         <div class="wrapper_content_right">
@@ -144,14 +148,18 @@
                 cancel-text="取消"
                 @confirm="switchStatus(record)"
               >
-                <a-switch :checked="record.isOpen" :disabled="disabled"/>
+                <a-switch :checked="record.isOpen" :disabled="disabled" />
               </a-popconfirm>
             </template>
             <template #operation="text, record">
-              <a @click="onEdit(record)" v-action:F001001002><a-icon type="form" />修改</a>
+              <a @click="onEdit(record)" v-action:F001001002>
+                <a-icon type="form" />
+                修改</a>
               <a-divider type="vertical" />
               <a-dropdown>
-                <a class="ant-dropdown-link"><a-icon type="double-right" />更多</a>
+                <a class="ant-dropdown-link">
+                  <a-icon type="double-right" />
+                  更多</a>
                 <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
                   <a-menu-item key="1" v-action:F001001003 style="color: '#004FA5';">
                     <a-icon type="delete" />
@@ -254,7 +262,7 @@ const columns = [
 
 export default {
   name: 'Index',
-  mixins: [ Confirm ],
+  mixins: [Confirm],
   components: {
     assignModal,
     schema,
@@ -262,6 +270,8 @@ export default {
   },
   data () {
     return {
+      dataLoaded: false,
+      expandAll: false, // 默认不展开全部
       disabled: false,
       dataSource: [],
       columns,
@@ -337,7 +347,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change}/>
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },
@@ -421,6 +431,8 @@ export default {
         }
       })
       this.banList = dataIds
+      // 设置 expandAll 属性为 true 只需在数据加载后执行一次
+      this.expandAll = true
       this.treeData = buildTree(list.map(el => {
         if (el.parentId === undefined) {
           el.parentId = null
@@ -446,6 +458,8 @@ export default {
         }
         return el
       }))
+      // 数据加载完成后，设置 dataLoaded 为 true，触发重新渲染
+      this.dataLoaded = true
     },
     operationShow (List = [], id = '') {
       return List.indexOf(id) === -1
@@ -533,9 +547,13 @@ export default {
       })
     }
   },
-  mounted () {
+  created () {
     this.getData()
     this.query()
+  },
+  mounted () {
+    // this.getData()
+    // this.query()
     // 角色管理状态
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
@@ -551,7 +569,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .wrapper {
   // padding: 8px 0;
   &_content {
@@ -566,7 +584,7 @@ export default {
       border-radius: 5px;
       padding: 5px;
       overflow: scroll;
-      margin-left:23px;
+      margin-left: 23px;
     }
 
     &_right {
