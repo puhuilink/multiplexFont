@@ -213,7 +213,7 @@ export default {
       orgId: ''
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss',
-    expandedRowKeys: []
+    expandedRowKeys: ['1']
     // 左侧树
 
   }),
@@ -295,7 +295,7 @@ export default {
         }
         return el
       }))
-      this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
+      // this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
       this.dataLoaded = true
     },
     operationShow (List = [], id = '') {
