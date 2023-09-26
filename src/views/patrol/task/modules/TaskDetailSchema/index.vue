@@ -64,12 +64,15 @@
               <template #imgs="imgs,record">
                 <span v-if="record.tags.imgs.length > 0">
                   <viewer :images="record.tags.imgs">
-                    <img
-                      v-for="(src,index) in record.tags.imgs"
-                      :src="`${baseURI}${src}`"
-                      :key="index"
-                      style="width: 50px;height: 50px"
-                    >
+                    <div class="image-container">
+                      <img
+                        v-for="(src,index) in record.tags.imgs"
+                        :src="`${baseURI}${src}`"
+                        :key="index"
+                        style="width: 50px;height: 50px"
+                        @click="showBigPic(src)"
+                      >
+                    </div>
                   </viewer>
                 </span>
               </template>
@@ -84,11 +87,13 @@
         </a-tabs>
       </div>
     </a-spin>
+    <picModal :img="bigImg" ref="bigPic"></picModal>
   </a-modal>
 </template>
 
 <script>
 import Schema from '@/components/Mixins/Modal/Schema'
+import picModal from './picModal'
 import { DELAY_MAPPING } from '../../../typing'
 import moment from 'moment'
 import _ from 'lodash'
@@ -97,7 +102,7 @@ import { xungeng } from '@/utils/request'
 export default {
   name: 'TaskDetailSchema',
   mixins: [Schema],
-  components: {},
+  components: { picModal },
   props: {},
   data () {
     return {
@@ -226,7 +231,8 @@ export default {
           this.paginationOpt.defaultPageSize = size
           this.fetch(this.parentData, this.parentData.id, this.tabsKey)
         }
-      }
+      },
+      bigImg: ''
     }
   },
   filters: {
@@ -249,6 +255,11 @@ export default {
     }
   },
   methods: {
+    showBigPic (src) {
+      this.bigImg = `${this.baseURI}${src}`
+      console.log('123', this.bigImg)
+      this.$refs.bigPic.show()
+    },
     valueMapping (record) {
       const type = record.type
       const list = JSON.parse(record.format)
@@ -358,6 +369,15 @@ export default {
   z-index: 999;
   position: absolute;
   top: 60px;
-  left: 800px;
+  left: 700px;
+}
+
+.image-container img {
+  max-width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.image-container img:hover {
+  transform: scale(1.3);
 }
 </style>
