@@ -33,10 +33,10 @@
           </a-col>
           <a-col :span="8">
             <span v-if="basicInfo.executor!==null">
-              执行人：{{ basicInfo.executor!=null ?
-                basicInfo.executor !== basicInfo.executor.toString()?
-                  basicInfo.executor.toString().replaceAll('\"','').replace('[','').replace(']',''):
-                  JSON.parse(basicInfo.executor).executor:
+              执行人：{{ basicInfo.executor != null ?
+                basicInfo.executor !== basicInfo.executor.toString() ?
+                  basicInfo.executor.toString().replaceAll('\"', '').replace('[', '').replace(']', '') :
+                  JSON.parse(basicInfo.executor).executor :
                 '' }}</span>
           </a-col>
         </a-row>
@@ -44,7 +44,12 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
-        <a-switch checked-children="异常" un-checked-children="无异常" v-model="switchStatus" class="occur" @change="fetchSwitch"/>
+        <a-switch
+          checked-children="异常"
+          un-checked-children="无异常"
+          v-model="switchStatus"
+          class="occur"
+          @change="fetchSwitch" />
         <a-tabs default-active-key="zoneId" @change="changeZone">
           <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias">
             <a-table
@@ -72,7 +77,7 @@
                 {{ remark.remarks }}
               </template>
               <template #endpoint="endpoint,record">
-                {{ record.endpointAlias&&endpoint!=='NULL'&&endpoint!==''?endpoint:'虚拟实体' }}
+                {{ record.endpointAlias && endpoint !== 'NULL' && endpoint !== '' ? endpoint : '虚拟实体' }}
               </template>
             </a-table>
           </a-tab-pane>
@@ -300,6 +305,10 @@ export default {
       }
     },
     detail (record) {
+      console.log(record)
+      if (record.eventCount > 0) {
+        this.switchStatus = true
+      }
       this.show('巡更记录单')
       this.parentData = record
       this.fetch(this.parentData, record.id)

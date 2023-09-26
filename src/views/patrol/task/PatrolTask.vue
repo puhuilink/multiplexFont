@@ -101,15 +101,28 @@
 
     <!-- / 操作区域 -->
     <div class="operation_box">
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="seeDetail" style="marginRight: 10px;" v-action:F010005001>
+      <a-button
+        :type="hasSelectedOne ? 'primary' : ''"
+        :disabled="!hasSelectedOne"
+        @click="seeDetail"
+        style="marginRight: 10px;"
+        v-action:F010005001>
         <a-icon type="search" />
-        查看</a-button>
-      <a-button :loading="exportLoading" :disabled="!hasSelected" @click="exportExcel" style="marginRight: 10px;" v-action:F010005002>
+        查看
+      </a-button>
+      <a-button
+        :loading="exportLoading"
+        :disabled="!hasSelected"
+        @click="exportExcel"
+        style="marginRight: 10px;"
+        v-action:F010005002>
         <a-icon type="upload" />
-        导出</a-button>
+        导出
+      </a-button>
       <a-button v-show="false" :loading="exportLoading" @click="exportExcelOnYear" v-action:F010005002>
         <a-icon type="upload" />
-        导出月/年计划</a-button>
+        导出月/年计划
+      </a-button>
     </div>
 
     <a-table
@@ -123,6 +136,11 @@
       :scroll="scroll"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
+      <template #action="text,record">
+        <a @click="abnormalDate(record)" v-action:F010001001005>
+          <a-icon type="search" />
+          {{ record.eventCount }}</a>
+      </template>
     </a-table>
 
     <TaskDetailSchema ref="schema" />
@@ -216,8 +234,9 @@ export default {
         },
         {
           title: '异常数量',
-          dataIndex: 'eventCount',
-          width: 100
+          // dataIndex: 'eventCount',
+          width: 100,
+          scopedSlots: { customRender: 'action' }
         },
         {
           title: '巡更人员',
@@ -264,6 +283,15 @@ export default {
     }
   },
   methods: {
+    abnormalDate (record) {
+      console.log(record)
+      const status = parseInt(record.status)
+      if (status < 30 && status > 2) {
+        this.$refs['schema'].detail(record)
+      } else {
+        this.$message.error('该任务单没有巡更记录可查看！')
+      }
+    },
     resetQueryParams () {
       this.queryParams = {
         groupId: '',
@@ -278,7 +306,11 @@ export default {
         this.queryParams.actualTimeStart = moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
         this.queryParams.actualTimeEnd = moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
       }
-      this.loadData(this.reloadParams({ ..._.omit(this.queryParams, ['timeList']), pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize }))
+      this.loadData(this.reloadParams({
+        ..._.omit(this.queryParams, ['timeList']),
+        pageNum: this.paginationOpt.defaultCurrent,
+        pageSize: this.paginationOpt.defaultPageSize
+      }))
       this.selectedRowKeys = []
     },
     moment,
@@ -385,5 +417,5 @@ export default {
 }
 </script>
 
-<style scoped lang='less'>
+<style scoped lang="less">
 </style>
