@@ -389,11 +389,11 @@ export default {
 
   },
   methods: {
-    isBlank(element) {
-      return element&&element!==''
+    isBlank (element) {
+      return element && element !== ''
     },
-    force(){
-      if (this.isBlank(this.answerForm.defaultLowerThreshold)){
+    force () {
+      if (this.isBlank(this.answerForm.defaultLowerThreshold)) {
         this.$refs.answerForm.clearValidate('defaultLowerThreshold')
       }
       this.$forceUpdate()

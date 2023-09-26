@@ -25,7 +25,7 @@ export const asyncRouterMap = [
         path: '/first',
         name: 'first',
         component: () => import('@/views/titlePage/index'),
-        meta: { title: '首页', keepAlive: true, icon: 'home' }
+        meta: { title: '首页', keepAlive: true, icon: 'home', permission: ['F030'] }
       },
       // view
       {
