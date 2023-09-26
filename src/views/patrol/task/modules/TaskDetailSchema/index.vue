@@ -13,31 +13,31 @@
       <!-- 基本信息 -->
       <div class="TaskDetailSchema__basicInfo">
         <a-row>
-          <a-col :span="12">
+          <a-col :span="8">
             <span>计划名称：{{ basicInfo.planAlias }}</span>
           </a-col>
-          <a-col :span="12">
+          <a-col :span="8">
             <span>任务单号：{{ basicInfo.id }}</span>
+          </a-col>
+          <a-col :span="6">
+            <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
 
         <a-row>
-          <a-col :span="6">
+          <a-col :span="8">
             <span>开始时间：{{ basicInfo.actualStartTime }}</span>
           </a-col>
-          <a-col :span="6">
+          <a-col :span="8">
             <span>完成时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
-          <a-col :span="6">
+          <a-col :span="8">
             <span v-if="basicInfo.executor!==null">
               执行人：{{ basicInfo.executor!=null ?
                 basicInfo.executor !== basicInfo.executor.toString()?
                   basicInfo.executor.toString().replaceAll('\"','').replace('[','').replace(']',''):
                   JSON.parse(basicInfo.executor).executor:
                 '' }}</span>
-          </a-col>
-          <a-col :span="6">
-            <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
       </div>
