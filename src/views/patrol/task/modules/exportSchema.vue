@@ -43,7 +43,7 @@
         <a-col :span="24">
           <a-transfer
             :list-style="{
-              width: '300px',
+              width: '280px',
               height: '200px',
             }"
             :data-source="dataSource"

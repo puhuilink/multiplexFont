@@ -64,7 +64,7 @@
           <a-tree
             :selected-keys="selectedKeys"
             :tree-data="treeData"
-            :defaultExpandAll="true"
+            :defaultExpandedKeys="expandedRowKeys"
             @expand="onExpand"
             @select="onSelect"
             :showIcon="true"
@@ -212,7 +212,8 @@ export default {
       timeList: [],
       orgId: ''
     },
-    dateFormat: 'YYYY-MM-DD HH:mm:ss'
+    dateFormat: 'YYYY-MM-DD HH:mm:ss',
+    expandedRowKeys: []
     // 左侧树
 
   }),
@@ -294,6 +295,7 @@ export default {
         }
         return el
       }))
+      this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
       this.dataLoaded = true
     },
     operationShow (List = [], id = '') {

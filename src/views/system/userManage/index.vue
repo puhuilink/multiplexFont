@@ -2,12 +2,12 @@
   <div class="wrapper" style="display: flex;">
     <!--      操作-->
     <div class="wrapper_content_left" style="overflow: hidden;margin-bottom: 23px; max-height: 1000px;">
-      <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+      <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="change" />
       <div style="overflow: auto;width: 100%;">
         <div v-if="dataLoaded">
           <a-tree
             :tree-data="treeData"
-            :defaultExpandAll="expandAll"
+            :defaultExpandedKeys="expandedRowKeys"
             @expand="onExpand"
             @select="onSelect"
             :showIcon="true"
@@ -317,7 +317,8 @@ export default {
       },
       pageLoading: false,
       banList: [],
-      selectTreeData: []
+      selectTreeData: [],
+      expandedRowKeys: []
     }
   },
   methods: {
@@ -458,6 +459,8 @@ export default {
         }
         return el
       }))
+
+      this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
       // 数据加载完成后，设置 dataLoaded 为 true，触发重新渲染
       this.dataLoaded = true
     },
@@ -547,13 +550,9 @@ export default {
       })
     }
   },
-  created () {
+  mounted () {
     this.getData()
     this.query()
-  },
-  mounted () {
-    // this.getData()
-    // this.query()
     // 角色管理状态
     const rolesData = localStorage.getItem('pro__Roles')
     if (rolesData) {
