@@ -141,7 +141,7 @@
           <a-icon type="search" />
           {{ record.eventCount }}</a>
         <span v-else>
-          </span>
+        </span>
       </template>
     </a-table>
 

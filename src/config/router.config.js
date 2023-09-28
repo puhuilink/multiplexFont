@@ -462,6 +462,17 @@ export const asyncRouterMap = [
             name: 'room',
             component: () => import('@/views/SecurityMonitoring/view/monitorPage'),
             meta: { title: '机房监控管理', keepAlive: true, icon: 'line-chart' }
+          },
+          {
+            path: '/machineRoom/room/:monitorName',
+            name: 'PatrolConfigPathEditIndex',
+            hidden: true,
+            component: () => import('@/views/SecurityMonitoring/view/monitorPageIndex'),
+            meta: {
+              // 使用动态路径参数作为页面标题
+              title: '监控',
+              keepAlive: true
+            }
           }
         ]
       },
