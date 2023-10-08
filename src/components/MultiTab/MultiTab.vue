@@ -100,7 +100,13 @@ export default {
     },
     renderTabPaneMenu (e) {
       return (
-        <a-menu {...{ on: { click: ({ key, item, domEvent }) => { this.closeMenuClick(key, e) } } }}>
+        <a-menu {...{
+          on: {
+            click: ({ key, item, domEvent }) => {
+              this.closeMenuClick(key, e)
+            }
+          }
+        }}>
           <a-menu-item key="closeThat">关闭当前标签</a-menu-item>
           <a-menu-item key="closeRight">关闭右侧</a-menu-item>
           <a-menu-item key="closeLeft">关闭左侧</a-menu-item>
@@ -114,7 +120,7 @@ export default {
 
       return (
         <a-dropdown overlay={menu} trigger={['contextmenu']}>
-          <span style={{ userSelect: 'none' }}>{ title }</span>
+          <span style={{ userSelect: 'none' }}>{title}</span>
         </a-dropdown>
       )
     }
@@ -133,11 +139,16 @@ export default {
   },
   render () {
     const { onEdit, $data: { pages } } = this
+
     const panes = pages.map(page => {
+      let str = ''
+      if (page.fullPath.toString().includes('/machineRoom/room/')) {
+        str = page.fullPath.toString().split('?')[0].slice(18)
+      }
       return (
         <a-tab-pane
           style={{ height: 0 }}
-          tab={this.renderTabPane(page.meta.customTitle || page.meta.title, page.fullPath)}
+          tab={this.renderTabPane(str || page.meta.customTitle || page.meta.title, page.fullPath)}
           key={page.fullPath} closable={pages.length > 1}
         >
         </a-tab-pane>)

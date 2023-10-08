@@ -137,9 +137,11 @@
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #action="text,record">
-        <a @click="abnormalDate(record)" v-action:F010001001005>
+        <a @click="abnormalDate(record)" v-if="record.eventCount>0">
           <a-icon type="search" />
           {{ record.eventCount }}</a>
+        <span v-else>
+        </span>
       </template>
     </a-table>
 

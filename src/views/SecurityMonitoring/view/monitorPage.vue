@@ -2,7 +2,7 @@
   <div>
     <a-spin :spinning="isLoading">
       <div class="ViewDisplay-tabs">
-        <a-tabs :default-active-key="activeKey" tab-position="top" @change="tabsChange">
+        <a-tabs :default-active-key="activeKey" tab-position="top" @change="tabsChange" id="box">
           <a-tab-pane
             v-for="floor in indexFloor"
             :key="floor.name"
@@ -180,8 +180,21 @@ export default {
       ]
     }
   },
-  methods: {
+  mounted () {
+    // 在组件挂载后，发起异步请求加载用户数据
+    const navContainer = document.querySelector('#box .ant-tabs-nav-container')
+    const navContainer1 = document.querySelector('.ant-layout-content > :last-child')
+    if (navContainer) {
+      // 更改高度为 40px
+      navContainer.style.cssText = 'height: 60px !important'
+    }
+    if (navContainer1) {
+      // 更改高度为 40px
+      navContainer1.style.cssText = 'padding: 0 !important'
+    }
+  },
 
+  methods: {
     tabsChange (name) {
       this.activeKey = name
       this.isLoading = true
@@ -189,11 +202,15 @@ export default {
       this.isLoading = false
     },
     async preview (fun) {
-      this.$refs.childRef.visible = true
+      // this.$refs.childRef.visible = true
       const { data: { data: { url } } } = await xungeng.post('/so/camera/getPreviewUrl', {
         cameraIndexCode: fun.cameraIndexCode
       })
-      this.$refs.childRef.childMethod(url, fun.title)
+      const monitorName = fun.title // 这里可以是动态获取的监控画面名字
+      // await this.$router.push(`/machineRoom/room/${monitorName}/url?url=${url}`)
+      await this.$router.push({ path: `/machineRoom/room/${monitorName}`, query: { url: url } })
+      // this.$router.push(`/machineRoom/room/:monitorName/:urlParam`)
+      // this.$refs.childRef.childMethod(url, fun.title)
     },
     thumbnail (src) {
       return src

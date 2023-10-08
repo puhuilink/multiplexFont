@@ -318,7 +318,7 @@ export default {
       pageLoading: false,
       banList: [],
       selectTreeData: [],
-      expandedRowKeys: []
+      expandedRowKeys: ['1']
     }
   },
   methods: {
@@ -460,7 +460,7 @@ export default {
         return el
       }))
 
-      this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
+      // this.expandedRowKeys = [...this.selectTreeData[0].children.filter(el => _.get(el, 'children', []).length > 0).map(el => el.id), '1']
       // 数据加载完成后，设置 dataLoaded 为 true，触发重新渲染
       this.dataLoaded = true
     },

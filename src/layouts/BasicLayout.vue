@@ -117,10 +117,10 @@ export default {
       return '80px'
     },
     showTab () {
-      const currentPath = this.$route.path
-      if (currentPath === '/SecurityMonitoring/SituationalAwareness' || currentPath === '/machineRoom/room') {
-        return false
-      }
+      // const currentPath = this.$route.path
+      // if (currentPath === '/SecurityMonitoring/SituationalAwareness' || currentPath === '/machineRoom/room') {
+      //   return false
+      // }
       return true
     }
   },
