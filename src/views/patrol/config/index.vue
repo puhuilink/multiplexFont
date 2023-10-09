@@ -13,7 +13,7 @@
                   <a-button
                     type="primary"
                     @click="() => {
-                      this.getPatrolPath(1, {checkpoint_alias:this.alias})
+                      this.getPatrolPath(1,)
                     }"
                   >查询</a-button>
                   <a-button
@@ -403,8 +403,8 @@ export default {
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
+          console.log(current,size)
           this.paginationOpt.defaultCurrent = current
-
           this.paginationOpt.defaultPageSize = size
           this.getPatrolPath(current)
         }
@@ -461,11 +461,6 @@ export default {
       if (!this.hasSelectedAll) {
         this.selectedRowKeys = []
         this.selectedRowKeys.push(...new Set(this.checkpoints))
-        this.selectedRows.push(...new Set(this.data.map(entity => ({
-          checkpoint_id: entity.checkpoint_id,
-          zone_alias: entity.zone_alias,
-          checkpoint_alias: entity.checkpoint_alias
-        }))))
         this.a_check.checked = true
       } else {
         this.selectedRowKeys = []
@@ -480,7 +475,8 @@ export default {
         this.selectedRows.push(row)
       }
     },
-    async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
+    async getPatrolPath (pageNo = 1) {
+      const checkpoint_alias = this.alias
       this.spinning = true
       this.data = []
       this.checkpoints = []
