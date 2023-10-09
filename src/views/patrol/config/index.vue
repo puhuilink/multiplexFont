@@ -406,7 +406,7 @@ export default {
           this.paginationOpt.defaultCurrent = current
 
           this.paginationOpt.defaultPageSize = size
-          this.query()
+          this.getPatrolPath(current)
         }
       }
     },
