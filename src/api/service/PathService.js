@@ -6,6 +6,7 @@ class PathService extends BaseService {
   static async find (alias, pageNum = 0, pageSize = 10) {
     let base = `/path/list?pageNum=${pageNum}&pageSize=${pageSize}`
     if (alias) {
+      alias = encodeURIComponent(alias)
       base += `&alias=${alias}`
     }
     try {
@@ -52,6 +53,9 @@ class PathService extends BaseService {
   // 分配用户给角色
   static async updatePath (arg) {
     try {
+      Object.keys(arg).forEach(key => {
+        arg[key] = encodeURIComponent(arg[key])
+      })
       const { code, data } = await xungeng.get(`/path/update?pathId=${arg.id}&alias=${arg.alias}&ascription=${arg.ascription}`)
       if (code === 200) {
         return data
