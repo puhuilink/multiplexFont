@@ -221,6 +221,7 @@ export default {
   },
   watch: {},
   created () {
+    this.initialPagination()
     this.dealRouter()
     this.fetchThreshold({})
   },
@@ -369,7 +370,7 @@ export default {
           description: this.isNew ? '新增阈值成功' : '编辑阈值成功'
         })
         this.visible = false
-        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+        await this.fetchThreshold({ pageNo: this.paginationOpt.defaultCurrent })
       } else {
         this.$notification.error({
           message: '系统提示',
@@ -386,7 +387,7 @@ export default {
           message: '系统提示',
           description: '删除阈值成功'
         })
-        await this.fetchThreshold({ pageNo: this.table.pageNumber })
+        await this.fetchThreshold({ pageNo: this.paginationOpt.defaultCurrent })
       } else {
         this.$notification.error({
           message: '系统提示',
