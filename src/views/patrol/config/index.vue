@@ -63,19 +63,21 @@
       :row-key="(record,index) => index"
       bordered
       :loadind="spinning"
-      :pagination="{
-        current: table.pageNumber,
-        defaultPageSize: 10,
-        total:this.pagination.total,
-        showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
-        onChange:(pageNumber) =>{
-          table.pageNumber = pageNumber
-          getPatrolPath(pageNumber,{checkpoint_alias:this.alias})
-          this.checkpoints = []
-          this.hostTable = []
-          this.endpointTable = []
-        }
-      }"
+      :pagination="paginationOpt
+      // {
+      //   current: table.pageNumber,
+      //   defaultPageSize: 10,
+      //   total:this.pagination.total,
+      //   showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
+      //   onChange:(pageNumber) =>{
+      //     table.pageNumber = pageNumber
+      //     getPatrolPath(pageNumber,{checkpoint_alias:this.alias})
+      //     this.checkpoints = []
+      //     this.hostTable = []
+      //     this.endpointTable = []
+      //   }
+      // }
+      "
     >
       <template slot="checkboxes">
         <a-checkbox
@@ -160,6 +162,7 @@ export default {
   },
   data () {
     return {
+      paginationOpt: {},
       alias: '',
       formStatus: 1,
       table: {
@@ -397,6 +400,29 @@ export default {
     }
   },
   methods: {
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.getPatrolPath(current)
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
+    },
     onRefresh () {
       this.$refs.zone.fetch()
       this.getPatrolPath(1, {})
@@ -475,11 +501,11 @@ export default {
         query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
         querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
       }
-      query_sql += ' limit 10 offset ' + (pageNo - 1) * 10
+      query_sql += ' limit 10 offset ' + (pageNo - 1) * this.paginationOpt.defaultPageSize
       this.data = dealQuery(await sql(query_sql))
       querys += ' and path_id = ' + this.pathId
       querys += ' and zone_id =' + this.zoneId
-      this.pagination.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
+      this.paginationOpt.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
       this.spinning = false
     },
     changeZone ({ pathId, zoneId }) {
@@ -531,6 +557,7 @@ export default {
   },
   created () {
     this.dealRouter()
+    this.initialPagination()
     this.getPatrolPath(1, {})
   }
 }

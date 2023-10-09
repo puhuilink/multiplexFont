@@ -4,7 +4,7 @@
     <div class="border_out_shu"></div>
     <div class="border_out_bigFont">{{ floor }}</div>
     <div class="border_out_title">{{ title }}</div>
-    <img :src="imgList[imgUrl]" class="border_out_img" />
+    <img :src="imgList[imgUrl]" class="border_out_img" alt="" />
   </div>
 </template>
 

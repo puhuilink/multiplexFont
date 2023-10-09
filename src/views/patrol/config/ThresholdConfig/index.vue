@@ -123,15 +123,7 @@
       :data-source="data"
       :loading="loading"
       :row-key="(record,index) => index"
-      :pagination="{
-        current: table.pageNumber,
-        defaultPageSize: 10,
-        total: this.total,
-        onChange:(pageNumber) =>{
-          table.pageNumber = pageNumber
-          handleSearch(pageNumber)
-        }
-      }"
+      :pagination="paginationOpt"
     >
       <template slot="host" slot-scope="value,record">{{ value }} <a-tag v-if="record.update_time =='NULL'" color="red">new</a-tag> </template>
       <template slot="endpoint" slot-scope="value,record">{{ record.visible==='t'?value:'虚拟实体' }}</template>
@@ -166,7 +158,7 @@ export default {
         pageSize: 10
       },
       queryParams: {},
-      pagination: {},
+      paginationOpt: {},
       columns: [
         {
           title: '监控对象',
@@ -265,7 +257,7 @@ export default {
       this.data = []
       const obj = _.cloneDeep(this.form)
       const { pathId, zoneId } = this
-      Object.assign(obj, { pathId, zoneId }, { pageNum: this.table.pageNumber, pageSize: 10 })
+      Object.assign(obj, { pathId, zoneId }, { pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
       Object.keys(obj).forEach(key => {
         if (!this.isBlank(obj[key])) {
           delete obj[key]
@@ -325,6 +317,29 @@ export default {
     },
     toBitchUpdate () {
       this.$refs.batchTable.openModal(this.pathId)
+    },
+    initialPagination () {
+      this.paginationOpt = {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.defaultPageSize = pageSize
+          this.handleSearch()
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt.defaultCurrent = current
+
+          this.paginationOpt.defaultPageSize = size
+          this.query()
+        }
+      }
     },
     async updateThreshold (data) {
       let result
