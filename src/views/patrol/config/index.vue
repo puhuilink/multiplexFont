@@ -63,21 +63,7 @@
       :row-key="(record,index) => index"
       bordered
       :loadind="spinning"
-      :pagination="paginationOpt
-      // {
-      //   current: table.pageNumber,
-      //   defaultPageSize: 10,
-      //   total:this.pagination.total,
-      //   showTotal: (total,range)=> `${range[0]}-${range[1]}共${total}个检查项`,
-      //   onChange:(pageNumber) =>{
-      //     table.pageNumber = pageNumber
-      //     getPatrolPath(pageNumber,{checkpoint_alias:this.alias})
-      //     this.checkpoints = []
-      //     this.hostTable = []
-      //     this.endpointTable = []
-      //   }
-      // }
-      "
+      :pagination="paginationOpt "
     >
       <template slot="checkboxes">
         <a-checkbox
@@ -89,7 +75,7 @@
       <template slot="checkbox" slot-scope="value,row">
         <a-checkbox
           :checked="isChecked(row.checkpoint_id)"
-          @change="onSelectChange(row.checkpoint_id)"
+          @change="onSelectChange(row.checkpoint_id,row)"
         />
       </template>
       <template slot="code" slot-scope="value,row">
@@ -376,6 +362,7 @@ export default {
         pageSize: 5,
         total: 0
       },
+      selectedRows: [],
       xgModelPoint: { id: '', alias: '', path: '', zone: '' },
       delId: null,
       deleteVisible: false
@@ -474,16 +461,23 @@ export default {
       if (!this.hasSelectedAll) {
         this.selectedRowKeys = []
         this.selectedRowKeys.push(...new Set(this.checkpoints))
+        this.selectedRows.push(...new Set(this.data.map(entity => ({
+          checkpoint_id: entity.checkpoint_id,
+          zone_alias: entity.zone_alias,
+          checkpoint_alias: entity.checkpoint_alias
+        }))))
         this.a_check.checked = true
       } else {
         this.selectedRowKeys = []
       }
     },
-    onSelectChange (e) {
+    onSelectChange (e, row) {
       if (this.selectedRowKeys.includes(e)) {
         this.selectedRowKeys.pop(e)
+        this.selectedRows.pop(row)
       } else {
         this.selectedRowKeys.push(e)
+        this.selectedRows.push(row)
       }
     },
     async getPatrolPath (pageNo = 1, { checkpoint_alias }) {
@@ -509,7 +503,7 @@ export default {
       this.spinning = false
     },
     changeZone ({ pathId, zoneId }) {
-      this.table.pageNumber = 1
+      this.paginationOpt.defaultCurrent = 1
       this.pathId = pathId
       this.zoneId = zoneId
       this.getPatrolPath(1, {})
@@ -530,12 +524,15 @@ export default {
     async batchDownloadQrCode () {
       try {
         this.qcCodeGlobalLoading = true
-        for (const checkpoint of this.data) {
+        for (const checkpointID of this.selectedRowKeys) {
+          const checkpoint = this.data.find(e => e.checkpoint_id === checkpointID)
           await this.downloadQrCode({
-            checkpointId: checkpoint,
-            checkpointAlias: `${_.get(checkpoint, 'zone_alias', '当前楼层')}-${_.get(checkpoint, 'checkpoint_alias', '当前点位')}-${_.get(checkpoint, 'host_alias', '当前对象')}`
+            checkpointId: checkpointID,
+            checkpointAlias: `${_.get(checkpoint, 'zone_alias', '当前楼层')}-${_.get(checkpoint, 'checkpoint_alias', '当前点位')}`
           })
         }
+      } catch (e) {
+        console.log(e)
       } finally {
         this.qcCodeGlobalLoading = false
       }
