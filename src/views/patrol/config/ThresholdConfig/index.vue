@@ -265,7 +265,7 @@ export default {
       })
       const result = await xungeng.get('/threshold/list', { params: obj })
       this.data = result.data.list
-      this.total = result.data.total
+      this.paginationOpt.total = result.data.total
       this.loading = false
     },
     handleReset () {
@@ -335,9 +335,8 @@ export default {
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationOpt.defaultCurrent = current
-
           this.paginationOpt.defaultPageSize = size
-          this.query()
+          this.handleSearch()
         }
       }
     },
