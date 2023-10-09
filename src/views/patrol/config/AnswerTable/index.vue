@@ -62,7 +62,7 @@
         type="primary"
         @click="()=>{
           this.visible = true
-          this.modalTitle = '新增检查项'
+          this.modalTitle = '新增检查值'
           this.isNew = true
           this.formatList = [
             {
