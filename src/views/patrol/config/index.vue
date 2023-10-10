@@ -403,7 +403,7 @@ export default {
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          console.log(current,size)
+          console.log(current, size)
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = size
           this.getPatrolPath(current)
@@ -412,7 +412,7 @@ export default {
     },
     onRefresh () {
       this.$refs.zone.fetch()
-      this.getPatrolPath(1, {})
+      this.getPatrolPath(1)
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)
@@ -491,7 +491,8 @@ export default {
         query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
         querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
       }
-      query_sql += ' limit 10 offset ' + (pageNo - 1) * this.paginationOpt.defaultPageSize
+      console.log(pageNo)
+      query_sql += ` limit ${this.paginationOpt.defaultPageSize} offset ` + (pageNo - 1) * this.paginationOpt.defaultPageSize
       this.data = dealQuery(await sql(query_sql))
       querys += ' and path_id = ' + this.pathId
       querys += ' and zone_id =' + this.zoneId
