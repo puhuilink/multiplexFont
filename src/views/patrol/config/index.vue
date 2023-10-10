@@ -500,12 +500,12 @@ export default {
         query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
         querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
       }
-      console.log(pageNo)
       query_sql += ` limit ${this.paginationOpt.defaultPageSize} offset ` + (pageNo - 1) * this.paginationOpt.defaultPageSize
       this.data = dealQuery(await sql(query_sql))
       querys += ' and path_id = ' + this.pathId
       querys += ' and zone_id =' + this.zoneId
       this.paginationOpt.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
+      this.paginationOpt.defaultCurrent = pageNo
       this.spinning = false
     },
     changeZone ({ pathId, zoneId }) {
