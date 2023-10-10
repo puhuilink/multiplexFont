@@ -42,24 +42,28 @@ export default {
       return `${year}-${month}-${day}`
     },
     drawPolicitalStatus () {
-      const formattedData = this.threadData.map(item => ({
-        ...item,
-        time: this.formatTimestampToDateString(item.time)
-      }))
+      let formattedData = null
       const middleNumData = []
       const highNumData = []
       const crisisNumData = []
       const lowNumData = []
       const timeData = []
+      if (this.threadData) {
+        formattedData = this.threadData.map(item => ({
+          ...item,
+          time: this.formatTimestampToDateString(item.time)
+        }))
+        formattedData.forEach(item => {
+          middleNumData.push(item.middleNum)
+          highNumData.push(item.highNum)
+          crisisNumData.push(item.crisisNum)
+          lowNumData.push(item.lowNum)
+          timeData.push(item.time)
+        })
+      }
 
       // 使用 forEach 循环处理数据
-      formattedData.forEach(item => {
-        middleNumData.push(item.middleNum)
-        highNumData.push(item.highNum)
-        crisisNumData.push(item.crisisNum)
-        lowNumData.push(item.lowNum)
-        timeData.push(item.time)
-      })
+
       // console.log(middleNumData, highNumData, crisisNumData, lowNumData, timeData)
       // 基于准备好的dom，初始化echarts实例
       const myChart03 = echarts.init(this.$refs.canvas03)
