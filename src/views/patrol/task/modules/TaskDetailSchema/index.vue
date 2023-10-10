@@ -44,12 +44,13 @@
 
       <!-- 点位信息 -->
       <div class="TaskDetailSchema__pointsInfo">
-        <a-switch
-          checked-children="异常"
-          un-checked-children="无异常"
-          v-model="switchStatus"
-          class="occur"
-          @change="fetchSwitch" />
+        <div class="occur">
+          <a-switch
+            checked-children="异常"
+            un-checked-children="无异常"
+            v-model="switchStatus"
+            @change="fetchSwitch" />
+        </div>
         <a-tabs default-active-key="zoneId" @change="changeZone">
           <a-tab-pane v-for="{ zoneAlias, zoneId } in switchCardList" :key="zoneId" :tab="zoneAlias">
             <a-table
@@ -369,7 +370,8 @@ export default {
   z-index: 999;
   position: absolute;
   top: 60px;
-  left: 700px;
+  right: 30px;
+  height: 100%;
 }
 
 .image-container img {

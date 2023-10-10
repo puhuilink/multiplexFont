@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="SoruceBox">
     <a-tabs :default-active-key="disabled?'2':'1'">
       <a-tab-pane key="1" tab="集团" v-if="!disabled">
         <safeSoruce></safeSoruce>
@@ -28,6 +28,14 @@ export default {
   data () {
     return {
       disabled: false
+    }
+  },
+  mounted () {
+    // 在组件挂载后，发起异步请求加载用户数据
+    const navContainer = document.querySelector('.SoruceBox .ant-tabs-nav-container')
+    if (navContainer) {
+      // 更改高度为 40px
+      navContainer.style.cssText = 'height: 60px !important'
     }
   },
   async created () {

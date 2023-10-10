@@ -181,13 +181,15 @@ export default {
 
         const comprehensiveData = comprehensive.data.data
         // 到这给第一个图表数据
-        const echartsData = comprehensiveData.map(item => {
-          // console.log(item);
-          item.time = this.formatTimestamp(parseInt(item.time))
-          this.listData1.push(item.risk)
-          this.listTime1.push(item.time)
-          return item
-        })
+        if (comprehensiveData) {
+          const echartsData = comprehensiveData.map(item => {
+            // console.log(item);
+            item.time = this.formatTimestamp(parseInt(item.time))
+            this.listData1.push(item.risk)
+            this.listTime1.push(item.time)
+            return item
+          })
+        }
 
         // this.datatime=listTime1
         // this.datatime=listData1
@@ -636,13 +638,16 @@ export default {
       const myChart22 = echarts.init(this.$refs.eacherbox22)
       const nameData = ['外部攻击告警', '横向移动告警', '资产外外连告警', '命中威胁告警', '恶意文件告警'] // 年份
       const threatLevels = ['危急', '高危', '中危', '低危']
-      const threatData = threatLevels.map(threatLevel => {
-        return Object.keys(this.listData22).reduce((acc, alarmType) => {
-          const threatLevelData = this.listData22[alarmType].alarmSeverityGroupStat.find(item => item.severityString === threatLevel)
-          acc.push(threatLevelData ? threatLevelData.alarmCount : 0)
-          return acc
-        }, [])
-      })
+      let threatData = []
+      if (threatLevels) {
+        threatData = threatLevels.map(threatLevel => {
+          return Object.keys(this.listData22).reduce((acc, alarmType) => {
+            const threatLevelData = this.listData22[alarmType].alarmSeverityGroupStat.find(item => item.severityString === threatLevel)
+            acc.push(threatLevelData ? threatLevelData.alarmCount : 0)
+            return acc
+          }, [])
+        })
+      }
 
       // 判断数据是否为空
       const isDataEmpty = threatData.every(data => data.every(value => value === 0))
