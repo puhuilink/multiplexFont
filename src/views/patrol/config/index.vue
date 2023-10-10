@@ -75,7 +75,7 @@
       <template slot="checkbox" slot-scope="value,row">
         <a-checkbox
           :checked="isChecked(row.checkpoint_id)"
-          @change="onSelectChange(row.checkpoint_id,row)"
+          @change="onSelectChange(row.checkpoint_id)"
         />
       </template>
       <template slot="code" slot-scope="value,row">
@@ -466,14 +466,23 @@ export default {
         this.selectedRowKeys = []
       }
     },
-    onSelectChange (e, row) {
+    arrayRemove (arr, item) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === item) {
+          // 从i出开始删除1个元素
+          arr.splice(i, 1)
+          i--
+        }
+      }
+      return arr
+    },
+    onSelectChange (e) {
       if (this.selectedRowKeys.includes(e)) {
-        this.selectedRowKeys.pop(e)
-        this.selectedRows.pop(row)
+        this.arrayRemove(this.selectedRowKeys, e)
       } else {
         this.selectedRowKeys.push(e)
-        this.selectedRows.push(row)
       }
+      console.log(this.selectedRowKeys)
     },
     async getPatrolPath (pageNo = 1) {
       const checkpoint_alias = this.alias

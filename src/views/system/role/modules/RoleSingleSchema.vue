@@ -278,8 +278,8 @@ export default {
      */
     async update () {
       // 如果选择指定部门且(修改指定部门值了吗?修改了没选吗:没需改或更换部门没选
-      // console.log( (!this.record?.dataIds.length))
-      if (this.record.dataType === 'CUSTOM' && ((this.record?.dataIds?.checked ? this.record?.dataIds.checked?.length === 0 : this.record?.dataIds?.length) || (!this.record?.dataIds) || this.record?.dataIds?.length === 0) && (!this.record?.dataIds?.length)) {
+      // console.log( (!this.record.dataIds.length))
+      if (this.record.dataType === 'CUSTOM' && ((this.record.dataIds.checked ? this.record.dataIds.checked.length === 0 : this.record.dataIds.length) || (!this.record.dataIds) || this.record.dataIds.length === 0) && (!this.record.dataIds.length)) {
         this.$notification.warning({
           message: '提示',
           description: `请选择部门范围`
@@ -288,7 +288,7 @@ export default {
         const operateType = 'DATA'
         Object.assign(this.record, { operateType })
 
-        if (this.record?.dataIds?.checked) {
+        if (this.record.dataIds.checked) {
           this.record.dataIds = this.record.dataIds.checked
         }
         try {
