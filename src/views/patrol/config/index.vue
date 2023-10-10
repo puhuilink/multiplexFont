@@ -403,7 +403,6 @@ export default {
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          console.log(current,size)
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = size
           this.getPatrolPath(current)
