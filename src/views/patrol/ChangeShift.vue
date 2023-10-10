@@ -8,7 +8,7 @@
               <!-- <ToggleBtn @click="toggleAdvanced" :advanced="advanced" /> -->
             </label>
             <span>
-              <QueryBtn @click="query" />
+              <QueryBtn @click="query(true)" />
               <ResetBtn @click="resetQueryParams" />
             </span>
           </a-col>
@@ -134,6 +134,7 @@ export default {
       dataSource: [],
       paginationOpt: {
         defaultCurrent: 1, // 默认当前页数
+        current: 1,
         defaultPageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数，必须先有
         showSizeChanger: true,
@@ -141,13 +142,13 @@ export default {
         pageSizeOptions: ['10', '20', '50', '100'],
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
-          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.current = current
           this.paginationOpt.defaultPageSize = pageSize
           this.query()
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.current = current
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
@@ -158,17 +159,21 @@ export default {
   computed: {},
   methods: {
     moment,
-    async query () {
+    async query (first = false) {
       try {
         this.pageLoading = true
         if (this.queryParams.receive_time) {
           this.queryParams.createTimeStart = this.moment(this.queryParams.receive_time[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.receive_time[1]).format('YYYY-MM-DD HH:mm:ss')
         }
+        if (first) {
+          this.paginationOpt.current = 1
+          this.$nextTick()
+        }
         const { data: { list, total } } = await xungeng.get('/changeShifts/list', {
           params: {
             pageSize: this.paginationOpt.defaultPageSize,
-            pageNum: this.paginationOpt.defaultCurrent,
+            pageNum: this.paginationOpt.current,
             ..._.omit(this.queryParams, ['receive_time'])
           }
         })

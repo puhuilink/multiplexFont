@@ -20,16 +20,24 @@ export default {
             }
           },
           legend: {
-            orient: 'horizontal',
+            orient: 'vertical',
             textStyle: {
               color: '#B0BDCD'
-            }
+            },
+            emphasis: {
+              textStyle: {
+                fontWeight: 'bold',
+                color: 'red'
+              }
+            },
+            right: 5,
+            itemGap: 5
           },
           grid: {
-            width: '800px',
-            height: '250px',
+            width: '450',
+            height: '200px',
             top: 'middle',
-            right: '5%'
+            left: '10%'
           },
           xAxis: {
             type: 'category',
@@ -116,7 +124,7 @@ export default {
 
 <style scoped>
 .outer {
-  width: 930px;
+  width: 650px;
   height: 328px;
   background: linear-gradient(360deg, rgba(33,82,139,0.49) 0%, rgba(21,47,87,0) 100%);
   position: relative;

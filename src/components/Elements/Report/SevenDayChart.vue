@@ -89,7 +89,7 @@ export default {
         },
         grid: {
           top: 'middle',
-          width: '400px',
+          width: '300px',
           height: '80px'
         },
         textStyle: {
@@ -130,7 +130,7 @@ export default {
 
 <style scoped>
 .outer {
-  width: 696px;
+  width: 500px;
   height: 174px;
   background: linear-gradient(360deg, rgba(33,82,139,0.49) 0%, rgba(21,47,87,0) 100%);
   position: relative;
@@ -163,7 +163,7 @@ export default {
   font-family: MicrosoftYaHei;
   color: #B3EFFF;
   line-height: 14px;
-  left: 74px;
+  left: 49px;
   top: 80px;
 }
 
@@ -175,19 +175,19 @@ export default {
   font-weight: bold;
   color: #00EDFF;
   line-height: 30px;
-  left: 46px;
+  left: 15px;
   top: 50px;
   text-align: center;
 }
 .chart_color {
   width: 484px;
   height: 112px;
-  left: 177px;
-  top: 30px;
+  left: 80px;
+  top: 50px;
   /*background-color: #fff;*/
 }
 .block_image {
-  left: 50px;
+  left: 10px;
   top: 78px;
 }
 </style>

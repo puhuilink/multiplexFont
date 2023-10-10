@@ -413,6 +413,14 @@ export default {
   },
   created () {
     this.query()
+  },
+  mounted () {
+    // 在组件挂载后，发起异步请求加载用户数据
+    const navContainer = document.querySelector('.unionAlarm .ant-tabs-nav-container')
+    if (navContainer) {
+      // 更改高度为 40px
+      navContainer.style.cssText = 'height: 60px !important'
+    }
   }
   // async beforeCreate () {
   //   try {
@@ -486,4 +494,5 @@ export default {
   justify-content: space-evenly;
   align-items: center;
 }
+
 </style>
