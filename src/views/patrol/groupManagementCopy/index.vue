@@ -201,13 +201,15 @@ export default {
       }
     },
     // 查询
-    async queryList () {
+    async queryList (page) {
       try {
+        if (this.Myid !== '' || this.Myname !== '' || this.isOpen !== null) {
+          this.pagination.current = page || 1
+        }
         this.pageLoading = true
-        const pageNum = this.pagination.current
         const pageSize = this.pagination.pageSize
         const { data } = await xungeng.get('/group/list', {
-          params: { pageNum: pageNum, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
+          params: { pageNum: this.pagination.current, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
         })
         console.log(data)
         this.dataList = data.list
@@ -282,12 +284,20 @@ export default {
       console.log(page, pageSize)
       this.pagination.current = page
       this.pagination.pageSize = pageSize
-      this.getList()
+      if (this.Myid !== '' || this.Myname !== '' || this.isOpen !== null) {
+        this.queryList(page)
+      } else {
+        this.getList()
+      }
     },
     handlePageSizeChange (page, pageSize) {
       this.pagination.current = page
       this.pagination.pageSize = pageSize
-      this.getList()
+      if (this.Myid !== '' || this.Myname !== '' || this.isOpen !== null) {
+        this.queryList()
+      } else {
+        this.getList()
+      }
     },
 
     // ++++++++++++++++++++++++++++++++++
