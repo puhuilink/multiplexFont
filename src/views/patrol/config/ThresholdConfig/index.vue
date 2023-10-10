@@ -222,6 +222,7 @@ export default {
   watch: {},
   created () {
     this.dealRouter()
+    this.initialPagination()
     this.fetchThreshold({})
   },
   mounted () {
