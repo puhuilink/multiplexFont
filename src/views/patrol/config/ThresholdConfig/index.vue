@@ -219,7 +219,13 @@ export default {
       return this.expand ? 11 : 7
     }
   },
-  watch: {},
+  watch: {
+    '$route.query': function (val) {
+      this.dealRouter()
+      this.initialPagination()
+      this.fetchThreshold({})
+    }
+  },
   created () {
     this.dealRouter()
     this.initialPagination()

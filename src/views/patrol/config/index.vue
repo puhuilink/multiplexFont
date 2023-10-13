@@ -387,6 +387,11 @@ export default {
     }
   },
   methods: {
+    firstRender () {
+      this.dealRouter()
+      this.initialPagination()
+      this.getPatrolPath(1)
+    },
     initialPagination () {
       this.paginationOpt = {
         defaultCurrent: 1, // 默认当前页数
@@ -558,10 +563,13 @@ export default {
       this.zoneId = query.zoneId
     }
   },
+  watch: {
+    '$route.query': function (val) {
+      this.firstRender()
+    }
+  },
   created () {
-    this.dealRouter()
-    this.initialPagination()
-    this.getPatrolPath(1, {})
+    this.firstRender()
   }
 }
 </script>
