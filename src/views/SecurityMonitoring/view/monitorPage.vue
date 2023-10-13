@@ -102,7 +102,7 @@ export default {
           name: '19F屋面',
           children: {
             floor: [{
-              icon: require('../static/19F_1801.png'),
+              icon: require('../static/19F_1801.jpg'),
               title: '18楼天台01',
               cameraIndexCode: 'ad048dc547904beea4b1d2e7b1ca3487'
             }]

@@ -19,6 +19,12 @@ export default {
     this.childMethod()
     // this.$route.meta.title = this.$route.params.monitorName
   },
+
+  watch: {
+    '$route.query': function () {
+      this.childMethod()
+    }
+  },
   methods: {
     async childMethod () {
       // 创建WebSocket连接
