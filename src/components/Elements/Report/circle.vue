@@ -34,13 +34,13 @@ export default {
 }
 .outer {
   position: relative;
-  width: 216px;
-  height: 175px;
+  width: 150px;
+  height: 150px;
 }
 
 .size-white {
-  width: 37px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   font-size: 36px;
   font-weight: 400;
   color: rgba(255,255,255,0.85);
@@ -52,11 +52,11 @@ export default {
   position:absolute;
 }
 .size {
-  width: 70px;
-  height: 14px;
+  width: 60px;
+  height: 10px;
   font-size: 14px;
   line-height: 14px;
-  left: 50%;
+  left: 60%;
   top: 55%;
   -webkit-transform:translateX(-50%) translateY(-50%);
   position:absolute;
@@ -69,6 +69,8 @@ export default {
   color: #FF7070;
 }
 .photo_deformation {
+  width: 200px;
+  height: 175px;
   position:absolute;
   left: 0%;
   -webkit-transform:translateX(-50%) translateY(-50%);
@@ -77,7 +79,7 @@ export default {
 
 .photo_alarm {
   position:absolute;
-  left: 50%;
+  left: 60%;
   top: 70%;
   -webkit-transform:translateX(-50%) translateY(-50%);
 }

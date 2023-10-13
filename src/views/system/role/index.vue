@@ -6,7 +6,7 @@
         <a-row :gutter="[8, 8]">
           <a-col class="search_box">
             <label class="search_label">搜索条件</label>
-            <a-button type="primary" @click="query">
+            <a-button type="primary" @click="query(true)">
               <a-icon type="search" />
               查询
             </a-button>
@@ -333,20 +333,20 @@ export default {
       this.paginationOpt = {
         defaultCurrent: 1, // 默认当前页数
         defaultPageSize: 10, // 默认当前页显示数据的大小
+        current: 1,
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: ['10', '20', '50', '100'],
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
-          this.paginationOpt.defaultCurrent = current
+          this.paginationOpt.current = current
           this.paginationOpt.defaultPageSize = pageSize
           this.query()
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          this.paginationOpt.defaultCurrent = current
-
+          this.paginationOpt.current = current
           this.paginationOpt.defaultPageSize = size
           this.query()
         }
@@ -363,7 +363,11 @@ export default {
       }
       this.selectedKeys = []
     },
-    query () {
+    query (first = true) {
+      if (first) {
+        this.paginationOpt.current = 1
+        this.$nextTick()
+      }
       this.loadData(this.queryParams)
     },
     /**
@@ -371,9 +375,8 @@ export default {
      */
     async loadData (parameter) {
       const { name, isOpen, createTimeStart, createTimeEnd, orgId } = parameter
-      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, orgId, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
+      const res = await RoleService.find(name, isOpen, createTimeStart, createTimeEnd, orgId, this.paginationOpt.current, this.paginationOpt.defaultPageSize)
       if (res) {
-        console.log(res)
         this.defaultData = res.list
         this.paginationOpt.total = res.total
       } else {

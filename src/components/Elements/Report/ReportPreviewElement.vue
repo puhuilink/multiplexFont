@@ -1,61 +1,110 @@
 <template>
-  <div class="border">
-    <a-row :gutter="[24,16]">
+  <div class="wrapper">
+    <a-row :gutter="[0,16]" type="flex" justify="center">
       <a-col :span="24">
         <img src="./img/大标题.png" class="biaoti">
       </a-col>
     </a-row>
-    <div class="abs" style="top: 90px;left: 20px;">
-      <cir :number="mainAlarm"></cir>
-    </div>
 
-    <div class="abs" style="top: 90px;left: 252px;">
-      <cir :number="allAlarm" type="all"></cir>
-    </div>
+    <a-row :gutter="[16,16]">
+      <a-col :span="3">
+        <cir :number="mainAlarm"></cir>
+      </a-col>
 
-    <div class="abs" style="top: 90px;left: 488px;">
-      <seven :number="past7Alarm" :chartData="past7MainList"></seven>
-    </div>
+      <a-col :span="3">
+        <cir :number="allAlarm" type="all"></cir>
+      </a-col>
 
-    <div class="abs" style="top: 90px;left: 1204px;">
-      <seven title="过去7天所有告警" :number="post7AllAlarm" type="all" :chartData="past7AllList"></seven>
-    </div>
+      <a-col :span="9">
+        <seven :number="past7Alarm" :chartData="past7MainList"></seven>
+      </a-col>
 
-    <!--    接入平台-->
-    <div class="abs" style="top: 290px;left: 970px;">
-      <tit></tit>
-      <color>
-        <span style="color: #00F9FF;top: 400px;left: 100px;" class="abs"></span>
-      </color>
-    </div>
+      <a-col :span="9">
+        <seven :number="past7Alarm" :chartData="past7MainList"></seven>
+      </a-col>
 
-    <!--    告警处置统计-->
-    <div class="abs" style="top: 687px;left: 20px;">
-      <tit name="告警处置统计"></tit>
-      <a-range-picker
-        v-model="dealTime"
-        format="YYYY/MM/DD HH:mm"
-        @change="dealAlarm"
-        class="abs rangePickerIceGai"
-        style="width: 234px;height: 28px;left: 684px;top: 5px;">
-        <a-icon slot="suffixIcon" type="calendar" />
-      </a-range-picker>
-      <AlarmStatistics ref="tongji"></AlarmStatistics>
-    </div>
+      <a-col :span="12">
+        <div style="top: 687px;left: 20px;">
+          <tit name="告警处置统计"></tit>
+          <a-range-picker
+            v-model="dealTime"
+            format="YYYY/MM/DD"
+            @change="dealAlarm"
+            class="abs rangePickerIceGai picker_deal"
+          >
+            <a-icon slot="suffixIcon" type="calendar" />
+          </a-range-picker>
+          <AlarmStatistics ref="tongji" style="margin: 0 auto"></AlarmStatistics>
+        </div>
+      </a-col>
 
-    <!--    告警分级统计-->
-    <div class="abs" style="top: 687px;left: 970px;">
-      <tit name="告警分级统计"></tit>
-      <a-range-picker
-        v-model="levelTime"
-        format="YYYY/MM/DD HH:mm"
-        @change="levelAlarm"
-        class="abs rangePickerIceGai"
-        style="width: 234px;height: 28px;left: 684px;top: 5px;">
-        <a-icon slot="suffixIcon" type="calendar" />
-      </a-range-picker>
-      <AlarmStatistics ref="level" :option="peizhi"></AlarmStatistics>
-    </div>
+      <a-col :span="12">
+        <!--    &lt;!&ndash;    告警分级统计&ndash;&gt;-->
+        <div class="abs">
+          <tit name="告警分级统计"></tit>
+          <a-range-picker
+            v-model="levelTime"
+            format="YYYY/MM/DD HH:mm"
+            @change="levelAlarm"
+            class="abs rangePickerIceGai picker_deal"
+            style="top: 5px">
+            <a-icon slot="suffixIcon" type="calendar" />
+          </a-range-picker>
+          <AlarmStatistics ref="level" :option="peizhi" style="margin: 0 auto"></AlarmStatistics>
+        </div>
+      </a-col>
+    </a-row>
+    <!--    <div class="abs">-->
+    <!--      <cir :number="mainAlarm"></cir>-->
+    <!--    </div>-->
+
+    <!--    <div class="abs" style="top: 90px;left: 252px;">-->
+    <!--      <cir :number="allAlarm" type="all"></cir>-->
+    <!--    </div>-->
+
+    <!--    <div class="abs" style="top: 90px;left: 488px;">-->
+    <!--      <seven :number="past7Alarm" :chartData="past7MainList"></seven>-->
+    <!--    </div>-->
+
+    <!--    <div class="abs" style="top: 90px;left: 1204px;">-->
+    <!--      <seven title="过去7天所有告警" :number="post7AllAlarm" type="all" :chartData="past7AllList"></seven>-->
+    <!--    </div>-->
+
+    <!--    &lt;!&ndash;    接入平台&ndash;&gt;-->
+    <!--    <div class="abs" style="top: 290px;left: 970px;">-->
+    <!--      <tit></tit>-->
+    <!--      <color>-->
+    <!--        <span style="color: #00F9FF;top: 400px;left: 100px;" class="abs"></span>-->
+    <!--      </color>-->
+    <!--    </div>-->
+
+    <!--    &lt;!&ndash;    告警处置统计&ndash;&gt;-->
+    <!--    <div class="abs" style="top: 687px;left: 20px;">-->
+    <!--      <tit name="告警处置统计"></tit>-->
+    <!--      <a-range-picker-->
+    <!--        v-model="dealTime"-->
+    <!--        format="YYYY/MM/DD HH:mm"-->
+    <!--        @change="dealAlarm"-->
+    <!--        class="abs rangePickerIceGai"-->
+    <!--        style="width: 234px;height: 28px;left: 684px;top: 5px;">-->
+    <!--        <a-icon slot="suffixIcon" type="calendar" />-->
+    <!--      </a-range-picker>-->
+    <!--      <AlarmStatistics ref="tongji"></AlarmStatistics>-->
+    <!--    </div>-->
+
+    <!--    &lt;!&ndash;    告警分级统计&ndash;&gt;-->
+    <!--    <div class="abs" style="top: 687px;left: 970px;">-->
+    <!--      <tit name="告警分级统计"></tit>-->
+    <!--      <a-range-picker-->
+    <!--        v-model="levelTime"-->
+    <!--        format="YYYY/MM/DD HH:mm"-->
+    <!--        @change="levelAlarm"-->
+    <!--        class="abs rangePickerIceGai"-->
+    <!--        style="width: 234px;height: 28px;left: 684px;top: 5px;">-->
+    <!--        <a-icon slot="suffixIcon" type="calendar" />-->
+    <!--      </a-range-picker>-->
+    <!--      <AlarmStatistics ref="level" :option="peizhi"></AlarmStatistics>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -86,18 +135,22 @@ const peizhi = {
     }
   },
   legend: {
-    right: '0%',
     orient: 'vertical',
-    top: '13%',
-    itemGap: 30,
     textStyle: {
-      color: '#B0BDCD',
-      padding: [5, 10, 5, 10]
-    }
+      color: '#B0BDCD'
+    },
+    emphasis: {
+      textStyle: {
+        fontWeight: 'bold',
+        color: 'red'
+      }
+    },
+    right: 5,
+    itemGap: 5
   },
   grid: {
-    width: '830px',
-    height: '250px',
+    width: '600px',
+    height: '200px',
     top: 'middle',
     right: '5%',
     left: '10%'
@@ -267,10 +320,10 @@ export default {
           }
         },
         grid: {
-          width: '800px',
+          width: '600px',
           height: '250px',
           top: 'middle',
-          right: '5%'
+          right: '10%'
         },
         xAxis: {
           type: 'category',
@@ -364,16 +417,23 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less" scoped>
 .rangePickerIceGai {
   background: #2877BF;
   color: #B0C9E8;
 }
 
-.border {
+.picker_deal {
+  width: 300px;
+  height: 28px;
+  left: 400px;
+  top: 15px;
+}
+
+.wrapper {
   background-color: #152F57;
-  height: 1080px;
-  width: 1920px;
+  height: 100%;
+  width: 100%;
   opacity: 100%;
   position: relative;
 }
@@ -383,9 +443,18 @@ export default {
 }
 
 .biaoti {
-  width: 1869px;
+  width: 100%;
   height: 62px;
-  margin-left: 18px;
   border: 2px solid;
+}
+
+.block_title_alarm {
+  top: 90px;
+  left: 20px;
+}
+
+.block_title_seven_own {
+  top: 90px;
+  left: 20px;
 }
 </style>
