@@ -22,16 +22,19 @@
       <a-form-model-item label="点击下载巡更路径模板" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="status">
         <a href="http://10.201.246.55/xunjian/export/pathTemplate"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
-      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M" v-if="status">
-        <a-upload
-          :file-list="fileList"
-          :remove="handleRemove"
-          :before-upload="beforeUpload"
-          @change="handleChange"
-        >
-          <a-button><a-icon type="upload" /> 上传文件 </a-button>
-        </a-upload>
-      </a-form-model-item>
+      <!--      <a-form-model-item label="点击下载当前巡更路劲" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="!status">-->
+      <!--        <a @click="downloadTemp"><a-icon type="download" /> 下载模板 </a>-->
+      <!--      </a-form-model-item>-->
+      <!--      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">-->
+      <!--        <a-upload-->
+      <!--          :file-list="fileList"-->
+      <!--          :remove="handleRemove"-->
+      <!--          :before-upload="beforeUpload"-->
+      <!--          @change="handleChange"-->
+      <!--        >-->
+      <!--          <a-button><a-icon type="upload" /> 上传文件 </a-button>-->
+      <!--        </a-upload>-->
+      <!--      </a-form-model-item>-->
     </a-form-model>
   </a-modal>
 </template>
@@ -179,7 +182,12 @@ export default {
     * 下载模板
     * */
     async downloadTemp () {
-      const data = await xungeng.get('/export/pathTemplate')
+      const data = await xungeng.request({
+        url: '/export/path',
+        responseType: 'blob',
+        params: { pathId: this.originalForm.id },
+        method: 'get'
+      })
       downloadExcel('路线模板', data)
       this.$notification.success({
         message: '系统提示',

@@ -50,9 +50,15 @@
         @click="batchDownloadQrCode"
         style="margin-right: 13px;"
       ><a-icon type="download" />下载</a-button>
-      <a-button @click="editPatrolConfig('newZone',{})" v-action:F010001001003001>
+      <a-button @click="editPatrolConfig('newZone',{})" v-action:F010001001003001 style="margin-right: 13px;">
         <a-icon type="plus" style="color: gray"/>
         新建楼层
+      </a-button>
+      <a-button type="primary" @click="showImportSchema" v-action:F010001001003001 style="margin-right: 13px;">
+        导入
+      </a-button>
+      <a-button type="primary" @click="downloadTemp" v-action:F010001001003001>
+        导出
       </a-button>
     </div>
     <a-table
@@ -125,15 +131,20 @@
       ref="configSchema"
       @refresh="onRefresh"
     />
+    <ImportSchema
+      ref="importSchema"
+      @refresh="refrehRender"
+    />
   </div>
 
 </template>
 <script>
 import { PatrolService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
-import { dealQuery, downloadFile } from '@/utils/util'
+import { dealQuery, downloadExcel, downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
+import ImportSchema from './modules/importSchema'
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { sql, xungeng } from '@/utils/request'
@@ -144,7 +155,8 @@ export default {
   props: {},
   components: {
     HostSchema,
-    ZoneSelect
+    ZoneSelect,
+    ImportSchema
   },
   data () {
     return {
@@ -408,7 +420,6 @@ export default {
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          console.log(current, size)
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = size
           this.getPatrolPath(current)
@@ -418,6 +429,13 @@ export default {
     onRefresh () {
       this.$refs.zone.fetch()
       this.getPatrolPath(1)
+    },
+    refrehRender () {
+      this.$notification.success({
+        message: '系统提示',
+        description: '导出成功'
+      })
+      this.firstRender()
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)
@@ -487,7 +505,6 @@ export default {
       } else {
         this.selectedRowKeys.push(e)
       }
-      console.log(this.selectedRowKeys)
     },
     async getPatrolPath (pageNo = 1) {
       const checkpoint_alias = this.alias
@@ -561,6 +578,28 @@ export default {
       const query = this.$route.query
       this.pathId = query.pathId
       this.zoneId = query.zoneId
+    },
+    /*
+    * 下载模板
+    * */
+    async downloadTemp () {
+      const data = await xungeng.request({
+        url: '/export/path',
+        responseType: 'blob',
+        params: { pathId: this.pathId },
+        method: 'get'
+      })
+      downloadExcel(`${this.$route.query.pathName}路径`, data)
+      this.$notification.success({
+        message: '系统提示',
+        description: '导出路径成功'
+      })
+    },
+    /*
+    * 导入
+    * */
+    showImportSchema () {
+      this.$refs.importSchema.show(this.pathId)
     }
   },
   watch: {

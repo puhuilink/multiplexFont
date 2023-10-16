@@ -198,7 +198,7 @@ export default {
       } = res
       await this.$router.push({
         path: '/patrol/config/pathConfig',
-        query: { pathId: record.id, zoneId: zones[0].zoneId }
+        query: { pathId: record.id, zoneId: zones[0].zoneId, pathName: record.alias }
       })
     },
     /**

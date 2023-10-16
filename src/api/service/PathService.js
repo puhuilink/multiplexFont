@@ -19,6 +19,23 @@ class PathService extends BaseService {
       this.$message.error(e)
     }
   }
+  // 导入路线
+  static async importPath (form) {
+    try {
+      const formD = new FormData()
+      formD.append('pathId', form.pathId)
+      formD.append('file', form.file)
+      const { code, data } =
+        await xungeng.post('/path/updateAllPath',
+          formD, { header: { 'content-type': 'application/x-www-form-urlencoded' } })
+      if (code === 200) {
+        return data
+      }
+    } catch (e) {
+      this.$message.error(e)
+    }
+  }
+
   // 添加路线
   static async add (form) {
     try {
