@@ -5,8 +5,8 @@
     <div class="ZoneSelect__header">
       <slot name="default"></slot>
     </div>
-
     <div class="pageMsg_box">
+      <span style='margin-top: 20px;margin-right: 10px'>[<a @click='plusClick' v-action:F010001001003001><a-icon type="plus"/></a>]</span>
       <a-tabs
         class="ZoneSelect__zone"
         :key="pathId"
@@ -32,7 +32,6 @@
           {{ pathName }}
         </a-radio-button>
       </a-radio-group>
-
     </div>
 
   </div>
@@ -71,6 +70,9 @@ export default {
     }
   },
   methods: {
+    plusClick () {
+      this.$emit('plus')
+    },
     changePathId (pathId) {
       const { pathList, options } = this
       const path = pathList.find((path) => pathId === path.pathId)
@@ -115,6 +117,14 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     // padding-right: 8px;
+  }
+  .newZone_box{
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    right: 10px;
+    top: 10px;
   }
   .pageMsg_box{
     position: absolute;
