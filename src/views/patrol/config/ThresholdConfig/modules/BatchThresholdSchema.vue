@@ -67,8 +67,7 @@
 
 <script>
 
-import { sql, xungeng } from '@/utils/request'
-import { dealQuery } from '@/utils/util'
+import { xungeng } from '@/utils/request'
 
 export default {
   name: 'BatchThresholdSchema',
