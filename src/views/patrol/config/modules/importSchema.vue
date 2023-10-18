@@ -15,6 +15,8 @@
         <a @click="downloadTemp">
           <a-icon type="download" />
           下载模板 </a>
+      <a-form-model-item label="点击下载当前巡更路劲" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
+        <a :href="`${url}/xunjian/export/pathTemplate`"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
       <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">
         <a-upload
@@ -52,6 +54,7 @@ export default {
     return {
       current: 0,
       confirmLoading: false,
+      url: process.env.VUE_APP_QUOTE_URL,
       fileList: [],
       steps: [
         { title: '填写基本信息' },

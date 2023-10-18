@@ -363,7 +363,7 @@ export default {
       }
       this.selectedKeys = []
     },
-    query (first = true) {
+    query (first = false) {
       if (first) {
         this.paginationOpt.current = 1
         this.$nextTick()
