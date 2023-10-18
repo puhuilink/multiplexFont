@@ -3,7 +3,7 @@
   <div class="ZoneSelect">
     <!-- eslint-disable -->
     <div class="ZoneSelect__header">
-      <slot name="default"></slot>
+      <slot name="default">12356566</slot>
     </div>
     <div class="pageMsg_box">
       <span style='margin-top: 20px;margin-right: 10px'>[<a @click='plusClick' v-action:F010001001003001><a-icon type="plus"/></a>]</span>
@@ -49,6 +49,10 @@ export default {
     pathId: {
       type: String,
       default: ''
+    },
+    pathName: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -67,6 +71,9 @@ export default {
       handler (options) {
         this.$emit('change', options)
       }
+    },
+    '$route.query': function (val) {
+      this.fetch()
     }
   },
   methods: {
@@ -84,7 +91,7 @@ export default {
     async fetch () {
       const { zones, list } = await PathService.getPathList(this.pathId)
       const path = {
-        pathName: list[0].pathAlias,
+        pathName: this.pathName,
         pathId: list[0].pathId,
         zoneList: zones.map((z) => {
           return {

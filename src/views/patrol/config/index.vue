@@ -1,7 +1,7 @@
 <template>
   <div class="PatrolConfig">
     <div class="PatrolConfig__header">
-      <ZoneSelect ref="zone" @change="changeZone" :path-id="pathId" @plus="editPatrolConfig('newZone',{})">
+      <ZoneSelect ref="zone" @change="changeZone" :path-id="pathId" :pathName="pathName" @plus="editPatrolConfig('newZone',{})">
         <div class="PatrolConfig__operation" style="width: 100%;">
           <a-form class="d-flex flex-row" style="width: 100%;">
             <div class="fold">
@@ -370,7 +370,8 @@ export default {
       selectedRows: [],
       xgModelPoint: { id: '', alias: '', path: '', zone: '' },
       delId: null,
-      deleteVisible: false
+      deleteVisible: false,
+      pathName: ''
     }
   },
   computed: {
@@ -425,11 +426,11 @@ export default {
       this.getPatrolPath(1)
     },
     refreshRender () {
+      location.reload()
       this.$notification.success({
         message: '系统提示',
         description: '导入成功'
       })
-      this.firstRender()
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)
@@ -572,6 +573,7 @@ export default {
       const query = this.$route.query
       this.pathId = query.pathId
       this.zoneId = query.zoneId
+      this.pathName = query.pathName
     },
     /*
     * 下载模板
@@ -598,6 +600,7 @@ export default {
   },
   watch: {
     '$route.query': function (val) {
+      console.log('watch', val)
       this.firstRender()
     }
   },
