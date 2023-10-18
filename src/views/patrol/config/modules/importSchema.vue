@@ -11,7 +11,7 @@
     :afterClose="reset"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-model-item label="点击下载当前巡更路劲" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
+      <a-form-model-item label="点击下载当前巡更路径" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
         <a @click="downloadTemp">
           <a-icon type="download" />
           下载模板 </a>
