@@ -50,19 +50,13 @@
         @click="batchDownloadQrCode"
         style="margin-right: 13px;"
       ><a-icon type="download" />下载</a-button>
-      <a-button type="primary" style="margin-right: 10px"><a-icon type="export"/>导出</a-button>
-      <a-button type="primary" style="margin-right: 10px"><a-icon type="import"/>导入</a-button>
-      <a-button type="primary" style="margin-right: 10px"><a-icon type="import"/>调整顺序</a-button>
-      <a-button @click="editPatrolConfig('newZone',{})" v-action:F010001001003001 style="margin-right: 13px;">
-        <a-icon type="plus" style="color: gray"/>
-        新建楼层
-      </a-button>
-      <a-button type="primary" @click="showImportSchema" v-action:F010001001003001 style="margin-right: 13px;">
-        导入
-      </a-button>
-      <a-button type="primary" @click="downloadTemp" v-action:F010001001003001>
-        导出
-      </a-button>
+      <a-button type="primary" style="margin-right: 10px" @click="showImportSchema" v-action:F010001001003005><a-icon type="export"/>导入</a-button>
+      <a-button type="primary" style="margin-right: 10px" @click="downloadTemp" v-action:F010001001003004><a-icon type="import"/>导出</a-button>
+      <a-button type="primary" style="margin-right: 10px" v-action:F010001001003004><a-icon type="import"/>调整顺序</a-button>
+<!--      <a-button @click="editPatrolConfig('newZone',{})"  style="margin-right: 13px;">-->
+<!--        <a-icon type="plus" style="color: gray"/>-->
+<!--        新建楼层-->
+<!--      </a-button>-->
     </div>
     <a-table
       ref="table"
