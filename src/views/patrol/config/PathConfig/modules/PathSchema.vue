@@ -20,21 +20,21 @@
         <a-input v-model="originalForm.ascription"/>
       </a-form-model-item>
       <a-form-model-item label="点击下载巡更路径模板" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="status">
-        <a :href="`${process.env.VUE_APP_QUOTE_URL}/xunjian/export/pathTemplate`"><a-icon type="download" /> 下载模板 </a>
+        <a :href="`${url}/xunjian/export/pathTemplate`"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
       <!--      <a-form-model-item label="点击下载当前巡更路劲" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="!status">-->
       <!--        <a @click="downloadTemp"><a-icon type="download" /> 下载模板 </a>-->
       <!--      </a-form-model-item>-->
-      <!--      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">-->
-      <!--        <a-upload-->
-      <!--          :file-list="fileList"-->
-      <!--          :remove="handleRemove"-->
-      <!--          :before-upload="beforeUpload"-->
-      <!--          @change="handleChange"-->
-      <!--        >-->
-      <!--          <a-button><a-icon type="upload" /> 上传文件 </a-button>-->
-      <!--        </a-upload>-->
-      <!--      </a-form-model-item>-->
+      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">
+        <a-upload
+          :file-list="fileList"
+          :remove="handleRemove"
+          :before-upload="beforeUpload"
+          @change="handleChange"
+        >
+          <a-button><a-icon type="upload" /> 上传文件 </a-button>
+        </a-upload>
+      </a-form-model-item>
     </a-form-model>
   </a-modal>
 </template>
@@ -55,6 +55,7 @@ export default {
   props: {},
   data: function () {
     return {
+      url: process.env.VUE_APP_QUOTE_URL,
       current: 0,
       confirmLoading: false,
       fileList: [],
