@@ -106,7 +106,11 @@ export default {
     wrapperCol: { span: 14 },
     Depts: [],
     menus: [],
-    record: null,
+    record: {
+      record: {
+        dataIds: { checked: [] }
+      }
+    },
     submit: () => {
     }
   }),
@@ -234,8 +238,7 @@ export default {
      * 打开数据权限窗口
      */
     async updateData (record) {
-      this.record = { ...record }
-      // this.record.dataIds = { checked: [this.record.organizeId] }
+      this.record = { dataIds: { checked: [] }, ...record }
       this.submit = this.update
       this.show('编辑数据权限')
       await this.initTreeData()
@@ -268,10 +271,9 @@ export default {
         this.record.dataIds = []
         this.$forceUpdate()
       }
-      if (this.record.dataType === 'ALL') {
-        this.record.dataIds = []
-        this.$forceUpdate()
-      }
+      // if (this.record.dataType === 'CUSTOM') {
+      //   this.record.dataIds.checked = []
+      // }
     },
     /**
      * 调取编辑接口
