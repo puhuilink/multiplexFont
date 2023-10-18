@@ -48,7 +48,7 @@
       >
         <div v-if="operationArray[2].edit">
           <a-input v-model="formState.hostAlias" placeholder="设备名称，该项必填!"/>
-          <a-input v-model="formState.cantainer" placeholder="柜位"/>
+          <a-input v-model="formState.container" placeholder="柜位"/>
           <a-input v-model="formState.hostType" placeholder="设备类型"/>
           <a-input v-model="formState.hostBrand" placeholder="设备品牌"/>
           <a-input v-model="formState.ipAddress" placeholder="IP地址"/>
@@ -58,7 +58,7 @@
         <div v-if="operationArray[2].show">
           <h5 style="color: grey"></h5>
           <h5 style="color: grey">设备名称：{{ formState.hostAlias }}</h5>
-          <h5 style="color: grey">柜位：{{ formState.cantainer }}</h5>
+          <h5 style="color: grey">柜位：{{ formState.container }}</h5>
           <h5 style="color: grey">设备类型：{{ formState.hostType }}</h5>
           <h5 style="color: grey">设备品牌：{{ formState.hostBrand }}</h5>
           <h5 style="color: grey">IP地址：{{ formState.ipAddress }}</h5>

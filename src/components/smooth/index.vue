@@ -42,7 +42,7 @@ const generateItems = (count, creator) => {
 }
 
 export default {
-  name: 'Simple',
+  name: 'SimpleDraggable',
   components: { Container, Draggable },
   data () {
     return {

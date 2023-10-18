@@ -70,10 +70,12 @@ class PathService extends BaseService {
   // 分配用户给角色
   static async updatePath (arg) {
     try {
-      Object.keys(arg).forEach(key => {
-        arg[key] = encodeURIComponent(arg[key])
-      })
-      const { code, data } = await xungeng.get(`/path/update?pathId=${arg.id}&alias=${arg.alias}&ascription=${arg.ascription}`)
+      const { id, ...other } = arg
+      const args = {}
+      Object.assign(args, { pathId: id }, other)
+      const formData = new FormData()
+      Object.keys(args).forEach(key => formData.append(key, args[key]))
+      const { code, data } = await xungeng.post(`/path/update`, formData)
       if (code === 200) {
         return data
       }

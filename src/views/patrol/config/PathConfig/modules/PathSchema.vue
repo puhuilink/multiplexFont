@@ -16,7 +16,7 @@
       <a-form-model-item label="巡更路径名称" prop="alias">
         <a-input v-model="originalForm.alias"/>
       </a-form-model-item>
-      <a-form-model-item label="路径图标识" prop="ascription">
+      <a-form-model-item label="路径图标标识" prop="ascription">
         <a-input v-model="originalForm.ascription"/>
       </a-form-model-item>
       <a-form-model-item label="点击下载巡更路径模板" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="status">
@@ -25,7 +25,7 @@
       <!--      <a-form-model-item label="点击下载当前巡更路劲" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。" v-if="!status">-->
       <!--        <a @click="downloadTemp"><a-icon type="download" /> 下载模板 </a>-->
       <!--      </a-form-model-item>-->
-      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">
+      <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M" v-if="title==='新增'">
         <a-upload
           :file-list="fileList"
           :remove="handleRemove"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { PathService, UserService } from '@/api'
+import { PathService } from '@/api'
 import Schema from '@/components/Mixins/Modal/Schema'
 import _ from 'lodash'
 import AuthMenu from '~~~/Auth/AuthMenu.vue'

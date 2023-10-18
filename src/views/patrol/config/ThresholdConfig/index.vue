@@ -257,6 +257,7 @@ export default {
       })
     },
     handleSearch () {
+      this.paginationOpt.defaultCurrent = 1
       this.fetchThreshold()
     },
     async fetchThreshold () {
@@ -337,13 +338,13 @@ export default {
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = pageSize
-          this.handleSearch()
+          this.fetchThreshold()
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationOpt.defaultCurrent = current
           this.paginationOpt.defaultPageSize = size
-          this.handleSearch()
+          this.fetchThreshold()
         }
       }
     },
