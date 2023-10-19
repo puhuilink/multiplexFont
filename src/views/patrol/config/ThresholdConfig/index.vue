@@ -257,7 +257,7 @@ export default {
       })
     },
     handleSearch () {
-      this.paginationOpt.defaultCurrent = 1
+      this.paginationOpt.current = 1
       this.fetchThreshold()
     },
     async fetchThreshold () {
@@ -265,7 +265,7 @@ export default {
       this.data = []
       const obj = _.cloneDeep(this.form)
       const { pathId, zoneId } = this
-      Object.assign(obj, { pathId, zoneId }, { pageNum: this.paginationOpt.defaultCurrent, pageSize: this.paginationOpt.defaultPageSize })
+      Object.assign(obj, { pathId, zoneId }, { pageNum: this.paginationOpt.current, pageSize: this.paginationOpt.pageSize })
       Object.keys(obj).forEach(key => {
         if (!this.isBlank(obj[key])) {
           delete obj[key]
@@ -328,22 +328,22 @@ export default {
     },
     initialPagination () {
       this.paginationOpt = {
-        defaultCurrent: 1, // 默认当前页数
-        defaultPageSize: 10, // 默认当前页显示数据的大小
+        current: 1, // 默认当前页数
+        pageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,
         pageSizeOptions: ['10', '20', '50', '100'],
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
-          this.paginationOpt.defaultCurrent = current
-          this.paginationOpt.defaultPageSize = pageSize
+          this.paginationOpt.current = current
+          this.paginationOpt.pageSize = pageSize
           this.fetchThreshold()
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          this.paginationOpt.defaultCurrent = current
-          this.paginationOpt.defaultPageSize = size
+          this.paginationOpt.current = current
+          this.paginationOpt.pageSize = size
           this.fetchThreshold()
         }
       }

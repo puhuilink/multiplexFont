@@ -6,7 +6,7 @@
       <slot name="default">12356566</slot>
     </div>
     <div class="pageMsg_box">
-      <span style='margin-top: 20px;margin-right: 10px'>[<a @click='plusClick' v-action:F010001001003001><a-icon type="plus"/></a>]</span>
+      <span style='margin-top: 15px;margin-right: 10px'>[<a @click='plusClick' v-action:F010001001003001><a-icon type="plus"/></a>]</span>
       <a-tabs
         class="ZoneSelect__zone"
         :key="pathId"
