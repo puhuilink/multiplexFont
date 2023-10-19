@@ -401,7 +401,7 @@ export default {
     initialPagination () {
       this.paginationOpt = {
         current: 1, // 默认当前页数
-        defaultPageSize: 10, // 默认当前页显示数据的大小
+        pageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,
@@ -409,14 +409,14 @@ export default {
         showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.current = current
-          this.paginationOpt.defaultPageSize = pageSize
+          this.paginationOpt.pageSize = pageSize
           this.getPatrolPath(current)
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           console.log(current, size)
           this.paginationOpt.current = current
-          this.paginationOpt.defaultPageSize = size
+          this.paginationOpt.pageSize = size
           this.getPatrolPath(current)
         }
       }
@@ -518,7 +518,7 @@ export default {
         query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
         querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
       }
-      query_sql += ` limit ${this.paginationOpt.defaultPageSize} offset ` + (pageNo - 1) * this.paginationOpt.defaultPageSize
+      query_sql += ` limit ${this.paginationOpt.pageSize} offset ` + (pageNo - 1) * this.paginationOpt.pageSize
       this.data = dealQuery(await sql(query_sql))
       querys += ' and path_id = ' + this.pathId
       querys += ' and zone_id =' + this.zoneId
