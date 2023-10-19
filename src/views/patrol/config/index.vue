@@ -502,7 +502,6 @@ export default {
       }
     },
     async getPatrolPath (pageNo = 1) {
-
       const checkpoint_alias = this.alias
       this.spinning = true
       this.data = []

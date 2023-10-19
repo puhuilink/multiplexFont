@@ -86,7 +86,7 @@ export default {
         }
       ],
       loading: false,
-      rule: [{ required: true, message: '排班条件必填' }],
+      rule: [{ required: true, message: '排班名称必填' }],
       field: 'mobile_phone'
     }
   },
@@ -125,7 +125,7 @@ export default {
      * 修改电话
      */
     reviseTele () {
-      this.rule = [{ required: true, message: '排班条件必填', trigger: 'blur' }]
+      this.rule = [{ required: true, message: '排班名称必填', trigger: 'blur' }]
       this.field = 'mobile_phone'
       this.$refs.schema.onTele()
     }

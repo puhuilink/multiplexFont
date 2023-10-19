@@ -20,7 +20,7 @@
           <a-form-model-item
             label="排班名称"
             prop="name"
-            :rules="[{ required: true, message: '排班条件必填' }]"
+            :rules="[{ required: true, message: '排班名称必填' }]"
           >
             <a-input placeholder="请输入排班名称" v-model="formData.name"></a-input>
           </a-form-model-item>

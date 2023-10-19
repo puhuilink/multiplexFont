@@ -40,7 +40,7 @@ export default {
   props: {
     rule: {
       type: Array,
-      default: () => [{ required: true, message: '排班条件必填', trigger: 'blur' }]
+      default: () => [{ required: true, message: '排班名称必填', trigger: 'blur' }]
     },
     field: {
       type: String,
