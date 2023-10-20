@@ -104,6 +104,8 @@ const responseInterceptor = (response) => {
           message: msg,
           description: '请重新登录'
         })
+        this.$router.push('/user/login')
+        location.reload()
         throw new Error(msg)
       }
       default: {

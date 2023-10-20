@@ -132,7 +132,7 @@
 
 </template>
 <script>
-import { PatrolService } from '@/api'
+import { PathService, PatrolService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import { dealQuery, downloadExcel, downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
@@ -425,12 +425,17 @@ export default {
       this.$refs.zone.fetch()
       this.getPatrolPath(1)
     },
-    refreshRender () {
-      location.reload()
+    async refreshRender () {
       this.$notification.success({
         message: '系统提示',
         description: '导入成功'
       })
+      // this.$refs.zone.fetch()
+      // this.initialPagination()
+      const { zones } = await PathService.getPathList(this.pathId)
+      this.zoneId = zones[0].zoneId
+      await this.$refs.zone.fetch()
+      await this.getPatrolPath(1)
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)
@@ -526,7 +531,6 @@ export default {
       this.paginationOpt = false
       this.paginationOpt = copy
       this.paginationOpt.current = pageNo
-      console.log(this.paginationOpt)
       await this.$nextTick()
       this.spinning = false
     },
@@ -605,7 +609,6 @@ export default {
   },
   watch: {
     '$route.query': function (val) {
-      console.log('watch', val)
       this.firstRender()
     }
   },

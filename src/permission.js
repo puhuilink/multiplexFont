@@ -13,6 +13,10 @@ NProgress.configure({ showSpinner: false })
 const allowRouteNameList = ['login', 'Design', 'Preview']
 
 router.beforeEach((to, from, next) => {
+  // let expire = 3600000 * 7
+  //
+  // console.log('开始时间', localStorage.getItem(ACCESS_TOKEN), Vue.ls.get(ACCESS_TOKEN))
+
   NProgress.start()
 
   // 设置页面标题为当前页面

@@ -154,7 +154,7 @@ export default {
         try {
           this.confirmLoading = true
           await PathService.importPath(this.originalForm)
-          this.$emit('refresh')
+          this.$emit('refresh', true)
           this.cancel()
         } catch (e) {
           throw e
