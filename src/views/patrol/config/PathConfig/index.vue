@@ -70,38 +70,45 @@ export default {
         dataIndex: 'index',
         align: 'center',
         width: '120px',
+        ellipsis: true,
         scopedSlots: { customRender: 'index' }
       },
       {
         title: '路径名称',
         dataIndex: 'alias',
+        ellipsis: true,
         width: '150px'
       },
       {
         title: '巡更组',
         dataIndex: 'groupId',
+        ellipsis: true,
         scopedSlots: { customRender: 'status' },
         width: '120px'
       },
       {
         title: '提交人',
         dataIndex: 'updator',
+        ellipsis: true,
         width: '120px',
         customRender: (text, el) => el.updator || el.creator
       },
       {
         title: '路径图标识',
         dataIndex: 'ascription',
+        ellipsis: true,
         width: '120px'
       },
       {
         title: '提交时间',
         dataIndex: 'updateTime',
+        ellipsis: true,
         width: '200px'
       },
       {
         title: '操作',
         width: '400px',
+        ellipsis: true,
         scopedSlots: { customRender: 'action' }
       }
     ]),

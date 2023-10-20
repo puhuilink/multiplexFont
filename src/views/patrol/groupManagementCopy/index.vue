@@ -188,6 +188,7 @@ export default {
   },
   mounted () {
     this.getList()
+    this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
   },
   methods: {
     handleChange (value) {

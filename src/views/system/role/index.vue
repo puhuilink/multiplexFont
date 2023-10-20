@@ -221,6 +221,7 @@ export default {
     this.initialPagination()
     this.query()
     this.getData()
+    this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
   },
   created () {
     const rolesData = localStorage.getItem('pro__Roles')

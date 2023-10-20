@@ -420,6 +420,7 @@ export default {
     await this.getGroup()
     await this.getPlan()
     this.query()
+    this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
   }
 }
 </script>

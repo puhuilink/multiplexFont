@@ -211,6 +211,7 @@ export default {
   },
   mounted () {
     this.query()
+    this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
   }
 }
 </script>

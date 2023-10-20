@@ -349,6 +349,7 @@ export default {
     this.getData()
     this.getUserList()
     this.expandedRowKeys = ['1']
+    this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'form' })
