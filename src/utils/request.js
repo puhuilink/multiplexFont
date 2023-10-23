@@ -97,6 +97,8 @@ const responseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        this.$router.push('/user/login')
+        location.reload()
         break
       }
       case 30: {
@@ -130,6 +132,8 @@ const secondResponseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        this.$router.push('/user/login')
+        location.reload()
         break
       }
       case 30: {
@@ -157,6 +161,8 @@ const xungengresponseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        this.$router.push('/user/login')
+        location.reload()
         break
       }
       default: {
