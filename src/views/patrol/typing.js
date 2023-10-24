@@ -94,7 +94,7 @@ export const SHIFT_SCHEMA_MAPPING = new Map(
     ['checkpointAlias', '点位'],
     ['container', '柜位'],
     ['hostAlias', '设备名称'],
-    ['endpointAlias', '监控实体'],
+    ['endpointAlias', '检查实体'],
     ['ipAddress', 'IP地址'],
     ['hostType', '设备类型'],
     ['hostBelong', '设备归属单位'],

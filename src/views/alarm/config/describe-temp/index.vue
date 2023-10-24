@@ -102,7 +102,7 @@ export default {
         sorter: true
       },
       {
-        title: '监控实体',
+        title: '检查实体',
         dataIndex: '12345',
         width: 200,
         sorter: true

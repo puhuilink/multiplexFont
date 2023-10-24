@@ -12,7 +12,7 @@
 
     <a-form-model-item
       v-bind="$props"
-      label="监控实体"
+      label="检查实体"
       prop="endpointModelId"
       :rules="rules.endpoint"
     >

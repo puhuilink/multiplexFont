@@ -59,7 +59,7 @@
       />
     </a-form-item>
 
-    <a-form-item label="监控实体" required >
+    <a-form-item label="检查实体" required >
       <EndpointSelect
         :parentId="resourceConfig.deviceModel"
         schema="model"
@@ -244,7 +244,7 @@ export default {
       )
     },
     /**
-     * 设置监控实体
+     * 设置检查实体
      */
     changeEndpoint (endpointModelId) {
       Object.assign(

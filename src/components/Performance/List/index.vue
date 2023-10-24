@@ -17,7 +17,7 @@
             <a-row>
               <a-col :md="12" :sm="24">
                 <a-form-item
-                  label="监控实体"
+                  label="检查实体"
                   v-bind="formItemLayout"
                   class="fw"
                 >
@@ -106,7 +106,7 @@ export default {
       //   customRender: (__, { host_id, cmdb = {} }) => _.get(cmdb, 'host_alias') || host_id
       // },
       {
-        title: '监控实体',
+        title: '检查实体',
         dataIndex: 'endpoint_id',
         sorter: true,
         width: 180,

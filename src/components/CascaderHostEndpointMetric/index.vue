@@ -228,7 +228,7 @@ export default {
           this.renderSelect({
             loading: loading.endpointModels,
             options: options.endpointModels,
-            placeholder: '请选择监控实体（模型）',
+            placeholder: '请选择检查实体（模型）',
             value: config.endpointModelId,
             onChange: this.setEndpointModelId
           })
@@ -238,7 +238,7 @@ export default {
           this.renderSelect({
             loading: loading.endpoints,
             options: options.endpoints,
-            placeholder: '请选择监控实体（实例）',
+            placeholder: '请选择检查实体（实例）',
             value: config.endpointId,
             onChange: this.setEndpointId
           })

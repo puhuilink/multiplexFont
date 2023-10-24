@@ -48,7 +48,7 @@ class AlarmService extends BaseService {
    * @param {Number} 告警 id
    */
   static async detail (id) {
-    // 设备名称、监控实体、检查项、值
+    // 设备名称、检查实体、检查项、值
     const deviceInfo = ['host_id ', 'endpoint_id', 'metric_id', 'agent_id']
     // alias
     const aliasInfo = ['cmdbHost { alias host_type }', 'cmdbEndpoint { modelEndpoint { alias } }', 'cmdbMetric { modelMetric { alias } }']

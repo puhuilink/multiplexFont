@@ -12,7 +12,7 @@ export class AdaptorOverviewConfig extends AdaptorConfig {
   constructor ({
     // 设备
     hostAlias = '',
-    // 监控实体
+    // 检查实体
     endpointAlias = '',
     // 检查项
     alias = [],

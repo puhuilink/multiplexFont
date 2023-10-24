@@ -70,7 +70,7 @@ export default {
           }
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           align: 'left',
           dataIndex: 'endpointAlias',
           width: 160

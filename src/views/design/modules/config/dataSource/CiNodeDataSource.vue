@@ -76,7 +76,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="监控实体" v-bind="formItemLayout" required >
+        <a-form-item label="检查实体" v-bind="formItemLayout" required >
           <EndpointSelect
             schema="model"
             v-bind="selectProps"

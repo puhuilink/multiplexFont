@@ -252,12 +252,12 @@ const titleMap = {
   editZone: '编辑楼层信息',
   editPoint: '编辑点位信息',
   editHost: '编辑设备信息',
-  editEndpoint: '编辑监控实体信息',
+  editEndpoint: '编辑检查实体信息',
   editMetric: '编辑检查项信息',
   newZone: '新增楼层及下级数据',
   newPoint: '新增点位及下级数据',
   newHost: '新增设备及下级数据',
-  newEndpoint: '新增监控实体及下级数据',
+  newEndpoint: '新增检查实体及下级数据',
   newMetric: '新增检查项'
 }
 const formMap = {

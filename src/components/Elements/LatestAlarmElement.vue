@@ -48,7 +48,7 @@ export default {
           show: true
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           dataIndex: 'endpointAlias',
           width: 190,
           show: true,

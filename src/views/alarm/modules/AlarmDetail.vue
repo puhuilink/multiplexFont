@@ -68,7 +68,7 @@ export default {
         {
           children: [
             { label: '设备名称', key: 'cmdbHost.alias' },
-            { label: '监控实体', key: 'cmdbEndpoint.modelEndpoint.alias' }
+            { label: '检查实体', key: 'cmdbEndpoint.modelEndpoint.alias' }
           ]
         },
         {

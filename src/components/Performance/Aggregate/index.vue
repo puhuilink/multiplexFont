@@ -53,7 +53,7 @@ export default {
       expandedRowKeys: [],
       columns: Object.freeze([
         {
-          title: '监控实体',
+          title: '检查实体',
           dataIndex: 'endpoint_alias',
           width: 180,
           tooltip: true,

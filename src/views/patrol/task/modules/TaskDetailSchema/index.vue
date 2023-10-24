@@ -141,7 +141,7 @@ export default {
           customRender: (text) => text || ''
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           dataIndex: 'endpointAlias',
           width: 180,
           scopedSlots: { customRender: 'endpoint' }

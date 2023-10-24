@@ -26,7 +26,7 @@
       </a-select>
     </a-form-item>
 
-    <a-form-item label="监控实体">
+    <a-form-item label="检查实体">
       <a-select
         allowClear
         class="fw"
