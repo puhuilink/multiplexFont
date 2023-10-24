@@ -42,7 +42,7 @@
               </a-col>
 
               <a-col :xl="8" :md="12" :sm="24">
-                <a-form-item label="监控实体" v-bind="formItemLayout" class="fw">
+                <a-form-item label="检查实体" v-bind="formItemLayout" class="fw">
                   <EndpointSelect
                     schema="cmdb"
                     :parentId="queryParams.host_id"
@@ -425,7 +425,7 @@ export default {
           show: true
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           dataIndex: 'endpointAlias',
           width: 190,
           show: true,

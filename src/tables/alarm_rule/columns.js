@@ -269,7 +269,7 @@ export function metricModelColumn () {
 
 export function endpointModelIdColumn () {
   const column = {
-    title: '监控实体',
+    title: '检查实体',
     dataIndex: 'endpoint_model_id modelEndpoint { alias }',
     width: 200,
     customRender: (endpointModelId, { modelEndpoint }, model) => _.get(modelEndpoint, 'alias') || endpointModelId
@@ -281,7 +281,7 @@ export function endpointModelIdColumn () {
 
 export function modelEndpointModelIdColumn () {
   const column = {
-    title: '监控实体',
+    title: '检查实体',
     dataIndex: 'model { endpoint_alias }',
     width: 200,
     customRender: (__, { model }) => _.get(model, 'endpoint_alias')

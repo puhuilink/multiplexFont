@@ -135,7 +135,7 @@ export default {
       //   customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'host_alias'])
       // },
       // {
-      //   title: '监控实体',
+      //   title: '检查实体',
       //   width: 120,
       //   tooltip: true,
       //   customRender: (__, { alarm }) => _.get(alarm, ['cmdbHostEndpointMetric', 'endpoint_alias'])

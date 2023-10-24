@@ -36,7 +36,7 @@
               :sm="24"
             >
               <a-form-model-item
-                label="监控实体"
+                label="检查实体"
                 prop="endpointAlias"
               >
                 <a-input
@@ -166,7 +166,7 @@ export default {
           scopedSlots: { customRender: 'host' }
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           dataIndex: 'endpointAlias',
           scopedSlots: { customRender: 'endpoint' }
         },

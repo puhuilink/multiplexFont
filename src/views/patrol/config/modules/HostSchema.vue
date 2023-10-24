@@ -67,7 +67,7 @@
         </div>
       </a-form-model-item>
       <a-form-model-item
-        label="监控实体"
+        label="检查实体"
         prop="endpointAlias"
         v-if="operationArray[3].edit||operationArray[3].show"
         :rules="[{ required: operationArray[3].required, message: '请输入点位名称',trigger:'blur' }]"

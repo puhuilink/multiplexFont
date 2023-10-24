@@ -18,7 +18,7 @@ export class AdaptorResourceConfig extends AdaptorConfig {
     metricIds = [],
     // 分组方式:  hour / minute / month
     isGroup = '',
-    // 监控实体聚合方式：model / cmdb
+    // 检查实体聚合方式：model / cmdb
     endpointAggregateMode = 'model',
     legendType = 'host',
     refreshTime = '',

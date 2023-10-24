@@ -4,7 +4,7 @@
       <a-select></a-select>
     </a-form-model-item>
 
-    <a-form-model-item label="监控实体" v-bind="$props">
+    <a-form-model-item label="检查实体" v-bind="$props">
       <EndpointSelect schema="model" />
     </a-form-model-item>
 

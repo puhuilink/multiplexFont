@@ -44,7 +44,7 @@
             </div>
 
             <div class="AlarmRuleDetailSchema__item">
-              <label class="AlarmRuleDetailSchema__item-label">监控实体</label>
+              <label class="AlarmRuleDetailSchema__item-label">检查实体</label>
               <span class="AlarmRuleDetailSchema__item-value">{{ model.modelEndpoint ? model.modelEndpoint.alias :'暂无数据' }}</span>
             </div>
 

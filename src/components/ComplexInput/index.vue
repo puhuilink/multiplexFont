@@ -11,10 +11,10 @@
     </a-form-model-item>
     <a-form-model-item
       v-bind="formItemLayout"
-      label="监控实体"
+      label="检查实体"
       prop="deviceBrand"
       :rules="[
-        { required: true, message: '请选择监控实体' }
+        { required: true, message: '请选择检查实体' }
       ]">
       <a-input :disabled="true" :value="inputEle.deviceBrand"></a-input>
     </a-form-model-item>

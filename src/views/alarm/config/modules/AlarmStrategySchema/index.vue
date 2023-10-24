@@ -302,7 +302,7 @@ export default {
     isDetail: false,
     rules: {
       endpoint: [
-        { required: true, message: '请选择监控实体' }
+        { required: true, message: '请选择检查实体' }
       ],
       metric: [
         { required: true, message: '请选择检查项' }

@@ -52,7 +52,7 @@
       ><a-icon type="download" />下载</a-button>
       <a-button type="primary" style="margin-right: 10px" @click="downloadTemp" v-action:F010001001003005><a-icon type="export"/>导出</a-button>
       <a-button type="primary" style="margin-right: 10px" @click="showImportSchema" v-action:F010001001003004><a-icon type="import"/>导入</a-button>
-      <a-button style="margin-right: 10px;background-color: rgb(22,155,213);color: white" v-action:F010001001003004><a-icon type="swap"/>调整顺序</a-button>
+      <a-button style="margin-right: 10px;background-color: rgb(22,155,213);color: white" @click='showOrderSchema' v-action:F010001001003004><a-icon type="swap"/>调整顺序</a-button>
     </div>
     <a-table
       ref="table"
@@ -103,7 +103,7 @@
             </a-sub-menu>
             <a-sub-menu key="add" title="新增">
               <a-menu-item key="newMetric" @click="editPatrolConfig('newMetric',row)">仅新增检查项</a-menu-item>
-              <a-menu-item key="newEndpoint" @click="editPatrolConfig('newEndpoint',row)">新增监控实体及以下</a-menu-item>
+              <a-menu-item key="newEndpoint" @click="editPatrolConfig('newEndpoint',row)">新增检查实体及以下</a-menu-item>
               <a-menu-item key="newHost" @click="editPatrolConfig('newHost',row)">新增设备及以下</a-menu-item>
               <a-menu-item key="newPoint" @click="editPatrolConfig('newPoint',row)">新增点位及以下</a-menu-item>
             </a-sub-menu>
@@ -128,6 +128,10 @@
       ref="importSchema"
       @refresh="refreshRender"
     />
+    <OrderSchema
+      ref="orderSchema"
+      @refresh="onRefresh"
+    />
   </div>
 
 </template>
@@ -138,6 +142,7 @@ import { dealQuery, downloadExcel, downloadFile } from '@/utils/util'
 import HostSchema from './modules/HostSchema.vue'
 import ZoneSelect from './modules/ZoneSelect'
 import ImportSchema from './modules/importSchema'
+import OrderSchema from './modules/OrderSchema'
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { sql, xungeng } from '@/utils/request'
@@ -149,6 +154,7 @@ export default {
   components: {
     HostSchema,
     ZoneSelect,
+    OrderSchema,
     ImportSchema
   },
   data () {
@@ -282,7 +288,7 @@ export default {
           }
         },
         {
-          title: '监控实体',
+          title: '检查实体',
           align: 'center',
           width: '15%',
           dataIndex: 'endpoint_alias',
@@ -414,7 +420,6 @@ export default {
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
-          console.log(current, size)
           this.paginationOpt.current = current
           this.paginationOpt.pageSize = size
           this.getPatrolPath(current)
@@ -423,7 +428,7 @@ export default {
     },
     onRefresh () {
       this.$refs.zone.fetch()
-      this.getPatrolPath(1)
+      this.getPatrolPath(this.paginationOpt.current)
     },
     async refreshRender () {
       this.$notification.success({
@@ -605,6 +610,12 @@ export default {
     * */
     showImportSchema () {
       this.$refs.importSchema.show(this.pathId)
+    },
+    /*
+    * 调整顺序
+    * */
+    showOrderSchema () {
+      this.$refs.orderSchema.reorder(this.pathId)
     }
   },
   watch: {

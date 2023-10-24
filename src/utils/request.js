@@ -2,8 +2,9 @@ import Vue from 'vue'
 import axios from 'axios'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { encrypt, decrypt } from '@/utils/aes'
+import router from '@/router'
+import { ACCESS_TOKEN, USER } from '@/store/mutation-types'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL
@@ -81,6 +82,14 @@ const requestInterceptor = config => {
   return config
 }
 
+const Logout = () => {
+  Vue.ls.remove(ACCESS_TOKEN)
+  Vue.ls.remove(USER)
+  router.push('/user/login').then(() => {
+    // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+    location.reload()
+  })
+}
 const requestOverInterceptor = config => {
   config.headers['NGSOC-Access-Token'] = 'bfaab4f4d8704d99b04231ad26862f6d23673efa99bcf90914ccad2a9d3683e5'
   console.log(config.headers)
@@ -97,6 +106,7 @@ const responseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        setTimeout(() => Logout(), 500)
         break
       }
       case 30: {

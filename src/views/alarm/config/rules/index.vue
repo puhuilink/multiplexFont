@@ -29,7 +29,7 @@
 
               <a-col v-bind="colProps">
                 <a-form-item
-                  label="监控实体"
+                  label="检查实体"
                   v-bind="formItemLayout"
                   class="fw"
                 >
