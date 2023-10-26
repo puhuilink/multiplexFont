@@ -52,7 +52,7 @@
       ><a-icon type="download" />下载</a-button>
       <a-button type="primary" style="margin-right: 10px" @click="downloadTemp" v-action:F010001001003005><a-icon type="export"/>导出</a-button>
       <a-button type="primary" style="margin-right: 10px" @click="showImportSchema" v-action:F010001001003004><a-icon type="import"/>导入</a-button>
-      <a-button style="margin-right: 10px;background-color: rgb(22,155,213);color: white" @click='showOrderSchema' v-action:F010001001003004><a-icon type="swap"/>调整顺序</a-button>
+      <a-button style="margin-right: 10px;background-color: rgb(22,155,213);color: white" @click="showOrderSchema" v-action:F010001001003004><a-icon type="swap"/>调整顺序</a-button>
     </div>
     <a-table
       ref="table"
@@ -615,7 +615,7 @@ export default {
     * 调整顺序
     * */
     showOrderSchema () {
-      this.$refs.orderSchema.reorder(this.pathId)
+      this.$refs.orderSchema.reorder({ pathName: '', pathId: this.pathId }, { zoneName: '', zoneId: this.zoneId })
     }
   },
   watch: {

@@ -12,15 +12,14 @@
       @cancel="handleCancel"
       @close="handleCancel">
       <div class="OrderTitle">
-        <div>{{ `${path.pathName}-${zone.zoneName}` }}</div>
-        <a-select class="OrderTitle__select" placeholder="选择点位"></a-select>
-        <a-select class="OrderTitle__select" placeholder="选择设备"></a-select>
-        <a-select class="OrderTitle__select" placeholder="选择检查实体"></a-select>
+        <a-select class="OrderTitle__select" placeholder="选择点位" v-model="formState.checkpointId" :options="checkpoints" @change="queryList(0)"/>
+        <a-select class="OrderTitle__select" placeholder="选择设备" v-model="formState.hostId" :options="hosts" @change="queryList(1)"/>
+        <a-select class="OrderTitle__select" placeholder="选择检查实体" v-model="formState.endpointId" :options="endpoints" @change="queryList(2)"/>
       </div>
       <Container @drop="onDrop">
         <Draggable v-for="item in items" :key="item.id">
           <div class="draggable-item">
-            {{ item.data }}
+            {{ item.alias }}
           </div>
         </Draggable>
       </Container>
@@ -50,27 +49,22 @@ const applyDrag = (arr, dragResult) => {
   return result
 }
 
-const generateItems = (count, creator) => {
-  const result = []
-  for (let i = 0; i < count; i++) {
-    result.push(creator(i))
-  }
-  return result
-}
-
 export default {
   name: 'OrderSchema',
   components: { Container, Draggable },
   data () {
     return {
-      guardItem: [],
-      items: [{ id: 1, data: 'Draggable1' }, { id: 2, data: 'Draggable2' }, { id: 3, data: 'Draggable3' }],
-      formState: {},
+      checkpoints: [],
+      hosts: [],
+      endpoints: [],
+      items: [],
+      formState: { checkpointId: '', hostId: '', endpointId: '' },
       operationArray: [],
       visible: false,
       modalTitle: '',
       path: {},
       zone: {},
+      currentType: '',
       answerOptions: [],
       requestSubmit: () => {},
       labelCol: {
@@ -84,22 +78,75 @@ export default {
     }
   },
   methods: {
+    isBlank (element) {
+      return element !== null && element !== undefined && element !== ''
+    },
     backRenderDraggable (index) {
 
     },
     renderDraggable (item) {
       this.guardItem.push({ pathId: item.id, alias: item.alias })
     },
-    reorder (pathId, zoneId) {
+    reorder (path, zone) {
       this.visible = true
       this.modalTitle = '调整顺序'
       this.requestSubmit = this.requestEdit
-      this.guardItem = []
-      this.pathId = pathId
-      this.zoneId = zoneId
+      this.path = path
+      this.zone = zone
+      this.queryCheckpoint()
+    },
+    queryList (type) {
+      const { checkpointId, hostId, endpointId } = this.formState
+      if (type === 2) {
+        this.queryMetric({ pathId: this.path.pathId, endpointId })
+        return
+      }
+      if (type === 1) {
+        this.endpoints = []
+        this.formState.endpointId = ''
+        this.queryEndpoint({ pathId: this.path.pathId, hostId })
+        return
+      }
+      if (type === 0) {
+        this.hosts = []
+        this.endpoints = []
+        this.formState.endpointId = ''
+        this.formState.hostId = ''
+        this.queryHost({ pathId: this.path.pathId, checkpointId })
+      }
+    },
+    async queryMetric (args) {
+      const res = await xungeng.post('path/findSequence', args)
+      if (res.code === 200) {
+        this.items = res.data.map(data => ({ id: data.metricId, alias: data.metricAlias, sequence: data.metricSequence }))
+        this.currentType = 'metric'
+      }
+    },
+    async queryEndpoint (args) {
+      const res = await xungeng.post('path/findSequence', args)
+      if (res.code === 200) {
+        this.items = res.data.map(data => ({ id: data.endpointId, alias: data.endpointAlias, sequence: data.endpointSequence }))
+        this.endpoints = res.data.map(data => ({ key: data.endpointId, label: data.endpointAlias }))
+        this.currentType = 'endpoint'
+      }
+    },
+    async queryHost (args) {
+      const res = await xungeng.post('path/findSequence', args)
+      if (res.code === 200) {
+        this.items = res.data.map(data => ({ id: data.hostId, alias: data.hostAlias, sequence: data.hostSequence }))
+        this.hosts = res.data.map(data => ({ key: data.hostId, label: data.hostAlias }))
+        this.currentType = 'host'
+      }
+    },
+    async queryCheckpoint () {
+      const { pathId } = this.path
+      const res = await xungeng.post('path/findSequence', { pathId })
+      if (res.code === 200) {
+        this.checkpoints = res.data.map(data => ({ key: data.checkpointId, label: data.checkpointAlias }))
+      }
     },
     async requestEdit () {
-      const result = await xungeng.post('/path/editPath', this.formState)
+      const result = await xungeng.post('/path/updateSequence', this.formatItems())
       if (result.code === 200) {
         this.$notification.success({
           message: '系统提示',
@@ -113,6 +160,31 @@ export default {
         })
       }
       this.visible = false
+    },
+    formatItems () {
+      switch (this.currentType) {
+        case 'host': {
+          return this.items.map((item, index) => ({
+            'pathId': this.path.pathId,
+            'hostId': item.id,
+            'hostSequence': index
+          }))
+        }
+        case 'endpoint': {
+          return this.items.map((item, index) => ({
+            'pathId': this.path.pathId,
+            'endpointId': item.id,
+            'endpointSequence': index
+          }))
+        }
+        case 'metric': {
+          return this.items.map((item, index) => ({
+            'pathId': this.path.pathId,
+            'metricId': item.id,
+            'metricSequence': index
+          }))
+        }
+      }
     },
     handleCancel () {
       this.visible = false
