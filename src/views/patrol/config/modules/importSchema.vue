@@ -11,7 +11,7 @@
     :afterClose="reset"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-model-item label="点击下载当前巡更路径" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
+      <a-form-model-item label="点击下载巡更路径" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
         <a :href="`${url}/xunjian/export/pathTemplate`"><a-icon type="download" /> 下载模板 </a>
       </a-form-model-item>
       <a-form-model-item label="选择导入文件" prop="file" extra="提示：只支持.xls.xlsx格式，且不超过10M">

@@ -114,8 +114,15 @@ const responseInterceptor = (response) => {
           message: msg,
           description: '请重新登录'
         })
-        this.$router.push('/user/login')
-        location.reload()
+        router.push('/user/login').then(() => {
+          // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+          location.reload()
+        }).then(() => {
+          notification.error({
+            message: '登录已过期',
+            description: '请重新登录'
+          })
+        })
         throw new Error(msg)
       }
       default: {
@@ -140,6 +147,15 @@ const secondResponseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        router.push('/user/login').then(() => {
+          // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+          location.reload()
+        }).then(() => {
+          notification.error({
+            message: '登录已过期',
+            description: '请重新登录'
+          })
+        })
         break
       }
       case 30: {
@@ -163,9 +179,14 @@ const xungengresponseInterceptor = (response) => {
   if (code && ![200].includes(code)) {
     switch (code) {
       case 401: {
-        notification.error({
-          message: '登录已过期',
-          description: '请重新登录'
+        router.push('/user/login').then(() => {
+          // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
+          location.reload()
+        }).then(() => {
+          notification.error({
+            message: '登录已过期',
+            description: '请重新登录'
+          })
         })
         break
       }

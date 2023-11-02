@@ -488,7 +488,7 @@ body {
   .ant-dropdown-menu-item {
     width: 160px;
   }
-  
+
   .ant-dropdown-menu-item > .anticon:first-child,
   .ant-dropdown-menu-item > a > .anticon:first-child,
   .ant-dropdown-menu-submenu-title > .anticon:first-child .ant-dropdown-menu-submenu-title > a > .anticon:first-child {
@@ -686,4 +686,28 @@ body {
 
 .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
   color: #004FA5 !important;
+}
+
+.ant-table-thead > tr > th {
+  font-weight: bold !important;
+  position: relative;
+}
+
+.ant-table-thead > tr > th::after {
+  content: '' !important;
+  position: absolute !important;
+  height: 50% !important;
+  top: 50% !important;
+  right: 0 !important;
+  border-right: 1px solid #D2DEF1!important; // 设置表头右边框样式
+  transform: translateY(-50%)!important;
+}
+.ant-table-thead > tr > th:last-child::after {
+  content: '' !important;
+  position: absolute !important;
+  height: 50% !important;
+  top: 50% !important;
+  left: 0 !important;
+  border-right: 0px solid #D2DEF1!important; // 设置表头右边框样式
+  transform: translateY(-50%)!important;
 }
