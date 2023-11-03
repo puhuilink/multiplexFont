@@ -835,10 +835,10 @@ export const asyncRouterMap = [
           //   meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
           // },
           {
-            path: '/system/user',
-            name: 'User',
-            component: () => import('@/views/system/userManage/index'),
-            meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+            path: '/system/group',
+            name: 'Group',
+            component: () => import('@/views/system/apartment/index'),
+            meta: { title: '组织机构', keepAlive: true, permission: ['F001003'] }
           },
           // {
           //   path: '/system/group',
@@ -853,10 +853,17 @@ export const asyncRouterMap = [
             meta: { title: '角色管理', keepAlive: true, permission: ['F001002'] }
           },
           {
-            path: '/system/group',
-            name: 'Group',
-            component: () => import('@/views/system/apartment/index'),
-            meta: { title: '部门管理', keepAlive: true, permission: ['F001003'] }
+            path: '/system/user',
+            name: 'User',
+            component: () => import('@/views/system/userManage/index'),
+            meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
+          },
+          {
+            path: '/system/ImageManagement',
+            name: 'ImageManagement',
+            hidden: true,
+            component: () => import('@/views/system/ImageManagement/index'),
+            meta: { title: '机房图片管理', keepAlive: true, permission: ['F001001'] }
           }
           // {
           //   path: '/system/audit',

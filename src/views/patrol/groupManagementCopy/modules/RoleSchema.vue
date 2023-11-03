@@ -4,31 +4,28 @@
     :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
-    :width="940"
+    :width="787"
     wrapClassName="QuotaSchema__modal"
     :afterClose="reset"
     :key="modalKey"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-row>
-        <a-col :md="12" :sm="24">
+        <a-col :md="24" :sm="24">
           <a-form-model-item label="巡更组名称" prop="name">
             <a-input v-model="form.name" />
           </a-form-model-item>
         </a-col>
-        <a-col :md="12" :sm="24">
+      </a-row>
+      <a-row>
+        <a-col :md="24" :sm="24">
           <a-form-model-item label="巡更组编号" prop="id" :disabled="isDisabled">
-            <a-input v-model="form.id" :disabled="isDisabled"/>
+            <a-input v-model="form.id" :disabled="isDisabled" />
           </a-form-model-item>
         </a-col>
-        <a-col :md="12" :sm="24">
-          <!-- <a-form-model-item label="巡更路径" prop="pathIds">
-            <a-select mode="multiple" placeholder="请选择巡更路径" option-label-prop="label" @change="handlePathIdsChange">
-              <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)" :label="item.alias">
-                {{ item.alias }}
-              </a-select-option>
-            </a-select>
-          </a-form-model-item> -->
+      </a-row>
+      <a-row>
+        <a-col :md="24" :sm="24">
           <a-form-model-item label="巡更路径" prop="pathIds">
             <a-select mode="multiple" placeholder="请选择巡更路径" v-model="form.pathIds" @change="handlePathIdsChange">
               <!-- <a-select-option v-for="item in pathIdsApiData" :key="item.id" :value="JSON.stringify(item)" :label="item.alias"> -->
@@ -39,9 +36,11 @@
           </a-form-model-item>
 
         </a-col>
-        <a-col :md="12" :sm="24">
+      </a-row>
+      <a-row>
+        <a-col :md="24" :sm="24">
           <a-form-model-item label="用户" prop="userIds">
-            <a-select placeholder="请点击选择用户" mode="multiple" v-model="form.userIds" @change="handlePathIdsChange2" >
+            <a-select placeholder="请点击选择用户" mode="multiple" v-model="form.userIds" @change="handlePathIdsChange2">
               <!-- <a-select-option v-for="user in users" :key="user.userId" :value="JSON.stringify(user)"> -->
               <a-select-option v-for="user in users" :key="user.userId.toString()" :value="user.userId">
                 {{ user.staffName }}
@@ -49,26 +48,32 @@
             </a-select>
           </a-form-model-item>
         </a-col>
-        <a-col :md="12" :sm="24">
+      </a-row>
+      <a-row>
+        <a-col :md="24" :sm="24">
           <a-form-model-item label="有效标识" prop="isOpen">
             <!-- <a-select :isOpen="form.isOpen" />
              -->
-            <a-select show-search placeholder="" v-model="form.isOpen" @change="handleChange" >
-              <a-select-option :value="1" key="1"> 有效 </a-select-option>
+            <a-select show-search placeholder="" v-model="form.isOpen" @change="handleChange">
+              <a-select-option :value="1" key="1"> 有效</a-select-option>
               <a-select-option :value="0" key="2"> 无效</a-select-option>
             </a-select>
           </a-form-model-item>
         </a-col>
-        <a-col :md="12" :sm="24">
-          <a-form-model-item label="备注" >
+      </a-row>
+      <a-row>
+        <a-col :md="24" :sm="24">
+          <a-form-model-item label="备注">
             <a-input v-model="form.remark" type="textarea" />
           </a-form-model-item>
         </a-col>
       </a-row>
     </a-form-model>
     <template slot="footer">
-      <a-button @click="onCancel">取消</a-button>
-      <a-button @click="onSubmit" type="primary" :loading="submitLoading">保存</a-button>
+      <div class="modal-button-container">
+        <a-button @click="onSubmit" type="primary" :loading="submitLoading">提交</a-button>
+        <a-button @click="onCancel">取消</a-button>
+      </div>
     </template>
   </a-modal>
 </template>
@@ -82,6 +87,7 @@ import { xungeng } from '@/utils/request'
 import { encrypt, decrypt } from '@/utils/aes'
 import { notification } from 'ant-design-vue'
 import JSONBig from 'json-bigint'
+
 export default {
   name: 'RoleSchema',
   mixins: [Schema],
@@ -96,11 +102,19 @@ export default {
       modalKey: 0, // 弹窗key值
       current: 0,
       confirmLoading: false,
-      labelCol: { span: 24 },
-      wrapperCol: { span: 20 },
+      labelCol: { span: 6 },
+      wrapperCol: { span: 12 },
       rules: {
-        name: [{ required: true, message: '巡更组名称必填', trigger: 'blur' }, { max: 50, message: '最大字数限制50', trigger: 'blur' }],
-        id: [{ required: true, message: '巡更组编号必填', trigger: 'blur' }, { message: '输入字段应为1-50位的数字和英文字母大小写', trigger: 'blur', pattern: /^[A-Za-z0-9]{1,50}$/ }],
+        name: [{ required: true, message: '巡更组名称必填', trigger: 'blur' }, {
+          max: 50,
+          message: '最大字数限制50',
+          trigger: 'blur'
+        }],
+        id: [{ required: true, message: '巡更组编号必填', trigger: 'blur' }, {
+          message: '输入字段应为1-50位的数字和英文字母大小写',
+          trigger: 'blur',
+          pattern: /^[A-Za-z0-9]{1,50}$/
+        }],
         pathIds: [{ required: true, message: '巡更组路径必选', trigger: 'blur' }],
         userIds: [{ required: true, message: '巡更组用户必选', trigger: 'blur' }],
         isOpen: [{ required: true, message: '有效标识必选', trigger: 'blur' }]
@@ -131,15 +145,17 @@ export default {
       // selectedUser: [], // 选择的用户
       // remark: '',
       record: null,
-      onSubmit: () => {},
+      onSubmit: () => {
+      },
       staffName: [], // 回显数据用户id-用户名
       alias: []// 回显数据路径id-路径名
     }
   },
-  mounted () {},
+  mounted () {
+  },
   methods: {
     onCancel () {
-    // 重置下拉选项的选择
+      // 重置下拉选项的选择
       this.form = {
         id: '',
         name: '',
@@ -288,7 +304,7 @@ export default {
             })
           }
         } catch (error) {
-        // 编辑失败数据在转换回来
+          // 编辑失败数据在转换回来
           this.$emit('get_list')
           if (this.form.isOpen === true) {
             this.form.isOpen = 1
@@ -405,5 +421,9 @@ export default {
 <style lang="less">
 .steps-content {
   height: 500px;
+}
+.modal-button-container {
+  display: flex;
+  justify-content: center;
 }
 </style>
