@@ -7,6 +7,8 @@
       ref="table"
       rowKey="uuid"
       :scroll="scroll"
+      class="custom-table"
+      bordered
     >
     </a-table>
     <div class="TimeRange__operation">
@@ -114,13 +116,21 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .TimeRange {
   &__operation {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 4px;
+  }
+  /deep/ .ant-table-header .ant-table-thead > tr > th {
+    background-color: rgb(249, 250, 251) !important;
+    text-align: center;
+    /* 其他样式规则 */
+  }
+  /deep/ .ant-table-wrapper {
+    padding: 0 !important;
   }
 }
 </style>

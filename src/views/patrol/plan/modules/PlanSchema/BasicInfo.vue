@@ -23,7 +23,7 @@
           <label title="巡更组">巡更组</label>
         </span>
         <a-form-model-item prop="groupId">
-          <a-select v-model="_value.groupId" style="min-width: 120px">
+          <a-select v-model="_value.groupId" style="min-width: 140px">
             <a-select-option
               v-for="{ label, value } in patrolGroupList"
               :key="value"
@@ -53,7 +53,7 @@
           <label title="是否启用">是否启用</label>
         </span>
         <a-form-model-item prop="status">
-          <a-select v-model="_value.status" style="min-width: 60px">
+          <a-select v-model="_value.status" style="min-width: 140px">
             <a-select-option v-for="{ value, label } in STATUS_LIST" :key="value">{{ label }}</a-select-option>
           </a-select>
         </a-form-model-item>
