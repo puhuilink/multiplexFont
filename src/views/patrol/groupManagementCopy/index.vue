@@ -33,11 +33,6 @@
           </a-col>
         </a-row>
       </div>
-
-      <!-- <span class="collapse">
-        <a-button @click="queryList()" type="primary">查询</a-button>
-        <a-button @click="resetQueryParams">重置</a-button>
-      </span> -->
     </a-form>
 
     <!-- / 操作区域 -->
@@ -61,20 +56,6 @@
         删除巡更组
       </a-button>
     </div>
-    <!-- <a-table
-      :columns="columns"
-      :data-source="dataList"
-      :pagination="{ pageSize: 10 ,total:this.total,current:this.current,onChange: handlePageChange }"
-      ref="table"
-      :rowKey="(record) => record.id"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :scroll="scroll"
-
-    >
-      <template #status="text, record">
-        <a-switch :checked="text" @change="onStatusChange" />
-      </template>
-    </a-table> -->
     <a-table
       :columns="columns"
       :data-source="dataList"
@@ -86,23 +67,7 @@
       :scroll="scroll"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
-
-    <!-- <a-pagination
-      :total="total"
-      :current="current"
-      :pageSize="pageSize"
-      :show-size-changer="true"
-      :show-total="total => `显示 ${pageSize} 条记录,共 ${total} 条记录`"
-      :on-page-change="handlePageChange"
-      :on-show-size-change="handlePageChange"
-
-    ></a-pagination> -->
-
     <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList" />
-
-    <!--    &lt;!&ndash;    <AuthSchema v-action:M0110 ref="auth" @success="query(false)" />&ndash;&gt;-->
-
-    <!-- <UserGroupSchema v-action:M0104 ref="group" @editSuccess="query(false)"  -->
   </div>
 </template>
 
@@ -132,7 +97,8 @@ export default {
       columns: Object.freeze([
         {
           title: '巡更组编号',
-          dataIndex: 'id'
+          dataIndex: 'id',
+          width: '334px'
         },
         {
           title: '巡更组名称',
@@ -143,13 +109,12 @@ export default {
           title: '有效标识',
           dataIndex: 'isOpen',
           customRender: (text) => (text ? '有效' : '无效'),
-          width: '180px'
+          width: '180px',
+          align: 'center'
         },
         {
           title: '备注',
-          dataIndex: 'remark',
-          'min-width': 300
-          // sorter: true
+          dataIndex: 'remark'
         }
       ]),
       selectedRows: [],

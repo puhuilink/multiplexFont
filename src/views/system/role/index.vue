@@ -163,39 +163,46 @@ export default {
       {
         title: '角色编号',
         dataIndex: 'code',
-        width: '180px'
+        width: '180px',
+        align: 'center'
       },
       {
         title: '角色名称',
         dataIndex: 'name',
-        width: '150px'
+        width: '150px',
+        align: 'center'
       },
       {
         title: '所属部门',
         dataIndex: 'organizeName',
-        width: '150px'
+        width: '150px',
+        align: 'center'
       },
       {
         title: '是否开启',
         dataIndex: 'isOpen',
         scopedSlots: { customRender: 'status' },
-        width: '80px'
+        width: '80px',
+        align: 'center'
       },
       {
         title: '角色类型',
         dataIndex: 'defaultRole',
         customRender: (text) => text ? '内置角色' : '自定义',
-        width: '120px'
+        width: '120px',
+        align: 'center'
       },
       {
         title: '备注',
         dataIndex: 'remark',
-        width: 100
+        width: 100,
+        align: 'center'
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        width: '200px'
+        width: '200px',
+        align: 'center'
       },
       {
         title: '操作',

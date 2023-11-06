@@ -209,7 +209,8 @@ const columns = [
     title: '登录名',
     dataIndex: 'userName',
     key: 'userName',
-    width: 100
+    width: 100,
+    align: 'center'
   },
   {
     title: '用户名称',
@@ -221,38 +222,45 @@ const columns = [
     title: '部门',
     dataIndex: 'orgName',
     key: 'orgName',
-    ellipsis: true
+    ellipsis: true,
+    align: 'center'
   },
   {
     title: '手机号码',
     dataIndex: 'mobilePhone',
     key: 'mobilePhone',
-    ellipsis: true
+    ellipsis: true,
+    align: 'center'
   },
   {
     title: '是否开启',
     dataIndex: 'isOpen',
     key: 'isOpen',
     ellipsis: true,
+    align: 'center',
+    width: 100,
     scopedSlots: { customRender: 'isOpen' }
   },
   {
     title: '创建时间',
     dataIndex: 'createTime',
     key: 'createTime',
-    ellipsis: true
+    ellipsis: true,
+    align: 'center'
   },
   {
     title: '备注',
     dataIndex: 'remark',
     key: 'remarks',
-    ellipsis: true
+    ellipsis: true,
+    align: 'center'
   },
   {
     title: '操作',
     dataIndex: 'operation',
     key: 'operation',
     ellipsis: true,
+    align: 'center',
     fixed: 'right',
     width: 150,
     scopedSlots: { customRender: 'operation' }
