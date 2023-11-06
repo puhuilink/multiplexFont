@@ -6,9 +6,9 @@
       :pagination="false"
       ref="table"
       rowKey="uuid"
-      :scroll="scroll"
       class="custom-table"
       bordered
+      :scroll="scroll"
     >
     </a-table>
     <div class="TimeRange__operation">
@@ -57,7 +57,7 @@ export default {
       columns: [
         {
           title: '开始时间',
-          width: 170,
+          width: 300,
           customRender: (text, { start }) => {
             return (
               <EditableRow
@@ -71,7 +71,7 @@ export default {
         },
         {
           title: '结束时间',
-          width: 170,
+          width: 300,
           customRender: (text, { end }) => {
             return (
               <EditableRow
@@ -85,7 +85,8 @@ export default {
         },
         {
           title: '操作',
-          width: 80,
+          width: 170,
+          align: 'center',
           customRender: (text, record, index) => <a-icon type="delete" onClick={() => { this.remove(index) }} />
         }
       ]
@@ -94,7 +95,7 @@ export default {
   computed: {
     scroll () {
       return {
-        y: 300
+        y: 400
       }
     }
   },
@@ -122,7 +123,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4px;
   }
   /deep/ .ant-table-header .ant-table-thead > tr > th {
     background-color: rgb(249, 250, 251) !important;
