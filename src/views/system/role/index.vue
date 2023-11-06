@@ -86,7 +86,7 @@
           </template>
           <template #action="text, record">
             <div v-if="record.id!=='9527'">
-              <a @click="onEditUser(record)" v-action:F001002002>编辑</a>
+              <a @click="onEditUser(record)" v-action:F001002002><a-icon type="form" /> 编辑</a>
               <a-divider type="vertical" />
               <a-dropdown>
                 <a class="ant-dropdown-link">
@@ -94,15 +94,19 @@
                   更多</a>
                 <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
                   <a-menu-item key="1" v-action:F001002003 v-show="record.id!=='9527'">
+                    <a-icon type="menu-unfold" />
                     菜单权限
                   </a-menu-item>
                   <a-menu-item key="2" v-action:F001002004 v-show="record.id!=='9527'">
+                    <a-icon type="database" />
                     数据权限
                   </a-menu-item>
                   <a-menu-item key="3" v-action:F001002005>
+                    <a-icon type="usergroup-delete" />
                     分配用户
                   </a-menu-item>
                   <a-menu-item key="4" v-action:F001002006 v-show="record.id!=='9527'">
+                    <a-icon type="delete" />
                     删除
                   </a-menu-item>
                 </a-menu>

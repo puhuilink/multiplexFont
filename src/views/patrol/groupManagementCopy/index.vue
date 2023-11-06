@@ -115,6 +115,7 @@ import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
 import { xungeng } from '@/utils/request'
+import { Modal } from 'ant-design-vue'
 
 export default {
   name: 'Role',
@@ -210,7 +211,13 @@ export default {
         this.pageLoading = true
         const pageSize = this.pagination.pageSize
         const { data } = await xungeng.get('/group/list', {
-          params: { pageNum: this.pagination.current, pageSize: pageSize, id: this.Myid, name: this.Myname, isOpen: this.isOpen }
+          params: {
+            pageNum: this.pagination.current,
+            pageSize: pageSize,
+            id: this.Myid,
+            name: this.Myname,
+            isOpen: this.isOpen
+          }
         })
         console.log(data)
         this.dataList = data.list
@@ -245,9 +252,27 @@ export default {
 
     // 7.工作组删除(DELETE)
     DeleteGroup () {
-      this.$promiseConfirmDelete({
-        title: '删除',
-        content: '确定要删除吗',
+      const modal = Modal.confirm()
+      modal.update({
+        title: '请确定要删除选中的巡更组吗？',
+        // eslint-disable-next-line no-undef
+        icon: () => h('a-icon', {
+          props: {
+            type: 'info-circle',
+            theme: 'filled'
+          },
+          style: {
+            color: '#fa6400' // 设置图标颜色为橘黄色
+          }
+        }),
+        content: () => {
+          return (
+            <div>
+              如果删除将删除巡更组绑定的巡更路径关联信息和巡更组下人员的关联信息!
+            </div>
+          )
+        },
+
         onOk: async () => {
           let A = false
           for (const id of this.selectedRowKeys) {
