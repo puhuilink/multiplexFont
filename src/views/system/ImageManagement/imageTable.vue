@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     add (text = null) {
-      this.show('新建用户')
+      this.show('新建')
       this.formModel.apartmentId = text
     },
     onSubmit () {
@@ -145,7 +145,7 @@ export default {
     },
     edit (user) {
       console.log('user', user)
-      this.show('编辑用户')
+      this.show('编辑')
       this.formModel = {
         orgId: user.orgId,
         file: user.file,
