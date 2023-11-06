@@ -56,6 +56,7 @@
     </div>
     <div>
       <a-table
+        :expandIcon="expandIcon"
         :columns="columns"
         :data-source="treeData"
         :expandedRowKeys="expandedRowKeys"
@@ -105,6 +106,7 @@ export default {
           title: '是否启用',
           dataIndex: 'isOpen',
           key: 'isOpen',
+          align: 'center',
           customRender: (el) => {
             return (<a-tag color={el ? 'blue' : 'red'}>{el ? '开启' : '关闭'}</a-tag>)
           }
@@ -112,9 +114,10 @@ export default {
         {
           title: '创建时间',
           dataIndex: 'createTime',
-          key: 'createTime'
+          key: 'createTime',
+          align: 'center'
         },
-        { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' } }
+        { title: '操作', key: 'operation', align: 'center', scopedSlots: { customRender: 'operation' } }
       ],
       spread: true,
       expandedRowKeys: [],
@@ -193,26 +196,36 @@ export default {
       this.spread = !this.spread
     },
     expandIcon (props) {
-      if (props.expanded) {
+      console.log(props)
+      if (props.record.children && props.record.children.length > 0) {
+        if (props.expanded) {
+          return (
+            <span
+              style="margin-right: 8px"
+              class='table-icon'
+              onClick={(e) => {
+                props.onExpand(props.record, e)
+              }}
+            >
+              <a-icon type='down' class='icon' />
+            </span>
+          )
+        } else {
+          return (
+            <span
+              style="margin-right: 8px"
+              class='table-icon'
+              onClick={(e) => {
+                props.onExpand(props.record, e)
+              }}
+            >
+              <a-icon type='right' class='icon' />
+            </span>
+          )
+        }
+      } else { // 无数据-图标
         return (
-          <span
-            class='table-icon'
-            onClick={(e) => {
-              props.onExpand(props.record, e)
-            }}
-          >
-            <a-icon type='down' class='icon' />
-          </span>
-        )
-      } else {
-        return (
-          <span
-            class='table-icon'
-            onClick={(e) => {
-              props.onExpand(props.record, e)
-            }}
-          >
-            <a-icon type='right' class='icon' />
+          <span style="margin-right:22px">
           </span>
         )
       }
