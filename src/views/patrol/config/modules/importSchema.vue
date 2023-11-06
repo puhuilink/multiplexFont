@@ -8,7 +8,9 @@
     :maskClosable="false"
     okText="提交"
     @ok="onSubmit"
+    :width="700"
     :afterClose="reset"
+    class="importModal"
   >
     <a-form-model ref="ruleForm" :rules="rules" :model="originalForm" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-form-model-item label="点击下载巡更路径" prop="remark" extra="提示: 请先下载导入模板 excel文件，按格式填写后上传提交。">
@@ -36,6 +38,7 @@ import Schema from '~~~/Mixins/Modal/Schema'
 import { xungeng } from '@/utils/request'
 import { downloadExcel } from '@/utils/util'
 import { PathService } from '@/api'
+import { Modal } from 'ant-design-vue'
 
 export default {
   name: 'ImportSchema',
@@ -149,6 +152,44 @@ export default {
       })
     },
     onSubmit () {
+      const modal = Modal.confirm()
+      modal.update({
+        title: '提示',
+        // eslint-disable-next-line no-undef
+        icon: () => h('a-icon', {
+          props: {
+            type: 'info-circle',
+            theme: 'filled'
+          },
+          style: {
+            color: '#fa6400' // 设置图标颜色为橘黄色
+          }
+        }),
+        content: () => {
+          return (
+            <div>
+              将覆盖当前巡更路径已有信息，请确认是否导入
+            </div>
+          )
+        },
+
+        onOk: async () => {
+          this.$refs.ruleForm.validate(async (err) => {
+            if (!err) return
+            try {
+              this.confirmLoading = true
+              await PathService.importPath(this.originalForm)
+              this.$emit('refresh', true)
+              this.cancel()
+            } catch (e) {
+              throw e
+            } finally {
+              this.confirmLoading = false
+            }
+          })
+        }
+
+      })
       this.$refs.ruleForm.validate(async (err) => {
         if (!err) return
         try {
@@ -162,6 +203,10 @@ export default {
           this.confirmLoading = false
         }
       })
+    },
+    reset () {
+      this.$refs.ruleForm.resetFields()
+      Object.assign(this.$data, this.$options.data.apply(this))
     }
   }
 }
@@ -171,5 +216,10 @@ export default {
   margin: 0 auto;
   width: 80%;
   max-width: 400px;
+}
+.importModal {
+  .ant-form-extra {
+    color: #fd7c00 !important;
+  }
 }
 </style>

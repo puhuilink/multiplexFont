@@ -1,8 +1,8 @@
 <template>
   <div style="display: flex;align-items: center;margin-top: 5%;">
-    <span aria-setsize="small">计划排除日期（选填）：</span>
-    <a-date-picker ref="datePicker" @change="onChange" v-model="timeList"/>
-    <a-select mode="multiple" v-model="exception" @dropdownVisibleChange="func" ref="select" style="width: 60%"></a-select>
+    <span>计划排除日期（选填）:</span>
+    <a-date-picker ref="datePicker" @change="onChange" v-model="timeList" class="exceptSelect"/>
+    <a-select mode="multiple" v-model="exception" @dropdownVisibleChange="func" ref="select" class="exceptDate"></a-select>
   </div>
 </template>
 <script>
@@ -36,5 +36,12 @@ export default {
 </script>
 
 <style scoped>
-
+.exceptSelect {
+  margin-left: 8px;
+  width: 175px;
+}
+.exceptDate {
+  width: 355px;
+  margin-left: 32px;
+}
 </style>

@@ -3,51 +3,114 @@
     centered
     :footer="null"
     :title="title"
-    :width="820"
+    :width="1100"
     wrapClassName="ChangeShiftSchema__modal"
     v-model="visible"
     :afterClose="reset"
   >
     <a-spin :spinning="spinning">
       <div class="ChangeShiftSchema__block">
-        <div class="font_head">交班</div>
-        <a-row :gutter="[8,8]">
-          <a-col :span="8" style="text-align: left">
-            <span>交班人：{{ record.handName }}</span>
-          </a-col>
+        <a-form-model
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <div class="font_head">交班</div>
+          <a-row >
+            <a-col :span="8">
+              <a-form-model-item label="交班人">
+                {{ record.handName }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="9" style="text-align: left">
-            <span>交班时间：{{ record.handTime }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="交班时间">
+                {{ record.handTime }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="7" style="text-align: left">
-            <span>交班状态：{{ record.status | status }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="交班状态">
+                {{ record.status | status }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="8" style="text-align: left">
-            <span>工具仪表、钥匙：{{ record.tool | tool }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="工具仪表钥匙">
+                {{ record.tool | tool }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="9" style="text-align: left">
-            <span>图纸资料：{{ record.paper | data }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="图纸资料">
+                {{ record.paper | data }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="7" style="text-align: left">
-            <span>监控平台运行状态：{{ record.monitorStatus | monitorStatus }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="监控平台运行状态">
+                {{ record.monitorStatus | monitorStatus }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="8" style="text-align: left">
-            <span>机房温度（℃）：{{ record.temperature }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="机房温度（℃）">
+                {{ record.temperature }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="9" style="text-align: left">
-            <span>机房湿度（%rH）：{{ record.humidity }}</span>
-          </a-col>
+            <a-col :span="8" >
+              <a-form-model-item label="机房湿度（%rH）">
+                {{ record.humidity }}
+              </a-form-model-item>
+            </a-col>
 
-          <a-col :span="7" style="text-align: left">
-            <span>机房整洁度：{{ record.sanitary | sanitary }}</span>
-          </a-col>
-        </a-row>
+            <a-col :span="8" >
+              <a-form-model-item label="机房整洁度">
+                {{ record.sanitary | sanitary }}
+              </a-form-model-item>
+            </a-col>
+            <!--            <a-col :span="3" style="text-align: right">-->
+            <!--              <span>交班时间：</span>-->
+            <!--            </a-col>-->
+            <!--            <a-col :span="6" style="text-align: left">-->
+            <!--              {{ record.handTime }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="3" style="text-align: right">-->
+            <!--              <span>交班状态：</span>-->
+            <!--            </a-col>-->
+            <!--            <a-col :span="4" style="text-align: left">-->
+            <!--              {{ record.status | status }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="3" style="text-align: right">-->
+            <!--              <span>工具仪表、钥匙：</span>-->
+            <!--            </a-col>-->
+            <!--            <a-col :span="5" style="text-align: left">-->
+            <!--              {{ record.tool | tool }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="9" style="text-align: left">-->
+            <!--              <span>图纸资料：</span>{{ record.paper | data }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="7" style="text-align: left">-->
+            <!--              <span>监控平台运行状态：</span>{{ record.monitorStatus | monitorStatus }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="8" style="text-align: left">-->
+            <!--              <span>机房温度（℃）：</span>{{ record.temperature }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="9" style="text-align: left">-->
+            <!--              <span>机房湿度（%rH）：</span>{{ record.humidity }}-->
+            <!--            </a-col>-->
+
+            <!--            <a-col :span="7" style="text-align: left">-->
+            <!--              <span>机房整洁度：</span>{{ record.sanitary | sanitary }}-->
+            <!--            </a-col>-->
+          </a-row>
+        </a-form-model>
 
         <a-row>
           <a-divider />
@@ -107,6 +170,8 @@ export default {
     return {
       record: {},
       spinning: false,
+      labelCol: { span: 10 },
+      wrapperCol: { span: 11 },
       columns: [{
         title: '遗留事项',
         align: 'left',
@@ -272,5 +337,9 @@ export default {
   :nth-child(1) {
     margin-top: 20px;
   }
+}
+
+.ant-form-item {
+  margin-bottom: 0px !important;
 }
 </style>

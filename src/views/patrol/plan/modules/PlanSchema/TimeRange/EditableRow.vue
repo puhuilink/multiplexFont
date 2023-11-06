@@ -30,6 +30,7 @@ export default {
             this.$emit('change', { ...value, dayType })
           }}
         >
+          <a-icon type="calendar" slot="suffixIcon"/>
           <a-select-option value="A">今天</a-select-option>
           <a-select-option value="B">明天</a-select-option>
         </a-select>
@@ -55,7 +56,11 @@ export default {
   flex-direction: row;
 
   .ant-select {
-    width: 80px !important;
+    width: 120px !important;
+  }
+
+  .ant-time-picker {
+    width: 150px !important;
   }
 }
 </style>
