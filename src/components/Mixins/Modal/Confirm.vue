@@ -15,7 +15,8 @@ export default {
       okText = '确定',
       okType = 'danger',
       cancelText = '取消',
-      onOk = async () => {},
+      onOk = async () => {
+      },
       maskClosable = true,
       keyboard = true
     }) {
@@ -40,7 +41,8 @@ export default {
             }
           })
         },
-        onCancel () {}
+        onCancel () {
+        }
       })
     },
     $promiseConfirmDelete ({
@@ -49,9 +51,12 @@ export default {
       okText = '确定',
       okType = 'danger',
       cancelText = '取消',
-      onOk = async () => {},
+      onOk = async () => {
+      },
       maskClosable = false,
-      keyboard = false
+      keyboard = false,
+      icon = () => {
+      }
     }) {
       this.$promiseConfirm({
         title,
@@ -61,7 +66,8 @@ export default {
         cancelText,
         maskClosable,
         keyboard,
-        onOk
+        onOk,
+        icon
       })
     }
   }

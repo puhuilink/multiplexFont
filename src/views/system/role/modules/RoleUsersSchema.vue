@@ -21,9 +21,9 @@
       :wrapper-col="wrapperCol"
       v-if="record">
       <a-form-model-item label="角色名称" prop="name">
-        <a-input style="width: 60%" v-model="record.name" disabled/>
+        <a-input style="width: 60%" v-model="record.name" disabled />
       </a-form-model-item>
-      <a-form-model-item label="分配" prop="remark">
+      <a-form-model-item label="分配" prop="remark" >
         <a-transfer
           v-if="visible"
           :dataSource="groupList"
@@ -50,8 +50,8 @@ export default {
   name: 'UserGroupSchema',
   mixins: [Schema],
   data: (vm) => ({
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 },
+    labelCol: { span: 3 },
+    wrapperCol: { span: 18 },
     activeTabKey: '1',
     loading: false,
     record: null,
@@ -82,7 +82,7 @@ export default {
         this.groupList = [...this.groupList, ...list.map((el) => {
           return {
             key: el.userId,
-            title: el.staffName
+            title: `${el.staffName}(${el.mobilePhone})`
           }
         })]
       } catch (e) {
@@ -99,6 +99,7 @@ export default {
           fields: ['group_id'],
           alias: 'userGroupList'
         })
+        console.log(userGroupList)
         this.targetKeys = userGroupList.map((e) => e.group_id)
       } catch (e) {
         this.targetKeys = []
@@ -115,7 +116,8 @@ export default {
     handleChange (targetKeys, direction, moveKeys) {
       this.targetKeys = targetKeys
     },
-    handleSearch (dir, value) {},
+    handleSearch (dir, value) {
+    },
     edit (record) {
       console.log(this.show)
       this.show('分配用户')
@@ -128,7 +130,7 @@ export default {
         that.groupList = [...that.groupList, ...r.map(el => {
           return {
             key: el.userId,
-            title: el.staffName
+            title: `${el.staffName}(${el.mobilePhone})`
           }
         })]
         that.targetKeys = r.map(l => l.userId)
