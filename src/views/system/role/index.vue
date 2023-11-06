@@ -600,7 +600,6 @@ export default {
       })
     },
     moreOption (record, { key }) {
-      console.log('rec', record)
       switch (Number(key)) {
         case 1:
           this.onUpdateMenu(record)
