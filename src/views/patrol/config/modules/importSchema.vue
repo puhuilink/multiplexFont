@@ -152,55 +152,46 @@ export default {
       })
     },
     onSubmit () {
-      const modal = Modal.confirm()
-      modal.update({
-        title: '提示',
-        // eslint-disable-next-line no-undef
-        icon: () => h('a-icon', {
-          props: {
-            type: 'info-circle',
-            theme: 'filled'
-          },
-          style: {
-            color: '#fa6400' // 设置图标颜色为橘黄色
-          }
-        }),
-        content: () => {
-          return (
-            <div>
-              将覆盖当前巡更路径已有信息，请确认是否导入
-            </div>
-          )
-        },
-
-        onOk: async () => {
-          this.$refs.ruleForm.validate(async (err) => {
-            if (!err) return
-            try {
-              this.confirmLoading = true
-              await PathService.importPath(this.originalForm)
-              this.$emit('refresh', true)
-              this.cancel()
-            } catch (e) {
-              throw e
-            } finally {
-              this.confirmLoading = false
-            }
-          })
-        }
-
-      })
       this.$refs.ruleForm.validate(async (err) => {
         if (!err) return
         try {
-          this.confirmLoading = true
-          await PathService.importPath(this.originalForm)
-          this.$emit('refresh', true)
-          this.cancel()
+          const modal = Modal.confirm()
+          modal.update({
+            title: '提示',
+            // eslint-disable-next-line no-undef
+            icon: () => h('a-icon', {
+              props: {
+                type: 'info-circle',
+                theme: 'filled'
+              },
+              style: {
+                color: '#fa6400' // 设置图标颜色为橘黄色
+              }
+            }),
+            content: () => {
+              return (
+                <div>
+                  将覆盖当前巡更路径已有信息，请确认是否导入
+                </div>
+              )
+            },
+
+            onOk: async () => {
+              try {
+                this.confirmLoading = true
+                await PathService.importPath(this.originalForm)
+                this.$emit('refresh', true)
+                this.cancel()
+              } catch (e) {
+                throw e
+              } finally {
+                this.confirmLoading = false
+              }
+            }
+
+          })
         } catch (e) {
           throw e
-        } finally {
-          this.confirmLoading = false
         }
       })
     },
