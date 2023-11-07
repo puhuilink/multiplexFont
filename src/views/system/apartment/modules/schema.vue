@@ -57,6 +57,24 @@
           <a-select-option :value="0">否</a-select-option>
         </a-select>
       </a-form-model-item>
+      <!-- 上传图片           -->
+      <a-form-model-item
+        v-bind="formItemLayout"
+        label="选择导入文件"
+        prop="file"
+        extra="提示大小不超过10M">
+        <a-upload
+          :file-list="fileList"
+          :remove="handleRemove"
+          :before-upload="beforeUpload"
+          @change="handleChange"
+        >
+          <a-button>
+            <a-icon type="upload" />
+            上传文件
+          </a-button>
+        </a-upload>
+      </a-form-model-item>
 
       <!--      <a-row :gutter="[5, 8]" type="flex" align="middle">-->
       <!--        <a-col :span="4">-->
@@ -176,7 +194,8 @@ export default {
       formItemLayout: {
         labelCol: { span: 4 },
         wrapperCol: { span: 16, offset: 1 }
-      }
+      },
+      fileList: []
     }
   },
   methods: {
@@ -241,6 +260,26 @@ export default {
     },
     onCancel () {
       this.visible = false
+    },
+    //  图片
+    // 删除文件
+    handleRemove (file) {
+      this.fileList = []
+      if (this.originalForm.file && this.originalForm.file === file) {
+        this.originalForm.file = null
+      }
+    },
+    beforeUpload (file) {
+      console.log(file)
+    },
+    handleChange (fileObj) {
+      console.log(fileObj)
+      // const { file } = fileObj
+      // if (file.status === 'removed') {
+      //   return
+      // }
+      // this.fileList = [file]
+      this.formModel.file = fileObj
     }
   },
   computed: {
