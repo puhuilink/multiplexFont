@@ -102,6 +102,7 @@ export default {
           title: '交班时间',
           dataIndex: 'handTime',
           width: 180,
+          align: 'center',
           customRender: hand_time => moment(hand_time).format('YYYY-MM-DD HH:mm:ss')
         },
         // {
@@ -120,6 +121,7 @@ export default {
           dataIndex: 'receiveTime',
           defaultSortOrder: 'descend',
           width: 180,
+          align: 'center',
           customRender: time => time ? moment(time).format() : ''
         }
         // {
