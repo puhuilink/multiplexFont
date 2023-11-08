@@ -140,6 +140,7 @@ const secondResponseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        setTimeout(() => Logout(), 500)
         break
       }
       case 30: {
@@ -167,6 +168,7 @@ const xungengresponseInterceptor = (response) => {
           message: '登录已过期',
           description: '请重新登录'
         })
+        setTimeout(() => Logout(), 500)
         break
       }
       default: {

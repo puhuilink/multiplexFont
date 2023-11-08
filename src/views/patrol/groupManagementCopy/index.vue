@@ -83,7 +83,7 @@
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :loading="pageLoading"
-      :scroll="scroll"
+      :scroll="{x:1500,y:700}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
 

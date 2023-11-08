@@ -18,7 +18,7 @@
       <template slot="action" slot-scope="value,record">
         <a @click="toUpdate(record)"><a-icon type="form" />阈值批量修改</a>
         <a-divider type="vertical" />
-        <a @click="toUpdateNull()"><a-icon type="highlight" />阈值批量置空</a>
+        <a @click="toUpdateNull(record)"><a-icon type="highlight" />阈值批量置空</a>
       </template>
     </a-table>
     <BatchThresholdSchema

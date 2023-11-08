@@ -133,7 +133,7 @@
       rowKey="id"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
-      :scroll="scroll"
+      :scroll="{x:1500,y:700}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #action="text,record">
