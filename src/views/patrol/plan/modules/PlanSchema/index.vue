@@ -4,7 +4,7 @@
     :confirmLoading="confirmLoading"
     :title="title"
     v-model="visible"
-    :width="920"
+    :width="1100"
     wrapClassName="PlanSchema__modal"
     :afterClose="reset"
     okText="保存"
@@ -209,8 +209,9 @@ export default {
 .PlanSchema {
   &__modal {
     .ant-modal-body {
-      height: 700px;
+      height: 550px;
       overflow-y: auto;
+      padding: 30px 50px 0px 50px;
     }
 
     &__range {

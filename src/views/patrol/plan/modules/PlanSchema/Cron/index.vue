@@ -14,7 +14,7 @@
           <!-- <a-radio v-for="{ value, label } in typeList" :key="value" :value="value">{{ label }}</a-radio> -->
 
           <!-- / 工作日 -->
-          <a-radio value="workDayOfMonth">工作日</a-radio>
+          <!--          <a-radio value="workDayOfMonth">工作日</a-radio>-->
         </a-radio-group>
       </a-form-model-item>
     </a-row>
@@ -122,10 +122,11 @@ export default {
 
 <style lang="less">
 .Cron {
-  min-height: 90px;
+  min-height: 50px;
 
   &__paragraph {
     margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   .ant-checkbox-wrapper {

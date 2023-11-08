@@ -63,6 +63,7 @@ import moment from 'moment'
 import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
 import { xungeng } from '@/utils/request'
+import { Modal } from 'ant-design-vue'
 
 const timeColumnSnippet = {
   width: 130,
@@ -181,6 +182,7 @@ export default {
     },
     async onBatchDelete () {
       this.$promiseConfirmDelete({
+        okType: 'danger',
         onOk: () =>
           PatrolService.planBatchDelete(this.selectedRowKeys)
             .then(() => {

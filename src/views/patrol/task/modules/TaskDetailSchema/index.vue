@@ -12,24 +12,24 @@
     <a-spin :spinning="spinning" class="tab_fix">
       <!-- 基本信息 -->
       <div class="TaskDetailSchema__basicInfo">
-        <a-row>
+        <a-row :gutter="[10,30]">
           <a-col :span="8">
             <span>计划名称：{{ basicInfo.planAlias }}</span>
           </a-col>
           <a-col :span="8">
             <span>任务单号：{{ basicInfo.id }}</span>
           </a-col>
-          <a-col :span="6">
+          <a-col :span="8" >
             <span v-if="basicInfo.status!==null">任务单状态：{{ statusMapping[basicInfo.status.toString()] }}</span>
           </a-col>
         </a-row>
 
-        <a-row>
+        <a-row :gutter="[10]">
           <a-col :span="8">
             <span>开始时间：{{ basicInfo.actualStartTime }}</span>
           </a-col>
           <a-col :span="8">
-            <span>完成时间：{{ basicInfo.actualEndTime }}</span>
+            <span>结束时间：{{ basicInfo.actualEndTime }}</span>
           </a-col>
           <a-col :span="8">
             <span v-if="basicInfo.executor!==null">
@@ -58,6 +58,7 @@
               :columns="columns"
               :dataSource="dataSource"
               :pagination="paginationOpt"
+              class="custom-table"
               :scroll="scroll">
               <template #value="text, record">
                 {{ valueMapping(record) }}
@@ -114,77 +115,90 @@ export default {
           title: '点位',
           dataIndex: 'checkpointAlias',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: '柜位',
           dataIndex: 'container',
           width: 180,
+          align: 'center',
           customRender: (text) => text || '无柜位信息'
         },
         {
           title: '设备名称',
           dataIndex: 'hostAlias',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: 'IP地址',
           dataIndex: 'ipAddress',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: '设备归属单位',
           dataIndex: 'hostBelong',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: '检查实体',
           dataIndex: 'endpointAlias',
           width: 180,
+          align: 'center',
           scopedSlots: { customRender: 'endpoint' }
         },
         {
           title: '检查项',
           dataIndex: 'metricAlias',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: '值',
           dataIndex: 'value',
           width: 180,
+          align: 'center',
           scopedSlots: { customRender: 'value' }
         },
         {
           title: '备注',
           dataIndex: 'tags',
           width: 180,
+          align: 'center',
           scopedSlots: { customRender: 'remark' }
         },
         {
           title: '图片',
           width: 180,
+          align: 'center',
           scopedSlots: { customRender: 'imgs' }
         },
         {
           title: '设备类型',
           dataIndex: 'deviceType',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: '品牌',
           dataIndex: 'deviceBrand',
           width: 180,
+          align: 'center',
           customRender: (text) => text || ''
         },
         {
           title: 'SN号',
           width: 180,
           dataIndex: 'sn',
+          align: 'center',
           customRender: (text) => text || ''
         }
       ]),
@@ -365,11 +379,11 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .occur {
   z-index: 999;
   position: absolute;
-  top: 60px;
+  top: 68px;
   right: 30px;
   height: 100%;
 }
@@ -381,5 +395,20 @@ export default {
 
 .image-container img:hover {
   transform: scale(1.3);
+}
+
+/deep/ .custom-table .ant-table-header .ant-table-thead > tr > th {
+  background-color: rgba(217, 217, 217, 1) !important;
+  text-align: center;
+  /* 其他样式规则 */
+}
+
+/deep/  .ant-table-thead > tr > th {
+  font-weight: normal !important;;
+}
+/deep/  .ant-table-thead > tr > th:nth-child(4),
+/deep/ .ant-table-thead > tr > th:nth-child(5),
+/deep/ .ant-table-thead > tr > th:nth-child(8) {
+  font-weight: bold !important;
 }
 </style>

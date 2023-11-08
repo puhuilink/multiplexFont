@@ -1,11 +1,11 @@
 <template>
   <div class="TimePicker">
     <a-row>
-      <a-col :span="12">
+      <a-col :span="9">
         <span class="ant-form-item-label">生效时间:</span>
         <a-form-model-item prop="effectTime" class="TimePicker__item">
           <a-date-picker
-            style="min-width: 260px"
+            style="min-width: 270px"
             ref="effectTime"
             format="YYYY-MM-DD HH:mm:ss"
             v-model="plan.effectTime"
@@ -13,12 +13,12 @@
           ></a-date-picker>
         </a-form-model-item>
       </a-col>
-      <a-col :span="12">
+      <a-col :span="11">
         <span class="ant-form-item-label">失效时间:</span>
         <a-form-model-item prop="expireTime" class="TimePicker__item">
           <a-date-picker
             ref="expire"
-            style="min-width: 260px"
+            style="min-width: 290px"
             format="YYYY-MM-DD HH:mm:ss"
             v-model="plan.expireTime"
             class="TimePicker__column"

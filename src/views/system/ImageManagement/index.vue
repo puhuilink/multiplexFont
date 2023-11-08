@@ -18,112 +18,7 @@
       </div>
     </div>
     <div style="width: 83%;">
-      <div>
-        <a-form-model layout="inline" class="form">
-          <div class="fold">
-            <a-row :gutter="[8,8]">
-              <a-col class="search_box">
-                <label class="search_label">搜索条件</label>
-                <a-button type="primary" @click="query(true)">查询</a-button>
-                <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
-              </a-col>
-              <!--            <a-col-->
-              <!--              v-bind="colLayout"-->
-              <!--            >-->
-              <!--              <a-form-model-item-->
-              <!--                label="部门"-->
-              <!--                v-bind="formItemLayout">-->
-              <!--                <a-input-->
-              <!--                  v-model="queryParams.apartmentId"-->
-              <!--                  placeholder="请输入部门名称"-->
-              <!--                />-->
-              <!--              </a-form-model-item>-->
-              <!--            </a-col>-->
-              <a-col
-                :md="6"
-                :sm="24"
-                v-bind="colLayout"
-              >
-                <a-form-item
-                  label="登录名"
-                  v-bind="formItemLayout">
-                  <a-input
-                    v-model="queryParams.userName"
-                    placeholder="请输入登录名"
-                  />
-                </a-form-item>
-              </a-col>
-              <a-col
-                :md="6"
-                :sm="24"
-                v-bind="colLayout"
-              >
-                <a-form-item
-                  label="用户名称"
-                  v-bind="formItemLayout">
-                  <a-input
-                    v-model="queryParams.staffName"
-                    placeholder="请输入用户名称"
-                  />
-                </a-form-item>
-              </a-col>
-              <a-col
-                :md="12"
-                :sm="24"
-                :offset="0"
-                v-bind="colLayout"
-              >
-                <a-form-item
-                  label="手机号码"
-                  v-bind="formItemLayout">
-                  <a-input
-                    v-model="queryParams.mobilePhone"
-                    placeholder="手机号码"></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col
-                :md="6"
-                :sm="24"
-                v-bind="colLayout"
-              >
-                <a-form-item
-                  label="状态"
-                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 6,offset:3 } }"
-                  :wrapperCol="{ span: 6, offset: 5 }"
-                  v-bind="formItemLayout"
-                >
-                  <a-select
-                    style="width: 100px"
-                    placeholder="用户状态"
-                    v-model="queryParams.isOpen"
-                  >
-                    <a-select-option value="true">开启</a-select-option>
-                    <a-select-option value="false">关闭</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col
-                :md="10"
-                :sm="24"
-                v-bind="colLayout"
-              >
-                <a-form-item
-                  label="创建时间"
-                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } }"
-                  :wrapperCol="{ span: 6, offset: 1 }"
-                  v-bind="formItemLayout">
-                  <a-range-picker
-                    :show-time="{ format: 'HH:mm' }"
-                    format="YYYY-MM-DD HH:mm"
-                    :placeholder="['开始时间', '结束时间']"
-                    v-model="queryParams.timeList"
-                  />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </div>
-        </a-form-model>
-      </div>
+
       <div class="operation_box">
         <a-button type="primary" @click="onAdd" v-action:F001001001>
           <a-icon type="plus-circle" />
@@ -139,7 +34,9 @@
             rowKey="id"
             :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
             :data-source="dataSource">
-            <a slot="name" slot-scope="text">{{ text }}</a>
+            <template #img="text, record">
+              <img src="@/views/titlePage/assets/JF_xiamen_1F.png" class="border_out_img" alt="" />
+            </template>
             <template #isOpen="text, record">
               <a-popconfirm
                 :title="`确认要${record.isOpen ? '停用' : '启用'}用户吗？`"
@@ -155,39 +52,16 @@
                 <a-icon type="form" />
                 修改</a>
               <a-divider type="vertical" />
-              <a-dropdown>
-                <a class="ant-dropdown-link">
-                  <a-icon type="double-right" />
-                  更多</a>
-                <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                  <a-menu-item key="1" v-action:F001001003 style="color: '#004FA5';">
-                    <a-icon type="delete" />
-                    删除
-                  </a-menu-item>
-                  <a-menu-item key="2" v-action:F001001004>
-                    <a-icon type="lock" />
-                    修改密码
-                  </a-menu-item>
-                  <a-menu-item key="3" v-action:F001001005>
-                    <a-icon type="idcard" />
-                    分配角色
-                  </a-menu-item>
-                  <a-menu-item key="4">
-                    <a-icon type="unlock" />
-                    解锁
-                  </a-menu-item>
-                  <a-menu-item key="5">
-                    <a-icon type="reload" />
-                    令牌重置
-                  </a-menu-item>
-                </a-menu>
-              </a-dropdown>
+              <a @click="deleteImage(record)" v-action:F001001002>
+                <a-icon type="form" />
+                删除</a>
+              <a-divider type="vertical" />
+
             </template>
           </a-table>
         </div>
-        <assignModal ref="assign" @operateSuccess="Success"></assignModal>
         <schema ref="schema" :treeData="selectTreeData" @operateSuccess="Success"></schema>
-        <passwordSchema ref="deleteSchema" @operateSuccess="Success"></passwordSchema>
+
       </div>
     </div>
   </div>
@@ -195,10 +69,10 @@
 
 <script>
 import { Confirm } from '~~~/Mixins'
-import assignModal from '@/views/system/userManage/components/assignModal'
+
 import { buildTree } from '@/utils/util'
-import schema from './components/schema'
-import passwordSchema from './components/passwordSchema'
+import schema from './imageTable'
+
 import _ from 'lodash'
 import moment from 'moment'
 import { axios } from '@/utils/request'
@@ -206,31 +80,18 @@ import otp from 'axios'
 
 const columns = [
   {
-    title: '登录名',
-    dataIndex: 'userName',
-    key: 'userName',
-    width: 100,
-    align: 'center'
-  },
-  {
-    title: '用户名称',
-    dataIndex: 'staffName',
-    key: 'staffName',
-    ellipsis: true
-  },
-  {
     title: '部门',
     dataIndex: 'orgName',
     key: 'orgName',
-    ellipsis: true,
-    align: 'center'
+    align: 'center',
+    ellipsis: true
   },
   {
-    title: '手机号码',
+    title: '楼层',
     dataIndex: 'mobilePhone',
     key: 'mobilePhone',
-    ellipsis: true,
-    align: 'center'
+    align: 'center',
+    ellipsis: true
   },
   {
     title: '是否开启',
@@ -238,31 +99,30 @@ const columns = [
     key: 'isOpen',
     ellipsis: true,
     align: 'center',
-    width: 100,
     scopedSlots: { customRender: 'isOpen' }
   },
   {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
+    title: '图片',
+    dataIndex: 'img',
+    key: 'img',
     ellipsis: true,
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'img' }
   },
   {
     title: '备注',
     dataIndex: 'remark',
     key: 'remarks',
-    ellipsis: true,
-    align: 'center'
+    align: 'center',
+    ellipsis: true
   },
   {
     title: '操作',
     dataIndex: 'operation',
     key: 'operation',
     ellipsis: true,
-    align: 'center',
     fixed: 'right',
-    width: 150,
+    align: 'center',
     scopedSlots: { customRender: 'operation' }
   }
 ]
@@ -271,9 +131,7 @@ export default {
   name: 'Index',
   mixins: [Confirm],
   components: {
-    assignModal,
-    schema,
-    passwordSchema
+    schema
   },
   data () {
     return {
@@ -336,15 +194,6 @@ export default {
       this.queryParams.orgId = selectedKeys[0]
       this.query()
     },
-    // async getRoles () {
-    //   const { data: { list } } = await axios.get('/role/list', {
-    //     params: {
-    //       pageNum: 1,
-    //       pageSize: 9999
-    //     }
-    //   })
-    //   this.roleList = list
-    // },
     onExpand (expandedKeys) {
       this.expandedKeys = expandedKeys
       this.autoExpandParent = false
@@ -352,87 +201,27 @@ export default {
     change (value) {
       this.password = value.target.value
     },
-    renderInput () {
-      return (
-        <div style={{ textAlign: 'center' }}>
-          新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
-        </div>
-      )
-    },
-    renderIcon () {
-      return <div></div>
-    },
-    moreOption (record, { key }) {
-      switch (key) {
-        case '1':
-          const title = '删除'
-          const content = '此操作将永久删除该用户，是否继续？'
-          this.$promiseConfirmDelete({
-            title,
-            content,
-            closable: true,
-            onOk: async () => {
-              await axios.delete(`/user/${record.id}`, {
-                headers: {
-                  'Content-type': 'application/x-www-form-urlencoded'
-                }
-              })
-                .then(() => {
-                  this.$notifyDeleteSuccess()
-                })
-                .catch(this.$notifyError).finally(() => this.query())
+    deleteImage (record) {
+      const title = '删除'
+      const content = '此操作将永久删除该数据，是否继续？'
+      this.$promiseConfirmDelete({
+        title,
+        content,
+        closable: true,
+        onOk: async () => {
+          /* await axios.delete(`/user/${record.id}`, {
+            headers: {
+              'Content-type': 'application/x-www-form-urlencoded'
             }
           })
-          break
-        case '2':
-          this.$refs.deleteSchema.onShow(record)
-          break
-        case '3':
-          this.$refs.assign.onShow(record)
-          break
-        case '4':
-          this.$promiseConfirmDelete({
-            title: '账户解锁',
-            content: '此操作将解锁该账号，是否继续？',
-            closable: true,
-            onOk: async () => {
-              await axios.get(`/user/unlock?id=${record.id}`)
-                .then(() => {
-                  this.$notification.success({
-                    message: '系统提示',
-                    description: '解锁成功'
-                  })
-                })
-                .catch(this.$notifyError).finally(() => this.query())
-            }
-          })
-          break
-        case '5':
-          this.$promiseConfirmDelete({
-            title: '令牌重置',
-            content: '此操作将重置该用户登录令牌（导致现有令牌失效）, 是否继续？',
-            closable: true,
-            onOk: async () => {
-              await otp.post(`/otp/otp/dereg`, {
-                appId: process.env.VUE_APP_OTP_QUOTE_NAME,
-                userName: record.userName,
-                transNo: 'transNo1'
-              })
-                .then(() => {
-                  this.$notification.success({
-                    message: '系统提示',
-                    description: '重置成功'
-                  })
-                })
-                .catch(this.$notifyError).finally(() => this.query())
-            }
-          })
-          break
-        default:
-          return null
-      }
+            .then(() => {
+              this.$notifyDeleteSuccess()
+            })
+            .catch(this.$notifyError).finally(() => this.query()) */
+        }
+      })
     },
+
     async getData () {
       const { data: { dataIds, list } } = await axios.get('/organize/list', {
         params: {
@@ -554,13 +343,8 @@ export default {
         }
       }
       return tree
-    },
-    async Success () {
-      this.$refs.schema.onCancel()
-      this.$nextTick(() => {
-        this.query()
-      })
     }
+
   },
   mounted () {
     this.getData()
@@ -629,5 +413,8 @@ export default {
     overflow: hidden;
     transform: translateY(3.5px);
   }
+}
+.border_out_img{
+  width: 100%;
 }
 </style>
