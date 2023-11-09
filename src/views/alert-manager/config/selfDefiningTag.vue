@@ -36,7 +36,7 @@
               title="确定要删除此标签?"
               placement="left"
               @confirm="deleteTag(record.id)"
-              okText="确定"
+              okText="提交"
               cancelText="取消"
               :disabled="!record.deleteFlag"
             >

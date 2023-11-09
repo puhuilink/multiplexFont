@@ -18,7 +18,7 @@
             title="从视图中删除该部件?"
             placement="left"
             @confirm="() => removeWidget({ widgetId: activeWidget.widgetId })"
-            okText="确定"
+            okText="提交"
             cancelText="取消"
           >
             <a-button shape="circle" type="danger" icon="delete" />

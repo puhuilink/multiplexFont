@@ -80,6 +80,7 @@
       @cancel="resetSubmit"
       @close="resetSubmit"
       @ok="newSubmit"
+      okText="提交"
     >
       <a-form-model :model="answerForm" ref="answerForm">
         <a-form-model-item
@@ -378,7 +379,7 @@ export default {
     },
     'answerForm.defaultLowerThreshold': {
       handler (val, oldVal) {
-        if (val){
+        if (val) {
           console.log(val)
           this.$refs.answerForm.clearValidate(['defaultLowerThreshold'])
         }
@@ -415,7 +416,7 @@ export default {
       this.$confirm({
         title: '确定要删除该项吗',
         content: '删除后路径相关信息将变更',
-        okText: '确认',
+        okText: '提交',
         okType: 'danger',
         cancelText: '取消',
         onOk () {

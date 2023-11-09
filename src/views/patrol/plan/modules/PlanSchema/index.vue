@@ -7,7 +7,7 @@
     :width="1100"
     wrapClassName="PlanSchema__modal"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     cancelText="取消"
     @ok="submit"
     @cancel="cancel"

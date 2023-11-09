@@ -24,7 +24,7 @@
         title="确定要删除该数据源?"
         placement="left"
         @confirm="deleteAlertSource(record.sourceId)"
-        okText="确定"
+        okText="提交"
         cancelText="取消"
       >
         <a-button>删除</a-button>

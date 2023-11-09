@@ -9,7 +9,7 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     cancelText="取消"
     @ok="submit"
   >
@@ -129,7 +129,7 @@ export default {
         this.$emit('success')
       } catch (e) {
         this.$notification.error({
-          message: '保存异常，请稍后再试!'
+          message: '提交异常，请稍后再试!'
         })
         throw e
       } finally {

@@ -335,6 +335,7 @@ export default {
     onSelect (selectedKeys) {
       // 响应当前部门下的用户
       this.queryParams.orgId = selectedKeys[0]
+      this.paginationOpt.current = 1
       this.query()
     },
     // async getRoles () {
@@ -357,7 +358,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },

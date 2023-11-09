@@ -108,7 +108,7 @@
           v-action:M003004
           :title="`确定要更改${enabled ? '启用' : '停用'}状态吗？`"
           @confirm="onToggleEnabled(id, !enabled)"
-          okText="确定"
+          okText="提交"
           cancelText="取消">
           <a-button :type="enabled ? 'primary' : 'default'">{{ enabled ? '启用' : '停用' }}</a-button>
         </a-popconfirm>

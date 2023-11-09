@@ -8,7 +8,7 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    okText="确定"
+    okText="提交"
     @ok="cancel"
   >
     <a-spin :spinning="spinning">

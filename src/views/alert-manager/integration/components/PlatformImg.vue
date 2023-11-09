@@ -69,7 +69,7 @@
             <template slot="operation" slot-scope="text, record,index">
               <div class="editable-row-operations">
                 <span v-if="record.editable">
-                  <a @click="save(record.key)">保存</a>
+                  <a @click="save(record.key)">提交</a>
                   <a-divider type="vertical" />
                   <a-popconfirm title="确定取消吗?" @confirm="() => cancel(record.key)">
                     <a>取消</a>

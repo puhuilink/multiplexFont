@@ -12,7 +12,7 @@ export default {
     $promiseConfirm ({
       title = '删除',
       content = '确定要删除选中的记录吗？',
-      okText = '确定',
+      okText = '提交',
       okType = 'danger',
       cancelText = '取消',
       onOk = async () => {
@@ -48,7 +48,7 @@ export default {
     $promiseConfirmDelete ({
       title = '删除',
       content = '确定要删除选中的记录吗？',
-      okText = '确定',
+      okText = '提交',
       okType = 'danger',
       cancelText = '取消',
       onOk = async () => {

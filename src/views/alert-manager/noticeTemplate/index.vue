@@ -55,7 +55,7 @@
           </a-form-model-item>
           <a-form-model-item :wrapper-col="{ span: 14, offset:10 }">
             <a-button :loading="loading" type="primary" @click="mode === 'detail' ? changeStatus() : onSubmit()">
-              {{ mode === 'detail' ? '编辑' : '保存' }}
+              {{ mode === 'detail' ? '编辑' : '提交' }}
             </a-button>
             <a-button style="margin-left: 10px;" :disabled="disabled" @click="initALL">
               一键恢复默认模板
