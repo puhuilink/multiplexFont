@@ -12,9 +12,17 @@
       @cancel="handleCancel"
       @close="handleCancel">
       <div class="OrderTitle">
-        <a-select class="OrderTitle__select" placeholder="选择点位" v-model="formState.checkpointId" :options="checkpoints" @change="queryList(0)"/>
-        <a-select class="OrderTitle__select" placeholder="选择设备" v-model="formState.hostId" :options="hosts" @change="queryList(1)"/>
-        <a-select class="OrderTitle__select" placeholder="选择检查实体" v-model="formState.endpointId" :options="endpoints" @change="queryList(2)"/>
+        <a-form-model ref="ruleForm" layout="inline">
+          <a-form-model-item label="点位">
+            <a-select class="OrderTitle__select" placeholder="选择点位" v-model="formState.checkpointId" :options="checkpoints" @change="queryList(0)"/>
+          </a-form-model-item>
+          <a-form-model-item label="设备">
+            <a-select class="OrderTitle__select" placeholder="选择设备" v-model="formState.hostId" :options="hosts" @change="queryList(1)"/>
+          </a-form-model-item>
+          <a-form-model-item label="检查实体">
+            <a-select class="OrderTitle__select" placeholder="选择检查实体" v-model="formState.endpointId" :options="endpoints" @change="queryList(2)"/>
+          </a-form-model-item>
+        </a-form-model>
       </div>
       <Container @drop="onDrop">
         <Draggable v-for="item in items" :key="item.id">
@@ -68,12 +76,12 @@ export default {
       answerOptions: [],
       requestSubmit: () => {},
       labelCol: {
-        xs: { span: 14 },
-        sm: { span: 6 }
+        xs: { span: 2 },
+        sm: { span: 2 }
       },
       wrapperCol: {
-        xs: { span: 10 },
-        sm: { span: 12 }
+        xs: { span: 6 },
+        sm: { span: 6 }
       }
     }
   },
@@ -93,6 +101,8 @@ export default {
       this.requestSubmit = this.requestEdit
       this.path = path
       this.zone = zone
+      this.formState = { checkpointId: '', hostId: '', endpointId: '' }
+      this.items = []
       this.queryCheckpoint()
     },
     queryList (type) {
@@ -218,7 +228,7 @@ export default {
   font-weight: bold;
   margin-bottom: 20px;
   .OrderTitle__select{
-    width: 30% !important;
+    width: 150px !important;
     margin-right: 15px
   }
 }
