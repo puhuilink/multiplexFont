@@ -112,7 +112,7 @@ export default {
             return (
               <a-popconfirm
                 title={`确定要${record.state ? '封禁' : '解封'}吗？`}
-                okText="确定"
+                okText="提交"
                 cancelText="取消"
                 onconfirm={async () => {
                   try {

@@ -99,7 +99,7 @@
         </a-tooltip>
         <a-radio :value="ENABLED_TYPE_PERSISTENT">永久生效</a-radio>
         <a-tooltip>
-          <span slot="title">保存本次修改为默认模板永久生效</span>
+          <span slot="title">提交本次修改为默认模板永久生效</span>
           <a-icon type="info-circle" class="TemporaryApproveRule__icon_info" />
         </a-tooltip>
       </a-radio-group>

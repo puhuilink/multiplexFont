@@ -119,7 +119,8 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
+      <!--      <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>-->
+      <a-button @click="onSubmit" :loading="submitLoading" type="primary">提交</a-button>
     </template>
 
   </a-modal>

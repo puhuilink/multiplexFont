@@ -36,7 +36,7 @@ export function enabledColumn () {
         return (
           <a-popconfirm
             title={`确定要${!enabled ? '启用' : '停用'}吗？`}
-            okText="确定"
+            okText="提交"
             cancelText="取消"
             onconfirm={async () => {
               try {
@@ -91,7 +91,7 @@ export function unitEnabledColumn () {
         return (
           <a-popconfirm
             title={`确定要${!enabled ? '启用' : '停用'}吗？`}
-            okText="确定"
+            okText="提交"
             cancelText="取消"
             onconfirm={async () => {
               try {

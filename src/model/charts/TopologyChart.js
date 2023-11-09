@@ -156,7 +156,7 @@ export default class TopologyChart extends Chart {
     // 对于缩放事件的监听
     this.chart.on('wheelzoom', () => {
       // TODO: Vuex mutation
-      // 缩放可能只用于精确绘制但不希望被记录保存
+      // 缩放可能只用于精确绘制但不希望被记录提交
       // this.config.proprietaryConfig.zoom = this.chart.getZoom()
     })
 
