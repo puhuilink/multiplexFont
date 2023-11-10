@@ -126,14 +126,13 @@
     </div>
 
     <a-table
-      style="margin-top: 30px"
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
       rowKey="id"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
-      :scroll="{x:1500,y:700}"
+      :scroll="{x:1500,y:500}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #action="text,record">

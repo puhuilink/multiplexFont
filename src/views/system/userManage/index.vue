@@ -137,6 +137,7 @@
             :pagination="paginationOpt"
             :loading="pageLoading"
             rowKey="id"
+            :scroll="{x:1000,y:450}"
             :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
             :data-source="dataSource">
             <a slot="name" slot-scope="text">{{ text }}</a>
@@ -262,7 +263,7 @@ const columns = [
     ellipsis: true,
     align: 'center',
     fixed: 'right',
-    width: 150,
+    width: 180,
     scopedSlots: { customRender: 'operation' }
   }
 ]

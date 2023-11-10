@@ -61,6 +61,7 @@
         :data-source="treeData"
         :expandedRowKeys="expandedRowKeys"
         rowKey="id"
+        :scroll="{x:1500,y:700}"
         :pagination="false"
         @expand="expand"
         :loading="pageLoading"
