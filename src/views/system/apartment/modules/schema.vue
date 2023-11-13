@@ -45,7 +45,7 @@
         prop="order"
         label="序号"
       >
-        <a-input-number :min="0" v-model="formModel.order"></a-input-number>
+        <a-input-number :min="1" v-model="formModel.order"></a-input-number>
       </a-form-model-item>
 
       <!-- 上传图片           -->

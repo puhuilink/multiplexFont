@@ -15,7 +15,7 @@
       <!--      <a-col v-bind="wrapperCol"><blockImg floor="-1F" title="蓄冷罐室" img-url="0"></blockImg></a-col>-->
       <!--      <a-col v-bind="wrapperCol"><blockImg floor="1F" title="外电室" img-url="1"></blockImg></a-col>-->
       <a-col :span="24">
-        <img :src="this.imgUrl" class="prePictrue">
+        <img :src="this.imgUrl" class="prePictrue" v-show="!preShow">
         <div class="preSubmit" v-show="preShow">
           <h1>待提交导览图</h1>
         </div>

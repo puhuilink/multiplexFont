@@ -168,7 +168,7 @@ export default {
         menuCodes: []
       },
       dataForm: {
-        dataType: 'ALL',
+        dataType: 'CUSTOM',
         dataIds: []
       },
       Depts: [],

@@ -248,7 +248,8 @@ export default {
           }
         })
         this.banList = dataIds
-        this.treeData = this.buildTree(list.map(el => {
+        console.log('sort', list, list.sort((a, b) => a.sortIndex - b.sortIndex))
+        this.treeData = this.buildTree(list.sort((a, b) => a.sortIndex - b.sortIndex).map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
           }

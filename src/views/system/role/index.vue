@@ -78,7 +78,6 @@
           ref="table"
           rowKey="id"
           :pagination="paginationOpt"
-          :rowSelection="rowSelection"
           :scroll="{x:1500,y:500}"
           :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
           <template #status="text, record">
