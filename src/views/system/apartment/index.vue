@@ -100,7 +100,7 @@ export default {
       pageLoading: false,
       treeData,
       columns: [
-        { title: '部门名称', dataIndex: 'name', key: 'name' },
+        { title: '部门名称', dataIndex: 'name', key: 'name', width: '450px' },
         // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
         // { title: '排序', dataIndex: 'sortIndex', key: 'sortIndex', customRender: (el) => Number(el) },
         {
@@ -108,6 +108,7 @@ export default {
           dataIndex: 'isOpen',
           key: 'isOpen',
           align: 'center',
+          width: '150px',
           customRender: (el) => {
             return (<a-tag color={el ? 'blue' : 'red'}>{el ? '开启' : '关闭'}</a-tag>)
           }
@@ -289,8 +290,10 @@ export default {
     },
     Success () {
       this.$refs.schema.onCancel()
-      this.getData()
-      this.getUserList()
+      setTimeout(() => {
+        this.getData()
+        this.getUserList()
+      }, 500)
     },
     // 递归查找树节点并判断是否有children
     findNodeAndCheckChildren (node, targetValue) {
