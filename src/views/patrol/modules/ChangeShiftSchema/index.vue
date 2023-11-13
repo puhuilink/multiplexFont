@@ -134,7 +134,7 @@
           <a-col :span="8">
             <span>接班人：</span><span class="bold">{{ record.receiveName }}</span>
           </a-col>
-          <a-col :span="8" style="text-align: center">
+          <a-col :span="8" style="text-align: left">
             <span>接班时间：</span><span class="bold">{{ record.receiveTime }}</span>
           </a-col>
 
@@ -145,7 +145,7 @@
           <a-col :span="8">
             <span>监控值班记录表：</span><span class="bold">{{ record.monitorRecord | monitorStatus }}</span>
           </a-col>
-          <a-col :span="8" style="text-align: center">
+          <a-col :span="8" style="text-align: left">
             <span>运维日志表：</span><span class="bold">{{ record.maintenanceLog | maintenanceLog }}</span>
           </a-col>
 

@@ -45,7 +45,7 @@ class PathService extends BaseService {
       formD.append('ascription', form.ascription)
       const { code, data } =
         await xungeng.post('/path/add',
-          formD, { header: { 'content-type': 'application/x-www-form-urlencoded' } })
+          formD, { header: { 'content-type': 'multipart/form-data' } })
       if (code === 200) {
         return data
       }

@@ -265,7 +265,6 @@ export default {
       })
     },
     edit (user) {
-      console.log('user', user)
       this.show('编辑用户')
       this.isEdit = true
       this.formModel = {

@@ -358,7 +358,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },
@@ -559,9 +559,7 @@ export default {
     },
     async Success () {
       this.$refs.schema.onCancel()
-      this.$nextTick(() => {
-        this.query()
-      })
+      setTimeout(() => this.query(), 500)
     }
   },
   mounted () {
