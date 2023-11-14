@@ -187,6 +187,7 @@ export default {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         okType: 'danger',
+        content: '确定要删除选中的计划吗？',
         onOk: () =>
           PatrolService.planBatchDelete(this.selectedRowKeys)
             .then(() => {
