@@ -17,7 +17,8 @@
       <a-col :span="24">
         <img :src="this.imgUrl" class="prePictrue" v-show="!preShow">
         <div class="preSubmit" v-show="preShow">
-          <h1>待提交导览图</h1>
+          <img src="@/assets/images/noLead.png">
+          <h2>该单位尚未上传机房导览图，如有需要请先上传。</h2>
         </div>
       </a-col>
     </a-row>
@@ -73,10 +74,17 @@ export default {
   width: 100%;
   height: 550px;
   text-align: center;
-  line-height: 450px;
+
+  img {
+    margin-top: 20px;
+    width: 700px;
+    height: 370px;
+  }
 
   h1 {
     font-size: 40px;
+    line-height:40px;
+    height: 40px;
   }
 }
 
