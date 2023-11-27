@@ -71,8 +71,8 @@
     </a-form-model>
     <template slot="footer">
       <div class="modal-button-container">
-        <a-button @click="onSubmit" type="primary" :loading="submitLoading">提交</a-button>
         <a-button @click="onCancel">取消</a-button>
+        <a-button @click="onSubmit" type="primary" :loading="submitLoading">提交</a-button>
       </div>
     </template>
   </a-modal>

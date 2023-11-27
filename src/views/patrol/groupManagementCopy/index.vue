@@ -64,7 +64,7 @@
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :loading="pageLoading"
-      :scroll="scroll"
+      :scroll="{x:1500,y:500}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     ></a-table>
     <RoleSchema ref="schema" @addSuccess="queryList" @editSuccess="queryList(false)" @get_list="getList" />

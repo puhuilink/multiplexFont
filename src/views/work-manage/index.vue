@@ -37,7 +37,7 @@
           title="确定要删除此排班?"
           placement="left"
           @confirm="onDelete(id)"
-          okText="确定"
+          okText="提交"
           cancelText="取消"
         >
           <a-tooltip placement="top">

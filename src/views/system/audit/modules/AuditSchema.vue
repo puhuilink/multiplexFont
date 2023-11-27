@@ -8,7 +8,7 @@
     :width="940"
     @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     cancelText="取消"
   >
     <a-form :form="form" layout="vertical">

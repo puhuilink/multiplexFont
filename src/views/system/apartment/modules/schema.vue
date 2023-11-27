@@ -11,6 +11,15 @@
     destroyOnClose
     @ok="submit">
     <a-form-model ref="ruleForm" :model="formModel">
+
+      <a-form-model-item
+        label="部门名称"
+        v-bind="formItemLayout"
+        :rules="[{ required: true, message: '请填写部门名称' }]"
+      >
+        <a-input v-model="formModel.name"></a-input>
+      </a-form-model-item>
+
       <a-form-model-item
         label="上级部门"
         v-bind="formItemLayout"
@@ -31,19 +40,36 @@
       </a-form-model-item>
 
       <a-form-model-item
-        label="部门名称"
         v-bind="formItemLayout"
-        prop="name"
-        :rules="[{ required: true, message: '请输入部门名称' }]"
+        :rules="[{ required: true, message: '请输入显示排序' }]"
+        prop="order"
+        label="序号"
       >
-        <a-input v-model="formModel.name"/>
+        <a-input-number :min="1" v-model="formModel.order"></a-input-number>
+      </a-form-model-item>
+
+      <!-- 上传图片           -->
+      <a-form-model-item
+        v-bind="formItemLayout"
+        label="选择导入文件"
+        prop="file"
+        extra="提示大小不超过20M">
+        <a-upload
+          :fileList="this.formModel.fileList"
+          @remove="handleRemove"
+          @change="handleChange"
+          list-type="picture"
+          accept=".png, .jpeg, .jpg"
+        >
+          <a-button>
+            <a-icon type="upload" />
+            上传文件
+          </a-button>
+        </a-upload>
       </a-form-model-item>
 
       <a-form-model-item
-        v-bind="{
-          labelCol: { span: 4, offset: 0 },
-          wrapperCol: { span: 16, offset: 1 }
-        }"
+        v-bind="formItemLayout"
         label="是否启用"
         class="AlarmStrategy__modal-footer-left"
       >
@@ -56,24 +82,6 @@
           <a-select-option :value="1">是</a-select-option>
           <a-select-option :value="0">否</a-select-option>
         </a-select>
-      </a-form-model-item>
-      <!-- 上传图片           -->
-      <a-form-model-item
-        v-bind="formItemLayout"
-        label="选择导入文件"
-        prop="file"
-        extra="提示大小不超过10M">
-        <a-upload
-          :file-list="fileList"
-          :remove="handleRemove"
-          :before-upload="beforeUpload"
-          @change="handleChange"
-        >
-          <a-button>
-            <a-icon type="upload" />
-            上传文件
-          </a-button>
-        </a-upload>
       </a-form-model-item>
 
       <!--      <a-row :gutter="[5, 8]" type="flex" align="middle">-->
@@ -137,7 +145,8 @@
     <!-- / 底部按钮 -->
     <template slot="footer">
       <a-button @click="cancel">取消</a-button>
-      <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>
+      <!--      <a-button @click="onSubmit" :loading="submitLoading" type="primary">{{ isEdit ? '提交' : '确定' }}</a-button>-->
+      <a-button @click="onSubmit" :loading="submitLoading" type="primary">提交</a-button>
     </template>
 
   </a-modal>
@@ -147,7 +156,7 @@
 
 import Schema from '~~~/Mixins/Modal/Schema'
 import { STRATEGY_MODE } from '@/tables/cmdb_strategy/enum'
-import { axios } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 export default {
   name: 'Schema',
@@ -189,13 +198,26 @@ export default {
       submitLoading: false,
       formModel: {
         enabled: 1,
-        apartmentId: ''
+        apartmentId: '',
+        fileList: []
       },
       formItemLayout: {
-        labelCol: { span: 4 },
+        labelCol: { span: 7 },
         wrapperCol: { span: 16, offset: 1 }
       },
-      fileList: []
+      fileList: [],
+      rules: {
+        orgId: [
+          { required: true, message: '部门必填', trigger: 'blur' }
+        ],
+        floor: [
+          { max: 50, message: '楼层必填', trigger: 'blur' }
+        ],
+        file: [
+          { required: true, message: '文件必须上传', trigger: 'change' },
+          { validator: this.excelRequire, trigger: 'change' }
+        ]
+      }
     }
   },
   methods: {
@@ -216,6 +238,8 @@ export default {
             parentId: this.formModel.apartmentId,
             isOpen: !!this.formModel.enabled,
             leaderId: this.formModel.leader,
+            ...this.formModel.order ? { sortIndex: this.formModel.order } : {},
+            ...this.formModel.file ? { machineImg: this.formModel.file } : {},
             ...this.isEdit ? { id: this.formModel.id } : {}
           })
           if (this.isEdit) {
@@ -239,7 +263,17 @@ export default {
         apartmentId: user.parentId,
         enabled: user.isOpen,
         leaderId: user.leaderId,
-        id: user.id
+        order: user.sortIndex,
+        id: user.id,
+        file: user.machineImg
+      }
+      if (user.machineImg) {
+        this.formModel.fileList = [{
+          uid: '1',
+          name: 'image.png',
+          status: 'done',
+          thumbUrl: `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail/${user.machineImg}`
+        }]
       }
     },
     // 递归函数，用于遍历树形结构数组并找出所有节点值的最大值
@@ -261,25 +295,36 @@ export default {
     onCancel () {
       this.visible = false
     },
-    //  图片
-    // 删除文件
     handleRemove (file) {
-      this.fileList = []
-      if (this.originalForm.file && this.originalForm.file === file) {
-        this.originalForm.file = null
-      }
-    },
-    beforeUpload (file) {
-      console.log(file)
-    },
-    handleChange (fileObj) {
-      console.log(fileObj)
-      // const { file } = fileObj
-      // if (file.status === 'removed') {
-      //   return
+      console.log('移除', file)
+      this.formModel.fileList = []
+      this.formModel.file = null
+      // if (this.formModel.file && this.formModel.file === file) {
+      //   this.formModel.file = null
       // }
-      // this.fileList = [file]
-      this.formModel.file = fileObj
+    },
+    async handleChange ({ file, fileList }) {
+      console.log('变动', file, fileList)
+      if (!file.originFileObj) {
+        this.formModel.fileList = []
+        this.formModel.file = null
+        return
+      }
+      try {
+        const formD = new FormData()
+        formD.append('file', file.originFileObj)
+        const { data } = await xungeng.post('/upload/machine', formD, { header: { 'content-type': 'application/x-www-form-urlencoded' } })
+        file.thumbUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail/${data}`
+        this.formModel.fileList = fileList.map(el => {
+          el.thumbUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail/${data}`
+          el.status = 'done'
+          return el
+        })
+        this.formModel.file = data
+      } catch (e) {
+        this.$notifyError(e)
+        throw e
+      }
     }
   },
   computed: {
@@ -291,5 +336,15 @@ export default {
 </script>
 
 <style scoped>
-
+.upload-list-inline >>> .ant-upload-list-item {
+  float: left;
+  width: 200px;
+  margin-right: 8px;
+}
+.upload-list-inline >>> .ant-upload-animate-enter {
+  animation-name: uploadAnimateInlineIn;
+}
+.upload-list-inline >>> .ant-upload-animate-leave {
+  animation-name: uploadAnimateInlineOut;
+}
 </style>

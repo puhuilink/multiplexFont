@@ -18,7 +18,8 @@ export class PlanModel {
     pathId = '',
     zoneId = '',
     exception = '',
-    status = 'enabled'
+    status = 'enabled',
+    immediate = false
   }) {
     this.alias = alias
     this.schedule = new CronModel(schedule)
@@ -34,6 +35,7 @@ export class PlanModel {
     this.groupId = groupId
     this.expireTime = expireTime
     this.status = status
+    this.immediate = immediate
   }
 
   serialize () {

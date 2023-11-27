@@ -18,55 +18,55 @@
           <a-row >
             <a-col :span="8">
               <a-form-model-item label="交班人">
-                {{ record.handName }}
+                <span class="bold">{{ record.handName }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="交班时间">
-                {{ record.handTime }}
+                <span class="bold">{{ record.handTime }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="交班状态">
-                {{ record.status | status }}
+                <span class="bold">{{ record.status | status }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="工具仪表钥匙">
-                {{ record.tool | tool }}
+                <span class="bold">{{ record.tool | tool }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="图纸资料">
-                {{ record.paper | data }}
+                <span class="bold">{{ record.paper | data }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="监控平台运行状态">
-                {{ record.monitorStatus | monitorStatus }}
+                <span class="bold">{{ record.monitorStatus | monitorStatus }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="机房温度（℃）">
-                {{ record.temperature }}
+                <span class="bold">{{ record.temperature }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="机房湿度（%rH）">
-                {{ record.humidity }}
+                <span class="bold">{{ record.humidity }}</span>
               </a-form-model-item>
             </a-col>
 
             <a-col :span="8" >
               <a-form-model-item label="机房整洁度">
-                {{ record.sanitary | sanitary }}
+                <span class="bold">{{ record.sanitary | sanitary }}</span>
               </a-form-model-item>
             </a-col>
             <!--            <a-col :span="3" style="text-align: right">-->
@@ -132,10 +132,10 @@
         <div class="font_head">接班</div>
         <a-row>
           <a-col :span="8">
-            <span>接班人：{{ record.receiveName }}</span>
+            <span>接班人：</span><span class="bold">{{ record.receiveName }}</span>
           </a-col>
-          <a-col :span="8" style="text-align: center">
-            <span>接班时间：{{ record.receiveTime }}</span>
+          <a-col :span="8" style="text-align: left">
+            <span>接班时间：</span><span class="bold">{{ record.receiveTime }}</span>
           </a-col>
 
         </a-row>
@@ -143,10 +143,10 @@
         <div class="font_head" style="margin-top: 10px">交接文档</div>
         <a-row>
           <a-col :span="8">
-            <span>监控值班记录表：{{ record.monitorRecord | monitorStatus }}</span>
+            <span>监控值班记录表：</span><span class="bold">{{ record.monitorRecord | monitorStatus }}</span>
           </a-col>
-          <a-col :span="8" style="text-align: center">
-            <span>运维日志表：{{ record.maintenanceLog | maintenanceLog }}</span>
+          <a-col :span="8" style="text-align: left">
+            <span>运维日志表：</span><span class="bold">{{ record.maintenanceLog | maintenanceLog }}</span>
           </a-col>
 
         </a-row>
@@ -341,5 +341,9 @@ export default {
 
 .ant-form-item {
   margin-bottom: 0px !important;
+}
+
+.bold {
+  font-weight: 600;
 }
 </style>

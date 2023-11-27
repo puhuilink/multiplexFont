@@ -80,6 +80,7 @@
       @cancel="resetSubmit"
       @close="resetSubmit"
       @ok="newSubmit"
+      okText="提交"
     >
       <a-form-model :model="answerForm" ref="answerForm">
         <a-form-model-item
@@ -176,13 +177,13 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          :rules="[{ required: true, message: '默认报警最小值不能为空', trigger: 'change' }]"
+          :rules="[{ required: this.answerForm.defaultCondition !=='gt' && this.answerForm.defaultCondition !== undefined, message: '默认报警最小值不能为空', trigger: 'change' }]"
           label="默认报警最小值"
-          v-if="this.answerForm.defaultCondition !=='gt' && this.answerForm.defaultCondition !== undefined"
+          v-show="this.answerForm.defaultCondition !=='gt' && this.answerForm.defaultCondition !== undefined"
           prop="defaultLowerThreshold"
         >
           <a-select
-            v-if="(this.answerForm.defaultCondition === 'eq'||this.answerForm.defaultCondition === 'ne')&&this.answerForm.type === 'select'"
+            v-show="(this.answerForm.defaultCondition === 'eq'||this.answerForm.defaultCondition === 'ne')&&this.answerForm.type === 'select'"
             v-model="answerForm.defaultLowerThreshold"
             @change="force"
           >
@@ -197,7 +198,7 @@
 
           </a-select>
           <a-input-number
-            v-else-if="this.answerForm.defaultCondition !== 'gt'&&this.answerForm.type !== 'select'"
+            v-show="this.answerForm.defaultCondition !== 'gt'&&this.answerForm.type !== 'select'"
             :style="{width:'100%'}"
             v-model="answerForm.defaultLowerThreshold"
           />
@@ -241,11 +242,12 @@
     </a-modal>
     <a-table
       :loading="loading"
-      :locale="{emptyText:''}"
       :columns="columns"
       :data-source="Object.values(this.answers)"
       :pagination="pagination"
       row-key="id"
+      ref="table"
+      :scroll="{x:1500,y:500}"
     >
       <template slot="format" slot-scope="text,record">
         <a-card
@@ -274,12 +276,13 @@
 </template>
 
 <script>
+import { Confirm, List } from '@/components/Mixins'
 import { dealQuery } from '@/utils/util'
 import { sql, xungeng } from '@/utils/request'
 
 export default {
   name: 'AnswerManagement',
-  components: {},
+  mixins: [Confirm, List],
   props: {},
   data () {
     return {
@@ -371,7 +374,16 @@ export default {
         this.answerForm.defaultLowerThreshold = null
         this.answerForm.defaultUpperThreshold = null
         this.$forceUpdate()
-        console.log(this.answerForm.format)
+      },
+      immediate: true
+    },
+    'answerForm.defaultLowerThreshold': {
+      handler (val, oldVal) {
+        if (val) {
+          console.log(val)
+          this.$refs.answerForm.clearValidate(['defaultLowerThreshold'])
+        }
+        this.$forceUpdate()
       },
       immediate: true
     },
@@ -393,8 +405,9 @@ export default {
       return element && element !== ''
     },
     force () {
+      console.log(this.answerForm.defaultLowerThreshold)
       if (this.isBlank(this.answerForm.defaultLowerThreshold)) {
-        this.$refs.answerForm.clearValidate('defaultLowerThreshold')
+        this.$refs.answerForm.validateField(['defaultLowerThreshold'])
       }
       this.$forceUpdate()
     },
@@ -403,7 +416,7 @@ export default {
       this.$confirm({
         title: '确定要删除该项吗',
         content: '删除后路径相关信息将变更',
-        okText: '确认',
+        okText: '提交',
         okType: 'danger',
         cancelText: '取消',
         onOk () {
@@ -625,5 +638,5 @@ export default {
 }
 </script>
 
-<style scoped lang='less'>
+<style lang='less'>
 </style>

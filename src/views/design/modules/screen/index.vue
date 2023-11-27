@@ -21,7 +21,7 @@
                   title="确定删除选中部件"
                   :disabled="!isWidgetEditable"
                   @confirm="deleteWidgets"
-                  okText="确定"
+                  okText="提交"
                   cancelText="取消">
 
                   <a-tooltip>
@@ -86,7 +86,7 @@
 
             <div class="screen__end">
               <a-button-group>
-                <a-tooltip placement="top" title="保存">
+                <a-tooltip placement="top" title="提交">
                   <a-button type="link" @click="save"><a-icon type="save" /></a-button>
                 </a-tooltip>
                 <a-tooltip placement="top" title="导出">
@@ -105,7 +105,7 @@
                 <a-popconfirm
                   title="确定清空画板？"
                   @confirm="clear"
-                  okText="确定"
+                  okText="提交"
                   cancelText="取消">
 
                   <a-tooltip>
@@ -574,7 +574,7 @@ export default {
       })
     },
     /**
-     * 保存视图配置
+     * 提交视图配置
      */
     async save () {
       try {
@@ -583,13 +583,13 @@ export default {
         await ViewDesignService.updateViewDesign(this.$route.query.id, this.viewOptions)
         this.$notification.success({
           message: '系统提示',
-          description: '保存成功',
+          description: '提交成功',
           duration: 2
         })
       } catch (e) {
         this.$notification.error({
           message: '系统提示',
-          description: '保存失败',
+          description: '提交失败',
           duration: 2
         })
         throw e

@@ -58,6 +58,17 @@
           </a-select>
         </a-form-model-item>
       </a-col>
+
+      <a-col :span="8">
+        <span class="ant-form-item-label">
+          <label title="">立即生效</label>
+        </span>
+        <a-form-model-item prop="status" >
+          <a-select v-model="_value.immediate" class="input">
+            <a-select-option v-for="{ value, label } in IMMEDIATE_LIST" :key="value">{{ label }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
     </a-row>
 
   </div>
@@ -79,6 +90,9 @@ export const basicInfoRule = {
   ],
   status: [
     { required: true, message: '选择启用' }
+  ],
+  immediate: [
+    { required: true, message: '选择立即生效' }
   ]
 }
 
@@ -95,6 +109,16 @@ export default {
       },
       {
         value: 'disabled',
+        label: '否'
+      }
+    ],
+    IMMEDIATE_LIST: [
+      {
+        value: true,
+        label: '是'
+      },
+      {
+        value: false,
         label: '否'
       }
     ]

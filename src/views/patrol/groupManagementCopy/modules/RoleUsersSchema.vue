@@ -9,7 +9,7 @@
     @cancel="cancel"
     :afterClose="reset"
     :rowKey="(record) => record.group_id"
-    okText="保存"
+    okText="提交"
     @ok="submit"
     cancelText="取消"
   >

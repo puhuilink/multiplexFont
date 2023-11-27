@@ -8,7 +8,7 @@
     wrapClassName="QuotaSchema__modal"
     @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     cancelText="取消"
     :footer="null">
     <a-steps :current="current">
@@ -168,7 +168,7 @@ export default {
         menuCodes: []
       },
       dataForm: {
-        dataType: 'ALL',
+        dataType: 'CUSTOM',
         dataIds: []
       },
       Depts: [],

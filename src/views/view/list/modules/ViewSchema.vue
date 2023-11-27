@@ -8,7 +8,7 @@
     v-model="visible"
     @cancel="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     @ok="submit"
   >
 

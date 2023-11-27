@@ -10,10 +10,17 @@
       <a-col :span="24" style="margin-top: 40px;font-size: 28px">机房导览</a-col>
     </a-row>
     <a-row>
-      <a-col v-bind="wrapperCol"><blockImg></blockImg></a-col>
-      <a-col v-bind="wrapperCol"><blockImg floor="19F" title="屋面" img-url="2"></blockImg></a-col>
-      <a-col v-bind="wrapperCol"><blockImg floor="-1F" title="蓄冷罐室" img-url="0"></blockImg></a-col>
-      <a-col v-bind="wrapperCol"><blockImg floor="1F" title="外电室" img-url="1"></blockImg></a-col>
+      <!--      <a-col v-bind="wrapperCol"><blockImg></blockImg></a-col>-->
+      <!--      <a-col v-bind="wrapperCol"><blockImg floor="19F" title="屋面" img-url="2"></blockImg></a-col>-->
+      <!--      <a-col v-bind="wrapperCol"><blockImg floor="-1F" title="蓄冷罐室" img-url="0"></blockImg></a-col>-->
+      <!--      <a-col v-bind="wrapperCol"><blockImg floor="1F" title="外电室" img-url="1"></blockImg></a-col>-->
+      <a-col :span="24">
+        <img :src="this.imgUrl" class="prePictrue" v-show="!preShow">
+        <div class="preSubmit" v-show="preShow">
+          <img src="@/assets/images/noLead.png">
+          <h2>该单位尚未上传机房导览图，如有需要请先上传。</h2>
+        </div>
+      </a-col>
     </a-row>
   </div>
 </template>
@@ -21,6 +28,7 @@
 <script>
 import titleColor from './components/title'
 import blockImg from './components/block'
+import { axios } from '@/utils/request'
 export default {
   name: 'Index',
   components: {
@@ -34,7 +42,9 @@ export default {
         md: { span: 12, offset: 0 },
         xl: { span: 11, offset: 1 },
         xxl: { span: 10, offset: 2 }
-      }
+      },
+      imgUrl: '',
+      preShow: false
     }
   },
   methods: {
@@ -42,12 +52,43 @@ export default {
       console.log('path', path)
       this.$router.push(path)
     }
+  },
+  async mounted () {
+    const { data } = await axios.get('/organize/getMyMachine')
+    console.log('data', data)
+    if (data) {
+      this.imgUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail${data}`
+    } else {
+      this.preShow = true
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
 .a {
+  width: 100%;
+  height: 100%;
+}
+.preSubmit {
+  width: 100%;
+  height: 550px;
+  text-align: center;
+
+  img {
+    margin-top: 20px;
+    width: 700px;
+    height: 370px;
+  }
+
+  h1 {
+    font-size: 40px;
+    line-height:40px;
+    height: 40px;
+  }
+}
+
+.prePictrue {
   width: 100%;
   height: 100%;
 }

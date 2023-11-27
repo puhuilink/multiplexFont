@@ -181,7 +181,7 @@
               title="确定要删除此策略?"
               placement="left"
               @confirm="deleteSingleNotifyRule(record.id)"
-              okText="确定"
+              okText="提交"
               cancelText="取消"
             >
               <a-button>删除</a-button>
@@ -197,7 +197,7 @@
             title="确定要删除用户下所有策略?"
             placement="left"
             @confirm="deleteNotifyRule(record.accountId)"
-            okText="确定"
+            okText="提交"
             cancelText="取消"
           >
             <a-button>删除</a-button>
@@ -212,7 +212,7 @@
           <div style="font-size: 18px">工作时间</div>
           <span>
             <a-button v-if="watchFlag" type="primary" @click="()=>{this.watchFlag = false}">编辑</a-button>
-            <a-button v-else pirmary @click="saveTimeUpdate">保存</a-button>
+            <a-button v-else pirmary @click="saveTimeUpdate">提交</a-button>
           </span>
         </div>
         <div style="display: flex;justify-content: space-between;margin-top: 10px">
@@ -234,7 +234,7 @@
             title="确定要前往模板配置页面？?"
             placement="left"
             @confirm="navigateToTemplate"
-            okText="确定"
+            okText="提交"
             cancelText="取消"
           >
             <a-button type="primary">前往配置</a-button>

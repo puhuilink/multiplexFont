@@ -57,7 +57,7 @@
     <a-table
       ref="table"
       :columns="columns"
-      :scroll="{ x: 1500 }"
+      :scroll="{ x: 1500,y:700 }"
       :data-source="data"
       :row-key="(record,index) => index"
       bordered

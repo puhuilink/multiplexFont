@@ -44,7 +44,7 @@
       :columns="columns"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
-      :scroll="scroll"
+      :scroll="{x:1500,y:500}"
       :data-source="dataSource"
       :loading="pageLoading"
       :pagination="paginationOpt"
@@ -91,34 +91,38 @@ export default {
         {
           title: '巡更组',
           dataIndex: 'groupName',
-          width: 160
+          width: 120
         },
         {
           title: '更新时间',
           dataIndex: 'createTime',
+          align: 'center',
           ...timeColumnSnippet
         },
-        {
-          title: '循环周期',
-          dataIndex: 'schedule',
-          width: 120
-        },
+        // {
+        //   title: '循环周期',
+        //   dataIndex: 'schedule',
+        //   width: 120
+        // },
         {
           title: '生效时间',
           dataIndex: 'effectTime',
           width: 130,
+          align: 'center',
           ...timeColumnSnippet
         },
         {
           title: '失效时间',
           dataIndex: 'expireTime',
           width: 130,
+          align: 'center',
           ...timeColumnSnippet
         },
         {
           title: '是否开启',
           dataIndex: 'status',
           width: 120,
+          align: 'center',
           customRender: (status, record) => (
             // <a-button onClick={() => this.showModal(record)}>{PLAN_STATUS_MAPPING.get(status)}</a-button>
             <a-switch checked={status === 'enabled'} onClick={() => this.showModal(record)} />
@@ -183,6 +187,7 @@ export default {
     async onBatchDelete () {
       this.$promiseConfirmDelete({
         okType: 'danger',
+        content: '确定要删除选中的计划吗？',
         onOk: () =>
           PatrolService.planBatchDelete(this.selectedRowKeys)
             .then(() => {

@@ -137,6 +137,7 @@
             :pagination="paginationOpt"
             :loading="pageLoading"
             rowKey="id"
+            :scroll="{x:1000,y:450}"
             :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
             :data-source="dataSource">
             <a slot="name" slot-scope="text">{{ text }}</a>
@@ -262,7 +263,7 @@ const columns = [
     ellipsis: true,
     align: 'center',
     fixed: 'right',
-    width: 150,
+    width: 180,
     scopedSlots: { customRender: 'operation' }
   }
 ]
@@ -334,6 +335,7 @@ export default {
     onSelect (selectedKeys) {
       // 响应当前部门下的用户
       this.queryParams.orgId = selectedKeys[0]
+      this.paginationOpt.current = 1
       this.query()
     },
     // async getRoles () {
@@ -356,7 +358,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
+        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },
@@ -557,9 +559,7 @@ export default {
     },
     async Success () {
       this.$refs.schema.onCancel()
-      this.$nextTick(() => {
-        this.query()
-      })
+      setTimeout(() => this.query(), 500)
     }
   },
   mounted () {

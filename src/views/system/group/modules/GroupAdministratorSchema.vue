@@ -8,7 +8,7 @@
     wrapClassName="GroupAdministratorSchema__modal"
     v-model="visible"
     @cancel="cancel"
-    okText="保存"
+    okText="提交"
     @ok="submit"
   >
     <a-transfer

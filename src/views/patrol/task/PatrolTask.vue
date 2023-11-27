@@ -126,14 +126,13 @@
     </div>
 
     <a-table
-      style="margin-top: 30px"
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
       rowKey="id"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
-      :scroll="scroll"
+      :scroll="{x:1500,y:500}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #action="text,record">
@@ -187,7 +186,8 @@ export default {
           title: '任务单号',
           dataIndex: 'id',
           width: 150,
-          fixed: 'left'
+          fixed: 'left',
+          align: 'center'
           // sorter: (a, b) => Number(a.id) - Number(b.id),
           // defaultSortOrder: 'descend'
         },
@@ -199,7 +199,8 @@ export default {
         {
           title: '巡更组',
           dataIndex: 'groupName',
-          width: 220
+          width: 220,
+          align: 'center'
         },
         {
           title: '巡更实际开始时间',
@@ -212,12 +213,14 @@ export default {
           title: '延迟开始',
           dataIndex: 'actualStartLate',
           width: 100,
+          align: 'center',
           customRender: actual_start_late => actual_start_late ? '是' : '否'
         },
         {
           title: '巡更实际结束时间',
           dataIndex: 'actualEndTime',
           width: 180,
+          align: 'center',
           customRender: actual_end_time => actual_end_time ? moment(actual_end_time).format('YYYY-MM-DD HH:mm:ss') : ''
         },
         // {
@@ -230,6 +233,7 @@ export default {
           title: '任务单状态',
           dataIndex: 'status',
           width: 120,
+          align: 'center',
           customRender: status => {
             return STATUS_MAPPING.get(status)
           }

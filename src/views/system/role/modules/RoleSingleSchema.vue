@@ -10,7 +10,7 @@
     @cancel="cancel"
     @colse="cancel"
     :afterClose="reset"
-    okText="保存"
+    okText="提交"
     cancelText="取消"
     @ok="submit">
     <a-form-model

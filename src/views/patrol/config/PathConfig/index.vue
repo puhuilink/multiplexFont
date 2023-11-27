@@ -32,7 +32,7 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="role_code"
-      :scroll="scroll"
+      :scroll="{x:1500,y:550}"
       :pagination="paginationOpt"
     >
       <template #index="text,record,index">{{ index }}</template>
@@ -69,19 +69,21 @@ export default {
         title: '序号',
         dataIndex: 'index',
         align: 'center',
-        width: '120px',
+        width: '80px',
         ellipsis: true,
         scopedSlots: { customRender: 'index' }
       },
       {
         title: '路径名称',
         dataIndex: 'alias',
+        align: 'center',
         ellipsis: true,
         width: '150px'
       },
       {
         title: '巡更组',
         dataIndex: 'groupId',
+        align: 'center',
         ellipsis: true,
         scopedSlots: { customRender: 'status' },
         width: '120px'
@@ -89,6 +91,7 @@ export default {
       {
         title: '提交人',
         dataIndex: 'updator',
+        align: 'center',
         ellipsis: true,
         width: '120px',
         customRender: (text, el) => el.updator || el.creator
@@ -96,19 +99,22 @@ export default {
       {
         title: '路径图标识',
         dataIndex: 'ascription',
+        align: 'center',
         ellipsis: true,
-        width: '120px'
+        width: '240px'
       },
       {
         title: '提交时间',
         dataIndex: 'updateTime',
+        align: 'center',
         ellipsis: true,
         width: '200px'
       },
       {
         title: '操作',
-        width: '400px',
+        width: '350px',
         ellipsis: true,
+        fixed: 'right',
         scopedSlots: { customRender: 'action' }
       }
     ]),

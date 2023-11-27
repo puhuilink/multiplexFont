@@ -17,7 +17,7 @@
         </a-select>
       </a-form-model-item>
       <a-button @click="cancel">取消</a-button>
-      <a-button :loading="submitLoading" type="primary">保存</a-button>
+      <a-button :loading="submitLoading" type="primary">提交</a-button>
     </template>
 
     <!-- / 正文 -->
