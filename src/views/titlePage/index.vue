@@ -43,7 +43,7 @@ export default {
         xl: { span: 11, offset: 1 },
         xxl: { span: 10, offset: 2 }
       },
-      imgUrl: '',
+      imgUrl: require('@/assets/images/noLead.png'),
       preShow: false
     }
   },
@@ -54,12 +54,16 @@ export default {
     }
   },
   async mounted () {
-    const { data } = await axios.get('/organize/getMyMachine')
-    console.log('data', data)
-    if (data) {
-      this.imgUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail${data}`
-    } else {
+    try {
+      const { data } = await axios.get('/organize/getMyMachine')
+      if (data) {
+        this.imgUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail${data}`
+      } else {
+        this.preShow = true
+      }
+    } catch (e) {
       this.preShow = true
+      throw e
     }
   }
 }

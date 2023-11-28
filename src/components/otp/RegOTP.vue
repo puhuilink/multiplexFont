@@ -116,7 +116,8 @@ export default {
         } else {
           this.$notification.error({
             message: '系统提示',
-            description: res.data.description
+            // description: res.data.description
+            description: '动态令牌错误'
           })
         }
       }).catch(function (error) {

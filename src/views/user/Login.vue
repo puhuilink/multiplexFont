@@ -138,7 +138,7 @@
     </a-form>
     <!--    @otpSuccess="finalLogin"-->
     <secondFactoryOTP ref="factory" @close="onClose" @loginSuccess="loginSuccess"></secondFactoryOTP>
-    <RegOTP ref="reg" @close="onClose"></RegOTP>
+    <RegOTP ref="reg" @close="onClose" @otpSuccess="loginSuccess"></RegOTP>
   </div>
 </template>
 
