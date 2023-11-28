@@ -78,7 +78,7 @@
           ref="table"
           rowKey="id"
           :pagination="paginationOpt"
-          :scroll="{x:1500,y:500}"
+          :scroll="{x:1500}"
           :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''">
           <template #status="text, record">
             <a-switch :checked="text" @change="onStatusChange(record)" :disabled="record.id==='9527'?true:disabled" />

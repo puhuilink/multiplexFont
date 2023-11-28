@@ -109,7 +109,7 @@
       <a-button v-if="current < steps.length - 1" type="primary" @click="next">
         下一步
       </a-button>
-      <a-button v-if="current === steps.length - 1" type="primary" @click="submit">
+      <a-button v-if="current === steps.length - 1" type="primary" @click="submit" :loading="loading">
         完成
       </a-button>
 
@@ -137,6 +137,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       disabled: false,
       current: 0,
       confirmLoading: false,
@@ -383,14 +384,19 @@ export default {
       console.log(ob)
       this.$refs.dataForm.validate(async (err) => {
         if (!err) return
+
         try {
+          this.loading = true
           this.confirmLoading = true
           await RoleService.update(ob)
           this.$emit('addSuccess')
           this.$notifyAddSuccess()
           this.cancel()
+          this.loading = false
         } catch (e) {
           throw e
+          // eslint-disable-next-line no-unreachable
+          this.loading = false
         } finally {
           this.confirmLoading = false
         }

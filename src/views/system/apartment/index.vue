@@ -61,7 +61,6 @@
         :data-source="treeData"
         :expandedRowKeys="expandedRowKeys"
         rowKey="id"
-        :scroll="{x:1500,y:700}"
         :pagination="false"
         @expand="expand"
         :loading="pageLoading"
@@ -100,7 +99,7 @@ export default {
       pageLoading: false,
       treeData,
       columns: [
-        { title: '部门名称', dataIndex: 'name', key: 'name', width: '450px' },
+        { title: '部门名称', dataIndex: 'name', key: 'name', width: '250px' },
         // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
         // { title: '排序', dataIndex: 'sortIndex', key: 'sortIndex', customRender: (el) => Number(el) },
         {

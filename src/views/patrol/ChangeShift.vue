@@ -55,7 +55,6 @@
     </div>
     <a-table
       :columns="columns"
-      :scroll="{x:1500,y:500}"
       :rowSelection="rowSelection"
       rowKey="id"
       :loading="pageLoading"

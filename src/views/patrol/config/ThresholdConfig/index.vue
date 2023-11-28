@@ -125,7 +125,6 @@
       :row-key="(record,index) => index"
       :pagination="paginationOpt"
       ref="table"
-      :scroll="scroll"
     >
       <template slot="host" slot-scope="value,record">{{ value }} <a-tag v-if="record.update_time =='NULL'" color="red">new</a-tag> </template>
       <template slot="endpoint" slot-scope="value,record">{{ record.visible==='t'?value:'虚拟实体' }}</template>

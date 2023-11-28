@@ -44,7 +44,7 @@
       :columns="columns"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
-      :scroll="{x:1500,y:500}"
+      :scroll="{x:1500}"
       :data-source="dataSource"
       :loading="pageLoading"
       :pagination="paginationOpt"

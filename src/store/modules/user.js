@@ -72,6 +72,7 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
+
     SET_NAME: (state, { name }) => {
       const originalUser = Vue.ls.get(USER)
       originalUser.staffName = name
@@ -156,13 +157,7 @@ const user = {
       return new Promise(async (resolve, reject) => {
         UserService.login(userInfo)
           .then(({ code, data, msg }) => {
-            if (code === 30) {
-              this.$notification.error({
-                message: '系统提示',
-                description: msg
-              })
-              reject(msg)
-            }
+            console.log(code, data, msg)
             Vue.ls.set(ACCESS_TOKEN, data, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', data)
           }).then(() => {
@@ -174,6 +169,9 @@ const user = {
               commit('SET_ROLES', data)
               resolve(data)
             })
+          }).catch((e) => {
+            reject(e)
+            console.log(e)
           })
       })
     },

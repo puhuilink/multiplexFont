@@ -116,12 +116,7 @@ const responseInterceptor = (response) => {
         })
         router.push('/user/login').then(() => {
           // 通过 reload 强制触发 src/core/directives/actions 刷新，以保证切换账号时权限得以重置
-          location.reload()
-        }).then(() => {
-          notification.error({
-            message: '登录已过期',
-            description: '请重新登录'
-          })
+          // location.reload()
         })
         throw new Error(msg)
       }

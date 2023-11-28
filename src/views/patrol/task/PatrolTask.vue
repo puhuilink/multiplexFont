@@ -132,7 +132,7 @@
       rowKey="id"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
-      :scroll="{x:1500,y:500}"
+      :scroll="{x:1500}"
       :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
     >
       <template #action="text,record">
@@ -247,6 +247,7 @@ export default {
         {
           title: '巡更人员',
           dataIndex: 'executor',
+          align: 'center',
           width: 150,
           customRender: (executor) => {
             if (!executor) {

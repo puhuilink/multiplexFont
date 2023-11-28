@@ -137,7 +137,7 @@
             :pagination="paginationOpt"
             :loading="pageLoading"
             rowKey="id"
-            :scroll="{x:1000,y:450}"
+            :scroll="{x:1000}"
             :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
             :data-source="dataSource">
             <a slot="name" slot-scope="text">{{ text }}</a>
@@ -358,7 +358,7 @@ export default {
       return (
         <div style={{ textAlign: 'center' }}>
           新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
+          <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },

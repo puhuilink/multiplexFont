@@ -247,7 +247,7 @@
       :pagination="pagination"
       row-key="id"
       ref="table"
-      :scroll="{x:1500,y:500}"
+      :scroll="{x:1500}"
     >
       <template slot="format" slot-scope="text,record">
         <a-card

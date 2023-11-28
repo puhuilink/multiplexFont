@@ -68,13 +68,15 @@ export default {
           }, {
             baseURL: process.env.VUE_APP_OTP_BASE_URL
           }).then(data => {
+            console.log(data)
             if (data.data.statusCode === 1200) {
               this.$emit('loginSuccess')
               this.handleCancel()
             } else {
               this.$notification.error({
                 message: '系统提示',
-                description: data.data.description
+                // description: data.data.description
+                description: '动态令牌错误'
               })
             }
           })

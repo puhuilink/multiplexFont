@@ -136,8 +136,9 @@
       </a-form-item>
 
     </a-form>
-    <secondFactoryOTP ref="factory" @close="onClose" @loginSuccess="finalLogin"></secondFactoryOTP>
-    <RegOTP ref="reg" @close="onClose" @otpSuccess="finalLogin"></RegOTP>
+    <!--    @otpSuccess="finalLogin"-->
+    <secondFactoryOTP ref="factory" @close="onClose" @loginSuccess="loginSuccess"></secondFactoryOTP>
+    <RegOTP ref="reg" @close="onClose"></RegOTP>
   </div>
 </template>
 
@@ -148,6 +149,10 @@ import identify from '@/components/identify/index'
 import axios from 'axios'
 import secondFactoryOTP from '@/components/otp/SecondFactorOTP'
 import RegOTP from '@/components/otp/RegOTP'
+import Vue from 'vue'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import store from '@/store'
+
 const VUE_APP_SMS_ENABLED = process.env.VUE_APP_SMS_ENABLED === 'true'
 
 export default {
@@ -177,7 +182,8 @@ export default {
       identifyCodes: '1234567890abcdefjhijklinopqrsduvwxyz',
       identifyCode: '',
       loginParams: {},
-      otpName: process.env.VUE_APP_OTP_QUOTE_NAME
+      otpName: process.env.VUE_APP_OTP_QUOTE_NAME,
+      loginData: null
     }
   },
   computed: {
@@ -265,58 +271,78 @@ export default {
         if (err) {
           return
         }
-        if (VUE_APP_SMS_ENABLED && !this.hasSentVerifCode) {
-          this.$message.error('请先获取验证码!')
-          state.loginBtn = false
-          return
-        }
+        // console.log(values)
+        // console.log(this.loginParams)
+        // 填写过内容后,登录
+        this.Login(values)
+          .then((res) => {
+            // 登录通过
+            // console.log(res)
+            this.loginData = res
+            // otp验证是否开启-------
+            if (VUE_APP_SMS_ENABLED && !this.hasSentVerifCode) {
+              this.$message.error('请先获取验证码!')
+              state.loginBtn = false
+              return
+            }
+            Vue.ls.remove(ACCESS_TOKEN)
+            state.loginBtn = true
+            this.isLoginError = false
 
-        state.loginBtn = true
-        this.isLoginError = false
+            const loginParams = { ...values }
 
-        const loginParams = { ...values }
-
-        Reflect.deleteProperty(loginParams, 'userId')
-        loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
-        loginParams.pwd = values.pwd
-        this.loginParams = loginParams
-        if (JSON.parse(process.env.VUE_APP_OTP_SWITCH)) {
-          axios.post('/otp/getStatus', {
-            appId: this.otpName,
-            userName: values.userId,
-            transNo: 'transNo1'
-          }, {
-            baseURL: process.env.VUE_APP_OTP_BASE_URL
-          }).then((res) => {
-            if (res.data.statusCode === 1201) {
-              this.$refs.reg.otpBind({
-                appId: this.otpName,
-                userName: values.userId,
-                transNo: 'transNo1'
-              })
-            } else if (res.data.statusCode === 1200) {
-              this.$refs.factory.onShow({
-                appId: this.otpName,
-                userName: values.userId,
-                transNo: 'transNo1'
-              })
-              axios.post('/otp/msgOtp', {
+            Reflect.deleteProperty(loginParams, 'userId')
+            loginParams[!state.loginType ? 'email' : 'userId'] = values.userId
+            loginParams.pwd = values.pwd
+            this.loginParams = loginParams
+            if (JSON.parse(process.env.VUE_APP_OTP_SWITCH)) {
+              axios.post('/otp/getStatus', {
                 appId: this.otpName,
                 userName: values.userId,
                 transNo: 'transNo1'
               }, {
                 baseURL: process.env.VUE_APP_OTP_BASE_URL
+              }).then((res) => {
+                if (res.data.statusCode === 1201) {
+                  this.$refs.reg.otpBind({
+                    appId: this.otpName,
+                    userName: values.userId,
+                    transNo: 'transNo1'
+                  })
+                } else if (res.data.statusCode === 1200) {
+                  this.$refs.factory.onShow({
+                    appId: this.otpName,
+                    userName: values.userId,
+                    transNo: 'transNo1'
+                  })
+                  axios.post('/otp/msgOtp', {
+                    appId: this.otpName,
+                    userName: values.userId,
+                    transNo: 'transNo1'
+                  }, {
+                    baseURL: process.env.VUE_APP_OTP_BASE_URL
+                  })
+                }
               })
+            } else {
+              this.loginSuccess(res)
+
+              /* Login(loginParams)
+                .then((res) => this.loginSuccess(res))
+                .catch(err => this.requestFailed(err))
+                .finally(() => {
+                  state.loginBtn = false
+                }) */
             }
           })
-        } else {
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
-        }
+          .catch(err => {
+            // 登录错误
+            // console.log(err)
+            this.requestFailed(err)
+          }
+          ).finally(() => {
+            state.loginBtn = false
+          })
       })
     },
     // 获取验证码
@@ -365,18 +391,31 @@ export default {
     //     this.stepCaptchaVisible = false
     //   })
     // },
-    finalLogin () {
-      this.Login(this.loginParams)
-        .then((res) => this.loginSuccess(res))
-        .catch(err => this.requestFailed(err))
-        .finally(() => {
-          this.state.loginBtn = false
-        })
-    },
+    // finalLogin () {
+    //   console.log(123)
+    //   this.Login(this.loginParams)
+    //     .then((res) => {
+    //       console.log(res)
+    //       this.loginSuccess(res)
+    //     })
+    //     .catch(err => {
+    //         console.log(err)
+    //
+    //         this.requestFailed(err)
+    //       }
+    //     )
+    //   // .finally(() => {
+    //   //   this.state.loginBtn = false
+    //   // })
+    // },
     onClose () {
       this.state.loginBtn = false
     },
-    loginSuccess (res) {
+    loginSuccess () {
+      // zhe
+      Vue.ls.set('Authorization', store.getters.token, 7 * 24 * 60 * 60 * 1000)
+
+      const res = this.loginData
       if (res.menuCodes) {
         this.$router.push({ path: '/' })
         location.reload()

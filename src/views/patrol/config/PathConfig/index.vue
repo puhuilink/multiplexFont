@@ -32,7 +32,7 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="role_code"
-      :scroll="{x:1500,y:550}"
+      :scroll="{x:1500}"
       :pagination="paginationOpt"
     >
       <template #index="text,record,index">{{ index }}</template>
