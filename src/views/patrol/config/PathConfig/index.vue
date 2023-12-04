@@ -112,7 +112,7 @@ export default {
       },
       {
         title: '操作',
-        width: '350px',
+        width: '450px',
         ellipsis: true,
         fixed: 'right',
         scopedSlots: { customRender: 'action' }
@@ -303,7 +303,6 @@ export default {
               this.$notifyDeleteSuccess()
               this.query(false)
             })
-            .catch(this.$notifyError)
         }
 
       })

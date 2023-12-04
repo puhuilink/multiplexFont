@@ -383,7 +383,7 @@ export default {
                 .then(() => {
                   this.$notifyDeleteSuccess()
                 })
-                .catch(this.$notifyError).finally(() => this.query())
+                .catch().finally(() => this.query())
             }
           })
           break

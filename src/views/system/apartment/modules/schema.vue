@@ -41,7 +41,6 @@
 
       <a-form-model-item
         v-bind="formItemLayout"
-        :rules="[{ required: true, message: '请输入显示排序' }]"
         prop="order"
         label="序号"
       >
@@ -258,6 +257,7 @@ export default {
     edit (user) {
       this.show('编辑部门')
       this.isEdit = true
+      console.log('user', user)
       this.formModel = {
         name: user.name,
         apartmentId: user.parentId,
@@ -265,7 +265,7 @@ export default {
         leaderId: user.leaderId,
         order: user.sortIndex,
         id: user.id,
-        file: user.machineImg
+        fileList: user.machineImg
       }
       if (user.machineImg) {
         this.formModel.fileList = [{

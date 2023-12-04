@@ -96,10 +96,29 @@ export default {
         condition: [{ required: true, message: '阈值条件不能为空！', trigger: 'change' }],
         severity: [{ required: true, message: '阈值等级不能为空！', trigger: 'change' }],
         lowerThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'change' },
-          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }
+          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' },
+          { required: true,
+            validator: (rule, value, callback) => {
+              if (this.editForm.upperThreshold && this.editForm.upperThreshold < value) {
+                callback(new Error('不能超过上限阈值'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change' }
         ],
         upperThreshold: [{ required: true, message: '阈值数值不能为空！', trigger: 'change' },
-          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' }]
+          { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' },
+          { required: true,
+            validator: (rule, value, callback) => {
+              if (this.editForm.lowerThreshold && this.editForm.lowerThreshold > value) {
+                callback(new Error('不能低于下限阈值'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change' }
+        ]
       }
     }
   },
