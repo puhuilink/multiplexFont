@@ -99,8 +99,8 @@ export default {
           { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' },
           { required: true,
             validator: (rule, value, callback) => {
-              if (this.editForm.upperThreshold && this.editForm.upperThreshold < value) {
-                callback(new Error('不能超过上限阈值'))
+              if (this.editForm.condition === 'out' && this.editForm.upperThreshold && this.editForm.upperThreshold < value) {
+                callback(new Error('不能超过最大值'))
               } else {
                 callback()
               }
@@ -111,8 +111,8 @@ export default {
           { pattern: /^(([^0][0-9]+|0)\.([0-9]{1,2})$)|^(([^0][0-9]+|0)$)|^(([1-9]+)\.([0-9]{1,2})$)|^(([1-9]+)$)/, message: '必须填写数字！', trigger: 'change' },
           { required: true,
             validator: (rule, value, callback) => {
-              if (this.editForm.lowerThreshold && this.editForm.lowerThreshold > value) {
-                callback(new Error('不能低于下限阈值'))
+              if (this.editForm.condition === 'out' && this.editForm.lowerThreshold && this.editForm.lowerThreshold > value) {
+                callback(new Error('不能低于最小值'))
               } else {
                 callback()
               }
