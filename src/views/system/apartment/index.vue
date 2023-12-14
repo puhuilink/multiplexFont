@@ -76,9 +76,13 @@
           <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>
             <a-icon type="delete" />
             删除</a>
+          <a class="operator" @click="onDecentralization(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>
+            <a-icon type="safety-certificate" />
+            分权分域</a>
         </template>
       </a-table>
       <schema ref="schema" :treeData="treeData" :userList="userList" @operateSuccess="Success"></schema>
+      <decentralization ref="Permissions" :treeData2="treeData2" @operateSuccess="closeDomain"></decentralization>
     </div>
   </div>
 </template>
@@ -86,6 +90,7 @@
 <script>
 import { removeArrayValue } from '@/utils/util'
 import schema from '@/views/system/apartment/modules/schema'
+import decentralization from '@/views/system/apartment/modules/Decentralization'
 import { axios } from '@/utils/request'
 import { Confirm } from '~~~/Mixins'
 import { Form, Modal } from 'ant-design-vue'
@@ -98,6 +103,18 @@ export default {
     return {
       pageLoading: false,
       treeData,
+      treeData2: [
+        {
+          value: '1',
+          label: '漏洞统计管理',
+          parentId: '1'
+        }
+        // {
+        //   value: '2',
+        //   label: '安全态势感知',
+        //   parentId: '2'
+        // }
+      ],
       columns: [
         { title: '部门名称', dataIndex: 'name', key: 'name', width: '250px' },
         // { title: '负责人', dataIndex: 'leaderName', key: 'leaderName' },
@@ -130,7 +147,7 @@ export default {
     }
   },
   mixins: [Confirm, Form],
-  components: { schema },
+  components: { schema, decentralization },
   methods: {
     handleSearch () {
       this.getData({
@@ -188,6 +205,9 @@ export default {
         }
       })
     },
+    onDecentralization (text, record) {
+      this.$refs.Permissions.edit(text)
+    },
     open () {
       if (this.spread) {
         this.expandedRowKeys = [_.get(this.treeData, '0.id', ''), ...this.findNonEmptyChildrenIdsInTrees(this.treeData)]
@@ -197,7 +217,6 @@ export default {
       this.spread = !this.spread
     },
     expandIcon (props) {
-      console.log(props)
       if (props.record.children && props.record.children.length > 0) {
         if (props.expanded) {
           return (
@@ -248,7 +267,6 @@ export default {
           }
         })
         this.banList = dataIds
-        console.log('sort', list, list.sort((a, b) => a.sortIndex - b.sortIndex))
         this.treeData = this.buildTree(list.sort((a, b) => a.sortIndex - b.sortIndex).map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -288,6 +306,13 @@ export default {
       return tree
     },
     Success () {
+      this.$refs.schema.onCancel()
+      setTimeout(() => {
+        this.getData()
+        this.getUserList()
+      }, 500)
+    },
+    closeDomain () {
       this.$refs.schema.onCancel()
       setTimeout(() => {
         this.getData()
