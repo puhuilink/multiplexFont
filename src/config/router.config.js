@@ -1,6 +1,14 @@
 import { UserLayout, BasicLayout, RouteView } from '@/layouts'
 import { decrypt } from '@/utils/aes'
 
+let EmergencyManagement_x = true
+const proUserString = localStorage.getItem('pro__User')
+if (proUserString) {
+  const proUser = JSON.parse(proUserString)
+  const organizeId = proUser.value.organizeId
+  EmergencyManagement_x = !(organizeId === '77551146956226560' || organizeId === '77551230678728704')
+}
+
 export const asyncRouterMap = [
   {
     path: '/',
@@ -304,19 +312,18 @@ export const asyncRouterMap = [
             name: 'Emergency',
             redirect: '/SecurityMonitoring/EmergencyManagement/BanList',
             component: RouteView,
+            meta: {
+              title: '应急处理'
+            },
+            hidden: EmergencyManagement_x,
             children: [{
               path: '/SecurityMonitoring/EmergencyManagement/BanList',
               name: 'BanList',
               component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/NewBan'),
               meta: {
-                title: '一键封禁',
-                permission: ['F020001001']
+                title: '一键封禁'
               }
-            }],
-            meta: {
-              title: '应急处理',
-              permission: ['F020001']
-            }
+            }]
           }
           // {
           //   path: '/SecurityMonitoring/LeakSummary',

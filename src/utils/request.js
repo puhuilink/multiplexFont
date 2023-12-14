@@ -16,7 +16,8 @@ const serviceZhenhua = axios.create({
 })
 
 const serviceXungeng = axios.create({
-  baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL
+  baseURL: process.env.VUE_APP_XUNJIAN_API_BASE_URL,
+  timeout: 15000 // 设置请求超时时间为15秒
 })
 
 const serviceSdwan = axios.create({
