@@ -478,7 +478,6 @@ export default {
      * @event
      */
     onEditUser (record) {
-      console.log(record)
       this.$refs['schema'].edit(record)
     },
     /**

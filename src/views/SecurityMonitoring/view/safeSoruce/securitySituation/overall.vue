@@ -3,7 +3,6 @@
     <div class="titleC">{{ title }}</div>
     <div class="contentBox">
       <div class="img-one">
-        <!-- <div class="number1 numAll">{{content.topData.risk?content.topData.risk:'-'}}</div> -->
         <div class="number1 numAll">{{ objList.GlobalData.risk ? objList.GlobalData.risk : 10 }}</div>
         <div class="text1 textAll">{{ '中危' }}</div>
       </div>
