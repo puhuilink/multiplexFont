@@ -66,6 +66,13 @@
         :loading="pageLoading"
         :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"
         class="components-table-demo-nested">
+        <template #outSystem="text, record">
+          {{ record.ngsoc?'安全态势':'' }}
+          <a-divider type="vertical" v-if="!!(record.cloudNet&&record.ngsoc)"/>
+          {{ record.cloudNet?'漏洞管理':"" }}
+          <!--          {{ record.cloudNet?'SDWAN｜':"" }}-->
+          <!--          {{ record.cloudNet?'MV':"" }}-->
+        </template>
         <template #operation="text, record">
           <a class="operator" @click="onAdd(record)" :disabled="operationShow(banList, record.id)" v-action:F001003002>
             <a-icon type="plus" />
@@ -76,9 +83,30 @@
           <a class="operator" @click="onDelete(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>
             <a-icon type="delete" />
             删除</a>
-          <a class="operator" @click="onDecentralization(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>
-            <a-icon type="safety-certificate" />
-            分权分域</a>
+
+          <a-dropdown v-show="true">
+            <a class="ant-dropdown-link">
+              <a-icon type="double-right" style="transform: rotate(90deg);"/>
+              对接系统</a>
+            <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
+              <a-menu-item key="1">
+                安全态势
+              </a-menu-item>
+              <a-menu-item key="2">
+                漏洞管理
+              </a-menu-item>
+              <a-menu-item key="3">
+                SDWAN
+              </a-menu-item>
+              <a-menu-item key="4">
+                MV
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          <!--          <a class="operator" @click="onDecentralization(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>-->
+          <!--            <a-icon type="double-right" style="transform: rotate(90deg);"/>-->
+          <!--            对接系统</a>-->
+
         </template>
       </a-table>
       <schema ref="schema" :treeData="treeData" :userList="userList" @operateSuccess="Success"></schema>
@@ -98,7 +126,7 @@ import _ from 'lodash'
 const treeData = []
 
 export default {
-  name: 'Index',
+  name: 'ApartmentIndex',
   data () {
     return {
       pageLoading: false,
@@ -130,6 +158,12 @@ export default {
           }
         },
         {
+          title: '对接系统',
+          scopedSlots: { customRender: 'outSystem' },
+          key: 'outSystem',
+          align: 'center'
+        },
+        {
           title: '创建时间',
           dataIndex: 'createTime',
           key: 'createTime',
@@ -143,12 +177,29 @@ export default {
         isOpen: ''
       },
       userList: [],
-      banList: []
+      banList: [],
+      outSystem: []
     }
   },
   mixins: [Confirm, Form],
   components: { schema, decentralization },
   methods: {
+    moreOption (record, { key }) {
+      switch (Number(key)) {
+        case 1:
+          this.$refs.Permissions.editPerceive(record)
+          break
+        case 2:
+          this.$refs.Permissions.edit(record)
+          break
+        case 3:
+          console.log(record)
+          break
+        case 4:
+          console.log(record)
+          break
+      }
+    },
     handleSearch () {
       this.getData({
         isOpen: this.param.isOpen,
@@ -205,9 +256,9 @@ export default {
         }
       })
     },
-    onDecentralization (text, record) {
-      this.$refs.Permissions.edit(text)
-    },
+    // onDecentralization (text, record) {
+    //   this.$refs.Permissions.edit(text)
+    // },
     open () {
       if (this.spread) {
         this.expandedRowKeys = [_.get(this.treeData, '0.id', ''), ...this.findNonEmptyChildrenIdsInTrees(this.treeData)]
@@ -260,13 +311,29 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { dataIds, list } } = await axios.get('/organize/table', {
+        const { data: { dataIds, list, outSystem } } = await axios.get('/organize/table', {
           params: {
             ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
             ...this.param.orgName ? { name: this.param.orgName } : {}
           }
         })
         this.banList = dataIds
+        this.outSystem = outSystem
+        // 遍历this.list
+        for (let i = 0; i < list.length; i++) {
+          const listOrgId = list[i].id
+
+          // 在this.outSystem中查找匹配的orgId
+          const matchingSystem = this.outSystem.find(system => system.orgId === listOrgId)
+
+          // 如果找到匹配的组织
+          if (matchingSystem) {
+            // 将cloudNet和ngsoc的值添加到this.list中
+            list[i].cloudNet = matchingSystem.cloudNet
+            list[i].ngsoc = matchingSystem.ngsoc
+          }
+        }
+
         this.treeData = this.buildTree(list.sort((a, b) => a.sortIndex - b.sortIndex).map(el => {
           if (el.parentId === undefined) {
             el.parentId = null
@@ -392,9 +459,6 @@ export default {
     this.getUserList()
     this.expandedRowKeys = ['1']
     this.columns = this.columns.map(el => ({ ellipsis: true, ...el }))
-  },
-  beforeCreate () {
-    this.form = this.$form.createForm(this, { name: 'form' })
   }
 }
 </script>
