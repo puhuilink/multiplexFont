@@ -161,7 +161,7 @@
                   <a-icon type="double-right" />
                   更多</a>
                 <a-menu slot="overlay" @click="(key) => moreOption(record, key)">
-                  <a-menu-item key="1" v-action:F001001003 style="color: '#004FA5';">
+                  <a-menu-item key="1" v-action:F001001003 v-show="record.id!=='2'">
                     <a-icon type="delete" />
                     删除
                   </a-menu-item>
@@ -357,8 +357,7 @@ export default {
     renderInput () {
       return (
         <div style={{ textAlign: 'center' }}>
-          新密码为：
-        <a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
+          新密码为：<a-input style={{ width: '60%' }} value={this.password} onChange={this.change} />
         </div>
       )
     },
@@ -458,7 +457,6 @@ export default {
       // for (let i = 0; i <= 50; i++) {
       //   this.treeData[0].children.push(data)
       // }
-      // console.log(this.treeData[0].children[0], 'treeData')
 
       this.selectTreeData = this.buildTree(list.map(el => {
         if (el.parentId === undefined) {

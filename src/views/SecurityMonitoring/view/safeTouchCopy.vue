@@ -29,17 +29,7 @@
             <div ref="eacherbox21" class="eacherBox echarts"></div>
             <div class="eacherBoxfu">
               <!--              <div class="textTime">
-                <div class="textTime_1">时间范围</div>
-                <a-range-picker
-                  size="small"
-                  :disabled-date="disabledDate"
-                  :disabled-time="disabledRangeTime"
-                  :show-time="{
-                    hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
-                  }"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 330px" />
+                <div class="textTime_1">时间范围  <div>{{11}}</div></div>
               </div>-->
               <div ref="eacherbox22" class="eacherBox echarts" id="eacherBoxid"></div>
             </div>
@@ -132,7 +122,7 @@ export default {
         this.loading = false
         this.drawPolicitalStatus()
         this.drawPolicitalStatus2()
-        // this.drawPolicitalStatus22()
+        this.drawPolicitalStatus22()
         this.drawPolicitalStatus3()
         this.drawPolicitalStatus4()
       }
@@ -179,39 +169,59 @@ export default {
       try {
         const [comprehensive, alarm, Last7Alarm, Last7Threat] = await Promise.all([Promise1, Promise2, Promise3, Promise4])
 
-        const comprehensiveData = comprehensive.data.data
+        let comprehensiveData
+        if (comprehensive.data.code === 200) {
+          comprehensiveData = comprehensive.data.data ? comprehensive.data.data : []
+        } else {
+          comprehensiveData = []
+        }
         // 到这给第一个图表数据
         if (comprehensiveData) {
-          const echartsData = comprehensiveData.map(item => {
+          comprehensiveData.map(item => {
             // console.log(item);
             item.time = this.formatTimestamp(parseInt(item.time))
             this.listData1.push(item.risk)
             this.listTime1.push(item.time)
             return item
           })
+        } else {
+          this.listData1 = []
+          this.listTime1 = []
         }
 
-        // this.datatime=listTime1
-        // this.datatime=listData1
-
-        this.listData2 = alarm.data.data.alarmSeverityGroupStat
-
-        this.listData22 = [alarm.data.data.outAttackAlarm,
-          alarm.data.data.movementAlarm,
-          alarm.data.data.assetOutreachAlarm,
-          alarm.data.data.iocAlarm,
-          alarm.data.data.maliciousFileAlarm]
+        if (alarm.data.code) {
+          this.listData2 = alarm.data.data.alarmSeverityGroupStat
+          this.listData22 = [alarm.data.data.outAttackAlarm,
+            alarm.data.data.movementAlarm,
+            alarm.data.data.assetOutreachAlarm,
+            alarm.data.data.iocAlarm,
+            alarm.data.data.maliciousFileAlarm]
+        } else {
+          this.listData2 = []
+          this.listData22 = []
+        }
 
         // console.log('告警危害等级分布', Last7Alarm)
         if (Last7Alarm.data.code === 200) {
           this.listData3 = Last7Alarm.data
+        } else {
+          this.listData3 = []
         }
 
         if (Last7Threat.data.code === 200) {
           this.listData4 = Last7Threat.data
+        } else {
+          this.listData4 = []
         }
       } catch (e) {
         this.loading = false
+        this.listData1 = []
+        this.listTime1 = []
+        this.listData1 = []
+        this.listData2 = []
+        this.listData22 = []
+        this.listData3 = []
+        this.listData4 = []
       } finally {
         this.loading = false
       }
@@ -254,18 +264,16 @@ export default {
         ).padStart(2, '0')}`
         data.push(formattedDate)
       }
-      // this.datatime = data
-      // console.log(this.datatime);
     },
 
     drawPolicitalStatus () {
       // 基于准备好的dom，初始化echarts实例
       const myChart = echarts.init(this.$refs.eacherbox1)
-      const listTime1 = this.listTime1
-      const listData1 = this.listData1
+      // const listTime1 = this.listTime1
+      // const listData1 = this.listData1
 
       // 判断数据是否为空
-      const isDataEmpty = listData1.length === 0
+      const isDataEmpty = this.listData1.length === 0
 
       // 配置 graphic，用于显示 "暂无数据"
       const graphic = {
@@ -303,35 +311,30 @@ export default {
           right: '5%',
           bottom: '15%'
         },
-        xAxis: [
-          {
-            type: 'category',
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: 'rgb(41,188,245)'
-              }
-            },
-            axisLabel: {
-              margin: 13.5,
-              textStyle: {
-                color: '#81BAE5',
-                fontSize: 12
-              }
-            },
-            splitLine: {
-              show: false,
-              lineStyle: {
-                color: '#233653'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            data: listTime1
-          }
-        ],
-        yAxis: [
+        xAxis: {
+          show: !isDataEmpty,
+          type: 'category',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#DBDBDB'
+            }
+          },
+          axisLabel: {
+            margin: 13.5,
+            fontFamily: 'ArialMT',
+            color: '#81BAE5',
+            lineHeight: 12
+          },
+          splitLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          data: this.listTime1
+        },
+        yAxis:
           {
             name: '',
             nameTextStyle: {
@@ -343,8 +346,8 @@ export default {
             splitLine: {
               show: true,
               lineStyle: {
-                color: '#1160a0',
-                type: 'dashed'
+                color: '#f0f0f0',
+                type: 'dotted'
               }
             },
             axisLine: {
@@ -365,12 +368,12 @@ export default {
             axisTick: {
               show: false
             }
-          }
-        ],
+          },
         series: [
           {
-            name: '基准情景值',
+            name: '情景值',
             type: 'line',
+            symbolSize: 6,
             symbol: 'circle',
             lineStyle: {
               normal: {
@@ -394,7 +397,6 @@ export default {
                 }
               }
             },
-            symbolSize: 0,
             areaStyle: {
               normal: {
                 color: new echarts.graphic.LinearGradient(
@@ -421,7 +423,7 @@ export default {
               }
             },
             // 数据为空时不传入数据
-            data: isDataEmpty ? [] : listData1
+            data: isDataEmpty ? [] : this.listData1
           }
         ],
         graphic: [graphic] // 将 graphic 配置传入图表
@@ -627,8 +629,6 @@ export default {
         .getSeconds()
         .toString()
         .padStart(2, '0')}`
-
-      // console.log(formattedDate); // 输出: 2021.01.01 00:00:00
 
       return formattedDate
     },
@@ -1011,21 +1011,15 @@ export default {
           }
         ],
         xAxis: {
-          show: true,
+          show: !isDataEmpty,
           type: 'category',
           name: '',
           nameLocation: 'end',
           nameTextStyle: {
             fontSize: 12
           },
-          inverse: false,
           splitLine: {
-            show: false,
-            lineStyle: {
-              type: 'dashed',
-              color: '',
-              width: 1
-            }
+            show: false
           },
           axisTick: {
             show: false
@@ -1033,48 +1027,44 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              type: 'solid',
-              width: 1,
-              color: '#3B6F9F'
+              color: '#DBDBDB'
             }
           },
           axisLabel: {
             margin: 13.5,
-            interval: 'auto',
-            rotate: 0,
-            fontSize: 12,
-            color: '#81BAE5'
+            fontFamily: 'ArialMT',
+            color: '#81BAE5',
+            lineHeight: 12
           },
           data: severityTime
         },
-        yAxis: [
-          {
-            show: true,
-            type: 'value',
-            name: '',
-            min: 0,
-            nameTextStyle: {
-              color: 'rgba(255,255,255,0.7)'
-            },
-            axisLine: {
-              show: false
-            },
-            axisLabel: {
-              formatter: '{value}',
-              rotate: 0,
-              textStyle: {
-                color: 'rgba(28, 158, 222, 1)'
-              }
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
-                type: 'solid',
-                color: 'rgba(0, 206, 209, 0.1)'
-              }
+        yAxis: {
+          type: 'value',
+          name: '',
+          nameTextStyle: {
+            color: 'rgba(255,255,255,0.7)'
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            formatter: '{value}',
+            rotate: 0,
+            textStyle: {
+              color: 'rgba(28, 158, 222, 1)'
             }
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: 'solid',
+              color: 'rgba(0, 206, 209, 0.1)'
+            }
+          },
+          axisTick: {
+            show: false
           }
-        ],
+        },
         series: [
           {
             name: '危急',
@@ -1175,7 +1165,10 @@ export default {
       const ruleName = []
       const severityTime = []
       let resultArray
-      console.log(this.listData4)
+
+      // 没有数据，显示 "暂无数据"
+      const myChart4 = echarts.init(this.$refs.eacherbox4)
+      myChart4.clear()
       try {
         // console.log(this.listData4.data.data)
         if (this.listData4.data.data.length > 0) {
@@ -1227,17 +1220,14 @@ export default {
       } catch (error) {
 
       }
-      console.log(ruleName)
       if (ruleName.length <= 0) {
-        // 没有数据，显示 "暂无数据"
-        const myChart4 = echarts.init(this.$refs.eacherbox4)
-
         myChart4.setOption({
           graphic: [
             {
               type: 'text',
               left: 'center',
               top: 'middle',
+              silent: true,
               style: {
                 fill: '#9d9d9d',
                 fontWeight: 'bold',
@@ -1256,8 +1246,6 @@ export default {
         return
       }
 
-      // 基于准备好的dom，初始化echarts实例
-      const myChart4 = echarts.init(this.$refs.eacherbox4)
       const colorList = ['#3CA6FF', '#EAE174', '#DC5656', '#FFA044', '#BF78C5']
       const dataList = []
       const seriesList = []
@@ -1287,10 +1275,10 @@ export default {
             }
           },
           lineStyle: {
-            width: 4
+            width: 2
           },
-          symbol: 'none',
-          symbolSize: 8
+          symbol: 'emptyCircle',
+          symbolSize: 6
         })
       }
 
@@ -1303,7 +1291,6 @@ export default {
         legend: {
           top: '6%',
           left: 100,
-
           icon: 'circle',
           textStyle: {
             fontSize: 12,
@@ -1336,7 +1323,7 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#3B6F9F'
+              color: '#DBDBDB'
             }
           },
           axisLabel: {
@@ -1356,11 +1343,6 @@ export default {
         yAxis: {
           type: 'value',
           name: '',
-          axisLabel: {
-            fontFamily: 'ArialMT',
-            color: '#81BAE5',
-            lineHeight: 12
-          },
           axisLine: {
             show: false
           },
@@ -1371,11 +1353,20 @@ export default {
               type: 'dotted'
             }
           },
+          axisLabel: {
+            show: true,
+            textStyle: {
+              color: '#81BAE5',
+              fontSize: 12
+            }
+          },
+          axisTick: {
+            show: false
+          },
           nameTextStyle: {
-            show: false,
-            color: 'white',
+            color: '#81BAE5',
             fontSize: 12,
-            fontWeight: 600
+            padding: [0, 60, 0, 0]
           }
         },
         series: seriesList
@@ -1452,7 +1443,7 @@ export default {
         font-size: 12px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
-        color: #81bae5;
+        color: #333333;
         line-height: 12px;
       }
 

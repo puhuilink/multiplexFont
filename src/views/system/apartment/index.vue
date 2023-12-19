@@ -84,7 +84,7 @@
             <a-icon type="delete" />
             删除</a>
 
-          <a-dropdown v-show="true">
+          <a-dropdown v-show="system">
             <a class="ant-dropdown-link">
               <a-icon type="double-right" style="transform: rotate(90deg);"/>
               对接系统</a>
@@ -95,12 +95,12 @@
               <a-menu-item key="2">
                 漏洞管理
               </a-menu-item>
-              <a-menu-item key="3">
+              <!--              <a-menu-item key="3">
                 SDWAN
               </a-menu-item>
               <a-menu-item key="4">
                 MV
-              </a-menu-item>
+              </a-menu-item>-->
             </a-menu>
           </a-dropdown>
           <!--          <a class="operator" @click="onDecentralization(text, record)" v-if="!!record.parentId" :disabled="operationShow(banList, record.id)" v-action:F001003004>-->
@@ -129,6 +129,7 @@ export default {
   name: 'ApartmentIndex',
   data () {
     return {
+      system: false,
       pageLoading: false,
       treeData,
       treeData2: [
@@ -454,6 +455,13 @@ export default {
     }
   },
   mounted () {
+    const proUserString = localStorage.getItem('pro__User')
+    if (proUserString) {
+      const proUser = JSON.parse(proUserString)
+      const userId = proUser.value.userId
+      this.system = (userId === '2')
+    }
+
     // 获取当前表格信息
     this.getData()
     this.getUserList()

@@ -175,15 +175,6 @@ export default {
   },
 
   methods: {
-    handleBack () {
-      // console.log('back');
-      // const str = { action: 'back' }
-      // const jsonString = JSON.stringify(str);
-      // console.log(window.$flutter_inappwebviewFn);
-      // window.$flutter_inappwebviewFn.callHandler('haha', jsonString);
-
-      this.$router.back()
-    },
     // 外网威胁
     async getPageData () {
       // 获取态势感知-外部危险总览
@@ -191,7 +182,6 @@ export default {
         // 获取态势感知-外部危险总览
         const data = await getOuterThreatOverview()
         // console.log('外网威胁')
-        // console.log(data)
         this.content[0].number = data.data.threatNum
         this.content[1].number = data.data.victimIpNum
         this.content[2].number = data.data.attackerIpNum
@@ -201,8 +191,6 @@ export default {
       // 获取态势感知-外部威胁等级分布
       const OuterThreatLevelData = await getOuterThreatLevel()
       // console.log('外部威胁等级分布')
-      // console.log(OuterThreatLevelData)
-      // 将接口数据填充到this.apiData中
       this.data = OuterThreatLevelData.data.map(item => ({
         value: item.threatNum,
         name: item.threatLevelName,
@@ -230,38 +218,36 @@ export default {
     async getGlobalRiskAPI () {
       // 获取态势感知-危机数
       const GlobalRiskData = await getGlobalRisk()
-
       // console.log('危机数')
-      // console.log(GlobalRiskData)
-
       // 获取态势感知-处置率
       const AlarmDisposeData = await getAlarmDispose()
       // console.log('处置率')
-      // console.log(AlarmDisposeData)
+
       // 获取态势感知-失陷率
       const VictimSurveyData = await getVictimSurvey()
       // console.log('失陷率')
-      // console.log(VictimSurveyData)
+
       const GlobalData = GlobalRiskData.data
       const AlarmData = AlarmDisposeData.data
       const VictimData = VictimSurveyData.data
 
-      this.objList = { GlobalData, AlarmData, VictimData }
-      // console.log(this.objList)
+      if (GlobalData) {
+        this.objList = { GlobalData, AlarmData, VictimData }
+      }
     },
     // 内网威胁
     async interiorAPI () {
       // 获取态势感知-内部危险总览
       const InnerThreatOverviewData = await getInnerThreatOverview()
       // console.log('内网威胁情况')
-      // console.log(InnerThreatOverviewData)
+
       this.contentTwo[0].number = InnerThreatOverviewData.data.threatWarning
       this.contentTwo[1].number = InnerThreatOverviewData.data.attackerCount
       this.contentTwo[2].number = InnerThreatOverviewData.data.victimCount
       // 获取态势感知-内部威胁等级分布
       const InnerThreatLevelData = await getInnerThreatLevel()
       // console.log('内部威胁等级分布')
-      // console.log(InnerThreatLevelData)
+
       const nameList = ['低危', '中危', '高危', '危急']
       this.data1 = InnerThreatLevelData.data.map((item, index) => ({
         value: item.count,
