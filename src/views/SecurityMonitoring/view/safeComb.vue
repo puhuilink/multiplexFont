@@ -1,13 +1,19 @@
 <template>
   <div class="SoruceBox">
-    <a-tabs :default-active-key="disabled?'2':'1'">
-      <a-tab-pane key="1" tab="集团" v-if="!disabled">
-        <safeSoruce></safeSoruce>
-      </a-tab-pane>
-      <a-tab-pane key="2" tab="二级单位" force-render>
-        <safeTouchCopy></safeTouchCopy>
-      </a-tab-pane>
-    </a-tabs>
+    <div v-if="!disabled">
+      <a-tabs :default-active-key="'1'">
+        <a-tab-pane key="1" tab="集团">
+          <safeSoruce></safeSoruce>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="二级单位" force-render>
+          <safeTouchCopy></safeTouchCopy>
+        </a-tab-pane>
+      </a-tabs>
+    </div>
+
+    <div v-if="disabled">
+      <safeTouchCopy></safeTouchCopy>
+    </div>
   </div>
 </template>
 

@@ -28,9 +28,9 @@
           <div class="twoEacherBox">
             <div ref="eacherbox21" class="eacherBox echarts"></div>
             <div class="eacherBoxfu">
-              <!--              <div class="textTime">
-                <div class="textTime_1">时间范围  <div>{{11}}</div></div>
-              </div>-->
+              <div class="textTime">
+                时间范围：<div style="font-weight: 500">{{ listData22StartTime }}-{{ listData22EndTime }}</div>
+              </div>
               <div ref="eacherbox22" class="eacherBox echarts" id="eacherBoxid"></div>
             </div>
           </div>
@@ -54,7 +54,6 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import echarts from 'echarts'
 import ajax from 'axios'
-import _ from 'lodash'
 import { axios } from '@/utils/request'
 // import { over } from '@/utils/request'
 export default {
@@ -72,7 +71,14 @@ export default {
       listData2: [],
       listData22: [],
       listData3: [],
-      listData4: []
+      listData4: [],
+      listData22EndTime: '0-0-0-0 0:0:0',
+      listData22StartTime: '0-0-0-0 0:0:0',
+      iocAlarm_total: null,
+      outAttackAlarm_total: null,
+      movementAlarm_total: null,
+      assetOutreachAlarm_total: null,
+      maliciousFileAlarm_total: null
     }
   },
 
@@ -188,17 +194,30 @@ export default {
           this.listData1 = []
           this.listTime1 = []
         }
-
-        if (alarm.data.code) {
+        console.log(!!alarm.data.code)
+        console.log(alarm.data.msg === 'OK')
+        if (alarm.data.code && alarm.data.msg === 'OK') {
           this.listData2 = alarm.data.data.alarmSeverityGroupStat
           this.listData22 = [alarm.data.data.outAttackAlarm,
             alarm.data.data.movementAlarm,
             alarm.data.data.assetOutreachAlarm,
             alarm.data.data.iocAlarm,
             alarm.data.data.maliciousFileAlarm]
+          this.listData22StartTime = this.timeformat(alarm.data.data.originalStartTime * 1)
+          this.listData22EndTime = this.timeformat(alarm.data.data.originalEndTime * 1)
+
+          this.iocAlarm_total = alarm.data.data.iocAlarm.total
+          this.outAttackAlarm_total = alarm.data.data.outAttackAlarm.total
+          this.movementAlarm_total = alarm.data.data.movementAlarm.total
+          this.assetOutreachAlarm_total = alarm.data.data.assetOutreachAlarm.total
+          this.maliciousFileAlarm_total = alarm.data.data.maliciousFileAlarm.total
         } else {
+          console.log('false')
+          this.outAttackAlarm_total = false
           this.listData2 = []
           this.listData22 = []
+          this.listData22StartTime = '0-0-0-0 0:0:0'
+          this.listData22EndTime = '0-0-0-0 0:0:0'
         }
 
         // console.log('告警危害等级分布', Last7Alarm)
@@ -222,6 +241,9 @@ export default {
         this.listData22 = []
         this.listData3 = []
         this.listData4 = []
+        this.outAttackAlarm_total = false
+        this.listData22StartTime = '0-0-0-0 0:0:0'
+        this.listData22EndTime = '0-0-0-0 0:0:0'
       } finally {
         this.loading = false
       }
@@ -274,6 +296,25 @@ export default {
 
       // 判断数据是否为空
       const isDataEmpty = this.listData1.length === 0
+      let datacoords = []
+      if (this.listData1.length > 0) {
+        // for (let i = 0; i < this.listData1.length - 1; i++) {
+        //   datacoords.push({
+        //     coords: [
+        //       [this.listTime1[i], this.listData1[i]],
+        //       [this.listTime1[i + 1], this.listData1[i + 1]]
+        //     ]
+        //   })
+        // }
+        datacoords = [
+          {
+            coords: [
+              [this.listTime1[0], this.listData1[0]],
+              [this.listTime1[this.listTime1.length - 1], this.listData1[this.listTime1.length - 1]]
+            ]
+          }
+        ]
+      }
 
       // 配置 graphic，用于显示 "暂无数据"
       const graphic = {
@@ -367,7 +408,8 @@ export default {
             },
             axisTick: {
               show: false
-            }
+            },
+            data: this.listData1
           },
         series: [
           {
@@ -425,6 +467,36 @@ export default {
             // 数据为空时不传入数据
             data: isDataEmpty ? [] : this.listData1
           }
+
+          /* // 流光代码
+          {
+            showSymbol: false,
+            type: 'lines',
+            smooth: false,
+            coordinateSystem: 'cartesian2d',
+            zlevel: 1,
+            effect: {
+              show: true,
+              smooth: true,
+              period: 3,
+              symbolSize: 5,
+              symbol: 'arrow',
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: 'rgba(0, 105, 194, 1)' },
+                { offset: 0.5, color: 'rgba(0, 105, 194, 0.5)' },
+                { offset: 1, color: 'rgba(0, 105, 194, 0.1)' }
+              ]),
+              trailLength: 0.1
+            },
+            lineStyle: {
+              color: '#fff',
+              width: 1,
+              opacity: 0,
+              curveness: 0,
+              cap: 'round'
+            },
+            data: datacoords
+          } */
         ],
         graphic: [graphic] // 将 graphic 配置传入图表
       })
@@ -616,21 +688,10 @@ export default {
       }
     },
 
-    // 处理时间数据格式为2021.01.01 00:00:00
+    // 处理时间数据格式为2023-12-21 06:02:17
     timeformat (mytime) {
-      const originalDate = new Date(mytime)
-
-      const formattedDate = `${originalDate.getFullYear()}.${(originalDate.getMonth() + 1)
-        .toString()
-        .padStart(2, '0')}.${originalDate.getDate().toString().padStart(2, '0')} ${originalDate
-        .getHours()
-        .toString()
-        .padStart(2, '0')}:${originalDate.getMinutes().toString().padStart(2, '0')}:${originalDate
-        .getSeconds()
-        .toString()
-        .padStart(2, '0')}`
-
-      return formattedDate
+      const date = new Date(mytime)
+      return date.toISOString().slice(0, 19).replace('T', ' ')
     },
     // 未处置---------------
     drawPolicitalStatus22 () {
@@ -661,7 +722,9 @@ export default {
       const dataList = [data1Arr, data2Arr, data3Arr, data4Arr]
       const colorList = ['#DC5656', '#FFA044', '#EAE174', '#3CA6FF', '#002F54']
       const seriesList = []
-      for (let index = 0; index < nameData.length; index++) {
+      const list_total = this.outAttackAlarm_total ? [this.outAttackAlarm_total, this.movementAlarm_total, this.assetOutreachAlarm_total, this.iocAlarm_total, this.maliciousFileAlarm_total] : []
+      const maxNumber = Math.max(...list_total)
+      for (let index = 0; index < threatLevels.length; index++) {
         seriesList.push({
           // name: dataName[0] + '-' + dataName[1],
           stack: 'bar',
@@ -681,20 +744,41 @@ export default {
             focus: 'series'
           },
           showBackground: true,
-          /*   backgroundStyle: {单个柱形图背景色
-              normal: {
-                color: '#000',
-              }
-          }, */
+          backgroundStyle: {
+            color: '#F1F1F1' // 柱形图中柱子的背景颜色
+          },
           label: {
-            show: false, // 图上的数据(例如柱形图最上面的展示数据)
-            position: 'right',
-            color: '#A0AEC0',
-            fontFamily: 'HarmonyOS Sans-Regular'
+            show: false // 图上的数据(例如柱形图最上面的展示数据)
           }
         })
       }
+      seriesList.push({
+        symbolBoundingData: maxNumber * 1.1,
+        itemStyle: {
+          normal: {
+            color: 'none' // 设置柱形图的颜色为透明
+          },
+          emphasis: {
+            color: 'none' // 设置柱形图的颜色为透明
+          }
+        },
 
+        type: 'pictorialBar',
+        barWidth: '12', // 柱型宽度
+        data: list_total,
+        emphasis: {
+          focus: 'series'
+        },
+        showBackground: true,
+        label: {
+          show: true, // 图上的数据(例如柱形图最上面的展示数据)
+          position: 'right',
+          distance: 1, // 向右偏移位置
+          color: '#333',
+          fontFamily: 'HarmonyOS Sans-Regular'
+        }
+      })
+      console.log(seriesList)
       const option = {
         tooltip: {
           trigger: 'axis', // 悬停
@@ -748,7 +832,7 @@ export default {
 
         grid: {
           left: '0',
-          right: '37',
+          right: '150',
           bottom: '0%', // 下边距,
           top: '5%',
           containLabel: true
@@ -798,6 +882,29 @@ export default {
               }
             }
           }
+          // y轴总和
+          /* {
+            type: 'category',
+            data: [50, 50, 100, 20, 60],
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: false
+            },
+            axisLabel: {
+              inside: true,
+              align: 'right',
+              // verticalAlign: 'bottom',
+              padding: [0, 0, 0, -50],
+              textStyle: {
+                color: '#81BAE5',
+                fontSize: '12',
+                fontFamily: 'PingFangSC-Semibold, PingFang SC',
+                fonWeight: 600
+              }
+            }
+          } */
         ],
 
         series: seriesList.map((item) => {
@@ -830,6 +937,17 @@ export default {
       }
 
       myChart22.setOption({
+        // backgroundColor: option.backgroundColor,
+        tooltip: option.tooltip,
+        // legend: option.legend,
+        grid: option.grid,
+        xAxis: option.xAxis,
+        yAxis: option.yAxis,
+        series: optionWithData,
+        // 将 graphic 配置传入图表
+        graphic: [graphic]
+      })
+      console.log({
         backgroundColor: option.backgroundColor,
         tooltip: option.tooltip,
         // legend: option.legend,
@@ -840,7 +958,6 @@ export default {
         // 将 graphic 配置传入图表
         graphic: [graphic]
       })
-
       window.addEventListener('resize', function () {
         myChart22.resize()
       })
@@ -1432,20 +1549,20 @@ export default {
     }
 
     .eacherBoxfu {
-      width: 330px;
+      //width: 330px;
+      width: 440px;
     }
 
     .textTime {
       // width: 100px;
-      height: 38px;
+      height: 20px;
+      display: flex;
 
-      .textTime_1 {
-        font-size: 12px;
+        font-size: 14px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
         color: #333333;
-        line-height: 12px;
-      }
+        line-height: 20px;
 
       /* .textTime_2 {
         width: 288px;
@@ -1481,8 +1598,8 @@ export default {
 //   // text-align: center;
 // }
 #eacherBoxid {
-  height: 280px;
-  width: 330px;
+  height: 260px;
+  width: 430px;
 }
 
 .echarts {
