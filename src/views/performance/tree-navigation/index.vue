@@ -183,7 +183,9 @@ export default {
 
 <style lang="less">
 .TreeNavigation {
-
+  .ant-tabs-nav .ant-tabs-tab {
+    padding: 1px !important;
+  }
   &__col {
     padding: 0 8px;
   }

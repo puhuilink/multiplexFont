@@ -171,13 +171,13 @@ export const asyncRouterMap = [
         name: 'performance',
         redirect: '/performance/tree-navigation',
         component: RouteView,
-        meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt', permission: ['F004'] },
+        meta: { title: '性能管理', keepAlive: true, icon: 'thunderbolt' },
         children: [
           {
             path: '/performance/tree-navigation',
             name: 'TreeNavigation',
             component: () => import('@/views/performance/tree-navigation/index'),
-            meta: { title: '树形导航图', keepAlive: true, permission: ['F004001'] }
+            meta: { title: '树形导航图', keepAlive: true }
           },
           // {
           //   path: 'http://10.201.53.101/doc/page/login.asp?_1572316965780',
@@ -192,22 +192,22 @@ export const asyncRouterMap = [
           {
             path: 'http://10.1.19.15/#/login',
             name: '北京Pigoss1',
-            meta: { title: '北京Pigoss1', target: '_blank', permission: ['F004004'] }
+            meta: { title: '北京Pigoss1', target: '_blank' }
           },
           {
             path: 'http://10.1.19.16/#/login',
             name: '北京Pigoss2',
-            meta: { title: '北京Pigoss2', target: '_blank', permission: ['F004004'] }
+            meta: { title: '北京Pigoss2', target: '_blank' }
           },
           {
             path: 'http://10.201.22.38/#/login',
             name: '厦门Pigoss1',
-            meta: { title: '厦门Pigoss1', target: '_blank', permission: ['F004008'] }
+            meta: { title: '厦门Pigoss1', target: '_blank' }
           },
           {
             path: 'http://10.201.22.39/#/login',
             name: '厦门Pigoss2',
-            meta: { title: '厦门Pigoss2', target: '_blank', permission: ['F004008'] }
+            meta: { title: '厦门Pigoss2', target: '_blank' }
           },
           // {
           //   path: 'http://10.1.1.10/',
@@ -219,7 +219,7 @@ export const asyncRouterMap = [
             path: 'http://10.201.52.2/',
             name: '厦门动环',
             // 东环不存在权限配置项，则和主视图同等权重
-            meta: { title: '厦门动环', target: '_blank', permission: ['F004010'] }
+            meta: { title: '厦门动环', target: '_blank' }
           },
           // {
           //   path: 'http://10.1.1.192:7900/#/ccc?u=admin&p=admin',
@@ -229,12 +229,12 @@ export const asyncRouterMap = [
           {
             path: 'http://10.201.51.30/zh-cn/apc/dashboard/spv/app1/?token=8e6c8bc1b377bf65e1817f2d90a808cc',
             name: 'NPM',
-            meta: { title: '4A告警监控', target: '_blank', permission: ['F004006'] }
+            meta: { title: '4A告警监控', target: '_blank' }
           },
           {
             path: 'http://10.1.13.34/#/login',
             name: 'AWX',
-            meta: { title: 'AWX', target: '_blank', permission: ['F004005'] }
+            meta: { title: 'AWX', target: '_blank' }
           }
         ]
       },
@@ -368,7 +368,7 @@ export const asyncRouterMap = [
             name: 'PatrolConfig',
             redirect: '/patrol/config/path',
             component: RouteView,
-            meta: { title: '巡更配置', keepAlive: true, permission: ['F010001'] },
+            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
             children: [{
               path: '/patrol/config/path',
               name: 'PatrolConfigPath',
@@ -484,129 +484,129 @@ export const asyncRouterMap = [
           }
         ]
       },
-      // {
-      //   path: '/alertManagerPlatform',
-      //   name: 'AlertManagerPlatform',
-      //   hidden: false,
-      //   component: RouteView,
-      //   redirect: '/alertManagerPlatform/config',
-      //   meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F013'] },
-      //   children: [
-      //     // {
-      //     //   path: '/alarm/profile',
-      //     //   name: 'profile',
-      //     //   component: () => import('@/views/profile/index'),
-      //     //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
-      //     // },
-      //     {
-      //       path: '/alertManagerPlatform/integration',
-      //       name: 'Integration',
-      //       hidden: false,
-      //       component: RouteView,
-      //       redirect: '/alertManagerPlatform/integration/platform',
-      //       meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F013002'] },
-      //       children: [
-      //         {
-      //           path: '/alertManagerPlatform/integration/newAlertSource',
-      //           name: 'NewAlertSource',
-      //           component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-      //           meta: { title: '新建数据源' },
-      //           hidden: true,
-      //           props: route => route.query
-      //         },
-      //         {
-      //           path: '/alertManagerPlatform/integration/updateAlertSource',
-      //           name: 'UpdateAlertSource',
-      //           component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-      //           meta: { title: '修改数据源' },
-      //           hidden: true,
-      //           props: route => route.query
-      //         },
-      //         {
-      //           path: '/alertManagerPlatform/integration/platform',
-      //           name: 'platform',
-      //           component: () => import('@/views/alert-manager/integration/index'),
-      //           meta: { title: '集成' }
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       path: '/alertManagerPlatform/config',
-      //       name: 'AlertConfig',
-      //       hidden: false,
-      //       component: RouteView,
-      //       redirect: '/alertManagerPlatform/config/deliver',
-      //       meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F013001'] },
-      //       children: [
-      //         {
-      //           path: '/alertManagerPlatform/config/deliver',
-      //           name: 'Deliver',
-      //           component: () => import('@/views/alert-manager/config/index'),
-      //           meta: { title: '分派策略', permission: ['F013001001'] }
-      //         },
-      //         {
-      //           path: '/alertManagerPlatform/config/notifyRule',
-      //           name: 'NotifyRule',
-      //           component: () => import('@/views/alert-manager/config/notifyRule'),
-      //           meta: { title: '通知策略', permission: ['F013001002'] }
-      //         },
-      //         {
-      //           path: '/alertManagerPlatform/config/shieldRule',
-      //           name: 'ShieldRule',
-      //           component: () => import('@/views/alert-manager/config/shieldRule'),
-      //           meta: { title: '屏蔽规则' }
-      //         },
-      //         // 通知组页
-      //         {
-      //           path: '/alertManagerPlatform/config/notified-group',
-      //           component: () => import('@/views/notificationGroup/index'),
-      //           meta: { title: '通知组管理', keepAlive: true, permission: ['F013001003'] },
-      //           name: 'notice-group'
-      //         },
-      //
-      //         // 模板管理
-      //         {
-      //           path: '/alertManagerPlatform/config/notice-template',
-      //           component: () => import('@/views/alert-manager/noticeTemplate/index'),
-      //           meta: { title: '模板管理', keepAlive: true, permission: ['F013001004'] },
-      //           name: 'notice-template'
-      //         },
-      //
-      //         // 排班
-      //         {
-      //           path: '/alertManagerPlatform/work-manage',
-      //           component: () => import('@/views/work-manage/index'),
-      //           meta: { title: '排班管理', keepAlive: true, permission: ['F013001005'] },
-      //           name: 'work-manage'
-      //         },
-      //
-      //         // 自定义标签
-      //         {
-      //           path: '/alertManagerPlatform/self-Defining',
-      //           component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
-      //           meta: { title: '自定义标签', keepAlive: true, permission: ['F013001005'] },
-      //           name: 'self-Tag'
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       path: '/alertManagerPlatform/alarm',
-      //       name: 'UnionAlarm',
-      //       hidden: false,
-      //       component: RouteView,
-      //       redirect: '/alertManagerPlatform/alarm/index',
-      //       meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F013003'] },
-      //       children: [
-      //         {
-      //           path: '/alertManagerPlatform/alarm/index',
-      //           component: () => import('@/views/union-alaram/index'),
-      //           meta: { title: '告警信息', keepAlive: true },
-      //           name: 'union'
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
+      {
+        path: '/alertManagerPlatform',
+        name: 'AlertManagerPlatform',
+        hidden: false,
+        component: RouteView,
+        redirect: '/alertManagerPlatform/config',
+        meta: { title: '统一告警', keepAlive: true, icon: 'bug' },
+        children: [
+          // {
+          //   path: '/alarm/profile',
+          //   name: 'profile',
+          //   component: () => import('@/views/profile/index'),
+          //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
+          // },
+          {
+            path: '/alertManagerPlatform/integration',
+            name: 'Integration',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/integration/platform',
+            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit' },
+            children: [
+              {
+                path: '/alertManagerPlatform/integration/newAlertSource',
+                name: 'NewAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '新建数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
+                path: '/alertManagerPlatform/integration/updateAlertSource',
+                name: 'UpdateAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '修改数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
+                path: '/alertManagerPlatform/integration/platform',
+                name: 'platform',
+                component: () => import('@/views/alert-manager/integration/index'),
+                meta: { title: '集成' }
+              }
+            ]
+          },
+          {
+            path: '/alertManagerPlatform/config',
+            name: 'AlertConfig',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/config/deliver',
+            meta: { title: '告警配置', keepAlive: true, icon: 'setting' },
+            children: [
+              {
+                path: '/alertManagerPlatform/config/deliver',
+                name: 'Deliver',
+                component: () => import('@/views/alert-manager/config/index'),
+                meta: { title: '分派策略' }
+              },
+              {
+                path: '/alertManagerPlatform/config/notifyRule',
+                name: 'NotifyRule',
+                component: () => import('@/views/alert-manager/config/notifyRule'),
+                meta: { title: '通知策略' }
+              },
+              {
+                path: '/alertManagerPlatform/config/shieldRule',
+                name: 'ShieldRule',
+                component: () => import('@/views/alert-manager/config/shieldRule'),
+                meta: { title: '屏蔽规则' }
+              },
+              // 通知组页
+              {
+                path: '/alertManagerPlatform/config/notified-group',
+                component: () => import('@/views/notificationGroup/index'),
+                meta: { title: '通知组管理', keepAlive: true },
+                name: 'notice-group'
+              },
+
+              // 模板管理
+              {
+                path: '/alertManagerPlatform/config/notice-template',
+                component: () => import('@/views/alert-manager/noticeTemplate/index'),
+                meta: { title: '模板管理', keepAlive: true },
+                name: 'notice-template'
+              },
+
+              // 排班
+              {
+                path: '/alertManagerPlatform/work-manage',
+                component: () => import('@/views/work-manage/index'),
+                meta: { title: '排班管理', keepAlive: true },
+                name: 'work-manage'
+              },
+
+              // 自定义标签
+              {
+                path: '/alertManagerPlatform/self-Defining',
+                component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
+                meta: { title: '自定义标签', keepAlive: true },
+                name: 'self-Tag'
+              }
+            ]
+          },
+          {
+            path: '/alertManagerPlatform/alarm',
+            name: 'UnionAlarm',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/alarm/index',
+            meta: { title: '告警管理', keepAlive: true, icon: 'alert' },
+            children: [
+              {
+                path: '/alertManagerPlatform/alarm/index',
+                component: () => import('@/views/union-alaram/index'),
+                meta: { title: '告警信息', keepAlive: true },
+                name: 'union'
+              }
+            ]
+          }
+        ]
+      },
       // capacity
       // {
       //   path: '/prediction',
@@ -776,57 +776,136 @@ export const asyncRouterMap = [
       //   ]
       // },
       // 二级单位
-      // {
-      //   path: '/secondSys',
-      //   name: 'secondSys',
-      //   redirect: 'secondSys/Zhenhua',
-      //   component: RouteView,
-      //   meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
-      //   children: [
-      //     {
-      //       path: '/secondSys/zhenhua',
-      //       name: '振华重工',
-      //       component: () => import('@/views/secondSys/zhenhua'),
-      //       meta: { title: '振华重工' }
-      //     },
-      //     {
-      //       path: '/secondSys/lujian',
-      //       name: '路建',
-      //       component: () => import('@/views/secondSys/lujian'),
-      //       meta: { title: '路建' }
-      //     },
-      //     {
-      //       path: '/secondSys/erhangju',
-      //       name: '二航局',
-      //       component: () => import('@/views/secondSys/erhangju'),
-      //       meta: { title: '二航局' }
-      //     },
-      //     {
-      //       path: '/secondSys/gangwan',
-      //       name: '港湾',
-      //       component: () => import('@/views/secondSys/gangwan'),
-      //       meta: { title: '港湾' }
-      //     },
-      //     {
-      //       path: '/secondSys/yigongju',
-      //       name: '一公局',
-      //       component: () => import('@/views/secondSys/yigongju'),
-      //       meta: { title: '一公局' }
-      //     },
-      //     {
-      //       path: '/secondSys/luqiao',
-      //       name: 'luqiao',
-      //       component: () => import('@/views/secondSys/luqiao'),
-      //       meta: { title: '路桥' }
-      //     },
-      //     {
-      //       path: '/secondSys/ergongju',
-      //       name: '二公局',
-      //       component: () => import('@/views/secondSys/ergongju'),
-      //       meta: { title: '二公局' }
-      //     }
-      //   ]
-      // },
+      {
+        path: '/secondSys',
+        name: 'secondSys',
+        hidden: true,
+        redirect: 'secondSys/Zhenhua',
+        component: RouteView,
+        meta: { title: '二级单位', keepAlive: true, icon: 'usergroup-delete', permission: 'F012' },
+        children: [
+          {
+            path: '/secondSys/zhenhua',
+            name: '振华重工',
+            component: () => import('@/views/secondSys/zhenhua'),
+            meta: { title: '振华重工' }
+          },
+          {
+            path: '/secondSys/lujian',
+            name: '路建',
+            component: () => import('@/views/secondSys/lujian'),
+            meta: { title: '路建' }
+          },
+          {
+            path: '/secondSys/erhangju',
+            name: '二航局',
+            component: () => import('@/views/secondSys/erhangju'),
+            meta: { title: '二航局' }
+          },
+          {
+            path: '/secondSys/gangwan',
+            name: '港湾',
+            component: () => import('@/views/secondSys/gangwan'),
+            meta: { title: '港湾' }
+          },
+          {
+            path: '/secondSys/yigongju',
+            name: '一公局',
+            component: () => import('@/views/secondSys/yigongju'),
+            meta: { title: '一公局' }
+          },
+          {
+            path: '/secondSys/luqiao',
+            name: 'luqiao',
+            component: () => import('@/views/secondSys/luqiao'),
+            meta: { title: '路桥' }
+          },
+          {
+            path: '/secondSys/ergongju',
+            name: '二公局',
+            component: () => import('@/views/secondSys/ergongju'),
+            meta: { title: '二公局' }
+          }
+        ]
+      },
+      // 安全监控
+      {
+        path: '/SecurityMonitoring',
+        name: 'SecurityMonitoring',
+        redirect: '/SecurityMonitoring/EmergencyManagement',
+        component: RouteView,
+        meta: { title: '安全监控', keepAlive: true, icon: 'monitor', permission: 'F020' },
+        children: [
+          {
+            path: '/SecurityMonitoring/SituationalAwareness',
+            name: 'SituationalAwareness',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '安全态势感知' },
+            component: RouteView,
+            redirect: '/SecurityMonitoring/SituationalAwareness/Manage',
+            children: [{
+              path: '/SecurityMonitoring/SituationalAwareness/Manage',
+              name: 'Weakness',
+              component: () => import('@/views/SecurityMonitoring/view/safeTouch'),
+              meta: { title: '安全态势感知管理' }
+            }]
+          },
+          {
+            path: '/SecurityMonitoring/LeakSummary',
+            name: 'LeakSummary',
+            redirect: '/SecurityMonitoring/LeakSummary/Manage',
+            // component: () => import('@/views/user/settings/index'),
+            meta: { title: '漏洞统计' },
+            component: RouteView,
+            children: [{
+              path: '/SecurityMonitoring/LeakSummary/Manage',
+              name: 'Manage',
+              component: () => import('@/views/SecurityMonitoring/view/leakSummary'),
+              meta: { title: '漏洞统计管理' }
+            }]
+          },
+          {
+            path: '/SecurityMonitoring/EmergencyManagement',
+            name: 'Emergency',
+            redirect: '/SecurityMonitoring/EmergencyManagement/BanList',
+            component: RouteView,
+            children: [{
+              path: '/SecurityMonitoring/EmergencyManagement/BanList',
+              name: 'BanList',
+              component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+              meta: { title: '一键封禁列表' }
+            }],
+            meta: { title: '应急处理', permission: 'F020001' }
+          }
+          // {
+          //   path: '/SecurityMonitoring/LeakSummary',
+          //   name: 'LeakSummary',
+          //   // component: () => import('@/views/user/PwdChange'),
+          //   meta: { title: '漏洞统计' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/SituationalAwareness',
+          //   name: 'SituationalAwareness',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '态势感知' }
+          // },
+          // {
+          //   path: '/SecurityMonitoring/EmergencyManagement',
+          //   name: 'EmergencyManagement',
+          //   // component: () => import('@/views/user/settings/index'),
+          //   meta: { title: '应急处理' },
+          //   children: [
+          //     {
+          //       path: '/SecurityMonitoring/EmergencyManagement/BanList',
+          //       name: 'BanList',
+          //       // component: () => import('@/views/SecurityMonitoring/EmergencyManagement/BanList/index'),
+          //       component: () => import('@/views/user/PwdChange'),
+          //       meta: { title: '一键封禁列表' }
+          //     }
+          //   ]
+          // }
+        ]
+      },
       // system
       {
         path: '/system',
@@ -835,30 +914,6 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['F001'] },
         children: [
-          // {
-          //   path: '/system/user',
-          //   name: 'User',
-          //   component: () => import('@/views/system/user/index'),
-          //   meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
-          // },
-          {
-            path: '/system/group',
-            name: 'Group',
-            component: () => import('@/views/system/apartment/index'),
-            meta: { title: '组织机构', keepAlive: true, permission: ['F001003'] }
-          },
-          // {
-          //   path: '/system/group',
-          //   name: 'Group',
-          //   component: () => import('@/views/system/group/index'),
-          //   meta: { title: '工作组管理', keepAlive: true, permission: ['F001002'] }
-          // },
-          {
-            path: '/system/role',
-            name: 'Role',
-            component: () => import('@/views/system/role/index'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['F001002'] }
-          },
           {
             path: '/system/user',
             name: 'User',
@@ -983,11 +1038,6 @@ export const constantRouterMap = [
     name: '600',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600')
   }
-  /* {
-    path: '/player',
-    name: 'player',
-    component: () => import('@/views/SecurityMonitoring/view/player')
-  } */
 
 ]
 
