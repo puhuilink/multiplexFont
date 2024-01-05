@@ -55,8 +55,8 @@
       />
 
       <!-- layout content -->
-      <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }" :class="!showTab?'tab_fix':''">
-        <multi-tab v-if="showTab"></multi-tab>
+      <a-layout-content :style="{ height: '100%', margin: '5px 10px 0', paddingTop: '20px' }">
+        <!--        <multi-tab v-if="showTab"></multi-tab>-->
         <transition name="page-transition">
           <route-view />
         </transition>
@@ -187,8 +187,6 @@ export default {
   padding-top: 66px !important;
   &>:last-child{
     background: #fff;
-    border-top: 1px solid #004FA5 !important;
-    border-bottom: 1px solid #004FA5 !important;
     padding-top: 23px !important;
     >form>div{
       width: 100% !important;

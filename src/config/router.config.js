@@ -84,87 +84,87 @@ export const asyncRouterMap = [
       },
 
       // alarm
-      {
-        path: '/alarm',
-        name: 'alarm',
-        redirect: '/alarm/monitor',
-        component: RouteView,
-        meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F003'] },
-        children: [
-          {
-            path: '/alarm/monitor',
-            name: 'AlarmMonitor',
-            component: () => import('@/views/alarm/monitor/index'),
-            meta: { title: '告警监控', keepAlive: true, permission: ['F003001'] }
-          },
-          {
-            path: '/alarm/log',
-            component: RouteView,
-            meta: { title: '告警记录', keepAlive: true, permission: ['F003002'] },
-            redirect: '/alarm/log/alarm',
-            children: [
-              {
-                path: '/alarm/log/history',
-                name: 'AlarmLogHistory',
-                component: () => import('@/views/alarm/log/history/index'),
-                meta: { title: '历史告警', keepAlive: true, permission: ['F003002001'] }
-              },
-              {
-                path: '/alarm/log/forward',
-                name: 'AlarmLogForward',
-                component: () => import('@/views/alarm/log/forward/index'),
-                meta: { title: '通知记录', keepAlive: true, permission: ['F003002002'] }
-              }
-            ]
-          },
-          {
-            path: '/alarm/config',
-            name: 'AlarmConfig',
-            component: RouteView,
-            meta: { title: '告警配置', keepAlive: true, permission: ['F003003'] },
-            children: [
-              {
-                path: '/alarm/config/strategy',
-                name: 'AlarmStrategy',
-                component: () => import('@/views/alarm/config/strategy/index'),
-                meta: { title: '阈值规则', keepAlive: true, permission: ['F003003001'] }
-              },
-              // {
-              //   path: '/alarm/config/describe-temp',
-              //   name: 'DescribeTemp',
-              //   component: () => import('@/views/alarm/config/describe-temp/index'),
-              //   meta: { title: '告警描述模板', keepAlive: true, permission: [ 'F003003003' ] }
-              // },
-              {
-                path: '/alarm/config/forward-temp',
-                name: 'ForwardTemp',
-                component: () => import('@/views/alarm/config/forward-temp/index'),
-                meta: { title: '告警通知模板', keepAlive: true, permission: ['F003003002'] }
-              },
-              // 前转规则合并
-              // {
-              //   path: '/alarm/config/forward-rules',
-              //   name: 'ForwardRules',
-              //   component: () => import('@/views/alarm/config/forward-rules/index'),
-              //   meta: { title: '告警通知规则', keepAlive: true, permission: ['F003003003'] }
-              // },
-              {
-                path: '/alarm/config/rules',
-                name: 'AlarmRules',
-                component: () => import('@/views/alarm/config/rules/index'),
-                meta: { title: '告警规则', keepAlive: true, permission: ['F003003004'] }
-              },
-              {
-                path: '/alarm/config/forward-bind',
-                name: 'ForwardBind',
-                component: () => import('@/views/alarm/config/forward-bind/index'),
-                // TODO 告警绑定没加权限位
-                meta: { title: '告警绑定', keepAlive: true, permission: ['F003003005'] }
-              }
-            ]
-          }
-        ]
-      },
+      // {
+      //   path: '/alarm',
+      //   name: 'alarm',
+      //   redirect: '/alarm/monitor',
+      //   component: RouteView,
+      //   meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F003'] },
+      //   children: [
+      //     {
+      //       path: '/alarm/monitor',
+      //       name: 'AlarmMonitor',
+      //       component: () => import('@/views/alarm/monitor/index'),
+      //       meta: { title: '告警监控', keepAlive: true, permission: ['F003001'] }
+      //     },
+      //     {
+      //       path: '/alarm/log',
+      //       component: RouteView,
+      //       meta: { title: '告警记录', keepAlive: true, permission: ['F003002'] },
+      //       redirect: '/alarm/log/alarm',
+      //       children: [
+      //         {
+      //           path: '/alarm/log/history',
+      //           name: 'AlarmLogHistory',
+      //           component: () => import('@/views/alarm/log/history/index'),
+      //           meta: { title: '历史告警', keepAlive: true, permission: ['F003002001'] }
+      //         },
+      //         {
+      //           path: '/alarm/log/forward',
+      //           name: 'AlarmLogForward',
+      //           component: () => import('@/views/alarm/log/forward/index'),
+      //           meta: { title: '通知记录', keepAlive: true, permission: ['F003002002'] }
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       path: '/alarm/config',
+      //       name: 'AlarmConfig',
+      //       component: RouteView,
+      //       meta: { title: '告警配置', keepAlive: true, permission: ['F003003'] },
+      //       children: [
+      //         {
+      //           path: '/alarm/config/strategy',
+      //           name: 'AlarmStrategy',
+      //           component: () => import('@/views/alarm/config/strategy/index'),
+      //           meta: { title: '阈值规则', keepAlive: true, permission: ['F003003001'] }
+      //         },
+      //         // {
+      //         //   path: '/alarm/config/describe-temp',
+      //         //   name: 'DescribeTemp',
+      //         //   component: () => import('@/views/alarm/config/describe-temp/index'),
+      //         //   meta: { title: '告警描述模板', keepAlive: true, permission: [ 'F003003003' ] }
+      //         // },
+      //         {
+      //           path: '/alarm/config/forward-temp',
+      //           name: 'ForwardTemp',
+      //           component: () => import('@/views/alarm/config/forward-temp/index'),
+      //           meta: { title: '告警通知模板', keepAlive: true, permission: ['F003003002'] }
+      //         },
+      //         // 前转规则合并
+      //         // {
+      //         //   path: '/alarm/config/forward-rules',
+      //         //   name: 'ForwardRules',
+      //         //   component: () => import('@/views/alarm/config/forward-rules/index'),
+      //         //   meta: { title: '告警通知规则', keepAlive: true, permission: ['F003003003'] }
+      //         // },
+      //         {
+      //           path: '/alarm/config/rules',
+      //           name: 'AlarmRules',
+      //           component: () => import('@/views/alarm/config/rules/index'),
+      //           meta: { title: '告警规则', keepAlive: true, permission: ['F003003004'] }
+      //         },
+      //         {
+      //           path: '/alarm/config/forward-bind',
+      //           name: 'ForwardBind',
+      //           component: () => import('@/views/alarm/config/forward-bind/index'),
+      //           // TODO 告警绑定没加权限位
+      //           meta: { title: '告警绑定', keepAlive: true, permission: ['F003003005'] }
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
 
       // performance
       {
