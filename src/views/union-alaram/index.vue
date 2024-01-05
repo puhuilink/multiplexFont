@@ -419,7 +419,7 @@ export default {
     const navContainer = document.querySelector('.unionAlarm .ant-tabs-nav-container')
     if (navContainer) {
       // 更改高度为 40px
-      navContainer.style.cssText = 'height: 60px !important'
+      navContainer.style.cssText = 'height: 45px !important'
     }
   }
   // async beforeCreate () {
@@ -462,6 +462,7 @@ export default {
 
 .form {
   margin-right: 10px;
+  padding: 5px 10px;
 
   .fold {
     flex: 1;

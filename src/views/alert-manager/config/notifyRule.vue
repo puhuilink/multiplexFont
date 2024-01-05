@@ -206,31 +206,33 @@
       </a-table>
     <!--    <DetailSchema ref="schema" @close="onClose"></DetailSchema>-->
     </div>
-    <div >
-      <div style="height: 120px;background: white;border-radius: 2px;">
-        <div style="display:flex;justify-content: space-between;width: 400px;padding: 10px">
-          <div style="font-size: 18px">工作时间</div>
+
+    <!--    右边配置区域-->
+    <div class="total-container">
+      <div class="container">
+        <div class="title">
+          <span>工作时间</span>
           <span>
             <a-button v-if="watchFlag" type="primary" @click="()=>{this.watchFlag = false}">编辑</a-button>
-            <a-button v-else pirmary @click="saveTimeUpdate">提交</a-button>
+            <a-button v-else primary @click="saveTimeUpdate">提交</a-button>
           </span>
         </div>
-        <div style="display: flex;justify-content: space-between;margin-top: 10px">
-          <div>
-            <a-select :disabled="watchFlag" v-model="workTime.weekStart" style="width: 80px" :options="days"/>
-            ～
-            <a-select :disabled="watchFlag" v-model="workTime.weekEnd" style="width: 80px" :options="days"/>
-          </div>
-          <div>
-            <a-time-picker :disabled="watchFlag" v-model=" workTime.timeStart" style="width: 90px" format="HH:mm"/>
-            ～
-            <a-time-picker :disabled="watchFlag" v-model="workTime.timeEnd" style="width: 90px" format="HH:mm"/>
-          </div>
+        <div class="content">
+          <a-select :disabled="watchFlag" v-model="workTime.weekStart" style="width: 120px" :options="days"/>
+          ～
+          <a-select :disabled="watchFlag" v-model="workTime.weekEnd" style="width: 120px" :options="days"/>
+
+        </div>
+        <div class="content">
+          <a-time-picker :disabled="watchFlag" v-model=" workTime.timeStart" style="width: 120px" format="HH:mm"/>
+          ～
+          <a-time-picker :disabled="watchFlag" v-model="workTime.timeEnd" style="width: 120px" format="HH:mm"/>
         </div>
       </div>
-      <div style="margin-top: 20px;height: 60px;background: white;border-radius: 2px; padding: 2px">
-        <div style="display:flex;justify-content: space-between;align-items: center;width: 400px;padding: 10px">
-          <div style="font-size: 18px">通知模板</div>  <a-popconfirm
+      <div class="sub-container">
+        <div class="title">
+          <span>通知模板</span>
+          <a-popconfirm
             title="确定要前往模板配置页面？?"
             placement="left"
             @confirm="navigateToTemplate"
@@ -783,9 +785,8 @@ export default {
   display: grid;
   background: #edf0f4;
   grid-template-columns: auto 400px;
-  grid-gap: 30px;
+  grid-gap: 20px;
   height: 100%;
-  padding: 3px;
 }
 .circle{
   background: #208DFF;
@@ -850,5 +851,50 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+.container {
+  background: white;
+  margin-top: 20px;
+}
+
+.title {
+  span {
+    font-size: 14px;
+    font-family: "PingFang SC";
+    font-weight: bold;
+  }
+  display: flex;
+  width: 367px;
+  justify-content: space-between;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 380px;
+  height: 10px;
+  line-height: 10px;
+}
+
+.total-container {
+  background: #FFFFFF;
+  padding: 5px 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  width: 367px;
+  margin-top: 10px;
+  div {
+    display: block;
+  }
+}
+
+.sub-container {
+  margin-top: 20px;
+  height: 60px;
+  background: white;
+  padding: 2px;
 }
 </style>
