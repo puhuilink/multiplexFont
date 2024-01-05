@@ -25,7 +25,8 @@ export const asyncRouterMap = [
           // component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/system/apartment/index'),
           // component: () => import('@/views/SecurityMonitoring/view/DHMonitoring'),
-          component: () => import('@/components/smooth/index'),
+          // component: () => import('@/components/smooth/index'),
+          component: () => import('@/views/titlePageHome/index'),
           meta: { title: '开发调试页面', keepAlive: true, icon: 'bug' },
           name: 'devTest'
         }
