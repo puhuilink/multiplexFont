@@ -4,8 +4,8 @@
       <div>
         <img :src="logo" alt="" />
         <span>
-          <h1 v-show="showTitle" class="logo__title">机 房 运 维 安 全</h1>
-          <h1 v-show="showTitle" class="logo__subtitle">一 体 化 管 理 系 统</h1>
+          <h1 v-show="showTitle" class="logo__title">运 维 管 控 平 台</h1>
+          <!--          <h1 v-show="showTitle" class="logo__subtitle">一 体 化 管 理 系 统</h1>-->
         </span>
       </div>
     </router-link>

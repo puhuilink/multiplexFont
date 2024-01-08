@@ -1,7 +1,7 @@
 <template>
   <div class="notifyRulesBasic">
     <div class="unionAlarm" style="background: white">
-      <div style="margin-bottom:10px;display: flex;flex-direction: row-reverse;margin-top: 10px;margin-right: 10px"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
+      <div class="in-title"><a-button icon="plus" type="primary" @click="()=>openModal()">新建通知策略</a-button></div>
       <a-modal
         title="新建通知策略"
         :visible="visible"
@@ -896,5 +896,13 @@ export default {
   height: 60px;
   background: white;
   padding: 2px;
+}
+
+.in-title {
+  margin: 0 auto;
+  width: 95%;
+  padding: 10px 24px;
+  border-radius: 5px;
+  background-color: rgba(229, 235, 243, 1);
 }
 </style>

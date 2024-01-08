@@ -1,6 +1,8 @@
 <template>
   <div class="deliverRules">
-    <div style="margin-bottom:10px;display: flex;flex-direction: row-reverse"><a-button icon="plus" type="primary" @click="openModal(null)">新建分派策略</a-button></div>
+    <div class="title">
+      <a-button icon="plus" type="primary" @click="openModal(null)">新建分派策略</a-button>
+    </div>
     <a-modal
       :title="updateFlag?'修改分派策略':'新建分派策略'"
       :visible="visible"
@@ -196,7 +198,7 @@
       </div></div>
     </a-modal>
     <a-table
-      bordered
+      :bordered="false"
       :columns="columns"
       :pagination="pagination"
       :data-source="data">
@@ -796,5 +798,13 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.title {
+  margin: 0 auto;
+  width: 97%;
+  padding: 10px 24px;
+  border-radius: 5px;
+  background-color: rgba(229, 235, 243, 1);
 }
 </style>
