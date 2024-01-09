@@ -30,11 +30,12 @@ export default {
 .shell {
   height: 97px;
   //width: 104px;
- margin: 0 20px;
+ margin: 0 35px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  white-space: nowrap; /* 禁止换行 */
   img{
     width: 58px;
     height: 58px;

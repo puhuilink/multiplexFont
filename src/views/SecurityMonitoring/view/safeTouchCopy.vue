@@ -778,7 +778,7 @@ export default {
           fontFamily: 'HarmonyOS Sans-Regular'
         }
       })
-      console.log(seriesList)
+      // console.log(seriesList)
       const option = {
         tooltip: {
           trigger: 'axis', // 悬停
@@ -947,17 +947,17 @@ export default {
         // 将 graphic 配置传入图表
         graphic: [graphic]
       })
-      console.log({
-        backgroundColor: option.backgroundColor,
-        tooltip: option.tooltip,
-        // legend: option.legend,
-        grid: option.grid,
-        xAxis: option.xAxis,
-        yAxis: option.yAxis,
-        series: optionWithData,
-        // 将 graphic 配置传入图表
-        graphic: [graphic]
-      })
+      // console.log({
+      //   backgroundColor: option.backgroundColor,
+      //   tooltip: option.tooltip,
+      //   // legend: option.legend,
+      //   grid: option.grid,
+      //   xAxis: option.xAxis,
+      //   yAxis: option.yAxis,
+      //   series: optionWithData,
+      //   // 将 graphic 配置传入图表
+      //   graphic: [graphic]
+      // })
       window.addEventListener('resize', function () {
         myChart22.resize()
       })
