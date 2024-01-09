@@ -4,11 +4,10 @@
 
       <!-- / 左侧资源树 -->
       <a-col :xl="5" :lg="6" :md="8" :sm="0" class="TreeNavigation__col">
-        <a-tabs>
-          <a-tab-pane key="1" tab="资源树" class="TreeNavigation__content">
-            <CmdbTree @select="onCmdbSelect" />
-          </a-tab-pane>
-        </a-tabs>
+        <h1>资源树</h1>
+        <div class="Border">
+          <CmdbTree @select="onCmdbSelect" />
+        </div>
       </a-col>
 
       <!-- / 右侧正文 -->
@@ -181,13 +180,19 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .TreeNavigation {
+  .ant-tabs-nav-container {
+    height: 26px!important;
+  }
   .ant-tabs-nav .ant-tabs-tab {
     padding: 1px !important;
   }
   &__col {
-    padding: 0 8px;
+    padding: 10px 20px;
+    Border {
+      border: 1px grey;
+    }
   }
 
   &__content {

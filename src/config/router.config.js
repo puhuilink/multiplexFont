@@ -37,6 +37,233 @@ export const asyncRouterMap = [
         component: () => import('@/views/titlePage/index'),
         meta: { title: '首页', keepAlive: true, icon: 'home', permission: ['F030'] }
       },
+      {
+        path: '/alertManagerPlatform',
+        name: 'AlertManagerPlatform',
+        component: RouteView,
+        redirect: '/alertManagerPlatform/config',
+        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F005'] },
+        children: [
+          // {
+          //   path: '/alarm/profile',
+          //   name: 'profile',
+          //   component: () => import('@/views/profile/index'),
+          //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
+          // },
+          {
+            path: '/alertManagerPlatform/integration',
+            name: 'Integration',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/integration/platform',
+            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F005001'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/integration/newAlertSource',
+                name: 'NewAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '新建数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
+                path: '/alertManagerPlatform/integration/updateAlertSource',
+                name: 'UpdateAlertSource',
+                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
+                meta: { title: '修改数据源' },
+                hidden: true,
+                props: route => route.query
+              },
+              {
+                path: '/alertManagerPlatform/integration/platform',
+                name: 'platform',
+                component: () => import('@/views/alert-manager/integration/index'),
+                meta: { title: '集成' }
+              }
+            ]
+          },
+          {
+            path: '/alertManagerPlatform/config',
+            name: 'AlertConfig',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/config/deliver',
+            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F005002'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/config/deliver',
+                name: 'Deliver',
+                component: () => import('@/views/alert-manager/config/index'),
+                meta: { title: '分派策略', permission: ['F005002001'] }
+              },
+              {
+                path: '/alertManagerPlatform/config/notifyRule',
+                name: 'NotifyRule',
+                component: () => import('@/views/alert-manager/config/notifyRule'),
+                meta: { title: '通知策略', permission: ['F005002002'] }
+              },
+              {
+                path: '/alertManagerPlatform/config/shieldRule',
+                name: 'ShieldRule',
+                component: () => import('@/views/alert-manager/config/shieldRule'),
+                meta: { title: '屏蔽规则', permission: ['F005002003'] }
+              },
+              // 通知组页
+              {
+                path: '/alertManagerPlatform/config/notified-group',
+                component: () => import('@/views/notificationGroup/index'),
+                meta: { title: '通知组管理', keepAlive: true, permission: ['F005002004'] },
+                name: 'notice-group'
+              },
+
+              // 模板管理
+              {
+                path: '/alertManagerPlatform/config/notice-template',
+                component: () => import('@/views/alert-manager/noticeTemplate/index'),
+                meta: { title: '模板管理', keepAlive: true, permission: ['F005002005'] },
+                name: 'notice-template'
+              },
+
+              // 排班
+              {
+                path: '/alertManagerPlatform/work-manage',
+                component: () => import('@/views/work-manage/index'),
+                meta: { title: '排班管理', keepAlive: true, permission: ['F005002006'] },
+                name: 'work-manage'
+              },
+
+              // 自定义标签
+              {
+                path: '/alertManagerPlatform/self-Defining',
+                component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
+                meta: { title: '自定义标签', keepAlive: true, permission: ['F005002007'] },
+                name: 'self-Tag'
+              }
+            ]
+          },
+          {
+            path: '/alertManagerPlatform/alarm',
+            name: 'UnionAlarm',
+            hidden: false,
+            component: RouteView,
+            redirect: '/alertManagerPlatform/alarm/index',
+            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F005003'] },
+            children: [
+              {
+                path: '/alertManagerPlatform/alarm/index',
+                component: () => import('@/views/union-alaram/index'),
+                meta: { title: '告警信息', keepAlive: true },
+                name: 'union'
+              }
+            ]
+          }
+        ]
+      },
+
+      // patrol
+      {
+        path: '/patrol',
+        name: 'patrol',
+        redirect: '/patrol/calendar',
+        component: RouteView,
+        meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: ['F010'] },
+        children: [
+          {
+            path: '/patrol/config',
+            name: 'PatrolConfig',
+            redirect: '/patrol/config/path',
+            component: RouteView,
+            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
+            children: [{
+              path: '/patrol/config/path',
+              name: 'PatrolConfigPath',
+              component: () => import('@/views/patrol/config/PathConfig/index'),
+              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001001'] }
+            },
+            {
+              path: '/patrol/config/pathConfig',
+              name: 'PatrolConfigPathEdit',
+              hidden: true,
+              component: () => import('@/views/patrol/config/index'),
+              meta: { title: '配置巡更路径', keepAlive: true, permission: ['F010001001003'] }
+            },
+            {
+              path: '/patrol/config/answer',
+              name: 'PatrolConfigAnswer',
+              component: () => import('@/views/patrol/config/AnswerTable/index'),
+              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001003'] }
+            },
+            {
+              path: '/patrol/config/threshold',
+              name: 'PatrolConfigThreshold',
+              hidden: true,
+              component: () => import('@/views/patrol/config/ThresholdConfig/index'),
+              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001001004'] }
+            }]
+          },
+          // {
+          //   path: '/patrol/calendar',
+          //   name: 'Calendar',
+          //   component: () => import('@/views/patrol/calendar/TaskCalendar'),
+          //   meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
+          // },
+          // {
+          //   path: '/patrol/route',
+          //   name: 'RouteManagement',
+          //   component: () => import('@/views/patrol/route/RouteManagement'),
+          //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
+          // },
+          {
+            path: '/patrol/group',
+            name: 'PatrolGroup',
+            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
+            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010002'] }
+          },
+          {
+            path: '/patrol/plan',
+            name: 'Plan',
+            component: () => import('@/views/patrol/plan/index'),
+            meta: { title: '计划管理', keepAlive: true, permission: ['F010003'] }
+          },
+          {
+            path: '/patrol/change-shift',
+            name: 'ChangeShift',
+            component: () => import('@/views/patrol/ChangeShift'),
+            meta: { title: '交接班查询', keepAlive: true, permission: ['F010004'] }
+          },
+          {
+            path: '/patrol/task',
+            name: 'PatrolTask',
+            component: () => import('@/views/patrol/task/PatrolTask'),
+            meta: { title: '巡更记录单', keepAlive: true, permission: ['F010005'] }
+          }
+          // {
+          //   path: '/patrol/object',
+          //   name: 'PatrolObject',
+          //   component: () => import('@/views/patrol/object/PatrolObject'),
+          //   meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
+          // },
+          // {
+          //   path: '/patrol/alarm-approve',
+          //   name: 'AlarmApprove',
+          //   component: () => import('@/views/patrol/alarm-approve/index'),
+          //   meta: { title: '告警审批', keepAlive: true, permission: ['F010005'] }
+          // }
+          // {
+          //   path: '/patrol/NoticeTemp',
+          //   name: 'NoticeTemp',
+          //   component: () => import('@/views/patrol/NoticeTemp/index'),
+          //   meta: { title: '巡更通知模板', keepAlive: true }
+          // },
+          // {
+          //   path: '/patrol/informConfig',
+          //   name: 'InformConfig',
+          //   component: () => import('@/views/patrol/informConfig/index'),
+          //   meta: { title: '巡更通知配置', keepAlive: true }
+          // }
+        ]
+      },
+
       // view
       {
         path: '/view',
@@ -356,109 +583,6 @@ export const asyncRouterMap = [
         ]
       },
 
-      // patrol
-      {
-        path: '/patrol',
-        name: 'patrol',
-        redirect: '/patrol/calendar',
-        component: RouteView,
-        meta: { title: '巡更管理', keepAlive: true, icon: 'environment', permission: ['F010'] },
-        children: [
-          {
-            path: '/patrol/config',
-            name: 'PatrolConfig',
-            redirect: '/patrol/config/path',
-            component: RouteView,
-            meta: { title: '巡更配置', keepAlive: true, permission: ['F010'] },
-            children: [{
-              path: '/patrol/config/path',
-              name: 'PatrolConfigPath',
-              component: () => import('@/views/patrol/config/PathConfig/index'),
-              meta: { title: '巡更路径', keepAlive: true, permission: ['F010001001'] }
-            },
-            {
-              path: '/patrol/config/pathConfig',
-              name: 'PatrolConfigPathEdit',
-              hidden: true,
-              component: () => import('@/views/patrol/config/index'),
-              meta: { title: '配置巡更路径', keepAlive: true, permission: ['F010001001003'] }
-            },
-            {
-              path: '/patrol/config/answer',
-              name: 'PatrolConfigAnswer',
-              component: () => import('@/views/patrol/config/AnswerTable/index'),
-              meta: { title: '检查值管理', keepAlive: true, permission: ['F010001003'] }
-            },
-            {
-              path: '/patrol/config/threshold',
-              name: 'PatrolConfigThreshold',
-              hidden: true,
-              component: () => import('@/views/patrol/config/ThresholdConfig/index'),
-              meta: { title: '阈值管理', keepAlive: true, permission: ['F010001001004'] }
-            }]
-          },
-          // {
-          //   path: '/patrol/calendar',
-          //   name: 'Calendar',
-          //   component: () => import('@/views/patrol/calendar/TaskCalendar'),
-          //   meta: { title: '任务日历', keepAlive: true, permission: [ 'F010001' ] }
-          // },
-          // {
-          //   path: '/patrol/route',
-          //   name: 'RouteManagement',
-          //   component: () => import('@/views/patrol/route/RouteManagement'),
-          //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
-          // },
-          {
-            path: '/patrol/group',
-            name: 'PatrolGroup',
-            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
-            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010002'] }
-          },
-          {
-            path: '/patrol/plan',
-            name: 'Plan',
-            component: () => import('@/views/patrol/plan/index'),
-            meta: { title: '计划管理', keepAlive: true, permission: ['F010003'] }
-          },
-          {
-            path: '/patrol/change-shift',
-            name: 'ChangeShift',
-            component: () => import('@/views/patrol/ChangeShift'),
-            meta: { title: '交接班查询', keepAlive: true, permission: ['F010004'] }
-          },
-          {
-            path: '/patrol/task',
-            name: 'PatrolTask',
-            component: () => import('@/views/patrol/task/PatrolTask'),
-            meta: { title: '巡更记录单', keepAlive: true, permission: ['F010005'] }
-          }
-          // {
-          //   path: '/patrol/object',
-          //   name: 'PatrolObject',
-          //   component: () => import('@/views/patrol/object/PatrolObject'),
-          //   meta: { title: '巡更检查对象', keepAlive: true, permission: [ 'F010005' ] }
-          // },
-          // {
-          //   path: '/patrol/alarm-approve',
-          //   name: 'AlarmApprove',
-          //   component: () => import('@/views/patrol/alarm-approve/index'),
-          //   meta: { title: '告警审批', keepAlive: true, permission: ['F010005'] }
-          // }
-          // {
-          //   path: '/patrol/NoticeTemp',
-          //   name: 'NoticeTemp',
-          //   component: () => import('@/views/patrol/NoticeTemp/index'),
-          //   meta: { title: '巡更通知模板', keepAlive: true }
-          // },
-          // {
-          //   path: '/patrol/informConfig',
-          //   name: 'InformConfig',
-          //   component: () => import('@/views/patrol/informConfig/index'),
-          //   meta: { title: '巡更通知配置', keepAlive: true }
-          // }
-        ]
-      },
       {
         path: '/machineRoom',
         name: 'machineRoom',
@@ -482,129 +606,6 @@ export const asyncRouterMap = [
               title: '监控',
               keepAlive: true
             }
-          }
-        ]
-      },
-      {
-        path: '/alertManagerPlatform',
-        name: 'AlertManagerPlatform',
-        hidden: false,
-        component: RouteView,
-        redirect: '/alertManagerPlatform/config',
-        meta: { title: '统一告警', keepAlive: true, icon: 'bug', permission: ['F005'] },
-        children: [
-          // {
-          //   path: '/alarm/profile',
-          //   name: 'profile',
-          //   component: () => import('@/views/profile/index'),
-          //   meta: { title: '个人看板', keepAlive: true, permission: ['F002002'] }
-          // },
-          {
-            path: '/alertManagerPlatform/integration',
-            name: 'Integration',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/integration/platform',
-            meta: { title: '集成', keepAlive: true, icon: 'deployment-unit', permission: ['F005001'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/integration/newAlertSource',
-                name: 'NewAlertSource',
-                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-                meta: { title: '新建数据源' },
-                hidden: true,
-                props: route => route.query
-              },
-              {
-                path: '/alertManagerPlatform/integration/updateAlertSource',
-                name: 'UpdateAlertSource',
-                component: () => import('@/views/alert-manager/integration/components/NewAlertSource'),
-                meta: { title: '修改数据源' },
-                hidden: true,
-                props: route => route.query
-              },
-              {
-                path: '/alertManagerPlatform/integration/platform',
-                name: 'platform',
-                component: () => import('@/views/alert-manager/integration/index'),
-                meta: { title: '集成' }
-              }
-            ]
-          },
-          {
-            path: '/alertManagerPlatform/config',
-            name: 'AlertConfig',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/config/deliver',
-            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F005002'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/config/deliver',
-                name: 'Deliver',
-                component: () => import('@/views/alert-manager/config/index'),
-                meta: { title: '分派策略', permission: ['F005002001'] }
-              },
-              {
-                path: '/alertManagerPlatform/config/notifyRule',
-                name: 'NotifyRule',
-                component: () => import('@/views/alert-manager/config/notifyRule'),
-                meta: { title: '通知策略', permission: ['F005002002'] }
-              },
-              {
-                path: '/alertManagerPlatform/config/shieldRule',
-                name: 'ShieldRule',
-                component: () => import('@/views/alert-manager/config/shieldRule'),
-                meta: { title: '屏蔽规则', permission: ['F005002003'] }
-              },
-              // 通知组页
-              {
-                path: '/alertManagerPlatform/config/notified-group',
-                component: () => import('@/views/notificationGroup/index'),
-                meta: { title: '通知组管理', keepAlive: true, permission: ['F005002004'] },
-                name: 'notice-group'
-              },
-
-              // 模板管理
-              {
-                path: '/alertManagerPlatform/config/notice-template',
-                component: () => import('@/views/alert-manager/noticeTemplate/index'),
-                meta: { title: '模板管理', keepAlive: true, permission: ['F005002005'] },
-                name: 'notice-template'
-              },
-
-              // 排班
-              {
-                path: '/alertManagerPlatform/work-manage',
-                component: () => import('@/views/work-manage/index'),
-                meta: { title: '排班管理', keepAlive: true, permission: ['F005002006'] },
-                name: 'work-manage'
-              },
-
-              // 自定义标签
-              {
-                path: '/alertManagerPlatform/self-Defining',
-                component: () => import('@/views/alert-manager/config/selfDefiningTag.vue'),
-                meta: { title: '自定义标签', keepAlive: true, permission: ['F005002007'] },
-                name: 'self-Tag'
-              }
-            ]
-          },
-          {
-            path: '/alertManagerPlatform/alarm',
-            name: 'UnionAlarm',
-            hidden: false,
-            component: RouteView,
-            redirect: '/alertManagerPlatform/alarm/index',
-            meta: { title: '告警管理', keepAlive: true, icon: 'alert', permission: ['F005003'] },
-            children: [
-              {
-                path: '/alertManagerPlatform/alarm/index',
-                component: () => import('@/views/union-alaram/index'),
-                meta: { title: '告警信息', keepAlive: true },
-                name: 'union'
-              }
-            ]
           }
         ]
       },

@@ -11,7 +11,7 @@
         style="margin-bottom: 15%"
       >
         <template #operation>
-          <div style="display: flex;align-items: center">
+          <div class="titleText">
             <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
             <TitleMsg :id="id"></TitleMsg>
           </div>
@@ -127,5 +127,12 @@ export default {
 </script>
 
 <style scoped>
-
+.titleText {
+  display: flex;
+  align-items: center;
+  background-color: rgba(241, 247, 255, 1);
+  width: 96%;
+  margin: 0 auto;
+  padding: 5px 10px;
+}
 </style>

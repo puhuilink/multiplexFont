@@ -6,6 +6,7 @@
         :key="hostId"
         :closable="false"
         tab="主机信息"
+        type="editable-card"
       >
         <tabPane :id="hostId" @pointCheckout="alarmSingleDetails"></tabPane>
       </a-tab-pane>
@@ -163,7 +164,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .PerformanceDetail {
   .ant-table-content {
     position: relative;

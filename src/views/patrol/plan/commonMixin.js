@@ -38,7 +38,6 @@ export default {
         this.pathList = data.map(el => ({ label: el.alias, value: el.id }))
       } catch (e) {
         this.pathList = []
-        this.$message.warning('当前暂无可用巡更路线')
         this.plan.pathId = ''
         throw e
       } finally {

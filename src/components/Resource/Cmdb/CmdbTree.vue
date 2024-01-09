@@ -144,6 +144,9 @@ export default {
 
 <style lang="less">
 .CmdbTree {
+  border: 1px solid rgba(191, 191, 191, 1);
+  border-radius: 5px;
+  padding: 5px;
   &__search {
     position: sticky;
     top: 0px;
