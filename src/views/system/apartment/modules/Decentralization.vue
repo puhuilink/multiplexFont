@@ -195,6 +195,7 @@ export default {
             })
 
             if (res.code === 200) {
+              this.$emit('operateSuccess')
               this.$notification.success({
                 message: '系统提示',
                 description: '编辑成功'

@@ -79,12 +79,13 @@
     <!--    <a-row>-->
     <!--      <a-col :span="24" style="margin-top: 40px;font-size: 28px">机房导览</a-col>-->
     <!--    </a-row>-->
-
+    <FloatButton></FloatButton>
   </div>
 </template>
 
 <script>
 import titleColor from './components/title'
+import FloatButton from './components/FloatButton'
 // import blockImg from './components/block'
 import { axios } from '@/utils/request'
 import * as echarts from 'echarts'
@@ -257,7 +258,8 @@ const data2 = [
 export default {
   name: 'TitlePageHome',
   components: {
-    titleColor
+    titleColor,
+    FloatButton
   },
   data () {
     return {
@@ -771,7 +773,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 16px;
-    border-right: 8px solid #EFF0F4;
+    border-left: 8px solid #EFF0F4;
     padding: 26px 19px 0 23px;
     .row_1_col_2_head{
       display: block;
@@ -819,7 +821,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 16px;
-    border-right: 8px solid #EFF0F4;
+    border-left: 8px solid #EFF0F4;
     padding: 26px 19px 0 23px;
     .row_1_col_3_head{
       display: block;

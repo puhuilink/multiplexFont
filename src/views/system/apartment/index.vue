@@ -381,7 +381,6 @@ export default {
       }, 500)
     },
     closeDomain () {
-      this.$refs.schema.onCancel()
       setTimeout(() => {
         this.getData()
         this.getUserList()
