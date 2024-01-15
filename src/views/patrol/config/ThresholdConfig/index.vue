@@ -23,9 +23,9 @@
               <a-form-model-item
                 label="监控对象"
                 prop="hostAlias"
+                v-bind="formLayout"
               >
                 <a-input
-                  :style="{width:'63%'}"
                   v-model="form.hostAlias"
                   placeholder="请输入关键字"
                 />
@@ -38,67 +38,76 @@
               <a-form-model-item
                 label="检查实体"
                 prop="endpointAlias"
+                v-bind="formLayout"
               >
                 <a-input
-                  :style="{width:'60%'}"
                   v-model="form.endpointAlias"
                   placeholder="请输入关键字"
                 />
               </a-form-model-item>
             </a-col><a-col
-              :md="6"
-              :sm="24"
+            :md="6"
+            :sm="24"
+          >
+            <a-form-model-item
+              label="检查项"
+              prop="metricAlias"
+              v-model="form.endpointAlias"
+              v-bind="formLayout"
             >
-              <a-form-model-item
-                label="检查项"
-                prop="metricAlias">
-                <a-input
-                  :style="{width:'60%'}"
-                  v-model="form.metricAlias"
-                  placeholder="请输入关键字"
-                />
-              </a-form-model-item>
-            </a-col><a-col
-              :md="6"
-              :sm="24"
+              <a-input
+                v-model="form.metricAlias"
+                placeholder="请输入关键字"
+              />
+            </a-form-model-item>
+          </a-col><a-col
+            :md="6"
+            :sm="24"
+          >
+            <a-form-model-item
+              label="检查值类型"
+              prop="metricAlias"
+              v-model="form.endpointAlias"
+              v-bind="{
+                  labelCol: { span: 6 },
+                  wrapperCol: { span: 14, offset: 1 },
+                }"
             >
-              <a-form-model-item
-                label="检查值类型"
-                prop="metricAlias">
-                <a-select
-                  :style="{width:'60%'}"
-                  v-model="form.answerType"
-                  placeholder="请选择类型"
-                >
-                  <a-select-option
-                    value="fill">
-                    填写
-                  </a-select-option><a-select-option
-                    value="select">
-                    选择
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col><a-col
-              :md="6"
-              :sm="24"
+              <a-select
+                v-model="form.answerType"
+                placeholder="请选择类型"
+              >
+                <a-select-option
+                  value="fill">
+                  填写
+                </a-select-option><a-select-option
+                value="select">
+                选择
+              </a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col><a-col
+            :md="6"
+            :sm="24"
+          >
+            <a-form-model-item
+              label="告警等级"
+              prop="severity"
+              v-model="form.endpointAlias"
+              v-bind="formLayout"
             >
-              <a-form-model-item
-                label="告警等级"
-                prop="severity">
 
-                <a-select
-                  :style="{width:'60%'}"
-                  v-model="form.severity"
-                  placeholder="请选择告警等级"
-                >
-                  <a-select-option value="1">L1</a-select-option>
-                  <a-select-option value="2">L2</a-select-option>
-                  <a-select-option value="3">L3</a-select-option>
-                  <a-select-option value="4">L4</a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
+              <a-select
+                v-model="form.severity"
+                placeholder="请选择告警等级"
+              >
+                <a-select-option value="1">L1</a-select-option>
+                <a-select-option value="2">L2</a-select-option>
+                <a-select-option value="3">L3</a-select-option>
+                <a-select-option value="4">L4</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
           </a-row>
         </div>
       </a-form-model>
@@ -118,6 +127,7 @@
       />
     </div>
     <a-table
+      size="middle"
       :locale="{emptyText:' '}"
       :columns="columns"
       :data-source="data"
@@ -156,6 +166,10 @@ export default {
     return {
       delId: null,
       deleteVisible: false,
+      formLayout: {
+        labelCol: { span: 5 },
+        wrapperCol: { span: 14, offset: 1 }
+      },
       table: {
         pageNumber: 1,
         pageSize: 10
@@ -171,25 +185,30 @@ export default {
         {
           title: '检查实体',
           dataIndex: 'endpointAlias',
+          align: 'center',
           scopedSlots: { customRender: 'endpoint' }
         },
         {
           title: '检查项',
           dataIndex: 'metricAlias',
+          align: 'center',
           scopedSlots: { customRender: 'metric' }
         },
         {
           title: '检查值',
           dataIndex: 'answerAlias',
+          align: 'center',
           scopedSlots: { customRender: 'answer' }
         },
         {
           title: '阈值',
+          align: 'center',
           scopedSlots: { customRender: 'value' }
         },
         {
           title: '告警等级',
           dataIndex: 'severity',
+          align: 'center',
           scopedSlots: { customRender: 'severity' }
         },
         {

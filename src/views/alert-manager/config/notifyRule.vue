@@ -860,7 +860,7 @@ export default {
 .title {
   span {
     font-size: 14px;
-    font-family: "PingFang SC";
+    font-family: 'PingFang SC', sans-serif;
     font-weight: bold;
   }
   display: flex;
