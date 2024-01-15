@@ -26,12 +26,13 @@
           @search="onSearch"
           size="large"
           :loading="loadingInput"/>
-        <a-badge status="processing" color="#EFA24F" text="紧急告警该如何快速有效处置?" class="row_1_col_1_badge"/>
-        <a-badge status="processing" color="#EFA24F" text="机房运维发现问题如何处理?" class="row_1_col_1_badge"/>
-        <a-badge status="processing" color="#EFA24F" text="统一监控章程是什么??" class="row_1_col_1_badge"/>
-        <a-badge status="processing" color="#EFA24F" text="紧急告警该如何快速有效处置?" class="row_1_col_1_badge"/>
-        <a-badge status="processing" color="#EFA24F" text="机房运维发现问题如何处理?" class="row_1_col_1_badge"/>
-        <a-badge status="processing" color="#EFA24F" text="统一监控章程是什么??" class="row_1_col_1_badge"/>
+        <div class="badge_box">
+          <a-badge status="processing" color="#EFA24F" text="紧急告警该如何快速有效处置?" class="row_1_col_1_badge"/>
+          <a-badge status="processing" color="#EFA24F" text="机房运维发现问题如何处理?" class="row_1_col_1_badge"/>
+          <a-badge status="processing" color="#EFA24F" text="统一监控章程是什么??" class="row_1_col_1_badge"/>
+          <a-badge status="processing" color="#EFA24F" text="告警处理规?" class="row_1_col_1_badge"/>
+          <a-badge status="processing" color="#EFA24F" text="如何快速定位告警源??" class="row_1_col_1_badge"/>
+        </div>
       </a-col>
       <a-col :span="12" class="row_1_col_2">
         <span class="row_1_col_2_head">平台简介</span>
@@ -79,12 +80,13 @@
     <!--    <a-row>-->
     <!--      <a-col :span="24" style="margin-top: 40px;font-size: 28px">机房导览</a-col>-->
     <!--    </a-row>-->
-
+    <FloatButton></FloatButton>
   </div>
 </template>
 
 <script>
 import titleColor from './components/title'
+import FloatButton from './components/FloatButton'
 // import blockImg from './components/block'
 import { axios } from '@/utils/request'
 import * as echarts from 'echarts'
@@ -257,7 +259,8 @@ const data2 = [
 export default {
   name: 'TitlePageHome',
   components: {
-    titleColor
+    titleColor,
+    FloatButton
   },
   data () {
     return {
@@ -271,7 +274,7 @@ export default {
       menuItems: [
         { route: '/', img: require('./assets/jkjc.png'), label: '监控集成' },
         { route: '/', img: require('./assets/zjgl.png'), label: '主机管理' },
-        { route: '/', img: require('./assets/zjgl.png'), label: '虚拟化管理' },
+        { route: '/', img: require('./assets/zidingyi.png'), label: '虚拟化管理' },
         { route: '/', img: require('./assets/wltp.png'), label: '网络拓扑' },
         { route: '/', img: require('./assets/gjjc.png'), label: '告警集成' },
         { route: '/', img: require('./assets/gjclsz.png'), label: '告警策略设置' },
@@ -680,6 +683,10 @@ export default {
       margin-bottom: 10px;
       //border: 1px solid rgba(151,151,151,0.62);
     }
+    .badge_box{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(33%, 1fr));
+    }
 
     /deep/ .ant-input-suffix {
       color: rgb(63, 124, 242) !important;
@@ -692,6 +699,9 @@ export default {
     .row_1_col_1_badge {
       height: 28px;
       line-height: 28px;
+      /deep/ .ant-badge-status-text{
+        font-size: 12px;
+      }
     }
   }
 
@@ -771,7 +781,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 16px;
-    border-right: 8px solid #EFF0F4;
+    border-left: 8px solid #EFF0F4;
     padding: 26px 19px 0 23px;
     .row_1_col_2_head{
       display: block;
@@ -819,7 +829,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 16px;
-    border-right: 8px solid #EFF0F4;
+    border-left: 8px solid #EFF0F4;
     padding: 26px 19px 0 23px;
     .row_1_col_3_head{
       display: block;
