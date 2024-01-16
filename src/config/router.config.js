@@ -936,6 +936,12 @@ export const asyncRouterMap = [
             meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
           },
           {
+            path: '/system/workGroup',
+            name: 'workGroup',
+            component: () => import('@/views/system/workGroup/index'),
+            meta: { title: '工作组管理', keepAlive: true }
+          },
+          {
             path: '/system/ImageManagement',
             name: 'ImageManagement',
             hidden: true,
