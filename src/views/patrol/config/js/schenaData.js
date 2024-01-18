@@ -14,7 +14,7 @@ const hostForm = {
   pathId: '', // 必传
   hostId: '', // 必传
   hostAlias: '', // 必传
-  cantainer: '', // 非必传
+  container: '', // 非必传
   hostType: '', // 非必传
   hostBrand: '', // 非必传
   ipAddress: '', // 非必传
@@ -37,7 +37,7 @@ const newZoneForm = {
   zoneAlias: '',
   checkpointAlias: '',
   hostAlias: '',
-  cantainer: '',
+  container: '',
   hostType: '',
   hostBrand: '',
   ipAddress: '',
@@ -53,7 +53,7 @@ const newCheckpointForm = {
   zoneAlias: '',
   checkpointAlias: '',
   hostAlias: '',
-  cantainer: '',
+  container: '',
   hostType: '',
   hostBrand: '',
   ipAddress: '',
@@ -70,7 +70,7 @@ const newHostForm = {
   checkpointId: '',
   checkpointAlias: '',
   hostAlias: '',
-  cantainer: '',
+  container: '',
   hostType: '',
   hostBrand: '',
   ipAddress: '',
@@ -88,7 +88,7 @@ const newEndpointForm = {
   checkpointAlias: '',
   hostId: '',
   hostAlias: '',
-  cantainer: '',
+  container: '',
   hostType: '',
   hostBrand: '',
   ipAddress: '',
@@ -106,7 +106,7 @@ const newMetricForm = {
   checkpointAlias: '',
   hostId: '',
   hostAlias: '',
-  cantainer: '',
+  container: '',
   hostType: '',
   hostBrand: '',
   ipAddress: '',
@@ -275,7 +275,7 @@ const formMap = {
 const takeKeysMap = {
   editZone: ['pathId', 'zoneId', 'zoneAlias'],
   editPoint: ['pathId', 'checkpointId', 'checkpointAlias'],
-  editHost: ['pathId', 'hostId', 'hostAlias', 'cantainer', 'hostType', 'hostBrand', 'ipAddress', 'sn', 'hostBelong'],
+  editHost: ['pathId', 'hostId', 'hostAlias', 'container', 'hostType', 'hostBrand', 'ipAddress', 'sn', 'hostBelong'],
   editEndpoint: ['pathId', 'endpointId', 'endpointAlias'],
   editMetric: ['pathId', 'metricId', 'metricAlias', 'answerId'],
   newZone: ['pathId'],
@@ -299,7 +299,7 @@ const takeKeysMap = {
     'checkpointAlias',
     'hostId',
     'hostAlias',
-    'cantainer',
+    'container',
     'hostType',
     'hostBrand',
     'ipAddress',
@@ -314,7 +314,7 @@ const takeKeysMap = {
     'checkpointAlias',
     'hostId',
     'hostAlias',
-    'cantainer',
+    'container',
     'hostType',
     'hostBrand',
     'ipAddress',
