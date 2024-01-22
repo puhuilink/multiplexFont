@@ -119,11 +119,9 @@ export default {
       this.floatDrag.addEventListener('touchend', this.touchEnd)
     },
     mouseDown (e) {
-      console.log('按下', e)
       const event = e || window.event
       this.mousedownX = event.screenX
       this.mousedownY = event.screenY
-      console.log('x', this.mousedownY)
       const that = this
       const floatDragWidth = this.floatDragDom.width / 2
       const floatDragHeight = this.floatDragDom.height / 2
@@ -132,11 +130,13 @@ export default {
       }
       this.canClick = false
       this.floatDrag.style.transition = 'none'
-      document.onmousemove = function (e) {
+      document.onmousemove = e => {
+        if (this.mousedownY === e.screenY && this.mousedownX === e.screenX) {
+          return
+        }
         var event = e || window.event
         that.left = event.clientX - floatDragWidth
         that.top = event.clientY - floatDragHeight
-        console.log('left', that.left, 'top', that.top)
         if (that.left < 0) that.left = 0
         if (that.top < 0) that.top = 0
         // 鼠标移出可视区域后给按钮还原
@@ -196,7 +196,6 @@ export default {
       if (flag) {
         return
       }
-      console.log('不执行')
       this.clientWidth = document.documentElement.clientWidth
       this.clientHeight = document.documentElement.clientHeight
       if (this.left + this.floatDragDom.width / 2 >= this.clientWidth / 2) {
@@ -215,7 +214,6 @@ export default {
       }
     },
     setFun () {
-      console.log(123)
       this.$refs['auth'].showModal()
     },
     Tickets () {
