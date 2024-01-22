@@ -15,215 +15,295 @@
           取消
         </a-button>
       </template>
-      <a-row class="row_1">
-        <a-col :span="24" class="row_1_col_1">
+      <a-spin :spinning="!treeData">
+        <a-row class="row_1">
+          <a-col :span="24" class="row_1_col_1">
 
-          <a-tabs v-model="selectedKey" tabPosition="left" :tabBarStyle="{ width: '150px' }" :animated="false">
-            <a-tab-pane v-for="(node, index) in treeData" :key="node.key" :disabled="index === 0">
-              <template v-slot:tab>
-                <div>
-                  <!-- 判断是否为第一个标签页 -->
-                  <template v-if="index === 0">
-                    <a-input
-                      v-model="keyword"
-                      placeholder="请输入关键词"
-                      class="row_1_col_1_input"
-                      size="default"
+            <a-tabs v-model="selectedKey" tabPosition="left" :tabBarStyle="{ width: '150px' }" :animated="false" @change="callback">
+              <a-tab-pane v-for="(node, index) in treeData" :key="node.key" :disabled="index === 0">
+                <template v-slot:tab>
+                  <div>
+                    <!-- 判断是否为第一个标签页 -->
+                    <template v-if="index === 0">
+                      <a-input
+                        v-model="keyword"
+                        placeholder="请输入关键词"
+                        class="row_1_col_1_input"
+                        size="default"
+                      >
+                        <a-tooltip slot="suffix" >
+                          <img src="../assets/sous.png" alt="" style="width: 1.1rem;height: auto" @click="onSearch">
+                        </a-tooltip>
+                      </a-input>
+                    </template>
+                    <!-- 如果不是第一个标签页，则显示原有的自定义标签 -->
+                    <template v-else>
+                      <div class="custom-tab">
+                        <span class="left-align">{{ node.parentName }}</span>
+                        <span class="right-align">{{ node.value }}</span>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+                <!-- 内容放在这里 -->
+                <div style="height: 550px;">
+                  <div class="Preview">预览<div>拖动鼠标调整顺序</div></div>
+                  <div class="Preview_1">
+                    <draggable
+                      v-model="checkedOptions"
+                      class="grid-container"
+                      @sort="sortFuntion"
                     >
-                      <a-tooltip slot="suffix" >
-                        <img src="../assets/sous.png" alt="" style="width: 1.1rem;height: auto" @click="onSearch">
-                      </a-tooltip>
-                    </a-input>
-                  </template>
-                  <!-- 如果不是第一个标签页，则显示原有的自定义标签 -->
-                  <template v-else>
-                    <div class="custom-tab">
-                      <span class="left-align">{{ node.title }}</span>
-                      <span class="right-align">{{ node.value }}</span>
-                    </div>
-                  </template>
-                </div>
-              </template>
-              <!-- 内容放在这里 -->
-              <div style="height: 550px;">
-                <div class="Preview">预览<div>拖动鼠标调整顺序</div></div>
-                <div class="Preview_1">
-                  <draggable v-model="checkedOptions" class="grid-container">
 
-                    <div v-for="(item, index) in checkedOptions" :key="index" class="grid-item closeBoxF">
-                      <img :src="item.image" alt="item.name" class="item-image" />
-                      <div class="item-name">{{ item.name }}</div>
-                      <a-icon type="close" @click="closePreview(item, index)" class="closeBox"/>
-                    </div>
+                      <div v-for="(item, index) in checkedOptions" :key="index" class="grid-item closeBoxF">
+                        <img :src=" require('../assets/' + item.imgUrl)" alt="item.name" class="item-image" />
+                        <div class="item-name">{{ item.name }}</div>
+                        <a-icon type="close" @click="closePreview(item, index)" class="closeBox"/>
+                      </div>
 
-                  </draggable>
-                </div>
-                <div class="Preview Preview2">请选择</div>
-                <div class="Preview_2">
+                    </draggable>
+                  </div>
+                  <div class="Preview Preview2">请选择</div>
+                  <div class="Preview_2">
 
-                  <div class="grid-container">
-                    <div v-for="(item, index) in options" :key="index" class="grid-item">
-                      <img :src="item.image" alt="item.name" class="item-image" />
-                      <div class="item-name">{{ item.name }}</div>
-                      <input
-                        type="checkbox"
-                        :key="item.id"
-                        :value="item.id"
-                        v-model="checkedItems"
-                        class="item-checkbox"
-                      />
+                    <div class="grid-container">
+                      <div v-for="(item, index) in options" :key="index" class="grid-item">
+                        <img :src=" require('../assets/' + item.imgUrl)" :alt="item.name" class="item-image" />
+                        <!--                        <img v-lazy="thumbnail(item.imgUrl)" :alt="item.name" class="item-image" />-->
+                        <div class="item-name">{{ item.name }}</div>
+                        <input
+                          type="checkbox"
+                          :key="item.id"
+                          :value="item.id"
+                          v-model="checkedItems"
+                          class="item-checkbox"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-            </a-tab-pane>
-          </a-tabs>
-        </a-col>
-      </a-row>
-      <div class="cardBox">卡片设置</div>
-      <CheckBox style="padding: 24px 38px"></CheckBox>
+              </a-tab-pane>
+            </a-tabs>
+          </a-col>
+        </a-row>
+        <div class="cardBox">卡片设置</div>
+        <div style="padding: 24px 38px">
+          <div class="grid-container-card">
+            <div v-for="(item, index) in options2" :key="index" class="grid-item-card">
+              <img :src=" require('../assets/' + item.imgUrl)" alt="item.name" class="item-image-card" />
+              <div class="item-name-card">{{ item.name }}</div>
+              <input
+                type="checkbox"
+                :key="item.id"
+                :value="item.id"
+                v-model="checkedItems2"
+                class="item-checkbox"
+              />
+            </div>
+          </div>
+        </div>
+      </a-spin>
     </a-modal>
   </div>
 </template>
 <script>
+import PreviewMixin from '@/views/view/display/PreviewMixin.vue'
 import draggable from 'vuedraggable'
-import CheckBox from './CheckBox'
+import _ from 'lodash'
+import defaultPreviewImg from '@/assets/images/view__preview_default.jpg'
+import DesktopMixin from '@/views/view/display/DesktopMixin'
+import { axios } from '@/utils/request'
 const treeData = [
   {
-    title: '',
+    parentName: '',
     key: '0',
     value: null
   },
   {
-    title: '全部',
-    key: '0-0',
+    parentName: '全部',
+    key: '00',
     value: 28
   },
   {
-    title: '统一监控',
-    key: '0-0-0',
+    parentName: '统一监控',
+    key: '2',
     value: 2
   },
   {
-    title: '巡更管理',
-    key: '0-0-1',
+    parentName: '巡更管理',
+    key: '3',
     value: 3
   },
   {
-    title: '告警管理',
-    key: '0-0-2',
-    value: 3
-  },
-  {
-    title: '资产管理',
-    key: '0-0-3',
-    value: 3
-  },
-  {
-    title: '知识库',
-    key: '0-0-4',
-    value: 3
-  },
-  {
-    title: '运维可视化',
-    key: '0-0-5',
-    value: 3
-  },
-  {
-    title: '系统管理',
-    key: '0-0-6',
+    parentName: '告警管理',
+    key: '4',
     value: 3
   }
 
 ]
 const options2 = [
-  { id: 1, label: '监控集成', image: require('../assets/jkjc.png') },
-  { id: 2, label: '监控集成', image: require('../assets/jkjc.png') },
-  { id: 10, label: 'Option 1', image: require('../assets/jkjc.png') },
-  { id: 11, label: 'Option 2', image: require('../assets/jkjc.png') },
-  { id: 12, label: 'Option 3', image: require('../assets/jkjc.png') },
-  { id: 13, label: 'Option 3', image: require('../assets/jkjc.png') }
+  { id: 1, name: '知识库', imgUrl: 'zhishiku.png' },
+  { id: 2, name: '平台简介', imgUrl: 'jianjie.png' },
+  { id: 3, name: '我的待办', imgUrl: 'daiban.png' },
+  { id: 4, name: '我的申请', imgUrl: 'shenqing.png' },
+  { id: 5, name: '资产类型分布', imgUrl: 'zclx.png' },
+  { id: 6, name: '资产状态分布', imgUrl: 'zczt.png' }
 ]
 
 export default {
   name: 'SetUp',
   components: {
-    CheckBox,
     draggable
   },
+  mixins: [PreviewMixin],
+  // inject: ['allLinkList_menu'],
   data () {
     return {
-      list: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
       loading: false,
       visible: false,
       // loadingInput: false,
       keyword: '',
-      treeData: treeData,
-      selectedKey: '0-0', // 设置默认选中的项
+      selectedKey: '00', // 设置默认选中的项
       checkedValues: [], // 选中的复选框的值
       options2,
+      treeData: this.allLinkListMenuCard.memu,
       optionsWithDisabled: [
         { value: 'Apple' },
         { value: 'Pear' },
         { label: 'Orange', value: 'Orange', disabled: false }
       ],
-      options: [
-        { id: 1, name: '监控集成', image: require('../assets/jkjc.png') },
-        { id: 2, name: '告警列表', image: require('../assets/jkjc.png') },
-        { id: 3, name: '巡更路径设置', image: require('../assets/jkjc.png') },
-        { id: 4, name: '监控集成', image: require('../assets/jkjc.png') },
-        { id: 5, name: '主机管理', image: require('../assets/jkjc.png') },
-        { id: 6, name: 'Option 3', image: require('../assets/jkjc.png') },
-        { id: 7, name: 'Option 1', image: require('../assets/jkjc.png') },
-        { id: 8, name: 'Option 2', image: require('../assets/jkjc.png') },
-        { id: 9, name: 'Option 3', image: require('../assets/jkjc.png') },
-        { id: 10, name: 'Option 1', image: require('../assets/jkjc.png') },
-        { id: 11, name: 'Option 2', image: require('../assets/jkjc.png') },
-        { id: 12, name: 'Option 3', image: require('../assets/jkjc.png') },
-        { id: 13, name: 'Option 3', image: require('../assets/jkjc.png') }
-      ],
+      options: [],
+      list: {},
       // 默认选中
-      checkedItems: [1, 2],
-      checkedOptions: [{ id: 1, name: '监控集成', image: require('../assets/jkjc.png') }]
+      checkedItems: [],
+      // 选中排序的
+      checkedOptions: [],
+      checkedItems2: [1, 2]
     }
   },
+  props: {
+    allLinkListMenuCard: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  /* computed: {
+    treeData: {
+      get () {
+        return this.allLinkList_menu().menu
+      },
+      set () {
+        // this.options = this.treeData.childList
+      }
+    }
+  }, */
   watch: {
-    checkedItems: function (newCheckedItems) {
-      this.checkedOptions = this.options.filter(option => newCheckedItems.includes(option.id))
+    checkedItems: function (newCheckedItems, old) {
+      let set = []
+      // 添加
+      if (newCheckedItems.length > old.length) {
+        set = newCheckedItems.filter(el => !old.includes(el))
+        this.checkedOptions.push(...this.options.filter(option => option.id === set[0]))
+      } else if (newCheckedItems.length < old.length) {
+        // 删除
+        set = old.filter(el => !newCheckedItems.includes(el))
+        this.checkedOptions.splice(this.checkedOptions.findIndex(el => el.id === set[0]), 1)
+      } else {
+        return
+      }
+      this.checkedOptions = _.uniq(this.checkedOptions)
+    },
+    allLinkListMenuCard: {
+      handler (newVal) {
+        // 当 allLinkListMenuCard 更新时执行的逻辑
+        this.treeData = newVal.menu // 或者进行其他处理
+        this.options = this.treeData[1].childList || []
+        this.options2 = newVal.card
+      },
+      immediate: true // 立即执行一次，以处理异步数据的初始状态
     }
   },
-
   methods: {
+    thumbnail (src) {
+      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
+    },
     showModal () {
       this.visible = true
     },
-    handleOk (e) {
+    async handleOk (e) {
+      const menuCodesList = []
+      const cardCodesList = []
+      console.log(this.checkedOptions, this.checkedItems2)
+      for (let i = 0; i < this.checkedItems2.length; i++) {
+        for (const eElement of this.options2) {
+          if (eElement.id === this.checkedItems2[i]) {
+            cardCodesList.push(eElement.code)
+          }
+        }
+      }
+      for (let i = 0; i < this.checkedOptions.length; i++) {
+        menuCodesList.push(this.checkedOptions[i].code)
+      }
+      console.log(menuCodesList, cardCodesList)
       this.loading = true
-      setTimeout(() => {
+      // 30.首页—保存我的快捷功能和卡片
+      /* await axios.post('/menu/delete',{
+        menuCodes: menuCodesList,
+        cardCodes: cardCodesList
+      }).then(res => {
+        // console.log(data)
+        if (res.code === 200) {
+          this.visible = false
+          this.loading = false
+          // this.allLinkList_menu_card = res.data
+        } else {
+          this.$notification.error({
+            message: '系统提示',
+            // description: data.data.description
+            description: '网络错误'
+          })
+        }
+      }).catch((e) => {
+        throw e
+      }).finally(() => {
         this.visible = false
         this.loading = false
-      }, 3000)
+      }) */
     },
     handleCancel (e) {
       this.visible = false
     },
     onSearch (e) {
-      console.log(e)
+      // console.log(e)
       // this.loadingInput = true
       // setTimeout(() => {
       //   this.loadingInput = false
       // }, 3000)
     },
-    // callback (val) {
-    //   console.log(val)
-    // }
+    callback (key) {
+      for (const item of this.treeData) {
+        // 如果找到 key 匹配的对象
+        if (item.key === key) {
+          this.options = item.childList || []
+          break
+        }
+      }
+    },
     closePreview (item, index) {
-      console.log(item, index)
+      // 获取 要删除数据中的id在this.checkedItems中的下表
+      const c = this.checkedItems.findIndex(id => id === item.id)
+      this.checkedItems.splice(c, 1)
       this.checkedOptions.splice(index, 1)
-      this.checkedItems.splice(index - 1, 1)
+    },
+    sortFuntion ({ to, from, item, clone, oldlndex, newlndex }) {
+      // console.log('sort', to, from, item, clone, oldlndex, newlndex)
     }
 
+  },
+
+  created () {
+    this.checkedOptions = this.options.filter(option => this.checkedItems.includes(option.id))
   }
 }
 </script>
@@ -286,7 +366,7 @@ export default {
       background: #3F78F0;
       border-radius: 4px;
       //font-size: 0.8rem;
-      //font-family: PingFangSC, PingFang SC;
+      font-family: 'PingFang SC', sans-serif;
       font-weight: 400;
       color: #FFFFFF;
     }
@@ -300,14 +380,14 @@ export default {
       border-bottom: 1px solid #E3E3E3;
       font-size: 14px;
       padding: 0 10px;
-      font-family: PingFangSC, PingFang SC;
+      font-family: 'PingFang SC',sans-serif;
       font-weight: 500;
       color: #000000;
       line-height: 34px;
       :first-child{
         padding: 0 10px;
         font-size: 12px;
-        font-family: PingFangSC, PingFang SC;
+        font-family: 'PingFang SC',sans-serif;
         font-weight: 400;
         color: #999999;
         line-height: 34px;
@@ -330,7 +410,7 @@ export default {
   height: 49px;
   padding-left: 17px;
   font-size: 16px;
-  //font-family: PingFangSC, PingFang SC;
+  font-family: 'PingFang SC',sans-serif;
   font-weight: 400;
   color: #000000;
   line-height: 49px;
@@ -366,6 +446,39 @@ export default {
   }
 
 }
+
+.grid-container-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+  grid-gap: 20px;
+  overflow: hidden;
+  .grid-item-card {
+    display: flex;
+    //flex-direction: column;
+    //align-items: center;
+    //justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    width: 172px;
+    height: 62px;
+    border-radius: 8px;
+    border: 1px solid rgba(151,151,151,0.34);
+    padding:0 13px;
+  }
+  .item-image-card {
+    width: 25px;
+    height: auto;
+
+    margin-right: 12px;
+  }
+  .item-name-card {
+    //height: 100%;
+    font-size: 14px;
+    color: #000000;
+    margin-right: auto;
+    font-family: 'PingFang SC',sans-serif;
+  }
+
+}
 .item-checkbox {
   /* 样式修改：空心圆 */
   appearance: none;
@@ -394,7 +507,7 @@ export default {
   background: #3F78F0;
 }
 .Preview_1 {
-  height: 170px;
+  height: 174px;
   overflow-y: scroll;
 }
 
@@ -408,7 +521,7 @@ export default {
 }
 
 .Preview_2{
-  height: 312px;
+  height: 320px;
   overflow-y: scroll;
 }
 .Preview_2::-webkit-scrollbar {

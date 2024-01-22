@@ -4,7 +4,7 @@
       ref="floatDrag"
       class="float-position"
       id="float-box"
-      :style="{left: left + 'px', top: top + 'px', right: right + 'px', zIndex: zIndex }"
+      :style="{top: top + 'px', right: right + 'px', zIndex: zIndex, left: left + 'px' }"
       @touchmove.prevent
       @mousemove.prevent
       @mousedown="mouseDown"
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <SetUp ref="auth"></SetUp>
+    <SetUp ref="auth" :allLinkListMenuCard="allLinkListMenuCard"></SetUp>
   </div>
 
 </template>
@@ -32,7 +32,12 @@ export default {
   components: {
     SetUp
   },
+  // inject: ['allLinkList_menu'],
   props: {
+    allLinkListMenuCard: {
+      type: Object,
+      default: () => ({})
+    },
     distanceRight: {
       type: Number,
       default: 36
@@ -72,14 +77,7 @@ export default {
 
       flag: true, // 控制悬浮框是否展开
       box: '', // 悬浮球的dom
-      activeIndex: 0, // 高亮显示
-      powerList: [
-        {
-          path: require('../assets/gjlb.png'),
-          label: '设置'
-        }
-
-      ]
+      activeIndex: 0 // 高亮显示
     }
   },
   created () {
@@ -94,9 +92,7 @@ export default {
       // 设置初始位置
       // this.left = this.clientWidth - this.floatDragDom.width - this.distanceRight;
       // this.right = 0
-      console.log(this.clientHeight, this.floatDragDom.height, this.distanceBottom)
       this.top = this.clientHeight - this.floatDragDom.height - this.distanceBottom
-      console.log(this.top)
       this.initDraggable()
     })
     // this.isScrollHidden && window.addEventListener('scroll', this.handleScroll);
@@ -119,14 +115,15 @@ export default {
      * 初始化draggable
      */
     initDraggable () {
-      this.floatDrag.addEventListener('touchstart', this.toucheStart)
       this.floatDrag.addEventListener('touchmove', (e) => this.touchMove(e))
       this.floatDrag.addEventListener('touchend', this.touchEnd)
     },
     mouseDown (e) {
+      console.log('按下', e)
       const event = e || window.event
       this.mousedownX = event.screenX
       this.mousedownY = event.screenY
+      console.log('x', this.mousedownY)
       const that = this
       const floatDragWidth = this.floatDragDom.width / 2
       const floatDragHeight = this.floatDragDom.height / 2
@@ -139,6 +136,7 @@ export default {
         var event = e || window.event
         that.left = event.clientX - floatDragWidth
         that.top = event.clientY - floatDragHeight
+        console.log('left', that.left, 'top', that.top)
         if (that.left < 0) that.left = 0
         if (that.top < 0) that.top = 0
         // 鼠标移出可视区域后给按钮还原
@@ -175,10 +173,7 @@ export default {
       this.checkDraggablePosition(flag)
       this.floatDrag.style.transition = 'all 0.3s'
     },
-    toucheStart () {
-      this.canClick = false
-      this.floatDrag.style.transition = 'none'
-    },
+
     touchMove (e) {
       this.canClick = true
       if (e.targetTouches.length === 1) {
@@ -201,6 +196,7 @@ export default {
       if (flag) {
         return
       }
+      console.log('不执行')
       this.clientWidth = document.documentElement.clientWidth
       this.clientHeight = document.documentElement.clientHeight
       if (this.left + this.floatDragDom.width / 2 >= this.clientWidth / 2) {
@@ -219,10 +215,11 @@ export default {
       }
     },
     setFun () {
+      console.log(123)
       this.$refs['auth'].showModal()
     },
     Tickets () {
-      console.log('gongdan')
+      console.log('工单')
     },
     Customer () {
       console.log('客服')
