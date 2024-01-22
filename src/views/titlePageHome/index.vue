@@ -5,7 +5,10 @@
       <div style="display: flex;padding-left: 15px;overflow-x: scroll; ">
         <div v-for="(item, index) in menuItems" :key="index">
           <a @click="tiaozhuan(item.route)">
-            <titleColor :img="item.img" :font="item.label"></titleColor>
+            <div class="shell">
+              <img :src=" require('./assets/' + item.imgUrl)" class="shell_image" alt=""/>
+              <span class="shell_font">{{ item.name }}</span>
+            </div>
           </a>
         </div>
       </div>
@@ -70,26 +73,27 @@
     <a-row class="a-row_3">
       <a-col :span="12" class="a-row_3_col_left">
         <span class="row_1_col_3_head">资产分布情况</span>
-        <div class="echartsBox1" style="height: 225px"></div>
+        <div class="echartsBox1" style="height: 84%"></div>
       </a-col>
       <a-col :span="12" class="a-row_3_col_right">
         <span class="row_1_col_3_head">资产状态分布图</span>
-        <div class="echartsBox2" style="height: 225px"></div>
+        <div class="echartsBox2" style="height: 84%"></div>
       </a-col>
     </a-row>
     <!--    <a-row>-->
     <!--      <a-col :span="24" style="margin-top: 40px;font-size: 28px">机房导览</a-col>-->
     <!--    </a-row>-->
-    <FloatButton></FloatButton>
+    <FloatButton :allLinkListMenuCard="allLinkList_menu_card"></FloatButton>
   </div>
 </template>
 
 <script>
-import titleColor from './components/title'
+import img from './assets/zcgl.png'
 import FloatButton from './components/FloatButton'
 // import blockImg from './components/block'
 import { axios } from '@/utils/request'
 import * as echarts from 'echarts'
+import Vue from 'vue'
 const columns = [
   {
     title: '告警级别',
@@ -259,9 +263,14 @@ const data2 = [
 export default {
   name: 'TitlePageHome',
   components: {
-    titleColor,
     FloatButton
   },
+  // provide () {
+  //   return {
+  //     allLinkList_menu: () => this.allLinkList_menu_card
+  //     // allLinkList_menu: this.allLinkList_menu_card
+  //   }
+  // },
   data () {
     return {
       value: 'title', // 初始选中的按钮的值
@@ -272,24 +281,27 @@ export default {
         xxl: { span: 10, offset: 2 }
       },
       menuItems: [
-        { route: '/', img: require('./assets/jkjc.png'), label: '监控集成' },
-        { route: '/', img: require('./assets/zjgl.png'), label: '主机管理' },
-        { route: '/', img: require('./assets/zidingyi.png'), label: '虚拟化管理' },
-        { route: '/', img: require('./assets/wltp.png'), label: '网络拓扑' },
-        { route: '/', img: require('./assets/gjjc.png'), label: '告警集成' },
-        { route: '/', img: require('./assets/gjclsz.png'), label: '告警策略设置' },
-        { route: '/', img: require('./assets/gjlb.png'), label: '告警列表' },
-        { route: '/', img: require('./assets/xgljsz.png'), label: '巡更路径设置' },
-        { route: '/', img: require('./assets/xgjhgl.png'), label: '巡更计划管理' },
-        { route: '/', img: require('./assets/zcgl.png'), label: '资产管理' }
+        { route: '/', imgUrl: 'jkjc.png', name: '监控集成' },
+        { route: '/', imgUrl: 'zjgl.png', name: '主机管理' },
+        { route: '/', imgUrl: 'zidingyi.png', name: '虚拟化管理' },
+        { route: '/', imgUrl: 'wltp.png', name: '网络拓扑' },
+        { route: '/', imgUrl: 'gjjc.png', name: '告警集成' },
+        { route: '/', imgUrl: 'gjclsz.png', name: '告警策略设置' },
+        { route: '/', imgUrl: 'gjlb.png', name: '告警列表' },
+        { route: '/', imgUrl: 'xgljsz.png', name: '巡更路径设置' },
+        { route: '/', imgUrl: 'xgjhgl.png', name: '巡更计划管理' },
+        { route: '/', imgUrl: 'zcgl.png', name: '巡更计划管理' }
       ],
+      // 卡片布局未知
+      menuItemsCard: [],
       loadingInput: false,
       text_txt: `运维管控平台对资产进行全面的“监控、巡更、告警、处置”自动化平台，助力中交集团基础数字化转型，保障数据中心基础设施服务的高质量发展。<br>
         可视化视图多维度直观展示基础设施监控指标，对告警统一汇聚并抑制去重进行有效告警并处置，对机房资产进行巡更，自动生成巡更报告平台实现运维管理全流程数字化、精细化，同时为未来中交云持续建设夯实了运维保障基础。`,
       data,
       columns,
       data2,
-      columns2
+      columns2,
+      allLinkList_menu_card: {}
     }
   },
   methods: {
@@ -603,9 +615,183 @@ export default {
         }
       }
       this.initCharts('.echartsBox2', catogray_option2)
+    },
+    async menuAllLinkList () {
+      try {
+        // 28.首页—全部快捷功能和卡片
+        // await axios.get('/menu/allLinkList').then(res => {
+        //   // console.log(data)
+        //   if (res.code === 200) {
+        //     // this.allLinkList_menu_card = res.data
+        //   } else {
+        //     this.$notification.error({
+        //       message: '系统提示',
+        //       // description: data.data.description
+        //       description: '网络错误'
+        //     })
+        //   }
+        // })
+      } catch (e) {
+
+      } finally {
+        this.allLinkList_menu_card = {
+          menu: [// 快捷功能
+            {
+              parentName: '统一监控',
+              childList: [
+                {
+                  code: 'F004',
+                  name: '性能管理',
+                  menuType: 1,
+                  menuSystem: 1,
+                  parentCode: 'F005002',
+                  imgUrl: 'jkjc.png'
+                },
+                {
+                  code: 'F005',
+                  name: '第三方系统',
+                  menuType: 1,
+                  menuSystem: 1,
+                  parentCode: 'F005002',
+                  imgUrl: 'jkjc.png'
+                }
+              ]
+            },
+            {
+              parentName: '巡更管理',
+              childList: [
+                {
+                  code: 'F010001',
+                  name: '巡更配置',
+                  menuType: 1,
+                  menuSystem: 1,
+                  parentCode: 'F005002',
+                  imgUrl: 'jkjc.png'
+                },
+                {
+                  code: 'F010002',
+                  name: '计划管理',
+                  menuType: 1,
+                  menuSystem: 1,
+                  parentCode: 'F005002',
+                  imgUrl: 'jkjc.png'
+                }
+              ]
+            }
+          ],
+          card: [ // 卡片
+            {
+              code: 'C001',
+              name: '知识库',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'zhishiku.png'
+            },
+            {
+              code: 'C002',
+              name: '平台简介',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'jianjie.png'
+            },
+            {
+              code: 'C003',
+              name: '我的待办',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'daiban.png'
+            },
+            {
+              code: 'C004',
+              name: '我的申请',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'shenqing.png'
+            },
+            {
+              code: 'C005',
+              name: '资产类型分布',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'zclx.png'
+            },
+            {
+              code: 'C006',
+              name: '资产状态分布',
+              menuType: 10,
+              menuSystem: 1,
+              parentCode: '',
+              imgUrl: 'zczt.png'
+            }
+          ]
+        }
+        // 给menu的childList加上id属性
+        this.addIdToChildList(this.allLinkList_menu_card.menu)
+
+        // 给card的childList加上id属性
+        // this.addIdToChildList(this.allLinkList_menu_card.card)
+        this.allLinkList_menu_card.card.forEach((item, index) => {
+          item.id = index + 1
+        })
+        const newObj = [{
+          parentName: '',
+          key: '0',
+          value: null
+        },
+        {
+          parentName: '全部',
+          key: '00',
+          value: null,
+          childList: []
+        }]
+        this.allLinkList_menu_card.menu.unshift(...newObj)
+        // 整合所有childList数据给,全部按钮
+        for (let i = 2; i < this.allLinkList_menu_card.menu.length; i++) {
+          this.allLinkList_menu_card.menu[1].childList.push(...this.allLinkList_menu_card.menu[i].childList)
+        }
+        this.allLinkList_menu_card.menu[1].value = this.allLinkList_menu_card.menu[1].childList.length
+      }
+    },
+    async myLinkListFun () {
+      try {
+        // 29.首页—我的快捷功能和卡片
+        // await axios.get('/menu/myLinkList').then(res => {
+        //   // console.log(data)
+        //   if (res.code === 200) {
+        //     this.menuItems = res.data.menu
+        //     // this.menuItemsCard = res.data.card 卡片去掉布局未知?
+        //   } else {
+        //     this.$notification.error({
+        //       message: '系统提示',
+        //       // description: data.data.description
+        //       description: '网络错误'
+        //     })
+        //   }
+        // })
+      } catch (e) {
+
+      } finally {}
+    },
+    addIdToChildList (arr) {
+      arr.forEach((item, index) => {
+        item.key = index + 1
+        item.value = item.childList.length
+        item.childList.forEach((childItem, childIndex) => {
+          childItem.id = index * 10 + childIndex + 1
+          // childItem.imgUrl = require(childItem.imgUrl)
+        })
+      })
     }
   },
-
+  created () {
+    this.menuAllLinkList()
+    this.myLinkListFun()
+  },
   mounted () {
     this.echatsFun()
     this.echatsFun2()
@@ -625,12 +811,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.shell {
+  height: 97px;
+  //width: 104px;
+  margin: 0 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap; /* 禁止换行 */
+  img{
+    width: 58px;
+    height: 58px;
+    //background: #3F78F0;
+    //border-radius: 8px;
+  }
+  .shell_font{
+    margin-top: 18px;
+    height: 21px;
+    font-size: 16px;
+    //font-family: MicrosoftYaHei;
+    color: #333333;
+    line-height: 21px;
+  }
+}
 .shortcut {
   width: 100%;
   height: 180px;
   background: #FFFFFF;
   border-radius: 8px;
-
+  font-family: 'MicrosoftYaHei';
   .shortcut_1 {
     //margin-top: 26px;
     //margin-left: 23px;
@@ -656,7 +866,7 @@ export default {
     border-radius: 16px;
     border-right: 8px solid #EFF0F4;
     padding: 22px 0 0 67px;
-
+    font-family: 'MicrosoftYaHei';
     .button-container {
       display: flex;
       align-items: center;
@@ -711,7 +921,7 @@ export default {
     border-radius: 16px;
     border-left: 8px solid #EFF0F4;
     padding: 26px 29px 0 22px;
-
+    font-family: 'MicrosoftYaHei';
     .row_1_col_2_head {
       display: block;
       height: 21px;
