@@ -9,9 +9,18 @@
             <a-button type="primary" @click="query">查询</a-button>
             <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
           </a-col>
-          <a-col :md="6" :sm="24">
+          <a-col :md="8" :sm="12">
             <a-form-item label="路径名称" v-bind="formItemLayout" class="fw">
               <a-input allowClear placeholder="请输入巡更路径名称" v-model.trim="queryParams.alias" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="8" :sm="12">
+            <a-form-item label="工作组名称" v-bind="formItemLayout" class="fw">
+              <a-select placeholder="请选择工作组" @change="handleChange" style="width: 100%">
+                <a-select-option v-for="item in groupId_arr" :key="item.id">
+                  {{ item.name }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -45,7 +54,7 @@
       </template>
     </a-table>
 
-    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" />
+    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :groupIdArr="groupId_arr"/>
   </div>
 </template>
 
@@ -55,8 +64,7 @@ import { PathService, RoleService } from '@/api'
 import { Confirm, List } from '@/components/Mixins'
 import _ from 'lodash'
 import { USER_FLAG } from '@/tables/user/enum'
-import { xungeng } from '@/utils/request'
-
+import { xungeng, axios } from '@/utils/request'
 export default {
   name: 'Path',
   mixins: [Confirm, List],
@@ -124,7 +132,9 @@ export default {
     queryParams: {
       alias: null
     },
-    paginationOpt: {}
+    paginationOpt: {},
+    select_groupId: '',
+    groupId_arr: []
   }),
   mounted () {
     this.initialPagination()
@@ -141,6 +151,10 @@ export default {
     }
   },
   methods: {
+    handleChange (value) {
+      // console.log(`selected ${value}`)
+      this.select_groupId = value
+    },
     initialPagination () {
       this.paginationOpt = {
         defaultCurrent: 1, // 默认当前页数
@@ -185,7 +199,7 @@ export default {
      */
     async loadData (parameter) {
       const { alias } = parameter
-      const { list, total } = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize)
+      const { list, total } = await PathService.find(alias, this.paginationOpt.defaultCurrent, this.paginationOpt.defaultPageSize, this.select_groupId)
       if (list) {
         this.defaultData = list
         this.paginationOpt.total = Number.parseInt(total.toString())
@@ -197,8 +211,59 @@ export default {
     async getList () {
       const pageNum = 1
       const pageSize = 9999
-      const { data } = await xungeng.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      /* const { data } = {
+        data: {
+          total: 2,
+          list: [
+            {
+              id: '234567890098791',
+              name: '公规院巡更组',
+              remark: '1111',
+              organizeId: 77551011547316224,
+              isOpean: true,
+              deleteFlag: false,
+              creator: 756,
+              createTime: '2023-08-06 20:54:15',
+              updator: 756,
+              updateTime: '2023-08-06 20:54:15'
+            },
+            {
+              id: '234567890098793',
+              name: '二公局巡更组',
+              organizeId: 108203208312094720,
+              isOpean: true,
+              deleteFlag: false,
+              creator: 756,
+              createTime: '2023-08-03 20:01:42',
+              updator: 756,
+              updateTime: '2023-08-03 20:01:42'
+            }
+          ],
+          business: [
+            {
+              groupId: '234567890098791',
+              patrol: true, // true表示对接了巡更路径
+              alarm: true // true 表示对接了告警源
+            },
+            { groupId: '234567890098793',
+              patrol: false, // false表示没有对接巡更路径
+              alarm: false // false表示没有对接告警源
+            }
+          ]
+        }
+      } */
       this.dataList = data.list
+      // 请选择工作组赋选择项
+      for (const item of data.business) {
+        if (item.patrol === true) {
+          for (const i of data.list) {
+            if (item.groupId === i.id) {
+              this.groupId_arr.push(i)
+            }
+          }
+        }
+      }
     },
     /**
      * 跳转到配置路径界面
