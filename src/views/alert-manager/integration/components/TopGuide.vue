@@ -1,10 +1,18 @@
 <template>
-  <div
-    style="display: flex;  align-items: center;justify-content: space-between">
-    <a-tabs default-active-key="1" style="margin-left: 15px">
+  <div style="display: flex;  align-items: center;justify-content: space-between">
+    <!-- <a-tabs default-active-key="1" style="margin-left: 15px">
       <a-tab-pane key="1" tab="    监控工具   "></a-tab-pane>
-    </a-tabs>
-    <a-select style="width: 200px;margin-right: 15px" :options="platformOptions" allowClear @change="handleChange" @focus="getPlatformList"> </a-select>
+    </a-tabs> -->
+    <h3 style="margin-left: 15px;color: #004FA5;margin-Top: 9px;">监控工具</h3>
+    <a-select
+      style="width: 200px;margin-right: 15px"
+      placeholder="请选择"
+      :options="platformOptions"
+      allowClear
+      @change="handleChange"
+      @focus="getPlatformList"
+    >
+    </a-select>
   </div>
 </template>
 
