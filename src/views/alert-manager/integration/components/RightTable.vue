@@ -16,7 +16,7 @@
   >
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
     <template :slot="'action'" slot-scope="text,record">
-      <a-button @click="updateAlertSource(record)">编辑</a-button>
+      <a-icon style="color: #5b8ff9;" @click="updateAlertSource(record)" type="edit" />
       <a-divider type="vertical" />
       <!--      <a-switch :checked="record.status" size="small" />-->
       <!--      <a-divider type="vertical" />-->
@@ -27,7 +27,7 @@
         okText="提交"
         cancelText="取消"
       >
-        <a-button>删除</a-button>
+        <a-icon style="color: #5b8ff9;" type="delete" />
       </a-popconfirm>
     </template>
     <template :slot="'status'" slot-scope="text, record">
@@ -35,7 +35,7 @@
       <img v-show="!record.sourceStatus" :src="require(`@/assets/icons/svg/errorLight.svg`)" />
     </template>
     <template :slot="'autoClose'" slot-scope="text, record">
-      {{ record.autoClose?record.autoCloseInterval+'分钟自动关闭':'否' }}
+      {{ record.autoCloseInterval?( record.autoClose?record.autoCloseInterval+'分钟自动关闭':'否'):"--" }}
     </template>
   </a-table>
 </template>
@@ -64,7 +64,7 @@ const columns = [
     title: '状态',
     key: 'status',
     scopedSlots: { customRender: 'status' },
-    width: '30px',
+    width: '100px',
     align: 'center'
   },
   {
@@ -72,28 +72,28 @@ const columns = [
     key: 'name',
     dataIndex: 'sourceName',
     ellipsis: true,
-    width: '50px',
+    width: '100px',
     align: 'center'
   },
   {
     title: '告警源IP',
     key: 'ip',
     dataIndex: 'sourceIp',
-    width: '60px',
+    width: '100px',
     align: 'center'
   },
   {
     title: '告警源端口',
     key: 'port',
     dataIndex: 'sourcePort',
-    width: '48px',
+    width: '100px',
     align: 'center'
   },
   {
     title: '告警源平台',
     key: 'platform',
     dataIndex: 'platName',
-    width: '50px',
+    width: '100px',
     align: 'center'
   },
   {
@@ -109,7 +109,7 @@ const columns = [
     key: 'autoClose',
     dataIndex: 'autoClose',
     scopedSlots: { customRender: 'autoClose' },
-    width: '40px',
+    width: '100px',
     align: 'center'
   },
   {
@@ -117,7 +117,7 @@ const columns = [
     key: 'action',
     fixed: 'right',
     scopedSlots: { customRender: 'action' },
-    width: '180px',
+    width: '170px',
     align: 'center'
   }
 ]
