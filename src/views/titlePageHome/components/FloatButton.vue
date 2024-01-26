@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <SetUp ref="auth" :allLinkListMenuCard="allLinkListMenuCard"></SetUp>
+    <SetUp ref="auth" :allLinkListMenuCard="allLinkListMenuCard" @custom-event="myLinkListFun" :menuItems="menuItems" :menuItemsCard="menuItemsCard"></SetUp>
   </div>
 
 </template>
@@ -37,6 +37,14 @@ export default {
     allLinkListMenuCard: {
       type: Object,
       default: () => ({})
+    },
+    menuItemsCard: {
+      type: Array,
+      default: null
+    },
+    menuItems: {
+      type: Array,
+      default: null
     },
     distanceRight: {
       type: Number,
@@ -105,6 +113,9 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    myLinkListFun () {
+      this.$emit('custom-event')
+    },
     /**
      * 窗口resize监听
      */

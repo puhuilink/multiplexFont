@@ -20,7 +20,7 @@
           <a-col :span="24" class="row_1_col_1">
 
             <a-tabs v-model="selectedKey" tabPosition="left" :tabBarStyle="{ width: '150px' }" :animated="false" @change="callback">
-              <a-tab-pane v-for="(node, index) in treeData" :key="node.key" :disabled="index === 0">
+              <a-tab-pane v-for="(node, index) in treeData" :key="node.key">
                 <template v-slot:tab>
                   <div>
                     <!-- 判断是否为第一个标签页 -->
@@ -31,7 +31,7 @@
                         class="row_1_col_1_input"
                         size="default"
                       >
-                        <a-tooltip slot="suffix" >
+                        <a-tooltip slot="suffix">
                           <img src="../assets/sous.png" alt="" style="width: 1.1rem;height: auto" @click="onSearch">
                         </a-tooltip>
                       </a-input>
@@ -56,7 +56,7 @@
                     >
 
                       <div v-for="(item, index) in checkedOptions" :key="index" class="grid-item closeBoxF">
-                        <img :src=" require('../assets/' + item.imgUrl)" alt="item.name" class="item-image" />
+                        <img v-lazy="thumbnail(item.imgUrl)" alt="item.name" class="item-image" />
                         <div class="item-name">{{ item.name }}</div>
                         <a-icon type="close" @click="closePreview(item, index)" class="closeBox"/>
                       </div>
@@ -68,8 +68,8 @@
 
                     <div class="grid-container">
                       <div v-for="(item, index) in options" :key="index" class="grid-item">
-                        <img :src=" require('../assets/' + item.imgUrl)" :alt="item.name" class="item-image" />
-                        <!--                        <img v-lazy="thumbnail(item.imgUrl)" :alt="item.name" class="item-image" />-->
+                        <!--  <img :src=" require('../assets/' + item.imgUrl)" :alt="item.name" class="item-image" />-->
+                        <img v-lazy="thumbnail(item.imgUrl)" :alt="item.name" class="item-image" src=""/>
                         <div class="item-name">{{ item.name }}</div>
                         <input
                           type="checkbox"
@@ -91,7 +91,7 @@
         <div style="padding: 24px 38px">
           <div class="grid-container-card">
             <div v-for="(item, index) in options2" :key="index" class="grid-item-card">
-              <img :src=" require('../assets/' + item.imgUrl)" alt="item.name" class="item-image-card" />
+              <img v-lazy="thumbnail(item.imgUrl)" alt="item.name" class="item-image-card" />
               <div class="item-name-card">{{ item.name }}</div>
               <input
                 type="checkbox"
@@ -111,7 +111,7 @@
 import PreviewMixin from '@/views/view/display/PreviewMixin.vue'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
-import defaultPreviewImg from '@/assets/images/view__preview_default.jpg'
+import defaultPreviewImg from '@/views/titlePageHome/assets/baobiao.png'
 import DesktopMixin from '@/views/view/display/DesktopMixin'
 import { axios } from '@/utils/request'
 const treeData = [
@@ -175,29 +175,50 @@ export default {
       ],
       options: [],
       list: {},
-      // 默认选中
-      checkedItems: [],
+      // 已选快捷功能
+      checkedItems: this.menuItems || [],
       // 选中排序的
       checkedOptions: [],
-      checkedItems2: [1, 2]
+      // 已选卡片
+      checkedItems2: []
     }
   },
   props: {
     allLinkListMenuCard: {
       type: Object,
       default: () => ({})
+    },
+    menuItemsCard: {
+      type: Array,
+      default: null
+    },
+    menuItems: {
+      type: Array,
+      default: null
     }
   },
-  /* computed: {
-    treeData: {
-      get () {
-        return this.allLinkList_menu().menu
-      },
-      set () {
-        // this.options = this.treeData.childList
-      }
-    }
-  }, */
+  computed: {
+    // demo: {
+    //   get () {
+    //     const temp = []
+    //     const { card } = this.allLinkListMenuCard
+    //     for (const el of card) {
+    //       for (const item of this.menuItemsCard) {
+    //         console.log('loop', el, item)
+    //         if (el.code === item.code) {
+    //           temp.push(el.id)
+    //         }
+    //       }
+    //     }
+    //     console.log('temp', temp)
+    //     this.checkedItems2 = temp
+    //     return temp
+    //   },
+    //   set () {
+    //     // this.options = this.treeData.childList
+    //   }
+    // }
+  },
   watch: {
     checkedItems: function (newCheckedItems, old) {
       let set = []
@@ -220,13 +241,45 @@ export default {
         this.treeData = newVal.menu // 或者进行其他处理
         this.options = this.treeData[1].childList || []
         this.options2 = newVal.card
-      },
-      immediate: true // 立即执行一次，以处理异步数据的初始状态
+      }
+      // immediate: true // 立即执行一次，以处理异步数据的初始状态
+    },
+    menuItemsCard: {
+      handler (newVal) {
+        const temp = []
+        const { card } = this.allLinkListMenuCard
+        for (const el of card) {
+          for (const item of newVal) {
+            if (el.code === item.code) {
+              temp.push(el.id)
+            }
+          }
+        }
+        this.checkedItems2 = temp
+      }
+      // immediate: true // 立即执行一次，以处理异步数据的初始状态
+    },
+    menuItems: {
+      handler (newVal) {
+        const temp = []
+        const { menu } = this.allLinkListMenuCard
+        for (const el of menu[1].childList) {
+          for (const item of newVal) {
+            console.log('loop', el, item)
+            if (el.code === item.code) {
+              temp.push(el.id)
+            }
+          }
+        }
+        console.log('temp', temp)
+        this.checkedItems = temp
+      }
+      // immediate: true // 立即执行一次，以处理异步数据的初始状态
     }
   },
   methods: {
     thumbnail (src) {
-      return src ? `${process.env.VUE_APP_VIEW_THUMBNAIL_URI}/${src}` : defaultPreviewImg
+      return src ? `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail/${src}` : defaultPreviewImg
     },
     showModal () {
       this.visible = true
@@ -248,7 +301,7 @@ export default {
       console.log(menuCodesList, cardCodesList)
       this.loading = true
       // 30.首页—保存我的快捷功能和卡片
-      /* await axios.post('/menu/delete',{
+      await axios.post('/menu/saveConfig', {
         menuCodes: menuCodesList,
         cardCodes: cardCodesList
       }).then(res => {
@@ -256,7 +309,12 @@ export default {
         if (res.code === 200) {
           this.visible = false
           this.loading = false
-          // this.allLinkList_menu_card = res.data
+          this.$notification.success({
+            message: '系统提示',
+            description: '保存成功'
+          })
+          // 重新获取首页我的设置
+          this.$emit('custom-event')
         } else {
           this.$notification.error({
             message: '系统提示',
@@ -269,13 +327,13 @@ export default {
       }).finally(() => {
         this.visible = false
         this.loading = false
-      }) */
+      })
     },
     handleCancel (e) {
       this.visible = false
     },
     onSearch (e) {
-      // console.log(e)
+      console.log(e)
       // this.loadingInput = true
       // setTimeout(() => {
       //   this.loadingInput = false

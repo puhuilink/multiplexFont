@@ -6,7 +6,7 @@
         <div v-for="(item, index) in menuItems" :key="index">
           <a @click="tiaozhuan(item.route)">
             <div class="shell">
-              <img :src=" require('./assets/' + item.imgUrl)" class="shell_image" alt=""/>
+              <img v-lazy="thumbnail(item.imgUrl)" src="" class="shell_image" alt=""/>
               <span class="shell_font">{{ item.name }}</span>
             </div>
           </a>
@@ -14,22 +14,22 @@
       </div>
     </div>
 
-    <a-row class="a-row_1">
-      <a-col :span="12" class="row_1_col_1">
+    <a-row class="a-row_1" v-if="cardExistsC001||cardExistsC002">
+      <a-col :span="cardExistsC002 ? 12 : 24" class="row_1_col_1" v-if="cardExistsC001" >
         <a-radio-group v-model="value" buttonStyle="solid" @change="onChange">
           <a-radio-button value="title">知识标题</a-radio-button>
           <a-radio-button value="category">知识分类</a-radio-button>
           <a-radio-button value="keyword">关键字</a-radio-button>
           <a-radio-button value="summary">内容摘要</a-radio-button>
           <a-radio-button value="content">知识正文</a-radio-button>
-        </a-radio-group>
+        </a-radio-group><br>
         <a-input-search
           placeholder="请输入您要查找的知识内容"
           class="row_1_col_1_input"
           @search="onSearch"
           size="large"
           :loading="loadingInput"/>
-        <div class="badge_box">
+        <div class="badge_box" :style="{ width: cardExistsC002 ? '100%' : '50%' }">
           <a-badge status="processing" color="#EFA24F" text="紧急告警该如何快速有效处置?" class="row_1_col_1_badge"/>
           <a-badge status="processing" color="#EFA24F" text="机房运维发现问题如何处理?" class="row_1_col_1_badge"/>
           <a-badge status="processing" color="#EFA24F" text="统一监控章程是什么??" class="row_1_col_1_badge"/>
@@ -37,14 +37,14 @@
           <a-badge status="processing" color="#EFA24F" text="如何快速定位告警源??" class="row_1_col_1_badge"/>
         </div>
       </a-col>
-      <a-col :span="12" class="row_1_col_2">
+      <a-col :span="cardExistsC001 ? 12 : 24" class="row_1_col_2" v-if="cardExistsC002">
         <span class="row_1_col_2_head">平台简介</span>
         <span v-html="text_txt" class="row_1_col_2_text"></span>
       </a-col>
     </a-row>
 
-    <a-row class="a-row_2">
-      <a-col :span="12" class="a-row_2_col_left">
+    <a-row class="a-row_2" v-if="cardExistsC003||cardExistsC004">
+      <a-col :span="cardExistsC004 ? 12 : 24" class="a-row_2_col_left" v-if="cardExistsC003" :style="{ borderRight: cardExistsC004 ? '0.5rem solid #EFF0F4' : 'none' }">
         <span class="row_1_col_2_head">我的待办</span>
 
         <a-table :columns="columns" :data-source="data" :pagination="false" size="middle">
@@ -56,7 +56,7 @@
           </span>
         </a-table>
       </a-col>
-      <a-col :span="12" class="a-row_2_col_right">
+      <a-col :span="cardExistsC003 ? 12 : 24" class="a-row_2_col_right" v-if="cardExistsC004" :style="{ borderLeft: cardExistsC003 ? '0.5rem solid #EFF0F4' : 'none' }">
         <span class="row_1_col_2_head">我的申请</span>
 
         <a-table :columns="columns2" :data-source="data2" :pagination="false" size="middle">
@@ -70,30 +70,27 @@
       </a-col>
     </a-row>
 
-    <a-row class="a-row_3">
-      <a-col :span="12" class="a-row_3_col_left">
+    <a-row class="a-row_3" v-if="cardExistsC005||cardExistsC006" :style="{ height: watchEcharts }">
+      <a-col :span="12" class="a-row_3_col_left" v-if="cardExistsC005">
         <span class="row_1_col_3_head">资产分布情况</span>
-        <div class="echartsBox1" style="height: 84%"></div>
+        <div class="echartsBox1" :style="{height: '84%'}" ></div>
       </a-col>
-      <a-col :span="12" class="a-row_3_col_right">
+      <a-col :span="12" class="a-row_3_col_right" v-if="cardExistsC006">
         <span class="row_1_col_3_head">资产状态分布图</span>
-        <div class="echartsBox2" style="height: 84%"></div>
+        <div class="echartsBox2" :style="{height: '84%'}"></div>
       </a-col>
     </a-row>
-    <!--    <a-row>-->
-    <!--      <a-col :span="24" style="margin-top: 40px;font-size: 28px">机房导览</a-col>-->
-    <!--    </a-row>-->
-    <FloatButton :allLinkListMenuCard="allLinkList_menu_card"></FloatButton>
+
+    <FloatButton :allLinkListMenuCard="allLinkList_menu_card" @custom-event="myLinkListFun" :menuItems="menuItems" :menuItemsCard="menuItemsCard"></FloatButton>
   </div>
 </template>
 
 <script>
 import img from './assets/zcgl.png'
 import FloatButton from './components/FloatButton'
-// import blockImg from './components/block'
 import { axios } from '@/utils/request'
 import * as echarts from 'echarts'
-import Vue from 'vue'
+import defaultPreviewImg from '@/views/titlePageHome/assets/baobiao.png'
 const columns = [
   {
     title: '告警级别',
@@ -265,14 +262,9 @@ export default {
   components: {
     FloatButton
   },
-  // provide () {
-  //   return {
-  //     allLinkList_menu: () => this.allLinkList_menu_card
-  //     // allLinkList_menu: this.allLinkList_menu_card
-  //   }
-  // },
   data () {
     return {
+      watchEcharts: '270px',
       value: 'title', // 初始选中的按钮的值
       wrapperCol: {
         xs: { span: 6, offset: 0 },
@@ -281,16 +273,16 @@ export default {
         xxl: { span: 10, offset: 2 }
       },
       menuItems: [
-        { route: '/', imgUrl: 'jkjc.png', name: '监控集成' },
-        { route: '/', imgUrl: 'zjgl.png', name: '主机管理' },
-        { route: '/', imgUrl: 'zidingyi.png', name: '虚拟化管理' },
-        { route: '/', imgUrl: 'wltp.png', name: '网络拓扑' },
-        { route: '/', imgUrl: 'gjjc.png', name: '告警集成' },
-        { route: '/', imgUrl: 'gjclsz.png', name: '告警策略设置' },
-        { route: '/', imgUrl: 'gjlb.png', name: '告警列表' },
-        { route: '/', imgUrl: 'xgljsz.png', name: '巡更路径设置' },
-        { route: '/', imgUrl: 'xgjhgl.png', name: '巡更计划管理' },
-        { route: '/', imgUrl: 'zcgl.png', name: '巡更计划管理' }
+        // { route: '/', imgUrl: 'jkjc.png', name: '监控集成' },
+        // { route: '/', imgUrl: 'zjgl.png', name: '主机管理' },
+        // { route: '/', imgUrl: 'zidingyi.png', name: '虚拟化管理' },
+        // { route: '/', imgUrl: 'wltp.png', name: '网络拓扑' },
+        // { route: '/', imgUrl: 'gjjc.png', name: '告警集成' },
+        // { route: '/', imgUrl: 'gjclsz.png', name: '告警策略设置' },
+        // { route: '/', imgUrl: 'gjlb.png', name: '告警列表' },
+        // { route: '/', imgUrl: 'xgljsz.png', name: '巡更路径设置' },
+        // { route: '/', imgUrl: 'xgjhgl.png', name: '巡更计划管理' },
+        // { route: '/', imgUrl: 'zcgl.png', name: '巡更计划管理' }
       ],
       // 卡片布局未知
       menuItemsCard: [],
@@ -301,10 +293,27 @@ export default {
       columns,
       data2,
       columns2,
-      allLinkList_menu_card: {}
+      allLinkList_menu_card: {},
+
+      cardExistsC001: false,
+      cardExistsC002: false,
+      cardExistsC003: false,
+      cardExistsC004: false,
+      cardExistsC005: false,
+      cardExistsC006: false
+
     }
   },
   methods: {
+    // 刷新
+    parentMethod () {
+      console.log('试试')
+      this.$forceUpdate()
+    },
+    thumbnail (src) {
+      console.log(src)
+      return src ? `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail/${src}` : defaultPreviewImg
+    },
     tiaozhuan (path) {
       console.log('path', path)
       // this.$router.push(path)
@@ -325,10 +334,11 @@ export default {
       ele !== null ? ele.removeAttribute('_echarts_instance_') : ''
 
       let myEcharts = null
-
-      myEcharts = echarts.init(ele)
-
-      myEcharts.setOption(data)
+      myEcharts = echarts.init(ele).setOption(data)
+      return myEcharts
+      // myEcharts = echarts.init(ele)
+      //
+      // myEcharts.setOption(data)
     },
     echatsFun () {
       const catogray_option = {
@@ -484,6 +494,9 @@ export default {
         }
       }
       this.initCharts('.echartsBox1', catogray_option)
+      // window.addEventListener('resize', () => {
+      //   this.initCharts('.echartsBox1', catogray_option).resize()
+      // })
     },
     echatsFun2 () {
       const catogray_option2 = {
@@ -615,25 +628,51 @@ export default {
         }
       }
       this.initCharts('.echartsBox2', catogray_option2)
+      // window.addEventListener('resize', () => {
+      //   this.initCharts('.echartsBox2', catogray_option2).resize()
+      // })
     },
-    async menuAllLinkList () {
+    menuAllLinkList () {
       try {
         // 28.首页—全部快捷功能和卡片
-        // await axios.get('/menu/allLinkList').then(res => {
-        //   // console.log(data)
-        //   if (res.code === 200) {
-        //     // this.allLinkList_menu_card = res.data
-        //   } else {
-        //     this.$notification.error({
-        //       message: '系统提示',
-        //       // description: data.data.description
-        //       description: '网络错误'
-        //     })
-        //   }
-        // })
-      } catch (e) {
+        axios.get('/menu/allLinkList').then(res => {
+          // console.log(data)
+          if (res.code === 200) {
+            this.allLinkList_menu_card = res.data
+            // 给menu的childList加上id属性
+            this.addIdToChildList(this.allLinkList_menu_card.menu)
 
-      } finally {
+            // 给card的childList加上id属性
+            // this.addIdToChildList(this.allLinkList_menu_card.card)
+            this.allLinkList_menu_card.card.forEach((item, index) => {
+              item.id = index + 1
+            })
+            const newObj = [{
+              parentName: '',
+              key: '0',
+              value: null
+            },
+            {
+              parentName: '全部',
+              key: '00',
+              value: null,
+              childList: []
+            }]
+            this.allLinkList_menu_card.menu.unshift(...newObj)
+            // 整合所有childList数据给,全部按钮
+            for (let i = 2; i < this.allLinkList_menu_card.menu.length; i++) {
+              this.allLinkList_menu_card.menu[1].childList.push(...this.allLinkList_menu_card.menu[i].childList)
+            }
+            this.allLinkList_menu_card.menu[1].value = this.allLinkList_menu_card.menu[1].childList.length
+          } else {
+            this.$notification.error({
+              message: '系统提示',
+              // description: data.data.description
+              description: '网络错误'
+            })
+          }
+        })
+      } catch (e) {
         this.allLinkList_menu_card = {
           menu: [// 快捷功能
             {
@@ -755,24 +794,60 @@ export default {
           this.allLinkList_menu_card.menu[1].childList.push(...this.allLinkList_menu_card.menu[i].childList)
         }
         this.allLinkList_menu_card.menu[1].value = this.allLinkList_menu_card.menu[1].childList.length
+      } finally {
+
       }
     },
-    async myLinkListFun () {
+    myLinkListFun () {
       try {
         // 29.首页—我的快捷功能和卡片
-        // await axios.get('/menu/myLinkList').then(res => {
-        //   // console.log(data)
-        //   if (res.code === 200) {
-        //     this.menuItems = res.data.menu
-        //     // this.menuItemsCard = res.data.card 卡片去掉布局未知?
-        //   } else {
-        //     this.$notification.error({
-        //       message: '系统提示',
-        //       // description: data.data.description
-        //       description: '网络错误'
-        //     })
-        //   }
-        // })
+        axios.get('/menu/myLinkList').then(res => {
+          // console.log(data)
+          if (res.code === 200) {
+            this.menuItems = res.data.menu
+            this.menuItemsCard = res.data.card // 卡片掉布局
+            const codearr = ['C001', 'C002', 'C003', 'C004', 'C005', 'C006']
+            // 重置数据,下方判断只变为true,不会变为false
+            this.cardExistsC001 = false
+            this.cardExistsC002 = false
+            this.cardExistsC003 = false
+            this.cardExistsC004 = false
+            this.cardExistsC005 = false
+            this.cardExistsC006 = false
+            for (const re of this.menuItemsCard) {
+              for (const reElement of codearr) {
+                if (re.code === reElement) {
+                  // console.log(`cardExists${reElement}`, this[`cardExists${reElement}`])
+                  this[`cardExists${reElement}`] = true
+                }
+              }
+            }
+            // this.cardExistsC001 = false
+            // this.cardExistsC002 = false
+            // this.cardExistsC003 = true
+            // this.cardExistsC004 = false
+            // this.cardExistsC005 = true
+            // this.cardExistsC006 = true
+
+            this.watchEcharts = (!(this.cardExistsC001 && this.cardExistsC002) || !(this.cardExistsC003 && this.cardExistsC004)) ? '390px' : '270px'
+            if (this.cardExistsC005 === true) {
+              this.$nextTick(() => {
+                this.echatsFun()
+              })
+            }
+            if (this.cardExistsC006 === true) {
+              this.$nextTick(() => {
+                this.echatsFun2()
+              })
+            }
+          } else {
+            this.$notification.error({
+              message: '系统提示',
+              // description: data.data.description
+              description: '网络错误'
+            })
+          }
+        })
       } catch (e) {
 
       } finally {}
@@ -788,13 +863,25 @@ export default {
       })
     }
   },
-  created () {
-    this.menuAllLinkList()
-    this.myLinkListFun()
+  // watch: {
+  //   watchEcharts: {
+  //     handler (newVal, oldVal) {
+  //       // 在 watchEcharts 变化时执行
+  //       this.$nextTick(() => {
+  //         this.echatsFun()
+  //         this.echatsFun2()
+  //       })
+  //     }
+  //     // deep: true, // 如果 watchEcharts 是对象或数组，需要加上 deep: true
+  //     // immediate: true // 立即执行一次，监听初始化时的值变化
+  //   }
+  // },
+
+  created: async function () {
+    await this.menuAllLinkList()
+    await this.myLinkListFun()
   },
-  mounted () {
-    this.echatsFun()
-    this.echatsFun2()
+  async mounted () {
     /* try {
       const { data } = await axios.get('/organize/getMyMachine')
       if (data) {
