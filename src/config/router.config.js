@@ -214,12 +214,12 @@ export const asyncRouterMap = [
           //   component: () => import('@/views/patrol/route/RouteManagement'),
           //   meta: { title: '路线展示', keepAlive: true, permission: [ 'F010002' ] }
           // },
-          {
-            path: '/patrol/group',
-            name: 'PatrolGroup',
-            component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
-            meta: { title: '巡更组管理', keepAlive: true, permission: ['F010002'] }
-          },
+          // {
+          //   path: '/patrol/group',
+          //   name: 'PatrolGroup',
+          //   component: () => import('@/views/patrol/groupManagementCopy/index.vue'),
+          //   meta: { title: '巡更组管理', keepAlive: true, permission: ['F010002'] }
+          // },
           {
             path: '/patrol/plan',
             name: 'Plan',

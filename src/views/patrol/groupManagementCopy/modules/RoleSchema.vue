@@ -249,7 +249,6 @@ export default {
       // await this.getfindAllUser()
       const allUser = await xungeng.get('/user/findAllUser')
       // this.users = JSON.parse(decrypt(data.data))
-      console.log(JSONBig.parse(decrypt(allUser.data)))
       const pickUser = JSONBig.parse(decrypt(allUser.data)) ? JSONBig.parse(decrypt(allUser.data)).map(el => {
         el.userId = el.userId.toString()
         return _.pick(el, ['staffName', 'userId'])
