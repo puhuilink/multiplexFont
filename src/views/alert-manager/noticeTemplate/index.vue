@@ -230,10 +230,10 @@ export default {
   },
   mounted () {
     this.fetch()
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 

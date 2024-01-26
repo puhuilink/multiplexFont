@@ -773,10 +773,10 @@ export default {
     this.fetchWorkTime()
     this.fetchUser()
     this.fetchGroup()
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 

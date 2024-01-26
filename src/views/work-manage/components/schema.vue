@@ -381,10 +381,10 @@ export default {
       this.$refs.form.resetFields()
       Object.assign(this.$data, this.$options.data.apply(this))
     }
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 

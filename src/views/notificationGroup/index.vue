@@ -166,18 +166,18 @@ export default {
   },
   created () {
     this.fetch()
-  },
-  async beforeCreate () {
-    try {
-      const { data } = await alarm.get('/api/authentication/auth/get')
-      const deData = decrypt(data)
-      if (deData === '2') {
-        await this.$router.push({ name: '600' })
-      }
-    } catch (e) {
-      await this.$router.push({ name: '600' })
-    }
   }
+  // async beforeCreate () {
+  //   try {
+  //     const { data } = await alarm.get('/api/authentication/auth/get')
+  //     const deData = decrypt(data)
+  //     if (deData === '2') {
+  //       await this.$router.push({ name: '600' })
+  //     }
+  //   } catch (e) {
+  //     await this.$router.push({ name: '600' })
+  //   }
+  // }
 }
 </script>
 

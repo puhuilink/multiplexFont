@@ -727,10 +727,10 @@ export default {
     this.fetchCondition('1')
     this.fetchCondition('2')
     this.fetchCondition('3')
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 
