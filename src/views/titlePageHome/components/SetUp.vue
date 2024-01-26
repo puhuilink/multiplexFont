@@ -333,19 +333,29 @@ export default {
       this.visible = false
     },
     onSearch (e) {
-      console.log(e)
+      const arr = []
+      for (const eElement of this.treeData[1].childList) {
+        if (eElement.name.includes(this.keyword)) {
+          arr.push(eElement)
+        }
+      }
+      this.options = arr || []
       // this.loadingInput = true
       // setTimeout(() => {
       //   this.loadingInput = false
       // }, 3000)
     },
     callback (key) {
-      for (const item of this.treeData) {
-        // 如果找到 key 匹配的对象
-        if (item.key === key) {
-          this.options = item.childList || []
-          break
+      console.log(key)
+      if (key !== 0) {
+        for (const item of this.treeData) {
+          // 如果找到 key 匹配的对象
+          if (item.key === key) {
+            this.options = item.childList || []
+            break
+          }
         }
+        this.keyword = ''
       }
     },
     closePreview (item, index) {
