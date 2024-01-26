@@ -1,9 +1,9 @@
 <template>
   <div>
-    <a-steps :current="current">
-      <a-step :key="'form'" title="基本信息" />
-      <a-step :key="'json'" title="json解析" />
-      <a-step :key="'mapping'" title="关系映射" />
+    <a-steps :current="current" type="navigation">
+      <a-step :key="'form'" status="process" title="基本信息" />
+      <a-step :key="'json'" status="process" title="json解析" />
+      <a-step :key="'mapping'" status="process" title="关系映射" />
     </a-steps>
     <div class="steps-content">
       <a-form-model
@@ -22,14 +22,14 @@
           label="告警源名称"
           prop="name"
         >
-          <a-input v-model="formState.name" style="width: 200px" />
+          <a-input v-model="formState.name" style="width: 300px"/>
         </a-form-model-item>
         <a-form-model-item
           :rules="[{ required: true, message: '请输入告警源IP！', trigger: 'change' }]"
           label="告警源IP"
           prop="ip"
         >
-          <a-input v-model="formState.ip" style="width: 200px" />
+          <a-input v-model="formState.ip" style="width: 300px"/>
         </a-form-model-item>
 
         <a-form-model-item
@@ -37,7 +37,7 @@
           label="告警源端口"
           prop="port"
         >
-          <a-input-number v-model="formState.port" style="width: 200px" />
+          <a-input-number v-model="formState.port" />
         </a-form-model-item>
         <a-form-model-item
           extra="针对未关闭的告警，以监控工具最后一次发出告警事件为准，如果设定的时间内未进行手动关闭告警，系统将自动为您关闭告警；自定义区间范围：0-1440分钟，0表示永不关闭，1440分钟即为24小时。"
@@ -158,16 +158,17 @@
         </a-form-model>
       </div>
     </div>
-    <div class="steps-action">
+    <div class="steps-action" style="text-align: center;">
       <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
         上一步
       </a-button>
-      <a-button v-if="current < 2" type="primary" @click="next">
+      <a-button style="margin-left: 8px" v-if="current < 2" type="primary" @click="next">
         下一步
       </a-button>
       <a-button
         v-if="current === 2"
         type="primary"
+        style="margin-left: 8px"
         @click="onSubmit"
       >
         提交
@@ -512,9 +513,9 @@ export default {
 <style scoped>
 .steps-content {
   margin-top: 16px;
-  border: 1px dashed #e9e9e9;
+  /* border: 1px dashed #e9e9e9;
   border-radius: 6px;
-  background-color: #fafafa;
+  background-color: #fafafa; */
   min-height: 200px;
   padding-top: 80px;
 }

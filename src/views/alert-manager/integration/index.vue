@@ -3,7 +3,7 @@
     <div style="background: #ffffff; margin-bottom: 10px">
       <TopGuide @platformChange="changeSelectedId" />
     </div>
-    <div style="display: flex;margin-left: 20px; margin-right: 20px;">
+    <div style="display: flex; margin-right: 20px;">
       <div style="height: 100%;width: 300px; background: #ffffff"><LeftList /></div>
       <div style="width: 20px"></div>
       <div style="height: 100%;min-width: 800px;margin-left: 20px; background: #ffffff"><RightTable :platform-id="selectedId" /></div>
@@ -52,4 +52,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.ant-table-wrapper {
+    padding:  0 !important;
+}
+</style>
