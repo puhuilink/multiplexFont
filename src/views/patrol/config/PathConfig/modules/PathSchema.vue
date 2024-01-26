@@ -18,7 +18,7 @@
       </a-form-model-item>
       <a-form-model-item label="工作组名称" prop="groupId">
         <a-select placeholder="请选择工作组" v-model="originalForm.groupId" style="width: 100%">
-          <a-select-option v-for="item in groupIdArr" :key="item.id">
+          <a-select-option v-for="(item ,index) in groupIdArr" :key="index" :value="item.id">
             {{ item.name }}
           </a-select-option>
         </a-select>
@@ -142,9 +142,11 @@ export default {
      * 打开编辑窗口
      */
     async edit (record) {
+      console.log(record)
       this.status = false
       const { id, alias, ascription, groupId } = record
-      this.originalForm = { id, alias, ascription, groupId }
+      const pathId = id
+      this.originalForm = { pathId, alias, ascription, groupId }
       this.submit = this.update
       this.show('编辑')
       await this.$nextTick()
@@ -174,6 +176,7 @@ export default {
      * 调取编辑接口
      */
     async update () {
+      console.log(this.originalForm)
       this.$refs.ruleForm.validateField('alias', async (err, values) => {
         if (err) return
         try {

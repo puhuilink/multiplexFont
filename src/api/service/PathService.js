@@ -11,11 +11,11 @@ class PathService extends BaseService {
     }
     if (groupId) {
       groupId = encodeURIComponent(groupId)
-      base += `&alias=${groupId}`
+      base += `&groupId=${groupId}`
     }
     try {
       const { code, data } =
-        await axios.get(base)
+        await xungeng.get(base)
       if (code === 200) {
         return data
       }
@@ -49,7 +49,7 @@ class PathService extends BaseService {
       formD.append('ascription', form.ascription)
       formD.append('groupId', form.groupId)
       const { code, data } =
-        await axios.post('/path/add',
+        await xungeng.post('/path/add',
           formD, { header: { 'content-type': 'multipart/form-data' } })
       if (code === 200) {
         return data
