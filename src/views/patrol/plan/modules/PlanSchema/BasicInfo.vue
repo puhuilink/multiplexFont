@@ -42,7 +42,7 @@
           <label title="巡更路径">巡更路径</label>
         </span>
         <a-form-model-item prop="pathId">
-          <a-select v-model="_value.pathId" class="input" @change="handleChange">
+          <a-select v-model="_value.pathId" class="input">
             <a-select-option v-for="{ label, value } in pathList" :key="value" :value="value">{{
               label
             }}</a-select-option>
