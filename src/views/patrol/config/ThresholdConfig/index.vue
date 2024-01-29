@@ -93,7 +93,6 @@
               <a-form-model-item
                 label="告警等级"
                 prop="severity"
-                v-model="form.endpointAlias"
                 v-bind="formLayout"
               >
 
