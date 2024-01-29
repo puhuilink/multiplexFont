@@ -5,7 +5,7 @@
       v-model="visible"
       title="快捷功能设置"
       @ok="handleOk"
-      :width="966"
+      :width="928"
       on-ok="handleOk">
       <template slot="footer">
         <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
@@ -46,7 +46,7 @@
                   </div>
                 </template>
                 <!-- 内容放在这里 -->
-                <div style="height: 550px;">
+                <div style="height: 420px;">
                   <div class="Preview">预览<div>拖动鼠标调整顺序</div></div>
                   <div class="Preview_1">
                     <draggable
@@ -56,7 +56,7 @@
                     >
 
                       <div v-for="(item, index) in checkedOptions" :key="index" class="grid-item closeBoxF">
-                        <img v-lazy="thumbnail(item.imgUrl)" alt="item.name" class="item-image" />
+                        <img v-lazy="thumbnail(item.imgUrl)" alt="item.name" class="item-image" src=""/>
                         <div class="item-name">{{ item.name }}</div>
                         <a-icon type="close" @click="closePreview(item, index)" class="closeBox"/>
                       </div>
@@ -221,11 +221,15 @@ export default {
   },
   watch: {
     checkedItems: function (newCheckedItems, old) {
+      console.log(newCheckedItems, old)
       let set = []
       // 添加
       if (newCheckedItems.length > old.length) {
         set = newCheckedItems.filter(el => !old.includes(el))
-        this.checkedOptions.push(...this.options.filter(option => option.id === set[0]))
+        console.log(set)
+        for (const x of set) {
+          this.checkedOptions.push(...this.options.filter(option => option.id === x))
+        }
       } else if (newCheckedItems.length < old.length) {
         // 删除
         set = old.filter(el => !newCheckedItems.includes(el))
@@ -257,7 +261,6 @@ export default {
         }
         this.checkedItems2 = temp
       }
-      // immediate: true // 立即执行一次，以处理异步数据的初始状态
     },
     menuItems: {
       handler (newVal) {
@@ -271,10 +274,8 @@ export default {
             }
           }
         }
-        console.log('temp', temp)
         this.checkedItems = temp
       }
-      // immediate: true // 立即执行一次，以处理异步数据的初始状态
     }
   },
   methods: {
@@ -284,7 +285,7 @@ export default {
     showModal () {
       this.visible = true
     },
-    async handleOk (e) {
+    async handleOk () {
       const menuCodesList = []
       const cardCodesList = []
       console.log(this.checkedOptions, this.checkedItems2)
@@ -329,10 +330,10 @@ export default {
         this.loading = false
       })
     },
-    handleCancel (e) {
+    handleCancel () {
       this.visible = false
     },
-    onSearch (e) {
+    onSearch () {
       const arr = []
       for (const eElement of this.treeData[1].childList) {
         if (eElement.name.includes(this.keyword)) {
@@ -346,7 +347,6 @@ export default {
       // }, 3000)
     },
     callback (key) {
-      console.log(key)
       if (key !== 0) {
         for (const item of this.treeData) {
           // 如果找到 key 匹配的对象
@@ -568,14 +568,14 @@ export default {
   font-size: 14px;
   line-height: 120%;
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   padding-left: 3px;
   color: #fff; /* 勾勾的颜色 */
   background: #3F78F0;
 }
 .Preview_1 {
-  height: 174px;
+  height: 140px;
   overflow-y: scroll;
 }
 
@@ -589,7 +589,7 @@ export default {
 }
 
 .Preview_2{
-  height: 320px;
+  height: 262px;
   overflow-y: scroll;
 }
 .Preview_2::-webkit-scrollbar {
