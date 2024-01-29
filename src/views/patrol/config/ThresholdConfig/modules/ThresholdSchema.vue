@@ -164,7 +164,7 @@ export default {
     openModal (data) {
       this.parentData = data
       const { id, condition, lowerThreshold, upperThreshold, severity } = data
-      Object.assign(this.editForm, { id, condition, lowerThreshold, upperThreshold, severity })
+      Object.assign(this.editForm, { id, condition, lowerThreshold, upperThreshold, severity: severity.toString() })
       this.visible = true
       this.handleOk = this.update
     },
