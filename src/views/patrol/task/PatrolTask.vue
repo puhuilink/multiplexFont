@@ -44,6 +44,11 @@
               </a-select>
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="计划名称" v-bind="formItemLayout" class="fw">
+              <a-input placeholder="请输入计划名称" v-model="queryParams.alias" allowClear></a-input>
+            </a-form-item>
+          </a-col>
         </a-row>
         <a-row v-show="advanced">
           <a-col :md="6" :sm="24">
@@ -89,6 +94,7 @@
               />
             </a-form-item>
           </a-col>
+
         </a-row>
       </div>
 
