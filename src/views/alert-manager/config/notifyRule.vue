@@ -773,10 +773,10 @@ export default {
     this.fetchWorkTime()
     this.fetchUser()
     this.fetchGroup()
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 
@@ -883,7 +883,7 @@ export default {
 
 .content {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 367px;
   margin-top: 10px;
   div {
@@ -904,5 +904,6 @@ export default {
   padding: 10px 24px;
   border-radius: 5px;
   background-color: rgba(229, 235, 243, 1);
+  margin-top: 15px;
 }
 </style>

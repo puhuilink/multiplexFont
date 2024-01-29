@@ -1,6 +1,6 @@
 <template>
   <div class="wd">
-    <div style="display: flex;flex-direction: row-reverse;height: 3rem;">
+    <div style="display: flex;height: 2rem;margin-left: 22px">
       <a-button @click="onAdd" type="primary" size="large">新建排班</a-button>
     </div>
 
@@ -177,18 +177,18 @@ export default {
   },
   mounted () {
     this.fetch()
-  },
-  async beforeCreate () {
-    try {
-      const { data } = await alarm.get('/api/authentication/auth/get')
-      const deData = decrypt(data)
-      if (deData === '2') {
-        await this.$router.push({ name: '600' })
-      }
-    } catch (e) {
-      await this.$router.push({ name: '600' })
-    }
   }
+  // async beforeCreate () {
+  //   try {
+  //     const { data } = await alarm.get('/api/authentication/auth/get')
+  //     const deData = decrypt(data)
+  //     if (deData === '2') {
+  //       await this.$router.push({ name: '600' })
+  //     }
+  //   } catch (e) {
+  //     await this.$router.push({ name: '600' })
+  //   }
+  // }
 }
 </script>
 
@@ -206,7 +206,10 @@ export default {
     opacity: 0.5;
     padding: 20px;
     overflow: hidden;
-    margin-bottom: 1rem;
+    border-radius: 5px;
+    width: 96%;
+    margin: 0 auto;
+    margin-bottom: 4px;
   }
   &-fix {
     height: 80px;

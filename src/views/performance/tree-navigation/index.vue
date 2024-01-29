@@ -25,39 +25,39 @@
           </a-tab-pane>
 
           <!-- / 视图 -->
-          <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content" :class="isFullScreen ? ['TreeNavigation__renderer-fullscreen'] : []">
-            <div class="TreeNavigation__renderer">
-              <a-spin size="large" :spinning="spinning">
-                <div class="PreviewMixin-bar" :class="isFullScreen ? ['PreviewMixin-bar__fullscreen'] : []" v-show="view">
-                  <a-tooltip placement="top" title="等宽">
-                    <a-icon type="column-width" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>
-                  </a-tooltip>
+          <!--          <a-tab-pane key="2" tab="视图" forceRender class="TreeNavigation__content" :class="isFullScreen ? ['TreeNavigation__renderer-fullscreen'] : []">-->
+          <!--            <div class="TreeNavigation__renderer">-->
+          <!--              <a-spin size="large" :spinning="spinning">-->
+          <!--                <div class="PreviewMixin-bar" :class="isFullScreen ? ['PreviewMixin-bar__fullscreen'] : []" v-show="view">-->
+          <!--                  <a-tooltip placement="top" title="等宽">-->
+          <!--                    <a-icon type="column-width" :class="{ 'PreviewMixin-bar&#45;&#45;active': scaleMode === 'fullWidth' }" @click="setScaleMode('fullWidth')"/>-->
+          <!--                  </a-tooltip>-->
 
-                  <a-tooltip placement="top" title="等高">
-                    <a-icon type="column-height" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>
-                  </a-tooltip>
+          <!--                  <a-tooltip placement="top" title="等高">-->
+          <!--                    <a-icon type="column-height" :class="{ 'PreviewMixin-bar&#45;&#45;active': scaleMode === 'fullHeight' }" @click="setScaleMode('fullHeight')"/>-->
+          <!--                  </a-tooltip>-->
 
-                  <a-tooltip placement="top" title="拉伸">
-                    <a-icon type="swap" :class="{ 'PreviewMixin-bar--active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>
-                  </a-tooltip>
+          <!--                  <a-tooltip placement="top" title="拉伸">-->
+          <!--                    <a-icon type="swap" :class="{ 'PreviewMixin-bar&#45;&#45;active': scaleMode === 'fullscreen' }" @click="setScaleMode('fullscreen')"/>-->
+          <!--                  </a-tooltip>-->
 
-                  <a-tooltip placement="top" title="原始">
-                    <a-icon type="pic-center" :class="{ 'PreviewMixin-bar--active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>
-                  </a-tooltip>
+          <!--                  <a-tooltip placement="top" title="原始">-->
+          <!--                    <a-icon type="pic-center" :class="{ 'PreviewMixin-bar&#45;&#45;active': scaleMode === 'primary' }" @click="setScaleMode('primary')"/>-->
+          <!--                  </a-tooltip>-->
 
-                  <a-tooltip placement="top" title="自适应">
-                    <a-icon type="border-outer" :class="{ 'PreviewMixin-bar--active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>
-                  </a-tooltip>
+          <!--                  <a-tooltip placement="top" title="自适应">-->
+          <!--                    <a-icon type="border-outer" :class="{ 'PreviewMixin-bar&#45;&#45;active': scaleMode === 'auto' }" @click="setScaleMode('auto')"/>-->
+          <!--                  </a-tooltip>-->
 
-                  <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">
-                    <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />
-                  </a-tooltip>
-                </div>
-                <Renderer ref="renderer" :view="view" v-if="view" />
-                <a-empty v-show="description" :description="description" />
-              </a-spin>
-            </div>
-          </a-tab-pane>
+          <!--                  <a-tooltip placement="top" :title="isFullScreen ? '退出全屏' : '全屏'">-->
+          <!--                    <a-icon :type="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" @click="toggleFullscreen" />-->
+          <!--                  </a-tooltip>-->
+          <!--                </div>-->
+          <!--                <Renderer ref="renderer" :view="view" v-if="view" />-->
+          <!--                <a-empty v-show="description" :description="description" />-->
+          <!--              </a-spin>-->
+          <!--            </div>-->
+          <!--          </a-tab-pane>-->
 
         </a-tabs>
       </a-col>

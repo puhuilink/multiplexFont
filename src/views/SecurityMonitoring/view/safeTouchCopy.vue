@@ -1272,6 +1272,7 @@ export default {
       })
 
       window.addEventListener('resize', function () {
+        console.log('重绘')
         myChart3.resize()
       })
     },

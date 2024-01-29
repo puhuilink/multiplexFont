@@ -10,6 +10,17 @@
     <a-form layout="inline" class="form">
       <div class="fold">
         <a-row :gutter="[8,8]">
+          <a-col class="search_box">
+            <label class="search_label">搜索条件</label>
+            <a-button type="primary" @click="query(true)">
+              <a-icon type="search" />
+              查询
+            </a-button>
+            <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">
+              <a-icon type="sync" />
+              重置
+            </a-button>
+          </a-col>
           <a-col v-bind="colLayout">
             <!--            告警级别-->
             <a-form-item :label="ALARM_QUERY_LABEL.level" v-bind="formItemLayout" class="wd">
@@ -56,50 +67,54 @@
           </a-col>
         </a-row>
       </div>
-      <span class="collapse">
-        <QueryBtn @click="query" />
-        <ResetBtn @click="resetQueryParams" />
-      </span>
-    </a-form>
-    <!--        导出-->
-    <a-button
-      @click="downLoad"
-      icon="export"
-      :disabled="false"
-      style="margin-bottom: 10px"
-      type="primary"
-      :loading="exportLoading">导出</a-button>
-    <!--            关闭按钮-->
-    <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
-      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
-    </a-popconfirm>
+      <!--      <span class="collapse">-->
+      <!--        <QueryBtn @click="query" />-->
+      <!--        <ResetBtn @click="resetQueryParams" />-->
+      <!--      </span>-->
+      <div class="operation_box">
+        <a-button
+          @click="downLoad"
+          icon="export"
+          :disabled="false"
+          type="primary"
+          :loading="exportLoading">导出</a-button>
+        <!--            关闭按钮-->
+        <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这些告警？" :disabled="!hasSelected" @confirm="() => batchCloseAlarm()">
+          <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">关闭</a-button>
+        </a-popconfirm>
 
-    <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这些告警？" :disabled="!hasSelected" @confirm="() => batchClaimedAlarm()">
-      <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">认领</a-button>
-    </a-popconfirm>
-    <a-table
-      :loading="loading"
-      bordered
-      rowKey="ID"
-      :scroll="{y: scrollY}"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-      :columns="columns"
-      :data-source="dataSource"
-      :pagination="paginationOpt"
-    >
-      <a slot="name" slot-scope="text">{{ text }}</a>
-      <span slot="action" slot-scope="text, record" class="center">
-        <a-button @click="showDetail(text, record)">详情</a-button>
-        <a-divider v-if="state === ALARM_STATE.unclaimed" type="vertical" />
-        <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这条告警？" @confirm="() => claimAlarm(record)">
-          <a-button>认领</a-button>
+        <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这些告警？" :disabled="!hasSelected" @confirm="() => batchClaimedAlarm()">
+          <a-button icon="check" :disabled="!hasSelected" style="margin-left: 10px">认领</a-button>
         </a-popconfirm>
-        <a-divider v-if="state === ALARM_STATE.unSolved" type="vertical" />
-        <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)">
-          <a-button>关闭</a-button>
-        </a-popconfirm>
-      </span>
-    </a-table>
+        <div/>
+      </div></a-form>
+    <!--        导出-->
+    <div class="wrapper_content content_item">
+      <a-table
+        :loading="loading"
+        bordered
+        rowKey="ID"
+        :scroll="{y: scrollY}"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :columns="columns"
+        :data-source="dataSource"
+        :pagination="paginationOpt"
+      >
+        <a slot="name" slot-scope="text">{{ text }}</a>
+        <span slot="action" slot-scope="text, record" class="center">
+          <a-button @click="showDetail(text, record)">详情</a-button>
+          <a-divider v-if="state === ALARM_STATE.unclaimed" type="vertical" />
+          <a-popconfirm v-if="state === ALARM_STATE.unclaimed" title="是否要认领这条告警？" @confirm="() => claimAlarm(record)">
+            <a-button>认领</a-button>
+          </a-popconfirm>
+          <a-divider v-if="state === ALARM_STATE.unSolved" type="vertical" />
+          <a-popconfirm v-if="state === ALARM_STATE.unSolved" title="是否要关闭这条告警？" @confirm="() => closeAlarm(record)">
+            <a-button>关闭</a-button>
+          </a-popconfirm>
+        </span>
+      </a-table>
+    </div>
+
     <DetailSchema ref="schema" @close="onClose"></DetailSchema>
   </div>
 </template>
@@ -494,6 +509,11 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.content_item {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 </style>

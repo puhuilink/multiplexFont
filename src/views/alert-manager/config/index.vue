@@ -347,12 +347,12 @@ export default {
         sm: 24
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
           md: { span: 14, offset: 0 },
           xl: { span: 14, offset: 2 },
-          xxl: { span: 20, offset: 0 }
+          xxl: { span: 16, offset: 0 }
         }
       },
       data,
@@ -705,7 +705,6 @@ export default {
     rowSelection () {
       return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
         },
         getCheckboxProps: record => ({
           props: {
@@ -727,10 +726,10 @@ export default {
     this.fetchCondition('1')
     this.fetchCondition('2')
     this.fetchCondition('3')
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 

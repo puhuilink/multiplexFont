@@ -45,10 +45,10 @@ export default {
   },
   mounted () {
     this.requestPlatformList()
-  },
-  beforeCreate () {
-    judgeRoleToAlertView()
   }
+  // beforeCreate () {
+  //   judgeRoleToAlertView()
+  // }
 }
 </script>
 

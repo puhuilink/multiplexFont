@@ -17,7 +17,7 @@
           <a-col :md="8" :sm="12">
             <a-form-item label="工作组名称" v-bind="formItemLayout" class="fw">
               <a-select placeholder="请选择工作组" @change="handleChange" style="width: 100%">
-                <a-select-option v-for="item in groupId_arr" :key="item.id">
+                <a-select-option v-for="(item ,index) in groupId_arr" :key="index" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
               </a-select>
@@ -54,7 +54,7 @@
       </template>
     </a-table>
 
-    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :groupIdArr="groupId_arr"/>
+    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :groupIdArr="dataList"/>
   </div>
 </template>
 
@@ -152,7 +152,7 @@ export default {
   },
   methods: {
     handleChange (value) {
-      // console.log(`selected ${value}`)
+      console.log(`selected ${value}`)
       this.select_groupId = value
     },
     initialPagination () {
@@ -192,6 +192,7 @@ export default {
     },
     query () {
       this.getList()
+      console.log(this.queryParams)
       this.loadData({ ...this.queryParams })
     },
     /**
