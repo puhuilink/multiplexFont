@@ -54,7 +54,7 @@
       </template>
     </a-table>
 
-    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :groupIdArr="groupId_arr"/>
+    <PathSchema ref="schema" @addSuccess="query" @editSuccess="query(false)" :groupIdArr="dataList"/>
   </div>
 </template>
 
