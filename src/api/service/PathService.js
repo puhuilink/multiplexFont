@@ -15,7 +15,7 @@ class PathService extends BaseService {
     }
     try {
       const { code, data } =
-        await axios.get(base)
+        await xungeng.get(base)
       if (code === 200) {
         return data
       }

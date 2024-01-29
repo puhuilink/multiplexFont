@@ -11,13 +11,15 @@
             </span>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="巡更组" v-bind="formItemLayout" class="fw">
-              <a-select allowClear v-model="queryParams.groupId" placeholder="请输入">
-                <a-select-option
-                  v-for="{ label, value } in patrolGroupList"
-                  :key="value"
-                  :value="value"
-                >{{ label }}</a-select-option>
+            <a-form-item label="工作组" v-bind="formItemLayout" class="fw">
+              <!-- <a-select allowClear v-model="queryParams.groupId" placeholder="请输入">
+                <a-select-option v-for="{ label, value } in patrolGroupList" :key="value" :value="value">{{ label
+                }}</a-select-option>
+              </a-select> -->
+              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%">
+                <a-select-option v-for="item in patrolGroupList" :key="item.id">
+                  {{ item.name }}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -31,12 +33,21 @@
     </a-form>
     <div style="width: 100%" class="operation_box">
       <a-button type="primary" @click="onAdd" style="margin-right: 10px" v-action:F010003001>
-        <a-icon type="plus-circle"/>
+        <a-icon type="plus-circle" />
         新增</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onEdit" style="margin-right: 10px" v-action:F010003002>
+      <a-button
+        :type="hasSelectedOne ? 'primary' : ''"
+        :disabled="!hasSelectedOne"
+        @click="onEdit"
+        style="margin-right: 10px"
+        v-action:F010003002>
         <a-icon type="edit" />
         编辑</a-button>
-      <a-button :type="hasSelectedOne ? 'primary' : ''" :disabled="!hasSelectedOne" @click="onBatchDelete" v-action:F010003003>
+      <a-button
+        :type="hasSelectedOne ? 'primary' : ''"
+        :disabled="!hasSelectedOne"
+        @click="onBatchDelete"
+        v-action:F010003003>
         <a-icon type="delete" />
         删除</a-button>
     </div>
@@ -44,12 +55,11 @@
       :columns="columns"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
-      :scroll="{x:1500}"
+      :scroll="{ x: 1500 }"
       :data-source="dataSource"
       :loading="pageLoading"
       :pagination="paginationOpt"
-      :rowClassName="(record, index)=> index % 2 === 1 ? 'table_bg' : ''"
-    ></a-table>
+      :rowClassName="(record, index) => index % 2 === 1 ? 'table_bg' : ''"></a-table>
 
     <PlanSchema ref="schema" @addSuccess="query" @editSuccess="query" />
   </div>
@@ -62,7 +72,7 @@ import { ASCRIPTION_LIST, PLAN_STATUS_MAPPING, PLAN_STATUS_ENABLED, PLAN_STATUS_
 import moment from 'moment'
 import { PatrolService } from '@/api'
 import commonMixin from './commonMixin'
-import { xungeng } from '@/utils/request'
+import { xungeng, axios } from '@/utils/request'
 import { Modal } from 'ant-design-vue'
 
 const timeColumnSnippet = {
@@ -81,6 +91,7 @@ export default {
     return {
       pageLoading: false,
       dataSource: [],
+      patrolGroupList: [],
       ASCRIPTION_LIST,
       columns: [
         {
@@ -89,7 +100,7 @@ export default {
           width: 120
         },
         {
-          title: '巡更组',
+          title: '工作组',
           dataIndex: 'groupName',
           width: 120
         },
@@ -157,6 +168,23 @@ export default {
     }
   },
   methods: {
+    // async fetchPatrolGroupList () {
+    //   try {
+    //     this.patrolGroupLoading = true
+    //     const { data: { list } } = await xungeng.get('/group/list', {
+    //       params: {
+    //         pageNum: 1,
+    //         pageSize: 999
+    //       }
+    //     })
+    //     this.patrolGroupList = list.map(el => ({ label: el.name, value: el.id }))
+    //   } catch (e) {
+    //     this.patrolGroupList = []
+    //     throw e
+    //   } finally {
+    //     this.patrolGroupLoading = false
+    //   }
+    // },
     async query (first = false) {
       try {
         this.pageLoading = true
@@ -250,5 +278,4 @@ export default {
 }
 </script>
 
-<style scoped lang='less'>
-</style>
+<style scoped lang='less'></style>
