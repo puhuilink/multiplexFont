@@ -238,8 +238,7 @@ import '@/utils/utils.less'
 import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
-import { alarm } from '@/utils/request'
-import { judgeRoleToAlertView } from '@/utils/util'
+import { axios } from '@/utils/request'
 
 const columns = [
   {
@@ -378,7 +377,7 @@ export default {
   },
   methods: {
     async deleteStrategy (id) {
-      const res = await alarm.post('/platform/policy/delete', { id })
+      const res = await axios.post('/alert/policy/delete', { id })
       if (res.code === 200) {
         this.$message.success('删除成功！')
         await this.fetchList()
@@ -387,7 +386,7 @@ export default {
       }
     },
     async fetchList () {
-      const { data } = await alarm.post('/platform/policy/find', {
+      const { data } = await axios.post('/alert/policy/find', {
         limit: 25,
         offset: 1,
         account_id: store.getters.userId,
@@ -587,10 +586,8 @@ export default {
       }
       this.formState.source_id = e.value
       this.formState.source_name = e.label
-      // console.log('111')
     },
     async handleOk () {
-      console.log(this.formState)
       let flag = false
       this.$refs.ruleForm.validate(valid => {
         if (!valid) {
@@ -620,13 +617,13 @@ export default {
       let url = ''
       if (this.updateFlag) {
         backup.updator = store.getters.userId
-        url = '/platform/policy/update'
+        url = '/alert/policy/update'
       } else {
         backup.creator = store.getters.userId
-        url = '/platform/policy/add'
+        url = '/alert/policy/add'
       }
 
-      const res = await alarm.post(url, backup)
+      const res = await axios.post(url, backup)
       if (res.code === 200) {
         this.$message.success(this.updateFlag ? '修改成功' : '新建成功！')
         this.closeModal()
@@ -636,17 +633,7 @@ export default {
       }
     },
     onSelectChange (selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
-    },
-    handleChange (value) {
-      console.log(`selected ${value}`)
-    },
-    handleBlur () {
-      console.log('blur')
-    },
-    handleFocus () {
-      console.log('focus')
     },
     filterOption (input, option) {
       return (
@@ -671,9 +658,6 @@ export default {
       } catch (e) {
         return '无分派人信息'
       }
-    },
-    onChange (date, dateString) {
-      console.log(date, dateString)
     },
     onChangeState (activeKey) {
       this.state = activeKey

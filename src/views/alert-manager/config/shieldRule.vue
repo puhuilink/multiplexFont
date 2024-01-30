@@ -5,7 +5,7 @@
       :title="updateFlag?'修改屏蔽规则':'新建屏蔽规则'"
       :visible="visible"
       :confirm-loading="confirmLoading"
-      width="1100px"
+      :width="700"
       @ok="handleOk"
       @cancel="closeModal"
       @close="closeModal"
@@ -71,7 +71,7 @@
     <a-modal
       title="屏蔽规则详情"
       :visible="show"
-      width="1100px"
+      :width="700"
       @ok="closeShow"
       @cancel="closeShow"
       @close="closeShow"
@@ -267,12 +267,12 @@ export default {
         sm: 24
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
           md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 2 },
-          xxl: { span: 20, offset: 0 }
+          xl: { span: 14, offset: 0 },
+          xxl: { span: 16, offset: 0 }
         }
       },
       data,

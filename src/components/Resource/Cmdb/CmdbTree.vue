@@ -147,6 +147,8 @@ export default {
   border: 1px solid rgba(191, 191, 191, 1);
   border-radius: 5px;
   padding: 5px;
+  height: 720px;
+  overflow: scroll;
   &__search {
     position: sticky;
     top: 0px;

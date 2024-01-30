@@ -64,7 +64,6 @@
           </a-form-model-item>
           <a-form-model-item
             label="通知对象"
-            style="display: flex;justify-content: space-between"
             :rules="[{required:true, validator: notifyAccountPass, trigger: 'change' }]"
             prop="notifyStaffType"
           >
@@ -76,7 +75,7 @@
                 {label:'通知人', value: '1'}
               ]"
             />
-            <span>
+            <span style="margin-left: 5px">
               <a-select v-if="formState.notifyStaffType=== '1'" style="width: 200px" v-model="userId" :options="user" @change="clearV"/>
               <a-select v-else style="width: 200px" v-model="groupId" :options="group" @change="clearV"/>
             </span>
@@ -354,12 +353,12 @@ export default {
         sm: 24
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
           md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 2 },
-          xxl: { span: 20, offset: 0 }
+          xl: { span: 14, offset: 0 },
+          xxl: { span: 16, offset: 0 }
         }
       },
       data,

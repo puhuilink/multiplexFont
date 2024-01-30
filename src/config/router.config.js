@@ -110,12 +110,12 @@ export const asyncRouterMap = [
                 meta: { title: '屏蔽规则', permission: ['F005002003'] }
               },
               // 通知组页
-              {
-                path: '/alertManagerPlatform/config/notified-group',
-                component: () => import('@/views/notificationGroup/index'),
-                meta: { title: '通知组管理', keepAlive: true, permission: ['F005002004'] },
-                name: 'notice-group'
-              },
+              // {
+              //   path: '/alertManagerPlatform/config/notified-group',
+              //   component: () => import('@/views/notificationGroup/index'),
+              //   meta: { title: '通知组管理', keepAlive: true, permission: ['F005002004'] },
+              //   name: 'notice-group'
+              // },
 
               // 模板管理
               {

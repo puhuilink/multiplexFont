@@ -132,8 +132,7 @@ export default {
   },
   methods: {
     async fetchAnswer () {
-      const base_sql = 'select id,alias from t_patrol_answer '
-      const data = dealQuery(await sql(base_sql))
+      const { data } = await xungeng.get('/answer/list')
       this.answerOptions = []
       data.forEach(entity => {
         this.answerOptions.push({
