@@ -344,7 +344,8 @@ export default {
       let pp
       try {
         const { data } = await alarm.post('/api/integration/platform/display', { platformId: id })
-        pp = data
+        pp = { platformId: id, ...data }
+        console.log('data', data)
       } catch (e) {
         this.$message.error('请求失败！请检查网络连接！')
         return
