@@ -321,7 +321,7 @@ export default {
           title: '默认告警等级',
           dataIndex: 'default_severity',
           align: 'center',
-          customRender: (value) => value  ? 'L' + value : '无'
+          customRender: (value) => value ? 'L' + value : '无'
         },
         {
           title: '操作',
@@ -549,14 +549,14 @@ export default {
       this.form.validateFields((err, value) => {
         if (!err) {
           this.answers = {}
-          let where = {}
+          const where = {}
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
             where['alias'] = value.alias
           }
           if (value.type !== null && value.type !== undefined && value.type !== '') {
             where['type'] = value.type
           }
-          if (Object.keys(where).length>0) {
+          if (Object.keys(where).length > 0) {
             this.fetchAnswer(where)
           } else {
             this.fetchAnswer()
@@ -622,7 +622,7 @@ export default {
     },
     async fetchAnswer (params) {
       this.loading = true
-      const { data } = await xungeng.get('/answer/list',{params})
+      const { data } = await xungeng.get('/answer/list', { params })
       this.answers = {}
       for (let i = 0; i < data.length; i++) {
         const answer = data[i]

@@ -357,6 +357,15 @@ export default {
         }
       }
     },
+    async getPlan () {
+      const { data: { list } } = await xungeng.get('/plan/list', {
+        params: {
+          pageSize: 9999,
+          pageNum: 1
+        }
+      })
+      this.plans = list.map(el => ({ label: el.alias, value: el.id }))
+    },
     async loadData (parameter) {
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
       this.defaultData = list

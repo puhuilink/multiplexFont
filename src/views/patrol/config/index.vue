@@ -78,7 +78,7 @@
         />
       </template>
       <template slot="endpoint" slot-scope="value">
-        {{value?value:"虚拟实体"}}
+        {{ value?value:"虚拟实体" }}
       </template>
       <template slot="code" slot-scope="value,row">
         <a

@@ -125,7 +125,7 @@ export default {
         width: 180
       },
       {
-        title: '巡更组',
+        title: '工作组',
         dataIndex: 'group_name',
         width: 180
       },

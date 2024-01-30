@@ -40,7 +40,7 @@ export default {
     },
     menuItemsCard: {
       type: Array,
-      default: null
+      default: () => []
     },
     menuItems: {
       type: Array,

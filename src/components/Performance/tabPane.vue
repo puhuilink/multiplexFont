@@ -13,7 +13,8 @@
         <template #operation>
           <div class="titleText">
             <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
-            <TitleMsg :id="id"></TitleMsg>
+<!--            TODO: 接口出来之后再对接-->
+<!--            <TitleMsg :id="id"></TitleMsg>-->
           </div>
         </template>
       </CTable>

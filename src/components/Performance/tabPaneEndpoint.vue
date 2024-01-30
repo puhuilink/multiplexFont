@@ -14,7 +14,7 @@
         <template #operation>
           <div style="display: flex;align-items: center">
             <AlarmStatusBadgeGroup @alarmSend="alarmChange"/>
-            <TitleMsg :id="hostId"></TitleMsg>
+<!--            <TitleMsg :id="hostId"></TitleMsg>-->
           </div>
         </template>
       </CTable>
