@@ -149,17 +149,17 @@ export default {
           }
         },
         {
-          title: '备注',
-          dataIndex: 'remarks',
-          width: '150px',
-          align: 'center'
-        },
-        {
-          title: '对接系统',
+          title: '关联业务',
           dataIndex: 'system',
           align: 'center',
           width: '150px',
           scopedSlots: { customRender: 'system' }
+        },
+        {
+          title: '备注',
+          dataIndex: 'remarks',
+          width: '150px',
+          align: 'center'
         },
         {
           title: '操作',
