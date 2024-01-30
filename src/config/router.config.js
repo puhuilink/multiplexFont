@@ -49,7 +49,7 @@ export const asyncRouterMap = [
           {
             path: '/UnifiedMonitoring/Performance',
             name: 'Performance',
-            redirect: '/performance/Performance/TreeNavigation',
+            component: RouteView,
             meta: { title: '性能管理', keepAlive: true, permission: ['F004001'] },
             children: [
               {
