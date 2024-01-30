@@ -80,7 +80,7 @@ class PathService extends BaseService {
       Object.assign(args, { pathId: id }, other)
       const formData = new FormData()
       Object.keys(args).forEach(key => formData.append(key, args[key]))
-      const { code, data } = await axios.post(`/path/update`, formData)
+      const { code, data } = await xungeng.post(`/path/update`, formData)
       if (code === 200) {
         return data
       }
