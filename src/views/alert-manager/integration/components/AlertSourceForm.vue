@@ -109,8 +109,8 @@
           <a-input v-model="formState.url" style="width: 300px" />
         </a-form-model-item>
         <a-form-model-item
-          :rules="[{ required: isAdmin, message: '请选择通知组！', trigger: 'change' }]"
-          label="通知组"
+          :rules="[{ required: true, message: '请选择工作组！', trigger: 'change' }]"
+          label="工作组"
           prop="groupId"
         >
           <a-select v-model="formState.groupId" style="width: 200px" :options="groupData" />
