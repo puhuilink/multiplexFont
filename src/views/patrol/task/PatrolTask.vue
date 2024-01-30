@@ -14,16 +14,10 @@
             </span>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item
-              label="巡更组"
-              v-bind="formItemLayout"
-              class="fw"
-            >
-              <a-select allowClear v-model="queryParams.groupId">
-                <a-select-option
-                  v-for="{name, id} in groups"
-                  :key="id"
-                >{{ name }}
+            <a-form-item label="工作组" v-bind="formItemLayout" class="fw">
+              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%">
+                <a-select-option v-for="(item ,index) in groupId_arr" :key="index" :value="item.id">
+                  {{ item.name }}
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -168,7 +162,7 @@ import {
 import moment from 'moment'
 import { PatrolTaskListService } from '@/api/service/PatrolTaskListService'
 import _ from 'lodash'
-import { xungeng } from '@/utils/request'
+import { axios, xungeng } from '@/utils/request'
 
 export default {
   name: 'PatrolTask',
@@ -180,6 +174,7 @@ export default {
   },
   data () {
     return {
+      groupId_arr: [],
       defaultData: [],
       groups: [],
       plans: [],
@@ -203,7 +198,7 @@ export default {
           width: 220
         },
         {
-          title: '巡更组',
+          title: '工作组',
           dataIndex: 'groupName',
           width: 220,
           align: 'center'
@@ -341,19 +336,26 @@ export default {
       })
       return newObj
     },
+    // 4.工作组列表
     async getGroup () {
-      const { list } = await PatrolTaskListService.getGroupList({ pageNum: 0, pageSize: 9999 })
-      this.groups = list
-      this.queryParams.groupId = list[0].id
-    },
-    async getPlan () {
-      const { data: { list } } = await xungeng.get('/plan/list', {
-        params: {
-          pageSize: 9999,
-          pageNum: 1
+      // const { list } = await PatrolTaskListService.getGroupList({ pageNum: 0, pageSize: 9999 })
+      // this.groups = list
+      // this.queryParams.groupId = list[0].id
+
+      const pageNum = 1
+      const pageSize = 9999
+      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      this.dataList = data.list
+      // 请选择工作组赋选择项
+      for (const item of data.business) {
+        if (item.patrol === true) {
+          for (const i of data.list) {
+            if (item.groupId === i.id) {
+              this.groupId_arr.push(i)
+            }
+          }
         }
-      })
-      this.plans = list.map(el => ({ label: el.alias, value: el.id }))
+      }
     },
     async loadData (parameter) {
       const { list, total } = await PatrolTaskListService.getTaskList(parameter)
