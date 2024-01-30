@@ -14,7 +14,7 @@
     <a-row :gutter="[24, 24]" type="flex" justify="space-between">
       <a-col :span="16" >
         <div style="background: white; height: 100%; padding: 20px;border-radius:2px;">
-          <AlertSourceForm :record="record" :platform-id="platform.id" />
+          <AlertSourceForm :record="record" :platformId="platform.platformId" />
         </div>
       </a-col>
       <a-col :span="8" >
@@ -101,6 +101,7 @@ export default {
     },
     loadPlatformList () {
       const plat = this.platform
+      console.log('plat', plat)
       if (plat.levelRelation !== null && plat.levelRelation !== {}) {
         const dataList = []
         Object.keys(plat.levelRelation).forEach(level => {
