@@ -13,7 +13,7 @@
                   <a-button
                     type="primary"
                     @click="() => {
-                      this.getPatrolPath(1,)
+                      this.getPatrolPath()
                     }"
                   >查询</a-button>
                   <a-button
@@ -76,6 +76,9 @@
           :checked="isChecked(row.checkpoint_id)"
           @change="onSelectChange(row.checkpoint_id)"
         />
+      </template>
+      <template slot="endpoint" slot-scope="value">
+        {{value?value:"虚拟实体"}}
       </template>
       <template slot="code" slot-scope="value,row">
         <a
@@ -201,7 +204,7 @@ export default {
         {
           // slots: { title: 'checkpoint' },
           title: '点位',
-          dataIndex: 'checkpoint_alias',
+          dataIndex: 'checkpointAlias',
           align: 'center',
           scopedSlots: { customRender: 'checkpoint' },
           customCell: (row, index) => {
@@ -258,7 +261,7 @@ export default {
         },
         {
           title: '监控对象',
-          dataIndex: 'host_alias',
+          dataIndex: 'hostAlias',
           align: 'center',
           scopedSlots: { customRender: 'host' },
           customCell: (row, index) => {
@@ -291,7 +294,7 @@ export default {
           title: '检查实体',
           align: 'center',
           width: '15%',
-          dataIndex: 'endpoint_alias',
+          dataIndex: 'endpointAlias',
           scopedSlots: { customRender: 'endpoint' },
           customCell: (row, index) => {
             if (this.endpointTable.length < this.data.length) {
@@ -321,7 +324,7 @@ export default {
         },
         {
           title: '检查项',
-          dataIndex: 'metric_alias'
+          dataIndex: 'metricAlias'
         },
         {
           title: '操作',
@@ -402,7 +405,7 @@ export default {
     firstRender () {
       this.dealRouter()
       this.initialPagination()
-      this.getPatrolPath(1)
+      this.getPatrolPath()
     },
     initialPagination () {
       this.paginationOpt = {
@@ -416,19 +419,19 @@ export default {
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.current = current
           this.paginationOpt.pageSize = pageSize
-          this.getPatrolPath(current)
+          this.getPatrolPath()
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationOpt.current = current
           this.paginationOpt.pageSize = size
-          this.getPatrolPath(current)
+          this.getPatrolPath()
         }
       }
     },
     onRefresh () {
       this.$refs.zone.fetch()
-      this.getPatrolPath(this.paginationOpt.current)
+      this.getPatrolPath()
     },
     async refreshRender () {
       this.$notification.success({
@@ -440,7 +443,7 @@ export default {
       const { zones } = await PathService.getPathList(this.pathId)
       this.zoneId = zones[0].zoneId
       await this.$refs.zone.fetch()
-      await this.getPatrolPath(1)
+      await this.getPatrolPath()
     },
     editPatrolConfig (type, data) {
       this.$refs.configSchema.infoConfig(type, data, this.pathId, this.zoneId)
@@ -474,7 +477,7 @@ export default {
           message: '系统提示',
           description: '巡更路径变更成功'
         })
-        await this.getPatrolPath(1, {})
+        await this.getPatrolPath()
       } else {
         this.$notification.error({
           message: '系统提示',
@@ -511,39 +514,29 @@ export default {
         this.selectedRowKeys.push(e)
       }
     },
-    async getPatrolPath (pageNo = 1) {
-      const checkpoint_alias = this.alias
+    async getPatrolPath () {
       this.spinning = true
       this.data = []
       this.checkpoints = []
       this.selectedRowKeys = []
       this.hostTable = []
       this.endpointTable = []
-      let query_sql = 'select * from v_patrol_path where 1=1 '
-      let querys = 'select count(1) as total from v_patrol_path where 1=1 '
-      query_sql += 'and path_id = ' + this.pathId
-      query_sql += 'and zone_id =' + this.zoneId
-      if (checkpoint_alias !== null && checkpoint_alias !== undefined && checkpoint_alias !== '') {
-        query_sql += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
-        querys += ' and checkpoint_alias like \'%' + checkpoint_alias + '%\''
-      }
-      query_sql += ` limit ${this.paginationOpt.pageSize} offset ` + (pageNo - 1) * this.paginationOpt.pageSize
-      this.data = dealQuery(await sql(query_sql))
-      querys += ' and path_id = ' + this.pathId
-      querys += ' and zone_id =' + this.zoneId
-      this.paginationOpt.total = parseInt(dealQuery((await sql(querys)))[0]['total'])
-      const copy = _.cloneDeep(this.paginationOpt)
-      this.paginationOpt = false
-      this.paginationOpt = copy
-      this.paginationOpt.current = pageNo
-      await this.$nextTick()
+      const res = await xungeng.get('/path/find', { params: {
+        pathId: this.pathId,
+        zoneId: this.zoneId,
+        ...this.alias ? { alias: this.alias } : {},
+        pageSize: this.paginationOpt.pageSize,
+        pageNum: this.paginationOpt.current
+      } })
+      this.data = res.data.list
+      this.paginationOpt.total = res.data.total
       this.spinning = false
     },
     changeZone ({ pathId, zoneId }) {
       this.paginationOpt.current = 1
       this.pathId = pathId
       this.zoneId = zoneId
-      this.getPatrolPath(1)
+      this.getPatrolPath()
     },
     downloadQrCode ({ checkpointId, checkpointAlias }) {
       this.$set(this.qcCodeLoading, checkpointId, true)
