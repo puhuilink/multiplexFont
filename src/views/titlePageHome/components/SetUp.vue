@@ -47,7 +47,7 @@
                 </template>
                 <!-- 内容放在这里 -->
                 <div style="height: 420px;">
-                  <div class="Preview">预览<div>拖动鼠标调整顺序</div></div>
+                  <div class="PreviewBox">预览<div>拖动鼠标调整顺序</div></div>
                   <div class="Preview_1">
                     <draggable
                       v-model="checkedOptions"
@@ -63,7 +63,7 @@
 
                     </draggable>
                   </div>
-                  <div class="Preview Preview2">请选择</div>
+                  <div class="PreviewBox Preview2">请选择</div>
                   <div class="Preview_2">
 
                     <div class="grid-container grid-container2">
@@ -190,7 +190,7 @@ export default {
     },
     menuItemsCard: {
       type: Array,
-      default: null
+      default: () => []
     },
     menuItems: {
       type: Array,
@@ -268,7 +268,6 @@ export default {
         const { menu } = this.allLinkListMenuCard
         for (const el of menu[1].childList) {
           for (const item of newVal) {
-            console.log('loop', el, item)
             if (el.code === item.code) {
               temp.push(el.id)
             }
@@ -442,7 +441,7 @@ export default {
       margin-right: 0.7rem;
     }
 
-    .Preview{
+    .PreviewBox{
       display: flex;
       height: 34px;
       border-bottom: 1px solid #E3E3E3;
