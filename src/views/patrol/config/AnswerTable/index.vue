@@ -321,7 +321,7 @@ export default {
           title: '默认告警等级',
           dataIndex: 'default_severity',
           align: 'center',
-          customRender: (value) => value !== 'NULL' ? 'L' + value : '无'
+          customRender: (value) => value  ? 'L' + value : '无'
         },
         {
           title: '操作',
@@ -523,20 +523,20 @@ export default {
           obj[_.value] = _
         })
       } else {
-        obj[record.default_lower_threshold] = {}
-        obj[record.default_lower_threshold].alias = record.default_lower_threshold
+        obj[record.defaultLowerThreshold] = {}
+        obj[record.defaultLowerThreshold].alias = record.default_lower_threshold
       }
-      switch (record.default_condition) {
+      switch (record.defaultCondition) {
         case 'eq':
-          return '值为"' + obj[record.default_lower_threshold].alias + '"则异常'
+          return '值为"' + obj[record.defaultLowerThreshold].alias + '"则异常'
         case 'ne':
-          return '值不为"' + obj[record.default_lower_threshold].alias + '"则异常'
+          return '值不为"' + obj[record.defaultLowerThreshold].alias + '"则异常'
         case 'out':
-          return '值超出"' + record.default_lower_threshold + '~' + record.default_upper_threshold + '"范围则异常'
+          return '值超出"' + record.defaultLowerThreshold + '~' + record.defaultUpperThreshold + '"范围则异常'
         case 'gt':
-          return '值大于"' + record.default_upper_threshold + '"则异常'
+          return '值大于"' + record.defaultUpperThreshold + '"则异常'
         case 'lt':
-          return '值小于"' + record.default_lower_threshold + '"则异常'
+          return '值小于"' + record.defaultLowerThreshold + '"则异常'
         default:
           return '暂无阈值'
       }
@@ -549,14 +549,14 @@ export default {
       this.form.validateFields((err, value) => {
         if (!err) {
           this.answers = {}
-          let where = ''
+          let where = {}
           if (value.alias !== null && value.alias !== undefined && value.alias !== '') {
-            where += ' and alias like \'%' + value.alias + '%\''
+            where['alias'] = value.alias
           }
           if (value.type !== null && value.type !== undefined && value.type !== '') {
-            where += 'and type = \'' + value.type + '\''
+            where['type'] = value.type
           }
-          if (where !== '') {
+          if (Object.keys(where).length>0) {
             this.fetchAnswer(where)
           } else {
             this.fetchAnswer()
@@ -580,10 +580,10 @@ export default {
       this.temp = record.type === 'select' ? '' : '%.1f'
       this.$nextTick(() => {
         this.answerForm = { ...this.answerForm,
-          'defaultCondition': record.default_condition,
-          'defaultSeverity': record.default_severity,
-          'defaultLowerThreshold': record.default_lower_threshold,
-          'defaultUpperThreshold': record.default_upper_threshold
+          'defaultCondition': record.defaultLowerThreshold,
+          'defaultSeverity': record.defaultSeverity,
+          'defaultLowerThreshold': record.defaultLowerThreshold,
+          'defaultUpperThreshold': record.defaultUpperThreshold
         }
       })
       this.formatList = record.type === 'select' ? JSON.parse(record.format) : []
@@ -620,13 +620,9 @@ export default {
     toggle () {
       this.expand = !this.expand
     },
-    async fetchAnswer (where) {
+    async fetchAnswer (params) {
       this.loading = true
-      let base_sql = 'select * from t_patrol_answer where 1=1 '
-      if (where !== null && where !== undefined && where !== '') {
-        base_sql += where
-      }
-      const data = dealQuery(await sql(base_sql))
+      const { data } = await xungeng.get('/answer/list',{params})
       this.answers = {}
       for (let i = 0; i < data.length; i++) {
         const answer = data[i]

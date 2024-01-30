@@ -6,9 +6,6 @@ import {
 import {
   ApGroupDao
 } from '../dao/ApGroupDao'
-import {
-  ApDictDao
-} from '../dao/ApDictDao'
 import { UserDao } from '@/api/dao/UserDao'
 import { alarm } from '@/utils/request'
 import { decrypt } from '@/utils/aes'
@@ -30,9 +27,7 @@ class ApSourceService extends BaseService {
     )
   }
   static async dictFind (argus = {}) {
-    return query(
-      ApDictDao.find(argus)
-    )
+    return alarm.post('platform/policy/findDict', argus)
   }
   // 告警源列表
   static async fetchSourceList () {
@@ -58,15 +53,8 @@ class ApSourceService extends BaseService {
   }
   // 告警源列表
   static async fetchDictList (type) {
-    const { data: { list } } = await this.dictFind({
-      where: { condition_type: type },
-      alias: 'list',
-      fields: [
-        'id',
-        'condition_value'
-      ]
-    })
-    return list
+    const { data } = await this.dictFind({ condition_type: type })
+    return data
   }
   // 告警源列表
   static async fetchGroupList () {
