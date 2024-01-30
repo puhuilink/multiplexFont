@@ -22,14 +22,14 @@
           label="告警源名称"
           prop="name"
         >
-          <a-input v-model="formState.name" style="width: 300px"/>
+          <a-input v-model="formState.name" style="width: 300px" />
         </a-form-model-item>
         <a-form-model-item
           :rules="[{ required: true, message: '请输入告警源IP！', trigger: 'change' }]"
           label="告警源IP"
           prop="ip"
         >
-          <a-input v-model="formState.ip" style="width: 300px"/>
+          <a-input v-model="formState.ip" style="width: 300px" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -50,16 +50,17 @@
             :max="1440"
             v-show="formState.autoClose"
             v-model="formState.autoCloseInterval"
-            style="width: 100px">
+            style="width: 100px"
+          >
           </a-input-number>
           <span v-show="formState.autoClose">分钟后自动关闭</span>
-          <a-switch :checked="formState.autoClose" @change="onAutoCloseChange"/>
+          <a-switch :checked="formState.autoClose" @change="onAutoCloseChange" />
         </a-form-model-item>
         <a-form-model-item
           extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
           label="开启自动去重"
         >
-          <a-switch :checked="formState.autoGroup" @change="onDedupChange"/>
+          <a-switch :checked="formState.autoGroup" @change="onDedupChange" />
         </a-form-model-item>
         <a-form-model-item
           extra="同一告警源在选定时间内将压缩依据内容相同的告警数据压缩成一条数据"
@@ -67,14 +68,11 @@
           :rules="[{ required: formState.compress, message: '请配置压缩告警范围！', trigger: 'change' }]"
           prop="compressDuration"
         >
-          <a-select
-            v-show="formState.compress"
-            v-model="formState.compressDuration"
-            style="width: 200px">
+          <a-select v-show="formState.compress" v-model="formState.compressDuration" style="width: 200px">
             <a-select-option :value="'5'">压缩5分钟告警</a-select-option>
             <a-select-option :value="'10'">压缩10分钟告警</a-select-option>
           </a-select>
-          <a-switch :checked="formState.compress" @change="onCompressChange"/>
+          <a-switch :checked="formState.compress" @change="onCompressChange" />
         </a-form-model-item>
         <a-form-model-item
           extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
@@ -84,7 +82,7 @@
         >
           <a-select v-show="formState.claim" v-model="formState.claimLevel" style="width: 200px" :options="options">
           </a-select>
-          <a-switch :checked="formState.claim" @change="onReclaimChange"/>
+          <a-switch :checked="formState.claim" @change="onReclaimChange" />
         </a-form-model-item>
         <a-form-model-item
           extra="默认关闭，开启后需要配置监控时长，间隔时间内没有告警接入，将提醒选择的用户。时间范围：1~24小时，建议设置5小时以上更为合适"
@@ -97,10 +95,11 @@
             :max="24"
             v-show="formState.monitor"
             v-model="formState.monitorInterval"
-            style="width: 180px">
+            style="width: 180px"
+          >
           </a-input-number>
           <span v-show="formState.monitor">小时</span>
-          <a-switch :checked="formState.monitor" @change="onSelfChange"/>
+          <a-switch :checked="formState.monitor" @change="onSelfChange" />
         </a-form-model-item>
         <a-form-model-item
           :rules="[{ required: true, message: '请输入告警源URL！', trigger: 'change' }]"
@@ -110,25 +109,24 @@
           <a-input v-model="formState.url" style="width: 300px" />
         </a-form-model-item>
         <a-form-model-item
-          v-if="isAdmin"
           :rules="[{ required: isAdmin, message: '请选择通知组！', trigger: 'change' }]"
           label="通知组"
           prop="groupId"
         >
-          <a-select v-model="formState.groupId" style="width: 200px" :options="groupData"/>
+          <a-select v-model="formState.groupId" style="width: 200px" :options="groupData" />
         </a-form-model-item>
       </a-form-model>
       <div class="jsonContent" v-if="current === 1">
         <div class="originalJson">
           <h3>请输入JSON数据</h3>
-          <textarea style="height: 400px;width: 60%" v-model="jsonContent"></textarea>
+          <textarea style="height: 400px; width: 60%" v-model="jsonContent"></textarea>
           <div>
             <a-button type="primary" @click="translateJson">解析</a-button>
           </div>
         </div>
         <div class="jsonResult">
           <h3>解析结果</h3>
-          <textarea style="height: 400px;width: 60%" v-model="jsonResult" disabled></textarea>
+          <textarea style="height: 400px; width: 60%" v-model="jsonResult" disabled></textarea>
         </div>
       </div>
       <div class="jsonMapping" v-if="current === 2">
@@ -141,46 +139,34 @@
           style="margin-top: 30px"
         >
           <a-form-model-item
-            v-for="(item,index) in Object.keys(mappingForm)"
+            v-for="(item, index) in Object.keys(mappingForm)"
             :label="mappingTitle[index]"
             :key="index"
-            :rules="[{ required: item === 'uniqueKey' || item === 'event_id', message: '该项必须配置！', trigger: 'change' }]"
+            :rules="[
+              { required: item === 'uniqueKey' || item === 'event_id', message: '该项必须配置！', trigger: 'change' },
+            ]"
             :prop="item"
           >
-            <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions"/>
+            <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions" />
             <span v-show="formState.compress && (compressFlags[index] || !compressFlags.includes(true))">
-              <a-divider type="vertical"/>
-              <a-checkbox @change="compressChange(index)">
-                作为压缩依据
-              </a-checkbox>
+              <a-divider type="vertical" />
+              <a-checkbox @change="compressChange(index)"> 作为压缩依据 </a-checkbox>
             </span>
           </a-form-model-item>
         </a-form-model>
       </div>
     </div>
-    <div class="steps-action" style="text-align: center;">
-      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
-        上一步
-      </a-button>
-      <a-button style="margin-left: 8px" v-if="current < 2" type="primary" @click="next">
-        下一步
-      </a-button>
-      <a-button
-        v-if="current === 2"
-        type="primary"
-        style="margin-left: 8px"
-        @click="onSubmit"
-      >
-        提交
-      </a-button>
+    <div class="steps-action" style="text-align: center">
+      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev"> 上一步 </a-button>
+      <a-button style="margin-left: 8px" v-if="current < 2" type="primary" @click="next"> 下一步 </a-button>
+      <a-button v-if="current === 2" type="primary" style="margin-left: 8px" @click="onSubmit"> 提交 </a-button>
     </div>
   </div>
-
 </template>
 
 <script>
 import store from '@/store/index'
-import { alarm } from '@/utils/request'
+import { alarm, axios } from '@/utils/request'
 
 export default {
   name: 'AlertSourceForm',
@@ -199,14 +185,14 @@ export default {
     return {
       compressFlags: [],
       typeObj: {
-        'uniqueKey': 'string',
-        'device': 'string',
-        'title': 'string',
-        'content': 'string',
-        'level': 'string',
-        'startTime': 'struct',
-        'lastTime': 'struct',
-        'deviceType': 'string'
+        uniqueKey: 'string',
+        device: 'string',
+        title: 'string',
+        content: 'string',
+        level: 'string',
+        startTime: 'struct',
+        lastTime: 'struct',
+        deviceType: 'string'
       },
       formState: {
         groupId: '',
@@ -263,13 +249,13 @@ export default {
       jb: null,
       isAdmin: false,
       titleMapping: {
-        'uniqueKey': '唯一标识符',
-        'device': '告警设备',
-        'title': '告警标题',
-        'content': '告警内容',
-        'level': '告警级别',
-        'event_id': '事件id',
-        'device_type': '设备类别'
+        uniqueKey: '唯一标识符',
+        device: '告警设备',
+        title: '告警标题',
+        content: '告警内容',
+        level: '告警级别',
+        event_id: '事件id',
+        device_type: '设备类别'
       },
       mappingTitle: [
         '标识唯一值',
@@ -300,7 +286,7 @@ export default {
       this.jb = JsonBody
       this.data = Object.keys(JsonBody)
       this.jsonOptions = []
-      this.data.forEach(j => {
+      this.data.forEach((j) => {
         this.jsonOptions.push({
           value: j,
           label: j
@@ -310,7 +296,7 @@ export default {
     next () {
       if (this.current === 0) {
         let flag = false
-        this.$refs.ruleForm.validate(valid => {
+        this.$refs.ruleForm.validate((valid) => {
           if (!valid) {
             this.$message.error('请检查您的表单项是否都填写完毕！')
             flag = true
@@ -364,7 +350,7 @@ export default {
     },
     async onSubmit () {
       let flag = false
-      this.$refs.basic.validate(valid => {
+      this.$refs.basic.validate((valid) => {
         if (!valid) {
           flag = true
           this.$message.error('请检查您的表单项是否都填写完毕！')
@@ -381,24 +367,24 @@ export default {
         if (this.mappingForm[m] && this.mappingForm[m] !== '') {
           if (m === 'uniqueKey') {
             alertMapping.push({
-              'sourceField': this.mappingForm[m],
-              'targetField': m,
-              'targetType': this.typeObj[m],
+              sourceField: this.mappingForm[m],
+              targetField: m,
+              targetType: this.typeObj[m],
               remark: this.jb[this.mappingForm[m]]
             })
           } else if (this.formState.compress && index === this.compressFlags.indexOf(true)) {
             alertMapping.push({
-              'sourceField': this.mappingForm[m],
-              'targetField': m,
-              'targetType': this.typeObj[m],
-              'compressCondition': true,
-              'compressSequence': 1
+              sourceField: this.mappingForm[m],
+              targetField: m,
+              targetType: this.typeObj[m],
+              compressCondition: true,
+              compressSequence: 1
             })
           } else {
             alertMapping.push({
-              'sourceField': this.mappingForm[m],
-              'targetField': m,
-              'targetType': this.typeObj[m]
+              sourceField: this.mappingForm[m],
+              targetField: m,
+              targetType: this.typeObj[m]
             })
           }
         }
@@ -420,6 +406,7 @@ export default {
         delete this.formState.compressDuration
       }
       const sourceData = { ...this.formState, platformId: this.platformId, sampleData: this.jsonContent }
+      console.log('1234567', sourceData)
       let requestAddress = '/api/integration/source/add'
       if (this.record && this.record !== {}) {
         requestAddress = '/api/integration/source/update'
@@ -443,7 +430,7 @@ export default {
         const form = {}
         const titles = []
         const compressFlags = []
-        data.forEach(d => {
+        data.forEach((d) => {
           Obj[d.fieldName] = d.fieldType
           form[d.fieldName] = ''
           titles.push(this.titleMapping[d.fieldName])
@@ -458,19 +445,23 @@ export default {
       }
     },
     async getGroupData () {
-      if (!this.isAdmin) {
-        return
-      }
       try {
-        const { data } = await alarm.get('/api/configuration/group/getUnbindSourceGroup')
+        const pageNum = 1
+        const pageSize = 9999
+        const { data } = await axios.get('/group/list', {
+          params: { isOpen: true, pageNum: pageNum, pageSize: pageSize }
+        })
+        console.log('data', data.list)
         const arr = []
-        data.forEach(d => {
+        data.list.forEach((item) => {
           arr.push({
-            label: d.groupName,
-            value: d.groupId
+            label: item.name,
+            value: item.id
           })
         })
+
         this.groupData = arr
+        console.log('this.groupData', this.groupData)
       } catch (e) {
         this.$message.error(e.response.data.msg)
       }
@@ -498,7 +489,7 @@ export default {
     },
     jsonResult () {
       let content = ''
-      this.data.forEach(element => {
+      this.data.forEach((element) => {
         content += element + '\n'
       })
       return content
@@ -523,14 +514,17 @@ export default {
 .steps-action {
   margin-top: 24px;
 }
-.jsonContent{
+
+.jsonContent {
   display: flex;
 }
-.originalJson{
+
+.originalJson {
   width: 45%;
   text-align: center;
 }
-.jsonResult{
+
+.jsonResult {
   width: 45%;
   text-align: center;
 }
