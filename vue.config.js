@@ -38,7 +38,9 @@ const {
   VUE_APP_OTP_BASE_URL,
   VUE_APP_OTP_BASE_ORIGINAL_URL,
   VUE_APP_ECHARTS_URL,
-  VUE_APP_ORIGINAL_ECHARTS_URL
+  VUE_APP_ORIGINAL_ECHARTS_URL,
+  VUE_APP_TREE_API_BASE_URL,
+  VUE_APP_TREE_API_ORIGIN_URL
 } = process.env
 
 const useCDN = VUE_APP_ENABLED_CDN === 'true'
@@ -282,6 +284,16 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           [VUE_APP_ECHARTS_URL]: ''
+        }
+      },
+      // 树形导航图
+      // echarts图表
+      [VUE_APP_TREE_API_BASE_URL]: {
+        target: VUE_APP_TREE_API_ORIGIN_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          [VUE_APP_TREE_API_BASE_URL]: ''
         }
       }
     }

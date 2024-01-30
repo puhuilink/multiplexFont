@@ -1,5 +1,5 @@
 import { GroupService } from '@/api'
-import { xungeng } from '@/utils/request'
+import { xungeng, axios } from '@/utils/request'
 
 export default {
   data: () => ({
@@ -9,33 +9,54 @@ export default {
     pathList: []
   }),
   methods: {
+    // async fetchPatrolGroupList () {
+    //   console.log('执行于此-123456789');
+    //   try {
+    //     this.patrolGroupLoading = true
+    //     const { data: { list } } = await xungeng.get('/group/list', {
+    //       params: {
+    //         pageNum: 1,
+    //         pageSize: 999
+    //       }
+    //     })
+    //     this.patrolGroupList = list.map(el => ({ label: el.name, value: el.id }))
+    //   } catch (e) {
+    //     this.patrolGroupList = []
+    //     throw e
+    //   } finally {
+    //     this.patrolGroupLoading = false
+    //   }
+    // },
     async fetchPatrolGroupList () {
-      try {
-        this.patrolGroupLoading = true
-        const { data: { list } } = await xungeng.get('/group/list', {
-          params: {
-            pageNum: 1,
-            pageSize: 999
+      const pageNum = 1
+      const pageSize = 9999
+      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      this.dataList = data.list
+      // 请选择工作组赋选择项
+      for (const item of data.business) {
+        if (item.patrol === true) {
+          for (const i of data.list) {
+            if (item.groupId === i.id) {
+              this.patrolGroupList.push(i)
+            }
           }
-        })
-        this.patrolGroupList = list.map(el => ({ label: el.name, value: el.id }))
-      } catch (e) {
-        this.patrolGroupList = []
-        throw e
-      } finally {
-        this.patrolGroupLoading = false
+        }
       }
     },
-    async fetchPathListList (value, plan = '') {
+    async fetchPathListList (value) {
       try {
+        const pageNum = 1
+        const pageSize = 9999
         this.patrolGroupLoading = true
-        const { data } = await xungeng.get('/path/listUnBind', {
+        const { data } = await xungeng.get('/path/list', {
           params: {
-            groupId: value.toString(),
-            ...(plan.length > 0 ? { planId: plan.toString() } : {})
+            pageNum: pageNum,
+            pageSize: pageSize,
+            groupId: value.toString()
           }
         })
-        this.pathList = data.map(el => ({ label: el.alias, value: el.id }))
+        console.log('data', data)
+        this.pathList = data.list.map(el => ({ label: el.alias, value: el.id }))
       } catch (e) {
         this.pathList = []
         this.plan.pathId = ''

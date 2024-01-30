@@ -8,6 +8,7 @@ import {
   CmdbHostTreeDao
 } from '../dao/index'
 import _ from 'lodash'
+import { axios, serviceTree } from '@/utils/request'
 
 class CmdbService extends BaseService {
   static find (argus = {}) {
@@ -44,28 +45,31 @@ class CmdbService extends BaseService {
 
   static async resourceTree (where = {}) {
     // 扁平一层查找
-    let { data: { cmdbHostList } } = await query(
-      CmdbHostDao.find({
-        where: {
-          ...where,
-          enable: true
-        },
-        fields: [
-          'id',
-          'alias',
-          'location',
-          'host',
-          'host_type',
-          'modelHost { host }',
-          'hostTypeView { view_id:  t_view_id }',
-          'hostView { view_id: t_view_id }'
-        ],
-        alias: 'cmdbHostList'
-      })
-    )
+    // let { data: { cmdbHostList } } = await query(
+    //   CmdbHostDao.find({
+    //     where: {
+    //       ...where,
+    //       enable: true
+    //     },
+    //     fields: [
+    //       'id',
+    //       'alias',
+    //       'location',
+    //       'host',
+    //       'host_type',
+    //       'modelHost { host }',
+    //       'hostTypeView { view_id:  t_view_id }',
+    //       'hostView { view_id: t_view_id }'
+    //     ],
+    //     alias: 'cmdbHostList'
+    //   })
+    // )
+
+    let { data: { list } } = await serviceTree.get('/hostTree/list')
+    console.log('list', list)
 
     // FIXME: host_type 为 Linux 时 hasura 查询处重复数据，此处为前端 hack
-    cmdbHostList = _.uniqBy(cmdbHostList, el => el.id)
+    list = _.uniqBy(list, el => el.id)
 
     // https://github.com/vueComponent/ant-design-vue/issues/634
     // https://www.antdv.com/components/tree-cn/#components-tree-demo-searchable
@@ -82,19 +86,19 @@ class CmdbService extends BaseService {
     }
 
     // 按采集系统 / 区域划分第一层
-    const locationList = _.groupBy(cmdbHostList.filter(Boolean), 'location')
+    const locationList = _.groupBy(list.filter(Boolean), 'location')
 
     // 按设备类型划分第二层
     Object
       .entries(locationList)
       .forEach(([location, hostList]) => {
         const children = Object
-          .entries(_.groupBy(hostList, 'host_type'))
-          .map(([host_type, list]) => ({
+          .entries(_.groupBy(hostList, 'hostType'))
+          .map(([hostType, list]) => ({
             // 统一个 model_host 会在不同 location 中多次用到
             // 此处 id 仅用作树形结构唯一标识，并无实际作用
-            id: `${location}-${host_type}`,
-            alias: _.get(list, ['0', 'modelHost', 'host']) || host_type,
+            id: `${location}-${hostType}`,
+            alias: _.get(list, ['0', 'modelHost', 'host']) || hostType,
             children: list.map(e => ({
               ...e,
               selectable: true,
@@ -113,6 +117,8 @@ class CmdbService extends BaseService {
           ...treeNodeTitleSlots
         })
       })
+
+    console.log('root', root)
 
     return [root]
   }

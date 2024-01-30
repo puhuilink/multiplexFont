@@ -36,6 +36,10 @@ const over = axios.create({
   baseURL: process.env.VUE_APP_ECHARTS_URL
 })
 
+const serviceTree = axios.create({
+  baseURL: process.env.VUE_APP_TREE_API_BASE_URL
+})
+
 const sql = async (s) => {
   const payload = {
     type: 'bulk',
@@ -224,6 +228,10 @@ serviceAlarm.interceptors.response.use(secondResponseInterceptor)
 
 over.interceptors.request.use(requestOverInterceptor)
 
+serviceTree.interceptors.request.use(requestInterceptor)
+
+serviceTree.interceptors.response.use(responseInterceptor)
+
 const installer = {
   vm: {},
   install (Vue) {
@@ -241,5 +249,6 @@ export {
   serviceCorp as crop,
   serviceAlarm as alarm,
   sql,
-  over
+  over,
+  serviceTree
 }
