@@ -49,14 +49,15 @@ export const asyncRouterMap = [
           {
             path: '/UnifiedMonitoring/Performance',
             name: 'Performance',
+            redirect: '/UnifiedMonitoring/Performance/TreeNavigation',
             component: RouteView,
-            meta: { title: '性能管理', keepAlive: true, permission: ['F004001'] },
+            meta: { title: '性能管理', keepAlive: true, permission: ['F004'] },
             children: [
               {
                 path: '/UnifiedMonitoring/Performance/TreeNavigation',
                 name: 'TreeNavigation',
                 component: () => import('@/views/performance/tree-navigation/index'),
-                meta: { title: '树形导航图', keepAlive: true, permission: ['F004001'] }
+                meta: { title: '树形导航图', keepAlive: true, permission: ['F004'] }
               }
             ]
           },

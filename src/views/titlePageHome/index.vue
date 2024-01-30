@@ -316,7 +316,7 @@ export default {
     },
     tiaozhuan (path) {
       console.log('path', path)
-      // this.$router.push(path)
+      this.$router.push(path)
     },
     onSearch (e) {
       console.log(e)
