@@ -66,7 +66,7 @@
                   <div class="Preview Preview2">请选择</div>
                   <div class="Preview_2">
 
-                    <div class="grid-container">
+                    <div class="grid-container grid-container2">
                       <div v-for="(item, index) in options" :key="index" class="grid-item">
                         <!--  <img :src=" require('../assets/' + item.imgUrl)" :alt="item.name" class="item-image" />-->
                         <img v-lazy="thumbnail(item.imgUrl)" :alt="item.name" class="item-image" src=""/>
@@ -288,7 +288,7 @@ export default {
     async handleOk () {
       const menuCodesList = []
       const cardCodesList = []
-      console.log(this.checkedOptions, this.checkedItems2)
+      // console.log(this.checkedOptions, this.checkedItems2)
       for (let i = 0; i < this.checkedItems2.length; i++) {
         for (const eElement of this.options2) {
           if (eElement.id === this.checkedItems2[i]) {
@@ -299,7 +299,7 @@ export default {
       for (let i = 0; i < this.checkedOptions.length; i++) {
         menuCodesList.push(this.checkedOptions[i].code)
       }
-      console.log(menuCodesList, cardCodesList)
+      // console.log(menuCodesList, cardCodesList)
       this.loading = true
       // 30.首页—保存我的快捷功能和卡片
       await axios.post('/menu/saveConfig', {
@@ -494,7 +494,8 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   grid-row-gap: 18px; /* 上下间距 */
   grid-column-gap: 32px; /* 左右间距 */
-  margin-top: 26px;
+  padding-top: 26px;
+  overflow-y: scroll;
   .grid-item {
     display: flex;
     flex-direction: column;
@@ -514,7 +515,9 @@ export default {
   }
 
 }
-
+.grid-container2{
+  padding-top: 10px;
+}
 .grid-container-card {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
@@ -589,7 +592,7 @@ export default {
 }
 
 .Preview_2{
-  height: 262px;
+  height: 140px;
   overflow-y: scroll;
 }
 .Preview_2::-webkit-scrollbar {
@@ -605,7 +608,7 @@ export default {
   .closeBox{
     position: absolute;
     right: 10%;
-    top: -10%;
+    top: -5%;
   }
 }
 </style>

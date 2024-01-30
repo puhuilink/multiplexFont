@@ -170,20 +170,22 @@ export default {
     },
     async getMenu () {
       try {
-        const result = await RoleService.findMenu()
+        // const result = await RoleService.findMenu()
+        const res = await axios.get('/menu/list')
+        const result = res.data.list
         const fList = result.map(el => {
-          if (el.parent_code === 'NULL') {
-            el.parent_code = null
+          if (el.code === 'F') {
+            el.parentCode = null
           }
-          if (el.menu_type === '1') {
+          if (el.menuType === 1) {
             return el
           }
         }).filter((f) => f)
         const mList = result.map(el => {
-          if (el.parent_code === 'NULL') {
-            el.parent_code = null
+          if (el.parentCode === 'NULL') {
+            el.parentCode = null
           }
-          if (el.menu_type === '2') {
+          if (el.menuType === '2') {
             return el
           }
         }).filter((f) => f)
@@ -201,7 +203,7 @@ export default {
         if (!item) {
           return
         }
-        if (item.parent_code === parentId) {
+        if (item.parentCode === parentId) {
           const children = this.buildTree(data, item.code)
           if (children.length > 0) {
             item.children = children
@@ -295,6 +297,7 @@ export default {
         }
         try {
           this.confirmLoading = true
+          await RoleService.update(this.record)
           await RoleService.update(this.record)
           this.$emit('editSuccess')
           this.$notifyEditSuccess()
