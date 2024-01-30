@@ -5,6 +5,7 @@ export default {
   data: () => ({
     patrolGroupLoading: false,
     pathListLoading: false,
+    patrolSourcelist: [],
     patrolGroupList: [],
     pathList: []
   }),
@@ -30,8 +31,8 @@ export default {
     async fetchPatrolGroupList () {
       const pageNum = 1
       const pageSize = 9999
-      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
-      this.dataList = data.list
+      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize, isOpen: true } })
+      this.patrolSourcelist = data.list
       // 请选择工作组赋选择项
       for (const item of data.business) {
         if (item.patrol === true) {

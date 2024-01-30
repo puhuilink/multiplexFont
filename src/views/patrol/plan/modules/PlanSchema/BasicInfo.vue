@@ -30,7 +30,7 @@
             >{{ label }}</a-select-option>
           </a-select> -->
           <a-select placeholder="请选择工作组" v-model="_value.groupId" class="input">
-            <a-select-option v-for="item in patrolGroupList" :key="item.id">
+            <a-select-option v-for="item in patrolSourcelist" :key="item.id">
               {{ item.name }}
             </a-select-option>
           </a-select>

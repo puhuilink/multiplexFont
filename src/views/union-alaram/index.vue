@@ -275,7 +275,7 @@ export default {
         this.queryParams.start_time = this.queryParams.timeList[0]
         this.queryParams.last_time = this.queryParams.timeList[1]
       }
-      const { data, page } = await alarm.post('/platform/alert/main/list', {
+      const { data, page } = await alarm.post('/api/alert/main/list', {
         account_id: Vue.ls.get(USER).userId,
         limit: this.paginationOpt.defaultPageSize,
         offset: this.paginationOpt.defaultCurrent,
@@ -293,7 +293,7 @@ export default {
       try {
         this.loading = true
         // eslint-disable-next-line no-unused-vars
-        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, claim_status: '1', account_id: Vue.ls.get(USER).userId }])
+        const { code, msg } = await alarm.post('/api/alert/main/updates ', [{ id: record.ID, claim_status: '1', account_id: Vue.ls.get(USER).userId }])
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -312,7 +312,7 @@ export default {
       try {
         this.loading = true
         // eslint-disable-next-line no-unused-vars
-        const { code, msg } = await alarm.post('/platform/alert/main/updates ', [{ id: record.ID, process_status: '1', account_id: Vue.ls.get(USER).userId }])
+        const { code, msg } = await alarm.post('/api/alert/main/updates ', [{ id: record.ID, process_status: '1', account_id: Vue.ls.get(USER).userId }])
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -334,7 +334,7 @@ export default {
       const parmas = this.selectedRows.map(el => ({ id: el.ID, claim_status: '1', account_id: Vue.ls.get(USER).userId }))
       try {
         this.loading = true
-        const { code } = await alarm.post('/platform/alert/main/updates ', parmas)
+        const { code } = await alarm.post('/api/alert/main/updates ', parmas)
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -357,7 +357,7 @@ export default {
       const parmas = this.selectedRows.map(el => ({ id: el.ID, process_status: '1', claim_status: '1', account_id: Vue.ls.get(USER).userId }))
       try {
         this.loading = true
-        const { code } = await alarm.post('/platform/alert/main/updates ', parmas)
+        const { code } = await alarm.post('/api/alert/main/updates ', parmas)
         if (code === 200) {
           this.$notification.success({
             message: '系统提示',
@@ -396,7 +396,7 @@ export default {
           this.queryParams.last_time = this.queryParams.timeList[1]
         }
         const data = await alarm({
-          url: '/platform/alert/download',
+          url: '/api/alert/download',
           method: 'post',
           data: {
             account_id: Vue.ls.get(USER).userId,

@@ -212,7 +212,7 @@ export default {
     async getList () {
       const pageNum = 1
       const pageSize = 9999
-      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize } })
+      const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize, isOpen: true } })
       /* const { data } = {
         data: {
           total: 2,
