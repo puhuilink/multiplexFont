@@ -92,20 +92,7 @@ export default {
             key: this.endpointId,
             column: this.detailColumns,
             alarmLevel: [],
-            title: await CmdbEndpointService.find({
-              where: { endpoint_id: this.endpointId },
-              fields: [
-                'alias',
-                'endpointModelId: endpoint_model_id'
-              ],
-              alias: 'data'
-            }).then(r => {
-              const data = _.first(r.data.data)
-              // if (data.endpointModelId) {
-              //   this.endpointModelId = data.endpointModelId
-              // }
-              return data.alias
-            })
+            title: record.endpointAlias
           })
           this.activeKey = this.endpointId
         }
