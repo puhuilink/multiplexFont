@@ -164,7 +164,6 @@ import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
 import { alarm } from '@/utils/request'
-import { judgeRoleToAlertView } from '@/utils/util'
 
 const columns = [
   {
@@ -307,7 +306,7 @@ export default {
       }
     },
     async fetchList () {
-      const { data } = await alarm.post('/platform/policy/find', {
+      const { data } = await alarm.post('/api/policy/find', {
         limit: 25,
         offset: 1,
         account_id: store.getters.userId,
@@ -323,10 +322,9 @@ export default {
       }
     },
     async fetchSource () {
-      const res = await ApSourceService.fetchAllSourceList()
+      const { data } = await alarm.get('/api/integration/source/get', { params: { policyType: 1 } })
       this.alertSource = []
-      // console.log('res', res)
-      res.forEach(r => {
+      data.forEach(r => {
         this.alertSource.push(
           {
             label: r.name,
@@ -402,6 +400,7 @@ export default {
     openModal (record) {
       const user = store.getters.userId
       this.isAdmin = user === 'administrator'
+      console.log(this.conditions)
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = { ..._.cloneDeep(record) }
@@ -654,7 +653,7 @@ export default {
   color: white
 }
 * {
-  marigin: 0px;
+  margin: 0px;
   //background-color: #EFF3F7;
 }
 
@@ -667,7 +666,7 @@ export default {
   float: left;
   width: 40%;
 }
--
+
 .wd {
   width: 100%;
 }
