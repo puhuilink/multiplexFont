@@ -176,6 +176,9 @@ export default {
         _.omit(this.$options.data.apply(this), ['tabIndex'])
       )
     }
+  },
+  created () {
+    console.log(123)
   }
 }
 </script>

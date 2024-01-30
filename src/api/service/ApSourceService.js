@@ -27,7 +27,7 @@ class ApSourceService extends BaseService {
     )
   }
   static async dictFind (argus = {}) {
-    return alarm.post('platform/policy/findDict', argus)
+    return alarm.post('/api/alert/policy/findDict', argus)
   }
   // 告警源列表
   static async fetchSourceList () {

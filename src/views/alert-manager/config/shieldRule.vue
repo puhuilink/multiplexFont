@@ -306,7 +306,7 @@ export default {
       }
     },
     async fetchList () {
-      const { data } = await alarm.post('/api/policy/find', {
+      const { data } = await alarm.post('/api/alert/policy/find', {
         limit: 25,
         offset: 1,
         account_id: store.getters.userId,

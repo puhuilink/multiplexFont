@@ -312,12 +312,20 @@ export default {
     async getData (params = { isOpen: true, orgName: '' }) {
       try {
         this.pageLoading = true
-        const { data: { dataIds, list, outSystem } } = await axios.get('/organize/table', {
+        const { data } = await axios.get('/organize/table', {
           params: {
             ...this.param.isOpen ? { isOpen: this.param.isOpen } : {},
             ...this.param.orgName ? { name: this.param.orgName } : {}
           }
         })
+        const dataIds = _.get(data, 'dataIds', [])
+        const list = _.get(data, 'list', [])
+        const outSystem = _.get(data, 'outSystem', [])
+        if (!dataIds.length) {
+          this.treeData = []
+          this.$notifyError('未查询到组织机构')
+          return
+        }
         this.banList = dataIds
         this.outSystem = outSystem
         // 遍历this.list
