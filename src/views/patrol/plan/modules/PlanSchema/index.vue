@@ -14,7 +14,7 @@
   >
     <a-spin :spinning="spinning">
       <a-form-model :model="plan" ref="ruleForm" :rules="rules" layout="inline">
-        <BasicInfo :plan.sync="plan" />
+        <BasicInfo :plan.sync="plan" :editFlag="editFlag"/>
 
         <Cron v-if="plan.schedule" :cron.sync="plan.schedule" />
 
@@ -61,6 +61,7 @@ export default {
   props: {},
   data: () => ({
     plan: {},
+    editFlag: false,
     spinning: false
   }),
   computed: {
@@ -134,10 +135,12 @@ export default {
       this.plan = new PlanModel({})
       this.submit = this.insert
       this.show('新增巡更计划')
+      this.editFlag = false
     },
     edit (plan) {
       this.submit = this.update
       this.show('编辑巡更计划')
+      this.editFlag = true
       this.fetchPlanDetail(plan)
     },
     async fetchPlanDetail (plan) {
@@ -150,6 +153,7 @@ export default {
       // } finally {
       //   this.spinning = false
       // }
+
       this.plan = new PlanModel(plan)
     },
     /**

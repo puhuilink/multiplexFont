@@ -91,6 +91,12 @@ export default {
   name: 'BasicInfo',
   mixins: [mixin, commonMixin],
   components: {},
+  props: {
+    editFlag: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     STATUS_LIST: [
       {
@@ -127,7 +133,9 @@ export default {
       deep: true,
       async handler (parentId) {
         await this.$nextTick()
-        this.plan.pathId = ''
+        if (this.editFlag === false) {
+          this.plan.pathId = ''
+        }
         parentId && (await this.fetchPathListList(parentId))
       }
     }
