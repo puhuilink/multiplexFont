@@ -1,6 +1,11 @@
 import { UserLayout, BasicLayout, RouteView } from '@/layouts'
 import { decrypt } from '@/utils/aes'
+import navicon_icon from '@/views/titlePageHome/assets/navicon_icon.png'
+import { createFromIconfontCN } from '@ant-design/icons-vue'
 
+// const MyIcon = createFromIconfontCN({
+//   scriptUrl: '@/views/titlePageHome/assets/navicon_icon.png' // 替换为你的图标字体文件地址
+// })
 let EmergencyManagement_x = true
 const proUserString = localStorage.getItem('pro__User')
 if (proUserString) {
@@ -228,13 +233,13 @@ export const asyncRouterMap = [
             name: 'machineRoom',
             redirect: '/machineRoom/room',
             component: RouteView,
-            meta: { title: '机房监控', keepAlive: true, icon: 'line-chart', permission: ['F021'] },
+            meta: { title: '机房监控', keepAlive: true, permission: ['F021'] },
             children: [
               {
                 path: '/machineRoom/room',
                 name: 'room',
                 component: () => import('@/views/SecurityMonitoring/view/monitorPage'),
-                meta: { title: '机房监控管理', keepAlive: true, icon: 'line-chart' }
+                meta: { title: '机房监控管理', keepAlive: true }
               },
               {
                 path: '/machineRoom/room/:monitorName',
@@ -289,7 +294,7 @@ export const asyncRouterMap = [
             hidden: false,
             component: RouteView,
             redirect: '/alertManagerPlatform/integration/platform',
-            meta: { title: '告警集成', keepAlive: true, icon: 'deployment-unit', permission: ['F005001'] },
+            meta: { title: '告警集成', keepAlive: true, permission: ['F005001'] },
             children: [
               {
                 path: '/alertManagerPlatform/integration/newAlertSource',
@@ -315,6 +320,7 @@ export const asyncRouterMap = [
               }
             ]
           },
+          // 数据库未设置权限
           {
             path: '/alertManagerPlatform/alarm/index',
             component: () => import('@/views/union-alaram/index'),
@@ -327,7 +333,7 @@ export const asyncRouterMap = [
             hidden: false,
             component: RouteView,
             redirect: '/alertManagerPlatform/config/deliver',
-            meta: { title: '告警配置', keepAlive: true, icon: 'setting', permission: ['F005002'] },
+            meta: { title: '告警配置', keepAlive: true, permission: ['F005002'] },
             children: [
               {
                 path: '/alertManagerPlatform/config/deliver',
@@ -341,6 +347,7 @@ export const asyncRouterMap = [
                 component: () => import('@/views/alert-manager/config/notifyRule'),
                 meta: { title: '通知策略', permission: ['F005002002'] }
               },
+              // 数据库未设置权限
               {
                 path: '/alertManagerPlatform/config/shieldRule',
                 name: 'ShieldRule',
@@ -387,20 +394,23 @@ export const asyncRouterMap = [
         name: 'AssetManagement',
         component: RouteView,
         redirect: '/AssetManagement/grouping',
-        meta: { title: '资产管理', keepAlive: true, icon: 'bug', permission: ['F005'] },
+        meta: { title: '资产管理', keepAlive: true, icon: 'radar-chart', permission: ['F005'] },
         children: [
+          // 数据库未设置权限
           {
             path: '/AssetManagement/grouping',
             name: 'grouping',
             component: () => import('@/views/profile/index'),
             meta: { title: '资产分组', keepAlive: true, permission: ['F005'] }
           },
+          // 数据库未设置权限
           {
             path: '/AssetManagement/type',
             name: 'type',
             component: () => import('@/views/profile/index'),
             meta: { title: '资产类型', keepAlive: true, permission: ['F005'] }
           },
+          // 数据库未设置权限
           {
             path: '/AssetManagement/list',
             name: 'list',
@@ -414,14 +424,16 @@ export const asyncRouterMap = [
         name: 'knowledgeBase',
         component: RouteView,
         redirect: '/knowledgeBase/KnowledgeCenter',
-        meta: { title: '知识库管理', keepAlive: true, icon: 'bug', permission: ['F005'] },
+        meta: { title: '知识库管理', keepAlive: true, icon: 'radar-chart', permission: ['F005'] },
         children: [
+          // 数据库未设置权限
           {
             path: '/knowledgeBase/KnowledgeCenter',
             name: 'KnowledgeCenter',
             component: () => import('@/views/profile/index'),
             meta: { title: '知识中心', keepAlive: true, permission: ['F005'] }
           },
+          // 数据库未设置权限
           {
             path: '/knowledgeBase/manage',
             name: 'manage',
@@ -435,20 +447,23 @@ export const asyncRouterMap = [
         name: 'visualization',
         component: RouteView,
         redirect: '/visualization/KnowledgeCenter',
-        meta: { title: '运维可视化', keepAlive: true, icon: 'bug', permission: ['F005'] },
+        meta: { title: '运维可视化', keepAlive: true, icon: 'bar-chart', permission: ['F005'] },
         children: [
+          // 数据库未设置权限
           {
             path: '/visualization/LargeScreen',
             name: 'LargeScreen',
             component: () => import('@/views/profile/index'),
             meta: { title: '大屏展示', keepAlive: true, permission: ['F005'] }
           },
+          // 数据库未设置权限
           {
             path: '/visualization/customize',
             name: 'customize',
             component: () => import('@/views/profile/index'),
             meta: { title: '可视化定制', keepAlive: true, permission: ['F005'] }
           },
+          // 数据库未设置权限
           {
             path: '/visualization/report',
             name: 'report',
@@ -928,6 +943,7 @@ export const asyncRouterMap = [
             component: () => import('@/views/system/userManage/index'),
             meta: { title: '用户管理', keepAlive: true, permission: ['F001001'] }
           },
+          // 数据库未设置权限
           {
             path: '/system/workGroup',
             name: 'workGroup',
