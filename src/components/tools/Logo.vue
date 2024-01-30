@@ -4,7 +4,7 @@
       <div>
         <img :src="logo" alt="" />
         <span>
-          <h1 v-show="showTitle" class="logo__title">运 维 管 控 平 台</h1>
+          <h1 v-show="showTitle" class="logo__title">运维管控平台</h1>
           <!--          <h1 v-show="showTitle" class="logo__subtitle">一 体 化 管 理 系 统</h1>-->
         </span>
       </div>
@@ -75,7 +75,8 @@ export default {
   }
 
   img {
-    height: 40px !important;
+    width:43px !important;
+    height: 44px !important;
   }
   span{
     display: flex;
@@ -83,10 +84,12 @@ export default {
     white-space: nowrap;
   }
   &__title {
-    font-size: 18px !important;
-    line-height: 26px !important;
-    font-family: FZZZHUNHJW--GB1-0, arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
-    font-weight: normal !important;
+    font-size: 20px !important;
+    font-family: MicrosoftYaHei, arial, 'Microsoft Yahei', 'Hiragino Sans GB', sans-serif !important;
+    font-weight: bold;
+    color: #FFFFFF;
+    line-height: 100%;
+    letter-spacing: 2px;
   }
   &__subtitle{
     font-size: 14px !important;
