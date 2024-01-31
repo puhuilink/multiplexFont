@@ -306,7 +306,7 @@ export default {
       }
     },
     async fetchList () {
-      const { data } = await alarm.post('/ap/platform/policy/find', {
+      const { data } = await alarm.post('/api/policy/find', {
         limit: 25,
         offset: 1,
         account_id: store.getters.userId,
@@ -327,8 +327,8 @@ export default {
       data.forEach(r => {
         this.alertSource.push(
           {
-            label: r.name,
-            value: r.id
+            label: r.sourceName,
+            value: r.sourceId
           }
         )
       })

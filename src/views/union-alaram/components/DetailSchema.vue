@@ -138,7 +138,7 @@ export default {
     },
     async loadData (limit = 10, offset = 1) {
       this.loading = true
-      const { data, page } = await alarm.post('/ap/alert/sub/list',
+      const { data, page } = await alarm.post('/api/alert/sub/list',
         { master_id: this.main.ID,
           limit: limit,
           offset: offset }

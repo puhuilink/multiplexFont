@@ -112,11 +112,12 @@ export default {
      * @param option
      * @return {boolean}
      */
-    filterOption: filterTransferOption('group_name'),
+    filterOption: filterTransferOption('title'),
     handleChange (targetKeys, direction, moveKeys) {
       this.targetKeys = targetKeys
     },
     handleSearch (dir, value) {
+      console.log(dir, value)
     },
     edit (record) {
       console.log(this.show)
