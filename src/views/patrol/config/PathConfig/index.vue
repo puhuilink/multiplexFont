@@ -40,7 +40,7 @@
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
-      :locale="locale"
+      :locale="emptyText()"
       rowKey="role_code"
       :scroll="{x:1500}"
       :pagination="paginationOpt"
@@ -128,9 +128,6 @@ export default {
       }
     ]),
     dataList: [],
-    locale: {
-      emptyText: <a-empty></a-empty>
-    },
     defaultData: [],
     selectedRows: [],
     queryParams: {
@@ -158,6 +155,11 @@ export default {
     handleChange (value) {
       console.log(`selected ${value}`)
       this.select_groupId = value
+    },
+    emptyText () {
+      return {
+        emptyText: <a-empty></a-empty>
+      }
     },
     initialPagination () {
       this.paginationOpt = {
