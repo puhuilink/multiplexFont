@@ -82,6 +82,13 @@ import NewAlarmMixin from '~~~/Elements/NewAlarmMixin'
 
 export default {
   name: 'NewAlarmElement',
+  data () {
+    return {
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      }
+    }
+  },
   mixins: [NewAlarmMixin]
 }
 </script>

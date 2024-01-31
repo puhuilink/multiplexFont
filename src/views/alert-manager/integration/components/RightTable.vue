@@ -1,6 +1,7 @@
 <template>
   <a-table
     :columns="columns"
+    :locale="locale"
     :data-source="data"
     :row-key="(record) => record.id"
     :pagination="{
@@ -232,6 +233,9 @@ export default {
     return {
       data,
       columns,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       state: {
         selectedRowKeys: [], // Check here to configure the default column
         loading: false

@@ -85,7 +85,7 @@
 
     </a-modal>
     <a-table
-      :locale="{emptyText:''}"
+      :locale="locale"
       :data-source="Object.values(metrics)"
       :pagination="{
         current: this.current,
@@ -156,6 +156,9 @@ export default {
   data () {
     return {
       loading: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       total: 0,
       current: 1,
       form: this.$form.createForm(this, { name: 'advanced_search' }),

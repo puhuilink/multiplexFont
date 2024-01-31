@@ -242,6 +242,7 @@
     </a-modal>
     <a-table
       :loading="loading"
+      :locale="locale"
       :columns="columns"
       :data-source="Object.values(this.answers)"
       :pagination="pagination"
@@ -287,6 +288,9 @@ export default {
   data () {
     return {
       loading: false,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       form: this.$form.createForm(this, { name: 'advanced_search' }),
       data: [],
       answerForm: {},

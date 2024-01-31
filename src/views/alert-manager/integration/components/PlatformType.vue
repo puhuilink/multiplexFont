@@ -37,6 +37,7 @@
             prop="levelRelation">
             <a-table
               :columns="mappingColumns"
+              :locale="locale"
               :data-source="formState.levelRelation"
               :pagination="false"
               bordered
@@ -133,6 +134,9 @@ export default {
   data () {
     return {
       visible: false,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       confirmLoading: false,
       formState: _.cloneDeep(original),
       labelCol: { span: 6 },

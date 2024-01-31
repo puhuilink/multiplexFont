@@ -58,6 +58,7 @@
     </div>
     <a-table
       :columns="columns"
+      :locale="locale"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
       :scroll="{ x: 1500 }"
@@ -95,6 +96,9 @@ export default {
   data () {
     return {
       pageLoading: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       dataSource: [],
       patrolGroupList: [],
       ASCRIPTION_LIST,

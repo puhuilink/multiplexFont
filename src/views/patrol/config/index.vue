@@ -56,6 +56,7 @@
     </div>
     <a-table
       ref="table"
+      :locale="locale"
       :columns="columns"
       :scroll="{ x: 1500,y:700 }"
       :data-source="data"
@@ -163,6 +164,9 @@ export default {
   data () {
     return {
       paginationOpt: {},
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       alias: '',
       formStatus: 1,
       table: {

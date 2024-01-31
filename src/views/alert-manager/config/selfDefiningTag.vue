@@ -22,6 +22,7 @@
         <a-table
           bordered
           :columns="columns"
+          :locale="locale"
           :pagination="pagination"
           :data-source="data">
           <span :slot="'index'" slot-scope="text,record,index" >{{ index }}</span>
@@ -86,6 +87,9 @@ export default {
     return {
       activeKey: ['1'],
       sampleData: {},
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns: [
         {
           title: '序号',
