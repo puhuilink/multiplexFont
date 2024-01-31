@@ -111,6 +111,7 @@
         <a-form-model-item
           :rules="[{ required: true, message: '请选择工作组！', trigger: 'change' }]"
           label="工作组"
+          v-if="editFlag"
           prop="groupId"
         >
           <a-select v-model="formState.groupId" style="width: 200px" :options="groupData" />
@@ -179,6 +180,10 @@ export default {
     platformId: {
       type: String,
       default: '302455444528566272'
+    },
+    editFlag: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -343,8 +348,6 @@ export default {
       // console.log('Failed:', flag)
     },
     compressChange (index) {
-      console.log(index)
-      console.log(this.compressFlags[index])
       this.compressFlags[index] = !this.compressFlags[index]
       this.$forceUpdate()
     },
@@ -356,36 +359,50 @@ export default {
           this.$message.error('请检查您的表单项是否都填写完毕！')
         }
       })
-      if (this.formState.compress && !this.compressItem) {
+      if (this.formState.compress && this.compressFlags.indexOf(true) === -1) {
         this.$message.error('压缩依据必选！')
       }
       if (flag) {
         return
       }
       const alertMapping = []
+      const that = this
       Object.keys(this.mappingForm).forEach((m, index) => {
         if (this.mappingForm[m] && this.mappingForm[m] !== '') {
           if (m === 'uniqueKey') {
-            alertMapping.push({
-              sourceField: this.mappingForm[m],
-              targetField: m,
-              targetType: this.typeObj[m],
-              remark: this.jb[this.mappingForm[m]]
-            })
-          } else if (this.formState.compress && index === this.compressFlags.indexOf(true)) {
-            alertMapping.push({
-              sourceField: this.mappingForm[m],
-              targetField: m,
-              targetType: this.typeObj[m],
-              compressCondition: true,
-              compressSequence: 1
-            })
+            if (this.formState.compress && index === that.compressFlags.indexOf(true)) {
+              alertMapping.push({
+                sourceField: this.mappingForm[m],
+                targetField: m,
+                targetType: this.typeObj[m],
+                compressCondition: true,
+                compressSequence: 1,
+                remark: this.jb[this.mappingForm[m]]
+              })
+            } else {
+              alertMapping.push({
+                sourceField: this.mappingForm[m],
+                targetField: m,
+                targetType: this.typeObj[m],
+                remark: this.jb[this.mappingForm[m]]
+              })
+            }
           } else {
-            alertMapping.push({
-              sourceField: this.mappingForm[m],
-              targetField: m,
-              targetType: this.typeObj[m]
-            })
+            if (this.formState.compress && index === that.compressFlags.indexOf(true)) {
+              alertMapping.push({
+                sourceField: this.mappingForm[m],
+                targetField: m,
+                targetType: this.typeObj[m],
+                compressCondition: true,
+                compressSequence: 1
+              })
+            } else {
+              alertMapping.push({
+                sourceField: this.mappingForm[m],
+                targetField: m,
+                targetType: this.typeObj[m]
+              })
+            }
           }
         }
       })
@@ -406,7 +423,6 @@ export default {
         delete this.formState.compressDuration
       }
       const sourceData = { ...this.formState, platformId: this.platformId, sampleData: this.jsonContent }
-      console.log('1234567', sourceData)
       let requestAddress = '/api/integration/source/add'
       if (this.record && this.record !== {}) {
         requestAddress = '/api/integration/source/update'

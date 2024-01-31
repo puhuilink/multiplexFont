@@ -4,44 +4,45 @@
     :data-source="data"
     :row-key="(record) => record.id"
     :pagination="{
-      pageSizeOptions: [ '5', '10', '20', '30' ],
+      pageSizeOptions: ['5', '10', '20', '30'],
       defaultCurrent: 1,
       pageSize: 10,
       defaultPageSize: 10,
       hideOnSinglePage: false,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`
+      showTotal: (total, [start, end]) => `显示 ${start} ~ ${end} 条记录，共 ${total} 条记录`,
     }"
   >
     <template :slot="'autoClose'" slot-scope="text"> {{ text }}分钟 </template>
-    <template :slot="'action'" slot-scope="text,record">
-      <a-icon style="color: #5b8ff9;" @click="updateAlertSource(record)" type="edit" />
+    <template :slot="'action'" slot-scope="text, record">
+      <a-tooltip title="编辑">
+        <a-icon style="color: #5b8ff9" @click="updateAlertSource(record)" type="edit" />
+      </a-tooltip>
       <a-divider type="vertical" />
-      <!--      <a-switch :checked="record.status" size="small" />-->
-      <!--      <a-divider type="vertical" />-->
-      <a-popconfirm
-        title="确定要删除该数据源?"
-        placement="left"
-        @confirm="deleteAlertSource(record.sourceId)"
-        okText="提交"
-        cancelText="取消"
-      >
-        <a-icon style="color: #5b8ff9;" type="delete" />
-      </a-popconfirm>
+      <a-tooltip title="删除">
+        <a-popconfirm
+          title="确定要删除该数据源?"
+          placement="left"
+          @confirm="deleteAlertSource(record.sourceId)"
+          okText="提交"
+          cancelText="取消"
+        >
+          <a-icon style="color: #5b8ff9" type="delete" />
+        </a-popconfirm>
+      </a-tooltip>
     </template>
     <template :slot="'status'" slot-scope="text, record">
       <img v-show="record.sourceStatus" :src="require(`@/assets/icons/svg/successLight.svg`)" />
       <img v-show="!record.sourceStatus" :src="require(`@/assets/icons/svg/errorLight.svg`)" />
     </template>
     <template :slot="'autoClose'" slot-scope="text, record">
-      {{ record.autoCloseInterval?( record.autoClose?record.autoCloseInterval+'分钟自动关闭':'否'):"--" }}
+      {{ record.autoCloseInterval ? (record.autoClose ? record.autoCloseInterval + '分钟自动关闭' : '否') : '--' }}
     </template>
   </a-table>
 </template>
 
 <script>
-
 import SvgIcon from '@/components/SvgIcon/index.vue'
 import { alarm } from '@/utils/request'
 
@@ -185,7 +186,7 @@ export default {
     async deleteAlertSource (id) {
       let res
       try {
-        res = await alarm.post('/api/integration/source/delete', { 'sourceId': id })
+        res = await alarm.post('/api/integration/source/delete', { sourceId: id })
       } catch (e) {
         // res = {
         //   'code': 200,
@@ -221,7 +222,7 @@ export default {
     }
   },
   watch: {
-    'platformId': {
+    platformId: {
       handler (e) {
         this.initialData()
       }

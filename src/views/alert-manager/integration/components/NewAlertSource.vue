@@ -2,7 +2,9 @@
   <div style="background: #f0f2f5">
     <a-row :gutter="[24, 24]">
       <a-col :span="24">
-        <div style="background: white; padding: 20px; justify-content: space-between;display: flex;border-radius:2px">
+        <div
+          style="background: white; padding: 20px; justify-content: space-between; display: flex; border-radius: 2px"
+        >
           <a @click="back"><a-icon type="left" />&nbsp;
             {{ record !== undefined && record.id !== null ? '修改' : '新建' }}告警源&nbsp;/&nbsp;{{ platform.name }}</a
             >
@@ -12,17 +14,21 @@
       </a-col>
     </a-row>
     <a-row :gutter="[24, 24]" type="flex" justify="space-between">
-      <a-col :span="16" >
-        <div style="background: white; height: 100%; padding: 20px;border-radius:2px;">
-          <AlertSourceForm :record="record" :platformId="platform.platformId" />
+      <a-col :span="16">
+        <div style="background: white; height: 100%; padding: 20px; border-radius: 2px">
+          <AlertSourceForm
+            :record="record"
+            :platformId="platform.platformId"
+            :editFlag="record !== undefined && record.id !== null ? false : true"
+          />
         </div>
       </a-col>
-      <a-col :span="8" >
-        <div style="background: white; padding: 20px;height: 100%;border-radius:2px">
-          <center >
+      <a-col :span="8">
+        <div style="background: white; padding: 20px; height: 100%; border-radius: 2px">
+          <center>
             <img :src="platform.url" width="100px" height="100px" />
           </center>
-          <p style="margin-top: 30px;font-weight:500">
+          <p style="margin-top: 30px; font-weight: 500">
             {{ this.platform.remark ? this.platform.remark : defaultRemark }}
           </p>
           <div>
@@ -104,7 +110,7 @@ export default {
       console.log('plat', plat)
       if (plat.levelRelation !== null && plat.levelRelation !== {}) {
         const dataList = []
-        Object.keys(plat.levelRelation).forEach(level => {
+        Object.keys(plat.levelRelation).forEach((level) => {
           dataList.push({
             here: level,
             there: plat.levelRelation[level]
