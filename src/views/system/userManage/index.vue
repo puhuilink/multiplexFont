@@ -322,7 +322,8 @@ export default {
         }
       },
       queryParams: {
-        isOpen: null
+        isOpen: null,
+        timeList: []
       },
       pageLoading: false,
       banList: [],
@@ -483,9 +484,12 @@ export default {
           this.paginationOpt.current = 1
           this.$nextTick()
         }
-        if (this.queryParams.timeList) {
+        if (this.queryParams.timeList.length) {
           this.queryParams.createTimeStart = this.moment(this.queryParams.timeList[0]).format('YYYY-MM-DD HH:mm:ss')
           this.queryParams.createTimeEnd = this.moment(this.queryParams.timeList[1]).format('YYYY-MM-DD HH:mm:ss')
+        } else {
+          this.queryParams.createTimeStart = null
+          this.queryParams.createTimeEnd = null
         }
         const { data: { list, total } } = await axios.get('/user/list', {
           params: {
