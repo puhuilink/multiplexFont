@@ -93,12 +93,14 @@
       <a-table
         :loading="loading"
         bordered
+        :locale="locale"
         rowKey="ID"
         :scroll="{y: scrollY}"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :columns="columns"
         :data-source="dataSource"
         :pagination="paginationOpt"
+        class="union_table"
       >
         <a slot="name" slot-scope="text">{{ text }}</a>
         <span slot="action" slot-scope="text, record" class="center">
@@ -183,6 +185,9 @@ export default {
   data () {
     return {
       loading: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       exportLoading: false,
       ALARM_MAP,
       state: ALARM_STATE.unSolved,
@@ -514,6 +519,12 @@ export default {
 .content_item {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.union_table {
+  .ant-btn {
+    min-width: 60px !important;
+  }
 }
 
 </style>

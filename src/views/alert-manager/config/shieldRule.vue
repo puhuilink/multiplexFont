@@ -2,7 +2,7 @@
   <div class="deliverRules">
     <div class="topTitle"><a-button icon="plus" type="primary" @click="openModal(null)">新建屏蔽规则</a-button></div>
     <a-modal
-      :title="updateFlag?'修改屏蔽规则':'新建屏蔽规则'"
+      :title="updateFlag ? '修改屏蔽规则' : '新建屏蔽规则'"
       :visible="visible"
       :confirm-loading="confirmLoading"
       :width="700"
@@ -10,7 +10,12 @@
       @cancel="closeModal"
       @close="closeModal"
     >
-      <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+      <a-form-model
+        ref="ruleForm"
+        :model="formState"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
+      >
         <a-form-model-item
           label="屏蔽策略名称"
           :rules="[{ required: true, message: '屏蔽策略名称必填', trigger: 'change' }]"
@@ -18,53 +23,90 @@
         >
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
-        <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
-          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
+        <a-form-model-item
+          label="告警源"
+          :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]"
+          prop="source_id"
+        >
+          <a-select
+            label-in-value
+            :value="{ key: formState.source_id, label: formState.source_name }"
+            :options="alertSource"
+            @change="sourceChange"
+          />
         </a-form-model-item>
-        <a-form-model-item label="分派条件" :rules="[{ required:true, type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
+        <a-form-model-item
+          label="分派条件"
+          :rules="[{ required: true, type: 'array', validator: sourcePass, trigger: 'change' }]"
+          prop="policy_source"
+        >
           <div style="">
             <div
-              style="display: grid;
-            grid-template-columns: 60px 1fr;
-            grid-auto-columns: 1fr;"
-              v-for="(map,index) in formState.policy_source"
-              :key="index">
-              <a-avatar :size="32" class="circle"> {{ index+1 }}</a-avatar >
+              style="display: grid; grid-template-columns: 60px 1fr; grid-auto-columns: 1fr"
+              v-for="(map, index) in formState.policy_source"
+              :key="index"
+            >
+              <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar>
               <div>
-                <div style="display: flex;align-items: center;">
+                <div style="display: flex; align-items: center">
                   规则之间的条件：<a-radio-group :options="options" v-model="map.group_relation" :default-value="1" />
-                  <div style="display: flex;flex-direction: revert">
-                    <a-icon type="delete" v-if="formState.policy_source.length !== 1" @click="deleteStrategyByIndex(index)"/>
+                  <div style="display: flex; flex-direction: revert">
+                    <a-icon
+                      type="delete"
+                      v-if="formState.policy_source.length !== 1"
+                      @click="deleteStrategyByIndex(index)"
+                    />
                   </div>
                 </div>
-                <div v-for="(m,i) in map.group_condition" :key="i">
-                  <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]" @change="nameChange(m)"/>
-                  <a-select v-model="m.condition_symbol" style="width: 25%;margin-right: 5px" :options="conditions[1]"/>
+                <div v-for="(m, i) in map.group_condition" :key="i">
+                  <a-select
+                    v-model="m.condition_name"
+                    style="width: 25%; margin-right: 5px"
+                    :options="conditions[0]"
+                    @change="nameChange(m)"
+                  />
+                  <a-select
+                    v-model="m.condition_symbol"
+                    style="width: 25%; margin-right: 5px"
+                    :options="conditions[1]"
+                  />
                   <span>
                     <a-select
                       mode="multiple"
                       v-model="m.condition_value"
-                      style="width: 40%;margin-right: 5px"
+                      style="width: 40%; margin-right: 5px"
                       :options="conditions[2]"
-                      v-if="m.condition_name === '294504721270575106'"/>
-                    <a-input v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
+                      v-if="m.condition_name === '294504721270575106'"
+                    />
+                    <a-input v-else v-model="m.condition_value" style="width: 30%; margin-right: 5px" />
                   </span>
-                  <div :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }">
-                    <a-icon type="delete" @click="deleteRuleByIndex(index,i)"/>
-                    <a-divider type="vertical"/>
+                  <div
+                    :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }"
+                  >
+                    <a-icon type="delete" @click="deleteRuleByIndex(index, i)" />
+                    <a-divider type="vertical" />
                   </div>
-                  <a-icon type="plus" @click="addRule(index)"/>
+                  <a-icon type="plus" @click="addRule(index)" />
                 </div>
               </div>
-            </div></div>
+            </div>
+          </div>
 
           <a-button class="add_button" @click="addStrategy"> 增加</a-button>
         </a-form-model-item>
-        <a-form-model-item label="生效时间" :rules="[{ required: true, message: '生效时间必选', trigger: 'change' }]" prop="start_time">
+        <a-form-model-item
+          label="生效时间"
+          :rules="[{ required: true, message: '生效时间必选', trigger: 'change' }]"
+          prop="start_time"
+        >
           <a-date-picker show-time placeholder="生效时间 " @change="onStartChange" format="YYYY-MM-DDTHH:mm:ssZ" />
         </a-form-model-item>
-        <a-form-model-item label="失效时间" :rules="[{ required: true, message: '失效时间必选', trigger: 'change' }]" prop="end_time">
-          <a-date-picker show-time placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DDTHH:mm:ssZ"/>
+        <a-form-model-item
+          label="失效时间"
+          :rules="[{ required: true, message: '失效时间必选', trigger: 'change' }]"
+          prop="end_time"
+        >
+          <a-date-picker show-time placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DDTHH:mm:ssZ" />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -74,34 +116,30 @@
       :width="700"
       @ok="closeShow"
       @cancel="closeShow"
-      @close="closeShow"
-    >
+      @close="closeShow">
       <div>策略名称：{{ watchForm.policy_name }}</div>
       <div>告警源：{{ watchForm.source_name }}</div>
-      <div>屏蔽条件：
+      <div>
+        屏蔽条件：
         <div
-          style="display: grid;
-            grid-template-columns: 40px 1fr;
-            grid-auto-columns: 1fr;"
-          v-for="(map,index) in watchForm.policy_source"
-          :key="index">
-          <a-avatar :size="24" class="circle"> {{ map.group_relation === '1'?'或':'且' }}</a-avatar >
-          <div
-            style="display: grid;
-            grid-template-rows: 50px 50px;
-            grid-auto-rows: 50px;">
-            <div v-for="(m,i) in map.group_condition" :key="i">
+          style="display: grid; grid-template-columns: 40px 1fr; grid-auto-columns: 1fr"
+          v-for="(map, index) in watchForm.policy_source"
+          :key="index"
+        >
+          <a-avatar :size="24" class="circle"> {{ map.group_relation === '1' ? '或' : '且' }}</a-avatar>
+          <div style="display: grid; grid-template-rows: 50px 50px; grid-auto-rows: 50px">
+            <div v-for="(m, i) in map.group_condition" :key="i">
               <a-select
                 disabled
                 v-model="m.condition_name"
-                style="width: 25%;margin-right: 5px"
+                style="width: 25%; margin-right: 5px"
                 :options="conditions[0]"
                 :show-arrow="false"
               />
               <a-select
                 disabled
                 v-model="m.condition_symbol"
-                style="width: 25%;margin-right: 5px"
+                style="width: 25%; margin-right: 5px"
                 :options="conditions[1]"
                 :show-arrow="false"
               />
@@ -110,31 +148,27 @@
                   disabled
                   mode="multiple"
                   v-model="m.condition_value"
-                  style="width: 40%;margin-right: 5px"
+                  style="width: 40%; margin-right: 5px"
                   :options="conditions[2]"
                   v-if="m.condition_name === '294504721270575106'"
                   :show-arrow="false"
                 />
-                <a-input disabled v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
+                <a-input disabled v-else v-model="m.condition_value" style="width: 30%; margin-right: 5px" />
               </span>
             </div>
           </div>
         </div>
       </div>
     </a-modal>
-    <a-table
-      bordered
-      :columns="columns"
-      :pagination="pagination"
-      :data-source="data">
+    <a-table bordered :locale="locale" :columns="columns" :pagination="pagination" :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
-      <template :slot="'levelUp'" slot-scope="text,record">
-        {{ record.policy_account.length>1?'是':'否' }}
+      <template :slot="'levelUp'" slot-scope="text, record">
+        {{ record.policy_account.length > 1 ? '是' : '否' }}
       </template>
-      <template :slot="'notify'" slot-scope="text,record">
+      <template :slot="'notify'" slot-scope="text, record">
         {{ notifyContent(record.policy_account) }}
       </template>
-      <template :slot="'action'" slot-scope="text,record">
+      <template :slot="'action'" slot-scope="text, record">
         <a-button @click="showModal(record)">查看</a-button>
         <a-divider type="vertical" />
         <a-button @click="openModal(record)">编辑</a-button>
@@ -201,7 +235,7 @@ const columns = [
 ]
 const data = []
 const pagination = {
-  pageSizeOptions: [ '5', '10', '20', '30' ],
+  pageSizeOptions: ['5', '10', '20', '30'],
   defaultCurrent: 1,
   pageSize: 10,
   defaultPageSize: 10,
@@ -223,9 +257,7 @@ const originalStrategy = {
   policy_id: '',
   policy_name: '',
   group_relation: '1',
-  group_condition: [
-    _.cloneDeep(originalRule)
-  ]
+  group_condition: [_.cloneDeep(originalRule)]
 }
 
 const originalData = {
@@ -241,11 +273,8 @@ const originalData = {
   update_time: '0001-01-01T00:00:00Z', // 策略最后更新时间
   updator: '', // 策略最后更新人
   enabled: true, // 策略启停用 0 - 停用， 1 - 启用
-  policy_source: [
-    _.cloneDeep(originalStrategy)
-  ],
-  policy_account: [
-  ]
+  policy_source: [_.cloneDeep(originalStrategy)],
+  policy_account: []
 }
 
 export default {
@@ -253,10 +282,13 @@ export default {
   data () {
     return {
       show: false,
+      locale: {
+        emptyText: (
+          <a-empty> </a-empty>
+        )
+      },
       updateFlag: false,
-      conditions: [
-        [], [], []
-      ],
+      conditions: [[], [], []],
       alertSource: [],
       group: [],
       user: [],
@@ -324,26 +356,25 @@ export default {
     async fetchSource () {
       const { data } = await alarm.get('/api/integration/source/get', { params: { policyType: 1 } })
       this.alertSource = []
-      data.forEach(r => {
-        this.alertSource.push(
-          {
-            label: r.sourceName,
-            value: r.sourceId
-          }
-        )
+      data.forEach((r) => {
+        this.alertSource.push({
+          label: r.sourceName,
+          value: r.sourceId
+        })
       })
     },
     sourcePass (rule, value, callback) {
       let flag = false
-      value.forEach(v => {
+      value.forEach((v) => {
         if (flag) {
           return false
         }
-        v.group_condition.forEach(condition => {
+        v.group_condition.forEach((condition) => {
           if (flag) {
             return false
           }
-          flag = condition.condition_name === '' || condition.condition_symbol === '' || condition.condition_value === ''
+          flag =
+            condition.condition_name === '' || condition.condition_symbol === '' || condition.condition_value === ''
         })
       })
       if (flag) {
@@ -355,25 +386,21 @@ export default {
     async fetchGroup () {
       const res = await ApSourceService.fetchGroupList()
       this.group = []
-      res.forEach(r => {
-        this.group.push(
-          {
-            label: r.name,
-            value: r.id
-          }
-        )
+      res.forEach((r) => {
+        this.group.push({
+          label: r.name,
+          value: r.id
+        })
       })
     },
     async fetchUser () {
       const res = await ApSourceService.fetchUserList()
       this.user = []
-      res.forEach(r => {
-        this.user.push(
-          {
-            label: r.staff_name,
-            value: r.user_id
-          }
-        )
+      res.forEach((r) => {
+        this.user.push({
+          label: r.staff_name,
+          value: r.user_id
+        })
       })
     },
     onStartChange (value, dateString) {
@@ -389,7 +416,7 @@ export default {
     async fetchCondition (condition_type) {
       const data = await ApSourceService.fetchDictList(condition_type)
       const arr = []
-      data.forEach(d => {
+      data.forEach((d) => {
         arr.push({
           label: d.condition_value,
           value: d.id
@@ -404,8 +431,8 @@ export default {
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = { ..._.cloneDeep(record) }
-        this.formState.policy_source.forEach(source => {
-          source.group_condition.forEach(condition => {
+        this.formState.policy_source.forEach((source) => {
+          source.group_condition.forEach((condition) => {
             try {
               // condition.condition_value = JSON.parse(condition.condition_value)
               condition.condition_value = condition.condition_value.split(',')
@@ -416,7 +443,9 @@ export default {
         })
       } else {
         if (this.alertSource.length) {
-          setTimeout(() => { this.sourceChange(this.alertSource[0]) }, 1000)
+          setTimeout(() => {
+            this.sourceChange(this.alertSource[0])
+          }, 1000)
         } else {
           this.$message.error('该通知组未创建数据源或已存在屏蔽策略！')
         }
@@ -426,8 +455,8 @@ export default {
     },
     showModal (record) {
       this.watchForm = { ..._.cloneDeep(record) }
-      this.watchForm.policy_source.forEach(source => {
-        source.group_condition.forEach(condition => {
+      this.watchForm.policy_source.forEach((source) => {
+        source.group_condition.forEach((condition) => {
           try {
             // condition.condition_value = JSON.parse(condition.condition_value)
             condition.condition_value = condition.condition_value.split(',')
@@ -452,9 +481,7 @@ export default {
         this.$message.warn('最多只能有9条策略！')
         return
       }
-      this.formState.policy_source.push(
-        { ..._.cloneDeep(originalStrategy) }
-      )
+      this.formState.policy_source.push({ ..._.cloneDeep(originalStrategy) })
       this.$forceUpdate()
     },
     deleteStrategyByIndex (index) {
@@ -471,9 +498,7 @@ export default {
         this.$message.warn('最多只能有五条规则！')
         return
       }
-      this.formState.policy_source[index].group_condition.push(
-        { ..._.cloneDeep(originalRule) }
-      )
+      this.formState.policy_source[index].group_condition.push({ ..._.cloneDeep(originalRule) })
       this.$forceUpdate()
     },
     notifyLevelUp () {
@@ -481,16 +506,14 @@ export default {
         this.$message.warn('通知最多只能升级三次！')
         return
       }
-      this.formState.policy_account.push(
-        {
-          'id': '',
-          'policy_id': '',
-          'account_id': '',
-          'group_id': '',
-          'upgrade_interval': 30, // 告警升级时间
-          'account_type': '1'
-        }
-      )
+      this.formState.policy_account.push({
+        id: '',
+        policy_id: '',
+        account_id: '',
+        group_id: '',
+        upgrade_interval: 30, // 告警升级时间
+        account_type: '1'
+      })
     },
     sourceChange (e) {
       if (!e) {
@@ -503,7 +526,7 @@ export default {
     async handleOk () {
       console.log(this.formState)
       let flag = false
-      this.$refs.ruleForm.validate(valid => {
+      this.$refs.ruleForm.validate((valid) => {
         if (!valid) {
           this.$message.error('请检查您的表单项是否都填写完毕！')
           flag = true
@@ -557,9 +580,7 @@ export default {
       console.log('focus')
     },
     filterOption (input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      )
+      return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
     notifyContent (arr) {
       try {
@@ -567,12 +588,12 @@ export default {
         arr.forEach((a, index) => {
           if (index === 0) {
             if (a.account_type === '0') {
-              str += '分派组:' + this.group.find(g => g.value === a.group_id).label
+              str += '分派组:' + this.group.find((g) => g.value === a.group_id).label
             } else {
-              str += '分派人:' + this.user.find(g => g.value === a.account_id).label
+              str += '分派人:' + this.user.find((g) => g.value === a.account_id).label
             }
           } else {
-            str += ' 升级给:' + this.user.find(g => g.value === a.account_id).label
+            str += ' 升级给:' + this.user.find((g) => g.value === a.account_id).label
           }
         })
         return str
@@ -597,9 +618,7 @@ export default {
       console.log('认领', record)
     },
     // 关闭或批量关闭告警
-    closeAlarm (record) {
-
-    },
+    closeAlarm (record) {},
     showDetail () {
       this.$refs.schema.show('压缩告警详情')
       // TODO 交互详情内容
@@ -615,7 +634,7 @@ export default {
         onChange: (selectedRowKeys, selectedRows) => {
           console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
         },
-        getCheckboxProps: record => ({
+        getCheckboxProps: (record) => ({
           props: {
             disabled: record.name === 'Disabled User', // Column configuration not to be checked
             name: record.name
@@ -643,14 +662,14 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.circle{
-  background: rgba(9, 117, 209, 0.10) ;
-  color: #0975D1;
+.circle {
+  background: rgba(9, 117, 209, 0.1);
+  color: #0975d1;
 }
-.add_button{
+.add_button {
   width: 100px;
   background-color: rgba(34, 127, 230, 1);
-  color: white
+  color: white;
 }
 * {
   margin: 0px;

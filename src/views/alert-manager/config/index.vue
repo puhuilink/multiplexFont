@@ -199,6 +199,7 @@
     </a-modal>
     <a-table
       :bordered="false"
+      :locale="locale"
       :columns="columns"
       :pagination="pagination"
       :data-source="data">
@@ -333,6 +334,9 @@ export default {
   data () {
     return {
       show: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       updateFlag: false,
       conditions: [
         [], [], []

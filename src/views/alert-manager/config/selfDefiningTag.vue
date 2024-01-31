@@ -15,8 +15,13 @@
         </a-collapse>
       </div>
       <div class="rightTable">
-        <a-table bordered :columns="columns" :pagination="pagination" :data-source="data">
-          <span :slot="'index'" slot-scope="text,record,index">{{ index }}</span>
+        <a-table
+          bordered
+          :columns="columns"
+          :locale="locale"
+          :pagination="pagination"
+          :data-source="data">
+          <span :slot="'index'" slot-scope="text,record,index" >{{ index }}</span>
           <span slot="sourceName">{{ getSourceName(activeSourceId) }}</span>
           <span slot="type">告警源</span>
           <template :slot="'action'" slot-scope="text,record">
@@ -94,6 +99,9 @@ export default {
     return {
       activeKey: ['1'],
       sampleData: {},
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns: [
         {
           title: '序号',

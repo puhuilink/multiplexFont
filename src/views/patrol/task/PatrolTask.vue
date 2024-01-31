@@ -15,7 +15,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="工作组" v-bind="formItemLayout" class="fw">
-              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%">
+              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%" allowClear>
                 <a-select-option v-for="(item ,index) in groupId_arr" :key="index" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
@@ -130,6 +130,7 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="id"
+      :locale="locale"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="{x:1500}"
@@ -175,6 +176,9 @@ export default {
   data () {
     return {
       groupId_arr: [],
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       defaultData: [],
       groups: [],
       plans: [],

@@ -9,7 +9,7 @@
   >
     <a-table
       style="width: 100%"
-      :locale="{emptyText:' '}"
+      :locale="locale"
       :columns="columns"
       :data-source="data"
       :loading="loading"
@@ -45,6 +45,9 @@ export default {
     }
     return {
       loading: false,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns: [
         {
           title: '检查项',

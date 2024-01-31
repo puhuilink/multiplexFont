@@ -61,6 +61,7 @@
       :data-source="dataList"
       :pagination="pagination"
       ref="table"
+      :locale="locale"
       :rowKey="(record) => record.id"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :loading="pageLoading"
@@ -116,6 +117,9 @@ export default {
           dataIndex: 'remark'
         }
       ]),
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       selectedRows: [],
       Myid: '',
       Myname: '',

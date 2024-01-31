@@ -24,6 +24,7 @@
       :loading="loading"
       bordered
       rowKey="id"
+      :locale="locale"
       :scroll="{y: scrollY}"
       :pagination="paginationOpt"
       class="button_sty"
@@ -81,6 +82,9 @@ export default {
     return {
       advanced: false,
       dataSource,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns,
       loading: false,
       title: [],

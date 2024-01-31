@@ -16,7 +16,7 @@
                 <a-select-option v-for="{ label, value } in patrolGroupList" :key="value" :value="value">{{ label
                 }}</a-select-option>
               </a-select> -->
-              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%">
+              <a-select placeholder="请选择工作组" v-model="queryParams.groupId" style="width: 100%" allowClear>
                 <a-select-option v-for="item in patrolGroupList" :key="item.id">
                   {{ item.name }}
                 </a-select-option>
@@ -58,6 +58,7 @@
     </div>
     <a-table
       :columns="columns"
+      :locale="locale"
       :rowKey="(el) => el.id"
       :rowSelection="rowSelection"
       :scroll="{ x: 1500 }"
@@ -95,6 +96,9 @@ export default {
   data () {
     return {
       pageLoading: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       dataSource: [],
       patrolGroupList: [],
       ASCRIPTION_LIST,

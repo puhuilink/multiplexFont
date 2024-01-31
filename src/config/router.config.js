@@ -378,6 +378,15 @@ export const asyncRouterMap = [
                 name: 'work-manage'
               },
 
+              // 排班详情编辑
+              {
+                path: '/alertManagerPlatform/work-manage/detail',
+                component: () => import('@/views/work-manage/index'),
+                meta: { title: '排班', keepAlive: true },
+                hidden: true,
+                name: 'manage-detail'
+              },
+
               // 自定义标签
               {
                 path: '/alertManagerPlatform/selfDefining',

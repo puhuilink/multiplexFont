@@ -5,6 +5,7 @@
       :dataSource="interval.dataSource"
       :pagination="false"
       ref="table"
+      :locale="locale"
       rowKey="uuid"
       class="custom-table"
       bordered
@@ -54,6 +55,9 @@ export default {
   },
   data () {
     return {
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       columns: [
         {
           title: '开始时间',

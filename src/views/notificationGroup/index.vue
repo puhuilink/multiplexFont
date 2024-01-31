@@ -41,6 +41,7 @@
     </a-popconfirm>
     <a-table
       :columns="columns"
+      :locale="locale"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :loading="loading"
       rowKey="groupId"
@@ -102,6 +103,9 @@ export default {
         xl: 8,
         md: 12,
         sm: 24
+      },
+      locale: {
+        emptyText: <a-empty></a-empty>
       },
       formItemLayout: {
         labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 4 } },
