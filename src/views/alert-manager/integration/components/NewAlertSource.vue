@@ -37,6 +37,7 @@
               :columns="platformMapping"
               :data-source="data1"
               :pagination="false"
+              :locale="locale"
               :row-key="(record, index) => index"
               bordered
             >
@@ -125,6 +126,9 @@ export default {
     const record = this.$route.query.record
     return {
       platform,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       record,
       defaultRemark,
       data1: [

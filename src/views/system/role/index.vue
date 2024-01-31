@@ -74,6 +74,7 @@
       <div class="wrapper_content_right">
         <a-table
           :columns="columns"
+          :locale="locale"
           :dataSource="defaultData"
           ref="table"
           rowKey="id"
@@ -157,6 +158,9 @@ export default {
     selectedKeys: [], // 用于跟踪选中状态的数组
     treeData: [],
     selectTreeData: [],
+    locale: {
+      emptyText: <a-empty></a-empty>
+    },
     disabled: true,
     columns: Object.freeze([
       {

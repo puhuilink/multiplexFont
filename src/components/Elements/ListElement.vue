@@ -1,6 +1,5 @@
 <template>
   <div class="list-element">
-
     <!-- S 列表 -->
     <a-table
       :customHeaderRow="() => ({ style: headerRowStyle })"
@@ -10,6 +9,7 @@
       :pagination="false"
       rowKey="uuid"
       ref="table"
+      :locale="locale"
       :scroll="scroll"
     >
     </a-table>
@@ -22,6 +22,13 @@ import ListMixin from '@/components/Elements/ListMixin'
 
 export default {
   name: 'ListElement',
+  data () {
+    return {
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      }
+    }
+  },
   mixins: [ListMixin]
 }
 </script>

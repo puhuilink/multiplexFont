@@ -15,6 +15,7 @@
     <a-table
       :columns="columns"
       :data-source="dataSource"
+      :locale="locale"
       bordered
       rowKey="ID"
       :loading="loading"
@@ -114,6 +115,9 @@ export default {
   data () {
     return {
       data,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       dataSource: [],
       columns,
       main: {},

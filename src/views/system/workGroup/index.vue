@@ -65,6 +65,7 @@
       <div class="wrapper_content_right">
         <a-table
           :columns="columns"
+          :locale="locale"
           :dataSource="defaultData"
           ref="table"
           :rowSelection="rowSelection"
@@ -121,6 +122,9 @@ export default {
   data () {
     return {
       dataLoaded: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       selectedKeys: [], // 用于跟踪选中状态的数组
       treeData: [],
       selectTreeData: [],

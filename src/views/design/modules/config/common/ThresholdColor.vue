@@ -18,6 +18,7 @@
 
       <a-table
         ref="table"
+        :locale="locale"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
@@ -79,6 +80,9 @@ export default {
   },
   data: () => ({
     dataSource: [],
+    locale: {
+      emptyText: <a-empty> </a-empty>
+    },
     $scrollTable: null,
     visible: false
   }),

@@ -93,6 +93,7 @@
       <a-table
         :loading="loading"
         bordered
+        :locale="locale"
         rowKey="ID"
         :scroll="{y: scrollY}"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -184,6 +185,9 @@ export default {
   data () {
     return {
       loading: false,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       exportLoading: false,
       ALARM_MAP,
       state: ALARM_STATE.unSolved,

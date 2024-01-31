@@ -6,6 +6,7 @@
         :columns="innerTable.columns"
         :data-source="dataSource"
         :pagination="false"
+        :locale="locale"
         :loading="loading"
         size="small"
       >
@@ -26,6 +27,9 @@ export default {
     return {
       elementProps: {
         styleConfig: {}
+      },
+      locale: {
+        emptyText: <a-empty></a-empty>
       },
       dataSource: [],
       visible: false,

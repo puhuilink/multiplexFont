@@ -154,6 +154,7 @@
       <a-table
         style="margin-top: 10px"
         :columns="columns"
+        :locale="locale"
         :pagination="pagination"
         :data-source="data"
         :expanded-row-keys="expandedRowKeys"
@@ -340,6 +341,9 @@ export default {
     return {
       innerColumns,
       innerData,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       groupId: '',
       userId: '',
       expandedRowKeys: [],
