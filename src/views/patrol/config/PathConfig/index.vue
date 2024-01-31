@@ -40,6 +40,7 @@
       :columns="columns"
       :dataSource="defaultData"
       ref="table"
+      :locale="locale"
       rowKey="role_code"
       :scroll="{x:1500}"
       :pagination="paginationOpt"
@@ -127,6 +128,9 @@ export default {
       }
     ]),
     dataList: [],
+    locale: {
+      emptyText: <a-empty></a-empty>
+    },
     defaultData: [],
     selectedRows: [],
     queryParams: {
