@@ -31,7 +31,11 @@ class ApSourceService extends BaseService {
   }
   // 告警源列表
   static async fetchSourceList () {
-    const { data } = await alarm.get('/api/integration/source/get')
+    const { data } = await alarm.get('/api/integration/source/get', {
+      params: {
+        policyType: 1
+      }
+    })
     const list = []
     data.forEach(d => {
       list.push({

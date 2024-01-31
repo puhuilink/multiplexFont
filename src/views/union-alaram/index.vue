@@ -99,6 +99,7 @@
         :columns="columns"
         :data-source="dataSource"
         :pagination="paginationOpt"
+        class="union_table"
       >
         <a slot="name" slot-scope="text">{{ text }}</a>
         <span slot="action" slot-scope="text, record" class="center">
@@ -514,6 +515,12 @@ export default {
 .content_item {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.union_table {
+  .ant-btn {
+    min-width: 60px !important;
+  }
 }
 
 </style>

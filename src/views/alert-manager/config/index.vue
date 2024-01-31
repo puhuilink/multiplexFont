@@ -238,7 +238,7 @@ import '@/utils/utils.less'
 import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
-import { axios } from '@/utils/request'
+import { alarm, axios } from '@/utils/request'
 
 const columns = [
   {
@@ -386,7 +386,7 @@ export default {
       }
     },
     async fetchList () {
-      const { data } = await axios.post('/alert/policy/find', {
+      const { data } = await alarm.post('/api/policy/find', {
         limit: 25,
         offset: 1,
         account_id: store.getters.userId,

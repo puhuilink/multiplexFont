@@ -117,9 +117,6 @@ class CmdbService extends BaseService {
           ...treeNodeTitleSlots
         })
       })
-
-    console.log('root', root)
-
     return [root]
   }
 

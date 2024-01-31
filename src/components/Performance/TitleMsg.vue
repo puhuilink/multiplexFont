@@ -1,12 +1,13 @@
 <template>
   <div style="font-weight: bold;font-size: 17px;margin-left: -40%;width: 100%;">
-    {{ tabMsg.alias }}  {{ tabMsg.ip ? `(${tabMsg.ip})` : '' }} {{ tabMsg.location ? `数据域: ${tabMsg.location}` : '' }} {{ tabMsg.hostType ? `\/${tabMsg.hostType.host}` : '' }}
+    {{ tabMsg.alias }}  {{ tabMsg.ip ? `(${tabMsg.ip})` : '' }} {{ tabMsg.location ? `数据域: ${tabMsg.location}` : '' }}
   </div>
 </template>
 
 <script>
 import { CmdbService } from '@/api'
 import _ from 'lodash'
+import { serviceTree } from '@/utils/request'
 
 export default {
   name: 'TitleMsg',
@@ -24,19 +25,12 @@ export default {
   },
   methods: {
     async loadData () {
-      const { data: { source } } = await CmdbService.find({
-        where: {
+      const { data } = await serviceTree.get('/hostTree/infoById', {
+        params: {
           id: this.id
-        },
-        fields: [
-          'alias',
-          'hostType:modelHost { host }',
-          'ip',
-          'location'
-        ],
-        alias: 'source'
+        }
       })
-      this.tabMsg = _.first(source)
+      this.tabMsg = data
     }
   },
   created () {

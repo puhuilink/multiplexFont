@@ -6,6 +6,7 @@
     :loading="loading"
     centered
     @cancel="onCancel"
+    class="calendar"
   >
     <template #footer>
       <a-button @click="onCancel">取消</a-button>

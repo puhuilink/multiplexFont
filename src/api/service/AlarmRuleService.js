@@ -2,7 +2,7 @@ import { BaseService } from './BaseService'
 import { query } from '../utils/hasura-orm/index'
 import { AlarmRuleDao } from '../dao/index'
 import _ from 'lodash'
-import { axios } from '@/utils/request'
+import { axios, serviceTree } from '@/utils/request'
 
 class AlarmRuleService extends BaseService {
   static async find (argus = {}) {
@@ -154,7 +154,7 @@ class AlarmRuleService extends BaseService {
     if (alarmList.length === 0) {
       Reflect.deleteProperty(data, 'level')
     }
-    return axios
+    return serviceTree
       .post('/host/hostDetail', { ...data })
       .then(({ data }) => data)
   }
@@ -168,14 +168,14 @@ class AlarmRuleService extends BaseService {
     if (alarmList.length === 0) {
       Reflect.deleteProperty(data, 'level')
     }
-    return axios
+    return serviceTree
       .post('/endpoint/endpointDetail', { ...data })
       .then(({ data }) => data)
   }
 
   // 告警下钻，展示历史记录详情
   static async historyAlarmDataView (startTime, entTime, content) {
-    return axios.post('/data/view', { dataType: 1, startTime: entTime[0], endTime: startTime[0], content: [{ hostId: content.AlarmhostId, endpointId: content.endpointId, endpointModelId: content.endpointModelId, metricId: content.metricId, metricModelId: content.metricModelId }]
+    return serviceTree.post('/data/view', { dataType: 1, startTime: entTime[0], endTime: startTime[0], content: [{ hostId: content.AlarmhostId, endpointId: content.endpointId, endpointModelId: content.endpointModelId, metricId: content.metricId, metricModelId: content.metricModelId }]
     })
   }
 }

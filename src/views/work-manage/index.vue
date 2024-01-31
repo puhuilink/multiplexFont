@@ -26,12 +26,13 @@
       rowKey="id"
       :scroll="{y: scrollY}"
       :pagination="paginationOpt"
+      class="button_sty"
     >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action" slot-scope="text, { id }">
-        <a-button @click="onDetail(id)">查看</a-button>
+        <a-button @click="onDetail(id)" class="button_sty" size="small">查看</a-button>
         <a-divider type="vertical" />
-        <a-button @click="onEdit(id)">编辑</a-button>
+        <a-button @click="onEdit(id)" class="button_sty" size="small">编辑</a-button>
         <a-divider type="vertical" />
         <a-popconfirm
           title="确定要删除此排班?"
@@ -41,10 +42,7 @@
           cancelText="取消"
         >
           <a-tooltip placement="top">
-            <template slot="title">
-              <span>删除</span>
-            </template>
-            <a-button>删除</a-button>
+            <a-button class="button_sty" size="small">删除</a-button>
           </a-tooltip>
         </a-popconfirm>
       </span>
@@ -67,10 +65,10 @@ import { decrypt } from '@/utils/aes'
 const format = 'YYYY-MM-DD hh:mm:ss'
 const columns = [
   { title: '排班名称', align: 'center', dataIndex: 'name', key: 'name' },
-  { title: '生效时间', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
-  { title: '最后一次编辑时间', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
+  { title: '生效时间', align: 'center', dataIndex: 'effectiveTime', key: 'effectiveTime', customRender: el => moment(el).format(format) },
+  { title: '最后一次编辑时间', align: 'center', dataIndex: 'updateTime', key: 'updateTime', customRender: (_, el) => _ || el.createTime },
   { title: '排班人员', width: 200, align: 'center', dataIndex: 'tags', key: 'tags' },
-  { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '500', scopedSlots: { customRender: 'action' } }
+  { title: '操作', dataIndex: '', key: 'x', align: 'center' , width: '700', scopedSlots: { customRender: 'action' } }
 ]
 
 const dataSource = []
@@ -217,6 +215,11 @@ export default {
 
   &-btn {
     float: right;
+  }
+}
+.button_sty {
+  .ant-btn {
+    min-width: 60px !important;
   }
 }
 </style>

@@ -152,7 +152,7 @@
 import Schema from '@/components/Mixins/Modal/Schema'
 import moment from 'moment'
 import singleDate from '@/views/work-manage/components/singleDate'
-import { alarm } from '@/utils/request'
+import { alarm, axios } from '@/utils/request'
 import { dealObject, weekMap } from './enum.js'
 import _ from 'lodash'
 import {
@@ -279,11 +279,11 @@ export default {
     },
     async query () {
       try {
-        const { data } = await alarm.get('/api/configuration/group/getAllUser')
-        if (data && data.length) {
-          this.group = data.map(el => ({
-            label: _.get(el, 'accountName', ''),
-            value: _.get(el, 'accountId', '')
+        const { data: { list } } = await axios.get('/user/list?pageSize=999&pageNum=1')
+        if (list && list.length) {
+          this.group = list.map(el => ({
+            label: _.get(el, 'userName', ''),
+            value: _.get(el, 'id', '')
           }))
         } else {
           this.$message.warning('暂无可分配用户')
