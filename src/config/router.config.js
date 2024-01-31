@@ -19,7 +19,7 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: '首页' },
+    meta: { title: '工作台' },
     redirect: '/first',
     children: [
       ...process.env.NODE_ENV === 'production' ? [] : [
@@ -41,7 +41,7 @@ export const asyncRouterMap = [
         name: 'first',
         // component: () => import('@/views/titlePage/index'),
         component: () => import('@/views/titlePageHome/index'),
-        meta: { title: '首页', keepAlive: true, icon: 'home', permission: ['F030'] }
+        meta: { title: '工作台', keepAlive: true, icon: 'home', permission: ['F030'] }
       },
       // performance
       {

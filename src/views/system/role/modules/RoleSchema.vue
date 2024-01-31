@@ -88,7 +88,7 @@
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item label="请选择部门范围" prop="dataType" v-if="dataForm.dataType === 'CUSTOM'">
+          <a-form-model-item label="请选择部门范围" prop="dataType" v-if="dataForm.dataType === 'CUSTOM'" class="form-model-item-box">
             <a-tree
               checkable
               defaultExpandAll
@@ -96,7 +96,8 @@
               :checkStrictly="true"
               :autoExpandParent="true"
               v-model="dataForm.dataIds"
-              :treeData="Depts">
+              :treeData="Depts"
+              class="tree_Box">
             </a-tree>
           </a-form-model-item>
         </a-form-model>
@@ -241,23 +242,26 @@ export default {
     },
     async getMenu () {
       try {
-        const result = await RoleService.findMenu()
+        // const result = await RoleService.findMenu()
+        const res = await axios.get('/menu/list')
+        const result = res.data.list
         const fList = result.map(el => {
-          if (el.parent_code === 'NULL') {
-            el.parent_code = null
+          if (el.code === 'F') {
+            el.parentCode = null
           }
-          if (el.menu_type === '1') {
+          if (el.menuType === 1) {
             return el
           }
         }).filter((f) => f)
         const mList = result.map(el => {
-          if (el.parent_code === 'NULL') {
-            el.parent_code = null
+          if (el.parentCode === 'NULL') {
+            el.parentCode = null
           }
-          if (el.menu_type === '2') {
+          if (el.menuType === '2') {
             return el
           }
         }).filter((f) => f)
+
         const FF = this.buildTree(fList)
         const MM = this.buildTree(mList)
         this.menus = [...FF, ...MM]
@@ -271,7 +275,7 @@ export default {
         if (!item) {
           return
         }
-        if (item.parent_code === parentId) {
+        if (item.parentCode === parentId) {
           const children = this.buildTree(data, item.code)
           if (children.length > 0) {
             item.children = children
@@ -466,8 +470,15 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .steps-content {
   height: 500px;
+}
+.form-model-item-box{
+  height: 450px;
+}
+.tree_Box{
+  overflow-y: auto;
+  height: 400px;
 }
 </style>
