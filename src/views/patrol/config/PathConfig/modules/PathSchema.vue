@@ -17,7 +17,7 @@
         <a-input v-model="originalForm.alias"/>
       </a-form-model-item>
       <a-form-model-item label="工作组名称" prop="groupId">
-        <a-select placeholder="请选择工作组" v-model="originalForm.groupId" style="width: 100%">
+        <a-select placeholder="请选择工作组" v-model="originalForm.groupId" style="width: 100%" allowClear>
           <a-select-option v-for="(item ,index) in groupIdArr" :key="index" :value="item.id">
             {{ item.name }}
           </a-select-option>
