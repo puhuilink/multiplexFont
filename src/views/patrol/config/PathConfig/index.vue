@@ -16,7 +16,7 @@
           </a-col>
           <a-col :md="8" :sm="12">
             <a-form-item label="工作组名称" v-bind="formItemLayout" class="fw">
-              <a-select placeholder="请选择工作组" @change="handleChange" style="width: 100%">
+              <a-select placeholder="请选择工作组" v-model="select_groupId" style="width: 100%" allowClear>
                 <a-select-option v-for="(item ,index) in groupId_arr" :key="index" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
@@ -189,6 +189,7 @@ export default {
       this.queryParams = {
         alias: null
       }
+      this.select_groupId = ''
     },
     query () {
       this.getList()
@@ -212,6 +213,7 @@ export default {
     async getList () {
       const pageNum = 1
       const pageSize = 9999
+      this.groupId_arr = []
       const { data } = await axios.get('/group/list', { params: { pageNum: pageNum, pageSize: pageSize, isOpen: true } })
       /* const { data } = {
         data: {
