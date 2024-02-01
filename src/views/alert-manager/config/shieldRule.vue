@@ -588,7 +588,7 @@ export default {
       })
       backup.start_time = this.timeFormat(backup.start_time)
       backup.end_time = this.timeFormat(backup.end_time)
-      backup.policy_account[0].account_id = this.$store.state.userId
+      backup.policy_account[0].account_id = store.getters.userId
       let url = ''
       if (this.updateFlag) {
         backup.updator = store.getters.userId
