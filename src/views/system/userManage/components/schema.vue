@@ -53,7 +53,10 @@
               wrapperCol: { span: 18 },
             }"
             prop="mobilePhone"
-            :rules="[{ required: true, message: '请填写手机号码' }]"
+            :rules="[
+              { required: true, message: '请填写手机号码' },
+              { pattern: /^1[3456789]\d{9}$/, message: '请输入有效的手机号码' }
+            ]"
           >
             <a-input v-model="formModel.mobilePhone"></a-input>
           </a-form-model-item>
@@ -66,7 +69,10 @@
               wrapperCol: { span: 18 },
             }"
             prop="email"
-            :rules="[{ required: true, message: '请填写邮箱' }]"
+            :rules="[
+              { required: true, message: '请填写邮箱' },
+              { type: 'email', message: '请输入有效的邮箱地址' }
+            ]"
           >
             <a-input v-model="formModel.email"></a-input>
           </a-form-model-item>

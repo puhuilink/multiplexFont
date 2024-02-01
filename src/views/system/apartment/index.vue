@@ -321,9 +321,13 @@ export default {
         const dataIds = _.get(data, 'dataIds', [])
         const list = _.get(data, 'list', [])
         const outSystem = _.get(data, 'outSystem', [])
+        console.log(dataIds.length)
         if (!dataIds.length) {
           this.treeData = []
-          this.$notifyError('未查询到组织机构')
+          this.$notification.warning({
+            message: '系统提示',
+            description: '暂无数据'
+          })
           return
         }
         this.banList = dataIds

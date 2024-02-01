@@ -15,7 +15,7 @@
           <a-form-model-item
             label="告警状态"
             :prop="`alertStatusType`"
-            :rules="[{ type:'array',required: true, message: '告警状态必填', trigger: 'change' }]">
+            :rules="[{ type:'array',required: 'change', message: '告警状态必填', trigger: 'change' }]">
             <a-checkbox :checked="statusChecked('1')" @change="changeAlertStatusType('1')" >
               发生时
             </a-checkbox>
@@ -94,17 +94,23 @@
         <a-form-model :model="updateFormState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-model-item
             label="告警状态"
-            :rules="[{ required: true, trigger: 'change' }]"
+            :rules="[{ required: true, trigger: 'change' ,message: '告警状态必填',}]"
           >
-            <a-select style="width: 200px" v-model="updateFormState.alertStatusType" >
+<!--            <a-select style="width: 200px" v-model="updateFormState.alertStatusType" >
               <a-select-option :value="'1'">发生时</a-select-option>
               <a-select-option :value="'0'">关闭时</a-select-option>
               <a-select-option :value="'2'">任何情况</a-select-option>
-            </a-select>
+            </a-select>-->
+            <a-checkbox-group v-model="updateFormState.alertStatusType">
+              <a-checkbox :value="'1'" :disabled="true">发生时</a-checkbox>
+              <a-checkbox :value="'0'" :disabled="true">关闭时</a-checkbox>
+              <a-checkbox :value="'2'" :disabled="true">全部</a-checkbox>
+            </a-checkbox-group>
           </a-form-model-item>
-          <a-form-model-item
+<!--          <a-form-model-item
             label="通知方式"
-            :rules="[{ required: true, trigger: 'change' }]"
+            :rules="[{  type:'array',required: true,  message: '通知方式必填',trigger: 'change' }]"
+            :prop="`notifyWay`"
           >
             <a-select style="width: 200px" v-model="updateFormState.notifyWay">
               <a-select-option :value="'0'">短信</a-select-option>
@@ -113,6 +119,18 @@
               <a-select-option :value="'3'">邮件</a-select-option>
               <a-select-option :value="'4'">企业微信</a-select-option>
             </a-select>
+          </a-form-model-item>-->
+          <a-form-model-item
+            label="通知方式"
+            :rules="[{ type:'array', required: true, message: '通知方式必填', trigger: 'change' }]"
+          >
+            <a-checkbox-group v-model="updateFormState.notifyWay">
+              <a-checkbox :value="'0'" :disabled="true">短信</a-checkbox>
+              <a-checkbox :value="'1'" :disabled="true">交建通</a-checkbox>
+              <a-checkbox :value="'2'" :disabled="true">工单</a-checkbox>
+              <a-checkbox :value="'3'" :disabled="true">邮件</a-checkbox>
+              <a-checkbox :value="'4'" :disabled="true">企业微信</a-checkbox>
+            </a-checkbox-group>
           </a-form-model-item>
           <a-form-model-item
             label="时间设置"
@@ -132,7 +150,6 @@
           </a-form-model-item>
           <a-form-model-item
             label="通知对象"
-            style="display: flex;justify-content: space-between"
             :rules="[{ required: true, trigger: 'change' }]"
             prop="notifyStaffType"
           >
@@ -174,7 +191,8 @@
             <span v-for="(t,index) in record.notifyWay" :key="t"><a-divider v-if="index!==0" type="vertical"/>{{ notifyWayMapping(t) }}</span>
           </span>
           <span slot="operation" class="table-operation" slot-scope="text,record">
-            <a-button @click="openUpdateModal(record)">修改</a-button>
+            <!--            <a-button @click="openUpdateModal(record)">修改</a-button>-->
+            <a-icon type="edit" theme="twoTone" @click="openUpdateModal(record)" two-tone-color="#3D7CEC"/>
             <a-divider type="vertical" />
             <a-popconfirm
               title="确定要删除此策略?"
@@ -183,13 +201,15 @@
               okText="提交"
               cancelText="取消"
             >
-              <a-button>删除</a-button>
+              <a-icon type="delete" theme="twoTone" two-tone-color="#3D7CEC"/>
+              <!--              <a-button>删除</a-button>-->
             </a-popconfirm>
           </span>
         </a-table>
         <template :slot="'action'" slot-scope="text,record">
           <span style="visibility: hidden">
-            <a-button>修改</a-button>
+            <!--            <a-button>修改</a-button>-->
+            <a-icon type="edit" theme="twoTone" two-tone-color="#3D7CEC"/>
             <a-divider type="vertical" />
           </span>
           <a-popconfirm
@@ -199,7 +219,8 @@
             okText="提交"
             cancelText="取消"
           >
-            <a-button>删除</a-button>
+            <a-icon type="delete" theme="twoTone" two-tone-color="#3D7CEC"/>
+            <!--            <a-button>删除</a-button>-->
           </a-popconfirm>
         </template>
       </a-table>
@@ -232,10 +253,10 @@
         <div class="title">
           <span>通知模板</span>
           <a-popconfirm
-            title="确定要前往模板配置页面？?"
+            title="确定要前往模板配置页面?"
             placement="left"
             @confirm="navigateToTemplate"
-            okText="提交"
+            okText="确定"
             cancelText="取消"
           >
             <a-button type="primary">前往配置</a-button>
@@ -258,15 +279,15 @@ import { decrypt, encrypt } from '@/utils/aes'
 import { judgeRoleToAlertView } from '@/utils/util'
 
 const innerColumns = [
-  { title: '序号', scopedSlots: { customRender: 'No' } },
-  { title: '告警状态', dataIndex: 'state', scopedSlots: { customRender: 'state' } },
-  { title: '通知条件', dataIndex: 'rule', scopedSlots: { customRender: 'rule' } },
-  { title: '通知方式', dataIndex: 'gateway', scopedSlots: { customRender: 'gateway' } },
+  { title: '序号', align: 'center', scopedSlots: { customRender: 'No' } },
+  { title: '告警状态', align: 'center', dataIndex: 'state', scopedSlots: { customRender: 'state' } },
+  { title: '通知条件', align: 'center', dataIndex: 'rule', scopedSlots: { customRender: 'rule' } },
+  { title: '通知方式', align: 'center', dataIndex: 'gateway', scopedSlots: { customRender: 'gateway' } },
   {
     title: '操作',
     dataIndex: 'operation',
     fixed: 'right',
-    align: 'right',
+    align: 'center',
     width: '200px',
     key: 'operation',
     scopedSlots: { customRender: 'operation' }
@@ -275,7 +296,7 @@ const innerColumns = [
 const columns = [
   {
     title: '通知对象',
-    align: 'left',
+    align: 'center',
     width: '70%',
     dataIndex: 'accountId',
     scopedSlots: { customRender: 'accountId' }
@@ -283,7 +304,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    align: 'right',
+    align: 'center',
     width: '200px',
     scopedSlots: { customRender: 'action' }
   }
@@ -566,7 +587,11 @@ export default {
         this.groupId = this.updateFormState.notifyStaffType === '0' ? this.updateFormState.accountId : ''
         this.userId = this.updateFormState.notifyStaffType === '1' ? this.updateFormState.accountId : ''
         this.updateFlag = true
+        // this.updateFormState.notifyWay = [this.updateFormState.notifyWay]
+        // this.updateFormState.alertStatusType = [this.updateFormState.alertStatusType]
       }
+      console.log('rec', this.updateFormState)
+
       this.updateVisible = true
     },
     closeModal () {
@@ -624,6 +649,7 @@ export default {
       }
     },
     async handleUpdate () {
+      this.updateFormState.alertStatusType.toString()
       const backup = _.cloneDeep(this.updateFormState)
       const url = '/api/configuration/notify/update'
       if (this.groupId === '' && this.userId === '') {
