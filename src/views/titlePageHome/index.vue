@@ -47,7 +47,7 @@
       <a-col :span="cardExistsC004 ? 12 : 24" class="a-row_2_col_left" v-if="cardExistsC003" :style="{ borderRight: cardExistsC004 ? '0.5rem solid #EFF0F4' : 'none' }">
         <span class="row_1_col_2_head">我的待办</span>
 
-        <a-table :columns="columns" :data-source="data" :pagination="false" size="middle">
+        <a-table :columns="columns" :data-source="data" :locale="locale" :pagination="false" size="middle">
           <a slot="color" slot-scope="text, record">
             <a-badge :color="record.color"></a-badge>
           </a>
@@ -59,7 +59,7 @@
       <a-col :span="cardExistsC003 ? 12 : 24" class="a-row_2_col_right" v-if="cardExistsC004" :style="{ borderLeft: cardExistsC003 ? '0.5rem solid #EFF0F4' : 'none' }">
         <span class="row_1_col_2_head">我的申请</span>
 
-        <a-table :columns="columns2" :data-source="data2" :pagination="false" size="middle">
+        <a-table :columns="columns2" :data-source="data2" :locale="locale" :pagination="false" size="middle">
           <a slot="color" slot-scope="text, record">
             {{ record.color }}
           </a>
@@ -265,6 +265,9 @@ export default {
   data () {
     return {
       watchEcharts: '270px',
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       value: 'title', // 初始选中的按钮的值
       wrapperCol: {
         xs: { span: 6, offset: 0 },

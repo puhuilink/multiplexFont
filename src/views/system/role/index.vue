@@ -74,6 +74,7 @@
       <div class="wrapper_content_right">
         <a-table
           :columns="columns"
+          :locale="emptyText()"
           :dataSource="defaultData"
           ref="table"
           rowKey="id"
@@ -224,8 +225,9 @@ export default {
     },
     dateFormat: 'YYYY-MM-DD HH:mm:ss',
     expandedRowKeys: ['1']
-    // 左侧树
-
+    // locale: {
+    //   emptyText: <a-empty></a-empty>
+    // }
   }),
   mounted () {
     this.initialPagination()
@@ -259,6 +261,11 @@ export default {
   methods: {
     // 左侧树
     moment,
+    emptyText () {
+      return {
+        emptyText: <a-empty></a-empty>
+      }
+    },
     onSelect (selectedKeys) {
       // 节点被选择时 响应当前部门下的用户 到这
       this.queryParams.orgId = selectedKeys[0]

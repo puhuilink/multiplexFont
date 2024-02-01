@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
+import { encrypt } from '@/utils/aes'
 export const weekMap = new Map([
   [1, '周一'],
   [2, '周二'],
@@ -24,10 +25,11 @@ export const dealObject = (clone) => {
   obj.plan.map(el => {
     for (let time = moment(params.schedule.effectiveTime); Number(obj.rangeTime[1].diff(time, 'hour')) >= 0; time.add(1, 'day')) {
       if (obj.sendType === 'day') {
+        console.log('account', el.account.split('|||||||||')[0])
         params.task.push({
           startTime: time.format('YYYY-MM-DD') + ' ' + el.startTime.format('HH:mm'),
           endTime: time.format('YYYY-MM-DD') + ' ' + el.endTime.format('HH:mm'),
-          account: el.account.split('|||||||||')[1]
+          account: encrypt(el.account.split('|||||||||')[0])
         })
       } else {
         if (el.weekNumber.includes(Number(time.format('d')))) {
@@ -35,7 +37,7 @@ export const dealObject = (clone) => {
           params.task.push({
             startTime: time.format('YYYY-MM-DD') + ' ' + el.startTime.format('HH:mm'),
             endTime: time.format('YYYY-MM-DD') + ' ' + el.endTime.format('HH:mm'),
-            account: el.account.split('|||||||||')[1]
+            account: encrypt(el.account.split('|||||||||')[0])
           })
         }
       }

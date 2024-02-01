@@ -45,6 +45,7 @@
           prop="levelRelation">
           <a-table
             :columns="mappingColumns"
+            :locale="locale"
             :data-source="formState.levelRelation"
             :pagination="false"
             bordered
@@ -133,6 +134,9 @@ export default {
     const baseUrl = process.env.VUE_APP_VIEW_THUMBNAIL_URI
     return {
       name,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       baseUrl,
       count,
       labelCol: { span: 6 },

@@ -55,6 +55,7 @@
     </div>
     <a-table
       :columns="columns"
+      :locale="locale"
       :rowSelection="rowSelection"
       rowKey="id"
       :loading="pageLoading"
@@ -85,6 +86,9 @@ export default {
   props: {},
   data () {
     return {
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns: Object.freeze([
         // {
         //   title: '巡更组',

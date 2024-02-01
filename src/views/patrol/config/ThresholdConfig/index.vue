@@ -127,7 +127,7 @@
     </div>
     <a-table
       size="middle"
-      :locale="{emptyText:' '}"
+      :locale="locale"
       :columns="columns"
       :data-source="data"
       :loading="loading"
@@ -164,6 +164,9 @@ export default {
   data () {
     return {
       delId: null,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       deleteVisible: false,
       formLayout: {
         labelCol: { span: 5 },

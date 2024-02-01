@@ -11,7 +11,7 @@
         关闭
       </a-button>
     </template>
-    <a-table :columns="columns" :data-source="data" bordered>
+    <a-table :columns="columns" :locale="locale" :data-source="data" bordered>
       <template slot="title">
         <table width="100%">
           <tr align="center">
@@ -98,6 +98,9 @@ export default {
   data () {
     return {
       data,
+      locale: {
+        emptyText: <a-empty></a-empty>
+      },
       columns
     }
   },

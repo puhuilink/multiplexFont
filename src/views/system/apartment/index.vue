@@ -58,6 +58,7 @@
       <a-table
         :expandIcon="expandIcon"
         :columns="columns"
+        :locale="locale"
         :data-source="treeData"
         :expandedRowKeys="expandedRowKeys"
         rowKey="id"
@@ -132,6 +133,9 @@ export default {
       system: false,
       pageLoading: false,
       treeData,
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       treeData2: [
         {
           value: '1',

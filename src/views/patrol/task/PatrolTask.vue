@@ -130,6 +130,7 @@
       :dataSource="defaultData"
       ref="table"
       rowKey="id"
+      :locale="locale"
       :pagination="paginationOpt"
       :rowSelection="rowSelection"
       :scroll="{x:1500}"
@@ -175,6 +176,9 @@ export default {
   data () {
     return {
       groupId_arr: [],
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       defaultData: [],
       groups: [],
       plans: [],

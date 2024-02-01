@@ -29,6 +29,7 @@
         <div class="wrapper_content_right">
           <a-table
             :columns="columns"
+            :locale="locale"
             :pagination="paginationOpt"
             :loading="pageLoading"
             rowKey="id"
@@ -139,6 +140,9 @@ export default {
       expandAll: false, // 默认不展开全部
       disabled: false,
       dataSource: [],
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       columns,
       expandedKeys: [],
       searchValue: '',

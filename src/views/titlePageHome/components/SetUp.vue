@@ -591,7 +591,7 @@ export default {
 }
 
 .Preview_2{
-  height: 140px;
+  height: 25vh;
   overflow-y: scroll;
 }
 .Preview_2::-webkit-scrollbar {

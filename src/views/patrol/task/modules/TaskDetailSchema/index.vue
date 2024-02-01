@@ -56,6 +56,7 @@
             <a-table
               bordered
               :columns="columns"
+              :locale="locale"
               :dataSource="dataSource"
               :pagination="paginationOpt"
               class="custom-table"
@@ -108,6 +109,9 @@ export default {
   props: {},
   data () {
     return {
+      locale: {
+        emptyText: <a-empty> </a-empty>
+      },
       baseURI: process.env.VUE_APP_VIEW_THUMBNAIL_URI,
       details: [],
       columns: Object.freeze([
