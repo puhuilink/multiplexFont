@@ -207,19 +207,20 @@ const columns = [
   {
     title: '规则名称',
     align: 'center',
-    dataIndex: 'name'
+    dataIndex: 'policy_name'
   },
   {
     title: '关联告警源',
     align: 'center',
-    dataIndex: 'dataSource'
+    dataIndex: 'policy_source',
+    customRender: el => _.get(el, '0.source_name')
   },
-  {
-    title: '规则内容',
-    align: 'center',
-    dataIndex: 'content',
-    scopedSlots: { customRender: 'content' }
-  },
+  // {
+  //   title: '规则内容',
+  //   align: 'center',
+  //   dataIndex: 'content',
+  //   scopedSlots: { customRender: 'content' }
+  // },
   {
     title: '生效时间',
     align: 'center',
