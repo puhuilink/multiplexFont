@@ -349,6 +349,7 @@ export default {
       }
     },
     nameChange (entity) {
+      console.log('entity', entity)
       if (entity.condition_name === '294504721270575106') {
         entity.condition_value = []
       }
@@ -419,7 +420,7 @@ export default {
       data.forEach((d) => {
         arr.push({
           label: d.condition_value,
-          value: d.id
+          value: d.ID
         })
       })
       this.conditions[Number(condition_type) - 1] = arr
@@ -431,6 +432,7 @@ export default {
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = { ..._.cloneDeep(record) }
+        console.log('this.formState', this.formState)
         this.formState.policy_source.forEach((source) => {
           source.group_condition.forEach((condition) => {
             try {
