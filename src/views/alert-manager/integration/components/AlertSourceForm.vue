@@ -1,166 +1,183 @@
 <template>
   <div>
-    <a-steps :current="current" type="navigation">
-      <a-step :key="'form'" status="process" title="基本信息" />
-      <a-step :key="'json'" status="process" title="json解析" />
-      <a-step :key="'mapping'" status="process" title="关系映射" />
-    </a-steps>
-    <div class="steps-content">
-      <a-form-model
-        v-if="current === 0"
-        :label-col="{ span: 4 }"
-        :model="formState"
-        :wrapper-col="{ span: 20 }"
-        autocomplete="off"
-        ref="ruleForm"
-        style="margin-top: 30px"
-        @finish="onFinish"
-        @finishFailed="onFinishFailed"
-      >
-        <a-form-model-item
-          :rules="[{ required: true, message: '请输入告警源名称！', trigger: 'change' }]"
-          label="告警源名称"
-          prop="name"
-        >
-          <a-input v-model="formState.name" style="width: 300px" />
-        </a-form-model-item>
-        <a-form-model-item
-          :rules="[{ required: true, message: '请输入告警源IP！', trigger: 'change' }]"
-          label="告警源IP"
-          prop="ip"
-        >
-          <a-input v-model="formState.ip" style="width: 300px" />
-        </a-form-model-item>
-
-        <a-form-model-item
-          :rules="[{ required: true, message: '请输入告警源端口！', trigger: 'change' }]"
-          label="告警源端口"
-          prop="port"
-        >
-          <a-input-number v-model="formState.port" />
-        </a-form-model-item>
-        <a-form-model-item
-          extra="针对未关闭的告警，以监控工具最后一次发出告警事件为准，如果设定的时间内未进行手动关闭告警，系统将自动为您关闭告警；自定义区间范围：0-1440分钟，0表示永不关闭，1440分钟即为24小时。"
-          label="自动关闭"
-          :rules="[{ required: formState.autoClose, message: '请配置自动关闭时间！', trigger: 'change' }]"
-          prop="autoCloseInterval"
-        >
-          <a-input-number
-            :min="0"
-            :max="1440"
-            v-show="formState.autoClose"
-            v-model="formState.autoCloseInterval"
-            style="width: 100px"
-          >
-          </a-input-number>
-          <span v-show="formState.autoClose">分钟后自动关闭</span>
-          <a-switch :checked="formState.autoClose" @change="onAutoCloseChange" />
-        </a-form-model-item>
-        <a-form-model-item
-          extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
-          label="开启自动去重"
-        >
-          <a-switch :checked="formState.autoGroup" @change="onDedupChange" />
-        </a-form-model-item>
-        <a-form-model-item
-          extra="同一告警源在选定时间内将压缩依据内容相同的告警数据压缩成一条数据"
-          label="压缩告警"
-          :rules="[{ required: formState.compress, message: '请配置压缩告警范围！', trigger: 'change' }]"
-          prop="compressDuration"
-        >
-          <a-select v-show="formState.compress" v-model="formState.compressDuration" style="width: 200px">
-            <a-select-option :value="'5'">压缩5分钟告警</a-select-option>
-            <a-select-option :value="'10'">压缩10分钟告警</a-select-option>
-          </a-select>
-          <a-switch :checked="formState.compress" @change="onCompressChange" />
-        </a-form-model-item>
-        <a-form-model-item
-          extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
-          label="开启认领"
-          :rules="[{ required: formState.claim, message: '请配置认领级别！', trigger: 'change' }]"
-          prop="claimLevel"
-        >
-          <a-select v-show="formState.claim" v-model="formState.claimLevel" style="width: 200px" :options="options">
-          </a-select>
-          <a-switch :checked="formState.claim" @change="onReclaimChange" />
-        </a-form-model-item>
-        <a-form-model-item
-          extra="默认关闭，开启后需要配置监控时长，间隔时间内没有告警接入，将提醒选择的用户。时间范围：1~24小时，建议设置5小时以上更为合适"
-          label="开启自监控"
-          :rules="[{ required: formState.monitor, message: '请配置监控时长！', trigger: 'change' }]"
-          prop="monitorInterval"
-        >
-          <a-input-number
-            :min="1"
-            :max="24"
-            v-show="formState.monitor"
-            v-model="formState.monitorInterval"
-            style="width: 180px"
-          >
-          </a-input-number>
-          <span v-show="formState.monitor">小时</span>
-          <a-switch :checked="formState.monitor" @change="onSelfChange" />
-        </a-form-model-item>
-        <a-form-model-item
-          :rules="[{ required: true, message: '请输入告警源URL！', trigger: 'change' }]"
-          label="告警URL"
-          prop="url"
-        >
-          <a-input v-model="formState.url" style="width: 300px" />
-        </a-form-model-item>
-        <a-form-model-item
-          :rules="[{ required: true, message: '请选择工作组！', trigger: 'change' }]"
-          label="工作组"
-          v-if="editFlag"
-          prop="groupId"
-        >
-          <a-select v-model="formState.groupId" style="width: 200px" :options="groupData" />
-        </a-form-model-item>
-      </a-form-model>
-      <div class="jsonContent" v-if="current === 1">
-        <div class="originalJson">
-          <h3>请输入JSON数据</h3>
-          <textarea style="height: 400px; width: 60%" v-model="jsonContent"></textarea>
-          <div>
-            <a-button type="primary" @click="translateJson">解析</a-button>
-          </div>
-        </div>
-        <div class="jsonResult">
-          <h3>解析结果</h3>
-          <textarea style="height: 400px; width: 60%" v-model="jsonResult" disabled></textarea>
-        </div>
-      </div>
-      <div class="jsonMapping" v-if="current === 2">
+    <div style="height: 60px">
+      <a-steps :current="current" type="navigation">
+        <a-step :key="'form'" status="process" title="基本信息" />
+        <a-step :key="'json'" status="process" title="json解析" />
+        <a-step :key="'mapping'" status="process" title="关系映射" />
+      </a-steps>
+    </div>
+    <div class="button-form">
+      <div class="steps-content">
         <a-form-model
+          v-if="current === 0"
           :label-col="{ span: 4 }"
-          :model="mappingForm"
+          :model="formState"
           :wrapper-col="{ span: 20 }"
           autocomplete="off"
-          ref="basic"
-          style="margin-top: 30px"
+          ref="ruleForm"
+          style="margin-top: 10px;margin-left: 20%"
+          @finish="onFinish"
+          @finishFailed="onFinishFailed"
         >
           <a-form-model-item
-            v-for="(item, index) in Object.keys(mappingForm)"
-            :label="mappingTitle[index]"
-            :key="index"
-            :rules="[
-              { required: item === 'uniqueKey' || item === 'event_id', message: '该项必须配置！', trigger: 'change' },
-            ]"
-            :prop="item"
+            :rules="[{ required: true, message: '请输入告警源名称！', trigger: 'change' }]"
+            label="告警源名称"
+            prop="name"
           >
-            <a-select v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions" />
-            <span v-show="formState.compress && (compressFlags[index] || !compressFlags.includes(true))">
-              <a-divider type="vertical" />
-              <a-checkbox @change="compressChange(index)"> 作为压缩依据 </a-checkbox>
-            </span>
+            <a-input size="small" v-model="formState.name" style="width: 300px" />
+          </a-form-model-item>
+          <a-form-model-item
+            :rules="[{ required: true, message: '请输入告警源IP！', trigger: 'change' }]"
+            label="告警源IP"
+            prop="ip"
+          >
+            <a-input size="small" v-model="formState.ip" style="width: 300px" />
+          </a-form-model-item>
+
+          <a-form-model-item
+            :rules="[{ required: true, message: '请输入告警源端口！', trigger: 'change' }]"
+            label="告警源端口"
+            prop="port"
+          >
+            <a-input-number size="small" v-model="formState.port" />
+          </a-form-model-item>
+          <a-form-model-item
+            extra="针对未关闭的告警，以监控工具最后一次发出告警事件为准，如果设定的时间内未进行手动关闭告警，系统将自动为您关闭告警；自定义区间范围：0-1440分钟，0表示永不关闭，1440分钟即为24小时。"
+            label="自动关闭"
+            :rules="[{ required: formState.autoClose, message: '请配置自动关闭时间！', trigger: 'change' }]"
+            prop="autoCloseInterval"
+          >
+            <a-input-number
+              :min="0"
+              size="small"
+              :max="1440"
+              v-show="formState.autoClose"
+              v-model="formState.autoCloseInterval"
+              style="width: 100px"
+            >
+            </a-input-number>
+            <span v-show="formState.autoClose">分钟后自动关闭</span>
+            <a-switch size="small" :checked="formState.autoClose" @change="onAutoCloseChange" />
+          </a-form-model-item>
+          <a-form-model-item
+            extra="规则说明：同一应用且EVENT_ID相同且级别相同；同一个告警源且告警名称相同级别相同的告警数据会被实时压缩成一条数据。最新的数据会覆盖历史数据，记录最新发生时间和发生频次。"
+            label="开启自动去重"
+          >
+            <a-switch size="small" :checked="formState.autoGroup" @change="onDedupChange" />
+          </a-form-model-item>
+          <a-form-model-item
+            extra="同一告警源在选定时间内将压缩依据内容相同的告警数据压缩成一条数据"
+            label="压缩告警"
+            :rules="[{ required: formState.compress, message: '请配置压缩告警范围！', trigger: 'change' }]"
+            prop="compressDuration"
+          >
+            <a-select
+              size="small"
+              v-show="formState.compress"
+              v-model="formState.compressDuration"
+              style="width: 200px"
+            >
+              <a-select-option :value="'5'">压缩5分钟告警</a-select-option>
+              <a-select-option :value="'10'">压缩10分钟告警</a-select-option>
+            </a-select>
+            <a-switch size="small" :checked="formState.compress" @change="onCompressChange" />
+          </a-form-model-item>
+          <a-form-model-item
+            extra="当告警事件严重程度达到指定级别以后，需同时通知给相应领导，且值班人员需要对告警进行认领"
+            label="开启认领"
+            :rules="[{ required: formState.claim, message: '请配置认领级别！', trigger: 'change' }]"
+            prop="claimLevel"
+          >
+            <a-select
+              size="small"
+              v-show="formState.claim"
+              v-model="formState.claimLevel"
+              style="width: 200px"
+              :options="options"
+            >
+            </a-select>
+            <a-switch size="small" :checked="formState.claim" @change="onReclaimChange" />
+          </a-form-model-item>
+          <a-form-model-item
+            extra="默认关闭，开启后需要配置监控时长，间隔时间内没有告警接入，将提醒选择的用户。时间范围：1~24小时，建议设置5小时以上更为合适"
+            label="开启自监控"
+            :rules="[{ required: formState.monitor, message: '请配置监控时长！', trigger: 'change' }]"
+            prop="monitorInterval"
+          >
+            <a-input-number
+              :min="1"
+              size="small"
+              :max="24"
+              v-show="formState.monitor"
+              v-model="formState.monitorInterval"
+              style="width: 180px"
+            >
+            </a-input-number>
+            <span v-show="formState.monitor">小时</span>
+            <a-switch size="small" :checked="formState.monitor" @change="onSelfChange" />
+          </a-form-model-item>
+          <a-form-model-item
+            :rules="[{ required: true, message: '请输入告警源URL！', trigger: 'change' }]"
+            label="告警URL"
+            prop="url"
+          >
+            <a-input size="small" v-model="formState.url" style="width: 300px" />
+          </a-form-model-item>
+          <a-form-model-item
+            :rules="[{ required: true, message: '请选择工作组！', trigger: 'change' }]"
+            label="工作组"
+            v-if="editFlag"
+            prop="groupId"
+          >
+            <a-select size="small" v-model="formState.groupId" style="width: 200px" :options="groupData" />
           </a-form-model-item>
         </a-form-model>
+        <div class="jsonContent" v-if="current === 1">
+          <div class="originalJson">
+            <h3>请输入JSON数据</h3>
+            <textarea style="height: 400px; width: 60%" v-model="jsonContent"></textarea>
+            <div>
+              <a-button type="primary" @click="translateJson">解析</a-button>
+            </div>
+          </div>
+          <div class="jsonResult">
+            <h3>解析结果</h3>
+            <textarea style="height: 400px; width: 60%" v-model="jsonResult" disabled></textarea>
+          </div>
+        </div>
+        <div class="jsonMapping" v-if="current === 2">
+          <a-form-model
+            :label-col="{ span: 4 }"
+            :model="mappingForm"
+            :wrapper-col="{ span: 20 }"
+            autocomplete="off"
+            ref="basic"
+            style="margin-top: 10px; margin-left: 30%"
+          >
+            <a-form-model-item
+              v-for="(item, index) in Object.keys(mappingForm)"
+              :label="mappingTitle[index]"
+              :key="index"
+              :rules="[
+                { required: item === 'uniqueKey' || item === 'event_id', message: '该项必须配置！', trigger: 'change' },
+              ]"
+              :prop="item"
+            >
+              <a-select size="small" v-model="mappingForm[item]" style="width: 200px" :options="jsonOptions" />
+              <span v-show="formState.compress && (compressFlags[index] || !compressFlags.includes(true))">
+                <a-divider type="vertical" />
+                <a-checkbox size="small" @change="compressChange(index)"> 作为压缩依据 </a-checkbox>
+              </span>
+            </a-form-model-item>
+          </a-form-model>
+        </div>
       </div>
-    </div>
-    <div class="steps-action" style="text-align: center">
-      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev"> 上一步 </a-button>
-      <a-button style="margin-left: 8px" v-if="current < 2" type="primary" @click="next"> 下一步 </a-button>
-      <a-button v-if="current === 2" type="primary" style="margin-left: 8px" @click="onSubmit"> 提交 </a-button>
+      <div class="steps-action" style="text-align: center">
+        <a-button v-if="current > 0" style="margin-left: 8px" @click="prev"> 上一步 </a-button>
+        <a-button style="margin-left: 8px" v-if="current < 2" type="primary" @click="next"> 下一步 </a-button>
+        <a-button v-if="current === 2" type="primary" style="margin-left: 8px" @click="onSubmit"> 提交 </a-button>
+      </div>
     </div>
   </div>
 </template>
@@ -518,13 +535,20 @@ export default {
 </script>
 
 <style scoped>
+.button-form {
+  height: 800px;
+  display: grid;
+  align-content: center;
+}
+
 .steps-content {
-  margin-top: 16px;
-  /* border: 1px dashed #e9e9e9;
-  border-radius: 6px;
-  background-color: #fafafa; */
+  margin-top: 0px;
   min-height: 200px;
-  padding-top: 80px;
+  padding-top: 0px;
+}
+
+.ant-form-item {
+  margin-bottom: 1rem !important;
 }
 
 .steps-action {
@@ -533,6 +557,7 @@ export default {
 
 .jsonContent {
   display: flex;
+  align-content: center;
 }
 
 .originalJson {

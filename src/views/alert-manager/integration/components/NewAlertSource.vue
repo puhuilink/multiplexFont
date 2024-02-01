@@ -1,9 +1,9 @@
 <template>
   <div style="background: #f0f2f5">
-    <a-row :gutter="[24, 24]">
+    <a-row :gutter="[16, 16]">
       <a-col :span="24">
         <div
-          style="background: white; padding: 20px; justify-content: space-between; display: flex; border-radius: 2px"
+          style="background: white; padding: 10px; justify-content: space-between; display: flex; border-radius: 2px"
         >
           <a @click="back"><a-icon type="left" />&nbsp;
             {{ record !== undefined && record.id !== null ? '修改' : '新建' }}告警源&nbsp;/&nbsp;{{ platform.name }}</a
@@ -13,9 +13,9 @@
         </div>
       </a-col>
     </a-row>
-    <a-row :gutter="[24, 24]" type="flex" justify="space-between">
-      <a-col :span="16">
-        <div style="background: white; height: 100%; padding: 20px; border-radius: 2px">
+    <a-row :gutter="[16, 16]" type="flex" justify="space-between">
+      <a-col :span="18">
+        <div style="background: white; height: 100%; padding: 10px; border-radius: 2px">
           <AlertSourceForm
             :record="record"
             :platformId="platform.platformId"
@@ -23,8 +23,8 @@
           />
         </div>
       </a-col>
-      <a-col :span="8">
-        <div style="background: white; padding: 20px; height: 100%; border-radius: 2px">
+      <a-col :span="6">
+        <div style="background: white; padding: 10px; height: 100%; border-radius: 2px">
           <center>
             <img :src="platform.url" width="100px" height="100px" />
           </center>
