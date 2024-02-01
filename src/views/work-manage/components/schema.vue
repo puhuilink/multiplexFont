@@ -283,7 +283,7 @@ export default {
         if (list && list.length) {
           this.group = list.map(el => ({
             label: _.get(el, 'userName', ''),
-            value: _.get(el, 'id', '')
+            value: _.get(el, 'id', '') + '|||||||||' + _.get(el, 'userName', '')
           }))
         } else {
           this.$message.warning('暂无可分配用户')

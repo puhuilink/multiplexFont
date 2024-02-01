@@ -2,17 +2,13 @@
   <div class="mainDisplay">
     <div class="topTitle">
       <h2 style="width: 93%">数据标签列表</h2>
-      <a-button type="primary" style="width: 100px; height: 100%" @click="openModal" >新建</a-button>
+      <a-button type="primary" :class="data.length < 7?'':'btn_disabled'" :disabled="data.length>=7" style="width: 100px; height: 100%" @click="openModal(false)">新建</a-button>
     </div>
     <div class="mainBody" ref="mainBody">
       <div class="leftList">
         <a-collapse v-model="activeKey" accordion>
           <a-collapse-panel key="1" header="告警源">
-            <p
-              v-for="source in sourceList"
-              :key="source.sourceId"
-              @click="fetchSourceTags(source.sourceId)"
-            >
+            <p v-for="source in sourceList" :key="source.sourceId" @click="fetchSourceTags(source.sourceId)">
               {{ source.sourceName }}
             </p>
           </a-collapse-panel>
@@ -39,8 +35,7 @@
               @confirm="deleteTag(record.id)"
               okText="提交"
               cancelText="取消"
-              :disabled="!record.deleteFlag"
-            >
+              :disabled="!record.deleteFlag">
               <a-button :disabled="!record.deleteFlag">删除</a-button>
             </a-popconfirm>
           </template>
@@ -48,22 +43,39 @@
       </div>
     </div>
     <a-modal
-      :title="updateFlag?'修改映射信息':'新建映射信息'"
+      :title="updateFlag ? '修改映射信息' : '新建映射信息'"
       :visible="visible"
       width="1100px"
       @ok="handleOk"
       @cancel="closeModal"
-      @close="closeModal"
-    >
-      <a-form-model ref="ruleForm" :model="formState" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-        <a-form-model-item label="告警源字段" :rules="[{ required: true, message: '告警源字段必选', trigger: 'change' }]" prop="sourceField">
-          <a-select v-model="formState.sourceField" :options="sourceOptions" @change="sourceChange"/>
+      @close="closeModal">
+      <a-form-model
+        ref="ruleForm"
+        :model="formState"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol">
+        <a-form-model-item
+          label="告警源字段"
+          :rules="[{ required: true, message: '告警源字段必选', trigger: 'change' }]"
+          prop="sourceField">
+          <a-select v-model="formState.sourceField" :options="sourceOptions" @change="sourceChange" />
         </a-form-model-item>
-        <a-form-model-item label="映射字段" :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]" prop="targetField" >
-          <a-select v-model="formState.targetField" :options="mappingOptions" @change="targetChange" :disabled="targetFlag"/>
+        <a-form-model-item
+          label="映射字段"
+          :rules="[{ required: true, message: '映射字段必选', trigger: 'change' }]"
+          prop="targetField">
+          <a-select
+            v-model="formState.targetField"
+            :options="mappingOptions"
+            @change="targetChange"
+            :disabled="targetFlag" />
         </a-form-model-item>
-        <a-form-model-item label="说明" v-if="formState.targetField === 'uniqueKey'" :rules="[{ required: formState.targetField === 'uniqueKey', message: '告警源字段必填', trigger: 'change' }]" prop="sourceField">
-          <a-input v-model="formState.remark"/>
+        <a-form-model-item
+          label="说明"
+          v-if="formState.targetField === 'uniqueKey'"
+          :rules="[{ required: formState.targetField === 'uniqueKey', message: '告警源字段必填', trigger: 'change' }]"
+          prop="sourceField">
+          <a-input v-model="formState.remark" />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -154,7 +166,7 @@ export default {
         'updateFlag': false
       }],
       pagination: {
-        pageSizeOptions: [ '5', '10', '20', '30' ],
+        pageSizeOptions: ['5', '10', '20', '30'],
         defaultCurrent: 1,
         pageSize: 10,
         defaultPageSize: 10,
@@ -237,11 +249,7 @@ export default {
       }
       try {
         const res = await alarm.post(baseUrl, formData)
-        if (res.data) {
-          this.$message.success(res.data)
-        } else {
-          this.$message.error(res.msg)
-        }
+        this.$message.success(res.msg)
         this.closeModal()
       } catch (e) {
         this.$message.error('网络请求错误！')
@@ -330,7 +338,7 @@ export default {
   },
   computed: {},
   mounted () {
-    this.getDivHeight()
+    // this.getDivHeight()
     window.addEventListener('resize', this.getDivHeight)
     this.fetchSourceList()
     this.fetchMappingList()
@@ -342,30 +350,47 @@ export default {
 </script>
 
 <style scoped>
-.mainDisplay{
+.mainDisplay {
   margin-left: 10px;
   margin-right: 10px;
 }
-.topTitle{
+
+.topTitle {
   display: flex;
+  width: 97%;
   align-items: center;
   height: 40px;
+  margin: 0 auto;
   margin-bottom: 10px;
+  .btn_disabled{
+    color: rgba(0,0,0,.25) !important;
+    background-color: #F5F5F5 !important;
+    border-color: #d9d9d9 !important;
+  }
 }
-.mainBody{
+
+.mainBody {
   display: flex;
-  height: 0;
+  width: 97%;
+  height: auto;
+  justify-content: space-between;
+  margin: 0 auto;
 }
-.leftList{
+
+.leftList {
   height: 100%;
-  width: 27%;
-  margin-right: 2%;
-  border: 1px solid grey;
+  width: 13%;
+  /* margin-right: 2%; */
+  /* border: 1px solid grey; */
 }
-.rightTable{
+
+.rightTable {
   height: 100%;
-  width: 77%;
-  margin-right: 2%;
-  border: grey solid 1px;
+  width: 85%;
+  /* margin-right: 2%; */
+  /* border: grey solid 1px; */
+  .ant-table-wrapper{
+    padding: 0;
+  }
 }
 </style>

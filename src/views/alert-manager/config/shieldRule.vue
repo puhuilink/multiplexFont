@@ -1,8 +1,6 @@
 <template>
   <div class="deliverRules">
-    <div style="margin-bottom: 10px; display: flex; flex-direction: row-reverse">
-      <a-button icon="plus" type="primary" @click="openModal(null)">新建屏蔽规则</a-button>
-    </div>
+    <div class="topTitle"><a-button icon="plus" type="primary" @click="openModal(null)">新建屏蔽规则</a-button></div>
     <a-modal
       :title="updateFlag ? '修改屏蔽规则' : '新建屏蔽规则'"
       :visible="visible"
@@ -729,5 +727,11 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+.topTitle{
+  margin-bottom:10px;
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 0 24px;
 }
 </style>
