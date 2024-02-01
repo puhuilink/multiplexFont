@@ -21,7 +21,7 @@
           <a-input v-model="formState.policy_name" />
         </a-form-model-item>
         <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
-          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange" :disabled="!isAdmin"/>
+          <a-select label-in-value :value="{ key: formState.source_id,label:formState.source_name }" :options="alertSource" @change="sourceChange"/>
         </a-form-model-item>
         <a-form-model-item label="分派条件" :rules="[{ required:true, type: 'array', validator:sourcePass, trigger: 'change' }]" prop="policy_source">
           <div style="">
@@ -370,7 +370,7 @@ export default {
       ],
       formState: _.cloneDeep(originalData),
       watchForm: _.cloneDeep(originalData),
-      isAdmin: false
+      isAdmin: true
     }
   },
   mixins: [List],
@@ -483,7 +483,7 @@ export default {
       data.forEach(d => {
         arr.push({
           label: d.condition_value,
-          value: d.id
+          value: d.ID
         })
       })
       this.conditions[Number(condition_type) - 1] = arr
@@ -586,7 +586,7 @@ export default {
       if (!e) {
         this.$message.error('找不到正确的告警源！')
       }
-      this.formState.source_id = e.value
+      this.formState.source_id = e.key
       this.formState.source_name = e.label
     },
     async handleOk () {
@@ -619,13 +619,13 @@ export default {
       let url = ''
       if (this.updateFlag) {
         backup.updator = store.getters.userId
-        url = '/alert/policy/update'
+        url = '/platform/policy/update'
       } else {
         backup.creator = store.getters.userId
-        url = '/alert/policy/add'
+        url = '/platform/policy/add'
       }
 
-      const res = await axios.post(url, backup)
+      const res = await alarm.post(url, backup)
       if (res.code === 200) {
         this.$message.success(this.updateFlag ? '修改成功' : '新建成功！')
         this.closeModal()
