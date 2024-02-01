@@ -109,93 +109,91 @@
       @cancel="closeShow"
       @close="closeShow"
     >
-      <div>策略名称：{{ watchForm.policy_name }}</div>
-      <div>告警源：{{ watchForm.source_name }}</div>
-      <div>分派条件：
-        <div
-          style="display: grid;
-            grid-template-columns: 40px 1fr;
+      <a-form-model ref="ruleForm" :model="watchForm" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+        <a-form-model-item
+          label="分派策略名称"
+          :rules="[{ required: true, message: '分派策略名称必填', trigger: 'change' }]"
+          prop="policy_name"
+        >
+          <a-input v-model="watchForm.policy_name" disabled/>
+        </a-form-model-item>
+        <a-form-model-item label="告警源" :rules="[{ required: true, message: '告警源必选', trigger: 'change' }]" prop="source_id">
+          <a-select label-in-value :value="{ key: watchForm.source_id, label: watchForm.source_name }" :options="alertSource" @change="sourceChange" :disabled="!isAdmin"/>
+        </a-form-model-item>
+        <a-form-model-item label="分派条件" :rules="[{ required: true, type: 'array', validator: sourcePass, trigger: 'change' }]" prop="policy_source">
+          <div style="">
+            <div
+              style="display: grid;
+            grid-template-columns: 60px 1fr;
             grid-auto-columns: 1fr;"
-          v-for="(map,index) in watchForm.policy_source"
-          :key="index">
-          <a-avatar :size="24" class="circle"> {{ map.group_relation === '1'?'或':'且' }}</a-avatar >
+              v-for="(map, index) in watchForm.policy_source"
+              :key="index">
+              <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar >
+              <div>
+                <div style="display: flex;align-items: center;">
+                  规则之间的条件：<a-radio-group :options="options" v-model="map.group_relation" :default-value="1" disabled/>
+                  <div style="display: flex;flex-direction: revert">
+                    <a-icon type="delete" v-if="watchForm.policy_source.length !== 1" @click="deleteStrategyByIndex(index)"/>
+                  </div>
+                </div>
+                <div v-for="(m, i) in map.group_condition" :key="i">
+                  <a-select v-model="m.condition_name" style="width: 25%;margin-right: 5px" :options="conditions[0]" disabled @change="nameChange(m)"/>
+                  <a-select v-model="m.condition_symbol" style="width: 25%;margin-right: 5px" :options="conditions[1]" disabled/>
+                  <span>
+                    <a-select
+                      disabled
+                      mode="multiple"
+                      v-model="m.condition_value"
+                      style="width: 40%;margin-right: 5px"
+                      :options="conditions[2]"
+                      v-if="m.condition_name === '294504721270575106'"/>
+                    <a-input v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px" disabled/>
+                  </span>
+                  <div :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }">
+                    <a-divider type="vertical"/>
+                  </div>
+                </div>
+              </div>
+            </div></div>
+
+        </a-form-model-item>
+        <a-form-model-item label="分派人" :rules="[{ required: true, type: 'array', validator: accountPass, trigger: 'change' }]" prop="policy_account">
           <div
             style="display: grid;
-            grid-template-rows: 50px 50px;
-            grid-auto-rows: 50px;">
-            <div v-for="(m,i) in map.group_condition" :key="i">
-              <a-select
-                disabled
-                v-model="m.condition_name"
-                style="width: 25%;margin-right: 5px"
-                :options="conditions[0]"
-                :show-arrow="false"
-              />
-              <a-select
-                disabled
-                v-model="m.condition_symbol"
-                style="width: 25%;margin-right: 5px"
-                :options="conditions[1]"
-                :show-arrow="false"
-              />
-              <span>
+            grid-template-columns: 60px 1fr;
+            grid-auto-columns: 1fr;margin-top: 2px"
+            v-for="(notice, index) in watchForm.policy_account"
+            :key="index">
+            <a-avatar :size="32" class="circle">{{ index === 0 ? '立即' : '升级' }}</a-avatar>
+            <div v-if="index === 0">
+              <div>
                 <a-select
                   disabled
-                  mode="multiple"
-                  v-model="m.condition_value"
-                  style="width: 40%;margin-right: 5px"
-                  :options="conditions[2]"
-                  v-if="m.condition_name === '294504721270575106'"
-                  :show-arrow="false"
-                />
-                <a-input disabled v-else v-model="m.condition_value" style="width: 30%;margin-right: 5px"/>
-              </span>
+                  v-model="notice.account_type"
+                  style="width: 100px"
+                  placeholder="通知组或人" >
+                  <a-select-option value="1">
+                    通知人
+                  </a-select-option>
+                  <a-select-option value="0">
+                    通知组
+                  </a-select-option>
+                </a-select>
+                <span>
+                  <a-select disabled v-if="notice.account_type === '1'" v-model="notice.account_id" style="width: 100px" :options="user"/>
+                  <a-select disabled v-else v-model="notice.group_id" style="width: 100px" :options="group"/>
+                </span>
+              </div>
+            </div>
+            <div v-else >
+              <div style="display: flex;align-items: center">
+                <div>如果告警升级后 <a-input-number disabled v-model="notice.upgrade_interval"/>分钟无人处理，则告警自动升级通知以下用户</div>
+                <div>通知人 <a-select disabled v-model="notice.account_id" style="width: 100px" :options="user"/></div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div>分派人：<div
-        style="display: grid;
-            grid-template-columns: 60px 1fr;
-            grid-auto-columns: 1fr;margin-top: 10px"
-        v-for="(notice,index) in watchForm.policy_account"
-        :key="index">
-        <a-avatar :size="32" class="circle">{{ index === 0?'立即':'升级' }}</a-avatar>
-        <div v-if="index===0">
-          <div>
-            <a-select v-model="notice.account_type" style="width: 100px" placeholder="通知组或人" disabled :show-arrow="false">
-              <a-select-option value="1">
-                通知人
-              </a-select-option>
-              <a-select-option value="0">
-                通知组
-              </a-select-option>
-            </a-select>
-            <span>
-              <a-select
-                v-if="notice.account_type === '1'"
-                v-model="notice.account_id"
-                style="width: 100px"
-                :options="user"
-                disabled
-                :show-arrow="false"/>
-              <a-select
-                v-else
-                v-model="notice.group_id"
-                style="width: 100px"
-                :options="group"
-                disabled
-                :show-arrow="false"/>
-            </span>
-          </div>
-        </div>
-        <div v-else >
-          <div style="display: flex;align-items: center">
-            <div>如果告警升级后 <a-input-number :min="0" v-model="notice.upgrade_interval" disabled/>分钟无人处理，则告警自动升级通知以下用户</div>
-            <div>通知人 <a-select v-model="notice.account_id" style="width: 100px" :options="user" disabled :show-arrow="false"/></div>
-          </div>
-        </div>
-      </div></div>
+        </a-form-model-item>
+      </a-form-model>
     </a-modal>
     <a-table
       :bordered="false"
@@ -205,7 +203,7 @@
       :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <template :slot="'levelUp'" slot-scope="text,record">
-        {{ record.policy_account.length>1?'是':'否' }}
+        {{ record.policy_account.length > 1 ? '是' : '否' }}
       </template>
       <template :slot="'notify'" slot-scope="text,record">
         {{ notifyContent(record.policy_account) }}
@@ -353,9 +351,9 @@ export default {
         labelCol: { xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
-          md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 2 },
-          xxl: { span: 16, offset: 0 }
+          md: { span: 18, offset: 0 },
+          xl: { span: 18, offset: 2 },
+          xxl: { span: 18, offset: 0 }
         }
       },
       data,
