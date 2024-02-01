@@ -38,7 +38,7 @@
           />
         </a-form-model-item>
         <a-form-model-item
-          label="分派条件"
+          label="屏蔽条件"
           :rules="[{ required: true, type: 'array', validator: sourcePass, trigger: 'change' }]"
           prop="policy_source"
         >
@@ -102,14 +102,14 @@
           :rules="[{ required: true, message: '生效时间必选', trigger: 'change' }]"
           prop="start_time"
         >
-          <a-date-picker show-time placeholder="生效时间 " @change="onStartChange" format="YYYY-MM-DD HH:mm:ss" />
+          <a-date-picker show-time v-model="formState.start_time" placeholder="生效时间 " @change="onStartChange" format="YYYY-MM-DD HH:mm:ss" />
         </a-form-model-item>
         <a-form-model-item
           label="失效时间"
           :rules="[{ required: true, message: '失效时间必选', trigger: 'change' }]"
           prop="end_time"
         >
-          <a-date-picker show-time placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DD HH:mm:ss ">
+          <a-date-picker show-time v-model="formState.end_time" placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DD HH:mm:ss ">
           </a-date-picker>
         </a-form-model-item>
       </a-form-model>
@@ -202,6 +202,7 @@ import _ from 'lodash'
 import { ApSourceService } from '@/api/service/ApSourceService'
 import store from '@/store/index'
 import { alarm } from '@/utils/request'
+import moment from 'moment'
 
 const columns = [
   {
@@ -224,12 +225,14 @@ const columns = [
   {
     title: '生效时间',
     align: 'center',
-    dataIndex: 'start_time'
+    dataIndex: 'start_time',
+    customRender: el => moment(el).format('YYYY-MM-DD HH:mm')
   },
   {
     title: '失效时间',
     align: 'center',
-    dataIndex: 'end_time'
+    dataIndex: 'end_time',
+    customRender: el => moment(el).format('YYYY-MM-DD HH:mm')
   },
   {
     title: '操作',
@@ -464,11 +467,10 @@ export default {
     openModal (record) {
       const user = store.getters.userId
       this.isAdmin = user === 'administrator'
-      console.log(this.conditions)
       if (record !== null && record !== {}) {
         this.updateFlag = true
         this.formState = { ..._.cloneDeep(record) }
-        console.log('this.formState', this.formState)
+        console.log('rec', this.formState)
         this.formState.policy_source.forEach((source) => {
           source.group_condition.forEach((condition) => {
             try {
