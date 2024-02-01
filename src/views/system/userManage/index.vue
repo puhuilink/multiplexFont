@@ -40,7 +40,7 @@
               <!--              </a-form-model-item>-->
               <!--            </a-col>-->
               <a-col
-                :md="6"
+                :md="7"
                 :sm="24"
                 v-bind="colLayout"
               >
@@ -48,13 +48,14 @@
                   label="登录名"
                   v-bind="formItemLayout">
                   <a-input
+                    class="box_input"
                     v-model="queryParams.userName"
                     placeholder="请输入登录名"
                   />
                 </a-form-item>
               </a-col>
               <a-col
-                :md="6"
+                :md="7"
                 :sm="24"
                 v-bind="colLayout"
               >
@@ -62,13 +63,14 @@
                   label="用户名称"
                   v-bind="formItemLayout">
                   <a-input
+                    class="box_input"
                     v-model="queryParams.staffName"
                     placeholder="请输入用户名称"
                   />
                 </a-form-item>
               </a-col>
               <a-col
-                :md="12"
+                :md="7"
                 :sm="24"
                 :offset="0"
                 v-bind="colLayout"
@@ -77,23 +79,25 @@
                   label="手机号码"
                   v-bind="formItemLayout">
                   <a-input
+                    class="box_input"
                     v-model="queryParams.mobilePhone"
                     placeholder="手机号码"></a-input>
                 </a-form-item>
               </a-col>
+            </a-row>
+            <a-row :gutter="[8,8]">
               <a-col
-                :md="6"
+                :md="7"
                 :sm="24"
                 v-bind="colLayout"
               >
                 <a-form-item
                   label="状态"
-                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 6,offset:3 } }"
-                  :wrapperCol="{ span: 6, offset: 5 }"
-                  v-bind="formItemLayout"
+                  :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:1, span: 6 }, xxl: { span: 6,offset:1 } }"
+                  :wrapperCol="{ span: 6, offset: 3 }"
                 >
                   <a-select
-                    style="width: 100px"
+                    class="box_select"
                     placeholder="用户状态"
                     v-model="queryParams.isOpen"
                   >
@@ -103,23 +107,25 @@
                 </a-form-item>
               </a-col>
               <a-col
-                :md="10"
+                :md="7"
                 :sm="24"
-                v-bind="colLayout"
+                :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:3, span: 6 }, xxl: { span: 6,offset:3 } }"
+                :wrapperCol="{ span: 6, offset: 0 }"
               >
                 <a-form-item
                   label="创建时间"
-                  :labelCol="{ xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } }"
-                  :wrapperCol="{ span: 6, offset: 1 }"
-                  v-bind="formItemLayout">
+                  :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:0, span: 6 }, xxl: { span: 6,offset:0 } }"
+                  :wrapperCol="{ span: 16, offset: 2 }">
                   <a-range-picker
                     :show-time="{ format: 'HH:mm' }"
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
+                    class="range-picker_box"
                     v-model="queryParams.timeList"
                   />
                 </a-form-item>
               </a-col>
+
             </a-row>
           </div>
         </a-form-model>
@@ -211,19 +217,21 @@ const columns = [
     title: '登录名',
     dataIndex: 'userName',
     key: 'userName',
-    width: 100,
+    width: 150,
     align: 'center'
   },
   {
     title: '用户名称',
     dataIndex: 'staffName',
     key: 'staffName',
+    width: 150,
     ellipsis: true
   },
   {
     title: '部门',
     dataIndex: 'orgName',
     key: 'orgName',
+    width: 150,
     ellipsis: true,
     align: 'center'
   },
@@ -232,7 +240,8 @@ const columns = [
     dataIndex: 'mobilePhone',
     key: 'mobilePhone',
     ellipsis: true,
-    align: 'center'
+    align: 'center',
+    width: 150
   },
   {
     title: '是否开启',
@@ -248,12 +257,14 @@ const columns = [
     dataIndex: 'createTime',
     key: 'createTime',
     ellipsis: true,
+    width: 180,
     align: 'center'
   },
   {
     title: '备注',
     dataIndex: 'remark',
     key: 'remarks',
+    width: 150,
     ellipsis: true,
     align: 'center'
   },
@@ -292,7 +303,11 @@ export default {
       autoExpandParent: true,
       treeData: [],
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 6 }, xxl: { span: 6 } },
+        labelCol: {
+          xs: { span: 14 },
+          md: { span: 8 },
+          xl: { span: 6 },
+          xxl: { span: 6 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
           md: { span: 14, offset: 0 },
@@ -635,5 +650,14 @@ export default {
     overflow: hidden;
     transform: translateY(3.5px);
   }
+}
+.box_select{
+  width: 200px;
+}
+.range-picker_box{
+  width: 156px
+}
+.box_input{
+  width: 200px;
 }
 </style>
