@@ -202,7 +202,6 @@ export default {
   },
   methods: {
     openModal (record) {
-      console.log(record)
       if (record) {
         this.updateFlag = true
         this.formState.mappingId = record.id
@@ -213,7 +212,6 @@ export default {
         delete this.formState.targetType
         this.targetFlag = !record.updateFlag
       } else {
-        console.log(this.updateFlag)
         this.formState.sourceId = this.activeSourceId
         delete this.formState.mappingId
       }
@@ -251,11 +249,7 @@ export default {
       }
       try {
         const res = await alarm.post(baseUrl, formData)
-        if (res.data) {
-          this.$message.success(res.data)
-        } else {
-          this.$message.error(res.msg)
-        }
+        this.$message.success(res.msg)
         this.closeModal()
       } catch (e) {
         this.$message.error('网络请求错误！')
