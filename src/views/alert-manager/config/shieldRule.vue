@@ -1,6 +1,8 @@
 <template>
   <div class="deliverRules">
-    <div class="topTitle"><a-button icon="plus" type="primary" @click="openModal(null)">新建屏蔽规则</a-button></div>
+    <div class="topTitle">
+      <a-button icon="plus" type="primary" @click="openModal(null)">新建屏蔽规则</a-button>
+    </div>
     <a-modal
       :title="updateFlag ? '修改屏蔽规则' : '新建屏蔽规则'"
       :visible="visible"
@@ -49,7 +51,8 @@
               <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar>
               <div>
                 <div style="display: flex; align-items: center">
-                  规则之间的条件：<a-radio-group :options="options" v-model="map.group_relation" :default-value="1" />
+                  规则之间的条件：
+                  <a-radio-group :options="options" v-model="map.group_relation" :default-value="1" />
                   <div style="display: flex; flex-direction: revert">
                     <a-icon
                       type="delete"
@@ -99,14 +102,15 @@
           :rules="[{ required: true, message: '生效时间必选', trigger: 'change' }]"
           prop="start_time"
         >
-          <a-date-picker show-time placeholder="生效时间 " @change="onStartChange" format="YYYY-MM-DDTHH:mm:ssZ" />
+          <a-date-picker show-time placeholder="生效时间 " @change="onStartChange" format="YYYY-MM-DD HH:mm:ss" />
         </a-form-model-item>
         <a-form-model-item
           label="失效时间"
           :rules="[{ required: true, message: '失效时间必选', trigger: 'change' }]"
           prop="end_time"
         >
-          <a-date-picker show-time placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DDTHH:mm:ssZ" />
+          <a-date-picker show-time placeholder="失效时间 " @change="onEndChange" format="YYYY-MM-DD HH:mm:ss ">
+          </a-date-picker>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -274,7 +278,15 @@ const originalData = {
   updator: '', // 策略最后更新人
   enabled: true, // 策略启停用 0 - 停用， 1 - 启用
   policy_source: [_.cloneDeep(originalStrategy)],
-  policy_account: []
+  policy_account: [{ // 策略分派人
+    id: '', // 策略分派人ID，新增时为空，修改时需填写
+    policy_id: '', // 策略ID，新增时为空，修改时需填写
+    account_id: 'administrator', // 立即通知人ID
+    group_id: '', // 立即通知组ID
+    upgrade_interval: 0, // 告警升级时间
+    upgrade_count: 0, // 升级次数，0代表立即通知
+    account_type: '1' // 通知组/人，0 - 通知组， 1 - 通知人
+  }]
 }
 
 export default {
@@ -284,7 +296,7 @@ export default {
       show: false,
       locale: {
         emptyText: (
-          <a-empty> </a-empty>
+          <a-empty></a-empty>
         )
       },
       updateFlag: false,
@@ -363,6 +375,29 @@ export default {
           value: r.sourceId
         })
       })
+    },
+    timeFormat (time) {
+      const dateObject = Date.parse(time.toString())
+      console.log(this.timestampToTime(dateObject))
+      return this.timestampToTime(dateObject)
+    },
+    /**
+     * @param {number} timestamp 时间戳
+     * @returns {string}
+     */
+    timestampToTime (timestamp) {
+      if (timestamp === 0 || timestamp == null) {
+        return ''
+      } else {
+        const date = new Date(timestamp) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        const Y = date.getFullYear() + '-'
+        const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+        const D = date.getDate() < 10 ? '0' + date.getDate() + '' : date.getDate() + ''
+        const H = date.getHours() + ':'
+        const M2 = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+        const S = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+        return Y + M + D + 'T' + H + M2 + S + 'Z'
+      }
     },
     sourcePass (rule, value, callback) {
       let flag = false
@@ -521,7 +556,8 @@ export default {
       if (!e) {
         this.$message.error('找不到正确的告警源！')
       }
-      this.formState.source_id = e.value
+      console.log(e)
+      this.formState.source_id = e.value || e.key
       this.formState.source_name = e.label
       // console.log('111')
     },
@@ -550,6 +586,9 @@ export default {
           }
         })
       })
+      backup.start_time = this.timeFormat(backup.start_time)
+      backup.end_time = this.timeFormat(backup.end_time)
+      backup.policy_account[0].account_id = store.getters.userId
       let url = ''
       if (this.updateFlag) {
         backup.updator = store.getters.userId
@@ -620,7 +659,8 @@ export default {
       console.log('认领', record)
     },
     // 关闭或批量关闭告警
-    closeAlarm (record) {},
+    closeAlarm (record) {
+    },
     showDetail () {
       this.$refs.schema.show('压缩告警详情')
       // TODO 交互详情内容
@@ -628,6 +668,15 @@ export default {
     onClose () {
       console.log('关闭')
       this.visible = false
+    }
+  },
+  watch: {
+    'formState.source_id': {
+      handle (newValue, oldValue) {
+        if (newValue) {
+          this.$refs.ruleForm.resetFields(['source_id'])
+        }
+      }
     }
   },
   computed: {
@@ -668,11 +717,13 @@ export default {
   background: rgba(9, 117, 209, 0.1);
   color: #0975d1;
 }
+
 .add_button {
   width: 100px;
   background-color: rgba(34, 127, 230, 1);
   color: white;
 }
+
 * {
   margin: 0px;
   //background-color: #EFF3F7;
@@ -698,11 +749,13 @@ export default {
 
 .form {
   margin-right: 10px;
+
   .fold {
     flex: 1;
     display: inline-block;
     width: calc(100% - 216px);
   }
+
   .collapse {
     float: right;
     overflow: hidden;
@@ -728,8 +781,9 @@ export default {
   justify-content: space-evenly;
   align-items: center;
 }
-.topTitle{
-  margin-bottom:10px;
+
+.topTitle {
+  margin-bottom: 10px;
   display: flex;
   flex-direction: row-reverse;
   padding: 0 24px;
