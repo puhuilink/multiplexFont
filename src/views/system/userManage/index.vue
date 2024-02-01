@@ -27,26 +27,19 @@
                 <a-button type="primary" @click="query(true)">查询</a-button>
                 <a-button :style="{ marginLeft: '15px' }" @click="resetQueryParams">重置</a-button>
               </a-col>
-              <!--            <a-col-->
-              <!--              v-bind="colLayout"-->
-              <!--            >-->
-              <!--              <a-form-model-item-->
-              <!--                label="部门"-->
-              <!--                v-bind="formItemLayout">-->
-              <!--                <a-input-->
-              <!--                  v-model="queryParams.apartmentId"-->
-              <!--                  placeholder="请输入部门名称"-->
-              <!--                />-->
-              <!--              </a-form-model-item>-->
-              <!--            </a-col>-->
+            </a-row>
+            <a-row :gutter="[8,8]">
               <a-col
-                :md="7"
+                :xxl="7"
+                :xl="8"
+                :md="8"
                 :sm="24"
-                v-bind="colLayout"
               >
                 <a-form-item
                   label="登录名"
-                  v-bind="formItemLayout">
+                  :labelCol="{span:6}"
+                  :wrapperCol="{ span: 16, offset: 2 }"
+                >
                   <a-input
                     class="box_input"
                     v-model="queryParams.userName"
@@ -55,9 +48,10 @@
                 </a-form-item>
               </a-col>
               <a-col
-                :md="7"
+                :xxl="7"
+                :xl="8"
+                :md="8"
                 :sm="24"
-                v-bind="colLayout"
               >
                 <a-form-item
                   label="用户名称"
@@ -70,10 +64,10 @@
                 </a-form-item>
               </a-col>
               <a-col
-                :md="7"
+                :xxl="7"
+                :xl="8"
+                :md="8"
                 :sm="24"
-                :offset="0"
-                v-bind="colLayout"
               >
                 <a-form-item
                   label="手机号码"
@@ -87,14 +81,15 @@
             </a-row>
             <a-row :gutter="[8,8]">
               <a-col
-                :md="7"
+                :xxl="7"
+                :xl="8"
+                :md="8"
                 :sm="24"
-                v-bind="colLayout"
               >
                 <a-form-item
-                  label="状态"
-                  :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:1, span: 6 }, xxl: { span: 6,offset:1 } }"
-                  :wrapperCol="{ span: 6, offset: 3 }"
+                  :label="'\u00a0'+'\u00a0'+'\u00a0'+'状态'"
+                  :labelCol="{span:6}"
+                  :wrapperCol="{ span: 16, offset: 2 }"
                 >
                   <a-select
                     class="box_select"
@@ -107,15 +102,19 @@
                 </a-form-item>
               </a-col>
               <a-col
-                :md="7"
+                :xxl="7"
+                :xl="8"
+                :md="8"
                 :sm="24"
-                :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:3, span: 6 }, xxl: { span: 6,offset:3 } }"
-                :wrapperCol="{ span: 6, offset: 0 }"
               >
                 <a-form-item
                   label="创建时间"
-                  :labelCol="{ xs: { offset:0, span: 14 }, md: { offset:0, span: 6 }, lg: { offset:0, span: 6 },xl: { offset:0, span: 6 }, xxl: { span: 6,offset:0 } }"
-                  :wrapperCol="{ span: 16, offset: 2 }">
+                  class="special"
+                  :labelCol="{xs: { span: 14 },
+                              md: { span: 6 },
+                              xl: { span: 6 },
+                              xxl: { span: 6 } }"
+                  :wrapperCol="{ lg: { span: 16, offset: 0 },xl: { span: 16, offset: 2 } }">
                   <a-range-picker
                     :show-time="{ format: 'HH:mm' }"
                     format="YYYY-MM-DD HH:mm"
@@ -301,7 +300,7 @@ export default {
       formItemLayout: {
         labelCol: {
           xs: { span: 14 },
-          md: { span: 8 },
+          md: { span: 6 },
           xl: { span: 6 },
           xxl: { span: 6 } },
         wrapperCol: {
@@ -651,9 +650,17 @@ export default {
   width: 200px;
 }
 .range-picker_box{
-  width: 156px
+  width: 100px
 }
 .box_input{
   width: 200px;
+}
+.special {
+  /deep/ .ant-input {
+    width: 200px !important;
+  }
+  /deep/ .ant-calendar-picker {
+    width: 200px !important;
+  }
 }
 </style>
