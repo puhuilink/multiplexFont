@@ -638,9 +638,10 @@ export default {
     menuAllLinkList () {
       try {
         // 28.首页—全部快捷功能和卡片
-        axios.get('/menu/allLinkList').then(res => {
+        axios.get('/menu/allLinkList').then(async res => {
           // console.log(data)
           if (res.code === 200) {
+            await this.myLinkListFun()
             this.allLinkList_menu_card = res.data
             // 给menu的childList加上id属性
             this.addIdToChildList(this.allLinkList_menu_card.menu)
@@ -882,20 +883,6 @@ export default {
 
   created: async function () {
     await this.menuAllLinkList()
-    await this.myLinkListFun()
-  },
-  async mounted () {
-    /* try {
-      const { data } = await axios.get('/organize/getMyMachine')
-      if (data) {
-        this.imgUrl = `${process.env.VUE_APP_QUOTE_URL}/view_thumbnail${data}`
-      } else {
-
-      }
-    } catch (e) {
-
-      throw e
-    } */
   }
 }
 </script>
