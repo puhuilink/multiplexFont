@@ -46,7 +46,7 @@
                   </div>
                 </template>
                 <!-- 内容放在这里 -->
-                <div style="height: 420px;">
+                <div class="PreviewBoxF">
                   <div class="PreviewBox">预览<div>拖动鼠标调整顺序</div></div>
                   <div class="Preview_1">
                     <draggable
@@ -194,7 +194,7 @@ export default {
     },
     menuItems: {
       type: Array,
-      default: null
+      default: () => []
     }
   },
   computed: {
@@ -221,7 +221,7 @@ export default {
   },
   watch: {
     checkedItems: function (newCheckedItems, old) {
-      console.log(newCheckedItems, old)
+      // console.log(newCheckedItems, old)
       let set = []
       // 添加
       if (newCheckedItems.length > old.length) {
@@ -494,7 +494,7 @@ export default {
   grid-row-gap: 18px; /* 上下间距 */
   grid-column-gap: 32px; /* 左右间距 */
   padding-top: 26px;
-  overflow-y: scroll;
+  //overflow-y: scroll;
   .grid-item {
     display: flex;
     flex-direction: column;
@@ -591,7 +591,7 @@ export default {
 }
 
 .Preview_2{
-  height: 290px;
+  height: 212px;
   overflow-y: scroll;
 }
 .Preview_2::-webkit-scrollbar {
@@ -609,5 +609,8 @@ export default {
     right: 10%;
     top: -5%;
   }
+}
+.PreviewBoxF{
+  height: 430px;
 }
 </style>
