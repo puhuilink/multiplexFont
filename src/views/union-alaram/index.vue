@@ -9,7 +9,7 @@
     <!--      查询-->
     <a-form layout="inline" class="form">
       <div class="fold">
-        <a-row :gutter="[8,8]">
+        <a-row :gutter="[16,16]">
           <a-col class="search_box">
             <label class="search_label">搜索条件</label>
             <a-button type="primary" @click="query(true)">
@@ -65,6 +65,9 @@
               <a-range-picker v-model="queryParams.timeList" format="YYYY-MM-DD HH:mm:ss" />
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row>
+
         </a-row>
       </div>
       <!--      <span class="collapse">-->
@@ -194,20 +197,20 @@ export default {
       ALARM_STATE,
       ALARM_QUERY_LABEL,
       colLayout: {
-        xl: 12,
-        md: 12,
-        sm: 24
+        xl: 6,
+        md: 6,
+        sm: 6
       },
       queryParams: {
         process_status: '0'
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 6 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 7 }, xxl: { span: 7 } },
         wrapperCol: {
-          xs: { span: 10, offset: 0 },
+          xs: { span: 14, offset: 0 },
           md: { span: 14, offset: 0 },
-          xl: { span: 16, offset: 2 },
-          xxl: { span: 20, offset: 0 }
+          xl: { span: 14, offset: 0 },
+          xxl: { span: 14, offset: 0 }
         }
       },
       dataSource,

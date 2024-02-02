@@ -45,11 +45,11 @@
         >
           <div style="">
             <div
-              style="display: grid; grid-template-columns: 60px 1fr; grid-auto-columns: 1fr"
+              style="display: grid; grid-template-columns: 37px 1fr; grid-auto-columns: 1fr"
               v-for="(map, index) in formState.policy_source"
               :key="index"
             >
-              <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar>
+              <a-avatar size="small" class="circle"> {{ index + 1 }}</a-avatar>
               <div>
                 <div style="display: flex; align-items: center">
                   规则之间的条件：
@@ -139,13 +139,13 @@
           </a-col>
           <a-col :span="18">
             <div
-              style="display: grid; grid-template-columns: 60px 1fr; grid-auto-columns: 1fr"
+              style="display: grid; grid-template-columns: 37px 1fr; grid-auto-columns: 1fr"
               v-for="(map, index) in watchForm.policy_source"
               :key="index"
             >
-              <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar>
+              <a-avatar :size="24" class="circle"> {{ index + 1 }}</a-avatar>
               <div>
-                <div style="display: flex; align-items: center">
+                <div style="display: flex; align-items: center; padding: 3px">
                   规则之间的条件：
                   <a-radio-group disabled :options="options" v-model="map.group_relation" :default-value="1" />
                   <div style="display: flex; flex-direction: revert">
@@ -160,14 +160,14 @@
                   <a-select
                     disabled
                     v-model="m.condition_name"
-                    style="width: 25%; margin-right: 5px"
+                    style="width: 25%;padding: 3px"
                     :options="conditions[0]"
                     @change="nameChange(m)"
                   />
                   <a-select
                     v-model="m.condition_symbol"
                     disabled
-                    style="width: 25%; margin-right: 5px"
+                    style="width: 25%;padding: 3px"
                     :options="conditions[1]"
                   />
                   <span>
@@ -175,11 +175,11 @@
                       disabled
                       mode="multiple"
                       v-model="m.condition_value"
-                      style="width: 40%; margin-right: 5px"
+                      style="width: 40%;padding: 3px"
                       :options="conditions[2]"
                       v-if="m.condition_name === '294504721270575106'"
                     />
-                    <a-input disabled v-else v-model="m.condition_value" style="width: 30%; margin-right: 5px" />
+                    <a-input disabled v-else v-model="m.condition_value" style="width: 30%;padding: 3px" />
                   </span>
                   <div
                     :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }"
@@ -789,11 +789,6 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.circle {
-  background: rgba(9, 117, 209, 0.1);
-  color: #0975d1;
-}
-
 .add_button {
   width: 100px;
   background-color: rgba(34, 127, 230, 1);
@@ -837,6 +832,14 @@ export default {
     overflow: hidden;
     transform: translateY(3.5px);
   }
+}
+
+.circle{
+  font-size: 24px;
+  color: #3F78F0;
+  background-color: rgba(230, 241, 250, 1);
+  border-radius: 50%;
+  margin-left: 30%;
 }
 
 .right {

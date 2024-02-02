@@ -825,6 +825,7 @@ export default {
   color: white;
   border-radius: 50%;
   grid-column: 1/2;
+  margin-top: 18%;
 }
 * {
   marigin: 0px;
