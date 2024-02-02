@@ -193,7 +193,7 @@
           </span>
           <span slot="operation" class="table-operation" slot-scope="text,record">
             <!--            <a-button @click="openUpdateModal(record)">修改</a-button>-->
-            <a-icon type="edit" theme="twoTone" @click="openUpdateModal(record)" two-tone-color="#3D7CEC"/>
+            <a @click="openUpdateModal(record)"><img src="@/assets/icons/icon_edit.png"></a>
             <a-divider type="vertical" />
             <a-popconfirm
               title="确定要删除此策略?"
@@ -202,7 +202,7 @@
               okText="提交"
               cancelText="取消"
             >
-              <a-icon type="delete" theme="twoTone" two-tone-color="#3D7CEC"/>
+              <img src="@/assets/icons/icon_delet.png">
               <!--              <a-button>删除</a-button>-->
             </a-popconfirm>
           </span>

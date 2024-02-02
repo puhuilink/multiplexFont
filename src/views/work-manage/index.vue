@@ -27,13 +27,13 @@
       :locale="locale"
       :scroll="{y: scrollY}"
       :pagination="paginationOpt"
-      class="button_sty"
+      class="button_sty ruleTable"
     >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action" slot-scope="text, { id }">
-        <a-button @click="onDetail(id)" class="button_sty" size="small">查看</a-button>
+        <a @click="onDetail(id)"><img src="@/assets/icons/icon_search.png"></a>
         <a-divider type="vertical" />
-        <a-button @click="onEdit(id)" class="button_sty" size="small">编辑</a-button>
+        <a @click="onEdit(id)"><img src="@/assets/icons/icon_edit.png"></a>
         <a-divider type="vertical" />
         <a-popconfirm
           title="确定要删除此排班?"
@@ -43,7 +43,7 @@
           cancelText="取消"
         >
           <a-tooltip placement="top">
-            <a-button class="button_sty" size="small">删除</a-button>
+            <img src="@/assets/icons/icon_delet.png">
           </a-tooltip>
         </a-popconfirm>
       </span>

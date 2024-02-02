@@ -11,6 +11,7 @@
       @ok="handleOk"
       @cancel="closeModal"
       @close="closeModal"
+      centered
     >
       <a-form-model
         ref="ruleForm"
@@ -117,54 +118,122 @@
     <a-modal
       title="屏蔽规则详情"
       :visible="show"
-      :width="700"
-      @ok="closeShow"
+      :width="800"
       @cancel="closeShow"
-      @close="closeShow">
-      <div>策略名称：{{ watchForm.policy_name }}</div>
-      <div>告警源：{{ watchForm.source_name }}</div>
-      <div>
-        屏蔽条件：
-        <div
-          style="display: grid; grid-template-columns: 40px 1fr; grid-auto-columns: 1fr"
-          v-for="(map, index) in watchForm.policy_source"
-          :key="index"
-        >
-          <a-avatar :size="24" class="circle"> {{ map.group_relation === '1' ? '或' : '且' }}</a-avatar>
-          <div style="display: grid; grid-template-rows: 50px 50px; grid-auto-rows: 50px">
-            <div v-for="(m, i) in map.group_condition" :key="i">
-              <a-select
-                disabled
-                v-model="m.condition_name"
-                style="width: 25%; margin-right: 5px"
-                :options="conditions[0]"
-                :show-arrow="false"
-              />
-              <a-select
-                disabled
-                v-model="m.condition_symbol"
-                style="width: 25%; margin-right: 5px"
-                :options="conditions[1]"
-                :show-arrow="false"
-              />
-              <span>
-                <a-select
-                  disabled
-                  mode="multiple"
-                  v-model="m.condition_value"
-                  style="width: 40%; margin-right: 5px"
-                  :options="conditions[2]"
-                  v-if="m.condition_name === '294504721270575106'"
-                  :show-arrow="false"
-                />
-                <a-input disabled v-else v-model="m.condition_value" style="width: 30%; margin-right: 5px" />
-              </span>
-            </div>
-          </div>
+      class="detail_modal"
+      >
+      <div class="header-title">
+        <div class="singer">
+          <span class="title-label">屏蔽规则名称:</span>
+          <span class="title-value">{{ watchForm.policy_name }}</span>
+        </div>
+        <div class="singer">
+          <span class="title-label">告警源:</span>
+          <span class="title-value">{{ watchForm.source_name }}</span>
         </div>
       </div>
+      <div class="detail_form">
+        <a-row :gutter="[16,16]">
+          <a-col v-bind="detailLayout">
+            屏蔽规则:
+          </a-col>
+          <a-col :span="18">
+            <div
+              style="display: grid; grid-template-columns: 60px 1fr; grid-auto-columns: 1fr"
+              v-for="(map, index) in watchForm.policy_source"
+              :key="index"
+            >
+              <a-avatar :size="32" class="circle"> {{ index + 1 }}</a-avatar>
+              <div>
+                <div style="display: flex; align-items: center">
+                  规则之间的条件：
+                  <a-radio-group disabled :options="options" v-model="map.group_relation" :default-value="1" />
+                  <div style="display: flex; flex-direction: revert">
+                    <a-icon
+                      type="delete"
+                      v-if="formState.policy_source.length !== 1"
+                      @click="deleteStrategyByIndex(index)"
+                    />
+                  </div>
+                </div>
+                <div v-for="(m, i) in map.group_condition" :key="i">
+                  <a-select
+                    disabled
+                    v-model="m.condition_name"
+                    style="width: 25%; margin-right: 5px"
+                    :options="conditions[0]"
+                    @change="nameChange(m)"
+                  />
+                  <a-select
+                    v-model="m.condition_symbol"
+                    disabled
+                    style="width: 25%; margin-right: 5px"
+                    :options="conditions[1]"
+                  />
+                  <span>
+                    <a-select
+                      disabled
+                      mode="multiple"
+                      v-model="m.condition_value"
+                      style="width: 40%; margin-right: 5px"
+                      :options="conditions[2]"
+                      v-if="m.condition_name === '294504721270575106'"
+                    />
+                    <a-input disabled v-else v-model="m.condition_value" style="width: 30%; margin-right: 5px" />
+                  </span>
+                  <div
+                    :style="{ visibility: map.group_condition.length > 1 ? 'default' : 'hidden', display: 'inline' }"
+                  >
+                    <a-icon type="delete" disabled @click="deleteRuleByIndex(index, i)" />
+                    <a-divider type="vertical" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="[16,16]">
+          <a-col v-bind="detailLayout">
+            生效时间:
+          </a-col>
+          <a-col :span="18">
+            <a-date-picker
+              disabled
+              show-time
+              v-model="watchForm.start_time"
+              placeholder="生效时间 "
+              @change="onStartChange"
+              format="YYYY-MM-DD HH:mm:ss" />
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="[16,16]">
+          <a-col v-bind="detailLayout">
+            失效时间:
+          </a-col>
+          <a-col :span="18">
+            <a-date-picker
+              disabled
+              show-time
+              v-model="watchForm.end_time"
+              placeholder="生效时间 "
+              @change="onStartChange"
+              format="YYYY-MM-DD HH:mm:ss" />
+          </a-col>
+        </a-row>
+      </div>
+      <template #footer>
+        <a-button type="primary" @click="closeShow">确定</a-button>
+      </template>
     </a-modal>
-    <a-table bordered :locale="locale" :columns="columns" :pagination="pagination" :data-source="data">
+    <a-table
+      :bordered="false"
+      :locale="locale"
+      :columns="columns"
+      :pagination="pagination"
+      class="ruleTable"
+      :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <template :slot="'levelUp'" slot-scope="text, record">
         {{ record.policy_account.length > 1 ? '是' : '否' }}
@@ -173,9 +242,9 @@
         {{ notifyContent(record.policy_account) }}
       </template>
       <template :slot="'action'" slot-scope="text, record">
-        <a-button @click="showModal(record)">查看</a-button>
+        <a @click="showModal(record)"><img src="@/assets/icons/icon_search.png"></a>
         <a-divider type="vertical" />
-        <a-button @click="openModal(record)">编辑</a-button>
+        <a @click="openModal(record)"><img src="@/assets/icons/icon_edit.png"></a>
         <a-divider type="vertical" />
         <!--        <a-switch :checked="record.status" size="small" />-->
         <!--        <a-divider type="vertical" />-->
@@ -186,7 +255,7 @@
           okText="提交"
           cancelText="取消"
         >
-          <a-button>删除</a-button>
+          <img src="@/assets/icons/icon_delet.png">
         </a-popconfirm>
       </template>
     </a-table>
@@ -308,18 +377,21 @@ export default {
       alertSource: [],
       group: [],
       user: [],
+      detailLayout: {
+        xxl: 4,
+        xl: 3,
+        md: 3,
+        sm: 3
+      },
       colLayout: {
         xl: 8,
         md: 12,
         sm: 24
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 } },
+        labelCol: { span: 4 },
         wrapperCol: {
-          xs: { span: 10, offset: 0 },
-          md: { span: 14, offset: 0 },
-          xl: { span: 14, offset: 0 },
-          xxl: { span: 16, offset: 0 }
+          span: 20
         }
       },
       data,
@@ -494,6 +566,7 @@ export default {
       this.visible = true
     },
     showModal (record) {
+      console.log('rec', record)
       this.watchForm = { ..._.cloneDeep(record) }
       this.watchForm.policy_source.forEach((source) => {
         source.group_condition.forEach((condition) => {
@@ -779,6 +852,13 @@ export default {
   }
 }
 
+.deliverRules {
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .center {
   display: flex;
   justify-content: space-evenly;
@@ -786,9 +866,60 @@ export default {
 }
 
 .topTitle {
-  margin-bottom: 10px;
   display: flex;
-  flex-direction: row-reverse;
+  align-items: center;
   padding: 0 24px;
+  background-color: #E5EBF3;
+  width: 97%;
+  height: 45px;
+  margin: 0 auto;
+  border-radius: 5px;
 }
+
+.detail_form {
+  margin: 0 auto;
+  width: 70%;
+  /deep/ .ant-col-xl-6 {
+    width: 16% !important;
+  }
+  span {
+    margin-left: 3px;
+  }
+}
+
+.header-title {
+  height: 45px;
+  line-height: 45px;
+  width: 70%;
+  background-color: rgba(249, 251, 255, 1);
+  border-top: 1px solid #D4DBE6; /* 上边框为2像素宽度，黑色 */
+  border-bottom: 1px solid #D4DBE6;
+  margin: 0 auto 10px;
+  .singer {
+    /* 全部singer的样式，包括第一个singer */
+    /* 可以在这里添加其他共享样式 */
+    display: inline-block;
+    margin-left: 20px; /* 为所有singer添加margin-left: 20px */
+    .title-label {
+      font-size: 14px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      color: #666666;
+    }
+    .title-value {
+      font-size: 14px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      color: #333333;
+      margin-left: 2px;
+    }
+  }
+
+  .singer:first-child {
+    /* 第一个singer的样式 */
+    /* 可以在这里添加特定于第一个singer的样式，如果有需要 */
+    margin-left: 3px; /* 重置第一个singer的margin-left为0，如果不需要margin-left的话 */
+  }
+}
+
 </style>

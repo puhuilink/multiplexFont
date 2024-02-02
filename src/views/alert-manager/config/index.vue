@@ -200,6 +200,7 @@
       :locale="locale"
       :columns="columns"
       :pagination="pagination"
+      class="ruleTable"
       :data-source="data">
       <a slot="name" slot-scope="text">{{ text }}</a>
       <template :slot="'levelUp'" slot-scope="text,record">
@@ -209,9 +210,9 @@
         {{ notifyContent(record.policy_account) }}
       </template>
       <template :slot="'action'" slot-scope="text,record">
-        <a-button @click="showModal(record)">查看</a-button>
+        <a @click="showModal(record)"><img src="@/assets/icons/icon_search.png"></a>
         <a-divider type="vertical" />
-        <a-button @click="openModal(record)">编辑</a-button>
+        <a @click="openModal(record)"><img src="@/assets/icons/icon_edit.png"></a>
         <a-divider type="vertical" />
         <!--        <a-switch :checked="record.status" size="small" />-->
         <!--        <a-divider type="vertical" />-->
@@ -222,7 +223,7 @@
           okText="提交"
           cancelText="取消"
         >
-          <a-button>删除</a-button>
+          <img src="@/assets/icons/icon_delet.png">
         </a-popconfirm>
       </template>
     </a-table>
