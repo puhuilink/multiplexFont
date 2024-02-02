@@ -7,10 +7,10 @@
     <div class="mainBody" ref="mainBody">
       <div class="leftList">
         <a-collapse v-model="activeKey" accordion>
-          <a-collapse-panel key="1" header="告警源">
-            <p v-for="source in sourceList" :key="source.sourceId" @click="fetchSourceTags(source.sourceId)">
-              {{ source.sourceName }}
-            </p>
+          <a-collapse-panel key="1" header="告警源" style="font-weight: bold">
+            <a v-for="source in sourceList" :key="source.sourceId" @click="fetchSourceTags(source.sourceId)" class="collapse-box">
+              {{ source.sourceName }}<br><br>
+            </a>
           </a-collapse-panel>
         </a-collapse>
       </div>
@@ -33,7 +33,7 @@
               title="确定要删除此标签?"
               placement="left"
               @confirm="deleteTag(record.id)"
-              okText="提交"
+              okText="确认"
               cancelText="取消"
               :disabled="!record.deleteFlag">
               <a-button :disabled="!record.deleteFlag">删除</a-button>
@@ -85,6 +85,8 @@
 <script>
 import { alarm } from '@/utils/request'
 import _ from 'lodash'
+import notification from 'ant-design-vue/lib/notification'
+
 const originalFormData = {
   sourceId: '',
   mappingId: '',
@@ -97,6 +99,8 @@ export default {
   name: 'SelfDefiningTag',
   data () {
     return {
+      op: [],
+      op1: [],
       activeKey: ['1'],
       sampleData: {},
       locale: {
@@ -203,6 +207,23 @@ export default {
   methods: {
     openModal (record) {
       if (record) {
+        // 编辑映射字段
+        this.mappingOptions = this.op.filter(opItem => {
+          // 排除传入的数据
+          if (record.targetField === opItem.key) {
+            return true
+          }
+          return !this.data.some(dataItem => dataItem.targetField === opItem.key)
+        })
+        // 编辑告警源字段
+        this.sourceOptions = this.op1.filter(opItem => {
+          // 排除传入的数据
+          if (record.sourceField === opItem.key) {
+            return true
+          }
+          return !this.data.some(dataItem => dataItem.sourceField === opItem.key)
+        })
+
         this.updateFlag = true
         this.formState.mappingId = record.id
         this.formState.sourceField = record.sourceField
@@ -212,6 +233,9 @@ export default {
         delete this.formState.targetType
         this.targetFlag = !record.updateFlag
       } else {
+        // 新增
+        this.mappingOptions = this.op.filter(opItem => !this.data.some(dataItem => dataItem.targetField === opItem.key))
+        this.sourceOptions = this.op1.filter(opItem => !this.data.some(dataItem => dataItem.sourceField === opItem.key))
         this.formState.sourceId = this.activeSourceId
         delete this.formState.mappingId
       }
@@ -220,10 +244,18 @@ export default {
     async deleteTag (mappingId) {
       try {
         const res = await alarm.post('/api/configuration/mapping/delete', { mappingId })
-        if (res.data) {
-          this.$message.success(res.data)
+        if (res.code === 200) {
+          await this.fetchSourceList()
+          await this.fetchMappingList()
+          notification.success({
+            message: '系统提示',
+            description: res.msg
+          })
         } else {
-          this.$message.error(res.msg)
+          notification.success({
+            message: '系统提示',
+            description: res.msg
+          })
         }
       } catch (e) {
         this.$message.error('网络请求错误！')
@@ -249,10 +281,22 @@ export default {
       }
       try {
         const res = await alarm.post(baseUrl, formData)
-        this.$message.success(res.msg)
-        this.closeModal()
+        if (res.code === 200) {
+          await this.fetchSourceList()
+          await this.fetchMappingList()
+          notification.success({
+            message: '系统提示',
+            description: res.msg
+          })
+          this.closeModal()
+        } else {
+          notification.error({
+            message: '系统提示',
+            description: res.msg
+          })
+        }
       } catch (e) {
-        this.$message.error('网络请求错误！')
+        console.log(e)
       }
     },
     sourceChange (e) {
@@ -287,6 +331,7 @@ export default {
         const { data } = await alarm.get('/api/configuration/mapping/getSource')
         this.sourceList = data
         await this.fetchSourceTags(data[0].sourceId)
+        await this.fetchMappingList()
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.sourceList = []
@@ -297,14 +342,13 @@ export default {
       try {
         const { data } = await alarm.get('/api/integration/source/preadd')
         this.mappingList = data
-        const op = []
+        this.op = []
         data.forEach(d => {
-          op.push({
+          this.op.push({
             key: d.fieldName,
             label: this.mappingLabels[d.fieldName]
           })
         })
-        this.mappingOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.mappingList = []
@@ -316,16 +360,15 @@ export default {
         this.activeSourceId = sourceId
         const { data } = await alarm.post('/api/configuration/mapping/find', { sourceId })
         this.data = data.mapping
-        const op = []
+        this.op1 = []
         const sample = JSON.parse(data.sampleData.sampleData)
         this.sampleData = sample
         Object.keys(sample).forEach(s => {
-          op.push({
+          this.op1.push({
             key: s,
             label: s
           })
         })
-        this.sourceOptions = op
       } catch (e) {
         this.$message.error('网络请求错误！')
         this.data = []
@@ -341,7 +384,6 @@ export default {
     // this.getDivHeight()
     window.addEventListener('resize', this.getDivHeight)
     this.fetchSourceList()
-    this.fetchMappingList()
   },
   destroyed () {
     window.removeEventListener('resize', this.getDivHeight, false)
@@ -360,15 +402,13 @@ export default {
   width: 97%;
   align-items: center;
   height: 40px;
-  margin: 0 auto;
-  margin-bottom: 10px;
-  .btn_disabled{
-    color: rgba(0,0,0,.25) !important;
-    background-color: #F5F5F5 !important;
-    border-color: #d9d9d9 !important;
-  }
+  margin: 0 auto 10px;
 }
-
+.btn_disabled {
+  color: rgba(0,0,0,.25) !important;
+  background-color: #F5F5F5 !important;
+  border-color: #d9d9d9 !important;
+}
 .mainBody {
   display: flex;
   width: 97%;
@@ -389,8 +429,12 @@ export default {
   width: 85%;
   /* margin-right: 2%; */
   /* border: grey solid 1px; */
-  .ant-table-wrapper{
-    padding: 0;
-  }
+}
+.ant-table-wrapper{
+  padding: 0;
+}
+.collapse-box{
+  font-weight: bold;
+  color: #000
 }
 </style>
