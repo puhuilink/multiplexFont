@@ -226,7 +226,7 @@ export default {
       // 添加
       if (newCheckedItems.length > old.length) {
         set = newCheckedItems.filter(el => !old.includes(el))
-        console.log(set)
+        // console.log(set)
         for (const x of set) {
           this.checkedOptions.push(...this.options.filter(option => option.id === x))
         }
