@@ -7,8 +7,8 @@
     <div class="mainBody" ref="mainBody">
       <div class="leftList">
         <a-collapse v-model="activeKey" accordion>
-          <a-collapse-panel key="1" header="告警源" style="font-weight: bold">
-            <a v-for="source in sourceList" :key="source.sourceId" @click="fetchSourceTags(source.sourceId)" class="collapse-box">
+          <a-collapse-panel key="1" header="告警源"  style="font-weight: bold">
+            <a v-for="source in sourceList" :key="source.sourceId" @click="fetchSourceTags(source.sourceId)" class="collapse-box" :class=" selectedSource === source.sourceId?'bold-text':'no-bold-text' ">
               {{ source.sourceName }}<br><br>
             </a>
           </a-collapse-panel>
@@ -99,6 +99,7 @@ export default {
   name: 'SelfDefiningTag',
   data () {
     return {
+      selectedSource: null,
       op: [],
       op1: [],
       activeKey: ['1'],
@@ -356,6 +357,7 @@ export default {
     },
     // 获取数据源对应的映射关系
     async fetchSourceTags (sourceId) {
+      this.selectedSource = sourceId
       try {
         this.activeSourceId = sourceId
         const { data } = await alarm.post('/api/configuration/mapping/find', { sourceId })
@@ -434,7 +436,13 @@ export default {
   padding: 0;
 }
 .collapse-box{
+  /*font-weight: bold;*/
+  color: #000;
+}
+.bold-text {
   font-weight: bold;
-  color: #000
+}
+.no-bold-text {
+  font-weight: 400;
 }
 </style>
