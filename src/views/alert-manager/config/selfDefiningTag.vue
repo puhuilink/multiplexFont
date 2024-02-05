@@ -22,7 +22,7 @@
           :pagination="pagination"
           :data-source="data">
           <span :slot="'index'" slot-scope="text,record,index" >{{ index }}</span>
-          <span slot="sourceName">{{ getSourceName(activeSourceId) }}</span>
+          <span slot="sourceName"  class="bold-text">{{ getSourceName(activeSourceId) }}</span>
           <span slot="type">告警源</span>
           <template :slot="'action'" slot-scope="text,record">
             <a-button @click="openModal(record)">编辑</a-button>
