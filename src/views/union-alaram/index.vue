@@ -528,6 +528,10 @@ export default {
   .ant-btn {
     min-width: 60px !important;
   }
+/deep/ .ant-table-thead > tr > th::after {
+  content: none !important;
+}
+
 }
 
 </style>

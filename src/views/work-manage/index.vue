@@ -27,7 +27,7 @@
       :locale="locale"
       :scroll="{y: scrollY}"
       :pagination="paginationOpt"
-      class="button_sty ruleTable"
+      class="button_sty ruleTable border-clear"
     >
       <!--      <span slot="customTitle"><a-tooltip title="使用该排班的分派策略、智能降噪或风暴预警"><a-icon type="info-circle" />关联信息</a-tooltip></span>-->
       <span slot="action" slot-scope="text, { id }">

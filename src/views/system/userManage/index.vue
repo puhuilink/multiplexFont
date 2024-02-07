@@ -180,7 +180,7 @@
                     分配角色
                   </a-menu-item>
                   <a-menu-item key="4">
-                    <a-icon type="unlock" />
+                    <a-icon type="unlock" disabled="record.lock"/>
                     解锁
                   </a-menu-item>
                   <a-menu-item key="5">
@@ -412,21 +412,24 @@ export default {
           this.$refs.assign.onShow(record)
           break
         case '4':
-          this.$promiseConfirmDelete({
-            title: '账户解锁',
-            content: '此操作将解锁该账号，是否继续？',
-            closable: true,
-            onOk: async () => {
-              await axios.get(`/user/unlock?id=${record.id}`)
-                .then(() => {
-                  this.$notification.success({
-                    message: '系统提示',
-                    description: '解锁成功'
+          // 账号锁定再触发
+          if (record.lock) {
+            this.$promiseConfirmDelete({
+              title: '账户解锁',
+              content: '此操作将解锁该账号，是否继续？',
+              closable: true,
+              onOk: async () => {
+                await axios.get(`/user/unlock?id=${record.id}`)
+                  .then(() => {
+                    this.$notification.success({
+                      message: '系统提示',
+                      description: '解锁成功'
+                    })
                   })
-                })
-                .catch(this.$notifyError).finally(() => this.query())
-            }
-          })
+                  .catch(this.$notifyError).finally(() => this.query())
+              }
+            })
+          }
           break
         case '5':
           this.$promiseConfirmDelete({
