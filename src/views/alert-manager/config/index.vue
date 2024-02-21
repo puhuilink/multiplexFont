@@ -60,7 +60,7 @@
               </div>
             </div></div>
 
-          <a-button class="add_button" @click="addStrategy"> 增加</a-button>
+          <a-button class="add_button" @click="addStrategy" type="primary"> 增加</a-button>
         </a-form-model-item>
         <a-form-model-item label="分派人" :rules="[{ required:true, type: 'array',validator: accountPass, trigger: 'change' }]" prop="policy_account">
           <div
@@ -97,7 +97,7 @@
               <a-icon type="delete" @click="notifyLevelDownByIndex(index)"></a-icon>
             </div>
           </div>
-          <a-button class="add_button" @click="notifyLevelUp"> 升级</a-button>
+          <a-button class="add_button" @click="notifyLevelUp" type="primary"> 升级</a-button>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -349,12 +349,12 @@ export default {
         sm: 24
       },
       formItemLayout: {
-        labelCol: { xs: { span: 14 }, md: { span: 6 }, xl: { span: 6 }, xxl: { span: 4 } },
+        labelCol: { xs: { span: 14 }, md: { span: 6 }, xl: { span: 4 }, xxl: { span: 4 } },
         wrapperCol: {
           xs: { span: 10, offset: 0 },
-          md: { span: 18, offset: 0 },
-          xl: { span: 18, offset: 2 },
-          xxl: { span: 18, offset: 0 }
+          md: { span: 16, offset: 0 },
+          xl: { span: 16, offset: 2 },
+          xxl: { span: 16, offset: 2 }
         }
       },
       data,
@@ -726,9 +726,9 @@ export default {
   color: #0975D1;
 }
 .add_button{
-  width: 100px;
-  background-color: rgba(34, 127, 230, 1);
-  color: white
+  //width: 100px;
+  //background-color: rgba(34, 127, 230, 1);
+  //color: white
 }
 * {
   marigin: 0px;

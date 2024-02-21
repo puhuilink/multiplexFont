@@ -96,7 +96,7 @@
             </div>
           </div>
 
-          <a-button class="add_button" @click="addStrategy"> 增加</a-button>
+          <a-button class="add_button" @click="addStrategy" type="primary"> 增加</a-button>
         </a-form-model-item>
         <a-form-model-item
           label="生效时间"
@@ -790,9 +790,9 @@ export default {
 
 <style lang='less' scoped>
 .add_button {
-  width: 100px;
-  background-color: rgba(34, 127, 230, 1);
-  color: white;
+  //width: 100px;
+  //background-color: rgba(34, 127, 230, 1);
+  //color: white;
 }
 
 * {
